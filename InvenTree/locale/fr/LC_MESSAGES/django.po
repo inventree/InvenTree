@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-29 03:06+0000\n"
-"PO-Revision-Date: 2023-11-28 01:40\n"
+"POT-Creation-Date: 2023-11-30 05:32+0000\n"
+"PO-Revision-Date: 2023-12-01 02:00\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -32,16 +32,16 @@ msgstr "Pas de valeur renseignée"
 #: InvenTree/conversion.py:125
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "Impossible de convertir {original} en {unit}"
 
 #: InvenTree/conversion.py:127
 msgid "Invalid quantity supplied"
-msgstr ""
+msgstr "Quantité fournie invalide"
 
 #: InvenTree/conversion.py:141
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr ""
+msgstr "Quantité fournie invalide ({exc})"
 
 #: InvenTree/exceptions.py:89
 msgid "Error details can be found in the admin panel"
@@ -142,17 +142,17 @@ msgstr "Numéro de série en doublon"
 #: InvenTree/helpers.py:523 InvenTree/helpers.py:558
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr ""
+msgstr "Plage de groupe non valide : {group}"
 
 #: InvenTree/helpers.py:552
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr ""
+msgstr "La plage de groupe {group} dépasse la quantité autorisée ({expected_quantity})"
 
 #: InvenTree/helpers.py:576 InvenTree/helpers.py:583 InvenTree/helpers.py:598
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr ""
+msgstr "Séquence de groupe invalide : {group}"
 
 #: InvenTree/helpers.py:608
 msgid "No serial numbers found"
@@ -160,7 +160,7 @@ msgstr "Aucun numéro de série trouvé"
 
 #: InvenTree/helpers.py:611
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr ""
+msgstr "Le nombre de numéros de série uniques ({len(serials)}) doit correspondre à la quantité ({expected_quantity})"
 
 #: InvenTree/helpers.py:740
 msgid "Remove HTML tags from this value"
@@ -461,24 +461,23 @@ msgstr "Sélectionnez la devise à partir des options disponibles"
 
 #: InvenTree/serializers.py:427
 msgid "You do not have permission to change this user role."
-msgstr ""
+msgstr "Vous n'avez pas la permission de modifier ce rôle utilisateur."
 
 #: InvenTree/serializers.py:437
 msgid "Only superusers can create new users"
-msgstr ""
+msgstr "Seuls les super-utilisateurs peuvent créer de nouveaux utilisateurs"
 
 #: InvenTree/serializers.py:454
 #, python-brace-format
 msgid "Welcome to {current_site.name}"
-msgstr ""
+msgstr "Bienvenue sur {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
+msgstr "Votre compte a été créé.\n\n"
+"Veuillez utiliser la fonction de réinitialisation du mot de passe pour avoir accès (à https://{domain})."
 
 #: InvenTree/serializers.py:519
 msgid "Filename"
@@ -543,123 +542,123 @@ msgstr "URL du fichier image distant"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Le téléchargement des images depuis une URL distante n'est pas activé"
 
-#: InvenTree/settings.py:819
+#: InvenTree/settings.py:830
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgare"
 
-#: InvenTree/settings.py:820
+#: InvenTree/settings.py:831
 msgid "Czech"
 msgstr "Tchèque"
 
-#: InvenTree/settings.py:821
+#: InvenTree/settings.py:832
 msgid "Danish"
 msgstr "Danois"
 
-#: InvenTree/settings.py:822
+#: InvenTree/settings.py:833
 msgid "German"
 msgstr "Allemand"
 
-#: InvenTree/settings.py:823
+#: InvenTree/settings.py:834
 msgid "Greek"
 msgstr "Grec"
 
-#: InvenTree/settings.py:824
+#: InvenTree/settings.py:835
 msgid "English"
 msgstr "Anglais"
 
-#: InvenTree/settings.py:825
+#: InvenTree/settings.py:836
 msgid "Spanish"
 msgstr "Espagnol"
 
-#: InvenTree/settings.py:826
+#: InvenTree/settings.py:837
 msgid "Spanish (Mexican)"
 msgstr "Espagnol (Mexique)"
 
-#: InvenTree/settings.py:827
+#: InvenTree/settings.py:838
 msgid "Farsi / Persian"
 msgstr "Farsi / Perse"
 
-#: InvenTree/settings.py:828
+#: InvenTree/settings.py:839
 msgid "Finnish"
 msgstr "Finnois"
 
-#: InvenTree/settings.py:829
+#: InvenTree/settings.py:840
 msgid "French"
 msgstr "Français"
 
-#: InvenTree/settings.py:830
+#: InvenTree/settings.py:841
 msgid "Hebrew"
 msgstr "Hébreu"
 
-#: InvenTree/settings.py:831
+#: InvenTree/settings.py:842
 msgid "Hindi"
 msgstr "Hindi"
 
-#: InvenTree/settings.py:832
+#: InvenTree/settings.py:843
 msgid "Hungarian"
 msgstr "Hongrois"
 
-#: InvenTree/settings.py:833
+#: InvenTree/settings.py:844
 msgid "Italian"
 msgstr "Italien"
 
-#: InvenTree/settings.py:834
+#: InvenTree/settings.py:845
 msgid "Japanese"
 msgstr "Japonais"
 
-#: InvenTree/settings.py:835
+#: InvenTree/settings.py:846
 msgid "Korean"
 msgstr "Coréen"
 
-#: InvenTree/settings.py:836
+#: InvenTree/settings.py:847
 msgid "Dutch"
 msgstr "Néerlandais"
 
-#: InvenTree/settings.py:837
+#: InvenTree/settings.py:848
 msgid "Norwegian"
 msgstr "Norvégien"
 
-#: InvenTree/settings.py:838
+#: InvenTree/settings.py:849
 msgid "Polish"
 msgstr "Polonais"
 
-#: InvenTree/settings.py:839
+#: InvenTree/settings.py:850
 msgid "Portuguese"
 msgstr "Portugais"
 
-#: InvenTree/settings.py:840
+#: InvenTree/settings.py:851
 msgid "Portuguese (Brazilian)"
 msgstr "Portugais (Brésilien)"
 
-#: InvenTree/settings.py:841
+#: InvenTree/settings.py:852
 msgid "Russian"
 msgstr "Russe"
 
-#: InvenTree/settings.py:842
+#: InvenTree/settings.py:853
 msgid "Slovenian"
 msgstr "Slovénien"
 
-#: InvenTree/settings.py:843
+#: InvenTree/settings.py:854
 msgid "Swedish"
 msgstr "Suédois"
 
-#: InvenTree/settings.py:844
+#: InvenTree/settings.py:855
 msgid "Thai"
 msgstr "Thaïlandais"
 
-#: InvenTree/settings.py:845
+#: InvenTree/settings.py:856
 msgid "Turkish"
 msgstr "Turc"
 
-#: InvenTree/settings.py:846
+#: InvenTree/settings.py:857
 msgid "Vietnamese"
 msgstr "Vietnamien"
 
-#: InvenTree/settings.py:847
+#: InvenTree/settings.py:858
 msgid "Chinese (Simplified)"
 msgstr "Chinois (Simplifié)"
 
-#: InvenTree/settings.py:848
+#: InvenTree/settings.py:859
 msgid "Chinese (Traditional)"
 msgstr "Chinois (Traditionnel)"
 
@@ -983,7 +982,7 @@ msgstr "Ordres de Fabrication"
 
 #: build/models.py:115
 msgid "Build order part cannot be changed"
-msgstr ""
+msgstr "La pièce de commande de construction ne peut pas être changée"
 
 #: build/models.py:122
 msgid "Invalid choice for parent build"
@@ -2094,7 +2093,7 @@ msgstr "Nom de domaine invalide : {domain}"
 
 #: common/models.py:1012
 msgid "No plugin"
-msgstr ""
+msgstr "Pas de plugin"
 
 #: common/models.py:1078
 msgid "Restart required"
@@ -2106,7 +2105,7 @@ msgstr "Un paramètre a été modifié, ce qui nécessite un redémarrage du ser
 
 #: common/models.py:1086
 msgid "Pending migrations"
-msgstr ""
+msgstr "Migration en attente"
 
 #: common/models.py:1087
 msgid "Number of pending database migrations"
@@ -2177,7 +2176,7 @@ msgstr "jours"
 
 #: common/models.py:1147
 msgid "Currency Update Plugin"
-msgstr ""
+msgstr "Plugin de mise à jour de devise"
 
 #: common/models.py:1148
 msgid "Currency update plugin to use"
@@ -3556,7 +3555,7 @@ msgstr ""
 
 #: common/models.py:2996 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
-msgstr ""
+msgstr "Définition"
 
 #: common/models.py:2997
 msgid "Unit definition"
@@ -3732,7 +3731,7 @@ msgstr ""
 
 #: company/models.py:344
 msgid "Set as primary address"
-msgstr ""
+msgstr "Sélectionner comme adresse principale"
 
 #: company/models.py:347 templates/js/translated/company.js:904
 #: templates/js/translated/company.js:961
@@ -4227,11 +4226,11 @@ msgstr ""
 #: company/templates/company/detail.html:187
 #: company/templates/company/detail.html:188
 msgid "Add Contact"
-msgstr ""
+msgstr "Ajouter un contact"
 
 #: company/templates/company/detail.html:206
 msgid "Company addresses"
-msgstr ""
+msgstr "Carnet d'adresses de l'entreprise"
 
 #: company/templates/company/detail.html:210
 #: company/templates/company/detail.html:211
@@ -4312,7 +4311,7 @@ msgstr "Articles en stock assignés"
 
 #: company/templates/company/sidebar.html:33
 msgid "Contacts"
-msgstr ""
+msgstr "Contacts"
 
 #: company/templates/company/sidebar.html:35
 msgid "Addresses"
@@ -4524,13 +4523,13 @@ msgstr "Filtres"
 #: label/templates/label/stocklocation/qr.html:20
 #: templates/allauth_2fa/setup.html:18
 msgid "QR Code"
-msgstr ""
+msgstr "QR Code"
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
 #: templates/qr_code.html:7
 msgid "QR code"
-msgstr ""
+msgstr "QR code"
 
 #: order/admin.py:29 order/models.py:72
 #: report/templates/report/inventree_po_report_base.html:31
@@ -4539,7 +4538,7 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:2119
 #: templates/js/translated/sales_order.js:1847
 msgid "Total Price"
-msgstr ""
+msgstr "Prix Total"
 
 #: order/api.py:230
 msgid "No matching purchase order found"
@@ -4566,7 +4565,7 @@ msgstr "Commande d’achat"
 #: templates/js/translated/return_order.js:281
 #: templates/js/translated/stock.js:2912
 msgid "Return Order"
-msgstr ""
+msgstr "Retour de commande"
 
 #: order/api.py:1413 templates/js/translated/sales_order.js:1042
 msgid "Unknown"
@@ -4574,7 +4573,7 @@ msgstr "Inconnu"
 
 #: order/models.py:73
 msgid "Total price for this order"
-msgstr ""
+msgstr "Prix total pour cette commande"
 
 #: order/models.py:78 order/serializers.py:50
 msgid "Order Currency"
@@ -4671,7 +4670,7 @@ msgstr "Société à laquelle les articles sont vendus"
 
 #: order/models.py:810 order/models.py:1769
 msgid "Customer Reference "
-msgstr ""
+msgstr "Référence client "
 
 #: order/models.py:810 order/models.py:1770
 msgid "Customer order reference code"
@@ -4914,7 +4913,7 @@ msgstr ""
 
 #: order/models.py:1764
 msgid "Return order status"
-msgstr ""
+msgstr "Statut du retour de commande"
 
 #: order/models.py:1919
 msgid "Only serialized items can be assigned to a Return Order"
@@ -5467,20 +5466,20 @@ msgstr "Nouvelle Expédition"
 msgid "Match Supplier Parts"
 msgstr ""
 
-#: order/views.py:389
+#: order/views.py:390
 msgid "Sales order not found"
 msgstr ""
 
-#: order/views.py:395
+#: order/views.py:396
 msgid "Price not found"
 msgstr "Prix introuvable"
 
-#: order/views.py:398
+#: order/views.py:399
 #, python-brace-format
 msgid "Updated {part} unit-price to {price}"
 msgstr ""
 
-#: order/views.py:403
+#: order/views.py:404
 #, python-brace-format
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
@@ -13345,8 +13344,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13521,3 +13519,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
