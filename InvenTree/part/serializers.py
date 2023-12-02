@@ -611,7 +611,8 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'duplicate',
             'initial_stock',
             'initial_supplier',
-            'copy_category_parameters'
+            'copy_category_parameters',
+            'existing_image',
         ]
 
         return fields
@@ -767,7 +768,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
     # Allow selection of an existing part image file
     existing_image = serializers.CharField(
         label=_('Existing Image'),
-        help_text=_('Select an existing image file for this part'),
+        help_text=_('Filename of an existing part image'),
         write_only=True,
         required=False,
         allow_blank=False,
@@ -901,8 +902,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         part = self.instance
         data = self.validated_data
 
-        # Check if an existing part image was selected
-        existing_image = data.get('existing_image', None)
+        existing_image = data.pop('existing_image', None)
 
         if existing_image:
             img_path = os.path.join(
