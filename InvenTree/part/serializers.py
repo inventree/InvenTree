@@ -27,6 +27,7 @@ import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status
 import part.filters
+import part.helpers
 import part.stocktake
 import part.tasks
 import stock.models
@@ -523,6 +524,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'pk',
             'purchaseable',
             'remote_image',
+            'existing_image',
             'revision',
             'salable',
             'starred',
@@ -759,6 +761,16 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         default=True, required=False,
         label=_('Copy Category Parameters'),
         help_text=_('Copy parameter templates from selected part category'),
+    )
+
+    # Allow selection of an existing part image file
+    existing_image = serializers.FilePathField(
+        path=part.helpers.get_part_image_directory(),
+        recursive=False,
+        allow_files=True,
+        allow_folders=False,
+        required=False,
+        write_only=True,
     )
 
     @transaction.atomic

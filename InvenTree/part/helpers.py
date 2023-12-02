@@ -1,6 +1,9 @@
 """Various helper functions for the part app"""
 
 import logging
+import os
+
+from django.conf import settings
 
 from jinja2 import Environment
 
@@ -66,3 +69,24 @@ def render_part_full_name(part) -> str:
     # Fallback to the default format
     elements = [el for el in [part.IPN, part.name, part.revision] if el]
     return ' | '.join(elements)
+
+
+# Subdirectory for storing part images
+PART_IMAGE_DIR = "part_images"
+
+
+def get_part_image_directory() -> str:
+    """Return the directory where part images are stored.
+
+    Returns:
+        str: Directory where part images are stored
+
+    TODO: Future work may be needed here to support other storage backends, such as S3
+    """
+
+    part_image_directory = os.path.join(
+        settings.MEDIA_ROOT,
+        PART_IMAGE_DIR,
+    )
+
+    return os.path.abspath(part_image_directory)
