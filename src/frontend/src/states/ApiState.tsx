@@ -196,11 +196,14 @@ export type PathParams = Record<string, string | number>;
  * Construct an API URL with an endpoint and (optional) pk value
  */
 export function apiUrl(
-  path: ApiPaths,
+  path: ApiPaths | string,
   pk?: any,
   pathParams?: PathParams
 ): string {
-  let _url = apiEndpoint(path);
+  let _url = path;
+  if (Object.values(ApiPaths).includes(path as ApiPaths)) {
+    _url = apiEndpoint(path as ApiPaths);
+  }
 
   // If the URL does not start with a '/', add the API prefix
   if (!_url.startsWith('/')) {
