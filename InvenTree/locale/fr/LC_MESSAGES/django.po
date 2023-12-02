@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-30 05:32+0000\n"
-"PO-Revision-Date: 2023-12-01 02:00\n"
+"PO-Revision-Date: 2023-12-02 02:04\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -2052,7 +2052,7 @@ msgstr "Description du projet"
 
 #: common/models.py:135
 msgid "User or group responsible for this project"
-msgstr ""
+msgstr "Utilisateur ou groupe responsable de ce projet"
 
 #: common/models.py:658
 msgid "Settings key (must be unique - case insensitive)"
@@ -2109,7 +2109,7 @@ msgstr "Migration en attente"
 
 #: common/models.py:1087
 msgid "Number of pending database migrations"
-msgstr ""
+msgstr "Nombre de migrations de base de données en attente"
 
 #: common/models.py:1093
 msgid "Server Instance Name"
@@ -2161,11 +2161,11 @@ msgstr "Sélectionnez la devise de base pour les calculs de prix"
 
 #: common/models.py:1136
 msgid "Currency Update Interval"
-msgstr ""
+msgstr "Intervalle de mise à jour des devises"
 
 #: common/models.py:1137
 msgid "How often to update exchange rates (set to zero to disable)"
-msgstr ""
+msgstr "Fréquence de mise à jour des taux de change (définir à zéro pour désactiver)"
 
 #: common/models.py:1139 common/models.py:1203 common/models.py:1221
 #: common/models.py:1228 common/models.py:1239 common/models.py:1250
@@ -2180,7 +2180,7 @@ msgstr "Plugin de mise à jour de devise"
 
 #: common/models.py:1148
 msgid "Currency update plugin to use"
-msgstr ""
+msgstr "Plugin de mise à jour des devises à utiliser"
 
 #: common/models.py:1154
 msgid "Download from URL"
@@ -2276,7 +2276,7 @@ msgstr "Support des code-barres"
 
 #: common/models.py:1259
 msgid "Enable barcode scanner support in the web interface"
-msgstr ""
+msgstr "Activer le support du scanner de codes-barres dans l'interface web"
 
 #: common/models.py:1265
 msgid "Barcode Input Delay"
