@@ -20,7 +20,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(
-  url: ApiPaths,
+  url: ApiPaths | string,
   pk?: string | number,
   pathParams?: PathParams
 ): string {
