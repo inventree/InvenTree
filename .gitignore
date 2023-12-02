@@ -42,6 +42,7 @@ dummy_image.*
 _tmp.csv
 InvenTree/label.pdf
 InvenTree/label.png
+InvenTree/part_image_123abc.png
 label.pdf
 label.png
 InvenTree/my_special*
