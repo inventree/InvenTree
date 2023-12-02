@@ -31,8 +31,9 @@ def compile_full_name_template(*args, **kwargs):
 
     _part_full_name_template_string = template_string
 
+    # skipqc: BAN-B701
     env = Environment(
-        autoescape=False,  # skipqc: BAN-B701 (autoescape is set to False on purpose)
+        autoescape=False,
         variable_start_string='{{',
         variable_end_string='}}'
     )
