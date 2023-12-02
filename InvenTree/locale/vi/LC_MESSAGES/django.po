@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-30 05:32+0000\n"
-"PO-Revision-Date: 2023-12-01 02:01\n"
+"PO-Revision-Date: 2023-12-02 02:04\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -3358,7 +3358,7 @@ msgstr "Độ dài chuỗi trong bảng"
 
 #: common/models.py:2279
 msgid "Maximum length limit for strings displayed in table views"
-msgstr ""
+msgstr "Giới hạn độ dài tối đa cho chuỗi hiển thị trong kiểu xem bảng biểu"
 
 #: common/models.py:2288
 msgid "Default part label template"
@@ -5518,7 +5518,7 @@ msgstr "Từ khóa"
 
 #: part/admin.py:41
 msgid "Part Image"
-msgstr ""
+msgstr "Ảnh sản phẩm"
 
 #: part/admin.py:42 part/admin.py:189 part/stocktake.py:220
 msgid "Category ID"
@@ -5976,11 +5976,11 @@ msgstr "Chi phí tối đa của sản phẩm biến thể đã tính"
 
 #: part/models.py:2912
 msgid "Override minimum cost"
-msgstr ""
+msgstr "Ghi đề chi phí tối thiểu"
 
 #: part/models.py:2918
 msgid "Override maximum cost"
-msgstr ""
+msgstr "Ghi đề chi phí tối đa"
 
 #: part/models.py:2924
 msgid "Calculated overall minimum cost"
@@ -6536,19 +6536,19 @@ msgstr "Chức năng kiểm kê chưa được bật"
 
 #: part/serializers.py:1088
 msgid "Override calculated value for minimum price"
-msgstr ""
+msgstr "Giá trị tính toán ghi đè cho giá tối thiểu"
 
 #: part/serializers.py:1093
 msgid "Minimum price currency"
-msgstr ""
+msgstr "Tiền tế giá tối thiểu"
 
 #: part/serializers.py:1100
 msgid "Override calculated value for maximum price"
-msgstr ""
+msgstr "Giá trị tính toán ghi đè cho giá tối đa"
 
 #: part/serializers.py:1105
 msgid "Maximum price currency"
-msgstr ""
+msgstr "Tiền tế giá tối đa"
 
 #: part/serializers.py:1121
 msgid "Update"
@@ -6561,15 +6561,15 @@ msgstr "Cập nhật giá cho sản phẩm này"
 #: part/serializers.py:1143
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
-msgstr ""
+msgstr "Không thể chuyển đổi từ tiền tệ đã cung cấp cho {default_currency}"
 
 #: part/serializers.py:1147
 msgid "Minimum price must not be greater than maximum price"
-msgstr ""
+msgstr "Giá tối thiểu không được lớn hơn giá tối đa"
 
 #: part/serializers.py:1148
 msgid "Maximum price must not be less than minimum price"
-msgstr ""
+msgstr "Giá tối đa không được nhỏ hơn giá tối thiểu"
 
 #: part/serializers.py:1455
 msgid "Select part to copy BOM from"
@@ -7200,7 +7200,7 @@ msgstr "Làm mới giá sản phẩm"
 
 #: part/templates/part/prices.html:17
 msgid "Override Part Pricing"
-msgstr ""
+msgstr "Ghi đè định giá sản phẩm"
 
 #: part/templates/part/prices.html:18
 #: templates/InvenTree/settings/settings_staff_js.html:80
@@ -7245,7 +7245,7 @@ msgstr "Định giá biến thể"
 
 #: part/templates/part/prices.html:106
 msgid "Pricing Overrides"
-msgstr ""
+msgstr "Ghi đè định giá"
 
 #: part/templates/part/prices.html:113
 msgid "Overall Pricing"
@@ -7284,7 +7284,7 @@ msgstr "Thêm định giá bán hàng"
 
 #: part/templates/part/pricing_javascript.html:24
 msgid "Update Pricing"
-msgstr ""
+msgstr "Cập nhập giá bán"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
 #: templates/js/translated/part.js:2138 templates/js/translated/part.js:2140
@@ -7396,19 +7396,19 @@ msgstr "Mã vạch phù hợp với hàng hóa hiện có"
 
 #: plugin/base/barcodes/api.py:302
 msgid "No matching part data found"
-msgstr ""
+msgstr "Không tìm thấy thông tin sản phẩm phù hợp"
 
 #: plugin/base/barcodes/api.py:319
 msgid "No matching supplier parts found"
-msgstr ""
+msgstr "Không tìm thấy sản phẩm nhà cung cấp phù hợp"
 
 #: plugin/base/barcodes/api.py:324
 msgid "Multiple matching supplier parts found"
-msgstr ""
+msgstr "Tìm thấy nhiều sản phẩm nhà cung cấp phù hợp"
 
 #: plugin/base/barcodes/api.py:349
 msgid "Matched supplier part"
-msgstr ""
+msgstr "Sản phẩm nhà cung cấp phù hợp"
 
 #: plugin/base/barcodes/api.py:395
 msgid "Item has already been received"
@@ -7450,31 +7450,31 @@ msgstr "Mục dòng đơn đặt mua đã nhận"
 
 #: plugin/base/barcodes/serializers.py:21
 msgid "Scanned barcode data"
-msgstr ""
+msgstr "Thông tin mã vạch đã quét"
 
 #: plugin/base/barcodes/serializers.py:81
 msgid "PurchaseOrder to allocate items against"
-msgstr ""
+msgstr "Đơn đặt mua để chỉ định hàng hóa"
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
-msgstr ""
+msgstr "Đơn đặt mua không chờ xử lý"
 
 #: plugin/base/barcodes/serializers.py:105
 msgid "PurchaseOrder to receive items against"
-msgstr ""
+msgstr "Đơn đặt mua để nhận hàng hóa"
 
 #: plugin/base/barcodes/serializers.py:112
 msgid "Purchase order has not been placed"
-msgstr ""
+msgstr "Đơn đặt mua vẫn chưa được thực hiện"
 
 #: plugin/base/barcodes/serializers.py:119
 msgid "Location to receive items into"
-msgstr ""
+msgstr "Địa điểm để nhận hàng hóa vào bên trong"
 
 #: plugin/base/barcodes/serializers.py:126
 msgid "Cannot select a structural location"
-msgstr ""
+msgstr "Không thể chọn một địa điểm có cấu trúc"
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -8124,15 +8124,15 @@ msgstr "Địa điểm bên ngoài"
 
 #: stock/api.py:659
 msgid "Part Tree"
-msgstr ""
+msgstr "Cây sản phẩm"
 
 #: stock/api.py:688
 msgid "Expiry date before"
-msgstr ""
+msgstr "Ngày hết hạn trước đó"
 
 #: stock/api.py:694
 msgid "Expiry date after"
-msgstr ""
+msgstr "Ngày hết hạn sau đó"
 
 #: stock/api.py:699 stock/templates/stock/item_base.html:439
 #: templates/js/translated/table_filters.js:441
