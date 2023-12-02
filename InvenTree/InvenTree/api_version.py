@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 156
+INVENTREE_API_VERSION = 157
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v157 -> 2023-12-02 : https://github.com/inventree/InvenTree/pull/6021
+    - Add write-only "existing_image" field to Part API serializer
 
 v156 -> 2023-11-26 : https://github.com/inventree/InvenTree/pull/5982
     - Add POST endpoint for report and label creation
