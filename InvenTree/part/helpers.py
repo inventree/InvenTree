@@ -32,7 +32,7 @@ def compile_full_name_template(*args, **kwargs):
     _part_full_name_template_string = template_string
 
     env = Environment(
-        autoescape=True,
+        autoescape=False,
         variable_start_string='{{',
         variable_end_string='}}'
     )
