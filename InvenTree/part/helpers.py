@@ -84,9 +84,13 @@ def get_part_image_directory() -> str:
     TODO: Future work may be needed here to support other storage backends, such as S3
     """
 
-    part_image_directory = os.path.join(
+    part_image_directory = os.path.abspath(os.path.join(
         settings.MEDIA_ROOT,
         PART_IMAGE_DIR,
-    )
+    ))
 
-    return os.path.abspath(part_image_directory)
+    # Create the directory if it does not exist
+    if not os.path.exists(part_image_directory):
+        os.makedirs(part_image_directory)
+
+    return part_image_directory
