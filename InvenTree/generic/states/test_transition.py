@@ -26,6 +26,9 @@ class TransitionTests(InvenTreeTestCase):
         with self.assertRaises(NotImplementedError):
             ErrorImplementation()
 
+        # Remove the class
+        del ErrorImplementation
+
     def test_storage(self):
         """Ensure that the storage collection mechanism works."""
 
@@ -34,9 +37,8 @@ class TransitionTests(InvenTreeTestCase):
                 raise MyPrivateError('RaisingImplementation')
 
         # Ensure registering works
-        self.assertEqual(len(storage.list), 0)
         storage.collect()
-        self.assertEqual(len(storage.list), 2)
+        self.assertEqual(len(storage.list), 3)
 
         # Ensure the class is registered
         self.assertIn(RaisingImplementation, storage.list)
@@ -46,14 +48,33 @@ class TransitionTests(InvenTreeTestCase):
             StateTransitionMixin.handle_transition(0, 1, self, self, dflt)
         self.assertEqual(str(exp.exception), 'RaisingImplementation')
 
-    def test_default_function(self):
-        """Ensure that the default function is called."""
+        # Remove the class
+        del RaisingImplementation
+
+    def test_function(self):
+        """Ensure that a TransitionMethod's function is called."""
+
+        # Setup
+        class ValidImplementationNoEffect(TransitionMethod):
+            def transition(self, *args, **kwargs):
+                return False  # Return false to test that that work too
 
         class ValidImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
-                return False  # Return false to indicate that this should run
+                return 1234
 
-        # Ensure the default action is called
+        storage.collect()
+        self.assertEqual(len(storage.list), 2)
+
+        # Ensure that the function is called
+        self.assertEqual(StateTransitionMixin.handle_transition(0, 1, self, self, dflt), 1234)
+
+        # Remove the classes
+        del ValidImplementationNoEffect
+        del ValidImplementation
+
+    def test_default_function(self):
+        """Ensure that the default function is called."""
         with self.assertRaises(MyPrivateError) as exp:
             StateTransitionMixin.handle_transition(0, 1, self, self, dflt)
         self.assertEqual(str(exp.exception), 'dflt')
