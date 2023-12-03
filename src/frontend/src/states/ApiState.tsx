@@ -9,7 +9,7 @@ import { ApiPaths } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { ServerAPIProps } from './states';
 
-type StatusLookup = Record<ModelType, StatusCodeListInterface>;
+type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
@@ -35,7 +35,8 @@ export const useServerApiState = create<ServerApiStateProps>()(
         await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
           const newStatusLookup: StatusLookup = {} as StatusLookup;
           for (const key in response.data) {
-            newStatusLookup[statusCodeList[key]] = response.data[key].values;
+            newStatusLookup[statusCodeList[key] || key] =
+              response.data[key].values;
           }
           set({ status: newStatusLookup });
         });
@@ -195,11 +196,14 @@ export type PathParams = Record<string, string | number>;
  * Construct an API URL with an endpoint and (optional) pk value
  */
 export function apiUrl(
-  path: ApiPaths,
+  path: ApiPaths | string,
   pk?: any,
   pathParams?: PathParams
 ): string {
-  let _url = apiEndpoint(path);
+  let _url = path;
+  if (Object.values(ApiPaths).includes(path as ApiPaths)) {
+    _url = apiEndpoint(path as ApiPaths);
+  }
 
   // If the URL does not start with a '/', add the API prefix
   if (!_url.startsWith('/')) {

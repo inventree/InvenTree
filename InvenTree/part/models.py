@@ -293,7 +293,8 @@ def rename_part_image(instance, filename):
     Returns:
         Cleaned filename in format part_<n>_img
     """
-    base = 'part_images'
+
+    base = part_helpers.PART_IMAGE_DIR
     fname = os.path.basename(filename)
 
     return os.path.join(base, fname)
