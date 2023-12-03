@@ -537,17 +537,17 @@ class PurchaseOrder(StateTransitionMixin, TotalPriceMixin, Order):
 
     @transaction.atomic
     def place_order(self):
-        """Attempt to transition the PurchaseOrder to PLACED status."""
+        """Attempt to transition to PLACED status."""
         self.handle_transition(self.status, PurchaseOrderStatus.PLACED.value, self, self.default_action_place)
 
     @transaction.atomic
     def complete_order(self):
-        """Attempt to transition the PurchaseOrder to COMPLETE status."""
+        """Attempt to transition to COMPLETE status."""
         self.handle_transition(self.status, PurchaseOrderStatus.COMPLETE.value, self, self.default_action_complete)
 
     @transaction.atomic
     def cancel_order(self):
-        """Attempt to transition the PurchaseOrder to CANCELLED status."""
+        """Attempt to transition to CANCELLED status."""
         self.handle_transition(self.status, PurchaseOrderStatus.CANCELLED.value, self, self.default_action_cancel)
 
     @property
