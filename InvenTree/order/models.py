@@ -519,22 +519,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             trigger_event('purchaseorder.completed', id=self.pk)
 
-    def _action_cancel(self, *args, **kwargs):
-        """Marks the PurchaseOrder as CANCELLED."""
-        if self.can_cancel:
-            self.status = PurchaseOrderStatus.CANCELLED.value
-            self.save()
-
-            trigger_event('purchaseorder.cancelled', id=self.pk)
-
-            # Notify users that the order has been canceled
-            notify_responsible(
-                self,
-                PurchaseOrder,
-                exclude=self.created_by,
-                content=InvenTreeNotificationBodies.OrderCanceled
-            )
-
     @transaction.atomic
     def place_order(self):
         """Attempt to transition to PLACED status."""
@@ -571,6 +555,22 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrderStatus.PLACED.value,
             PurchaseOrderStatus.PENDING.value
         ]
+
+    def _action_cancel(self, *args, **kwargs):
+        """Marks the PurchaseOrder as CANCELLED."""
+        if self.can_cancel:
+            self.status = PurchaseOrderStatus.CANCELLED.value
+            self.save()
+
+            trigger_event('purchaseorder.cancelled', id=self.pk)
+
+            # Notify users that the order has been canceled
+            notify_responsible(
+                self,
+                PurchaseOrder,
+                exclude=self.created_by,
+                content=InvenTreeNotificationBodies.OrderCanceled
+            )
     # endregion
 
     def pending_line_items(self):
