@@ -161,7 +161,7 @@ class TotalPriceMixin(models.Model):
         return total
 
 
-class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, ReferenceIndexingMixin):
+class Order(StateTransitionMixin, InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, ReferenceIndexingMixin):
     """Abstract model for an order.
 
     Instances of this class:
@@ -282,7 +282,7 @@ class Order(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, Reference
         raise NotImplementedError(f"get_status_class() not implemented for {__class__}")
 
 
-class PurchaseOrder(StateTransitionMixin, TotalPriceMixin, Order):
+class PurchaseOrder(TotalPriceMixin, Order):
     """A PurchaseOrder represents goods shipped inwards from an external supplier.
 
     Attributes:
@@ -906,8 +906,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order'"""
         self.issue_order()
 
-    @transaction.atomic
-    def issue_order(self):
+    def default_action_place(self):
         """Change this order from 'PENDING' to 'IN_PROGRESS'"""
         if self.status == SalesOrderStatus.PENDING:
             self.status = SalesOrderStatus.IN_PROGRESS.value
@@ -916,7 +915,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
             trigger_event('salesorder.issued', id=self.pk)
 
-    def complete_order(self, user, **kwargs):
+    def default_action_complete(self, user, **kwargs):
         """Mark this order as "complete."""
         if not self.can_complete(**kwargs):
             return False
@@ -940,8 +939,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Return True if this order can be cancelled."""
         return self.is_open
 
-    @transaction.atomic
-    def cancel_order(self):
+    def default_action_cancel(self, *args, **kwargs):
         """Cancel this order (only if it is "open").
 
         Executes:
@@ -969,6 +967,21 @@ class SalesOrder(TotalPriceMixin, Order):
         )
 
         return True
+
+    @transaction.atomic
+    def issue_order(self):
+        """Attempt to transition to IN_PROGRESS status."""
+        self.handle_transition(self.status, SalesOrderStatus.IN_PROGRESS.value, self, self.default_action_place)
+
+    @transaction.atomic
+    def complete_order(self):
+        """Attempt to transition to SHIPPED status."""
+        self.handle_transition(self.status, SalesOrderStatus.SHIPPED.value, self, self.default_action_complete)
+
+    @transaction.atomic
+    def cancel_order(self):
+        """Attempt to transition to CANCELLED status."""
+        self.handle_transition(self.status, SalesOrderStatus.CANCELLED.value, self, self.default_action_cancel)
 
     @property
     def line_count(self):
@@ -1814,8 +1827,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return True if this order is fully received"""
         return not self.lines.filter(received_date=None).exists()
 
-    @transaction.atomic
-    def cancel_order(self):
+    def default_action_cancel(self):
         """Cancel this ReturnOrder (if not already cancelled)"""
         if self.status != ReturnOrderStatus.CANCELLED:
             self.status = ReturnOrderStatus.CANCELLED.value
@@ -1831,8 +1843,7 @@ class ReturnOrder(TotalPriceMixin, Order):
                 content=InvenTreeNotificationBodies.OrderCanceled
             )
 
-    @transaction.atomic
-    def complete_order(self):
+    def default_action_complete(self):
         """Complete this ReturnOrder (if not already completed)"""
         if self.status == ReturnOrderStatus.IN_PROGRESS:
             self.status = ReturnOrderStatus.COMPLETE.value
@@ -1845,8 +1856,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order"""
         self.issue_order()
 
-    @transaction.atomic
-    def issue_order(self):
+    def default_action_place(self):
         """Issue this ReturnOrder (if currently pending)"""
         if self.status == ReturnOrderStatus.PENDING:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
@@ -1854,6 +1864,21 @@ class ReturnOrder(TotalPriceMixin, Order):
             self.save()
 
             trigger_event('returnorder.issued', id=self.pk)
+
+    @transaction.atomic
+    def issue_order(self):
+        """Attempt to transition to IN_PROGRESS status."""
+        self.handle_transition(self.status, ReturnOrderStatus.IN_PROGRESS.value, self, self.default_action_place)
+
+    @transaction.atomic
+    def complete_order(self):
+        """Attempt to transition to COMPLETE status."""
+        self.handle_transition(self.status, ReturnOrderStatus.COMPLETE.value, self, self.default_action_complete)
+
+    @transaction.atomic
+    def cancel_order(self):
+        """Attempt to transition to CANCELLED status."""
+        self.handle_transition(self.status, ReturnOrderStatus.CANCELLED.value, self, self.default_action_cancel)
 
     @transaction.atomic
     def receive_line_item(self, line, location, user, note=''):
