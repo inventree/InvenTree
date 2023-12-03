@@ -522,17 +522,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def place_order(self):
         """Attempt to transition to PLACED status."""
-        self.handle_transition(self.status, PurchaseOrderStatus.PLACED.value, self, self._action_place)
+        return self.handle_transition(self.status, PurchaseOrderStatus.PLACED.value, self, self._action_place)
 
     @transaction.atomic
     def complete_order(self):
         """Attempt to transition to COMPLETE status."""
-        self.handle_transition(self.status, PurchaseOrderStatus.COMPLETE.value, self, self._action_complete)
+        return self.handle_transition(self.status, PurchaseOrderStatus.COMPLETE.value, self, self._action_complete)
 
     @transaction.atomic
     def cancel_order(self):
         """Attempt to transition to CANCELLED status."""
-        self.handle_transition(self.status, PurchaseOrderStatus.CANCELLED.value, self, self._action_cancel)
+        return self.handle_transition(self.status, PurchaseOrderStatus.CANCELLED.value, self, self._action_cancel)
 
     @property
     def is_pending(self):
@@ -974,17 +974,17 @@ class SalesOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def issue_order(self):
         """Attempt to transition to IN_PROGRESS status."""
-        self.handle_transition(self.status, SalesOrderStatus.IN_PROGRESS.value, self, self._action_place)
+        return self.handle_transition(self.status, SalesOrderStatus.IN_PROGRESS.value, self, self._action_place)
 
     @transaction.atomic
     def complete_order(self, user):
         """Attempt to transition to SHIPPED status."""
-        self.handle_transition(self.status, SalesOrderStatus.SHIPPED.value, self, self._action_complete, user=user)
+        return self.handle_transition(self.status, SalesOrderStatus.SHIPPED.value, self, self._action_complete, user=user)
 
     @transaction.atomic
     def cancel_order(self):
         """Attempt to transition to CANCELLED status."""
-        self.handle_transition(self.status, SalesOrderStatus.CANCELLED.value, self, self._action_cancel)
+        return self.handle_transition(self.status, SalesOrderStatus.CANCELLED.value, self, self._action_cancel)
     # endregion
 
     @property
@@ -1873,17 +1873,17 @@ class ReturnOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def issue_order(self):
         """Attempt to transition to IN_PROGRESS status."""
-        self.handle_transition(self.status, ReturnOrderStatus.IN_PROGRESS.value, self, self._action_place)
+        return self.handle_transition(self.status, ReturnOrderStatus.IN_PROGRESS.value, self, self._action_place)
 
     @transaction.atomic
     def complete_order(self):
         """Attempt to transition to COMPLETE status."""
-        self.handle_transition(self.status, ReturnOrderStatus.COMPLETE.value, self, self._action_complete)
+        return self.handle_transition(self.status, ReturnOrderStatus.COMPLETE.value, self, self._action_complete)
 
     @transaction.atomic
     def cancel_order(self):
         """Attempt to transition to CANCELLED status."""
-        self.handle_transition(self.status, ReturnOrderStatus.CANCELLED.value, self, self._action_cancel)
+        return self.handle_transition(self.status, ReturnOrderStatus.CANCELLED.value, self, self._action_cancel)
     # endregion
 
     @transaction.atomic
