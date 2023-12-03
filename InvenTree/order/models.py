@@ -481,7 +481,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return line
 
     # region state changes
-    def default_action_place(self, *args, **kwargs):
+    def _action_place(self, *args, **kwargs):
         """Marks the PurchaseOrder as PLACED.
 
         Order must be currently PENDING.
@@ -501,7 +501,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 content=InvenTreeNotificationBodies.NewOrder
             )
 
-    def default_action_complete(self, *args, **kwargs):
+    def _action_complete(self, *args, **kwargs):
         """Marks the PurchaseOrder as COMPLETE.
 
         Order must be currently PLACED.
@@ -519,7 +519,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             trigger_event('purchaseorder.completed', id=self.pk)
 
-    def default_action_cancel(self, *args, **kwargs):
+    def _action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
         if self.can_cancel:
             self.status = PurchaseOrderStatus.CANCELLED.value
@@ -538,17 +538,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def place_order(self):
         """Attempt to transition to PLACED status."""
-        self.handle_transition(self.status, PurchaseOrderStatus.PLACED.value, self, self.default_action_place)
+        self.handle_transition(self.status, PurchaseOrderStatus.PLACED.value, self, self._action_place)
 
     @transaction.atomic
     def complete_order(self):
         """Attempt to transition to COMPLETE status."""
-        self.handle_transition(self.status, PurchaseOrderStatus.COMPLETE.value, self, self.default_action_complete)
+        self.handle_transition(self.status, PurchaseOrderStatus.COMPLETE.value, self, self._action_complete)
 
     @transaction.atomic
     def cancel_order(self):
         """Attempt to transition to CANCELLED status."""
-        self.handle_transition(self.status, PurchaseOrderStatus.CANCELLED.value, self, self.default_action_cancel)
+        self.handle_transition(self.status, PurchaseOrderStatus.CANCELLED.value, self, self._action_cancel)
 
     @property
     def is_pending(self):
@@ -902,11 +902,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
         return True
 
+    # region state changes
     def place_order(self):
         """Deprecated version of 'issue_order'"""
         self.issue_order()
 
-    def default_action_place(self):
+    def _action_place(self):
         """Change this order from 'PENDING' to 'IN_PROGRESS'"""
         if self.status == SalesOrderStatus.PENDING:
             self.status = SalesOrderStatus.IN_PROGRESS.value
@@ -915,7 +916,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
             trigger_event('salesorder.issued', id=self.pk)
 
-    def default_action_complete(self, user, **kwargs):
+    def _action_complete(self, user, **kwargs):
         """Mark this order as "complete."""
         if not self.can_complete(**kwargs):
             return False
@@ -939,7 +940,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Return True if this order can be cancelled."""
         return self.is_open
 
-    def default_action_cancel(self, *args, **kwargs):
+    def _action_cancel(self, *args, **kwargs):
         """Cancel this order (only if it is "open").
 
         Executes:
@@ -971,17 +972,18 @@ class SalesOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def issue_order(self):
         """Attempt to transition to IN_PROGRESS status."""
-        self.handle_transition(self.status, SalesOrderStatus.IN_PROGRESS.value, self, self.default_action_place)
+        self.handle_transition(self.status, SalesOrderStatus.IN_PROGRESS.value, self, self._action_place)
 
     @transaction.atomic
     def complete_order(self):
         """Attempt to transition to SHIPPED status."""
-        self.handle_transition(self.status, SalesOrderStatus.SHIPPED.value, self, self.default_action_complete)
+        self.handle_transition(self.status, SalesOrderStatus.SHIPPED.value, self, self._action_complete)
 
     @transaction.atomic
     def cancel_order(self):
         """Attempt to transition to CANCELLED status."""
-        self.handle_transition(self.status, SalesOrderStatus.CANCELLED.value, self, self.default_action_cancel)
+        self.handle_transition(self.status, SalesOrderStatus.CANCELLED.value, self, self._action_cancel)
+    # endregion
 
     @property
     def line_count(self):
@@ -1812,6 +1814,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         help_text=_('Date order was completed')
     )
 
+    # region state changes
     @property
     def is_pending(self):
         """Return True if this order is pending"""
@@ -1827,7 +1830,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return True if this order is fully received"""
         return not self.lines.filter(received_date=None).exists()
 
-    def default_action_cancel(self):
+    def _action_cancel(self):
         """Cancel this ReturnOrder (if not already cancelled)"""
         if self.status != ReturnOrderStatus.CANCELLED:
             self.status = ReturnOrderStatus.CANCELLED.value
@@ -1843,7 +1846,7 @@ class ReturnOrder(TotalPriceMixin, Order):
                 content=InvenTreeNotificationBodies.OrderCanceled
             )
 
-    def default_action_complete(self):
+    def _action_complete(self):
         """Complete this ReturnOrder (if not already completed)"""
         if self.status == ReturnOrderStatus.IN_PROGRESS:
             self.status = ReturnOrderStatus.COMPLETE.value
@@ -1856,7 +1859,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order"""
         self.issue_order()
 
-    def default_action_place(self):
+    def _action_place(self):
         """Issue this ReturnOrder (if currently pending)"""
         if self.status == ReturnOrderStatus.PENDING:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
@@ -1868,17 +1871,18 @@ class ReturnOrder(TotalPriceMixin, Order):
     @transaction.atomic
     def issue_order(self):
         """Attempt to transition to IN_PROGRESS status."""
-        self.handle_transition(self.status, ReturnOrderStatus.IN_PROGRESS.value, self, self.default_action_place)
+        self.handle_transition(self.status, ReturnOrderStatus.IN_PROGRESS.value, self, self._action_place)
 
     @transaction.atomic
     def complete_order(self):
         """Attempt to transition to COMPLETE status."""
-        self.handle_transition(self.status, ReturnOrderStatus.COMPLETE.value, self, self.default_action_complete)
+        self.handle_transition(self.status, ReturnOrderStatus.COMPLETE.value, self, self._action_complete)
 
     @transaction.atomic
     def cancel_order(self):
         """Attempt to transition to CANCELLED status."""
-        self.handle_transition(self.status, ReturnOrderStatus.CANCELLED.value, self, self.default_action_cancel)
+        self.handle_transition(self.status, ReturnOrderStatus.CANCELLED.value, self, self._action_cancel)
+    # endregion
 
     @transaction.atomic
     def receive_line_item(self, line, location, user, note=''):
