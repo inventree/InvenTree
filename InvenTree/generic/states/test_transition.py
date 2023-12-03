@@ -14,6 +14,13 @@ def dflt(*args, **kwargs):
     raise MyPrivateError('dflt')
 
 
+def _clean_storage(refs):
+    """Clean the storage."""
+    for ref in refs:
+        del ref
+    storage.collect()
+
+
 class TransitionTests(InvenTreeTestCase):
     """Tests for basic NotificationMethod."""
 
@@ -26,8 +33,7 @@ class TransitionTests(InvenTreeTestCase):
         with self.assertRaises(NotImplementedError):
             ErrorImplementation()
 
-        # Remove the class
-        del ErrorImplementation
+        _clean_storage([ErrorImplementation])
 
     def test_storage(self):
         """Ensure that the storage collection mechanism works."""
@@ -48,8 +54,7 @@ class TransitionTests(InvenTreeTestCase):
             StateTransitionMixin.handle_transition(0, 1, self, self, dflt)
         self.assertEqual(str(exp.exception), 'RaisingImplementation')
 
-        # Remove the class
-        del RaisingImplementation
+        _clean_storage([RaisingImplementation])
 
     def test_function(self):
         """Ensure that a TransitionMethod's function is called."""
@@ -63,15 +68,14 @@ class TransitionTests(InvenTreeTestCase):
             def transition(self, *args, **kwargs):
                 return 1234
 
+        self.assertEqual(len(storage.list), 0)
         storage.collect()
         self.assertEqual(len(storage.list), 2)
 
         # Ensure that the function is called
         self.assertEqual(StateTransitionMixin.handle_transition(0, 1, self, self, dflt), 1234)
 
-        # Remove the classes
-        del ValidImplementationNoEffect
-        del ValidImplementation
+        _clean_storage([ValidImplementationNoEffect, ValidImplementation])
 
     def test_default_function(self):
         """Ensure that the default function is called."""
