@@ -907,7 +907,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order'"""
         self.issue_order()
 
-    def _action_place(self):
+    def _action_place(self, *args, **kwargs):
         """Change this order from 'PENDING' to 'IN_PROGRESS'"""
         if self.status == SalesOrderStatus.PENDING:
             self.status = SalesOrderStatus.IN_PROGRESS.value
@@ -916,8 +916,10 @@ class SalesOrder(TotalPriceMixin, Order):
 
             trigger_event('salesorder.issued', id=self.pk)
 
-    def _action_complete(self, user, **kwargs):
+    def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
+        user = kwargs.pop('user', None)
+
         if not self.can_complete(**kwargs):
             return False
 
@@ -975,9 +977,9 @@ class SalesOrder(TotalPriceMixin, Order):
         self.handle_transition(self.status, SalesOrderStatus.IN_PROGRESS.value, self, self._action_place)
 
     @transaction.atomic
-    def complete_order(self):
+    def complete_order(self, user):
         """Attempt to transition to SHIPPED status."""
-        self.handle_transition(self.status, SalesOrderStatus.SHIPPED.value, self, self._action_complete)
+        self.handle_transition(self.status, SalesOrderStatus.SHIPPED.value, self, self._action_complete, user=user)
 
     @transaction.atomic
     def cancel_order(self):
@@ -1830,7 +1832,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return True if this order is fully received"""
         return not self.lines.filter(received_date=None).exists()
 
-    def _action_cancel(self):
+    def _action_cancel(self, *args, **kwargs):
         """Cancel this ReturnOrder (if not already cancelled)"""
         if self.status != ReturnOrderStatus.CANCELLED:
             self.status = ReturnOrderStatus.CANCELLED.value
@@ -1846,7 +1848,7 @@ class ReturnOrder(TotalPriceMixin, Order):
                 content=InvenTreeNotificationBodies.OrderCanceled
             )
 
-    def _action_complete(self):
+    def _action_complete(self, *args, **kwargs):
         """Complete this ReturnOrder (if not already completed)"""
         if self.status == ReturnOrderStatus.IN_PROGRESS:
             self.status = ReturnOrderStatus.COMPLETE.value
@@ -1859,7 +1861,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order"""
         self.issue_order()
 
-    def _action_place(self):
+    def _action_place(self, *args, **kwargs):
         """Issue this ReturnOrder (if currently pending)"""
         if self.status == ReturnOrderStatus.PENDING:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
