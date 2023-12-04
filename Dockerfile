@@ -94,7 +94,7 @@ ENTRYPOINT ["/bin/sh", "./init.sh"]
 
 FROM inventree_base as prebuild
 
-RUN ./install_build_packages.sh --virtual .build-deps && \
+RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
     pip install -r base_requirements.txt -r requirements.txt --no-cache-dir && \
     apk --purge del .build-deps
 
@@ -135,6 +135,8 @@ EXPOSE 5173
 
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
+
+RUN pip install -r base_requirements.txt
 
 # Install nodejs / npm / yarn
 
