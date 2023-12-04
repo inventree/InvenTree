@@ -9,7 +9,8 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.10-alpine3.18 as inventree_base
+ARG base_image=python:3.10-alpine3.18
+FROM ${base_image} as inventree_base
 
 # Build arguments for this image
 ARG commit_hash=""
