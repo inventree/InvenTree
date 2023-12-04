@@ -36,6 +36,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import { ItemDetails } from '../../components/nav/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
@@ -85,7 +86,8 @@ export default function PartDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle />
+        icon: <IconInfoCircle />,
+        content: !instanceQuery.isFetching && <ItemDetails params={part} />
       },
       {
         name: 'parameters',
