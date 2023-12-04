@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-29 01:52\n"
+"PO-Revision-Date: 2023-11-30 01:57\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -19,26 +19,27 @@ msgstr ""
 "X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:34
+#: src/components/tables/company/AddressTable.tsx:36
 msgid "Title"
 msgstr "Titel"
 
-#: src/components/forms/ApiForm.tsx:127
+#: src/components/forms/ApiForm.tsx:129
 #: src/functions/forms.tsx:48
 #: src/functions/forms.tsx:57
 #: src/functions/forms.tsx:260
 msgid "Form Error"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:291
+#: src/components/forms/ApiForm.tsx:296
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:363
+#: src/components/forms/ApiForm.tsx:368
 msgid "Form Errors Exist"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:406
+#: src/components/forms/ApiForm.tsx:421
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
@@ -97,7 +98,7 @@ msgstr "Välkommen, logga in nedan"
 
 #: src/components/forms/AuthenticationForm.tsx:91
 #: src/components/tables/settings/UserDrawer.tsx:159
-#: src/components/tables/settings/UserTable.tsx:57
+#: src/components/tables/settings/UserTable.tsx:56
 msgid "Username"
 msgstr "Användarnamn"
 
@@ -116,8 +117,9 @@ msgid "Reset password"
 msgstr "Återställ lösenord"
 
 #: src/components/forms/AuthenticationForm.tsx:117
+#: src/components/tables/company/ContactTable.tsx:47
 #: src/components/tables/settings/UserDrawer.tsx:163
-#: src/components/tables/settings/UserTable.tsx:51
+#: src/components/tables/settings/UserTable.tsx:50
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
@@ -156,10 +158,11 @@ msgstr "Värd"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
+#: src/components/tables/company/ContactTable.tsx:35
 #: src/components/tables/part/PartCategoryTable.tsx:24
-#: src/components/tables/part/PartParameterTemplateTable.tsx:30
-#: src/components/tables/settings/CustomUnitsTable.tsx:32
-#: src/components/tables/settings/GroupTable.tsx:29
+#: src/components/tables/part/PartParameterTemplateTable.tsx:29
+#: src/components/tables/settings/CustomUnitsTable.tsx:31
+#: src/components/tables/settings/GroupTable.tsx:28
 #: src/components/tables/stock/StockLocationTable.tsx:25
 msgid "Name"
 msgstr "Namn"
@@ -336,11 +339,11 @@ msgstr ""
 msgid "Scan QR code"
 msgstr "Skanna QR-kod"
 
-#: src/components/items/YesNoButton.tsx:12
+#: src/components/items/YesNoButton.tsx:16
 msgid "Yes"
 msgstr "Ja"
 
-#: src/components/items/YesNoButton.tsx:12
+#: src/components/items/YesNoButton.tsx:16
 msgid "No"
 msgstr "Nej"
 
@@ -762,7 +765,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:56
 #: src/components/tables/stock/StockLocationTable.tsx:36
-#: src/pages/company/CompanyDetail.tsx:97
+#: src/pages/company/CompanyDetail.tsx:99
 #: src/pages/stock/LocationDetail.tsx:36
 #: src/pages/stock/LocationDetail.tsx:82
 msgid "Stock Items"
@@ -791,7 +794,7 @@ msgid "Builds"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:81
-#: src/pages/company/CompanyDetail.tsx:195
+#: src/pages/company/CompanyDetail.tsx:199
 msgid "Company"
 msgstr ""
 
@@ -802,7 +805,7 @@ msgstr "Företag"
 #: src/components/render/ModelType.tsx:88
 #: src/components/tables/ColumnRenderers.tsx:66
 #: src/components/tables/TableHoverCard.tsx:58
-#: src/components/tables/settings/ProjectCodeTable.tsx:34
+#: src/components/tables/settings/ProjectCodeTable.tsx:33
 msgid "Project Code"
 msgstr "Projektkod"
 
@@ -818,7 +821,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:96
 #: src/pages/Index/Settings/SystemSettings.tsx:263
-#: src/pages/company/CompanyDetail.tsx:88
+#: src/pages/company/CompanyDetail.tsx:90
 #: src/pages/part/PartDetail.tsx:175
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
@@ -840,7 +843,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:108
 #: src/pages/Index/Settings/SystemSettings.tsx:276
-#: src/pages/company/CompanyDetail.tsx:106
+#: src/pages/company/CompanyDetail.tsx:108
 #: src/pages/part/PartDetail.tsx:181
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
@@ -861,17 +864,18 @@ msgid "Return Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:122
-#: src/pages/company/CompanyDetail.tsx:115
+#: src/pages/company/CompanyDetail.tsx:117
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
 msgstr "Returorder"
 
 #: src/components/render/ModelType.tsx:128
+#: src/components/tables/company/AddressTable.tsx:49
 msgid "Address"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:129
-#: src/pages/company/CompanyDetail.tsx:135
+#: src/pages/company/CompanyDetail.tsx:138
 msgid "Addresses"
 msgstr ""
 
@@ -880,7 +884,7 @@ msgid "Contact"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:136
-#: src/pages/company/CompanyDetail.tsx:130
+#: src/pages/company/CompanyDetail.tsx:132
 msgid "Contacts"
 msgstr ""
 
@@ -940,7 +944,7 @@ msgstr ""
 #: src/components/tables/bom/BomTable.tsx:93
 #: src/components/tables/build/BuildOrderTable.tsx:56
 #: src/components/tables/part/PartParameterTable.tsx:65
-#: src/components/tables/part/PartParameterTemplateTable.tsx:41
+#: src/components/tables/part/PartParameterTemplateTable.tsx:40
 #: src/components/tables/part/RelatedPartTable.tsx:60
 #: src/components/tables/plugin/PluginListTable.tsx:73
 #: src/components/tables/stock/StockItemTable.tsx:45
@@ -948,6 +952,7 @@ msgid "Description"
 msgstr "Beskrivning"
 
 #: src/components/tables/ColumnRenderers.tsx:42
+#: src/components/tables/company/AddressTable.tsx:104
 msgid "Link"
 msgstr "Länk"
 
@@ -1212,7 +1217,7 @@ msgstr ""
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:213
 #: src/components/tables/purchasing/SupplierPartTable.tsx:130
 #: src/pages/build/BuildDetail.tsx:169
-#: src/pages/company/CompanyDetail.tsx:152
+#: src/pages/company/CompanyDetail.tsx:156
 #: src/pages/part/PartDetail.tsx:228
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:90
 #: src/pages/sales/ReturnOrderDetail.tsx:50
@@ -1249,7 +1254,7 @@ msgstr ""
 msgid "Bom item deleted"
 msgstr ""
 
-#: src/components/tables/bom/BomTable.tsx:310
+#: src/components/tables/bom/BomTable.tsx:309
 msgid "Are you sure you want to remove this BOM item?"
 msgstr ""
 
@@ -1286,7 +1291,7 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:175
 #: src/components/tables/plugin/PluginListTable.tsx:218
 #: src/components/tables/settings/UserDrawer.tsx:181
-#: src/components/tables/settings/UserTable.tsx:88
+#: src/components/tables/settings/UserTable.tsx:87
 msgid "Active"
 msgstr "Aktiv"
 
@@ -1296,6 +1301,113 @@ msgstr ""
 
 #: src/components/tables/build/BuildOrderTable.tsx:120
 msgid "Assigned to me"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:42
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:143
+msgid "Primary"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:68
+msgid "Postal Code"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:74
+msgid "City"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:80
+msgid "State / Province"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:86
+msgid "Country"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:92
+msgid "Courier Notes"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:98
+msgid "Internal Notes"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:128
+msgid "Edit Address"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:130
+msgid "Address updated"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:141
+msgid "Delete Address"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:142
+msgid "Address deleted"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:144
+msgid "Are you sure you want to delete this address?"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:160
+#: src/components/tables/company/AddressTable.tsx:174
+msgid "Add Address"
+msgstr ""
+
+#: src/components/tables/company/AddressTable.tsx:162
+msgid "Address created"
+msgstr ""
+
+#: src/components/tables/company/CompanyTable.tsx:32
+msgid "Company Name"
+msgstr ""
+
+#: src/components/tables/company/CompanyTable.tsx:50
+#: src/defaults/links.tsx:10
+msgid "Website"
+msgstr "Hemsida"
+
+#: src/components/tables/company/ContactTable.tsx:41
+msgid "Phone"
+msgstr ""
+
+#: src/components/tables/company/ContactTable.tsx:53
+msgid "Role"
+msgstr ""
+
+#: src/components/tables/company/ContactTable.tsx:76
+msgid "Edit Contact"
+msgstr ""
+
+#: src/components/tables/company/ContactTable.tsx:78
+msgid "Contact updated"
+msgstr ""
+
+#: src/components/tables/company/ContactTable.tsx:89
+msgid "Delete Contact"
+msgstr ""
+
+#: src/components/tables/company/ContactTable.tsx:90
+msgid "Contact deleted"
+msgstr ""
+
+#: src/components/tables/company/ContactTable.tsx:92
+msgid "Are you sure you want to delete this contact?"
+msgstr ""
+
+#: src/components/tables/company/ContactTable.tsx:108
+msgid "Create Contact"
+msgstr ""
+
+#: src/components/tables/company/ContactTable.tsx:110
+msgid "Contact created"
+msgstr ""
+
+#: src/components/tables/company/ContactTable.tsx:122
+msgid "Add contact"
 msgstr ""
 
 #: src/components/tables/general/AttachmentTable.tsx:30
@@ -1342,15 +1454,6 @@ msgstr ""
 msgid "Upload attachment"
 msgstr ""
 
-#: src/components/tables/general/CompanyTable.tsx:32
-msgid "Company Name"
-msgstr ""
-
-#: src/components/tables/general/CompanyTable.tsx:50
-#: src/defaults/links.tsx:10
-msgid "Website"
-msgstr "Hemsida"
-
 #: src/components/tables/notifications/NotificationsTable.tsx:24
 msgid "Age"
 msgstr ""
@@ -1378,7 +1481,7 @@ msgid "Parameter"
 msgstr ""
 
 #: src/components/tables/part/PartParameterTable.tsx:93
-#: src/components/tables/part/PartParameterTemplateTable.tsx:36
+#: src/components/tables/part/PartParameterTemplateTable.tsx:35
 #: src/components/tables/part/PartTable.tsx:45
 msgid "Units"
 msgstr "Enheter"
@@ -1399,63 +1502,67 @@ msgstr ""
 msgid "Part parameter deleted"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTable.tsx:144
+#: src/components/tables/part/PartParameterTable.tsx:143
 msgid "Are you sure you want to remove this parameter?"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTable.tsx:163
+#: src/components/tables/part/PartParameterTable.tsx:161
 msgid "Add Part Parameter"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTable.tsx:172
+#: src/components/tables/part/PartParameterTable.tsx:170
 msgid "Part parameter added"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTable.tsx:183
+#: src/components/tables/part/PartParameterTable.tsx:181
 msgid "Add parameter"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTable.tsx:200
+#: src/components/tables/part/PartParameterTable.tsx:198
 msgid "Include Variants"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:46
+#: src/components/tables/part/PartParameterTemplateTable.tsx:45
 msgid "Checkbox"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:50
+#: src/components/tables/part/PartParameterTemplateTable.tsx:49
 msgid "Choices"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:65
+#: src/components/tables/part/PartParameterTemplateTable.tsx:64
 msgid "Edit Parameter Template"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:67
+#: src/components/tables/part/PartParameterTemplateTable.tsx:66
 msgid "Parameter template updated"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:78
+#: src/components/tables/part/PartParameterTemplateTable.tsx:77
 msgid "Delete Parameter Template"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:79
+#: src/components/tables/part/PartParameterTemplateTable.tsx:78
 msgid "Parameter template deleted"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:81
-msgid "Remove parameter template"
+#: src/components/tables/part/PartParameterTemplateTable.tsx:80
+msgid "Are you sure you want to remove this parameter template?"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:93
+#: src/components/tables/part/PartParameterTemplateTable.tsx:83
+#~ msgid "Remove parameter template"
+#~ msgstr "Remove parameter template"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:92
 msgid "Create Parameter Template"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:95
+#: src/components/tables/part/PartParameterTemplateTable.tsx:94
 msgid "Parameter template created"
 msgstr ""
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:103
+#: src/components/tables/part/PartParameterTemplateTable.tsx:102
 msgid "Add parameter template"
 msgstr ""
 
@@ -1616,7 +1723,7 @@ msgstr ""
 msgid "Related part deleted"
 msgstr ""
 
-#: src/components/tables/part/RelatedPartTable.tsx:116
+#: src/components/tables/part/RelatedPartTable.tsx:115
 msgid "Are you sure you want to remove this relationship?"
 msgstr ""
 
@@ -1850,7 +1957,7 @@ msgstr ""
 msgid "Supplier part deleted"
 msgstr ""
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:214
+#: src/components/tables/purchasing/SupplierPartTable.tsx:213
 msgid "Are you sure you want to remove this supplier part?"
 msgstr ""
 
@@ -1885,98 +1992,98 @@ msgstr ""
 msgid "Refresh currency exchange rates"
 msgstr ""
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:38
+#: src/components/tables/settings/CustomUnitsTable.tsx:37
 msgid "Definition"
 msgstr ""
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:44
+#: src/components/tables/settings/CustomUnitsTable.tsx:43
 msgid "Symbol"
 msgstr ""
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:60
+#: src/components/tables/settings/CustomUnitsTable.tsx:59
 msgid "Edit custom unit"
 msgstr ""
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:67
+#: src/components/tables/settings/CustomUnitsTable.tsx:66
 msgid "Custom unit updated"
 msgstr ""
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:77
+#: src/components/tables/settings/CustomUnitsTable.tsx:76
 msgid "Delete custom unit"
 msgstr ""
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:78
+#: src/components/tables/settings/CustomUnitsTable.tsx:77
 msgid "Custom unit deleted"
 msgstr ""
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:81
+#: src/components/tables/settings/CustomUnitsTable.tsx:79
 msgid "Are you sure you want to remove this custom unit?"
 msgstr ""
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:94
-#: src/components/tables/settings/CustomUnitsTable.tsx:110
+#: src/components/tables/settings/CustomUnitsTable.tsx:91
+#: src/components/tables/settings/CustomUnitsTable.tsx:107
 msgid "Add custom unit"
 msgstr ""
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:100
+#: src/components/tables/settings/CustomUnitsTable.tsx:97
 msgid "Custom unit created"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:41
+#: src/components/tables/settings/GroupTable.tsx:40
 msgid "Edit group"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:46
+#: src/components/tables/settings/GroupTable.tsx:45
 msgid "Group updated"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:55
+#: src/components/tables/settings/GroupTable.tsx:54
 msgid "Delete group"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:56
+#: src/components/tables/settings/GroupTable.tsx:55
 msgid "Group deleted"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:59
+#: src/components/tables/settings/GroupTable.tsx:57
 msgid "Are you sure you want to delete this group?"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:70
-#: src/components/tables/settings/GroupTable.tsx:84
+#: src/components/tables/settings/GroupTable.tsx:67
+#: src/components/tables/settings/GroupTable.tsx:81
 msgid "Add group"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:73
+#: src/components/tables/settings/GroupTable.tsx:70
 msgid "Added group"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:50
+#: src/components/tables/settings/ProjectCodeTable.tsx:49
 msgid "Edit project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:57
+#: src/components/tables/settings/ProjectCodeTable.tsx:56
 msgid "Project code updated"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:67
+#: src/components/tables/settings/ProjectCodeTable.tsx:66
 msgid "Delete project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:68
+#: src/components/tables/settings/ProjectCodeTable.tsx:67
 msgid "Project code deleted"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:71
+#: src/components/tables/settings/ProjectCodeTable.tsx:69
 msgid "Are you sure you want to remove this project code?"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:84
-#: src/components/tables/settings/ProjectCodeTable.tsx:99
+#: src/components/tables/settings/ProjectCodeTable.tsx:81
+#: src/components/tables/settings/ProjectCodeTable.tsx:96
 msgid "Add project code"
 msgstr ""
 
-#: src/components/tables/settings/ProjectCodeTable.tsx:91
+#: src/components/tables/settings/ProjectCodeTable.tsx:88
 msgid "Added project code"
 msgstr ""
 
@@ -2001,19 +2108,19 @@ msgid "User details for {0}"
 msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:148
-#: src/pages/company/CompanyDetail.tsx:71
+#: src/pages/company/CompanyDetail.tsx:73
 #: src/pages/part/PartDetail.tsx:87
 #: src/pages/stock/StockDetail.tsx:69
 msgid "Details"
 msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:165
-#: src/components/tables/settings/UserTable.tsx:62
+#: src/components/tables/settings/UserTable.tsx:61
 msgid "First Name"
 msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:170
-#: src/components/tables/settings/UserTable.tsx:67
+#: src/components/tables/settings/UserTable.tsx:66
 msgid "Last Name"
 msgstr ""
 
@@ -2022,17 +2129,17 @@ msgid "Rights"
 msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:184
-#: src/components/tables/settings/UserTable.tsx:80
+#: src/components/tables/settings/UserTable.tsx:79
 msgid "Staff"
 msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:190
-#: src/components/tables/settings/UserTable.tsx:84
+#: src/components/tables/settings/UserTable.tsx:83
 msgid "Superuser"
 msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:200
-#: src/components/tables/settings/UserTable.tsx:73
+#: src/components/tables/settings/UserTable.tsx:72
 #: src/pages/Index/Settings/AdminCenter.tsx:38
 msgid "Groups"
 msgstr ""
@@ -2041,19 +2148,19 @@ msgstr ""
 msgid "No groups"
 msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:100
+#: src/components/tables/settings/UserTable.tsx:99
 msgid "Edit user"
 msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:107
+#: src/components/tables/settings/UserTable.tsx:106
 msgid "User updated"
 msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:116
+#: src/components/tables/settings/UserTable.tsx:115
 msgid "Delete user"
 msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:117
+#: src/components/tables/settings/UserTable.tsx:116
 msgid "User deleted"
 msgstr ""
 
@@ -2061,16 +2168,16 @@ msgstr ""
 #~ msgid "user deleted"
 #~ msgstr "user deleted"
 
-#: src/components/tables/settings/UserTable.tsx:120
+#: src/components/tables/settings/UserTable.tsx:118
 msgid "Are you sure you want to delete this user?"
 msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:131
-#: src/components/tables/settings/UserTable.tsx:147
+#: src/components/tables/settings/UserTable.tsx:128
+#: src/components/tables/settings/UserTable.tsx:144
 msgid "Add user"
 msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:139
+#: src/components/tables/settings/UserTable.tsx:136
 msgid "Added user"
 msgstr ""
 
@@ -2603,47 +2710,47 @@ msgstr ""
 #~ msgid "Combusken battles with the intensely hot flames it spews"
 #~ msgstr "Combusken battles with the intensely hot flames it spews"
 
-#: src/forms/AttachmentForms.tsx:58
+#: src/forms/AttachmentForms.tsx:57
 msgid "Add File"
 msgstr ""
 
-#: src/forms/AttachmentForms.tsx:58
+#: src/forms/AttachmentForms.tsx:57
 msgid "Add Link"
 msgstr ""
 
-#: src/forms/AttachmentForms.tsx:59
+#: src/forms/AttachmentForms.tsx:58
 msgid "File added"
 msgstr ""
 
-#: src/forms/AttachmentForms.tsx:59
+#: src/forms/AttachmentForms.tsx:58
 msgid "Link added"
 msgstr ""
 
-#: src/forms/AttachmentForms.tsx:100
+#: src/forms/AttachmentForms.tsx:99
 msgid "Edit File"
 msgstr "Redigera fil"
 
-#: src/forms/AttachmentForms.tsx:100
+#: src/forms/AttachmentForms.tsx:99
 msgid "Edit Link"
 msgstr "Redigera länk"
 
-#: src/forms/AttachmentForms.tsx:101
+#: src/forms/AttachmentForms.tsx:100
 msgid "File updated"
 msgstr ""
 
-#: src/forms/AttachmentForms.tsx:101
+#: src/forms/AttachmentForms.tsx:100
 msgid "Link updated"
 msgstr ""
 
-#: src/forms/AttachmentForms.tsx:125
+#: src/forms/AttachmentForms.tsx:124
 msgid "Delete Attachment"
 msgstr "Radera bilaga"
 
-#: src/forms/AttachmentForms.tsx:126
+#: src/forms/AttachmentForms.tsx:125
 msgid "Attachment deleted"
 msgstr ""
 
-#: src/forms/AttachmentForms.tsx:130
+#: src/forms/AttachmentForms.tsx:128
 msgid "Are you sure you want to delete this attachment?"
 msgstr ""
 
@@ -3137,10 +3244,6 @@ msgstr ""
 msgid "The following email addresses are associated with your account:"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:143
-msgid "Primary"
-msgstr ""
-
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:148
 msgid "Verified"
 msgstr ""
@@ -3391,7 +3494,7 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:157
-#: src/pages/company/CompanyDetail.tsx:140
+#: src/pages/company/CompanyDetail.tsx:144
 #: src/pages/part/PartDetail.tsx:216
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:78
 #: src/pages/sales/ReturnOrderDetail.tsx:38
@@ -3468,19 +3571,19 @@ msgstr ""
 msgid "New Build Order"
 msgstr ""
 
-#: src/pages/company/CompanyDetail.tsx:76
+#: src/pages/company/CompanyDetail.tsx:78
 msgid "Manufactured Parts"
 msgstr ""
 
-#: src/pages/company/CompanyDetail.tsx:82
+#: src/pages/company/CompanyDetail.tsx:84
 msgid "Supplied Parts"
 msgstr ""
 
-#: src/pages/company/CompanyDetail.tsx:124
+#: src/pages/company/CompanyDetail.tsx:126
 msgid "Assigned Stock"
 msgstr ""
 
-#: src/pages/company/CompanyDetail.tsx:169
+#: src/pages/company/CompanyDetail.tsx:173
 msgid "Company Actions"
 msgstr ""
 

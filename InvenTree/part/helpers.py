@@ -1,8 +1,11 @@
 """Various helper functions for the part app"""
 
 import logging
+import os
 
-from jinja2 import Environment
+from django.conf import settings
+
+from jinja2 import Environment, select_autoescape
 
 logger = logging.getLogger('inventree')
 
@@ -29,10 +32,11 @@ def compile_full_name_template(*args, **kwargs):
     if template_string == _part_full_name_template_string and _part_full_name_template is not None:
         return _part_full_name_template
 
+    # Cache the template string
     _part_full_name_template_string = template_string
 
     env = Environment(
-        autoescape=True,
+        autoescape=select_autoescape(default_for_string=False, default=False),
         variable_start_string='{{',
         variable_end_string='}}'
     )
@@ -66,3 +70,28 @@ def render_part_full_name(part) -> str:
     # Fallback to the default format
     elements = [el for el in [part.IPN, part.name, part.revision] if el]
     return ' | '.join(elements)
+
+
+# Subdirectory for storing part images
+PART_IMAGE_DIR = "part_images"
+
+
+def get_part_image_directory() -> str:
+    """Return the directory where part images are stored.
+
+    Returns:
+        str: Directory where part images are stored
+
+    TODO: Future work may be needed here to support other storage backends, such as S3
+    """
+
+    part_image_directory = os.path.abspath(os.path.join(
+        settings.MEDIA_ROOT,
+        PART_IMAGE_DIR,
+    ))
+
+    # Create the directory if it does not exist
+    if not os.path.exists(part_image_directory):
+        os.makedirs(part_image_directory)
+
+    return part_image_directory
