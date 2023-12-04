@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Divider, Stack } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { AxiosResponse } from 'axios';
@@ -248,7 +249,12 @@ export function openModalApiForm(props: OpenApiFormProps) {
         onClose: () => {
           props.onClose ? props.onClose() : null;
         },
-        children: <ApiForm id={modalId} props={props} />
+        children: (
+          <Stack spacing={'xs'}>
+            <Divider />
+            <ApiForm id={modalId} props={props} />
+          </Stack>
+        )
       });
     })
     .catch((error) => {

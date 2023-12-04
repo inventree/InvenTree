@@ -3,7 +3,6 @@ import { Group, Menu, Skeleton, Text, UnstyledButton } from '@mantine/core';
 import {
   IconChevronDown,
   IconLogout,
-  IconPlugConnected,
   IconSettings,
   IconUserBolt,
   IconUserCog
@@ -57,15 +56,6 @@ export function MainMenu() {
             to="/settings/system"
           >
             <Trans>System Settings</Trans>
-          </Menu.Item>
-        )}
-        {userState.user?.is_staff && (
-          <Menu.Item
-            icon={<IconPlugConnected />}
-            component={Link}
-            to="/settings/plugin"
-          >
-            <Trans>Plugins</Trans>
           </Menu.Item>
         )}
         <Menu.Divider />

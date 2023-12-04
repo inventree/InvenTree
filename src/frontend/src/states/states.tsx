@@ -72,7 +72,8 @@ export enum SettingType {
   Boolean = 'boolean',
   Integer = 'integer',
   String = 'string',
-  Choice = 'choice'
+  Choice = 'choice',
+  Model = 'related field'
 }
 
 export interface PluginProps {
