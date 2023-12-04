@@ -2,7 +2,7 @@
 
 import logging
 
-from jinja2 import Environment
+from jinja2 import Environment, select_autoescape
 
 logger = logging.getLogger('inventree')
 
@@ -33,7 +33,7 @@ def compile_full_name_template(*args, **kwargs):
 
     # skipqc: BAN-B701
     env = Environment(
-        autoescape=False,
+        autoescape=select_autoescape(default_for_string=False, default=False),
         variable_start_string='{{',
         variable_end_string='}}'
     )
