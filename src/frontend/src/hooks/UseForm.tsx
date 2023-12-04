@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
@@ -18,6 +19,7 @@ export interface ApiFormModalProps extends ApiFormProps {
   cancelColor?: string;
   onClose?: () => void;
   onOpen?: () => void;
+  closeOnClickOutside?: boolean;
 }
 
 /**
@@ -56,8 +58,14 @@ export function useApiFormModal(props: ApiFormModalProps) {
     title: formProps.title,
     onOpen: formProps.onOpen,
     onClose: formProps.onClose,
+    closeOnClickOutside: formProps.closeOnClickOutside,
     size: 'xl',
-    children: <OptionsApiForm props={formProps} id={id} />
+    children: (
+      <Stack spacing={'xs'}>
+        <Divider />
+        <OptionsApiForm props={formProps} id={id} />
+      </Stack>
+    )
   });
 
   useEffect(() => {

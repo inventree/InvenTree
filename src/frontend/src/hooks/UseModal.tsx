@@ -10,6 +10,7 @@ export interface UseModalProps {
   size?: MantineNumberSize;
   onOpen?: () => void;
   onClose?: () => void;
+  closeOnClickOutside?: boolean;
 }
 
 export function useModal(props: UseModalProps) {
@@ -34,6 +35,7 @@ export function useModal(props: UseModalProps) {
       <Modal
         opened={opened}
         onClose={close}
+        closeOnClickOutside={props.closeOnClickOutside}
         size={props.size ?? 'xl'}
         title={<StylishText size="xl">{props.title}</StylishText>}
       >

@@ -22,11 +22,13 @@ interface LocalStateProps {
   blackColor: string;
   radius: MantineNumberSize;
   loader: LoaderType;
+  lastUsedPanels: Record<string, string>;
+  setLastUsedPanel: (panelKey: string) => (value: string) => void;
 }
 
 export const useLocalState = create<LocalStateProps>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       autoupdate: false,
       toggleAutoupdate: () =>
         set((state) => ({ autoupdate: !state.autoupdate })),
@@ -43,7 +45,17 @@ export const useLocalState = create<LocalStateProps>()(
       whiteColor: '#fff',
       blackColor: '#000',
       radius: 'xs',
-      loader: 'oval'
+      loader: 'oval',
+      // panels
+      lastUsedPanels: {},
+      setLastUsedPanel: (panelKey) => (value) => {
+        const currentValue = get().lastUsedPanels[panelKey];
+        if (currentValue !== value) {
+          set({
+            lastUsedPanels: { ...get().lastUsedPanels, [panelKey]: value }
+          });
+        }
+      }
     }),
     {
       name: 'session-settings'
