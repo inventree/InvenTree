@@ -33,6 +33,7 @@ from InvenTree.status_codes import (BuildStatusGroups,
                                     PurchaseOrderStatusGroups,
                                     SalesOrderStatusGroups)
 from part.admin import PartCategoryResource, PartResource
+from stock.models import StockLocation
 
 from . import serializers as part_serializers
 from . import views
@@ -950,6 +951,8 @@ class PartFilter(rest_filters.FilterSet):
             return queryset.filter(Q(in_stock=0) & ~Q(stock_item_count=0))
         return queryset.exclude(Q(in_stock=0) & ~Q(stock_item_count=0))
 
+    default_location = rest_filters.ModelChoiceFilter(label="Default Location", queryset=StockLocation.objects.all())
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1189,13 +1192,6 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
                         queryset = queryset.filter(category=cat_id)
                 except (ValueError, PartCategory.DoesNotExist):
                     pass
-
-        # Does the user wish to filter by default location?
-        default_loc = params.get("default_location", None)
-
-        if default_loc is not None:
-            # Filter out any part not in the specified default location
-            queryset = queryset.filter(default_location=default_loc)
 
         queryset = self.filter_parametric_data(queryset)
 
