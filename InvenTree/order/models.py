@@ -977,9 +977,9 @@ class SalesOrder(TotalPriceMixin, Order):
         return self.handle_transition(self.status, SalesOrderStatus.IN_PROGRESS.value, self, self._action_place)
 
     @transaction.atomic
-    def complete_order(self, user):
+    def complete_order(self, user, **kwargs):
         """Attempt to transition to SHIPPED status."""
-        return self.handle_transition(self.status, SalesOrderStatus.SHIPPED.value, self, self._action_complete, user=user)
+        return self.handle_transition(self.status, SalesOrderStatus.SHIPPED.value, self, self._action_complete, user=user, **kwargs)
 
     @transaction.atomic
     def cancel_order(self):
