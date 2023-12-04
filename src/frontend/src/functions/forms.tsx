@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Divider, Stack } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { AxiosResponse } from 'axios';
@@ -19,7 +20,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(
-  url: ApiPaths,
+  url: ApiPaths | string,
   pk?: string | number,
   pathParams?: PathParams
 ): string {
@@ -248,7 +249,12 @@ export function openModalApiForm(props: OpenApiFormProps) {
         onClose: () => {
           props.onClose ? props.onClose() : null;
         },
-        children: <ApiForm id={modalId} props={props} />
+        children: (
+          <Stack spacing={'xs'}>
+            <Divider />
+            <ApiForm id={modalId} props={props} />
+          </Stack>
+        )
       });
     })
     .catch((error) => {

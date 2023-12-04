@@ -45,6 +45,7 @@ jobs:
               - docker-compose.yml
               - docker.dev.env
               - Dockerfile
+              - requirements.txt
 
 
   # Build the docker image

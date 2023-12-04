@@ -60,7 +60,7 @@ export interface ApiFormAction {
  * @param onFormError : A callback function to call when the form is submitted with errors.
  */
 export interface ApiFormProps {
-  url: ApiPaths;
+  url: ApiPaths | string;
   pk?: number | string | undefined;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -179,7 +179,12 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     criteriaMode: 'all',
     defaultValues
   });
-  const { isValid, isDirty, isLoading: isFormLoading } = form.formState;
+  const {
+    isValid,
+    isDirty,
+    isLoading: isFormLoading,
+    isSubmitting
+  } = form.formState;
 
   // Cache URL
   const url = useMemo(
@@ -351,8 +356,8 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
   };
 
   const isLoading = useMemo(
-    () => isFormLoading || initialDataQuery.isFetching,
-    [isFormLoading, initialDataQuery.isFetching]
+    () => isFormLoading || initialDataQuery.isFetching || isSubmitting,
+    [isFormLoading, initialDataQuery.isFetching, isSubmitting]
   );
 
   const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {
@@ -361,7 +366,6 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
 
   return (
     <Stack>
-      <Divider />
       <Stack spacing="sm">
         <LoadingOverlay visible={isLoading} />
         {(!isValid || nonFieldErrors.length > 0) && (
@@ -423,4 +427,63 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
       </Group>
     </Stack>
   );
+}
+
+export function CreateApiForm({
+  id,
+  props
+}: {
+  id?: string;
+  props: ApiFormProps;
+}) {
+  const createProps = useMemo<ApiFormProps>(
+    () => ({
+      ...props,
+      method: 'POST'
+    }),
+    [props]
+  );
+
+  return <OptionsApiForm props={createProps} id={id} />;
+}
+
+export function EditApiForm({
+  id,
+  props
+}: {
+  id?: string;
+  props: ApiFormProps;
+}) {
+  const editProps = useMemo<ApiFormProps>(
+    () => ({
+      ...props,
+      fetchInitialData: props.fetchInitialData ?? true,
+      submitText: t`Update` ?? props.submitText,
+      method: 'PUT'
+    }),
+    [props]
+  );
+
+  return <OptionsApiForm props={editProps} id={id} />;
+}
+
+export function DeleteApiForm({
+  id,
+  props
+}: {
+  id?: string;
+  props: ApiFormProps;
+}) {
+  const deleteProps = useMemo<ApiFormProps>(
+    () => ({
+      ...props,
+      method: 'DELETE',
+      submitText: t`Delete`,
+      submitColor: 'red',
+      fields: {}
+    }),
+    [props]
+  );
+
+  return <OptionsApiForm props={deleteProps} id={id} />;
 }

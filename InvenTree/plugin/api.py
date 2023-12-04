@@ -3,9 +3,11 @@
 from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
@@ -15,6 +17,7 @@ from InvenTree.helpers import str2bool
 from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
                               RetrieveUpdateDestroyAPI, UpdateAPI)
 from InvenTree.permissions import IsSuperuser
+from plugin import registry
 from plugin.base.action.api import ActionPluginView
 from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
@@ -251,7 +254,35 @@ def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
     if not plugin_cgf.active:
         raise NotFound(detail=f"Plugin '{ref}' is not active")
 
-    return plugin_cgf.plugin
+    plugin = plugin_cgf.plugin
+
+    if not plugin:
+        raise NotFound(detail=f"Plugin '{ref}' not installed")
+
+    return plugin
+
+
+class PluginAllSettingList(APIView):
+    """List endpoint for all plugin settings for a specific plugin.
+
+    - GET: return all settings for a plugin config
+    """
+
+    permission_classes = [GlobalSettingsPermissions]
+
+    @extend_schema(responses={200: PluginSerializers.PluginSettingSerializer(many=True)})
+    def get(self, request, pk):
+        """Get all settings for a plugin config."""
+
+        # look up the plugin
+        plugin = check_plugin(None, pk)
+
+        settings = getattr(plugin, 'settings', {})
+
+        settings_dict = PluginSetting.all_settings(settings_definition=settings, plugin=plugin.plugin_config())
+
+        results = PluginSerializers.PluginSettingSerializer(list(settings_dict.values()), many=True).data
+        return Response(results)
 
 
 class PluginSettingDetail(RetrieveUpdateAPI):
@@ -287,6 +318,37 @@ class PluginSettingDetail(RetrieveUpdateAPI):
     ]
 
 
+class RegistryStatusView(APIView):
+    """Status API endpoint for the plugin registry.
+
+    - GET: Provide status data for the plugin registry
+    """
+
+    permission_classes = [IsSuperuser, ]
+
+    serializer_class = PluginSerializers.PluginRegistryStatusSerializer
+
+    @extend_schema(responses={200: PluginSerializers.PluginRegistryStatusSerializer()})
+    def get(self, request):
+        """Show registry status information."""
+        error_list = []
+
+        for stage, errors in registry.errors.items():
+            for error_detail in errors:
+                for name, message in error_detail.items():
+                    error_list.append({
+                        "stage": stage,
+                        "name": name,
+                        "message": message,
+                    })
+
+        result = PluginSerializers.PluginRegistryStatusSerializer({
+            "registry_errors": error_list,
+        }).data
+
+        return Response(result)
+
+
 plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
     re_path(r'^barcode/', include(barcode_api_urls)),
@@ -300,7 +362,10 @@ plugin_api_urls = [
 
         # Detail views for a single PluginConfig item
         path(r'<int:pk>/', include([
-            re_path(r'^settings/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail-pk'),
+            re_path(r"^settings/", include([
+                re_path(r'^(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail-pk'),
+                re_path(r"^.*$", PluginAllSettingList.as_view(), name="api-plugin-settings"),
+            ])),
             re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-detail-activate'),
             re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
         ])),
@@ -311,6 +376,9 @@ plugin_api_urls = [
         # Plugin management
         re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
         re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
+
+        # Registry status
+        re_path(r"^status/", RegistryStatusView.as_view(), name="api-plugin-registry-status"),
 
         # Anything else
         re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
