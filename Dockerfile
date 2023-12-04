@@ -130,6 +130,9 @@ CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./Inve
 
 FROM inventree_base as dev
 
+# Vite server (for local frontend development)
+EXPOSE 5173
+
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
@@ -154,3 +157,10 @@ ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
+
+# Image target for devcontainer
+FROM dev as devcontainer
+
+ARG workspace="/workspaces/InvenTree"
+
+WORKDIR ${WORKSPACE}
