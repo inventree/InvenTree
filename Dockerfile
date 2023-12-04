@@ -136,7 +136,7 @@ EXPOSE 5173
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
-RUN pip install -r base_requirements.txt
+RUN pip install -r base_requirements.txt --no-cache-dir
 
 # Install nodejs / npm / yarn
 
