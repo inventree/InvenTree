@@ -29,6 +29,13 @@ class LabelPrintingOptionsSerializer(serializers.Serializer):
         help_text=_('Page size for the label sheet')
     )
 
+    skip = serializers.IntegerField(
+        default=0,
+        label=_('Skip Labels'),
+        help_text=_('Skip this number of labels when printing label sheets'),
+        min_value=0
+    )
+
     border = serializers.BooleanField(
         default=False,
         label=_('Border'),
@@ -70,6 +77,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         page_size_code = printing_options.get('page_size', 'A4')
         landscape = printing_options.get('landscape', False)
         border = printing_options.get('border', False)
+        skip = int(printing_options.get('skip', 0))
 
         # Extract size of page
         page_size = report.helpers.page_size(page_size_code)
@@ -90,6 +98,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
         # Data to pass through to each page
         document_data = {
+            "skip": skip,
             "border": border,
             "landscape": landscape,
             "page_width": page_width,
@@ -107,6 +116,9 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         idx = 0
 
         while idx < n_labels:
+
+            document_data['label_idx'] = idx
+
             if page := self.print_page(label, items[idx:idx + n_cells], request, **document_data):
                 pages.append(page)
 
@@ -153,6 +165,9 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
         n_cols = kwargs['n_cols']
         n_rows = kwargs['n_rows']
+        n_skip = kwargs['skip']
+
+        label_idx = kwargs['label_idx']
 
         # Generate a table of labels
         html = """<table class='label-sheet-table'>"""
@@ -165,6 +180,11 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
                 # Cell index
                 idx = row * n_cols + col
+
+                # If we are within the skip range, do not render a label
+                if (idx + label_idx) < n_skip:
+                    html += """<div class='label-sheet-cell-skip'></div>"""
+                    continue
 
                 if idx < len(items):
                     try:
