@@ -54,6 +54,7 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git" \
       org.label-schema.vcs-ref=${commit_tag}
 
+# Install required system level packages
 RUN apk add --no-cache \
     git gettext py-cryptography \
     # Image format support
@@ -76,6 +77,8 @@ WORKDIR ${INVENTREE_HOME}
 
 COPY ./docker/requirements.txt base_requirements.txt
 COPY ./requirements.txt ./
+COPY ./docker/install_build_packages.sh .
+RUN chmod +x install_build_packages.sh
 
 # For ARMv7 architecture, add the piwheels repo (for cryptography library)
 # Otherwise, we have to build from source, which is difficult
@@ -84,23 +87,19 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
     printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
     fi
 
-RUN apk add --no-cache --virtual .build-deps \
-    gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev openldap-dev \
-    # Image format dev libs
-    jpeg-dev openjpeg-dev libwebp-dev zlib-dev \
-    # DB specific dev libs
-    postgresql-dev sqlite-dev mariadb-dev && \
-    pip install -r base_requirements.txt -r requirements.txt --no-cache-dir && \
-    apk --purge del .build-deps
-
 COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
-
 RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/sh", "./init.sh"]
 
+FROM inventree_base as prebuild
+
+RUN ./install_build_packages.sh --virtual .build-deps && \
+    pip install -r base_requirements.txt -r requirements.txt --no-cache-dir && \
+    apk --purge del .build-deps
+
 # Frontend builder image:
-FROM inventree_base as frontend
+FROM prebuild as frontend
 
 RUN apk add --no-cache --update nodejs npm && npm install -g yarn
 RUN yarn config set network-timeout 600000 -g
@@ -112,7 +111,7 @@ RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
-FROM inventree_base as production
+FROM prebuild as production
 
 ENV INVENTREE_DEBUG=False
 
@@ -129,8 +128,10 @@ COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ./InvenTree/web/
 # TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
-
 FROM inventree_base as dev
+
+# Install packages required for building python packages
+RUN ./install_build_packages.sh
 
 # Install nodejs / npm / yarn
 
