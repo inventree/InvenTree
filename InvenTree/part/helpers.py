@@ -32,6 +32,9 @@ def compile_full_name_template(*args, **kwargs):
     if template_string == _part_full_name_template_string and _part_full_name_template is not None:
         return _part_full_name_template
 
+    # Cache the template string
+    _part_full_name_template_string = template_string
+
     env = Environment(
         autoescape=select_autoescape(default_for_string=False, default=False),
         variable_start_string='{{',
