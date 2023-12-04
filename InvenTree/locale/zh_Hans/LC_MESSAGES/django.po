@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-27 00:53+0000\n"
+"POT-Creation-Date: 2023-11-29 03:06+0000\n"
 "PO-Revision-Date: 2023-02-28 22:38\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -3471,7 +3471,7 @@ msgid "Table String Length"
 msgstr ""
 
 #: common/models.py:2279
-msgid "Maximimum length limit for strings displayed in table views"
+msgid "Maximum length limit for strings displayed in table views"
 msgstr ""
 
 #: common/models.py:2288
