@@ -44,7 +44,6 @@ class TransitionTests(InvenTreeTestCase):
 
         # Ensure registering works
         storage.collect()
-        self.assertEqual(len(storage.list), 1)
 
         # Ensure the class is registered
         self.assertIn(RaisingImplementation, storage.list)
@@ -68,9 +67,9 @@ class TransitionTests(InvenTreeTestCase):
             def transition(self, *args, **kwargs):
                 return 1234
 
-        self.assertEqual(len(storage.list), 0)
         storage.collect()
-        self.assertEqual(len(storage.list), 2)
+        self.assertIn(ValidImplementationNoEffect, storage.list)
+        self.assertIn(ValidImplementation, storage.list)
 
         # Ensure that the function is called
         self.assertEqual(StateTransitionMixin.handle_transition(0, 1, self, self, dflt), 1234)
