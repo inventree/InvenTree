@@ -39,16 +39,6 @@ export default function PluginManagementPanel() {
         <Title order={5}>
           <Trans>Plugin Settings</Trans>
         </Title>
-        <Alert
-          icon={<IconAlertTriangle />}
-          color="yellow"
-          title={<Trans>Warning</Trans>}
-        >
-          <Trans>
-            Changing the settings below require you to immediately restart the
-            server. Do not change this while under active usage.
-          </Trans>
-        </Alert>
         <GlobalSettingList
           keys={[
             'ENABLE_PLUGINS_SCHEDULE',
