@@ -102,18 +102,6 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'projectcodes',
-        label: t`Project Codes`,
-        icon: <IconListDetails />,
-        content: (
-          <Stack spacing="xs">
-            <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
-            <Divider />
-            <ProjectCodeTable />
-          </Stack>
-        )
-      },
-      {
         name: 'physicalunits',
         label: t`Physical Units`,
         icon: <IconScale />,
