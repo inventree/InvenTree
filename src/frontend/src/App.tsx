@@ -25,15 +25,16 @@ function checkMobile() {
   return false;
 }
 
+const MobileAppView = Loadable(lazy(() => import('./views/MobileAppView')));
+const DesktopAppView = Loadable(lazy(() => import('./views/DesktopAppView')));
+
 // Main App
 export default function App() {
   // Check if mobile
   if (checkMobile()) {
-    const MobileAppView = Loadable(lazy(() => import('./views/MobileAppView')));
     return <MobileAppView />;
   }
 
   // Main App component
-  const DesktopAppView = Loadable(lazy(() => import('./views/DesktopAppView')));
   return <DesktopAppView />;
 }

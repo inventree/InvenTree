@@ -33,6 +33,7 @@ from InvenTree.status_codes import (BuildStatusGroups,
                                     PurchaseOrderStatusGroups,
                                     SalesOrderStatusGroups)
 from part.admin import PartCategoryResource, PartResource
+from stock.models import StockLocation
 
 from . import serializers as part_serializers
 from . import views
@@ -949,6 +950,8 @@ class PartFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.filter(Q(in_stock=0) & ~Q(stock_item_count=0))
         return queryset.exclude(Q(in_stock=0) & ~Q(stock_item_count=0))
+
+    default_location = rest_filters.ModelChoiceFilter(label="Default Location", queryset=StockLocation.objects.all())
 
     is_template = rest_filters.BooleanFilter()
 

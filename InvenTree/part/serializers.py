@@ -3,6 +3,7 @@
 import imghdr
 import io
 import logging
+import os
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
@@ -27,6 +28,7 @@ import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status
 import part.filters
+import part.helpers as part_helpers
 import part.stocktake
 import part.tasks
 import stock.models
@@ -511,6 +513,8 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'description',
             'full_name',
             'image',
+            'remote_image',
+            'existing_image',
             'IPN',
             'is_template',
             'keywords',
@@ -522,7 +526,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'parameters',
             'pk',
             'purchaseable',
-            'remote_image',
             'revision',
             'salable',
             'starred',
@@ -608,7 +611,8 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'duplicate',
             'initial_stock',
             'initial_supplier',
-            'copy_category_parameters'
+            'copy_category_parameters',
+            'existing_image',
         ]
 
         return fields
@@ -761,6 +765,33 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         help_text=_('Copy parameter templates from selected part category'),
     )
 
+    # Allow selection of an existing part image file
+    existing_image = serializers.CharField(
+        label=_('Existing Image'),
+        help_text=_('Filename of an existing part image'),
+        write_only=True,
+        required=False,
+        allow_blank=False,
+    )
+
+    def validate_existing_image(self, img):
+        """Validate the selected image file"""
+        if not img:
+            return img
+
+        img = img.split(os.path.sep)[-1]
+
+        # Ensure that the file actually exists
+        img_path = os.path.join(
+            part_helpers.get_part_image_directory(),
+            img
+        )
+
+        if not os.path.exists(img_path) or not os.path.isfile(img_path):
+            raise ValidationError(_('Image file does not exist'))
+
+        return img
+
     @transaction.atomic
     def create(self, validated_data):
         """Custom method for creating a new Part instance using this serializer"""
@@ -869,6 +900,18 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         super().save()
 
         part = self.instance
+        data = self.validated_data
+
+        existing_image = data.pop('existing_image', None)
+
+        if existing_image:
+            img_path = os.path.join(
+                part_helpers.PART_IMAGE_DIR,
+                existing_image
+            )
+
+            part.image = img_path
+            part.save()
 
         # Check if an image was downloaded from a remote URL
         remote_img = getattr(self, 'remote_image_file', None)

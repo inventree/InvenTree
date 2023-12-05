@@ -3,7 +3,7 @@ import { Input } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 import Select from 'react-select';
 
@@ -35,12 +35,17 @@ export function RelatedModelField({
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
 
+  const [offset, setOffset] = useState<number>(0);
+
+  const [data, setData] = useState<any[]>([]);
+  const dataRef = useRef<any[]>([]);
+
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If the value is unchanged, do nothing
     if (field.value === pk) return;
 
-    if (field.value !== null) {
+    if (field.value !== null && field.value !== undefined) {
       const url = `${definition.api_url}${field.value}/`;
 
       api.get(url).then((response) => {
@@ -53,6 +58,7 @@ export function RelatedModelField({
           };
 
           setData([value]);
+          dataRef.current = [value];
           setPk(data.pk);
         }
       });
@@ -61,13 +67,15 @@ export function RelatedModelField({
     }
   }, [definition.api_url, field.value]);
 
-  const [offset, setOffset] = useState<number>(0);
-
-  const [data, setData] = useState<any[]>([]);
-
   // Search input query
   const [value, setValue] = useState<string>('');
   const [searchText, cancelSearchText] = useDebouncedValue(value, 250);
+
+  // reset current data on search value change
+  useEffect(() => {
+    dataRef.current = [];
+    setData([]);
+  }, [searchText]);
 
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
@@ -95,7 +103,9 @@ export function RelatedModelField({
           params: params
         })
         .then((response) => {
-          const values: any[] = [...data];
+          // current values need to be accessed via a ref, otherwise "data" has old values here
+          // and this results in no overriding the data which means the current value cannot be displayed
+          const values: any[] = [...dataRef.current];
           const alreadyPresentPks = values.map((x) => x.value);
 
           const results = response.data?.results ?? response.data ?? [];
@@ -111,6 +121,7 @@ export function RelatedModelField({
           });
 
           setData(values);
+          dataRef.current = values;
           return response;
         })
         .catch((error) => {

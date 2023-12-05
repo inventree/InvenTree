@@ -278,6 +278,15 @@ remote_login_header: HTTP_REMOTE_USER
 #   # cache timeout to reduce traffic with LDAP server, default: 3600 (1h)
 #   # cache_timeout: 3600
 
+#   # LDAP group support
+#   # group_search: ou=groups,dc=example,dc=com
+#   # require_group: cn=inventree_allow,ou=groups,dc=example,dc=com
+#   # deny_group: cn=inventree_deny,ou=groups,dc=example,dc=com
+#   # Set staff/superuser flag based on LDAP group membership
+#   # user_flags_by_group:
+#   #   is_staff: cn=inventree_staff,ou=groups,dc=example,dc=com
+#   #   is_superuser: cn=inventree_superuser,ou=groups,dc=example,dc=com
+
 # Customization options
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO

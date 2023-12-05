@@ -14,28 +14,30 @@ import { PathParams, apiUrl } from '../states/ApiState';
  * To use this hook:
  * const { instance, refreshInstance } = useInstance(url: string, pk: number)
  */
-export function useInstance({
+export function useInstance<T = any>({
   endpoint,
   pk,
-  pathParams,
   params = {},
+  pathParams,
   defaultValue = {},
   hasPrimaryKey = true,
   refetchOnMount = true,
-  refetchOnWindowFocus = false
+  refetchOnWindowFocus = false,
+  throwError = false
 }: {
   endpoint: ApiPaths;
   pk?: string | undefined;
-  pathParams?: PathParams;
   hasPrimaryKey?: boolean;
   params?: any;
+  pathParams?: PathParams;
   defaultValue?: any;
   refetchOnMount?: boolean;
   refetchOnWindowFocus?: boolean;
+  throwError?: boolean;
 }) {
-  const [instance, setInstance] = useState<any>(defaultValue);
+  const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
-  const instanceQuery = useQuery({
+  const instanceQuery = useQuery<T>({
     queryKey: ['instance', endpoint, pk, params],
     queryFn: async () => {
       if (hasPrimaryKey) {
@@ -45,7 +47,7 @@ export function useInstance({
         }
       }
 
-      let url = apiUrl(endpoint, pk, pathParams);
+      const url = apiUrl(endpoint, pk, pathParams);
 
       return api
         .get(url, {
@@ -64,6 +66,9 @@ export function useInstance({
         .catch((error) => {
           setInstance(defaultValue);
           console.error(`Error fetching instance ${url}:`, error);
+
+          if (throwError) throw error;
+
           return null;
         });
     },

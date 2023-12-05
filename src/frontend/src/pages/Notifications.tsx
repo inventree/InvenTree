@@ -24,7 +24,7 @@ export default function NotificationsPage() {
   const notificationPanels = useMemo(() => {
     return [
       {
-        name: 'notifications-unread',
+        name: 'unread',
         label: t`Notifications`,
         icon: <IconBellExclamation size="18" />,
         content: (
@@ -52,7 +52,7 @@ export default function NotificationsPage() {
         )
       },
       {
-        name: 'notifications-history',
+        name: 'history',
         label: t`History`,
         icon: <IconBellCheck size="18" />,
         content: (
