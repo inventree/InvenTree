@@ -24,26 +24,40 @@ msgid "Title"
 msgstr "Tiêu đề"
 
 #: src/components/forms/ApiForm.tsx:129
-#: src/functions/forms.tsx:48
-#: src/functions/forms.tsx:57
-#: src/functions/forms.tsx:260
+#: src/functions/forms.tsx:49
+#: src/functions/forms.tsx:58
+#: src/functions/forms.tsx:266
 msgid "Form Error"
 msgstr "Lỗi form"
 
-#: src/components/forms/ApiForm.tsx:296
+#: src/components/forms/ApiForm.tsx:301
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
 msgstr "Thành công"
 
-#: src/components/forms/ApiForm.tsx:368
+#: src/components/forms/ApiForm.tsx:372
 msgid "Form Errors Exist"
 msgstr "Từ các lỗi hiện hữu"
 
-#: src/components/forms/ApiForm.tsx:421
+#: src/components/forms/ApiForm.tsx:425
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
 msgstr "Gửi"
+
+#: src/components/forms/ApiForm.tsx:461
+msgid "Update"
+msgstr ""
+
+#: src/components/forms/ApiForm.tsx:481
+#: src/components/items/ActionDropdown.tsx:173
+#: src/components/tables/RowActions.tsx:61
+#: src/functions/forms.tsx:306
+#: src/hooks/UseForm.tsx:117
+#: src/pages/Index/Scan.tsx:332
+#: src/pages/Notifications.tsx:79
+msgid "Delete"
+msgstr "Xóa"
 
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:33
@@ -97,8 +111,7 @@ msgid "Welcome, log in below"
 msgstr "Chào bạn, đăng nhập bên dưới"
 
 #: src/components/forms/AuthenticationForm.tsx:91
-#: src/components/tables/settings/UserDrawer.tsx:159
-#: src/components/tables/settings/UserTable.tsx:56
+#: src/components/tables/settings/UserTable.tsx:163
 msgid "Username"
 msgstr "Tên người dùng"
 
@@ -118,8 +131,7 @@ msgstr "Đặt lại mật khẩu"
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/components/tables/company/ContactTable.tsx:47
-#: src/components/tables/settings/UserDrawer.tsx:163
-#: src/components/tables/settings/UserTable.tsx:50
+#: src/components/tables/settings/UserTable.tsx:157
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
@@ -161,8 +173,10 @@ msgstr "Host"
 #: src/components/tables/company/ContactTable.tsx:35
 #: src/components/tables/part/PartCategoryTable.tsx:24
 #: src/components/tables/part/PartParameterTemplateTable.tsx:29
+#: src/components/tables/plugin/PluginErrorTable.tsx:33
+#: src/components/tables/plugin/PluginListTable.tsx:156
 #: src/components/tables/settings/CustomUnitsTable.tsx:31
-#: src/components/tables/settings/GroupTable.tsx:28
+#: src/components/tables/settings/GroupTable.tsx:100
 #: src/components/tables/stock/StockLocationTable.tsx:25
 msgid "Name"
 msgstr "Tên"
@@ -207,7 +221,7 @@ msgstr "Trạng thái: <0>worker</0> ({0}), <1>plugins</1>{1}"
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
 #: src/components/tables/InvenTreeTable.tsx:393
-#: src/components/tables/plugin/PluginListTable.tsx:163
+#: src/components/tables/plugin/PluginListTable.tsx:363
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
@@ -215,19 +229,19 @@ msgstr "Trạng thái: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgid "Error"
 msgstr "Lỗi"
 
-#: src/components/forms/fields/RelatedModelField.tsx:199
+#: src/components/forms/fields/RelatedModelField.tsx:210
 #: src/pages/Index/Settings/UserSettings.tsx:64
 msgid "Search"
 msgstr "Tìm kiếm"
 
-#: src/components/forms/fields/RelatedModelField.tsx:200
+#: src/components/forms/fields/RelatedModelField.tsx:211
 #: src/components/modals/AboutInvenTreeModal.tsx:67
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:301
 msgid "Loading"
 msgstr "Đang tải"
 
-#: src/components/forms/fields/RelatedModelField.tsx:202
+#: src/components/forms/fields/RelatedModelField.tsx:213
 msgid "No results found"
 msgstr "Không có kết quả nào được tìm thấy"
 
@@ -270,15 +284,6 @@ msgstr "Gỡ bỏ mã vạch tùy chỉnh"
 msgid "Edit"
 msgstr "Sửa"
 
-#: src/components/items/ActionDropdown.tsx:173
-#: src/components/tables/RowActions.tsx:61
-#: src/functions/forms.tsx:300
-#: src/hooks/UseForm.tsx:109
-#: src/pages/Index/Scan.tsx:332
-#: src/pages/Notifications.tsx:79
-msgid "Delete"
-msgstr "Xóa"
-
 #: src/components/items/ActionDropdown.tsx:174
 msgid "Delete item"
 msgstr "Xoá mặt hàng"
@@ -313,6 +318,10 @@ msgstr "Lỗi đã xảy ra:"
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
 msgstr "Đọc tiếp"
+
+#: src/components/items/InfoItem.tsx:25
+msgid "None"
+msgstr ""
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
@@ -552,7 +561,8 @@ msgid "Email settings not configured"
 msgstr "Chưa cấu hình thiết lập email"
 
 #: src/components/modals/ServerInfoModal.tsx:112
-#: src/components/tables/plugin/PluginListTable.tsx:86
+#: src/components/tables/plugin/PluginListTable.tsx:174
+#: src/components/tables/plugin/PluginListTable.tsx:286
 msgid "Version"
 msgstr "Phiên bản"
 
@@ -565,45 +575,39 @@ msgstr "Phiên bản máy chủ"
 #~ msgid "Profile"
 #~ msgstr "Profile"
 
-#: src/components/nav/MainMenu.tsx:44
+#: src/components/nav/MainMenu.tsx:43
 #: src/defaults/menuItems.tsx:63
-#: src/pages/Index/Settings/AdminCenter.tsx:98
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:62
 msgid "Admin Center"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:48
-#: src/pages/Index/Settings/AdminCenter.tsx:44
+#: src/components/nav/MainMenu.tsx:47
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
 msgid "Settings"
 msgstr "Cài đặt"
 
-#: src/components/nav/MainMenu.tsx:51
+#: src/components/nav/MainMenu.tsx:50
 #: src/defaults/menuItems.tsx:15
 msgid "Account settings"
 msgstr "Cài đặt tài khoản"
 
-#: src/components/nav/MainMenu.tsx:59
+#: src/components/nav/MainMenu.tsx:58
 #: src/defaults/menuItems.tsx:58
 #: src/pages/Index/Settings/SystemSettings.tsx:296
 msgid "System Settings"
 msgstr "Thiết lập hệ thống"
 
 #: src/components/nav/MainMenu.tsx:68
-#: src/components/nav/NavigationDrawer.tsx:67
-#: src/pages/Index/Settings/PluginSettings.tsx:32
-msgid "Plugins"
-msgstr "Plugins"
-
-#: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
 #~ msgstr "Current language {locale}"
+
+#: src/components/nav/MainMenu.tsx:69
+msgid "Logout"
+msgstr "Đăng xuất"
 
 #: src/components/nav/MainMenu.tsx:71
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
-
-#: src/components/nav/MainMenu.tsx:79
-msgid "Logout"
-msgstr "Đăng xuất"
 
 #: src/components/nav/NavHoverMenu.tsx:61
 msgid "Open Navigation"
@@ -630,6 +634,11 @@ msgstr "Điều hướng"
 msgid "Pages"
 msgstr "Trang"
 
+#: src/components/nav/NavigationDrawer.tsx:67
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:29
+msgid "Plugins"
+msgstr "Plugins"
+
 #: src/components/nav/NavigationDrawer.tsx:77
 msgid "Documentation"
 msgstr "Tài liệu"
@@ -638,7 +647,7 @@ msgstr "Tài liệu"
 msgid "About"
 msgstr "Giới thiệu"
 
-#: src/components/nav/NotificationDrawer.tsx:70
+#: src/components/nav/NotificationDrawer.tsx:71
 #: src/pages/Index/Settings/SystemSettings.tsx:124
 #: src/pages/Index/Settings/UserSettings.tsx:94
 #: src/pages/Notifications.tsx:28
@@ -646,11 +655,11 @@ msgstr "Giới thiệu"
 msgid "Notifications"
 msgstr "Thông báo"
 
-#: src/components/nav/NotificationDrawer.tsx:87
+#: src/components/nav/NotificationDrawer.tsx:88
 msgid "You have no unread notifications."
 msgstr "Bạn chưa có thông báo mới."
 
-#: src/components/nav/NotificationDrawer.tsx:111
+#: src/components/nav/NotificationDrawer.tsx:123
 #: src/pages/Notifications.tsx:36
 msgid "Mark as read"
 msgstr "Đánh dấu đã đọc"
@@ -901,7 +910,8 @@ msgid "User"
 msgstr "Người dùng"
 
 #: src/components/render/ModelType.tsx:150
-#: src/pages/Index/Settings/AdminCenter.tsx:34
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:23
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
 msgstr "Người dùng"
 
@@ -922,21 +932,21 @@ msgstr ""
 msgid "Quantity"
 msgstr "Số lượng"
 
-#: src/components/settings/SettingItem.tsx:32
-#: src/components/settings/SettingItem.tsx:74
+#: src/components/settings/SettingItem.tsx:43
+#: src/components/settings/SettingItem.tsx:96
 msgid "Setting updated"
 msgstr "Cài đặt đã được cập nhật"
 
-#: src/components/settings/SettingItem.tsx:33
-#: src/components/settings/SettingItem.tsx:75
+#: src/components/settings/SettingItem.tsx:44
+#: src/components/settings/SettingItem.tsx:97
 msgid "{0} updated successfully"
 msgstr "{0} đã được cập nhật thành công"
 
-#: src/components/settings/SettingItem.tsx:41
+#: src/components/settings/SettingItem.tsx:52
 msgid "Error editing setting"
 msgstr "Lỗi sửa thiết lập"
 
-#: src/components/settings/SettingItem.tsx:61
+#: src/components/settings/SettingItem.tsx:89
 msgid "Edit Setting"
 msgstr "Sửa thiết lập"
 
@@ -946,7 +956,8 @@ msgstr "Sửa thiết lập"
 #: src/components/tables/part/PartParameterTable.tsx:65
 #: src/components/tables/part/PartParameterTemplateTable.tsx:40
 #: src/components/tables/part/RelatedPartTable.tsx:60
-#: src/components/tables/plugin/PluginListTable.tsx:73
+#: src/components/tables/plugin/PluginListTable.tsx:159
+#: src/components/tables/plugin/PluginListTable.tsx:273
 #: src/components/tables/stock/StockItemTable.tsx:45
 msgid "Description"
 msgstr "Mô tả"
@@ -1062,10 +1073,10 @@ msgid "Select filter value"
 msgstr "Lựa chọn giá trị để lọc"
 
 #: src/components/tables/FilterSelectModal.tsx:166
-#: src/components/tables/plugin/PluginListTable.tsx:132
+#: src/components/tables/plugin/PluginListTable.tsx:332
 #: src/contexts/ThemeContext.tsx:64
-#: src/functions/forms.tsx:201
-#: src/hooks/UseForm.tsx:36
+#: src/functions/forms.tsx:202
+#: src/hooks/UseForm.tsx:38
 msgid "Cancel"
 msgstr "Hủy bỏ"
 
@@ -1289,9 +1300,9 @@ msgstr "Phát hành bởi"
 
 #: src/components/tables/build/BuildOrderTable.tsx:110
 #: src/components/tables/part/PartTable.tsx:175
-#: src/components/tables/plugin/PluginListTable.tsx:218
-#: src/components/tables/settings/UserDrawer.tsx:181
-#: src/components/tables/settings/UserTable.tsx:87
+#: src/components/tables/plugin/PluginListTable.tsx:177
+#: src/components/tables/plugin/PluginListTable.tsx:471
+#: src/components/tables/settings/UserTable.tsx:194
 msgid "Active"
 msgstr "Hoạt động"
 
@@ -1468,6 +1479,7 @@ msgid "Notification"
 msgstr "Thông báo"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:38
+#: src/components/tables/plugin/PluginErrorTable.tsx:37
 msgid "Message"
 msgstr "Nội dụng tin nhắn"
 
@@ -1727,95 +1739,166 @@ msgstr "Phụ kiện liên quan đã được xóa"
 msgid "Are you sure you want to remove this relationship?"
 msgstr "Bạn có chắc chắn muốn xóa mối quan hệ này không?"
 
-#: src/components/tables/plugin/PluginListTable.tsx:28
-msgid "Plugin is active"
-msgstr "Phần bổ sung hoạt động"
+#: src/components/tables/plugin/PluginErrorTable.tsx:29
+msgid "Stage"
+msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:34
-msgid "Plugin is inactive"
-msgstr "Phần bổ sung đang tắt"
+#: src/components/tables/plugin/PluginListTable.tsx:102
+msgid "Plugin with id {id} not found"
+msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:41
-msgid "Plugin is not installed"
-msgstr "Phần bổ sung chưa được cài đặt"
-
-#: src/components/tables/plugin/PluginListTable.tsx:58
-msgid "Plugin"
-msgstr "Phần bổ sung"
-
-#: src/components/tables/plugin/PluginListTable.tsx:80
-msgid "Description not available"
-msgstr "Mô tả không có sẵn"
-
-#: src/components/tables/plugin/PluginListTable.tsx:105
-msgid "Activate Plugin"
-msgstr "Kích hoạt phần bổ sung"
-
-#: src/components/tables/plugin/PluginListTable.tsx:105
-msgid "Deactivate Plugin"
-msgstr "Tắt phần bổ sung"
-
-#: src/components/tables/plugin/PluginListTable.tsx:114
-msgid "Confirm plugin activation"
-msgstr "Xác nhận kích hoạt phần bổ sung"
-
-#: src/components/tables/plugin/PluginListTable.tsx:115
-msgid "Confirm plugin deactivation"
-msgstr "Xác nhận tắt phần bổ sung"
+#: src/components/tables/plugin/PluginListTable.tsx:104
+msgid "An error occurred while fetching plugin details"
+msgstr ""
 
 #: src/components/tables/plugin/PluginListTable.tsx:121
-msgid "The following plugin will be activated"
-msgstr "Những phần bổ sung sau đây sẽ được kích hoạt"
+msgid "Plugin Actions"
+msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:122
-msgid "The following plugin will be deactivated"
-msgstr "Những phần bổ sung sau đây sẽ bị tắt"
+#: src/components/tables/plugin/PluginListTable.tsx:125
+#: src/components/tables/plugin/PluginListTable.tsx:128
+msgid "Edit plugin"
+msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:133
-msgid "Confirm"
-msgstr "Xác nhận"
-
-#: src/components/tables/plugin/PluginListTable.tsx:143
-msgid "Activating plugin"
-msgstr "Kích hoạt phần bổ sung"
-
-#: src/components/tables/plugin/PluginListTable.tsx:143
-msgid "Deactivating plugin"
-msgstr "Tắt phần bổ sung"
+#: src/components/tables/plugin/PluginListTable.tsx:139
+#: src/components/tables/plugin/PluginListTable.tsx:140
+msgid "Reload"
+msgstr ""
 
 #: src/components/tables/plugin/PluginListTable.tsx:153
-msgid "Plugin updated"
-msgstr "Đã cập nhật phần bổ sung"
-
-#: src/components/tables/plugin/PluginListTable.tsx:155
-msgid "The plugin was activated"
-msgstr "Phần bổ sung đã được kích hoạt"
-
-#: src/components/tables/plugin/PluginListTable.tsx:156
-msgid "The plugin was deactivated"
-msgstr "Phần bổ sung đã bị tắt"
+msgid "Plugin information"
+msgstr ""
 
 #: src/components/tables/plugin/PluginListTable.tsx:164
-msgid "Error updating plugin"
-msgstr "Lỗi cập nhật phần bổ sung"
+msgid "Author"
+msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:181
-msgid "Deactivate"
-msgstr "Hủy kích hoạt"
+#: src/components/tables/plugin/PluginListTable.tsx:169
+msgid "Date"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:185
+msgid "Package information"
+msgstr ""
 
 #: src/components/tables/plugin/PluginListTable.tsx:190
-msgid "Activate"
-msgstr "Kích hoạt"
+msgid "Installation path"
+msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:223
+#: src/components/tables/plugin/PluginListTable.tsx:195
+#: src/components/tables/plugin/PluginListTable.tsx:476
 msgid "Builtin"
 msgstr "Gắn liền"
 
-#: src/components/tables/plugin/PluginListTable.tsx:228
+#: src/components/tables/plugin/PluginListTable.tsx:206
+msgid "Plugin settings"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:223
+msgid "Plugin is active"
+msgstr "Phần bổ sung hoạt động"
+
+#: src/components/tables/plugin/PluginListTable.tsx:229
+msgid "Plugin is inactive"
+msgstr "Phần bổ sung đang tắt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:236
+msgid "Plugin is not installed"
+msgstr "Phần bổ sung chưa được cài đặt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:258
+msgid "Plugin"
+msgstr "Phần bổ sung"
+
+#: src/components/tables/plugin/PluginListTable.tsx:280
+msgid "Description not available"
+msgstr "Mô tả không có sẵn"
+
+#: src/components/tables/plugin/PluginListTable.tsx:305
+msgid "Activate Plugin"
+msgstr "Kích hoạt phần bổ sung"
+
+#: src/components/tables/plugin/PluginListTable.tsx:305
+msgid "Deactivate Plugin"
+msgstr "Tắt phần bổ sung"
+
+#: src/components/tables/plugin/PluginListTable.tsx:314
+msgid "Confirm plugin activation"
+msgstr "Xác nhận kích hoạt phần bổ sung"
+
+#: src/components/tables/plugin/PluginListTable.tsx:315
+msgid "Confirm plugin deactivation"
+msgstr "Xác nhận tắt phần bổ sung"
+
+#: src/components/tables/plugin/PluginListTable.tsx:321
+msgid "The following plugin will be activated"
+msgstr "Những phần bổ sung sau đây sẽ được kích hoạt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:322
+msgid "The following plugin will be deactivated"
+msgstr "Những phần bổ sung sau đây sẽ bị tắt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:333
+msgid "Confirm"
+msgstr "Xác nhận"
+
+#: src/components/tables/plugin/PluginListTable.tsx:343
+msgid "Activating plugin"
+msgstr "Kích hoạt phần bổ sung"
+
+#: src/components/tables/plugin/PluginListTable.tsx:343
+msgid "Deactivating plugin"
+msgstr "Tắt phần bổ sung"
+
+#: src/components/tables/plugin/PluginListTable.tsx:353
+msgid "Plugin updated"
+msgstr "Đã cập nhật phần bổ sung"
+
+#: src/components/tables/plugin/PluginListTable.tsx:355
+msgid "The plugin was activated"
+msgstr "Phần bổ sung đã được kích hoạt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:356
+msgid "The plugin was deactivated"
+msgstr "Phần bổ sung đã bị tắt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:364
+msgid "Error updating plugin"
+msgstr "Lỗi cập nhật phần bổ sung"
+
+#: src/components/tables/plugin/PluginListTable.tsx:381
+msgid "Deactivate"
+msgstr "Hủy kích hoạt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:390
+msgid "Activate"
+msgstr "Kích hoạt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:404
+msgid "Install plugin"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:412
+msgid "Install"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:416
+msgid "Plugin installed successfully"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:435
+msgid "Install Plugin"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:448
+msgid "Plugin detail"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:481
 msgid "Sample"
 msgstr "Mẫu"
 
-#: src/components/tables/plugin/PluginListTable.tsx:233
+#: src/components/tables/plugin/PluginListTable.tsx:486
 msgid "Installed"
 msgstr "Đã cài đặt"
 
@@ -2029,33 +2112,45 @@ msgstr "Thêm đơn vị tùy chỉnh"
 msgid "Custom unit created"
 msgstr "Đơn vị tùy chỉnh đã được tạo"
 
-#: src/components/tables/settings/GroupTable.tsx:40
-msgid "Edit group"
-msgstr ""
-
 #: src/components/tables/settings/GroupTable.tsx:45
-msgid "Group updated"
+#~ msgid "Group updated"
+#~ msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:48
+msgid "Group with id {id} not found"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:54
+#: src/components/tables/settings/GroupTable.tsx:50
+msgid "An error occurred while fetching group details"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:74
+msgid "Permission set"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:115
 msgid "Delete group"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:55
+#: src/components/tables/settings/GroupTable.tsx:116
 msgid "Group deleted"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:57
+#: src/components/tables/settings/GroupTable.tsx:118
 msgid "Are you sure you want to delete this group?"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:67
-#: src/components/tables/settings/GroupTable.tsx:81
+#: src/components/tables/settings/GroupTable.tsx:128
+#: src/components/tables/settings/GroupTable.tsx:142
 msgid "Add group"
 msgstr ""
 
-#: src/components/tables/settings/GroupTable.tsx:70
+#: src/components/tables/settings/GroupTable.tsx:131
 msgid "Added group"
+msgstr ""
+
+#: src/components/tables/settings/GroupTable.tsx:152
+msgid "Edit group"
 msgstr ""
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:49
@@ -2088,97 +2183,127 @@ msgid "Added project code"
 msgstr "Mã dự án đã được thêm"
 
 #: src/components/tables/settings/UserDrawer.tsx:92
-msgid "User permission changed successfully"
-msgstr ""
+#~ msgid "User permission changed successfully"
+#~ msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:93
-msgid "Some changes might only take effect after the user refreshes their login."
-msgstr ""
+#~ msgid "Some changes might only take effect after the user refreshes their login."
+#~ msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:118
-msgid "Changed user active status successfully"
-msgstr ""
+#~ msgid "Changed user active status successfully"
+#~ msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:119
-msgid "Set to {active}"
-msgstr ""
+#~ msgid "Set to {active}"
+#~ msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:142
-msgid "User details for {0}"
-msgstr ""
-
-#: src/components/tables/settings/UserDrawer.tsx:148
-#: src/pages/company/CompanyDetail.tsx:73
-#: src/pages/part/PartDetail.tsx:87
-#: src/pages/stock/StockDetail.tsx:69
-msgid "Details"
-msgstr "Chi tiết"
-
-#: src/components/tables/settings/UserDrawer.tsx:165
-#: src/components/tables/settings/UserTable.tsx:61
-msgid "First Name"
-msgstr ""
-
-#: src/components/tables/settings/UserDrawer.tsx:170
-#: src/components/tables/settings/UserTable.tsx:66
-msgid "Last Name"
-msgstr ""
+#~ msgid "User details for {0}"
+#~ msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:176
-msgid "Rights"
+#~ msgid "Rights"
+#~ msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:66
+msgid "User with id {id} not found"
 msgstr ""
 
-#: src/components/tables/settings/UserDrawer.tsx:184
-#: src/components/tables/settings/UserTable.tsx:79
-msgid "Staff"
+#: src/components/tables/settings/UserTable.tsx:68
+msgid "An error occurred while fetching user details"
 msgstr ""
 
-#: src/components/tables/settings/UserDrawer.tsx:190
-#: src/components/tables/settings/UserTable.tsx:83
-msgid "Superuser"
+#: src/components/tables/settings/UserTable.tsx:86
+msgid "Is Active"
 msgstr ""
 
-#: src/components/tables/settings/UserDrawer.tsx:200
-#: src/components/tables/settings/UserTable.tsx:72
-#: src/pages/Index/Settings/AdminCenter.tsx:38
-msgid "Groups"
+#: src/components/tables/settings/UserTable.tsx:87
+msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
 msgstr ""
 
-#: src/components/tables/settings/UserDrawer.tsx:204
-msgid "No groups"
+#: src/components/tables/settings/UserTable.tsx:91
+msgid "Is Staff"
 msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:99
-msgid "Edit user"
+#: src/components/tables/settings/UserTable.tsx:92
+msgid "Designates whether the user can log into the django admin site."
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:96
+msgid "Is Superuser"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:97
+msgid "Designates that this user has all permissions without explicitly assigning them."
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:103
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:19
+msgid "Info"
 msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:106
-msgid "User updated"
-msgstr ""
+#~ msgid "User updated"
+#~ msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:115
-msgid "Delete user"
-msgstr ""
-
-#: src/components/tables/settings/UserTable.tsx:116
-msgid "User deleted"
+#: src/components/tables/settings/UserTable.tsx:107
+msgid "You cannot edit the rights for the currently logged-in user."
 msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:117
 #~ msgid "user deleted"
 #~ msgstr "user deleted"
 
-#: src/components/tables/settings/UserTable.tsx:118
+#: src/components/tables/settings/UserTable.tsx:121
+#: src/components/tables/settings/UserTable.tsx:179
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:18
+msgid "Groups"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:133
+msgid "No groups"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:168
+msgid "First Name"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:173
+msgid "Last Name"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:186
+msgid "Staff"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:190
+msgid "Superuser"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:209
+msgid "Delete user"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:210
+msgid "User deleted"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:212
 msgid "Are you sure you want to delete this user?"
 msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:128
-#: src/components/tables/settings/UserTable.tsx:144
+#: src/components/tables/settings/UserTable.tsx:222
+#: src/components/tables/settings/UserTable.tsx:238
 msgid "Add user"
 msgstr ""
 
-#: src/components/tables/settings/UserTable.tsx:136
+#: src/components/tables/settings/UserTable.tsx:230
 msgid "Added user"
+msgstr ""
+
+#: src/components/tables/settings/UserTable.tsx:247
+msgid "Edit user"
 msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:71
@@ -2843,19 +2968,19 @@ msgstr "Đã đăng nhập"
 msgid "Found an existing login - using it to log you in."
 msgstr "Tìm thấy một tài khoản đã tồn tại - hãy sử dụng nó để đăng nhập."
 
-#: src/functions/forms.tsx:49
+#: src/functions/forms.tsx:50
 msgid "Form method not provided"
 msgstr "Phương thức biểu mẫu chưa được cung cấp"
 
-#: src/functions/forms.tsx:58
+#: src/functions/forms.tsx:59
 msgid "Response did not contain action data"
 msgstr "Phản hồi không chứa dữ liệu chức năng"
 
-#: src/functions/forms.tsx:187
+#: src/functions/forms.tsx:188
 msgid "Invalid Form"
 msgstr "Mẫu không hợp lệ"
 
-#: src/functions/forms.tsx:188
+#: src/functions/forms.tsx:189
 msgid "method parameter not supplied"
 msgstr "tham số phương thức không được cung cấp"
 
@@ -3335,36 +3460,52 @@ msgid "Loader"
 msgstr "Thanh tải"
 
 #: src/pages/Index/Settings/AdminCenter.tsx:30
-msgid "User Management"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter.tsx:48
-msgid "Select settings relevant for user lifecycle. More available in"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter.tsx:54
-msgid "System settings"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter.tsx:74
-msgid "Quick Actions"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter.tsx:79
-msgid "Add a new user"
-msgstr ""
+#~ msgid "User Management"
+#~ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter.tsx:91
 #~ msgid "Advanced Amininistrative Options for InvenTree"
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
-#: src/pages/Index/Settings/AdminCenter.tsx:99
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:39
+msgid "Quick Actions"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:44
+msgid "Add a new user"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:63
 msgid "Advanced Options"
 msgstr ""
 
-#: src/pages/Index/Settings/PluginSettings.tsx:47
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:23
+msgid "External plugins are not enabled for this InvenTree installation."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
+msgid "Plugin Error Stack"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:40
 msgid "Plugin Settings"
 msgstr "Thiết lập phần bổ sung"
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
+msgid "Warning"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:47
+msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:30
+msgid "Select settings relevant for user lifecycle. More available in"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:35
+msgid "System settings"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:70
 msgid "Login"
@@ -3570,6 +3711,12 @@ msgstr ""
 #: src/pages/build/BuildIndex.tsx:39
 msgid "New Build Order"
 msgstr "Tạo đơn đặt bản dựng"
+
+#: src/pages/company/CompanyDetail.tsx:73
+#: src/pages/part/PartDetail.tsx:87
+#: src/pages/stock/StockDetail.tsx:69
+msgid "Details"
+msgstr "Chi tiết"
 
 #: src/pages/company/CompanyDetail.tsx:78
 msgid "Manufactured Parts"
@@ -3788,4 +3935,3 @@ msgstr "Giao diện nền tảng được tối ưu cho máy tính bảng và m�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Đọc tài liệu"
-

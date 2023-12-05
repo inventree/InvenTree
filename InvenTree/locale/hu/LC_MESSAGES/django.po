@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-02 07:54+0000\n"
+"POT-Creation-Date: 2023-12-05 01:22+0000\n"
 "PO-Revision-Date: 2023-12-03 02:11\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -474,9 +474,13 @@ msgstr "Üdvözöljük a {current_site.name}-on"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid "Your account has been created.\n\n"
+msgid ""
+"Your account has been created.\n"
+"\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr "Felhasználói fiókját létrehoztuk.\n\n"
+msgstr ""
+"Felhasználói fiókját létrehoztuk.\n"
+"\n"
 "Bejelentkezéshez használja a jelszó beállítás funkciót (at https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -1486,7 +1490,8 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:507
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr ""
+"Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:576
@@ -5628,31 +5633,31 @@ msgstr "Minimum ár"
 msgid "Maximum Price"
 msgstr "Maximum ár"
 
-#: part/api.py:505
+#: part/api.py:506
 msgid "Incoming Purchase Order"
 msgstr "Beérkező beszerzési rendelés"
 
-#: part/api.py:525
+#: part/api.py:526
 msgid "Outgoing Sales Order"
 msgstr "Kimenő vevői rendelés"
 
-#: part/api.py:543
+#: part/api.py:544
 msgid "Stock produced by Build Order"
 msgstr "Gyártással előállított készlet"
 
-#: part/api.py:629
+#: part/api.py:630
 msgid "Stock required for Build Order"
 msgstr "A gyártási utasításhoz szükséges készlet"
 
-#: part/api.py:774
+#: part/api.py:775
 msgid "Valid"
 msgstr "Érvényes"
 
-#: part/api.py:775
+#: part/api.py:776
 msgid "Validate entire Bill of Materials"
 msgstr "Teljes alkatrészjegyzék jóváhagyása"
 
-#: part/api.py:781
+#: part/api.py:782
 msgid "This option must be selected"
 msgstr "Ennek az opciónak ki kll lennie választva"
 
@@ -7504,7 +7509,7 @@ msgstr "Alapvető vonalkód támogatást ad"
 #: plugin/builtin/integration/core_notifications.py:34
 #: plugin/builtin/integration/currency_exchange.py:22
 #: plugin/builtin/labels/inventree_label.py:23
-#: plugin/builtin/labels/label_sheet.py:56
+#: plugin/builtin/labels/label_sheet.py:63
 #: plugin/builtin/suppliers/digikey.py:19 plugin/builtin/suppliers/lcsc.py:21
 #: plugin/builtin/suppliers/mouser.py:19 plugin/builtin/suppliers/tme.py:21
 msgid "InvenTree contributors"
@@ -7577,34 +7582,44 @@ msgid "Page size for the label sheet"
 msgstr "Címke oldal méret"
 
 #: plugin/builtin/labels/label_sheet.py:34
+#, fuzzy
+#| msgid "Labels"
+msgid "Skip Labels"
+msgstr "Címkék"
+
+#: plugin/builtin/labels/label_sheet.py:35
+msgid "Skip this number of labels when printing label sheets"
+msgstr ""
+
+#: plugin/builtin/labels/label_sheet.py:41
 msgid "Border"
 msgstr "Szegély"
 
-#: plugin/builtin/labels/label_sheet.py:35
+#: plugin/builtin/labels/label_sheet.py:42
 msgid "Print a border around each label"
 msgstr "Az egyes címkék körüli margó"
 
-#: plugin/builtin/labels/label_sheet.py:40 report/models.py:203
+#: plugin/builtin/labels/label_sheet.py:47 report/models.py:203
 msgid "Landscape"
 msgstr "Fekvő"
 
-#: plugin/builtin/labels/label_sheet.py:41
+#: plugin/builtin/labels/label_sheet.py:48
 msgid "Print the label sheet in landscape mode"
 msgstr "Fekvő módban nyomtatás"
 
-#: plugin/builtin/labels/label_sheet.py:53
+#: plugin/builtin/labels/label_sheet.py:60
 msgid "InvenTree Label Sheet Printer"
 msgstr "Inventree Címke Ív Nyomtató"
 
-#: plugin/builtin/labels/label_sheet.py:54
+#: plugin/builtin/labels/label_sheet.py:61
 msgid "Arrays multiple labels onto a single sheet"
 msgstr "Több címke egy ívre helyezése"
 
-#: plugin/builtin/labels/label_sheet.py:87
+#: plugin/builtin/labels/label_sheet.py:95
 msgid "Label is too large for page size"
 msgstr "Címke túl nagy a lapmérethez képest"
 
-#: plugin/builtin/labels/label_sheet.py:116
+#: plugin/builtin/labels/label_sheet.py:128
 msgid "No labels were generated"
 msgstr "Nem készült címke"
 
@@ -13360,7 +13375,8 @@ msgstr "A kiválasztott SSO kiszolgáló érvénytelen, vagy nincs megfelelően 
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "A %(provider_name)s felhasználói fiókodat fogod használni a %(site_name)s belépéshez.<br>Kérlek töltsd ki az alábbi adatokat:"
 
@@ -13535,4 +13551,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
-

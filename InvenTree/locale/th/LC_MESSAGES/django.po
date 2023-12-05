@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-02 07:54+0000\n"
+"POT-Creation-Date: 2023-12-05 01:22+0000\n"
 "PO-Revision-Date: 2023-12-03 02:11\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
@@ -474,7 +474,9 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid "Your account has been created.\n\n"
+msgid ""
+"Your account has been created.\n"
+"\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -5626,31 +5628,31 @@ msgstr ""
 msgid "Maximum Price"
 msgstr ""
 
-#: part/api.py:505
+#: part/api.py:506
 msgid "Incoming Purchase Order"
 msgstr ""
 
-#: part/api.py:525
+#: part/api.py:526
 msgid "Outgoing Sales Order"
 msgstr ""
 
-#: part/api.py:543
+#: part/api.py:544
 msgid "Stock produced by Build Order"
 msgstr ""
 
-#: part/api.py:629
+#: part/api.py:630
 msgid "Stock required for Build Order"
 msgstr ""
 
-#: part/api.py:774
+#: part/api.py:775
 msgid "Valid"
 msgstr ""
 
-#: part/api.py:775
+#: part/api.py:776
 msgid "Validate entire Bill of Materials"
 msgstr ""
 
-#: part/api.py:781
+#: part/api.py:782
 msgid "This option must be selected"
 msgstr ""
 
@@ -7502,7 +7504,7 @@ msgstr ""
 #: plugin/builtin/integration/core_notifications.py:34
 #: plugin/builtin/integration/currency_exchange.py:22
 #: plugin/builtin/labels/inventree_label.py:23
-#: plugin/builtin/labels/label_sheet.py:56
+#: plugin/builtin/labels/label_sheet.py:63
 #: plugin/builtin/suppliers/digikey.py:19 plugin/builtin/suppliers/lcsc.py:21
 #: plugin/builtin/suppliers/mouser.py:19 plugin/builtin/suppliers/tme.py:21
 msgid "InvenTree contributors"
@@ -7575,34 +7577,42 @@ msgid "Page size for the label sheet"
 msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:34
-msgid "Border"
+msgid "Skip Labels"
 msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:35
-msgid "Print a border around each label"
-msgstr ""
-
-#: plugin/builtin/labels/label_sheet.py:40 report/models.py:203
-msgid "Landscape"
+msgid "Skip this number of labels when printing label sheets"
 msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:41
+msgid "Border"
+msgstr ""
+
+#: plugin/builtin/labels/label_sheet.py:42
+msgid "Print a border around each label"
+msgstr ""
+
+#: plugin/builtin/labels/label_sheet.py:47 report/models.py:203
+msgid "Landscape"
+msgstr ""
+
+#: plugin/builtin/labels/label_sheet.py:48
 msgid "Print the label sheet in landscape mode"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:53
+#: plugin/builtin/labels/label_sheet.py:60
 msgid "InvenTree Label Sheet Printer"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:54
+#: plugin/builtin/labels/label_sheet.py:61
 msgid "Arrays multiple labels onto a single sheet"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:87
+#: plugin/builtin/labels/label_sheet.py:95
 msgid "Label is too large for page size"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:116
+#: plugin/builtin/labels/label_sheet.py:128
 msgid "No labels were generated"
 msgstr ""
 
@@ -13358,7 +13368,8 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13533,4 +13544,3 @@ msgstr ""
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr ""
-
