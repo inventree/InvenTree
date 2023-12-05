@@ -9,6 +9,7 @@ import {
   ImageProps,
   LoadingOverlay,
   Overlay,
+  Skeleton,
   Stack
 } from '@mantine/core';
 import { useId } from '@mantine/hooks';
@@ -52,7 +53,8 @@ export function ApiImage(props: ImageProps) {
               setImage(url);
               break;
             default:
-              // User is not authorized to view this image
+              // User is not authorized to view this image, or the image is not available
+              setImage('');
               setAuthorized(false);
               console.error(`Error fetching image ${props.src}:`, response);
               break;
@@ -72,7 +74,14 @@ export function ApiImage(props: ImageProps) {
   return (
     <Stack>
       <LoadingOverlay visible={imgQuery.isLoading || imgQuery.isFetching} />
-      <Image {...props} src={image} withPlaceholder fit="contain" />
+      {image && image.length > 0 ? (
+        <Image {...props} src={image} withPlaceholder fit="contain" />
+      ) : (
+        <Skeleton
+          height={props?.height ?? props.width}
+          width={props?.width ?? props.height}
+        />
+      )}
       {imgQuery.isError && <Overlay color="#F00" />}
     </Stack>
   );
