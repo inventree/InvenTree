@@ -1,6 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
+  IconList,
   IconListDetails,
   IconPlugConnected,
   IconScale,
@@ -30,6 +31,13 @@ const CustomUnitsTable = Loadable(
   lazy(() => import('../../../../components/tables/settings/CustomUnitsTable'))
 );
 
+const PartParameterTemplateTable = Loadable(
+  lazy(
+    () =>
+      import('../../../../components/tables/part/PartParameterTemplateTable')
+  )
+);
+
 export default function AdminCenter() {
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
@@ -56,6 +64,12 @@ export default function AdminCenter() {
         label: t`Custom Units`,
         icon: <IconScale />,
         content: <CustomUnitsTable />
+      },
+      {
+        name: 'parameters',
+        label: t`Part Parameters`,
+        icon: <IconList />,
+        content: <PartParameterTemplateTable />
       },
       {
         name: 'plugin',
