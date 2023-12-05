@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { Alert, Stack, Title } from '@mantine/core';
-import { IconAlertTriangle, IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { PluginErrorTable } from '../../../../components/tables/plugin/PluginErrorTable';
