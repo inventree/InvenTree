@@ -27,8 +27,6 @@ import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { PartParameterTemplateTable } from '../../../components/tables/part/PartParameterTemplateTable';
 import { CurrencyTable } from '../../../components/tables/settings/CurrencyTable';
-import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
-import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
 import { useServerApiState } from '../../../states/ApiState';
 
 /**
@@ -100,12 +98,6 @@ export default function SystemSettings() {
             ]}
           />
         )
-      },
-      {
-        name: 'physicalunits',
-        label: t`Physical Units`,
-        icon: <IconScale />,
-        content: <CustomUnitsTable />
       },
       {
         name: 'notifications',

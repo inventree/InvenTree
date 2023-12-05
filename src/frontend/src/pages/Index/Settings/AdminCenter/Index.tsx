@@ -3,6 +3,7 @@ import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
   IconListDetails,
   IconPlugConnected,
+  IconScale,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
@@ -25,6 +26,10 @@ const ProjectCodeTable = Loadable(
   lazy(() => import('../../../../components/tables/settings/ProjectCodeTable'))
 );
 
+const CustomUnitsTable = Loadable(
+  lazy(() => import('../../../../components/tables/settings/CustomUnitsTable'))
+);
+
 export default function AdminCenter() {
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
@@ -45,6 +50,12 @@ export default function AdminCenter() {
             <ProjectCodeTable />
           </Stack>
         )
+      },
+      {
+        name: 'customunits',
+        label: t`Custom Units`,
+        icon: <IconScale />,
+        content: <CustomUnitsTable />
       },
       {
         name: 'plugin',
