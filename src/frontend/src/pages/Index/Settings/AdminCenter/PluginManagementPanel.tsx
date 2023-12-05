@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { Alert, Stack, Title } from '@mantine/core';
-import { IconAlertTriangle, IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { PluginErrorTable } from '../../../../components/tables/plugin/PluginErrorTable';
@@ -39,16 +39,6 @@ export default function PluginManagementPanel() {
         <Title order={5}>
           <Trans>Plugin Settings</Trans>
         </Title>
-        <Alert
-          icon={<IconAlertTriangle />}
-          color="yellow"
-          title={<Trans>Warning</Trans>}
-        >
-          <Trans>
-            Changing the settings below require you to immediately restart the
-            server. Do not change this while under active usage.
-          </Trans>
-        </Alert>
         <GlobalSettingList
           keys={[
             'ENABLE_PLUGINS_SCHEDULE',

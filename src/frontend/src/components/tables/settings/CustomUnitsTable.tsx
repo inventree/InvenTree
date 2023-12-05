@@ -19,7 +19,7 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 /**
  * Table for displaying list of custom physical units
  */
-export function CustomUnitsTable() {
+export default function CustomUnitsTable() {
   const table = useTable('custom-units');
 
   const user = useUserState();
