@@ -20,7 +20,7 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 /**
  * Table for displaying list of project codes
  */
-export function ProjectCodeTable() {
+export default function ProjectCodeTable() {
   const table = useTable('project-codes');
 
   const user = useUserState();
