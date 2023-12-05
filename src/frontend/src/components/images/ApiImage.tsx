@@ -4,14 +4,7 @@
  *
  * Image caching is handled automagically by the browsers cache
  */
-import {
-  Image,
-  ImageProps,
-  LoadingOverlay,
-  Overlay,
-  Skeleton,
-  Stack
-} from '@mantine/core';
+import { Image, ImageProps, Skeleton, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -73,7 +66,6 @@ export function ApiImage(props: ImageProps) {
 
   return (
     <Stack>
-      <LoadingOverlay visible={imgQuery.isLoading || imgQuery.isFetching} />
       {image && image.length > 0 ? (
         <Image {...props} src={image} withPlaceholder fit="contain" />
       ) : (
@@ -82,7 +74,6 @@ export function ApiImage(props: ImageProps) {
           width={props?.width ?? props.height}
         />
       )}
-      {imgQuery.isError && <Overlay color="#F00" />}
     </Stack>
   );
 }
