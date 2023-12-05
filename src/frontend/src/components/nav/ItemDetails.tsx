@@ -12,13 +12,19 @@ function defineFields(part: any) {
   ];
 }
 
+const imageActions = {
+  selectExisting: true,
+  uploadFile: true,
+  deleteFile: true
+};
+
 export function ItemDetails({ params = {} }: { params?: any }) {
   console.log(params);
   const fields = defineFields(params);
 
   return (
     <Paper withBorder={true}>
-      <DetailsImage src={params.image} />
+      <DetailsImage imageActions={imageActions} src={params.image} />
     </Paper>
   );
 }

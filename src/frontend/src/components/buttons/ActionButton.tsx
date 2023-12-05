@@ -10,7 +10,7 @@ export type ActionButtonProps = {
   color?: string;
   tooltip?: string;
   variant?: string;
-  size?: number;
+  size?: number | string;
   disabled?: boolean;
   onClick?: any;
   hidden?: boolean;
@@ -35,6 +35,7 @@ export function ActionButton(props: ActionButtonProps) {
           color={props.color}
           size={props.size}
           onClick={props.onClick ?? notYetImplemented}
+          variant={props.variant}
         >
           <Group spacing="xs" noWrap={true}>
             {props.icon}
