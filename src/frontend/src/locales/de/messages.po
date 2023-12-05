@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-30 01:56\n"
+"PO-Revision-Date: 2023-12-05 02:31\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2114,7 +2114,7 @@ msgstr ""
 
 #: src/components/tables/settings/GroupTable.tsx:45
 #~ msgid "Group updated"
-#~ msgstr ""
+#~ msgstr "Group updated"
 
 #: src/components/tables/settings/GroupTable.tsx:48
 msgid "Group with id {id} not found"
@@ -2184,27 +2184,27 @@ msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:92
 #~ msgid "User permission changed successfully"
-#~ msgstr ""
+#~ msgstr "User permission changed successfully"
 
 #: src/components/tables/settings/UserDrawer.tsx:93
 #~ msgid "Some changes might only take effect after the user refreshes their login."
-#~ msgstr ""
+#~ msgstr "Some changes might only take effect after the user refreshes their login."
 
 #: src/components/tables/settings/UserDrawer.tsx:118
 #~ msgid "Changed user active status successfully"
-#~ msgstr ""
+#~ msgstr "Changed user active status successfully"
 
 #: src/components/tables/settings/UserDrawer.tsx:119
 #~ msgid "Set to {active}"
-#~ msgstr ""
+#~ msgstr "Set to {active}"
 
 #: src/components/tables/settings/UserDrawer.tsx:142
 #~ msgid "User details for {0}"
-#~ msgstr ""
+#~ msgstr "User details for {0}"
 
 #: src/components/tables/settings/UserDrawer.tsx:176
 #~ msgid "Rights"
-#~ msgstr ""
+#~ msgstr "Rights"
 
 #: src/components/tables/settings/UserTable.tsx:66
 msgid "User with id {id} not found"
@@ -2245,7 +2245,7 @@ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:106
 #~ msgid "User updated"
-#~ msgstr ""
+#~ msgstr "User updated"
 
 #: src/components/tables/settings/UserTable.tsx:107
 msgid "You cannot edit the rights for the currently logged-in user."
@@ -3461,7 +3461,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter.tsx:30
 #~ msgid "User Management"
-#~ msgstr ""
+#~ msgstr "User Management"
 
 #: src/pages/Index/Settings/AdminCenter.tsx:91
 #~ msgid "Advanced Amininistrative Options for InvenTree"
@@ -3935,3 +3935,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
