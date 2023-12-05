@@ -10,7 +10,7 @@ asgiref==3.7.2
     #   django
 build==1.0.3
     # via pip-tools
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c requirements.txt
     #   requests
@@ -33,13 +33,13 @@ coverage==5.5
     #   coveralls
 coveralls==2.1.2
     # via -r requirements-dev.in
-cryptography==41.0.6
+cryptography==41.0.7
     # via
     #   -c requirements.txt
     #   pdfminer-six
 distlib==0.3.7
     # via virtualenv
-django==4.1.10
+django==4.1.13
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
@@ -61,9 +61,9 @@ flake8==6.1.0
     #   pep8-naming
 flake8-docstrings==1.7.0
     # via -r requirements-dev.in
-identify==2.5.31
+identify==2.5.32
     # via pre-commit
-idna==3.4
+idna==3.6
     # via
     #   -c requirements.txt
     #   requests
@@ -87,7 +87,7 @@ pep8-naming==0.13.3
     # via -r requirements-dev.in
 pip-tools==7.3.0
     # via -r requirements-dev.in
-platformdirs==3.11.0
+platformdirs==4.1.0
     # via virtualenv
 pre-commit==3.5.0
     # via -r requirements-dev.in
@@ -128,13 +128,13 @@ typing-extensions==4.8.0
     #   -c requirements.txt
     #   asgiref
     #   django-test-migrations
-urllib3==2.0.7
+urllib3==2.1.0
     # via
     #   -c requirements.txt
     #   requests
-virtualenv==20.24.6
+virtualenv==20.25.0
     # via pre-commit
-wheel==0.41.3
+wheel==0.42.0
     # via pip-tools
 zipp==3.16.2
     # via
