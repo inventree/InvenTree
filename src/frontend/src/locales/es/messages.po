@@ -5,16 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: es_MX\n"
+"Language: es\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-01 02:01\n"
+"PO-Revision-Date: 2023-12-05 02:30\n"
 "Last-Translator: \n"
-"Language-Team: Spanish, Mexico\n"
+"Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: es-MX\n"
+"X-Crowdin-Language: es-ES\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
@@ -62,7 +62,7 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:33
 msgid "Login failed"
-msgstr "Error al iniciar sesión"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
@@ -78,11 +78,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr "Inicio de sesión exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr "¡Bienvenido de vuelta!"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -91,11 +91,11 @@ msgstr "¡Bienvenido de vuelta!"
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:102
 msgid "Mail delivery successful"
-msgstr "Envío de correo exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr "Revisa tu bandeja de entrada para el enlace de inicio de sesión. Si tienes una cuenta, recibirás un enlace de inicio de sesión. Revisa también el correo no deseado."
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -104,30 +104,30 @@ msgstr "Revisa tu bandeja de entrada para el enlace de inicio de sesión. Si tie
 
 #: src/components/forms/AuthenticationForm.tsx:72
 msgid "Input error"
-msgstr "Error de entrada"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr "Bienvenido, inicia sesión a continuación"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:91
 #: src/components/tables/settings/UserTable.tsx:163
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr "Contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr "Tu contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr "Restablecer contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/components/tables/company/ContactTable.tsx:47
@@ -135,13 +135,13 @@ msgstr "Restablecer contraseña"
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
-msgstr "Correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr "Te enviaremos un enlace para iniciar sesión - si estás registrado"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -149,11 +149,11 @@ msgstr "Te enviaremos un enlace para iniciar sesión - si estás registrado"
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr "Envíame un correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr "Usaré nombre de usuario y contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
@@ -179,11 +179,11 @@ msgstr ""
 #: src/components/tables/settings/GroupTable.tsx:100
 #: src/components/tables/stock/StockLocationTable.tsx:25
 msgid "Name"
-msgstr "Nombre"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr "Nadie aquí..."
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
@@ -192,11 +192,11 @@ msgstr ""
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr "Guardar"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr "Seleccionar instancia de destino"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
@@ -204,15 +204,15 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr "Versión: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr "API:{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr "Nombre: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
@@ -834,7 +834,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:175
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
-msgstr "Órdenes de compra"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:102
 msgid "Purchase Order Line"
@@ -876,7 +876,7 @@ msgstr ""
 #: src/pages/company/CompanyDetail.tsx:117
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
-msgstr "Ordenes de devolución"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:128
 #: src/components/tables/company/AddressTable.tsx:49
@@ -2114,7 +2114,7 @@ msgstr ""
 
 #: src/components/tables/settings/GroupTable.tsx:45
 #~ msgid "Group updated"
-#~ msgstr ""
+#~ msgstr "Group updated"
 
 #: src/components/tables/settings/GroupTable.tsx:48
 msgid "Group with id {id} not found"
@@ -2184,27 +2184,27 @@ msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:92
 #~ msgid "User permission changed successfully"
-#~ msgstr ""
+#~ msgstr "User permission changed successfully"
 
 #: src/components/tables/settings/UserDrawer.tsx:93
 #~ msgid "Some changes might only take effect after the user refreshes their login."
-#~ msgstr ""
+#~ msgstr "Some changes might only take effect after the user refreshes their login."
 
 #: src/components/tables/settings/UserDrawer.tsx:118
 #~ msgid "Changed user active status successfully"
-#~ msgstr ""
+#~ msgstr "Changed user active status successfully"
 
 #: src/components/tables/settings/UserDrawer.tsx:119
 #~ msgid "Set to {active}"
-#~ msgstr ""
+#~ msgstr "Set to {active}"
 
 #: src/components/tables/settings/UserDrawer.tsx:142
 #~ msgid "User details for {0}"
-#~ msgstr ""
+#~ msgstr "User details for {0}"
 
 #: src/components/tables/settings/UserDrawer.tsx:176
 #~ msgid "Rights"
-#~ msgstr ""
+#~ msgstr "Rights"
 
 #: src/components/tables/settings/UserTable.tsx:66
 msgid "User with id {id} not found"
@@ -2245,7 +2245,7 @@ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:106
 #~ msgid "User updated"
-#~ msgstr ""
+#~ msgstr "User updated"
 
 #: src/components/tables/settings/UserTable.tsx:107
 msgid "You cannot edit the rights for the currently logged-in user."
@@ -3461,7 +3461,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter.tsx:30
 #~ msgid "User Management"
-#~ msgstr ""
+#~ msgstr "User Management"
 
 #: src/pages/Index/Settings/AdminCenter.tsx:91
 #~ msgid "Advanced Amininistrative Options for InvenTree"
@@ -3935,3 +3935,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
