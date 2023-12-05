@@ -21,7 +21,7 @@ export function ApiImage(props: ImageProps) {
 
   const queryKey = useId();
 
-  const imgQuery = useQuery({
+  const _imgQuery = useQuery({
     queryKey: ['image', queryKey, props.src],
     enabled:
       authorized &&
