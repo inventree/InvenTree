@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-30 01:56\n"
+"PO-Revision-Date: 2023-12-05 02:31\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2114,7 +2114,7 @@ msgstr "Egyedi mértékegység létrehozva"
 
 #: src/components/tables/settings/GroupTable.tsx:45
 #~ msgid "Group updated"
-#~ msgstr "Csoport frissítve"
+#~ msgstr "Group updated"
 
 #: src/components/tables/settings/GroupTable.tsx:48
 msgid "Group with id {id} not found"
@@ -2184,27 +2184,27 @@ msgstr "Projekt kód hozzáadva"
 
 #: src/components/tables/settings/UserDrawer.tsx:92
 #~ msgid "User permission changed successfully"
-#~ msgstr "Felhasználói jogosultság módosítása sikeres"
+#~ msgstr "User permission changed successfully"
 
 #: src/components/tables/settings/UserDrawer.tsx:93
 #~ msgid "Some changes might only take effect after the user refreshes their login."
-#~ msgstr "Némely változás csak újra bejelentkezés után lép életbe."
+#~ msgstr "Some changes might only take effect after the user refreshes their login."
 
 #: src/components/tables/settings/UserDrawer.tsx:118
 #~ msgid "Changed user active status successfully"
-#~ msgstr "Felhasználó aktív státuszának módosítása sikeres"
+#~ msgstr "Changed user active status successfully"
 
 #: src/components/tables/settings/UserDrawer.tsx:119
 #~ msgid "Set to {active}"
-#~ msgstr "Beállítva: {active}"
+#~ msgstr "Set to {active}"
 
 #: src/components/tables/settings/UserDrawer.tsx:142
 #~ msgid "User details for {0}"
-#~ msgstr "Felhasználói részletek: {0}"
+#~ msgstr "User details for {0}"
 
 #: src/components/tables/settings/UserDrawer.tsx:176
 #~ msgid "Rights"
-#~ msgstr "Jogosultságok"
+#~ msgstr "Rights"
 
 #: src/components/tables/settings/UserTable.tsx:66
 msgid "User with id {id} not found"
@@ -2245,7 +2245,7 @@ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:106
 #~ msgid "User updated"
-#~ msgstr "Felhasználó frissítve"
+#~ msgstr "User updated"
 
 #: src/components/tables/settings/UserTable.tsx:107
 msgid "You cannot edit the rights for the currently logged-in user."
@@ -3461,7 +3461,7 @@ msgstr "Betöltő"
 
 #: src/pages/Index/Settings/AdminCenter.tsx:30
 #~ msgid "User Management"
-#~ msgstr "Felhasználók kezelése"
+#~ msgstr "User Management"
 
 #: src/pages/Index/Settings/AdminCenter.tsx:91
 #~ msgid "Advanced Amininistrative Options for InvenTree"
@@ -3935,3 +3935,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+
