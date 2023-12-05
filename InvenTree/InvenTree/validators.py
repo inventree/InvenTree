@@ -17,7 +17,6 @@ import InvenTree.conversion
 
 def validate_physical_units(unit):
     """Ensure that a given unit is a valid physical unit."""
-
     unit = unit.strip()
 
     # Ignore blank units
@@ -69,7 +68,6 @@ class AllowedURLValidator(validators.URLValidator):
 
 def validate_purchase_order_reference(value):
     """Validate the 'reference' field of a PurchaseOrder."""
-
     from order.models import PurchaseOrder
 
     # If we get to here, run the "default" validation routine
@@ -78,7 +76,6 @@ def validate_purchase_order_reference(value):
 
 def validate_sales_order_reference(value):
     """Validate the 'reference' field of a SalesOrder."""
-
     from order.models import SalesOrder
 
     # If we get to here, run the "default" validation routine
@@ -140,7 +137,6 @@ def validate_part_name_format(value):
 
     Make sure that each template container has a field of Part Model
     """
-
     # Make sure that the field_name exists in Part model
     from part.models import Part
 

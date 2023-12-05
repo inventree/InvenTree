@@ -9,10 +9,11 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q, Sum, UniqueConstraint
-from django.db.models.signals import post_delete, post_save, pre_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy as __
 
 from moneyed import CURRENCIES
 from stdimage.models import StdImageField
@@ -50,7 +51,7 @@ def rename_company_image(instance, filename):
     else:
         ext = ''
 
-    fn = 'company_{pk}_img'.format(pk=instance.pk)
+    fn = f'company_{instance.pk}_img'
 
     if ext:
         fn += '.' + ext
@@ -160,7 +161,6 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
         This property exists for backwards compatibility
         """
-
         addr = self.primary_address
 
         return str(addr) if addr is not None else None
@@ -186,7 +186,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
     def __str__(self):
         """Get string representation of a Company."""
-        return "{n} - {d}".format(n=self.name, d=self.description)
+        return f"{self.name} - {self.description}"
 
     def get_absolute_url(self):
         """Get the web URL for the detail view for this Company."""
@@ -196,26 +196,24 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         """Return the URL of the image for this company."""
         if self.image:
             return InvenTree.helpers.getMediaUrl(self.image.url)
-        else:
-            return InvenTree.helpers.getBlankImage()
+        return InvenTree.helpers.getBlankImage()
 
     def get_thumbnail_url(self):
         """Return the URL for the thumbnail image for this Company."""
         if self.image:
             return InvenTree.helpers.getMediaUrl(self.image.thumbnail.url)
-        else:
-            return InvenTree.helpers.getBlankThumbnail()
+        return InvenTree.helpers.getBlankThumbnail()
 
     @property
     def parts(self):
         """Return SupplierPart objects which are supplied or manufactured by this company."""
-        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id))
+        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id)).distinct()
 
     @property
     def stock_items(self):
         """Return a list of all stock items supplied or manufactured by this company."""
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
+        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).distinct()
 
 
 class CompanyAttachment(InvenTreeAttachment):
@@ -281,10 +279,12 @@ class Address(models.Model):
         link: External link to additional address information
     """
 
+    class Meta:
+        """Metaclass defines extra model options"""
+        verbose_name_plural = "Addresses"
+
     def __init__(self, *args, **kwargs):
         """Custom init function"""
-        if 'confirm_primary' in kwargs:
-            self.confirm_primary = kwargs.pop('confirm_primary', None)
         super().__init__(*args, **kwargs)
 
     def __str__(self):
@@ -304,24 +304,30 @@ class Address(models.Model):
 
         return ", ".join(populated_lines)
 
-    class Meta:
-        """Metaclass defines extra model options"""
-        verbose_name_plural = "Addresses"
+    def save(self, *args, **kwargs):
+        """Run checks when saving an address:
+
+        - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
+        """
+        others = list(Address.objects.filter(company=self.company).exclude(pk=self.pk).all())
+
+        # If this is the *only* address for this company, make it the primary one
+        if len(others) == 0:
+            self.primary = True
+
+        super().save(*args, **kwargs)
+
+        # Once this address is saved, check others
+        if self.primary:
+            for addr in others:
+                if addr.primary:
+                    addr.primary = False
+                    addr.save()
 
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the Contcat model"""
         return reverse('api-address-list')
-
-    def validate_unique(self, exclude=None):
-        """Ensure that only one primary address exists per company"""
-
-        super().validate_unique(exclude=exclude)
-
-        if self.primary:
-            # Check that no other primary address exists for this company
-            if Address.objects.filter(company=self.company, primary=True).exclude(pk=self.pk).exists():
-                raise ValidationError({'primary': _('Company already has a primary address')})
 
     company = models.ForeignKey(Company, related_name='addresses',
                                 on_delete=models.CASCADE,
@@ -382,27 +388,7 @@ class Address(models.Model):
                              help_text=_('Link to address information (external)'))
 
 
-@receiver(pre_save, sender=Address)
-def check_primary(sender, instance, **kwargs):
-    """Removes primary flag from current primary address if the to-be-saved address is marked as primary"""
-
-    if instance.company.primary_address is None:
-        instance.primary = True
-
-    # If confirm_primary is not present, this function does not need to do anything
-    if not hasattr(instance, 'confirm_primary') or \
-       instance.primary is False or \
-       instance.company.primary_address is None or \
-       instance.id == instance.company.primary_address.id:
-        return
-
-    if instance.confirm_primary is True:
-        adr = Address.objects.get(id=instance.company.primary_address.id)
-        adr.primary = False
-        adr.save()
-
-
-class ManufacturerPart(MetadataMixin, models.Model):
+class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
     Attributes:
@@ -717,7 +703,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     SKU = models.CharField(
         max_length=100,
-        verbose_name=_('SKU'),
+        verbose_name=__("SKU = Stock Keeping Unit (supplier part number)", 'SKU'),
         help_text=_('Supplier stock keeping unit')
     )
 
@@ -765,7 +751,6 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     def base_quantity(self, quantity=1) -> Decimal:
         """Calculate the base unit quantiy for a given quantity."""
-
         q = Decimal(quantity) * Decimal(self.pack_quantity_native)
         q = round(q, 10).normalize()
 
@@ -790,7 +775,6 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     def update_available_quantity(self, quantity):
         """Update the available quantity for this SupplierPart"""
-
         self.available = quantity
         self.availability_updated = datetime.now()
         self.save()
@@ -864,8 +848,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
         if q is None or r is None:
             return 0
-        else:
-            return max(q - r, 0)
+        return max(q - r, 0)
 
     def purchase_orders(self):
         """Returns a list of purchase orders relating to this supplier part."""
@@ -928,7 +911,6 @@ class SupplierPriceBreak(common.models.PriceBreak):
 @receiver(post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break')
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated"""
-
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:
@@ -938,7 +920,6 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=SupplierPriceBreak, dispatch_uid='post_delete_supplier_price_break')
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted"""
-
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
 
         if instance.part and instance.part.part:

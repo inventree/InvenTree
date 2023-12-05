@@ -7,7 +7,7 @@ name: Backport
 
 on:
   pull_request_target:
-    types: ["labeled", "closed"]
+    types: [ "labeled", "closed" ]
 
 jobs:
   backport:
@@ -22,7 +22,7 @@ jobs:
       )
     steps:
       - name: Backport Action
-        uses: sqren/backport-github-action@v8.9.3
+        uses: sqren/backport-github-action@f54e19901f2a57f8b82360f2490d47ee82ec82c6 # pin@v9.2.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           auto_backport_label_prefix: backport-to-

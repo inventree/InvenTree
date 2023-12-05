@@ -449,7 +449,7 @@ function barcodeScanDialog(options={}) {
 
 
 /*
- * Dialog for linking a particular barcode to a database model instsance
+ * Dialog for linking a particular barcode to a database model instance
  */
 function linkBarcodeDialog(data, options={}) {
 

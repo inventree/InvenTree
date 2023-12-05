@@ -3,6 +3,7 @@ import {
   Anchor,
   Button,
   Group,
+  Loader,
   Paper,
   PasswordInput,
   Stack,
@@ -13,6 +14,7 @@ import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
@@ -25,12 +27,18 @@ export function AuthenticationForm() {
   const [classicLoginMode, setMode] = useDisclosure(true);
   const navigate = useNavigate();
 
+  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
+
   function handleLogin() {
+    setIsLoggingIn(true);
+
     if (classicLoginMode === true) {
       doClassicLogin(
         classicForm.values.username,
         classicForm.values.password
       ).then((ret) => {
+        setIsLoggingIn(false);
+
         if (ret === false) {
           notifications.show({
             title: t`Login failed`,
@@ -49,6 +57,8 @@ export function AuthenticationForm() {
       });
     } else {
       doSimpleLogin(simpleForm.values.email).then((ret) => {
+        setIsLoggingIn(false);
+
         if (ret?.status === 'ok') {
           notifications.show({
             title: t`Mail delivery successful`,
@@ -126,11 +136,17 @@ export function AuthenticationForm() {
               <Trans>I will use username and password</Trans>
             )}
           </Anchor>
-          <Button type="submit" onClick={handleLogin}>
-            {classicLoginMode ? (
-              <Trans>Log in</Trans>
+          <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
+            {isLoggingIn ? (
+              <Loader size="sm" />
             ) : (
-              <Trans>Send mail</Trans>
+              <>
+                {classicLoginMode ? (
+                  <Trans>Log In</Trans>
+                ) : (
+                  <Trans>Send Email</Trans>
+                )}
+              </>
             )}
           </Button>
         </Group>

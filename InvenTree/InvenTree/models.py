@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -73,7 +73,6 @@ class MetadataMixin(models.Model):
 
     def validate_metadata(self):
         """Validate the metadata field."""
-
         # Ensure that the 'metadata' field is a valid dict object
         if self.metadata is None:
             self.metadata = {}
@@ -202,7 +201,6 @@ class ReferenceIndexingMixin(models.Model):
 
         This is defined by a global setting object, specified by the REFERENCE_PATTERN_SETTING attribute
         """
-
         # By default, we return an empty string
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
@@ -218,7 +216,6 @@ class ReferenceIndexingMixin(models.Model):
         - Returns a python dict object which contains the context data for formatting the reference string.
         - The default implementation provides some default context information
         """
-
         return {
             'ref': cls.get_next_reference(),
             'date': datetime.now(),
@@ -230,18 +227,15 @@ class ReferenceIndexingMixin(models.Model):
 
         In practice, this means the item with the highest reference value
         """
-
         query = cls.objects.all().order_by('-reference_int', '-pk')
 
         if query.exists():
             return query.first()
-        else:
-            return None
+        return None
 
     @classmethod
     def get_next_reference(cls):
         """Return the next available reference value for this particular class."""
-
         # Find the "most recent" item
         latest = cls.get_most_recent_item()
 
@@ -270,7 +264,6 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def generate_reference(cls):
         """Generate the next 'reference' field based on specified pattern"""
-
         fmt = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
 
@@ -310,7 +303,6 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def validate_reference_pattern(cls, pattern):
         """Ensure that the provided pattern is valid"""
-
         ctx = cls.get_reference_context()
 
         try:
@@ -336,7 +328,6 @@ class ReferenceIndexingMixin(models.Model):
     @classmethod
     def validate_reference_field(cls, value):
         """Check that the provided 'reference' value matches the requisite pattern"""
-
         pattern = cls.get_reference_pattern()
 
         value = str(value).strip()
@@ -368,7 +359,6 @@ class ReferenceIndexingMixin(models.Model):
 
         If we cannot extract using the pattern for some reason, fallback to the entire reference
         """
-
         try:
             # Extract named group based on provided pattern
             reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
@@ -390,7 +380,6 @@ class ReferenceIndexingMixin(models.Model):
 
 def extract_int(reference, clip=0x7fffffff, allow_negative=False):
     """Extract an integer out of reference."""
-
     # Default value if we cannot convert to an integer
     ref_int = 0
 
@@ -440,7 +429,8 @@ class InvenTreeAttachment(models.Model):
     An attachment can be either an uploaded file, or an external URL
 
     Attributes:
-        attachment: File
+        attachment: Upload file
+        link: External URL
         comment: String descriptor for the attachment
         user: User associated with file upload
         upload_date: Date the file was uploaded
@@ -480,8 +470,7 @@ class InvenTreeAttachment(models.Model):
         """Human name for attachment."""
         if self.attachment is not None:
             return os.path.basename(self.attachment.name)
-        else:
-            return str(self.link)
+        return str(self.link)
 
     attachment = models.FileField(upload_to=rename_attachment, verbose_name=_('Attachment'),
                                   help_text=_('Select file to attach'),
@@ -511,8 +500,7 @@ class InvenTreeAttachment(models.Model):
         """Base name/path for attachment."""
         if self.attachment:
             return os.path.basename(self.attachment.name)
-        else:
-            return None
+        return None
 
     @basename.setter
     def basename(self, fn):
@@ -534,7 +522,7 @@ class InvenTreeAttachment(models.Model):
 
         # Check that there are no directory tricks going on...
         if new_file.parent != attachment_dir:
-            logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
+            logger.error("Attempted to rename attachment outside valid directory: '%s'", new_file)
             raise ValidationError(_("Invalid attachment directory"))
 
         # Ignore further checks if the filename is not actually being renamed
@@ -551,7 +539,7 @@ class InvenTreeAttachment(models.Model):
             raise ValidationError(_("Filename missing extension"))
 
         if not old_file.exists():
-            logger.error(f"Trying to rename attachment '{old_file}' which does not exist")
+            logger.error("Trying to rename attachment '%s' which does not exist", old_file)
             return
 
         if new_file.exists():
@@ -563,6 +551,21 @@ class InvenTreeAttachment(models.Model):
             self.save()
         except Exception:
             raise ValidationError(_("Error renaming file"))
+
+    def fully_qualified_url(self):
+        """Return a 'fully qualified' URL for this attachment.
+
+        - If the attachment is a link to an external resource, return the link
+        - If the attachment is an uploaded file, return the fully qualified media URL
+        """
+        if self.link:
+            return self.link
+
+        if self.attachment:
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
+
+        return ''
 
 
 class InvenTreeTree(MPTTModel):
@@ -577,6 +580,10 @@ class InvenTreeTree(MPTTModel):
         parent: The item immediately above this one. An item with a null parent is a top-level item
     """
 
+    # How items (not nodes) are hooked into the tree
+    # e.g. for StockLocation, this value is 'location'
+    ITEM_PARENT_KEY = None
+
     class Meta:
         """Metaclass defines extra model properties."""
         abstract = True
@@ -585,13 +592,130 @@ class InvenTreeTree(MPTTModel):
         """Set insert order."""
         order_insertion_by = ['name']
 
+    def delete(self, delete_children=False, delete_items=False):
+        """Handle the deletion of a tree node.
+
+        1. Update nodes and items under the current node
+        2. Delete this node
+        3. Rebuild the model tree
+        4. Rebuild the path for any remaining lower nodes
+        """
+        tree_id = self.tree_id if self.parent else None
+
+        # Ensure that we have the latest version of the database object
+        try:
+            self.refresh_from_db()
+        except self.__class__.DoesNotExist:
+            # If the object no longer exists, raise a ValidationError
+            raise ValidationError("Object %s of type %s no longer exists", str(self), str(self.__class__))
+
+        # Cache node ID values for lower nodes, before we delete this one
+        lower_nodes = list(self.get_descendants(include_self=False).values_list('pk', flat=True))
+
+        # 1. Update nodes and items under the current node
+        self.handle_tree_delete(delete_children=delete_children, delete_items=delete_items)
+
+        # 2. Delete *this* node
+        super().delete()
+
+        # 3. Update the tree structure
+        if tree_id:
+            self.__class__.objects.partial_rebuild(tree_id)
+        else:
+            self.__class__.objects.rebuild()
+
+        # 4. Rebuild the path for any remaining lower nodes
+        nodes = self.__class__.objects.filter(pk__in=lower_nodes)
+
+        nodes_to_update = []
+
+        for node in nodes:
+            new_path = node.construct_pathstring()
+
+            if new_path != node.pathstring:
+                node.pathstring = new_path
+                nodes_to_update.append(node)
+
+        if len(nodes_to_update) > 0:
+            self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
+
+    def handle_tree_delete(self, delete_children=False, delete_items=False):
+        """Delete a single instance of the tree, based on provided kwargs.
+
+        Removing a tree "node" from the database must be considered carefully,
+        based on what the user intends for any items which exist *under* that node.
+
+        - "children" are any nodes which exist *under* this node (e.g. PartCategory)
+        - "items" are any items which exist *under* this node (e.g. Part)
+
+        Arguments:
+            delete_children: If True, delete all child items
+            delete_items: If True, delete all items associated with this node
+
+        There are multiple scenarios we can consider here:
+
+        A) delete_children = True and delete_items = True
+        B) delete_children = True and delete_items = False
+        C) delete_children = False and delete_items = True
+        D) delete_children = False and delete_items = False
+        """
+
+        child_nodes = self.get_descendants(include_self=False)
+
+        # Case A: Delete all child items, and all child nodes.
+        # - Delete all items at any lower level
+        # - Delete all descendant nodes
+        if delete_children and delete_items:
+            self.get_items(cascade=True).delete()
+            self.delete_nodes(child_nodes)
+
+        # Case B: Delete all child nodes, but move all child items up to the parent
+        # - Move all items at any lower level to the parent of this item
+        # - Delete all descendant nodes
+        elif delete_children and not delete_items:
+            self.get_items(cascade=True).update(**{
+                self.ITEM_PARENT_KEY: self.parent
+            })
+
+            self.delete_nodes(child_nodes)
+
+        # Case C: Delete all child items, but keep all child nodes
+        # - Remove all items directly associated with this node
+        # - Move any direct child nodes up one level
+        elif not delete_children and delete_items:
+            self.get_items(cascade=False).delete()
+            self.get_children().update(parent=self.parent)
+
+        # Case D: Keep all child items, and keep all child nodes
+        # - Move all items directly associated with this node up one level
+        # - Move any direct child nodes up one level
+        elif not delete_children and not delete_items:
+            self.get_items(cascade=False).update(**{
+                self.ITEM_PARENT_KEY: self.parent
+            })
+            self.get_children().update(parent=self.parent)
+
+    def delete_nodes(self, nodes):
+        """Delete  a set of nodes from the tree.
+
+        1. First, set the "parent" value for selected nodes to None
+        2. Then, perform bulk deletion of selected nodes
+
+        Step 1. is required because we cannot guarantee the order-of-operations in the db backend
+
+        Arguments:
+            nodes: A queryset of nodes to delete
+        """
+
+        nodes.update(parent=None)
+        nodes.delete()
+
     def validate_unique(self, exclude=None):
         """Validate that this tree instance satisfies our uniqueness requirements.
 
         Note that a 'unique_together' requirement for ('name', 'parent') is insufficient,
         as it ignores cases where parent=None (i.e. top-level items)
         """
-
         super().validate_unique(exclude)
 
         results = self.__class__.objects.filter(
@@ -612,9 +736,14 @@ class InvenTreeTree(MPTTModel):
             }
         }
 
+    def construct_pathstring(self):
+        """Construct the pathstring for this tree node"""
+        return InvenTree.helpers.constructPathString(
+            [item.name for item in self.path]
+        )
+
     def save(self, *args, **kwargs):
         """Custom save method for InvenTreeTree abstract model"""
-
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
@@ -624,9 +753,7 @@ class InvenTreeTree(MPTTModel):
             })
 
         # Re-calculate the 'pathstring' field
-        pathstring = InvenTree.helpers.constructPathString(
-            [item.name for item in self.path]
-        )
+        pathstring = self.construct_pathstring()
 
         if pathstring != self.pathstring:
 
@@ -638,9 +765,20 @@ class InvenTreeTree(MPTTModel):
             self.pathstring = pathstring
             super().save(*args, **kwargs)
 
-            # Ensure that the pathstring changes are propagated down the tree also
-            for child in self.get_children():
-                child.save(*args, **kwargs)
+            # Update the pathstring for any child nodes
+            lower_nodes = self.get_descendants(include_self=False)
+
+            nodes_to_update = []
+
+            for node in lower_nodes:
+                new_path = node.construct_pathstring()
+
+                if new_path != node.pathstring:
+                    node.pathstring = new_path
+                    nodes_to_update.append(node)
+
+            if len(nodes_to_update) > 0:
+                self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
 
     name = models.CharField(
         blank=False,
@@ -672,16 +810,15 @@ class InvenTreeTree(MPTTModel):
         help_text=_('Path')
     )
 
-    @property
-    def item_count(self):
-        """Return the number of items which exist *under* this node in the tree.
+    def get_items(self, cascade=False):
+        """Return a queryset of items which exist *under* this node in the tree.
 
-        Here an 'item' is considered to be the 'leaf' at the end of each branch,
-        and the exact nature here will depend on the class implementation.
+        - For a StockLocation instance, this would be a queryset of StockItem objects
+        - For a PartCategory instance, this would be a queryset of Part objects
 
-        The default implementation returns zero
+        The default implementation returns an empty list
         """
-        return 0
+        raise NotImplementedError(f"items() method not implemented for {type(self)}")
 
     def getUniqueParents(self):
         """Return a flat set of all parent items that exist above this node.
@@ -742,9 +879,26 @@ class InvenTreeTree(MPTTModel):
         """
         return self.parentpath + [self]
 
+    def get_path(self):
+        """Return a list of element in the item tree.
+
+        Contains the full path to this item, with each entry containing the following data:
+
+        {
+            pk: <pk>,
+            name: <name>,
+        }
+        """
+        return [
+            {
+                'pk': item.pk,
+                'name': item.name
+            } for item in self.path
+        ]
+
     def __str__(self):
         """String representation of a category is the full path to that category."""
-        return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
+        return f"{self.pathstring} - {self.description}"
 
 
 class InvenTreeNotesMixin(models.Model):
@@ -804,34 +958,45 @@ class InvenTreeBarcodeMixin(models.Model):
     @classmethod
     def barcode_model_type(cls):
         """Return the model 'type' for creating a custom QR code."""
-
         # By default, use the name of the class
         return cls.__name__.lower()
 
     def format_barcode(self, **kwargs):
         """Return a JSON string for formatting a QR code for this model instance."""
-
         return InvenTree.helpers.MakeBarcode(
             self.__class__.barcode_model_type(),
             self.pk,
             **kwargs
         )
 
+    def format_matched_response(self):
+        """Format a standard response for a matched barcode."""
+
+        data = {
+            'pk': self.pk,
+        }
+
+        if hasattr(self, 'get_api_url'):
+            api_url = self.get_api_url()
+            data['api_url'] = f"{api_url}{self.pk}/"
+
+        if hasattr(self, 'get_absolute_url'):
+            data['web_url'] = self.get_absolute_url()
+
+        return data
+
     @property
     def barcode(self):
         """Format a minimal barcode string (e.g. for label printing)"""
-
         return self.format_barcode(brief=True)
 
     @classmethod
     def lookup_barcode(cls, barcode_hash):
         """Check if a model instance exists with the specified third-party barcode hash."""
-
         return cls.objects.filter(barcode_hash=barcode_hash).first()
 
     def assign_barcode(self, barcode_hash=None, barcode_data=None, raise_error=True, save=True):
         """Assign an external (third-party) barcode to this object."""
-
         # Must provide either barcode_hash or barcode_data
         if barcode_hash is None and barcode_data is None:
             raise ValueError("Provide either 'barcode_hash' or 'barcode_data'")
@@ -859,23 +1024,10 @@ class InvenTreeBarcodeMixin(models.Model):
 
     def unassign_barcode(self):
         """Unassign custom barcode from this model"""
-
         self.barcode_data = ''
         self.barcode_hash = ''
 
         self.save()
-
-
-@receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
-def before_delete_tree_item(sender, instance, using, **kwargs):
-    """Receives pre_delete signal from InvenTreeTree object.
-
-    Before an item is deleted, update each child object to point to the parent of the object being deleted.
-    """
-    # Update each tree item below this one
-    for child in instance.children.all():
-        child.parent = instance.parent
-        child.save()
 
 
 @receiver(post_save, sender=Error, dispatch_uid='error_post_save_notification')
@@ -884,9 +1036,9 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
     - Send a UI notification to all users with staff status
     """
-
     if created:
         try:
+            import common.models
             import common.notifications
 
             users = get_user_model().objects.filter(is_staff=True)
@@ -902,14 +1054,21 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                 'link': link
             }
 
-            common.notifications.trigger_notification(
-                instance,
-                'inventree.error_log',
-                context=context,
-                targets=users,
-                delivery_methods={common.notifications.UIMessageNotification, },
-            )
+            target_users = []
+
+            for user in users:
+                if common.models.InvenTreeUserSetting.get_setting('NOTIFICATION_ERROR_REPORT', True, user=user):
+                    target_users.append(user)
+
+            if len(target_users) > 0:
+                common.notifications.trigger_notification(
+                    instance,
+                    'inventree.error_log',
+                    context=context,
+                    targets=target_users,
+                    delivery_methods={common.notifications.UIMessageNotification, },
+                )
 
         except Exception as exc:
             """We do not want to throw an exception while reporting an exception"""
-            logger.error(exc)
+            logger.error(exc)  # noqa: LOG005

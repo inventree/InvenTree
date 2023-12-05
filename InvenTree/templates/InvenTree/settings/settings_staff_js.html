@@ -146,6 +146,25 @@ onPanelLoad('project-codes', function() {
                 title: '{% trans "Project Code" %}',
             },
             {
+                field: 'responsible',
+                title: '{% trans "Responsible" %}',
+                formatter: function(value, row) {
+                    if (!row.responsible_detail) {
+                        return '-';
+                    }
+
+                    var html = row.responsible_detail.name;
+
+                    if (row.responsible_detail.label == '{% trans "group" %}') {
+                        html += `<span class='float-right fas fa-users'></span>`;
+                    } else {
+                        html += `<span class='float-right fas fa-user'></span>`;
+                    }
+
+                    return html;
+                }
+            },
+            {
                 field: 'description',
                 sortable: false,
                 title: '{% trans "Description" %}',
@@ -171,6 +190,7 @@ onPanelLoad('project-codes', function() {
             fields: {
                 code: {},
                 description: {},
+                responsible: {},
             },
             refreshTable: '#project-code-table',
         });
@@ -308,6 +328,10 @@ onPanelLoad('category', function() {
                 parameter_template: {},
                 category: {
                     icon: 'fa-sitemap',
+                    tree_picker: {
+                        url: '{% url "api-part-category-tree" %}',
+                        default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+                    },
                 },
                 default_value: {},
             },
@@ -368,6 +392,10 @@ onPanelLoad('category', function() {
                 category: {
                     icon: 'fa-sitemap',
                     value: pk,
+                    tree_picker: {
+                        url: '{% url "api-part-category-tree" %}',
+                        default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+                    },
                 },
                 default_value: {},
             },
@@ -397,6 +425,82 @@ onPanelLoad('part-parameters', function() {
 onPanelLoad('parts', function() {
     $("#import-part").click(function() {
         launchModalForm("{% url 'api-part-import' %}?reset", {});
+    });
+});
+
+// Javascript for the Stock settings panel
+onPanelLoad("stock", function() {
+
+    // Construct the stock location type table
+    $('#location-type-table').bootstrapTable({
+        url: '{% url "api-location-type-list" %}',
+        search: true,
+        sortable: true,
+        formatNoMatches: function() {
+            return '{% trans "No stock location types found" %}';
+        },
+        columns: [
+            {
+                field: 'name',
+                sortable: true,
+                title: '{% trans "Name" %}',
+            },
+            {
+                field: 'description',
+                sortable: false,
+                title: '{% trans "Description" %}',
+            },
+            {
+                field: 'icon',
+                sortable: true,
+                title: '{% trans "Icon" %}',
+            },
+            {
+                field: 'location_count',
+                sortable: true,
+                title: '{% trans "Location count" %}',
+                formatter: function(value, row) {
+                    let html = value;
+                    let buttons = '';
+
+                    buttons += makeEditButton('button-location-type-edit', row.pk, '{% trans "Edit Location Type" %}');
+                    buttons += makeDeleteButton('button-location-type-delete', row.pk, '{% trans "Delete Location type" %}');
+
+                    html += wrapButtons(buttons);
+                    return html;
+                }
+            }
+        ]
+    });
+
+    $('#location-type-table').on('click', '.button-location-type-edit', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-location-type-list" %}${pk}/`, {
+            title: '{% trans "Edit Location Type" %}',
+            fields: stockLocationTypeFields(),
+            refreshTable: '#location-type-table',
+        });
+    });
+
+    $('#location-type-table').on('click', '.button-location-type-delete', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(`{% url "api-location-type-list" %}${pk}/`, {
+            title: '{% trans "Delete Location Type" %}',
+            method: 'DELETE',
+            refreshTable: '#location-type-table',
+        });
+    });
+
+    $('#new-location-type').click(function() {
+        // Construct a new location type
+        constructForm('{% url "api-location-type-list" %}', {
+            fields: stockLocationTypeFields(),
+            title: '{% trans "New Location Type" %}',
+            method: 'POST',
+            refreshTable: '#location-type-table',
+        });
     });
 });
 
@@ -453,8 +557,18 @@ onPanelLoad('stocktake', function() {
     $('#btn-generate-stocktake').click(function() {
         generateStocktakeReport({
             part: {},
-            category: {},
-            location: {},
+            category: {
+                tree_picker: {
+                    url: '{% url "api-part-category-tree" %}',
+                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+                },
+            },
+            location: {
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
+            },
             generate_report: {},
             update_parts: {},
         });

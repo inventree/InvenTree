@@ -1,5 +1,5 @@
 import { Trans } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Card, Container, Group, Loader, Stack, Text } from '@mantine/core';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,9 +14,20 @@ export default function Logged_In() {
 
   return (
     <>
-      <Text>
-        <Trans>Checking if you are already logged in</Trans>
-      </Text>
+      <Container>
+        <Stack align="center">
+          <Card shadow="sm" padding="lg" radius="md">
+            <Stack>
+              <Text size="lg">
+                <Trans>Checking if you are already logged in</Trans>
+              </Text>
+              <Group position="center">
+                <Loader />
+              </Group>
+            </Stack>
+          </Card>
+        </Stack>
+      </Container>
     </>
   );
 }

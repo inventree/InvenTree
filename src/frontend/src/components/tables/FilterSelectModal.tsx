@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Modal, Space } from '@mantine/core';
+import { Modal } from '@mantine/core';
 import { Select } from '@mantine/core';
 import { Stack } from '@mantine/core';
 import { Button, Group, Text } from '@mantine/core';

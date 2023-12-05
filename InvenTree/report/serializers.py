@@ -16,7 +16,6 @@ class ReportSerializerBase(InvenTreeModelSerializer):
     @staticmethod
     def report_fields():
         """Generic serializer fields for a report template"""
-
         return [
             'pk',
             'name',

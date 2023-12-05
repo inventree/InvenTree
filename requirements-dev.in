@@ -11,4 +11,5 @@ isort                                   # python import sorting
 pep8-naming                             # PEP naming convention extension
 pip-tools                               # Compile pip requirements
 pre-commit                              # Git pre-commit
-setuptools                              # Standard depenedency
+setuptools                              # Standard dependency
+pdfminer.six                            # PDF validation

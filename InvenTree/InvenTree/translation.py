@@ -40,7 +40,6 @@ def reload_translation_stats():
 
 def get_translation_percent(lang_code):
     """Return the translation percentage for the given language code"""
-
     if _translation_stats is None:
         reload_translation_stats()
 

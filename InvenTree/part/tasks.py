@@ -18,7 +18,8 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models
 import part.stocktake
-from InvenTree.tasks import ScheduledTask, check_daily_holdoff, scheduled_task
+from InvenTree.tasks import (ScheduledTask, check_daily_holdoff,
+                             record_task_success, scheduled_task)
 
 logger = logging.getLogger("inventree")
 
@@ -73,8 +74,7 @@ def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
         pricing: The target PartPricing instance to be updated
         counter: How many times this function has been called in sequence
     """
-
-    logger.info(f"Updating part pricing for {pricing.part}")
+    logger.info("Updating part pricing for %s", pricing.part)
 
     pricing.update_pricing(counter=counter)
 
@@ -90,12 +90,11 @@ def check_missing_pricing(limit=250):
     Arguments:
         limit: Maximum number of parts to process at once
     """
-
     # Find parts for which pricing information has never been updated
     results = part.models.PartPricing.objects.filter(updated=None)[:limit]
 
     if results.count() > 0:
-        logger.info(f"Found {results.count()} parts with empty pricing")
+        logger.info("Found %s parts with empty pricing", results.count())
 
         for pp in results:
             pp.schedule_for_update()
@@ -107,7 +106,7 @@ def check_missing_pricing(limit=250):
     results = part.models.PartPricing.objects.filter(updated__lte=stale_date)[:limit]
 
     if results.count() > 0:
-        logger.info(f"Found {results.count()} stale pricing entries")
+        logger.info("Found %s stale pricing entries", results.count())
 
         for pp in results:
             pp.schedule_for_update()
@@ -117,7 +116,7 @@ def check_missing_pricing(limit=250):
     results = part.models.PartPricing.objects.exclude(currency=currency)
 
     if results.count() > 0:
-        logger.info(f"Found {results.count()} pricing entries in the wrong currency")
+        logger.info("Found %s pricing entries in the wrong currency", results.count())
 
         for pp in results:
             pp.schedule_for_update()
@@ -126,7 +125,7 @@ def check_missing_pricing(limit=250):
     results = part.models.Part.objects.filter(pricing_data=None)[:limit]
 
     if results.count() > 0:
-        logger.info(f"Found {results.count()} parts without pricing")
+        logger.info("Found %s parts without pricing", results.count())
 
         for p in results:
             pricing = p.pricing
@@ -143,7 +142,6 @@ def scheduled_stocktake_reports():
     - Delete 'old' stocktake report files after the specified period
     - Generate new reports at the specified period
     """
-
     # Sleep a random number of seconds to prevent worker conflict
     time.sleep(random.randint(1, 5))
 
@@ -153,7 +151,7 @@ def scheduled_stocktake_reports():
     old_reports = part.models.PartStocktakeReport.objects.filter(date__lt=threshold)
 
     if old_reports.count() > 0:
-        logger.info(f"Deleting {old_reports.count()} stale stocktake reports")
+        logger.info("Deleting %s stale stocktake reports", old_reports.count())
         old_reports.delete()
 
     # Next, check if stocktake functionality is enabled
@@ -167,7 +165,7 @@ def scheduled_stocktake_reports():
         logger.info("Stocktake auto reports are disabled, exiting")
         return
 
-    if not check_daily_holdoff('_STOCKTAKE_RECENT_REPORT', report_n_days):
+    if not check_daily_holdoff('STOCKTAKE_RECENT_REPORT', report_n_days):
         logger.info("Stocktake report was recently generated - exiting")
         return
 
@@ -175,7 +173,7 @@ def scheduled_stocktake_reports():
     part.stocktake.generate_stocktake_report(update_parts=True)
 
     # Record the date of this report
-    common.models.InvenTreeSetting.set_setting('_STOCKTAKE_RECENT_REPORT', datetime.now().isoformat(), None)
+    record_task_success('STOCKTAKE_RECENT_REPORT')
 
 
 def rebuild_parameters(template_id):
@@ -184,7 +182,6 @@ def rebuild_parameters(template_id):
     This function is called when a base template is changed,
     which may cause the base unit to be adjusted.
     """
-
     try:
         template = part.models.PartParameterTemplate.objects.get(pk=template_id)
     except part.models.PartParameterTemplate.DoesNotExist:
@@ -205,7 +202,7 @@ def rebuild_parameters(template_id):
             n += 1
 
     if n > 0:
-        logger.info(f"Rebuilt {n} parameters for template '{template.name}'")
+        logger.info("Rebuilt %s parameters for template '%s'", n, template.name)
 
 
 def rebuild_supplier_parts(part_id):
@@ -214,7 +211,6 @@ def rebuild_supplier_parts(part_id):
     This function is called when a bart part is changed,
     which may cause the native units of any supplier parts to be updated
     """
-
     try:
         prt = part.models.Part.objects.get(pk=part_id)
     except part.models.Part.DoesNotExist:
@@ -233,4 +229,4 @@ def rebuild_supplier_parts(part_id):
             pass
 
     if n > 0:
-        logger.info(f"Rebuilt {n} supplier parts for part '{prt.name}'")
+        logger.info("Rebuilt %s supplier parts for part '%s'", n, prt.name)

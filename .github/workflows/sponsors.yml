@@ -1,0 +1,35 @@
+name: Generate Sponsors README
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 30 15 * * 0-6
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'Inventree'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      - name: Generate Sponsors
+        uses: JamesIves/github-sponsors-readme-action@a2d75a8d58b117b19777a910e284ccb082aaf117
+        with:
+          token: ${{ secrets.INVENTREE_SPONSORS_TOKEN }}
+          file: 'README.md'
+          organization: true
+
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git checkout -b sponsors
+          git add README.md
+          git commit -m "updated sponsors"
+
+      - name: Push Changes
+        uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: sponsors
+          force: true

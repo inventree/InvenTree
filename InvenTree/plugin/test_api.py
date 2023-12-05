@@ -23,13 +23,23 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         """Setup for all tests."""
         self.MSG_NO_PKG = 'Either packagename of URL must be provided'
 
-        self.PKG_NAME = 'minimal'
-        self.PKG_URL = 'git+https://github.com/geoffrey-a-reed/minimal'
+        self.PKG_NAME = 'inventree-brother-plugin'
+        self.PKG_URL = 'git+https://github.com/inventree/inventree-brother-plugin'
         super().setUp()
 
     def test_plugin_install(self):
         """Test the plugin install command."""
         url = reverse('api-plugin-install')
+
+        # invalid package name
+        self.post(
+            url,
+            {
+                'confirm': True,
+                'packagename': 'invalid_package_name-asdads-asfd-asdf-asdf-asdf'
+            },
+            expected_code=400
+        )
 
         # valid - Pypi
         data = self.post(
@@ -41,7 +51,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             expected_code=201,
         ).data
 
-        self.assertEqual(data['success'], True)
+        self.assertEqual(data['success'], 'Installed plugin successfully')
 
         # valid - github url
         data = self.post(
@@ -52,7 +62,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             },
             expected_code=201,
         ).data
-        self.assertEqual(data['success'], True)
+
+        self.assertEqual(data['success'], 'Installed plugin successfully')
 
         # valid - github url and package name
         data = self.post(
@@ -60,11 +71,11 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             {
                 'confirm': True,
                 'url': self.PKG_URL,
-                'packagename': 'minimal',
+                'packagename': self.PKG_NAME,
             },
             expected_code=201,
         ).data
-        self.assertEqual(data['success'], True)
+        self.assertEqual(data['success'], 'Installed plugin successfully')
 
         # invalid tries
         # no input
@@ -92,7 +103,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_activate(self):
         """Test the plugin activate."""
-
         test_plg = self.plugin_confs.first()
 
         def assert_plugin_active(self, active):
@@ -178,7 +188,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_check_plugin(self):
         """Test check_plugin function."""
-
         # No argument
         with self.assertRaises(NotFound) as exc:
             check_plugin(plugin_slug=None, plugin_pk=None)
@@ -196,7 +205,6 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
     def test_plugin_settings(self):
         """Test plugin settings access via the API"""
-
         # Ensure we have superuser permissions
         self.user.is_superuser = True
         self.user.save()

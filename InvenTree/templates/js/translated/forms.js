@@ -19,6 +19,8 @@
     showMessage,
     showModalSpinner,
     toBool,
+    showQuestionDialog,
+    generateTreeStructure,
 */
 
 /* exported
@@ -30,6 +32,7 @@
     setFormGroupVisibility,
     showFormInput,
     selectImportFields,
+    updateForm,
 */
 
 /**
@@ -295,7 +298,7 @@ function constructDeleteForm(fields, options) {
  * - closeText: Text for the "close" button
  * - fields: list of fields to display, with the following options
  *      - filters: API query filters
- *      - onEdit: callback when field is edited
+ *      - onEdit: callback or array of callbacks which get fired when field is edited
  *      - secondary: Define a secondary modal form for this field
  *      - label: Specify custom label
  *      - help_text: Specify custom help_text
@@ -304,6 +307,7 @@ function constructDeleteForm(fields, options) {
  *      - hidden: Set to true to hide the field
  *      - icon: font-awesome icon to display before the field
  *      - prefix: Custom HTML prefix to display before the field
+ *      - localOnly: If true, this field will only be rendered, but not send to the server
  * - data: map of data to fill out field values with
  * - focus: Name of field to focus on when modal is displayed
  * - preventClose: Set to true to prevent form from closing on success
@@ -313,6 +317,7 @@ function constructDeleteForm(fields, options) {
  * - reload: Set to true to reload the current page after form success
  * - confirm: Set to true to require a "confirm" button
  * - confirmText: Text for confirm button (default = "Confirm")
+ * - disableSuccessMessage: Set to true to suppress the success message if the response contains a success key by accident
  *
  */
 function constructForm(url, options={}) {
@@ -481,16 +486,48 @@ function extractNestedField(field_name, fields) {
  */
 function constructFormBody(fields, options) {
 
-    var html = '';
+    let html = '';
+
+    // Client must provide set of fields to be displayed,
+    // otherwise *all* fields will be displayed
+    const displayed_fields = options.fields || fields || {};
+
+    if(!options.fields) {
+        options.fields = displayed_fields;
+    }
 
     // add additional content as a header on top (provided as html by the caller)
     if (options.header_html) {
         html += options.header_html;
     }
 
-    // Client must provide set of fields to be displayed,
-    // otherwise *all* fields will be displayed
-    var displayed_fields = options.fields || fields;
+    // process every field by recursively walking down nested fields
+    const processField = (name, field, optionsField) => {
+        if (typeof optionsField !== "object") return;
+
+        if (field.type === "nested object" && optionsField.children) {
+            for (const [k, v] of Object.entries(field.children)) {
+                processField(`${name}__${k}`, v, optionsField.children[k]);
+            }
+        }
+
+        if (field.type === "dependent field") {
+            if(field.child) {
+                // copy child attribute from parameters to options
+                optionsField.child = field.child;
+
+                processField(name, field.child, optionsField.child);
+            } else {
+                delete optionsField.child;
+            }
+        }
+    }
+
+    for (const [k,v] of Object.entries(fields)) {
+        if (options.fields && k in options.fields) {
+            processField(k, v, options.fields[k]);
+        }
+    }
 
     // Override default option values if a 'DELETE' form is specified
     if (options.method == 'DELETE') {
@@ -593,14 +630,6 @@ function constructFormBody(fields, options) {
         var field_name = field_names[idx];
 
         var field = fields[field_name];
-
-        switch (field.type) {
-        // Skip field types which are simply not supported
-        case 'nested object':
-            continue;
-        default:
-            break;
-        }
 
         html += constructField(field_name, field, options);
     }
@@ -718,6 +747,21 @@ function constructFormBody(fields, options) {
     });
 }
 
+/**
+ * This Method updates an existing form by replacing all form fields with the new ones
+ * @param {*} options new form definition options
+ */
+function updateForm(options) {
+    // merge already entered values in the newly constructed form
+    options.data = extractFormData(options.fields, options);
+
+    // remove old submit handlers
+    $(options.modal).off('click', '#modal-form-submit');
+
+    // construct new form
+    constructFormBody(options.fields, options);
+}
+
 
 // Add a "confirm" checkbox to the modal
 // The "submit" button will be disabled unless "confirm" is checked
@@ -790,7 +834,7 @@ function insertSecondaryButtons(options) {
 /*
  * Extract all specified form values as a single object
  */
-function extractFormData(fields, options) {
+function extractFormData(fields, options, includeLocal = true) {
 
     var data = {};
 
@@ -803,6 +847,7 @@ function extractFormData(fields, options) {
         if (!field) continue;
 
         if (field.type == 'candy') continue;
+        if (!includeLocal && field.localOnly) continue;
 
         data[name] = getFormFieldValue(name, field, options);
     }
@@ -839,6 +884,7 @@ function submitFormData(fields, options) {
 
         // Ignore visual fields
         if (field && field.type == 'candy') continue;
+        if (field && field.localOnly === true) continue;
 
         if (field) {
 
@@ -1010,6 +1056,17 @@ function updateFieldValue(name, value, field, options) {
         }
         // TODO - Specify an actual value!
         break;
+    case 'nested object':
+        for (const [k, v] of Object.entries(value)) {
+            if (!(k in field.children)) continue;
+            updateFieldValue(`${name}__${k}`, v, field.children[k], options);
+        }
+        break;
+    case 'dependent field':
+        if (field.child) {
+            updateFieldValue(name, value, field.child, options);
+        }
+        break;
     case 'file upload':
     case 'image upload':
         break;
@@ -1144,6 +1201,17 @@ function getFormFieldValue(name, field={}, options={}) {
     case 'email':
         value = sanitizeInputString(el.val());
         break;
+    case 'nested object':
+        value = {};
+        for (const [name, subField] of Object.entries(field.children)) {
+            value[name] = getFormFieldValue(subField.name, subField, options);
+        }
+        break;
+    case 'dependent field':
+        if(!field.child) return undefined;
+
+        value = getFormFieldValue(name, field.child, options);
+        break;
     default:
         value = el.val();
         break;
@@ -1188,7 +1256,7 @@ function handleFormSuccess(response, options) {
     }
 
     // Display any messages
-    if (response && (response.success || options.successMessage)) {
+    if (!options.disableSuccessMessage && response && (response.success || options.successMessage)) {
         showAlertOrCache(
             response.success || options.successMessage,
             cache,
@@ -1428,19 +1496,28 @@ function handleFormErrors(errors, fields={}, options={}) {
         var field = fields[field_name] || {};
         var field_errors = errors[field_name];
 
-        if ((field.type == 'nested object') && ('children' in field)) {
+        // for nested objects with children and dependent fields with a child defined, extract nested errors
+        if (((field.type == 'nested object') && ('children' in field)) || ((field.type == 'dependent field') && ('child' in field))) {
             // Handle multi-level nested errors
+            const handleNestedError = (parent_name, sub_field_errors) => {
+                for (const sub_field in sub_field_errors) {
+                    const sub_sub_field_name = `${parent_name}__${sub_field}`;
+                    const sub_sub_field_errors = sub_field_errors[sub_field];
 
-            for (var sub_field in field_errors) {
-                var sub_field_name = `${field_name}__${sub_field}`;
-                var sub_field_errors = field_errors[sub_field];
+                    if (!first_error_field && sub_sub_field_errors && isFieldVisible(sub_sub_field_name, options)) {
+                        first_error_field = sub_sub_field_name;
+                    }
 
-                if (!first_error_field && sub_field_errors && isFieldVisible(sub_field_name, options)) {
-                    first_error_field = sub_field_name;
+                    // if the error is an object, its a nested object, recursively handle the errors
+                    if (typeof sub_sub_field_errors === "object" && !Array.isArray(sub_sub_field_errors)) {
+                        handleNestedError(sub_sub_field_name, sub_sub_field_errors)
+                    } else {
+                        addFieldErrorMessage(sub_sub_field_name, sub_sub_field_errors, options);
+                    }
                 }
-
-                addFieldErrorMessage(sub_field_name, sub_field_errors, options);
             }
+
+            handleNestedError(field_name, field_errors);
         } else if ((field.type == 'field') && ('child' in field)) {
             // This is a "nested" array field
             handleNestedArrayErrors(errors, field_name, options);
@@ -1535,7 +1612,7 @@ function addFieldCallbacks(fields, options) {
 
         var field = fields[name];
 
-        if (!field || !field.onEdit) continue;
+        if (!field || field.type === "candy") continue;
 
         addFieldCallback(name, field, options);
     }
@@ -1543,15 +1620,34 @@ function addFieldCallbacks(fields, options) {
 
 
 function addFieldCallback(name, field, options) {
+    const el = getFormFieldElement(name, options);
 
-    var el = getFormFieldElement(name, options);
+    if (field.onEdit) {
+        el.change(function() {
 
-    el.change(function() {
+            var value = getFormFieldValue(name, field, options);
+            let onEditHandlers = field.onEdit;
 
-        var value = getFormFieldValue(name, field, options);
+            if (!Array.isArray(onEditHandlers)) {
+                onEditHandlers = [onEditHandlers];
+            }
 
-        field.onEdit(value, name, field, options);
-    });
+            for (const onEdit of onEditHandlers) {
+                onEdit(value, name, field, options);
+            }
+        });
+    }
+
+    // attach field callback for nested fields
+    if(field.type === "nested object") {
+        for (const [c_name, c_field] of Object.entries(field.children)) {
+            addFieldCallback(`${name}__${c_name}`, c_field, options);
+        }
+    }
+
+    if(field.type === "dependent field" && field.child) {
+        addFieldCallback(name, field.child, options);
+    }
 }
 
 
@@ -1706,16 +1802,32 @@ function initializeRelatedFields(fields, options={}) {
 
         if (!field || field.hidden) continue;
 
-        switch (field.type) {
-        case 'related field':
-            initializeRelatedField(field, fields, options);
-            break;
-        case 'choice':
-            initializeChoiceField(field, fields, options);
-            break;
-        default:
-            break;
+        initializeRelatedFieldsRecursively(field, fields, options);
+    }
+}
+
+function initializeRelatedFieldsRecursively(field, fields, options) {
+    switch (field.type) {
+    case 'related field':
+        initializeRelatedField(field, fields, options);
+        break;
+    case 'choice':
+        initializeChoiceField(field, fields, options);
+        break;
+    case 'nested object':
+        for (const [c_name, c_field] of Object.entries(field.children)) {
+            if(!c_field.name) c_field.name = `${field.name}__${c_name}`;
+            initializeRelatedFieldsRecursively(c_field, field.children, options);
         }
+        break;
+    case 'dependent field':
+        if (field.child) {
+            if(!field.child.name) field.child.name = field.name;
+            initializeRelatedFieldsRecursively(field.child, fields, options);
+        }
+        break;
+    default:
+        break;
     }
 }
 
@@ -2022,6 +2134,94 @@ function initializeRelatedField(field, fields, options={}) {
             }
         });
     }
+
+    if(field.tree_picker) {
+        // construct button
+        const button = $(`<button class="input-group-text px-2"><i class="fas fa-external-link-alt"></i></button>`);
+
+        // insert open tree picker button after select
+        select.parent().find(".select2").after(button);
+
+        // save copy of filters, because of possible side effects
+        const filters = field.filters ? { ...field.filters } : {};
+
+        button.on("click", () => {
+            const tree_id = `${name}_tree`;
+
+            const title = '{% trans "Select" %}' + " " + options.actions[name].label;
+            const content = `
+                <div class="mb-1">
+                    <div class="input-group mb-2">
+                        <input class="form-control" type="text" id="${name}_tree_search" placeholder="{% trans "Search" %} ${options.actions[name].label}..." />
+                        <button class="input-group-text" id="${name}_tree_search_btn"><i class="fas fa-search"></i></button>
+                    </div>
+
+                    <div id="${tree_id}" style="height: 65vh; overflow-y: auto;">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border" role="status"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showQuestionDialog(title, content, {
+                accept_text: '{% trans "Select" %}',
+                accept: () => {
+                    const selectedNode = $(`#${tree_id}`).treeview('getSelected');
+                    if(selectedNode.length > 0) {
+                        const url = `${field.api_url}/${selectedNode[0].pk}/`.replace('//', '/');
+
+                        inventreeGet(url, field.filters || {}, {
+                            success: function(data) {
+                                setRelatedFieldData(name, data, options);
+                            }
+                        });
+                    }
+                }
+            });
+
+            inventreeGet(field.tree_picker.url, {}, {
+                success: (data) => {
+                    const current_value = getFormFieldValue(name, field, options);
+
+                    const rootNodes = generateTreeStructure(data, {
+                        selected: current_value,
+                        processNode: (node) => {
+                            node.selectable = true;
+                            node.text = node.name;
+
+                            // disable this node, if it doesn't match the filter criteria
+                            for (const [k, v] of Object.entries(filters)) {
+                                if (k in node && node[k] !== v) {
+                                    node.selectable = false;
+                                    node.color = "grey";
+                                    break;
+                                }
+                            }
+
+                            return node;
+                        }
+                    });
+
+                    $(`#${tree_id}`).treeview({
+                        data: rootNodes,
+                        expandIcon: 'fas fa-plus-square large-treeview-icon',
+                        collapseIcon: 'fa fa-minus-square large-treeview-icon',
+                        nodeIcon: field.tree_picker.defaultIcon,
+                        color: "black",
+                    });
+                }
+            });
+
+            $(`#${name}_tree_search_btn`).on("click", () => {
+                const searchValue = $(`#${name}_tree_search`).val();
+                $(`#${tree_id}`).treeview("search", [searchValue, {
+                    ignoreCase: true,
+                    exactMatch: false,
+                    revealResults: true,
+                }]);
+            });
+        });
+    }
 }
 
 
@@ -2237,14 +2437,14 @@ function constructField(name, parameters, options={}) {
     html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title} ${css}>`;
 
     // Add a label
-    if (!options.hideLabels) {
+    if (!options.hideLabels && parameters.type !== "nested object" && parameters.type !== "dependent field") {
         html += constructLabel(name, parameters);
     }
 
     html += `<div class='controls'>`;
 
     // Does this input deserve "extra" decorators?
-    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null);
+    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null) || (parameters.tree_picker != null);
 
     // Some fields can have 'clear' inputs associated with them
     if (!parameters.required && !parameters.read_only) {
@@ -2265,7 +2465,7 @@ function constructField(name, parameters, options={}) {
     }
 
     if (extra) {
-        html += `<div class='input-group'>`;
+        html += `<div class='input-group flex-nowrap'>`;
 
         if (parameters.prefix) {
             html += `<span class='input-group-text'>${parameters.prefix}</span>`;
@@ -2282,9 +2482,9 @@ function constructField(name, parameters, options={}) {
 
         if (!parameters.required && !options.hideClearButton) {
             html += `
-            <span class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
+            <button class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>
-            </span>`;
+            </button>`;
         }
 
         html += `</div>`; // input-group
@@ -2391,6 +2591,12 @@ function constructInput(name, parameters, options={}) {
         break;
     case 'raw':
         func = constructRawInput;
+        break;
+    case 'nested object':
+        func = constructNestedObject;
+        break;
+    case 'dependent field':
+        func = constructDependentField;
         break;
     default:
         // Unsupported field type!
@@ -2671,6 +2877,129 @@ function constructRawInput(name, parameters) {
 
 }
 
+/*
+ * Construct a nested object input
+ */
+function constructNestedObject(name, parameters, options) {
+    let html = `
+        <div id="div_id_${name}" class='panel form-panel' style="margin-bottom: 0; padding-bottom: 0;">
+            <div class='panel-heading form-panel-heading'>
+                <div>
+                    <h6 style='display: inline;'>${parameters.label}</h6>
+                </div>
+            </div>
+            <div class='panel-content form-panel-content' id="id_${name}">
+    `;
+
+    parameters.field_names = [];
+
+    for (const [key, field] of Object.entries(parameters.children)) {
+        const subFieldName = `${name}__${key}`;
+        field.name = subFieldName;
+        parameters.field_names.push(subFieldName);
+
+        html += constructField(subFieldName, field, options);
+    }
+
+    html += "</div></div>";
+
+    return html;
+}
+
+function getFieldByNestedPath(name, fields) {
+    if (typeof name === "string") {
+        name = name.split("__");
+    }
+
+    if (name.length === 0) return fields;
+
+    if (fields.type === "nested object") fields = fields.children;
+
+    if (!(name[0] in fields)) return null;
+    let field = fields[name[0]];
+
+    if (field.type === "dependent field" && field.child) {
+        field = field.child;
+    }
+
+    return getFieldByNestedPath(name.slice(1), field);
+}
+
+/*
+ * Construct a dependent field input
+ */
+function constructDependentField(name, parameters, options) {
+    // add onEdit handler to all fields this dependent field depends on
+    for (let d_field_name of parameters.depends_on) {
+        const d_field = getFieldByNestedPath([...name.split("__").slice(0, -1), d_field_name], options.fields);
+        if (!d_field) continue;
+
+        const onEdit = (value, name, field, options) => {
+            if(value === undefined) return;
+
+            // extract the current form data to include in OPTIONS request
+            const data = extractFormData(options.fields, options, false)
+
+            $.ajax({
+                url: options.url,
+                type: "OPTIONS",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: "json",
+                accepts: { json: "application/json" },
+                success: (res) => {
+                    const fields = res.actions[options.method];
+
+                    // merge already entered values in the newly constructed form
+                    options.data = extractFormData(options.fields, options);
+
+                    // remove old submit handlers
+                    $(options.modal).off('click', '#modal-form-submit');
+
+                    if (options.method === "POST") {
+                        constructCreateForm(fields, options);
+                    }
+
+                    if (options.method === "PUT" || options.method === "PATCH") {
+                        constructChangeForm(fields, options);
+                    }
+
+                    if (options.method === "DELETE") {
+                        constructDeleteForm(fields, options);
+                    }
+                },
+                error: (xhr) => showApiError(xhr, options.url)
+            });
+        }
+
+        // attach on edit handler
+        const originalOnEdit = d_field.onEdit;
+        d_field.onEdit = [onEdit];
+
+        if(typeof originalOnEdit === "function") {
+            d_field.onEdit.push(originalOnEdit);
+        } else if (Array.isArray(originalOnEdit)) {
+            // push old onEdit handlers, but omit the old
+            d_field.onEdit.push(...originalOnEdit.filter(h => h !== d_field._currentDependentFieldOnEdit));
+        }
+
+        // track current onEdit handler function
+        d_field._currentDependentFieldOnEdit = onEdit;
+    }
+
+    // child is not specified already, return a dummy div with id so no errors can happen
+    if (!parameters.child) {
+        return `<div id="id_${name}" hidden></div>`;
+    }
+
+    // copy label to child if not already provided
+    if(!parameters.child.label) {
+        parameters.child.label = parameters.label;
+    }
+
+    // construct the provided child field
+    return constructField(name, parameters.child, options);
+}
 
 /*
  * Construct a 'help text' div based on the field parameters

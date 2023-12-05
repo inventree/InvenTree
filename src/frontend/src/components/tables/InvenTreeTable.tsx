@@ -1,107 +1,51 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Indicator, Space, Stack, Tooltip } from '@mantine/core';
 import { Group } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
-import { ButtonMenu } from '../items/ButtonMenu';
+import { TableState } from '../../hooks/UseTable';
+import { ButtonMenu } from '../buttons/ButtonMenu';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
 import { TableFilter } from './Filter';
 import { FilterGroup } from './FilterGroup';
 import { FilterSelectModal } from './FilterSelectModal';
+import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
 
-/*
- * Load list of hidden columns from local storage.
- * Returns a list of column names which are "hidden" for the current table
- */
-function loadHiddenColumns(tableKey: string) {
-  return JSON.parse(
-    localStorage.getItem(`inventree-hidden-table-columns-${tableKey}`) || '[]'
-  );
-}
+const defaultPageSize: number = 25;
 
 /**
- * Write list of hidden columns to local storage
- * @param tableKey : string - unique key for the table
- * @param columns : string[] - list of column names
+ * Set of optional properties which can be passed to an InvenTreeTable component
+ *
+ * @param params : any - Base query parameters
+ * @param tableState : TableState - State manager for the table
+ * @param defaultSortColumn : string - Default column to sort by
+ * @param noRecordsText : string - Text to display when no records are found
+ * @param enableDownload : boolean - Enable download actions
+ * @param enableFilters : boolean - Enable filter actions
+ * @param enableSelection : boolean - Enable row selection
+ * @param enableSearch : boolean - Enable search actions
+ * @param enablePagination : boolean - Enable pagination
+ * @param enableRefresh : boolean - Enable refresh actions
+ * @param pageSize : number - Number of records per page
+ * @param barcodeActions : any[] - List of barcode actions
+ * @param customFilters : TableFilter[] - List of custom filters
+ * @param customActionGroups : any[] - List of custom action groups
+ * @param printingActions : any[] - List of printing actions
+ * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
+ * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
+ * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  */
-function saveHiddenColumns(tableKey: string, columns: any[]) {
-  localStorage.setItem(
-    `inventree-hidden-table-columns-${tableKey}`,
-    JSON.stringify(columns)
-  );
-}
-
-/**
- * Loads the list of active filters from local storage
- * @param tableKey : string - unique key for the table
- * @param filterList : TableFilter[] - list of available filters
- * @returns a map of active filters for the current table, {name: value}
- */
-function loadActiveFilters(tableKey: string, filterList: TableFilter[]) {
-  let active = JSON.parse(
-    localStorage.getItem(`inventree-active-table-filters-${tableKey}`) || '{}'
-  );
-
-  // We expect that the active filter list is a map of {name: value}
-  // Return *only* those filters which are in the filter list
-  let x = filterList
-    .filter((f) => f.name in active)
-    .map((f) => ({
-      ...f,
-      value: active[f.name]
-    }));
-
-  return x;
-}
-
-/**
- * Write the list of active filters to local storage
- * @param tableKey : string - unique key for the table
- * @param filters : any - map of active filters, {name: value}
- */
-function saveActiveFilters(tableKey: string, filters: TableFilter[]) {
-  let active = Object.fromEntries(filters.map((flt) => [flt.name, flt.value]));
-
-  localStorage.setItem(
-    `inventree-active-table-filters-${tableKey}`,
-    JSON.stringify(active)
-  );
-}
-
-/**
- * Table Component which extends DataTable with custom InvenTree functionality
- */
-export function InvenTreeTable({
-  url,
-  params,
-  columns,
-  enableDownload = false,
-  enableFilters = true,
-  enablePagination = true,
-  enableRefresh = true,
-  enableSearch = true,
-  enableSelection = false,
-  pageSize = 25,
-  tableKey = '',
-  defaultSortColumn = '',
-  noRecordsText = t`No records found`,
-  printingActions = [],
-  barcodeActions = [],
-  customActionGroups = [],
-  customFilters = []
-}: {
-  url: string;
-  params: any;
-  columns: TableColumn[];
-  tableKey: string;
+export type InvenTreeTableProps<T = any> = {
+  params?: any;
   defaultSortColumn?: string;
   noRecordsText?: string;
   enableDownload?: boolean;
@@ -111,33 +55,133 @@ export function InvenTreeTable({
   enablePagination?: boolean;
   enableRefresh?: boolean;
   pageSize?: number;
-  printingActions?: any[];
   barcodeActions?: any[];
-  customActionGroups?: any[];
   customFilters?: TableFilter[];
+  customActionGroups?: React.ReactNode[];
+  printingActions?: any[];
+  idAccessor?: string;
+  dataFormatter?: (data: T) => any;
+  rowActions?: (record: T) => RowAction[];
+  onRowClick?: (record: T, index: number, event: any) => void;
+};
+
+/**
+ * Default table properties (used if not specified)
+ */
+const defaultInvenTreeTableProps: InvenTreeTableProps = {
+  params: {},
+  noRecordsText: t`No records found`,
+  enableDownload: false,
+  enableFilters: true,
+  enablePagination: true,
+  enableRefresh: true,
+  enableSearch: true,
+  enableSelection: false,
+  pageSize: defaultPageSize,
+  defaultSortColumn: '',
+  printingActions: [],
+  barcodeActions: [],
+  customFilters: [],
+  customActionGroups: [],
+  idAccessor: 'pk',
+  onRowClick: (record: any, index: number, event: any) => {}
+};
+
+/**
+ * Table Component which extends DataTable with custom InvenTree functionality
+ */
+export function InvenTreeTable<T = any>({
+  url,
+  tableState,
+  columns,
+  props
+}: {
+  url: string;
+  tableState: TableState;
+  columns: TableColumn<T>[];
+  props: InvenTreeTableProps<T>;
 }) {
-  // Data columns
-  const [dataColumns, setDataColumns] = useState<any[]>(columns);
+  // Use the first part of the table key as the table name
+  const tableName: string = useMemo(() => {
+    let key = tableState?.tableKey ?? 'table';
+    return key.split('-')[0];
+  }, []);
+
+  // Build table properties based on provided props (and default props)
+  const tableProps: InvenTreeTableProps<T> = useMemo(() => {
+    return {
+      ...defaultInvenTreeTableProps,
+      ...props
+    };
+  }, [props]);
 
   // Check if any columns are switchable (can be hidden)
-  const hasSwitchableColumns = columns.some((col: any) => col.switchable);
-
-  // Manage state for switchable columns (initially load from local storage)
-  let [hiddenColumns, setHiddenColumns] = useState(() =>
-    loadHiddenColumns(tableKey)
+  const hasSwitchableColumns = columns.some(
+    (col: TableColumn) => col.switchable ?? true
   );
 
+  // A list of hidden columns, saved to local storage
+  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
+    key: `inventree-hidden-table-columns-${tableName}`,
+    defaultValue: []
+  });
+
+  // Active filters (saved to local storage)
+  const [activeFilters, setActiveFilters] = useLocalStorage<any[]>({
+    key: `inventree-active-table-filters-${tableName}`,
+    defaultValue: [],
+    getInitialValueInEffect: false
+  });
+
+  // Data selection
+  const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
+
+  function onSelectedRecordsChange(records: any[]) {
+    setSelectedRecords(records);
+  }
+
   // Update column visibility when hiddenColumns change
-  useEffect(() => {
-    setDataColumns(
-      dataColumns.map((col) => {
-        return {
-          ...col,
-          hidden: hiddenColumns.includes(col.accessor)
-        };
-      })
-    );
-  }, [hiddenColumns]);
+  const dataColumns: any = useMemo(() => {
+    let cols = columns.map((col) => {
+      let hidden: boolean = col.hidden ?? false;
+
+      if (col.switchable ?? true) {
+        hidden = hiddenColumns.includes(col.accessor);
+      }
+
+      return {
+        ...col,
+        hidden: hidden
+      };
+    });
+
+    // If row actions are available, add a column for them
+    if (tableProps.rowActions) {
+      cols.push({
+        accessor: 'actions',
+        title: '   ',
+        hidden: false,
+        switchable: false,
+        width: 50,
+        render: function (record: any) {
+          return (
+            <RowActions
+              actions={tableProps.rowActions?.(record) ?? []}
+              disabled={selectedRecords.length > 0}
+            />
+          );
+        }
+      });
+    }
+
+    return cols;
+  }, [
+    columns,
+    hiddenColumns,
+    tableProps.rowActions,
+    tableProps.enableSelection,
+    selectedRecords
+  ]);
 
   // Callback when column visibility is toggled
   function toggleColumn(columnName: string) {
@@ -149,19 +193,10 @@ export function InvenTreeTable({
       newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
     }
 
-    let hiddenColumnNames = newColumns
-      .filter((col) => col.hidden)
-      .map((col) => col.accessor);
-
-    // Save list of hidden columns to local storage
-    saveHiddenColumns(tableKey, hiddenColumnNames);
-
-    // Refresh state
-    setHiddenColumns(loadHiddenColumns(tableKey));
+    setHiddenColumns(
+      newColumns.filter((col) => col.hidden).map((col) => col.accessor)
+    );
   }
-
-  // Check if custom filtering is enabled for this table
-  const hasCustomFilters = enableFilters && customFilters.length > 0;
 
   // Filter selection open state
   const [filterSelectOpen, setFilterSelectOpen] = useState<boolean>(false);
@@ -172,11 +207,6 @@ export function InvenTreeTable({
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
-  // Map of currently active filters, {name: value}
-  const [activeFilters, setActiveFilters] = useState(() =>
-    loadActiveFilters(tableKey, customFilters)
-  );
-
   /*
    * Callback for the "add filter" button.
    * Launches a modal dialog to add a new filter
@@ -184,7 +214,7 @@ export function InvenTreeTable({
   function onFilterAdd(name: string, value: string) {
     let filters = [...activeFilters];
 
-    let newFilter = customFilters.find((flt) => flt.name == name);
+    let newFilter = tableProps.customFilters?.find((flt) => flt.name == name);
 
     if (newFilter) {
       filters.push({
@@ -192,7 +222,6 @@ export function InvenTreeTable({
         value: value
       });
 
-      saveActiveFilters(tableKey, filters);
       setActiveFilters(filters);
     }
   }
@@ -202,7 +231,7 @@ export function InvenTreeTable({
    */
   function onFilterRemove(filterName: string) {
     let filters = activeFilters.filter((flt) => flt.name != filterName);
-    saveActiveFilters(tableKey, filters);
+
     setActiveFilters(filters);
   }
 
@@ -210,18 +239,24 @@ export function InvenTreeTable({
    * Callback function when all custom filters are removed from the table
    */
   function onFilterClearAll() {
-    saveActiveFilters(tableKey, []);
     setActiveFilters([]);
   }
 
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  // Reset the pagination state when the search term changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
+
   /*
    * Construct query filters for the current table
    */
   function getTableFilters(paginate: boolean = false) {
-    let queryParams = { ...params };
+    let queryParams = {
+      ...tableProps.params
+    };
 
     // Add custom filters
     activeFilters.forEach((flt) => (queryParams[flt.name] = flt.value));
@@ -232,7 +267,8 @@ export function InvenTreeTable({
     }
 
     // Pagination
-    if (enablePagination && paginate) {
+    if (tableProps.enablePagination && paginate) {
+      let pageSize = tableProps.pageSize ?? defaultPageSize;
       queryParams.limit = pageSize;
       queryParams.offset = (page - 1) * pageSize;
     }
@@ -270,7 +306,7 @@ export function InvenTreeTable({
 
   // Data Sorting
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-    columnAccessor: defaultSortColumn,
+    columnAccessor: tableProps.defaultSortColumn ?? '',
     direction: 'asc'
   });
 
@@ -285,20 +321,14 @@ export function InvenTreeTable({
 
     // Find matching column:
     // If column provides custom ordering term, use that
-    let column = dataColumns.find((col) => col.accessor == key);
+    let column = dataColumns.find((col: any) => col.accessor == key);
     return column?.ordering || key;
   }
 
   // Missing records text (based on server response)
-  const [missingRecordsText, setMissingRecordsText] =
-    useState<string>(noRecordsText);
-
-  // Data selection
-  const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
-
-  function onSelectedRecordsChange(records: any[]) {
-    setSelectedRecords(records);
-  }
+  const [missingRecordsText, setMissingRecordsText] = useState<string>(
+    tableProps.noRecordsText ?? t`No records found`
+  );
 
   const handleSortStatusChange = (status: DataTableSortStatus) => {
     setPage(1);
@@ -317,8 +347,28 @@ export function InvenTreeTable({
       .then(function (response) {
         switch (response.status) {
           case 200:
-            setMissingRecordsText(noRecordsText);
-            return response.data;
+            setMissingRecordsText(
+              tableProps.noRecordsText ?? t`No records found`
+            );
+
+            let results = [];
+
+            if (props.dataFormatter) {
+              // Custom data formatter provided
+              results = props.dataFormatter(response.data);
+            } else {
+              // Extract returned data (accounting for pagination) and ensure it is a list
+              results = response.data?.results ?? response.data ?? [];
+            }
+
+            if (!Array.isArray(results)) {
+              setMissingRecordsText(t`Server returned incorrect data type`);
+              results = [];
+            }
+
+            setRecordCount(response.data?.count ?? results.length);
+
+            return results;
           case 400:
             setMissingRecordsText(t`Bad request`);
             break;
@@ -346,63 +396,72 @@ export function InvenTreeTable({
       });
   };
 
-  const { data, isError, isFetching, isLoading, refetch } = useQuery(
-    [
-      `table-${tableKey}`,
+  const { data, isError, isFetching, isLoading, refetch } = useQuery({
+    queryKey: [
+      `table-${tableName}`,
       sortStatus.columnAccessor,
       sortStatus.direction,
       page,
       activeFilters,
       searchTerm
     ],
-    fetchTableData,
-    {
-      refetchOnWindowFocus: false,
-      refetchOnMount: 'always'
-    }
-  );
+    queryFn: fetchTableData,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true
+  });
+
+  const [recordCount, setRecordCount] = useState<number>(0);
+
+  /*
+   * Reload the table whenever the tableKey changes
+   * this allows us to programmatically refresh the table
+   */
+  useEffect(() => {
+    refetch();
+  }, [tableState?.tableKey, props.params]);
 
   return (
     <>
       <FilterSelectModal
-        availableFilters={customFilters}
+        availableFilters={tableProps.customFilters ?? []}
         activeFilters={activeFilters}
         opened={filterSelectOpen}
         onCreateFilter={onFilterAdd}
         onClose={() => setFilterSelectOpen(false)}
       />
-      <Stack>
+      <Stack spacing="sm">
         <Group position="apart">
-          <Group position="left" spacing={5}>
-            {customActionGroups.map((group: any, idx: number) => group)}
-            {barcodeActions.length > 0 && (
+          <Group position="left" key="custom-actions" spacing={5}>
+            {tableProps.customActionGroups?.map((group, idx) => (
+              <Fragment key={idx}>{group}</Fragment>
+            ))}
+            {(tableProps.barcodeActions?.length ?? 0 > 0) && (
               <ButtonMenu
+                key="barcode-actions"
                 icon={<IconBarcode />}
                 label={t`Barcode actions`}
                 tooltip={t`Barcode actions`}
-                actions={barcodeActions}
+                actions={tableProps.barcodeActions ?? []}
               />
             )}
-            {printingActions.length > 0 && (
+            {(tableProps.printingActions?.length ?? 0 > 0) && (
               <ButtonMenu
+                key="printing-actions"
                 icon={<IconPrinter />}
                 label={t`Print actions`}
                 tooltip={t`Print actions`}
-                actions={printingActions}
+                actions={tableProps.printingActions ?? []}
               />
-            )}
-            {enableDownload && (
-              <DownloadAction downloadCallback={downloadData} />
             )}
           </Group>
           <Space />
           <Group position="right" spacing={5}>
-            {enableSearch && (
+            {tableProps.enableSearch && (
               <TableSearchInput
                 searchCallback={(term: string) => setSearchTerm(term)}
               />
             )}
-            {enableRefresh && (
+            {tableProps.enableRefresh && (
               <ActionIcon>
                 <Tooltip label={t`Refresh data`}>
                   <IconRefresh onClick={() => refetch()} />
@@ -415,20 +474,27 @@ export function InvenTreeTable({
                 onToggleColumn={toggleColumn}
               />
             )}
-            {hasCustomFilters && (
-              <Indicator
-                size="xs"
-                label={activeFilters.length}
-                disabled={activeFilters.length == 0}
-              >
-                <ActionIcon>
-                  <Tooltip label={t`Table filters`}>
-                    <IconFilter
-                      onClick={() => setFiltersVisible(!filtersVisible)}
-                    />
-                  </Tooltip>
-                </ActionIcon>
-              </Indicator>
+            {tableProps.enableFilters &&
+              (tableProps.customFilters?.length ?? 0 > 0) && (
+                <Indicator
+                  size="xs"
+                  label={activeFilters.length}
+                  disabled={activeFilters.length == 0}
+                >
+                  <ActionIcon>
+                    <Tooltip label={t`Table filters`}>
+                      <IconFilter
+                        onClick={() => setFiltersVisible(!filtersVisible)}
+                      />
+                    </Tooltip>
+                  </ActionIcon>
+                </Indicator>
+              )}
+            {tableProps.enableDownload && (
+              <DownloadAction
+                key="download-action"
+                downloadCallback={downloadData}
+              />
             )}
           </Group>
         </Group>
@@ -445,22 +511,34 @@ export function InvenTreeTable({
           striped
           highlightOnHover
           loaderVariant="dots"
-          idAccessor={'pk'}
-          minHeight={200}
-          totalRecords={data?.count ?? data?.length ?? 0}
-          recordsPerPage={pageSize}
+          pinLastColumn={tableProps.rowActions != undefined}
+          idAccessor={tableProps.idAccessor}
+          minHeight={300}
+          totalRecords={recordCount}
+          recordsPerPage={tableProps.pageSize ?? defaultPageSize}
           page={page}
           onPageChange={setPage}
           sortStatus={sortStatus}
           onSortStatusChange={handleSortStatusChange}
-          selectedRecords={enableSelection ? selectedRecords : undefined}
+          selectedRecords={
+            tableProps.enableSelection ? selectedRecords : undefined
+          }
           onSelectedRecordsChange={
-            enableSelection ? onSelectedRecordsChange : undefined
+            tableProps.enableSelection ? onSelectedRecordsChange : undefined
           }
           fetching={isFetching}
           noRecordsText={missingRecordsText}
-          records={data?.results ?? data ?? []}
+          records={data}
           columns={dataColumns}
+          onRowClick={tableProps.onRowClick}
+          defaultColumnProps={{
+            noWrap: true,
+            textAlignment: 'left',
+            cellsStyle: {
+              // TODO: Need a better way of handling "wide" cells,
+              overflow: 'hidden'
+            }
+          }}
         />
       </Stack>
     </>

@@ -1,16 +1,11 @@
 """JSON serializers for plugin app."""
 
-import subprocess
-
-from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
-from InvenTree.tasks import check_for_migrations, offload_task
 from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
 
 
@@ -61,12 +56,14 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'mixins',
             'is_builtin',
             'is_sample',
+            'is_installed',
         ]
 
         read_only_fields = [
             'key',
             'is_builtin',
             'is_sample',
+            'is_installed',
         ]
 
     meta = serializers.DictField(read_only=True)
@@ -119,63 +116,14 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
     def save(self):
         """Install a plugin from a package registry and set operational results as instance data."""
+        from plugin.installer import install_plugin
+
         data = self.validated_data
 
         packagename = data.get('packagename', '')
         url = data.get('url', '')
 
-        # build up the command
-        install_name = []
-
-        if url:
-            # use custom registration / VCS
-            if True in [identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn', ]]:
-                # using a VCS provider
-                if packagename:
-                    install_name.append(f'{packagename}@{url}')
-                else:
-                    install_name.append(url)
-            else:  # pragma: no cover
-                # using a custom package repositories
-                # This is only for pypa compliant directory services (all current are tested above)
-                # and not covered by tests.
-                install_name.append('-i')
-                install_name.append(url)
-                install_name.append(packagename)
-
-        elif packagename:
-            # use pypi
-            install_name.append(packagename)
-
-        command = 'python -m pip install'.split()
-        command.extend(install_name)
-        ret = {'command': ' '.join(command)}
-        success = False
-        # execute pypi
-        try:
-            result = subprocess.check_output(command, cwd=settings.BASE_DIR.parent)
-            ret['result'] = str(result, 'utf-8')
-            ret['success'] = True
-            success = True
-        except subprocess.CalledProcessError as error:  # pragma: no cover
-            ret['result'] = str(error.output, 'utf-8')
-            ret['error'] = True
-
-        # save plugin to plugin_file if installed successful
-        if success:
-            # Read content of plugin file
-            plg_lines = open(settings.PLUGIN_FILE).readlines()
-            with open(settings.PLUGIN_FILE, "a") as plugin_file:
-                # Check if last line has a newline
-                if plg_lines[-1][-1:] != '\n':
-                    plugin_file.write('\n')
-                # Write new plugin to file
-                plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
-
-        # Check for migrations
-        offload_task(check_for_migrations, worker=True)
-
-        return ret
+        return install_plugin(url=url, packagename=packagename)
 
 
 class PluginConfigEmptySerializer(serializers.Serializer):
@@ -196,9 +144,15 @@ class PluginActivateSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         """Apply the new 'active' value to the plugin instance"""
+        from InvenTree.tasks import check_for_migrations, offload_task
 
         instance.active = validated_data.get('active', True)
         instance.save()
+
+        if instance.active:
+            # A plugin has just been activated - check for database migrations
+            offload_task(check_for_migrations)
+
         return instance
 
 
@@ -220,3 +174,17 @@ class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
     EXTRA_FIELDS = ['method', ]
 
     method = serializers.CharField(read_only=True)
+
+
+class PluginRegistryErrorSerializer(serializers.Serializer):
+    """Serializer for a plugin registry error."""
+
+    stage = serializers.CharField()
+    name = serializers.CharField()
+    message = serializers.CharField()
+
+
+class PluginRegistryStatusSerializer(serializers.Serializer):
+    """Serializer for plugin registry status."""
+
+    registry_errors = serializers.ListField(child=PluginRegistryErrorSerializer())

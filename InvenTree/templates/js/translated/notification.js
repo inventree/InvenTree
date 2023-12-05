@@ -37,6 +37,7 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
             ordering: 'age',
             read: read,
         },
+        sidePagination: 'server',
         paginationVAlign: 'bottom',
         formatNoMatches: options.no_matches,
         columns: [

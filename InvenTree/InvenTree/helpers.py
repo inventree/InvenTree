@@ -51,7 +51,6 @@ def constructPathString(path, max_chars=250):
         path: A list of strings e.g. ['path', 'to', 'location']
         max_chars: Maximum number of characters
     """
-
     pathstring = '/'.join(path)
 
     # Replace middle elements to limit the pathstring
@@ -93,7 +92,6 @@ def getBlankThumbnail():
 
 def getLogoImage(as_file=False, custom=True):
     """Return the InvenTree logo image, or a custom logo if available."""
-
     """Return the path to the logo-file."""
     if custom and settings.CUSTOM_LOGO:
 
@@ -109,20 +107,17 @@ def getLogoImage(as_file=False, custom=True):
         if storage is not None:
             if as_file:
                 return f"file://{storage.path(settings.CUSTOM_LOGO)}"
-            else:
-                return storage.url(settings.CUSTOM_LOGO)
+            return storage.url(settings.CUSTOM_LOGO)
 
     # If we have got to this point, return the default logo
     if as_file:
         path = settings.STATIC_ROOT.joinpath('img/inventree.png')
         return f"file://{path}"
-    else:
-        return getStaticUrl('img/inventree.png')
+    return getStaticUrl('img/inventree.png')
 
 
-def getSplashScren(custom=True):
+def getSplashScreen(custom=True):
     """Return the InvenTree splash screen, or a custom splash if available"""
-
     static_storage = StaticFilesStorage()
 
     if custom and settings.CUSTOM_SPLASH:
@@ -159,8 +154,7 @@ def str2bool(text, test=True):
     """
     if test:
         return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', 'on', ]
-    else:
-        return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
+    return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
 
 
 def str2int(text, default=None):
@@ -185,8 +179,7 @@ def is_bool(text):
         return True
     elif str2bool(text, False):
         return True
-    else:
-        return False
+    return False
 
 
 def isNull(text):
@@ -333,12 +326,11 @@ def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
         object_type: string describing the object type e.g. 'StockItem'
         object_id: ID (Primary Key) of the object in the database
         object_url: url for JSON API detail view of the object
-        data: Python dict object containing extra datawhich will be rendered to string (must only contain stringable values)
+        data: Python dict object containing extra data which will be rendered to string (must only contain stringable values)
 
     Returns:
         json string of the supplied data plus some other data
     """
-
     if object_data is None:
         object_data = {}
 
@@ -357,7 +349,7 @@ def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
         object_data['id'] = object_pk
         data[cls_name] = object_data
 
-    return json.dumps(data, sort_keys=True)
+    return str(json.dumps(data, sort_keys=True))
 
 
 def GetExportFormats():
@@ -415,7 +407,6 @@ def increment_serial_number(serial: str):
     Returns:
         incremented value, or None if incrementing could not be performed.
     """
-
     from plugin.registry import registry
 
     # Ensure we start with a string value
@@ -441,7 +432,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     - Individual serials are separated by comma: 1, 2, 3, 6,22
     - Sequential ranges with provided limits are separated by hyphens: 1-5, 20 - 40
     - The "next" available serial number can be specified with the tilde (~) character
-    - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
+    - Serial numbers can be supplied as <start>+ for getting all expected numbers starting from <start>
     - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
 
     Actual generation of sequential serials is passed to the 'validation' plugin mixin,
@@ -452,7 +443,6 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         expected_quantity: The number of (unique) serial numbers we expect
         starting_value: Provide a starting value for the sequence (or None)
     """
-
     if starting_value is None:
         starting_value = increment_serial_number(None)
 
@@ -530,7 +520,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
                 if a == b:
                     # Invalid group
-                    add_error(_("Invalid group range: {g}").format(g=group))
+                    add_error(_(f"Invalid group range: {group}"))
                     continue
 
                 group_items = []
@@ -559,13 +549,13 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                         break
 
                 if len(group_items) > remaining:
-                    add_error(_("Group range {g} exceeds allowed quantity ({q})".format(g=group, q=expected_quantity)))
+                    add_error(_(f"Group range {group} exceeds allowed quantity ({expected_quantity})"))
                 elif len(group_items) > 0 and group_items[0] == a and group_items[-1] == b:
                     # In this case, the range extraction looks like it has worked
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_error(_("Invalid group range: {g}").format(g=group))
+                    add_error(_(f"Invalid group range: {group}"))
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
@@ -583,14 +573,14 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             sequence_count = max(0, expected_quantity - len(serials))
 
             if len(items) > 2 or len(items) == 0:
-                add_error(_("Invalid group sequence: {g}").format(g=group))
+                add_error(_(f"Invalid group sequence: {group}"))
                 continue
             elif len(items) == 2:
                 try:
                     if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
-                    add_error(_("Invalid group sequence: {g}").format(g=group))
+                    add_error(_(f"Invalid group sequence: {group}"))
                     continue
 
             value = items[0]
@@ -605,7 +595,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 for item in sequence_items:
                     add_serial(item)
             else:
-                add_error(_("Invalid group sequence: {g}").format(g=group))
+                add_error(_(f"Invalid group sequence: {group}"))
 
         else:
             # At this point, we assume that the 'group' is just a single serial value
@@ -618,7 +608,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         raise ValidationError([_("No serial numbers found")])
 
     if len(errors) == 0 and len(serials) != expected_quantity:
-        raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(serials), q=expected_quantity)])
+        raise ValidationError([_(f"Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})")])
 
     return serials
 
@@ -656,7 +646,7 @@ def validateFilterString(value, model=None):
 
         if len(pair) != 2:
             raise ValidationError(
-                "Invalid group: {g}".format(g=group)
+                f"Invalid group: {group}"
             )
 
         k, v = pair
@@ -666,7 +656,7 @@ def validateFilterString(value, model=None):
 
         if not k or not v:
             raise ValidationError(
-                "Invalid group: {g}".format(g=group)
+                f"Invalid group: {group}"
             )
 
         results[k] = v
@@ -724,7 +714,6 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
 
     If raise_error is True, a ValidationError will be thrown if HTML tags are detected
     """
-
     cleaned = clean(
         value,
         strip=True,
@@ -756,7 +745,6 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
 
 def remove_non_printable_characters(value: str, remove_newline=True, remove_ascii=True, remove_unicode=True):
     """Remove non-printable / control characters from the provided string"""
-
     cleaned = value
 
     if remove_ascii:
@@ -787,7 +775,6 @@ def hash_barcode(barcode_data):
     We first remove any non-printable characters from the barcode data,
     as some browsers have issues scanning characters in.
     """
-
     barcode_data = str(barcode_data).strip()
     barcode_data = remove_non_printable_characters(barcode_data)
 
@@ -813,7 +800,6 @@ def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = '
 
     The method name must always be the name of the field prefixed by 'get_'
     """
-
     model_cls = getattr(obj, type_ref)
     obj_id = getattr(obj, object_ref)
 

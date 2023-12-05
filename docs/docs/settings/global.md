@@ -25,7 +25,7 @@ Configuration of basic server settings.
 | Use Instance Name | Boolean | Use instance name in title bars | False |
 | Restrict showing `about` | Boolean | Show the `about` modal only to superusers | False |
 | Base URL | String | Base URL for server instance | *blank* |
-| Company Name | String | Company name | My compant name |
+| Company Name | String | Company name | My company name |
 | Download from URL | Boolean | Allow downloading of images from remote URLs | False |
 
 ### Login Settings

@@ -27,6 +27,7 @@
     showFormInput,
     thumbnailImage,
     wrapButtons,
+    yesNoLabel,
 */
 
 /* exported
@@ -798,45 +799,7 @@ function addressFields(options={}) {
         company: {
             icon: 'fa-building',
         },
-        primary: {
-            onEdit: function(val, name, field, opts) {
-
-                if (val === false) {
-
-                    hideFormInput("confirm_primary", opts);
-                    $('#id_confirm_primary').prop("checked", false);
-                    clearFormErrors(opts);
-                    enableSubmitButton(opts, true);
-
-                } else if (val === true) {
-
-                    showFormInput("confirm_primary", opts);
-                    if($('#id_confirm_primary').prop("checked") === false) {
-                        handleFormErrors({'confirm_primary': 'WARNING: Setting this address as primary will remove primary flag from other addresses'}, field, {});
-                        enableSubmitButton(opts, false);
-                    }
-                }
-            }
-        },
-        confirm_primary: {
-            help_text: "Confirm",
-            onEdit: function(val, name, field, opts) {
-
-                if (val === true) {
-
-                    clearFormErrors(opts);
-                    enableSubmitButton(opts, true);
-
-                } else if (val === false) {
-
-                    handleFormErrors({'confirm_primary': 'WARNING: Setting this address as primary will remove primary flag from other addresses'}, field, {});
-                    enableSubmitButton(opts, false);
-                }
-            },
-            css: {
-                display: 'none'
-            }
-        },
+        primary: {},
         title: {},
         line1: {
             icon: 'fa-map'
@@ -984,11 +947,7 @@ function loadAddressTable(table, options={}) {
                 title: '{% trans "Primary" %}',
                 switchable: false,
                 formatter: function(value) {
-                    let checked = '';
-                    if (value == true) {
-                        checked = 'checked="checked"';
-                    }
-                    return `<input type="checkbox" ${checked} disabled="disabled" value="${value? 1 : 0}">`;
+                    return yesNoLabel(value);
                 }
             },
             {

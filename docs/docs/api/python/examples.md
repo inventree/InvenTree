@@ -82,7 +82,7 @@ ParameterWeight = Parameter.create(api, { 'part': couch.pk, 'template': WeightTe
 These parameter templates need to be defined only once and can be used for all other parts. Lets finally add a picture.
 
 ```python
-couch.upload_image('my_nice_couch.jpg')
+couch.uploadImage('my_nice_couch.jpg')
 ```
 
 ### Adding Location Data

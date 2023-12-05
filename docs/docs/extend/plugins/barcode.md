@@ -23,3 +23,35 @@ POST {
     barcode_data: "[(>someBarcodeDataWhichThePluginKnowsHowToDealWith"
 }
 ```
+
+### Example
+Please find below a very simple example that is executed each time a barcode is scanned.
+
+```python
+from django.utils.translation import gettext_lazy as _
+
+from InvenTree.models import InvenTreeBarcodeMixin
+from plugin import InvenTreePlugin
+from plugin.mixins import BarcodeMixin
+
+class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
+
+    NAME = "MyBarcode"
+    TITLE = "My Barcodes"
+    DESCRIPTION = "support for barcodes"
+    VERSION = "0.0.1"
+    AUTHOR = "Michael"
+
+    status = 0
+
+    def scan(self, barcode_data):
+
+        self.status = self.status+1
+        print('Started barcode plugin', self.status)
+        print(barcode_data)
+        response = {}
+        return response
+
+```
+
+To try it just copy the file to src/InvenTree/plugins and restart the server. Open the scan barcode window and start to scan codes or type in text manually. Each time the timeout is hit the plugin will execute and printout the result. The timeout can be changed in `Settings->Barcode Support->Barcode Input Delay`.

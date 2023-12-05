@@ -5,10 +5,8 @@ from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
 
-from rest_framework.authtoken.models import Token
-
 from InvenTree.unit_test import InvenTreeTestCase
-from users.models import Owner, RuleSet
+from users.models import ApiToken, Owner, RuleSet
 
 
 class RuleSetModelTest(TestCase):
@@ -242,7 +240,7 @@ class OwnerModelTest(InvenTreeTestCase):
         """Test token mechanisms."""
         self.client.logout()
 
-        token = Token.objects.filter(user=self.user)
+        token = ApiToken.objects.filter(user=self.user)
 
         # not authed
         self.do_request(reverse('api-token'), {}, 401)
@@ -252,15 +250,6 @@ class OwnerModelTest(InvenTreeTestCase):
         response = self.do_request(reverse('api-token'), {})
         self.assertEqual(response['token'], token.first().key)
 
-        # token delete
-        response = self.client.delete(reverse('api-token'), {}, format='json')
-        self.assertEqual(response.status_code, 202)
-        self.assertEqual(len(token), 0)
-
-        # token second delete
-        response = self.client.delete(reverse('api-token'), {}, format='json')
-        self.assertEqual(response.status_code, 400)
-
         # test user is associated with token
-        response = self.do_request(reverse('api-user-me'), {}, 200)
+        response = self.do_request(reverse('api-user-me'), {'name': 'another-token'}, 200)
         self.assertEqual(response['username'], self.username)

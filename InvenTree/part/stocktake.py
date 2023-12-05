@@ -41,7 +41,6 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
 
     In this case, the stocktake *report* will be limited to the specified location.
     """
-
     # Determine which locations are "valid" for the generated report
     location = kwargs.get('location', None)
     locations = location.get_descendants(include_self=True) if location else []
@@ -61,7 +60,7 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
 
     if not pricing.is_valid:
         # If pricing is not valid, let's update
-        logger.info(f"Pricing not valid for {target} - updating")
+        logger.info("Pricing not valid for %s - updating", target)
         pricing.update_pricing(cascade=False)
         pricing.refresh_from_db()
 
@@ -98,7 +97,6 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
             entry_cost_min = convert_money(entry_cost_min, base_currency) * entry.quantity
             entry_cost_max = convert_money(entry_cost_max, base_currency) * entry.quantity
         except Exception:
-            logger.warning(f"Could not convert {entry.purchase_price} to {base_currency}")
 
             entry_cost_min = Money(0, base_currency)
             entry_cost_max = Money(0, base_currency)
@@ -159,7 +157,6 @@ def generate_stocktake_report(**kwargs):
         generate_report: If True, generate a stocktake report from the calculated data (default=True)
         update_parts: If True, save stocktake information against each filtered Part (default = True)
     """
-
     # Determine if external locations should be excluded
     exclude_external = kwargs.get(
         'exclude_exernal',
@@ -210,7 +207,7 @@ def generate_stocktake_report(**kwargs):
         logger.info("No parts selected for stocktake report - exiting")
         return
 
-    logger.info(f"Generating new stocktake report for {n_parts} parts")
+    logger.info("Generating new stocktake report for %s parts", n_parts)
 
     base_currency = common.settings.currency_code_default()
 
@@ -249,10 +246,6 @@ def generate_stocktake_report(**kwargs):
             exclude_external=exclude_external,
             location=location,
         )
-
-        if stocktake.quantity == 0:
-            # Skip rows with zero total quantity
-            continue
 
         total_parts += 1
 
@@ -310,4 +303,4 @@ def generate_stocktake_report(**kwargs):
         )
 
     t_stocktake = time.time() - t_start
-    logger.info(f"Generated stocktake report for {total_parts} parts in {round(t_stocktake, 2)}s")
+    logger.info("Generated stocktake report for %s parts in %ss", total_parts, round(t_stocktake, 2))

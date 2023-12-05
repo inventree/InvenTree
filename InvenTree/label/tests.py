@@ -94,7 +94,6 @@ class LabelTest(InvenTreeAPITestCase):
 
     def test_print_part_label(self):
         """Actually 'print' a label, and ensure that the correct information is contained."""
-
         label_data = """
         {% load barcode %}
         {% load report %}
@@ -107,7 +106,7 @@ class LabelTest(InvenTreeAPITestCase):
         <!-- Test InvenTree URL -->
         url: {{ qr_url|safe }}
         <!-- Test image URL generation -->
-        image: {% part_image part %}
+        image: {% part_image part width=128 %}
         <!-- Test InvenTree logo -->
         logo: {% logo_image %}
         </html>
@@ -136,7 +135,9 @@ class LabelTest(InvenTreeAPITestCase):
         # Print via the API (Note: will default to the builtin plugin if no plugin supplied)
         url = reverse('api-part-label-print', kwargs={'pk': label.pk})
 
-        part_pk = Part.objects.first().pk
+        prt = Part.objects.first()
+        part_pk = prt.pk
+        part_name = prt.name
 
         response = self.get(f'{url}?parts={part_pk}', expected_code=200)
         data = json.loads(response.content)
@@ -150,11 +151,12 @@ class LabelTest(InvenTreeAPITestCase):
             content = f.read()
 
         # Test that each element has been rendered correctly
-        self.assertIn("part: 1 - M2x4 LPHS", content)
+        self.assertIn(f"part: {part_pk} - {part_name}", content)
         self.assertIn(f'data: {{"part": {part_pk}}}', content)
-        self.assertIn("http://testserver/part/1/", content)
-        self.assertIn("img/blank_image.png", content)
-        self.assertIn("img/inventree.png", content)
+        self.assertIn(f'http://testserver/part/{part_pk}/', content)
+
+        # Check that a encoded image has been generated
+        self.assertIn('data:image/png;charset=utf-8;base64,', content)
 
     def test_metadata(self):
         """Unit tests for the metadata field."""

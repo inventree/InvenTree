@@ -2,7 +2,7 @@
 django<4.2                              # Django package
 coreapi                                 # API documentation for djangorestframework
 cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
-django-allauth                          # SSO for external providers via OpenID
+django-allauth<0.55.0                   # SSO for external providers via OpenID  # FIXED 2023-09-06 due to https://github.com/iMerica/dj-rest-auth/issues/534
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
@@ -16,15 +16,16 @@ django-ical                             # iCal export for calendar views
 django-import-export                    # Data import / export for admin interface
 django-maintenance-mode                 # Shut down application while reloading etc.
 django-markdownify                      # Markdown rendering
-django-money<3.0.0                      # Django app for currency management  # FIXED 2022-06-26 to make sure py-moneyed is not conflicting
 django-mptt                             # Modified Preorder Tree Traversal
+django-markdownify                      # Markdown rendering
+django-money>=3.0.0,<3.3.0              # Django app for currency management # FIXED 2023-10-31 3.3.0 breaks due to https://github.com/django-money/django-money/issues/731
 django-redis>=5.0.0                     # Redis integration
 django-q2                               # Background task scheduling
 django-q-sentry                         # sentry.io integration for django-q
 django-sesame                           # Magic link authentication
 django-sql-utils                        # Advanced query annotation / aggregation
 django-sslserver                        # Secure HTTP development server
-django-stdimage<6.0.0                   # Advanced ImageField management  # FIXED 2022-06-29 6.0.0 breaks serialization for django-q
+django-stdimage                         # Advanced ImageField management
 django-taggit                           # Tagging support
 django-user-sessions                    # user sessions in DB
 django-weasyprint                       # django weasyprint integration
@@ -37,7 +38,7 @@ drf-spectacular                         # DRF API documentation
 feedparser                              # RSS newsfeed parser
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
-pillow==9.5.0                           # Image manipulation # FIXED 2023-07-04 as we require PIL.Image.ANTIALIAS
+pillow                                  # Image manipulation
 pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
@@ -46,9 +47,6 @@ qrcode[pil]                             # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
 regex                                   # Advanced regular expressions
 sentry-sdk                              # Error reporting (optional)
-setuptools                              # Standard depenedency
+setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
-weasyprint==54.3                        # PDF generation
-
-# Fixed sub-dependencies
-py-moneyed<2.0                          # For django-money # FIXED 2022-06-18 as we need `moneyed.localization`
+weasyprint                              # PDF generation

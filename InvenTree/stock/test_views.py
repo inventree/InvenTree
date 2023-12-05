@@ -39,7 +39,6 @@ class StockDetailTest(StockViewTestCase):
 
     def test_basic_info(self):
         """Test that basic stock item info is rendered"""
-
         url = reverse('stock-item-detail', kwargs={'pk': 1})
 
         response = self.client.get(url)

@@ -3,16 +3,12 @@
 {
   "name": "InvenTree",
   "build": {
-    "dockerfile": "Dockerfile",
+    "dockerfile": "../Dockerfile",
     "context": "..",
+    "target": "devcontainer",
     "args": {
-      // Update 'VARIANT' to pick a Python version: 3, 3.10, 3.9, 3.8, 3.7, 3.6
-      // Append -bullseye or -buster to pin to an OS version.
-      // Use -bullseye variants on local on arm64/Apple Silicon.
-      "VARIANT": "3.10-bullseye",
-      // Options
-      "NODE_VERSION": "lts/*",
-      "WORKSPACE": "${containerWorkspaceFolder}"
+      "base_image": "mcr.microsoft.com/vscode/devcontainers/base:alpine-3.18",
+      "workspace": "${containerWorkspaceFolder}"
     }
   },
 
@@ -48,8 +44,11 @@
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [8000],
+  "forwardPorts": [5173, 8000],
   "portsAttributes": {
+    "5173": {
+      "label": "Vite server"
+    },
     "8000": {
       "label": "InvenTree server"
     }
@@ -60,15 +59,15 @@
 
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
+  "containerUser": "vscode",
   "features": {
-    "git": "os-provided",
-    "github-cli": "latest"
+    "git": "os-provided"
   },
 
   "remoteEnv": {
     // InvenTree config
     "INVENTREE_DEBUG": "True",
-    "INVENTREE_DEBUG_LEVEL": "INFO",
+    "INVENTREE_LOG_LEVEL": "INFO",
     "INVENTREE_DB_ENGINE": "sqlite3",
     "INVENTREE_DB_NAME": "${containerWorkspaceFolder}/dev/database.sqlite3",
     "INVENTREE_MEDIA_ROOT": "${containerWorkspaceFolder}/dev/media",

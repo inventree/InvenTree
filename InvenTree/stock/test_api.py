@@ -13,13 +13,15 @@ import tablib
 from djmoney.money import Money
 from rest_framework import status
 
+import build.models
 import company.models
 import part.models
 from common.models import InvenTreeSetting
 from InvenTree.status_codes import StockHistoryCode, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
-from stock.models import StockItem, StockItemTestResult, StockLocation
+from stock.models import (StockItem, StockItemTestResult, StockLocation,
+                          StockLocationType)
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
@@ -94,7 +96,10 @@ class StockLocationTest(StockAPITestCase):
             'items',
             'pathstring',
             'owner',
-            'url'
+            'url',
+            'icon',
+            'location_type',
+            'location_type_detail',
         ]
 
         response = self.get(self.list_url, expected_code=200)
@@ -110,8 +115,8 @@ class StockLocationTest(StockAPITestCase):
             'name': 'Location',
             'description': 'Another location for stock'
         }
-        response = self.client.post(self.list_url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.post(self.list_url, data, expected_code=201)
 
     def test_stock_location_delete(self):
         """Test stock location deletion with different parameters"""
@@ -133,11 +138,9 @@ class StockLocationTest(StockAPITestCase):
             delete_sub_locations: bool = False
             delete_stock_items: bool = False
 
-            if i == Target.move_sub_locations_to_parent_delete_stockitems \
-                    or i == Target.delete_sub_locations_delete_stockitems:
+            if i in (Target.move_sub_locations_to_parent_delete_stockitems, Target.delete_sub_locations_delete_stockitems):
                 delete_stock_items = True
-            if i == Target.delete_sub_locations_move_stockitems_to_parent \
-                    or i == Target.delete_sub_locations_delete_stockitems:
+            if i in (Target.delete_sub_locations_move_stockitems_to_parent, Target.delete_sub_locations_delete_stockitems):
                 delete_sub_locations = True
 
             # Create a parent stock location
@@ -236,7 +239,6 @@ class StockLocationTest(StockAPITestCase):
         - Stock items cannot be located to structural locations
         - Check that stock location change to structural fails if items located into it
         """
-
         # Create our structural stock location
         structural_location = StockLocation.objects.create(
             name='Structural stock location',
@@ -293,6 +295,88 @@ class StockLocationTest(StockAPITestCase):
         with self.assertRaises(ValidationError):
             non_structural_location.full_clean()
 
+    def test_stock_location_icon(self):
+        """Test stock location icon inheritance from StockLocationType."""
+        parent_location = StockLocation.objects.create(name="Parent location")
+
+        location_type = StockLocationType.objects.create(name="Box", description="This is a very cool type of box", icon="fas fa-box")
+        location = StockLocation.objects.create(name="Test location", custom_icon="fas fa-microscope", location_type=location_type, parent=parent_location)
+
+        res = self.get(self.list_url, {"parent": str(parent_location.pk)}, expected_code=200).json()
+        self.assertEqual(res[0]["icon"], "fas fa-microscope", "Custom icon from location should be returned")
+
+        location.custom_icon = ""
+        location.save()
+        res = self.get(self.list_url, {"parent": str(parent_location.pk)}, expected_code=200).json()
+        self.assertEqual(res[0]["icon"], "fas fa-box", "Custom icon is None, therefore it should inherit the location type icon")
+
+        location_type.icon = ""
+        location_type.save()
+        res = self.get(self.list_url, {"parent": str(parent_location.pk)}, expected_code=200).json()
+        self.assertEqual(res[0]["icon"], "", "Custom icon and location type icon is None, None should be returned")
+
+    def test_stock_location_list_filter(self):
+        """Test stock location list filters."""
+        parent_location = StockLocation.objects.create(name="Parent location")
+
+        location_type = StockLocationType.objects.create(name="Box", description="This is a very cool type of box", icon="fas fa-box")
+        location_type2 = StockLocationType.objects.create(name="Shelf", description="This is a very cool type of shelf", icon="fas fa-shapes")
+        StockLocation.objects.create(name="Test location w. type", location_type=location_type, parent=parent_location)
+        StockLocation.objects.create(name="Test location w. type 2", parent=parent_location, location_type=location_type2)
+        StockLocation.objects.create(name="Test location wo type", parent=parent_location)
+
+        res = self.get(self.list_url, {"parent": str(parent_location.pk), "has_location_type": "1"}, expected_code=200).json()
+        self.assertEqual(len(res), 2)
+        self.assertEqual(res[0]["name"], "Test location w. type")
+        self.assertEqual(res[1]["name"], "Test location w. type 2")
+
+        res = self.get(self.list_url, {"parent": str(parent_location.pk), "location_type": str(location_type.pk)}, expected_code=200).json()
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0]["name"], "Test location w. type")
+
+        res = self.get(self.list_url, {"parent": str(parent_location.pk), "has_location_type": "0"}, expected_code=200).json()
+        self.assertEqual(len(res), 1)
+        self.assertEqual(res[0]["name"], "Test location wo type")
+
+
+class StockLocationTypeTest(StockAPITestCase):
+    """Tests for the StockLocationType API endpoints."""
+
+    list_url = reverse('api-location-type-list')
+
+    def test_list(self):
+        """Test that the list endpoint works as expected."""
+        location_types = [
+            StockLocationType.objects.create(name="Type 1", description="Type 1 desc", icon="fas fa-box"),
+            StockLocationType.objects.create(name="Type 2", description="Type 2 desc", icon="fas fa-box"),
+            StockLocationType.objects.create(name="Type 3", description="Type 3 desc", icon="fas fa-box"),
+        ]
+
+        StockLocation.objects.create(name="Loc 1", location_type=location_types[0])
+        StockLocation.objects.create(name="Loc 2", location_type=location_types[0])
+        StockLocation.objects.create(name="Loc 3", location_type=location_types[1])
+
+        res = self.get(self.list_url, expected_code=200).json()
+        self.assertEqual(len(res), 3)
+        self.assertCountEqual([r["location_count"] for r in res], [2, 1, 0])
+
+    def test_delete(self):
+        """Test that we can delete a location type via API."""
+        location_type = StockLocationType.objects.create(name="Type 1", description="Type 1 desc", icon="fas fa-box")
+        self.delete(reverse('api-location-type-detail', kwargs={"pk": location_type.pk}), expected_code=204)
+        self.assertEqual(StockLocationType.objects.count(), 0)
+
+    def test_create(self):
+        """Test that we can create a location type via API."""
+        self.post(self.list_url, {"name": "Test Type 1", "description": "Test desc 1", "icon": "fas fa-box"}, expected_code=201)
+        self.assertIsNotNone(StockLocationType.objects.filter(name="Test Type 1").first())
+
+    def test_update(self):
+        """Test that we can update a location type via API."""
+        location_type = StockLocationType.objects.create(name="Type 1", description="Type 1 desc", icon="fas fa-box")
+        res = self.patch(reverse('api-location-type-detail', kwargs={"pk": location_type.pk}), {"icon": "fas fa-shapes"}, expected_code=200).json()
+        self.assertEqual(res["icon"], "fas fa-shapes")
+
 
 class StockItemListTest(StockAPITestCase):
     """Tests for the StockItem API LIST endpoint."""
@@ -310,7 +394,6 @@ class StockItemListTest(StockAPITestCase):
 
     def test_top_level_filtering(self):
         """Test filtering against "top level" stock location"""
-
         # No filters, should return *all* items
         response = self.get(self.list_url, {}, expected_code=200)
         self.assertEqual(len(response.data), StockItem.objects.count())
@@ -402,6 +485,11 @@ class StockItemListTest(StockAPITestCase):
         """Filter StockItem by batch code."""
         response = self.get_stock(batch='B123')
         self.assertEqual(len(response), 1)
+
+    def test_filter_by_company(self):
+        """Test that we can filter stock items by company"""
+        for cmp in company.models.Company.objects.all():
+            self.get_stock(company=cmp.pk)
 
     def test_filter_by_serialized(self):
         """Filter StockItem by serialized status."""
@@ -557,13 +645,110 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(len(dataset), 17)
 
+    def test_filter_by_allocated(self):
+        """Test that we can filter by "allocated" status:
+
+        - Only return stock items which are 'allocated'
+        - Either to a build order or sales order
+        - Test that the results are "distinct" (no duplicated results)
+        - Ref: https://github.com/inventree/InvenTree/pull/5916
+        """
+
+        # Create a build order to allocate to
+        assembly = part.models.Part.objects.create(name='F Assembly', description='Assembly for filter test', assembly=True)
+        component = part.models.Part.objects.create(name='F Component', description='Component for filter test', component=True)
+        bom_item = part.models.BomItem.objects.create(part=assembly, sub_part=component, quantity=10)
+
+        # Create two build orders
+        bo_1 = build.models.Build.objects.create(part=assembly, quantity=10)
+        bo_2 = build.models.Build.objects.create(part=assembly, quantity=20)
+
+        # Test that two distinct build line items are created automatically
+        self.assertEqual(bo_1.build_lines.count(), 1)
+        self.assertEqual(bo_2.build_lines.count(), 1)
+        self.assertEqual(build.models.BuildLine.objects.filter(bom_item=bom_item).count(), 2)
+
+        build_line_1 = bo_1.build_lines.first()
+        build_line_2 = bo_2.build_lines.first()
+
+        # Allocate stock
+        location = StockLocation.objects.first()
+        stock_1 = StockItem.objects.create(part=component, quantity=100, location=location)
+        stock_2 = StockItem.objects.create(part=component, quantity=100, location=location)
+        stock_3 = StockItem.objects.create(part=component, quantity=100, location=location)
+
+        # Allocate stock_1 to two build orders
+        build.models.BuildItem.objects.create(
+            stock_item=stock_1,
+            build_line=build_line_1,
+            quantity=5
+        )
+
+        build.models.BuildItem.objects.create(
+            stock_item=stock_1,
+            build_line=build_line_2,
+            quantity=5
+        )
+
+        # Allocate stock_2 to 1 build orders
+        build.models.BuildItem.objects.create(
+            stock_item=stock_2,
+            build_line=build_line_1,
+            quantity=5
+        )
+
+        url = reverse('api-stock-list')
+
+        # 3 items when just filtering by part
+        response = self.get(
+            url,
+            {
+                "part": component.pk,
+                "in_stock": True
+            },
+            expected_code=200
+        )
+        self.assertEqual(len(response.data), 3)
+
+        # 1 item when filtering by "not allocated"
+        response = self.get(
+            url,
+            {
+                "part": component.pk,
+                "in_stock": True,
+                "allocated": False,
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["pk"], stock_3.pk)
+
+        # 2 items when filtering by "allocated"
+        response = self.get(
+            url,
+            {
+                "part": component.pk,
+                "in_stock": True,
+                "allocated": True,
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 2)
+
+        ids = [item["pk"] for item in response.data]
+
+        self.assertIn(stock_1.pk, ids)
+        self.assertIn(stock_2.pk, ids)
+
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""
 
-        def get_stock(data):
+        def get_stock(data, expected_status=200):
             """Helper function to fetch stock items."""
             response = self.client.get(self.list_url, data=data)
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, expected_status)
             return response.data
 
         # Create a bunch of StockItem objects
@@ -612,43 +797,42 @@ class StockItemTest(StockAPITestCase):
         """Test the default location functionality, if a 'location' is not specified in the creation request."""
         # The part 'R_4K7_0603' (pk=4) has a default location specified
 
-        response = self.client.post(
+        response = self.post(
             self.list_url,
             data={
                 'part': 4,
                 'quantity': 10
-            }
+            },
+            expected_code=201
         )
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['location'], 2)
 
         # What if we explicitly set the location to a different value?
 
-        response = self.client.post(
+        response = self.post(
             self.list_url,
             data={
                 'part': 4,
                 'quantity': 20,
                 'location': 1,
-            }
+            },
+            expected_code=201
         )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['location'], 1)
 
         # And finally, what if we set the location explicitly to None?
 
-        response = self.client.post(
+        response = self.post(
             self.list_url,
             data={
                 'part': 4,
                 'quantity': 20,
                 'location': '',
-            }
+            },
+            expected_code=201
         )
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['location'], None)
 
     def test_stock_item_create(self):
@@ -703,7 +887,6 @@ class StockItemTest(StockAPITestCase):
 
     def test_stock_item_create_withsupplierpart(self):
         """Test creation of a StockItem via the API, including SupplierPart data."""
-
         # POST with non-existent supplier part
         response = self.post(
             self.list_url,
@@ -884,18 +1067,14 @@ class StockItemTest(StockAPITestCase):
             'quantity': 10,
         }
 
-        response = self.client.post(self.list_url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(self.list_url, data, expected_code=201)
 
         self.assertIsNone(response.data['expiry_date'])
 
         # Second test - create a new StockItem with an explicit expiry date
         data['expiry_date'] = '2022-12-12'
 
-        response = self.client.post(self.list_url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(self.list_url, data, expected_code=201)
 
         self.assertIsNotNone(response.data['expiry_date'])
         self.assertEqual(response.data['expiry_date'], '2022-12-12')
@@ -906,12 +1085,17 @@ class StockItemTest(StockAPITestCase):
             'quantity': 10
         }
 
-        response = self.client.post(self.list_url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(self.list_url, data, expected_code=201)
 
         # Expected expiry date is 10 days in the future
         expiry = datetime.now().date() + timedelta(10)
 
+        self.assertEqual(response.data['expiry_date'], expiry.isoformat())
+
+        # Test result when sending a blank value
+        data['expiry_date'] = None
+
+        response = self.post(self.list_url, data, expected_code=201)
         self.assertEqual(response.data['expiry_date'], expiry.isoformat())
 
     def test_purchase_price(self):
@@ -1053,7 +1237,6 @@ class StockItemTest(StockAPITestCase):
 
     def test_return_from_customer(self):
         """Test that we can return a StockItem from a customer, via the API"""
-
         # Assign item to customer
         item = StockItem.objects.get(pk=521)
         customer = company.models.Company.objects.get(pk=4)
@@ -1092,7 +1275,6 @@ class StockItemTest(StockAPITestCase):
 
     def test_convert_to_variant(self):
         """Test that we can convert a StockItem to a variant part via the API"""
-
         category = part.models.PartCategory.objects.get(pk=3)
 
         # First, construct a set of template / variant parts
@@ -1155,7 +1337,6 @@ class StockItemTest(StockAPITestCase):
 
     def test_set_status(self):
         """Test API endpoint for setting StockItem status"""
-
         url = reverse('api-stock-change-status')
 
         prt = Part.objects.first()
@@ -1343,29 +1524,25 @@ class StockTestResultTest(StockAPITestCase):
 
         url = self.get_url()
 
-        response = self.client.post(
+        self.post(
             url,
             data={
                 'test': 'A test',
                 'result': True,
             },
-            format='json'
+            expected_code=400
         )
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
         # This one should pass!
-        response = self.client.post(
+        self.post(
             url,
             data={
                 'test': 'A test',
                 'stock_item': 105,
                 'result': True,
             },
-            format='json'
+            expected_code=201
         )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_post(self):
         """Test creation of a new test result."""
@@ -1382,9 +1559,7 @@ class StockTestResultTest(StockAPITestCase):
             'notes': 'I guess there was just too much pressure?',
         }
 
-        response = self.client.post(url, data, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(url, data, expected_code=201)
 
         response = self.client.get(url)
         self.assertEqual(len(response.data), n + 1)
@@ -1424,7 +1599,6 @@ class StockTestResultTest(StockAPITestCase):
             }
 
             response = self.client.post(self.get_url(), data)
-
             self.assertEqual(response.status_code, 201)
 
             # Check that an attachment has been uploaded
@@ -1432,7 +1606,6 @@ class StockTestResultTest(StockAPITestCase):
 
     def test_bulk_delete(self):
         """Test that the BulkDelete endpoint works for this model"""
-
         n = StockItemTestResult.objects.count()
 
         tests = []
@@ -1607,7 +1780,6 @@ class StockMergeTest(StockAPITestCase):
     @classmethod
     def setUpTestData(cls):
         """Setup for all tests."""
-
         super().setUpTestData()
 
         cls.part = part.models.Part.objects.get(pk=25)
@@ -1797,7 +1969,6 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
 
     def metatester(self, apikey, model):
         """Generic tester"""
-
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
@@ -1826,7 +1997,6 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
 
     def test_metadata(self):
         """Test all endpoints"""
-
         for apikey, model in {
             'api-location-metadata': StockLocation,
             'api-stock-test-result-metadata': StockItemTestResult,

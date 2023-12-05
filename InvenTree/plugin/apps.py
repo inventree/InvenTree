@@ -42,9 +42,8 @@ class PluginAppConfig(AppConfig):
                 except Exception:  # pragma: no cover
                     pass
 
-                # get plugins and init them
-                registry.plugin_modules = registry.collect_plugins()
-                registry.load_plugins()
+                # Perform a full reload of the plugin registry
+                registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
                 # drop out of maintenance
                 # makes sure we did not have an error in reloading and maintenance is still active

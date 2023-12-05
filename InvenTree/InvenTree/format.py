@@ -3,7 +3,13 @@
 import re
 import string
 
+from django.conf import settings
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
+
+from babel import Locale
+from babel.numbers import parse_pattern
+from djmoney.money import Money
 
 
 def parse_format_string(fmt_string: str) -> dict:
@@ -11,7 +17,6 @@ def parse_format_string(fmt_string: str) -> dict:
 
     Returns a dict object which contains structured information about the format groups
     """
-
     groups = string.Formatter().parse(fmt_string)
 
     info = {}
@@ -62,7 +67,6 @@ def construct_format_regex(fmt_string: str) -> str:
     Raises:
         ValueError: Format string is invalid
     """
-
     pattern = "^"
 
     for group in string.Formatter().parse(fmt_string):
@@ -121,7 +125,6 @@ def validate_string(value: str, fmt_string: str) -> str:
     Raises:
         ValueError: The provided format string is invalid
     """
-
     pattern = construct_format_regex(fmt_string)
 
     result = re.match(pattern, value)
@@ -145,7 +148,6 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
         NameError: named value does not exist in the format string
         IndexError: named value could not be found in the provided entry
     """
-
     info = parse_format_string(fmt_string)
 
     if name not in info.keys():
@@ -164,3 +166,34 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
     # And return the value we are interested in
     # Note: This will raise an IndexError if the named group was not matched
     return result.group(name)
+
+
+def format_money(money: Money, decimal_places: int = None, format: str = None) -> str:
+    """Format money object according to the currently set local
+
+    Args:
+        decimal_places: Number of decimal places to use
+        format: Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
+
+    Returns:
+        str: The formatted string
+
+    Raises:
+        ValueError: format string is incorrectly specified
+    """
+    language = None and translation.get_language() or settings.LANGUAGE_CODE
+    locale = Locale.parse(translation.to_locale(language))
+    if format:
+        pattern = parse_pattern(format)
+    else:
+        pattern = locale.currency_formats["standard"]
+        if decimal_places is not None:
+            pattern.frac_prec = (decimal_places, decimal_places)
+
+    return pattern.apply(
+        money.amount,
+        locale,
+        currency=money.currency.code,
+        currency_digits=decimal_places is None,
+        decimal_quantization=decimal_places is not None,
+    )

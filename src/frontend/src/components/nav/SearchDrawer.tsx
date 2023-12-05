@@ -2,6 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
   Alert,
+  Anchor,
   Center,
   Checkbox,
   Divider,
@@ -25,185 +26,51 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { apiUrl } from '../../states/ApiState';
+import { useUserSettingsState } from '../../states/SettingsState';
+import { useUserState } from '../../states/UserState';
+import { RenderInstance } from '../render/Instance';
+import { ModelInformationDict } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
-  name: string;
-  title: string;
+  model: ModelType;
   enabled: boolean;
   parameters: any;
   results?: any;
-  render: (result: any) => JSX.Element;
 };
-
-// Placeholder function for permissions checks (will be replaced with a proper implementation)
-function permissionCheck(permission: string) {
-  return true;
-}
-
-// Placeholder function for settings checks (will be replaced with a proper implementation)
-function settingsCheck(setting: string) {
-  return true;
-}
-
-// Placeholder function for rendering an individual search result
-// In the future, this will be defined individually for each result type
-function renderResult(result: any) {
-  return <Text size="sm">Result here - ID = {`${result.pk}`}</Text>;
-}
-
-/*
- * Build a list of search queries based on user permissions
- */
-function buildSearchQueries(): SearchQuery[] {
-  return [
-    {
-      name: 'part',
-      title: t`Parts`,
-      parameters: {},
-      render: renderResult,
-      enabled:
-        permissionCheck('part.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_PARTS')
-    },
-    {
-      name: 'supplierpart',
-      title: t`Supplier Parts`,
-      parameters: {
-        part_detail: true,
-        supplier_detail: true,
-        manufacturer_detail: true
-      },
-      render: renderResult,
-      enabled:
-        permissionCheck('part.view') &&
-        permissionCheck('purchase_order.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS')
-    },
-    {
-      name: 'manufacturerpart',
-      title: t`Manufacturer Parts`,
-      parameters: {
-        part_detail: true,
-        supplier_detail: true,
-        manufacturer_detail: true
-      },
-      render: renderResult,
-      enabled:
-        permissionCheck('part.view') &&
-        permissionCheck('purchase_order.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS')
-    },
-    {
-      name: 'partcategory',
-      title: t`Part Categories`,
-      parameters: {},
-      render: renderResult,
-      enabled:
-        permissionCheck('part_category.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_CATEGORIES')
-    },
-    {
-      name: 'stockitem',
-      title: t`Stock Items`,
-      parameters: {
-        part_detail: true,
-        location_detail: true
-      },
-      render: renderResult,
-      enabled:
-        permissionCheck('stock.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_STOCK')
-    },
-    {
-      name: 'stocklocation',
-      title: t`Stock Locations`,
-      parameters: {},
-      render: renderResult,
-      enabled:
-        permissionCheck('stock_location.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_LOCATIONS')
-    },
-    {
-      name: 'build',
-      title: t`Build Orders`,
-      parameters: {
-        part_detail: true
-      },
-      render: renderResult,
-      enabled:
-        permissionCheck('build.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
-    },
-    {
-      name: 'company',
-      title: t`Companies`,
-      parameters: {},
-      render: renderResult,
-      enabled:
-        (permissionCheck('sales_order.view') ||
-          permissionCheck('purchase_order.view')) &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_COMPANIES')
-    },
-    {
-      name: 'purchaseorder',
-      title: t`Purchase Orders`,
-      parameters: {
-        supplier_detail: true
-      },
-      render: renderResult,
-      enabled:
-        permissionCheck('purchase_order.view') &&
-        settingsCheck(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
-    },
-    {
-      name: 'salesorder',
-      title: t`Sales Orders`,
-      parameters: {
-        customer_detail: true
-      },
-      render: renderResult,
-      enabled:
-        permissionCheck('sales_order.view') &&
-        settingsCheck(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
-    },
-    {
-      name: 'returnorder',
-      title: t`Return Orders`,
-      parameters: {
-        customer_detail: true
-      },
-      render: renderResult,
-      enabled:
-        permissionCheck('return_order.view') &&
-        settingsCheck(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
-    }
-  ];
-}
 
 /*
  * Render the results for a single search query
  */
 function QueryResultGroup({
   query,
-  onRemove
+  onRemove,
+  onResultClick
 }: {
   query: SearchQuery;
-  onRemove: (query: string) => void;
+  onRemove: (query: ModelType) => void;
+  onResultClick: (query: ModelType, pk: number) => void;
 }) {
   if (query.results.count == 0) {
     return null;
   }
 
+  const model = ModelInformationDict[query.model];
+
   return (
-    <Paper shadow="sm" radius="xs" p="md">
-      <Stack key={query.name}>
+    <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
+      <Stack key={`stack-${query.model}`}>
         <Group position="apart" noWrap={true}>
           <Group position="left" spacing={5} noWrap={true}>
-            <Text size="lg">{query.title}</Text>
+            <Text size="lg">{model.label_multiple}</Text>
             <Text size="sm" italic>
               {' '}
               - {query.results.count} <Trans>results</Trans>
@@ -215,14 +82,21 @@ function QueryResultGroup({
             color="red"
             variant="transparent"
             radius="xs"
-            onClick={() => onRemove(query.name)}
+            onClick={() => onRemove(query.model)}
           >
             <IconX />
           </ActionIcon>
         </Group>
         <Divider />
         <Stack>
-          {query.results.results.map((result: any) => query.render(result))}
+          {query.results.results.map((result: any) => (
+            <Anchor
+              onClick={() => onResultClick(query.model, result.pk)}
+              key={result.pk}
+            >
+              <RenderInstance instance={result} model={query.model} />
+            </Anchor>
+          ))}
         </Stack>
         <Space />
       </Stack>
@@ -247,15 +121,121 @@ export function SearchDrawer({
   const [searchRegex, setSearchRegex] = useState<boolean>(false);
   const [searchWhole, setSearchWhole] = useState<boolean>(false);
 
+  const user = useUserState();
+  const userSettings = useUserSettingsState();
+
+  // Build out search queries based on user permissions and preferences
+  const searchQueryList: SearchQuery[] = useMemo(() => {
+    return [
+      {
+        model: ModelType.part,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.part) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_PARTS')
+      },
+      {
+        model: ModelType.supplierpart,
+        parameters: {
+          part_detail: true,
+          supplier_detail: true,
+          manufacturer_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.part) &&
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS')
+      },
+      {
+        model: ModelType.manufacturerpart,
+        parameters: {
+          part_detail: true,
+          supplier_detail: true,
+          manufacturer_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.part) &&
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS')
+      },
+      {
+        model: ModelType.partcategory,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.part_category) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_CATEGORIES')
+      },
+      {
+        model: ModelType.stockitem,
+        parameters: {
+          part_detail: true,
+          location_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.stock) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_STOCK')
+      },
+      {
+        model: ModelType.stocklocation,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.stock_location) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_LOCATIONS')
+      },
+      {
+        model: ModelType.build,
+        parameters: {
+          part_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.build) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
+      },
+      {
+        model: ModelType.company,
+        parameters: {},
+        enabled:
+          (user.hasViewRole(UserRoles.sales_order) ||
+            user.hasViewRole(UserRoles.purchase_order)) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
+      },
+      {
+        model: ModelType.purchaseorder,
+        parameters: {
+          supplier_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
+      },
+      {
+        model: ModelType.salesorder,
+        parameters: {
+          customer_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.sales_order) &&
+          userSettings.isSet(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
+      },
+      {
+        model: ModelType.returnorder,
+        parameters: {
+          customer_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.return_order) &&
+          userSettings.isSet(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
+      }
+    ];
+  }, [user, userSettings]);
+
   // Construct a list of search queries based on user permissions
-  const searchQueries: SearchQuery[] = buildSearchQueries().filter(
-    (q) => q.enabled
-  );
+  const searchQueries: SearchQuery[] = searchQueryList.filter((q) => q.enabled);
 
   // Re-fetch data whenever the search term is updated
   useEffect(() => {
     // TODO: Implement search functionality
-    refetch();
+    searchQuery.refetch();
   }, [searchText]);
 
   // Function for performing the actual search query
@@ -275,11 +255,11 @@ export function SearchDrawer({
 
     // Add in custom query parameters
     searchQueries.forEach((query) => {
-      params[query.name] = query.parameters;
+      params[query.model] = query.parameters;
     });
 
     return api
-      .post(`/search/`, params)
+      .post(apiUrl(ApiPaths.api_search), params)
       .then(function (response) {
         return response.data;
       })
@@ -290,26 +270,26 @@ export function SearchDrawer({
   };
 
   // Search query manager
-  const { data, isError, isFetching, isLoading, refetch } = useQuery(
-    ['search', searchText, searchRegex, searchWhole],
-    performSearch,
-    {
-      refetchOnWindowFocus: false
-    }
-  );
+  const searchQuery = useQuery({
+    queryKey: ['search', searchText, searchRegex, searchWhole],
+    queryFn: performSearch,
+    refetchOnWindowFocus: false
+  });
 
   // A list of queries which return valid results
   const [queryResults, setQueryResults] = useState<SearchQuery[]>([]);
 
   // Update query results whenever the search results change
   useEffect(() => {
-    if (data) {
-      let queries = searchQueries.filter((query) => query.name in data);
+    if (searchQuery.data) {
+      let queries = searchQueries.filter(
+        (query) => query.model in searchQuery.data
+      );
 
-      for (let key in data) {
-        let query = queries.find((q) => q.name == key);
+      for (let key in searchQuery.data) {
+        let query = queries.find((q) => q.model == key);
         if (query) {
-          query.results = data[key];
+          query.results = searchQuery.data[key];
         }
       }
 
@@ -320,22 +300,33 @@ export function SearchDrawer({
     } else {
       setQueryResults([]);
     }
-  }, [data]);
+  }, [searchQuery.data]);
 
   // Callback to remove a set of results from the list
-  function removeResults(query: string) {
-    setQueryResults(queryResults.filter((q) => q.name != query));
+  function removeResults(query: ModelType) {
+    setQueryResults(queryResults.filter((q) => q.model != query));
   }
 
+  // Callback when the drawer is closed
   function closeDrawer() {
     setValue('');
     onClose();
   }
 
+  const navigate = useNavigate();
+
+  // Callback when one of the search results is clicked
+  function onResultClick(query: ModelType, pk: number) {
+    closeDrawer();
+    const targetModel = ModelInformationDict[query];
+    if (targetModel.url_detail == undefined) return;
+    navigate(targetModel.url_detail.replace(':pk', pk.toString()));
+  }
+
   return (
     <Drawer
       opened={opened}
-      size="lg"
+      size="xl"
       onClose={closeDrawer}
       position="right"
       withCloseButton={false}
@@ -359,7 +350,7 @@ export function SearchDrawer({
             size="lg"
             variant="outline"
             radius="xs"
-            onClick={() => refetch()}
+            onClick={() => searchQuery.refetch()}
           >
             <IconRefresh />
           </ActionIcon>
@@ -396,22 +387,24 @@ export function SearchDrawer({
         </Group>
       }
     >
-      {isFetching && (
+      {searchQuery.isFetching && (
         <Center>
           <Loader />
         </Center>
       )}
-      {!isFetching && !isError && (
+      {!searchQuery.isFetching && !searchQuery.isError && (
         <Stack spacing="md">
-          {queryResults.map((query) => (
+          {queryResults.map((query, idx) => (
             <QueryResultGroup
+              key={idx}
               query={query}
               onRemove={(query) => removeResults(query)}
+              onResultClick={(query, pk) => onResultClick(query, pk)}
             />
           ))}
         </Stack>
       )}
-      {isError && (
+      {searchQuery.isError && (
         <Alert
           color="red"
           radius="sm"
@@ -422,17 +415,20 @@ export function SearchDrawer({
           <Trans>An error occurred during search query</Trans>
         </Alert>
       )}
-      {searchText && !isFetching && !isError && queryResults.length == 0 && (
-        <Alert
-          color="blue"
-          radius="sm"
-          variant="light"
-          title={t`No results`}
-          icon={<IconSearch size="1rem" />}
-        >
-          <Trans>No results available for search query</Trans>
-        </Alert>
-      )}
+      {searchText &&
+        !searchQuery.isFetching &&
+        !searchQuery.isError &&
+        queryResults.length == 0 && (
+          <Alert
+            color="blue"
+            radius="sm"
+            variant="light"
+            title={t`No results`}
+            icon={<IconSearch size="1rem" />}
+          >
+            <Trans>No results available for search query</Trans>
+          </Alert>
+        )}
     </Drawer>
   );
 }

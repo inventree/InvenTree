@@ -3,6 +3,7 @@
 import logging
 
 from django.conf import settings
+from django.core.cache import cache
 
 from moneyed import CURRENCIES
 
@@ -11,17 +12,24 @@ logger = logging.getLogger('inventree')
 
 def currency_code_default():
     """Returns the default currency code (or USD if not specified)"""
-
     from common.models import InvenTreeSetting
 
+    cached_value = cache.get('currency_code_default', '')
+
+    if cached_value:
+        return cached_value
+
     try:
-        code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', create=False, cache=False)
+        code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', backup_value='', create=True, cache=True)
     except Exception:  # pragma: no cover
         # Database may not yet be ready, no need to throw an error here
         code = ''
 
     if code not in CURRENCIES:
         code = 'USD'  # pragma: no cover
+
+    # Cache the value for a short amount of time
+    cache.set('currency_code_default', code, 30)
 
     return code
 

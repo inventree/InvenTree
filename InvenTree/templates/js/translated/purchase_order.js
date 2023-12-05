@@ -139,6 +139,9 @@ function purchaseOrderFields(options={}) {
         },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         },
     };
 
@@ -883,15 +886,23 @@ function orderParts(parts_list, options={}) {
                 // Request 'requirements' information for each part
                 inventreeGet(`{% url "api-part-list" %}${part.pk}/requirements/`, {}, {
                     success: function(response) {
-                        var required = response.required || 0;
-                        var allocated = response.allocated || 0;
-                        var available = response.available_stock || 0;
+                        let required = response.required || 0;
+                        let allocated = response.allocated || 0;
+                        let available = response.available_stock || 0;
+                        let on_order = response.on_order || 0;
 
                         // Based on what we currently 'have' on hand, what do we need to order?
-                        var deficit = Math.max(required - allocated, 0);
+                        let deficit = Math.max(required - allocated, 0);
 
                         if (available < deficit) {
                             var q = deficit - available;
+
+                            // If we have some on order, subtract that from the quantity we need to order
+                            if (on_order > 0) {
+                                q -= on_order;
+                            }
+
+                            q = Math.max(q, 0);
 
                             updateFieldValue(
                                 `quantity_${part.pk}`,
@@ -1306,7 +1317,11 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             location: {
                 filters: {
                     structural: false,
-                }
+                },
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
             },
         },
         preFormContent: html,
@@ -1669,7 +1684,11 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 sortName: 'supplier__name',
                 formatter: function(value, row) {
-                    return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/?display=purchase-orders`);
+                    if (row.supplier_detail) {
+                        return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/?display=purchase-orders`);
+                    } else {
+                        return '-';
+                    }
                 }
             },
             {
@@ -1982,7 +2001,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "Part" %}',
                 switchable: false,
                 formatter: function(value, row, index, field) {
-                    if (row.part) {
+                    if (row.part_detail) {
                         return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
                     } else {
                         return '-';

@@ -31,7 +31,6 @@ def log_error(path):
     Arguments:
         path: The 'path' (most likely a URL) associated with this error (optional)
     """
-
     kind, info, data = sys.exc_info()
 
     # Check if the error is on the ignore list

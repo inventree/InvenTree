@@ -34,7 +34,7 @@ To get "up and running" with a development environment, complete with a set of [
 
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
-docker compose run inventree-dev-server invoke install
+docker compose run inventree-dev-server invoke update
 docker compose run inventree-dev-server invoke setup-test --dev
 docker compose up -d
 ```
@@ -68,7 +68,7 @@ If desired, the user may edit the environment variables, located in the `.env` f
 Perform the initial database setup by running the following command:
 
 ```bash
-docker compose run inventree-dev-server invoke update --no-frontend
+docker compose run inventree-dev-server invoke update
 ```
 
 If this is the first time you are configuring the development server, this command will build a development version of the inventree docker image.
@@ -229,7 +229,7 @@ Any updates which require a database schema change must be reflected in the data
 To run database migrations inside the docker container, run the following command:
 
 ```
-docker compose run inventree-dev-server invoke update --no-frontend
+docker compose run inventree-dev-server invoke update
 ```
 
 ### Docker Image Updates

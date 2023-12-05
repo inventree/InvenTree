@@ -58,6 +58,14 @@ database:
 # Use the environment variable INVENTREE_DEBUG
 debug: True
 
+# Set to False to disable the admin interface (default = True)
+# Or, use the environment variable INVENTREE_ADMIN_ENABLED
+#admin_enabled: True
+
+# Set the admin URL (default is 'admin')
+# Or, use the environment variable INVENTREE_ADMIN_URL
+#admin_url: 'admin'
+
 # Set enabled frontends
 # Use the environment variable INVENTREE_CLASSIC_FRONTEND
 # classic_frontend: True
@@ -68,6 +76,10 @@ debug: True
 # Use environment variable INVENTREE_LOG_LEVEL
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
+
+# Enable database-level logging
+# Use the environment variable INVENTREE_DB_LOGGING
+db_logging: False
 
 # Select default system language (default is 'en-us')
 # Use the environment variable INVENTREE_LANGUAGE
@@ -229,16 +241,75 @@ remote_login_header: HTTP_REMOTE_USER
 #     KEYCLOAK_URL: 'https://keycloak.custom/auth'
 #     KEYCLOAK_REALM: 'master'
 
+# Add LDAP support
+# ldap:
+#   enabled: false
+#   debug: false  # enable debug mode to troubleshoot ldap configuration
+#   server_uri: ldaps://example.org
+#   bind_dn: cn=admin,dc=example,dc=org
+#   bind_password: admin_password
+#   search_base_dn: cn=Users,dc=example,dc=org
+
+#   # enable TLS encryption over the standard LDAP port,
+#   # see: https://django-auth-ldap.readthedocs.io/en/latest/reference.html#auth-ldap-start-tls
+#   # start_tls: false
+
+#   # uncomment if you want to use direct bind, bind_dn and bin_password is not necessary then
+#   # user_dn_template: "uid=%(user)s,dc=example,dc=org"
+
+#   # uncomment to set advanced global options, see https://www.python-ldap.org/en/latest/reference/ldap.html#ldap-options
+#   # for all available options (keys and values starting with OPT_ get automatically converted to python-ldap keys)
+#   # global_options:
+#   #   OPT_X_TLS_REQUIRE_CERT: OPT_X_TLS_NEVER
+#   #   OPT_X_TLS_CACERTFILE: /opt/inventree/ldapca.pem
+
+#   # uncomment for advanced filter search, default: uid=%(user)s
+#   # search_filter_str:
+
+#   # uncomment for advanced user attribute mapping (in the format <InvenTree attribute>: <LDAP attribute>)
+#   # user_attr_map:
+#   #   first_name: givenName
+#   #   last_name: sn
+#   #   email: mail
+
+#   # always update the user on each login, default: true
+#   # always_update_user: true
+
+#   # cache timeout to reduce traffic with LDAP server, default: 3600 (1h)
+#   # cache_timeout: 3600
+
+#   # LDAP group support
+#   # group_search: ou=groups,dc=example,dc=com
+#   # require_group: cn=inventree_allow,ou=groups,dc=example,dc=com
+#   # deny_group: cn=inventree_deny,ou=groups,dc=example,dc=com
+#   # Set staff/superuser flag based on LDAP group membership
+#   # user_flags_by_group:
+#   #   is_staff: cn=inventree_staff,ou=groups,dc=example,dc=com
+#   #   is_superuser: cn=inventree_superuser,ou=groups,dc=example,dc=com
+
 # Customization options
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
+# Logo and splash paths and filenames must be relative to the static_root directory
 # customize:
 #   login_message: InvenTree demo instance - <a href='https://inventree.org/demo.html'> Click here for login details</a>
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
-#   logo: logo.png
-#   splash: splash_screen.jpg
 #   hide_admin_link: true
 #   hide_password_reset: true
+#   logo: img/custom_logo.png
+#   splash: img/custom_splash.jpg
+
+# Frontend UI settings
+# frontend_settings:
+#   base_url: 'frontend'
+#   server_list:
+#     my_server1:
+#       host: https://demo.inventree.org/
+#       name: InvenTree Demo
+#   default_server: my_server1
+#   show_server_selector: false
+#   sentry_dsn: https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920
+#   environment: development
 
 # Custom flags
 # InvenTree uses django-flags; read more in their docs at https://cfpb.github.io/django-flags/conditions/

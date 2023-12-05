@@ -18,11 +18,10 @@ from .validators import AllowedURLValidator, allowable_url_schemes
 
 
 class InvenTreeRestURLField(RestURLField):
-    """Custom field for DRF with custom scheme vaildators."""
+    """Custom field for DRF with custom scheme validators."""
 
     def __init__(self, **kwargs):
         """Update schemes."""
-
         # Enforce 'max length' parameter in form validation
         if 'max_length' not in kwargs:
             kwargs['max_length'] = 200
@@ -38,19 +37,28 @@ class InvenTreeURLField(models.URLField):
 
     def __init__(self, **kwargs):
         """Initialization method for InvenTreeURLField"""
-
         # Max length for InvenTreeURLField is set to 200
         kwargs['max_length'] = 200
         super().__init__(**kwargs)
 
 
-def money_kwargs():
+def money_kwargs(**kwargs):
     """Returns the database settings for MoneyFields."""
     from common.settings import currency_code_default, currency_code_mappings
 
-    kwargs = {}
-    kwargs['currency_choices'] = currency_code_mappings()
-    kwargs['default_currency'] = currency_code_default()
+    # Default values (if not specified)
+    if 'max_digits' not in kwargs:
+        kwargs['max_digits'] = 19
+
+    if 'decimal_places' not in kwargs:
+        kwargs['decimal_places'] = 6
+
+    if 'currency_choices' not in kwargs:
+        kwargs['currency_choices'] = currency_code_mappings()
+
+    if 'default_currency' not in kwargs:
+        kwargs['default_currency'] = currency_code_default()
+
     return kwargs
 
 
@@ -64,16 +72,8 @@ class InvenTreeModelMoneyField(ModelMoneyField):
             # remove currency information for a clean migration
             kwargs['default_currency'] = ''
             kwargs['currency_choices'] = []
-        else:
-            # set defaults
-            kwargs.update(money_kwargs())
 
-        # Default values (if not specified)
-        if 'max_digits' not in kwargs:
-            kwargs['max_digits'] = 19
-
-        if 'decimal_places' not in kwargs:
-            kwargs['decimal_places'] = 6
+        kwargs = money_kwargs(**kwargs)
 
         # Set a minimum value validator
         validators = kwargs.get('validators', [])
@@ -115,11 +115,7 @@ class InvenTreeMoneyField(MoneyField):
 
     def __init__(self, *args, **kwargs):
         """Override initial values with the real info from database."""
-        kwargs.update(money_kwargs())
-
-        kwargs['max_digits'] = 19
-        kwargs['decimal_places'] = 6
-
+        kwargs = money_kwargs(**kwargs)
         super().__init__(*args, **kwargs)
 
 
@@ -151,7 +147,6 @@ class DatePickerFormField(forms.DateField):
 
 def round_decimal(value, places, normalize=False):
     """Round value to the specified number of places."""
-
     if type(value) in [Decimal, float]:
         value = round(value, places)
 
@@ -188,7 +183,6 @@ class RoundingDecimalField(models.DecimalField):
 
     def formfield(self, **kwargs):
         """Return a Field instance for this field."""
-
         kwargs['form_class'] = RoundingDecimalFormField
 
         return super().formfield(**kwargs)

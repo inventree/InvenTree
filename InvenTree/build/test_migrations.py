@@ -111,7 +111,6 @@ class TestReferencePatternMigration(MigratorTestCase):
 
     def prepare(self):
         """Create some initial data prior to migration"""
-
         Setting = self.old_state.apps.get_model('common', 'inventreesetting')
 
         # Create a custom existing prefix so we can confirm the operation is working
@@ -141,7 +140,6 @@ class TestReferencePatternMigration(MigratorTestCase):
 
     def test_reference_migration(self):
         """Test that the reference fields have been correctly updated"""
-
         Build = self.new_state.apps.get_model('build', 'build')
 
         for build in Build.objects.all():
@@ -170,7 +168,6 @@ class TestBuildLineCreation(MigratorTestCase):
 
     def prepare(self):
         """Create data to work with"""
-
         # Model references
         Part = self.old_state.apps.get_model('part', 'part')
         BomItem = self.old_state.apps.get_model('part', 'bomitem')
@@ -235,7 +232,6 @@ class TestBuildLineCreation(MigratorTestCase):
 
     def test_build_line_creation(self):
         """Test that the BuildLine objects have been created correctly"""
-
         Build = self.new_state.apps.get_model('build', 'build')
         BomItem = self.new_state.apps.get_model('part', 'bomitem')
         BuildLine = self.new_state.apps.get_model('build', 'buildline')

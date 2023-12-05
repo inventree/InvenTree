@@ -1,12 +1,11 @@
 """Template tags for rendering various barcodes."""
 
-import base64
-from io import BytesIO
-
 from django import template
 
 import barcode as python_barcode
 import qrcode as python_qrcode
+
+import report.helpers
 
 register = template.Library()
 
@@ -16,12 +15,8 @@ def image_data(img, fmt='PNG'):
 
     Returns a string ``data:image/FMT;base64,xxxxxxxxx`` which can be rendered to an <img> tag
     """
-    buffered = BytesIO()
-    img.save(buffered, format=fmt)
 
-    img_str = base64.b64encode(buffered.getvalue())
-
-    return f"data:image/{fmt.lower()};charset=utf-8;base64," + img_str.decode()
+    return report.helpers.encode_image_base64(img, fmt)
 
 
 @register.simple_tag()

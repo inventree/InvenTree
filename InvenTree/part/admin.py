@@ -25,7 +25,6 @@ class PartResource(InvenTreeResource):
         exclude = [
             'bom_checksum', 'bom_checked_by', 'bom_checked_date',
             'lft', 'rght', 'tree_id', 'level',
-            'image',
             'metadata',
             'barcode_data', 'barcode_hash',
         ]
@@ -39,6 +38,7 @@ class PartResource(InvenTreeResource):
     link = Field(attribute='link', column_name=_('Link'), widget=widgets.CharWidget())
     units = Field(attribute='units', column_name=_('Units'), widget=widgets.CharWidget())
     notes = Field(attribute='notes', column_name=_('Notes'))
+    image = Field(attribute='image', column_name=_('Part Image'), readonly=True)
     category = Field(attribute='category', column_name=_('Category ID'), widget=widgets.ForeignKeyWidget(models.PartCategory))
     category_name = Field(attribute='category__name', column_name=_('Category Name'), readonly=True)
     default_location = Field(attribute='default_location', column_name=_('Default Location ID'), widget=widgets.ForeignKeyWidget(StockLocation))
@@ -68,7 +68,6 @@ class PartResource(InvenTreeResource):
 
     def dehydrate_min_cost(self, part):
         """Render minimum cost value for this Part"""
-
         min_cost = part.pricing.overall_min if part.pricing else None
 
         if min_cost is not None:
@@ -76,7 +75,6 @@ class PartResource(InvenTreeResource):
 
     def dehydrate_max_cost(self, part):
         """Render maximum cost value for this Part"""
-
         max_cost = part.pricing.overall_max if part.pricing else None
 
         if max_cost is not None:
@@ -97,7 +95,6 @@ class PartResource(InvenTreeResource):
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
         """Rebuild MPTT tree structure after importing Part data"""
-
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
         # Rebuild the Part tree(s)
@@ -203,7 +200,6 @@ class PartCategoryResource(InvenTreeResource):
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
         """Rebuild MPTT tree structure after importing PartCategory data"""
-
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
         # Rebuild the PartCategory tree(s)
@@ -284,7 +280,6 @@ class BomItemResource(InvenTreeResource):
 
     def dehydrate_min_cost(self, item):
         """Render minimum cost value for the BOM line item"""
-
         min_price = item.sub_part.pricing.overall_min if item.sub_part.pricing else None
 
         if min_price is not None:
@@ -292,7 +287,6 @@ class BomItemResource(InvenTreeResource):
 
     def dehydrate_max_cost(self, item):
         """Render maximum cost value for the BOM line item"""
-
         max_price = item.sub_part.pricing.overall_max if item.sub_part.pricing else None
 
         if max_price is not None:
@@ -307,7 +301,6 @@ class BomItemResource(InvenTreeResource):
 
     def before_export(self, queryset, *args, **kwargs):
         """Perform before exporting data"""
-
         self.is_importing = kwargs.get('importing', False)
         self.include_pricing = kwargs.pop('include_pricing', False)
 

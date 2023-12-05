@@ -13,7 +13,6 @@ class LabelSerializerBase(InvenTreeModelSerializer):
     @staticmethod
     def label_fields():
         """Generic serializer fields for a label template"""
-
         return [
             'pk',
             'name',

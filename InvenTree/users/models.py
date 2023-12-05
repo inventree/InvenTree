@@ -1,12 +1,16 @@
 """Database model definitions for the 'users' app"""
 
+import datetime
 import logging
 
+from django.conf import settings
+from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Q, UniqueConstraint
 from django.db.models.signals import post_delete, post_save
@@ -15,9 +19,159 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from rest_framework.authtoken.models import Token as AuthToken
+
+import common.models as common_models
+import InvenTree.helpers
+import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase
 
 logger = logging.getLogger("inventree")
+
+
+#  OVERRIDE START
+# Overrides Django User model __str__ with a custom function to be able to change
+# string representation of a user
+def user_model_str(self):
+    """Function to override the default Django User __str__"""
+
+    if common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+        if self.first_name or self.last_name:
+            return f'{self.first_name} {self.last_name}'
+    return self.username
+
+
+User.add_to_class("__str__", user_model_str)  # Overriding User.__str__
+#  OVERRIDE END
+
+
+def default_token():
+    """Generate a default value for the token"""
+    return ApiToken.generate_key()
+
+
+def default_token_expiry():
+    """Generate an expiry date for a newly created token"""
+
+    # TODO: Custom value for default expiry timeout
+    # TODO: For now, tokens last for 1 year
+    return datetime.datetime.now().date() + datetime.timedelta(days=365)
+
+
+class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
+    """Extends the default token model provided by djangorestframework.authtoken, as follows:
+
+    - Adds an 'expiry' date - tokens can be set to expire after a certain date
+    - Adds a 'name' field - tokens can be given a custom name (in addition to the user information)
+    """
+
+    class Meta:
+        """Metaclass defines model properties"""
+        verbose_name = _('API Token')
+        verbose_name_plural = _('API Tokens')
+        abstract = False
+
+    def __str__(self):
+        """String representation uses the redacted token"""
+        return self.token
+
+    @classmethod
+    def generate_key(cls, prefix='inv-'):
+        """Generate a new token key - with custom prefix"""
+
+        # Suffix is the date of creation
+        suffix = '-' + str(datetime.datetime.now().date().isoformat().replace('-', ''))
+
+        return prefix + str(AuthToken.generate_key()) + suffix
+
+    # Override the 'key' field - force it to be unique
+    key = models.CharField(
+        default=default_token,
+        verbose_name=_('Key'),
+        db_index=True, unique=True,
+        max_length=100,
+        validators=[
+            MinLengthValidator(50),
+        ]
+    )
+
+    # Override the 'user' field, to allow multiple tokens per user
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name=_('User'),
+        related_name='api_tokens',
+    )
+
+    name = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_('Token Name'),
+        help_text=_('Custom token name'),
+    )
+
+    expiry = models.DateField(
+        default=default_token_expiry,
+        verbose_name=_('Expiry Date'),
+        help_text=_('Token expiry date'),
+        auto_now=False, auto_now_add=False,
+    )
+
+    last_seen = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Last Seen'),
+        help_text=_('Last time the token was used'),
+    )
+
+    revoked = models.BooleanField(
+        default=False,
+        verbose_name=_('Revoked'),
+        help_text=_('Token has been revoked'),
+    )
+
+    @staticmethod
+    def sanitize_name(name: str):
+        """Sanitize the provide name value"""
+
+        name = str(name).strip()
+
+        # Remove any non-printable chars
+        name = InvenTree.helpers.remove_non_printable_characters(name, remove_newline=True)
+        name = InvenTree.helpers.strip_html_tags(name)
+
+        name = name.replace(' ', '-')
+        # Limit to 100 characters
+        name = name[:100]
+
+        return name
+
+    @property
+    @admin.display(description=_('Token'))
+    def token(self):
+        """Provide a redacted version of the token.
+
+        The *raw* key value should never be displayed anywhere!
+        """
+
+        # If the token has not yet been saved, return the raw key
+        if self.pk is None:
+            return self.key
+
+        M = len(self.key) - 20
+
+        return self.key[:8] + '*' * M + self.key[-12:]
+
+    @property
+    @admin.display(boolean=True, description=_('Expired'))
+    def expired(self):
+        """Test if this token has expired"""
+        return self.expiry is not None and self.expiry < datetime.datetime.now().date()
+
+    @property
+    @admin.display(boolean=True, description=_('Active'))
+    def active(self):
+        """Test if this token is active"""
+        return not self.revoked and not self.expired
 
 
 class RuleSet(models.Model):
@@ -58,8 +212,7 @@ class RuleSet(models.Model):
             'auth_group',
             'auth_user',
             'auth_permission',
-            'authtoken_token',
-            'authtoken_tokenproxy',
+            'users_apitoken',
             'users_ruleset',
             'report_reportasset',
             'report_reportsnippet',
@@ -114,6 +267,7 @@ class RuleSet(models.Model):
         ],
         'stock_location': [
             'stock_stocklocation',
+            'stock_stocklocationtype',
             'label_stocklocationlabel',
             'report_stocklocationreport'
         ],
@@ -258,7 +412,6 @@ class RuleSet(models.Model):
     @classmethod
     def check_table_permission(cls, user, table, permission):
         """Check if the provided user has the specified permission against the table."""
-
         # Superuser knows no bounds
         if user.is_superuser:
             return True
@@ -286,7 +439,7 @@ class RuleSet(models.Model):
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
-        logger.debug(f"User '{name}' failed permission check for {table}.{permission}")
+        logger.debug("User '%s' failed permission check for %s.%s", name, table, permission)
 
         return False
 
@@ -295,11 +448,7 @@ class RuleSet(models.Model):
         """Construct the correctly formatted permission string, given the app_model name, and the permission type."""
         model, app = split_model(model)
 
-        return "{app}.{perm}_{model}".format(
-            app=app,
-            perm=permission,
-            model=model
-        )
+        return f"{app}.{permission}_{model}"
 
     def __str__(self, debug=False):  # pragma: no cover
         """Ruleset string representation."""
@@ -308,8 +457,7 @@ class RuleSet(models.Model):
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
                    f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
                    f'c: {str(self.can_change).ljust(5)} | d: {str(self.can_delete).ljust(5)}'
-        else:
-            return self.name
+        return self.name
 
     def save(self, *args, **kwargs):
         """Intercept the 'save' functionality to make additional permission changes:
@@ -376,14 +524,9 @@ def update_group_roles(group, debug=False):
 
     # Iterate through each permission already assigned to this group,
     # and create a simplified permission key string
-    for p in group.permissions.all():
+    for p in group.permissions.all().prefetch_related('content_type'):
         (permission, app, model) = p.natural_key()
-
-        permission_string = '{app}.{perm}'.format(
-            app=app,
-            perm=permission
-        )
-
+        permission_string = f"{app}.{permission}"
         group_permissions.add(permission_string)
 
     # List of permissions which must be added to the group
@@ -401,7 +544,7 @@ def update_group_roles(group, debug=False):
             allowed: Whether or not the action is allowed
         """
         if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
-            raise ValueError("Action {a} is invalid".format(a=action))
+            raise ValueError(f"Action {action} is invalid")
 
         permission_string = RuleSet.get_model_permission_string(model, action)
 
@@ -419,16 +562,23 @@ def update_group_roles(group, debug=False):
             if permission_string not in permissions_to_add:
                 permissions_to_delete.add(permission_string)
 
+    # Pre-fetch all the RuleSet objects
+    rulesets = {
+        r.name: r for r in RuleSet.objects.filter(group=group).prefetch_related('group')
+    }
+
     # Get all the rulesets associated with this group
     for r in RuleSet.RULESET_CHOICES:
 
         rulename = r[0]
 
-        try:
-            ruleset = RuleSet.objects.get(group=group, name=rulename)
-        except RuleSet.DoesNotExist:
-            # Create the ruleset with default values (if it does not exist)
-            ruleset = RuleSet.objects.create(group=group, name=rulename)
+        if rulename in rulesets:
+            ruleset = rulesets[rulename]
+        else:
+            try:
+                ruleset = RuleSet.objects.get(group=group, name=rulename)
+            except RuleSet.DoesNotExist:
+                ruleset = RuleSet.objects.create(group=group, name=rulename)
 
         # Which database tables does this RuleSet touch?
         models = ruleset.get_models()
@@ -457,7 +607,7 @@ def update_group_roles(group, debug=False):
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
         except ContentType.DoesNotExist:  # pragma: no cover
-            logger.warning(f"Error: Could not find permission matching '{permission_string}'")
+            logger.warning("Error: Could not find permission matching '%s'", permission_string)
             permission = None
 
         return permission
@@ -475,7 +625,7 @@ def update_group_roles(group, debug=False):
             group.permissions.add(permission)
 
         if debug:  # pragma: no cover
-            logger.debug(f"Adding permission {perm} to group {group.name}")
+            logger.debug("Adding permission %s to group %s", perm, group.name)
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -490,7 +640,7 @@ def update_group_roles(group, debug=False):
             group.permissions.remove(permission)
 
         if debug:  # pragma: no cover
-            logger.debug(f"Removing permission {perm} from group {group.name}")
+            logger.debug("Removing permission %s from group %s", perm, group.name)
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
@@ -512,7 +662,7 @@ def update_group_roles(group, debug=False):
                     permission = get_permission_object(child_perm)
                     if permission:
                         group.permissions.add(permission)
-                        logger.debug(f"Adding permission {child_perm} to group {group.name}")
+                        logger.debug("Adding permission %s to group %s", child_perm, group.name)
 
 
 def clear_user_role_cache(user):
@@ -523,7 +673,6 @@ def clear_user_role_cache(user):
     Args:
         user: The User object to be expunged from the cache
     """
-
     for role in RuleSet.RULESET_MODELS.keys():
         for perm in ['add', 'change', 'view', 'delete']:
             key = f"role_{user}_{role}_{perm}"
@@ -532,7 +681,6 @@ def clear_user_role_cache(user):
 
 def get_user_roles(user):
     """Return all roles available to a given user"""
-
     roles = set()
 
     for group in user.groups.all():
@@ -654,10 +802,16 @@ class Owner(models.Model):
 
     def __str__(self):
         """Defines the owner string representation."""
-        return f'{self.owner} ({self.owner_type.name})'
+        if self.owner_type.name == 'user' and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+            display_name = self.owner.get_full_name()
+        else:
+            display_name = str(self.owner)
+        return f'{display_name} ({self.owner_type.name})'
 
     def name(self):
         """Return the 'name' of this owner."""
+        if self.owner_type.name == 'user' and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+            return self.owner.get_full_name()
         return str(self.owner)
 
     def label(self):
@@ -730,7 +884,6 @@ class Owner(models.Model):
 
     def is_user_allowed(self, user, include_group: bool = False):
         """Check if user is allowed to access something owned by this owner."""
-
         user_owner = Owner.get_owner(user)
         return user_owner in self.get_related_owners(include_group=include_group)
 
@@ -753,7 +906,6 @@ def delete_owner(sender, instance, **kwargs):
 @receiver(post_save, sender=get_user_model(), dispatch_uid='clear_user_cache')
 def clear_user_cache(sender, instance, **kwargs):
     """Callback function when a user object is saved"""
-
     clear_user_role_cache(instance)
 
 

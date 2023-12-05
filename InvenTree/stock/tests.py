@@ -55,7 +55,6 @@ class StockTest(StockTestBase):
 
     def test_pathstring(self):
         """Check that pathstring updates occur as expected"""
-
         a = StockLocation.objects.create(name="A")
         b = StockLocation.objects.create(name="B", parent=a)
         c = StockLocation.objects.create(name="C", parent=b)
@@ -131,7 +130,6 @@ class StockTest(StockTestBase):
 
     def test_link(self):
         """Test the link URL field validation"""
-
         item = StockItem.objects.get(pk=1)
 
         # Check that invalid URLs fail
@@ -178,7 +176,6 @@ class StockTest(StockTestBase):
 
     def test_serial_numbers(self):
         """Test serial number uniqueness"""
-
         # Ensure that 'global uniqueness' setting is enabled
         InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', True, self.user)
 
@@ -284,7 +281,6 @@ class StockTest(StockTestBase):
 
     def test_parent_locations(self):
         """Test parent."""
-
         # Ensure pathstring gets updated
         self.drawer3.save()
 
@@ -318,7 +314,6 @@ class StockTest(StockTestBase):
 
     def test_items(self):
         """Test has_items."""
-
         # Drawer 3 should have three stock items
         self.assertEqual(self.drawer3.stock_items.count(), 18)
         self.assertEqual(self.drawer3.item_count, 18)
@@ -495,7 +490,6 @@ class StockTest(StockTestBase):
 
     def test_return_from_customer(self):
         """Test removing previous allocated stock from customer"""
-
         it = StockItem.objects.get(pk=2)
 
         # First establish total stock for this part
@@ -940,7 +934,6 @@ class StockBarcodeTest(StockTestBase):
 
     def test_stock_item_barcode_basics(self):
         """Simple tests for the StockItem barcode integration"""
-
         item = StockItem.objects.get(pk=1)
 
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
@@ -957,7 +950,6 @@ class StockBarcodeTest(StockTestBase):
 
     def test_location_barcode_basics(self):
         """Simple tests for the StockLocation barcode integration"""
-
         self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
 
         loc = StockLocation.objects.get(pk=1)
@@ -985,7 +977,6 @@ class VariantTest(StockTestBase):
 
     def test_serial_numbers(self):
         """Test serial number functionality for variant / template parts."""
-
         InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, self.user)
 
         chair = Part.objects.get(pk=10000)

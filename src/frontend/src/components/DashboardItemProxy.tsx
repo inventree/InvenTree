@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 import { api } from '../App';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { apiUrl } from '../states/ApiState';
 import { StatisticItem } from './items/DashboardItem';
 import { ErrorItem } from './items/ErrorItem';
 
@@ -15,13 +17,13 @@ export function DashboardItemProxy({
 }: {
   id: string;
   text: string;
-  url: string;
+  url: ApiPaths;
   params: any;
   autoupdate: boolean;
 }) {
   function fetchData() {
     return api
-      .get(`${url}/?search=&offset=0&limit=25`, { params: params })
+      .get(`${apiUrl(url)}?search=&offset=0&limit=25`, { params: params })
       .then((res) => res.data);
   }
   const { isLoading, error, data, isFetching } = useQuery({

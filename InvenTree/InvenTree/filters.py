@@ -1,9 +1,30 @@
 """General filters for InvenTree."""
 
+from datetime import datetime
+
+from django.conf import settings
+from django.utils import timezone
+from django.utils.timezone import make_aware
+
 from django_filters import rest_framework as rest_filters
 from rest_framework import filters
 
 import InvenTree.helpers
+
+
+class InvenTreeDateFilter(rest_filters.DateFilter):
+    """Custom DateFilter class which handles timezones correctly."""
+
+    def filter(self, qs, value):
+        """Override the filter method to handle timezones correctly."""
+
+        if settings.USE_TZ:
+            if value is not None:
+                tz = timezone.get_current_timezone()
+                value = datetime(value.year, value.month, value.day)
+                value = make_aware(value, tz, True)
+
+        return super().filter(qs, value)
 
 
 class InvenTreeSearchFilter(filters.SearchFilter):
@@ -15,7 +36,6 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         The following query params are available to 'augment' the search (in decreasing order of priority)
         - search_regex: If True, search is performed on 'regex' comparison
         """
-
         regex = InvenTree.helpers.str2bool(request.query_params.get('search_regex', False))
 
         search_fields = super().get_search_fields(view, request)
@@ -36,7 +56,6 @@ class InvenTreeSearchFilter(filters.SearchFilter):
 
         Depending on the request parameters, we may "augment" these somewhat
         """
-
         whole = InvenTree.helpers.str2bool(request.query_params.get('search_whole', False))
 
         terms = []

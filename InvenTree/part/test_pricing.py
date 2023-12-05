@@ -20,7 +20,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def setUp(self):
         """Setup routines"""
-
         super().setUp()
 
         self.generate_exchange_rates()
@@ -37,7 +36,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def create_price_breaks(self):
         """Create some price breaks for the part, in various currencies"""
-
         # First supplier part (CAD)
         self.supplier_1 = company.models.Company.objects.create(
             name='Supplier 1',
@@ -104,7 +102,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_pricing_data(self):
         """Test link between Part and PartPricing model"""
-
         # Initially there is no associated Pricing data
         with self.assertRaises(ObjectDoesNotExist):
             pricing = self.part.pricing_data
@@ -130,7 +127,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_simple(self):
         """Tests for hard-coded values"""
-
         pricing = self.part.pricing
 
         # Add internal pricing
@@ -162,7 +158,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_supplier_part_pricing(self):
         """Test for supplier part pricing"""
-
         pricing = self.part.pricing
 
         # Initially, no information (not yet calculated)
@@ -189,7 +184,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_internal_pricing(self):
         """Tests for internal price breaks"""
-
         # Ensure internal pricing is enabled
         common.models.InvenTreeSetting.set_setting('PART_INTERNAL_PRICE', True, None)
 
@@ -225,7 +219,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_stock_item_pricing(self):
         """Test for stock item pricing data"""
-
         # Create a part
         p = part.models.Part.objects.create(
             name='Test part for pricing',
@@ -273,7 +266,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_bom_pricing(self):
         """Unit test for BOM pricing calculations"""
-
         pricing = self.part.pricing
 
         self.assertIsNone(pricing.bom_cost_min)
@@ -315,7 +307,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_purchase_pricing(self):
         """Unit tests for historical purchase pricing"""
-
         self.create_price_breaks()
 
         pricing = self.part.pricing
@@ -380,7 +371,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_delete_with_pricing(self):
         """Test for deleting a part which has pricing information"""
-
         # Create some pricing data
         self.create_price_breaks()
 
@@ -405,7 +395,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_delete_without_pricing(self):
         """Test that we can delete a part which does not have pricing information"""
-
         pricing = self.part.pricing
 
         self.assertIsNone(pricing.pk)
@@ -426,7 +415,6 @@ class PartPricingTests(InvenTreeTestCase):
         - Create PartPricing objects where there are none
         - Schedule pricing calculations for the newly created PartPricing objects
         """
-
         from part.tasks import check_missing_pricing
 
         # Create some parts
@@ -453,7 +441,6 @@ class PartPricingTests(InvenTreeTestCase):
         Essentially a series of on_delete listeners caused a new PartPricing object to be created,
         but it pointed to a Part instance which was slated to be deleted inside an atomic transaction.
         """
-
         p = part.models.Part.objects.create(
             name="my part",
             description="my part description",

@@ -148,6 +148,7 @@ InvenTree supports the following reporting functionality:
 | [Purchase Order Report](./purchase_order.md) | Format a purchase order report |
 | [Sales Order Report](./sales_order.md) | Format a sales order report |
 | [Return Order Report](./return_order.md) | Format a return order report |
+| [Stock Location Report](./stock_location.md) | Format a stock location report |
 
 ### Default Reports
 

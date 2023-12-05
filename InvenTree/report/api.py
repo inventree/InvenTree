@@ -20,7 +20,8 @@ import part.models
 from InvenTree.api import MetadataView
 from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateDestroyAPI)
 from stock.models import StockItem, StockItemAttachment, StockLocation
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
@@ -33,7 +34,7 @@ from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           StockLocationReportSerializer, TestReportSerializer)
 
 
-class ReportListView(ListAPI):
+class ReportListView(ListCreateAPI):
     """Generic API class for report templates."""
 
     filter_backends = [
@@ -69,7 +70,6 @@ class ReportFilterMixin:
 
     def get_items(self):
         """Return a list of database objects from query parameters"""
-
         if not self.ITEM_MODEL:
             raise NotImplementedError(f"ITEM_MODEL attribute not defined for {__class__}")
 
@@ -100,7 +100,6 @@ class ReportFilterMixin:
         As each 'report' instance may optionally define its own filters,
         the resulting queryset is the 'union' of the two
         """
-
         queryset = super().filter_queryset(queryset)
 
         items = self.get_items()
@@ -217,7 +216,7 @@ class ReportPrintMixin:
                 report_name += '.pdf'
 
             if debug_mode:
-                """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
+                """Concatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
 
                 html = "\n".join(outputs)
 
@@ -308,7 +307,6 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
 
     def report_callback(self, item, report, request):
         """Callback to (optionally) save a copy of the generated report"""
-
         if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT', cache=False):
 
             # Construct a PDF file object

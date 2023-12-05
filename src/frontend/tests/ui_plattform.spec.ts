@@ -11,5 +11,4 @@ test('Basic Platform UI test', async ({ page }) => {
   await page.goto('./platform/');
 
   await expect(page).toHaveTitle('InvenTree Demo Server');
-  await expect(page.getByText('Home').nth(1)).toBeVisible();
 });

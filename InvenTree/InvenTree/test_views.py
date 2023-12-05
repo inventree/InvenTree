@@ -45,7 +45,6 @@ class ViewTests(InvenTreeTestCase):
 
     def test_settings_page(self):
         """Test that the 'settings' page loads correctly"""
-
         # Settings page loads
         url = reverse('settings')
 
@@ -122,7 +121,6 @@ class ViewTests(InvenTreeTestCase):
 
     def test_url_login(self):
         """Test logging in via arguments"""
-
         # Log out
         self.client.logout()
         response = self.client.get("/index/")

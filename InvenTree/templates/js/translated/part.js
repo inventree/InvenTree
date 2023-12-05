@@ -128,6 +128,10 @@ function partFields(options={}) {
             filters: {
                 structural: false,
             },
+            tree_picker: {
+                url: '{% url "api-part-category-tree" %}',
+                default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+            },
         },
         name: {},
         IPN: {},
@@ -147,7 +151,11 @@ function partFields(options={}) {
             icon: 'fa-sitemap',
             filters: {
                 structural: false,
-            }
+            },
+            tree_picker: {
+                url: '{% url "api-location-tree" %}',
+                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+            },
         },
         default_supplier: {
             icon: 'fa-building',
@@ -164,6 +172,9 @@ function partFields(options={}) {
         },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         },
         component: {
             default: global_settings.PART_COMPONENT,
@@ -275,6 +286,10 @@ function partFields(options={}) {
             value: global_settings.PART_COPY_BOM,
         };
 
+        fields.duplicate__copy_notes = {
+            value: true,
+        }
+
         fields.duplicate__copy_parameters = {
             value: global_settings.PART_COPY_PARAMETERS,
         };
@@ -292,6 +307,10 @@ function categoryFields(options={}) {
         parent: {
             help_text: '{% trans "Parent part category" %}',
             required: false,
+            tree_picker: {
+                url: '{% url "api-part-category-tree" %}',
+                default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+            },
         },
         name: {},
         description: {},
@@ -299,7 +318,11 @@ function categoryFields(options={}) {
             icon: 'fa-sitemap',
             filters: {
                 structural: false,
-            }
+            },
+            tree_picker: {
+                url: '{% url "api-location-tree" %}',
+                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+            },
         },
         default_keywords: {
             icon: 'fa-key',
@@ -2181,7 +2204,12 @@ function setPartCategory(data, options={}) {
         method: 'POST',
         preFormContent: html,
         fields: {
-            category: {},
+            category: {
+                tree_picker: {
+                    url: '{% url "api-part-category-tree" %}',
+                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+                },
+            },
         },
         processBeforeUpload: function(data) {
             data.parts = parts;

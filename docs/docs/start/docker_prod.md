@@ -11,6 +11,9 @@ The following guide provides a streamlined production InvenTree installation, wi
 
 ### Before You Start
 
+!!! warning "Check the version"
+    Please make sure you are reading the [STABLE](https://docs.inventree.org/en/stable/start/docker_prod/) documentation when using the stable docker image tags.
+
 !!! warning "Docker Skills Required"
     This guide assumes that you are reasonably comfortable with the basic concepts of docker and docker compose.
 
@@ -58,7 +61,7 @@ The example docker compose file launches the following containers:
 | --- | --- |
 | inventree-db | PostgreSQL database |
 | inventree-server | Gunicorn web server |
-| invenrtee-worker | django-q background worker |
+| inventree-worker | django-q background worker |
 | inventree-proxy | nginx proxy server |
 | *inventree-cache* | *redis cache (optional)* |
 
@@ -88,7 +91,7 @@ This container uses the official [redis image](https://hub.docker.com/_/redis).
 
 !!! info "Redis on Docker"
     Docker adds an additional network layer - that might lead to lower performance than bare metal.
-    To optimise and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
+    To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
 
 !!! warning "Disabled by default"
     The *redis* container is not enabled in the default configuration. This is provided as an example for users wishing to use redis.
@@ -132,7 +135,7 @@ The first step is to edit the environment variables, located in the `.env` file.
 Perform the initial database setup by running the following command:
 
 ```bash
-docker compose run inventree-server invoke update --no-frontend
+docker compose run inventree-server invoke update
 ```
 
 This command performs the following steps:
@@ -202,6 +205,9 @@ docker compose pull
 
 This ensures that the InvenTree containers will be running the latest version of the InvenTree source code.
 
+!!! tip "Docker Directory"
+    All `docker compose` commands must be performed in the same directory as the [docker-compose.yml file](#required-files)
+
 !!! info "Tagged Version"
     If you are targeting a particular "tagged" version of InvenTree, you may wish to edit the `INVENTREE_TAG` variable in the `.env` file before issuing the `docker compose pull` command
 
@@ -210,7 +216,7 @@ This ensures that the InvenTree containers will be running the latest version of
 Run the following command to ensure that the InvenTree database is updated:
 
 ```
-docker compose run inventree-server invoke update --no-frontend
+docker compose run inventree-server invoke update
 ```
 
 !!! info "Skip Backup"

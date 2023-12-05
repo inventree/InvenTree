@@ -257,6 +257,10 @@ function showApiError(xhr, url) {
         title = '{% trans "Error 408: Timeout" %}';
         message = '{% trans "Connection timeout while requesting data from server" %}';
         break;
+    case 503:
+        title = '{% trans "Error 503: Service Unavailable" %}';
+        message = '{% trans "The server is currently unavailable" %}';
+        break;
     default:
         title = '{% trans "Unhandled Error Code" %}';
         message = `{% trans "Error code" %}: ${xhr.status}`;
