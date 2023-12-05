@@ -109,17 +109,22 @@ class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBar
         self.validate_reference_field(self.reference)
         self.reference_int = self.rebuild_reference_field(self.reference)
 
-        # Prevent changing target part after creation
-        if self.has_field_changed('part'):
-            raise ValidationError({
-                'part': _('Build order part cannot be changed')
-            })
-
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
             raise ValidationError({
                 'parent': _('Invalid choice for parent build'),
+            })
+
+    def clean(self):
+        """Validate the BuildOrder model"""
+
+        super().clean()
+
+        # Prevent changing target part after creation
+        if self.has_field_changed('part'):
+            raise ValidationError({
+                'part': _('Build order part cannot be changed')
             })
 
     @staticmethod
