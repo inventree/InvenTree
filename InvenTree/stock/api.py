@@ -779,6 +779,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
             })
 
         try:
+            Part.objects.prefetch_related(None)
             part = Part.objects.get(pk=data.get('part', None))
         except (ValueError, Part.DoesNotExist):
             raise ValidationError({
