@@ -5,16 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: es_MX\n"
+"Language: es\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-05 02:32\n"
+"PO-Revision-Date: 2023-12-06 02:39\n"
 "Last-Translator: \n"
-"Language-Team: Spanish, Mexico\n"
+"Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: es-MX\n"
+"X-Crowdin-Language: es-ES\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
@@ -62,7 +62,7 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:33
 msgid "Login failed"
-msgstr "Error al iniciar sesión"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
@@ -78,11 +78,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr "Inicio de sesión exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr "¡Bienvenido de vuelta!"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -91,11 +91,11 @@ msgstr "¡Bienvenido de vuelta!"
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:102
 msgid "Mail delivery successful"
-msgstr "Envío de correo exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr "Revisa tu bandeja de entrada para el enlace de inicio de sesión. Si tienes una cuenta, recibirás un enlace de inicio de sesión. Revisa también el correo no deseado."
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -104,30 +104,30 @@ msgstr "Revisa tu bandeja de entrada para el enlace de inicio de sesión. Si tie
 
 #: src/components/forms/AuthenticationForm.tsx:72
 msgid "Input error"
-msgstr "Error de entrada"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr "Bienvenido, inicia sesión a continuación"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:91
 #: src/components/tables/settings/UserTable.tsx:163
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr "Contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr "Tu contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr "Restablecer contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/components/tables/company/ContactTable.tsx:47
@@ -135,13 +135,13 @@ msgstr "Restablecer contraseña"
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
-msgstr "Correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr "Te enviaremos un enlace para iniciar sesión - si estás registrado"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -149,11 +149,11 @@ msgstr "Te enviaremos un enlace para iniciar sesión - si estás registrado"
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr "Envíame un correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr "Usaré nombre de usuario y contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
@@ -179,11 +179,11 @@ msgstr ""
 #: src/components/tables/settings/GroupTable.tsx:100
 #: src/components/tables/stock/StockLocationTable.tsx:25
 msgid "Name"
-msgstr "Nombre"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr "Nadie aquí..."
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
@@ -192,11 +192,11 @@ msgstr ""
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr "Guardar"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr "Seleccionar instancia de destino"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
@@ -204,15 +204,15 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr "Versión: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr "API:{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr "Nombre: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
@@ -220,7 +220,7 @@ msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
-#: src/components/tables/InvenTreeTable.tsx:393
+#: src/components/tables/InvenTreeTable.tsx:394
 #: src/components/tables/plugin/PluginListTable.tsx:363
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -307,7 +307,7 @@ msgid "Read More"
 msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:385
+#: src/components/tables/InvenTreeTable.tsx:386
 msgid "Unknown error"
 msgstr ""
 
@@ -488,7 +488,7 @@ msgid "Close modal"
 msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:17
-#: src/pages/Index/Settings/SystemSettings.tsx:42
+#: src/pages/Index/Settings/SystemSettings.tsx:36
 msgid "Server"
 msgstr ""
 
@@ -570,31 +570,31 @@ msgstr ""
 msgid "Server Version"
 msgstr ""
 
+#: src/components/nav/MainMenu.tsx:38
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
+msgid "Settings"
+msgstr ""
+
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
 #~ msgid "Profile"
 #~ msgstr "Profile"
 
-#: src/components/nav/MainMenu.tsx:43
-#: src/defaults/menuItems.tsx:63
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:62
-msgid "Admin Center"
-msgstr ""
-
-#: src/components/nav/MainMenu.tsx:47
-#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
-msgid "Settings"
-msgstr ""
-
-#: src/components/nav/MainMenu.tsx:50
+#: src/components/nav/MainMenu.tsx:41
 #: src/defaults/menuItems.tsx:15
 msgid "Account settings"
 msgstr ""
 
-#: src/components/nav/MainMenu.tsx:58
+#: src/components/nav/MainMenu.tsx:49
 #: src/defaults/menuItems.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:296
+#: src/pages/Index/Settings/SystemSettings.tsx:266
 msgid "System Settings"
+msgstr ""
+
+#: src/components/nav/MainMenu.tsx:59
+#: src/defaults/menuItems.tsx:63
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:109
+msgid "Admin Center"
 msgstr ""
 
 #: src/components/nav/MainMenu.tsx:68
@@ -635,7 +635,7 @@ msgid "Pages"
 msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:67
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:29
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:76
 msgid "Plugins"
 msgstr ""
 
@@ -648,7 +648,7 @@ msgid "About"
 msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:71
-#: src/pages/Index/Settings/SystemSettings.tsx:124
+#: src/pages/Index/Settings/SystemSettings.tsx:100
 #: src/pages/Index/Settings/UserSettings.tsx:94
 #: src/pages/Notifications.tsx:28
 #: src/pages/Notifications.tsx:100
@@ -666,7 +666,7 @@ msgstr ""
 
 #: src/components/nav/PartCategoryTree.tsx:80
 #: src/components/render/ModelType.tsx:49
-#: src/pages/Index/Settings/SystemSettings.tsx:188
+#: src/pages/Index/Settings/SystemSettings.tsx:164
 #: src/pages/part/CategoryDetail.tsx:60
 msgid "Part Categories"
 msgstr ""
@@ -730,7 +730,7 @@ msgstr ""
 #: src/components/tables/part/PartCategoryTable.tsx:36
 #: src/defaults/links.tsx:27
 #: src/defaults/menuItems.tsx:33
-#: src/pages/Index/Settings/SystemSettings.tsx:193
+#: src/pages/Index/Settings/SystemSettings.tsx:169
 #: src/pages/part/CategoryDetail.tsx:46
 #: src/pages/part/CategoryDetail.tsx:82
 #: src/pages/part/PartDetail.tsx:243
@@ -819,7 +819,7 @@ msgid "Project Code"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:89
-#: src/pages/Index/Settings/SystemSettings.tsx:106
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:52
 msgid "Project Codes"
 msgstr ""
 
@@ -829,12 +829,12 @@ msgid "Purchase Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:96
-#: src/pages/Index/Settings/SystemSettings.tsx:263
+#: src/pages/Index/Settings/SystemSettings.tsx:233
 #: src/pages/company/CompanyDetail.tsx:90
 #: src/pages/part/PartDetail.tsx:175
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
-msgstr "Órdenes de compra"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:102
 msgid "Purchase Order Line"
@@ -851,7 +851,7 @@ msgid "Sales Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:108
-#: src/pages/Index/Settings/SystemSettings.tsx:276
+#: src/pages/Index/Settings/SystemSettings.tsx:246
 #: src/pages/company/CompanyDetail.tsx:108
 #: src/pages/part/PartDetail.tsx:181
 #: src/pages/sales/SalesIndex.tsx:21
@@ -876,7 +876,7 @@ msgstr ""
 #: src/pages/company/CompanyDetail.tsx:117
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
-msgstr "Ordenes de devolución"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:128
 #: src/components/tables/company/AddressTable.tsx:49
@@ -910,7 +910,7 @@ msgid "User"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:150
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:23
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:46
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
 msgstr ""
@@ -1085,46 +1085,46 @@ msgid "Add Filter"
 msgstr ""
 
 #: src/components/tables/InvenTreeTable.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:329
-#: src/components/tables/InvenTreeTable.tsx:350
+#: src/components/tables/InvenTreeTable.tsx:330
+#: src/components/tables/InvenTreeTable.tsx:351
 msgid "No records found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:364
+#: src/components/tables/InvenTreeTable.tsx:365
 msgid "Server returned incorrect data type"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:372
+#: src/components/tables/InvenTreeTable.tsx:373
 msgid "Bad request"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:375
+#: src/components/tables/InvenTreeTable.tsx:376
 msgid "Unauthorized"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:378
+#: src/components/tables/InvenTreeTable.tsx:379
 msgid "Forbidden"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:381
+#: src/components/tables/InvenTreeTable.tsx:382
 msgid "Not found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:441
 #: src/components/tables/InvenTreeTable.tsx:442
+#: src/components/tables/InvenTreeTable.tsx:443
 msgid "Barcode actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:450
 #: src/components/tables/InvenTreeTable.tsx:451
+#: src/components/tables/InvenTreeTable.tsx:452
 msgid "Print actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:465
+#: src/components/tables/InvenTreeTable.tsx:466
 msgid "Refresh data"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:484
+#: src/components/tables/InvenTreeTable.tsx:485
 msgid "Table filters"
 msgstr ""
 
@@ -1586,7 +1586,7 @@ msgstr ""
 #: src/components/tables/stock/StockItemTable.tsx:50
 #: src/defaults/links.tsx:28
 #: src/defaults/menuItems.tsx:38
-#: src/pages/Index/Settings/SystemSettings.tsx:230
+#: src/pages/Index/Settings/SystemSettings.tsx:200
 #: src/pages/part/PartDetail.tsx:98
 #: src/pages/stock/LocationDetail.tsx:63
 #: src/pages/stock/StockDetail.tsx:135
@@ -3467,15 +3467,23 @@ msgstr ""
 #~ msgid "Advanced Amininistrative Options for InvenTree"
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:39
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:64
+msgid "Custom Units"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:70
+msgid "Part Parameters"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:86
 msgid "Quick Actions"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:44
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:91
 msgid "Add a new user"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:63
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:110
 msgid "Advanced Options"
 msgstr ""
 
@@ -3491,14 +3499,6 @@ msgstr ""
 msgid "Plugin Settings"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
-msgid "Warning"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:47
-msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
-msgstr ""
-
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:30
 msgid "Select settings relevant for user lifecycle. More available in"
 msgstr ""
@@ -3507,46 +3507,42 @@ msgstr ""
 msgid "System settings"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:70
+#: src/pages/Index/Settings/SystemSettings.tsx:64
 msgid "Login"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:92
+#: src/pages/Index/Settings/SystemSettings.tsx:86
 msgid "Barcodes"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:118
-msgid "Physical Units"
-msgstr ""
-
-#: src/pages/Index/Settings/SystemSettings.tsx:129
+#: src/pages/Index/Settings/SystemSettings.tsx:105
 #: src/pages/part/PartDetail.tsx:151
 msgid "Pricing"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:158
+#: src/pages/Index/Settings/SystemSettings.tsx:118
+#~ msgid "Physical Units"
+#~ msgstr "Physical Units"
+
+#: src/pages/Index/Settings/SystemSettings.tsx:134
 msgid "Exchange Rates"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:166
+#: src/pages/Index/Settings/SystemSettings.tsx:142
 msgid "Labels"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:172
+#: src/pages/Index/Settings/SystemSettings.tsx:148
 #: src/pages/Index/Settings/UserSettings.tsx:99
 msgid "Reporting"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:224
-msgid "Part Parameters"
-msgstr ""
-
-#: src/pages/Index/Settings/SystemSettings.tsx:252
+#: src/pages/Index/Settings/SystemSettings.tsx:222
 #: src/pages/part/PartDetail.tsx:199
 msgid "Stocktake"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:257
+#: src/pages/Index/Settings/SystemSettings.tsx:227
 #: src/pages/build/BuildDetail.tsx:262
 #: src/pages/build/BuildIndex.tsx:36
 #: src/pages/part/PartDetail.tsx:130
@@ -3554,7 +3550,7 @@ msgstr ""
 msgid "Build Orders"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:299
+#: src/pages/Index/Settings/SystemSettings.tsx:269
 msgid "Switch to User Setting"
 msgstr ""
 
