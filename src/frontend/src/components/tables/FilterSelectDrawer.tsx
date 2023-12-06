@@ -1,15 +1,19 @@
 import { t } from '@lingui/macro';
 import {
+  ActionIcon,
+  Button,
   CloseButton,
   Divider,
   Drawer,
   Group,
   Paper,
+  Select,
   Stack,
   Text,
   Tooltip
 } from '@mantine/core';
-import { useCallback, useEffect } from 'react';
+import { IconCircleX } from '@tabler/icons-react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TableState } from '../../hooks/UseTable';
 import { StylishText } from '../items/StylishText';
@@ -50,6 +54,110 @@ function FilterItem({
   );
 }
 
+interface FilterProps extends React.ComponentPropsWithoutRef<'div'> {
+  name: string;
+  label: string;
+  description?: string;
+}
+
+/*
+ * Custom component for the filter select
+ */
+const FilterSelectItem = forwardRef<HTMLDivElement, FilterProps>(
+  ({ name, label, description, ...others }, ref) => (
+    <div ref={ref} {...others}>
+      <Text size="sm">{label}</Text>
+      <Text size="xs">{description}</Text>
+    </div>
+  )
+);
+
+function FilterAddGroup({
+  tableState,
+  availableFilters
+}: {
+  tableState: TableState;
+  availableFilters: TableFilter[];
+}) {
+  const filterOptions = useMemo(() => {
+    let activeFilterNames = tableState.activeFilters.map((flt) => flt.name);
+
+    return availableFilters
+      .filter((flt) => !activeFilterNames.includes(flt.name))
+      .map((flt) => ({
+        value: flt.name,
+        label: flt.label,
+        description: flt.description
+      }));
+  }, [tableState.activeFilters, availableFilters]);
+
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+
+  const valueOptions = useMemo(() => {
+    // Find the matching filter
+    let filter: TableFilter | undefined = availableFilters.find(
+      (flt) => flt.name === selectedFilter
+    );
+
+    if (!filter) {
+      return [];
+    }
+
+    switch (filter.type) {
+      case 'boolean':
+        return [
+          { value: 'true', label: t`True` },
+          { value: 'false', label: t`False` }
+        ];
+      default:
+        return [];
+    }
+  }, [selectedFilter]);
+
+  const setSelectedValue = useCallback(
+    (value: string | null) => {
+      // Find the matching filter
+      let filter: TableFilter | undefined = availableFilters.find(
+        (flt) => flt.name === selectedFilter
+      );
+
+      if (!filter) {
+        return;
+      }
+
+      let newFilter: TableFilter = {
+        ...filter,
+        value: value
+      };
+
+      tableState.setActiveFilters([...tableState.activeFilters, newFilter]);
+    },
+    [selectedFilter]
+  );
+
+  return (
+    <Stack spacing="xs">
+      <Divider />
+      <Select
+        data={filterOptions}
+        itemComponent={FilterSelectItem}
+        searchable={true}
+        placeholder={t`Select filter`}
+        label={t`Filter`}
+        onChange={(value: string | null) => setSelectedFilter(value)}
+      />
+      {selectedFilter && (
+        <Select
+          data={valueOptions}
+          label={t`Value`}
+          placeholder={t`Select filter value`}
+          onChange={(value: string | null) => setSelectedValue(value)}
+        />
+      )}
+    </Stack>
+  );
+}
+
 export function FilterSelectDrawer({
   availableFilters,
   tableState,
@@ -61,6 +169,8 @@ export function FilterSelectDrawer({
   opened: boolean;
   onClose: () => void;
 }) {
+  const [addFilter, setAddFilter] = useState<boolean>(false);
+
   return (
     <Drawer
       size="sm"
@@ -75,6 +185,45 @@ export function FilterSelectDrawer({
         {tableState.activeFilters.map((f) => (
           <FilterItem flt={f} tableState={tableState} />
         ))}
+        {tableState.activeFilters.length > 0 && <Divider />}
+        {addFilter && (
+          <Stack spacing="xs">
+            <FilterAddGroup
+              tableState={tableState}
+              availableFilters={availableFilters}
+            />
+          </Stack>
+        )}
+        <Group position="center" p="xs">
+          {addFilter ? (
+            <Button
+              onClick={() => setAddFilter(false)}
+              color="orange"
+              variant="subtle"
+            >
+              <Text>{t`Cancel`}</Text>
+            </Button>
+          ) : (
+            <>
+              {tableState.activeFilters.length > 0 && (
+                <Button
+                  onClick={tableState.clearActiveFilters}
+                  color="red"
+                  variant="subtle"
+                >
+                  <Text>{t`Clear all filters`}</Text>
+                </Button>
+              )}
+              <Button
+                onClick={() => setAddFilter(true)}
+                color="green"
+                variant="subtle"
+              >
+                <Text>{t`Add filter`}</Text>
+              </Button>
+            </>
+          )}
+        </Group>
       </Stack>
     </Drawer>
   );
