@@ -111,7 +111,7 @@ export default function StockDetail() {
           <AttachmentTable
             endpoint={ApiPaths.stock_attachment_list}
             model="stock_item"
-            pk={stockitem.pk ?? -1}
+            pk={Number(id) ?? -1}
           />
         )
       },
@@ -121,7 +121,7 @@ export default function StockDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.stock_item_list, stockitem.pk)}
+            url={apiUrl(ApiPaths.stock_item_list, id)}
             data={stockitem.notes ?? ''}
             allowEdit={true}
           />

@@ -46,9 +46,8 @@ export default function Stock() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
-            wait={instanceQuery.isFetching}
             params={{
-              location: location.pk ?? null
+              location: id
             }}
           />
         )
@@ -59,9 +58,8 @@ export default function Stock() {
         icon: <IconSitemap />,
         content: (
           <StockLocationTable
-            wait={instanceQuery.isFetching}
             params={{
-              parent: location.pk ?? null
+              parent: id
             }}
           />
         )

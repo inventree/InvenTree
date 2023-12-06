@@ -59,7 +59,7 @@ export default function PurchaseOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: order?.pk && <PurchaseOrderLineItemTable orderId={order.pk} />
+        content: <PurchaseOrderLineItemTable orderId={Number(id)} />
       },
       {
         name: 'received-stock',
@@ -81,7 +81,7 @@ export default function PurchaseOrderDetail() {
           <AttachmentTable
             endpoint={ApiPaths.purchase_order_attachment_list}
             model="order"
-            pk={order.pk ?? -1}
+            pk={Number(id) ?? -1}
           />
         )
       },
@@ -91,7 +91,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.purchase_order_list, order.pk)}
+            url={apiUrl(ApiPaths.purchase_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />

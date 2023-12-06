@@ -94,14 +94,12 @@ export function InvenTreeTable<T = any>({
   url,
   tableState,
   columns,
-  props,
-  wait = false
+  props
 }: {
   url: string;
   tableState: TableState;
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
-  wait: boolean;
 }) {
   // Use the first part of the table key as the table name
   const tableName: string = useMemo(() => {
@@ -339,13 +337,6 @@ export function InvenTreeTable<T = any>({
   // Function to perform API query to fetch required data
   const fetchTableData = async () => {
     let queryParams = getTableFilters(true);
-
-    if (wait == true) {
-      console.log('Returned on wait');
-      return [];
-    }
-
-    console.log("Didn't wait");
 
     return api
       .get(`${url}`, {

@@ -41,7 +41,7 @@ export default function ReturnOrderDetail() {
           <AttachmentTable
             endpoint={ApiPaths.return_order_attachment_list}
             model="order"
-            pk={order.pk ?? -1}
+            pk={Number(id) ?? -1}
           />
         )
       },
@@ -51,7 +51,7 @@ export default function ReturnOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.return_order_list, order.pk)}
+            url={apiUrl(ApiPaths.return_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />
