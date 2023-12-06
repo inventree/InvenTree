@@ -125,12 +125,16 @@ function FilterAddGroup({
         return;
       }
 
+      let filters = tableState.activeFilters.filter(
+        (flt) => flt.name !== selectedFilter
+      );
+
       let newFilter: TableFilter = {
         ...filter,
         value: value
       };
 
-      tableState.setActiveFilters([...tableState.activeFilters, newFilter]);
+      tableState.setActiveFilters([...filters, newFilter]);
     },
     [selectedFilter]
   );
