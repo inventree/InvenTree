@@ -107,17 +107,20 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
         // TODO: Filter by status code
         name: 'active',
         type: 'boolean',
-        label: t`Active`
+        label: t`Active`,
+        description: t`Filter by active status`
       },
       {
         name: 'overdue',
         type: 'boolean',
-        label: t`Overdue`
+        label: t`Overdue`,
+        description: t`Filter by overdue status`
       },
       {
         name: 'assigned_to_me',
         type: 'boolean',
-        label: t`Assigned to me`
+        label: t`Assigned to me`,
+        description: t`Filter orders assigned to me`
       }
       // TODO: 'assigned to' filter
       // TODO: 'issued by' filter
