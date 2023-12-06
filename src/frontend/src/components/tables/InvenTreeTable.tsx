@@ -15,8 +15,7 @@ import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
 import { TableFilter } from './Filter';
-import { FilterGroup } from './FilterGroup';
-import { FilterSelectModal } from './FilterSelectModal';
+import { FilterSelectDrawer } from './FilterSelectDrawer';
 import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
 
@@ -126,13 +125,6 @@ export function InvenTreeTable<T = any>({
     defaultValue: []
   });
 
-  // Active filters (saved to local storage)
-  const [activeFilters, setActiveFilters] = useLocalStorage<any[]>({
-    key: `inventree-active-table-filters-${tableName}`,
-    defaultValue: [],
-    getInitialValueInEffect: false
-  });
-
   // Data selection
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
@@ -198,49 +190,11 @@ export function InvenTreeTable<T = any>({
     );
   }
 
-  // Filter selection open state
-  const [filterSelectOpen, setFilterSelectOpen] = useState<boolean>(false);
-
   // Pagination
   const [page, setPage] = useState(1);
 
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
-
-  /*
-   * Callback for the "add filter" button.
-   * Launches a modal dialog to add a new filter
-   */
-  function onFilterAdd(name: string, value: string) {
-    let filters = [...activeFilters];
-
-    let newFilter = tableProps.customFilters?.find((flt) => flt.name == name);
-
-    if (newFilter) {
-      filters.push({
-        ...newFilter,
-        value: value
-      });
-
-      setActiveFilters(filters);
-    }
-  }
-
-  /*
-   * Callback function when a specified filter is removed from the table
-   */
-  function onFilterRemove(filterName: string) {
-    let filters = activeFilters.filter((flt) => flt.name != filterName);
-
-    setActiveFilters(filters);
-  }
-
-  /*
-   * Callback function when all custom filters are removed from the table
-   */
-  function onFilterClearAll() {
-    setActiveFilters([]);
-  }
 
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -259,7 +213,9 @@ export function InvenTreeTable<T = any>({
     };
 
     // Add custom filters
-    activeFilters.forEach((flt) => (queryParams[flt.name] = flt.value));
+    tableState.activeFilters.forEach(
+      (flt) => (queryParams[flt.name] = flt.value)
+    );
 
     // Add custom search term
     if (searchTerm) {
@@ -398,11 +354,12 @@ export function InvenTreeTable<T = any>({
 
   const { data, isError, isFetching, isLoading, refetch } = useQuery({
     queryKey: [
-      `table-${tableName}`,
+      tableState.tableKey,
+      props.params,
       sortStatus.columnAccessor,
       sortStatus.direction,
       page,
-      activeFilters,
+      tableState.activeFilters,
       searchTerm
     ],
     queryFn: fetchTableData,
@@ -412,23 +369,17 @@ export function InvenTreeTable<T = any>({
 
   const [recordCount, setRecordCount] = useState<number>(0);
 
-  /*
-   * Reload the table whenever the tableKey changes
-   * this allows us to programmatically refresh the table
-   */
-  useEffect(() => {
-    refetch();
-  }, [tableState?.tableKey, props.params]);
-
   return (
     <>
-      <FilterSelectModal
-        availableFilters={tableProps.customFilters ?? []}
-        activeFilters={activeFilters}
-        opened={filterSelectOpen}
-        onCreateFilter={onFilterAdd}
-        onClose={() => setFilterSelectOpen(false)}
-      />
+      {tableProps.enableFilters &&
+        (tableProps.customFilters?.length ?? 0 > 0) && (
+          <FilterSelectDrawer
+            availableFilters={tableProps.customFilters ?? []}
+            tableState={tableState}
+            opened={filtersVisible}
+            onClose={() => setFiltersVisible(false)}
+          />
+        )}
       <Stack spacing="sm">
         <Group position="apart">
           <Group position="left" key="custom-actions" spacing={5}>
@@ -478,8 +429,8 @@ export function InvenTreeTable<T = any>({
               (tableProps.customFilters?.length ?? 0 > 0) && (
                 <Indicator
                   size="xs"
-                  label={activeFilters.length}
-                  disabled={activeFilters.length == 0}
+                  label={tableState.activeFilters.length}
+                  disabled={tableState.activeFilters.length == 0}
                 >
                   <ActionIcon>
                     <Tooltip label={t`Table filters`}>
@@ -498,14 +449,6 @@ export function InvenTreeTable<T = any>({
             )}
           </Group>
         </Group>
-        {filtersVisible && (
-          <FilterGroup
-            activeFilters={activeFilters}
-            onFilterAdd={() => setFilterSelectOpen(true)}
-            onFilterRemove={onFilterRemove}
-            onFilterClearAll={onFilterClearAll}
-          />
-        )}
         <DataTable
           withBorder
           striped
