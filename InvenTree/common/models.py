@@ -1175,6 +1175,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
         },
 
+        'INVENTREE_STRICT_URLS': {
+            'name': _('Strict URL Validation'),
+            'description': _('Require schema specification when validating URLs'),
+            'validator': bool,
+            'default': True,
+        },
+
         'INVENTREE_REQUIRE_CONFIRM': {
             'name': _('Require confirm'),
             'description': _('Require explicit user confirmation for certain action.'),

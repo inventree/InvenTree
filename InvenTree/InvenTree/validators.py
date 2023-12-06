@@ -60,9 +60,23 @@ def allowable_url_schemes():
 
 class AllowedURLValidator(validators.URLValidator):
     """Custom URL validator to allow for custom schemes."""
+
     def __call__(self, value):
         """Validate the URL."""
+
+        import common.models
+
         self.schemes = allowable_url_schemes()
+
+        # Determine if 'strict' URL validation is required (i.e. if the URL must have a schema prefix)
+        strict_urls = common.models.InvenTreeSetting.get_setting('INVENTREE_STRICT_URLS', True, cache=False)
+
+        if not strict_urls:
+            # Allow URLs which do not have a provided schema
+            if '://' not in value:
+                # Validate as if it were http
+                value = 'http://' + value
+
         super().__call__(value)
 
 

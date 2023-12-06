@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-02 07:54+0000\n"
-"PO-Revision-Date: 2023-12-03 02:11\n"
+"POT-Creation-Date: 2023-12-05 22:49+0000\n"
+"PO-Revision-Date: 2023-12-06 02:40\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -281,7 +281,7 @@ msgstr "Chọn file đính kèm"
 msgid "Link"
 msgstr "Liên kết"
 
-#: InvenTree/models.py:483 build/models.py:302 part/models.py:838
+#: InvenTree/models.py:483 build/models.py:307 part/models.py:838
 #: stock/models.py:769
 msgid "Link to external URL"
 msgstr "Liên kết đến URL bên ngoài"
@@ -362,7 +362,7 @@ msgstr "Lựa chọn sai"
 msgid "Name"
 msgstr "Tên"
 
-#: InvenTree/models.py:793 build/models.py:175
+#: InvenTree/models.py:793 build/models.py:180
 #: build/templates/build/detail.html:24 common/models.py:126
 #: company/models.py:447 company/models.py:726
 #: company/templates/company/company_base.html:71
@@ -979,19 +979,19 @@ msgstr "Tạo đơn hàng"
 msgid "Build Orders"
 msgstr "Tạo đơn hàng"
 
-#: build/models.py:115
-msgid "Build order part cannot be changed"
-msgstr "Sản phẩm đơn đặt bản dựng không thể thay đổi được"
-
-#: build/models.py:122
+#: build/models.py:116
 msgid "Invalid choice for parent build"
 msgstr "Lựa chọn sai cho bản dựng cha"
 
-#: build/models.py:166
+#: build/models.py:127
+msgid "Build order part cannot be changed"
+msgstr "Sản phẩm đơn đặt bản dựng không thể thay đổi được"
+
+#: build/models.py:171
 msgid "Build Order Reference"
 msgstr "Tham chiếu đơn đặt bản dựng"
 
-#: build/models.py:167 order/models.py:363 order/models.py:776
+#: build/models.py:172 order/models.py:363 order/models.py:776
 #: order/models.py:1102 order/models.py:1738 part/admin.py:274
 #: part/models.py:3795 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
@@ -1007,20 +1007,20 @@ msgstr "Tham chiếu đơn đặt bản dựng"
 msgid "Reference"
 msgstr "Tham chiếu"
 
-#: build/models.py:178
+#: build/models.py:183
 msgid "Brief description of the build (optional)"
 msgstr "Mô tả ngắn về phiên bạn (Tùy chọn)"
 
-#: build/models.py:186 build/templates/build/build_base.html:183
+#: build/models.py:191 build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
 msgstr "Phiên bản cha"
 
-#: build/models.py:187
+#: build/models.py:192
 msgid "BuildOrder to which this build is allocated"
 msgstr "Đơn đặt bản dựng với bản dựng này đã được phân bổ"
 
-#: build/models.py:192 build/templates/build/build_base.html:97
+#: build/models.py:197 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:908
 #: order/models.py:1209 order/models.py:1324 order/models.py:1325
 #: part/models.py:366 part/models.py:2847 part/models.py:2973
@@ -1071,103 +1071,103 @@ msgstr "Đơn đặt bản dựng với bản dựng này đã được phân b�
 msgid "Part"
 msgstr "Nguyên liệu"
 
-#: build/models.py:200
+#: build/models.py:205
 msgid "Select part to build"
 msgstr "Chọn sản phẩm để xây dựng"
 
-#: build/models.py:205
+#: build/models.py:210
 msgid "Sales Order Reference"
 msgstr "Tham chiếu đơn đặt bản dựng"
 
-#: build/models.py:209
+#: build/models.py:214
 msgid "SalesOrder to which this build is allocated"
 msgstr "Đơn đặt bán hàng với bản dựng này đã được phân bổ"
 
-#: build/models.py:214 build/serializers.py:942
+#: build/models.py:219 build/serializers.py:942
 #: templates/js/translated/build.js:1718
 #: templates/js/translated/sales_order.js:1185
 msgid "Source Location"
 msgstr "Địa điểm nguồn"
 
-#: build/models.py:218
+#: build/models.py:223
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "Chọn địa điểm để lấy trong kho cho bản dựng này (để trống để lấy từ bất kỳ vị trí kho nào)"
 
-#: build/models.py:223
+#: build/models.py:228
 msgid "Destination Location"
 msgstr "Địa điểm đích"
 
-#: build/models.py:227
+#: build/models.py:232
 msgid "Select location where the completed items will be stored"
 msgstr "Chọn địa điểm nơi hàng hóa hoàn thiện sẽ được lưu kho"
 
-#: build/models.py:231
+#: build/models.py:236
 msgid "Build Quantity"
 msgstr "Xây dựng số lượng"
 
-#: build/models.py:234
+#: build/models.py:239
 msgid "Number of stock items to build"
 msgstr "Số kho hàng để dựng"
 
-#: build/models.py:238
+#: build/models.py:243
 msgid "Completed items"
 msgstr "Những mục hoàn thành"
 
-#: build/models.py:240
+#: build/models.py:245
 msgid "Number of stock items which have been completed"
 msgstr "Số sản phẩm trong kho đã được hoàn thiện"
 
-#: build/models.py:244
+#: build/models.py:249
 msgid "Build Status"
 msgstr "Trnạg thái bản dựng"
 
-#: build/models.py:248
+#: build/models.py:253
 msgid "Build status code"
 msgstr "Mã trạng thái bản dựng"
 
-#: build/models.py:257 build/serializers.py:275 order/serializers.py:516
+#: build/models.py:262 build/serializers.py:275 order/serializers.py:516
 #: stock/models.py:773 stock/serializers.py:1282
 #: templates/js/translated/purchase_order.js:1125
 msgid "Batch Code"
 msgstr "Mã lô hàng"
 
-#: build/models.py:261 build/serializers.py:276
+#: build/models.py:266 build/serializers.py:276
 msgid "Batch code for this build output"
 msgstr "Mã lô cho đầu ra bản dựng này"
 
-#: build/models.py:264 order/models.py:242 part/models.py:975
+#: build/models.py:269 order/models.py:242 part/models.py:975
 #: part/templates/part/part_base.html:310
 #: templates/js/translated/return_order.js:339
 #: templates/js/translated/sales_order.js:827
 msgid "Creation Date"
 msgstr "Ngày tạo"
 
-#: build/models.py:268
+#: build/models.py:273
 msgid "Target completion date"
 msgstr "Ngày hoàn thành mục tiêu"
 
-#: build/models.py:269
+#: build/models.py:274
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Ngày mục tiêu để hoàn thành bản dựng. Bản dựng sẽ bị quá hạn sau ngày này."
 
-#: build/models.py:272 order/models.py:413 order/models.py:1781
+#: build/models.py:277 order/models.py:413 order/models.py:1781
 #: templates/js/translated/build.js:2235
 msgid "Completion Date"
 msgstr "Ngày hoàn thành"
 
-#: build/models.py:278
+#: build/models.py:283
 msgid "completed by"
 msgstr "hoàn thành bởi"
 
-#: build/models.py:286 templates/js/translated/build.js:2195
+#: build/models.py:291 templates/js/translated/build.js:2195
 msgid "Issued by"
 msgstr "Cấp bởi"
 
-#: build/models.py:287
+#: build/models.py:292
 msgid "User who issued this build order"
 msgstr "Người dùng người đã được phân công cho đơn đặt bản dựng này"
 
-#: build/models.py:295 build/templates/build/build_base.html:204
+#: build/models.py:300 build/templates/build/build_base.html:204
 #: build/templates/build/detail.html:122 common/models.py:134
 #: order/models.py:256 order/templates/order/order_base.html:217
 #: order/templates/order/return_order_base.html:188
@@ -1182,11 +1182,11 @@ msgstr "Người dùng người đã được phân công cho đơn đặt bản
 msgid "Responsible"
 msgstr "Chịu trách nhiệm"
 
-#: build/models.py:296
+#: build/models.py:301
 msgid "User or group responsible for this build order"
 msgstr "Người dùng hoặc nhóm có trách nhiệm với đơn đặt bản dựng này"
 
-#: build/models.py:301 build/templates/build/detail.html:108
+#: build/models.py:306 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
 #: company/templates/company/supplier_part.html:194
 #: order/templates/order/order_base.html:167
@@ -1198,15 +1198,15 @@ msgstr "Người dùng hoặc nhóm có trách nhiệm với đơn đặt bản 
 msgid "External Link"
 msgstr "Liên kết bên ngoài"
 
-#: build/models.py:306
+#: build/models.py:311
 msgid "Build Priority"
 msgstr "Độ ưu tiên"
 
-#: build/models.py:309
+#: build/models.py:314
 msgid "Priority of this build order"
 msgstr "Độ quan trọng của đơn đặt bản dựng"
 
-#: build/models.py:316 common/models.py:119 order/admin.py:17
+#: build/models.py:321 common/models.py:119 order/admin.py:17
 #: order/models.py:231 templates/InvenTree/settings/settings_staff_js.html:146
 #: templates/js/translated/build.js:2132
 #: templates/js/translated/purchase_order.js:1704
@@ -1217,47 +1217,47 @@ msgstr "Độ quan trọng của đơn đặt bản dựng"
 msgid "Project Code"
 msgstr "Mã dự án"
 
-#: build/models.py:317
+#: build/models.py:322
 msgid "Project code for this build order"
 msgstr "Mã dự án cho đơn đặt bản dựng này"
 
-#: build/models.py:552
+#: build/models.py:557
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "Đơn đặt bản dựng {build} đã được hoàn thành"
 
-#: build/models.py:558
+#: build/models.py:563
 msgid "A build order has been completed"
 msgstr "Một đơn đặt bản dựng đã được hoàn thành"
 
-#: build/models.py:776 build/models.py:851
+#: build/models.py:781 build/models.py:856
 msgid "No build output specified"
 msgstr "Không có đầu ra bản dựng đã được chỉ ra"
 
-#: build/models.py:779
+#: build/models.py:784
 msgid "Build output is already completed"
 msgstr "Đầu ra bản dựng đã được hoàn thiện"
 
-#: build/models.py:782
+#: build/models.py:787
 msgid "Build output does not match Build Order"
 msgstr "Đầu ra bản dựng không phù hợp với đơn đặt bản dựng"
 
-#: build/models.py:855 build/serializers.py:218 build/serializers.py:257
+#: build/models.py:860 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:444 order/serializers.py:389
 #: order/serializers.py:511 part/serializers.py:1322 part/serializers.py:1661
 #: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "Số lượng phải lớn hơn 0"
 
-#: build/models.py:860 build/serializers.py:223
+#: build/models.py:865 build/serializers.py:223
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Số lượng không thể lớn hơn số lượng đầu ra"
 
-#: build/models.py:1274
+#: build/models.py:1279
 msgid "Build object"
 msgstr "Dựng đối tượng"
 
-#: build/models.py:1288 build/models.py:1546 build/serializers.py:205
+#: build/models.py:1293 build/models.py:1551 build/serializers.py:205
 #: build/serializers.py:242 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2359
 #: order/models.py:1089 order/models.py:1660 order/serializers.py:1267
@@ -1304,36 +1304,36 @@ msgstr "Dựng đối tượng"
 msgid "Quantity"
 msgstr "Số lượng"
 
-#: build/models.py:1289
+#: build/models.py:1294
 msgid "Required quantity for build order"
 msgstr "Yêu cầu số lượng để dựng đơn đặt"
 
-#: build/models.py:1369
+#: build/models.py:1374
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Xây dựng mục phải xác định đầu ra, bởi vì sản phẩm chủ được đánh dấu là có thể theo dõi"
 
-#: build/models.py:1378
+#: build/models.py:1383
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Số lượng được phân bổ ({q}) không thể vượt quá số lượng có trong kho ({a})"
 
-#: build/models.py:1388 order/models.py:1616
+#: build/models.py:1393 order/models.py:1616
 msgid "Stock item is over-allocated"
 msgstr "Kho hàng đã bị phân bổ quá đà"
 
-#: build/models.py:1394 order/models.py:1619
+#: build/models.py:1399 order/models.py:1619
 msgid "Allocation quantity must be greater than zero"
 msgstr "Số lượng phân bổ phải lớn hơn 0"
 
-#: build/models.py:1400
+#: build/models.py:1405
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Số lượng phải là 1 cho kho sê ri"
 
-#: build/models.py:1461
+#: build/models.py:1466
 msgid "Selected stock item does not match BOM line"
 msgstr "Hàng trong kho đã chọn không phù hợp với đường BOM"
 
-#: build/models.py:1533 build/serializers.py:795 order/serializers.py:1095
+#: build/models.py:1538 build/serializers.py:795 order/serializers.py:1095
 #: order/serializers.py:1116 stock/serializers.py:488 stock/serializers.py:989
 #: stock/serializers.py:1115 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1350,19 +1350,19 @@ msgstr "Hàng trong kho đã chọn không phù hợp với đường BOM"
 msgid "Stock Item"
 msgstr "Kho hàng"
 
-#: build/models.py:1534
+#: build/models.py:1539
 msgid "Source stock item"
 msgstr "Kho hàng gốc"
 
-#: build/models.py:1547
+#: build/models.py:1552
 msgid "Stock quantity to allocate to build"
 msgstr "Số lượng kho hàng cần chỉ định để xây dựng"
 
-#: build/models.py:1555
+#: build/models.py:1560
 msgid "Install into"
 msgstr "Cài đặt vào"
 
-#: build/models.py:1556
+#: build/models.py:1561
 msgid "Destination stock item"
 msgstr "Kho hàng đích"
 
@@ -5627,31 +5627,31 @@ msgstr "Giá thấp nhất"
 msgid "Maximum Price"
 msgstr "Giá cao nhất"
 
-#: part/api.py:505
+#: part/api.py:506
 msgid "Incoming Purchase Order"
 msgstr "Đơn đặt mua vào"
 
-#: part/api.py:525
+#: part/api.py:526
 msgid "Outgoing Sales Order"
 msgstr "Đơn hàng bán ra"
 
-#: part/api.py:543
+#: part/api.py:544
 msgid "Stock produced by Build Order"
 msgstr "Kho sản xuất bởi Đơn đặt bản dựng"
 
-#: part/api.py:629
+#: part/api.py:630
 msgid "Stock required for Build Order"
 msgstr "Kho được yêu cầu cho đơn đặt bản dựng"
 
-#: part/api.py:774
+#: part/api.py:775
 msgid "Valid"
 msgstr "Hợp lệ"
 
-#: part/api.py:775
+#: part/api.py:776
 msgid "Validate entire Bill of Materials"
 msgstr "Xác minh toàn bộ hóa đơn vật liệu"
 
-#: part/api.py:781
+#: part/api.py:782
 msgid "This option must be selected"
 msgstr "Tùy chọn này phải được chọn"
 
@@ -7503,7 +7503,7 @@ msgstr "Cung cấp hỗ trợ gốc cho mã vạch"
 #: plugin/builtin/integration/core_notifications.py:34
 #: plugin/builtin/integration/currency_exchange.py:22
 #: plugin/builtin/labels/inventree_label.py:23
-#: plugin/builtin/labels/label_sheet.py:56
+#: plugin/builtin/labels/label_sheet.py:63
 #: plugin/builtin/suppliers/digikey.py:19 plugin/builtin/suppliers/lcsc.py:21
 #: plugin/builtin/suppliers/mouser.py:19 plugin/builtin/suppliers/tme.py:21
 msgid "InvenTree contributors"
@@ -7576,34 +7576,42 @@ msgid "Page size for the label sheet"
 msgstr "Khổ giấy cho tờ nhãn"
 
 #: plugin/builtin/labels/label_sheet.py:34
+msgid "Skip Labels"
+msgstr "Bỏ qua nhãn"
+
+#: plugin/builtin/labels/label_sheet.py:35
+msgid "Skip this number of labels when printing label sheets"
+msgstr ""
+
+#: plugin/builtin/labels/label_sheet.py:41
 msgid "Border"
 msgstr "Viền"
 
-#: plugin/builtin/labels/label_sheet.py:35
+#: plugin/builtin/labels/label_sheet.py:42
 msgid "Print a border around each label"
 msgstr "In một viền xung quanh từng nhãn"
 
-#: plugin/builtin/labels/label_sheet.py:40 report/models.py:203
+#: plugin/builtin/labels/label_sheet.py:47 report/models.py:203
 msgid "Landscape"
 msgstr "Ngang"
 
-#: plugin/builtin/labels/label_sheet.py:41
+#: plugin/builtin/labels/label_sheet.py:48
 msgid "Print the label sheet in landscape mode"
 msgstr "In tờ viền theo khổ giấy nằm ngang"
 
-#: plugin/builtin/labels/label_sheet.py:53
+#: plugin/builtin/labels/label_sheet.py:60
 msgid "InvenTree Label Sheet Printer"
 msgstr "Máy in tờ nhãn InvenTree"
 
-#: plugin/builtin/labels/label_sheet.py:54
+#: plugin/builtin/labels/label_sheet.py:61
 msgid "Arrays multiple labels onto a single sheet"
 msgstr "Sắp xếp nhiều nhãn trong một tờ đơn"
 
-#: plugin/builtin/labels/label_sheet.py:87
+#: plugin/builtin/labels/label_sheet.py:95
 msgid "Label is too large for page size"
 msgstr "Nhãn quá lớn so với khổ giấy"
 
-#: plugin/builtin/labels/label_sheet.py:116
+#: plugin/builtin/labels/label_sheet.py:128
 msgid "No labels were generated"
 msgstr "Chưa tạo nhãn nào"
 
