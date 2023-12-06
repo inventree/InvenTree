@@ -306,9 +306,7 @@ export function BomTable({
               title: t`Delete Bom Item`,
               successMessage: t`Bom item deleted`,
               onFormSuccess: table.refreshTable,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this BOM item?`}</Text>
-              )
+              preFormWarning: t`Are you sure you want to remove this BOM item?`
             });
           }
         })

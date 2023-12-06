@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -21,7 +20,7 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 /**
  * Table for displaying list of project codes
  */
-export function ProjectCodeTable() {
+export default function ProjectCodeTable() {
   const table = useTable('project-codes');
 
   const user = useUserState();
@@ -67,9 +66,7 @@ export function ProjectCodeTable() {
               title: t`Delete project code`,
               successMessage: t`Project code deleted`,
               onFormSuccess: table.refreshTable,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this project code?`}</Text>
-              )
+              preFormWarning: t`Are you sure you want to remove this project code?`
             });
           }
         })

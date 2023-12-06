@@ -110,8 +110,8 @@ export function RenderInlineModel({
   // TODO: Handle URL
 
   return (
-    <Group spacing="xs" position="apart">
-      <Group spacing="xs" position="left">
+    <Group spacing="xs" position="apart" noWrap={true}>
+      <Group spacing="xs" position="left" noWrap={true}>
         {image && Thumbnail({ src: image, size: 18 })}
         <Text size="sm">{primary}</Text>
         {secondary && <Text size="xs">{secondary}</Text>}

@@ -17,6 +17,7 @@ from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
 from InvenTree.helpers import str2bool, str2int
 from InvenTree.views import AjaxUpdateView, AjaxView, InvenTreeRoleMixin
+from part.helpers import PART_IMAGE_DIR
 from plugin.views import InvenTreePluginViewMixin
 from stock.models import StockItem, StockLocation
 
@@ -398,12 +399,12 @@ class PartImageSelect(AjaxUpdateView):
         data = {}
 
         if img:
-            img_path = settings.MEDIA_ROOT.joinpath('part_images', img)
+            img_path = settings.MEDIA_ROOT.joinpath(PART_IMAGE_DIR, img)
 
             # Ensure that the image already exists
             if os.path.exists(img_path):
 
-                part.image = os.path.join('part_images', img)
+                part.image = os.path.join(PART_IMAGE_DIR, img)
                 part.save()
 
                 data['success'] = _('Updated part image')

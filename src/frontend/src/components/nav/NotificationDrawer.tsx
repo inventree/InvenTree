@@ -12,6 +12,7 @@ import { Group, Stack, Text } from '@mantine/core';
 import { IconBellCheck, IconBellPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiPaths } from '../../enums/ApiEndpoints';
@@ -71,7 +72,7 @@ export function NotificationDrawer({
           <ActionIcon
             onClick={() => {
               onClose();
-              navigate('/notifications/');
+              navigate('/notifications/unread');
             }}
           >
             <IconBellPlus />
@@ -90,7 +91,18 @@ export function NotificationDrawer({
         {notificationQuery.data?.results?.map((notification: any) => (
           <Group position="apart" key={notification.pk}>
             <Stack spacing="3">
-              <Text size="sm">{notification.target?.name ?? 'target'}</Text>
+              {notification?.target?.link ? (
+                <Text
+                  size="sm"
+                  component={Link}
+                  to={notification?.target?.link}
+                  target="_blank"
+                >
+                  {notification.target?.name ?? 'target'}
+                </Text>
+              ) : (
+                <Text size="sm">{notification.target?.name ?? 'target'}</Text>
+              )}
               <Text size="xs">{notification.age_human ?? 'name'}</Text>
             </Stack>
             <Space />

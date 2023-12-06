@@ -129,7 +129,8 @@ export function InvenTreeTable<T = any>({
   // Active filters (saved to local storage)
   const [activeFilters, setActiveFilters] = useLocalStorage<any[]>({
     key: `inventree-active-table-filters-${tableName}`,
-    defaultValue: []
+    defaultValue: [],
+    getInitialValueInEffect: false
   });
 
   // Data selection

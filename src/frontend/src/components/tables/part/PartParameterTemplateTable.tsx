@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -18,7 +17,7 @@ import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
-export function PartParameterTemplateTable() {
+export default function PartParameterTemplateTable() {
   const table = useTable('part-parameter-templates');
 
   const user = useUserState();
@@ -39,7 +38,7 @@ export function PartParameterTemplateTable() {
       {
         accessor: 'description',
         title: t`Description`,
-        sortbale: false
+        sortable: false
       },
       {
         accessor: 'checkbox',
@@ -78,7 +77,7 @@ export function PartParameterTemplateTable() {
               title: t`Delete Parameter Template`,
               successMessage: t`Parameter template deleted`,
               onFormSuccess: table.refreshTable,
-              preFormContent: <Text>{t`Remove parameter template`}</Text>
+              preFormWarning: t`Are you sure you want to remove this parameter template?`
             });
           }
         })

@@ -1,5 +1,6 @@
 """Unit tests for the various part API endpoints"""
 
+import os
 from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
@@ -1464,6 +1465,16 @@ class PartCreationTests(PartAPITestBase):
 class PartDetailTests(PartAPITestBase):
     """Test that we can create / edit / delete Part objects via the API."""
 
+    @classmethod
+    def setUpTestData(cls):
+        """Custom setup routine for this class"""
+        super().setUpTestData()
+
+        # Create a custom APIClient for file uploads
+        # Ref: https://stackoverflow.com/questions/40453947/how-to-generate-a-file-upload-test-request-with-django-rest-frameworks-apireq
+        cls.upload_client = APIClient()
+        cls.upload_client.force_authenticate(user=cls.user)
+
     def test_part_operations(self):
         """Test that Part instances can be adjusted via the API"""
         n = Part.objects.count()
@@ -1643,17 +1654,12 @@ class PartDetailTests(PartAPITestBase):
         with self.assertRaises(ValueError):
             print(p.image.file)
 
-        # Create a custom APIClient for file uploads
-        # Ref: https://stackoverflow.com/questions/40453947/how-to-generate-a-file-upload-test-request-with-django-rest-frameworks-apireq
-        upload_client = APIClient()
-        upload_client.force_authenticate(user=self.user)
-
         # Try to upload a non-image file
         with open('dummy_image.txt', 'w') as dummy_image:
             dummy_image.write('hello world')
 
         with open('dummy_image.txt', 'rb') as dummy_image:
-            response = upload_client.patch(
+            response = self.upload_client.patch(
                 url,
                 {
                     'image': dummy_image,
@@ -1672,7 +1678,7 @@ class PartDetailTests(PartAPITestBase):
             img.save(fn)
 
             with open(fn, 'rb') as dummy_image:
-                response = upload_client.patch(
+                response = self.upload_client.patch(
                     url,
                     {
                         'image': dummy_image,
@@ -1685,6 +1691,55 @@ class PartDetailTests(PartAPITestBase):
             # And now check that the image has been set
             p = Part.objects.get(pk=pk)
             self.assertIsNotNone(p.image)
+
+    def test_existing_image(self):
+        """Test that we can allocate an existing uploaded image to a new Part"""
+
+        # First, upload an image for an existing part
+        p = Part.objects.first()
+
+        fn = 'part_image_123abc.png'
+
+        img = PIL.Image.new('RGB', (128, 128), color='blue')
+        img.save(fn)
+
+        with open(fn, 'rb') as img_file:
+            response = self.upload_client.patch(
+                reverse('api-part-detail', kwargs={'pk': p.pk}),
+                {
+                    'image': img_file,
+                },
+            )
+
+            self.assertEqual(response.status_code, 200)
+            image_name = response.data['image']
+            self.assertTrue(image_name.startswith('/media/part_images/part_image'))
+
+        # Attempt to create, but with an invalid image name
+        response = self.post(
+            reverse('api-part-list'),
+            {
+                'name': 'New part',
+                'description': 'New Part description',
+                'category': 1,
+                'existing_image': 'does_not_exist.png',
+            },
+            expected_code=400
+        )
+
+        # Now, create a new part and assign the same image
+        response = self.post(
+            reverse('api-part-list'),
+            {
+                'name': 'New part',
+                'description': 'New part description',
+                'category': 1,
+                'existing_image': image_name.split(os.path.sep)[-1]
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(response.data['image'], image_name)
 
     def test_details(self):
         """Test that the required details are available."""

@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -20,7 +19,7 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 /**
  * Table for displaying list of custom physical units
  */
-export function CustomUnitsTable() {
+export default function CustomUnitsTable() {
   const table = useTable('custom-units');
 
   const user = useUserState();
@@ -77,9 +76,7 @@ export function CustomUnitsTable() {
               title: t`Delete custom unit`,
               successMessage: t`Custom unit deleted`,
               onFormSuccess: table.refreshTable,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this custom unit?`}</Text>
-              )
+              preFormWarning: t`Are you sure you want to remove this custom unit?`
             });
           }
         })

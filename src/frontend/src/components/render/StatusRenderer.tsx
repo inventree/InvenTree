@@ -69,7 +69,7 @@ export const StatusRenderer = ({
   options
 }: {
   status: string;
-  type: ModelType;
+  type: ModelType | string;
   options?: renderStatusLabelOptionsInterface;
 }) => {
   const statusCodeList = useServerApiState.getState().status;
