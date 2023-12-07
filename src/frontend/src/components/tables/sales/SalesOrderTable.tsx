@@ -17,7 +17,13 @@ import {
   TargetDateColumn,
   TotalPriceColumn
 } from '../ColumnRenderers';
-import { StatusFilterOptions, TableFilter } from '../Filter';
+import {
+  AssignedToMeFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({ params }: { params?: any }) {
@@ -33,21 +39,9 @@ export function SalesOrderTable({ params }: { params?: any }) {
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.salesorder)
       },
-      {
-        name: 'outstanding',
-        label: t`Outstanding`,
-        description: t`Show outstanding orders`
-      },
-      {
-        name: 'overdue',
-        label: t`Overdue`,
-        description: t`Show overdue orders`
-      },
-      {
-        name: 'assigned_to_me',
-        label: t`Assigned to me`,
-        description: t`Show orders assigned to me`
-      }
+      OutstandingFilter(),
+      OverdueFilter(),
+      AssignedToMeFilter()
       // TODO: has_project_code
       // TODO: project_code
     ];

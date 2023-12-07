@@ -80,3 +80,27 @@ export function StatusFilterOptions(
     return [];
   };
 }
+
+export function AssignedToMeFilter(): TableFilter {
+  return {
+    name: 'assigned_to_me',
+    label: t`Assigned to me`,
+    description: t`Show orders assigned to me`
+  };
+}
+
+export function OutstandingFilter(): TableFilter {
+  return {
+    name: 'outstanding',
+    label: t`Outstanding`,
+    description: t`Show outstanding orders`
+  };
+}
+
+export function OverdueFilter(): TableFilter {
+  return {
+    name: 'overdue',
+    label: t`Overdue`,
+    description: t`Show overdue orders`
+  };
+}
