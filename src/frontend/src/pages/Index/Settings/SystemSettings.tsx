@@ -7,11 +7,8 @@ import {
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
-  IconList,
-  IconListDetails,
   IconPackages,
   IconQrcode,
-  IconScale,
   IconServerCog,
   IconShoppingCart,
   IconSitemap,
@@ -25,10 +22,7 @@ import { StylishText } from '../../../components/items/StylishText';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
-import { PartParameterTemplateTable } from '../../../components/tables/part/PartParameterTemplateTable';
 import { CurrencyTable } from '../../../components/tables/settings/CurrencyTable';
-import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
-import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
 import { useServerApiState } from '../../../states/ApiState';
 
 /**
@@ -55,6 +49,7 @@ export default function SystemSettings() {
               'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
               'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
               'INVENTREE_REQUIRE_CONFIRM',
+              'INVENTREE_STRICT_URLS',
               'INVENTREE_TREE_DEPTH',
               'INVENTREE_BACKUP_ENABLE',
               'INVENTREE_BACKUP_DAYS',
@@ -100,24 +95,6 @@ export default function SystemSettings() {
             ]}
           />
         )
-      },
-      {
-        name: 'projectcodes',
-        label: t`Project Codes`,
-        icon: <IconListDetails />,
-        content: (
-          <Stack spacing="xs">
-            <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
-            <Divider />
-            <ProjectCodeTable />
-          </Stack>
-        )
-      },
-      {
-        name: 'physicalunits',
-        label: t`Physical Units`,
-        icon: <IconScale />,
-        content: <CustomUnitsTable />
       },
       {
         name: 'notifications',
@@ -218,12 +195,6 @@ export default function SystemSettings() {
             ]}
           />
         )
-      },
-      {
-        name: 'parameters',
-        label: t`Part Parameters`,
-        icon: <IconList />,
-        content: <PartParameterTemplateTable />
       },
       {
         name: 'stock',

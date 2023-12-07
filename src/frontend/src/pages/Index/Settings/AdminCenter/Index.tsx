@@ -1,18 +1,41 @@
 import { Trans, t } from '@lingui/macro';
-import { Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
-import { IconPlugConnected, IconUsersGroup } from '@tabler/icons-react';
+import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import {
+  IconList,
+  IconListDetails,
+  IconPlugConnected,
+  IconScale,
+  IconUsersGroup
+} from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
+import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
 );
+
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
+);
+
+const ProjectCodeTable = Loadable(
+  lazy(() => import('../../../../components/tables/settings/ProjectCodeTable'))
+);
+
+const CustomUnitsTable = Loadable(
+  lazy(() => import('../../../../components/tables/settings/CustomUnitsTable'))
+);
+
+const PartParameterTemplateTable = Loadable(
+  lazy(
+    () =>
+      import('../../../../components/tables/part/PartParameterTemplateTable')
+  )
 );
 
 export default function AdminCenter() {
@@ -23,6 +46,30 @@ export default function AdminCenter() {
         label: t`Users`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />
+      },
+      {
+        name: 'projectcodes',
+        label: t`Project Codes`,
+        icon: <IconListDetails />,
+        content: (
+          <Stack spacing="xs">
+            <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
+            <Divider />
+            <ProjectCodeTable />
+          </Stack>
+        )
+      },
+      {
+        name: 'customunits',
+        label: t`Custom Units`,
+        icon: <IconScale />,
+        content: <CustomUnitsTable />
+      },
+      {
+        name: 'parameters',
+        label: t`Part Parameters`,
+        icon: <IconList />,
+        content: <PartParameterTemplateTable />
       },
       {
         name: 'plugin',

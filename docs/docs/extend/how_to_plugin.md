@@ -81,6 +81,32 @@ setuptools.setup(
     entry_points={"inventree_plugins": ["ShopifyIntegrationPlugin = path.to.source:ShopifyIntegrationPluginClass"]}
 ```
 
+#### Including Extra Files
+
+In some cases you may wish to copy across extra files when the package is installed. For example, you may have custom template files which need to be copied across to the installation directory.
+
+In this case, you will need to include a `MANIFEST.in` file in the root directory of your plugin, and include the line `include_package_data=True` in your `setup.py` file.
+
+!!! tip "Setuptools Documentation"
+    Read more about `MANIFEST.in` in the [setuptools documentation](https://setuptools.pypa.io/en/latest/userguide/miscellaneous.html)
+
+As an example, you have a plugin codebase with the following directory structure:
+
+```
+- my_plugin  # Core plugin code
+- my_plugin/templates/  # Template files
+- MANIFEST.in  # Manifest file
+- setup.py  # Setuptools script
+```
+
+To ensure that the templates are copied into the installation directory, `MANIFEST.in` should look like:
+
+```
+recursive-include my_plugin/templates *
+```
+
+Other files and directories can be copied in a similar manner.
+
 
 ### A simple example
 This example adds a new action under `/api/action/sample` using the ActionMixin.

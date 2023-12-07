@@ -11,6 +11,7 @@ from djmoney.forms.fields import MoneyField
 from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.models.validators import MinMoneyValidator
 from rest_framework.fields import URLField as RestURLField
+from rest_framework.fields import empty
 
 import InvenTree.helpers
 
@@ -28,6 +29,20 @@ class InvenTreeRestURLField(RestURLField):
 
         super().__init__(**kwargs)
         self.validators[-1].schemes = allowable_url_schemes()
+
+    def run_validation(self, data=empty):
+        """Override default validation behaviour for this field type"""
+
+        import common.models
+
+        strict_urls = common.models.InvenTreeSetting.get_setting('INVENTREE_STRICT_URLS', True, cache=False)
+
+        if not strict_urls and data is not empty:
+            if '://' not in data:
+                # Validate as if there were a schema provided
+                data = 'http://' + data
+
+        return super().run_validation(data=data)
 
 
 class InvenTreeURLField(models.URLField):
