@@ -372,7 +372,7 @@ export function InvenTreeTable<T = any>({
   return (
     <>
       {tableProps.enableFilters &&
-        (tableProps.customFilters?.length ?? 0 > 0) && (
+        (tableProps.customFilters?.length ?? 0) > 0 && (
           <FilterSelectDrawer
             availableFilters={tableProps.customFilters ?? []}
             tableState={tableState}

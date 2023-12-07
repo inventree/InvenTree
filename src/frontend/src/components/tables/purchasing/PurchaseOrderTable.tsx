@@ -17,6 +17,7 @@ import {
   TargetDateColumn,
   TotalPriceColumn
 } from '../ColumnRenderers';
+import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -27,7 +28,33 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
 
   const table = useTable('purchase-order');
 
-  // TODO: Custom filters
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
+      },
+      {
+        name: 'outstanding',
+        label: t`Outstanding`,
+        description: t`Show outstanding orders`
+      },
+      {
+        name: 'overdue',
+        label: t`Overdue`,
+        description: t`Show overdue orders`
+      },
+      {
+        name: 'assigned_to_me',
+        label: t`Assigned to me`,
+        description: t`Show orders assigned to me`
+      }
+      // TODO: has_project_code
+      // TODO: project_code
+    ];
+  }, []);
 
   // TODO: Row actions
 
@@ -83,6 +110,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           ...params,
           supplier_detail: true
         },
+        customFilters: tableFilters,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/purchasing/purchase-order/${row.pk}`);
