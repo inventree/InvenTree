@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-06 12:55+0000\n"
-"PO-Revision-Date: 2023-12-05 02:30\n"
+"POT-Creation-Date: 2023-12-06 06:18+0000\n"
+"PO-Revision-Date: 2023-12-07 02:34\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -474,13 +474,9 @@ msgstr "Bienvenue sur {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Votre compte a été créé.\n"
-"\n"
+msgstr "Votre compte a été créé.\n\n"
 "Veuillez utiliser la fonction de réinitialisation du mot de passe pour avoir accès (à https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -13379,8 +13375,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13555,3 +13550,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
