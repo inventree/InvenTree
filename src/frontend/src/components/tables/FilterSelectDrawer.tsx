@@ -17,6 +17,7 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TableState } from '../../hooks/UseTable';
 import { StylishText } from '../items/StylishText';
+import { YesNoButton } from '../items/YesNoButton';
 import { TableFilter } from './Filter';
 
 /*
@@ -36,6 +37,14 @@ function FilterItem({
     tableState.setActiveFilters(newFilters);
   }, [flt]);
 
+  const value = useMemo(() => {
+    switch (flt.type) {
+      default:
+      case 'bool':
+        return <YesNoButton value={flt.value} />;
+    }
+  }, [flt]);
+
   return (
     <Paper p="sm" shadow="sm" radius="xs">
       <Group position="apart" key={flt.name}>
@@ -44,7 +53,7 @@ function FilterItem({
           <Text size="xs">{flt.description}</Text>
         </Stack>
         <Group position="right">
-          <Text size="xs">{flt.value}</Text>
+          {value}
           <Tooltip label={t`Remove filter`} withinPortal={true}>
             <CloseButton size="md" color="red" onClick={removeFilter} />
           </Tooltip>
@@ -104,13 +113,12 @@ function FilterAddGroup({
     }
 
     switch (filter.type) {
+      default:
       case 'boolean':
         return [
-          { value: 'true', label: t`True` },
-          { value: 'false', label: t`False` }
+          { value: 'true', label: t`Yes` },
+          { value: 'false', label: t`No` }
         ];
-      default:
-        return [];
     }
   }, [selectedFilter]);
 

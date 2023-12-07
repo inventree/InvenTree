@@ -13,7 +13,7 @@ export type TableFilter = {
   name: string;
   label: string;
   description?: string;
-  type: string;
+  type?: string;
   choices?: TableFilterChoice[];
   choiceFunction?: () => TableFilterChoice[];
   defaultValue?: any;
