@@ -25,10 +25,11 @@
 {% endblock heading %}
 
 {% block actions %}
-{% if category and user.is_staff and roles.part_category.change %}
-{% url 'admin:part_partcategory_change' category.pk as url %}
+{% if category %}
+{% admin_url user "part.partcategory" category.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
+
 {% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
 {% if stocktake_enable and roles.stocktake.add %}
 <button type='button' class='btn btn-outline-secondary' id='category-stocktake' title='{% trans "Perform stocktake for this part category" %}'>
@@ -239,8 +240,17 @@
         generateStocktakeReport({
             category: {
                 {% if category %}value: {{ category.pk }},{% endif %}
+                tree_picker: {
+                    url: '{% url "api-part-category-tree" %}',
+                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+                },
             },
-            location: {},
+            location: {
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
+            },
             generate_report: {},
             update_parts: {},
         });

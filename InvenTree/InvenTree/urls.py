@@ -10,35 +10,38 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
-from dj_rest_auth.registration.views import (SocialAccountDisconnectView,
+from dj_rest_auth.registration.views import (ConfirmEmailView,
+                                             SocialAccountDisconnectView,
                                              SocialAccountListView)
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from sesame.views import LoginView
 
-from build.api import build_api_urls
+import build.api
+import common.api
+import company.api
+import label.api
+import order.api
+import part.api
+import plugin.api
+import report.api
+import stock.api
+import users.api
 from build.urls import build_urls
-from common.api import admin_api_urls, common_api_urls, settings_api_urls
 from common.urls import common_urls
-from company.api import company_api_urls
 from company.urls import (company_urls, manufacturer_part_urls,
                           supplier_part_urls)
-from label.api import label_api_urls
-from order.api import order_api_urls
 from order.urls import order_urls
-from part.api import bom_api_urls, part_api_urls
 from part.urls import part_urls
-from plugin.api import plugin_api_urls
 from plugin.urls import get_plugin_urls
-from report.api import report_api_urls
-from stock.api import stock_api_urls
 from stock.urls import stock_urls
-from users.api import user_urls
-from web.urls import spa_view
 from web.urls import urlpatterns as platform_urls
 
-from .api import APISearchView, InfoView, NotFoundView
+from .api import (APISearchView, InfoView, NotFoundView, VersionTextView,
+                  VersionView)
 from .magic_login import GetSimpleLoginView
-from .social_auth_urls import SocialProvierListView, social_auth_urlpatterns
+from .social_auth_urls import (EmailListView, EmailPrimaryView,
+                               EmailRemoveView, EmailVerifyView,
+                               SocialProviderListView, social_auth_urlpatterns)
 from .views import (AboutView, AppearanceSelectView, CustomConnectionsView,
                     CustomEmailView, CustomLoginView,
                     CustomPasswordResetFromKeyView,
@@ -55,37 +58,48 @@ apipatterns = [
     # Global search
     path('search/', APISearchView.as_view(), name='api-search'),
 
-    re_path(r'^settings/', include(settings_api_urls)),
-    re_path(r'^part/', include(part_api_urls)),
-    re_path(r'^bom/', include(bom_api_urls)),
-    re_path(r'^company/', include(company_api_urls)),
-    re_path(r'^stock/', include(stock_api_urls)),
-    re_path(r'^build/', include(build_api_urls)),
-    re_path(r'^order/', include(order_api_urls)),
-    re_path(r'^label/', include(label_api_urls)),
-    re_path(r'^report/', include(report_api_urls)),
-    re_path(r'^user/', include(user_urls)),
-    re_path(r'^admin/', include(admin_api_urls)),
+    re_path(r'^settings/', include(common.api.settings_api_urls)),
+    re_path(r'^part/', include(part.api.part_api_urls)),
+    re_path(r'^bom/', include(part.api.bom_api_urls)),
+    re_path(r'^company/', include(company.api.company_api_urls)),
+    re_path(r'^stock/', include(stock.api.stock_api_urls)),
+    re_path(r'^build/', include(build.api.build_api_urls)),
+    re_path(r'^order/', include(order.api.order_api_urls)),
+    re_path(r'^label/', include(label.api.label_api_urls)),
+    re_path(r'^report/', include(report.api.report_api_urls)),
+    re_path(r'^user/', include(users.api.user_urls)),
+    re_path(r'^admin/', include(common.api.admin_api_urls)),
 
     # Plugin endpoints
-    path('', include(plugin_api_urls)),
+    path('', include(plugin.api.plugin_api_urls)),
 
     # Common endpoints endpoint
-    path('', include(common_api_urls)),
+    path('', include(common.api.common_api_urls)),
 
     # OpenAPI Schema
     re_path('schema/', SpectacularAPIView.as_view(custom_settings={'SCHEMA_PATH_PREFIX': '/api/'}), name='schema'),
 
-    # InvenTree information endpoint
-    path('', InfoView.as_view(), name='api-inventree-info'),
+    # InvenTree information endpoints
+    path("version-text", VersionTextView.as_view(), name="api-version-text"),  # version text
+    path('version/', VersionView.as_view(), name='api-version'),  # version info
+    path('', InfoView.as_view(), name='api-inventree-info'),  # server info
 
-    # Third party API endpoints
-    path('auth/', include('dj_rest_auth.urls')),
-    path('auth/registration/', include('dj_rest_auth.registration.urls')),
-    path('auth/providers/', SocialProvierListView.as_view(), name='social_providers'),
-    path('auth/social/', include(social_auth_urlpatterns)),
-    path('auth/social/', SocialAccountListView.as_view(), name='social_account_list'),
-    path('auth/social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),
+    # Auth API endpoints
+    path('auth/', include([
+        re_path(r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$', ConfirmEmailView.as_view(), name='account_confirm_email'),
+        path('registration/', include('dj_rest_auth.registration.urls')),
+        path('providers/', SocialProviderListView.as_view(), name='social_providers'),
+        path('emails/', include([path('<int:pk>/', include([
+            path('primary/', EmailPrimaryView.as_view(), name='email-primary'),
+            path('verify/', EmailVerifyView.as_view(), name='email-verify'),
+            path('remove/', EmailRemoveView().as_view(), name='email-remove'),])),
+            path('', EmailListView.as_view(), name='email-list')
+        ])),
+        path('social/', include(social_auth_urlpatterns)),
+        path('social/', SocialAccountListView.as_view(), name='social_account_list'),
+        path('social/<int:pk>/disconnect/', SocialAccountDisconnectView.as_view(), name='social_account_disconnect'),
+        path('', include('dj_rest_auth.urls')),
+    ])),
 
     # Magic login URLs
     path("email/generate/", csrf_exempt(GetSimpleLoginView().as_view()), name="sesame-generate",),
@@ -186,10 +200,6 @@ classic_frontendpatterns = [
     re_path(r'^about/', AboutView.as_view(), name='about'),
     re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
-    # admin sites
-    re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
-    re_path(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
-
     # DB user sessions
     path('accounts/sessions/other/delete/', view=CustomSessionDeleteOtherView.as_view(), name='session_delete_other', ),
     re_path(r'^accounts/sessions/(?P<pk>\w+)/delete/$', view=CustomSessionDeleteView.as_view(), name='session_delete', ),
@@ -207,29 +217,29 @@ classic_frontendpatterns = [
     re_path(r'^accounts/', include('allauth.urls')),        # included urlpatterns
 ]
 
+urlpatterns = []
 
-new_frontendpatterns = [
-    # Platform urls
-    re_path(r'^platform/', include(platform_urls)),
-    re_path(r'^platform', spa_view, name='platform'),
-]
+if settings.INVENTREE_ADMIN_ENABLED:
+    admin_url = settings.INVENTREE_ADMIN_URL,
+    urlpatterns += [
+        path(f'{admin_url}/error_log/', include('error_report.urls')),
+        path(f'{admin_url}/', admin.site.urls, name='inventree-admin'),
+    ]
 
-# Load patterns for frontend according to settings
+urlpatterns += backendpatterns
+
 frontendpatterns = []
-if settings.ENABLE_CLASSIC_FRONTEND:
-    frontendpatterns.append(re_path('', include(classic_frontendpatterns)))
-if settings.ENABLE_PLATFORM_FRONTEND:
-    frontendpatterns.append(re_path('', include(new_frontendpatterns)))
 
+if settings.ENABLE_CLASSIC_FRONTEND:
+    frontendpatterns += classic_frontendpatterns
+if settings.ENABLE_PLATFORM_FRONTEND:
+    frontendpatterns += platform_urls
+
+urlpatterns += frontendpatterns
 
 # Append custom plugin URLs (if plugin support is enabled)
 if settings.PLUGINS_ENABLED:
-    frontendpatterns.append(get_plugin_urls())
-
-urlpatterns = [
-    re_path('', include(frontendpatterns)),
-    re_path('', include(backendpatterns)),
-]
+    urlpatterns.append(get_plugin_urls())
 
 # Server running in "DEBUG" mode?
 if settings.DEBUG:
@@ -245,6 +255,11 @@ if settings.DEBUG:
         urlpatterns = [
             path('__debug__/', include(debug_toolbar.urls)),
         ] + urlpatterns
+
+# Redirect for favicon.ico
+urlpatterns.append(
+    path('favicon.ico', RedirectView.as_view(url=f'{settings.STATIC_URL}img/favicon/favicon.ico'))
+)
 
 # Send any unknown URLs to the parts page
 urlpatterns += [re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')]

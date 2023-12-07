@@ -13,7 +13,6 @@ class TestSerialNumberMigration(MigratorTestCase):
 
     def prepare(self):
         """Create initial data for this migration"""
-
         Part = self.old_state.apps.get_model('part', 'part')
         StockItem = self.old_state.apps.get_model('stock', 'stockitem')
 
@@ -53,7 +52,6 @@ class TestSerialNumberMigration(MigratorTestCase):
 
     def test_migrations(self):
         """Test that the migrations have been applied correctly"""
-
         StockItem = self.new_state.apps.get_model('stock', 'stockitem')
 
         # Check that the serial number integer conversion has been applied correctly
@@ -77,7 +75,6 @@ class TestScheduledForDeletionMigration(MigratorTestCase):
 
     def prepare(self):
         """Create some initial stock items"""
-
         Part = self.old_state.apps.get_model('part', 'part')
         StockItem = self.old_state.apps.get_model('stock', 'stockitem')
 
@@ -124,7 +121,6 @@ class TestScheduledForDeletionMigration(MigratorTestCase):
 
     def test_migration(self):
         """Test that all stock items were actually removed"""
-
         StockItem = self.new_state.apps.get_model('stock', 'stockitem')
 
         # All the "scheduled for deletion" items have been removed

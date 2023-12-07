@@ -2,10 +2,12 @@
 
 import os
 from collections import OrderedDict
+from copy import deepcopy
 from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -15,7 +17,7 @@ from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
@@ -43,7 +45,6 @@ class InvenTreeMoneySerializer(MoneyField):
 
     def get_value(self, data):
         """Test that the returned amount is a valid Decimal."""
-
         amount = super(DecimalField, self).get_value(data)
 
         # Convert an empty string to None
@@ -73,7 +74,6 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
 
     def __init__(self, *args, **kwargs):
         """Initialize the currency serializer"""
-
         choices = currency_code_mappings()
 
         allow_blank = kwargs.get('allow_blank', False) or kwargs.get('allow_null', False)
@@ -93,6 +93,93 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
             kwargs['help_text'] = _('Select currency from available options')
 
         super().__init__(*args, **kwargs)
+
+
+class DependentField(serializers.Field):
+    """A dependent field can be used to dynamically return child fields based on the value of other fields."""
+    child = None
+
+    def __init__(self, *args, depends_on, field_serializer, **kwargs):
+        """A dependent field can be used to dynamically return child fields based on the value of other fields.
+
+        Example:
+        This example adds two fields. If the client selects integer, an integer field will be shown, but if he
+        selects char, an char field will be shown. For any other value, nothing will be shown.
+
+        class TestSerializer(serializers.Serializer):
+            select_type = serializers.ChoiceField(choices=[
+                ("integer", "Integer"),
+                ("char", "Char"),
+            ])
+            my_field = DependentField(depends_on=["select_type"], field_serializer="get_my_field")
+
+            def get_my_field(self, fields):
+                if fields["select_type"] == "integer":
+                    return serializers.IntegerField()
+                if fields["select_type"] == "char":
+                    return serializers.CharField()
+        """
+        super().__init__(*args, **kwargs)
+
+        self.depends_on = depends_on
+        self.field_serializer = field_serializer
+
+    def get_child(self, raise_exception=False):
+        """This method tries to extract the child based on the provided data in the request by the client."""
+        data = deepcopy(self.context["request"].data)
+
+        def visit_parent(node):
+            """Recursively extract the data for the parent field/serializer in reverse."""
+            nonlocal data
+
+            if node.parent:
+                visit_parent(node.parent)
+
+            # only do for composite fields and stop right before the current field
+            if hasattr(node, "child") and node is not self and isinstance(data, dict):
+                data = data.get(node.field_name, None)
+        visit_parent(self)
+
+        # ensure that data is a dictionary and that a parent exists
+        if not isinstance(data, dict) or self.parent is None:
+            return
+
+        # check if the request data contains the dependent fields, otherwise skip getting the child
+        for f in self.depends_on:
+            if not data.get(f, None):
+                return
+
+        # partially validate the data for options requests that set raise_exception while calling .get_child(...)
+        if raise_exception:
+            validation_data = {k: v for k, v in data.items() if k in self.depends_on}
+            serializer = self.parent.__class__(context=self.context, data=validation_data, partial=True)
+            serializer.is_valid(raise_exception=raise_exception)
+
+        # try to get the field serializer
+        field_serializer = getattr(self.parent, self.field_serializer)
+        child = field_serializer(data)
+
+        if not child:
+            return
+
+        self.child = child
+        self.child.bind(field_name='', parent=self)
+
+    def to_internal_value(self, data):
+        """This method tries to convert the data to an internal representation based on the defined to_internal_value method on the child."""
+        self.get_child()
+        if self.child:
+            return self.child.to_internal_value(data)
+
+        return None
+
+    def to_representation(self, value):
+        """This method tries to convert the data to representation based on the defined to_representation method on the child."""
+        self.get_child()
+        if self.child:
+            return self.child.to_representation(value)
+
+        return None
 
 
 class InvenTreeModelSerializer(serializers.ModelSerializer):
@@ -197,7 +284,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Custom create method which supports field adjustment"""
-
         initial_data = validated_data.copy()
 
         # Remove any fields which do not exist on the model
@@ -221,7 +307,6 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         In addition to running validators on the serializer fields,
         this class ensures that the underlying model is also validated.
         """
-
         # Run any native validation checks first (may raise a ValidationError)
         data = super().run_validation(data)
 
@@ -298,8 +383,78 @@ class UserSerializer(InvenTreeModelSerializer):
             'username',
             'first_name',
             'last_name',
-            'email'
+            'email',
         ]
+
+        read_only_fields = [
+            'username',
+        ]
+
+
+class ExendedUserSerializer(UserSerializer):
+    """Serializer for a User with a bit more info."""
+    from users.serializers import GroupSerializer
+
+    groups = GroupSerializer(read_only=True, many=True)
+
+    class Meta(UserSerializer.Meta):
+        """Metaclass defines serializer fields."""
+        fields = UserSerializer.Meta.fields + [
+            'groups',
+            'is_staff',
+            'is_superuser',
+            'is_active'
+        ]
+
+        read_only_fields = UserSerializer.Meta.read_only_fields + [
+            'groups',
+        ]
+
+    def validate(self, attrs):
+        """Expanded validation for changing user role."""
+        # Check if is_staff or is_superuser is in attrs
+        role_change = 'is_staff' in attrs or 'is_superuser' in attrs
+        request_user = self.context['request'].user
+
+        if role_change:
+            if request_user.is_superuser:
+                # Superusers can change any role
+                pass
+            elif request_user.is_staff and 'is_superuser' not in attrs:
+                # Staff can change any role except is_superuser
+                pass
+            else:
+                raise PermissionDenied(_("You do not have permission to change this user role."))
+        return super().validate(attrs)
+
+
+class UserCreateSerializer(ExendedUserSerializer):
+    """Serializer for creating a new User."""
+    def validate(self, attrs):
+        """Expanded valiadation for auth."""
+        # Check that the user trying to create a new user is a superuser
+        if not self.context['request'].user.is_superuser:
+            raise serializers.ValidationError(_("Only superusers can create new users"))
+
+        # Generate a random password
+        password = User.objects.make_random_password(length=14)
+        attrs.update({'password': password})
+        return super().validate(attrs)
+
+    def create(self, validated_data):
+        """Send an e email to the user after creation."""
+        instance = super().create(validated_data)
+
+        # Make sure the user cannot login until they have set a password
+        instance.set_unusable_password()
+        # Send the user an onboarding email (from current site)
+        current_site = Site.objects.get_current()
+        domain = current_site.domain
+        instance.email_user(
+            subject=_(f"Welcome to {current_site.name}"),
+            message=_(f"Your account has been created.\n\nPlease use the password reset function to get access (at https://{domain})."),
+        )
+        return instance
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
@@ -701,7 +856,6 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
     def skip_create_fields(self):
         """Ensure the 'remote_image' field is skipped when creating a new instance"""
-
         return [
             'remote_image',
         ]
@@ -710,7 +864,7 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         required=False,
         allow_blank=False,
         write_only=True,
-        label=_("URL"),
+        label=_("Remote Image"),
         help_text=_("URL of remote image file"),
     )
 
@@ -720,7 +874,6 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         - Attempt to download the image and store it against this object instance
         - Catches and re-throws any errors
         """
-
         if not url:
             return
 

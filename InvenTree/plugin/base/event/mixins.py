@@ -9,6 +9,14 @@ class EventMixin:
     Implementing classes must provide a "process_event" function:
     """
 
+    def wants_process_event(self, event):
+        """Function to subscribe to events.
+
+        Return true if you're interested in the given event, false if not.
+        """
+        # Default implementation always returns true (backwards compatibility)
+        return True
+
     def process_event(self, event, *args, **kwargs):
         """Function to handle events.
 

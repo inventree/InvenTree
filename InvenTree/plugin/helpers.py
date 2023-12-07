@@ -109,7 +109,6 @@ def get_entrypoints():
 # region git-helpers
 def get_git_log(path):
     """Get dict with info of the last commit to file named in path."""
-
     import datetime
 
     from dulwich.repo import NotGitRepository, Repo
@@ -209,7 +208,7 @@ def render_template(plugin, template_file, context=None):
     try:
         tmp = template.loader.get_template(template_file)
     except template.TemplateDoesNotExist:
-        logger.error(f"Plugin {plugin.slug} could not locate template '{template_file}'")
+        logger.exception("Plugin %s could not locate template '%s'", plugin.slug, template_file)
 
         return f"""
         <div class='alert alert-block alert-danger'>

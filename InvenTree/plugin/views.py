@@ -27,7 +27,7 @@ class InvenTreePluginViewMixin:
             except Exception:
                 # Log the error to the database
                 log_error(self.request.path)
-                logger.error(f"Plugin '{plug.slug}' could not render custom panels at '{self.request.path}'")
+                logger.exception("Plugin '%s' could not render custom panels at '%s'", plug.slug, self.request.path)
 
         return panels
 

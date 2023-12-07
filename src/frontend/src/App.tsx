@@ -9,6 +9,7 @@ import { useSessionState } from './states/SessionState';
 
 // API
 export const api = axios.create({});
+
 export function setApiDefaults() {
   const host = useLocalState.getState().host;
   const token = useSessionState.getState().token;
@@ -24,15 +25,16 @@ function checkMobile() {
   return false;
 }
 
+const MobileAppView = Loadable(lazy(() => import('./views/MobileAppView')));
+const DesktopAppView = Loadable(lazy(() => import('./views/DesktopAppView')));
+
 // Main App
 export default function App() {
   // Check if mobile
   if (checkMobile()) {
-    const MobileAppView = Loadable(lazy(() => import('./views/MobileAppView')));
     return <MobileAppView />;
   }
 
   // Main App component
-  const DesktopAppView = Loadable(lazy(() => import('./views/DesktopAppView')));
   return <DesktopAppView />;
 }

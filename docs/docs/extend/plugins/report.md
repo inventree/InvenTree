@@ -31,7 +31,7 @@ from report.models import PurchaseOrderReport
 class SampleReportPlugin(ReportMixin, InvenTreePlugin):
     """Sample plugin which provides extra context data to a report"""
 
-    NAME = "Report Plugin"
+    NAME = "Sample Report Plugin"
     SLUG = "reportexample"
     TITLE = "Sample Report Plugin"
     DESCRIPTION = "A sample plugin which provides extra context data to a report"
@@ -41,7 +41,8 @@ class SampleReportPlugin(ReportMixin, InvenTreePlugin):
         """Some custom function which is not required for the plugin to function"""
         return random.randint(0, 100)
 
-    def add_report_context(self, instance, request, context):
+    def add_report_context(self, report_instance, model_instance, request, context):
+
         """Add example content to the report instance"""
 
         # We can add any extra context data we want to the report
@@ -53,7 +54,7 @@ class SampleReportPlugin(ReportMixin, InvenTreePlugin):
         context['random_int'] = self.some_custom_function()
 
         # We can also add extra data to the context which is specific to the report type
-        context['is_purchase_order'] = isinstance(instance, PurchaseOrderReport)
+        context['is_purchase_order'] = isinstance(report_instance, PurchaseOrderReport)
 
         # We can also use the 'request' object to add extra context data
         context['request_method'] = request.method

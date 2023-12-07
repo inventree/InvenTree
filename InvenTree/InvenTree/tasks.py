@@ -48,11 +48,11 @@ def schedule_task(taskname, **kwargs):
         # If this task is already scheduled, don't schedule it again
         # Instead, update the scheduling parameters
         if Schedule.objects.filter(func=taskname).exists():
-            logger.debug(f"Scheduled task '{taskname}' already exists - updating!")
+            logger.debug("Scheduled task '%s' already exists - updating!", taskname)
 
             Schedule.objects.filter(func=taskname).update(**kwargs)
         else:
-            logger.info(f"Creating scheduled task '{taskname}'")
+            logger.info("Creating scheduled task '%s'", taskname)
 
             Schedule.objects.create(
                 name=taskname,
@@ -89,12 +89,11 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     Note that this function creates some *hidden* global settings (designated with the _ prefix),
     which are used to keep a running track of when the particular task was was last run.
     """
-
     from common.models import InvenTreeSetting
     from InvenTree.ready import isInTestMode
 
     if n_days <= 0:
-        logger.info(f"Specified interval for task '{task_name}' < 1 - task will not run")
+        logger.info("Specified interval for task '%s' < 1 - task will not run", task_name)
         return False
 
     # Sleep a random number of seconds to prevent worker conflict
@@ -117,7 +116,7 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
         threshold = datetime.now() - timedelta(days=n_days)
 
         if last_success > threshold:
-            logger.info(f"Last successful run for '{task_name}' was too recent - skipping task")
+            logger.info("Last successful run for '%s' was too recent - skipping task", task_name)
             return False
 
     # Check for any information we have about this task
@@ -134,7 +133,7 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
         threshold = datetime.now() - timedelta(hours=12)
 
         if last_attempt > threshold:
-            logger.info(f"Last attempt for '{task_name}' was too recent - skipping task")
+            logger.info("Last attempt for '%s' was too recent - skipping task", task_name)
             return False
 
     # Record this attempt
@@ -146,29 +145,28 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
 
 def record_task_attempt(task_name: str):
     """Record that a multi-day task has been attempted *now*"""
-
     from common.models import InvenTreeSetting
 
-    logger.info(f"Logging task attempt for '{task_name}'")
+    logger.info("Logging task attempt for '%s'", task_name)
 
     InvenTreeSetting.set_setting(f'_{task_name}_ATTEMPT', datetime.now().isoformat(), None)
 
 
 def record_task_success(task_name: str):
     """Record that a multi-day task was successful *now*"""
-
     from common.models import InvenTreeSetting
 
     InvenTreeSetting.set_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
 
 
-def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs):
+def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs) -> bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
-    If workers are not running or force_sync flag
-    is set then the task is ran synchronously.
-    """
+    If workers are not running or force_sync flag, is set then the task is ran synchronously.
 
+    Returns:
+        bool: True if the task was offloaded (or ran), False otherwise
+    """
     try:
         import importlib
 
@@ -176,10 +174,21 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
 
         from InvenTree.status import is_worker_running
     except AppRegistryNotReady:  # pragma: no cover
-        logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
-        return
+        logger.warning("Could not offload task '%s' - app registry not ready", taskname)
+
+        if force_async:
+            # Cannot async the task, so return False
+            return False
+        else:
+            force_sync = True
     except (OperationalError, ProgrammingError):  # pragma: no cover
         raise_warning(f"Could not offload task '{taskname}' - database not ready")
+
+        if force_async:
+            # Cannot async the task, so return False
+            return False
+        else:
+            force_sync = True
 
     if force_async or (is_worker_running() and not force_sync):
         # Running as asynchronous task
@@ -187,9 +196,11 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
             task = AsyncTask(taskname, *args, **kwargs)
             task.run()
         except ImportError:
-            raise_warning(f"WARNING: '{taskname}' not started - Function not found")
+            raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
+            return False
         except Exception as exc:
-            raise_warning(f"WARNING: '{taskname}' not started due to {type(exc)}")
+            raise_warning(f"WARNING: '{taskname}' not offloaded due to {str(exc)}")
+            return False
     else:
 
         if callable(taskname):
@@ -202,14 +213,14 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
                 app_mod = app + '.' + mod
             except ValueError:
                 raise_warning(f"WARNING: '{taskname}' not started - Malformed function path")
-                return
+                return False
 
             # Import module from app
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
                 raise_warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
-                return
+                return False
 
             # Retrieve function
             try:
@@ -223,10 +234,17 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
                     _func = eval(func)  # pragma: no cover
             except NameError:
                 raise_warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
-                return
+                return False
 
         # Workers are not running: run it as synchronous task
-        _func(*args, **kwargs)
+        try:
+            _func(*args, **kwargs)
+        except Exception as exc:
+            raise_warning(f"WARNING: '{taskname}' not started due to {str(exc)}")
+            return False
+
+    # Finally, task either completed successfully or was offloaded
+    return True
 
 
 @dataclass()
@@ -253,7 +271,7 @@ class ScheduledTask:
 
 
 class TaskRegister:
-    """Registry for periodicall tasks."""
+    """Registry for periodic tasks."""
     task_list: List[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
@@ -269,8 +287,9 @@ def scheduled_task(interval: str, minutes: int = None, tasklist: TaskRegister = 
 
     Example:
     ```python
-    @register(ScheduledTask.DAILY)
-    def my_custom_funciton():
+    @scheduled_task(ScheduledTask.DAILY)
+    def my_custom_function():
+        # Perform a custom function once per day
         ...
     ```
 
@@ -342,7 +361,7 @@ def delete_successful_tasks():
         )
 
         if results.count() > 0:
-            logger.info(f"Deleting {results.count()} successful task records")
+            logger.info("Deleting %s successful task records", results.count())
             results.delete()
 
     except AppRegistryNotReady:  # pragma: no cover
@@ -352,7 +371,6 @@ def delete_successful_tasks():
 @scheduled_task(ScheduledTask.DAILY)
 def delete_failed_tasks():
     """Delete failed task logs which are older than a specified period"""
-
     try:
         from django_q.models import Failure
 
@@ -367,7 +385,7 @@ def delete_failed_tasks():
         )
 
         if results.count() > 0:
-            logger.info(f"Deleting {results.count()} failed task records")
+            logger.info("Deleting %s failed task records", results.count())
             results.delete()
 
     except AppRegistryNotReady:  # pragma: no cover
@@ -390,7 +408,7 @@ def delete_old_error_logs():
         )
 
         if errors.count() > 0:
-            logger.info(f"Deleting {errors.count()} old error logs")
+            logger.info("Deleting %s old error logs", errors.count())
             errors.delete()
 
     except AppRegistryNotReady:  # pragma: no cover
@@ -401,7 +419,6 @@ def delete_old_error_logs():
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_notifications():
     """Delete old notification logs"""
-
     try:
         from common.models import (InvenTreeSetting, NotificationEntry,
                                    NotificationMessage)
@@ -414,7 +431,7 @@ def delete_old_notifications():
         )
 
         if items.count() > 0:
-            logger.info(f"Deleted {items.count()} old notification entries")
+            logger.info("Deleted %s old notification entries", items.count())
             items.delete()
 
         items = NotificationMessage.objects.filter(
@@ -422,7 +439,7 @@ def delete_old_notifications():
         )
 
         if items.count() > 0:
-            logger.info(f"Deleted {items.count()} old notification messages")
+            logger.info("Deleted %s old notification messages", items.count())
             items.delete()
 
     except AppRegistryNotReady:
@@ -474,7 +491,7 @@ def check_for_updates():
     match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
 
     if len(match.groups()) != 3:  # pragma: no cover
-        logger.warning(f"Version '{tag}' did not match expected pattern")
+        logger.warning("Version '%s' did not match expected pattern", tag)
         return
 
     latest_version = [int(x) for x in match.groups()]
@@ -482,7 +499,7 @@ def check_for_updates():
     if len(latest_version) != 3:
         raise ValueError(f"Version '{tag}' is not correct format")  # pragma: no cover
 
-    logger.info(f"Latest InvenTree version: '{tag}'")
+    logger.info("Latest InvenTree version: '%s'", tag)
 
     # Save the version to the database
     common.models.InvenTreeSetting.set_setting(
@@ -496,38 +513,55 @@ def check_for_updates():
 
 
 @scheduled_task(ScheduledTask.DAILY)
-def update_exchange_rates():
-    """Update currency exchange rates."""
+def update_exchange_rates(force: bool = False):
+    """Update currency exchange rates
+
+    Arguments:
+        force: If True, force the update to run regardless of the last update time
+    """
     try:
         from djmoney.contrib.exchange.models import Rate
 
+        from common.models import InvenTreeSetting
         from common.settings import currency_code_default, currency_codes
         from InvenTree.exchange import InvenTreeExchange
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
         return
-    except Exception:  # pragma: no cover
-        # Other error?
+    except Exception as exc:  # pragma: no cover
+        logger.info("Could not perform 'update_exchange_rates' - %s", exc)
         return
+
+    if not force:
+        interval = int(InvenTreeSetting.get_setting('CURRENCY_UPDATE_INTERVAL', 1, cache=False))
+
+        if not check_daily_holdoff('update_exchange_rates', interval):
+            logger.info("Skipping exchange rate update (interval not reached)")
+            return
 
     backend = InvenTreeExchange()
     base = currency_code_default()
-    logger.info(f"Updating exchange rates using base currency '{base}'")
+    logger.info("Updating exchange rates using base currency '%s'", base)
 
     try:
         backend.update_rates(base_currency=base)
 
         # Remove any exchange rates which are not in the provided currencies
         Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
+
+        # Record successful task execution
+        record_task_success('update_exchange_rates')
+
+    except (AppRegistryNotReady, OperationalError, ProgrammingError):
+        logger.warning("Could not update exchange rates - database not ready")
     except Exception as e:  # pragma: no cover
-        logger.error(f"Error updating exchange rates: {e} ({type(e)})")
+        logger.exception("Error updating exchange rates: %s", str(type(e)))
 
 
 @scheduled_task(ScheduledTask.DAILY)
 def run_backup():
     """Run the backup command."""
-
     from common.models import InvenTreeSetting
 
     if not InvenTreeSetting.get_setting('INVENTREE_BACKUP_ENABLE', False, cache=False):
@@ -549,72 +583,77 @@ def run_backup():
     record_task_success('run_backup')
 
 
+def get_migration_plan():
+    """Returns a list of migrations which are needed to be run."""
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+    plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
+    return plan
+
+
 @scheduled_task(ScheduledTask.DAILY)
-def check_for_migrations(worker: bool = True):
+def check_for_migrations():
     """Checks if migrations are needed.
 
     If the setting auto_update is enabled we will start updating.
     """
-    # Test if auto-updates are enabled
-    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
-        return
-
+    from common.models import InvenTreeSetting
     from plugin import registry
+
+    def set_pending_migrations(n: int):
+        """Helper function to inform the user about pending migrations"""
+
+        logger.info('There are %s pending migrations', n)
+        InvenTreeSetting.set_setting('_PENDING_MIGRATIONS', n, None)
+
+    logger.info("Checking for pending database migrations")
+
+    # Force plugin registry reload
+    registry.check_reload()
 
     plan = get_migration_plan()
 
+    n = len(plan)
+
     # Check if there are any open migrations
     if not plan:
-        logger.info('There are no open migrations')
+        set_pending_migrations(0)
         return
 
-    logger.info('There are open migrations')
+    set_pending_migrations(n)
+
+    # Test if auto-updates are enabled
+    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+        logger.info("Auto-update is disabled - skipping migrations")
+        return
 
     # Log open migrations
     for migration in plan:
-        logger.info(migration[0])
+        logger.info("- %s", str(migration[0]))
 
     # Set the application to maintenance mode - no access from now on.
-    logger.info('Going into maintenance')
     set_maintenance_mode(True)
-    logger.info('Mainentance mode is on now')
 
-    # Check if we are worker - go kill all other workers then.
-    # Only the frontend workers run updates.
-    if worker:
-        logger.info('Current process is a worker - shutting down cluster')
-
-    # Ok now we are ready to go ahead!
     # To be sure we are in maintenance this is wrapped
     with maintenance_mode_on():
-        logger.info('Starting migrations')
-        print('Starting migrations')
+        logger.info('Starting migration process...')
 
         try:
             call_command('migrate', interactive=False)
         except NotSupportedError as e:  # pragma: no cover
             if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
                 raise e
-            logger.error(f'Error during migrations: {e}')
+            logger.exception('Error during migrations: %s', e)
+        else:
+            set_pending_migrations(0)
 
-        print('Migrations done')
-        logger.info('Ran migrations')
+            logger.info("Completed %s migrations", n)
 
-    # Make sure we are out of maintenance again
-    logger.info('Checking InvenTree left maintenance mode')
+    # Make sure we are out of maintenance mode
     if get_maintenance_mode():
-
-        logger.warning('Mainentance was still on - releasing now')
+        logger.warning("Maintenance mode was not disabled - forcing it now")
         set_maintenance_mode(False)
-        logger.info('Released out of maintenance')
+        logger.info("Manually released maintenance mode")
 
     # We should be current now - triggering full reload to make sure all models
     # are loaded fully in their new state.
-    registry.reload_plugins(full_reload=True, force_reload=True)
-
-
-def get_migration_plan():
-    """Returns a list of migrations which are needed to be run."""
-    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
-    plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
-    return plan
+    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)

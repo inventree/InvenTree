@@ -3,13 +3,13 @@
 import io
 import logging
 from decimal import Decimal
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
-import moneyed.localization
 import requests
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
@@ -21,6 +21,7 @@ import InvenTree.helpers_model
 import InvenTree.version
 from common.notifications import (InvenTreeNotificationBodies,
                                   NotificationBody, trigger_notification)
+from InvenTree.format import format_money
 
 logger = logging.getLogger('inventree')
 
@@ -40,7 +41,6 @@ def construct_absolute_url(*arg, **kwargs):
     2. If the InvenTree setting INVENTREE_BASE_URL is set, use that
     3. Otherwise, use the current request URL (if available)
     """
-
     relative_url = '/'.join(arg)
 
     # If a site URL is provided, use that
@@ -50,9 +50,7 @@ def construct_absolute_url(*arg, **kwargs):
         # Otherwise, try to use the InvenTree setting
         try:
             site_url = common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL', create=False, cache=False)
-        except ProgrammingError:
-            pass
-        except OperationalError:
+        except (ProgrammingError, OperationalError):
             pass
 
     if not site_url:
@@ -66,14 +64,7 @@ def construct_absolute_url(*arg, **kwargs):
         # No site URL available, return the relative URL
         return relative_url
 
-    # Strip trailing slash from base url
-    if site_url.endswith('/'):
-        site_url = site_url[:-1]
-
-    if relative_url.startswith('/'):
-        relative_url = relative_url[1:]
-
-    return f"{site_url}/{relative_url}"
+    return urljoin(site_url, relative_url)
 
 
 def get_base_url(**kwargs):
@@ -104,7 +95,6 @@ def download_image_from_url(remote_url, timeout=2.5):
         ValueError: Server responded with invalid 'Content-Length' value
         TypeError: Response is not a valid image
     """
-
     # Check that the provided URL at least looks valid
     validator = URLValidator()
     validator(remote_url)
@@ -177,18 +167,16 @@ def download_image_from_url(remote_url, timeout=2.5):
     return img
 
 
-def render_currency(money, decimal_places=None, currency=None, include_symbol=True, min_decimal_places=None, max_decimal_places=None):
+def render_currency(money, decimal_places=None, currency=None, min_decimal_places=None, max_decimal_places=None):
     """Render a currency / Money object to a formatted string (e.g. for reports)
 
     Arguments:
         money: The Money instance to be rendered
         decimal_places: The number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         currency: Optionally convert to the specified currency
-        include_symbol: Render with the appropriate currency symbol
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
     """
-
     if money in [None, '']:
         return '-'
 
@@ -227,11 +215,7 @@ def render_currency(money, decimal_places=None, currency=None, include_symbol=Tr
 
     decimal_places = max(decimal_places, max_decimal_places)
 
-    return moneyed.localization.format_money(
-        money,
-        decimal_places=decimal_places,
-        include_symbol=include_symbol,
-    )
+    return format_money(money, decimal_places=decimal_places)
 
 
 def getModelsWithMixin(mixin_class) -> list:
@@ -242,10 +226,13 @@ def getModelsWithMixin(mixin_class) -> list:
     Returns:
         List of models that inherit from the given mixin class
     """
-
     from django.contrib.contenttypes.models import ContentType
 
-    db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
+    try:
+        db_models = [x.model_class() for x in ContentType.objects.all() if x is not None]
+    except (OperationalError, ProgrammingError):
+        # Database is likely not yet ready
+        db_models = []
 
     return [x for x in db_models if x is not None and issubclass(x, mixin_class)]
 

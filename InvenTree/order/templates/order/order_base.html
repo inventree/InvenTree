@@ -19,10 +19,10 @@
 {% endblock heading %}
 
 {% block actions %}
-{% if user.is_staff and roles.purchase_order.change %}
-{% url 'admin:order_purchaseorder_change' order.pk as url %}
+
+{% admin_url user "order.purchaseorder" order.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
+
 {% if barcodes %}
 <!-- Barcode actions menu -->
 <div class='btn-group' role='group'>
@@ -165,7 +165,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-link'></span></td>
         <td>{% trans "External Link" %}</td>
-        <td>{% include 'clip_link.html' with link=order.link %}</td>
+        <td>{% include 'clip_link.html' with link=order.link new_window=True %}</td>
     </tr>
     {% endif %}
     <tr>

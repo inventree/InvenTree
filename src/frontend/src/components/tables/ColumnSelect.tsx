@@ -11,7 +11,7 @@ export function TableColumnSelect({
   onToggleColumn: (columnName: string) => void;
 }) {
   return (
-    <Menu shadow="xs">
+    <Menu shadow="xs" closeOnItemClick={false}>
       <Menu.Target>
         <ActionIcon>
           <Tooltip label={t`Select Columns`}>
@@ -23,7 +23,7 @@ export function TableColumnSelect({
       <Menu.Dropdown>
         <Menu.Label>{t`Select Columns`}</Menu.Label>
         {columns
-          .filter((col) => col.switchable)
+          .filter((col) => col.switchable ?? true)
           .map((col) => (
             <Menu.Item key={col.accessor}>
               <Checkbox

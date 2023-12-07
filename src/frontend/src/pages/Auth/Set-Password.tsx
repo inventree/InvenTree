@@ -14,7 +14,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { LanguageContext } from '../../contexts/LanguageContext';
-import { ApiPaths, url } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { apiUrl } from '../../states/ApiState';
 
 export default function Set_Password() {
   const simpleForm = useForm({ initialValues: { password: '' } });
@@ -57,7 +58,7 @@ export default function Set_Password() {
     // Set password with call to backend
     api
       .post(
-        url(ApiPaths.user_reset_set),
+        apiUrl(ApiPaths.user_reset_set),
         {
           uid: uid,
           token: token,

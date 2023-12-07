@@ -13,13 +13,13 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Version Check
         run: |
           pip install requests
           python3 ci/version_check.py
       - name: Push to Stable Branch
-        uses: ad-m/github-push-action@4dcce6dea3e3c8187237fc86b7dfdc93e5aaae58 # pin@master
+        uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0
         if: env.stable_release == 'true'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -29,7 +29,7 @@ jobs:
   publish-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -42,7 +42,7 @@ jobs:
         run: |
           cd InvenTree/web/static/web
           zip -r ../frontend-build.zip *
-      - uses: svenstaro/upload-release-action@v2
+      - uses: svenstaro/upload-release-action@1beeb572c19a9242f4361f4cee78f8e0d9aec5df # pin@2.7.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: InvenTree/web/static/frontend-build.zip

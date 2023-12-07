@@ -28,6 +28,10 @@ class BomItemTest(TestCase):
 
     def setUp(self):
         """Create initial data"""
+        super().setUp()
+
+        Part.objects.rebuild()
+
         self.bob = Part.objects.get(id=100)
         self.orphan = Part.objects.get(name='Orphan')
         self.r1 = Part.objects.get(name='R_2K2_0805')
@@ -202,7 +206,6 @@ class BomItemTest(TestCase):
 
     def test_consumable(self):
         """Tests for the 'consumable' BomItem field"""
-
         # Create an assembly part
         assembly = Part.objects.create(name="An assembly", description="Made with parts", assembly=True)
 
@@ -262,3 +265,37 @@ class BomItemTest(TestCase):
                 p.set_metadata(k, k)
 
             self.assertEqual(len(p.metadata.keys()), 4)
+
+    def test_invalid_bom(self):
+        """Test that ValidationError is correctly raised for an invalid BOM item"""
+
+        # First test: A BOM item which points to itself
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(
+                part=self.bob,
+                sub_part=self.bob,
+                quantity=1
+            )
+
+        # Second test: A recursive BOM
+        part_a = Part.objects.create(name='Part A', description="A part which is called A", assembly=True, is_template=True, component=True)
+        part_b = Part.objects.create(name='Part B', description="A part which is called B", assembly=True, component=True)
+        part_c = Part.objects.create(name='Part C', description="A part which is called C", assembly=True, component=True)
+
+        BomItem.objects.create(part=part_a, sub_part=part_b, quantity=10)
+        BomItem.objects.create(part=part_b, sub_part=part_c, quantity=10)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=part_c, sub_part=part_a, quantity=10)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=part_c, sub_part=part_b, quantity=10)
+
+        # Third test: A recursive BOM with a variant part
+        part_v = Part.objects.create(name='Part V', description='A part which is called V', variant_of=part_a, assembly=True, component=True)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=part_a, sub_part=part_v, quantity=10)
+
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=part_v, sub_part=part_a, quantity=10)

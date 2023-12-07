@@ -21,7 +21,6 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
 
     def get_context_data(self, **kwargs):
         """Add extra context data to the company index page"""
-
         ctx = super().get_context_data(**kwargs)
 
         # Provide custom context data to the template,

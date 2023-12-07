@@ -53,10 +53,23 @@ The following basic options are available:
 | --- | --- | --- | --- |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | True |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
+| INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
-| ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
+| INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface](https://docs.djangoproject.com/en/4.2/ref/contrib/admin/) | True |
+| INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
 | INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
+
+### Admin Site
+
+Django provides a powerful [administrator interface](https://docs.djangoproject.com/en/4.2/ref/contrib/admin/) which can be used to manage the InvenTree database. This interface is enabled by default, but can be disabled by setting `INVENTREE_ADMIN_ENABLED` to `False`.
+
+#### Custom Admin URL
+
+By default, the admin interface is available at the `/admin/` URL. This can be changed by setting the `INVENTREE_ADMIN_URL` environment variable.
+
+!!! warning "Security"
+    Changing the admin URL is a simple way to improve security, but it is not a substitute for proper security practices.
 
 ### Base URL Configuration
 
@@ -163,13 +176,20 @@ The following email settings are available:
 The "sender" email address is the address from which InvenTree emails are sent (by default) and must be specified for outgoing emails to function:
 
 !!! info "Fallback"
-     If `INVENTREE_EMAIL_SENDER` is not provided, the system will fall back to `INVENTREE_EMAIL_USERNAME` (if the username is a valid email address)
+    If `INVENTREE_EMAIL_SENDER` is not provided, the system will fall back to `INVENTREE_EMAIL_USERNAME` (if the username is a valid email address)
 
 ## Supported Currencies
 
 The currencies supported by InvenTree must be specified in the [configuration file](#configuration-file).
 
-A list of currency codes (e.g. *AUD*, *CAD*, *JPY*, *USD*) can be specified using the `currencies` variable.
+A list of currency codes (e.g. *AUD*, *CAD*, *JPY*, *USD*) can be specified using the `currencies` variable (or using the `INVENTREE_CURRENCIES` environment variable).
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_CURRENCIES | currencies | List of supported currencies| `AUD`, `CAD`, `CNY`, `EUR`, `GBP`, `JPY`, `NZD`, `USD` |
+
+!!! tip "More Info"
+    Read the [currencies documentation](../settings/currency.md) for more information on currency support in InvenTree
 
 ## Allowed Hosts / CORS
 
@@ -234,9 +254,9 @@ InvenTree provides allowance for additional sign-in options. The following optio
 
 ### Single Sign On
 
-SSO backends for all required authentication providers need to be added to the config file as a list under the key `social_backends`. The correct backend-name can be found in django-allauths [configuration documentation](https://django-allauth.readthedocs.io/en/latest/installation.html#django).
+SSO backends for all required authentication providers need to be added to the config file as a list under the key `social_backends`. The correct backend-name can be found in django-allauths [configuration documentation](https://django-allauth.readthedocs.io/en/latest/installation/quickstart.html).
 
-If the selected providers need additional settings they must be added as dicts under the key `social_providers`. The correct settings can be found in the django-allauths [provider documentation](https://django-allauth.readthedocs.io/en/latest/providers.html).
+If the selected providers need additional settings they must be added as dicts under the key `social_providers`. The correct settings can be found in the django-allauths [provider documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html).
 
 !!! warning "You are not done"
     SSO still needs credentials for all providers and has to be enabled in the [global settings](../settings/global.md)!

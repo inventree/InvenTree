@@ -25,4 +25,19 @@
 
     </tbody>
 </table>
+
+<div class='panel-heading'>
+    <div class='d-flex flex-span'>
+        <h4>{% trans "Stock Location Types" %}</h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            <button class='btn btn-success' id='new-location-type'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Location Type" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<table class='table table-striped table-condensed' id='location-type-table'></table>
+
 {% endblock content %}

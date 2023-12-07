@@ -59,7 +59,7 @@ The InvenTree documentation assumes that the operating system is a debian based 
 InvenTree runs on [Python](https://python.org).
 
 !!! warning "Python Version"
-    InvenTree requrires Python 3.9 (or newer). If your system has an older version of Python installed, you will need to follow the update instructions for your OS.
+    InvenTree requires Python 3.9 (or newer). If your system has an older version of Python installed, you will need to follow the update instructions for your OS.
 
 ### Invoke
 

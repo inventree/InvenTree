@@ -26,14 +26,14 @@ class Command(BaseCommand):
 
         img = model.image
 
-        logger.info(f"Generating thumbnail image for '{img}'")
+        logger.info("Generating thumbnail image for '%s'", img)
 
         try:
             model.image.render_variations(replace=False)
         except FileNotFoundError:
-            logger.warning(f"Warning: Image file '{img}' is missing")
+            logger.warning("Warning: Image file '%s' is missing", img)
         except UnidentifiedImageError:
-            logger.warning(f"Warning: Image file '{img}' is not a valid image")
+            logger.warning("Warning: Image file '%s' is not a valid image", img)
 
     def handle(self, *args, **kwargs):
         """Rebuild all thumbnail images."""
@@ -43,7 +43,7 @@ class Command(BaseCommand):
             try:
                 self.rebuild_thumbnail(part)
             except (OperationalError, ProgrammingError):
-                logger.error("ERROR: Database read error.")
+                logger.exception("ERROR: Database read error.")
                 break
 
         logger.info("Rebuilding Company thumbnails")
@@ -52,5 +52,5 @@ class Command(BaseCommand):
             try:
                 self.rebuild_thumbnail(company)
             except (OperationalError, ProgrammingError):
-                logger.error("ERROR: abase read error.")
+                logger.exception("ERROR: abase read error.")
                 break

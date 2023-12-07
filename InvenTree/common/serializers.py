@@ -11,6 +11,7 @@ from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.serializers import (InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer)
+from users.serializers import OwnerSerializer
 
 
 class SettingsValueField(serializers.Field):
@@ -51,6 +52,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     value = SettingsValueField()
 
+    units = serializers.CharField(read_only=True)
+
     def get_choices(self, obj):
         """Returns the choices available for a given item."""
         results = []
@@ -81,6 +84,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'name',
             'description',
             'type',
+            'units',
             'choices',
             'model_name',
             'api_url',
@@ -103,6 +107,7 @@ class UserSettingsSerializer(SettingsSerializer):
             'description',
             'user',
             'type',
+            'units',
             'choices',
             'model_name',
             'api_url',
@@ -188,7 +193,6 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
     def get_target(self, obj):
         """Function to resolve generic object reference to target."""
-
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
         if target and 'link' not in target:
@@ -278,8 +282,12 @@ class ProjectCodeSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'code',
-            'description'
+            'description',
+            'responsible',
+            'responsible_detail',
         ]
+
+    responsible_detail = OwnerSerializer(source='responsible', read_only=True)
 
 
 class FlagSerializer(serializers.Serializer):

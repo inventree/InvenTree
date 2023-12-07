@@ -45,7 +45,6 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def assign(self, data, expected_code=None):
         """Perform a 'barcode assign' request"""
-
         return self.post(
             reverse('api-barcode-link'),
             data=data,
@@ -54,7 +53,6 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def unassign(self, data, expected_code=None):
         """Perform a 'barcode unassign' request"""
-
         return self.post(
             reverse('api-barcode-unlink'),
             data=data,
@@ -63,7 +61,6 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def scan(self, data, expected_code=None):
         """Perform a 'scan' operation"""
-
         return self.post(
             reverse('api-barcode-scan'),
             data=data,
@@ -72,7 +69,6 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def test_unassign_errors(self):
         """Test various error conditions for the barcode unassign endpoint"""
-
         # Fail without any fields provided
         response = self.unassign(
             {},
@@ -84,8 +80,8 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         # Fail with too many fields provided
         response = self.unassign(
             {
-                'stockitem': 'abcde',
-                'part': 'abcde',
+                'stockitem': stock.models.StockItem.objects.first().pk,
+                'part': part.models.Part.objects.first().pk,
             },
             expected_code=400,
         )
@@ -100,21 +96,20 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn('No match found', str(response.data['stockitem']))
+        self.assertIn('Incorrect type', str(response.data['stockitem']))
 
         # Fail with an invalid Part instance
         response = self.unassign(
             {
-                'part': 'invalid',
+                'part': 99999999999,
             },
             expected_code=400,
         )
 
-        self.assertIn('No match found', str(response.data['part']))
+        self.assertIn('object does not exist', str(response.data['part']))
 
     def test_assign_to_stock_item(self):
         """Test that we can assign a unique barcode to a StockItem object"""
-
         # Test without providing any fields
         response = self.assign(
             {
@@ -198,7 +193,6 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def test_assign_to_part(self):
         """Test that we can assign a unique barcode to a Part instance"""
-
         barcode = 'xyz-123'
 
         self.assignRole('part.change')
@@ -222,7 +216,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn('No matching part instance found in database', str(response.data))
+        self.assertIn('object does not exist', str(response.data['part']))
 
         # Test assigning to a valid part (should pass)
         response = self.assign(
@@ -281,7 +275,6 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def test_assign_to_location(self):
         """Test that we can assign a unique barcode to a StockLocation instance"""
-
         barcode = '555555555555555555555555'
 
         # Assign random barcode data to a StockLocation instance
@@ -338,7 +331,6 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def test_scan_third_party(self):
         """Test scanning of third-party barcodes"""
-
         # First scanned barcode is for a 'third-party' barcode (which does not exist)
         response = self.scan({'barcode': 'blbla=10008'}, expected_code=400)
         self.assertEqual(response.data['error'], 'No match found for barcode data')
@@ -367,7 +359,6 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def test_scan_inventree(self):
         """Test scanning of first-party barcodes"""
-
         # Scan a StockItem object (which does not exist)
         response = self.scan(
             {

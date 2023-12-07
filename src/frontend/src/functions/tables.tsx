@@ -7,10 +7,11 @@ export function shortenString({
   str,
   len = 100
 }: {
-  str: string;
+  str: string | undefined;
   len?: number;
 }) {
   // Ensure that the string is a string
+  str = str ?? '';
   str = str.toString();
 
   // If the string is already short enough, return it

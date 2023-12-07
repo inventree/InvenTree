@@ -23,6 +23,8 @@ import { Html5QrcodeResult } from 'html5-qrcode/core';
 import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { apiUrl } from '../../states/ApiState';
 
 export function QrCodeModal({
   context,
@@ -63,16 +65,18 @@ export function QrCodeModal({
     qrCodeScanner?.pause();
 
     handlers.append(decodedText);
-    api.post('/barcode/', { barcode: decodedText }).then((response) => {
-      showNotification({
-        title: response.data?.success || t`Unknown response`,
-        message: JSON.stringify(response.data),
-        color: response.data?.success ? 'teal' : 'red'
+    api
+      .post(apiUrl(ApiPaths.barcode), { barcode: decodedText })
+      .then((response) => {
+        showNotification({
+          title: response.data?.success || t`Unknown response`,
+          message: JSON.stringify(response.data),
+          color: response.data?.success ? 'teal' : 'red'
+        });
+        if (response.data?.url) {
+          window.location.href = response.data.url;
+        }
       });
-      if (response.data?.url) {
-        window.location.href = response.data.url;
-      }
-    });
 
     qrCodeScanner?.resume();
   }

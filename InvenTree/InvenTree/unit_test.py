@@ -143,7 +143,6 @@ class UserMixin:
 
     def setUp(self):
         """Run setup for individual test methods"""
-
         if self.auto_login:
             self.client.login(username=self.username, password=self.password)
 
@@ -156,7 +155,6 @@ class UserMixin:
             assign_all: Set to True to assign *all* roles
             group: The group to assign roles to (or leave None to use the group assigned to this class)
         """
-
         if group is None:
             group = cls.group
 
@@ -207,7 +205,6 @@ class ExchangeRateMixin:
 
     def generate_exchange_rates(self):
         """Helper function which generates some exchange rates to work with"""
-
         rates = {
             'AUD': 1.5,
             'CAD': 1.7,
@@ -271,7 +268,6 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
     def checkResponse(self, url, method, expected_code, response):
         """Debug output for an unexpected response"""
-
         # No expected code, return
         if expected_code is None:
             return
@@ -318,7 +314,6 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
     def post(self, url, data=None, expected_code=None, format='json'):
         """Issue a POST request."""
-
         # Set default value - see B006
         if data is None:
             data = {}
@@ -331,7 +326,6 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
     def delete(self, url, data=None, expected_code=None, format='json'):
         """Issue a DELETE request."""
-
         if data is None:
             data = {}
 

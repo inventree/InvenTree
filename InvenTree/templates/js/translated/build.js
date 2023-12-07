@@ -113,6 +113,9 @@ function buildFormFields() {
         },
         responsible: {
             icon: 'fa-users',
+            filters: {
+                is_active: true,
+            }
         },
     };
 
@@ -129,6 +132,9 @@ function buildFormFields() {
 function editBuildOrder(pk) {
 
     var fields = buildFormFields();
+
+    // Cannot edit "part" field after creation
+    delete fields['part'];
 
     constructForm(`{% url "api-build-list" %}${pk}/`, {
         fields: fields,
@@ -605,6 +611,10 @@ function completeBuildOutputs(build_id, outputs, options={}) {
                 filters: {
                     structural: false,
                 },
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
             },
             notes: {
                 icon: 'fa-sticky-note',
@@ -734,7 +744,11 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
             location: {
                 filters: {
                     structural: false,
-                }
+                },
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
             },
             notes: {},
             discard_allocations: {},
@@ -1926,7 +1940,11 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
             value: options.location,
             filters: {
                 structural: false,
-            }
+            },
+            tree_picker: {
+                url: '{% url "api-location-tree" %}',
+                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+            },
         },
         exclude_location: {},
         interchangeable: {
@@ -2708,6 +2726,7 @@ function loadBuildLineTable(table, build_id, options={}) {
 
         deallocateStock(build_id, {
             build_line: pk,
+            output: output,
             onSuccess: function() {
                 $(table).bootstrapTable('refresh');
             }

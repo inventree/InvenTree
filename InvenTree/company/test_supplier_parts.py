@@ -14,7 +14,6 @@ class SupplierPartPackUnitsTests(InvenTreeTestCase):
 
     def test_pack_quantity_dimensionless(self):
         """Test valid values for the 'pack_quantity' field"""
-
         # Create a part without units (dimensionless)
         part = Part.objects.create(name='Test Part', description='Test part description', component=True)
 
@@ -59,7 +58,6 @@ class SupplierPartPackUnitsTests(InvenTreeTestCase):
 
     def test_pack_quantity(self):
         """Test pack_quantity for a part with a specified dimension"""
-
         # Create a part with units 'm'
         part = Part.objects.create(name='Test Part', description='Test part description', component=True, units='m')
 
@@ -73,7 +71,7 @@ class SupplierPartPackUnitsTests(InvenTreeTestCase):
             SKU='TEST-SKU'
         )
 
-        # All these values are valid for a part with dimesion 'm'
+        # All these values are valid for a part with dimension 'm'
         pass_tests = {
             '': 1,
             '1': 1,

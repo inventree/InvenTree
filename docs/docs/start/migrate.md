@@ -20,6 +20,12 @@ Export the database contents to a JSON file using the following command:
 invoke export-records -f data.json
 ```
 
+When using docker the command above would produce output inside the ephemeral container. To make sure your JSON file persists in the docker volume used for backups use the following command:
+
+```
+docker compose run inventree-server invoke export-records -f data/backup/data.json
+```
+
 This will create JSON file at the specified location which contains all database records.
 
 !!! info "Specifying filename"

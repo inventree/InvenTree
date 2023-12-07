@@ -3,10 +3,13 @@
 import logging
 import os
 import shutil
+import warnings
 from pathlib import Path
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.core.exceptions import AppRegistryNotReady
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 logger = logging.getLogger("inventree")
 
@@ -17,9 +20,8 @@ class ReportConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the report app is loaded."""
-
-        from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
-                                     isPluginRegistryLoaded)
+        from InvenTree.ready import (canAppAccessDatabase, isImportingData,
+                                     isInMainThread, isPluginRegistryLoaded)
 
         # skip loading if plugin registry is not loaded or we run in a background thread
         if not isPluginRegistryLoaded() or not isInMainThread():
@@ -30,14 +32,19 @@ class ReportConfig(AppConfig):
         logging.getLogger('weasyprint').setLevel(logging.WARNING)
 
         # Create entries for default report templates
-        if canAppAccessDatabase(allow_test=False):
-            self.create_default_test_reports()
-            self.create_default_build_reports()
-            self.create_default_bill_of_materials_reports()
-            self.create_default_purchase_order_reports()
-            self.create_default_sales_order_reports()
-            self.create_default_return_order_reports()
-            self.create_default_stock_location_reports()
+        if canAppAccessDatabase(allow_test=False) and not isImportingData():
+
+            try:
+                self.create_default_test_reports()
+                self.create_default_build_reports()
+                self.create_default_bill_of_materials_reports()
+                self.create_default_purchase_order_reports()
+                self.create_default_sales_order_reports()
+                self.create_default_return_order_reports()
+                self.create_default_stock_location_reports()
+            except (AppRegistryNotReady, IntegrityError, OperationalError, ProgrammingError):
+                # Database might not yet be ready
+                warnings.warn('Database was not ready for creating reports', stacklevel=2)
 
     def create_default_reports(self, model, reports):
         """Copy default report files across to the media directory."""
@@ -55,7 +62,7 @@ class ReportConfig(AppConfig):
         )
 
         if not dst_dir.exists():
-            logger.info(f"Creating missing directory: '{dst_dir}'")
+            logger.info("Creating missing directory: '%s'", dst_dir)
             dst_dir.mkdir(parents=True, exist_ok=True)
 
         # Copy each report template across (if required)
@@ -73,7 +80,7 @@ class ReportConfig(AppConfig):
             dst_file = settings.MEDIA_ROOT.joinpath(filename)
 
             if not dst_file.exists():
-                logger.info(f"Copying test report template '{dst_file}'")
+                logger.info("Copying test report template '%s'", dst_file)
                 shutil.copyfile(src_file, dst_file)
 
             try:
@@ -81,7 +88,7 @@ class ReportConfig(AppConfig):
                 if model.objects.filter(template=filename).exists():
                     continue
 
-                logger.info(f"Creating new TestReport for '{report['name']}'")
+                logger.info("Creating new TestReport for '%s'", report.get('name'))
 
                 model.objects.create(
                     name=report['name'],
@@ -190,7 +197,6 @@ class ReportConfig(AppConfig):
 
     def create_default_return_order_reports(self):
         """Create database entries for the default ReturnOrderReport templates"""
-
         try:
             from report.models import ReturnOrderReport
         except Exception:  # pragma: no cover
@@ -210,7 +216,6 @@ class ReportConfig(AppConfig):
 
     def create_default_stock_location_reports(self):
         """Create database entries for the default StockLocationReport templates"""
-
         try:
             from report.models import StockLocationReport
         except Exception:  # pragma: no cover

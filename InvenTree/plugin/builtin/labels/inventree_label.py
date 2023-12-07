@@ -39,7 +39,6 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         - Label outputs are concatenated together, and we return a single PDF file.
         - If DEBUG mode is enabled, we return a single HTML file.
         """
-
         debug = self.get_setting('DEBUG')
 
         outputs = []
@@ -87,10 +86,9 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
 
         Returns either a PDF or HTML output, depending on the DEBUG setting.
         """
-
         debug = kwargs.get('debug', self.get_setting('DEBUG'))
 
         if debug:
             return self.render_to_html(label, request, **kwargs)
-        else:
-            return self.render_to_pdf(label, request, **kwargs)
+
+        return self.render_to_pdf(label, request, **kwargs)

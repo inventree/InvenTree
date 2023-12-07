@@ -18,6 +18,7 @@ import build.models
 import common.models
 import order.models
 import part.models
+import report.helpers
 import stock.models
 from InvenTree.helpers import validateFilterString
 from InvenTree.helpers_model import get_base_url
@@ -27,7 +28,7 @@ from plugin.registry import registry
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
 except OSError as err:  # pragma: no cover
-    print("OSError: {e}".format(e=err))
+    print(f"OSError: {err}")
     print("You may require some further system packages to be installed.")
     sys.exit(1)
 
@@ -100,6 +101,12 @@ class ReportBase(models.Model):
 
         abstract = True
 
+    def __init__(self, *args, **kwargs):
+        """Initialize the particular report instance"""
+        super().__init__(*args, **kwargs)
+
+        self._meta.get_field('page_size').choices = report.helpers.report_page_size_options()
+
     def save(self, *args, **kwargs):
         """Perform additional actions when the report is saved"""
         # Increment revision number
@@ -109,7 +116,7 @@ class ReportBase(models.Model):
 
     def __str__(self):
         """Format a string representation of a report instance"""
-        return "{n} - {d}".format(n=self.name, d=self.description)
+        return f"{self.name} - {self.description}"
 
     @classmethod
     def getSubdir(cls):
@@ -118,7 +125,6 @@ class ReportBase(models.Model):
 
     def rename_file(self, filename):
         """Function for renaming uploaded file"""
-
         filename = os.path.basename(filename)
 
         path = os.path.join('report', 'report_template', self.getSubdir(), filename)
@@ -130,7 +136,7 @@ class ReportBase(models.Model):
         if str(filename) == str(self.template):
 
             if fullpath.exists():
-                logger.info(f"Deleting existing report template: '{filename}'")
+                logger.info("Deleting existing report template: '%s'", filename)
                 os.remove(fullpath)
 
         # Ensure that the cache is cleared for this template!
@@ -185,6 +191,19 @@ class ReportBase(models.Model):
         editable=False,
     )
 
+    page_size = models.CharField(
+        max_length=20,
+        default=report.helpers.report_page_size_default,
+        verbose_name=_('Page Size'),
+        help_text=_('Page size for PDF reports'),
+    )
+
+    landscape = models.BooleanField(
+        default=False,
+        verbose_name=_('Landscape'),
+        help_text=_('Render report in landscape orientation'),
+    )
+
 
 class ReportTemplateBase(MetadataMixin, ReportBase):
     """Reporting template model.
@@ -203,6 +222,20 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         """Supply context data to the template for rendering."""
         return {}
 
+    def get_report_size(self):
+        """Return the printable page size for this report"""
+        try:
+            page_size_default = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4')
+        except Exception:
+            page_size_default = 'A4'
+
+        page_size = self.page_size or page_size_default
+
+        if self.landscape:
+            page_size = page_size + ' landscape'
+
+        return page_size
+
     def context(self, request):
         """All context to be passed to the renderer."""
         # Generate custom context data based on the particular report subclass
@@ -211,7 +244,8 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         context['base_url'] = get_base_url(request=request)
         context['date'] = datetime.datetime.now().date()
         context['datetime'] = datetime.datetime.now()
-        context['default_page_size'] = common.models.InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE')
+        context['page_size'] = self.get_report_size()
+        context['report_template'] = self
         context['report_description'] = self.description
         context['report_name'] = self.name
         context['report_revision'] = self.revision
@@ -315,7 +349,6 @@ class TestReport(ReportTemplateBase):
         - Second, any 'non required' tests
         - Finally, any test results which do not match a test
         """
-
         keys = []
 
         for test in stock_item.part.getTestTemplates(required=True):
@@ -527,7 +560,6 @@ class ReturnOrderReport(ReportTemplateBase):
 
     def get_context_data(self, request):
         """Return custom context data for the ReturnOrderReport template"""
-
         order = self.object_to_print
 
         return {
@@ -543,7 +575,6 @@ class ReturnOrderReport(ReportTemplateBase):
 
 def rename_snippet(instance, filename):
     """Function to rename a report snippet once uploaded"""
-
     filename = os.path.basename(filename)
 
     path = os.path.join('report', 'snippets', filename)
@@ -555,7 +586,7 @@ def rename_snippet(instance, filename):
     if str(filename) == str(instance.snippet):
 
         if fullpath.exists():
-            logger.info(f"Deleting existing snippet file: '{filename}'")
+            logger.info("Deleting existing snippet file: '%s'", filename)
             os.remove(fullpath)
 
     # Ensure that the cache is deleted for this snippet
@@ -582,7 +613,6 @@ class ReportSnippet(models.Model):
 
 def rename_asset(instance, filename):
     """Function to rename an asset file when uploaded"""
-
     filename = os.path.basename(filename)
 
     path = os.path.join('report', 'assets', filename)
@@ -593,7 +623,7 @@ def rename_asset(instance, filename):
         fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
         if fullpath.exists():
-            logger.info(f"Deleting existing asset file: '{filename}'")
+            logger.info("Deleting existing asset file: '%s'", filename)
             os.remove(fullpath)
 
     return path

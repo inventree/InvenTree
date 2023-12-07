@@ -26,3 +26,16 @@ The barcode is tested as follows, in decreasing order of priority:
 
 !!! tip "Plugin Loading Order"
     The first custom plugin to return a result "wins". As the loading order of custom plugins is not defined (or configurable), take special care if you are running multiple plugins which support barcode actions.
+
+## Builtin Supplier Barcode Plugins
+
+InvenTree comes with a few builtin supplier plugins, which handle their respective barcode formats.
+
+Scanning a supplier barcode for a supplied part will link to the corresponding supplier part if the [SKU](../report/context_variables.md#supplierpart) from the barcode could be matched.
+
+The following suppliers (and barcode formats) are currently supported:
+
+- DigiKey (2D Data Matrix code)
+- Mouser (2D Data Matrix code)
+- LCSC (QR code)
+- TME (QR code & 2D Data Matrix code)

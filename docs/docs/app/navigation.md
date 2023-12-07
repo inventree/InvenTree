@@ -48,7 +48,7 @@ The <span class='fas fa-search'></span> action opens the [Search](./search.md) s
 
 ### Scan Barcode
 
-The <span class='fas fa-qrcode'></span> action opens the [barcode scan](./barcode.md) window, which allows quick access to the barcode scanning functionality.
+The <span class='fas fa-qrcode'></span> action opens the [barcode scan](./barcode.md#global-scan) window, which allows quick access to the barcode scanning functionality.
 
 ## Context Actions
 

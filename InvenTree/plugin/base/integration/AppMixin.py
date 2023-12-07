@@ -1,10 +1,13 @@
 """Plugin mixin class for AppMixin."""
 import logging
 from importlib import reload
+from pathlib import Path
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
+
+from InvenTree.config import get_plugin_dir
 
 logger = logging.getLogger('inventree')
 
@@ -90,7 +93,7 @@ class AppMixin:
                     models += [model._meta.model_name]
             except LookupError:  # pragma: no cover
                 # if an error occurs the app was never loaded right -> so nothing to do anymore
-                logger.debug(f'{app_name} App was not found during deregistering')
+                logger.debug('%s App was not found during deregistering', app_name)
                 break
 
             # unregister the models (yes, models are just kept in multilevel dicts)
@@ -127,7 +130,7 @@ class AppMixin:
                 app_config = apps.get_app_config(app_name)
             except LookupError:  # pragma: no cover
                 # the plugin was never loaded correctly
-                logger.debug(f'{app_name} App was not found during deregistering')
+                logger.debug('%s App was not found during deregistering', app_name)
                 break
 
             # reload models if they were set
@@ -156,12 +159,22 @@ class AppMixin:
         - a local file / dir
         - a package
         """
-        try:
-            # for local path plugins
-            plugin_path = '.'.join(plugin.path().relative_to(settings.BASE_DIR).parts)
-        except ValueError:  # pragma: no cover
+        path = plugin.path()
+        custom_plugins_dir = get_plugin_dir()
+
+        if path.is_relative_to(settings.BASE_DIR):
+            # Plugins which are located relative to the base code directory
+            plugin_path = '.'.join(path.relative_to(settings.BASE_DIR).parts)
+        elif custom_plugins_dir and path.is_relative_to(custom_plugins_dir):
+            # Plugins which are located relative to the custom plugins directory
+            plugin_path = '.'.join(path.relative_to(custom_plugins_dir).parts)
+
+            # Ensure that the parent directory is added also
+            plugin_path = Path(custom_plugins_dir).parts[-1] + '.' + plugin_path
+        else:
             # plugin is shipped as package - extract plugin module name
             plugin_path = plugin.__module__.split('.')[0]
+
         return plugin_path
 
 # endregion

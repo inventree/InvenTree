@@ -16,8 +16,7 @@ class SettingsAdmin(ImportExportModelAdmin):
         """Prevent the 'key' field being edited once the setting is created."""
         if obj:
             return ['key']
-        else:
-            return []
+        return []
 
 
 class UserSettingsAdmin(ImportExportModelAdmin):
@@ -29,8 +28,7 @@ class UserSettingsAdmin(ImportExportModelAdmin):
         """Prevent the 'key' field being edited once the setting is created."""
         if obj:
             return ['key']
-        else:
-            return []
+        return []
 
 
 class WebhookAdmin(ImportExportModelAdmin):

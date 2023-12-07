@@ -81,6 +81,7 @@
     serializeStockItem,
     stockItemFields,
     stockLocationFields,
+    stockLocationTypeFields,
     uninstallStockItem,
 */
 
@@ -130,21 +131,50 @@ function serializeStockItem(pk, options={}) {
     constructForm(url, options);
 }
 
+function stockLocationTypeFields() {
+    const fields = {
+        name: {},
+        description: {},
+        icon: {
+            help_text: `{% trans "Default icon for all locations that have no icon set (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
+            placeholder: 'fas fa-box',
+            icon: "fa-icons",
+        },
+    }
+
+    return fields;
+}
+
 
 function stockLocationFields(options={}) {
     var fields = {
         parent: {
             help_text: '{% trans "Parent stock location" %}',
             required: false,
+            tree_picker: {
+                url: '{% url "api-location-tree" %}',
+                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+            },
         },
         name: {},
         description: {},
         owner: {},
         structural: {},
         external: {},
-        icon: {
+        location_type: {
+            secondary: {
+                title: '{% trans "Add Location type" %}',
+                fields: function() {
+                    const fields = stockLocationTypeFields();
+
+                    return fields;
+                }
+            },
+        },
+        custom_icon: {
             help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
+            icon: "fa-icons",
         },
     };
 
@@ -322,6 +352,10 @@ function stockItemFields(options={}) {
             icon: 'fa-sitemap',
             filters: {
                 structural: false,
+            },
+            tree_picker: {
+                url: '{% url "api-location-tree" %}',
+                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         quantity: {
@@ -878,7 +912,11 @@ function mergeStockItems(items, options={}) {
                 icon: 'fa-sitemap',
                 filters: {
                     structural: false,
-                }
+                },
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
             },
             notes: {
                 icon: 'fa-sticky-note',
@@ -2717,7 +2755,18 @@ function loadStockLocationTable(table, options) {
                 formatter: function(value) {
                     return yesNoLabel(value);
                 }
-            }
+            },
+            {
+                field: 'location_type',
+                title: '{% trans "Location type" %}',
+                switchable: true,
+                sortable: false,
+                formatter: function(value, row) {
+                    if (row.location_type_detail) {
+                        return row.location_type_detail.name;
+                    }
+                }
+            },
         ]
     });
 }
@@ -3013,8 +3062,10 @@ function loadInstalledInTable(table, options) {
                 formatter: function(value, row) {
                     var html = '';
 
-                    html += imageHoverIcon(row.part_detail.thumbnail);
-                    html += renderLink(row.part_detail.full_name, `/stock/item/${row.pk}/`);
+                    if (row.part_detail) {
+                        html += imageHoverIcon(row.part_detail.thumbnail);
+                        html += renderLink(row.part_detail.full_name, `/stock/item/${row.pk}/`);
+                    }
 
                     return html;
                 }
@@ -3095,7 +3146,11 @@ function uninstallStockItem(installed_item_id, options={}) {
                     icon: 'fa-sitemap',
                     filters: {
                         structural: false,
-                    }
+                    },
+                    tree_picker: {
+                        url: '{% url "api-location-tree" %}',
+                        default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                    },
                 },
                 note: {
                     icon: 'fa-sticky-note',
@@ -3162,6 +3217,12 @@ function installStockItem(stock_item_id, part_id, options={}) {
                         in_stock: true,
                         tracked: true,
                     },
+                    onSelect: function(data, field, opts) {
+                        // Adjust the 'quantity' field
+                        if ('quantity' in data) {
+                            updateFieldValue('quantity', data.quantity, opts);
+                        }
+                    },
                     adjustFilters: function(filters, opts) {
                         var part = getFormFieldValue('part', {}, opts);
 
@@ -3171,7 +3232,8 @@ function installStockItem(stock_item_id, part_id, options={}) {
 
                         return filters;
                     }
-                }
+                },
+                quantity: {},
             },
             confirm: true,
             title: '{% trans "Install Stock Item" %}',

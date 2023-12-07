@@ -101,6 +101,13 @@
                 <td>{% trans "This is a builtin plugin which cannot be disabled" %}</td>
             </tr>
             {% else %}
+            {% if plugin.is_sample %}
+            <tr>
+                <td><span class='fas fa-check-circle icon-blue'></span></td>
+                <td>{% trans "Sample" %}</td>
+                <td>{% trans "This is a sample plugin" %}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <td><span class='fas fa-user'></span></td>
                 <td>{% trans "Commit Author" %}</td><td>{{ plugin.package.author }} - {{ plugin.package.mail }}{% include "clip.html" %}</td>

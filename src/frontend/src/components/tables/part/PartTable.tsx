@@ -1,13 +1,18 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { Group, Text } from '@mantine/core';
+import { ReactNode, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { notYetImplemented } from '../../../functions/notifications';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { shortenString } from '../../../functions/tables';
-import { ThumbnailHoverCard } from '../../items/Thumbnail';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
+import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
+import { DescriptionColumn, LinkColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
-import { InvenTreeTable } from '../InvenTreeTable';
+import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a list of columns for the part table
@@ -17,14 +22,14 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'name',
       sortable: true,
+      noWrap: true,
       title: t`Part`,
       render: function (record: any) {
-        // TODO - Link to the part detail page
         return (
-          <ThumbnailHoverCard
+          <Thumbnail
             src={record.thumbnail || record.image}
-            text={record.name}
-            link=""
+            alt={record.name}
+            text={record.full_name}
           />
         );
       }
@@ -32,29 +37,23 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'IPN',
       title: t`IPN`,
-      sortable: true,
-      switchable: true
+      sortable: true
     },
     {
       accessor: 'units',
       sortable: true,
-      title: t`Units`,
-      switchable: true
+      title: t`Units`
     },
-    {
-      accessor: 'description',
-      title: t`Description`,
-      sortable: true,
-      switchable: true
-    },
+    DescriptionColumn(),
     {
       accessor: 'category',
       title: t`Category`,
       sortable: true,
+
       render: function (record: any) {
         // TODO: Link to the category detail page
         return shortenString({
-          str: record.category_detail.pathstring
+          str: record.category_detail?.pathstring
         });
       }
     },
@@ -62,23 +61,107 @@ function partTableColumns(): TableColumn[] {
       accessor: 'total_in_stock',
       title: t`Stock`,
       sortable: true,
-      switchable: true
+
+      render: (record) => {
+        let extra: ReactNode[] = [];
+
+        let stock = record?.total_in_stock ?? 0;
+        let allocated =
+          (record?.allocated_to_build_orders ?? 0) +
+          (record?.allocated_to_sales_orders ?? 0);
+        let available = Math.max(0, stock - allocated);
+        let min_stock = record?.minimum_stock ?? 0;
+
+        let text = String(stock);
+
+        let color: string | undefined = undefined;
+
+        if (min_stock > stock) {
+          extra.push(
+            <Text key="min-stock" color="orange">
+              {t`Minimum stock` + `: ${min_stock}`}
+            </Text>
+          );
+
+          color = 'orange';
+        }
+
+        if (record.ordering > 0) {
+          extra.push(
+            <Text key="on-order">{t`On Order` + `: ${record.ordering}`}</Text>
+          );
+        }
+
+        if (record.building) {
+          extra.push(
+            <Text key="building">{t`Building` + `: ${record.building}`}</Text>
+          );
+        }
+
+        if (record.allocated_to_build_orders > 0) {
+          extra.push(
+            <Text key="bo-allocations">
+              {t`Build Order Allocations` +
+                `: ${record.allocated_to_build_orders}`}
+            </Text>
+          );
+        }
+
+        if (record.allocated_to_sales_orders > 0) {
+          extra.push(
+            <Text key="so-allocations">
+              {t`Sales Order Allocations` +
+                `: ${record.allocated_to_sales_orders}`}
+            </Text>
+          );
+        }
+
+        if (available != stock) {
+          extra.push(
+            <Text key="available">{t`Available` + `: ${available}`}</Text>
+          );
+        }
+
+        // TODO: Add extra information on stock "demand"
+
+        if (stock <= 0) {
+          color = 'red';
+          text = t`No stock`;
+        } else if (available <= 0) {
+          color = 'orange';
+        } else if (available < min_stock) {
+          color = 'yellow';
+        }
+
+        return (
+          <TableHoverCard
+            value={
+              <Group spacing="xs" position="left">
+                <Text color={color}>{text}</Text>
+                {record.units && (
+                  <Text size="xs" color={color}>
+                    [{record.units}]
+                  </Text>
+                )}
+              </Group>
+            }
+            title={t`Stock Information`}
+            extra={extra}
+          />
+        );
+      }
     },
     {
       accessor: 'price_range',
       title: t`Price Range`,
       sortable: false,
-      switchable: true,
+
       render: function (record: any) {
         // TODO: Render price range
         return '-- price --';
       }
     },
-    {
-      accessor: 'link',
-      title: t`Link`,
-      switchable: true
-    }
+    LinkColumn()
   ];
 }
 
@@ -173,38 +256,36 @@ function partTableFilters(): TableFilter[] {
   ];
 }
 
-function partTableParams(params: any): any {
-  return {
-    ...params,
-    category_detail: true
-  };
-}
-
 /**
  * PartListTable - Displays a list of parts, based on the provided parameters
  * @param {Object} params - The query parameters to pass to the API
  * @returns
  */
-export function PartListTable({ params = {} }: { params?: any }) {
-  let tableParams = useMemo(() => partTableParams(params), []);
-  let tableColumns = useMemo(() => partTableColumns(), []);
-  let tableFilters = useMemo(() => partTableFilters(), []);
+export function PartListTable({ props }: { props: InvenTreeTableProps }) {
+  const tableColumns = useMemo(() => partTableColumns(), []);
+  const tableFilters = useMemo(() => partTableFilters(), []);
 
-  // Add required query parameters
-  tableParams.category_detail = true;
+  const table = useTable('part-list');
+
+  const navigate = useNavigate();
 
   return (
     <InvenTreeTable
-      url="part/"
-      enableDownload
-      tableKey="part-table"
-      printingActions={[
-        <Text onClick={notYetImplemented}>Hello</Text>,
-        <Text onClick={notYetImplemented}>World</Text>
-      ]}
-      params={tableParams}
+      url={apiUrl(ApiPaths.part_list)}
+      tableState={table}
       columns={tableColumns}
-      customFilters={tableFilters}
+      props={{
+        ...props,
+        enableDownload: true,
+        customFilters: tableFilters,
+        params: {
+          ...props.params,
+          category_detail: true
+        },
+        onRowClick: (record, _index, _event) => {
+          navigate(`/part/${record.pk}/`);
+        }
+      }}
     />
   );
 }

@@ -46,32 +46,22 @@ function loadPluginTable(table, options={}) {
         },
         columns: [
             {
-                field: 'active',
-                title: '',
-                sortable: true,
-                formatter: function(value, row) {
-                    if (row.active) {
-                        return `<span class='fa fa-check-circle icon-green' title='{% trans "This plugin is active" %}'></span>`;
-                    } else {
-                        return `<span class='fa fa-times-circle icon-red' title ='{% trans "This plugin is not active" %}'></span>`;
-                    }
-                }
-            },
-            {
                 field: 'name',
-                title: '{% trans "Plugin Description" %}',
+                title: '{% trans "Plugin" %}',
                 sortable: true,
+                switchable: false,
                 formatter: function(value, row) {
                     let html = '';
 
-                    if (row.active) {
-                        html += `<strong>${value}</strong>`;
-                        if (row.meta && row.meta.description) {
-                            html += ` - <small>${row.meta.description}</small>`;
-                        }
+                    if (!row.is_installed) {
+                        html += `<span class='fa fa-question-circle' title='{% trans "This plugin is no longer installed" %}'></span>`;
+                    } else if (row.active) {
+                        html += `<span class='fa fa-check-circle icon-green' title='{% trans "This plugin is active" %}'></span>`;
                     } else {
-                        html += `<em>${value}</em>`;
+                        html += `<span class='fa fa-times-circle icon-red' title ='{% trans "This plugin is installed but not active" %}'></span>`;
                     }
+
+                    html += `&nbsp;<span>${value}</span>`;
 
                     if (row.is_builtin) {
                         html += `<span class='badge bg-success rounded-pill badge-right'>{% trans "Builtin" %}</span>`;
@@ -83,6 +73,12 @@ function loadPluginTable(table, options={}) {
 
                     return html;
                 }
+            },
+            {
+                field: 'meta.description',
+                title: '{% trans "Description" %}',
+                sortable: false,
+                switchable: true,
             },
             {
                 field: 'meta.version',
@@ -104,15 +100,18 @@ function loadPluginTable(table, options={}) {
             {
                 field: 'meta.author',
                 title: '{% trans "Author" %}',
+                sortable: false,
             },
             {
                 field: 'actions',
                 title: '',
+                switchable: false,
+                sortable: false,
                 formatter: function(value, row) {
                     let buttons = '';
 
                     // Check if custom plugins are enabled for this instance
-                    if (options.custom && !row.is_builtin) {
+                    if (options.custom && !row.is_builtin && row.is_installed) {
                         if (row.active) {
                             buttons += makeIconButton('fa-stop-circle icon-red', 'btn-plugin-disable', row.pk, '{% trans "Disable Plugin" %}');
                         } else {
@@ -157,6 +156,9 @@ function installPlugin() {
         onSuccess: function(data) {
             let msg = '{% trans "The Plugin was installed" %}';
             showMessage(msg, {style: 'success', details: data.result, timeout: 30000});
+
+            // Reload the plugin table
+            $('#table-plugins').bootstrapTable('refresh');
         }
     });
 }

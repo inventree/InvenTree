@@ -11,3 +11,26 @@ export function notYetImplemented() {
     color: 'red'
   });
 }
+
+/**
+ * Show a notification that the user does not have permission to perform the action
+ */
+export function permissionDenied() {
+  notifications.show({
+    title: t`Permission denied`,
+    message: t`You do not have permission to perform this action`,
+    color: 'red'
+  });
+}
+
+/**
+ * Display a notification on an invalid return code
+ */
+export function invalidResponse(returnCode: number) {
+  // TODO: Specific return code messages
+  notifications.show({
+    title: t`Invalid Return Code`,
+    message: t`Server returned status ${returnCode}`,
+    color: 'red'
+  });
+}

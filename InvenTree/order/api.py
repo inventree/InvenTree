@@ -66,17 +66,16 @@ class GeneralExtraLineList(APIDownloadMixin):
     filter_backends = SEARCH_ORDER_FILTER
 
     ordering_fields = [
-        'title',
         'quantity',
         'note',
         'reference',
     ]
 
     search_fields = [
-        'title',
         'quantity',
         'note',
-        'reference'
+        'reference',
+        'description',
     ]
 
     filterset_fields = [
@@ -92,7 +91,6 @@ class OrderFilter(rest_filters.FilterSet):
 
     def filter_status(self, queryset, name, value):
         """Filter by integer status code"""
-
         return queryset.filter(status=value)
 
     # Exact match for reference
@@ -106,14 +104,12 @@ class OrderFilter(rest_filters.FilterSet):
 
     def filter_assigned_to_me(self, queryset, name, value):
         """Filter by orders which are assigned to the current user."""
-
         # Work out who "me" is!
         owners = Owner.get_owners_matching_user(self.request.user)
 
         if str2bool(value):
             return queryset.filter(responsible__in=owners)
-        else:
-            return queryset.exclude(responsible__in=owners)
+        return queryset.exclude(responsible__in=owners)
 
     overdue = rest_filters.BooleanFilter(label='overdue', method='filter_overdue')
 
@@ -122,21 +118,17 @@ class OrderFilter(rest_filters.FilterSet):
 
         Note that the overdue_filter() classmethod must be defined for the model
         """
-
         if str2bool(value):
             return queryset.filter(self.Meta.model.overdue_filter())
-        else:
-            return queryset.exclude(self.Meta.model.overdue_filter())
+        return queryset.exclude(self.Meta.model.overdue_filter())
 
     outstanding = rest_filters.BooleanFilter(label='outstanding', method='filter_outstanding')
 
     def filter_outstanding(self, queryset, name, value):
         """Generic filter for determining if an order is 'outstanding'"""
-
         if str2bool(value):
             return queryset.filter(status__in=self.Meta.model.get_status_class().OPEN)
-        else:
-            return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
+        return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
     project_code = rest_filters.ModelChoiceFilter(
         queryset=common_models.ProjectCode.objects.all(),
@@ -147,11 +139,9 @@ class OrderFilter(rest_filters.FilterSet):
 
     def filter_has_project_code(self, queryset, name, value):
         """Filter by whether or not the order has a project code"""
-
         if str2bool(value):
             return queryset.exclude(project_code=None)
-        else:
-            return queryset.filter(project_code=None)
+        return queryset.filter(project_code=None)
 
 
 class LineItemFilter(rest_filters.FilterSet):
@@ -168,8 +158,7 @@ class LineItemFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(**filters)
-        else:
-            return queryset.filter(**filters)
+        return queryset.filter(**filters)
 
 
 class PurchaseOrderFilter(OrderFilter):
@@ -227,7 +216,6 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     def create(self, request, *args, **kwargs):
         """Save user information on create."""
-
         data = self.clean_data(request.data)
 
         duplicate_order = data.pop('duplicate_order', None)
@@ -275,7 +263,6 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a file"""
-
         dataset = PurchaseOrderResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
@@ -432,11 +419,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
 
     def filter_pending(self, queryset, name, value):
         """Filter by "pending" status (order status = pending)"""
-
         if str2bool(value):
             return queryset.filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
-        else:
-            return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
+        return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
@@ -449,9 +434,8 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
 
         if str2bool(value):
             return queryset.filter(q)
-        else:
-            # Only count "pending" orders
-            return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
+        # Only count "pending" orders
+        return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
 
 class PurchaseOrderLineItemMixin:
@@ -511,7 +495,6 @@ class PurchaseOrderLineItemList(PurchaseOrderLineItemMixin, APIDownloadMixin, Li
 
     def download_queryset(self, queryset, export_format):
         """Download the requested queryset as a file"""
-
         dataset = PurchaseOrderLineItemResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
@@ -562,7 +545,6 @@ class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
-
         dataset = PurchaseOrderExtraLineResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
         filename = f"InvenTree_ExtraPurchaseOrderLines.{export_format}"
@@ -582,10 +564,6 @@ class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
 
     queryset = models.SalesOrderAttachment.objects.all()
     serializer_class = serializers.SalesOrderAttachmentSerializer
-
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
 
     filterset_fields = [
         'order',
@@ -666,7 +644,6 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
-
         dataset = SalesOrderResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
@@ -764,8 +741,7 @@ class SalesOrderLineItemFilter(LineItemFilter):
 
         if str2bool(value):
             return queryset.filter(q)
-        else:
-            return queryset.exclude(q)
+        return queryset.exclude(q)
 
 
 class SalesOrderLineItemMixin:
@@ -816,7 +792,6 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
 
     def download_queryset(self, queryset, export_format):
         """Download the requested queryset as a file"""
-
         dataset = SalesOrderLineItemResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
 
@@ -853,7 +828,6 @@ class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
-
         dataset = SalesOrderExtraLineResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
         filename = f"InvenTree_ExtraSalesOrderLines.{export_format}"
@@ -1020,8 +994,7 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         """Filter SalesOrder list by 'shipped' status (boolean)"""
         if str2bool(value):
             return queryset.exclude(shipment_date=None)
-        else:
-            return queryset.filter(shipment_date=None)
+        return queryset.filter(shipment_date=None)
 
     delivered = rest_filters.BooleanFilter(label='delivered', method='filter_delivered')
 
@@ -1029,8 +1002,7 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         """Filter SalesOrder list by 'delivered' status (boolean)"""
         if str2bool(value):
             return queryset.exclude(delivery_date=None)
-        else:
-            return queryset.filter(delivery_date=None)
+        return queryset.filter(delivery_date=None)
 
 
 class SalesOrderShipmentList(ListCreateAPI):
@@ -1078,10 +1050,6 @@ class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
 
     queryset = models.PurchaseOrderAttachment.objects.all()
     serializer_class = serializers.PurchaseOrderAttachmentSerializer
-
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
 
     filterset_fields = [
         'order',
@@ -1159,7 +1127,6 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
-
         dataset = ReturnOrderResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
         filename = f"InvenTree_ReturnOrders.{export_format}"
@@ -1260,11 +1227,9 @@ class ReturnOrderLineItemFilter(LineItemFilter):
 
     def filter_received(self, queryset, name, value):
         """Filter by 'received' field"""
-
         if str2bool(value):
             return queryset.exclude(received_date=None)
-        else:
-            return queryset.filter(received_date=None)
+        return queryset.filter(received_date=None)
 
 
 class ReturnOrderLineItemMixin:
@@ -1275,7 +1240,6 @@ class ReturnOrderLineItemMixin:
 
     def get_serializer(self, *args, **kwargs):
         """Return serializer for this endpoint with extra data as requested"""
-
         try:
             params = self.request.query_params
 
@@ -1291,7 +1255,6 @@ class ReturnOrderLineItemMixin:
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for this endpoint"""
-
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related(
@@ -1310,7 +1273,6 @@ class ReturnOrderLineItemList(ReturnOrderLineItemMixin, APIDownloadMixin, ListCr
 
     def download_queryset(self, queryset, export_format):
         """Download the requested queryset as a file"""
-
         raise NotImplementedError("download_queryset not yet implemented for this endpoint")
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -1342,7 +1304,6 @@ class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
-
         raise NotImplementedError("download_queryset not yet implemented")
 
 
@@ -1358,10 +1319,6 @@ class ReturnOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
 
     queryset = models.ReturnOrderAttachment.objects.all()
     serializer_class = serializers.ReturnOrderAttachmentSerializer
-
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
 
     filterset_fields = [
         'order',
@@ -1401,7 +1358,6 @@ class OrderCalendarExport(ICalFeed):
         https://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django
         https://www.djangosnippets.org/snippets/243/
         """
-
         import base64
 
         if request.user.is_authenticated:
@@ -1447,7 +1403,6 @@ class OrderCalendarExport(ICalFeed):
 
     def title(self, obj):
         """Return calendar title."""
-
         if obj["ordertype"] == 'purchase-order':
             ordertype_title = _('Purchase Order')
         elif obj["ordertype"] == 'sales-order':
@@ -1526,7 +1481,6 @@ class OrderCalendarExport(ICalFeed):
 
     def item_link(self, item):
         """Set the item link."""
-
         return construct_absolute_url(item.get_absolute_url())
 
 

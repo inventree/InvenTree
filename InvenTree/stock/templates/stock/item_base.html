@@ -25,10 +25,9 @@
 
 {% block actions %}
 
-{% if user.is_staff and roles.stock.change %}
-{% url 'admin:stock_stockitem_change' item.pk as url %}
+{% admin_url user "stock.stockitem" item.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
+
 {% mixin_available "locate" as locate_available %}
 {% if plugins_enabled and locate_available %}
 <button id='locate-item-button' title='{% trans "Locate stock item" %}' class='btn btn-outline-secondary' typy='button'>
@@ -199,7 +198,7 @@
     <tr>
         <td><span class='fas fa-link'></span>
         <td>{% trans "External Link" %}</td>
-        <td>{% include 'clip_link.html' with link=item.link %}</td>
+        <td>{% include 'clip_link.html' with link=item.link new_window=True %}</td>
     </tr>
     {% endif %}
     {% if item.supplier_part.manufacturer_part %}
@@ -368,7 +367,12 @@
     <tr>
         <td><span class='fas fa-th-list'></span></td>
         <td>{% trans "Sales Order" %}</td>
-        <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
+        <td>
+            <a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a>
+            {% if item.sales_order.customer %}
+            - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a>
+            {% endif %}
+        </td>
     </tr>
     {% else %}
     {% if allocated_to_sales_orders %}
@@ -645,6 +649,10 @@ $("#stock-return-from-customer").click(function() {
                 {% if item.part.default_location %}
                 value: {{ item.part.default_location.pk }},
                 {% endif %}
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
             },
             notes: {
                 icon: 'fa-sticky-note',

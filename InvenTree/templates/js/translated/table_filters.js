@@ -18,6 +18,30 @@
 */
 
 
+// Construct a dynamic API filter for the "issued by" field
+function constructIssuedByFilter() {
+    return {
+        title: '{% trans "Issued By" %}',
+        options: function() {
+            let users = {};
+
+            inventreeGet('{% url "api-user-list" %}', {}, {
+                async: false,
+                success: function(response) {
+                    for (let user of response) {
+                        users[user.pk] = {
+                            key: user.pk,
+                            value: user.username
+                        };
+                    }
+                }
+            });
+
+            return users;
+        }
+    }
+}
+
 // Construct a dynamic API filter for the "project" field
 function constructProjectCodeFilter() {
     return {
@@ -217,6 +241,30 @@ function getStockLocationFilters() {
         external: {
             type: 'bool',
             title: '{% trans "External" %}',
+        },
+        location_type: {
+            title: '{% trans "Location type" %}',
+            options: function() {
+                const locationTypes = {};
+
+                inventreeGet('{% url "api-location-type-list" %}', {}, {
+                    async: false,
+                    success: function(response) {
+                        for(const locationType of response) {
+                            locationTypes[locationType.pk] = {
+                                key: locationType.pk,
+                                value: locationType.name,
+                            }
+                        }
+                    }
+                });
+
+                return locationTypes;
+            },
+        },
+        has_location_type: {
+            type: 'bool',
+            title: '{% trans "Has location type" %}'
         },
     };
 }
@@ -439,6 +487,18 @@ function getPluginTableFilters() {
             type: 'bool',
             title: '{% trans "Active" %}',
         },
+        builtin: {
+            type: 'bool',
+            title: '{% trans "Builtin" %}',
+        },
+        sample: {
+            type: 'bool',
+            title: '{% trans "Sample" %}',
+        },
+        installed: {
+            type: 'bool',
+            title: '{% trans "Installed" %}'
+        },
     };
 }
 
@@ -482,6 +542,7 @@ function getBuildTableFilters() {
                 return ownersList;
             },
         },
+        issued_by: constructIssuedByFilter(),
     };
 
     if (global_settings.PROJECT_CODES_ENABLED) {
@@ -767,7 +828,7 @@ function getPartParameterTemplateFilters() {
 }
 
 
-// Return a dictionary of filters for the "parameteric part" table
+// Return a dictionary of filters for the "parametric part" table
 function getParametricPartTableFilters() {
     let filters = getPartTableFilters();
 

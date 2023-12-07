@@ -3,6 +3,7 @@ import { Center, Container } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
 
+import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
 import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
@@ -21,12 +22,13 @@ export default function Login() {
     state.fetchServerApiState
   ]);
   const hostname =
-    hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey].name;
+    hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
 
   // Data manipulation functions
   function ChangeHost(newHost: string): void {
-    setHost(hostList[newHost].host, newHost);
+    setHost(hostList[newHost]?.host, newHost);
+    setApiDefaults();
     fetchServerApiState();
   }
 

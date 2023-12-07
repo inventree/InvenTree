@@ -12,7 +12,6 @@ def annotate_location_items(filter: Q = None):
     - Includes items in subcategories also
     - Requires subquery to perform annotation
     """
-
     # Construct a subquery to provide all items in this location and any sublocations
     subquery = stock.models.StockItem.objects.exclude(location=None).filter(
         location__tree_id=OuterRef('tree_id'),

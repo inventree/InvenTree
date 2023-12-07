@@ -2,24 +2,23 @@
 
 import logging
 import os
-import sys
 from datetime import date, datetime
 
 from django import template
 from django.conf import settings as djangosettings
 from django.templatetags.static import StaticNode
-from django.urls import reverse
+from django.urls import NoReverseMatch, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+import common.models
 import InvenTree.helpers
 import InvenTree.helpers_model
-from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
+import plugin.models
 from common.settings import currency_code_default
 from InvenTree import settings, version
 from plugin import registry
-from plugin.models import NotificationUserSetting, PluginSetting
 from plugin.plugin import InvenTreePlugin
 
 register = template.Library()
@@ -67,7 +66,7 @@ def render_date(context, date_object):
         try:
             date_object = date.fromisoformat(date_object)
         except ValueError:
-            logger.warning(f"Tried to convert invalid date string: {date_object}")
+            logger.warning("Tried to convert invalid date string: %s", date_object)
             return None
 
     # We may have already pre-cached the date format by calling this already!
@@ -79,7 +78,7 @@ def render_date(context, date_object):
 
         if user and user.is_authenticated:
             # User is specified - look for their date display preference
-            user_date_format = InvenTreeUserSetting.get_setting('DATE_DISPLAY_FORMAT', user=user)
+            user_date_format = common.models.InvenTreeUserSetting.get_setting('DATE_DISPLAY_FORMAT', user=user)
         else:
             user_date_format = 'YYYY-MM-DD'
 
@@ -105,7 +104,6 @@ def render_date(context, date_object):
 @register.simple_tag
 def render_currency(money, **kwargs):
     """Render a currency / Money object"""
-
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
@@ -142,7 +140,7 @@ def inventree_in_debug_mode(*args, **kwargs):
 @register.simple_tag()
 def inventree_show_about(user, *args, **kwargs):
     """Return True if the about modal should be shown."""
-    if InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT'):
+    if common.models.InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT'):
         # Return False if the user is not a superuser, or no user information is provided
         if not user or not user.is_superuser:
             return False
@@ -184,13 +182,7 @@ def plugins_info(*args, **kwargs):
 @register.simple_tag()
 def inventree_db_engine(*args, **kwargs):
     """Return the InvenTree database backend e.g. 'postgresql'."""
-    db = djangosettings.DATABASES['default']
-
-    engine = db.get('ENGINE', _('Unknown database'))
-
-    engine = engine.replace('django.db.backends.', '')
-
-    return engine
+    return version.inventreeDatabase() or _('Unknown database')
 
 
 @register.simple_tag()
@@ -211,15 +203,13 @@ def inventree_logo(**kwargs):
 
     Returns a path to an image file, which can be rendered in the web interface
     """
-
     return InvenTree.helpers.getLogoImage(**kwargs)
 
 
 @register.simple_tag()
 def inventree_splash(**kwargs):
     """Return the URL for the InvenTree splash screen, *or* a custom screen if the user has provided one."""
-
-    return InvenTree.helpers.getSplashScren(**kwargs)
+    return InvenTree.helpers.getSplashScreen(**kwargs)
 
 
 @register.simple_tag()
@@ -231,17 +221,14 @@ def inventree_base_url(*args, **kwargs):
 @register.simple_tag()
 def python_version(*args, **kwargs):
     """Return the current python version."""
-    return sys.version.split(' ')[0]
+    return version.inventreePythonVersion()
 
 
 @register.simple_tag()
 def inventree_version(shortstring=False, *args, **kwargs):
     """Return InvenTree version string."""
     if shortstring:
-        return _("{title} v{version}".format(
-            title=version.inventreeInstanceTitle(),
-            version=version.inventreeVersion()
-        ))
+        return _(f"{version.inventreeInstanceTitle()} v{version.inventreeVersion()}")
     return version.inventreeVersion()
 
 
@@ -314,21 +301,25 @@ def inventree_platform(*args, **kwargs):
 @register.simple_tag()
 def inventree_github_url(*args, **kwargs):
     """Return URL for InvenTree github site."""
-    return "https://github.com/InvenTree/InvenTree/"
+    return version.inventreeGithubUrl()
 
 
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
     """Return URL for InvenTree documentation site."""
-    tag = version.inventreeDocsVersion()
+    return version.inventreeDocUrl()
 
-    return f"https://docs.inventree.org/en/{tag}"
+
+@register.simple_tag()
+def inventree_app_url(*args, **kwargs):
+    """Return URL for InvenTree app site."""
+    return version.inventreeAppUrl()
 
 
 @register.simple_tag()
 def inventree_credits_url(*args, **kwargs):
     """Return URL for InvenTree credits site."""
-    return "https://docs.inventree.org/en/latest/credits/"
+    return version.inventreeCreditsUrl()
 
 
 @register.simple_tag()
@@ -344,26 +335,25 @@ def setting_object(key, *args, **kwargs):
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
     """
-
     cache = kwargs.get('cache', True)
 
     if 'plugin' in kwargs:
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
-        plugin = kwargs['plugin']
-        if issubclass(plugin.__class__, InvenTreePlugin):
-            plugin = plugin.plugin_config()
+        plg = kwargs['plugin']
+        if issubclass(plg.__class__, InvenTreePlugin):
+            plg = plg.plugin_config()
 
-        return PluginSetting.get_setting_object(key, plugin=plugin, cache=cache)
+        return plugin.models.PluginSetting.get_setting_object(key, plugin=plg, cache=cache)
 
     elif 'method' in kwargs:
-        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
+        return plugin.models.NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
 
     elif 'user' in kwargs:
-        return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'], cache=cache)
+        return common.models.InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'], cache=cache)
 
     else:
-        return InvenTreeSetting.get_setting_object(key, cache=cache)
+        return common.models.InvenTreeSetting.get_setting_object(key, cache=cache)
 
 
 @register.simple_tag()
@@ -371,28 +361,28 @@ def settings_value(key, *args, **kwargs):
     """Return a settings value specified by the given key."""
     if 'user' in kwargs:
         if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated is False):
-            return InvenTreeUserSetting.get_setting(key)
-        return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
+            return common.models.InvenTreeUserSetting.get_setting(key)
+        return common.models.InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
 
-    return InvenTreeSetting.get_setting(key)
+    return common.models.InvenTreeSetting.get_setting(key)
 
 
 @register.simple_tag()
 def user_settings(user, *args, **kwargs):
     """Return all USER settings as a key:value dict."""
-    return InvenTreeUserSetting.allValues(user=user)
+    return common.models.InvenTreeUserSetting.allValues(user=user)
 
 
 @register.simple_tag()
 def global_settings(*args, **kwargs):
     """Return all GLOBAL InvenTree settings as a key:value dict."""
-    return InvenTreeSetting.allValues()
+    return common.models.InvenTreeSetting.allValues()
 
 
 @register.simple_tag()
 def visible_global_settings(*args, **kwargs):
     """Return any global settings which are not marked as 'hidden'."""
-    return InvenTreeSetting.allValues(exclude_hidden=True)
+    return common.models.InvenTreeSetting.allValues(exclude_hidden=True)
 
 
 @register.simple_tag()
@@ -439,7 +429,7 @@ def progress_bar(val, max_val, *args, **kwargs):
 
 @register.simple_tag()
 def get_color_theme_css(username):
-    """Return the cutsom theme .css file for the selected user"""
+    """Return the custom theme .css file for the selected user"""
     user_theme_name = get_user_color_theme(username)
     # Build path to CSS sheet
     inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
@@ -453,6 +443,9 @@ def get_color_theme_css(username):
 @register.simple_tag()
 def get_user_color_theme(username):
     """Get current user color theme."""
+
+    from common.models import ColorTheme
+
     try:
         user_theme = ColorTheme.objects.filter(user=username).get()
         user_theme_name = user_theme.name
@@ -468,6 +461,8 @@ def get_user_color_theme(username):
 def get_available_themes(*args, **kwargs):
     """Return the available theme choices."""
     themes = []
+
+    from common.models import ColorTheme
 
     for key, name in ColorTheme.get_color_themes_choices():
         themes.append({
@@ -490,20 +485,16 @@ def primitive_to_javascript(primitive):
 
     elif type(primitive) in [int, float]:
         return primitive
-
-    else:
-        # Wrap with quotes
-        return format_html("'{}'", primitive)  # noqa: P103
+    # Wrap with quotes
+    return format_html("'{}'", primitive)  # noqa: P103
 
 
 @register.simple_tag()
 def js_bool(val):
     """Return a javascript boolean value (true or false)"""
-
     if val:
         return 'true'
-    else:
-        return 'false'
+    return 'false'
 
 
 @register.filter
@@ -634,3 +625,52 @@ else:  # pragma: no cover
         token.contents = ' '.join(bits)
 
         return I18nStaticNode.handle_token(parser, token)
+
+
+@register.simple_tag()
+def admin_index(user):
+    """Return a URL for the admin interface"""
+
+    if not djangosettings.INVENTREE_ADMIN_ENABLED:
+        return ''
+
+    if not user.is_staff:
+        return ''
+
+    return reverse('admin:index')
+
+
+@register.simple_tag()
+def admin_url(user, table, pk):
+    """Generate a link to the admin site for the given model instance.
+
+    - If the admin site is disabled, an empty URL is returned
+    - If the user is not a staff user, an empty URL is returned
+    - If the user does not have the correct permission, an empty URL is returned
+    """
+
+    app, model = table.strip().split('.')
+
+    from django.urls import reverse
+
+    if not djangosettings.INVENTREE_ADMIN_ENABLED:
+        return ""
+
+    if not user.is_staff:
+        return ""
+
+    # Check the user has the correct permission
+    perm_string = f"{app}.change_{model}"
+    if not user.has_perm(perm_string):
+        return ''
+
+    # Fallback URL
+    url = reverse(f"admin:{app}_{model}_changelist")
+
+    if pk:
+        try:
+            url = reverse(f'admin:{app}_{model}_change', args=(pk,))
+        except NoReverseMatch:
+            pass
+
+    return url

@@ -58,7 +58,7 @@ The following parameters are available for each Build Order, and can be edited b
 | Source Location | Stock location to source stock items from (blank = all locations) |
 | Destination Location | Stock location where the build outputs will be located |
 | Target Date | Target date for build completion |
-| Responsible | User (or group of users) who is resonsible for the build |
+| Responsible | User (or group of users) who is responsible for the build |
 | External Link | Link to external webpage |
 | Notes | Build notes, supports markdown |
 

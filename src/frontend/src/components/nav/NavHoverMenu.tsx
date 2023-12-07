@@ -7,7 +7,8 @@ import {
   Group,
   HoverCard,
   Skeleton,
-  Text
+  Text,
+  UnstyledButton
 } from '@mantine/core';
 import { IconLayoutSidebar } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -34,14 +35,22 @@ export function NavHoverMenu({
 
   useEffect(() => {
     if (hostKey && hostList[hostKey]) {
-      setInstanceName(hostList[hostKey].name);
+      setInstanceName(hostList[hostKey]?.name);
     }
   }, [hostKey]);
 
   return (
-    <HoverCard width={600} position="bottom" shadow="md" withinPortal>
+    <HoverCard
+      width={600}
+      openDelay={300}
+      position="bottom"
+      shadow="md"
+      withinPortal
+    >
       <HoverCard.Target>
-        <InvenTreeLogo />
+        <UnstyledButton onClick={() => openDrawer()}>
+          <InvenTreeLogo />
+        </UnstyledButton>
       </HoverCard.Target>
 
       <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>

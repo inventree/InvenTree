@@ -15,9 +15,9 @@ When a certain (server-side) event occurs, the background worker passes the even
 {% include 'img.html' %}
 {% endwith %}
 
-### Example
+### Example (all events)
 
-Implementing classes must provide a `process_event` function:
+Implementing classes must at least provide a `process_event` function:
 
 ```python
 class EventPlugin(EventMixin, InvenTreePlugin):
@@ -34,6 +34,34 @@ class EventPlugin(EventMixin, InvenTreePlugin):
 
     def process_event(self, event, *args, **kwargs):
         print(f"Processing triggered event: '{event}'")
+```
+
+### Example (specific events)
+
+If you want to process just some specific events, you can also implement the `wants_process_event` function to decide if you want to process this event or not. This function will be executed synchronously, so be aware that it should contain simple logic.
+
+Overall this function can reduce the workload on the background workers significantly since less events are queued to be processed.
+
+```python
+class EventPlugin(EventMixin, InvenTreePlugin):
+    """
+    A simple example plugin which responds to 'salesordershipment.completed' event on the InvenTree server.
+
+    This example simply prints out the event information.
+    A more complex plugin can run enhanced logic on this event.
+    """
+
+    NAME = "EventPlugin"
+    SLUG = "event"
+    TITLE = "Triggered Events"
+
+    def wants_process_event(self, event):
+        """Here you can decide if this event should be send to `process_event` or not."""
+        return event == "salesordershipment.completed"
+
+    def process_event(self, event, *args, **kwargs):
+        """Here you can run you'r specific logic."""
+        print(f"Sales order was completely shipped: '{args}' '{kwargs}'")
 ```
 
 ### Events

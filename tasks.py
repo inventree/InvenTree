@@ -35,7 +35,7 @@ def content_excludes():
     excludes = [
         "contenttypes",
         "auth.permission",
-        "authtoken.token",
+        "users.apitoken",
         "error_report.error",
         "admin.logentry",
         "django_q.schedule",
@@ -98,7 +98,6 @@ def yarn(c, cmd, pty: bool = False):
         cmd: Yarn command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
     """
-
     path = managePyDir().parent.joinpath('src').joinpath('frontend')
     c.run(f'cd "{path}" && {cmd}', pty=pty)
 
@@ -169,6 +168,7 @@ def install(c):
 
     # Install required Python packages with PIP
     c.run('pip3 install --upgrade pip')
+    c.run('pip3 install --upgrade setuptools')
     c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 
@@ -246,7 +246,6 @@ def translate_stats(c):
 
     The file generated from this is needed for the UI.
     """
-
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
     try:
@@ -281,7 +280,6 @@ def translate(c):
 @task
 def backup(c):
     """Backup the database and media files."""
-
     print("Backing up InvenTree database...")
     manage(c, "dbbackup --noinput --clean --compress")
     print("Backing up InvenTree media files...")
@@ -291,7 +289,6 @@ def backup(c):
 @task
 def restore(c):
     """Restore the database and media files."""
-
     print("Restoring InvenTree database...")
     manage(c, "dbrestore --noinput --uncompress")
     print("Restoring InvenTree media files...")
@@ -320,11 +317,10 @@ def migrate(c):
     post=[static, clean_settings, translate_stats],
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
-        'no_frontend': 'Skip frontend compilation/download step (is already included with docker image)',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
     }
 )
-def update(c, skip_backup=False, no_frontend: bool = False, frontend: bool = False):
+def update(c, skip_backup=False, frontend: bool = False):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -340,7 +336,6 @@ def update(c, skip_backup=False, no_frontend: bool = False, frontend: bool = Fal
     - clean_settings
     - translate_stats
     """
-
     # Ensure required components are installed
     install(c)
 
@@ -354,7 +349,8 @@ def update(c, skip_backup=False, no_frontend: bool = False, frontend: bool = Fal
     # If:
     # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
     # - `--no-frontend` flag is set
-    if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
+    # if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
+    if not frontend:
         return
 
     # Decide if we should compile the frontend or try to download it
@@ -547,7 +543,7 @@ def wait(c):
 
 @task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
 def server(c, address="127.0.0.1:8000"):
-    """Launch a (deveopment) server using Django's in-built webserver.
+    """Launch a (development) server using Django's in-built webserver.
 
     Note: This is *not* sufficient for a production installation.
     """
@@ -690,7 +686,6 @@ def test(c, disable_pty=False, runtest='', migrations=False, report=False, cover
 @task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset"):
     """Setup a testing environment."""
-
     from InvenTree.InvenTree.config import get_media_dir
 
     if not ignore_update:
@@ -790,7 +785,6 @@ def frontend_compile(c):
     Args:
         c: Context variable
     """
-
     frontend_install(c)
     frontend_trans(c)
     frontend_build(c)
@@ -863,7 +857,6 @@ def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventre
     3. invoke frontend-download --file /home/vscode/Downloads/frontend-build.zip
        This will extract your zip file and place the contents at the correct destination
     """
-
     import functools
     import subprocess
     from tempfile import NamedTemporaryFile

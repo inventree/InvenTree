@@ -4,17 +4,21 @@ from importlib import import_module
 
 from django.urls import include, path, reverse
 
+from allauth.account.models import EmailAddress
 from allauth.socialaccount import providers
 from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.keycloak.views import \
     KeycloakOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.views import (OAuth2Adapter,
                                                           OAuth2LoginView)
-from rest_framework.generics import ListAPIView
-from rest_framework.permissions import AllowAny
+from drf_spectacular.utils import OpenApiResponse, extend_schema
+from rest_framework.exceptions import NotFound
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from common.models import InvenTreeSetting
+from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI
+from InvenTree.serializers import InvenTreeModelSerializer
 
 logger = logging.getLogger('inventree')
 
@@ -31,7 +35,6 @@ class GenericOAuth2ApiConnectView(GenericOAuth2ApiLoginView):
 
     def dispatch(self, request, *args, **kwargs):
         """Dispatch the connect request directly."""
-
         # Override the request method be in connection mode
         request.GET = request.GET.copy()
         request.GET['process'] = 'connect'
@@ -84,12 +87,12 @@ for provider in providers.registry.get_list():
         urls = handle_oauth2(adapter=adapters[0])
     else:
         if provider.id in legacy:
-            logger.warning(f'`{provider.id}` is not supported on platform UI. Use `{legacy[provider.id]}` instead.')
+            logger.warning('`%s` is not supported on platform UI. Use `%s` instead.', provider.id, legacy[provider.id])
             continue
         elif provider.id == 'keycloak':
             urls = handle_keycloak()
         else:
-            logger.error(f'Found handler that is not yet ready for platform UI: `{provider.id}`. Open an feature request on GitHub if you need it implemented.')
+            logger.error('Found handler that is not yet ready for platform UI: `%s`. Open an feature request on GitHub if you need it implemented.', provider.id)
             continue
     provider_urlpatterns += [path(f'{provider.id}/', include(urls))]
 
@@ -97,7 +100,7 @@ for provider in providers.registry.get_list():
 social_auth_urlpatterns += provider_urlpatterns
 
 
-class SocialProvierListView(ListAPIView):
+class SocialProviderListView(ListAPI):
     """List of available social providers."""
     permission_classes = (AllowAny,)
 
@@ -110,9 +113,12 @@ class SocialProvierListView(ListAPIView):
                 'name': provider.name,
                 'login': request.build_absolute_uri(reverse(f'{provider.id}_api_login')),
                 'connect': request.build_absolute_uri(reverse(f'{provider.id}_api_connect')),
+                'configured': False
             }
             try:
-                provider_data['display_name'] = provider.get_app(request).name
+                provider_app = provider.get_app(request)
+                provider_data['display_name'] = provider_app.name
+                provider_data['configured'] = True
             except SocialApp.DoesNotExist:
                 provider_data['display_name'] = provider.name
 
@@ -125,3 +131,81 @@ class SocialProvierListView(ListAPIView):
             'providers': provider_list
         }
         return Response(data)
+
+
+class EmailAddressSerializer(InvenTreeModelSerializer):
+    """Serializer for the EmailAddress model."""
+
+    class Meta:
+        """Meta options for EmailAddressSerializer."""
+
+        model = EmailAddress
+        fields = '__all__'
+
+
+class EmptyEmailAddressSerializer(InvenTreeModelSerializer):
+    """Empty Serializer for the EmailAddress model."""
+
+    class Meta:
+        """Meta options for EmailAddressSerializer."""
+
+        model = EmailAddress
+        fields = []
+
+
+class EmailListView(ListCreateAPI):
+    """List of registered email addresses for current users."""
+    permission_classes = (IsAuthenticated,)
+    serializer_class = EmailAddressSerializer
+
+    def get_queryset(self):
+        """Only return data for current user."""
+        return EmailAddress.objects.filter(user=self.request.user)
+
+
+class EmailActionMixin(CreateAPI):
+    """Mixin to modify email addresses for current users."""
+    serializer_class = EmptyEmailAddressSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        """Filter queryset for current user."""
+        return EmailAddress.objects.filter(user=self.request.user, pk=self.kwargs['pk']).first()
+
+    @extend_schema(responses={200: OpenApiResponse(response=EmailAddressSerializer)})
+    def post(self, request, *args, **kwargs):
+        """Filter item, run action and return data."""
+        email = self.get_queryset()
+        if not email:
+            raise NotFound
+
+        self.special_action(email, request, *args, **kwargs)
+        return Response(EmailAddressSerializer(email).data)
+
+
+class EmailVerifyView(EmailActionMixin):
+    """Re-verify an email for a currently logged in user."""
+
+    def special_action(self, email, request, *args, **kwargs):
+        """Send confirmation."""
+        if email.verified:
+            return
+        email.send_confirmation(request)
+
+
+class EmailPrimaryView(EmailActionMixin):
+    """Make an email for a currently logged in user primary."""
+
+    def special_action(self, email, *args, **kwargs):
+        """Mark email as primary."""
+        if email.primary:
+            return
+        email.set_as_primary()
+
+
+class EmailRemoveView(EmailActionMixin):
+    """Remove an email for a currently logged in user."""
+
+    def special_action(self, email, *args, **kwargs):
+        """Delete email."""
+        email.delete()

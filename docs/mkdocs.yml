@@ -78,6 +78,7 @@ nav:
       - Getting started: develop/starting.md
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
+      - Platform UI: develop/react-frontend.md
     - Credits: credits.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
@@ -140,6 +141,7 @@ nav:
       - Sales Order: report/sales_order.md
       - Return Order: report/return_order.md
       - BOM: report/bom.md
+      - Stock Location: report/stock_location.md
     - Labels:
       - Custom Labels: report/labels.md
       - Part Labels: report/labels/part_labels.md
@@ -162,6 +164,7 @@ nav:
     - Error Logs: settings/logs.md
     - Email: settings/email.md
     - Background Tasks: settings/tasks.md
+    - Currency Support: settings/currency.md
   - App:
     - InvenTree App: app/app.md
     - Connect: app/connect.md
@@ -202,6 +205,7 @@ nav:
       - API Mixin: extend/plugins/api.md
       - App Mixin: extend/plugins/app.md
       - Barcode Mixin: extend/plugins/barcode.md
+      - Currency Mixin: extend/plugins/currency.md
       - Event Mixin: extend/plugins/event.md
       - Label Printing Mixin: extend/plugins/label.md
       - Locate Mixin: extend/plugins/locate.md

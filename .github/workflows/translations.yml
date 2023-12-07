@@ -21,13 +21,13 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Set up Python 3.9
-        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
           python-version: 3.9
       - name: Set up Node 16
-        uses: actions/setup-node@969bd2663942d722d85b6a8626225850c2f7be4b  # pin to v3.5.0
+        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7  # pin to v3.8.2
         with:
           node-version: 16
       - name: Install Dependencies
@@ -46,7 +46,7 @@ jobs:
           git add "*.po"
           git commit -m "updated translation base"
       - name: Push changes
-        uses: ad-m/github-push-action@4dcce6dea3e3c8187237fc86b7dfdc93e5aaae58 # pin@master
+        uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: l10

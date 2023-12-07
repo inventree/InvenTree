@@ -9,7 +9,8 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-FROM python:3.10-alpine3.18 as inventree_base
+ARG base_image=python:3.10-alpine3.18
+FROM ${base_image} as inventree_base
 
 # Build arguments for this image
 ARG commit_hash=""
@@ -53,12 +54,13 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git" \
       org.label-schema.vcs-ref=${commit_tag}
 
+# Install required system level packages
 RUN apk add --no-cache \
     git gettext py-cryptography \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
     # SQLite support
     sqlite \
     # PostgreSQL support
@@ -75,6 +77,8 @@ WORKDIR ${INVENTREE_HOME}
 
 COPY ./docker/requirements.txt base_requirements.txt
 COPY ./requirements.txt ./
+COPY ./docker/install_build_packages.sh .
+RUN chmod +x install_build_packages.sh
 
 # For ARMv7 architecture, add the piwheels repo (for cryptography library)
 # Otherwise, we have to build from source, which is difficult
@@ -83,25 +87,22 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
     printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
     fi
 
-RUN apk add --no-cache --virtual .build-deps \
-    gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev \
-    # Image format dev libs
-    jpeg-dev openjpeg-dev libwebp-dev zlib-dev \
-    # DB specific dev libs
-    postgresql-dev sqlite-dev mariadb-dev && \
-    pip install -r base_requirements.txt -r requirements.txt --no-cache-dir && \
-    apk --purge del .build-deps
-
 COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
-
 RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/sh", "./init.sh"]
 
+FROM inventree_base as prebuild
+
+RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
+    pip install -r base_requirements.txt -r requirements.txt --no-cache-dir && \
+    apk --purge del .build-deps
+
 # Frontend builder image:
-FROM inventree_base as frontend
+FROM prebuild as frontend
 
 RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN yarn config set network-timeout 600000 -g
 COPY InvenTree ${INVENTREE_HOME}/InvenTree
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
@@ -110,7 +111,7 @@ RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
-FROM inventree_base as production
+FROM prebuild as production
 
 ENV INVENTREE_DEBUG=False
 
@@ -127,11 +128,20 @@ COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ./InvenTree/web/
 # TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
-
 FROM inventree_base as dev
 
+# Vite server (for local frontend development)
+EXPOSE 5173
+
+# Install packages required for building python packages
+RUN ./install_build_packages.sh
+
+RUN pip install -r base_requirements.txt --no-cache-dir
+
 # Install nodejs / npm / yarn
+
 RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
@@ -149,3 +159,10 @@ ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
+
+# Image target for devcontainer
+FROM dev as devcontainer
+
+ARG workspace="/workspaces/InvenTree"
+
+WORKDIR ${WORKSPACE}

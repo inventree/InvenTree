@@ -163,7 +163,6 @@ class StatusCode(BaseEnum):
     @classmethod
     def template_context(cls):
         """Return a dict representation containing all required information for templates."""
-
         ret = {x.name: x.value for x in cls.values()}
         ret['list'] = cls.list()
 

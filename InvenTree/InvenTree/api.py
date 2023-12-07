@@ -6,23 +6,85 @@ from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import OrmQ
-from rest_framework import permissions
+from drf_spectacular.utils import OpenApiResponse, extend_schema
+from rest_framework import permissions, serializers
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 
+import InvenTree.version
 import users.models
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from part.templatetags.inventree_extras import plugins_info
 from plugin.serializers import MetadataSerializer
+from users.models import ApiToken
 
-from .mixins import RetrieveUpdateAPI
-from .status import is_worker_running
-from .version import (inventreeApiVersion, inventreeInstanceName,
-                      inventreeVersion)
+from .email import is_email_configured
+from .mixins import ListAPI, RetrieveUpdateAPI
+from .status import check_system_health, is_worker_running
+from .version import inventreeApiText
 from .views import AjaxView
+
+
+class VersionView(APIView):
+    """Simple JSON endpoint for InvenTree version information."""
+
+    permission_classes = [
+        permissions.IsAdminUser,
+    ]
+
+    def get(self, request, *args, **kwargs):
+        """Return information about the InvenTree server."""
+        return JsonResponse({
+            'dev': InvenTree.version.isInvenTreeDevelopmentVersion(),
+            'up_to_date': InvenTree.version.isInvenTreeUpToDate(),
+            'version': {
+                'server': InvenTree.version.inventreeVersion(),
+                'api': InvenTree.version.inventreeApiVersion(),
+                'commit_hash': InvenTree.version.inventreeCommitHash(),
+                'commit_date': InvenTree.version.inventreeCommitDate(),
+                'commit_branch': InvenTree.version.inventreeBranch(),
+                'python': InvenTree.version.inventreePythonVersion(),
+                'django': InvenTree.version.inventreeDjangoVersion()
+            },
+            'links': {
+                'doc': InvenTree.version.inventreeDocUrl(),
+                'code': InvenTree.version.inventreeGithubUrl(),
+                'credit': InvenTree.version.inventreeCreditsUrl(),
+                'app': InvenTree.version.inventreeAppUrl(),
+                'bug': f'{InvenTree.version.inventreeGithubUrl()}/issues'
+            }
+        })
+
+
+class VersionSerializer(serializers.Serializer):
+    """Serializer for a single version."""
+    version = serializers.CharField()
+    date = serializers.CharField()
+    gh = serializers.CharField()
+    text = serializers.CharField()
+    latest = serializers.BooleanField()
+
+    class Meta:
+        """Meta class for VersionSerializer."""
+        fields = ['version', 'date', 'gh', 'text', 'latest']
+
+
+class VersionApiSerializer(serializers.Serializer):
+    """Serializer for the version api endpoint."""
+    VersionSerializer(many=True)
+
+
+class VersionTextView(ListAPI):
+    """Simple JSON endpoint for InvenTree version text."""
+    permission_classes = [permissions.IsAdminUser]
+
+    @extend_schema(responses={200: OpenApiResponse(response=VersionApiSerializer)})
+    def list(self, request, *args, **kwargs):
+        """Return information about the InvenTree server."""
+        return JsonResponse(inventreeApiText())
 
 
 class InfoView(AjaxView):
@@ -35,23 +97,55 @@ class InfoView(AjaxView):
 
     def worker_pending_tasks(self):
         """Return the current number of outstanding background tasks"""
-
         return OrmQ.objects.count()
 
     def get(self, request, *args, **kwargs):
         """Serve current server information."""
+        is_staff = request.user.is_staff
+        if not is_staff and request.user.is_anonymous:
+            # Might be Token auth - check if so
+            is_staff = self.check_auth_header(request)
+
         data = {
             'server': 'InvenTree',
-            'version': inventreeVersion(),
-            'instance': inventreeInstanceName(),
-            'apiVersion': inventreeApiVersion(),
+            'version': InvenTree.version.inventreeVersion(),
+            'instance': InvenTree.version.inventreeInstanceName(),
+            'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
             'active_plugins': plugins_info(),
+            'email_configured': is_email_configured(),
+            'debug_mode': settings.DEBUG,
+            'docker_mode': settings.DOCKER,
+            'system_health': check_system_health() if is_staff else None,
+            'database': InvenTree.version.inventreeDatabase()if is_staff else None,
+            'platform': InvenTree.version.inventreePlatform() if is_staff else None,
+            'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
+            'target': InvenTree.version.inventreeTarget()if is_staff else None,
         }
 
         return JsonResponse(data)
+
+    def check_auth_header(self, request):
+        """Check if user is authenticated via a token in the header."""
+        # TODO @matmair: remove after refacgtor of Token check is done
+        headers = request.headers.get('Authorization', request.headers.get('authorization'))
+        if not headers:
+            return False
+
+        auth = headers.strip()
+        if not (auth.lower().startswith('token') and len(auth.split()) == 2):
+            return False
+
+        token_key = auth.split()[1]
+        try:
+            token = ApiToken.objects.get(key=token_key)
+            if token.active and token.user and token.user.is_staff:
+                return True
+        except ApiToken.DoesNotExist:
+            pass
+        return False
 
 
 class NotFoundView(AjaxView):
@@ -208,10 +302,8 @@ class APIDownloadMixin:
         if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
             queryset = self.filter_queryset(self.get_queryset())
             return self.download_queryset(queryset, export_format)
-
-        else:
-            # Default to the parent class implementation
-            return super().get(request, *args, **kwargs)
+        # Default to the parent class implementation
+        return super().get(request, *args, **kwargs)
 
     def download_queryset(self, queryset, export_format):
         """This function must be implemented to provide a downloadFile request."""
@@ -227,6 +319,12 @@ class AttachmentMixin:
     ]
 
     filter_backends = SEARCH_ORDER_FILTER
+
+    search_fields = [
+        'attachment',
+        'comment',
+        'link',
+    ]
 
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
@@ -250,7 +348,6 @@ class APISearchView(APIView):
 
     def get_result_types(self):
         """Construct a list of search types we can return"""
-
         import build.api
         import company.api
         import order.api
@@ -273,7 +370,6 @@ class APISearchView(APIView):
 
     def post(self, request, *args, **kwargs):
         """Perform search query against available models"""
-
         data = request.data
 
         results = {}
@@ -286,6 +382,11 @@ class APISearchView(APIView):
             'limit': 1,
             'offset': 0,
         }
+
+        if 'search' not in data:
+            raise ValidationError({
+                'search': 'Search term must be provided',
+            })
 
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested

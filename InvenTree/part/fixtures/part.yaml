@@ -7,6 +7,7 @@
     description: 'M2x4 low profile head screw'
     category: 8
     link: http://www.acme.com/parts/m2x4lphs
+    creation_date: '2018-01-01'
     tree_id: 0
     purchaseable: True
     level: 0
@@ -19,6 +20,7 @@
     name: 'M3x12 SHCS'
     description: 'M3x12 socket head cap screw'
     category: 8
+    creation_date: '2019-02-02'
     tree_id: 0
     level: 0
     lft: 0
@@ -32,6 +34,7 @@
     name: 'R_2K2_0805'
     description: '2.2kOhm resistor in 0805 package'
     category: 2
+    creation_date: '2020-03-03'
     tree_id: 0
     level: 0
     lft: 0
@@ -44,6 +47,7 @@
     name: 'R_4K7_0603'
     description: '4.7kOhm resistor in 0603 package'
     category: 2
+    creation_date: '2021-04-04'
     default_location: 2  # Home/Bathroom
     tree_id: 0
     level: 0
@@ -58,6 +62,7 @@
     description: '22nF capacitor in 0805 package'
     purchaseable: true
     category: 3
+    creation_date: '2022-05-05'
     tree_id: 0
     level: 0
     lft: 0
@@ -69,6 +74,7 @@
     name: 'Widget'
     description: 'A watchamacallit'
     category: 7
+    creation_date: '2023-06-06'
     salable: true
     assembly: true
     trackable: true
@@ -85,6 +91,7 @@
     description: 'A part without a category'
     category: null
     salable: true
+    creation_date: '2024-07-07'
     tree_id: 0
     level: 0
     lft: 0
@@ -99,6 +106,7 @@
     assembly: true
     salable: true
     purchaseable: false
+    creation_date: '2025-08-08'
     category: 7
     active: True
     IPN: BOB
@@ -114,6 +122,7 @@
     name: 'Assembly'
     description: 'A high level assembly part'
     salable: true
+    creation_date: '2026-09-09'
     active: True
     tree_id: 0
     level: 0
@@ -128,6 +137,7 @@
     description: 'A chair, which is actually just a template part'
     is_template: True
     trackable: true
+    creation_date: '2027-10-10'
     salable: true
     category: 7
     tree_id: 1
@@ -142,6 +152,7 @@
     description: 'A variant chair part which is blue'
     variant_of: 10000
     trackable: true
+    creation_date: '2028-11-11'
     category: 7
     tree_id: 1
     level: 0
@@ -156,6 +167,8 @@
     variant_of: 10000
     IPN: "R.CH"
     trackable: true
+    salable: true
+    creation_date: '2029-12-12'
     category: 7
     tree_id: 1
     level: 0
@@ -170,6 +183,7 @@
     variant_of: 10000
     category: 7
     trackable: true
+    creation_date: '2030-01-01'
     tree_id: 1
     level: 0
     lft: 0
@@ -183,6 +197,7 @@
     variant_of: 10003
     is_template: true
     category: 7
+    creation_date: '2031-02-02'
     trackable: true
     tree_id: 1
     level: 0

@@ -7,6 +7,12 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "worker",
+      "type": "shell",
+      "command": "inv worker",
+      "problemMatcher": [],
+    },
+    {
       "label": "clean-settings",
       "type": "shell",
       "command": "inv clean-settings",
