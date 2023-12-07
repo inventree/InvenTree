@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import {
+  Badge,
   Button,
   CloseButton,
   Divider,
@@ -46,7 +47,7 @@ function FilterItem({
           <Text size="xs">{flt.description}</Text>
         </Stack>
         <Group position="right">
-          <Text>{flt.value}</Text>
+          <Badge>{flt.displayValue ?? flt.value}</Badge>
           <Tooltip label={t`Remove filter`} withinPortal={true}>
             <CloseButton size="md" color="red" onClick={removeFilter} />
           </Tooltip>
@@ -125,7 +126,8 @@ function FilterAddGroup({
 
       let newFilter: TableFilter = {
         ...filter,
-        value: value
+        value: value,
+        displayValue: valueOptions.find((v) => v.value === value)?.label
       };
 
       tableState.setActiveFilters([...filters, newFilter]);

@@ -27,6 +27,7 @@ export type TableFilter = {
   choiceFunction?: () => TableFilterChoice[];
   defaultValue?: any;
   value?: any;
+  displayValue?: any;
 };
 
 /**
