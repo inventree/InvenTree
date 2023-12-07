@@ -33,6 +33,7 @@ class InvenTreeConfig(AppConfig):
         - Starting regular tasks
         - Updating exchange rates
         - Collecting notification methods
+        - Collecting state transition methods
         - Adding users set in the current environment
         """
         # skip loading if plugin registry is not loaded or we run in a background thread
@@ -52,6 +53,7 @@ class InvenTreeConfig(AppConfig):
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
         self.collect_notification_methods()
+        self.collect_state_transition_methods()
 
         # Ensure the unit registry is loaded
         InvenTree.conversion.get_unit_registry()
@@ -249,5 +251,11 @@ class InvenTreeConfig(AppConfig):
     def collect_notification_methods(self):
         """Collect all notification methods."""
         from common.notifications import storage
+
+        storage.collect()
+
+    def collect_state_transition_methods(self):
+        """Collect all state transition methods."""
+        from generic.states import storage
 
         storage.collect()

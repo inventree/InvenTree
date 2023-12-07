@@ -49,6 +49,7 @@ export default function SystemSettings() {
               'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
               'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
               'INVENTREE_REQUIRE_CONFIRM',
+              'INVENTREE_STRICT_URLS',
               'INVENTREE_TREE_DEPTH',
               'INVENTREE_BACKUP_ENABLE',
               'INVENTREE_BACKUP_DAYS',
