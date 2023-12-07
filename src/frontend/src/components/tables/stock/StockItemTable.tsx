@@ -243,15 +243,93 @@ function stockItemTableColumns(): TableColumn[] {
 function stockItemTableFilters(): TableFilter[] {
   return [
     {
-      name: 'test_filter',
-      label: t`Test Filter`,
-      description: t`This is a test filter`,
-      type: 'choice',
-      choiceFunction: () => [
-        { value: '1', label: 'One' },
-        { value: '2', label: 'Two' },
-        { value: '3', label: 'Three' }
-      ]
+      name: 'active',
+      label: t`Active`,
+      description: t`Show stock for active parts`
+    },
+    {
+      name: 'assembly',
+      label: t`Assembly`,
+      description: t`Show stock for assmebled parts`
+    },
+    {
+      name: 'allocated',
+      label: t`Allocated`,
+      description: t`Show items which have been allocated`
+    },
+    {
+      name: 'available',
+      label: t`Available`,
+      description: t`Show items which are available`
+    },
+    {
+      name: 'cascade',
+      label: t`Include Sublocations`,
+      description: t`Include stock in sublocations`
+    },
+    {
+      name: 'depleted',
+      label: t`Depleted`,
+      description: t`Show depleted stock items`
+    },
+    {
+      name: 'in_stock',
+      label: t`In Stock`,
+      description: t`Show items which are in stock`
+    },
+    {
+      name: 'is_building',
+      label: t`In Production`,
+      description: t`Show items which are in production`
+    },
+    {
+      name: 'include_variants',
+      label: t`Include Variants`,
+      description: t`Include stock items for variant parts`
+    },
+    {
+      name: 'installed',
+      label: t`Installed`,
+      description: t`Show stock items which are installed in other items`
+    },
+    {
+      name: 'sent_to_customer',
+      label: t`Sent to Customer`,
+      description: t`Show items which have been sent to a customer`
+    },
+    {
+      name: 'serialized',
+      label: t`Is Serialized`,
+      description: t`Show items which have a serial number`
+    },
+    // TODO: serial
+    // TODO: serial_gte
+    // TODO: serial_lte
+    // TODO: status
+    {
+      name: 'has_batch',
+      label: t`Has Batch Code`,
+      description: t`Show items which have a batch code`
+    },
+    // TODO: batch
+    {
+      name: 'tracked',
+      label: t`Tracked`,
+      description: t`Show tracked items`
+    },
+    {
+      name: 'has_purchase_price',
+      label: t`Has Purchase Price`,
+      description: t`Show items which have a purchase price`
+    },
+    // TODO: Expired
+    // TODO: stale
+    // TODO: expiry_date_lte
+    // TODO: expiry_date_gte
+    {
+      name: 'external',
+      label: t`External Location`,
+      description: t`Show items in an external location`
     }
   ];
 }
