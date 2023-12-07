@@ -201,7 +201,7 @@ export function FilterSelectDrawer({
             />
           </Stack>
         )}
-        <Group position="center" p="xs">
+        <Group position="center" p="xs" grow>
           {addFilter ? (
             <Button
               onClick={() => setAddFilter(false)}
@@ -218,16 +218,18 @@ export function FilterSelectDrawer({
                   color="red"
                   variant="subtle"
                 >
-                  <Text>{t`Clear all filters`}</Text>
+                  <Text>{t`Clear Filters`}</Text>
                 </Button>
               )}
-              <Button
-                onClick={() => setAddFilter(true)}
-                color="green"
-                variant="subtle"
-              >
-                <Text>{t`Add filter`}</Text>
-              </Button>
+              {tableState.activeFilters.length < availableFilters.length && (
+                <Button
+                  onClick={() => setAddFilter(true)}
+                  color="green"
+                  variant="subtle"
+                >
+                  <Text>{t`Add Filter`}</Text>
+                </Button>
+              )}
             </>
           )}
         </Group>
