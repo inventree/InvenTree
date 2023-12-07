@@ -175,6 +175,11 @@ export function FilterSelectDrawer({
 }) {
   const [addFilter, setAddFilter] = useState<boolean>(false);
 
+  // Hide the "add filter" selection whenever the selected filters change
+  useEffect(() => {
+    setAddFilter(false);
+  }, [tableState.activeFilters]);
+
   return (
     <Drawer
       size="sm"
