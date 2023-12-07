@@ -6,7 +6,7 @@ import { renderDate } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
-import { apiUrl, useServerApiState } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { RenderUser } from '../../render/User';

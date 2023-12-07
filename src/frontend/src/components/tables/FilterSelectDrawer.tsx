@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import {
-  ActionIcon,
   Button,
   CloseButton,
   Divider,
@@ -67,7 +66,7 @@ interface FilterProps extends React.ComponentPropsWithoutRef<'div'> {
  * Custom component for the filter select
  */
 const FilterSelectItem = forwardRef<HTMLDivElement, FilterProps>(
-  ({ name, label, description, ...others }, ref) => (
+  ({ label, description, ...others }, ref) => (
     <div ref={ref} {...others}>
       <Text size="sm">{label}</Text>
       <Text size="xs">{description}</Text>
