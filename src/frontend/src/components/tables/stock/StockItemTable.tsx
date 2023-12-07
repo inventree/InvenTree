@@ -11,7 +11,7 @@ import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { StatusColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import { StatusFilterOptions, TableFilter } from '../Filter';
 import { TableHoverCard } from '../TableHoverCard';
 import { InvenTreeTable } from './../InvenTreeTable';
 
@@ -248,6 +248,12 @@ function stockItemTableFilters(): TableFilter[] {
       description: t`Show stock for active parts`
     },
     {
+      name: 'status',
+      label: t`Status`,
+      description: t`Filter by stock status`,
+      choiceFunction: StatusFilterOptions(ModelType.stockitem)
+    },
+    {
       name: 'assembly',
       label: t`Assembly`,
       description: t`Show stock for assmebled parts`
@@ -305,7 +311,6 @@ function stockItemTableFilters(): TableFilter[] {
     // TODO: serial
     // TODO: serial_gte
     // TODO: serial_lte
-    // TODO: status
     {
       name: 'has_batch',
       label: t`Has Batch Code`,

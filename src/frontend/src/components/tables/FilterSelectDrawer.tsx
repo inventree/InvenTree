@@ -12,13 +12,15 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import { IconCircleX } from '@tabler/icons-react';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TableState } from '../../hooks/UseTable';
 import { StylishText } from '../items/StylishText';
-import { YesNoButton } from '../items/YesNoButton';
-import { TableFilter } from './Filter';
+import {
+  TableFilter,
+  TableFilterChoice,
+  getTableFilterOptions
+} from './Filter';
 
 /*
  * Render a single table filter item
@@ -37,14 +39,6 @@ function FilterItem({
     tableState.setActiveFilters(newFilters);
   }, [flt]);
 
-  const value = useMemo(() => {
-    switch (flt.type) {
-      default:
-      case 'bool':
-        return <YesNoButton value={flt.value} />;
-    }
-  }, [flt]);
-
   return (
     <Paper p="sm" shadow="sm" radius="xs">
       <Group position="apart" key={flt.name}>
@@ -53,7 +47,7 @@ function FilterItem({
           <Text size="xs">{flt.description}</Text>
         </Stack>
         <Group position="right">
-          {value}
+          <Text>{flt.value}</Text>
           <Tooltip label={t`Remove filter`} withinPortal={true}>
             <CloseButton size="md" color="red" onClick={removeFilter} />
           </Tooltip>
@@ -102,7 +96,7 @@ function FilterAddGroup({
 
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
-  const valueOptions = useMemo(() => {
+  const valueOptions: TableFilterChoice[] = useMemo(() => {
     // Find the matching filter
     let filter: TableFilter | undefined = availableFilters.find(
       (flt) => flt.name === selectedFilter
@@ -112,14 +106,7 @@ function FilterAddGroup({
       return [];
     }
 
-    switch (filter.type) {
-      default:
-      case 'boolean':
-        return [
-          { value: 'true', label: t`Yes` },
-          { value: 'false', label: t`No` }
-        ];
-    }
+    return getTableFilterOptions(filter);
   }, [selectedFilter]);
 
   const setSelectedValue = useCallback(
@@ -157,6 +144,7 @@ function FilterAddGroup({
         placeholder={t`Select filter`}
         label={t`Filter`}
         onChange={(value: string | null) => setSelectedFilter(value)}
+        maxDropdownHeight={800}
       />
       {selectedFilter && (
         <Select
@@ -164,6 +152,7 @@ function FilterAddGroup({
           label={t`Value`}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => setSelectedValue(value)}
+          maxDropdownHeight={800}
         />
       )}
     </Stack>
