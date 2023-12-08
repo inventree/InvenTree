@@ -120,7 +120,7 @@ root_command() {
   fi
 
   echo "### Getting and adding key"
-  curl -fsSL https://dl.packager.io/srv/$publisher/InvenTree/key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/pkgr-inventree.gpg> /dev/null
+  curl -fsSL https://dl.packager.io/srv/$publisher/InvenTree/key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/pkgr-inventree.gpg > /dev/null
   echo "### Adding package source"
   SOURCE_URL="deb [signed-by=/etc/apt/trusted.gpg.d/pkgr-inventree.gpg] https://dl.packager.io/srv/deb/$publisher/InvenTree/$source_url/$DIST_OS $DIST_VER main"
   echo "$SOURCE_URL" | tee /etc/apt/sources.list.d/inventree.list > /dev/null
