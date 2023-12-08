@@ -17,7 +17,7 @@ import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
-export function PartParameterTemplateTable() {
+export default function PartParameterTemplateTable() {
   const table = useTable('part-parameter-templates');
 
   const user = useUserState();

@@ -4,13 +4,7 @@
  *
  * Image caching is handled automagically by the browsers cache
  */
-import {
-  Image,
-  ImageProps,
-  LoadingOverlay,
-  Overlay,
-  Stack
-} from '@mantine/core';
+import { Image, ImageProps, Skeleton, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -27,7 +21,7 @@ export function ApiImage(props: ImageProps) {
 
   const queryKey = useId();
 
-  const imgQuery = useQuery({
+  const _imgQuery = useQuery({
     queryKey: ['image', queryKey, props.src],
     enabled:
       authorized &&
@@ -52,7 +46,8 @@ export function ApiImage(props: ImageProps) {
               setImage(url);
               break;
             default:
-              // User is not authorized to view this image
+              // User is not authorized to view this image, or the image is not available
+              setImage('');
               setAuthorized(false);
               console.error(`Error fetching image ${props.src}:`, response);
               break;
@@ -71,9 +66,14 @@ export function ApiImage(props: ImageProps) {
 
   return (
     <Stack>
-      <LoadingOverlay visible={imgQuery.isLoading || imgQuery.isFetching} />
-      <Image {...props} src={image} withPlaceholder fit="contain" />
-      {imgQuery.isError && <Overlay color="#F00" />}
+      {image && image.length > 0 ? (
+        <Image {...props} src={image} withPlaceholder fit="contain" />
+      ) : (
+        <Skeleton
+          height={props?.height ?? props.width}
+          width={props?.width ?? props.height}
+        />
+      )}
     </Stack>
   );
 }

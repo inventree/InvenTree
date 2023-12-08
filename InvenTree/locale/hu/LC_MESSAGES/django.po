@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-02 07:54+0000\n"
-"PO-Revision-Date: 2023-12-03 02:11\n"
+"POT-Creation-Date: 2023-12-05 01:22+0000\n"
+"PO-Revision-Date: 2023-12-05 02:31\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -5628,31 +5628,31 @@ msgstr "Minimum ár"
 msgid "Maximum Price"
 msgstr "Maximum ár"
 
-#: part/api.py:505
+#: part/api.py:506
 msgid "Incoming Purchase Order"
 msgstr "Beérkező beszerzési rendelés"
 
-#: part/api.py:525
+#: part/api.py:526
 msgid "Outgoing Sales Order"
 msgstr "Kimenő vevői rendelés"
 
-#: part/api.py:543
+#: part/api.py:544
 msgid "Stock produced by Build Order"
 msgstr "Gyártással előállított készlet"
 
-#: part/api.py:629
+#: part/api.py:630
 msgid "Stock required for Build Order"
 msgstr "A gyártási utasításhoz szükséges készlet"
 
-#: part/api.py:774
+#: part/api.py:775
 msgid "Valid"
 msgstr "Érvényes"
 
-#: part/api.py:775
+#: part/api.py:776
 msgid "Validate entire Bill of Materials"
 msgstr "Teljes alkatrészjegyzék jóváhagyása"
 
-#: part/api.py:781
+#: part/api.py:782
 msgid "This option must be selected"
 msgstr "Ennek az opciónak ki kll lennie választva"
 
@@ -7504,7 +7504,7 @@ msgstr "Alapvető vonalkód támogatást ad"
 #: plugin/builtin/integration/core_notifications.py:34
 #: plugin/builtin/integration/currency_exchange.py:22
 #: plugin/builtin/labels/inventree_label.py:23
-#: plugin/builtin/labels/label_sheet.py:56
+#: plugin/builtin/labels/label_sheet.py:63
 #: plugin/builtin/suppliers/digikey.py:19 plugin/builtin/suppliers/lcsc.py:21
 #: plugin/builtin/suppliers/mouser.py:19 plugin/builtin/suppliers/tme.py:21
 msgid "InvenTree contributors"
@@ -7577,34 +7577,42 @@ msgid "Page size for the label sheet"
 msgstr "Címke oldal méret"
 
 #: plugin/builtin/labels/label_sheet.py:34
+msgid "Skip Labels"
+msgstr ""
+
+#: plugin/builtin/labels/label_sheet.py:35
+msgid "Skip this number of labels when printing label sheets"
+msgstr ""
+
+#: plugin/builtin/labels/label_sheet.py:41
 msgid "Border"
 msgstr "Szegély"
 
-#: plugin/builtin/labels/label_sheet.py:35
+#: plugin/builtin/labels/label_sheet.py:42
 msgid "Print a border around each label"
 msgstr "Az egyes címkék körüli margó"
 
-#: plugin/builtin/labels/label_sheet.py:40 report/models.py:203
+#: plugin/builtin/labels/label_sheet.py:47 report/models.py:203
 msgid "Landscape"
 msgstr "Fekvő"
 
-#: plugin/builtin/labels/label_sheet.py:41
+#: plugin/builtin/labels/label_sheet.py:48
 msgid "Print the label sheet in landscape mode"
 msgstr "Fekvő módban nyomtatás"
 
-#: plugin/builtin/labels/label_sheet.py:53
+#: plugin/builtin/labels/label_sheet.py:60
 msgid "InvenTree Label Sheet Printer"
 msgstr "Inventree Címke Ív Nyomtató"
 
-#: plugin/builtin/labels/label_sheet.py:54
+#: plugin/builtin/labels/label_sheet.py:61
 msgid "Arrays multiple labels onto a single sheet"
 msgstr "Több címke egy ívre helyezése"
 
-#: plugin/builtin/labels/label_sheet.py:87
+#: plugin/builtin/labels/label_sheet.py:95
 msgid "Label is too large for page size"
 msgstr "Címke túl nagy a lapmérethez képest"
 
-#: plugin/builtin/labels/label_sheet.py:116
+#: plugin/builtin/labels/label_sheet.py:128
 msgid "No labels were generated"
 msgstr "Nem készült címke"
 
