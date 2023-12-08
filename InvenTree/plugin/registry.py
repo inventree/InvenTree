@@ -260,8 +260,7 @@ class PluginsRegistry:
 
         if self.loading_lock.acquire(blocking=False):
 
-            logger.info('Plugin Registry: Reloading plugins')
-            logger.info('Plugin Registry: Force: %s, Full: %s, Collect: %s', force_reload, full_reload, collect)
+            logger.info('Plugin Registry: Reloading plugins - Force: %s, Full: %s, Collect: %s', force_reload, full_reload, collect)
 
             with maintenance_mode_on():
                 if collect:
