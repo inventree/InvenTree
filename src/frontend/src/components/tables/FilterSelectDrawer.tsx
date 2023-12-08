@@ -188,7 +188,6 @@ export function FilterSelectDrawer({
       title={<StylishText size="lg">{t`Table Filters`}</StylishText>}
     >
       <Stack spacing="xs">
-        <Divider />
         {tableState.activeFilters.map((f) => (
           <FilterItem flt={f} tableState={tableState} />
         ))}
@@ -201,38 +200,34 @@ export function FilterSelectDrawer({
             />
           </Stack>
         )}
-        <Group position="center" p="xs" grow>
-          {addFilter ? (
+        {addFilter && (
+          <Button
+            onClick={() => setAddFilter(false)}
+            color="orange"
+            variant="subtle"
+          >
+            <Text>{t`Cancel`}</Text>
+          </Button>
+        )}
+        {!addFilter &&
+          tableState.activeFilters.length < availableFilters.length && (
             <Button
-              onClick={() => setAddFilter(false)}
-              color="orange"
+              onClick={() => setAddFilter(true)}
+              color="green"
               variant="subtle"
             >
-              <Text>{t`Cancel`}</Text>
+              <Text>{t`Add Filter`}</Text>
             </Button>
-          ) : (
-            <>
-              {tableState.activeFilters.length > 0 && (
-                <Button
-                  onClick={tableState.clearActiveFilters}
-                  color="red"
-                  variant="subtle"
-                >
-                  <Text>{t`Clear Filters`}</Text>
-                </Button>
-              )}
-              {tableState.activeFilters.length < availableFilters.length && (
-                <Button
-                  onClick={() => setAddFilter(true)}
-                  color="green"
-                  variant="subtle"
-                >
-                  <Text>{t`Add Filter`}</Text>
-                </Button>
-              )}
-            </>
           )}
-        </Group>
+        {!addFilter && tableState.activeFilters.length > 0 && (
+          <Button
+            onClick={tableState.clearActiveFilters}
+            color="red"
+            variant="subtle"
+          >
+            <Text>{t`Clear Filters`}</Text>
+          </Button>
+        )}
       </Stack>
     </Drawer>
   );
