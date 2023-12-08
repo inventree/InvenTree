@@ -131,6 +131,34 @@ class PluginConfigEmptySerializer(serializers.Serializer):
     ...
 
 
+class PluginReloadSerializer(serializers.Serializer):
+    """Serializer for remotely forcing plugin registry reload"""
+
+    full_reload = serializers.BooleanField(
+        required=False, default=False,
+        label=_("Full reload"),
+    )
+
+    force_reload = serializers.BooleanField(
+        required=False, default=False,
+        label=_("Force reload"),
+    )
+
+    collect_plugins = serializers.BooleanField(
+        required=False, default=False,
+        label=_("Collect plugins"),
+    )
+
+    def save(self):
+        """Reload the plugin registry."""
+        from plugin.registry import registry
+        registry.reload_plugins(
+            full_reload=self.validated_data.get('full_reload', False),
+            force_reload=self.validated_data.get('force_reload', False),
+            collect=self.validated_data.get('collect_plugins', False),
+        )
+
+
 class PluginActivateSerializer(serializers.Serializer):
     """Serializer for activating or deactivating a plugin"""
 

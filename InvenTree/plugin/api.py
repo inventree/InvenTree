@@ -189,6 +189,18 @@ class PluginActivate(UpdateAPI):
         serializer.save()
 
 
+class PluginReload(CreateAPI):
+    """Endpoint for reloading all plugins."""
+
+    queryset = PluginConfig.objects.none()
+    serializer_class = PluginSerializers.PluginReloadSerializer
+    permission_classes = [IsSuperuser,]
+
+    def perform_create(self, serializer):
+        """Saving the serializer instance performs plugin installation"""
+        return serializer.save()
+
+
 class PluginSettingList(ListAPI):
     """List endpoint for all plugin related settings.
 
@@ -374,6 +386,7 @@ plugin_api_urls = [
         re_path('^metadata/', MetadataView.as_view(), {'model': PluginConfig}, name='api-plugin-metadata'),
 
         # Plugin management
+        re_path(r'^reload/', PluginReload.as_view(), name='api-plugin-reload'),
         re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
         re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
 
