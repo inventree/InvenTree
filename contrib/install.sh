@@ -111,7 +111,7 @@ root_command() {
   done
 
   if [[ $NEEDS_LIBSSL1_1 == "true" ]]; then
-      echo "### Pathching for libssl1.1"
+      echo "### Installing libssl1.1"
 
       echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
       do_call "sudo apt-get update"
