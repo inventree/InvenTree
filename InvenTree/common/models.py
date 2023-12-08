@@ -1896,6 +1896,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Display Users full names instead of usernames'),
             'default': False,
             'validator': bool
+        },
+
+        'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
+            'name': _('Block build orders until required tests are completed'),
+            'description': _('Would you like required tests to be mandatory passed for completing build orders?'),
+            'default': False,
+            'validator': bool
         }
     }
 
