@@ -3,9 +3,7 @@ import { Group, LoadingOverlay, Stack, Table } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
-  IconCopy,
   IconDots,
-  IconEdit,
   IconFileTypePdf,
   IconInfoCircle,
   IconList,
