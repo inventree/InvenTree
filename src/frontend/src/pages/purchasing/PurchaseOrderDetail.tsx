@@ -81,7 +81,7 @@ export default function PurchaseOrderDetail() {
           <AttachmentTable
             endpoint={ApiPaths.purchase_order_attachment_list}
             model="order"
-            pk={Number(id) ?? -1}
+            pk={Number(id)}
           />
         )
       },

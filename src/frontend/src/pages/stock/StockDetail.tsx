@@ -111,7 +111,7 @@ export default function StockDetail() {
           <AttachmentTable
             endpoint={ApiPaths.stock_attachment_list}
             model="stock_item"
-            pk={Number(id) ?? -1}
+            pk={Number(id)}
           />
         )
       },

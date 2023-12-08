@@ -122,7 +122,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             params={{
-              build: id ?? -1,
+              build: id,
               is_building: false
             }}
           />
@@ -135,7 +135,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             params={{
-              consumed_by: id ?? -1
+              consumed_by: id
             }}
           />
         )
@@ -147,7 +147,7 @@ export default function BuildDetail() {
         content: (
           <BuildOrderTable
             params={{
-              parent: id ?? -1
+              parent: id
             }}
           />
         )
@@ -160,7 +160,7 @@ export default function BuildDetail() {
           <AttachmentTable
             endpoint={ApiPaths.build_order_attachment_list}
             model="build"
-            pk={Number(id ?? -1)}
+            pk={Number(id)}
           />
         )
       },

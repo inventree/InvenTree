@@ -30,15 +30,6 @@ export default function Stock() {
   });
 
   const locationPanels: PanelType[] = useMemo(() => {
-    console.log(
-      'Location:',
-      location,
-      'id:',
-      id,
-      instanceQuery.isFetching,
-      'loc.pk:',
-      location.pk
-    );
     return [
       {
         name: 'stock-items',

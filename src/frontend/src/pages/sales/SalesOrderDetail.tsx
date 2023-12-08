@@ -69,7 +69,7 @@ export default function SalesOrderDetail() {
           <AttachmentTable
             endpoint={ApiPaths.sales_order_attachment_list}
             model="order"
-            pk={Number(id) ?? -1}
+            pk={Number(id)}
           />
         )
       },
