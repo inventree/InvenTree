@@ -1899,8 +1899,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
-            'name': _('Block build orders until required tests are completed'),
-            'description': _('Would you like required tests to be mandatory passed for completing build orders?'),
+            'name': _('Block Until Tests Pass'),
+            'description': _('Prevent build outputs from being completed until all required tests pass'),
             'default': False,
             'validator': bool
         }

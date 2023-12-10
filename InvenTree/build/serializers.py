@@ -521,22 +521,20 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         outputs = data.get('outputs', [])
 
         if common.settings.prevent_build_output_complete_on_incompleted_tests:
-            error_string = ''
+            errors = []
             fail_count = 0
 
             for output in outputs:
                 stock_item = output['output']
                 if stock_item.hasRequiredTests() and not stock_item.passedAllRequiredTests():
                     if stock_item.part.trackable:
-                        if len(error_string):
-                            error_string += "<br>"
-                        error_string += _("The %s stock item was not passed on all of the required tests" % stock_item.serial)
+                        errors.append(_("The %s stock item was not passed on all of the required tests" % stock_item.serial))
                     else:
                         fail_count += stock_item.quantity
             if fail_count:
-                error_string = _("The %d stock item(s) was not passed on all required tests" % fail_count)
-            if len(error_string):
-                raise ValidationError(error_string)
+                errors.append(_("The %d stock item(s) was not passed on all required tests" % fail_count))
+            if len(errors):
+                raise ValidationError(errors)
 
         if len(outputs) == 0:
             raise ValidationError(_("A list of build outputs must be provided"))
