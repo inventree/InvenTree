@@ -11,7 +11,7 @@ import {
   Tooltip
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
+import { notifications, showNotification } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconCircleX,
@@ -30,6 +30,7 @@ import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useInstance } from '../../../hooks/UseInstance';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { ActionDropdown, EditItemAction } from '../../items/ActionDropdown';
 import { InfoItem } from '../../items/InfoItem';
@@ -423,11 +424,39 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
     }
   });
 
+  const user = useUserState();
+
+  const reloadPlugins = useCallback(() => {
+    api
+      .post(apiUrl(ApiPaths.plugin_reload), {
+        full_reload: true,
+        force_reload: true,
+        collect_plugins: true
+      })
+      .then(() => {
+        showNotification({
+          title: t`Plugins reloaded`,
+          message: t`Plugins were reloaded successfully`,
+          color: 'green'
+        });
+        table.refreshTable();
+      });
+  }, []);
+
   // Custom table actions
   const tableActions = useMemo(() => {
     let actions = [];
 
-    if (pluginsEnabled) {
+    if (user.user?.is_superuser && pluginsEnabled) {
+      actions.push(
+        <ActionButton
+          color="green"
+          icon={<IconRefresh />}
+          tooltip={t`Reload Plugins`}
+          onClick={reloadPlugins}
+        />
+      );
+
       actions.push(
         <ActionButton
           color="green"
@@ -439,7 +468,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
     }
 
     return actions;
-  }, []);
+  }, [user, pluginsEnabled]);
 
   return (
     <>
