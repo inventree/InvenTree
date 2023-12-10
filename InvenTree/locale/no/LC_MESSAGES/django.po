@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-07 20:21+0000\n"
-"PO-Revision-Date: 2023-12-08 02:46\n"
+"PO-Revision-Date: 2023-12-10 03:35\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -811,19 +811,19 @@ msgstr "Konvertert til variant"
 
 #: InvenTree/status_codes.py:126
 msgid "Build order output created"
-msgstr "Build ordreutgang opprettet"
+msgstr "Produksjonsartikkel opprettet"
 
 #: InvenTree/status_codes.py:127
 msgid "Build order output completed"
-msgstr "Build ordreutg fullført"
+msgstr "Produksjonsartikkel fullført"
 
 #: InvenTree/status_codes.py:128
 msgid "Build order output rejected"
-msgstr "Bygge ordreutgang avvist"
+msgstr "Produksjonsartikkel avvist"
 
 #: InvenTree/status_codes.py:129 templates/js/translated/stock.js:1732
 msgid "Consumed by build order"
-msgstr "Antatt som byggeordre"
+msgstr "Brukt av produksjonsordre"
 
 #: InvenTree/status_codes.py:132
 msgid "Shipped against Sales Order"
@@ -915,7 +915,7 @@ msgstr "Om InvenTree"
 
 #: build/api.py:237
 msgid "Build must be cancelled before it can be deleted"
-msgstr "Bygningen må avbrytes før den kan slettes"
+msgstr "Produksjonen må avbrytes før den kan slettes"
 
 #: build/api.py:281 part/models.py:3786 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2511
@@ -966,7 +966,7 @@ msgstr "Tilgjengelig"
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:967 templates/js/translated/stock.js:2863
 msgid "Build Order"
-msgstr "Build ordre"
+msgstr "Produksjonsordre"
 
 #: build/models.py:75 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -977,19 +977,19 @@ msgstr "Build ordre"
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:186 users/models.py:196
 msgid "Build Orders"
-msgstr "Build Ordre"
+msgstr "Produksjonsordrer"
 
 #: build/models.py:116
 msgid "Invalid choice for parent build"
-msgstr "Ugylding valg for overordnet build"
+msgstr "Ugyldig valg for overordnet produksjon"
 
 #: build/models.py:127
 msgid "Build order part cannot be changed"
-msgstr ""
+msgstr "Produksjonsordrens del kan ikke endres"
 
 #: build/models.py:171
 msgid "Build Order Reference"
-msgstr "Bygg ordrereferanse"
+msgstr "Produksjonsordre-referanse"
 
 #: build/models.py:172 order/models.py:364 order/models.py:792
 #: order/models.py:1136 order/models.py:1772 part/admin.py:274
@@ -1014,11 +1014,11 @@ msgstr "Kort beskrivelse av produksjonen (valgfritt)"
 #: build/models.py:191 build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr "Overordnet build"
+msgstr "Overordnet produksjon"
 
 #: build/models.py:192
 msgid "BuildOrder to which this build is allocated"
-msgstr "Build order som denne build er tildelt til"
+msgstr "Produksjonsordre som denne produksjonen er tildelt"
 
 #: build/models.py:197 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:908
@@ -1148,7 +1148,7 @@ msgstr "Forventet sluttdato"
 
 #: build/models.py:274
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr "Forventet dato for ferdigstillelse. Build er forvalt etter denne datoen."
+msgstr "Måldato for ferdigstillelse. Produksjonen vil være forfalt etter denne datoen."
 
 #: build/models.py:277 order/models.py:414 order/models.py:1815
 #: templates/js/translated/build.js:2235
@@ -1165,7 +1165,7 @@ msgstr "Utstedt av"
 
 #: build/models.py:292
 msgid "User who issued this build order"
-msgstr "Brukeren som utstede denne prosjekt order"
+msgstr "Brukeren som utstedte denne produksjonsordren"
 
 #: build/models.py:300 build/templates/build/build_base.html:204
 #: build/templates/build/detail.html:122 common/models.py:134
@@ -1224,23 +1224,23 @@ msgstr "Prosjektkode for denne produksjonsordren"
 #: build/models.py:557
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr "Byggeordre {build} er fullført"
+msgstr "Produksjonsordre {build} er fullført"
 
 #: build/models.py:563
 msgid "A build order has been completed"
-msgstr "Byggeordre er fullført"
+msgstr "En produksjonsordre er fullført"
 
 #: build/models.py:781 build/models.py:856
 msgid "No build output specified"
-msgstr "Ingen prosjekt utgang"
+msgstr "Ingen produksjonsartikkel spesifisert"
 
 #: build/models.py:784
 msgid "Build output is already completed"
-msgstr "Prosjekt utdata er allerede utfylt"
+msgstr "Produksjonsartikkelen er allerede fullført"
 
 #: build/models.py:787
 msgid "Build output does not match Build Order"
-msgstr "Prosjekt utdata samsvarer ikke Prosjekt Order"
+msgstr "Produksjonsartikkelen samsvarer ikke med produksjonsordren"
 
 #: build/models.py:860 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:445 order/serializers.py:389
@@ -1255,7 +1255,7 @@ msgstr "Kvantitet kan ikke være større enn utgangsantallet"
 
 #: build/models.py:1279
 msgid "Build object"
-msgstr "Bygg objekt"
+msgstr "Produksjonsobjekt"
 
 #: build/models.py:1293 build/models.py:1551 build/serializers.py:205
 #: build/serializers.py:242 build/templates/build/build_base.html:102
@@ -1306,11 +1306,11 @@ msgstr "Antall"
 
 #: build/models.py:1294
 msgid "Required quantity for build order"
-msgstr "Påkrved kvantitet for ordre"
+msgstr "Påkrevd antall for produksjonsordre"
 
 #: build/models.py:1374
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr "Prosjektvare må spesifisere en prosjekt utdata, siden hovedvaren er markert som sporbar"
+msgstr "Produksjonselement må spesifisere en produksjonsartikkel, da master-del er merket som sporbar"
 
 #: build/models.py:1383
 #, python-brace-format
@@ -1447,7 +1447,7 @@ msgstr "Plassering"
 
 #: build/serializers.py:422
 msgid "Stock location for scrapped outputs"
-msgstr "Lagreplassering for skrotet utganger"
+msgstr "Lagerplassering for skrotede produksjonsartikler"
 
 #: build/serializers.py:428
 msgid "Discard Allocations"
@@ -1455,11 +1455,11 @@ msgstr "Forkast tildelinger"
 
 #: build/serializers.py:429
 msgid "Discard any stock allocations for scrapped outputs"
-msgstr "Forkast lagerallokering for skrotet utganger"
+msgstr "Forkast tildelinger fra skrotede produksjonsartikler"
 
 #: build/serializers.py:434
 msgid "Reason for scrapping build output(s)"
-msgstr "Grunnen til utrangering av bygg utgang(er)"
+msgstr "Grunn for skroting av produksjonsartikler"
 
 #: build/serializers.py:494
 msgid "Location for completed build outputs"
@@ -1558,7 +1558,7 @@ msgstr "Produksjonsordren har uferdige artikler"
 
 #: build/serializers.py:718
 msgid "Build Line"
-msgstr "Bygg linje"
+msgstr "Produksjonslinje"
 
 #: build/serializers.py:728
 msgid "Build output"
@@ -1570,7 +1570,7 @@ msgstr "Produksjonsartikkel må peke til samme produksjon"
 
 #: build/serializers.py:772
 msgid "Build Line Item"
-msgstr "Bygg linjeelement"
+msgstr "Produksjonsartikkel"
 
 #: build/serializers.py:786
 msgid "bom_item.part must point to the same part as the build order"
@@ -1619,7 +1619,7 @@ msgstr "Lagervarer ved flere plasseringer kan brukes om hverandre"
 
 #: build/serializers.py:963
 msgid "Substitute Stock"
-msgstr "Erstatning av lagerbeholdning"
+msgstr "Erstatning-lagerbeholdning"
 
 #: build/serializers.py:964
 msgid "Allow allocation of substitute parts"
@@ -1845,7 +1845,7 @@ msgstr "Lagerkilde"
 
 #: build/templates/build/detail.html:43
 msgid "Stock can be taken from any available location."
-msgstr "Lagervare kan hentes fra alle tilgengelige steder."
+msgstr "Lagervare kan hentes fra alle tilgengelige plasseringer."
 
 #: build/templates/build/detail.html:49 order/models.py:1270
 #: templates/js/translated/purchase_order.js:2183
@@ -1870,7 +1870,7 @@ msgstr "Tildelte deler"
 #: templates/js/translated/table_filters.js:313
 #: templates/js/translated/table_filters.js:404
 msgid "Batch"
-msgstr "Parti"
+msgstr "Batch"
 
 #: build/templates/build/detail.html:133
 #: order/templates/order/order_base.html:173
@@ -1904,11 +1904,11 @@ msgstr "Tildel Lagerbeholdning til Produksjon"
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
-msgstr "Fjern lager allokering"
+msgstr "Fjern allokering av lagerbeholdning"
 
 #: build/templates/build/detail.html:182
 msgid "Deallocate Stock"
-msgstr "Fjern lager allokering"
+msgstr "Fjern allokering av lagerbeholdning"
 
 #: build/templates/build/detail.html:184
 msgid "Automatically allocate stock to build"
@@ -1924,7 +1924,7 @@ msgstr "Manuelt tildel lagerbeholdning til produksjon"
 
 #: build/templates/build/detail.html:188 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
-msgstr "Tildele lager"
+msgstr "Tildel lagerbeholdning"
 
 #: build/templates/build/detail.html:191
 msgid "Order required parts"
@@ -1953,7 +1953,7 @@ msgstr "Forbrukt lager"
 
 #: build/templates/build/detail.html:244
 msgid "Completed Build Outputs"
-msgstr "Fullførte byggeresultater"
+msgstr "Fullførte produksjonsartikkel"
 
 #: build/templates/build/detail.html:256 build/templates/build/sidebar.html:19
 #: company/templates/company/detail.html:229
@@ -1973,7 +1973,7 @@ msgstr "Vedlegg"
 
 #: build/templates/build/detail.html:271
 msgid "Build Notes"
-msgstr "Bygg notater"
+msgstr "Produksjonsnotater"
 
 #: build/templates/build/detail.html:422
 msgid "Allocation Complete"
@@ -1985,15 +1985,15 @@ msgstr "Alle linjer er fullt tildelt"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
-msgstr "Ny byggeordre"
+msgstr "Ny produksjonsordre"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
-msgstr "Byggordre detaljer"
+msgstr "Produksjonsordre-detaljer"
 
 #: build/templates/build/sidebar.html:10
 msgid "Incomplete Outputs"
-msgstr "Ufullstendige resultater"
+msgstr "Ufullstendige artikler"
 
 #: common/files.py:63
 #, python-brace-format
@@ -5645,11 +5645,11 @@ msgstr "Utgående salgsordre"
 
 #: part/api.py:544
 msgid "Stock produced by Build Order"
-msgstr "Lagervarer produsert av bygg order"
+msgstr "Lagervarer produsert av en produksjonsordre"
 
 #: part/api.py:630
 msgid "Stock required for Build Order"
-msgstr "Lagervarer som kreves for Bygg Order"
+msgstr "Lagervarer påkrevd for produksjonsordre"
 
 #: part/api.py:775
 msgid "Valid"
@@ -6906,11 +6906,11 @@ msgstr "Sammenstillinger"
 
 #: part/templates/part/detail.html:313
 msgid "Part Builds"
-msgstr ""
+msgstr "Del-produksjoner"
 
 #: part/templates/part/detail.html:338 stock/templates/stock/item.html:36
 msgid "Build Order Allocations"
-msgstr ""
+msgstr "Produksjonsordre-tildelinger"
 
 #: part/templates/part/detail.html:352
 msgid "Part Suppliers"
@@ -7073,7 +7073,7 @@ msgstr "Vis detaljer for del"
 #: part/templates/part/part_base.html:218
 #: stock/templates/stock/item_base.html:388
 msgid "Allocated to Build Orders"
-msgstr ""
+msgstr "Tildelt til produksjonsordrer"
 
 #: part/templates/part/part_base.html:227
 #: stock/templates/stock/item_base.html:381
@@ -7473,7 +7473,7 @@ msgstr "Skannet strekkodedata"
 
 #: plugin/base/barcodes/serializers.py:81
 msgid "PurchaseOrder to allocate items against"
-msgstr ""
+msgstr "Innkjøpsordre å tildele artikler mot"
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
@@ -7489,11 +7489,11 @@ msgstr "Innkjøpsordren har ikke blitt sendt"
 
 #: plugin/base/barcodes/serializers.py:119
 msgid "Location to receive items into"
-msgstr ""
+msgstr "Plassering å motta deler til"
 
 #: plugin/base/barcodes/serializers.py:126
 msgid "Cannot select a structural location"
-msgstr ""
+msgstr "Kan ikke velge en strukturell plassering"
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -7702,7 +7702,7 @@ msgstr "Nøkkel"
 
 #: plugin/models.py:35
 msgid "Key of plugin"
-msgstr ""
+msgstr "Utvidelsens \"Key\""
 
 #: plugin/models.py:43
 msgid "PluginName of the plugin"
@@ -7755,7 +7755,7 @@ msgstr "Utvidelsen krever maks versjon {v}"
 
 #: plugin/samples/integration/sample.py:50
 msgid "Enable PO"
-msgstr ""
+msgstr "Aktiver PO"
 
 #: plugin/samples/integration/sample.py:51
 msgid "Enable PO functionality in InvenTree interface"
@@ -7884,7 +7884,7 @@ msgstr "Sidestørrelse for PDF-rapporter"
 
 #: report/models.py:204
 msgid "Render report in landscape orientation"
-msgstr ""
+msgstr "Generer rapport i landskapsorientering"
 
 #: report/models.py:305
 msgid "Pattern for generating report filenames"
@@ -7960,7 +7960,7 @@ msgstr "Ressursfilbeskrivelse"
 
 #: report/models.py:676
 msgid "stock location query filters (comma-separated list of key=value pairs)"
-msgstr ""
+msgstr "spørringsfiltre for lagerplassering (kommadelt liste av nøkkel=verdi-par)"
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
 msgid "Materials needed"
@@ -8014,7 +8014,7 @@ msgstr "Serienummer"
 
 #: report/templates/report/inventree_slr_report.html:97
 msgid "Stock location items"
-msgstr ""
+msgstr "Artikler ved lagerplassering"
 
 #: report/templates/report/inventree_test_report_base.html:21
 msgid "Stock Item Test Report"
@@ -8063,32 +8063,32 @@ msgstr "Serienummer"
 
 #: report/templatetags/report.py:95
 msgid "Asset file does not exist"
-msgstr ""
+msgstr "Asset-filen eksisterer ikke"
 
 #: report/templatetags/report.py:144 report/templatetags/report.py:209
 msgid "Image file not found"
-msgstr ""
+msgstr "Bildefil ikke funnet"
 
 #: report/templatetags/report.py:230
 msgid "part_image tag requires a Part instance"
-msgstr ""
+msgstr "part_image-taggen krever en Part-instans"
 
 #: report/templatetags/report.py:269
 msgid "company_image tag requires a Company instance"
-msgstr ""
+msgstr "company_image-taggen krever en Company-instans"
 
 #: stock/admin.py:40 stock/admin.py:126
 msgid "Location ID"
-msgstr ""
+msgstr "Plasserings-ID"
 
 #: stock/admin.py:41 stock/admin.py:127
 msgid "Location Name"
-msgstr ""
+msgstr "Plasseringsnavn"
 
 #: stock/admin.py:45 stock/templates/stock/location.html:131
 #: stock/templates/stock/location.html:137
 msgid "Location Path"
-msgstr ""
+msgstr "Plasserings-sti"
 
 #: stock/admin.py:118
 msgid "Stock Item ID"
@@ -8121,7 +8121,7 @@ msgstr "Installert i"
 
 #: stock/admin.py:133
 msgid "Build ID"
-msgstr ""
+msgstr "Produksjons-ID"
 
 #: stock/admin.py:135
 msgid "Sales Order ID"
@@ -8147,19 +8147,19 @@ msgstr "Utløpsdato"
 
 #: stock/api.py:499 templates/js/translated/table_filters.js:427
 msgid "External Location"
-msgstr ""
+msgstr "Ekstern plassering"
 
 #: stock/api.py:659
 msgid "Part Tree"
-msgstr ""
+msgstr "Del-tre"
 
 #: stock/api.py:688
 msgid "Expiry date before"
-msgstr ""
+msgstr "Utløpsdato før"
 
 #: stock/api.py:694
 msgid "Expiry date after"
-msgstr ""
+msgstr "Utløpsdato etter"
 
 #: stock/api.py:699 stock/templates/stock/item_base.html:439
 #: templates/js/translated/table_filters.js:441
@@ -8188,103 +8188,103 @@ msgstr "Serienumre kan ikke angis for en ikke-sporbar del"
 
 #: stock/models.py:56
 msgid "Stock Location type"
-msgstr ""
+msgstr "Lagerplasseringstype"
 
 #: stock/models.py:57
 msgid "Stock Location types"
-msgstr ""
+msgstr "Lagerplasseringstyper"
 
 #: stock/models.py:86
 msgid "Default icon for all locations that have no icon set (optional)"
-msgstr ""
+msgstr "Standard ikom for alle plasseringer som ikke har satt et ikon (valgfritt)"
 
 #: stock/models.py:118 stock/models.py:726
 #: stock/templates/stock/location.html:17
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
-msgstr ""
+msgstr "Lagerplassering"
 
 #: stock/models.py:119 stock/templates/stock/location.html:179
 #: templates/InvenTree/search.html:166 templates/js/translated/search.js:178
 #: users/models.py:194
 msgid "Stock Locations"
-msgstr ""
+msgstr "Lagerplasseringer"
 
 #: stock/models.py:148 stock/models.py:862
 #: stock/templates/stock/item_base.html:247
 msgid "Owner"
-msgstr ""
+msgstr "Eier"
 
 #: stock/models.py:149 stock/models.py:863
 msgid "Select Owner"
-msgstr ""
+msgstr "Velg eier"
 
 #: stock/models.py:156
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
-msgstr ""
+msgstr "Lagervarer kan ikke knyttes direkte mot en strukturell lagerplassering, men kan knyttes mot underplasseringer."
 
 #: stock/models.py:162 templates/js/translated/stock.js:2752
 #: templates/js/translated/table_filters.js:243
 msgid "External"
-msgstr ""
+msgstr "Ekstern"
 
 #: stock/models.py:163
 msgid "This is an external stock location"
-msgstr ""
+msgstr "Dette er en ekstern lagerplassering"
 
 #: stock/models.py:169 templates/js/translated/stock.js:2761
 #: templates/js/translated/table_filters.js:246
 msgid "Location type"
-msgstr ""
+msgstr "Plasseringstype"
 
 #: stock/models.py:172
 msgid "Stock location type of this location"
-msgstr ""
+msgstr "Lagerplasseringstype for denne plasseringen"
 
 #: stock/models.py:237
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
-msgstr ""
+msgstr "De kan ikke gjøre denne plasseringen strukturell, da noen lagervarer allerede er plassert i den!"
 
 #: stock/models.py:593
 msgid "Stock items cannot be located into structural stock locations!"
-msgstr ""
+msgstr "Lagervarer kan ikke plasseres i strukturelle plasseringer!"
 
 #: stock/models.py:619 stock/serializers.py:229
 msgid "Stock item cannot be created for virtual parts"
-msgstr ""
+msgstr "Lagervare kan ikke opprettes for virtuelle deler"
 
 #: stock/models.py:636
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
-msgstr ""
+msgstr "Deltype ('{self.supplier_part.part}') må være {self.part}"
 
 #: stock/models.py:644 stock/models.py:653
 msgid "Quantity must be 1 for item with a serial number"
-msgstr ""
+msgstr "Antall må være 1 for produkt med et serienummer"
 
 #: stock/models.py:645
 msgid "Serial number cannot be set if quantity greater than 1"
-msgstr ""
+msgstr "Serienummeret kan ikke angis hvis antall er større enn 1"
 
 #: stock/models.py:667
 msgid "Item cannot belong to itself"
-msgstr ""
+msgstr "Elementet kan ikke tilhøre seg selv"
 
 #: stock/models.py:673
 msgid "Item must have a build reference if is_building=True"
-msgstr ""
+msgstr "Elementet må ha en produksjonsrefereanse om is_building=True"
 
 #: stock/models.py:687
 msgid "Build reference does not point to the same part object"
-msgstr ""
+msgstr "Produksjonsreferanse peker ikke til samme del-objekt"
 
 #: stock/models.py:701
 msgid "Parent Stock Item"
-msgstr ""
+msgstr "Overordnet lagervare"
 
 #: stock/models.py:711
 msgid "Base part"
-msgstr ""
+msgstr "Basisdel"
 
 #: stock/models.py:719
 msgid "Select a matching supplier part for this stock item"
@@ -8296,7 +8296,7 @@ msgstr "Hvor er denne lagervaren plassert?"
 
 #: stock/models.py:736 stock/serializers.py:1298
 msgid "Packaging this stock item is stored in"
-msgstr ""
+msgstr "Inpakningen denne lagervaren er lagret i"
 
 #: stock/models.py:745
 msgid "Is this item installed in another item?"
@@ -8328,7 +8328,7 @@ msgstr "Brukt av"
 
 #: stock/models.py:797
 msgid "Build order which consumed this stock item"
-msgstr ""
+msgstr "Produksjonsordren som brukte denne lagervaren"
 
 #: stock/models.py:808
 msgid "Source Purchase Order"
@@ -8373,7 +8373,7 @@ msgstr "Antall må være heltall"
 #: stock/models.py:1423
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
-msgstr ""
+msgstr "Antall kan ikke overstige tilgjengelig lagerbeholdning ({self.quantity})"
 
 #: stock/models.py:1426
 msgid "Serial numbers must be a list of integers"
@@ -8469,7 +8469,7 @@ msgstr "Serienummeret er for høyt"
 
 #: stock/serializers.py:222
 msgid "Use pack size when adding: the quantity defined is the number of packs"
-msgstr ""
+msgstr "Bruk pakningsstørrelse når du legger til: antall definert er antall pakker"
 
 #: stock/serializers.py:321
 msgid "Purchase price of this stock item, per unit or pack"
@@ -8506,11 +8506,11 @@ msgstr "Velg lagervare å montere"
 
 #: stock/serializers.py:496
 msgid "Quantity to Install"
-msgstr ""
+msgstr "Antall å installere"
 
 #: stock/serializers.py:497
 msgid "Enter the quantity of items to install"
-msgstr ""
+msgstr "Angi antallet elementer som skal installeres"
 
 #: stock/serializers.py:502 stock/serializers.py:581 stock/serializers.py:675
 #: stock/serializers.py:731
@@ -8519,7 +8519,7 @@ msgstr "Legg til transaksjonsnotat (valgfritt)"
 
 #: stock/serializers.py:511
 msgid "Quantity to install must be at least 1"
-msgstr ""
+msgstr "Antall å installere må være minst 1"
 
 #: stock/serializers.py:519
 msgid "Stock item is unavailable"
@@ -8531,7 +8531,7 @@ msgstr "Valgt del er ikke i stykklisten"
 
 #: stock/serializers.py:538
 msgid "Quantity to install must not exceed available quantity"
-msgstr ""
+msgstr "Antall å installere må ikke overskride tilgjengelig antall"
 
 #: stock/serializers.py:576
 msgid "Destination location for uninstalled item"
@@ -8547,7 +8547,7 @@ msgstr "Valgt del er ikke et gyldig alternativ for konvertering"
 
 #: stock/serializers.py:639
 msgid "Cannot convert stock item with assigned SupplierPart"
-msgstr ""
+msgstr "Kan ikke konvertere lagerprodukt med tildelt leverandørdel"
 
 #: stock/serializers.py:670
 msgid "Destination location for returned item"
@@ -8583,7 +8583,7 @@ msgstr "Valgt firma er ikke en kunde"
 
 #: stock/serializers.py:1059
 msgid "Stock assignment notes"
-msgstr ""
+msgstr "Lagervare-tildelignsnotater"
 
 #: stock/serializers.py:1069 stock/serializers.py:1329
 msgid "A list of stock items must be provided"
@@ -8591,23 +8591,23 @@ msgstr "En liste av lagervarer må oppgis"
 
 #: stock/serializers.py:1158
 msgid "Stock merging notes"
-msgstr ""
+msgstr "Notater om lagersammenslåing"
 
 #: stock/serializers.py:1163
 msgid "Allow mismatched suppliers"
-msgstr ""
+msgstr "Tillat forskjellige leverandører"
 
 #: stock/serializers.py:1164
 msgid "Allow stock items with different supplier parts to be merged"
-msgstr ""
+msgstr "Tillat lagervarer med forskjellige leverandørdeler å slås sammen"
 
 #: stock/serializers.py:1169
 msgid "Allow mismatched status"
-msgstr ""
+msgstr "Tillat forskjellig status"
 
 #: stock/serializers.py:1170
 msgid "Allow stock items with different status codes to be merged"
-msgstr ""
+msgstr "Tillat lagervarer med forskjellige statuskoder å slås sammen"
 
 #: stock/serializers.py:1180
 msgid "At least two stock items must be provided"
@@ -8619,23 +8619,23 @@ msgstr "Lagervare primærnøkkel verdi"
 
 #: stock/serializers.py:1290
 msgid "Stock item status code"
-msgstr ""
+msgstr "Lagervare statuskode"
 
 #: stock/serializers.py:1319
 msgid "Stock transaction notes"
-msgstr ""
+msgstr "Lager transaksjonsnotater"
 
 #: stock/templates/stock/item.html:17
 msgid "Stock Tracking Information"
-msgstr ""
+msgstr "Lager-sporingsinformasjon"
 
 #: stock/templates/stock/item.html:63
 msgid "Child Stock Items"
-msgstr ""
+msgstr "Underordnede lagervarer"
 
 #: stock/templates/stock/item.html:72
 msgid "This stock item does not have any child items"
-msgstr ""
+msgstr "Denne lagervaren har ikke noen underordnede lagervarer"
 
 #: stock/templates/stock/item.html:81
 #: stock/templates/stock/stock_sidebar.html:12
@@ -8656,15 +8656,15 @@ msgstr "Legg till Testdata"
 
 #: stock/templates/stock/item.html:125
 msgid "Stock Item Notes"
-msgstr ""
+msgstr "Notater for lagervare"
 
 #: stock/templates/stock/item.html:140
 msgid "Installed Stock Items"
-msgstr ""
+msgstr "Installerte lagervarer"
 
 #: stock/templates/stock/item.html:145 templates/js/translated/stock.js:3239
 msgid "Install Stock Item"
-msgstr ""
+msgstr "Installer lagervare"
 
 #: stock/templates/stock/item.html:267
 msgid "Delete all test results for this stock item"
@@ -8676,11 +8676,11 @@ msgstr "Legg til testresultat"
 
 #: stock/templates/stock/item_base.html:33
 msgid "Locate stock item"
-msgstr ""
+msgstr "Finn lagervare"
 
 #: stock/templates/stock/item_base.html:51
 msgid "Scan to Location"
-msgstr ""
+msgstr "Skann til plassering"
 
 #: stock/templates/stock/item_base.html:59
 #: stock/templates/stock/location.html:70
@@ -8695,51 +8695,51 @@ msgstr "Lagerjusteringshandlinger"
 #: stock/templates/stock/item_base.html:79
 #: stock/templates/stock/location.html:90 templates/js/translated/stock.js:1792
 msgid "Count stock"
-msgstr ""
+msgstr "Tell beholdning"
 
 #: stock/templates/stock/item_base.html:81
 #: templates/js/translated/stock.js:1774
 msgid "Add stock"
-msgstr ""
+msgstr "Legg til lagerbeholdning"
 
 #: stock/templates/stock/item_base.html:82
 #: templates/js/translated/stock.js:1783
 msgid "Remove stock"
-msgstr ""
+msgstr "Fjern lagerbeholdning"
 
 #: stock/templates/stock/item_base.html:85
 msgid "Serialize stock"
-msgstr ""
+msgstr "Serialiser lager"
 
 #: stock/templates/stock/item_base.html:88
 #: stock/templates/stock/location.html:96 templates/js/translated/stock.js:1801
 msgid "Transfer stock"
-msgstr ""
+msgstr "Overfør lagerbeholdning"
 
 #: stock/templates/stock/item_base.html:91
 #: templates/js/translated/stock.js:1855
 msgid "Assign to customer"
-msgstr ""
+msgstr "Tilordne til kunde"
 
 #: stock/templates/stock/item_base.html:94
 msgid "Return to stock"
-msgstr ""
+msgstr "Returner til Lager"
 
 #: stock/templates/stock/item_base.html:97
 msgid "Uninstall stock item"
-msgstr ""
+msgstr "Avinstaller lagervare"
 
 #: stock/templates/stock/item_base.html:97
 msgid "Uninstall"
-msgstr ""
+msgstr "Avinstaller"
 
 #: stock/templates/stock/item_base.html:101
 msgid "Install stock item"
-msgstr ""
+msgstr "Installer lagervare"
 
 #: stock/templates/stock/item_base.html:101
 msgid "Install"
-msgstr ""
+msgstr "Installer"
 
 #: stock/templates/stock/item_base.html:115
 msgid "Convert to variant"
@@ -8751,11 +8751,11 @@ msgstr "Duplisert lagervare"
 
 #: stock/templates/stock/item_base.html:120
 msgid "Edit stock item"
-msgstr ""
+msgstr "Rediger lagervare"
 
 #: stock/templates/stock/item_base.html:123
 msgid "Delete stock item"
-msgstr ""
+msgstr "Slett lagervare"
 
 #: stock/templates/stock/item_base.html:169 templates/InvenTree/search.html:139
 #: templates/js/translated/build.js:2111 templates/navbar.html:38
@@ -8764,36 +8764,36 @@ msgstr "Produksjon"
 
 #: stock/templates/stock/item_base.html:193
 msgid "Parent Item"
-msgstr ""
+msgstr "Overodnet element"
 
 #: stock/templates/stock/item_base.html:211
 msgid "No manufacturer set"
-msgstr ""
+msgstr "Ingen produsent valgt"
 
 #: stock/templates/stock/item_base.html:251
 msgid "You are not in the list of owners of this item. This stock item cannot be edited."
-msgstr ""
+msgstr "Du er ikke i eierlisten til dette elementet. Denne lagervaren kan ikke redigeres."
 
 #: stock/templates/stock/item_base.html:252
 #: stock/templates/stock/location.html:149
 msgid "Read only"
-msgstr ""
+msgstr "Kun lesetilgang"
 
 #: stock/templates/stock/item_base.html:265
 msgid "This stock item is unavailable"
-msgstr ""
+msgstr "Lagervaren er utilgjengelig"
 
 #: stock/templates/stock/item_base.html:271
 msgid "This stock item is in production and cannot be edited."
-msgstr ""
+msgstr "Denne lagervaren er under produksjon og kan ikke endres."
 
 #: stock/templates/stock/item_base.html:272
 msgid "Edit the stock item from the build view."
-msgstr ""
+msgstr "Rediger lagervaren fra produksjonsvinduet."
 
 #: stock/templates/stock/item_base.html:287
 msgid "This stock item is allocated to Sales Order"
-msgstr ""
+msgstr "Denne lagervaren er tildelt til Salgsordre"
 
 #: stock/templates/stock/item_base.html:295
 msgid "This stock item is allocated to Build Order"
@@ -8858,7 +8858,7 @@ msgstr "Ingen lagertelling utført"
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1922
 msgid "stock item"
-msgstr ""
+msgstr "lagervare"
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -8926,7 +8926,7 @@ msgstr "Skann inn beholder"
 
 #: stock/templates/stock/location.html:75
 msgid "Print Location Report"
-msgstr ""
+msgstr "Skriv ut plasseringsrapport"
 
 #: stock/templates/stock/location.html:104
 msgid "Location actions"
@@ -8969,7 +8969,7 @@ msgstr "Ny plassering"
 #: stock/templates/stock/location.html:289
 #: templates/js/translated/stock.js:2543
 msgid "stock location"
-msgstr ""
+msgstr "lagerplassering"
 
 #: stock/templates/stock/location.html:317
 msgid "Scanned stock container into this location"
@@ -9013,41 +9013,41 @@ msgstr "Autentiseringsfeil"
 
 #: templates/403_csrf.html:14
 msgid "You have been logged out from InvenTree."
-msgstr ""
+msgstr "Du har blitt logget ut av InvenTree."
 
 #: templates/403_csrf.html:19 templates/InvenTree/settings/sidebar.html:29
 #: templates/navbar.html:150
 msgid "Login"
-msgstr ""
+msgstr "Logg inn"
 
 #: templates/404.html:6 templates/404.html:12
 msgid "Page Not Found"
-msgstr ""
+msgstr "Side ikke funnet"
 
 #: templates/404.html:15
 msgid "The requested page does not exist"
-msgstr ""
+msgstr "Forespurt side eksisterer ikke"
 
 #: templates/500.html:6 templates/500.html:12
 msgid "Internal Server Error"
-msgstr ""
+msgstr "Intern serverfeil"
 
 #: templates/500.html:15
 #, python-format
 msgid "The %(inventree_title)s server raised an internal error"
-msgstr ""
+msgstr "%(inventree_title)s serveren reiste en intern feil"
 
 #: templates/500.html:16
 msgid "Refer to the error log in the admin interface for further details"
-msgstr ""
+msgstr "Se feilloggen i admingrensesnittet for flere detaljer"
 
 #: templates/503.html:11 templates/503.html:33
 msgid "Site is in Maintenance"
-msgstr ""
+msgstr "Nettstedet er i vedlikehold"
 
 #: templates/503.html:39
 msgid "The site is currently in maintenance and should be up again soon!"
-msgstr ""
+msgstr "Siden er for øyeblikket i vedlikehold og bør være oppe igjen snart!"
 
 #: templates/InvenTree/index.html:7
 msgid "Index"
@@ -9075,11 +9075,11 @@ msgstr "Nylig oppdatert"
 
 #: templates/InvenTree/index.html:134
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Oppbrukt lagerbeholdning"
 
 #: templates/InvenTree/index.html:148
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Påkrevd for produksjonsordre"
 
 #: templates/InvenTree/index.html:156
 msgid "Expired Stock"
@@ -9087,11 +9087,11 @@ msgstr "Utløpt lagerbeholdning"
 
 #: templates/InvenTree/index.html:172
 msgid "Stale Stock"
-msgstr ""
+msgstr "Gammel lagerbeholdning"
 
 #: templates/InvenTree/index.html:199
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Produksjonsordre som pågår"
 
 #: templates/InvenTree/index.html:210
 msgid "Overdue Build Orders"
@@ -9272,11 +9272,11 @@ msgstr "Lagertellingsrapporter"
 #: templates/InvenTree/settings/physical_units.html:8
 #: templates/InvenTree/settings/sidebar.html:35
 msgid "Physical Units"
-msgstr ""
+msgstr "Fysiske enheter"
 
 #: templates/InvenTree/settings/physical_units.html:12
 msgid "Add Unit"
-msgstr ""
+msgstr "Legg til enhet"
 
 #: templates/InvenTree/settings/plugin.html:9
 #: templates/InvenTree/settings/sidebar.html:64
@@ -9373,7 +9373,7 @@ msgstr "Eksempel"
 
 #: templates/InvenTree/settings/plugin_settings.html:108
 msgid "This is a sample plugin"
-msgstr ""
+msgstr "Dette er en eksempelplugin"
 
 #: templates/InvenTree/settings/plugin_settings.html:113
 msgid "Commit Author"
@@ -9478,15 +9478,15 @@ msgstr "Slett"
 
 #: templates/InvenTree/settings/settings_staff_js.html:95
 msgid "Edit Custom Unit"
-msgstr ""
+msgstr "Rediger egendefinert enhet"
 
 #: templates/InvenTree/settings/settings_staff_js.html:110
 msgid "Delete Custom Unit"
-msgstr ""
+msgstr "Slett egendefinert enhet"
 
 #: templates/InvenTree/settings/settings_staff_js.html:124
 msgid "New Custom Unit"
-msgstr ""
+msgstr "Ny egendefinert enhet"
 
 #: templates/InvenTree/settings/settings_staff_js.html:140
 msgid "No project codes found"
@@ -9495,7 +9495,7 @@ msgstr "Ingen prosjektkoder funnet"
 #: templates/InvenTree/settings/settings_staff_js.html:158
 #: templates/js/translated/build.js:2216
 msgid "group"
-msgstr ""
+msgstr "gruppe"
 
 #: templates/InvenTree/settings/settings_staff_js.html:175
 #: templates/InvenTree/settings/settings_staff_js.html:189
@@ -9509,179 +9509,179 @@ msgstr "Slett prosjektkode"
 
 #: templates/InvenTree/settings/settings_staff_js.html:285
 msgid "No category parameter templates found"
-msgstr ""
+msgstr "Ingen kategori-parametermaler funnet"
 
 #: templates/InvenTree/settings/settings_staff_js.html:308
 #: templates/js/translated/part.js:1645
 msgid "Edit Template"
-msgstr ""
+msgstr "Rediger mal"
 
 #: templates/InvenTree/settings/settings_staff_js.html:309
 #: templates/js/translated/part.js:1646
 msgid "Delete Template"
-msgstr ""
+msgstr "Slett mal"
 
 #: templates/InvenTree/settings/settings_staff_js.html:326
 msgid "Edit Category Parameter Template"
-msgstr ""
+msgstr "Rediger kategori-parametermal"
 
 #: templates/InvenTree/settings/settings_staff_js.html:353
 msgid "Delete Category Parameter Template"
-msgstr ""
+msgstr "Slett kategori-parametermal"
 
 #: templates/InvenTree/settings/settings_staff_js.html:388
 msgid "Create Category Parameter Template"
-msgstr ""
+msgstr "Opprett kategori-parametermal"
 
 #: templates/InvenTree/settings/settings_staff_js.html:418
 msgid "Create Part Parameter Template"
-msgstr ""
+msgstr "Opprett del-parametermal"
 
 #: templates/InvenTree/settings/settings_staff_js.html:440
 msgid "No stock location types found"
-msgstr ""
+msgstr "Ingen lagerplasseringstyper funnet"
 
 #: templates/InvenTree/settings/settings_staff_js.html:461
 msgid "Location count"
-msgstr ""
+msgstr "Antall plasseringer"
 
 #: templates/InvenTree/settings/settings_staff_js.html:466
 #: templates/InvenTree/settings/settings_staff_js.html:480
 msgid "Edit Location Type"
-msgstr ""
+msgstr "Rediger plasseringstype"
 
 #: templates/InvenTree/settings/settings_staff_js.html:467
 msgid "Delete Location type"
-msgstr ""
+msgstr "Slett plasseringstype"
 
 #: templates/InvenTree/settings/settings_staff_js.html:490
 msgid "Delete Location Type"
-msgstr ""
+msgstr "Slett plasseringstype"
 
 #: templates/InvenTree/settings/settings_staff_js.html:500
 #: templates/InvenTree/settings/stock.html:35
 msgid "New Location Type"
-msgstr ""
+msgstr "Ny plasseringstype"
 
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "Brukerinnstillinger"
 
 #: templates/InvenTree/settings/sidebar.html:9
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: templates/InvenTree/settings/sidebar.html:11
 msgid "Display"
-msgstr ""
+msgstr "Visning"
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
-msgstr ""
+msgstr "Startside"
 
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/js/translated/forms.js:2155 templates/js/translated/tables.js:543
 #: templates/navbar.html:107 templates/search.html:8
 #: templates/search_form.html:6 templates/search_form.html:7
 msgid "Search"
-msgstr ""
+msgstr "Søk"
 
 #: templates/InvenTree/settings/sidebar.html:19
 #: templates/InvenTree/settings/sidebar.html:43
 msgid "Reporting"
-msgstr ""
+msgstr "Rapportering"
 
 #: templates/InvenTree/settings/sidebar.html:24
 msgid "Global Settings"
-msgstr ""
+msgstr "Globale innstillinger"
 
 #: templates/InvenTree/settings/sidebar.html:27 templates/stats.html:9
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: templates/InvenTree/settings/sidebar.html:41
 msgid "Labels"
-msgstr ""
+msgstr "Etiketter"
 
 #: templates/InvenTree/settings/sidebar.html:45
 msgid "Categories"
-msgstr ""
+msgstr "Kategorier"
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
-msgstr ""
+msgstr "Innstillinger for salgsordre"
 
 #: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
-msgstr ""
+msgstr "Instillinger for lager"
 
 #: templates/InvenTree/settings/stock.html:31
 msgid "Stock Location Types"
-msgstr ""
+msgstr "Lagerplasseringstyper"
 
 #: templates/InvenTree/settings/user.html:13
 msgid "Account Settings"
-msgstr ""
+msgstr "Kontoinnstillinger"
 
 #: templates/InvenTree/settings/user.html:19
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
-msgstr ""
+msgstr "Endre passord"
 
 #: templates/InvenTree/settings/user.html:33
 msgid "Username"
-msgstr ""
+msgstr "Brukernavn"
 
 #: templates/InvenTree/settings/user.html:37
 msgid "First Name"
-msgstr ""
+msgstr "Fornavn"
 
 #: templates/InvenTree/settings/user.html:41
 msgid "Last Name"
-msgstr ""
+msgstr "Etternavn"
 
 #: templates/InvenTree/settings/user.html:55
 msgid "The following email addresses are associated with your account:"
-msgstr ""
+msgstr "Følgende e-postadresser er tilknyttet din konto:"
 
 #: templates/InvenTree/settings/user.html:76
 msgid "Verified"
-msgstr ""
+msgstr "Bekreftet"
 
 #: templates/InvenTree/settings/user.html:78
 msgid "Unverified"
-msgstr ""
+msgstr "Ubekreftet"
 
 #: templates/InvenTree/settings/user.html:80
 #: templates/js/translated/company.js:947
 msgid "Primary"
-msgstr ""
+msgstr "Primær"
 
 #: templates/InvenTree/settings/user.html:86
 msgid "Make Primary"
-msgstr ""
+msgstr "Gjør til primær"
 
 #: templates/InvenTree/settings/user.html:87
 msgid "Re-send Verification"
-msgstr ""
+msgstr "Re-send bekreftelse"
 
 #: templates/InvenTree/settings/user.html:96
 msgid "Warning:"
-msgstr ""
+msgstr "Advarsel:"
 
 #: templates/InvenTree/settings/user.html:97
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
-msgstr ""
+msgstr "Du har for øyeblikket ikke konfigurert noen epostadresse. Du burde legge til en e-postadresse slik at du kan motta varslinger, tilbakestille passordet, osv."
 
 #: templates/InvenTree/settings/user.html:105
 msgid "Add Email Address"
-msgstr ""
+msgstr "Legg til e-postadresse"
 
 #: templates/InvenTree/settings/user.html:110
 msgid "Add Email"
-msgstr ""
+msgstr "Legg til e-post"
 
 #: templates/InvenTree/settings/user.html:120
 msgid "Multifactor"
@@ -9804,7 +9804,7 @@ msgstr "Noen språk er ikke komplett"
 
 #: templates/InvenTree/settings/user_display.html:97
 msgid "Show only sufficient"
-msgstr ""
+msgstr "Vis kun tilstrekkelige"
 
 #: templates/InvenTree/settings/user_display.html:99
 msgid "and hidden."
@@ -9836,7 +9836,7 @@ msgstr "Søkeinnstillinger"
 
 #: templates/InvenTree/settings/user_sso.html:9
 msgid "Single Sign On Accounts"
-msgstr ""
+msgstr "\"Single Sign On\"-kontoer"
 
 #: templates/InvenTree/settings/user_sso.html:16
 msgid "You can sign in to your account using any of the following third party accounts:"
@@ -9848,11 +9848,11 @@ msgstr "Det finnes ingen sosiale nettverkskontoer koblet til denne kontoen."
 
 #: templates/InvenTree/settings/user_sso.html:58
 msgid "Add SSO Account"
-msgstr ""
+msgstr "Legg til SSO-konto"
 
 #: templates/InvenTree/settings/user_sso.html:67
 msgid "Single Sign On is not enabled for this server"
-msgstr ""
+msgstr "Single Sign On er ikke aktivert for denne serveren"
 
 #: templates/about.html:9
 msgid "InvenTree Version"
@@ -9872,7 +9872,7 @@ msgstr "Oppdatering er tilgjengelig"
 
 #: templates/about.html:43
 msgid "Commit Branch"
-msgstr ""
+msgstr "Commit Branch"
 
 #: templates/about.html:49
 msgid "InvenTree Documentation"
@@ -9896,28 +9896,28 @@ msgstr "Vis koden på GitHub"
 
 #: templates/about.html:74
 msgid "Credits"
-msgstr ""
+msgstr "Krediteringer"
 
 #: templates/about.html:79
 msgid "Mobile App"
-msgstr ""
+msgstr "Mobilapp"
 
 #: templates/about.html:84
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "Send feilrapport"
 
 #: templates/about.html:91 templates/clip.html:4
 #: templates/js/translated/helpers.js:585
 msgid "copy to clipboard"
-msgstr ""
+msgstr "kopier til utklippstavle"
 
 #: templates/about.html:91
 msgid "copy version information"
-msgstr ""
+msgstr "kopiér versjonsinformasjon"
 
 #: templates/account/base.html:66 templates/navbar.html:17
 msgid "InvenTree logo"
-msgstr ""
+msgstr "InvenTree-logo"
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:9
@@ -10107,7 +10107,7 @@ msgstr "Legg til vedlegg"
 
 #: templates/barcode_data.html:5
 msgid "Barcode Identifier"
-msgstr ""
+msgstr "Strekkode-identifikator"
 
 #: templates/base.html:103
 msgid "Server Restart Required"
@@ -10123,11 +10123,11 @@ msgstr "Kontakt systemadministratoren for mer informasjon"
 
 #: templates/base.html:113
 msgid "Pending Database Migrations"
-msgstr ""
+msgstr "Ventende database-migrasjoner"
 
 #: templates/base.html:116
 msgid "There are pending database migrations which require attention"
-msgstr ""
+msgstr "Det er ventende database-migrasjoner som krever oppmerksomhet"
 
 #: templates/email/build_order_completed.html:9
 #: templates/email/canceled_order_assigned.html:9
@@ -10234,11 +10234,11 @@ msgstr "Tidsavbrudd under forespørsel om data fra serveren"
 
 #: templates/js/translated/api.js:261
 msgid "Error 503: Service Unavailable"
-msgstr ""
+msgstr "Feil 503: Tjeneste utilgjengelig"
 
 #: templates/js/translated/api.js:262
 msgid "The server is currently unavailable"
-msgstr ""
+msgstr "Serveren er for tiden utilgjengelig"
 
 #: templates/js/translated/api.js:265
 msgid "Unhandled Error Code"
@@ -10364,36 +10364,36 @@ msgstr "Lagervaren er allerede skannet"
 
 #: templates/js/translated/barcode.js:674
 msgid "Stock Item already in this location"
-msgstr ""
+msgstr "Lagrevare allerede på denne plasseringen"
 
 #: templates/js/translated/barcode.js:681
 msgid "Added stock item"
-msgstr ""
+msgstr "La til lagervare"
 
 #: templates/js/translated/barcode.js:690
 msgid "Barcode does not match valid stock item"
-msgstr ""
+msgstr "Strekkoden samsvarer ikke med gyldig lagervare"
 
 #: templates/js/translated/barcode.js:709
 msgid "Scan Stock Container Into Location"
-msgstr ""
+msgstr "Skann lagerbeholder til plassering"
 
 #: templates/js/translated/barcode.js:711
 msgid "Scan stock container barcode to check in to this location"
-msgstr ""
+msgstr "Skann lagerbeholderens strekkode for å sjekke inn på denne plasseringen"
 
 #: templates/js/translated/barcode.js:745
 msgid "Barcode does not match valid stock location"
-msgstr ""
+msgstr "Strekkode samsvarer ikke med gyldig lagerplassering"
 
 #: templates/js/translated/barcode.js:789
 msgid "Check Into Location"
-msgstr ""
+msgstr "Sjekk inn på plassering"
 
 #: templates/js/translated/barcode.js:858
 #: templates/js/translated/barcode.js:867
 msgid "Barcode does not match a valid location"
-msgstr ""
+msgstr "Strekkode samsvarer ikke med en gyldig plassering"
 
 #: templates/js/translated/bom.js:78
 msgid "Create BOM Item"
@@ -10682,7 +10682,7 @@ msgstr "Tildel lagervarer til denne produksjonsartikkelen"
 
 #: templates/js/translated/build.js:430
 msgid "Deallocate stock from build output"
-msgstr ""
+msgstr "Fjern tildelt lagerbeholdning fra produksjonsartikkel"
 
 #: templates/js/translated/build.js:439
 msgid "Complete build output"
@@ -10690,7 +10690,7 @@ msgstr "Fullfør Produksjonsartikkel"
 
 #: templates/js/translated/build.js:447
 msgid "Scrap build output"
-msgstr ""
+msgstr "Skrot produksjonsartikkel"
 
 #: templates/js/translated/build.js:454
 msgid "Delete build output"
@@ -10698,11 +10698,11 @@ msgstr "Slett Produksjonsartikkel"
 
 #: templates/js/translated/build.js:474
 msgid "Are you sure you wish to deallocate the selected stock items from this build?"
-msgstr ""
+msgstr "Er du sikker på at du vil fjerne tildelingen av valgte lagervarer fra denne produksjonen?"
 
 #: templates/js/translated/build.js:492
 msgid "Deallocate Stock Items"
-msgstr ""
+msgstr "Fjern tildeling av lagervarer"
 
 #: templates/js/translated/build.js:578 templates/js/translated/build.js:706
 #: templates/js/translated/build.js:832
@@ -10716,7 +10716,7 @@ msgstr "Minst en produksjonsartikkel må velges"
 
 #: templates/js/translated/build.js:593
 msgid "Selected build outputs will be marked as complete"
-msgstr ""
+msgstr "Valgte produksjonsartikler vil bli markert som fullført"
 
 #: templates/js/translated/build.js:597 templates/js/translated/build.js:731
 #: templates/js/translated/build.js:855
@@ -10729,35 +10729,35 @@ msgstr "Fullfør Produksjonsartikler"
 
 #: templates/js/translated/build.js:722
 msgid "Selected build outputs will be marked as scrapped"
-msgstr ""
+msgstr "Valgte produksjonsartikler vil bli markert som skrotet"
 
 #: templates/js/translated/build.js:724
 msgid "Scrapped output are marked as rejected"
-msgstr ""
+msgstr "Skrotede artiker merkes som avslått"
 
 #: templates/js/translated/build.js:725
 msgid "Allocated stock items will no longer be available"
-msgstr ""
+msgstr "Tildelte lagervarer vil ikke lenger være tilgjengelig"
 
 #: templates/js/translated/build.js:726
 msgid "The completion status of the build order will not be adjusted"
-msgstr ""
+msgstr "Fullføringen til produksjonsordren vil ikke bli justert"
 
 #: templates/js/translated/build.js:757
 msgid "Scrap Build Outputs"
-msgstr ""
+msgstr "Skrot Produksjonsartikler"
 
 #: templates/js/translated/build.js:847
 msgid "Selected build outputs will be deleted"
-msgstr ""
+msgstr "Valgte produksjonsartikler bli slettet"
 
 #: templates/js/translated/build.js:849
 msgid "Build output data will be permanently deleted"
-msgstr ""
+msgstr "Produksjonsartikkeldata vil bli permanent slettet"
 
 #: templates/js/translated/build.js:850
 msgid "Allocated stock items will be returned to stock"
-msgstr ""
+msgstr "Tildelte lagervarer returneres til lagerbeholdning"
 
 #: templates/js/translated/build.js:868
 msgid "Delete Build Outputs"
@@ -10769,7 +10769,7 @@ msgstr "Ingen tildelinger til produksjonsordre funnet"
 
 #: templates/js/translated/build.js:984 templates/js/translated/build.js:2332
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Tildelt antall"
 
 #: templates/js/translated/build.js:998
 msgid "Location not specified"
@@ -10781,23 +10781,23 @@ msgstr "Fullfør artikler"
 
 #: templates/js/translated/build.js:1038
 msgid "Scrap outputs"
-msgstr ""
+msgstr "Skrot artikler"
 
 #: templates/js/translated/build.js:1056
 msgid "Delete outputs"
-msgstr "Slett resultat"
+msgstr "Slett artikler"
 
 #: templates/js/translated/build.js:1110
 msgid "build output"
-msgstr ""
+msgstr "produksjonsartikkel"
 
 #: templates/js/translated/build.js:1111
 msgid "build outputs"
-msgstr ""
+msgstr "produksjonsartikler"
 
 #: templates/js/translated/build.js:1115
 msgid "Build output actions"
-msgstr ""
+msgstr "Handlinger for produksjonsartikler"
 
 #: templates/js/translated/build.js:1284
 msgid "No active build outputs found"
@@ -10805,101 +10805,101 @@ msgstr "Ingen aktive produksjonsartikler funnet"
 
 #: templates/js/translated/build.js:1377
 msgid "Allocated Lines"
-msgstr ""
+msgstr "Tildelte linjer"
 
 #: templates/js/translated/build.js:1391
 msgid "Required Tests"
-msgstr ""
+msgstr "Påkrevde tester"
 
 #: templates/js/translated/build.js:1563
 #: templates/js/translated/purchase_order.js:630
 #: templates/js/translated/sales_order.js:1171
 msgid "Select Parts"
-msgstr ""
+msgstr "Velg deler"
 
 #: templates/js/translated/build.js:1564
 #: templates/js/translated/sales_order.js:1172
 msgid "You must select at least one part to allocate"
-msgstr ""
+msgstr "Du må velge minst en del å tildele"
 
 #: templates/js/translated/build.js:1627
 #: templates/js/translated/sales_order.js:1121
 msgid "Specify stock allocation quantity"
-msgstr ""
+msgstr "Spesifiser lagertildelingsmengde"
 
 #: templates/js/translated/build.js:1704
 msgid "All Parts Allocated"
-msgstr ""
+msgstr "Alle deler tildelt"
 
 #: templates/js/translated/build.js:1705
 msgid "All selected parts have been fully allocated"
-msgstr ""
+msgstr "Alle valgte deler er blitt fullt tildelt"
 
 #: templates/js/translated/build.js:1719
 #: templates/js/translated/sales_order.js:1186
 msgid "Select source location (leave blank to take from all locations)"
-msgstr ""
+msgstr "Velg kildeplassering (la være blank for å ta fra alle plasseringer)"
 
 #: templates/js/translated/build.js:1747
 msgid "Allocate Stock Items to Build Order"
-msgstr ""
+msgstr "Tildel lagervarer til produksjonsordre"
 
 #: templates/js/translated/build.js:1758
 #: templates/js/translated/sales_order.js:1283
 msgid "No matching stock locations"
-msgstr ""
+msgstr "Ingen samsvarende lagerplasseringer"
 
 #: templates/js/translated/build.js:1831
 #: templates/js/translated/sales_order.js:1362
 msgid "No matching stock items"
-msgstr ""
+msgstr "Ingen samsvarende lagervarer"
 
 #: templates/js/translated/build.js:1928
 msgid "Automatic Stock Allocation"
-msgstr ""
+msgstr "Automatisk lagertildeling"
 
 #: templates/js/translated/build.js:1929
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
-msgstr ""
+msgstr "Lagervarer vil bli automatisk tildelt denne produksjonsordren, i henhold til gitte retningslinjer"
 
 #: templates/js/translated/build.js:1931
 msgid "If a location is specified, stock will only be allocated from that location"
-msgstr ""
+msgstr "Om en plassering er angitt, vil lagerbeholdning kun tildeles fra denne plasseringen"
 
 #: templates/js/translated/build.js:1932
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
-msgstr ""
+msgstr "Om lagerbeholdning er utbyttbar, vil det tildeles fra første plassering som blir funnet"
 
 #: templates/js/translated/build.js:1933
 msgid "If substitute stock is allowed, it will be used where stock of the primary part cannot be found"
-msgstr ""
+msgstr "Om erstatningsbeholdning er tillatt, vill det bli brukt fra der lagerbeholdning av primærdelen ikke er funnet"
 
 #: templates/js/translated/build.js:1964
 msgid "Allocate Stock Items"
-msgstr ""
+msgstr "Tildel lagervarer"
 
 #: templates/js/translated/build.js:2070
 msgid "No builds matching query"
-msgstr ""
+msgstr "Ingen produksjoner samsvarer med spørringen"
 
 #: templates/js/translated/build.js:2105 templates/js/translated/build.js:2470
 #: templates/js/translated/forms.js:2151 templates/js/translated/forms.js:2167
 #: templates/js/translated/part.js:2314 templates/js/translated/part.js:2740
 #: templates/js/translated/stock.js:1953 templates/js/translated/stock.js:2681
 msgid "Select"
-msgstr ""
+msgstr "Velg"
 
 #: templates/js/translated/build.js:2119
 msgid "Build order is overdue"
-msgstr ""
+msgstr "Produksjonsordre er forfalt"
 
 #: templates/js/translated/build.js:2165
 msgid "Progress"
-msgstr ""
+msgstr "Fremgang"
 
 #: templates/js/translated/build.js:2201 templates/js/translated/stock.js:3013
 msgid "No user information"
-msgstr ""
+msgstr "Ingen brukerinformasjon"
 
 #: templates/js/translated/build.js:2377
 #: templates/js/translated/sales_order.js:1646
@@ -10921,15 +10921,15 @@ msgstr "Slett tildeling"
 
 #: templates/js/translated/build.js:2446
 msgid "build line"
-msgstr ""
+msgstr "produksjonslinje"
 
 #: templates/js/translated/build.js:2447
 msgid "build lines"
-msgstr ""
+msgstr "produksjonslinjer"
 
 #: templates/js/translated/build.js:2465
 msgid "No build lines found"
-msgstr ""
+msgstr "Ingen produksjonslinjer funnet"
 
 #: templates/js/translated/build.js:2495 templates/js/translated/part.js:790
 #: templates/js/translated/part.js:1202
@@ -10938,7 +10938,7 @@ msgstr "Sporbar del"
 
 #: templates/js/translated/build.js:2530
 msgid "Unit Quantity"
-msgstr ""
+msgstr "Enhetsantall"
 
 #: templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -10956,25 +10956,25 @@ msgstr "Forbruksvare"
 
 #: templates/js/translated/build.js:2633
 msgid "Tracked item"
-msgstr ""
+msgstr "Sporet element"
 
 #: templates/js/translated/build.js:2640
 #: templates/js/translated/sales_order.js:2016
 msgid "Build stock"
-msgstr ""
+msgstr "Produksjonens lagerbeholdning"
 
 #: templates/js/translated/build.js:2645 templates/js/translated/stock.js:1836
 msgid "Order stock"
-msgstr ""
+msgstr "Bestill til lager"
 
 #: templates/js/translated/build.js:2649
 #: templates/js/translated/sales_order.js:2010
 msgid "Allocate stock"
-msgstr ""
+msgstr "Tildel lagerbeholdning"
 
 #: templates/js/translated/build.js:2653
 msgid "Remove stock allocation"
-msgstr ""
+msgstr "Flern tildeling av lagerbeholdning"
 
 #: templates/js/translated/company.js:98
 msgid "Add Manufacturer"
@@ -11177,7 +11177,7 @@ msgstr "Ingen leverandørdeler funnet"
 
 #: templates/js/translated/company.js:1654
 msgid "Base Units"
-msgstr ""
+msgstr "Basisenhet"
 
 #: templates/js/translated/company.js:1684
 msgid "Availability"
@@ -11335,11 +11335,11 @@ msgstr "Usant"
 
 #: templates/js/translated/index.js:104
 msgid "No parts required for builds"
-msgstr ""
+msgstr "Ingen deler kreves for produksjoner"
 
 #: templates/js/translated/index.js:130
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Tildelt lagerbeholdning"
 
 #: templates/js/translated/label.js:53 templates/js/translated/report.js:123
 msgid "Select Items"
@@ -11351,177 +11351,177 @@ msgstr "Ingen artikler valgt for utskrift"
 
 #: templates/js/translated/label.js:72
 msgid "No Labels Found"
-msgstr ""
+msgstr "Ingen etiketter funnet"
 
 #: templates/js/translated/label.js:73
 msgid "No label templates found which match the selected items"
-msgstr ""
+msgstr "Ingen etikettmaler funnet som samsvarer med de valgte elementene"
 
 #: templates/js/translated/label.js:97
 msgid "selected"
-msgstr ""
+msgstr "valgt"
 
 #: templates/js/translated/label.js:133
 msgid "Printing Options"
-msgstr ""
+msgstr "Utskriftsvalg"
 
 #: templates/js/translated/label.js:148
 msgid "Print label"
-msgstr ""
+msgstr "Skriv ut etikett"
 
 #: templates/js/translated/label.js:148
 msgid "Print labels"
-msgstr ""
+msgstr "Skriv ut etiketter"
 
 #: templates/js/translated/label.js:149
 msgid "Print"
-msgstr ""
+msgstr "Skriv ut"
 
 #: templates/js/translated/label.js:155
 msgid "Select label template"
-msgstr ""
+msgstr "Velg etikettmal"
 
 #: templates/js/translated/label.js:168
 msgid "Select plugin"
-msgstr ""
+msgstr "Velg Plugin"
 
 #: templates/js/translated/label.js:187
 msgid "Labels sent to printer"
-msgstr ""
+msgstr "Etiketter sendt til skriver"
 
 #: templates/js/translated/modals.js:58 templates/js/translated/modals.js:158
 #: templates/js/translated/modals.js:683
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: templates/js/translated/modals.js:63 templates/js/translated/modals.js:157
 #: templates/js/translated/modals.js:751 templates/js/translated/modals.js:1059
 #: templates/modals.html:28 templates/modals.html:51
 msgid "Submit"
-msgstr ""
+msgstr "Send"
 
 #: templates/js/translated/modals.js:156
 msgid "Form Title"
-msgstr ""
+msgstr "Skjematittel"
 
 #: templates/js/translated/modals.js:445
 msgid "Waiting for server..."
-msgstr ""
+msgstr "Venter på server..."
 
 #: templates/js/translated/modals.js:596
 msgid "Show Error Information"
-msgstr ""
+msgstr "Vis feilinformasjon"
 
 #: templates/js/translated/modals.js:682
 msgid "Accept"
-msgstr ""
+msgstr "Godta"
 
 #: templates/js/translated/modals.js:740
 msgid "Loading Data"
-msgstr ""
+msgstr "Laster data"
 
 #: templates/js/translated/modals.js:1011
 msgid "Invalid response from server"
-msgstr ""
+msgstr "Ugyldig svar fra server"
 
 #: templates/js/translated/modals.js:1011
 msgid "Form data missing from server response"
-msgstr ""
+msgstr "Skjemadata mangler i serversvar"
 
 #: templates/js/translated/modals.js:1023
 msgid "Error posting form data"
-msgstr ""
+msgstr "Feil ved lagring av skjemadata"
 
 #: templates/js/translated/modals.js:1120
 msgid "JSON response missing form data"
-msgstr ""
+msgstr "JSON-svar mangler skjemadata"
 
 #: templates/js/translated/modals.js:1135
 msgid "Error 400: Bad Request"
-msgstr ""
+msgstr "Feil 400: Ugyldig forespørsel"
 
 #: templates/js/translated/modals.js:1136
 msgid "Server returned error code 400"
-msgstr ""
+msgstr "Serveren returnerte feilkode 400"
 
 #: templates/js/translated/modals.js:1159
 msgid "Error requesting form data"
-msgstr ""
+msgstr "Feil under forespørsel av skjemadata"
 
 #: templates/js/translated/news.js:33
 msgid "No news found"
-msgstr ""
+msgstr "Ingen nyheter funnet"
 
 #: templates/js/translated/news.js:38
 #: templates/js/translated/notification.js:46
 #: templates/js/translated/part.js:1604
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: templates/js/translated/notification.js:52
 msgid "Age"
-msgstr ""
+msgstr "Alder"
 
 #: templates/js/translated/notification.js:65
 msgid "Notification"
-msgstr ""
+msgstr "Varsel"
 
 #: templates/js/translated/notification.js:224
 msgid "Mark as unread"
-msgstr ""
+msgstr "Marker som ulest"
 
 #: templates/js/translated/notification.js:228
 msgid "Mark as read"
-msgstr ""
+msgstr "Merk som lest"
 
 #: templates/js/translated/notification.js:254
 msgid "No unread notifications"
-msgstr ""
+msgstr "Ingen uleste varsler"
 
 #: templates/js/translated/notification.js:296 templates/notifications.html:12
 msgid "Notifications will load here"
-msgstr ""
+msgstr "Varsler lastes inn her"
 
 #: templates/js/translated/order.js:89
 msgid "Add Extra Line Item"
-msgstr ""
+msgstr "Legg til ekstra ordrelinje"
 
 #: templates/js/translated/order.js:126
 msgid "Export Order"
-msgstr ""
+msgstr "Eksporter ordre"
 
 #: templates/js/translated/order.js:241
 msgid "Duplicate Line"
-msgstr ""
+msgstr "Dupliser linje"
 
 #: templates/js/translated/order.js:255
 msgid "Edit Line"
-msgstr ""
+msgstr "Rediger linje"
 
 #: templates/js/translated/order.js:268
 msgid "Delete Line"
-msgstr ""
+msgstr "Slett linje"
 
 #: templates/js/translated/order.js:281
 #: templates/js/translated/purchase_order.js:1984
 msgid "No line items found"
-msgstr ""
+msgstr "Ingen linjeelementer funnet"
 
 #: templates/js/translated/order.js:369
 msgid "Duplicate line"
-msgstr ""
+msgstr "Dupliser linje"
 
 #: templates/js/translated/order.js:370
 msgid "Edit line"
-msgstr ""
+msgstr "Rediger linje"
 
 #: templates/js/translated/order.js:374
 msgid "Delete line"
-msgstr ""
+msgstr "Slett linje"
 
 #: templates/js/translated/part.js:90
 msgid "Part Attributes"
-msgstr ""
+msgstr "Del-attributter"
 
 #: templates/js/translated/part.js:94
 msgid "Part Creation Options"
@@ -11694,11 +11694,11 @@ msgstr "Salgbar del"
 
 #: templates/js/translated/part.js:889
 msgid "Schedule generation of a new stocktake report."
-msgstr ""
+msgstr "Planlegg opprettelse av en ny varetellingsrapport."
 
 #: templates/js/translated/part.js:889
 msgid "Once complete, the stocktake report will be available for download."
-msgstr ""
+msgstr "Ved fullførelse vil varetellingsrapporten være tilgjengelig for nedlasting."
 
 #: templates/js/translated/part.js:897
 msgid "Generate Stocktake Report"
@@ -11706,19 +11706,19 @@ msgstr "Generer lagertellingsrapport"
 
 #: templates/js/translated/part.js:901
 msgid "Stocktake report scheduled"
-msgstr ""
+msgstr "Varetellingsrapport planlagt"
 
 #: templates/js/translated/part.js:1050
 msgid "No stocktake information available"
-msgstr ""
+msgstr "Ingen varetellingsinformasjon tilgjengelig"
 
 #: templates/js/translated/part.js:1108 templates/js/translated/part.js:1144
 msgid "Edit Stocktake Entry"
-msgstr ""
+msgstr "Rediger varetellingspunkt"
 
 #: templates/js/translated/part.js:1112 templates/js/translated/part.js:1154
 msgid "Delete Stocktake Entry"
-msgstr ""
+msgstr "Slett varetellingspunkt"
 
 #: templates/js/translated/part.js:1281
 msgid "No variants found"
@@ -11750,20 +11750,20 @@ msgstr "Ingen innkjøpsordrer funnet"
 #: templates/js/translated/return_order.js:756
 #: templates/js/translated/sales_order.js:1875
 msgid "This line item is overdue"
-msgstr ""
+msgstr "Denne ordrelinjen er over tidsfristen"
 
 #: templates/js/translated/part.js:1904
 #: templates/js/translated/purchase_order.js:2214
 msgid "Receive line item"
-msgstr ""
+msgstr "Motta ordrelinje"
 
 #: templates/js/translated/part.js:1967
 msgid "Delete part relationship"
-msgstr ""
+msgstr "Slett del-forhold"
 
 #: templates/js/translated/part.js:1989
 msgid "Delete Part Relationship"
-msgstr ""
+msgstr "Slett del-forhold"
 
 #: templates/js/translated/part.js:2077 templates/js/translated/part.js:2504
 msgid "No parts found"
@@ -11771,11 +11771,11 @@ msgstr "Ingen deler funnet"
 
 #: templates/js/translated/part.js:2198
 msgid "Set the part category for the selected parts"
-msgstr ""
+msgstr "Vel del-kategorien for valgte deler"
 
 #: templates/js/translated/part.js:2203
 msgid "Set Part Category"
-msgstr ""
+msgstr "Vel del-kategori"
 
 #: templates/js/translated/part.js:2233
 msgid "Set category"
@@ -11816,7 +11816,7 @@ msgstr "Abonnert kategori"
 
 #: templates/js/translated/part.js:2852
 msgid "No test templates matching query"
-msgstr ""
+msgstr "Ingen testmaler samsvarer med spørringen"
 
 #: templates/js/translated/part.js:2903 templates/js/translated/stock.js:1436
 msgid "Edit test result"
@@ -11841,87 +11841,87 @@ msgstr "Slett testresultatmal"
 
 #: templates/js/translated/part.js:3017 templates/js/translated/part.js:3018
 msgid "No date specified"
-msgstr ""
+msgstr "Ingen dato angitt"
 
 #: templates/js/translated/part.js:3020
 msgid "Specified date is in the past"
-msgstr ""
+msgstr "Spesifisert dato er i fortiden"
 
 #: templates/js/translated/part.js:3026
 msgid "Speculative"
-msgstr ""
+msgstr "Spekulativ"
 
 #: templates/js/translated/part.js:3076
 msgid "No scheduling information available for this part"
-msgstr ""
+msgstr "Ingen planleggingsinformasjon tilgjengelig for denne delen"
 
 #: templates/js/translated/part.js:3082
 msgid "Error fetching scheduling information for this part"
-msgstr ""
+msgstr "Feil ved henting av planleggingsinformasjon for denne delen"
 
 #: templates/js/translated/part.js:3178
 msgid "Scheduled Stock Quantities"
-msgstr ""
+msgstr "Planlagt lagerbeholdning"
 
 #: templates/js/translated/part.js:3194
 msgid "Maximum Quantity"
-msgstr ""
+msgstr "Maksimalt antall"
 
 #: templates/js/translated/part.js:3239
 msgid "Minimum Stock Level"
-msgstr ""
+msgstr "Minimalt lagerbeholdningsnivå"
 
 #: templates/js/translated/plugin.js:45
 msgid "No plugins found"
-msgstr ""
+msgstr "Ingen utvidelser funnet"
 
 #: templates/js/translated/plugin.js:57
 msgid "This plugin is no longer installed"
-msgstr ""
+msgstr "Denne utvidelsen er ikke lenger installert"
 
 #: templates/js/translated/plugin.js:59
 msgid "This plugin is active"
-msgstr ""
+msgstr "Denne utvidelsen er aktiv"
 
 #: templates/js/translated/plugin.js:61
 msgid "This plugin is installed but not active"
-msgstr ""
+msgstr "Denne utvidelsen er installert, men ikke aktiv"
 
 #: templates/js/translated/plugin.js:116 templates/js/translated/plugin.js:185
 msgid "Disable Plugin"
-msgstr ""
+msgstr "Deaktiver utvidelse"
 
 #: templates/js/translated/plugin.js:118 templates/js/translated/plugin.js:185
 msgid "Enable Plugin"
-msgstr ""
+msgstr "Aktiver utvidelse"
 
 #: templates/js/translated/plugin.js:157
 msgid "The Plugin was installed"
-msgstr ""
+msgstr "Utvidelsen ble installert"
 
 #: templates/js/translated/plugin.js:176
 msgid "Are you sure you want to enable this plugin?"
-msgstr ""
+msgstr "Er du sikker på at du vil aktivere denne utvidelsen?"
 
 #: templates/js/translated/plugin.js:180
 msgid "Are you sure you want to disable this plugin?"
-msgstr ""
+msgstr "Er du sikker på at du vil deaktivere denne utvidelsen?"
 
 #: templates/js/translated/plugin.js:188
 msgid "Enable"
-msgstr ""
+msgstr "Aktiver"
 
 #: templates/js/translated/plugin.js:188
 msgid "Disable"
-msgstr ""
+msgstr "Deaktiver"
 
 #: templates/js/translated/plugin.js:202
 msgid "Plugin updated"
-msgstr ""
+msgstr "Utvidelse oppdatert"
 
 #: templates/js/translated/pricing.js:159
 msgid "Error fetching currency data"
-msgstr ""
+msgstr "Feil ved henting av valutadata"
 
 #: templates/js/translated/pricing.js:321
 msgid "No BOM data available"
@@ -11929,67 +11929,67 @@ msgstr "Ingen BOM-data tilgjengelig"
 
 #: templates/js/translated/pricing.js:463
 msgid "No supplier pricing data available"
-msgstr ""
+msgstr "Ingen leverandørprisdata tilgjengelig"
 
 #: templates/js/translated/pricing.js:572
 msgid "No price break data available"
-msgstr ""
+msgstr "Ingen data om prisbrudd tilgjengelig"
 
 #: templates/js/translated/pricing.js:755
 msgid "No purchase history data available"
-msgstr ""
+msgstr "Ingen data tilgjengelig for kjøpshistorikk"
 
 #: templates/js/translated/pricing.js:791
 msgid "Purchase Price History"
-msgstr ""
+msgstr "Inkjøpsprishistorikk"
 
 #: templates/js/translated/pricing.js:894
 msgid "No sales history data available"
-msgstr ""
+msgstr "Ingen data tilgjengelig for salgshistorikk"
 
 #: templates/js/translated/pricing.js:916
 msgid "Sale Price History"
-msgstr ""
+msgstr "Salgsprishistorikk"
 
 #: templates/js/translated/pricing.js:1005
 msgid "No variant data available"
-msgstr ""
+msgstr "Ingen variantdata tilgjengelig"
 
 #: templates/js/translated/pricing.js:1045
 msgid "Variant Part"
-msgstr ""
+msgstr "Variantdel"
 
 #: templates/js/translated/purchase_order.js:169
 msgid "Select purchase order to duplicate"
-msgstr ""
+msgstr "Velg innkjøpsordre som skal dupliseres"
 
 #: templates/js/translated/purchase_order.js:176
 msgid "Duplicate Line Items"
-msgstr ""
+msgstr "Dupliser linjeelementer"
 
 #: templates/js/translated/purchase_order.js:177
 msgid "Duplicate all line items from the selected order"
-msgstr ""
+msgstr "Dupliser alle linjeelementer fra den valgte ordren"
 
 #: templates/js/translated/purchase_order.js:184
 msgid "Duplicate Extra Lines"
-msgstr ""
+msgstr "Dupliser ekstra linjer"
 
 #: templates/js/translated/purchase_order.js:185
 msgid "Duplicate extra line items from the selected order"
-msgstr ""
+msgstr "Dupliser ekstra linjeelementer fra den valgte ordren"
 
 #: templates/js/translated/purchase_order.js:206
 msgid "Edit Purchase Order"
-msgstr ""
+msgstr "Rediger innkjøpsordre"
 
 #: templates/js/translated/purchase_order.js:223
 msgid "Duplication Options"
-msgstr ""
+msgstr "Alternativer for duplisering"
 
 #: templates/js/translated/purchase_order.js:450
 msgid "Complete Purchase Order"
-msgstr ""
+msgstr "Fullfør Innkjøpsordre"
 
 #: templates/js/translated/purchase_order.js:467
 #: templates/js/translated/return_order.js:210
@@ -11999,16 +11999,16 @@ msgstr "Merk ordren som fullført?"
 
 #: templates/js/translated/purchase_order.js:473
 msgid "All line items have been received"
-msgstr ""
+msgstr "Alle linjeelementer har blitt mottatt"
 
 #: templates/js/translated/purchase_order.js:478
 msgid "This order has line items which have not been marked as received."
-msgstr ""
+msgstr "Denne ordren har linjeelementer som ikke er merket som mottatt."
 
 #: templates/js/translated/purchase_order.js:479
 #: templates/js/translated/sales_order.js:514
 msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr ""
+msgstr "Ved å fullføre denne ordren er det ikke lenger mulig å redigere ordren og linjeelementene."
 
 #: templates/js/translated/purchase_order.js:502
 msgid "Cancel Purchase Order"
@@ -12025,15 +12025,15 @@ msgstr "Denne innkjøpsordren kan ikke kanselleres"
 #: templates/js/translated/purchase_order.js:534
 #: templates/js/translated/return_order.js:164
 msgid "After placing this order, line items will no longer be editable."
-msgstr ""
+msgstr "Etter at ordren er sendt, vil linjeelementene ikke lenger kunne redigeres."
 
 #: templates/js/translated/purchase_order.js:539
 msgid "Issue Purchase Order"
-msgstr ""
+msgstr "Send innkjøpsordre"
 
 #: templates/js/translated/purchase_order.js:631
 msgid "At least one purchaseable part must be selected"
-msgstr ""
+msgstr "Minst én innkjøpsbar del må være valgt"
 
 #: templates/js/translated/purchase_order.js:656
 msgid "Quantity to order"
@@ -12053,20 +12053,20 @@ msgstr "Legg til innkjøpsordre"
 
 #: templates/js/translated/purchase_order.js:863
 msgid "No matching supplier parts"
-msgstr ""
+msgstr "Ingen samsvarende leverandørdeler"
 
 #: templates/js/translated/purchase_order.js:882
 msgid "No matching purchase orders"
-msgstr ""
+msgstr "Ingen samsvarende innkjøpsordre"
 
 #: templates/js/translated/purchase_order.js:1069
 msgid "Select Line Items"
-msgstr ""
+msgstr "Velg linjeelementer"
 
 #: templates/js/translated/purchase_order.js:1070
 #: templates/js/translated/return_order.js:492
 msgid "At least one line item must be selected"
-msgstr ""
+msgstr "Minst ett linjeelement må være valgt"
 
 #: templates/js/translated/purchase_order.js:1100
 msgid "Received Quantity"
@@ -12090,11 +12090,11 @@ msgstr "Fjern strekkode"
 
 #: templates/js/translated/purchase_order.js:1205
 msgid "Specify location"
-msgstr ""
+msgstr "Velg plassering"
 
 #: templates/js/translated/purchase_order.js:1213
 msgid "Add batch code"
-msgstr ""
+msgstr "Legg til batchkode"
 
 #: templates/js/translated/purchase_order.js:1224
 msgid "Add serial numbers"
@@ -12106,7 +12106,7 @@ msgstr "Serienumre"
 
 #: templates/js/translated/purchase_order.js:1301
 msgid "Order Code"
-msgstr ""
+msgstr "Ordrekode"
 
 #: templates/js/translated/purchase_order.js:1303
 msgid "Quantity to Receive"
@@ -12119,692 +12119,692 @@ msgstr "Bekreft mottak av varer"
 
 #: templates/js/translated/purchase_order.js:1330
 msgid "Receive Purchase Order Items"
-msgstr ""
+msgstr "Motta Innkjøpsordreartikler"
 
 #: templates/js/translated/purchase_order.js:1398
 msgid "Scan Item Barcode"
-msgstr ""
+msgstr "Skann elementets strekkode"
 
 #: templates/js/translated/purchase_order.js:1399
 msgid "Scan barcode on incoming item (must not match any existing stock items)"
-msgstr ""
+msgstr "Skann strekkode på innkommende element. (Kan ikke samsvare med eksisterende lagervarer)"
 
 #: templates/js/translated/purchase_order.js:1413
 msgid "Invalid barcode data"
-msgstr ""
+msgstr "Ugyldig strekkodedata"
 
 #: templates/js/translated/purchase_order.js:1675
 #: templates/js/translated/return_order.js:286
 #: templates/js/translated/sales_order.js:774
 #: templates/js/translated/sales_order.js:998
 msgid "Order is overdue"
-msgstr ""
+msgstr "Ordren er forfalt"
 
 #: templates/js/translated/purchase_order.js:1741
 #: templates/js/translated/return_order.js:354
 #: templates/js/translated/sales_order.js:851
 #: templates/js/translated/sales_order.js:1011
 msgid "Items"
-msgstr ""
+msgstr "Artikler"
 
 #: templates/js/translated/purchase_order.js:1837
 msgid "All selected Line items will be deleted"
-msgstr ""
+msgstr "Alle valgte ordrelinjer vil bli slettet"
 
 #: templates/js/translated/purchase_order.js:1855
 msgid "Delete selected Line items?"
-msgstr ""
+msgstr "Slett valgte linjeelementer?"
 
 #: templates/js/translated/purchase_order.js:1910
 #: templates/js/translated/sales_order.js:2070
 msgid "Duplicate Line Item"
-msgstr ""
+msgstr "Dupliser linjeelementer"
 
 #: templates/js/translated/purchase_order.js:1925
 #: templates/js/translated/return_order.js:476
 #: templates/js/translated/return_order.js:669
 #: templates/js/translated/sales_order.js:2083
 msgid "Edit Line Item"
-msgstr ""
+msgstr "Rediger ordrelinje"
 
 #: templates/js/translated/purchase_order.js:1936
 #: templates/js/translated/return_order.js:682
 #: templates/js/translated/sales_order.js:2094
 msgid "Delete Line Item"
-msgstr ""
+msgstr "Slett ordrelinje"
 
 #: templates/js/translated/purchase_order.js:2218
 #: templates/js/translated/sales_order.js:2024
 msgid "Duplicate line item"
-msgstr ""
+msgstr "Dupliser ordrelinje"
 
 #: templates/js/translated/purchase_order.js:2219
 #: templates/js/translated/return_order.js:801
 #: templates/js/translated/sales_order.js:2025
 msgid "Edit line item"
-msgstr ""
+msgstr "Rediger ordrelinje"
 
 #: templates/js/translated/purchase_order.js:2220
 #: templates/js/translated/return_order.js:805
 #: templates/js/translated/sales_order.js:2031
 msgid "Delete line item"
-msgstr ""
+msgstr "Slett ordrelinje"
 
 #: templates/js/translated/report.js:63
 msgid "items selected"
-msgstr ""
+msgstr "valgte elementer"
 
 #: templates/js/translated/report.js:71
 msgid "Select Report Template"
-msgstr ""
+msgstr "Velg rapportmal"
 
 #: templates/js/translated/report.js:86
 msgid "Select Test Report Template"
-msgstr ""
+msgstr "Velg testrapportmal"
 
 #: templates/js/translated/report.js:140
 msgid "No Reports Found"
-msgstr ""
+msgstr "Ingen rapporter funnet"
 
 #: templates/js/translated/report.js:141
 msgid "No report templates found which match the selected items"
-msgstr ""
+msgstr "Fant ingen rapportmaler som samsvarer med de valgte elementene"
 
 #: templates/js/translated/return_order.js:60
 #: templates/js/translated/sales_order.js:86
 msgid "Add Customer"
-msgstr ""
+msgstr "Ny kunde"
 
 #: templates/js/translated/return_order.js:134
 msgid "Create Return Order"
-msgstr ""
+msgstr "Ny Returordre"
 
 #: templates/js/translated/return_order.js:149
 msgid "Edit Return Order"
-msgstr ""
+msgstr "Rediger Returordre"
 
 #: templates/js/translated/return_order.js:169
 msgid "Issue Return Order"
-msgstr ""
+msgstr "Send Returordre"
 
 #: templates/js/translated/return_order.js:186
 msgid "Are you sure you wish to cancel this Return Order?"
-msgstr ""
+msgstr "Er du sikker du vil kansellere returordren?"
 
 #: templates/js/translated/return_order.js:193
 msgid "Cancel Return Order"
-msgstr ""
+msgstr "Kanseller Returordre"
 
 #: templates/js/translated/return_order.js:218
 msgid "Complete Return Order"
-msgstr ""
+msgstr "Fullfør Returordre"
 
 #: templates/js/translated/return_order.js:266
 msgid "No return orders found"
-msgstr ""
+msgstr "Ingen returordrer funnet"
 
 #: templates/js/translated/return_order.js:300
 #: templates/js/translated/sales_order.js:788
 msgid "Invalid Customer"
-msgstr ""
+msgstr "Ugyldig kunde"
 
 #: templates/js/translated/return_order.js:562
 msgid "Receive Return Order Items"
-msgstr ""
+msgstr "Motta ordrelinjer"
 
 #: templates/js/translated/return_order.js:693
 #: templates/js/translated/sales_order.js:2230
 msgid "No matching line items"
-msgstr ""
+msgstr "Ingen samsvarende ordrelinjer"
 
 #: templates/js/translated/return_order.js:798
 msgid "Mark item as received"
-msgstr ""
+msgstr "Merk som mottatt"
 
 #: templates/js/translated/sales_order.js:161
 msgid "Create Sales Order"
-msgstr ""
+msgstr "Opprett salgsordre"
 
 #: templates/js/translated/sales_order.js:176
 msgid "Edit Sales Order"
-msgstr ""
+msgstr "Rediger salgsordre"
 
 #: templates/js/translated/sales_order.js:291
 msgid "No stock items have been allocated to this shipment"
-msgstr ""
+msgstr "Ingen Lagervarer har blitt tildelt denne forsendelsen"
 
 #: templates/js/translated/sales_order.js:296
 msgid "The following stock items will be shipped"
-msgstr ""
+msgstr "Følgende lagervarer blir sendt"
 
 #: templates/js/translated/sales_order.js:336
 msgid "Complete Shipment"
-msgstr ""
+msgstr "Fullfør forsendelse"
 
 #: templates/js/translated/sales_order.js:360
 msgid "Confirm Shipment"
-msgstr ""
+msgstr "Bekreft forsendelse"
 
 #: templates/js/translated/sales_order.js:416
 msgid "No pending shipments found"
-msgstr ""
+msgstr "Ingen ventende forsendelser funnet"
 
 #: templates/js/translated/sales_order.js:420
 msgid "No stock items have been allocated to pending shipments"
-msgstr ""
+msgstr "Ingen Lagervarer har blitt tildelt til ventende forsendelser"
 
 #: templates/js/translated/sales_order.js:430
 msgid "Complete Shipments"
-msgstr ""
+msgstr "Fullfør forsendelser"
 
 #: templates/js/translated/sales_order.js:452
 msgid "Skip"
-msgstr ""
+msgstr "Hopp over"
 
 #: templates/js/translated/sales_order.js:513
 msgid "This order has line items which have not been completed."
-msgstr ""
+msgstr "Denne ordren har ordrelinjer som ikke er fullførte."
 
 #: templates/js/translated/sales_order.js:535
 msgid "Issue this Sales Order?"
-msgstr ""
+msgstr "Send denne salgsordren?"
 
 #: templates/js/translated/sales_order.js:540
 msgid "Issue Sales Order"
-msgstr ""
+msgstr "Send salgsordre"
 
 #: templates/js/translated/sales_order.js:559
 msgid "Cancel Sales Order"
-msgstr ""
+msgstr "Kanseller salgsordre"
 
 #: templates/js/translated/sales_order.js:564
 msgid "Cancelling this order means that the order will no longer be editable."
-msgstr ""
+msgstr "Å kansellere denne ordren betyr at ordren ikke lenger vil kunne redigeres."
 
 #: templates/js/translated/sales_order.js:618
 msgid "Create New Shipment"
-msgstr ""
+msgstr "Opprett ny forsendelse"
 
 #: templates/js/translated/sales_order.js:728
 msgid "No sales orders found"
-msgstr ""
+msgstr "Ingen salgsordrer funnet"
 
 #: templates/js/translated/sales_order.js:908
 msgid "Edit shipment"
-msgstr ""
+msgstr "Rediger forsendelse"
 
 #: templates/js/translated/sales_order.js:911
 msgid "Complete shipment"
-msgstr ""
+msgstr "Fullfør forsendelse"
 
 #: templates/js/translated/sales_order.js:916
 msgid "Delete shipment"
-msgstr ""
+msgstr "Slett forsendelse"
 
 #: templates/js/translated/sales_order.js:933
 msgid "Edit Shipment"
-msgstr ""
+msgstr "Rediger forsendelse"
 
 #: templates/js/translated/sales_order.js:948
 msgid "Delete Shipment"
-msgstr ""
+msgstr "Slett forsendelse"
 
 #: templates/js/translated/sales_order.js:981
 msgid "No matching shipments found"
-msgstr ""
+msgstr "Ingen samsvarende forsendelser funnet"
 
 #: templates/js/translated/sales_order.js:1006
 msgid "Shipment Reference"
-msgstr ""
+msgstr "Forsendelsesreferanse"
 
 #: templates/js/translated/sales_order.js:1030
 #: templates/js/translated/sales_order.js:1529
 msgid "Not shipped"
-msgstr ""
+msgstr "Ikke sendt"
 
 #: templates/js/translated/sales_order.js:1048
 msgid "Tracking"
-msgstr ""
+msgstr "Sporing"
 
 #: templates/js/translated/sales_order.js:1052
 msgid "Invoice"
-msgstr ""
+msgstr "Faktura"
 
 #: templates/js/translated/sales_order.js:1219
 msgid "Add Shipment"
-msgstr ""
+msgstr "Legg til forsendelse"
 
 #: templates/js/translated/sales_order.js:1270
 msgid "Confirm stock allocation"
-msgstr ""
+msgstr "Bekreft lagertildeling"
 
 #: templates/js/translated/sales_order.js:1271
 msgid "Allocate Stock Items to Sales Order"
-msgstr ""
+msgstr "Tildel lagervarer til salgsordre"
 
 #: templates/js/translated/sales_order.js:1477
 msgid "No sales order allocations found"
-msgstr ""
+msgstr "Ingen salgsordretildelinger funnet"
 
 #: templates/js/translated/sales_order.js:1569
 msgid "Edit Stock Allocation"
-msgstr ""
+msgstr "Rediger lagertildeling"
 
 #: templates/js/translated/sales_order.js:1583
 msgid "Confirm Delete Operation"
-msgstr ""
+msgstr "Bekreft sletteoperasjon"
 
 #: templates/js/translated/sales_order.js:1584
 msgid "Delete Stock Allocation"
-msgstr ""
+msgstr "Slett lagertildeling"
 
 #: templates/js/translated/sales_order.js:1623
 #: templates/js/translated/sales_order.js:1710
 #: templates/js/translated/stock.js:1744
 msgid "Shipped to customer"
-msgstr ""
+msgstr "Sendt til kunde"
 
 #: templates/js/translated/sales_order.js:1631
 #: templates/js/translated/sales_order.js:1719
 msgid "Stock location not specified"
-msgstr ""
+msgstr "Lagerplassering ikke angitt"
 
 #: templates/js/translated/sales_order.js:2008
 msgid "Allocate serial numbers"
-msgstr ""
+msgstr "Tildel serienumre"
 
 #: templates/js/translated/sales_order.js:2012
 msgid "Purchase stock"
-msgstr ""
+msgstr "Kjøp lagerbeholdning"
 
 #: templates/js/translated/sales_order.js:2021
 #: templates/js/translated/sales_order.js:2208
 msgid "Calculate price"
-msgstr ""
+msgstr "Beregn pris"
 
 #: templates/js/translated/sales_order.js:2035
 msgid "Cannot be deleted as items have been shipped"
-msgstr ""
+msgstr "Kan ikke slettes ettersom varene er sendt"
 
 #: templates/js/translated/sales_order.js:2038
 msgid "Cannot be deleted as items have been allocated"
-msgstr ""
+msgstr "Kan ikke slettes ettersom varene er tildelt"
 
 #: templates/js/translated/sales_order.js:2109
 msgid "Allocate Serial Numbers"
-msgstr ""
+msgstr "Tildel serienummer"
 
 #: templates/js/translated/sales_order.js:2216
 msgid "Update Unit Price"
-msgstr ""
+msgstr "Oppdater enhetspris"
 
 #: templates/js/translated/search.js:270
 msgid "No results"
-msgstr ""
+msgstr "Ingen resultater"
 
 #: templates/js/translated/search.js:292 templates/search.html:25
 msgid "Enter search query"
-msgstr ""
+msgstr "Angi søkeord"
 
 #: templates/js/translated/search.js:342
 msgid "result"
-msgstr ""
+msgstr "resultat"
 
 #: templates/js/translated/search.js:342
 msgid "results"
-msgstr ""
+msgstr "resultater"
 
 #: templates/js/translated/search.js:352
 msgid "Minimize results"
-msgstr ""
+msgstr "Minimer resultater"
 
 #: templates/js/translated/search.js:355
 msgid "Remove results"
-msgstr ""
+msgstr "Fjern resultater"
 
 #: templates/js/translated/stock.js:98
 msgid "Serialize Stock Item"
-msgstr ""
+msgstr "Serialiser lagervare"
 
 #: templates/js/translated/stock.js:129
 msgid "Confirm Stock Serialization"
-msgstr ""
+msgstr "Bekreft lagerserialisering"
 
 #: templates/js/translated/stock.js:139
 msgid "Default icon for all locations that have no icon set (optional) - Explore all available icons on"
-msgstr ""
+msgstr "Standard ikon for alle plasseringer som ikke har et ikon satt (valgfritt) - Utforsk alle tilgjengelige ikoner på"
 
 #: templates/js/translated/stock.js:152
 msgid "Parent stock location"
-msgstr ""
+msgstr "Overordnet lagerplassering"
 
 #: templates/js/translated/stock.js:166
 msgid "Add Location type"
-msgstr ""
+msgstr "Legg til plasseringstype"
 
 #: templates/js/translated/stock.js:202
 msgid "Edit Stock Location"
-msgstr ""
+msgstr "Rediger plasseringstype"
 
 #: templates/js/translated/stock.js:217
 msgid "New Stock Location"
-msgstr ""
+msgstr "Ny plasseringstype"
 
 #: templates/js/translated/stock.js:219
 msgid "Create another location after this one"
-msgstr ""
+msgstr "Opprett ny plassering etter denne"
 
 #: templates/js/translated/stock.js:220
 msgid "Stock location created"
-msgstr ""
+msgstr "Lagerplassering opprettet"
 
 #: templates/js/translated/stock.js:234
 msgid "Are you sure you want to delete this stock location?"
-msgstr ""
+msgstr "Er du sikker på at du vil slette denne lagerplasseringen?"
 
 #: templates/js/translated/stock.js:241
 msgid "Move to parent stock location"
-msgstr ""
+msgstr "Flytt til overordnet lagerplassering"
 
 #: templates/js/translated/stock.js:250
 msgid "Delete Stock Location"
-msgstr ""
+msgstr "Slett lagerplassering"
 
 #: templates/js/translated/stock.js:254
 msgid "Action for stock items in this stock location"
-msgstr ""
+msgstr "Handling for lagervarer på denne lagerplasseringen"
 
 #: templates/js/translated/stock.js:259
 msgid "Action for sub-locations"
-msgstr ""
+msgstr "Handling for underplasseringer"
 
 #: templates/js/translated/stock.js:313
 msgid "This part cannot be serialized"
-msgstr ""
+msgstr "Denne delen kan ikke bli serialisert"
 
 #: templates/js/translated/stock.js:349
 msgid "Add given quantity as packs instead of individual items"
-msgstr ""
+msgstr "Legg til gitt mengde som pakker i stedet for enkeltprodukter"
 
 #: templates/js/translated/stock.js:362
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "Angi innledende antall for denne lagervaren"
 
 #: templates/js/translated/stock.js:368
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr ""
+msgstr "Angi serienumre for ny lagerbeholdning (eller la stå tom)"
 
 #: templates/js/translated/stock.js:439
 msgid "Stock item duplicated"
-msgstr ""
+msgstr "Lagervare duplisert"
 
 #: templates/js/translated/stock.js:459
 msgid "Duplicate Stock Item"
-msgstr ""
+msgstr "Dupliser lagervare"
 
 #: templates/js/translated/stock.js:475
 msgid "Are you sure you want to delete this stock item?"
-msgstr ""
+msgstr "Er du sikker på at du vil slette denne lagervaren?"
 
 #: templates/js/translated/stock.js:480
 msgid "Delete Stock Item"
-msgstr ""
+msgstr "Slett lagervare"
 
 #: templates/js/translated/stock.js:501
 msgid "Edit Stock Item"
-msgstr ""
+msgstr "Rediger lagervare"
 
 #: templates/js/translated/stock.js:543
 msgid "Create another item after this one"
-msgstr ""
+msgstr "Opprett ny artikkel etter denne"
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr ""
+msgstr "Opprettet ny lagervare"
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr ""
+msgstr "Opprettet nye lagervarer"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
-msgstr ""
+msgstr "Finn serienummer"
 
 #: templates/js/translated/stock.js:597 templates/js/translated/stock.js:598
 msgid "Enter serial number"
-msgstr ""
+msgstr "Skriv inn serienummer"
 
 #: templates/js/translated/stock.js:614
 msgid "Enter a serial number"
-msgstr ""
+msgstr "Skriv inn et serienummer"
 
 #: templates/js/translated/stock.js:634
 msgid "No matching serial number"
-msgstr ""
+msgstr "Ingen samsvarende serienummer"
 
 #: templates/js/translated/stock.js:643
 msgid "More than one matching result found"
-msgstr ""
+msgstr "Mer enn ett samsvarende resultat funnet"
 
 #: templates/js/translated/stock.js:751
 msgid "Confirm stock assignment"
-msgstr ""
+msgstr "Bekreft lagertildeling"
 
 #: templates/js/translated/stock.js:752
 msgid "Assign Stock to Customer"
-msgstr ""
+msgstr "Tildel lagerbeholdning til kunde"
 
 #: templates/js/translated/stock.js:829
 msgid "Warning: Merge operation cannot be reversed"
-msgstr ""
+msgstr "Advarsel: Sammenslåing kan ikke reverseres"
 
 #: templates/js/translated/stock.js:830
 msgid "Some information will be lost when merging stock items"
-msgstr ""
+msgstr "Noe informasjon vil gå tapt ved sammenslåing av lagervarer"
 
 #: templates/js/translated/stock.js:832
 msgid "Stock transaction history will be deleted for merged items"
-msgstr ""
+msgstr "Lagertransaksjonshistorie vil bli slettet for sammenslåtte artikler"
 
 #: templates/js/translated/stock.js:833
 msgid "Supplier part information will be deleted for merged items"
-msgstr ""
+msgstr "Leverandørdelinformasjon vil bli slettet for sammenslåtte artikler"
 
 #: templates/js/translated/stock.js:928
 msgid "Confirm stock item merge"
-msgstr ""
+msgstr "Bekreft sammenslåing av lagervarer"
 
 #: templates/js/translated/stock.js:929
 msgid "Merge Stock Items"
-msgstr ""
+msgstr "Slå sammen lagervarer"
 
 #: templates/js/translated/stock.js:1024
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Overfør lagerbeholdning"
 
 #: templates/js/translated/stock.js:1025
 msgid "Move"
-msgstr ""
+msgstr "Flytt"
 
 #: templates/js/translated/stock.js:1031
 msgid "Count Stock"
-msgstr ""
+msgstr "Tell beholdning"
 
 #: templates/js/translated/stock.js:1032
 msgid "Count"
-msgstr ""
+msgstr "Tell"
 
 #: templates/js/translated/stock.js:1036
 msgid "Remove Stock"
-msgstr ""
+msgstr "Fjern lagerbeholdning"
 
 #: templates/js/translated/stock.js:1037
 msgid "Take"
-msgstr ""
+msgstr "Ta"
 
 #: templates/js/translated/stock.js:1041
 msgid "Add Stock"
-msgstr ""
+msgstr "Legg til lagerbeholdning"
 
 #: templates/js/translated/stock.js:1042 users/models.py:406
 msgid "Add"
-msgstr ""
+msgstr "Legg til"
 
 #: templates/js/translated/stock.js:1046
 msgid "Delete Stock"
-msgstr ""
+msgstr "Slett lagervare"
 
 #: templates/js/translated/stock.js:1143
 msgid "Quantity cannot be adjusted for serialized stock"
-msgstr ""
+msgstr "Antall kan ikke justeres for serialisert lagervare"
 
 #: templates/js/translated/stock.js:1143
 msgid "Specify stock quantity"
-msgstr ""
+msgstr "Angi lagermengde"
 
 #: templates/js/translated/stock.js:1177 templates/js/translated/stock.js:3267
 msgid "Select Stock Items"
-msgstr ""
+msgstr "Velg lagervarer"
 
 #: templates/js/translated/stock.js:1178
 msgid "Select at least one available stock item"
-msgstr ""
+msgstr "Velg minst en tilgjengelig lagervare"
 
 #: templates/js/translated/stock.js:1224
 msgid "Confirm stock adjustment"
-msgstr ""
+msgstr "Bekreft lagerjustering"
 
 #: templates/js/translated/stock.js:1360
 msgid "PASS"
-msgstr ""
+msgstr "BESTÅTT"
 
 #: templates/js/translated/stock.js:1362
 msgid "FAIL"
-msgstr ""
+msgstr "STRYK"
 
 #: templates/js/translated/stock.js:1367
 msgid "NO RESULT"
-msgstr ""
+msgstr "INGEN RESULTAT"
 
 #: templates/js/translated/stock.js:1429
 msgid "Pass test"
-msgstr ""
+msgstr "Bestå test"
 
 #: templates/js/translated/stock.js:1432
 msgid "Add test result"
-msgstr ""
+msgstr "Legg til testresultat"
 
 #: templates/js/translated/stock.js:1456
 msgid "No test results found"
-msgstr ""
+msgstr "Ingen resultater funnet"
 
 #: templates/js/translated/stock.js:1520
 msgid "Test Date"
-msgstr ""
+msgstr "Testdato"
 
 #: templates/js/translated/stock.js:1682
 msgid "Edit Test Result"
-msgstr ""
+msgstr "Rediger testresultat"
 
 #: templates/js/translated/stock.js:1704
 msgid "Delete Test Result"
-msgstr ""
+msgstr "Slett testresultat"
 
 #: templates/js/translated/stock.js:1736
 msgid "In production"
-msgstr ""
+msgstr "I produksjon"
 
 #: templates/js/translated/stock.js:1740
 msgid "Installed in Stock Item"
-msgstr ""
+msgstr "Installert i lagervare"
 
 #: templates/js/translated/stock.js:1748
 msgid "Assigned to Sales Order"
-msgstr ""
+msgstr "Tildelt til Salgsordre"
 
 #: templates/js/translated/stock.js:1754
 msgid "No stock location set"
-msgstr ""
+msgstr "Ingen lagerplassering satt"
 
 #: templates/js/translated/stock.js:1810
 msgid "Change stock status"
-msgstr ""
+msgstr "Endre lagerstatus"
 
 #: templates/js/translated/stock.js:1819
 msgid "Merge stock"
-msgstr ""
+msgstr "Slå sammen lagervarer"
 
 #: templates/js/translated/stock.js:1868
 msgid "Delete stock"
-msgstr ""
+msgstr "Slett lagervare"
 
 #: templates/js/translated/stock.js:1923
 msgid "stock items"
-msgstr ""
+msgstr "lagervarer"
 
 #: templates/js/translated/stock.js:1928
 msgid "Scan to location"
-msgstr ""
+msgstr "Skann til plassering"
 
 #: templates/js/translated/stock.js:1939
 msgid "Stock Actions"
-msgstr ""
+msgstr "Lagerhandlinger"
 
 #: templates/js/translated/stock.js:1983
 msgid "Load installed items"
-msgstr ""
+msgstr "Last inn installerte elementer"
 
 #: templates/js/translated/stock.js:2061
 msgid "Stock item is in production"
-msgstr ""
+msgstr "Lagervare er i produksjon"
 
 #: templates/js/translated/stock.js:2066
 msgid "Stock item assigned to sales order"
-msgstr ""
+msgstr "Lagervaren er tildelt en salgsordre"
 
 #: templates/js/translated/stock.js:2069
 msgid "Stock item assigned to customer"
-msgstr ""
+msgstr "Lagervaren er tildelt en kunde"
 
 #: templates/js/translated/stock.js:2072
 msgid "Serialized stock item has been allocated"
-msgstr ""
+msgstr "Serialisert lagervare er allerede tildelt"
 
 #: templates/js/translated/stock.js:2074
 msgid "Stock item has been fully allocated"
-msgstr ""
+msgstr "Alle linjer er fullt tildelt"
 
 #: templates/js/translated/stock.js:2076
 msgid "Stock item has been partially allocated"
-msgstr ""
+msgstr "Lagervare er delvis tildelt"
 
 #: templates/js/translated/stock.js:2079
 msgid "Stock item has been installed in another item"
-msgstr ""
+msgstr "Lagervare har blitt installert i en annen artikkel"
 
 #: templates/js/translated/stock.js:2081
 msgid "Stock item has been consumed by a build order"
-msgstr ""
+msgstr "Lagervare har blitt konsumert av en produksjonsordre"
 
 #: templates/js/translated/stock.js:2085
 msgid "Stock item has expired"
-msgstr ""
+msgstr "Lagervaren har utløpt"
 
 #: templates/js/translated/stock.js:2087
 msgid "Stock item will expire soon"
-msgstr ""
+msgstr "Lagervare vil utløpe snart"
 
 #: templates/js/translated/stock.js:2092
 msgid "Stock item has been rejected"
-msgstr ""
+msgstr "Lagervare har blitt avvist"
 
 #: templates/js/translated/stock.js:2094
 msgid "Stock item is lost"
-msgstr ""
+msgstr "Lagervare er tapt"
 
 #: templates/js/translated/stock.js:2096
 msgid "Stock item is destroyed"
-msgstr ""
+msgstr "Lagervare er ødelagt"
 
 #: templates/js/translated/stock.js:2100
 #: templates/js/translated/table_filters.js:350
@@ -12813,35 +12813,35 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2265
 msgid "Supplier part not specified"
-msgstr ""
+msgstr "Leverandørdel ikke angitt"
 
 #: templates/js/translated/stock.js:2312
 msgid "Stock Value"
-msgstr ""
+msgstr "Lagerverdi"
 
 #: templates/js/translated/stock.js:2440
 msgid "No stock items matching query"
-msgstr ""
+msgstr "Ingen lagervarer samsvarer med søket"
 
 #: templates/js/translated/stock.js:2544
 msgid "stock locations"
-msgstr ""
+msgstr "lagerplasseringer"
 
 #: templates/js/translated/stock.js:2699
 msgid "Load Sublocations"
-msgstr ""
+msgstr "Last underplasseringer"
 
 #: templates/js/translated/stock.js:2817
 msgid "Details"
-msgstr ""
+msgstr "Detaljer"
 
 #: templates/js/translated/stock.js:2821
 msgid "No changes"
-msgstr ""
+msgstr "Ingen endringer"
 
 #: templates/js/translated/stock.js:2833
 msgid "Part information unavailable"
-msgstr ""
+msgstr "Delinformasjon utilgjengelig"
 
 #: templates/js/translated/stock.js:2855
 msgid "Location no longer exists"
@@ -12849,27 +12849,27 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2872
 msgid "Build order no longer exists"
-msgstr ""
+msgstr "Produksjonsordre eksisterer ikke lenger"
 
 #: templates/js/translated/stock.js:2887
 msgid "Purchase order no longer exists"
-msgstr ""
+msgstr "Innkjøpsordre eksisterer ikke lenger"
 
 #: templates/js/translated/stock.js:2904
 msgid "Sales Order no longer exists"
-msgstr ""
+msgstr "Salgsordre eksisterer ikke lenger"
 
 #: templates/js/translated/stock.js:2921
 msgid "Return Order no longer exists"
-msgstr ""
+msgstr "Returordre eksisterer ikke lenger"
 
 #: templates/js/translated/stock.js:2940
 msgid "Customer no longer exists"
-msgstr ""
+msgstr "Kunde eksisterer ikke lenger"
 
 #: templates/js/translated/stock.js:2958
 msgid "Stock item no longer exists"
-msgstr ""
+msgstr "Lagervare eksisterer ikke lenger"
 
 #: templates/js/translated/stock.js:2976
 msgid "Added"
@@ -13065,7 +13065,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:346
 msgid "Include stock in sublocations"
-msgstr ""
+msgstr "Inkluder lager i underplasseringer"
 
 #: templates/js/translated/table_filters.js:351
 msgid "Show stock items which are depleted"
@@ -13073,125 +13073,125 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:356
 msgid "Show items which are in stock"
-msgstr ""
+msgstr "Vis elementer som er på lager"
 
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr ""
+msgstr "Under produksjon"
 
 #: templates/js/translated/table_filters.js:361
 msgid "Show items which are in production"
-msgstr ""
+msgstr "Vis elementer som er under produksjon"
 
 #: templates/js/translated/table_filters.js:365
 msgid "Include Variants"
-msgstr ""
+msgstr "Inkluder varianter"
 
 #: templates/js/translated/table_filters.js:366
 msgid "Include stock items for variant parts"
-msgstr ""
+msgstr "Inkluder lagervarer for variantdeler"
 
 #: templates/js/translated/table_filters.js:371
 msgid "Show stock items which are installed in another item"
-msgstr ""
+msgstr "Vis lagervarer som er installert i andre elementer"
 
 #: templates/js/translated/table_filters.js:376
 msgid "Show items which have been assigned to a customer"
-msgstr ""
+msgstr "Vis elementer som er tildelt en kunde"
 
 #: templates/js/translated/table_filters.js:396
 #: templates/js/translated/table_filters.js:397
 msgid "Stock status"
-msgstr ""
+msgstr "Lagerstatus"
 
 #: templates/js/translated/table_filters.js:400
 msgid "Has batch code"
-msgstr ""
+msgstr "Har batchkode"
 
 #: templates/js/translated/table_filters.js:409
 msgid "Stock item is tracked by either batch code or serial number"
-msgstr ""
+msgstr "Lagervare spores av enten batchkode eller serienummer"
 
 #: templates/js/translated/table_filters.js:414
 msgid "Has purchase price"
-msgstr ""
+msgstr "Har innkjøpspris"
 
 #: templates/js/translated/table_filters.js:415
 msgid "Show stock items which have a purchase price set"
-msgstr ""
+msgstr "Vis lagervarer som har innkjøpspris"
 
 #: templates/js/translated/table_filters.js:419
 msgid "Expiry Date before"
-msgstr ""
+msgstr "Utløpsdato før"
 
 #: templates/js/translated/table_filters.js:423
 msgid "Expiry Date after"
-msgstr ""
+msgstr "Utløpsdato etter"
 
 #: templates/js/translated/table_filters.js:436
 msgid "Show stock items which have expired"
-msgstr ""
+msgstr "Vis lagervarer som har utløpt"
 
 #: templates/js/translated/table_filters.js:442
 msgid "Show stock which is close to expiring"
-msgstr ""
+msgstr "Vis lagerbeholdning som er nær å utløpe"
 
 #: templates/js/translated/table_filters.js:456
 msgid "Test Passed"
-msgstr ""
+msgstr "Test bestått"
 
 #: templates/js/translated/table_filters.js:460
 msgid "Include Installed Items"
-msgstr ""
+msgstr "Inkluder installerte elementer"
 
 #: templates/js/translated/table_filters.js:511
 msgid "Build status"
-msgstr ""
+msgstr "Produksjonsstatus"
 
 #: templates/js/translated/table_filters.js:708
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Inkluder deler i underkategorier"
 
 #: templates/js/translated/table_filters.js:713
 msgid "Show active parts"
-msgstr ""
+msgstr "Vis aktive deler"
 
 #: templates/js/translated/table_filters.js:721
 msgid "Available stock"
-msgstr ""
+msgstr "Tilgjengelig lagerbeholdning"
 
 #: templates/js/translated/table_filters.js:729
 #: templates/js/translated/table_filters.js:825
 msgid "Has Units"
-msgstr ""
+msgstr "Har enheter"
 
 #: templates/js/translated/table_filters.js:730
 msgid "Part has defined units"
-msgstr ""
+msgstr "Del har definerte enheter"
 
 #: templates/js/translated/table_filters.js:734
 msgid "Has IPN"
-msgstr ""
+msgstr "Har IPN"
 
 #: templates/js/translated/table_filters.js:735
 msgid "Part has internal part number"
-msgstr ""
+msgstr "Delen har internt delnummer"
 
 #: templates/js/translated/table_filters.js:739
 msgid "In stock"
-msgstr ""
+msgstr "På lager"
 
 #: templates/js/translated/table_filters.js:747
 msgid "Purchasable"
-msgstr ""
+msgstr "Kan kjøpes"
 
 #: templates/js/translated/table_filters.js:759
 msgid "Has stocktake entries"
-msgstr ""
+msgstr "Har lagertellingsoppføringer"
 
 #: templates/js/translated/table_filters.js:821
 msgid "Has Choices"
-msgstr ""
+msgstr "Har valg"
 
 #: templates/js/translated/tables.js:92
 msgid "Display calendar view"
@@ -13203,75 +13203,75 @@ msgstr "Vis liste"
 
 #: templates/js/translated/tables.js:112
 msgid "Display tree view"
-msgstr ""
+msgstr "Vis tre-visning"
 
 #: templates/js/translated/tables.js:130
 msgid "Expand all rows"
-msgstr ""
+msgstr "Utvid alle rader"
 
 #: templates/js/translated/tables.js:136
 msgid "Collapse all rows"
-msgstr ""
+msgstr "Skjul alle rader"
 
 #: templates/js/translated/tables.js:186
 msgid "Export Table Data"
-msgstr ""
+msgstr "Eksporter tabelldata"
 
 #: templates/js/translated/tables.js:190
 msgid "Select File Format"
-msgstr ""
+msgstr "Velg filformat"
 
 #: templates/js/translated/tables.js:529
 msgid "Loading data"
-msgstr ""
+msgstr "Laster data"
 
 #: templates/js/translated/tables.js:532
 msgid "rows per page"
-msgstr ""
+msgstr "rader per side"
 
 #: templates/js/translated/tables.js:537
 msgid "Showing all rows"
-msgstr ""
+msgstr "Viser alle rader"
 
 #: templates/js/translated/tables.js:539
 msgid "Showing"
-msgstr ""
+msgstr "Viser"
 
 #: templates/js/translated/tables.js:539
 msgid "to"
-msgstr ""
+msgstr "til"
 
 #: templates/js/translated/tables.js:539
 msgid "of"
-msgstr ""
+msgstr "av"
 
 #: templates/js/translated/tables.js:539
 msgid "rows"
-msgstr ""
+msgstr "rader"
 
 #: templates/js/translated/tables.js:546
 msgid "No matching results"
-msgstr ""
+msgstr "Ingen passende treff"
 
 #: templates/js/translated/tables.js:549
 msgid "Hide/Show pagination"
-msgstr ""
+msgstr "Skjul/vis paginering"
 
 #: templates/js/translated/tables.js:555
 msgid "Toggle"
-msgstr ""
+msgstr "Bytt"
 
 #: templates/js/translated/tables.js:558
 msgid "Columns"
-msgstr ""
+msgstr "Kolonner"
 
 #: templates/js/translated/tables.js:561
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 #: templates/navbar.html:45
 msgid "Buy"
-msgstr ""
+msgstr "Kjøp"
 
 #: templates/navbar.html:57
 msgid "Sell"
@@ -13291,7 +13291,7 @@ msgstr ""
 
 #: templates/navbar.html:148
 msgid "Logout"
-msgstr ""
+msgstr "Logg ut"
 
 #: templates/notes_buttons.html:6 templates/notes_buttons.html:7
 msgid "Save"
@@ -13299,255 +13299,256 @@ msgstr ""
 
 #: templates/notifications.html:9
 msgid "Show all notifications and history"
-msgstr ""
+msgstr "Vis alle varsler og historikk"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
-msgstr ""
+msgstr "QR-data ikke oppgitt"
 
 #: templates/registration/logged_out.html:7
 msgid "You were logged out successfully."
-msgstr ""
+msgstr "Du ble logget ut."
 
 #: templates/registration/logged_out.html:9
 msgid "Log in again"
-msgstr ""
+msgstr "Logg inn på nytt"
 
 #: templates/search.html:9
 msgid "Show full search results"
-msgstr ""
+msgstr "Vis fullstendige søkeresultater"
 
 #: templates/search.html:12
 msgid "Clear search"
-msgstr ""
+msgstr "Nullstill søk"
 
 #: templates/search.html:15
 msgid "Close search menu"
-msgstr ""
+msgstr "Lukk søkemeny"
 
 #: templates/socialaccount/authentication_error.html:5
 msgid "Social Network Login Failure"
-msgstr ""
+msgstr "\"Sosial nettverk\"-pålogging feilet"
 
 #: templates/socialaccount/authentication_error.html:8
 msgid "Account Login Failure"
-msgstr ""
+msgstr "Kontofeil ved innlogging"
 
 #: templates/socialaccount/authentication_error.html:11
 msgid "An error occurred while attempting to login via your social network account."
-msgstr ""
+msgstr "En feil oppstod under forsøk på å logge inn via din sosiale nettverkskonto."
 
 #: templates/socialaccount/authentication_error.html:13
 msgid "Contact your system administrator for further information."
-msgstr ""
+msgstr "Kontakt systemadministratoren for mer informasjon."
 
 #: templates/socialaccount/login.html:13
 #, python-format
 msgid "Connect %(provider)s"
-msgstr ""
+msgstr "Koble til %(provider)s"
 
 #: templates/socialaccount/login.html:15
 #, python-format
 msgid "You are about to connect a new third party account from %(provider)s."
-msgstr ""
+msgstr "Du er i ferd med å koble en ny tredjepartskonto fra %(provider)s."
 
 #: templates/socialaccount/login.html:17
 #, python-format
 msgid "Sign In Via %(provider)s"
-msgstr ""
+msgstr "Logg på via %(provider)s"
 
 #: templates/socialaccount/login.html:19
 #, python-format
 msgid "You are about to sign in using a third party account from %(provider)s."
-msgstr ""
+msgstr "Du er i ferd med å logge inn med en tredjepartskonto fra %(provider)s."
 
 #: templates/socialaccount/login.html:24
 msgid "Continue"
-msgstr ""
+msgstr "Fortsett"
 
 #: templates/socialaccount/login.html:29
 msgid "Invalid SSO Provider"
-msgstr ""
+msgstr "Ugyldig SSO-leverandør"
 
 #: templates/socialaccount/login.html:31
 msgid "The selected SSO provider is invalid, or has not been correctly configured"
-msgstr ""
+msgstr "Valgt SSO-leverandør er ugyldig, eller den er ikke riktig konfigurert"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
 msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
+msgstr "Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
+"%(site_name)s.<br>Som et siste steg, vennligst fullfør skjemaet:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
 msgid "Provider has not been configured"
-msgstr ""
+msgstr "Leverandør er ikke konfigurert"
 
 #: templates/socialaccount/snippets/provider_list.html:35
 msgid "No SSO providers have been configured"
-msgstr ""
+msgstr "Ingen SSO-leverandører er konfigurert"
 
 #: templates/stats.html:13
 msgid "Instance Name"
-msgstr ""
+msgstr "Instansnavn"
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr ""
+msgstr "Database"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Serveren kjører i debug-modus"
 
 #: templates/stats.html:33
 msgid "Docker Mode"
-msgstr ""
+msgstr "Docker-modus"
 
 #: templates/stats.html:34
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Serveren er distribuert ved hjelp av docker"
 
 #: templates/stats.html:39
 msgid "Plugin Support"
-msgstr ""
+msgstr "Støtte for utvidelser"
 
 #: templates/stats.html:43
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Utvidelsesstøtte aktivert"
 
 #: templates/stats.html:45
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Utvidelsesstøtte deaktivert"
 
 #: templates/stats.html:52
 msgid "Server status"
-msgstr ""
+msgstr "Serverstatus"
 
 #: templates/stats.html:55
 msgid "Healthy"
-msgstr ""
+msgstr "Frisk"
 
 #: templates/stats.html:57
 msgid "Issues detected"
-msgstr ""
+msgstr "Problemer oppdaget"
 
 #: templates/stats.html:64
 msgid "Background Worker"
-msgstr ""
+msgstr "Bakgrunnsarbeider"
 
 #: templates/stats.html:67
 msgid "Background worker not running"
-msgstr ""
+msgstr "Bakgrunnsarbeider kjører ikke"
 
 #: templates/stats.html:75
 msgid "Email Settings"
-msgstr ""
+msgstr "E-Post-Innstillinger"
 
 #: templates/stats.html:78
 msgid "Email settings not configured"
-msgstr ""
+msgstr "E-postinnstillinger ikke konfigurert"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr ""
+msgstr "Nei"
 
 #: users/admin.py:90
 msgid "Users"
-msgstr ""
+msgstr "Brukere"
 
 #: users/admin.py:91
 msgid "Select which users are assigned to this group"
-msgstr ""
+msgstr "Velg hvilke brukere som er tilordnet denne gruppen"
 
 #: users/admin.py:226
 msgid "The following users are members of multiple groups"
-msgstr ""
+msgstr "Følgende brukere er medlemmer av flere grupper"
 
 #: users/admin.py:253
 msgid "Personal info"
-msgstr ""
+msgstr "Personlig informasjon"
 
 #: users/admin.py:254
 msgid "Permissions"
-msgstr ""
+msgstr "Tillatelser"
 
 #: users/admin.py:257
 msgid "Important dates"
-msgstr ""
+msgstr "Viktige datoer"
 
 #: users/authentication.py:29 users/models.py:129
 msgid "Token has been revoked"
-msgstr ""
+msgstr "Token er tilbakekalt"
 
 #: users/authentication.py:32
 msgid "Token has expired"
-msgstr ""
+msgstr "Token har utløpt"
 
 #: users/models.py:70
 msgid "API Token"
-msgstr ""
+msgstr "API-Token"
 
 #: users/models.py:71
 msgid "API Tokens"
-msgstr ""
+msgstr "API-Tokener"
 
 #: users/models.py:109
 msgid "Token Name"
-msgstr ""
+msgstr "Tokennavn"
 
 #: users/models.py:110
 msgid "Custom token name"
-msgstr ""
+msgstr "Egendefinert tokennavn"
 
 #: users/models.py:116
 msgid "Token expiry date"
-msgstr ""
+msgstr "Token utløpsdato"
 
 #: users/models.py:122
 msgid "Last Seen"
-msgstr ""
+msgstr "Sist sett"
 
 #: users/models.py:123
 msgid "Last time the token was used"
-msgstr ""
+msgstr "Sist gang tokenet ble brukt"
 
 #: users/models.py:128
 msgid "Revoked"
-msgstr ""
+msgstr "Tilbakekalt"
 
 #: users/models.py:393
 msgid "Permission set"
-msgstr ""
+msgstr "Tillatelse satt"
 
 #: users/models.py:401
 msgid "Group"
-msgstr ""
+msgstr "Gruppe"
 
 #: users/models.py:404
 msgid "View"
-msgstr ""
+msgstr "Visning"
 
 #: users/models.py:404
 msgid "Permission to view items"
-msgstr ""
+msgstr "Tillatelse til å se elementer"
 
 #: users/models.py:406
 msgid "Permission to add items"
-msgstr ""
+msgstr "Tillatelse til å legge til elementer"
 
 #: users/models.py:408
 msgid "Change"
-msgstr ""
+msgstr "Endre"
 
 #: users/models.py:408
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "Tillatelse til å endre elementer"
 
 #: users/models.py:410
 msgid "Permission to delete items"
-msgstr ""
+msgstr "Tillatelse til å slette elementer"
 
