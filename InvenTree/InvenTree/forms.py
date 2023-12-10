@@ -228,7 +228,12 @@ class CustomSignupForm(SignupForm):
 
 def registration_enabled():
     """Determine whether user registration is enabled."""
-    return settings.EMAIL_HOST and (InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'))
+    if InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'):
+        if settings.EMAIL_HOST:
+            return True
+        else:
+            logger.error("Registration cannot be enabled, because EMAIL_HOST is not configured.")
+    return False
 
 
 class RegistratonMixin:
