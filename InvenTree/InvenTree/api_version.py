@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 158
+INVENTREE_API_VERSION = 159
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v159 -> 2023-12-08 : https://github.com/inventree/InvenTree/pull/6056
+    - Adds API endpoint for reloading plugin registry
 
 v158 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5953
     - Adds API endpoint for listing all settings of a particular plugin

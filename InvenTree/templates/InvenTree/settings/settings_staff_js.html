@@ -591,5 +591,10 @@ onPanelLoad('plugin', function() {
         installPlugin();
     });
 
+    // Callback to reload plugins
+    $('#reload-plugins').click(function() {
+        reloadPlugins();
+    });
+
 {% endif %}
 });
