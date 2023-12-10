@@ -17,6 +17,13 @@ import {
   TargetDateColumn,
   TotalPriceColumn
 } from '../ColumnRenderers';
+import {
+  AssignedToMeFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({ params }: { params?: any }) {
@@ -24,7 +31,21 @@ export function SalesOrderTable({ params }: { params?: any }) {
 
   const navigate = useNavigate();
 
-  // TODO: Custom filters
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.salesorder)
+      },
+      OutstandingFilter(),
+      OverdueFilter(),
+      AssignedToMeFilter()
+      // TODO: has_project_code
+      // TODO: project_code
+    ];
+  }, []);
 
   // TODO: Row actions
 
@@ -80,6 +101,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
           ...params,
           customer_detail: true
         },
+        customFilters: tableFilters,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/sales/sales-order/${row.pk}/`);

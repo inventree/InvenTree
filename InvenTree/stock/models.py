@@ -2136,7 +2136,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if not InvenTree.ready.isImportingData():
+    if created and not InvenTree.ready.isImportingData():
         # Run this check in the background
         InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 

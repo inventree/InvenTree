@@ -820,8 +820,9 @@ class PartFilter(rest_filters.FilterSet):
     def filter_has_units(self, queryset, name, value):
         """Filter by whether the Part has units or not"""
         if str2bool(value):
-            return queryset.exclude(units='')
-        return queryset.filter(units='')
+            return queryset.exclude(Q(units=None) | Q(units=''))
+
+        return queryset.filter(Q(units=None) | Q(units='')).distinct()
 
     # Filter by parts which have (or not) an IPN value
     has_ipn = rest_filters.BooleanFilter(label='Has IPN', method='filter_has_ipn')
