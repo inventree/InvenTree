@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-06 06:18+0000\n"
+"POT-Creation-Date: 2023-12-10 22:58+0000\n"
 "PO-Revision-Date: 2023-12-07 02:34\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -54,7 +54,7 @@ msgstr "Datum eingeben"
 #: InvenTree/fields.py:215 InvenTree/models.py:920 build/serializers.py:433
 #: build/serializers.py:511 build/templates/build/sidebar.html:21
 #: company/models.py:733 company/templates/company/sidebar.html:37
-#: order/models.py:1104 order/templates/order/po_sidebar.html:11
+#: order/models.py:1138 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:40
 #: part/models.py:2999 part/templates/part/part_sidebar.html:63
@@ -115,19 +115,19 @@ msgstr "Bestätigung der E-Mail Adresse"
 msgid "You must type the same email each time."
 msgstr "E-Mail Adressen müssen übereinstimmen."
 
-#: InvenTree/forms.py:255 InvenTree/forms.py:261
+#: InvenTree/forms.py:260 InvenTree/forms.py:266
 msgid "The provided primary email address is not valid."
 msgstr "Die angegebene primäre E-Mail-Adresse ist ungültig."
 
-#: InvenTree/forms.py:267
+#: InvenTree/forms.py:272
 msgid "The provided email domain is not approved."
 msgstr "Die angegebene E-Mail-Domain ist nicht freigegeben."
 
-#: InvenTree/forms.py:371
+#: InvenTree/forms.py:376
 msgid "Registration is disabled."
 msgstr "Registrierung ist deaktiviert."
 
-#: InvenTree/helpers.py:452 order/models.py:446 order/models.py:623
+#: InvenTree/helpers.py:452 order/models.py:447 order/models.py:639
 msgid "Invalid quantity provided"
 msgstr "Keine gültige Menge"
 
@@ -266,7 +266,7 @@ msgstr "Datei zum Anhängen auswählen"
 
 #: InvenTree/models.py:482 common/models.py:2884 company/models.py:129
 #: company/models.py:387 company/models.py:441 company/models.py:720
-#: order/models.py:234 order/models.py:1108 order/models.py:1466
+#: order/models.py:235 order/models.py:1142 order/models.py:1500
 #: part/admin.py:38 part/models.py:837
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
@@ -348,7 +348,7 @@ msgstr "Ungültige Auswahl"
 #: report/models.py:170 stock/models.py:71 stock/models.py:72
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
-#: templates/InvenTree/settings/plugin.html:74
+#: templates/InvenTree/settings/plugin.html:80
 #: templates/InvenTree/settings/plugin_settings.html:22
 #: templates/InvenTree/settings/settings_staff_js.html:67
 #: templates/InvenTree/settings/settings_staff_js.html:446
@@ -368,7 +368,7 @@ msgstr "Name"
 #: company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:107 label/models.py:123
-#: order/models.py:226 order/models.py:1132 part/admin.py:191 part/admin.py:272
+#: order/models.py:227 order/models.py:1166 part/admin.py:191 part/admin.py:272
 #: part/models.py:805 part/models.py:3405 part/templates/part/category.html:82
 #: part/templates/part/part_base.html:170
 #: part/templates/part/part_scheduling.html:12 report/models.py:183
@@ -387,7 +387,7 @@ msgstr "Name"
 #: templates/js/translated/part.js:1483 templates/js/translated/part.js:1621
 #: templates/js/translated/part.js:1956 templates/js/translated/part.js:2353
 #: templates/js/translated/part.js:2783 templates/js/translated/part.js:2871
-#: templates/js/translated/plugin.js:79
+#: templates/js/translated/plugin.js:80
 #: templates/js/translated/purchase_order.js:1700
 #: templates/js/translated/purchase_order.js:1843
 #: templates/js/translated/purchase_order.js:2016
@@ -474,9 +474,13 @@ msgstr "Willkommen bei {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid "Your account has been created.\n\n"
+msgid ""
+"Your account has been created.\n"
+"\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr "Ihr Konto wurde erstellt.\n\n"
+msgstr ""
+"Ihr Konto wurde erstellt.\n"
+"\n"
 "Bitte verwenden Sie die Passwort-Zurücksetzen-Funktion, um Zugriff zu erhalten (https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -710,7 +714,7 @@ msgstr "Zurückgegeben"
 msgid "In Progress"
 msgstr "In Bearbeitung"
 
-#: InvenTree/status_codes.py:42 order/models.py:1345
+#: InvenTree/status_codes.py:42 order/models.py:1379
 #: templates/js/translated/sales_order.js:1523
 #: templates/js/translated/sales_order.js:1644
 #: templates/js/translated/sales_order.js:1957
@@ -991,8 +995,8 @@ msgstr "Teil in Bauauftrag kann nicht geändert werden"
 msgid "Build Order Reference"
 msgstr "Bauauftragsreferenz"
 
-#: build/models.py:172 order/models.py:363 order/models.py:776
-#: order/models.py:1102 order/models.py:1738 part/admin.py:274
+#: build/models.py:172 order/models.py:364 order/models.py:792
+#: order/models.py:1136 order/models.py:1772 part/admin.py:274
 #: part/models.py:3795 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
@@ -1022,7 +1026,7 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 
 #: build/models.py:197 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:908
-#: order/models.py:1209 order/models.py:1324 order/models.py:1325
+#: order/models.py:1243 order/models.py:1358 order/models.py:1359
 #: part/models.py:366 part/models.py:2847 part/models.py:2973
 #: part/models.py:3110 part/models.py:3129 part/models.py:3148
 #: part/models.py:3169 part/models.py:3261 part/models.py:3535
@@ -1135,7 +1139,7 @@ msgstr "Losnummer"
 msgid "Batch code for this build output"
 msgstr "Losnummer für dieses Endprodukt"
 
-#: build/models.py:269 order/models.py:242 part/models.py:975
+#: build/models.py:269 order/models.py:243 part/models.py:975
 #: part/templates/part/part_base.html:310
 #: templates/js/translated/return_order.js:339
 #: templates/js/translated/sales_order.js:827
@@ -1150,7 +1154,7 @@ msgstr "geplantes Fertigstellungsdatum"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Zieldatum für Bauauftrag-Fertigstellung."
 
-#: build/models.py:277 order/models.py:413 order/models.py:1781
+#: build/models.py:277 order/models.py:414 order/models.py:1815
 #: templates/js/translated/build.js:2235
 msgid "Completion Date"
 msgstr "Fertigstellungsdatum"
@@ -1169,7 +1173,7 @@ msgstr "Nutzer der diesen Bauauftrag erstellt hat"
 
 #: build/models.py:300 build/templates/build/build_base.html:204
 #: build/templates/build/detail.html:122 common/models.py:134
-#: order/models.py:256 order/templates/order/order_base.html:217
+#: order/models.py:257 order/templates/order/order_base.html:217
 #: order/templates/order/return_order_base.html:188
 #: order/templates/order/sales_order_base.html:228 part/models.py:982
 #: part/templates/part/part_base.html:390
@@ -1207,7 +1211,7 @@ msgid "Priority of this build order"
 msgstr "Priorität dieses Bauauftrags"
 
 #: build/models.py:321 common/models.py:119 order/admin.py:17
-#: order/models.py:231 templates/InvenTree/settings/settings_staff_js.html:146
+#: order/models.py:232 templates/InvenTree/settings/settings_staff_js.html:146
 #: templates/js/translated/build.js:2132
 #: templates/js/translated/purchase_order.js:1704
 #: templates/js/translated/return_order.js:318
@@ -1243,7 +1247,7 @@ msgid "Build output does not match Build Order"
 msgstr "Endprodukt stimmt nicht mit dem Bauauftrag überein"
 
 #: build/models.py:860 build/serializers.py:218 build/serializers.py:257
-#: build/serializers.py:815 order/models.py:444 order/serializers.py:389
+#: build/serializers.py:815 order/models.py:445 order/serializers.py:389
 #: order/serializers.py:511 part/serializers.py:1322 part/serializers.py:1661
 #: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
@@ -1260,7 +1264,7 @@ msgstr "Objekt bauen"
 #: build/models.py:1293 build/models.py:1551 build/serializers.py:205
 #: build/serializers.py:242 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2366
-#: order/models.py:1089 order/models.py:1660 order/serializers.py:1267
+#: order/models.py:1123 order/models.py:1694 order/serializers.py:1267
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:273
 #: part/forms.py:47 part/models.py:2986 part/models.py:3776
 #: part/templates/part/part_pricing.html:16
@@ -1317,11 +1321,11 @@ msgstr "Bauauftragsposition muss ein Endprodukt festlegen, da der übergeordnete
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Zugewiesene Menge ({q}) darf nicht verfügbare Menge ({a}) übersteigen"
 
-#: build/models.py:1393 order/models.py:1616
+#: build/models.py:1393 order/models.py:1650
 msgid "Stock item is over-allocated"
 msgstr "BestandObjekt ist zu oft zugewiesen"
 
-#: build/models.py:1399 order/models.py:1619
+#: build/models.py:1399 order/models.py:1653
 msgid "Allocation quantity must be greater than zero"
 msgstr "Reserviermenge muss größer null sein"
 
@@ -1417,7 +1421,7 @@ msgstr "Seriennummern automatisch zuweisen"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Benötigte Lagerartikel automatisch mit passenden Seriennummern zuweisen"
 
-#: build/serializers.py:332 stock/api.py:873
+#: build/serializers.py:332 stock/api.py:874
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Die folgenden Seriennummern existieren bereits oder sind ungültig"
 
@@ -1466,8 +1470,8 @@ msgid "Location for completed build outputs"
 msgstr "Lagerort für fertige Endprodukte"
 
 #: build/serializers.py:500 build/templates/build/build_base.html:151
-#: build/templates/build/detail.html:62 order/models.py:802
-#: order/models.py:1764 order/serializers.py:534 stock/admin.py:124
+#: build/templates/build/detail.html:62 order/models.py:818
+#: order/models.py:1798 order/serializers.py:534 stock/admin.py:124
 #: stock/serializers.py:726 stock/serializers.py:1289
 #: stock/templates/stock/item_base.html:427
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2179
@@ -1758,8 +1762,8 @@ msgid "Stock has not been fully allocated to this Build Order"
 msgstr "Bestand wurde Bauauftrag noch nicht vollständig zugewiesen"
 
 #: build/templates/build/build_base.html:160
-#: build/templates/build/detail.html:138 order/models.py:238
-#: order/models.py:1114 order/templates/order/order_base.html:186
+#: build/templates/build/detail.html:138 order/models.py:239
+#: order/models.py:1148 order/templates/order/order_base.html:186
 #: order/templates/order/return_order_base.html:164
 #: order/templates/order/sales_order_base.html:192
 #: report/templates/report/inventree_build_order_base.html:125
@@ -1796,8 +1800,8 @@ msgid "Completed Outputs"
 msgstr "Fertiggestellte Endprodukte"
 
 #: build/templates/build/build_base.html:190
-#: build/templates/build/detail.html:101 order/api.py:1409 order/models.py:1317
-#: order/models.py:1416 order/models.py:1564
+#: build/templates/build/detail.html:101 order/api.py:1409 order/models.py:1351
+#: order/models.py:1450 order/models.py:1598
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
 #: report/templates/report/inventree_build_order_base.html:135
@@ -1847,7 +1851,7 @@ msgstr "Ausgangs-Lager"
 msgid "Stock can be taken from any available location."
 msgstr "Bestand kann jedem verfügbaren Lagerort entnommen werden."
 
-#: build/templates/build/detail.html:49 order/models.py:1236
+#: build/templates/build/detail.html:49 order/models.py:1270
 #: templates/js/translated/purchase_order.js:2183
 msgid "Destination"
 msgstr "Ziel-Lager"
@@ -3404,7 +3408,7 @@ msgid "Price break quantity"
 msgstr "Preisstaffelungs Anzahl"
 
 #: common/models.py:2374 company/serializers.py:485 order/admin.py:41
-#: order/models.py:1147 order/models.py:1957
+#: order/models.py:1181 order/models.py:2005
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1883
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -3514,7 +3518,7 @@ msgid "Published"
 msgstr "Veröffentlicht"
 
 #: common/models.py:2894 templates/InvenTree/settings/plugin_settings.html:32
-#: templates/js/translated/news.js:56 templates/js/translated/plugin.js:102
+#: templates/js/translated/news.js:56 templates/js/translated/plugin.js:103
 msgid "Author"
 msgstr "Autor"
 
@@ -3671,7 +3675,7 @@ msgid "Contact email address"
 msgstr "Kontakt-Email"
 
 #: company/models.py:126 company/templates/company/company_base.html:139
-#: order/models.py:264 order/templates/order/order_base.html:203
+#: order/models.py:265 order/templates/order/order_base.html:203
 #: order/templates/order/return_order_base.html:174
 #: order/templates/order/sales_order_base.html:214
 msgid "Contact"
@@ -3904,7 +3908,7 @@ msgid "Linked manufacturer part must reference the same base part"
 msgstr "Verlinktes Herstellerteil muss dasselbe Basisteil referenzieren"
 
 #: company/models.py:700 company/templates/company/company_base.html:81
-#: company/templates/company/supplier_part.html:129 order/models.py:386
+#: company/templates/company/supplier_part.html:129 order/models.py:387
 #: order/templates/order/order_base.html:136 part/bom.py:284 part/bom.py:312
 #: part/serializers.py:436 plugin/builtin/suppliers/digikey.py:25
 #: plugin/builtin/suppliers/lcsc.py:26 plugin/builtin/suppliers/mouser.py:24
@@ -4062,8 +4066,8 @@ msgstr "Bild von URL herunterladen"
 msgid "Delete image"
 msgstr "Bild löschen"
 
-#: company/templates/company/company_base.html:86 order/models.py:790
-#: order/models.py:1752 order/templates/order/return_order_base.html:131
+#: company/templates/company/company_base.html:86 order/models.py:806
+#: order/models.py:1786 order/templates/order/return_order_base.html:131
 #: order/templates/order/sales_order_base.html:144 stock/models.py:754
 #: stock/models.py:755 stock/serializers.py:1044
 #: stock/templates/stock/item_base.html:405
@@ -4080,7 +4084,7 @@ msgstr "Kunde"
 msgid "Uses default currency"
 msgstr "verwendet Standard-Währung"
 
-#: company/templates/company/company_base.html:118 order/models.py:273
+#: company/templates/company/company_base.html:118 order/models.py:274
 #: order/templates/order/order_base.html:210
 #: order/templates/order/return_order_base.html:181
 #: order/templates/order/sales_order_base.html:221
@@ -4538,7 +4542,7 @@ msgstr "QR-Code"
 msgid "QR code"
 msgstr "QR-Code"
 
-#: order/admin.py:29 order/models.py:72
+#: order/admin.py:29 order/models.py:73
 #: report/templates/report/inventree_po_report_base.html:31
 #: report/templates/report/inventree_so_report_base.html:31
 #: templates/js/translated/order.js:327
@@ -4551,7 +4555,7 @@ msgstr "Gesamtpreis"
 msgid "No matching purchase order found"
 msgstr "Keine passende Bestellung gefunden"
 
-#: order/api.py:1407 order/models.py:1193 order/models.py:1276
+#: order/api.py:1407 order/models.py:1227 order/models.py:1310
 #: order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:18
 #: report/templates/report/inventree_po_report_base.html:14
@@ -4565,7 +4569,7 @@ msgstr "Keine passende Bestellung gefunden"
 msgid "Purchase Order"
 msgstr "Bestellung"
 
-#: order/api.py:1411 order/models.py:1927 order/models.py:1973
+#: order/api.py:1411 order/models.py:1975 order/models.py:2021
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4578,188 +4582,188 @@ msgstr "Rücksendeauftrag"
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: order/models.py:73
+#: order/models.py:74
 msgid "Total price for this order"
 msgstr "Gesamtpreis für diese Bestellung"
 
-#: order/models.py:78 order/serializers.py:50
+#: order/models.py:79 order/serializers.py:50
 msgid "Order Currency"
 msgstr "Auftragswährung"
 
-#: order/models.py:80 order/serializers.py:51
+#: order/models.py:81 order/serializers.py:51
 msgid "Currency for this order (leave blank to use company default)"
 msgstr "Währung für diesen Auftrag (leer lassen, um Firmenstandard zu verwenden)"
 
-#: order/models.py:206
+#: order/models.py:207
 msgid "Contact does not match selected company"
 msgstr "Kontakt stimmt nicht mit der ausgewählten Firma überein"
 
-#: order/models.py:226
+#: order/models.py:227
 msgid "Order description (optional)"
 msgstr "Auftragsbeschreibung (optional)"
 
-#: order/models.py:231
+#: order/models.py:232
 msgid "Select project code for this order"
 msgstr "Projektcode für diesen Auftrag auswählen"
 
-#: order/models.py:234 order/models.py:1109 order/models.py:1467
+#: order/models.py:235 order/models.py:1143 order/models.py:1501
 msgid "Link to external page"
 msgstr "Link auf externe Seite"
 
-#: order/models.py:239
+#: order/models.py:240
 msgid "Expected date for order delivery. Order will be overdue after this date."
 msgstr "Geplantes Lieferdatum für Auftrag."
 
-#: order/models.py:248
+#: order/models.py:249
 msgid "Created By"
 msgstr "Erstellt von"
 
-#: order/models.py:255
+#: order/models.py:256
 msgid "User or group responsible for this order"
 msgstr "Nutzer oder Gruppe der/die für diesen Auftrag zuständig ist/sind"
 
-#: order/models.py:265
+#: order/models.py:266
 msgid "Point of contact for this order"
 msgstr "Ansprechpartner für diesen Auftrag"
 
-#: order/models.py:274
+#: order/models.py:275
 msgid "Company address for this order"
 msgstr "Firmenadresse für diesen Auftrag"
 
-#: order/models.py:364 order/models.py:777
+#: order/models.py:365 order/models.py:793
 msgid "Order reference"
 msgstr "Bestell-Referenz"
 
-#: order/models.py:372 order/models.py:802
+#: order/models.py:373 order/models.py:818
 msgid "Purchase order status"
 msgstr "Bestellungs-Status"
 
-#: order/models.py:387
+#: order/models.py:388
 msgid "Company from which the items are being ordered"
 msgstr "Firma bei der die Teile bestellt werden"
 
-#: order/models.py:395 order/templates/order/order_base.html:148
+#: order/models.py:396 order/templates/order/order_base.html:148
 #: templates/js/translated/purchase_order.js:1696
 msgid "Supplier Reference"
 msgstr "Zulieferer-Referenz"
 
-#: order/models.py:395
+#: order/models.py:396
 msgid "Supplier order reference code"
 msgstr "Zulieferer Bestellreferenz"
 
-#: order/models.py:402
+#: order/models.py:403
 msgid "received by"
 msgstr "Empfangen von"
 
-#: order/models.py:407 order/models.py:1775
+#: order/models.py:408 order/models.py:1809
 msgid "Issue Date"
 msgstr "Aufgabedatum"
 
-#: order/models.py:408 order/models.py:1776
+#: order/models.py:409 order/models.py:1810
 msgid "Date order was issued"
 msgstr "Datum an dem die Bestellung aufgegeben wurde"
 
-#: order/models.py:414 order/models.py:1782
+#: order/models.py:415 order/models.py:1816
 msgid "Date order was completed"
 msgstr "Datum an dem der Auftrag fertigstellt wurde"
 
-#: order/models.py:449
+#: order/models.py:450
 msgid "Part supplier must match PO supplier"
 msgstr "Teile-Zulieferer muss dem Zulieferer der Bestellung entsprechen"
 
-#: order/models.py:618
+#: order/models.py:634
 msgid "Quantity must be a positive number"
 msgstr "Anzahl muss eine positive Zahl sein"
 
-#: order/models.py:791
+#: order/models.py:807
 msgid "Company to which the items are being sold"
 msgstr "Firma an die die Teile verkauft werden"
 
-#: order/models.py:810 order/models.py:1769
+#: order/models.py:826 order/models.py:1803
 msgid "Customer Reference "
 msgstr "Kundenreferenz"
 
-#: order/models.py:810 order/models.py:1770
+#: order/models.py:826 order/models.py:1804
 msgid "Customer order reference code"
 msgstr "Bestellreferenz"
 
-#: order/models.py:812 order/models.py:1421
+#: order/models.py:828 order/models.py:1455
 #: templates/js/translated/sales_order.js:843
 #: templates/js/translated/sales_order.js:1024
 msgid "Shipment Date"
 msgstr "Versanddatum"
 
-#: order/models.py:819
+#: order/models.py:835
 msgid "shipped by"
 msgstr "Versand von"
 
-#: order/models.py:868
+#: order/models.py:884
 msgid "Order cannot be completed as no parts have been assigned"
 msgstr "Auftrag kann nicht abgeschlossen werden, da keine Teile zugewiesen wurden"
 
-#: order/models.py:872
+#: order/models.py:888
 msgid "Only an open order can be marked as complete"
 msgstr "Nur ein offener Auftrag kann als abgeschlossen markiert werden"
 
-#: order/models.py:875 templates/js/translated/sales_order.js:506
+#: order/models.py:891 templates/js/translated/sales_order.js:506
 msgid "Order cannot be completed as there are incomplete shipments"
 msgstr "Auftrag kann nicht abgeschlossen werden, da unvollständige Sendungen vorhanden sind"
 
-#: order/models.py:878
+#: order/models.py:894
 msgid "Order cannot be completed as there are incomplete line items"
 msgstr "Auftrag kann nicht abgeschlossen werden, da es unvollständige Positionen gibt"
 
-#: order/models.py:1090
+#: order/models.py:1124
 msgid "Item quantity"
 msgstr "Anzahl"
 
-#: order/models.py:1102
+#: order/models.py:1136
 msgid "Line item reference"
 msgstr "Position - Referenz"
 
-#: order/models.py:1104
+#: order/models.py:1138
 msgid "Line item notes"
 msgstr "Position - Notizen"
 
-#: order/models.py:1115
+#: order/models.py:1149
 msgid "Target date for this line item (leave blank to use the target date from the order)"
 msgstr "Zieldatum für diesen Einzelposten (leer lassen, um das Zieldatum des Auftrags zu verwenden)"
 
-#: order/models.py:1133
+#: order/models.py:1167
 msgid "Line item description (optional)"
 msgstr "Positionsbeschreibung (optional)"
 
-#: order/models.py:1138
+#: order/models.py:1172
 msgid "Context"
 msgstr "Kontext"
 
-#: order/models.py:1139
+#: order/models.py:1173
 msgid "Additional context for this line"
 msgstr "Zusätzlicher Kontext für diese Zeile"
 
-#: order/models.py:1148
+#: order/models.py:1182
 msgid "Unit price"
 msgstr "Stückpreis"
 
-#: order/models.py:1178
+#: order/models.py:1212
 msgid "Supplier part must match supplier"
 msgstr "Lieferantenteil muss mit Lieferant übereinstimmen"
 
-#: order/models.py:1186
+#: order/models.py:1220
 msgid "deleted"
 msgstr "gelöscht"
 
-#: order/models.py:1192 order/models.py:1276 order/models.py:1316
-#: order/models.py:1415 order/models.py:1564 order/models.py:1926
-#: order/models.py:1973 templates/js/translated/sales_order.js:1488
+#: order/models.py:1226 order/models.py:1310 order/models.py:1350
+#: order/models.py:1449 order/models.py:1598 order/models.py:1974
+#: order/models.py:2021 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr "Bestellung"
 
-#: order/models.py:1210
+#: order/models.py:1244
 msgid "Supplier part"
 msgstr "Zuliefererteil"
 
-#: order/models.py:1217 order/templates/order/order_base.html:196
+#: order/models.py:1251 order/templates/order/order_base.html:196
 #: templates/js/translated/part.js:1868 templates/js/translated/part.js:1899
 #: templates/js/translated/purchase_order.js:1302
 #: templates/js/translated/purchase_order.js:2163
@@ -4769,185 +4773,185 @@ msgstr "Zuliefererteil"
 msgid "Received"
 msgstr "Empfangen"
 
-#: order/models.py:1218
+#: order/models.py:1252
 msgid "Number of items received"
 msgstr "Empfangene Objekt-Anzahl"
 
-#: order/models.py:1225 stock/models.py:857 stock/serializers.py:319
+#: order/models.py:1259 stock/models.py:857 stock/serializers.py:319
 #: stock/templates/stock/item_base.html:183
 #: templates/js/translated/stock.js:2281
 msgid "Purchase Price"
 msgstr "Preis"
 
-#: order/models.py:1226
+#: order/models.py:1260
 msgid "Unit purchase price"
 msgstr "Preis pro Einheit"
 
-#: order/models.py:1239
+#: order/models.py:1273
 msgid "Where does the Purchaser want this item to be stored?"
 msgstr "Wo möchte der Käufer diesen Artikel gelagert haben?"
 
-#: order/models.py:1304
+#: order/models.py:1338
 msgid "Virtual part cannot be assigned to a sales order"
 msgstr "Ein virtuelles Teil kann nicht einem Auftrag zugeordnet werden"
 
-#: order/models.py:1309
+#: order/models.py:1343
 msgid "Only salable parts can be assigned to a sales order"
 msgstr "Nur verkaufbare Teile können einem Auftrag zugewiesen werden"
 
-#: order/models.py:1335 part/templates/part/part_pricing.html:107
+#: order/models.py:1369 part/templates/part/part_pricing.html:107
 #: part/templates/part/prices.html:139 templates/js/translated/pricing.js:957
 msgid "Sale Price"
 msgstr "Verkaufspreis"
 
-#: order/models.py:1336
+#: order/models.py:1370
 msgid "Unit sale price"
 msgstr "Stückverkaufspreis"
 
-#: order/models.py:1346
+#: order/models.py:1380
 msgid "Shipped quantity"
 msgstr "Versendete Menge"
 
-#: order/models.py:1422
+#: order/models.py:1456
 msgid "Date of shipment"
 msgstr "Versanddatum"
 
-#: order/models.py:1427 templates/js/translated/sales_order.js:1036
+#: order/models.py:1461 templates/js/translated/sales_order.js:1036
 msgid "Delivery Date"
 msgstr "Lieferdatum"
 
-#: order/models.py:1428
+#: order/models.py:1462
 msgid "Date of delivery of shipment"
 msgstr "Versanddatum"
 
-#: order/models.py:1435
+#: order/models.py:1469
 msgid "Checked By"
 msgstr "Kontrolliert von"
 
-#: order/models.py:1436
+#: order/models.py:1470
 msgid "User who checked this shipment"
 msgstr "Benutzer, der diese Sendung kontrolliert hat"
 
-#: order/models.py:1443 order/models.py:1642 order/serializers.py:1282
+#: order/models.py:1477 order/models.py:1676 order/serializers.py:1282
 #: order/serializers.py:1410 templates/js/translated/model_renderers.js:446
 msgid "Shipment"
 msgstr "Sendung"
 
-#: order/models.py:1444
+#: order/models.py:1478
 msgid "Shipment number"
 msgstr "Sendungsnummer"
 
-#: order/models.py:1452
+#: order/models.py:1486
 msgid "Tracking Number"
 msgstr "Sendungsverfolgungsnummer"
 
-#: order/models.py:1453
+#: order/models.py:1487
 msgid "Shipment tracking information"
 msgstr "Informationen zur Sendungsverfolgung"
 
-#: order/models.py:1460
+#: order/models.py:1494
 msgid "Invoice Number"
 msgstr "Rechnungsnummer"
 
-#: order/models.py:1461
+#: order/models.py:1495
 msgid "Reference number for associated invoice"
 msgstr "Referenznummer für zugehörige Rechnung"
 
-#: order/models.py:1483
+#: order/models.py:1517
 msgid "Shipment has already been sent"
 msgstr "Sendung wurde bereits versandt"
 
-#: order/models.py:1486
+#: order/models.py:1520
 msgid "Shipment has no allocated stock items"
 msgstr "Sendung hat keine zugewiesene Lagerartikel"
 
-#: order/models.py:1599 order/models.py:1601
+#: order/models.py:1633 order/models.py:1635
 msgid "Stock item has not been assigned"
 msgstr "Lagerartikel wurde nicht zugewiesen"
 
-#: order/models.py:1607
+#: order/models.py:1641
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Kann Lagerartikel keiner Zeile mit einem anderen Teil hinzufügen"
 
-#: order/models.py:1609
+#: order/models.py:1643
 msgid "Cannot allocate stock to a line without a part"
 msgstr "Kann Lagerartikel keiner Zeile ohne Teil hinzufügen"
 
-#: order/models.py:1612
+#: order/models.py:1646
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Die zugeordnete Anzahl darf nicht die verfügbare Anzahl überschreiten"
 
-#: order/models.py:1622 order/serializers.py:1146
+#: order/models.py:1656 order/serializers.py:1146
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Anzahl für serialisierte Lagerartikel muss 1 sein"
 
-#: order/models.py:1625
+#: order/models.py:1659
 msgid "Sales order does not match shipment"
 msgstr "Auftrag gehört nicht zu Sendung"
 
-#: order/models.py:1626
+#: order/models.py:1660
 msgid "Shipment does not match sales order"
 msgstr "Sendung gehört nicht zu Auftrag"
 
-#: order/models.py:1634
+#: order/models.py:1668
 msgid "Line"
 msgstr "Position"
 
-#: order/models.py:1643
+#: order/models.py:1677
 msgid "Sales order shipment reference"
 msgstr "Sendungsnummer-Referenz"
 
-#: order/models.py:1656 order/models.py:1934
+#: order/models.py:1690 order/models.py:1982
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr "Position"
 
-#: order/models.py:1657
+#: order/models.py:1691
 msgid "Select stock item to allocate"
 msgstr "Lagerartikel für Zuordnung auswählen"
 
-#: order/models.py:1660
+#: order/models.py:1694
 msgid "Enter stock allocation quantity"
 msgstr "Anzahl für Bestandszuordnung eingeben"
 
-#: order/models.py:1739
+#: order/models.py:1773
 msgid "Return Order reference"
 msgstr "Rücksendungsreferenz"
 
-#: order/models.py:1753
+#: order/models.py:1787
 msgid "Company from which items are being returned"
 msgstr "Firma von der die Artikel zurückgeschickt werden"
 
-#: order/models.py:1764
+#: order/models.py:1798
 msgid "Return order status"
 msgstr "Status der Rücksendung"
 
-#: order/models.py:1919
+#: order/models.py:1967
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr "Nur serialisierte Artikel können einer Rücksendung zugeordnet werden"
 
-#: order/models.py:1935
+#: order/models.py:1983
 msgid "Select item to return from customer"
 msgstr "Artikel zur Rücksendung auswählen"
 
-#: order/models.py:1940
+#: order/models.py:1988
 msgid "Received Date"
 msgstr "Empfangsdatum"
 
-#: order/models.py:1941
+#: order/models.py:1989
 msgid "The date this this return item was received"
 msgstr "Das Datum des Empfangs dieses Rücksendeartikels"
 
-#: order/models.py:1952 templates/js/translated/return_order.js:733
+#: order/models.py:2000 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr "Ergebnis"
 
-#: order/models.py:1952
+#: order/models.py:2000
 msgid "Outcome for this line item"
 msgstr ""
 
-#: order/models.py:1958
+#: order/models.py:2006
 msgid "Cost associated with return or repair for this line item"
 msgstr "Kosten für die Rückgabe oder Reparatur dieses Objektes"
 
@@ -7726,7 +7730,7 @@ msgid "Builtin Plugin"
 msgstr "Integriertes Plugin"
 
 #: plugin/models.py:171 templates/InvenTree/settings/plugin_settings.html:9
-#: templates/js/translated/plugin.js:50
+#: templates/js/translated/plugin.js:51
 msgid "Plugin"
 msgstr "Plugin"
 
@@ -7825,11 +7829,37 @@ msgstr "Installation nicht bestätigt"
 msgid "Either packagename of URL must be provided"
 msgstr "Entweder Paketname oder URL muss angegeben werden"
 
-#: plugin/serializers.py:141
+#: plugin/serializers.py:139
+msgid "Full reload"
+msgstr ""
+
+#: plugin/serializers.py:140
+msgid "Perform a full reload of the plugin registry"
+msgstr ""
+
+#: plugin/serializers.py:145
+msgid "Force reload"
+msgstr ""
+
+#: plugin/serializers.py:146
+msgid "Force a reload of the plugin registry, even if it is already loaded"
+msgstr ""
+
+#: plugin/serializers.py:151
+#, fuzzy
+#| msgid "No plugin"
+msgid "Collect plugins"
+msgstr "Kein Plugin"
+
+#: plugin/serializers.py:152
+msgid "Collect plugins and add them to the registry"
+msgstr ""
+
+#: plugin/serializers.py:172
 msgid "Activate Plugin"
 msgstr "Plugin aktivieren"
 
-#: plugin/serializers.py:142
+#: plugin/serializers.py:173
 msgid "Activate this plugin"
 msgstr "Dieses Plugin aktivieren"
 
@@ -8170,19 +8200,19 @@ msgstr "überfällig"
 msgid "Quantity is required"
 msgstr "Menge ist erforderlich"
 
-#: stock/api.py:785
+#: stock/api.py:786
 msgid "Valid part must be supplied"
 msgstr "Gültiges Teil muss angegeben werden"
 
-#: stock/api.py:813
+#: stock/api.py:814
 msgid "The given supplier part does not exist"
 msgstr "Der angegebene Lieferantenartikel existiert nicht"
 
-#: stock/api.py:822
+#: stock/api.py:823
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr ""
 
-#: stock/api.py:845
+#: stock/api.py:846
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Seriennummern können für nicht verfolgbare Teile nicht angegeben werden"
 
@@ -9293,23 +9323,32 @@ msgid "Plugins"
 msgstr "Plugins"
 
 #: templates/InvenTree/settings/plugin.html:41
-#: templates/js/translated/plugin.js:150
+#: templates/InvenTree/settings/plugin.html:42
+#: templates/js/translated/plugin.js:151
 msgid "Install Plugin"
 msgstr "Plugin installieren"
 
-#: templates/InvenTree/settings/plugin.html:49
+#: templates/InvenTree/settings/plugin.html:44
+#: templates/InvenTree/settings/plugin.html:45
+#: templates/js/translated/plugin.js:224
+#, fuzzy
+#| msgid "Plugins"
+msgid "Reload Plugins"
+msgstr "Plugins"
+
+#: templates/InvenTree/settings/plugin.html:55
 msgid "External plugins are not enabled for this InvenTree installation"
 msgstr "Externe Plugins sind für diese InvenTree-Installation nicht aktiviert"
 
-#: templates/InvenTree/settings/plugin.html:64
+#: templates/InvenTree/settings/plugin.html:70
 msgid "Plugin Error Stack"
 msgstr "Plugin-Fehlerstapel"
 
-#: templates/InvenTree/settings/plugin.html:73
+#: templates/InvenTree/settings/plugin.html:79
 msgid "Stage"
 msgstr "Stufe"
 
-#: templates/InvenTree/settings/plugin.html:75
+#: templates/InvenTree/settings/plugin.html:81
 #: templates/js/translated/notification.js:76
 msgid "Message"
 msgstr "Meldung"
@@ -9319,7 +9358,7 @@ msgid "Plugin information"
 msgstr "Plugin-Informationen"
 
 #: templates/InvenTree/settings/plugin_settings.html:42
-#: templates/js/translated/plugin.js:85
+#: templates/js/translated/plugin.js:86
 msgid "Version"
 msgstr "Version"
 
@@ -9356,7 +9395,7 @@ msgid "Installation path"
 msgstr "Installationspfad"
 
 #: templates/InvenTree/settings/plugin_settings.html:100
-#: templates/js/translated/plugin.js:67
+#: templates/js/translated/plugin.js:68
 #: templates/js/translated/table_filters.js:492
 msgid "Builtin"
 msgstr "Integriert"
@@ -9366,7 +9405,7 @@ msgid "This is a builtin plugin which cannot be disabled"
 msgstr "Dies ist ein integriertes Plugin, das nicht deaktiviert werden kann"
 
 #: templates/InvenTree/settings/plugin_settings.html:107
-#: templates/js/translated/plugin.js:71
+#: templates/js/translated/plugin.js:72
 #: templates/js/translated/table_filters.js:496
 msgid "Sample"
 msgstr "Beispiel"
@@ -11871,51 +11910,51 @@ msgstr "Maximale Anzahl"
 msgid "Minimum Stock Level"
 msgstr "Minimaler Lagerbestand"
 
-#: templates/js/translated/plugin.js:45
+#: templates/js/translated/plugin.js:46
 msgid "No plugins found"
 msgstr ""
 
-#: templates/js/translated/plugin.js:57
+#: templates/js/translated/plugin.js:58
 msgid "This plugin is no longer installed"
 msgstr ""
 
-#: templates/js/translated/plugin.js:59
+#: templates/js/translated/plugin.js:60
 msgid "This plugin is active"
 msgstr ""
 
-#: templates/js/translated/plugin.js:61
+#: templates/js/translated/plugin.js:62
 msgid "This plugin is installed but not active"
 msgstr ""
 
-#: templates/js/translated/plugin.js:116 templates/js/translated/plugin.js:185
+#: templates/js/translated/plugin.js:117 templates/js/translated/plugin.js:186
 msgid "Disable Plugin"
 msgstr ""
 
-#: templates/js/translated/plugin.js:118 templates/js/translated/plugin.js:185
+#: templates/js/translated/plugin.js:119 templates/js/translated/plugin.js:186
 msgid "Enable Plugin"
 msgstr ""
 
-#: templates/js/translated/plugin.js:157
+#: templates/js/translated/plugin.js:158
 msgid "The Plugin was installed"
 msgstr "Das Plugin wurde installiert"
 
-#: templates/js/translated/plugin.js:176
+#: templates/js/translated/plugin.js:177
 msgid "Are you sure you want to enable this plugin?"
 msgstr ""
 
-#: templates/js/translated/plugin.js:180
+#: templates/js/translated/plugin.js:181
 msgid "Are you sure you want to disable this plugin?"
 msgstr ""
 
-#: templates/js/translated/plugin.js:188
+#: templates/js/translated/plugin.js:189
 msgid "Enable"
 msgstr "Aktivieren"
 
-#: templates/js/translated/plugin.js:188
+#: templates/js/translated/plugin.js:189
 msgid "Disable"
 msgstr "Deaktivieren"
 
-#: templates/js/translated/plugin.js:202
+#: templates/js/translated/plugin.js:203
 msgid "Plugin updated"
 msgstr "Plugin aktualisiert"
 
@@ -13375,9 +13414,11 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr "Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
+msgstr ""
+"Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
 "%(site_name)s anzumelden.<br>Als letzten Schritt füllen Sie bitte folgendes Formular aus:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13551,4 +13592,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
-
