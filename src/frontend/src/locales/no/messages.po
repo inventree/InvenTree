@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-08 02:46\n"
+"PO-Revision-Date: 2023-12-11 03:45\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -21,33 +21,33 @@ msgstr ""
 #: src/components/DashboardItemProxy.tsx:34
 #: src/components/tables/company/AddressTable.tsx:36
 msgid "Title"
-msgstr ""
+msgstr "Tittel"
 
 #: src/components/forms/ApiForm.tsx:129
 #: src/functions/forms.tsx:49
 #: src/functions/forms.tsx:58
 #: src/functions/forms.tsx:266
 msgid "Form Error"
-msgstr ""
+msgstr "Skjemafeil"
 
 #: src/components/forms/ApiForm.tsx:301
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "Suksess"
 
 #: src/components/forms/ApiForm.tsx:372
 msgid "Form Errors Exist"
-msgstr ""
+msgstr "Skjemafeil eksisterer"
 
 #: src/components/forms/ApiForm.tsx:425
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
-msgstr ""
+msgstr "Send"
 
 #: src/components/forms/ApiForm.tsx:461
 msgid "Update"
-msgstr ""
+msgstr "Oppdater"
 
 #: src/components/forms/ApiForm.tsx:481
 #: src/components/items/ActionDropdown.tsx:173
@@ -57,7 +57,7 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:332
 #: src/pages/Notifications.tsx:79
 msgid "Delete"
-msgstr ""
+msgstr "Slett"
 
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:33
@@ -4255,3 +4255,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
