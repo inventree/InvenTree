@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-10 22:58+0000\n"
-"PO-Revision-Date: 2023-12-07 02:35\n"
+"POT-Creation-Date: 2023-12-10 20:51+0000\n"
+"PO-Revision-Date: 2023-12-11 03:45\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -474,13 +474,9 @@ msgstr "Üdvözöljük a {current_site.name}-on"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Felhasználói fiókját létrehoztuk.\n"
-"\n"
+msgstr "Felhasználói fiókját létrehoztuk.\n\n"
 "Bejelentkezéshez használja a jelszó beállítás funkciót (at https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -1490,8 +1486,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:507
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:576
@@ -7848,10 +7843,8 @@ msgid "Force a reload of the plugin registry, even if it is already loaded"
 msgstr ""
 
 #: plugin/serializers.py:151
-#, fuzzy
-#| msgid "Select plugin"
 msgid "Collect plugins"
-msgstr "Plugin választás"
+msgstr ""
 
 #: plugin/serializers.py:152
 msgid "Collect plugins and add them to the registry"
@@ -9333,10 +9326,8 @@ msgstr "Plugin Telepítése"
 #: templates/InvenTree/settings/plugin.html:44
 #: templates/InvenTree/settings/plugin.html:45
 #: templates/js/translated/plugin.js:224
-#, fuzzy
-#| msgid "Plugins"
 msgid "Reload Plugins"
-msgstr "Pluginok"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:55
 msgid "External plugins are not enabled for this InvenTree installation"
@@ -13416,8 +13407,7 @@ msgstr "A kiválasztott SSO kiszolgáló érvénytelen, vagy nincs megfelelően 
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "A %(provider_name)s felhasználói fiókodat fogod használni a %(site_name)s belépéshez.<br>Kérlek töltsd ki az alábbi adatokat:"
 
@@ -13592,3 +13582,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
