@@ -385,15 +385,19 @@ class BarcodePOReceive(BarcodeView):
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
-        response = {}
+        response = {
+            "barcode_data": barcode,
+            "barcode_hash": hash_barcode(barcode)
+        }
 
         internal_barcode_plugin = next(filter(
             lambda plugin: plugin.name == "InvenTreeBarcode", plugins
         ))
 
-        if internal_barcode_plugin.scan(barcode):
-            response["error"] = _("Item has already been received")
-            raise ValidationError(response)
+        if result := internal_barcode_plugin.scan(barcode):
+            if 'stockitem' in result:
+                response["error"] = _("Item has already been received")
+                raise ValidationError(response)
 
         # Now, look just for "supplier-barcode" plugins
         plugins = registry.with_mixin("supplier-barcode")
@@ -422,8 +426,6 @@ class BarcodePOReceive(BarcodeView):
                 break
 
         response["plugin"] = plugin.name if plugin else None
-        response["barcode_data"] = barcode
-        response["barcode_hash"] = hash_barcode(barcode)
 
         # A plugin has not been found!
         if plugin is None:
