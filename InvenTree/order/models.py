@@ -1645,8 +1645,17 @@ class SalesOrderAllocation(models.Model):
         if self.quantity > self.item.quantity:
             errors['quantity'] = _('Allocation quantity cannot exceed stock quantity')
 
-        # TODO: The logic here needs improving. Do we need to subtract our own amount, or something?
-        if self.item.quantity - self.item.allocation_count() + self.quantity < self.quantity:
+        # Ensure that we do not 'over allocate' a stock item
+        build_allocation_count = self.item.build_allocation_count()
+        sales_allocation_count = self.item.sales_order_allocation_count(
+            exclude_allocations={
+                "pk": self.pk,
+            }
+        )
+
+        total_allocation = build_allocation_count + sales_allocation_count + self.quantity
+
+        if total_allocation > self.item.quantity:
             errors['quantity'] = _('Stock item is over-allocated')
 
         if self.quantity <= 0:
