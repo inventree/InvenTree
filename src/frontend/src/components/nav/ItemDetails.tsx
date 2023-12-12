@@ -8,10 +8,23 @@ const imageActions = {
   deleteFile: true
 };
 
-export function ItemDetails({ params = {} }: { params?: any }) {
+export function ItemDetails({
+  params = {},
+  apiPath,
+  refresh = null
+}: {
+  params?: any;
+  apiPath: string;
+  refresh: any;
+}) {
   return (
     <Paper withBorder={true}>
-      <DetailsImage imageActions={imageActions} src={params.image} />
+      <DetailsImage
+        imageActions={imageActions}
+        src={params.image}
+        apiPath={apiPath}
+        refresh={refresh}
+      />
     </Paper>
   );
 }

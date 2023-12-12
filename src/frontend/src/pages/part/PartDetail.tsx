@@ -87,7 +87,13 @@ export default function PartDetail() {
         name: 'details',
         label: t`Details`,
         icon: <IconInfoCircle />,
-        content: !instanceQuery.isFetching && <ItemDetails params={part} />
+        content: !instanceQuery.isFetching && (
+          <ItemDetails
+            params={part}
+            apiPath={apiUrl(ApiPaths.part_list, part.pk)}
+            refresh={refreshInstance}
+          />
+        )
       },
       {
         name: 'parameters',

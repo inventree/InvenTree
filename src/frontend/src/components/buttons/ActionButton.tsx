@@ -1,4 +1,5 @@
 import { ActionIcon, Group, Tooltip } from '@mantine/core';
+import { FloatingPosition } from '@mantine/core/lib/Floating';
 import { ReactNode } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
@@ -14,6 +15,7 @@ export type ActionButtonProps = {
   disabled?: boolean;
   onClick?: any;
   hidden?: boolean;
+  tooltipAlignment?: FloatingPosition;
 };
 
 /**
@@ -26,7 +28,7 @@ export function ActionButton(props: ActionButtonProps) {
         key={`tooltip-${props.key}`}
         disabled={!props.tooltip && !props.text}
         label={props.tooltip ?? props.text}
-        position="left"
+        position={props.tooltipAlignment ?? 'left'}
       >
         <ActionIcon
           key={`action-icon-${props.key}`}

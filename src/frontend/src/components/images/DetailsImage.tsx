@@ -1,12 +1,16 @@
-import { Group, Paper } from '@mantine/core';
+import { Group, Paper, Text } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { IconFileUpload, IconGridDots, IconTrash } from '@tabler/icons-react';
 
+import { api } from '../../App';
 import { ActionButton } from '../buttons/ActionButton';
 import { ApiImage } from './ApiImage';
 
 export type DetailImageProps = {
   src: string;
+  apiPath: string;
+  refresh: any;
   imageActions?: DetailImageButtonProps;
 };
 
@@ -19,13 +23,35 @@ export type DetailImageButtonProps = {
 // Image is expected to be 1:1 square, so only 1 dimension is needed
 const IMAGE_DIMENSION = 256;
 
+// Image to display if instance has no image
+const backup_image = '/static/img/blank_image.png';
+
+const removeModal = (apiPath: string, refresh: any) =>
+  modals.openConfirmModal({
+    title: 'Remove Image',
+    children: (
+      <Text size="sm">Remove the associated image from this part?</Text>
+    ),
+    labels: { confirm: 'Remove', cancel: 'Cancel' },
+    onConfirm: async () => {
+      await api.patch(apiPath, { image: null });
+      refresh();
+    }
+  });
+
 // TODO: Docstrings
 function ImageActionButtons({
   actions = {},
-  visible
+  visible,
+  apiPath,
+  hasImage,
+  refresh
 }: {
   actions?: DetailImageButtonProps;
   visible: boolean;
+  apiPath: string;
+  hasImage: boolean;
+  refresh: any;
 }) {
   return (
     visible && (
@@ -39,6 +65,7 @@ function ImageActionButtons({
             tooltip="Select from existing images"
             variant="outline"
             size="lg"
+            tooltipAlignment="top"
           />
         )}
         {actions.uploadFile && (
@@ -47,14 +74,17 @@ function ImageActionButtons({
             tooltip="Upload new image"
             variant="outline"
             size="lg"
+            tooltipAlignment="top"
           />
         )}
-        {actions.deleteFile && (
+        {actions.deleteFile && hasImage && (
           <ActionButton
-            icon={<IconTrash />}
+            icon={<IconTrash color="red" />}
             tooltip="Delete image"
             variant="outline"
             size="lg"
+            tooltipAlignment="top"
+            onClick={() => removeModal(apiPath, refresh)}
           />
         )}
       </Group>
@@ -79,12 +109,18 @@ export function DetailsImage(props: DetailImageProps) {
       }}
     >
       <ApiImage
-        src={props.src}
+        src={props.src ?? backup_image}
         style={{ zIndex: 1 }}
         height={IMAGE_DIMENSION}
         width={IMAGE_DIMENSION}
       />
-      <ImageActionButtons visible={hovered} actions={props.imageActions} />
+      <ImageActionButtons
+        visible={hovered}
+        actions={props.imageActions}
+        apiPath={props.apiPath}
+        hasImage={props.src ? true : false}
+        refresh={props.refresh}
+      />
     </Paper>
   );
 }
