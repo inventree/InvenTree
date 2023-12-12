@@ -552,6 +552,11 @@ class BarcodeSOAllocate(BarcodeView):
         sales_order = kwargs['sales_order']
         shipment = self.get_shipment(**kwargs)
 
+        if stock_item is not None and line_item is not None:
+            if stock_item.part != line_item.part:
+                result['error'] = _('Stock item does not match line item')
+                raise ValidationError(result)
+
         quantity = kwargs.get('quantity', None)
 
         # Override quantity for serialized items
@@ -560,7 +565,7 @@ class BarcodeSOAllocate(BarcodeView):
 
         if quantity is None:
             quantity = line_item.quantity - line_item.shipped
-            quantity = min(quantity, stock_item.unallocated_quantity)
+            quantity = min(quantity, stock_item.unallocated_quantity())
 
         response = {
             'stock_item': stock_item.pk if stock_item else None,
