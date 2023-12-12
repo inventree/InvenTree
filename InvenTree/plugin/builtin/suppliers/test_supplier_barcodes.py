@@ -175,28 +175,22 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
         url = reverse("api-barcode-po-receive")
 
-        result1 = self.post(url, data={"barcode": DIGIKEY_BARCODE})
-        assert result1.status_code == 400
+        result1 = self.post(url, data={"barcode": DIGIKEY_BARCODE}, expected_code=400)
         assert result1.data["error"].startswith("No matching purchase order")
 
         self.purchase_order1.place_order()
 
-        result2 = self.post(url, data={"barcode": DIGIKEY_BARCODE})
-        assert result2.status_code == 200
-        assert "success" in result2.data
+        result2 = self.post(url, data={"barcode": DIGIKEY_BARCODE}, expected_code=200)
+        self.assertIn("success", result2.data)
 
-        result3 = self.post(url, data={"barcode": DIGIKEY_BARCODE})
-        assert result3.status_code == 400
-        assert result3.data["error"].startswith(
-            "Item has already been received")
+        result3 = self.post(url, data={"barcode": DIGIKEY_BARCODE}, expected_code=400)
+        self.assertEqual(result3.data['error'], "Item has already been received")
 
-        result4 = self.post(url, data={"barcode": DIGIKEY_BARCODE[:-1]})
-        assert result4.status_code == 400
+        result4 = self.post(url, data={"barcode": DIGIKEY_BARCODE[:-1]}, expected_code=400)
         assert result4.data["error"].startswith(
             "Failed to find pending line item for supplier part")
 
-        result5 = self.post(reverse("api-barcode-scan"), data={"barcode": DIGIKEY_BARCODE})
-        assert result5.status_code == 200
+        result5 = self.post(reverse("api-barcode-scan"), data={"barcode": DIGIKEY_BARCODE}, expected_code=200)
         stock_item = StockItem.objects.get(pk=result5.data["stockitem"]["pk"])
         assert stock_item.supplier_part.SKU == "296-LM358BIDDFRCT-ND"
         assert stock_item.quantity == 10
