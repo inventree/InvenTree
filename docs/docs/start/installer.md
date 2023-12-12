@@ -151,6 +151,20 @@ inventree config
     All CLI settings are lost when the package is uninstalled.
     Use the config file where possible as it is kept on uninstall and can easily be synced across instances. Environment variables are a good place for passwords (but not the secret_key).
 
+### Invoke
+
+Many InvenTree administration operations run using the `invoke` tool. When installed via the package installer, these commands can be called as follows:
+
+```bash
+inventree run invoke <command>
+```
+
+For example, to print InvenTree version information:
+
+```bash
+inventree run invoke version
+```
+
 ## Architecture
 
 The packages are provided by [packager.io](https://packager.io/). They are built each time updates are pushed to GitHub and released about 10 minutes later. The local package index must be updated to see the new release in the package manager.

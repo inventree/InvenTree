@@ -69,7 +69,7 @@ export default function SalesOrderDetail() {
           <AttachmentTable
             endpoint={ApiPaths.sales_order_attachment_list}
             model="order"
-            pk={order.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -79,7 +79,7 @@ export default function SalesOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.sales_order_list, order.pk)}
+            url={apiUrl(ApiPaths.sales_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />
