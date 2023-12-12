@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-11 03:46\n"
+"PO-Revision-Date: 2023-12-12 03:57\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1225,7 +1225,7 @@ msgstr "Khoảng giá"
 #: src/components/tables/stock/StockItemTable.tsx:147
 #: src/components/tables/stock/StockItemTable.tsx:268
 msgid "Available"
-msgstr ""
+msgstr "Có sẵn"
 
 #: src/components/tables/bom/BomTable.tsx:167
 #: src/components/tables/part/PartTable.tsx:129
