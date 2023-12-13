@@ -12,9 +12,11 @@ import { StockLocationTable } from '../../components/tables/stock/StockLocationT
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 
-export default function Stock() {
-  const { id } = useParams();
-
+export function LocationPage({
+  locationId
+}: {
+  locationId?: string | undefined;
+}) {
   const [treeOpen, setTreeOpen] = useState(false);
 
   const {
@@ -23,7 +25,8 @@ export default function Stock() {
     instanceQuery
   } = useInstance({
     endpoint: ApiPaths.stock_location_list,
-    pk: id,
+    pk: locationId,
+    hasPrimaryKey: true,
     params: {
       path_detail: true
     }
@@ -38,7 +41,7 @@ export default function Stock() {
         content: (
           <StockItemTable
             params={{
-              location: id
+              location: locationId
             }}
           />
         )
@@ -50,13 +53,13 @@ export default function Stock() {
         content: (
           <StockLocationTable
             params={{
-              parent: id
+              parent: locationId ?? 'null'
             }}
           />
         )
       }
     ];
-  }, [location, id]);
+  }, [locationId]);
 
   const breadcrumbs = useMemo(
     () => [
@@ -90,4 +93,14 @@ export default function Stock() {
       </Stack>
     </>
   );
+}
+
+/**
+ * Detail page for a specific Stock Location instance
+ * Uses the :id parameter in the URL to determine which location to display
+ */
+export default function LocationDetail({}: {}) {
+  const { id } = useParams();
+
+  return <LocationPage locationId={id} />;
 }

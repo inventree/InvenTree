@@ -25,7 +25,7 @@ import { useInstance } from '../../hooks/UseInstance';
 export function CategoryPage({
   categoryId
 }: {
-  categoryId: string | undefined;
+  categoryId?: string | undefined;
 }) {
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -65,7 +65,7 @@ export function CategoryPage({
         content: (
           <PartCategoryTable
             params={{
-              parent: categoryId ?? null
+              parent: categoryId ?? 'null'
             }}
           />
         )
