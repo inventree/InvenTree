@@ -49,7 +49,6 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, 
         'prerender',
         'rebuild_models',
         'rebuild_thumbnails',
-        'showmigrations',
         'makemessages',
         'compilemessages',
         'backup',
@@ -70,6 +69,7 @@ def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, 
     if not allow_plugins:
         excluded_commands.extend([
             'makemigrations',
+            'showmigrations',
             'migrate',
             'collectstatic',
         ])
