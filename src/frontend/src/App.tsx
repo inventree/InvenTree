@@ -15,8 +15,14 @@ export function setApiDefaults() {
   const token = useSessionState.getState().token;
 
   api.defaults.baseURL = host;
-  api.defaults.headers.common['Authorization'] = `Token ${token}`;
+
+  if (token) {
+    api.defaults.headers.common['Authorization'] = `Token ${token}`;
+  } else {
+    api.defaults.headers.common['Authorization'] = null;
+  }
 }
+
 export const queryClient = new QueryClient();
 
 function checkMobile() {

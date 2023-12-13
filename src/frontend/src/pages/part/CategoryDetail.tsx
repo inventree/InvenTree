@@ -22,9 +22,11 @@ import { useInstance } from '../../hooks/UseInstance';
  *
  * Note: If no category ID is supplied, this acts as the top-level part category page
  */
-export default function CategoryDetail({}: {}) {
-  const { id } = useParams();
-
+export function CategoryPage({
+  categoryId
+}: {
+  categoryId?: string | undefined;
+}) {
   const [treeOpen, setTreeOpen] = useState(false);
 
   const {
@@ -33,7 +35,8 @@ export default function CategoryDetail({}: {}) {
     instanceQuery
   } = useInstance({
     endpoint: ApiPaths.category_list,
-    pk: id,
+    pk: categoryId,
+    hasPrimaryKey: true,
     params: {
       path_detail: true
     }
@@ -49,7 +52,7 @@ export default function CategoryDetail({}: {}) {
           <PartListTable
             props={{
               params: {
-                category: id
+                category: categoryId
               }
             }}
           />
@@ -62,7 +65,7 @@ export default function CategoryDetail({}: {}) {
         content: (
           <PartCategoryTable
             params={{
-              parent: id
+              parent: categoryId ?? 'null'
             }}
           />
         )
@@ -74,7 +77,7 @@ export default function CategoryDetail({}: {}) {
         content: <PlaceholderPanel />
       }
     ],
-    [category, id]
+    [categoryId]
   );
 
   const breadcrumbs = useMemo(
@@ -109,4 +112,14 @@ export default function CategoryDetail({}: {}) {
       <PanelGroup pageKey="partcategory" panels={categoryPanels} />
     </Stack>
   );
+}
+
+/**
+ * Detail page for a specific Part Category instance.
+ * Uses the :id parameter in the URL to determine which category to display.admin in
+ */
+export default function CategoryDetail({}: {}) {
+  const { id } = useParams();
+
+  return <CategoryPage categoryId={id} />;
 }

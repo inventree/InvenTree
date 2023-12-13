@@ -27,7 +27,9 @@ export const doClassicLogin = async (username: string, password: string) => {
         name: 'inventree-web-app'
       }
     })
-    .then((response) => response.data.token)
+    .then((response) => {
+      return response.status == 200 ? response.data?.token : undefined;
+    })
     .catch((error) => {
       showNotification({
         title: t`Login failed`,
@@ -37,7 +39,7 @@ export const doClassicLogin = async (username: string, password: string) => {
       return false;
     });
 
-  if (token === false) return token;
+  if (!token) return false;
 
   // log in with token
   doTokenLogin(token);
@@ -51,6 +53,7 @@ export const doClassicLogout = async () => {
   // TODO @matmair - logout from the server session
   // Set token in context
   const { setToken } = useSessionState.getState();
+
   setToken(undefined);
 
   notifications.show({
