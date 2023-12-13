@@ -109,7 +109,7 @@ django-import-export==3.3.1
     # via -r requirements.in
 django-js-asset==2.1.0
     # via django-mptt
-django-maintenance-mode==0.19.0
+django-maintenance-mode==0.21.0
     # via -r requirements.in
 django-markdownify==0.9.3
     # via -r requirements.in
@@ -233,7 +233,7 @@ python-dateutil==2.8.2
     #   icalendar
 python-dotenv==1.0.0
     # via -r requirements.in
-python-fsutil==0.11.0
+python-fsutil==0.12.0
     # via django-maintenance-mode
 python3-openid==3.2.0
     # via django-allauth
