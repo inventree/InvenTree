@@ -17,6 +17,8 @@ import { useUserState } from '../states/UserState';
 export const doClassicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
 
+  console.log('doClassicLogin:', username, password);
+
   // Get token from server
   const token = await axios
     .get(apiUrl(ApiPaths.user_token), {
@@ -27,8 +29,12 @@ export const doClassicLogin = async (username: string, password: string) => {
         name: 'inventree-web-app'
       }
     })
-    .then((response) => response.data.token)
+    .then((response) => {
+      console.log('response:', response.status, response.data);
+      return response.status == 200 ? response.data?.token : undefined;
+    })
     .catch((error) => {
+      console.log('error:', error);
       showNotification({
         title: t`Login failed`,
         message: t`Error fetching token from server.`,
@@ -37,7 +43,7 @@ export const doClassicLogin = async (username: string, password: string) => {
       return false;
     });
 
-  if (token === false) return token;
+  if (!token) return false;
 
   // log in with token
   doTokenLogin(token);
@@ -51,6 +57,8 @@ export const doClassicLogout = async () => {
   // TODO @matmair - logout from the server session
   // Set token in context
   const { setToken } = useSessionState.getState();
+
+  console.log('doClassicLogout');
   setToken(undefined);
 
   notifications.show({
@@ -83,6 +91,8 @@ export const doTokenLogin = (token: string) => {
   const { fetchServerApiState } = useServerApiState.getState();
   const globalSettingsState = useGlobalSettingsState.getState();
   const userSettingsState = useUserSettingsState.getState();
+
+  console.log('doTokenLogin:');
 
   setToken(token);
   fetchUserState();
@@ -119,6 +129,8 @@ export function handleReset(navigate: any, values: { email: string }) {
  * Check login state, and redirect the user as required
  */
 export function checkLoginState(navigate: any, redirect?: string) {
+  console.log('checkLoginState:', navigate, redirect);
+
   api
     .get(apiUrl(ApiPaths.user_token), {
       timeout: 2000,
@@ -127,6 +139,8 @@ export function checkLoginState(navigate: any, redirect?: string) {
       }
     })
     .then((val) => {
+      console.log('response:', val.status, val.data);
+
       if (val.status === 200 && val.data.token) {
         doTokenLogin(val.data.token);
 
@@ -142,6 +156,7 @@ export function checkLoginState(navigate: any, redirect?: string) {
       }
     })
     .catch(() => {
+      console.log('error:');
       navigate('/login');
     });
 }
