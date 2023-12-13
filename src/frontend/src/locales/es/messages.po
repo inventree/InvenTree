@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_MX\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-08 02:46\n"
+"PO-Revision-Date: 2023-12-11 03:46\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -174,7 +174,7 @@ msgstr ""
 #: src/components/tables/part/PartCategoryTable.tsx:26
 #: src/components/tables/part/PartParameterTemplateTable.tsx:50
 #: src/components/tables/plugin/PluginErrorTable.tsx:33
-#: src/components/tables/plugin/PluginListTable.tsx:156
+#: src/components/tables/plugin/PluginListTable.tsx:157
 #: src/components/tables/settings/CustomUnitsTable.tsx:31
 #: src/components/tables/settings/GroupTable.tsx:100
 #: src/components/tables/stock/StockLocationTable.tsx:51
@@ -221,7 +221,7 @@ msgstr ""
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
 #: src/components/tables/InvenTreeTable.tsx:350
-#: src/components/tables/plugin/PluginListTable.tsx:363
+#: src/components/tables/plugin/PluginListTable.tsx:364
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
@@ -251,7 +251,7 @@ msgid "Thumbnail"
 msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:84
-#: src/pages/build/BuildDetail.tsx:206
+#: src/pages/build/BuildDetail.tsx:204
 msgid "Barcode Actions"
 msgstr ""
 
@@ -563,8 +563,8 @@ msgid "Email settings not configured"
 msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:112
-#: src/components/tables/plugin/PluginListTable.tsx:174
-#: src/components/tables/plugin/PluginListTable.tsx:286
+#: src/components/tables/plugin/PluginListTable.tsx:175
+#: src/components/tables/plugin/PluginListTable.tsx:287
 msgid "Version"
 msgstr ""
 
@@ -930,7 +930,7 @@ msgstr ""
 #: src/components/tables/bom/UsedInTable.tsx:68
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:122
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:150
-#: src/pages/build/BuildDetail.tsx:77
+#: src/pages/build/BuildDetail.tsx:75
 msgid "Quantity"
 msgstr ""
 
@@ -958,8 +958,8 @@ msgstr ""
 #: src/components/tables/part/PartParameterTable.tsx:65
 #: src/components/tables/part/PartParameterTemplateTable.tsx:61
 #: src/components/tables/part/RelatedPartTable.tsx:60
-#: src/components/tables/plugin/PluginListTable.tsx:159
-#: src/components/tables/plugin/PluginListTable.tsx:273
+#: src/components/tables/plugin/PluginListTable.tsx:160
+#: src/components/tables/plugin/PluginListTable.tsx:274
 #: src/components/tables/stock/StockItemTable.tsx:45
 msgid "Description"
 msgstr ""
@@ -1095,7 +1095,7 @@ msgid "Table Filters"
 msgstr ""
 
 #: src/components/tables/FilterSelectDrawer.tsx:209
-#: src/components/tables/plugin/PluginListTable.tsx:332
+#: src/components/tables/plugin/PluginListTable.tsx:333
 #: src/contexts/ThemeContext.tsx:64
 #: src/functions/forms.tsx:202
 #: src/hooks/UseForm.tsx:38
@@ -1274,7 +1274,7 @@ msgstr ""
 #: src/components/tables/bom/BomTable.tsx:233
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:213
 #: src/components/tables/purchasing/SupplierPartTable.tsx:130
-#: src/pages/build/BuildDetail.tsx:169
+#: src/pages/build/BuildDetail.tsx:167
 #: src/pages/company/CompanyDetail.tsx:156
 #: src/pages/part/PartDetail.tsx:228
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:90
@@ -1388,8 +1388,8 @@ msgstr ""
 #: src/components/tables/build/BuildOrderTable.tsx:110
 #: src/components/tables/part/PartTable.tsx:175
 #: src/components/tables/part/PartVariantTable.tsx:15
-#: src/components/tables/plugin/PluginListTable.tsx:177
-#: src/components/tables/plugin/PluginListTable.tsx:471
+#: src/components/tables/plugin/PluginListTable.tsx:178
+#: src/components/tables/plugin/PluginListTable.tsx:500
 #: src/components/tables/settings/UserTable.tsx:194
 #: src/components/tables/stock/StockItemTable.tsx:247
 msgid "Active"
@@ -1923,162 +1923,174 @@ msgstr ""
 msgid "Stage"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:102
+#: src/components/tables/plugin/PluginListTable.tsx:103
 msgid "Plugin with id {id} not found"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:104
+#: src/components/tables/plugin/PluginListTable.tsx:105
 msgid "An error occurred while fetching plugin details"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:121
+#: src/components/tables/plugin/PluginListTable.tsx:122
 msgid "Plugin Actions"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:125
-#: src/components/tables/plugin/PluginListTable.tsx:128
+#: src/components/tables/plugin/PluginListTable.tsx:126
+#: src/components/tables/plugin/PluginListTable.tsx:129
 msgid "Edit plugin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:139
 #: src/components/tables/plugin/PluginListTable.tsx:140
+#: src/components/tables/plugin/PluginListTable.tsx:141
 msgid "Reload"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:153
+#: src/components/tables/plugin/PluginListTable.tsx:154
 msgid "Plugin information"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:164
+#: src/components/tables/plugin/PluginListTable.tsx:165
 msgid "Author"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:169
+#: src/components/tables/plugin/PluginListTable.tsx:170
 msgid "Date"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:185
+#: src/components/tables/plugin/PluginListTable.tsx:186
 msgid "Package information"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:190
+#: src/components/tables/plugin/PluginListTable.tsx:191
 msgid "Installation path"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:195
-#: src/components/tables/plugin/PluginListTable.tsx:476
+#: src/components/tables/plugin/PluginListTable.tsx:196
+#: src/components/tables/plugin/PluginListTable.tsx:505
 msgid "Builtin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:206
+#: src/components/tables/plugin/PluginListTable.tsx:207
 msgid "Plugin settings"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:223
+#: src/components/tables/plugin/PluginListTable.tsx:224
 msgid "Plugin is active"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:229
+#: src/components/tables/plugin/PluginListTable.tsx:230
 msgid "Plugin is inactive"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:236
+#: src/components/tables/plugin/PluginListTable.tsx:237
 msgid "Plugin is not installed"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:258
+#: src/components/tables/plugin/PluginListTable.tsx:259
 msgid "Plugin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:280
+#: src/components/tables/plugin/PluginListTable.tsx:281
 msgid "Description not available"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:305
+#: src/components/tables/plugin/PluginListTable.tsx:306
 msgid "Activate Plugin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:305
+#: src/components/tables/plugin/PluginListTable.tsx:306
 msgid "Deactivate Plugin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:314
+#: src/components/tables/plugin/PluginListTable.tsx:315
 msgid "Confirm plugin activation"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:315
+#: src/components/tables/plugin/PluginListTable.tsx:316
 msgid "Confirm plugin deactivation"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:321
+#: src/components/tables/plugin/PluginListTable.tsx:322
 msgid "The following plugin will be activated"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:322
+#: src/components/tables/plugin/PluginListTable.tsx:323
 msgid "The following plugin will be deactivated"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:333
+#: src/components/tables/plugin/PluginListTable.tsx:334
 msgid "Confirm"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:343
+#: src/components/tables/plugin/PluginListTable.tsx:344
 msgid "Activating plugin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:343
+#: src/components/tables/plugin/PluginListTable.tsx:344
 msgid "Deactivating plugin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:353
+#: src/components/tables/plugin/PluginListTable.tsx:354
 msgid "Plugin updated"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:355
+#: src/components/tables/plugin/PluginListTable.tsx:356
 msgid "The plugin was activated"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:356
+#: src/components/tables/plugin/PluginListTable.tsx:357
 msgid "The plugin was deactivated"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:364
+#: src/components/tables/plugin/PluginListTable.tsx:365
 msgid "Error updating plugin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:381
+#: src/components/tables/plugin/PluginListTable.tsx:382
 msgid "Deactivate"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:390
+#: src/components/tables/plugin/PluginListTable.tsx:391
 msgid "Activate"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:404
+#: src/components/tables/plugin/PluginListTable.tsx:405
 msgid "Install plugin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:412
+#: src/components/tables/plugin/PluginListTable.tsx:413
 msgid "Install"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:416
+#: src/components/tables/plugin/PluginListTable.tsx:417
 msgid "Plugin installed successfully"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:435
+#: src/components/tables/plugin/PluginListTable.tsx:438
+msgid "Plugins reloaded"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:439
+msgid "Plugins were reloaded successfully"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:455
+msgid "Reload Plugins"
+msgstr ""
+
+#: src/components/tables/plugin/PluginListTable.tsx:464
 msgid "Install Plugin"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:448
+#: src/components/tables/plugin/PluginListTable.tsx:477
 msgid "Plugin detail"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:481
+#: src/components/tables/plugin/PluginListTable.tsx:510
 msgid "Sample"
 msgstr ""
 
-#: src/components/tables/plugin/PluginListTable.tsx:486
+#: src/components/tables/plugin/PluginListTable.tsx:515
 #: src/components/tables/stock/StockItemTable.tsx:298
 msgid "Installed"
 msgstr ""
@@ -3855,7 +3867,7 @@ msgid "Stocktake"
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:228
-#: src/pages/build/BuildDetail.tsx:262
+#: src/pages/build/BuildDetail.tsx:260
 #: src/pages/build/BuildIndex.tsx:36
 #: src/pages/part/PartDetail.tsx:130
 #: src/pages/sales/SalesOrderDetail.tsx:61
@@ -3910,39 +3922,39 @@ msgstr ""
 msgid "Mark as unread"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:73
+#: src/pages/build/BuildDetail.tsx:71
 msgid "Base Part"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:81
+#: src/pages/build/BuildDetail.tsx:79
 msgid "Build Status"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:102
+#: src/pages/build/BuildDetail.tsx:100
 msgid "Build Details"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:108
+#: src/pages/build/BuildDetail.tsx:106
 msgid "Allocate Stock"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:114
+#: src/pages/build/BuildDetail.tsx:112
 msgid "Incomplete Outputs"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:120
+#: src/pages/build/BuildDetail.tsx:118
 msgid "Completed Outputs"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:133
+#: src/pages/build/BuildDetail.tsx:131
 msgid "Consumed Stock"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:145
+#: src/pages/build/BuildDetail.tsx:143
 msgid "Child Build Orders"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:157
+#: src/pages/build/BuildDetail.tsx:155
 #: src/pages/company/CompanyDetail.tsx:144
 #: src/pages/part/PartDetail.tsx:216
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:78
@@ -3959,15 +3971,15 @@ msgstr ""
 #~ msgstr "View part barcode"
 
 #: src/pages/build/BuildDetail.tsx:190
+msgid "Edit Build Order"
+msgstr ""
+
+#: src/pages/build/BuildDetail.tsx:190
 #: src/pages/part/PartDetail.tsx:274
 #~ msgid "Link custom barcode to part"
 #~ msgstr "Link custom barcode to part"
 
 #: src/pages/build/BuildDetail.tsx:192
-msgid "Edit Build Order"
-msgstr ""
-
-#: src/pages/build/BuildDetail.tsx:194
 msgid "Build Order updated"
 msgstr ""
 
@@ -3980,7 +3992,7 @@ msgstr ""
 #~ msgid "Build Order"
 #~ msgstr "Build Order"
 
-#: src/pages/build/BuildDetail.tsx:220
+#: src/pages/build/BuildDetail.tsx:218
 msgid "Reporting Actions"
 msgstr ""
 
@@ -3988,11 +4000,11 @@ msgstr ""
 #~ msgid "Edit build order"
 #~ msgstr "Edit build order"
 
-#: src/pages/build/BuildDetail.tsx:225
+#: src/pages/build/BuildDetail.tsx:223
 msgid "Report"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:226
+#: src/pages/build/BuildDetail.tsx:224
 msgid "Print build report"
 msgstr ""
 
@@ -4000,13 +4012,13 @@ msgstr ""
 #~ msgid "Duplicate build order"
 #~ msgstr "Duplicate build order"
 
+#: src/pages/build/BuildDetail.tsx:230
+msgid "Build Order Actions"
+msgstr ""
+
 #: src/pages/build/BuildDetail.tsx:231
 #~ msgid "Delete build order"
 #~ msgstr "Delete build order"
-
-#: src/pages/build/BuildDetail.tsx:232
-msgid "Build Order Actions"
-msgstr ""
 
 #: src/pages/build/BuildIndex.tsx:21
 msgid "Add Build Order"
