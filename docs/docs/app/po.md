@@ -4,7 +4,7 @@ title: Purchase Orders
 
 ## Purchase Order List
 
-The purchase order list display shows all current *outstanding* purchase orders. (Purchase orders which have been completed are not shown here).
+The purchase order list display lists all purchase orders:
 
 {% with id="po_list", url="app/po_list.png", maxheight="240px", description="Purchase order list" %}
 {% include "img.html" %}
@@ -14,7 +14,7 @@ Select an individual purchase order to display the detail view for that order.
 
 ### Filtering
 
-Available purchase orders can be subsequently filtered using the search input at the top of the screen
+Displayed purchase orders can be subsequently filtered using the search input at the top of the screen
 
 ## Purchase Order Detail
 
