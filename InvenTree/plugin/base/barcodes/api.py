@@ -504,7 +504,7 @@ class BarcodeSOAllocate(BarcodeView):
 
         sales_order = kwargs['sales_order']
 
-        if shipment := kwargs['shipment']:
+        if shipment := kwargs.get('shipment', None):
             if shipment.order != sales_order:
                 raise ValidationError({
                     'error': _('Shipment does not match sales order'),
