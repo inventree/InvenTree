@@ -396,6 +396,7 @@ class BarcodePOReceive(BarcodeView):
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
+
         response = {
             "barcode_data": barcode,
             "barcode_hash": hash_barcode(barcode)
@@ -413,6 +414,8 @@ class BarcodePOReceive(BarcodeView):
         # Now, look just for "supplier-barcode" plugins
         plugins = registry.with_mixin("supplier-barcode")
 
+        plugin_response = None
+
         for current_plugin in plugins:
 
             result = current_plugin.scan_receive_item(
@@ -428,15 +431,18 @@ class BarcodePOReceive(BarcodeView):
             if "error" in result:
                 logger.info("%s.scan_receive_item(...) returned an error: %s",
                             current_plugin.__class__.__name__, result["error"])
-                if not response:
+                if not plugin_response:
                     plugin = current_plugin
-                    response = result
+                    plugin_response = result
             else:
                 plugin = current_plugin
-                response = result
+                plugin_response = result
                 break
 
-        response["plugin"] = plugin.name if plugin else None
+        response['plugin'] = plugin.name if plugin else None
+
+        if plugin_response:
+            response = {**response, **plugin_response}
 
         # A plugin has not been found!
         if plugin is None:
