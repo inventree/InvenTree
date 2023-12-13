@@ -13,6 +13,35 @@ from platform import python_version
 from invoke import task
 
 
+def checkPythonVersion():
+    """Check that the installed python version meets minimum requirements.
+
+    If the python version is not sufficient, exits with a non-zero exit code.
+    """
+
+    REQ_MAJOR = 3
+    REQ_MINOR = 9
+
+    version = sys.version.split(" ")[0]
+
+    valid = True
+
+    if sys.version_info.major < REQ_MAJOR:
+        valid = False
+
+    elif sys.version_info.major == REQ_MAJOR and sys.version_info.minor < REQ_MINOR:
+        valid = False
+
+    if not valid:
+        print(f"The installed python version ({version}) is not supported!")
+        print(f"InvenTree requires Python {REQ_MAJOR}.{REQ_MINOR} or above")
+        sys.exit(1)
+
+
+if __name__ in ['__main__', 'tasks']:
+    checkPythonVersion()
+
+
 def apps():
     """Returns a list of installed apps."""
     return [
