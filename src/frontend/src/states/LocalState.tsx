@@ -24,6 +24,7 @@ interface LocalStateProps {
   loader: LoaderType;
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
+  getLastUsedPanel: (panelKey: string) => () => string | undefined;
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -55,6 +56,9 @@ export const useLocalState = create<LocalStateProps>()(
             lastUsedPanels: { ...get().lastUsedPanels, [panelKey]: value }
           });
         }
+      },
+      getLastUsedPanel(panelKey) {
+        return () => get().lastUsedPanels[panelKey];
       }
     }),
     {

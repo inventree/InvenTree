@@ -10,15 +10,8 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { useEffect, useState } from 'react';
-import {
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-  useParams
-} from 'react-router-dom';
 
 import { useLocalState } from '../../states/LocalState';
 import { PlaceholderPanel } from '../items/Placeholder';
@@ -44,61 +37,57 @@ export type PanelProps = {
   collapsible?: boolean;
 };
 
-function BasePanelGroup({
+export function PanelGroup({
   pageKey,
   panels,
   onPanelChange,
   selectedPanel,
   collapsible = true
 }: PanelProps): ReactNode {
-  const navigate = useNavigate();
-  const { panel } = useParams();
+  const localState = useLocalState();
 
+  const [panel, setPanel] = useState<string>(selectedPanel ?? '');
+
+  // Keep a list of active panels (hidden and disabled panels are not active)
   const activePanels = useMemo(
     () => panels.filter((panel) => !panel.hidden && !panel.disabled),
     [panels]
   );
 
-  const setLastUsedPanel = useLocalState((state) =>
-    state.setLastUsedPanel(pageKey)
-  );
-
+  // Set selected panel when component is initially loaded, or when the selected panel changes
   useEffect(() => {
-    if (panel) {
-      setLastUsedPanel(panel);
+    let first_panel: string = activePanels[0]?.name ?? '';
+    let active_panel: string =
+      useLocalState.getState().getLastUsedPanel(pageKey)() ?? '';
+
+    let panelName = selectedPanel || active_panel || first_panel;
+
+    if (panelName != panel) {
+      setPanel(panelName);
     }
-    // panel is intentionally no dependency as this should only run on initial render
-  }, [setLastUsedPanel]);
+
+    if (panelName != active_panel) {
+      useLocalState.getState().setLastUsedPanel(pageKey)(panelName);
+    }
+  }, [activePanels, panels, selectedPanel]);
 
   // Callback when the active panel changes
-  function handlePanelChange(panel: string) {
-    if (activePanels.findIndex((p) => p.name === panel) === -1) {
-      setLastUsedPanel('');
-      return navigate('../');
-    }
+  const handlePanelChange = useCallback(
+    (panelName: string) => {
+      // Ensure that the panel name is valid
+      if (!activePanels.some((panel) => panel.name == panelName)) {
+        return;
+      }
 
-    navigate(`../${panel}`);
+      setPanel(panelName);
+      localState.setLastUsedPanel(pageKey)(panelName);
 
-    // Optionally call external callback hook
-    if (onPanelChange) {
-      onPanelChange(panel);
-    }
-  }
-
-  // if the selected panel state changes update the current panel
-  useEffect(() => {
-    if (selectedPanel && selectedPanel !== panel) {
-      handlePanelChange(selectedPanel);
-    }
-  }, [selectedPanel, panel]);
-
-  // Update the active panel when panels changes and the active is no longer available
-  useEffect(() => {
-    if (activePanels.findIndex((p) => p.name === panel) === -1) {
-      setLastUsedPanel('');
-      return navigate('../');
-    }
-  }, [activePanels, panel]);
+      if (onPanelChange) {
+        onPanelChange(panelName);
+      }
+    },
+    [onPanelChange, pageKey]
+  );
 
   const [expanded, setExpanded] = useState<boolean>(true);
 
@@ -167,40 +156,5 @@ function BasePanelGroup({
         )}
       </Tabs>
     </Paper>
-  );
-}
-
-function IndexPanelComponent({ pageKey, selectedPanel, panels }: PanelProps) {
-  const lastUsedPanel = useLocalState((state) => {
-    const panelName =
-      selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
-
-    if (
-      panels.findIndex(
-        (p) => p.name === panelName && !p.disabled && !p.hidden
-      ) === -1
-    ) {
-      return panels[0]?.name;
-    }
-
-    return panelName;
-  });
-
-  return <Navigate to={lastUsedPanel} replace />;
-}
-
-/**
- * Render a panel group. The current panel will be appended to the current url.
- * The last opened panel will be stored in local storage and opened if no panel is provided via url param
- * @param panels - The list of panels to display
- * @param onPanelChange - Callback when the active panel changes
- * @param collapsible - If true, the panel group can be collapsed (defaults to true)
- */
-export function PanelGroup(props: PanelProps) {
-  return (
-    <Routes>
-      <Route index element={<IndexPanelComponent {...props} />} />
-      <Route path="/:panel/*" element={<BasePanelGroup {...props} />} />
-    </Routes>
   );
 }
