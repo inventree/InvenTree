@@ -139,33 +139,45 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         part = Part.objects.create(name="Test Part", description="Test Part")
         supplier = Company.objects.create(name="Supplier", is_supplier=True)
         manufacturer = Company.objects.create(
-            name="Test Manufacturer", is_manufacturer=True)
+            name="Test Manufacturer", is_manufacturer=True
+        )
 
         mouser = Company.objects.create(name="Mouser Test", is_supplier=True)
         mpart = ManufacturerPart.objects.create(
-            part=part, manufacturer=manufacturer, MPN="MC34063ADR")
+            part=part, manufacturer=manufacturer, MPN="MC34063ADR"
+        )
 
         self.purchase_order1 = PurchaseOrder.objects.create(
-            supplier_reference="72991337", supplier=supplier)
+            supplier_reference="72991337", supplier=supplier
+        )
+
         supplier_parts1 = [
             SupplierPart(SKU=f"1_{i}", part=part, supplier=supplier)
             for i in range(6)
         ]
+
         supplier_parts1.insert(
-            2, SupplierPart(SKU="296-LM358BIDDFRCT-ND", part=part, supplier=supplier))
+            2, SupplierPart(SKU="296-LM358BIDDFRCT-ND", part=part, supplier=supplier)
+        )
+
         for supplier_part in supplier_parts1:
             supplier_part.save()
             self.purchase_order1.add_line_item(supplier_part, 8)
 
         self.purchase_order2 = PurchaseOrder.objects.create(
-            reference="P0-1337", supplier=mouser)
+            reference="P0-1337", supplier=mouser
+        )
+
         self.purchase_order2.place_order()
         supplier_parts2 = [
             SupplierPart(SKU=f"2_{i}", part=part, supplier=mouser)
             for i in range(6)
         ]
-        supplier_parts2.insert(
-            3, SupplierPart(SKU="42", part=part, manufacturer_part=mpart, supplier=mouser))
+
+        supplier_parts2.insert(3, SupplierPart(
+            SKU="42", part=part, manufacturer_part=mpart, supplier=mouser
+        ))
+
         for supplier_part in supplier_parts2:
             supplier_part.save()
             self.purchase_order2.add_line_item(supplier_part, 5)
@@ -175,28 +187,23 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
         url = reverse("api-barcode-po-receive")
 
-        result1 = self.post(url, data={"barcode": DIGIKEY_BARCODE})
-        assert result1.status_code == 400
+        result1 = self.post(url, data={"barcode": DIGIKEY_BARCODE}, expected_code=400)
+
         assert result1.data["error"].startswith("No matching purchase order")
 
         self.purchase_order1.place_order()
 
-        result2 = self.post(url, data={"barcode": DIGIKEY_BARCODE})
-        assert result2.status_code == 200
-        assert "success" in result2.data
+        result2 = self.post(url, data={"barcode": DIGIKEY_BARCODE}, expected_code=200)
+        self.assertIn("success", result2.data)
 
-        result3 = self.post(url, data={"barcode": DIGIKEY_BARCODE})
-        assert result3.status_code == 400
-        assert result3.data["error"].startswith(
-            "Item has already been received")
+        result3 = self.post(url, data={"barcode": DIGIKEY_BARCODE}, expected_code=400)
+        self.assertEqual(result3.data['error'], "Item has already been received")
 
-        result4 = self.post(url, data={"barcode": DIGIKEY_BARCODE[:-1]})
-        assert result4.status_code == 400
+        result4 = self.post(url, data={"barcode": DIGIKEY_BARCODE[:-1]}, expected_code=400)
         assert result4.data["error"].startswith(
             "Failed to find pending line item for supplier part")
 
-        result5 = self.post(reverse("api-barcode-scan"), data={"barcode": DIGIKEY_BARCODE})
-        assert result5.status_code == 200
+        result5 = self.post(reverse("api-barcode-scan"), data={"barcode": DIGIKEY_BARCODE}, expected_code=200)
         stock_item = StockItem.objects.get(pk=result5.data["stockitem"]["pk"])
         assert stock_item.supplier_part.SKU == "296-LM358BIDDFRCT-ND"
         assert stock_item.quantity == 10

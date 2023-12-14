@@ -137,6 +137,37 @@ class SalesOrderTest(TestCase):
             quantity=25 if full else 20
         )
 
+    def test_over_allocate(self):
+        """Test that over allocation logic works"""
+
+        SA = StockItem.objects.create(part=self.part, quantity=9)
+
+        # First three allocations should succeed
+        for _i in range(3):
+            allocation = SalesOrderAllocation.objects.create(
+                line=self.line,
+                item=SA,
+                quantity=3,
+                shipment=self.shipment
+            )
+
+        # Editing an existing allocation with a larger quantity should fail
+        with self.assertRaises(ValidationError):
+            allocation.quantity = 4
+            allocation.save()
+            allocation.clean()
+
+        # Next allocation should fail
+        with self.assertRaises(ValidationError):
+            allocation = SalesOrderAllocation.objects.create(
+                line=self.line,
+                item=SA,
+                quantity=3,
+                shipment=self.shipment
+            )
+
+            allocation.clean()
+
     def test_allocate_partial(self):
         """Partially allocate stock"""
         self.allocate_stock(False)
