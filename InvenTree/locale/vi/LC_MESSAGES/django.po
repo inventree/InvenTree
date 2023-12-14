@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-13 02:04+0000\n"
-"PO-Revision-Date: 2023-12-12 03:57\n"
+"POT-Creation-Date: 2023-12-14 00:15+0000\n"
+"PO-Revision-Date: 2023-12-14 04:11\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -59,7 +59,7 @@ msgstr "Nhập ngày"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:40
 #: part/models.py:3003 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:139 stock/models.py:2217 stock/models.py:2325
+#: stock/admin.py:139 stock/models.py:2223 stock/models.py:2331
 #: stock/serializers.py:417 stock/serializers.py:580 stock/serializers.py:674
 #: stock/serializers.py:730 stock/serializers.py:1058 stock/serializers.py:1157
 #: stock/serializers.py:1318 stock/templates/stock/stock_sidebar.html:25
@@ -254,7 +254,7 @@ msgstr "Tập tin bị thiếu"
 msgid "Missing external link"
 msgstr "Thiếu liên kết bên ngoài"
 
-#: InvenTree/models.py:475 stock/models.py:2319
+#: InvenTree/models.py:475 stock/models.py:2325
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
@@ -474,13 +474,9 @@ msgstr "Chào mừng đến với {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Tài khoản của bạn đã được tạo.\n"
-"\n"
+msgstr "Tài khoản của bạn đã được tạo.\n\n"
 "Xin hãy sử dụng chức năng quên mật khẩu để truy cập (tại https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -996,7 +992,7 @@ msgid "Build Order Reference"
 msgstr "Tham chiếu đơn đặt bản dựng"
 
 #: build/models.py:172 order/models.py:364 order/models.py:792
-#: order/models.py:1136 order/models.py:1772 part/admin.py:274
+#: order/models.py:1136 order/models.py:1781 part/admin.py:274
 #: part/models.py:3799 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
@@ -1048,7 +1044,7 @@ msgstr "Đơn đặt bản dựng với bản dựng này đã được phân b�
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
 #: templates/email/overdue_build_order.html:16
-#: templates/js/translated/barcode.js:529 templates/js/translated/bom.js:632
+#: templates/js/translated/barcode.js:546 templates/js/translated/bom.js:632
 #: templates/js/translated/bom.js:769 templates/js/translated/bom.js:905
 #: templates/js/translated/build.js:1299 templates/js/translated/build.js:1730
 #: templates/js/translated/build.js:2150 templates/js/translated/build.js:2323
@@ -1154,7 +1150,7 @@ msgstr "Ngày hoàn thành mục tiêu"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Ngày mục tiêu để hoàn thành bản dựng. Bản dựng sẽ bị quá hạn sau ngày này."
 
-#: build/models.py:277 order/models.py:414 order/models.py:1815
+#: build/models.py:277 order/models.py:414 order/models.py:1824
 #: templates/js/translated/build.js:2235
 msgid "Completion Date"
 msgstr "Ngày hoàn thành"
@@ -1249,7 +1245,7 @@ msgstr "Đầu ra bản dựng không phù hợp với đơn đặt bản dựng
 #: build/models.py:860 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:445 order/serializers.py:389
 #: order/serializers.py:511 part/serializers.py:1322 part/serializers.py:1661
-#: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
+#: stock/models.py:629 stock/models.py:1426 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "Số lượng phải lớn hơn 0"
 
@@ -1264,7 +1260,7 @@ msgstr "Dựng đối tượng"
 #: build/models.py:1293 build/models.py:1551 build/serializers.py:205
 #: build/serializers.py:242 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2366
-#: order/models.py:1123 order/models.py:1694 order/serializers.py:1267
+#: order/models.py:1123 order/models.py:1703 order/serializers.py:1267
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:273
 #: part/forms.py:47 part/models.py:2990 part/models.py:3780
 #: part/templates/part/part_pricing.html:16
@@ -1281,7 +1277,7 @@ msgstr "Dựng đối tượng"
 #: stock/templates/stock/item_base.html:295
 #: stock/templates/stock/item_base.html:342
 #: templates/email/build_order_completed.html:18
-#: templates/js/translated/barcode.js:531 templates/js/translated/bom.js:771
+#: templates/js/translated/barcode.js:548 templates/js/translated/bom.js:771
 #: templates/js/translated/bom.js:981 templates/js/translated/build.js:516
 #: templates/js/translated/build.js:732 templates/js/translated/build.js:1356
 #: templates/js/translated/build.js:1733 templates/js/translated/build.js:2345
@@ -1321,11 +1317,11 @@ msgstr "Xây dựng mục phải xác định đầu ra, bởi vì sản phẩm 
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Số lượng được phân bổ ({q}) không thể vượt quá số lượng có trong kho ({a})"
 
-#: build/models.py:1393 order/models.py:1650
+#: build/models.py:1393 order/models.py:1659
 msgid "Stock item is over-allocated"
 msgstr "Kho hàng đã bị phân bổ quá đà"
 
-#: build/models.py:1399 order/models.py:1653
+#: build/models.py:1399 order/models.py:1662
 msgid "Allocation quantity must be greater than zero"
 msgstr "Số lượng phân bổ phải lớn hơn 0"
 
@@ -1434,8 +1430,8 @@ msgstr "Danh sách đầu ra bản dựng phải được cung cấp"
 #: stock/serializers.py:410 stock/serializers.py:575 stock/serializers.py:669
 #: stock/serializers.py:1150 stock/serializers.py:1421
 #: stock/templates/stock/item_base.html:394
-#: templates/js/translated/barcode.js:530
-#: templates/js/translated/barcode.js:778 templates/js/translated/build.js:994
+#: templates/js/translated/barcode.js:547
+#: templates/js/translated/barcode.js:795 templates/js/translated/build.js:994
 #: templates/js/translated/build.js:2360
 #: templates/js/translated/purchase_order.js:1174
 #: templates/js/translated/purchase_order.js:1264
@@ -1471,7 +1467,7 @@ msgstr "Vị trí cho đầu ra bản dựng hoàn thiện"
 
 #: build/serializers.py:500 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:818
-#: order/models.py:1798 order/serializers.py:534 stock/admin.py:124
+#: order/models.py:1807 order/serializers.py:534 stock/admin.py:124
 #: stock/serializers.py:726 stock/serializers.py:1289
 #: stock/templates/stock/item_base.html:427
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2179
@@ -1685,8 +1681,8 @@ msgstr "Hiển thị mã QR"
 #: part/templates/part/part_base.html:47
 #: stock/templates/stock/item_base.html:47
 #: stock/templates/stock/location.html:59
-#: templates/js/translated/barcode.js:479
-#: templates/js/translated/barcode.js:484
+#: templates/js/translated/barcode.js:496
+#: templates/js/translated/barcode.js:501
 msgid "Unlink Barcode"
 msgstr "Gỡ mã vạch"
 
@@ -3408,7 +3404,7 @@ msgid "Price break quantity"
 msgstr "Số lượng giá phá vỡ"
 
 #: common/models.py:2374 company/serializers.py:485 order/admin.py:41
-#: order/models.py:1181 order/models.py:2005
+#: order/models.py:1181 order/models.py:2014
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1883
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -3873,7 +3869,7 @@ msgstr "Tên tham số"
 
 #: company/models.py:532
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2312 templates/js/translated/company.js:1156
+#: stock/models.py:2318 templates/js/translated/company.js:1156
 #: templates/js/translated/company.js:1409 templates/js/translated/part.js:1492
 #: templates/js/translated/stock.js:1502
 msgid "Value"
@@ -4067,7 +4063,7 @@ msgid "Delete image"
 msgstr "Xóa ảnh"
 
 #: company/templates/company/company_base.html:86 order/models.py:806
-#: order/models.py:1786 order/templates/order/return_order_base.html:131
+#: order/models.py:1795 order/templates/order/return_order_base.html:131
 #: order/templates/order/sales_order_base.html:144 stock/models.py:754
 #: stock/models.py:755 stock/serializers.py:1044
 #: stock/templates/stock/item_base.html:405
@@ -4569,7 +4565,7 @@ msgstr "Không tìm thấy đơn đặt mua phù hợp"
 msgid "Purchase Order"
 msgstr "Đơn hàng"
 
-#: order/api.py:1411 order/models.py:1975 order/models.py:2021
+#: order/api.py:1411 order/models.py:1984 order/models.py:2030
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4655,15 +4651,15 @@ msgstr "Mã tham chiếu đơn đặt nhà cung cấp"
 msgid "received by"
 msgstr "nhận bởi"
 
-#: order/models.py:408 order/models.py:1809
+#: order/models.py:408 order/models.py:1818
 msgid "Issue Date"
 msgstr "Ngày phát hành"
 
-#: order/models.py:409 order/models.py:1810
+#: order/models.py:409 order/models.py:1819
 msgid "Date order was issued"
 msgstr "Ngày đặt hàng đã phát hành"
 
-#: order/models.py:415 order/models.py:1816
+#: order/models.py:415 order/models.py:1825
 msgid "Date order was completed"
 msgstr "Ngày đặt hàng đã được hoàn thiện"
 
@@ -4679,11 +4675,11 @@ msgstr "Số lượng phải là số dương"
 msgid "Company to which the items are being sold"
 msgstr "Doanh nghiệp từ những hàng hóa đang được bán"
 
-#: order/models.py:826 order/models.py:1803
+#: order/models.py:826 order/models.py:1812
 msgid "Customer Reference "
 msgstr "Tham chiếu khách hàng "
 
-#: order/models.py:826 order/models.py:1804
+#: order/models.py:826 order/models.py:1813
 msgid "Customer order reference code"
 msgstr "Mã tham chiếu đơn đặt của khách hàng"
 
@@ -4754,8 +4750,8 @@ msgid "deleted"
 msgstr "đã bị xóa"
 
 #: order/models.py:1226 order/models.py:1310 order/models.py:1350
-#: order/models.py:1449 order/models.py:1598 order/models.py:1974
-#: order/models.py:2021 templates/js/translated/sales_order.js:1488
+#: order/models.py:1449 order/models.py:1598 order/models.py:1983
+#: order/models.py:2030 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr "Đặt hàng"
 
@@ -4832,7 +4828,7 @@ msgstr "Kiểm tra bởi"
 msgid "User who checked this shipment"
 msgstr "Người dùng đã kiểm tra vận chuyển này"
 
-#: order/models.py:1477 order/models.py:1676 order/serializers.py:1282
+#: order/models.py:1477 order/models.py:1685 order/serializers.py:1282
 #: order/serializers.py:1410 templates/js/translated/model_renderers.js:446
 msgid "Shipment"
 msgstr "Vận chuyển"
@@ -4881,77 +4877,77 @@ msgstr "Không thể phân bổ hàng hóa vào một dòng mà không có sản
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Số lượng phân bổ không thể vượt quá số lượng của kho"
 
-#: order/models.py:1656 order/serializers.py:1146
+#: order/models.py:1665 order/serializers.py:1146
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Số lượng phải là 1 cho hàng hóa sêri"
 
-#: order/models.py:1659
+#: order/models.py:1668
 msgid "Sales order does not match shipment"
 msgstr "Đơn bán hàng không phù hợp với vận đơn"
 
-#: order/models.py:1660
+#: order/models.py:1669 plugin/base/barcodes/api.py:516
 msgid "Shipment does not match sales order"
 msgstr "Vận đơn không phù hợp với đơn bán hàng"
 
-#: order/models.py:1668
+#: order/models.py:1677
 msgid "Line"
 msgstr "Dòng"
 
-#: order/models.py:1677
+#: order/models.py:1686
 msgid "Sales order shipment reference"
 msgstr "Tham chiếu vận đơn của đơn hàng bán"
 
-#: order/models.py:1690 order/models.py:1982
+#: order/models.py:1699 order/models.py:1991
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr "Hàng hóa"
 
-#: order/models.py:1691
+#: order/models.py:1700
 msgid "Select stock item to allocate"
 msgstr "Chọn hàng trong kho để phân bổ"
 
-#: order/models.py:1694
+#: order/models.py:1703
 msgid "Enter stock allocation quantity"
 msgstr "Nhập số lượng phân kho"
 
-#: order/models.py:1773
+#: order/models.py:1782
 msgid "Return Order reference"
 msgstr "Tham chiếu đơn hàng trả lại"
 
-#: order/models.py:1787
+#: order/models.py:1796
 msgid "Company from which items are being returned"
 msgstr "Công ty có hàng hóa sẽ được trả lại"
 
-#: order/models.py:1798
+#: order/models.py:1807
 msgid "Return order status"
 msgstr "Trạng thái đơn hàng trả lại"
 
-#: order/models.py:1967
+#: order/models.py:1976
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr "Chỉ hàng hóa thêo sêri mới có thể được gán vào đơn hàng trả lại"
 
-#: order/models.py:1983
+#: order/models.py:1992
 msgid "Select item to return from customer"
 msgstr "Chọn hàng hóa để trả lại từ khách hàng"
 
-#: order/models.py:1988
+#: order/models.py:1997
 msgid "Received Date"
 msgstr "Ngày nhận được"
 
-#: order/models.py:1989
+#: order/models.py:1998
 msgid "The date this this return item was received"
 msgstr "Ngày mà hàng hóa trả lại đã được nhận"
 
-#: order/models.py:2000 templates/js/translated/return_order.js:733
+#: order/models.py:2009 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr "Kết quả"
 
-#: order/models.py:2000
+#: order/models.py:2009
 msgid "Outcome for this line item"
 msgstr "Kết quả cho hàng hóa dòng này"
 
-#: order/models.py:2006
+#: order/models.py:2015
 msgid "Cost associated with return or repair for this line item"
 msgstr "Chi phí gắn với hàng trả lại hoặc sửa chữa cho dòng hàng hóa này"
 
@@ -6511,7 +6507,7 @@ msgstr "Ảnh hiện có"
 
 #: part/serializers.py:771
 msgid "Filename of an existing part image"
-msgstr ""
+msgstr "Tên tệp của ảnh sản phẩm hiện hữu"
 
 #: part/serializers.py:791
 msgid "Image file does not exist"
@@ -7404,42 +7400,72 @@ msgstr "Chưa chỉ ra hành động cụ thể"
 msgid "No matching action found"
 msgstr "Không tìm thấy chức năng phù hợp"
 
-#: plugin/base/barcodes/api.py:123 plugin/base/barcodes/api.py:339
+#: plugin/base/barcodes/api.py:126 plugin/base/barcodes/api.py:346
+#: plugin/base/barcodes/api.py:540
 msgid "No match found for barcode data"
 msgstr "Không tìm thấy dữ liệu mã vạch phù hợp"
 
-#: plugin/base/barcodes/api.py:127
+#: plugin/base/barcodes/api.py:130
 msgid "Match found for barcode data"
 msgstr "Đã tìm thấy dữ liệu mã vạch phù hợp"
 
-#: plugin/base/barcodes/api.py:154
+#: plugin/base/barcodes/api.py:157
 #: templates/js/translated/purchase_order.js:1402
 msgid "Barcode matches existing item"
 msgstr "Mã vạch phù hợp với hàng hóa hiện có"
 
-#: plugin/base/barcodes/api.py:302
+#: plugin/base/barcodes/api.py:309
 msgid "No matching part data found"
 msgstr "Không tìm thấy thông tin sản phẩm phù hợp"
 
-#: plugin/base/barcodes/api.py:319
+#: plugin/base/barcodes/api.py:326
 msgid "No matching supplier parts found"
 msgstr "Không tìm thấy sản phẩm nhà cung cấp phù hợp"
 
-#: plugin/base/barcodes/api.py:324
+#: plugin/base/barcodes/api.py:331
 msgid "Multiple matching supplier parts found"
 msgstr "Tìm thấy nhiều sản phẩm nhà cung cấp phù hợp"
 
-#: plugin/base/barcodes/api.py:349
+#: plugin/base/barcodes/api.py:356
 msgid "Matched supplier part"
 msgstr "Sản phẩm nhà cung cấp phù hợp"
 
-#: plugin/base/barcodes/api.py:395
+#: plugin/base/barcodes/api.py:411
 msgid "Item has already been received"
 msgstr "Hàng hóa này đã được nhận"
 
-#: plugin/base/barcodes/api.py:430
+#: plugin/base/barcodes/api.py:449
 msgid "No match for supplier barcode"
 msgstr "Không phù hợp với mã vạch nhà cung cấp"
+
+#: plugin/base/barcodes/api.py:498
+msgid "Multiple matching line items found"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:503
+msgid "No matching line item found"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
+msgid "Barcode does not match an existing stock item"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:563
+msgid "Stock item does not match line item"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
+#: templates/js/translated/sales_order.js:1917
+msgid "Insufficient stock available"
+msgstr "Kho không đủ hạn mức khả dụng"
+
+#: plugin/base/barcodes/api.py:599
+msgid "Stock item allocated to sales order"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:603
+msgid "Not enough information"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7476,8 +7502,8 @@ msgid "Scanned barcode data"
 msgstr "Thông tin mã vạch đã quét"
 
 #: plugin/base/barcodes/serializers.py:81
-msgid "PurchaseOrder to allocate items against"
-msgstr "Đơn đặt mua để chỉ định hàng hóa"
+msgid "Purchase Order to allocate items against"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
@@ -7498,6 +7524,30 @@ msgstr "Địa điểm để nhận hàng hóa vào bên trong"
 #: plugin/base/barcodes/serializers.py:126
 msgid "Cannot select a structural location"
 msgstr "Không thể chọn một địa điểm có cấu trúc"
+
+#: plugin/base/barcodes/serializers.py:140
+msgid "Sales Order to allocate items against"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:147
+msgid "Sales order is not pending"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:154
+msgid "Sales order line item to allocate items against"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:160
+msgid "Sales order shipment to allocate items against"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:167
+msgid "Shipment has already been delivered"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:173
+msgid "Quantity to allocate"
+msgstr ""
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -7593,7 +7643,7 @@ msgstr "Bỏ qua nhãn"
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Skip this number of labels when printing label sheets"
-msgstr ""
+msgstr "Bỏ qua số nhãn này khi in tờ nhãn"
 
 #: plugin/builtin/labels/label_sheet.py:41
 msgid "Border"
@@ -8053,12 +8103,12 @@ msgid "Test Results"
 msgstr "Kết quả kiểm tra"
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2300 templates/js/translated/stock.js:1475
+#: stock/models.py:2306 templates/js/translated/stock.js:1475
 msgid "Test"
 msgstr "Thử nghiệm"
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2306
+#: stock/models.py:2312
 msgid "Result"
 msgstr "Kết quả"
 
@@ -8390,104 +8440,104 @@ msgstr "Giá mua riêng lẻ tại thời điểm mua"
 msgid "Converted to part"
 msgstr "Đã chuyển đổi sang sản phẩm"
 
-#: stock/models.py:1411
+#: stock/models.py:1417
 msgid "Part is not set as trackable"
 msgstr "Chưa đặt sản phẩm thành có thể theo dõi"
 
-#: stock/models.py:1417
+#: stock/models.py:1423
 msgid "Quantity must be integer"
 msgstr "Số lượng phải là số nguyên"
 
-#: stock/models.py:1423
+#: stock/models.py:1429
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "Số lượng không thể vượt quá số lượng trong kho đang có ({self.quantity})"
 
-#: stock/models.py:1426
+#: stock/models.py:1432
 msgid "Serial numbers must be a list of integers"
 msgstr "Số sêri phải là một danh sách dãy số nguyên"
 
-#: stock/models.py:1429
+#: stock/models.py:1435
 msgid "Quantity does not match serial numbers"
 msgstr "Số lượng không khớp với số sêri"
 
-#: stock/models.py:1436 stock/serializers.py:449
+#: stock/models.py:1442 stock/serializers.py:449
 msgid "Serial numbers already exist"
 msgstr "Số sêri đã tồn tại"
 
-#: stock/models.py:1507
+#: stock/models.py:1513
 msgid "Stock item has been assigned to a sales order"
 msgstr "Hàng trong kho đã được gán vào đơn hàng bán"
 
-#: stock/models.py:1510
+#: stock/models.py:1516
 msgid "Stock item is installed in another item"
 msgstr "Hàng trong kho đã được cài đặt vào hàng hóa khác"
 
-#: stock/models.py:1513
+#: stock/models.py:1519
 msgid "Stock item contains other items"
 msgstr "Hàng trong kho chứa hàng hóa khác"
 
-#: stock/models.py:1516
+#: stock/models.py:1522
 msgid "Stock item has been assigned to a customer"
 msgstr "Hàng trong kho đã được gắn với một khách hàng"
 
-#: stock/models.py:1519
+#: stock/models.py:1525
 msgid "Stock item is currently in production"
 msgstr "Hàng trong kho hiện đang sản xuất"
 
-#: stock/models.py:1522
+#: stock/models.py:1528
 msgid "Serialized stock cannot be merged"
 msgstr "Không thể hợp nhất kho nối tiếp"
 
-#: stock/models.py:1529 stock/serializers.py:1194
+#: stock/models.py:1535 stock/serializers.py:1194
 msgid "Duplicate stock items"
 msgstr "Mặt hàng trùng lặp"
 
-#: stock/models.py:1533
+#: stock/models.py:1539
 msgid "Stock items must refer to the same part"
 msgstr "Mặt hàng phải tham chiếu đến sản phẩm tương tự"
 
-#: stock/models.py:1537
+#: stock/models.py:1543
 msgid "Stock items must refer to the same supplier part"
 msgstr "Mặt hàng phải tham chiếu đến sản phẩm nhà cung cấp tương tự"
 
-#: stock/models.py:1541
+#: stock/models.py:1547
 msgid "Stock status codes must match"
 msgstr "Mã trạng thái kho phải phù hợp"
 
-#: stock/models.py:1735
+#: stock/models.py:1741
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Không thể xóa mặt hàng không ở trong kho"
 
-#: stock/models.py:2218
+#: stock/models.py:2224
 msgid "Entry notes"
 msgstr "Ghi chú đầu vào"
 
-#: stock/models.py:2276
+#: stock/models.py:2282
 msgid "Value must be provided for this test"
 msgstr "Phải cung cấp giá trị cho kiểm thử này"
 
-#: stock/models.py:2282
+#: stock/models.py:2288
 msgid "Attachment must be uploaded for this test"
 msgstr "Phải tải liên đính kèm cho kiểm thử này"
 
-#: stock/models.py:2301
+#: stock/models.py:2307
 msgid "Test name"
 msgstr "Tên kiểm thử"
 
-#: stock/models.py:2307
+#: stock/models.py:2313
 msgid "Test result"
 msgstr "Kết quả kiểm thử"
 
-#: stock/models.py:2313
+#: stock/models.py:2319
 msgid "Test output value"
 msgstr "Giá trị đầu ra kiểm thử"
 
-#: stock/models.py:2320
+#: stock/models.py:2326
 msgid "Test result attachment"
 msgstr "Đính kèm kết quả kiểm thử"
 
-#: stock/models.py:2326
+#: stock/models.py:2332
 msgid "Test notes"
 msgstr "Ghi chú kiểm thử"
 
@@ -10360,73 +10410,73 @@ msgstr "Quét dữ liệu mã vạch"
 msgid "Scan Barcode"
 msgstr "Quét mã vạch"
 
-#: templates/js/translated/barcode.js:440
+#: templates/js/translated/barcode.js:458
 msgid "No URL in response"
 msgstr "Thiếu URL trong dữ liệu trả lời"
 
-#: templates/js/translated/barcode.js:481
+#: templates/js/translated/barcode.js:498
 msgid "This will remove the link to the associated barcode"
 msgstr "Điều này sẽ gỡ liên kết đến mã vạch đã được liên kết"
 
-#: templates/js/translated/barcode.js:487
+#: templates/js/translated/barcode.js:504
 msgid "Unlink"
 msgstr "Hủy liên kết"
 
-#: templates/js/translated/barcode.js:550 templates/js/translated/stock.js:1155
+#: templates/js/translated/barcode.js:567 templates/js/translated/stock.js:1155
 msgid "Remove stock item"
 msgstr "Xóa mặt hàng"
 
-#: templates/js/translated/barcode.js:593
+#: templates/js/translated/barcode.js:610
 msgid "Scan Stock Items Into Location"
 msgstr "Quét mặt hàng vào trong vị trí"
 
-#: templates/js/translated/barcode.js:595
+#: templates/js/translated/barcode.js:612
 msgid "Scan stock item barcode to check in to this location"
 msgstr "Quét mã vạch mặt hàng để nhập vào vị trí này"
 
-#: templates/js/translated/barcode.js:598
-#: templates/js/translated/barcode.js:795
+#: templates/js/translated/barcode.js:615
+#: templates/js/translated/barcode.js:812
 msgid "Check In"
 msgstr "Đăng ký vào"
 
-#: templates/js/translated/barcode.js:630
+#: templates/js/translated/barcode.js:647
 msgid "No barcode provided"
 msgstr "Không cung cấp mã vạch"
 
-#: templates/js/translated/barcode.js:670
+#: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
 msgstr "Đã quét mặt hàng"
 
-#: templates/js/translated/barcode.js:674
+#: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
 msgstr "Đã quét mặt hàng vào vị trí này"
 
-#: templates/js/translated/barcode.js:681
+#: templates/js/translated/barcode.js:698
 msgid "Added stock item"
 msgstr "Đã thêm mặt hàng"
 
-#: templates/js/translated/barcode.js:690
+#: templates/js/translated/barcode.js:707
 msgid "Barcode does not match valid stock item"
 msgstr "Mã vạch không khớp với mặt hàng hợp lệ"
 
-#: templates/js/translated/barcode.js:709
+#: templates/js/translated/barcode.js:726
 msgid "Scan Stock Container Into Location"
 msgstr "Quét bộ chứa kho vào trong vị trí"
 
-#: templates/js/translated/barcode.js:711
+#: templates/js/translated/barcode.js:728
 msgid "Scan stock container barcode to check in to this location"
 msgstr "Quét mã vạch bộ chứa kho để nhập vào vị trí này"
 
-#: templates/js/translated/barcode.js:745
+#: templates/js/translated/barcode.js:762
 msgid "Barcode does not match valid stock location"
 msgstr "Mã vạch không khớp với vị trí kho hợp lệ"
 
-#: templates/js/translated/barcode.js:789
+#: templates/js/translated/barcode.js:806
 msgid "Check Into Location"
 msgstr "Kiểm tra vào vị trí"
 
-#: templates/js/translated/barcode.js:858
-#: templates/js/translated/barcode.js:867
+#: templates/js/translated/barcode.js:875
+#: templates/js/translated/barcode.js:884
 msgid "Barcode does not match a valid location"
 msgstr "Mã vạch không khớp với vị trí hợp lệ"
 
@@ -10974,11 +11024,6 @@ msgstr "Sản phẩm theo dõi được"
 #: templates/js/translated/build.js:2530
 msgid "Unit Quantity"
 msgstr "Số lượng đơn vị"
-
-#: templates/js/translated/build.js:2579
-#: templates/js/translated/sales_order.js:1917
-msgid "Insufficient stock available"
-msgstr "Kho không đủ hạn mức khả dụng"
 
 #: templates/js/translated/build.js:2581
 #: templates/js/translated/sales_order.js:1915
@@ -13410,8 +13455,7 @@ msgstr "Nhà cung cấp SSO đã chọn không hợp lệ hoặc đã không đ�
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "Bạn chuân bị sử dụng tài khoản %(provider_name)s của bạn để đăng nhập%(site_name)s<br>Vì là bước cuối cùng, xin hãy hoàn thiện biểu mẫu dưới đây:"
 
@@ -13586,3 +13630,4 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
+
