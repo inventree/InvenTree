@@ -826,6 +826,8 @@ LANGUAGE_COOKIE_AGE = 2592000
 # If a new language translation is supported, it must be added here
 # After adding a new language, run the following command:
 # python manage.py makemessages -l <language_code> -e html,js,py --no-wrap
+# where <language_code> is the code for the new language
+# Additionally, update the /src/frontend/.linguirc file
 LANGUAGES = [
     ('bg', _('Bulgarian')),
     ('cs', _('Czech')),
@@ -851,6 +853,7 @@ LANGUAGES = [
     ('pt-br', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
     ('sl', _('Slovenian')),
+    ('sr', _('Serbian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
