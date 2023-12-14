@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-13 02:04+0000\n"
-"PO-Revision-Date: 2023-12-11 03:45\n"
+"POT-Creation-Date: 2023-12-14 00:15+0000\n"
+"PO-Revision-Date: 2023-12-14 04:10\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -59,7 +59,7 @@ msgstr "Εισάγετε ημερομηνία"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:40
 #: part/models.py:3003 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:139 stock/models.py:2217 stock/models.py:2325
+#: stock/admin.py:139 stock/models.py:2223 stock/models.py:2331
 #: stock/serializers.py:417 stock/serializers.py:580 stock/serializers.py:674
 #: stock/serializers.py:730 stock/serializers.py:1058 stock/serializers.py:1157
 #: stock/serializers.py:1318 stock/templates/stock/stock_sidebar.html:25
@@ -254,7 +254,7 @@ msgstr "Το αρχείο λείπει"
 msgid "Missing external link"
 msgstr "Λείπει ο εξωτερικός σύνδεσμος"
 
-#: InvenTree/models.py:475 stock/models.py:2319
+#: InvenTree/models.py:475 stock/models.py:2325
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
@@ -474,9 +474,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -993,7 +991,7 @@ msgid "Build Order Reference"
 msgstr "Αναφορά Παραγγελίας Κατασκευής"
 
 #: build/models.py:172 order/models.py:364 order/models.py:792
-#: order/models.py:1136 order/models.py:1772 part/admin.py:274
+#: order/models.py:1136 order/models.py:1781 part/admin.py:274
 #: part/models.py:3799 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
@@ -1045,7 +1043,7 @@ msgstr "BuildOrder στην οποία έχει δοθεί αυτή η κατα�
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
 #: templates/email/overdue_build_order.html:16
-#: templates/js/translated/barcode.js:529 templates/js/translated/bom.js:632
+#: templates/js/translated/barcode.js:546 templates/js/translated/bom.js:632
 #: templates/js/translated/bom.js:769 templates/js/translated/bom.js:905
 #: templates/js/translated/build.js:1299 templates/js/translated/build.js:1730
 #: templates/js/translated/build.js:2150 templates/js/translated/build.js:2323
@@ -1151,7 +1149,7 @@ msgstr "Ημερομηνία ολοκλήρωσης στόχου"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Ημερομηνία ολοκλήρωσης της κατασκευής. Η κατασκευή θα καθυστερήσει μετά από αυτή την ημερομηνία."
 
-#: build/models.py:277 order/models.py:414 order/models.py:1815
+#: build/models.py:277 order/models.py:414 order/models.py:1824
 #: templates/js/translated/build.js:2235
 msgid "Completion Date"
 msgstr "Ημερομηνία ολοκλήρωσης"
@@ -1246,7 +1244,7 @@ msgstr "Η έξοδος κατασκευής δεν ταιριάζει με τη
 #: build/models.py:860 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:445 order/serializers.py:389
 #: order/serializers.py:511 part/serializers.py:1322 part/serializers.py:1661
-#: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
+#: stock/models.py:629 stock/models.py:1426 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "Η ποσότητα πρέπει να είναι μεγαλύτερη από 0"
 
@@ -1261,7 +1259,7 @@ msgstr ""
 #: build/models.py:1293 build/models.py:1551 build/serializers.py:205
 #: build/serializers.py:242 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2366
-#: order/models.py:1123 order/models.py:1694 order/serializers.py:1267
+#: order/models.py:1123 order/models.py:1703 order/serializers.py:1267
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:273
 #: part/forms.py:47 part/models.py:2990 part/models.py:3780
 #: part/templates/part/part_pricing.html:16
@@ -1278,7 +1276,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:295
 #: stock/templates/stock/item_base.html:342
 #: templates/email/build_order_completed.html:18
-#: templates/js/translated/barcode.js:531 templates/js/translated/bom.js:771
+#: templates/js/translated/barcode.js:548 templates/js/translated/bom.js:771
 #: templates/js/translated/bom.js:981 templates/js/translated/build.js:516
 #: templates/js/translated/build.js:732 templates/js/translated/build.js:1356
 #: templates/js/translated/build.js:1733 templates/js/translated/build.js:2345
@@ -1318,11 +1316,11 @@ msgstr "Το στοιχείο κατασκευής πρέπει να ορίζε�
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Η καταχωρημένη ποσότητα ({q}) δεν πρέπει να υπερβαίνει τη διαθέσιμη ποσότητα αποθέματος ({a})"
 
-#: build/models.py:1393 order/models.py:1650
+#: build/models.py:1393 order/models.py:1659
 msgid "Stock item is over-allocated"
 msgstr "Στοιχείο αποθέματος είναι υπερ-κατανεμημένο"
 
-#: build/models.py:1399 order/models.py:1653
+#: build/models.py:1399 order/models.py:1662
 msgid "Allocation quantity must be greater than zero"
 msgstr "Η ποσότητα πρέπει να είναι μεγαλύτερη από 0"
 
@@ -1431,8 +1429,8 @@ msgstr ""
 #: stock/serializers.py:410 stock/serializers.py:575 stock/serializers.py:669
 #: stock/serializers.py:1150 stock/serializers.py:1421
 #: stock/templates/stock/item_base.html:394
-#: templates/js/translated/barcode.js:530
-#: templates/js/translated/barcode.js:778 templates/js/translated/build.js:994
+#: templates/js/translated/barcode.js:547
+#: templates/js/translated/barcode.js:795 templates/js/translated/build.js:994
 #: templates/js/translated/build.js:2360
 #: templates/js/translated/purchase_order.js:1174
 #: templates/js/translated/purchase_order.js:1264
@@ -1468,7 +1466,7 @@ msgstr ""
 
 #: build/serializers.py:500 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:818
-#: order/models.py:1798 order/serializers.py:534 stock/admin.py:124
+#: order/models.py:1807 order/serializers.py:534 stock/admin.py:124
 #: stock/serializers.py:726 stock/serializers.py:1289
 #: stock/templates/stock/item_base.html:427
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2179
@@ -1682,8 +1680,8 @@ msgstr ""
 #: part/templates/part/part_base.html:47
 #: stock/templates/stock/item_base.html:47
 #: stock/templates/stock/location.html:59
-#: templates/js/translated/barcode.js:479
-#: templates/js/translated/barcode.js:484
+#: templates/js/translated/barcode.js:496
+#: templates/js/translated/barcode.js:501
 msgid "Unlink Barcode"
 msgstr ""
 
@@ -3405,7 +3403,7 @@ msgid "Price break quantity"
 msgstr ""
 
 #: common/models.py:2374 company/serializers.py:485 order/admin.py:41
-#: order/models.py:1181 order/models.py:2005
+#: order/models.py:1181 order/models.py:2014
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1883
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -3870,7 +3868,7 @@ msgstr ""
 
 #: company/models.py:532
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2312 templates/js/translated/company.js:1156
+#: stock/models.py:2318 templates/js/translated/company.js:1156
 #: templates/js/translated/company.js:1409 templates/js/translated/part.js:1492
 #: templates/js/translated/stock.js:1502
 msgid "Value"
@@ -4064,7 +4062,7 @@ msgid "Delete image"
 msgstr ""
 
 #: company/templates/company/company_base.html:86 order/models.py:806
-#: order/models.py:1786 order/templates/order/return_order_base.html:131
+#: order/models.py:1795 order/templates/order/return_order_base.html:131
 #: order/templates/order/sales_order_base.html:144 stock/models.py:754
 #: stock/models.py:755 stock/serializers.py:1044
 #: stock/templates/stock/item_base.html:405
@@ -4566,7 +4564,7 @@ msgstr ""
 msgid "Purchase Order"
 msgstr ""
 
-#: order/api.py:1411 order/models.py:1975 order/models.py:2021
+#: order/api.py:1411 order/models.py:1984 order/models.py:2030
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4652,15 +4650,15 @@ msgstr ""
 msgid "received by"
 msgstr ""
 
-#: order/models.py:408 order/models.py:1809
+#: order/models.py:408 order/models.py:1818
 msgid "Issue Date"
 msgstr ""
 
-#: order/models.py:409 order/models.py:1810
+#: order/models.py:409 order/models.py:1819
 msgid "Date order was issued"
 msgstr ""
 
-#: order/models.py:415 order/models.py:1816
+#: order/models.py:415 order/models.py:1825
 msgid "Date order was completed"
 msgstr ""
 
@@ -4676,11 +4674,11 @@ msgstr ""
 msgid "Company to which the items are being sold"
 msgstr ""
 
-#: order/models.py:826 order/models.py:1803
+#: order/models.py:826 order/models.py:1812
 msgid "Customer Reference "
 msgstr ""
 
-#: order/models.py:826 order/models.py:1804
+#: order/models.py:826 order/models.py:1813
 msgid "Customer order reference code"
 msgstr ""
 
@@ -4751,8 +4749,8 @@ msgid "deleted"
 msgstr ""
 
 #: order/models.py:1226 order/models.py:1310 order/models.py:1350
-#: order/models.py:1449 order/models.py:1598 order/models.py:1974
-#: order/models.py:2021 templates/js/translated/sales_order.js:1488
+#: order/models.py:1449 order/models.py:1598 order/models.py:1983
+#: order/models.py:2030 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr ""
 
@@ -4829,7 +4827,7 @@ msgstr ""
 msgid "User who checked this shipment"
 msgstr ""
 
-#: order/models.py:1477 order/models.py:1676 order/serializers.py:1282
+#: order/models.py:1477 order/models.py:1685 order/serializers.py:1282
 #: order/serializers.py:1410 templates/js/translated/model_renderers.js:446
 msgid "Shipment"
 msgstr ""
@@ -4878,77 +4876,77 @@ msgstr ""
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr ""
 
-#: order/models.py:1656 order/serializers.py:1146
+#: order/models.py:1665 order/serializers.py:1146
 msgid "Quantity must be 1 for serialized stock item"
 msgstr ""
 
-#: order/models.py:1659
+#: order/models.py:1668
 msgid "Sales order does not match shipment"
 msgstr ""
 
-#: order/models.py:1660
+#: order/models.py:1669 plugin/base/barcodes/api.py:516
 msgid "Shipment does not match sales order"
 msgstr ""
 
-#: order/models.py:1668
+#: order/models.py:1677
 msgid "Line"
 msgstr ""
 
-#: order/models.py:1677
+#: order/models.py:1686
 msgid "Sales order shipment reference"
 msgstr ""
 
-#: order/models.py:1690 order/models.py:1982
+#: order/models.py:1699 order/models.py:1991
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr ""
 
-#: order/models.py:1691
+#: order/models.py:1700
 msgid "Select stock item to allocate"
 msgstr ""
 
-#: order/models.py:1694
+#: order/models.py:1703
 msgid "Enter stock allocation quantity"
 msgstr ""
 
-#: order/models.py:1773
+#: order/models.py:1782
 msgid "Return Order reference"
 msgstr ""
 
-#: order/models.py:1787
+#: order/models.py:1796
 msgid "Company from which items are being returned"
 msgstr ""
 
-#: order/models.py:1798
+#: order/models.py:1807
 msgid "Return order status"
 msgstr ""
 
-#: order/models.py:1967
+#: order/models.py:1976
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr ""
 
-#: order/models.py:1983
+#: order/models.py:1992
 msgid "Select item to return from customer"
 msgstr ""
 
-#: order/models.py:1988
+#: order/models.py:1997
 msgid "Received Date"
 msgstr ""
 
-#: order/models.py:1989
+#: order/models.py:1998
 msgid "The date this this return item was received"
 msgstr ""
 
-#: order/models.py:2000 templates/js/translated/return_order.js:733
+#: order/models.py:2009 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr ""
 
-#: order/models.py:2000
+#: order/models.py:2009
 msgid "Outcome for this line item"
 msgstr ""
 
-#: order/models.py:2006
+#: order/models.py:2015
 msgid "Cost associated with return or repair for this line item"
 msgstr ""
 
@@ -7401,41 +7399,71 @@ msgstr ""
 msgid "No matching action found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:123 plugin/base/barcodes/api.py:339
+#: plugin/base/barcodes/api.py:126 plugin/base/barcodes/api.py:346
+#: plugin/base/barcodes/api.py:540
 msgid "No match found for barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:127
+#: plugin/base/barcodes/api.py:130
 msgid "Match found for barcode data"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:154
+#: plugin/base/barcodes/api.py:157
 #: templates/js/translated/purchase_order.js:1402
 msgid "Barcode matches existing item"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:302
+#: plugin/base/barcodes/api.py:309
 msgid "No matching part data found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:319
+#: plugin/base/barcodes/api.py:326
 msgid "No matching supplier parts found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:324
+#: plugin/base/barcodes/api.py:331
 msgid "Multiple matching supplier parts found"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:349
+#: plugin/base/barcodes/api.py:356
 msgid "Matched supplier part"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:395
+#: plugin/base/barcodes/api.py:411
 msgid "Item has already been received"
 msgstr ""
 
-#: plugin/base/barcodes/api.py:430
+#: plugin/base/barcodes/api.py:449
 msgid "No match for supplier barcode"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:498
+msgid "Multiple matching line items found"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:503
+msgid "No matching line item found"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
+msgid "Barcode does not match an existing stock item"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:563
+msgid "Stock item does not match line item"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
+#: templates/js/translated/sales_order.js:1917
+msgid "Insufficient stock available"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:599
+msgid "Stock item allocated to sales order"
+msgstr ""
+
+#: plugin/base/barcodes/api.py:603
+msgid "Not enough information"
 msgstr ""
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
@@ -7473,7 +7501,7 @@ msgid "Scanned barcode data"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:81
-msgid "PurchaseOrder to allocate items against"
+msgid "Purchase Order to allocate items against"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:88
@@ -7494,6 +7522,30 @@ msgstr ""
 
 #: plugin/base/barcodes/serializers.py:126
 msgid "Cannot select a structural location"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:140
+msgid "Sales Order to allocate items against"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:147
+msgid "Sales order is not pending"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:154
+msgid "Sales order line item to allocate items against"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:160
+msgid "Sales order shipment to allocate items against"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:167
+msgid "Shipment has already been delivered"
+msgstr ""
+
+#: plugin/base/barcodes/serializers.py:173
+msgid "Quantity to allocate"
 msgstr ""
 
 #: plugin/base/label/label.py:40
@@ -8050,12 +8102,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2300 templates/js/translated/stock.js:1475
+#: stock/models.py:2306 templates/js/translated/stock.js:1475
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2306
+#: stock/models.py:2312
 msgid "Result"
 msgstr ""
 
@@ -8387,104 +8439,104 @@ msgstr ""
 msgid "Converted to part"
 msgstr ""
 
-#: stock/models.py:1411
+#: stock/models.py:1417
 msgid "Part is not set as trackable"
 msgstr ""
 
-#: stock/models.py:1417
+#: stock/models.py:1423
 msgid "Quantity must be integer"
 msgstr ""
 
-#: stock/models.py:1423
+#: stock/models.py:1429
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr ""
 
-#: stock/models.py:1426
+#: stock/models.py:1432
 msgid "Serial numbers must be a list of integers"
 msgstr ""
 
-#: stock/models.py:1429
+#: stock/models.py:1435
 msgid "Quantity does not match serial numbers"
 msgstr ""
 
-#: stock/models.py:1436 stock/serializers.py:449
+#: stock/models.py:1442 stock/serializers.py:449
 msgid "Serial numbers already exist"
 msgstr ""
 
-#: stock/models.py:1507
+#: stock/models.py:1513
 msgid "Stock item has been assigned to a sales order"
 msgstr ""
 
-#: stock/models.py:1510
+#: stock/models.py:1516
 msgid "Stock item is installed in another item"
 msgstr ""
 
-#: stock/models.py:1513
+#: stock/models.py:1519
 msgid "Stock item contains other items"
 msgstr ""
 
-#: stock/models.py:1516
+#: stock/models.py:1522
 msgid "Stock item has been assigned to a customer"
 msgstr ""
 
-#: stock/models.py:1519
+#: stock/models.py:1525
 msgid "Stock item is currently in production"
 msgstr ""
 
-#: stock/models.py:1522
+#: stock/models.py:1528
 msgid "Serialized stock cannot be merged"
 msgstr ""
 
-#: stock/models.py:1529 stock/serializers.py:1194
+#: stock/models.py:1535 stock/serializers.py:1194
 msgid "Duplicate stock items"
 msgstr ""
 
-#: stock/models.py:1533
+#: stock/models.py:1539
 msgid "Stock items must refer to the same part"
 msgstr ""
 
-#: stock/models.py:1537
+#: stock/models.py:1543
 msgid "Stock items must refer to the same supplier part"
 msgstr ""
 
-#: stock/models.py:1541
+#: stock/models.py:1547
 msgid "Stock status codes must match"
 msgstr ""
 
-#: stock/models.py:1735
+#: stock/models.py:1741
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:2218
+#: stock/models.py:2224
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:2276
+#: stock/models.py:2282
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:2282
+#: stock/models.py:2288
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:2301
+#: stock/models.py:2307
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:2307
+#: stock/models.py:2313
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:2313
+#: stock/models.py:2319
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:2320
+#: stock/models.py:2326
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:2326
+#: stock/models.py:2332
 msgid "Test notes"
 msgstr ""
 
@@ -10357,73 +10409,73 @@ msgstr ""
 msgid "Scan Barcode"
 msgstr ""
 
-#: templates/js/translated/barcode.js:440
+#: templates/js/translated/barcode.js:458
 msgid "No URL in response"
 msgstr ""
 
-#: templates/js/translated/barcode.js:481
+#: templates/js/translated/barcode.js:498
 msgid "This will remove the link to the associated barcode"
 msgstr ""
 
-#: templates/js/translated/barcode.js:487
+#: templates/js/translated/barcode.js:504
 msgid "Unlink"
 msgstr ""
 
-#: templates/js/translated/barcode.js:550 templates/js/translated/stock.js:1155
+#: templates/js/translated/barcode.js:567 templates/js/translated/stock.js:1155
 msgid "Remove stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:593
+#: templates/js/translated/barcode.js:610
 msgid "Scan Stock Items Into Location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:595
+#: templates/js/translated/barcode.js:612
 msgid "Scan stock item barcode to check in to this location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:598
-#: templates/js/translated/barcode.js:795
+#: templates/js/translated/barcode.js:615
+#: templates/js/translated/barcode.js:812
 msgid "Check In"
 msgstr ""
 
-#: templates/js/translated/barcode.js:630
+#: templates/js/translated/barcode.js:647
 msgid "No barcode provided"
 msgstr ""
 
-#: templates/js/translated/barcode.js:670
+#: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
 msgstr ""
 
-#: templates/js/translated/barcode.js:674
+#: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:681
+#: templates/js/translated/barcode.js:698
 msgid "Added stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:690
+#: templates/js/translated/barcode.js:707
 msgid "Barcode does not match valid stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:709
+#: templates/js/translated/barcode.js:726
 msgid "Scan Stock Container Into Location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:711
+#: templates/js/translated/barcode.js:728
 msgid "Scan stock container barcode to check in to this location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:745
+#: templates/js/translated/barcode.js:762
 msgid "Barcode does not match valid stock location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:789
+#: templates/js/translated/barcode.js:806
 msgid "Check Into Location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:858
-#: templates/js/translated/barcode.js:867
+#: templates/js/translated/barcode.js:875
+#: templates/js/translated/barcode.js:884
 msgid "Barcode does not match a valid location"
 msgstr ""
 
@@ -10970,11 +11022,6 @@ msgstr ""
 
 #: templates/js/translated/build.js:2530
 msgid "Unit Quantity"
-msgstr ""
-
-#: templates/js/translated/build.js:2579
-#: templates/js/translated/sales_order.js:1917
-msgid "Insufficient stock available"
 msgstr ""
 
 #: templates/js/translated/build.js:2581
@@ -13407,8 +13454,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13583,3 +13629,4 @@ msgstr ""
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr ""
+
