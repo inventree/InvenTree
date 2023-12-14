@@ -71,11 +71,18 @@ class StateTransitionMixin:
             instance: Object instance
             default_action: Default action to be taken if none of the transitions returns a boolean true value
         """
+
+        print("handle_transition:", current_state, target_state, instance, default_action)
+
         # Check if there is a custom override function for this transition
         for override in storage.list:
+
+            print("-", override)
             rslt = override.transition(current_state, target_state, instance, default_action, **kwargs)
             if rslt:
+                print("result:", rslt)
                 return rslt
 
         # Default action
+        print("running default action")
         return default_action(current_state, target_state, instance, **kwargs)

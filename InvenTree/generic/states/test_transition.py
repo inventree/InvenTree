@@ -71,6 +71,8 @@ class TransitionTests(InvenTreeTestCase):
         self.assertIn(ValidImplementationNoEffect, storage.list)
         self.assertIn(ValidImplementation, storage.list)
 
+        print("storage.list:", storage.list)
+
         # Ensure that the function is called
         self.assertEqual(StateTransitionMixin.handle_transition(0, 1, self, self, dflt), 1234)
 
