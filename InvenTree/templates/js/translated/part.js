@@ -2187,6 +2187,14 @@ function partGridTile(part) {
  */
 function setPartCategory(data, options={}) {
 
+    if (data.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "At least one part must be selected" %}'
+        );
+        return;
+    }
+
     let parts = [];
 
     data.forEach(function(item) {

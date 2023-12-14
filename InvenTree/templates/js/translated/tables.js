@@ -150,7 +150,7 @@ function getTableData(table, allowEmpty=false) {
 
     let data = $(table).bootstrapTable('getSelections');
 
-    if (data.length == 0 && !allowEmpty) {
+    if (data.length == 0 && allowEmpty) {
         data = $(table).bootstrapTable('getData');
     }
 
