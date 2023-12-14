@@ -189,7 +189,7 @@ export function FilterSelectDrawer({
     >
       <Stack spacing="xs">
         {tableState.activeFilters.map((f) => (
-          <FilterItem flt={f} tableState={tableState} />
+          <FilterItem key={f.name} flt={f} tableState={tableState} />
         ))}
         {tableState.activeFilters.length > 0 && <Divider />}
         {addFilter && (
