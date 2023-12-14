@@ -101,3 +101,11 @@ Make sure you have `gnupg` and `pinentry-mac` installed and set up correctly. Re
 
 #### Where are the database, media files, ... stored?
 Backups, Commandhistory, media/static files, venv, plugin.txt, secret_key.txt, ... are stored in the `dev` folder. If you want to start with a clean setup, you can remove that folder, but be aware that this will delete everything you already setup in InvenTree.
+
+### Performance Improvements
+
+If you are running a devcontainer in Windows, you may experience some performance issues - particularly related to file system operations.
+
+For a significant improvement in performance, the source code should be installed into the **WSL 2** filesystem (not on your "Windows" filesystem). This will greatly improve file access performance, and also make the devcontainer much more responsive to file system changes.
+
+You can also refer to the [Improve disk performance guide](https://code.visualstudio.com/remote/advancedcontainers/improve-performance) for more information.
