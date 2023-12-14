@@ -122,6 +122,7 @@ To setup an editable install:
 - Download the source code for the plugin (or create a new plugin)
 - Ensure that your setup file (either `setup.py` or `pyproject.toml`) is valid
 - Launch a command line and activate your development virtual environment
+- `cd` into the top-level directory of your plugin project, where the setup file is located
 - Setup an editable install with the following command:
 
 ```bash
