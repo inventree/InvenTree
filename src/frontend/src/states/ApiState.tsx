@@ -141,6 +141,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'part/related/';
     case ApiPaths.part_attachment_list:
       return 'part/attachment/';
+    case ApiPaths.part_thumbs_list:
+      return 'part/thumbs/';
     case ApiPaths.company_list:
       return 'company/';
     case ApiPaths.contact_list:
@@ -210,7 +212,6 @@ export function apiUrl(
   if (Object.values(ApiPaths).includes(path as ApiPaths)) {
     _url = apiEndpoint(path as ApiPaths);
   }
-
   // If the URL does not start with a '/', add the API prefix
   if (!_url.startsWith('/')) {
     _url = apiPrefix() + _url;

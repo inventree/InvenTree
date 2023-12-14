@@ -1,6 +1,8 @@
-import { Paper } from '@mantine/core';
+import { Paper, Text } from '@mantine/core';
 
 import { DetailsImage } from '../images/DetailsImage';
+import { Thumbnail } from '../images/Thumbnail';
+import { PartThumbTable } from '../tables/part/PartThumbTable';
 
 const imageActions = {
   selectExisting: true,
@@ -25,6 +27,7 @@ export function ItemDetails({
         apiPath={apiPath}
         refresh={refresh}
       />
+      <PartThumbTable limit={25} />
     </Paper>
   );
 }
