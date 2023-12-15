@@ -99,12 +99,6 @@ export function InvenTreeTable<T = any>({
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }) {
-  // Use the first part of the table key as the table name
-  const tableName: string = useMemo(() => {
-    let key = tableState?.tableKey ?? 'table';
-    return key.split('-')[0];
-  }, []);
-
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
     return {
