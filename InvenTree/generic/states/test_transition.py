@@ -45,6 +45,10 @@ class TransitionTests(InvenTreeTestCase):
         # Ensure registering works
         storage.collect()
 
+        print("test_storage:")
+
+        print("storage.list:", storage.list)
+
         # Ensure the class is registered
         self.assertIn(RaisingImplementation, storage.list)
 
@@ -71,6 +75,7 @@ class TransitionTests(InvenTreeTestCase):
         self.assertIn(ValidImplementationNoEffect, storage.list)
         self.assertIn(ValidImplementation, storage.list)
 
+        print("test_function:")
         print("storage.list:", storage.list)
 
         # Ensure that the function is called
