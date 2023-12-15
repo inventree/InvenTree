@@ -4,6 +4,13 @@ from InvenTree.unit_test import InvenTreeTestCase
 
 from .transition import StateTransitionMixin, TransitionMethod, storage
 
+# Global variables to determine which transition classes raises an exception
+global raise_storage
+global raise_function
+
+raise_storage = False
+raise_function = False
+
 
 class MyPrivateError(NotImplementedError):
     """Error for testing purposes."""
@@ -16,6 +23,7 @@ def dflt(*args, **kwargs):
 
 def _clean_storage(refs):
     """Clean the storage."""
+
     for ref in refs:
         del ref
     storage.collect()
@@ -38,16 +46,23 @@ class TransitionTests(InvenTreeTestCase):
     def test_storage(self):
         """Ensure that the storage collection mechanism works."""
 
+        global raise_storage
+        global raise_function
+
+        raise_storage = True
+        raise_function = False
+
         class RaisingImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
-                raise MyPrivateError('RaisingImplementation')
+                """Custom transition method."""
+
+                global raise_storage
+
+                if raise_storage:
+                    raise MyPrivateError('RaisingImplementation')
 
         # Ensure registering works
         storage.collect()
-
-        print("test_storage:")
-
-        print("storage.list:", storage.list)
 
         # Ensure the class is registered
         self.assertIn(RaisingImplementation, storage.list)
@@ -62,6 +77,12 @@ class TransitionTests(InvenTreeTestCase):
     def test_function(self):
         """Ensure that a TransitionMethod's function is called."""
 
+        global raise_storage
+        global raise_function
+
+        raise_storage = False
+        raise_function = True
+
         # Setup
         class ValidImplementationNoEffect(TransitionMethod):
             def transition(self, *args, **kwargs):
@@ -74,9 +95,6 @@ class TransitionTests(InvenTreeTestCase):
         storage.collect()
         self.assertIn(ValidImplementationNoEffect, storage.list)
         self.assertIn(ValidImplementation, storage.list)
-
-        print("test_function:")
-        print("storage.list:", storage.list)
 
         # Ensure that the function is called
         self.assertEqual(StateTransitionMixin.handle_transition(0, 1, self, self, dflt), 1234)
