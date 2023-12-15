@@ -125,11 +125,8 @@ export function InvenTreeTable<T = any>({
     defaultValue: []
   });
 
-  // Data selection
-  const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
-
   function onSelectedRecordsChange(records: any[]) {
-    setSelectedRecords(records);
+    tableState.setSelectedRecords(records);
   }
 
   // Update column visibility when hiddenColumns change
@@ -159,7 +156,7 @@ export function InvenTreeTable<T = any>({
           return (
             <RowActions
               actions={tableProps.rowActions?.(record) ?? []}
-              disabled={selectedRecords.length > 0}
+              disabled={tableState.selectedRecords.length > 0}
             />
           );
         }
@@ -172,7 +169,7 @@ export function InvenTreeTable<T = any>({
     hiddenColumns,
     tableProps.rowActions,
     tableProps.enableSelection,
-    selectedRecords
+    tableState.selectedRecords
   ]);
 
   // Callback when column visibility is toggled
@@ -464,7 +461,7 @@ export function InvenTreeTable<T = any>({
           sortStatus={sortStatus}
           onSortStatusChange={handleSortStatusChange}
           selectedRecords={
-            tableProps.enableSelection ? selectedRecords : undefined
+            tableProps.enableSelection ? tableState.selectedRecords : undefined
           }
           onSelectedRecordsChange={
             tableProps.enableSelection ? onSelectedRecordsChange : undefined
