@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Indicator, Space, Stack, Tooltip } from '@mantine/core';
 import { Group } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
 import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
