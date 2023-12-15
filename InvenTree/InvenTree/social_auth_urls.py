@@ -2,7 +2,7 @@
 import logging
 from importlib import import_module
 
-from django.urls import include, path, reverse
+from django.urls import NoReverseMatch, include, path, reverse
 
 from allauth.account.models import EmailAddress
 from allauth.socialaccount import providers
@@ -72,10 +72,13 @@ legacy = {
 social_auth_urlpatterns = []
 
 provider_urlpatterns = []
-for provider in providers.registry.get_list():
+
+for name, provider in providers.registry.provider_map.items():
+
     try:
         prov_mod = import_module(provider.get_package() + ".views")
     except ImportError:
+        logger.exception("Could not import authentication provider %s", name)
         continue
 
     # Try to extract the adapter class
@@ -107,16 +110,25 @@ class SocialProviderListView(ListAPI):
     def get(self, request, *args, **kwargs):
         """Get the list of providers."""
         provider_list = []
-        for provider in providers.registry.get_list():
+        for provider in providers.registry.provider_map.values():
             provider_data = {
                 'id': provider.id,
                 'name': provider.name,
-                'login': request.build_absolute_uri(reverse(f'{provider.id}_api_login')),
-                'connect': request.build_absolute_uri(reverse(f'{provider.id}_api_connect')),
                 'configured': False
             }
+
             try:
-                provider_app = provider.get_app(request)
+                provider_data['login'] = request.build_absolute_uri(reverse(f'{provider.id}_api_login'))
+            except NoReverseMatch:
+                provider_data['login'] = None
+
+            try:
+                provider_data['connect'] = request.build_absolute_uri(reverse(f'{provider.id}_api_connect'))
+            except NoReverseMatch:
+                provider_data['connect'] = None
+
+            try:
+                provider_app = SocialApp.objects.get(provider_id=provider.id)
                 provider_data['display_name'] = provider_app.name
                 provider_data['configured'] = True
             except SocialApp.DoesNotExist:
