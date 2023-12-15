@@ -9,6 +9,9 @@ import { TableFilter } from '../components/tables/Filter';
  * tableKey: A unique key for the table. When this key changes, the table will be refreshed.
  * refreshTable: A callback function to externally refresh the table.
  * activeFilters: An array of active filters (saved to local storage)
+ * selectedRecords: An array of selected records (rows) in the table
+ * hiddenColumns: An array of hidden column names
+ * searchTerm: The current search term for the table
  */
 export type TableState = {
   tableKey: string;
@@ -19,6 +22,10 @@ export type TableState = {
   selectedRecords: any[];
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
+  hiddenColumns: string[];
+  setHiddenColumns: (columns: string[]) => void;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
 };
 
 /**
@@ -59,6 +66,15 @@ export function useTable(tableName: string): TableState {
     setSelectedRecords([]);
   }, []);
 
+  // A list of hidden columns, saved to local storage
+  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
+    key: `inventree-hidden-table-columns-${tableName}`,
+    defaultValue: []
+  });
+
+  // Search term
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
   return {
     tableKey,
     refreshTable,
@@ -67,6 +83,10 @@ export function useTable(tableName: string): TableState {
     clearActiveFilters,
     selectedRecords,
     setSelectedRecords,
-    clearSelectedRecords
+    clearSelectedRecords,
+    hiddenColumns,
+    setHiddenColumns,
+    searchTerm,
+    setSearchTerm
   };
 }

@@ -6,7 +6,7 @@ import { IconFilter, IconRefresh } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { TableState } from '../../hooks/UseTable';
@@ -119,15 +119,9 @@ export function InvenTreeTable<T = any>({
     (col: TableColumn) => col.switchable ?? true
   );
 
-  // A list of hidden columns, saved to local storage
-  const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
-    key: `inventree-hidden-table-columns-${tableName}`,
-    defaultValue: []
-  });
-
-  function onSelectedRecordsChange(records: any[]) {
+  const onSelectedRecordsChange = useCallback((records: any[]) => {
     tableState.setSelectedRecords(records);
-  }
+  }, []);
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
@@ -135,7 +129,7 @@ export function InvenTreeTable<T = any>({
       let hidden: boolean = col.hidden ?? false;
 
       if (col.switchable ?? true) {
-        hidden = hiddenColumns.includes(col.accessor);
+        hidden = tableState.hiddenColumns.includes(col.accessor);
       }
 
       return {
@@ -166,9 +160,9 @@ export function InvenTreeTable<T = any>({
     return cols;
   }, [
     columns,
-    hiddenColumns,
     tableProps.rowActions,
     tableProps.enableSelection,
+    tableState.hiddenColumns,
     tableState.selectedRecords
   ]);
 
@@ -182,7 +176,7 @@ export function InvenTreeTable<T = any>({
       newColumns[colIdx].hidden = !newColumns[colIdx].hidden;
     }
 
-    setHiddenColumns(
+    tableState.setHiddenColumns(
       newColumns.filter((col) => col.hidden).map((col) => col.accessor)
     );
   }
@@ -193,13 +187,10 @@ export function InvenTreeTable<T = any>({
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
-  // Search term
-  const [searchTerm, setSearchTerm] = useState<string>('');
-
   // Reset the pagination state when the search term changes
   useEffect(() => {
     setPage(1);
-  }, [searchTerm]);
+  }, [tableState.searchTerm]);
 
   /*
    * Construct query filters for the current table
@@ -215,8 +206,8 @@ export function InvenTreeTable<T = any>({
     );
 
     // Add custom search term
-    if (searchTerm) {
-      queryParams.search = searchTerm;
+    if (tableState.searchTerm) {
+      queryParams.search = tableState.searchTerm;
     }
 
     // Pagination
@@ -351,13 +342,13 @@ export function InvenTreeTable<T = any>({
 
   const { data, isError, isFetching, isLoading, refetch } = useQuery({
     queryKey: [
-      tableState.tableKey,
+      page,
       props.params,
       sortStatus.columnAccessor,
       sortStatus.direction,
-      page,
+      tableState.tableKey,
       tableState.activeFilters,
-      searchTerm
+      tableState.searchTerm
     ],
     queryFn: fetchTableData,
     refetchOnWindowFocus: false,
@@ -406,7 +397,9 @@ export function InvenTreeTable<T = any>({
           <Group position="right" spacing={5}>
             {tableProps.enableSearch && (
               <TableSearchInput
-                searchCallback={(term: string) => setSearchTerm(term)}
+                searchCallback={(term: string) =>
+                  tableState.setSearchTerm(term)
+                }
               />
             )}
             {tableProps.enableRefresh && (
