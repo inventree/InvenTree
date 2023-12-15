@@ -12,10 +12,13 @@ import { TableFilter } from '../components/tables/Filter';
  */
 export type TableState = {
   tableKey: string;
+  refreshTable: () => void;
   activeFilters: TableFilter[];
   setActiveFilters: (filters: TableFilter[]) => void;
   clearActiveFilters: () => void;
-  refreshTable: () => void;
+  selectedRecords: any[];
+  setSelectedRecords: (records: any[]) => void;
+  clearSelectedRecords: () => void;
 };
 
 /**
@@ -49,11 +52,21 @@ export function useTable(tableName: string): TableState {
     setActiveFilters([]);
   }, []);
 
+  // Array of selected records
+  const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
+
+  const clearSelectedRecords = useCallback(() => {
+    setSelectedRecords([]);
+  }, []);
+
   return {
     tableKey,
+    refreshTable,
     activeFilters,
     setActiveFilters,
     clearActiveFilters,
-    refreshTable
+    selectedRecords,
+    setSelectedRecords,
+    clearSelectedRecords
   };
 }
