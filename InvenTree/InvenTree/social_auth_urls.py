@@ -7,8 +7,6 @@ from django.urls import NoReverseMatch, include, path, reverse
 from allauth.account.models import EmailAddress
 from allauth.socialaccount import providers
 from allauth.socialaccount.models import SocialApp
-from allauth.socialaccount.providers.keycloak.views import \
-    KeycloakOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.views import (OAuth2Adapter,
                                                           OAuth2LoginView)
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -51,14 +49,6 @@ def handle_oauth2(adapter: OAuth2Adapter):
     ]
 
 
-def handle_keycloak():
-    """Define urls for keycloak."""
-    return [
-        path('login/', GenericOAuth2ApiLoginView.adapter_view(KeycloakOAuth2Adapter), name='keycloak_api_login'),
-        path('connect/', GenericOAuth2ApiConnectView.adapter_view(KeycloakOAuth2Adapter), name='keycloak_api_connet'),
-    ]
-
-
 legacy = {
     'twitter': 'twitter_oauth2',
     'bitbucket': 'bitbucket_oauth2',
@@ -92,8 +82,6 @@ for name, provider in providers.registry.provider_map.items():
         if provider.id in legacy:
             logger.warning('`%s` is not supported on platform UI. Use `%s` instead.', provider.id, legacy[provider.id])
             continue
-        elif provider.id == 'keycloak':
-            urls = handle_keycloak()
         else:
             logger.error('Found handler that is not yet ready for platform UI: `%s`. Open an feature request on GitHub if you need it implemented.', provider.id)
             continue

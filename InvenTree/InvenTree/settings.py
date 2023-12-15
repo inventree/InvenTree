@@ -288,6 +288,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'InvenTree.middleware.InvenTreeRemoteUserMiddleware',       # Remote / proxy auth
     'django_otp.middleware.OTPMiddleware',                      # MFA support
     'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',    # Flow control for allauth
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware',

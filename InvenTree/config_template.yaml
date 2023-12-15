@@ -233,13 +233,6 @@ remote_login_header: HTTP_REMOTE_USER
 # social_backends:
 #  - 'allauth.socialaccount.providers.google'
 #  - 'allauth.socialaccount.providers.github'
-#  - 'allauth.socialaccount.providers.keycloak'
-
-# Add specific settings for social account providers (if required)
-# social_providers:
-#   keycloak:
-#     KEYCLOAK_URL: 'https://keycloak.custom/auth'
-#     KEYCLOAK_REALM: 'master'
 
 # Add LDAP support
 # ldap:
