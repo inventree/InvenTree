@@ -118,19 +118,20 @@ class SocialProviderListView(ListAPI):
             }
 
             try:
-                provider_data['login'] = request.build_absolute_uri(reverse(f'{provider.id}_api_login'))
-            except NoReverseMatch:
-                provider_data['login'] = None
-
-            try:
-                provider_data['connect'] = request.build_absolute_uri(reverse(f'{provider.id}_api_connect'))
-            except NoReverseMatch:
-                provider_data['connect'] = None
-
-            try:
                 provider_app = SocialApp.objects.get(provider_id=provider.id)
                 provider_data['display_name'] = provider_app.name
                 provider_data['configured'] = True
+
+                try:
+                    provider_data['login'] = request.build_absolute_uri(reverse(f'{provider.id}_api_login'))
+                except NoReverseMatch:
+                    provider_data['login'] = None
+
+                try:
+                    provider_data['connect'] = request.build_absolute_uri(reverse(f'{provider.id}_api_connect'))
+                except NoReverseMatch:
+                    provider_data['connect'] = None
+
             except SocialApp.DoesNotExist:
                 provider_data['display_name'] = provider.name
 
