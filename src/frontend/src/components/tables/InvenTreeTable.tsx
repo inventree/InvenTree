@@ -321,7 +321,7 @@ export function InvenTreeTable<T = any>({
           default:
             setMissingRecordsText(
               t`Unknown error` + ': ' + response.statusText
-            ); // TODO: Translate
+            );
             break;
         }
 
@@ -333,7 +333,7 @@ export function InvenTreeTable<T = any>({
       });
   };
 
-  const { data, isError, isFetching, isLoading, refetch } = useQuery({
+  const { data, isFetching, refetch } = useQuery({
     queryKey: [
       page,
       props.params,
