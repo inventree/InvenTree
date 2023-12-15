@@ -90,7 +90,13 @@ class TransitionTests(InvenTreeTestCase):
 
         class ValidImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
-                return 1234
+
+                global raise_function
+
+                if raise_function:
+                    return 1234
+                else:
+                    return False
 
         storage.collect()
         self.assertIn(ValidImplementationNoEffect, storage.list)
