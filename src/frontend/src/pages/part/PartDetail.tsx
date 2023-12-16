@@ -55,6 +55,7 @@ import { editPart } from '../../forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { PartPricingPanel } from './PartPricing';
 
 /**
  * Detail view for a single Part instance
@@ -149,7 +150,8 @@ export default function PartDetail() {
       {
         name: 'pricing',
         label: t`Pricing`,
-        icon: <IconCurrencyDollar />
+        icon: <IconCurrencyDollar />,
+        content: <PartPricingPanel part={part} />
       },
       {
         name: 'manufacturers',

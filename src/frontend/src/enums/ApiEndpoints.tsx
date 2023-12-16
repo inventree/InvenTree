@@ -52,6 +52,7 @@ export enum ApiPaths {
   part_attachment_list = 'api-part-attachment-list',
   part_parameter_list = 'api-part-parameter-list',
   part_parameter_template_list = 'api-part-parameter-template-list',
+  part_pricing_detail = 'api-part-pricing-detail',
 
   // Company URLs
   company_list = 'api-company-list',

@@ -8,6 +8,7 @@ import {
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { formatCurrency, formatPriceRange } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { bomItemFields } from '../../../forms/BomForms';
@@ -55,9 +56,8 @@ export function BomTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      // TODO: Improve column rendering
       {
-        accessor: 'part',
+        accessor: 'sub_part',
         title: t`Part`,
         switchable: false,
         sortable: true,
@@ -138,17 +138,11 @@ export function BomTable({
         // TODO: See bom.js for existing implementation
       }),
       {
-        accessor: 'price_range',
+        accessor: 'pricing_max',
         title: t`Price Range`,
-
-        sortable: false,
+        sortable: true,
         render: (row) => {
-          let min_price = row.pricing_min || row.pricing_max;
-          let max_price = row.pricing_max || row.pricing_min;
-
-          // TODO: Custom price range rendering component
-          // TODO: Footer component for price range
-          return `${min_price} - ${max_price}`;
+          return formatPriceRange(row.pricing_min, row.pricing_max);
         }
       },
       {
