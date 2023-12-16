@@ -54,7 +54,7 @@ export function ApiImage(props: ImageProps) {
 
           return response;
         })
-        .catch((error) => {
+        .catch((_error) => {
           return null;
         });
     },
