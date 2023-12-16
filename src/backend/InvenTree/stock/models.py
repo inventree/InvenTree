@@ -1106,13 +1106,19 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         return total
 
-    def get_sales_order_allocations(self, active=True):
+    def get_sales_order_allocations(self, active=True, **kwargs):
         """Return a queryset for SalesOrderAllocations against this StockItem, with optional filters.
 
         Arguments:
             active: Filter by 'active' status of the allocation
         """
         query = self.sales_order_allocations.all()
+
+        if filter_allocations := kwargs.get('filter_allocations', None):
+            query = query.filter(**filter_allocations)
+
+        if exclude_allocations := kwargs.get('exclude_allocations', None):
+            query = query.exclude(**exclude_allocations)
 
         if active is True:
             query = query.filter(
@@ -1128,9 +1134,9 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         return query
 
-    def sales_order_allocation_count(self, active=True):
+    def sales_order_allocation_count(self, active=True, **kwargs):
         """Return the total quantity allocated to SalesOrders."""
-        query = self.get_sales_order_allocations(active=active)
+        query = self.get_sales_order_allocations(active=active, **kwargs)
         query = query.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 
         total = query['q']
@@ -2136,7 +2142,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if not InvenTree.ready.isImportingData():
+    if created and not InvenTree.ready.isImportingData():
         # Run this check in the background
         InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 

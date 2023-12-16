@@ -254,7 +254,7 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
         """Save the serializer to 'cancel' the order"""
         order = self.context['order']
 
-        if not order.can_cancel():
+        if not order.can_cancel:
             raise ValidationError(_("Order cannot be cancelled"))
 
         order.cancel_order()

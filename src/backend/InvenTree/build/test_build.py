@@ -491,7 +491,7 @@ class BuildTest(BuildTestBase):
         # Should not be able to change the part after the Build is saved
         with self.assertRaises(ValidationError):
             bo.part = assembly_2
-            bo.save()
+            bo.clean()
 
     def test_cancel(self):
         """Test cancellation of the build"""

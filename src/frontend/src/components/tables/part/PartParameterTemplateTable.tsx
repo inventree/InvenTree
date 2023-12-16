@@ -14,13 +14,34 @@ import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
-export function PartParameterTemplateTable() {
+export default function PartParameterTemplateTable() {
   const table = useTable('part-parameter-templates');
 
   const user = useUserState();
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'checkbox',
+        label: t`Checkbox`,
+        description: t`Show checkbox templates`
+      },
+      {
+        name: 'has_choices',
+        label: t`Has choices`,
+        description: t`Show templates with choices`
+      },
+      {
+        name: 'has_units',
+        label: t`Has Units`,
+        description: t`Show templates with units`
+      }
+    ];
+  }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -113,6 +134,7 @@ export function PartParameterTemplateTable() {
       columns={tableColumns}
       props={{
         rowActions: rowActions,
+        customFilters: tableFilters,
         customActionGroups: tableActions
       }}
     />

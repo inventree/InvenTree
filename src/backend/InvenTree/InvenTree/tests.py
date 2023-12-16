@@ -203,6 +203,37 @@ class ValidatorTest(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             validate_overage("aaaa")
 
+    def test_url_validation(self):
+        """Test for AllowedURLValidator"""
+
+        from common.models import InvenTreeSetting
+        from part.models import Part, PartCategory
+
+        # Without strict URL validation
+        InvenTreeSetting.set_setting('INVENTREE_STRICT_URLS', False, None)
+
+        n = Part.objects.count()
+        cat = PartCategory.objects.first()
+
+        # Should pass, even without a schema
+        Part.objects.create(
+            name=f'Part {n}',
+            description='Link without schema',
+            category=cat,
+            link='www.google.com',
+        )
+
+        # With strict URL validation
+        InvenTreeSetting.set_setting('INVENTREE_STRICT_URLS', True, None)
+
+        with self.assertRaises(ValidationError):
+            Part.objects.create(
+                name=f'Part {n + 1}',
+                description='Link without schema',
+                category=cat,
+                link='www.google.com',
+            )
+
 
 class FormatTest(TestCase):
     """Unit tests for custom string formatting functionality"""

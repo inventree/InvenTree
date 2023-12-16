@@ -62,7 +62,7 @@ def reload_unit_registry():
         pass
 
     dt = time.time() - t_start
-    logger.debug('Loaded unit registry in %s.3f s', dt)
+    logger.debug('Loaded unit registry in %.3f s', dt)
 
     return reg
 

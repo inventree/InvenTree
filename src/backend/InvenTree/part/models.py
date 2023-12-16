@@ -293,7 +293,8 @@ def rename_part_image(instance, filename):
     Returns:
         Cleaned filename in format part_<n>_img
     """
-    base = 'part_images'
+
+    base = part_helpers.PART_IMAGE_DIR
     fname = os.path.basename(filename)
 
     return os.path.join(base, fname)
@@ -2431,7 +2432,11 @@ class PartPricing(common.models.MetaMixin):
             # If something has happened to the Part model, might throw an error
             pass
 
-        super().save(*args, **kwargs)
+        try:
+            super().save(*args, **kwargs)
+        except IntegrityError:
+            # This error may be thrown if there is already duplicate pricing data
+            pass
 
     def update_bom_cost(self, save=True):
         """Recalculate BOM cost for the referenced Part instance.

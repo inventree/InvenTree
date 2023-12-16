@@ -239,11 +239,50 @@ export function BomTable({
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
+        name: 'sub_part_trackable',
+        label: t`Trackable Part`,
+        description: t`Show trackable items`
+      },
+      {
+        name: 'sub_part_assembly',
+        label: t`Assembled Part`,
+        description: t`Show asssmbled items`
+      },
+      {
+        name: 'available_stock',
+        label: t`Has Available Stock`,
+        description: t`Show items with available stock`
+      },
+      {
+        name: 'on_order',
+        label: t`On Order`,
+        description: t`Show items on order`
+      },
+      {
+        name: 'validated',
+        label: t`Validated`,
+        description: t`Show validated items`
+      },
+      {
+        name: 'inherited',
+        label: t`Gets Inherited`,
+        description: t`Show inherited items`
+      },
+      {
+        name: 'optional',
+        label: t`Optional`,
+        description: t`Show optional items`
+      },
+      {
         name: 'consumable',
         label: t`Consumable`,
-        type: 'boolean'
+        description: t`Show consumable items`
+      },
+      {
+        name: 'has_pricing',
+        label: t`Has Pricing`,
+        description: t`Show items with pricing`
       }
-      // TODO: More BOM table filters here
     ];
   }, [partId, params]);
 

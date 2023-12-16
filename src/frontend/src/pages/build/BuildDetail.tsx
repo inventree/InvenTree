@@ -3,9 +3,7 @@ import { Group, LoadingOverlay, Stack, Table } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
-  IconCopy,
   IconDots,
-  IconEdit,
   IconFileTypePdf,
   IconInfoCircle,
   IconList,
@@ -122,7 +120,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             params={{
-              build: build.pk ?? -1,
+              build: id,
               is_building: false
             }}
           />
@@ -135,7 +133,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             params={{
-              consumed_by: build.pk ?? -1
+              consumed_by: id
             }}
           />
         )
@@ -147,7 +145,7 @@ export default function BuildDetail() {
         content: (
           <BuildOrderTable
             params={{
-              parent: build.pk ?? -1
+              parent: id
             }}
           />
         )
@@ -160,7 +158,7 @@ export default function BuildDetail() {
           <AttachmentTable
             endpoint={ApiPaths.build_order_attachment_list}
             model="build"
-            pk={build.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -177,7 +175,7 @@ export default function BuildDetail() {
         )
       }
     ];
-  }, [build]);
+  }, [build, id]);
 
   const editBuildOrder = useCallback(() => {
     let fields = buildOrderFields();

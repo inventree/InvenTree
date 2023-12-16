@@ -49,7 +49,7 @@ export default function CategoryDetail({}: {}) {
           <PartListTable
             props={{
               params: {
-                category: category.pk ?? null
+                category: id
               }
             }}
           />
@@ -62,7 +62,7 @@ export default function CategoryDetail({}: {}) {
         content: (
           <PartCategoryTable
             params={{
-              parent: category.pk ?? null
+              parent: id
             }}
           />
         )

@@ -29,6 +29,13 @@ class LabelPrintingOptionsSerializer(serializers.Serializer):
         help_text=_('Page size for the label sheet')
     )
 
+    skip = serializers.IntegerField(
+        default=0,
+        label=_('Skip Labels'),
+        help_text=_('Skip this number of labels when printing label sheets'),
+        min_value=0
+    )
+
     border = serializers.BooleanField(
         default=False,
         label=_('Border'),
@@ -70,6 +77,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         page_size_code = printing_options.get('page_size', 'A4')
         landscape = printing_options.get('landscape', False)
         border = printing_options.get('border', False)
+        skip = int(printing_options.get('skip', 0))
 
         # Extract size of page
         page_size = report.helpers.page_size(page_size_code)
@@ -85,6 +93,9 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
         if n_cells == 0:
             raise ValidationError(_("Label is too large for page size"))
+
+        # Prepend the required number of skipped null labels
+        items = [None] * skip + list(items)
 
         n_labels = len(items)
 
@@ -107,6 +118,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         idx = 0
 
         while idx < n_labels:
+
             if page := self.print_page(label, items[idx:idx + n_cells], request, **document_data):
                 pages.append(page)
 
@@ -161,12 +173,19 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
             html += "<tr class='label-sheet-row'>"
 
             for col in range(n_cols):
-                html += f"<td class='label-sheet-cell label-sheet-row-{row} label-sheet-col-{col}'>"
 
                 # Cell index
                 idx = row * n_cols + col
 
-                if idx < len(items):
+                if idx >= len(items):
+                    break
+
+                html += f"<td class='label-sheet-cell label-sheet-row-{row} label-sheet-col-{col}'>"
+
+                # If the label is empty (skipped), render an empty cell
+                if items[idx] is None:
+                    html += """<div class='label-sheet-cell-skip'></div>"""
+                else:
                     try:
                         # Render the individual label template
                         # Note that we disable @page styling for this
