@@ -801,6 +801,18 @@ Use '--list' for a list of available commands
 Use '--help' for help on a specific command""")
 
 
+@task(help={
+    "filename": "Output filename (default = 'api.yaml')",
+})
+def apidoc(c, filename="api.yaml"):
+    """Generate API documentation"""
+
+    if not os.path.isabs(filename):
+        filename = localDir().joinpath(filename).resolve()
+
+    manage(c, f"spectacular --file {filename}", pty=True)
+
+
 @task()
 def frontend_check(c):
     """Check if frontend is available."""
