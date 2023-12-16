@@ -32,8 +32,8 @@ coverage==5.5
     #   -r src/backend/requirements-dev.in
     #   coveralls
 coveralls==2.1.2
-    # via -r requirements-dev.in
-cryptography==41.0.6
+    # via -r src/backend/requirements-dev.in
+cryptography==41.0.4
     # via
     #   -c src/backend/requirements.txt
     #   pdfminer-six
@@ -82,7 +82,7 @@ packaging==23.2
     #   -c src/backend/requirements.txt
     #   build
 pdfminer-six==20221105
-    # via -r requirements-dev.in
+    # via -r src/backend/requirements-dev.in
 pep8-naming==0.13.3
     # via -r src/backend/requirements-dev.in
 pip-tools==7.3.0
