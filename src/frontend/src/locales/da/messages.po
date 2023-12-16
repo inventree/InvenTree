@@ -220,7 +220,7 @@ msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
-#: src/components/tables/InvenTreeTable.tsx:350
+#: src/components/tables/InvenTreeTable.tsx:331
 #: src/components/tables/plugin/PluginListTable.tsx:364
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -307,7 +307,7 @@ msgid "Read More"
 msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:342
+#: src/components/tables/InvenTreeTable.tsx:323
 msgid "Unknown error"
 msgstr ""
 
@@ -1126,47 +1126,47 @@ msgstr ""
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/InvenTreeTable.tsx:72
-#: src/components/tables/InvenTreeTable.tsx:286
-#: src/components/tables/InvenTreeTable.tsx:307
+#: src/components/tables/InvenTreeTable.tsx:71
+#: src/components/tables/InvenTreeTable.tsx:267
+#: src/components/tables/InvenTreeTable.tsx:288
 msgid "No records found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:321
+#: src/components/tables/InvenTreeTable.tsx:302
 msgid "Server returned incorrect data type"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:329
+#: src/components/tables/InvenTreeTable.tsx:310
 msgid "Bad request"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:332
+#: src/components/tables/InvenTreeTable.tsx:313
 msgid "Unauthorized"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:335
+#: src/components/tables/InvenTreeTable.tsx:316
 msgid "Forbidden"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:338
+#: src/components/tables/InvenTreeTable.tsx:319
 msgid "Not found"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:393
-#: src/components/tables/InvenTreeTable.tsx:394
+#: src/components/tables/InvenTreeTable.tsx:374
+#: src/components/tables/InvenTreeTable.tsx:375
 msgid "Barcode actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:402
-#: src/components/tables/InvenTreeTable.tsx:403
+#: src/components/tables/InvenTreeTable.tsx:383
+#: src/components/tables/InvenTreeTable.tsx:384
 msgid "Print actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:417
+#: src/components/tables/InvenTreeTable.tsx:400
 msgid "Refresh data"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:436
+#: src/components/tables/InvenTreeTable.tsx:419
 msgid "Table filters"
 msgstr ""
 
@@ -4255,4 +4255,3 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
-
