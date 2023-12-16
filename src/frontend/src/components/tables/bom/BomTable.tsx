@@ -8,6 +8,7 @@ import {
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { formatPriceRange } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { bomItemFields } from '../../../forms/BomForms';
@@ -142,14 +143,8 @@ export function BomTable({
         title: t`Price Range`,
 
         sortable: false,
-        render: (row) => {
-          let min_price = row.pricing_min || row.pricing_max;
-          let max_price = row.pricing_max || row.pricing_min;
-
-          // TODO: Custom price range rendering component
-          // TODO: Footer component for price range
-          return `${min_price} - ${max_price}`;
-        }
+        render: (record: any) =>
+          formatPriceRange(record.pricing_min, record.pricing_max)
       },
       {
         accessor: 'available_stock',

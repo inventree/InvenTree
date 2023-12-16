@@ -110,6 +110,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
       actions.push(
         RowEditAction({
+          tooltip: t`Edit Part Parameter`,
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
@@ -132,6 +133,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
       actions.push(
         RowDeleteAction({
+          tooltip: t`Delete Part Parameter`,
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({

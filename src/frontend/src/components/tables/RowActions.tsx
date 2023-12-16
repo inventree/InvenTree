@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Tooltip } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 import { Menu } from '@mantine/core';
 import { IconCopy, IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
@@ -9,6 +9,7 @@ import { notYetImplemented } from '../../functions/notifications';
 // Type definition for a table row action
 export type RowAction = {
   title: string;
+  tooltip?: string;
   color?: string;
   icon: ReactNode;
   onClick?: () => void;
@@ -18,14 +19,17 @@ export type RowAction = {
 // Component for duplicating a row in a table
 export function RowDuplicateAction({
   onClick,
+  tooltip,
   hidden
 }: {
   onClick?: () => void;
+  tooltip?: string;
   hidden?: boolean;
 }): RowAction {
   return {
     title: t`Duplicate`,
     color: 'green',
+    tooltip: tooltip,
     onClick: onClick,
     icon: <IconCopy />,
     hidden: hidden
@@ -35,14 +39,17 @@ export function RowDuplicateAction({
 // Component for editing a row in a table
 export function RowEditAction({
   onClick,
+  tooltip,
   hidden
 }: {
   onClick?: () => void;
+  tooltip?: string;
   hidden?: boolean;
 }): RowAction {
   return {
     title: t`Edit`,
     color: 'blue',
+    tooltip: tooltip,
     onClick: onClick,
     icon: <IconEdit />,
     hidden: hidden
@@ -52,14 +59,17 @@ export function RowEditAction({
 // Component for deleting a row in a table
 export function RowDeleteAction({
   onClick,
+  tooltip,
   hidden
 }: {
   onClick?: () => void;
+  tooltip?: string;
   hidden?: boolean;
 }): RowAction {
   return {
     title: t`Delete`,
     color: 'red',
+    tooltip: tooltip,
     onClick: onClick,
     icon: <IconTrash />,
     hidden: hidden
@@ -97,10 +107,14 @@ export function RowActions({
   // Render a single action icon
   function RowActionIcon(action: RowAction) {
     return (
-      <Tooltip withinPortal={true} label={action.title} key={action.title}>
-        <ActionIcon
+      <Tooltip
+        withinPortal={true}
+        label={action.tooltip ?? action.title}
+        key={action.title}
+      >
+        <Menu.Item
           color={action.color}
-          size={20}
+          icon={action.icon}
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
             event?.preventDefault();
@@ -116,15 +130,10 @@ export function RowActions({
             setOpened(false);
           }}
         >
-          {action.icon}
-        </ActionIcon>
+          {action.title}
+        </Menu.Item>
       </Tooltip>
     );
-  }
-
-  // If only a single action is available, display that
-  if (visibleActions.length == 1) {
-    return <RowActionIcon {...visibleActions[0]} />;
   }
 
   return (
@@ -132,7 +141,7 @@ export function RowActions({
       <Menu
         withinPortal={true}
         disabled={disabled}
-        position="left"
+        position="bottom-end"
         opened={opened}
         onChange={setOpened}
       >
@@ -149,11 +158,9 @@ export function RowActions({
           </Tooltip>
         </Menu.Target>
         <Menu.Dropdown>
-          <Group position="right" spacing="xs" p={8}>
-            {visibleActions.map((action) => (
-              <RowActionIcon key={action.title} {...action} />
-            ))}
-          </Group>
+          {visibleActions.map((action) => (
+            <RowActionIcon key={action.title} {...action} />
+          ))}
         </Menu.Dropdown>
       </Menu>
     )
