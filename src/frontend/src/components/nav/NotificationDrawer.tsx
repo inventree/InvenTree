@@ -44,7 +44,6 @@ export function NotificationDrawer({
         })
         .then((response) => response.data)
         .catch((error) => {
-          console.error('Error fetching notifications:', error);
           return error;
         }),
     refetchOnMount: false,
