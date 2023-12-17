@@ -9,7 +9,6 @@ from django.urls import include, path, re_path
 from rest_framework import exceptions, permissions
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 import InvenTree.helpers
 from InvenTree.filters import SEARCH_ORDER_FILTER
@@ -91,7 +90,7 @@ class OwnerDetail(RetrieveAPI):
     serializer_class = OwnerSerializer
 
 
-class RoleDetails(APIView):
+class RoleDetails(GenericAPIView):
     """API endpoint which lists the available role permissions for the current user.
 
     (Requires authentication)
