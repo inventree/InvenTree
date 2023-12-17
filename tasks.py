@@ -803,14 +803,20 @@ Use '--help' for help on a specific command""")
 
 @task(help={
     "filename": "Output filename (default = 'api.yaml')",
+    "ignore_warnings": "Ignore warnings (default = False)",
 })
-def apidoc(c, filename="api.yaml"):
+def apidoc(c, filename="api.yaml", ignore_warnings=False):
     """Generate API documentation"""
 
     if not os.path.isabs(filename):
         filename = localDir().joinpath(filename).resolve()
 
-    manage(c, f"spectacular --file {filename} --validate", pty=True)
+    cmd = f"spectacular --file {filename} --validate --color"
+
+    if not ignore_warnings:
+        cmd += " --fail-on-warn"
+
+    manage(c, cmd, pty=True)
 
 
 @task()
