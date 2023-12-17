@@ -810,7 +810,7 @@ def apidoc(c, filename="api.yaml"):
     if not os.path.isabs(filename):
         filename = localDir().joinpath(filename).resolve()
 
-    manage(c, f"spectacular --file {filename}", pty=True)
+    manage(c, f"spectacular --file {filename} --validate", pty=True)
 
 
 @task()

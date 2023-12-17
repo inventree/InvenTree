@@ -488,9 +488,9 @@ if USE_JWT:
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
-    'LICENSE': {'MIT': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
-    'EXTERNAL_DOCS': {'docs': 'https://docs.inventree.org', 'web': 'https://inventree.org'},
-    'VERSION': inventreeApiVersion(),
+    'LICENSE': {'name': 'MIT', 'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
+    'EXTERNAL_DOCS': {'url': 'https://docs.inventree.org'},
+    'VERSION': str(inventreeApiVersion()),
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
