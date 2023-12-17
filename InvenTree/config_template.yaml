@@ -234,6 +234,13 @@ remote_login_header: HTTP_REMOTE_USER
 #  - 'allauth.socialaccount.providers.google'
 #  - 'allauth.socialaccount.providers.github'
 
+# Add specific settings for social account providers (if required)
+# Refer to the djngo-allauth documentation for more details:
+# https://docs.allauth.org/en/latest/socialaccount/provider_configuration.html
+# social_providers:
+#   github:
+#     VERIFIED_EMAIL: true
+
 # Add LDAP support
 # ldap:
 #   enabled: false
