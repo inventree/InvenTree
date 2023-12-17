@@ -12,9 +12,9 @@ from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 import common.models
 import common.serializers
@@ -39,7 +39,7 @@ class CsrfExemptMixin(object):
         return super().dispatch(*args, **kwargs)
 
 
-class WebhookView(CsrfExemptMixin, APIView):
+class WebhookView(CsrfExemptMixin, GenericAPIView):
     """Endpoint for receiving webhooks."""
     authentication_classes = []
     permission_classes = []
@@ -105,7 +105,7 @@ class WebhookView(CsrfExemptMixin, APIView):
             raise NotFound()
 
 
-class CurrencyExchangeView(APIView):
+class CurrencyExchangeView(GenericAPIView):
     """API endpoint for displaying currency information"""
 
     permission_classes = [
@@ -144,7 +144,7 @@ class CurrencyExchangeView(APIView):
         return Response(response)
 
 
-class CurrencyRefreshView(APIView):
+class CurrencyRefreshView(GenericAPIView):
     """API endpoint for manually refreshing currency exchange rates.
 
     User must be a 'staff' user to access this endpoint

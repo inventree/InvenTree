@@ -6,8 +6,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
@@ -274,7 +274,7 @@ def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
     return plugin
 
 
-class PluginAllSettingList(APIView):
+class PluginAllSettingList(GenericAPIView):
     """List endpoint for all plugin settings for a specific plugin.
 
     - GET: return all settings for a plugin config
@@ -330,7 +330,7 @@ class PluginSettingDetail(RetrieveUpdateAPI):
     ]
 
 
-class RegistryStatusView(APIView):
+class RegistryStatusView(GenericAPIView):
     """Status API endpoint for the plugin registry.
 
     - GET: Provide status data for the plugin registry

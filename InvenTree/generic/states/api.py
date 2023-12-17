@@ -3,14 +3,14 @@
 import inspect
 
 from rest_framework import permissions
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from rest_framework.views import APIView
 
 from .states import StatusCode
 
 
-class StatusView(APIView):
+class StatusView(GenericAPIView):
     """Generic API endpoint for discovering information on 'status codes' for a particular model.
 
     This class should be implemented as a subclass for each type of status.

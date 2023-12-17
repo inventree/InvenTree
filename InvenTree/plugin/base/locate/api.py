@@ -2,15 +2,15 @@
 
 from rest_framework import permissions
 from rest_framework.exceptions import NotFound, ParseError
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from InvenTree.tasks import offload_task
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
 
-class LocatePluginView(APIView):
+class LocatePluginView(GenericAPIView):
     """Endpoint for using a custom plugin to identify or 'locate' a stock item or location."""
 
     permission_classes = [

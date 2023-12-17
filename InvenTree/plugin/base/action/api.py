@@ -3,13 +3,13 @@
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import permissions
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from plugin import registry
 
 
-class ActionPluginView(APIView):
+class ActionPluginView(GenericAPIView):
     """Endpoint for running custom action plugins."""
 
     permission_classes = [

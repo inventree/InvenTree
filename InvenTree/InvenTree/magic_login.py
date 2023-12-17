@@ -9,8 +9,8 @@ from django.utils.translation import gettext_lazy as _
 
 import sesame.utils
 from rest_framework import serializers
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 
 def send_simple_login_email(user, link):
@@ -38,7 +38,7 @@ class GetSimpleLoginSerializer(serializers.Serializer):
     email = serializers.CharField(label=_("Email"))
 
 
-class GetSimpleLoginView(APIView):
+class GetSimpleLoginView(GenericAPIView):
     """View to send a simple login link."""
 
     permission_classes = ()

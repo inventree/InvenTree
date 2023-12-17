@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -28,7 +29,7 @@ from .version import inventreeApiText
 from .views import AjaxView
 
 
-class VersionView(APIView):
+class VersionView(GenericAPIView):
     """Simple JSON endpoint for InvenTree version information."""
 
     permission_classes = [
