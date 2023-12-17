@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-11 04:59+0000\n"
+"POT-Creation-Date: 2023-12-17 23:45+0000\n"
 "PO-Revision-Date: 2023-12-12 03:57\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
@@ -59,7 +59,7 @@ msgstr "Oppgi dato"
 #: order/templates/order/so_sidebar.html:17 part/admin.py:40
 #: part/models.py:3003 part/templates/part/part_sidebar.html:63
 #: report/templates/report/inventree_build_order_base.html:172
-#: stock/admin.py:139 stock/models.py:2217 stock/models.py:2325
+#: stock/admin.py:139 stock/models.py:2223 stock/models.py:2331
 #: stock/serializers.py:417 stock/serializers.py:580 stock/serializers.py:674
 #: stock/serializers.py:730 stock/serializers.py:1058 stock/serializers.py:1157
 #: stock/serializers.py:1318 stock/templates/stock/stock_sidebar.html:25
@@ -254,7 +254,7 @@ msgstr "Fil mangler"
 msgid "Missing external link"
 msgstr "Mangler eksternlenke"
 
-#: InvenTree/models.py:475 stock/models.py:2319
+#: InvenTree/models.py:475 stock/models.py:2325
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
@@ -474,9 +474,13 @@ msgstr "Velkommen til {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid "Your account has been created.\n\n"
+msgid ""
+"Your account has been created.\n"
+"\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr "Kontoen din har blitt opprettet.\n\n"
+msgstr ""
+"Kontoen din har blitt opprettet.\n"
+"\n"
 "Vennligst bruk funksjonen for tilbakestilling av passord for å få tilgang (på https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -541,123 +545,127 @@ msgstr "URLtil ekstern bildefil"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Nedlasting av bilder fra ekstern URL er ikke aktivert"
 
-#: InvenTree/settings.py:830
+#: InvenTree/settings.py:832
 msgid "Bulgarian"
 msgstr "Bulgarsk"
 
-#: InvenTree/settings.py:831
+#: InvenTree/settings.py:833
 msgid "Czech"
 msgstr "Tsjekkisk"
 
-#: InvenTree/settings.py:832
+#: InvenTree/settings.py:834
 msgid "Danish"
 msgstr "Dansk"
 
-#: InvenTree/settings.py:833
+#: InvenTree/settings.py:835
 msgid "German"
 msgstr "Tysk"
 
-#: InvenTree/settings.py:834
+#: InvenTree/settings.py:836
 msgid "Greek"
 msgstr "Gresk"
 
-#: InvenTree/settings.py:835
+#: InvenTree/settings.py:837
 msgid "English"
 msgstr "Engelsk"
 
-#: InvenTree/settings.py:836
+#: InvenTree/settings.py:838
 msgid "Spanish"
 msgstr "Spansk"
 
-#: InvenTree/settings.py:837
+#: InvenTree/settings.py:839
 msgid "Spanish (Mexican)"
 msgstr "Spansk (Meksikansk)"
 
-#: InvenTree/settings.py:838
+#: InvenTree/settings.py:840
 msgid "Farsi / Persian"
 msgstr "Farsi / Persisk"
 
-#: InvenTree/settings.py:839
+#: InvenTree/settings.py:841
 msgid "Finnish"
 msgstr "Finsk"
 
-#: InvenTree/settings.py:840
+#: InvenTree/settings.py:842
 msgid "French"
 msgstr "Fransk"
 
-#: InvenTree/settings.py:841
+#: InvenTree/settings.py:843
 msgid "Hebrew"
 msgstr "Hebraisk"
 
-#: InvenTree/settings.py:842
+#: InvenTree/settings.py:844
 msgid "Hindi"
 msgstr "Hindi"
 
-#: InvenTree/settings.py:843
+#: InvenTree/settings.py:845
 msgid "Hungarian"
 msgstr "Ungarsk"
 
-#: InvenTree/settings.py:844
+#: InvenTree/settings.py:846
 msgid "Italian"
 msgstr "Italiensk"
 
-#: InvenTree/settings.py:845
+#: InvenTree/settings.py:847
 msgid "Japanese"
 msgstr "Japansk"
 
-#: InvenTree/settings.py:846
+#: InvenTree/settings.py:848
 msgid "Korean"
 msgstr "Koreansk"
 
-#: InvenTree/settings.py:847
+#: InvenTree/settings.py:849
 msgid "Dutch"
 msgstr "Nederlandsk"
 
-#: InvenTree/settings.py:848
+#: InvenTree/settings.py:850
 msgid "Norwegian"
 msgstr "Norsk"
 
-#: InvenTree/settings.py:849
+#: InvenTree/settings.py:851
 msgid "Polish"
 msgstr "Polsk"
 
-#: InvenTree/settings.py:850
+#: InvenTree/settings.py:852
 msgid "Portuguese"
 msgstr "Portugisisk"
 
-#: InvenTree/settings.py:851
+#: InvenTree/settings.py:853
 msgid "Portuguese (Brazilian)"
 msgstr "Portugisisk (Brasil)"
 
-#: InvenTree/settings.py:852
+#: InvenTree/settings.py:854
 msgid "Russian"
 msgstr "Russisk"
 
-#: InvenTree/settings.py:853
+#: InvenTree/settings.py:855
 msgid "Slovenian"
 msgstr "Slovensk"
 
-#: InvenTree/settings.py:854
+#: InvenTree/settings.py:856
+msgid "Serbian"
+msgstr ""
+
+#: InvenTree/settings.py:857
 msgid "Swedish"
 msgstr "Svensk"
 
-#: InvenTree/settings.py:855
+#: InvenTree/settings.py:858
 msgid "Thai"
 msgstr "Thailandsk"
 
-#: InvenTree/settings.py:856
+#: InvenTree/settings.py:859
 msgid "Turkish"
 msgstr "Tyrkisk"
 
-#: InvenTree/settings.py:857
+#: InvenTree/settings.py:860
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
 
-#: InvenTree/settings.py:858
+#: InvenTree/settings.py:861
 msgid "Chinese (Simplified)"
 msgstr "Kinesisk (forenklet)"
 
-#: InvenTree/settings.py:859
+#: InvenTree/settings.py:862
 msgid "Chinese (Traditional)"
 msgstr "Kinesisk (tradisjonell)"
 
@@ -992,7 +1000,7 @@ msgid "Build Order Reference"
 msgstr "Produksjonsordre-referanse"
 
 #: build/models.py:172 order/models.py:364 order/models.py:792
-#: order/models.py:1136 order/models.py:1772 part/admin.py:274
+#: order/models.py:1136 order/models.py:1781 part/admin.py:274
 #: part/models.py:3799 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
@@ -1044,7 +1052,7 @@ msgstr "Produksjonsordre som denne produksjonen er tildelt"
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:15
 #: templates/email/overdue_build_order.html:16
-#: templates/js/translated/barcode.js:529 templates/js/translated/bom.js:632
+#: templates/js/translated/barcode.js:546 templates/js/translated/bom.js:632
 #: templates/js/translated/bom.js:769 templates/js/translated/bom.js:905
 #: templates/js/translated/build.js:1299 templates/js/translated/build.js:1730
 #: templates/js/translated/build.js:2150 templates/js/translated/build.js:2323
@@ -1150,7 +1158,7 @@ msgstr "Forventet sluttdato"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Måldato for ferdigstillelse. Produksjonen vil være forfalt etter denne datoen."
 
-#: build/models.py:277 order/models.py:414 order/models.py:1815
+#: build/models.py:277 order/models.py:414 order/models.py:1824
 #: templates/js/translated/build.js:2235
 msgid "Completion Date"
 msgstr "Fullført dato"
@@ -1245,7 +1253,7 @@ msgstr "Produksjonsartikkelen samsvarer ikke med produksjonsordren"
 #: build/models.py:860 build/serializers.py:218 build/serializers.py:257
 #: build/serializers.py:815 order/models.py:445 order/serializers.py:389
 #: order/serializers.py:511 part/serializers.py:1322 part/serializers.py:1661
-#: stock/models.py:629 stock/models.py:1420 stock/serializers.py:390
+#: stock/models.py:629 stock/models.py:1426 stock/serializers.py:390
 msgid "Quantity must be greater than zero"
 msgstr "Mengden må være større enn null"
 
@@ -1260,7 +1268,7 @@ msgstr "Produksjonsobjekt"
 #: build/models.py:1293 build/models.py:1551 build/serializers.py:205
 #: build/serializers.py:242 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2366
-#: order/models.py:1123 order/models.py:1694 order/serializers.py:1267
+#: order/models.py:1123 order/models.py:1703 order/serializers.py:1267
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:273
 #: part/forms.py:47 part/models.py:2990 part/models.py:3780
 #: part/templates/part/part_pricing.html:16
@@ -1277,7 +1285,7 @@ msgstr "Produksjonsobjekt"
 #: stock/templates/stock/item_base.html:295
 #: stock/templates/stock/item_base.html:342
 #: templates/email/build_order_completed.html:18
-#: templates/js/translated/barcode.js:531 templates/js/translated/bom.js:771
+#: templates/js/translated/barcode.js:548 templates/js/translated/bom.js:771
 #: templates/js/translated/bom.js:981 templates/js/translated/build.js:516
 #: templates/js/translated/build.js:732 templates/js/translated/build.js:1356
 #: templates/js/translated/build.js:1733 templates/js/translated/build.js:2345
@@ -1317,11 +1325,11 @@ msgstr "Produksjonselement må spesifisere en produksjonsartikkel, da master-del
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Tildelt antall ({q}) kan ikke overstige tilgjengelig lagerbeholdning ({a})"
 
-#: build/models.py:1393 order/models.py:1650
+#: build/models.py:1393 order/models.py:1659
 msgid "Stock item is over-allocated"
 msgstr "Lagervaren er overtildelt"
 
-#: build/models.py:1399 order/models.py:1653
+#: build/models.py:1399 order/models.py:1662
 msgid "Allocation quantity must be greater than zero"
 msgstr "Tildelingsantall må være større enn null"
 
@@ -1430,8 +1438,8 @@ msgstr "En liste over produksjonsartikler må oppgis"
 #: stock/serializers.py:410 stock/serializers.py:575 stock/serializers.py:669
 #: stock/serializers.py:1150 stock/serializers.py:1421
 #: stock/templates/stock/item_base.html:394
-#: templates/js/translated/barcode.js:530
-#: templates/js/translated/barcode.js:778 templates/js/translated/build.js:994
+#: templates/js/translated/barcode.js:547
+#: templates/js/translated/barcode.js:795 templates/js/translated/build.js:994
 #: templates/js/translated/build.js:2360
 #: templates/js/translated/purchase_order.js:1174
 #: templates/js/translated/purchase_order.js:1264
@@ -1467,7 +1475,7 @@ msgstr "Plassering for ferdige produksjonsartikler"
 
 #: build/serializers.py:500 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:818
-#: order/models.py:1798 order/serializers.py:534 stock/admin.py:124
+#: order/models.py:1807 order/serializers.py:534 stock/admin.py:124
 #: stock/serializers.py:726 stock/serializers.py:1289
 #: stock/templates/stock/item_base.html:427
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2179
@@ -1681,8 +1689,8 @@ msgstr "Vis QR-kode"
 #: part/templates/part/part_base.html:47
 #: stock/templates/stock/item_base.html:47
 #: stock/templates/stock/location.html:59
-#: templates/js/translated/barcode.js:479
-#: templates/js/translated/barcode.js:484
+#: templates/js/translated/barcode.js:496
+#: templates/js/translated/barcode.js:501
 msgid "Unlink Barcode"
 msgstr "Fjern strekkodekobling"
 
@@ -3404,7 +3412,7 @@ msgid "Price break quantity"
 msgstr "Antall for prisbrudd"
 
 #: common/models.py:2374 company/serializers.py:485 order/admin.py:41
-#: order/models.py:1181 order/models.py:2005
+#: order/models.py:1181 order/models.py:2014
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1883
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -3869,7 +3877,7 @@ msgstr "Parameternavn"
 
 #: company/models.py:532
 #: report/templates/report/inventree_test_report_base.html:104
-#: stock/models.py:2312 templates/js/translated/company.js:1156
+#: stock/models.py:2318 templates/js/translated/company.js:1156
 #: templates/js/translated/company.js:1409 templates/js/translated/part.js:1492
 #: templates/js/translated/stock.js:1502
 msgid "Value"
@@ -4063,7 +4071,7 @@ msgid "Delete image"
 msgstr "Slett bilde"
 
 #: company/templates/company/company_base.html:86 order/models.py:806
-#: order/models.py:1786 order/templates/order/return_order_base.html:131
+#: order/models.py:1795 order/templates/order/return_order_base.html:131
 #: order/templates/order/sales_order_base.html:144 stock/models.py:754
 #: stock/models.py:755 stock/serializers.py:1044
 #: stock/templates/stock/item_base.html:405
@@ -4565,7 +4573,7 @@ msgstr "Ingen samsvarende innkjøpsordre funnet"
 msgid "Purchase Order"
 msgstr "Innkjøpsordre"
 
-#: order/api.py:1411 order/models.py:1975 order/models.py:2021
+#: order/api.py:1411 order/models.py:1984 order/models.py:2030
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4651,15 +4659,15 @@ msgstr "Leverandørens ordrereferanse"
 msgid "received by"
 msgstr "mottatt av"
 
-#: order/models.py:408 order/models.py:1809
+#: order/models.py:408 order/models.py:1818
 msgid "Issue Date"
 msgstr "Sendt dato"
 
-#: order/models.py:409 order/models.py:1810
+#: order/models.py:409 order/models.py:1819
 msgid "Date order was issued"
 msgstr "Dato bestillingen ble sendt"
 
-#: order/models.py:415 order/models.py:1816
+#: order/models.py:415 order/models.py:1825
 msgid "Date order was completed"
 msgstr "Dato ordre ble fullført"
 
@@ -4675,11 +4683,11 @@ msgstr "Mengde må være positiv"
 msgid "Company to which the items are being sold"
 msgstr "Firma som varene selges til"
 
-#: order/models.py:826 order/models.py:1803
+#: order/models.py:826 order/models.py:1812
 msgid "Customer Reference "
 msgstr "Kundereferanse "
 
-#: order/models.py:826 order/models.py:1804
+#: order/models.py:826 order/models.py:1813
 msgid "Customer order reference code"
 msgstr "Kundens ordrereferanse"
 
@@ -4750,8 +4758,8 @@ msgid "deleted"
 msgstr "slettet"
 
 #: order/models.py:1226 order/models.py:1310 order/models.py:1350
-#: order/models.py:1449 order/models.py:1598 order/models.py:1974
-#: order/models.py:2021 templates/js/translated/sales_order.js:1488
+#: order/models.py:1449 order/models.py:1598 order/models.py:1983
+#: order/models.py:2030 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr "Ordre"
 
@@ -4828,7 +4836,7 @@ msgstr "Sjekket Av"
 msgid "User who checked this shipment"
 msgstr "Brukeren som sjekket forsendelsen"
 
-#: order/models.py:1477 order/models.py:1676 order/serializers.py:1282
+#: order/models.py:1477 order/models.py:1685 order/serializers.py:1282
 #: order/serializers.py:1410 templates/js/translated/model_renderers.js:446
 msgid "Shipment"
 msgstr "Forsendelse"
@@ -4877,77 +4885,77 @@ msgstr "Kan ikke tildele lagerbeholdning til en linje uten en del"
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Tildelingsantall kan ikke overstige tilgjengelig lagerbeholdning"
 
-#: order/models.py:1656 order/serializers.py:1146
+#: order/models.py:1665 order/serializers.py:1146
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Antall må være 1 for serialisert lagervare"
 
-#: order/models.py:1659
+#: order/models.py:1668
 msgid "Sales order does not match shipment"
 msgstr "Salgsordre samsvarer ikke med forsendelse"
 
-#: order/models.py:1660
+#: order/models.py:1669 plugin/base/barcodes/api.py:516
 msgid "Shipment does not match sales order"
 msgstr "Forsendelsen samsvarer ikke med salgsordre"
 
-#: order/models.py:1668
+#: order/models.py:1677
 msgid "Line"
 msgstr "Linje"
 
-#: order/models.py:1677
+#: order/models.py:1686
 msgid "Sales order shipment reference"
 msgstr "Forsendelsesreferanse for salgsordre"
 
-#: order/models.py:1690 order/models.py:1982
+#: order/models.py:1699 order/models.py:1991
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr "Artikkel"
 
-#: order/models.py:1691
+#: order/models.py:1700
 msgid "Select stock item to allocate"
 msgstr "Velg lagervare å tildele"
 
-#: order/models.py:1694
+#: order/models.py:1703
 msgid "Enter stock allocation quantity"
 msgstr "Angi lagertildelingsmengde"
 
-#: order/models.py:1773
+#: order/models.py:1782
 msgid "Return Order reference"
 msgstr "Returordre-referanse"
 
-#: order/models.py:1787
+#: order/models.py:1796
 msgid "Company from which items are being returned"
 msgstr "Firmaet delen skal returneres fra"
 
-#: order/models.py:1798
+#: order/models.py:1807
 msgid "Return order status"
 msgstr "Returordrestatus"
 
-#: order/models.py:1967
+#: order/models.py:1976
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr "Kun serialiserte artikler kan tilordnes en Returordre"
 
-#: order/models.py:1983
+#: order/models.py:1992
 msgid "Select item to return from customer"
 msgstr "Velg artikkel som skal returneres fra kunde"
 
-#: order/models.py:1988
+#: order/models.py:1997
 msgid "Received Date"
 msgstr "Mottatt Dato"
 
-#: order/models.py:1989
+#: order/models.py:1998
 msgid "The date this this return item was received"
 msgstr "Datoen denne returartikkelen ble mottatt"
 
-#: order/models.py:2000 templates/js/translated/return_order.js:733
+#: order/models.py:2009 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr "Utfall"
 
-#: order/models.py:2000
+#: order/models.py:2009
 msgid "Outcome for this line item"
 msgstr "Utfall for dette linjeelementet"
 
-#: order/models.py:2006
+#: order/models.py:2015
 msgid "Cost associated with return or repair for this line item"
 msgstr "Kostnad forbundet med retur eller reparasjon for dette linjeelementet"
 
@@ -7400,42 +7408,84 @@ msgstr "Ingen handling spesifisert"
 msgid "No matching action found"
 msgstr "Ingen samsvarende handling funnet"
 
-#: plugin/base/barcodes/api.py:123 plugin/base/barcodes/api.py:339
+#: plugin/base/barcodes/api.py:126 plugin/base/barcodes/api.py:346
+#: plugin/base/barcodes/api.py:540
 msgid "No match found for barcode data"
 msgstr "Ingen treff funnet for strekkodedata"
 
-#: plugin/base/barcodes/api.py:127
+#: plugin/base/barcodes/api.py:130
 msgid "Match found for barcode data"
 msgstr "Treff funnet for strekkodedata"
 
-#: plugin/base/barcodes/api.py:154
+#: plugin/base/barcodes/api.py:157
 #: templates/js/translated/purchase_order.js:1402
 msgid "Barcode matches existing item"
 msgstr "Strekkode samsvarer med ekisterende element"
 
-#: plugin/base/barcodes/api.py:302
+#: plugin/base/barcodes/api.py:309
 msgid "No matching part data found"
 msgstr "Ingen samsvarende del-data funnet"
 
-#: plugin/base/barcodes/api.py:319
+#: plugin/base/barcodes/api.py:326
 msgid "No matching supplier parts found"
 msgstr "Finner ingen matchende leverandørdeler"
 
-#: plugin/base/barcodes/api.py:324
+#: plugin/base/barcodes/api.py:331
 msgid "Multiple matching supplier parts found"
 msgstr "Flere samsvarende leverandørdeler funnet"
 
-#: plugin/base/barcodes/api.py:349
+#: plugin/base/barcodes/api.py:356
 msgid "Matched supplier part"
 msgstr "Fant leverandørdel"
 
-#: plugin/base/barcodes/api.py:395
+#: plugin/base/barcodes/api.py:411
 msgid "Item has already been received"
 msgstr "Artikkelen er allerede mottatt"
 
-#: plugin/base/barcodes/api.py:430
+#: plugin/base/barcodes/api.py:449
 msgid "No match for supplier barcode"
 msgstr "Ingen treff for leverandørstrekkode"
+
+#: plugin/base/barcodes/api.py:498
+#, fuzzy
+#| msgid "Multiple matching supplier parts found"
+msgid "Multiple matching line items found"
+msgstr "Flere samsvarende leverandørdeler funnet"
+
+#: plugin/base/barcodes/api.py:503
+#, fuzzy
+#| msgid "No matching line items"
+msgid "No matching line item found"
+msgstr "Ingen samsvarende ordrelinjer"
+
+#: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
+#, fuzzy
+#| msgid "Barcode does not match valid stock item"
+msgid "Barcode does not match an existing stock item"
+msgstr "Strekkoden samsvarer ikke med gyldig lagervare"
+
+#: plugin/base/barcodes/api.py:563
+#, fuzzy
+#| msgid "Selected stock item does not match BOM line"
+msgid "Stock item does not match line item"
+msgstr "Valgt lagervare samsvarer ikke med BOM-linjen"
+
+#: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
+#: templates/js/translated/sales_order.js:1917
+msgid "Insufficient stock available"
+msgstr "Utilstrekkelig lagerbeholdning"
+
+#: plugin/base/barcodes/api.py:599
+#, fuzzy
+#| msgid "Stock item assigned to sales order"
+msgid "Stock item allocated to sales order"
+msgstr "Lagervaren er tildelt en salgsordre"
+
+#: plugin/base/barcodes/api.py:603
+#, fuzzy
+#| msgid "No user information"
+msgid "Not enough information"
+msgstr "Ingen brukerinformasjon"
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7472,7 +7522,9 @@ msgid "Scanned barcode data"
 msgstr "Skannet strekkodedata"
 
 #: plugin/base/barcodes/serializers.py:81
-msgid "PurchaseOrder to allocate items against"
+#, fuzzy
+#| msgid "PurchaseOrder to allocate items against"
+msgid "Purchase Order to allocate items against"
 msgstr "Innkjøpsordre å tildele artikler mot"
 
 #: plugin/base/barcodes/serializers.py:88
@@ -7494,6 +7546,42 @@ msgstr "Plassering å motta deler til"
 #: plugin/base/barcodes/serializers.py:126
 msgid "Cannot select a structural location"
 msgstr "Kan ikke velge en strukturell plassering"
+
+#: plugin/base/barcodes/serializers.py:140
+#, fuzzy
+#| msgid "PurchaseOrder to allocate items against"
+msgid "Sales Order to allocate items against"
+msgstr "Innkjøpsordre å tildele artikler mot"
+
+#: plugin/base/barcodes/serializers.py:147
+#, fuzzy
+#| msgid "Purchase order is not pending"
+msgid "Sales order is not pending"
+msgstr "Innkjøpsordre er ikke ventende"
+
+#: plugin/base/barcodes/serializers.py:154
+#, fuzzy
+#| msgid "PurchaseOrder to allocate items against"
+msgid "Sales order line item to allocate items against"
+msgstr "Innkjøpsordre å tildele artikler mot"
+
+#: plugin/base/barcodes/serializers.py:160
+#, fuzzy
+#| msgid "PurchaseOrder to allocate items against"
+msgid "Sales order shipment to allocate items against"
+msgstr "Innkjøpsordre å tildele artikler mot"
+
+#: plugin/base/barcodes/serializers.py:167
+#, fuzzy
+#| msgid "Shipment has already been shipped"
+msgid "Shipment has already been delivered"
+msgstr "Forsendelsen er allerede sendt"
+
+#: plugin/base/barcodes/serializers.py:173
+#, fuzzy
+#| msgid "Quantity to Install"
+msgid "Quantity to allocate"
+msgstr "Antall å installere"
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -8049,12 +8137,12 @@ msgid "Test Results"
 msgstr "Testresultater"
 
 #: report/templates/report/inventree_test_report_base.html:102
-#: stock/models.py:2300 templates/js/translated/stock.js:1475
+#: stock/models.py:2306 templates/js/translated/stock.js:1475
 msgid "Test"
 msgstr "Test"
 
 #: report/templates/report/inventree_test_report_base.html:103
-#: stock/models.py:2306
+#: stock/models.py:2312
 msgid "Result"
 msgstr "Resultat"
 
@@ -8386,104 +8474,104 @@ msgstr "Innkjøpspris per enhet på kjøpstidspunktet"
 msgid "Converted to part"
 msgstr "Konvertert til del"
 
-#: stock/models.py:1411
+#: stock/models.py:1417
 msgid "Part is not set as trackable"
 msgstr "Delen er ikke angitt som sporbar"
 
-#: stock/models.py:1417
+#: stock/models.py:1423
 msgid "Quantity must be integer"
 msgstr "Antall må være heltall"
 
-#: stock/models.py:1423
+#: stock/models.py:1429
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
 msgstr "Antall kan ikke overstige tilgjengelig lagerbeholdning ({self.quantity})"
 
-#: stock/models.py:1426
+#: stock/models.py:1432
 msgid "Serial numbers must be a list of integers"
 msgstr "Serienumre må være en liste over tall"
 
-#: stock/models.py:1429
+#: stock/models.py:1435
 msgid "Quantity does not match serial numbers"
 msgstr "Antallet stemmer ikke overens med serienumrene"
 
-#: stock/models.py:1436 stock/serializers.py:449
+#: stock/models.py:1442 stock/serializers.py:449
 msgid "Serial numbers already exist"
 msgstr "Seriernummer eksisterer allerede"
 
-#: stock/models.py:1507
+#: stock/models.py:1513
 msgid "Stock item has been assigned to a sales order"
 msgstr "Lagervare har blitt tildelt en salgsordre"
 
-#: stock/models.py:1510
+#: stock/models.py:1516
 msgid "Stock item is installed in another item"
 msgstr "Lagervare er montert i en annen artikkel"
 
-#: stock/models.py:1513
+#: stock/models.py:1519
 msgid "Stock item contains other items"
 msgstr "Lagervare inneholder andre artikler"
 
-#: stock/models.py:1516
+#: stock/models.py:1522
 msgid "Stock item has been assigned to a customer"
 msgstr "Lagervare har blitt tildelt til en kunde"
 
-#: stock/models.py:1519
+#: stock/models.py:1525
 msgid "Stock item is currently in production"
 msgstr "Lagervare er for tiden i produksjon"
 
-#: stock/models.py:1522
+#: stock/models.py:1528
 msgid "Serialized stock cannot be merged"
 msgstr "Serialisert lagerbeholdning kan ikke slås sammen"
 
-#: stock/models.py:1529 stock/serializers.py:1194
+#: stock/models.py:1535 stock/serializers.py:1194
 msgid "Duplicate stock items"
 msgstr "Duplisert lagervare"
 
-#: stock/models.py:1533
+#: stock/models.py:1539
 msgid "Stock items must refer to the same part"
 msgstr "Lagervarer må referere til samme del"
 
-#: stock/models.py:1537
+#: stock/models.py:1543
 msgid "Stock items must refer to the same supplier part"
 msgstr "Lagervarer må referere til samme leverandørdel"
 
-#: stock/models.py:1541
+#: stock/models.py:1547
 msgid "Stock status codes must match"
 msgstr "Lagerstatuskoder må være like"
 
-#: stock/models.py:1735
+#: stock/models.py:1741
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Lagervare kan ikke flyttes fordi den ikke er på lager"
 
-#: stock/models.py:2218
+#: stock/models.py:2224
 msgid "Entry notes"
 msgstr "Oppføringsnotater"
 
-#: stock/models.py:2276
+#: stock/models.py:2282
 msgid "Value must be provided for this test"
 msgstr "Verdi må angis for denne testen"
 
-#: stock/models.py:2282
+#: stock/models.py:2288
 msgid "Attachment must be uploaded for this test"
 msgstr "Vedlegg må lastes opp for denne testen"
 
-#: stock/models.py:2301
+#: stock/models.py:2307
 msgid "Test name"
 msgstr "Testnavn"
 
-#: stock/models.py:2307
+#: stock/models.py:2313
 msgid "Test result"
 msgstr "Testresultat"
 
-#: stock/models.py:2313
+#: stock/models.py:2319
 msgid "Test output value"
 msgstr "Testens verdi"
 
-#: stock/models.py:2320
+#: stock/models.py:2326
 msgid "Test result attachment"
 msgstr "Vedlegg til testresultat"
 
-#: stock/models.py:2326
+#: stock/models.py:2332
 msgid "Test notes"
 msgstr "Testnotater"
 
@@ -10356,73 +10444,73 @@ msgstr "Skann strekkodedata"
 msgid "Scan Barcode"
 msgstr "Skann strekkode"
 
-#: templates/js/translated/barcode.js:440
+#: templates/js/translated/barcode.js:458
 msgid "No URL in response"
 msgstr "Ingen URL i svar"
 
-#: templates/js/translated/barcode.js:481
+#: templates/js/translated/barcode.js:498
 msgid "This will remove the link to the associated barcode"
 msgstr "Dette vil fjerne lenken til den tilknyttede strekkoden"
 
-#: templates/js/translated/barcode.js:487
+#: templates/js/translated/barcode.js:504
 msgid "Unlink"
 msgstr "Koble fra"
 
-#: templates/js/translated/barcode.js:550 templates/js/translated/stock.js:1155
+#: templates/js/translated/barcode.js:567 templates/js/translated/stock.js:1155
 msgid "Remove stock item"
 msgstr "Fjern lagervare"
 
-#: templates/js/translated/barcode.js:593
+#: templates/js/translated/barcode.js:610
 msgid "Scan Stock Items Into Location"
 msgstr "Skann lagervarer til plassering"
 
-#: templates/js/translated/barcode.js:595
+#: templates/js/translated/barcode.js:612
 msgid "Scan stock item barcode to check in to this location"
 msgstr "Skann lagervarens strekkode for å sjekke inn på denne plasseringen"
 
-#: templates/js/translated/barcode.js:598
-#: templates/js/translated/barcode.js:795
+#: templates/js/translated/barcode.js:615
+#: templates/js/translated/barcode.js:812
 msgid "Check In"
 msgstr "Sjekk inn"
 
-#: templates/js/translated/barcode.js:630
+#: templates/js/translated/barcode.js:647
 msgid "No barcode provided"
 msgstr "Ingen strekkode angitt"
 
-#: templates/js/translated/barcode.js:670
+#: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
 msgstr "Lagervaren er allerede skannet"
 
-#: templates/js/translated/barcode.js:674
+#: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
 msgstr "Lagrevare allerede på denne plasseringen"
 
-#: templates/js/translated/barcode.js:681
+#: templates/js/translated/barcode.js:698
 msgid "Added stock item"
 msgstr "La til lagervare"
 
-#: templates/js/translated/barcode.js:690
+#: templates/js/translated/barcode.js:707
 msgid "Barcode does not match valid stock item"
 msgstr "Strekkoden samsvarer ikke med gyldig lagervare"
 
-#: templates/js/translated/barcode.js:709
+#: templates/js/translated/barcode.js:726
 msgid "Scan Stock Container Into Location"
 msgstr "Skann lagerbeholder til plassering"
 
-#: templates/js/translated/barcode.js:711
+#: templates/js/translated/barcode.js:728
 msgid "Scan stock container barcode to check in to this location"
 msgstr "Skann lagerbeholderens strekkode for å sjekke inn på denne plasseringen"
 
-#: templates/js/translated/barcode.js:745
+#: templates/js/translated/barcode.js:762
 msgid "Barcode does not match valid stock location"
 msgstr "Strekkode samsvarer ikke med gyldig lagerplassering"
 
-#: templates/js/translated/barcode.js:789
+#: templates/js/translated/barcode.js:806
 msgid "Check Into Location"
 msgstr "Sjekk inn på plassering"
 
-#: templates/js/translated/barcode.js:858
-#: templates/js/translated/barcode.js:867
+#: templates/js/translated/barcode.js:875
+#: templates/js/translated/barcode.js:884
 msgid "Barcode does not match a valid location"
 msgstr "Strekkode samsvarer ikke med en gyldig plassering"
 
@@ -10970,11 +11058,6 @@ msgstr "Sporbar del"
 #: templates/js/translated/build.js:2530
 msgid "Unit Quantity"
 msgstr "Enhetsantall"
-
-#: templates/js/translated/build.js:2579
-#: templates/js/translated/sales_order.js:1917
-msgid "Insufficient stock available"
-msgstr "Utilstrekkelig lagerbeholdning"
 
 #: templates/js/translated/build.js:2581
 #: templates/js/translated/sales_order.js:1915
@@ -13406,9 +13489,11 @@ msgstr "Valgt SSO-leverandør er ugyldig, eller den er ikke riktig konfigurert"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr "Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
+msgstr ""
+"Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
 "%(site_name)s.<br>Som et siste steg, vennligst fullfør skjemaet:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13582,4 +13667,3 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
-

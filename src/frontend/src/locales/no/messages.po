@@ -51,7 +51,7 @@ msgstr "Oppdater"
 
 #: src/components/forms/ApiForm.tsx:481
 #: src/components/items/ActionDropdown.tsx:173
-#: src/components/tables/RowActions.tsx:61
+#: src/components/tables/RowActions.tsx:70
 #: src/functions/forms.tsx:306
 #: src/hooks/UseForm.tsx:117
 #: src/pages/Index/Scan.tsx:332
@@ -220,7 +220,7 @@ msgstr "Status: <0>arbeider</0> ({0}), <1>utvidelser</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
-#: src/components/tables/InvenTreeTable.tsx:350
+#: src/components/tables/InvenTreeTable.tsx:331
 #: src/components/tables/plugin/PluginListTable.tsx:364
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -280,7 +280,7 @@ msgid "Unlink custom barcode"
 msgstr "Koble fra egendefinert strekkode"
 
 #: src/components/items/ActionDropdown.tsx:154
-#: src/components/tables/RowActions.tsx:44
+#: src/components/tables/RowActions.tsx:50
 msgid "Edit"
 msgstr "Rediger"
 
@@ -289,7 +289,7 @@ msgid "Delete item"
 msgstr "Slett element"
 
 #: src/components/items/ActionDropdown.tsx:192
-#: src/components/tables/RowActions.tsx:27
+#: src/components/tables/RowActions.tsx:30
 #: src/pages/stock/StockDetail.tsx:195
 msgid "Duplicate"
 msgstr "Dupliser"
@@ -307,7 +307,7 @@ msgid "Read More"
 msgstr "Les mer"
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:342
+#: src/components/tables/InvenTreeTable.tsx:323
 msgid "Unknown error"
 msgstr "Ukjent feil"
 
@@ -649,7 +649,7 @@ msgstr "Dokumentasjon"
 msgid "About"
 msgstr "Om"
 
-#: src/components/nav/NotificationDrawer.tsx:71
+#: src/components/nav/NotificationDrawer.tsx:70
 #: src/pages/Index/Settings/SystemSettings.tsx:101
 #: src/pages/Index/Settings/UserSettings.tsx:94
 #: src/pages/Notifications.tsx:28
@@ -657,11 +657,11 @@ msgstr "Om"
 msgid "Notifications"
 msgstr "Varlser"
 
-#: src/components/nav/NotificationDrawer.tsx:88
+#: src/components/nav/NotificationDrawer.tsx:87
 msgid "You have no unread notifications."
 msgstr "Du har ingen uleste varsler."
 
-#: src/components/nav/NotificationDrawer.tsx:123
+#: src/components/nav/NotificationDrawer.tsx:122
 #: src/pages/Notifications.tsx:36
 msgid "Mark as read"
 msgstr "Merk som lest"
@@ -716,10 +716,10 @@ msgid "Unknown model: {model}"
 msgstr "Ukjent modell: {model}"
 
 #: src/components/render/ModelType.tsx:20
-#: src/components/tables/bom/BomTable.tsx:61
+#: src/components/tables/bom/BomTable.tsx:62
 #: src/components/tables/build/BuildOrderTable.tsx:39
 #: src/components/tables/part/PartParameterTable.tsx:34
-#: src/components/tables/part/PartTable.tsx:26
+#: src/components/tables/part/PartTable.tsx:27
 #: src/components/tables/part/RelatedPartTable.tsx:41
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:96
 #: src/components/tables/purchasing/SupplierPartTable.tsx:35
@@ -926,7 +926,7 @@ msgid "Serial Number"
 msgstr "Serienummer"
 
 #: src/components/render/Stock.tsx:28
-#: src/components/tables/bom/BomTable.tsx:102
+#: src/components/tables/bom/BomTable.tsx:103
 #: src/components/tables/bom/UsedInTable.tsx:68
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:122
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:150
@@ -953,7 +953,7 @@ msgid "Edit Setting"
 msgstr "Rediger innstilling"
 
 #: src/components/tables/ColumnRenderers.tsx:33
-#: src/components/tables/bom/BomTable.tsx:93
+#: src/components/tables/bom/BomTable.tsx:94
 #: src/components/tables/build/BuildOrderTable.tsx:57
 #: src/components/tables/part/PartParameterTable.tsx:65
 #: src/components/tables/part/PartParameterTemplateTable.tsx:61
@@ -1126,63 +1126,63 @@ msgstr "Fjern filtre"
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/InvenTreeTable.tsx:72
-#: src/components/tables/InvenTreeTable.tsx:286
-#: src/components/tables/InvenTreeTable.tsx:307
+#: src/components/tables/InvenTreeTable.tsx:71
+#: src/components/tables/InvenTreeTable.tsx:267
+#: src/components/tables/InvenTreeTable.tsx:288
 msgid "No records found"
 msgstr "Ingen poster funnet"
 
-#: src/components/tables/InvenTreeTable.tsx:321
+#: src/components/tables/InvenTreeTable.tsx:302
 msgid "Server returned incorrect data type"
 msgstr "Serveren returnerte feil datatype"
 
-#: src/components/tables/InvenTreeTable.tsx:329
+#: src/components/tables/InvenTreeTable.tsx:310
 msgid "Bad request"
 msgstr "Ugyldig forespørsel"
 
-#: src/components/tables/InvenTreeTable.tsx:332
+#: src/components/tables/InvenTreeTable.tsx:313
 msgid "Unauthorized"
 msgstr "Uautorisert"
 
-#: src/components/tables/InvenTreeTable.tsx:335
+#: src/components/tables/InvenTreeTable.tsx:316
 msgid "Forbidden"
 msgstr "Forbudt"
 
-#: src/components/tables/InvenTreeTable.tsx:338
+#: src/components/tables/InvenTreeTable.tsx:319
 msgid "Not found"
 msgstr "Ikke funnet"
 
-#: src/components/tables/InvenTreeTable.tsx:393
-#: src/components/tables/InvenTreeTable.tsx:394
+#: src/components/tables/InvenTreeTable.tsx:374
+#: src/components/tables/InvenTreeTable.tsx:375
 msgid "Barcode actions"
 msgstr "Strekkodehandlinger"
 
-#: src/components/tables/InvenTreeTable.tsx:402
-#: src/components/tables/InvenTreeTable.tsx:403
+#: src/components/tables/InvenTreeTable.tsx:383
+#: src/components/tables/InvenTreeTable.tsx:384
 msgid "Print actions"
 msgstr "Utskriftshandlinger"
 
-#: src/components/tables/InvenTreeTable.tsx:417
+#: src/components/tables/InvenTreeTable.tsx:400
 msgid "Refresh data"
 msgstr "Oppdater data"
 
-#: src/components/tables/InvenTreeTable.tsx:436
+#: src/components/tables/InvenTreeTable.tsx:419
 msgid "Table filters"
 msgstr "Tabellfiltre"
 
-#: src/components/tables/RowActions.tsx:140
+#: src/components/tables/RowActions.tsx:149
 msgid "Actions"
 msgstr "Handlinger"
 
-#: src/components/tables/bom/BomTable.tsx:70
+#: src/components/tables/bom/BomTable.tsx:71
 msgid "This BOM item is defined for a different parent"
 msgstr "Denne BOM-artikkelen er definert for en annen overordnet del"
 
-#: src/components/tables/bom/BomTable.tsx:85
+#: src/components/tables/bom/BomTable.tsx:86
 msgid "Part Information"
 msgstr "Delinformasjon"
 
-#: src/components/tables/bom/BomTable.tsx:98
+#: src/components/tables/bom/BomTable.tsx:99
 #: src/components/tables/bom/UsedInTable.tsx:76
 #: src/components/tables/build/BuildOrderTable.tsx:33
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:117
@@ -1190,45 +1190,45 @@ msgstr "Delinformasjon"
 msgid "Reference"
 msgstr "Referanse"
 
-#: src/components/tables/bom/BomTable.tsx:110
+#: src/components/tables/bom/BomTable.tsx:111
 msgid "Substitutes"
 msgstr "Erstatninger"
 
-#: src/components/tables/bom/BomTable.tsx:124
-#: src/components/tables/bom/BomTable.tsx:273
+#: src/components/tables/bom/BomTable.tsx:125
+#: src/components/tables/bom/BomTable.tsx:268
 #: src/components/tables/bom/UsedInTable.tsx:91
 msgid "Optional"
 msgstr "Valgfritt"
 
-#: src/components/tables/bom/BomTable.tsx:128
-#: src/components/tables/bom/BomTable.tsx:278
+#: src/components/tables/bom/BomTable.tsx:129
+#: src/components/tables/bom/BomTable.tsx:273
 msgid "Consumable"
 msgstr "Forbruksvare"
 
-#: src/components/tables/bom/BomTable.tsx:132
+#: src/components/tables/bom/BomTable.tsx:133
 msgid "Allow Variants"
 msgstr "Tillat Varianter"
 
-#: src/components/tables/bom/BomTable.tsx:136
-#: src/components/tables/bom/BomTable.tsx:268
+#: src/components/tables/bom/BomTable.tsx:137
+#: src/components/tables/bom/BomTable.tsx:263
 #: src/components/tables/bom/UsedInTable.tsx:86
 msgid "Gets Inherited"
 msgstr "Arves"
 
-#: src/components/tables/bom/BomTable.tsx:142
-#: src/components/tables/part/PartTable.tsx:156
+#: src/components/tables/bom/BomTable.tsx:143
+#: src/components/tables/part/PartTable.tsx:157
 msgid "Price Range"
 msgstr "Prisområde"
 
-#: src/components/tables/bom/BomTable.tsx:156
-#: src/components/tables/part/PartTable.tsx:121
+#: src/components/tables/bom/BomTable.tsx:151
+#: src/components/tables/part/PartTable.tsx:122
 #: src/components/tables/stock/StockItemTable.tsx:147
 #: src/components/tables/stock/StockItemTable.tsx:268
 msgid "Available"
 msgstr "Tilgjengelig"
 
-#: src/components/tables/bom/BomTable.tsx:167
-#: src/components/tables/part/PartTable.tsx:129
+#: src/components/tables/bom/BomTable.tsx:162
+#: src/components/tables/part/PartTable.tsx:130
 msgid "No stock"
 msgstr "Ingen lagerbeholdning"
 
@@ -1236,20 +1236,20 @@ msgstr "Ingen lagerbeholdning"
 #~ msgid "Available Stock"
 #~ msgstr "Available Stock"
 
-#: src/components/tables/bom/BomTable.tsx:175
+#: src/components/tables/bom/BomTable.tsx:170
 msgid "Includes substitute stock"
 msgstr "Inkluderer erstatningsbeholdning"
 
-#: src/components/tables/bom/BomTable.tsx:184
+#: src/components/tables/bom/BomTable.tsx:179
 msgid "Includes variant stock"
 msgstr "Inkluderer variantbeholdning"
 
-#: src/components/tables/bom/BomTable.tsx:192
+#: src/components/tables/bom/BomTable.tsx:187
 msgid "On order"
 msgstr "I bestilling"
 
-#: src/components/tables/bom/BomTable.tsx:200
-#: src/components/tables/part/PartTable.tsx:97
+#: src/components/tables/bom/BomTable.tsx:195
+#: src/components/tables/part/PartTable.tsx:98
 msgid "Building"
 msgstr "Produseres"
 
@@ -1257,21 +1257,21 @@ msgstr "Produseres"
 #~ msgid "Validate"
 #~ msgstr "Validate"
 
-#: src/components/tables/bom/BomTable.tsx:209
-#: src/components/tables/part/PartTable.tsx:148
+#: src/components/tables/bom/BomTable.tsx:204
+#: src/components/tables/part/PartTable.tsx:149
 #: src/components/tables/stock/StockItemTable.tsx:183
 msgid "Stock Information"
 msgstr "Lagerinformasjon"
 
-#: src/components/tables/bom/BomTable.tsx:216
+#: src/components/tables/bom/BomTable.tsx:211
 msgid "Can Build"
 msgstr "Kan Produsere"
 
-#: src/components/tables/bom/BomTable.tsx:220
+#: src/components/tables/bom/BomTable.tsx:215
 msgid "Consumable item"
 msgstr "Forbruksvare"
 
-#: src/components/tables/bom/BomTable.tsx:233
+#: src/components/tables/bom/BomTable.tsx:228
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:213
 #: src/components/tables/purchasing/SupplierPartTable.tsx:130
 #: src/pages/build/BuildDetail.tsx:167
@@ -1284,99 +1284,99 @@ msgstr "Forbruksvare"
 msgid "Notes"
 msgstr "Notater"
 
-#: src/components/tables/bom/BomTable.tsx:243
+#: src/components/tables/bom/BomTable.tsx:238
 msgid "Trackable Part"
 msgstr "Sporbar del"
 
-#: src/components/tables/bom/BomTable.tsx:244
+#: src/components/tables/bom/BomTable.tsx:239
 msgid "Show trackable items"
 msgstr "Vis sporbare deler"
 
-#: src/components/tables/bom/BomTable.tsx:248
+#: src/components/tables/bom/BomTable.tsx:243
 #: src/components/tables/bom/UsedInTable.tsx:31
 msgid "Assembled Part"
 msgstr "Sammenstilt del"
 
-#: src/components/tables/bom/BomTable.tsx:249
+#: src/components/tables/bom/BomTable.tsx:244
 msgid "Show asssmbled items"
 msgstr "Vis sammenstilte elementer"
 
-#: src/components/tables/bom/BomTable.tsx:253
+#: src/components/tables/bom/BomTable.tsx:248
 msgid "Has Available Stock"
 msgstr "Har tilgjengelig lagerbeholdning"
 
-#: src/components/tables/bom/BomTable.tsx:254
+#: src/components/tables/bom/BomTable.tsx:249
 msgid "Show items with available stock"
 msgstr "Vis elementer med tilgjengelig lagerbeholdning"
 
-#: src/components/tables/bom/BomTable.tsx:258
-#: src/components/tables/part/PartTable.tsx:91
+#: src/components/tables/bom/BomTable.tsx:253
+#: src/components/tables/part/PartTable.tsx:92
 msgid "On Order"
 msgstr "I bestilling"
 
-#: src/components/tables/bom/BomTable.tsx:259
+#: src/components/tables/bom/BomTable.tsx:254
 msgid "Show items on order"
 msgstr "Vis elementer i bestilling"
 
-#: src/components/tables/bom/BomTable.tsx:263
+#: src/components/tables/bom/BomTable.tsx:258
 msgid "Validated"
 msgstr "Godkjent"
 
-#: src/components/tables/bom/BomTable.tsx:264
+#: src/components/tables/bom/BomTable.tsx:259
 msgid "Show validated items"
 msgstr "Vis godkjente elementer"
 
-#: src/components/tables/bom/BomTable.tsx:269
+#: src/components/tables/bom/BomTable.tsx:264
 #: src/components/tables/bom/UsedInTable.tsx:87
 msgid "Show inherited items"
 msgstr "Vis arvede elementer"
 
-#: src/components/tables/bom/BomTable.tsx:274
+#: src/components/tables/bom/BomTable.tsx:269
 #: src/components/tables/bom/UsedInTable.tsx:92
 msgid "Show optional items"
 msgstr "Vis valgfrie elementer"
 
-#: src/components/tables/bom/BomTable.tsx:279
+#: src/components/tables/bom/BomTable.tsx:274
 msgid "Show consumable items"
 msgstr "Vis forbruksartikler"
 
-#: src/components/tables/bom/BomTable.tsx:283
+#: src/components/tables/bom/BomTable.tsx:278
 msgid "Has Pricing"
 msgstr "Har prising"
 
-#: src/components/tables/bom/BomTable.tsx:284
+#: src/components/tables/bom/BomTable.tsx:279
 msgid "Show items with pricing"
 msgstr "Vis varer med priser"
 
-#: src/components/tables/bom/BomTable.tsx:295
+#: src/components/tables/bom/BomTable.tsx:290
 msgid "View BOM"
 msgstr "Vis BOM"
 
-#: src/components/tables/bom/BomTable.tsx:306
+#: src/components/tables/bom/BomTable.tsx:301
 msgid "Validate BOM line"
 msgstr "Godkjenn BOM-linje"
 
-#: src/components/tables/bom/BomTable.tsx:314
+#: src/components/tables/bom/BomTable.tsx:309
 msgid "Edit Substitutes"
 msgstr "Rediger erstatninger"
 
-#: src/components/tables/bom/BomTable.tsx:328
+#: src/components/tables/bom/BomTable.tsx:323
 msgid "Edit Bom Item"
 msgstr "Rediger Bom-artikkel"
 
-#: src/components/tables/bom/BomTable.tsx:330
+#: src/components/tables/bom/BomTable.tsx:325
 msgid "Bom item updated"
 msgstr "BOM-artikkel oppdatert"
 
-#: src/components/tables/bom/BomTable.tsx:345
+#: src/components/tables/bom/BomTable.tsx:340
 msgid "Delete Bom Item"
 msgstr "Slett BOM-artikkel"
 
-#: src/components/tables/bom/BomTable.tsx:346
+#: src/components/tables/bom/BomTable.tsx:341
 msgid "Bom item deleted"
 msgstr "BOM-artikkel slettet"
 
-#: src/components/tables/bom/BomTable.tsx:348
+#: src/components/tables/bom/BomTable.tsx:343
 msgid "Are you sure you want to remove this BOM item?"
 msgstr "Er du sikker på at du vil fjerne dette BOM-elementet?"
 
@@ -1386,7 +1386,7 @@ msgstr "Påkrevd del"
 
 #: src/components/tables/bom/UsedInTable.tsx:96
 #: src/components/tables/build/BuildOrderTable.tsx:110
-#: src/components/tables/part/PartTable.tsx:175
+#: src/components/tables/part/PartTable.tsx:173
 #: src/components/tables/part/PartVariantTable.tsx:15
 #: src/components/tables/plugin/PluginListTable.tsx:178
 #: src/components/tables/plugin/PluginListTable.tsx:500
@@ -1400,7 +1400,7 @@ msgid "Show active assemblies"
 msgstr "Vis aktive sammenstillinger"
 
 #: src/components/tables/bom/UsedInTable.tsx:101
-#: src/components/tables/part/PartTable.tsx:199
+#: src/components/tables/part/PartTable.tsx:197
 #: src/components/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "Sporbar"
@@ -1601,7 +1601,7 @@ msgid "Age"
 msgstr "Alder"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:29
-#: src/components/tables/part/PartTable.tsx:50
+#: src/components/tables/part/PartTable.tsx:51
 msgid "Category"
 msgstr "Kategori"
 
@@ -1627,7 +1627,7 @@ msgid "Structural"
 msgstr "Strukturell"
 
 #: src/components/tables/part/PartCategoryTable.tsx:56
-#: src/components/tables/part/PartTable.tsx:187
+#: src/components/tables/part/PartTable.tsx:185
 msgid "Include Subcategories"
 msgstr "Inkluder underkategorier"
 
@@ -1645,43 +1645,45 @@ msgstr "Parametre"
 
 #: src/components/tables/part/PartParameterTable.tsx:93
 #: src/components/tables/part/PartParameterTemplateTable.tsx:56
-#: src/components/tables/part/PartTable.tsx:45
+#: src/components/tables/part/PartTable.tsx:46
 msgid "Units"
 msgstr "Enheter"
 
-#: src/components/tables/part/PartParameterTable.tsx:118
+#: src/components/tables/part/PartParameterTable.tsx:113
+#: src/components/tables/part/PartParameterTable.tsx:119
 msgid "Edit Part Parameter"
 msgstr "Rediger del-parameter"
 
-#: src/components/tables/part/PartParameterTable.tsx:126
+#: src/components/tables/part/PartParameterTable.tsx:127
 msgid "Part parameter updated"
 msgstr "Del-parameter oppdatert"
 
-#: src/components/tables/part/PartParameterTable.tsx:140
+#: src/components/tables/part/PartParameterTable.tsx:136
+#: src/components/tables/part/PartParameterTable.tsx:142
 msgid "Delete Part Parameter"
 msgstr "Slett del-parameter"
 
-#: src/components/tables/part/PartParameterTable.tsx:141
+#: src/components/tables/part/PartParameterTable.tsx:143
 msgid "Part parameter deleted"
 msgstr "Del-parameter slettet"
 
-#: src/components/tables/part/PartParameterTable.tsx:143
+#: src/components/tables/part/PartParameterTable.tsx:145
 msgid "Are you sure you want to remove this parameter?"
 msgstr "Er du sikker på at du vil fjerne dette parameteret?"
 
-#: src/components/tables/part/PartParameterTable.tsx:161
+#: src/components/tables/part/PartParameterTable.tsx:163
 msgid "Add Part Parameter"
 msgstr "Legg til del-parameter"
 
-#: src/components/tables/part/PartParameterTable.tsx:170
+#: src/components/tables/part/PartParameterTable.tsx:172
 msgid "Part parameter added"
 msgstr "Del-parameter lagt til"
 
-#: src/components/tables/part/PartParameterTable.tsx:181
+#: src/components/tables/part/PartParameterTable.tsx:183
 msgid "Add parameter"
 msgstr "Legg til parameter"
 
-#: src/components/tables/part/PartParameterTable.tsx:198
+#: src/components/tables/part/PartParameterTable.tsx:200
 #: src/components/tables/stock/StockItemTable.tsx:293
 msgid "Include Variants"
 msgstr "Inkluder varianter"
@@ -1704,7 +1706,7 @@ msgid "Show templates with choices"
 msgstr "Vis maler med valg"
 
 #: src/components/tables/part/PartParameterTemplateTable.tsx:40
-#: src/components/tables/part/PartTable.tsx:205
+#: src/components/tables/part/PartTable.tsx:203
 msgid "Has Units"
 msgstr "Har enheter"
 
@@ -1752,11 +1754,11 @@ msgstr "Parametermal opprettet"
 msgid "Add parameter template"
 msgstr "Legg til parametermal"
 
-#: src/components/tables/part/PartTable.tsx:39
+#: src/components/tables/part/PartTable.tsx:40
 msgid "IPN"
 msgstr "IPN"
 
-#: src/components/tables/part/PartTable.tsx:62
+#: src/components/tables/part/PartTable.tsx:63
 #: src/components/tables/stock/StockItemTable.tsx:50
 #: src/defaults/links.tsx:28
 #: src/defaults/menuItems.tsx:38
@@ -1767,107 +1769,107 @@ msgstr "IPN"
 msgid "Stock"
 msgstr "Lagerbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:82
+#: src/components/tables/part/PartTable.tsx:83
 msgid "Minimum stock"
 msgstr "Minimumsbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:104
+#: src/components/tables/part/PartTable.tsx:105
 msgid "Build Order Allocations"
 msgstr "Produksjonsordre-tildelinger"
 
-#: src/components/tables/part/PartTable.tsx:113
+#: src/components/tables/part/PartTable.tsx:114
 msgid "Sales Order Allocations"
 msgstr "Salgsordretildelinger"
 
-#: src/components/tables/part/PartTable.tsx:176
+#: src/components/tables/part/PartTable.tsx:174
 msgid "Filter by part active status"
 msgstr "Filtrer etter del aktiv-status"
 
-#: src/components/tables/part/PartTable.tsx:181
+#: src/components/tables/part/PartTable.tsx:179
 #: src/components/tables/stock/StockItemTable.tsx:258
 msgid "Assembly"
 msgstr "Sammenstilling"
 
-#: src/components/tables/part/PartTable.tsx:182
+#: src/components/tables/part/PartTable.tsx:180
 msgid "Filter by assembly attribute"
 msgstr "Filtrer etter sammenstillingsattributt"
 
-#: src/components/tables/part/PartTable.tsx:188
+#: src/components/tables/part/PartTable.tsx:186
 msgid "Include parts in subcategories"
 msgstr "Inkluder deler i underkategorier"
 
-#: src/components/tables/part/PartTable.tsx:193
+#: src/components/tables/part/PartTable.tsx:191
 msgid "Component"
 msgstr "Komponent"
 
-#: src/components/tables/part/PartTable.tsx:194
+#: src/components/tables/part/PartTable.tsx:192
 msgid "Filter by component attribute"
 msgstr "Filtrer etter komponentattributt"
 
-#: src/components/tables/part/PartTable.tsx:200
+#: src/components/tables/part/PartTable.tsx:198
 msgid "Filter by trackable attribute"
 msgstr "Filtrer etter sporbar attributt"
 
-#: src/components/tables/part/PartTable.tsx:206
+#: src/components/tables/part/PartTable.tsx:204
 msgid "Filter by parts which have units"
 msgstr "Filtrer etter deler som har enheter"
 
-#: src/components/tables/part/PartTable.tsx:211
+#: src/components/tables/part/PartTable.tsx:209
 msgid "Has IPN"
 msgstr "Har IPN"
+
+#: src/components/tables/part/PartTable.tsx:210
+msgid "Filter by parts which have an internal part number"
+msgstr "Filtrer etter deler som har internt delnummer"
 
 #: src/components/tables/part/PartTable.tsx:211
 #~ msgid "Detail"
 #~ msgstr "Detail"
 
-#: src/components/tables/part/PartTable.tsx:212
-msgid "Filter by parts which have an internal part number"
-msgstr "Filtrer etter deler som har internt delnummer"
-
-#: src/components/tables/part/PartTable.tsx:217
+#: src/components/tables/part/PartTable.tsx:215
 msgid "Has Stock"
 msgstr "Har beholdning"
 
-#: src/components/tables/part/PartTable.tsx:218
+#: src/components/tables/part/PartTable.tsx:216
 msgid "Filter by parts which have stock"
 msgstr "Filtrer etter deler som har lagerbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:223
+#: src/components/tables/part/PartTable.tsx:221
 #: src/defaults/dashboardItems.tsx:50
 msgid "Low Stock"
 msgstr "Lav lagerbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:224
+#: src/components/tables/part/PartTable.tsx:222
 msgid "Filter by parts which have low stock"
 msgstr "Filtrer etter deler som har lav lagerbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:229
+#: src/components/tables/part/PartTable.tsx:227
 msgid "Purchaseable"
 msgstr "Kjøpbar"
 
-#: src/components/tables/part/PartTable.tsx:230
+#: src/components/tables/part/PartTable.tsx:228
 msgid "Filter by parts which are purchaseable"
 msgstr "Filtrer etter deler som kan kjøpes"
 
-#: src/components/tables/part/PartTable.tsx:235
+#: src/components/tables/part/PartTable.tsx:233
 msgid "Salable"
 msgstr "Salgbar"
 
-#: src/components/tables/part/PartTable.tsx:236
+#: src/components/tables/part/PartTable.tsx:234
 msgid "Filter by parts which are salable"
 msgstr "Filtrer etter deler som kan selges"
 
-#: src/components/tables/part/PartTable.tsx:241
-#: src/components/tables/part/PartTable.tsx:245
+#: src/components/tables/part/PartTable.tsx:239
+#: src/components/tables/part/PartTable.tsx:243
 #: src/components/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Virtuell"
 
-#: src/components/tables/part/PartTable.tsx:242
+#: src/components/tables/part/PartTable.tsx:240
 msgid "Filter by parts which are virtual"
 msgstr "Filtrer etter deler som er virtuelle"
 
-#: src/components/tables/part/PartTable.tsx:246
+#: src/components/tables/part/PartTable.tsx:244
 msgid "Not Virtual"
 msgstr "Ikke virtuell"
 
@@ -4255,4 +4257,3 @@ msgstr "Plattformgrensesnittet er optimalisert for Nettbrett og Desktop, du kan 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Les dokumentasjonen"
-

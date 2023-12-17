@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-14 22:19+0000\n"
+"POT-Creation-Date: 2023-12-17 23:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -543,127 +543,127 @@ msgstr ""
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:830
+#: InvenTree/settings.py:832
 msgid "Bulgarian"
 msgstr ""
 
-#: InvenTree/settings.py:831
+#: InvenTree/settings.py:833
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/settings.py:832
+#: InvenTree/settings.py:834
 msgid "Danish"
 msgstr ""
 
-#: InvenTree/settings.py:833
+#: InvenTree/settings.py:835
 msgid "German"
 msgstr ""
 
-#: InvenTree/settings.py:834
+#: InvenTree/settings.py:836
 msgid "Greek"
 msgstr ""
 
-#: InvenTree/settings.py:835
+#: InvenTree/settings.py:837
 msgid "English"
 msgstr ""
 
-#: InvenTree/settings.py:836
+#: InvenTree/settings.py:838
 msgid "Spanish"
 msgstr ""
 
-#: InvenTree/settings.py:837
+#: InvenTree/settings.py:839
 msgid "Spanish (Mexican)"
 msgstr ""
 
-#: InvenTree/settings.py:838
+#: InvenTree/settings.py:840
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/settings.py:839
+#: InvenTree/settings.py:841
 msgid "Finnish"
 msgstr ""
 
-#: InvenTree/settings.py:840
+#: InvenTree/settings.py:842
 msgid "French"
 msgstr ""
 
-#: InvenTree/settings.py:841
+#: InvenTree/settings.py:843
 msgid "Hebrew"
 msgstr ""
 
-#: InvenTree/settings.py:842
+#: InvenTree/settings.py:844
 msgid "Hindi"
 msgstr ""
 
-#: InvenTree/settings.py:843
+#: InvenTree/settings.py:845
 msgid "Hungarian"
 msgstr ""
 
-#: InvenTree/settings.py:844
+#: InvenTree/settings.py:846
 msgid "Italian"
 msgstr ""
 
-#: InvenTree/settings.py:845
+#: InvenTree/settings.py:847
 msgid "Japanese"
 msgstr ""
 
-#: InvenTree/settings.py:846
+#: InvenTree/settings.py:848
 msgid "Korean"
 msgstr ""
 
-#: InvenTree/settings.py:847
+#: InvenTree/settings.py:849
 msgid "Dutch"
 msgstr ""
 
-#: InvenTree/settings.py:848
+#: InvenTree/settings.py:850
 msgid "Norwegian"
 msgstr ""
 
-#: InvenTree/settings.py:849
+#: InvenTree/settings.py:851
 msgid "Polish"
 msgstr ""
 
-#: InvenTree/settings.py:850
+#: InvenTree/settings.py:852
 msgid "Portuguese"
 msgstr ""
 
-#: InvenTree/settings.py:851
+#: InvenTree/settings.py:853
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: InvenTree/settings.py:852
+#: InvenTree/settings.py:854
 msgid "Russian"
 msgstr ""
 
-#: InvenTree/settings.py:853
+#: InvenTree/settings.py:855
 msgid "Slovenian"
 msgstr ""
 
-#: InvenTree/settings.py:854
+#: InvenTree/settings.py:856
 msgid "Serbian"
 msgstr ""
 
-#: InvenTree/settings.py:855
+#: InvenTree/settings.py:857
 msgid "Swedish"
 msgstr ""
 
-#: InvenTree/settings.py:856
+#: InvenTree/settings.py:858
 msgid "Thai"
 msgstr ""
 
-#: InvenTree/settings.py:857
+#: InvenTree/settings.py:859
 msgid "Turkish"
 msgstr ""
 
-#: InvenTree/settings.py:858
+#: InvenTree/settings.py:860
 msgid "Vietnamese"
 msgstr ""
 
-#: InvenTree/settings.py:859
+#: InvenTree/settings.py:861
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: InvenTree/settings.py:860
+#: InvenTree/settings.py:862
 msgid "Chinese (Traditional)"
 msgstr ""
 
