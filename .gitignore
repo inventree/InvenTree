@@ -105,5 +105,8 @@ InvenTree/plugins/
 # Compiled translation files
 *.mo
 
+# Generated API schema file
+api.yaml
+
 # web frontend (static files)
 InvenTree/web/static
