@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
 from rest_framework import exceptions, permissions
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -214,7 +215,7 @@ class GroupList(ListCreateAPI):
     ]
 
 
-class GetAuthToken(APIView):
+class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
     permission_classes = [
