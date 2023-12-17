@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
-from allauth.exceptions import ImmediateHttpResponse
+from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
 from allauth_2fa.utils import user_has_valid_totp_device
@@ -24,6 +24,7 @@ from crispy_forms.layout import Field, Layout
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 
+import InvenTree.sso
 from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
 
@@ -228,7 +229,7 @@ class CustomSignupForm(SignupForm):
 
 def registration_enabled():
     """Determine whether user registration is enabled."""
-    if InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'):
+    if InvenTreeSetting.get_setting('LOGIN_ENABLE_REG') or InvenTree.sso.registration_enabled():
         if settings.EMAIL_HOST:
             return True
         else:

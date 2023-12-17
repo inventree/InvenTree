@@ -6,7 +6,6 @@ from django.urls import NoReverseMatch, include, path, reverse
 
 from allauth.account.models import EmailAddress
 from allauth.socialaccount import providers
-from allauth.socialaccount.models import SocialApp
 from allauth.socialaccount.providers.oauth2.views import (OAuth2Adapter,
                                                           OAuth2LoginView)
 from drf_spectacular.utils import OpenApiResponse, extend_schema
@@ -14,6 +13,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+import InvenTree.sso
 from common.models import InvenTreeSetting
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI
 from InvenTree.serializers import InvenTreeModelSerializer
@@ -106,28 +106,23 @@ class SocialProviderListView(ListAPI):
             }
 
             try:
-                provider_app = SocialApp.objects.get(provider_id=provider.id)
-                provider_data['display_name'] = provider_app.name
-                provider_data['configured'] = True
+                provider_data['login'] = request.build_absolute_uri(reverse(f'{provider.id}_api_login'))
+            except NoReverseMatch:
+                provider_data['login'] = None
 
-                try:
-                    provider_data['login'] = request.build_absolute_uri(reverse(f'{provider.id}_api_login'))
-                except NoReverseMatch:
-                    provider_data['login'] = None
+            try:
+                provider_data['connect'] = request.build_absolute_uri(reverse(f'{provider.id}_api_connect'))
+            except NoReverseMatch:
+                provider_data['connect'] = None
 
-                try:
-                    provider_data['connect'] = request.build_absolute_uri(reverse(f'{provider.id}_api_connect'))
-                except NoReverseMatch:
-                    provider_data['connect'] = None
-
-            except SocialApp.DoesNotExist:
-                provider_data['display_name'] = provider.name
+            provider_data['configured'] = InvenTree.sso.check_provider(provider)
+            provider_data['display_name'] = InvenTree.sso.provider_display_name(provider)
 
             provider_list.append(provider_data)
 
         data = {
-            'sso_enabled': InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO'),
-            'sso_registration': InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'),
+            'sso_enabled': InvenTree.sso.login_enabled(),
+            'sso_registration': InvenTree.sso.registration_enabled(),
             'mfa_required': InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA'),
             'providers': provider_list
         }

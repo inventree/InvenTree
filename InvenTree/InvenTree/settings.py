@@ -957,6 +957,13 @@ SITE_ID = 1
 SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list)
 
 for app in SOCIAL_BACKENDS:
+
+    # Ensure that the app starts with 'allauth.socialaccount.providers'
+    social_prefix = 'allauth.socialaccount.providers.'
+
+    if not app.startswith(social_prefix):  # pragma: no cover
+        app = social_prefix + app
+
     INSTALLED_APPS.append(app)  # pragma: no cover
 
 SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict)
