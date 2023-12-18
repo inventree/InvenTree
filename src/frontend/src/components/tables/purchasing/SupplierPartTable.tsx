@@ -179,7 +179,8 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
   }, [user]);
 
   const editSupplierPartFields = useSupplierPartFields({
-    hidePart: true
+    hidePart: true,
+    partPk: params?.part
   });
 
   // Row action callback
