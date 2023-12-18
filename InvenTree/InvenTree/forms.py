@@ -359,6 +359,13 @@ class CustomSocialAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultSocial
         # Otherwise defer to the original allauth adapter.
         return super().login(request, user)
 
+    def authentication_error(self, request, provider_id, error=None, exception=None, extra_context=None):
+        """Callback method for authentication errors."""
+
+        # Log the error to the database
+        log_error(request.path if request else 'sso')
+        logger.error("SSO error for provider '%s' - check admin error log", provider_id)
+
 
 # override dj-rest-auth
 class CustomRegisterSerializer(RegisterSerializer):
