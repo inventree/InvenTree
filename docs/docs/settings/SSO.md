@@ -134,3 +134,7 @@ Make sure all users with admin privileges have sufficient passwords - they can r
 
 !!! warning "It's a secret!"
     Never share the secret key associated with your InvenTree install!
+
+## Error Handling
+
+If you encounter an error during the SSO process, the error should be logged in the InvenTree database. You can view the [error log](./logs.md) in the [admin interface](./admin.md) to see the details of the error.
