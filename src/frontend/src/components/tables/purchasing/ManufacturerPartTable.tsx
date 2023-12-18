@@ -2,6 +2,9 @@ import { t } from '@lingui/macro';
 import { ReactNode, useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
+import { useManufacturerPartFields } from '../../../forms/CompanyForms';
+import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -10,6 +13,7 @@ import { RenderPart } from '../../render/Part';
 import { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 /*
  * Construct a table listing manufacturer parts
@@ -27,7 +31,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
         title: t`Part`,
         switchable: 'part' in params,
         sortable: true,
-        render: (record: any) => RenderPart(record?.part_detail)
+        render: (record: any) => PartColumn(record?.part_detail)
       },
       {
         accessor: 'manufacturer',
@@ -59,10 +63,40 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     return [];
   }, [user]);
 
+  const editManufacturerPartFields = useManufacturerPartFields();
+
   const rowActions = useCallback(
     (record: any) => {
-      // TODO: Custom row actions
-      return [];
+      return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.purchase_order),
+          onClick: () => {
+            record.pk &&
+              openEditApiForm({
+                url: ApiPaths.manufacturer_part_list,
+                pk: record.pk,
+                title: t`Edit Manufacturer Part`,
+                fields: editManufacturerPartFields,
+                onFormSuccess: table.refreshTable,
+                successMessage: t`Manufacturer part updated`
+              });
+          }
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+          onClick: () => {
+            record.pk &&
+              openDeleteApiForm({
+                url: ApiPaths.manufacturer_part_list,
+                pk: record.pk,
+                title: t`Delete Manufacturer Part`,
+                successMessage: t`Manufacturer part deleted`,
+                onFormSuccess: table.refreshTable,
+                preFormWarning: t`Are you sure you want to remove this manufacturer part?`
+              });
+          }
+        })
+      ];
     },
     [user]
   );
