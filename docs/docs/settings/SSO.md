@@ -9,6 +9,9 @@ InvenTree provides the possibility to use 3rd party services to authenticate use
 !!! tip "Provider Documentation"
     There are a lot of technical considerations when configuring a particular SSO provider. A good starting point is the [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html)
 
+!!! warning "Advanced Users"
+    The SSO functionality provided by django-allauth is powerful, but can prove challenging to configure. Please ensure that you understand the implications of enabling SSO for your InvenTree instance. Specific technical details of each available SSO provider are beyond the scope of this documentation - please refer to the [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) for more information.
+
 ## SSO Configuration
 
 The basic requirements for configuring SSO are outlined below:
@@ -131,3 +134,7 @@ Make sure all users with admin privileges have sufficient passwords - they can r
 
 !!! warning "It's a secret!"
     Never share the secret key associated with your InvenTree install!
+
+## Error Handling
+
+If you encounter an error during the SSO process, the error should be logged in the InvenTree database. You can view the [error log](./logs.md) in the [admin interface](./admin.md) to see the details of the error.
