@@ -14,6 +14,7 @@ import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
@@ -56,11 +57,7 @@ export default function PartParameterTemplateTable() {
         title: t`Units`,
         sortable: true
       },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        sortable: false
-      },
+      DescriptionColumn(),
       {
         accessor: 'checkbox',
         title: t`Checkbox`

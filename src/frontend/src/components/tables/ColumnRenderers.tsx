@@ -5,12 +5,18 @@ import { t } from '@lingui/macro';
 
 import { formatCurrency, renderDate } from '../../defaults/formatters';
 import { ModelType } from '../../enums/ModelType';
+import { Thumbnail } from '../images/Thumbnail';
 import { ProgressBar } from '../items/ProgressBar';
 import { YesNoButton } from '../items/YesNoButton';
 import { TableStatusRenderer } from '../render/StatusRenderer';
 import { RenderOwner } from '../render/User';
 import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
+
+// Render a Part instance within a table
+export function PartColumn(part: any) {
+  return <Thumbnail src={part?.thumbnail ?? part.image} text={part.name} />;
+}
 
 export function BooleanColumn({
   accessor,
