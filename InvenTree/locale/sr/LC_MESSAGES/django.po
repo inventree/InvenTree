@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-14 22:19+0000\n"
+"POT-Creation-Date: 2023-12-19 04:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,47 +84,47 @@ msgstr ""
 msgid "Provided value does not match required pattern: "
 msgstr ""
 
-#: InvenTree/forms.py:147
+#: InvenTree/forms.py:148
 msgid "Enter password"
 msgstr ""
 
-#: InvenTree/forms.py:148
+#: InvenTree/forms.py:149
 msgid "Enter new password"
 msgstr ""
 
-#: InvenTree/forms.py:157
+#: InvenTree/forms.py:158
 msgid "Confirm password"
 msgstr ""
 
-#: InvenTree/forms.py:158
+#: InvenTree/forms.py:159
 msgid "Confirm new password"
 msgstr ""
 
-#: InvenTree/forms.py:162
+#: InvenTree/forms.py:163
 msgid "Old password"
 msgstr ""
 
-#: InvenTree/forms.py:199
+#: InvenTree/forms.py:200
 msgid "Email (again)"
 msgstr ""
 
-#: InvenTree/forms.py:203
+#: InvenTree/forms.py:204
 msgid "Email address confirmation"
 msgstr ""
 
-#: InvenTree/forms.py:224
+#: InvenTree/forms.py:225
 msgid "You must type the same email each time."
 msgstr ""
 
-#: InvenTree/forms.py:260 InvenTree/forms.py:266
+#: InvenTree/forms.py:261 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
 msgstr ""
 
-#: InvenTree/forms.py:272
+#: InvenTree/forms.py:273
 msgid "The provided email domain is not approved."
 msgstr ""
 
-#: InvenTree/forms.py:376
+#: InvenTree/forms.py:384
 msgid "Registration is disabled."
 msgstr ""
 
@@ -543,127 +543,127 @@ msgstr ""
 msgid "Downloading images from remote URL is not enabled"
 msgstr ""
 
-#: InvenTree/settings.py:830
+#: InvenTree/settings.py:833
 msgid "Bulgarian"
 msgstr ""
 
-#: InvenTree/settings.py:831
+#: InvenTree/settings.py:834
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/settings.py:832
+#: InvenTree/settings.py:835
 msgid "Danish"
 msgstr ""
 
-#: InvenTree/settings.py:833
+#: InvenTree/settings.py:836
 msgid "German"
 msgstr ""
 
-#: InvenTree/settings.py:834
+#: InvenTree/settings.py:837
 msgid "Greek"
 msgstr ""
 
-#: InvenTree/settings.py:835
+#: InvenTree/settings.py:838
 msgid "English"
 msgstr ""
 
-#: InvenTree/settings.py:836
+#: InvenTree/settings.py:839
 msgid "Spanish"
 msgstr ""
 
-#: InvenTree/settings.py:837
+#: InvenTree/settings.py:840
 msgid "Spanish (Mexican)"
 msgstr ""
 
-#: InvenTree/settings.py:838
+#: InvenTree/settings.py:841
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/settings.py:839
+#: InvenTree/settings.py:842
 msgid "Finnish"
 msgstr ""
 
-#: InvenTree/settings.py:840
+#: InvenTree/settings.py:843
 msgid "French"
 msgstr ""
 
-#: InvenTree/settings.py:841
+#: InvenTree/settings.py:844
 msgid "Hebrew"
 msgstr ""
 
-#: InvenTree/settings.py:842
+#: InvenTree/settings.py:845
 msgid "Hindi"
 msgstr ""
 
-#: InvenTree/settings.py:843
+#: InvenTree/settings.py:846
 msgid "Hungarian"
 msgstr ""
 
-#: InvenTree/settings.py:844
+#: InvenTree/settings.py:847
 msgid "Italian"
 msgstr ""
 
-#: InvenTree/settings.py:845
+#: InvenTree/settings.py:848
 msgid "Japanese"
 msgstr ""
 
-#: InvenTree/settings.py:846
+#: InvenTree/settings.py:849
 msgid "Korean"
 msgstr ""
 
-#: InvenTree/settings.py:847
+#: InvenTree/settings.py:850
 msgid "Dutch"
 msgstr ""
 
-#: InvenTree/settings.py:848
+#: InvenTree/settings.py:851
 msgid "Norwegian"
 msgstr ""
 
-#: InvenTree/settings.py:849
+#: InvenTree/settings.py:852
 msgid "Polish"
 msgstr ""
 
-#: InvenTree/settings.py:850
+#: InvenTree/settings.py:853
 msgid "Portuguese"
 msgstr ""
 
-#: InvenTree/settings.py:851
+#: InvenTree/settings.py:854
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: InvenTree/settings.py:852
+#: InvenTree/settings.py:855
 msgid "Russian"
 msgstr ""
 
-#: InvenTree/settings.py:853
+#: InvenTree/settings.py:856
 msgid "Slovenian"
 msgstr ""
 
-#: InvenTree/settings.py:854
+#: InvenTree/settings.py:857
 msgid "Serbian"
 msgstr ""
 
-#: InvenTree/settings.py:855
+#: InvenTree/settings.py:858
 msgid "Swedish"
 msgstr ""
 
-#: InvenTree/settings.py:856
+#: InvenTree/settings.py:859
 msgid "Thai"
 msgstr ""
 
-#: InvenTree/settings.py:857
+#: InvenTree/settings.py:860
 msgid "Turkish"
 msgstr ""
 
-#: InvenTree/settings.py:858
+#: InvenTree/settings.py:861
 msgid "Vietnamese"
 msgstr ""
 
-#: InvenTree/settings.py:859
+#: InvenTree/settings.py:862
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: InvenTree/settings.py:860
+#: InvenTree/settings.py:863
 msgid "Chinese (Traditional)"
 msgstr ""
 
