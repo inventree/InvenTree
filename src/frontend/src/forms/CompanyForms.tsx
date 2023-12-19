@@ -81,6 +81,20 @@ export function useSupplierPartFields({
   }, [part]);
 }
 
+export function useManufacturerPartFields() {
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      part: {},
+      manufacturer: {},
+      MPN: {},
+      description: {},
+      link: {}
+    };
+
+    return fields;
+  }, []);
+}
+
 /**
  * Field set for editing a company instance
  */
