@@ -2,6 +2,7 @@
 
 import logging
 
+from django.db.models import F
 from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
 
@@ -10,6 +11,8 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
+import order.models
+import stock.models
 from InvenTree.helpers import hash_barcode
 from plugin import registry
 from plugin.builtin.barcodes.inventree_barcode import \
@@ -272,6 +275,10 @@ class BarcodePOAllocate(BarcodeView):
     - A SupplierPart object
     """
 
+    role_required = [
+        'purchase_order.add'
+    ]
+
     serializer_class = barcode_serializers.BarcodePOAllocateSerializer
 
     def get_supplier_part(self, purchase_order, part=None, supplier_part=None, manufacturer_part=None):
@@ -370,6 +377,10 @@ class BarcodePOReceive(BarcodeView):
     - location: The destination location for the received item (optional)
     """
 
+    role_required = [
+        'purchase_order.add'
+    ]
+
     serializer_class = barcode_serializers.BarcodePOReceiveSerializer
 
     def handle_barcode(self, barcode: str, request, **kwargs):
@@ -385,18 +396,25 @@ class BarcodePOReceive(BarcodeView):
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
-        response = {}
+
+        response = {
+            "barcode_data": barcode,
+            "barcode_hash": hash_barcode(barcode)
+        }
 
         internal_barcode_plugin = next(filter(
             lambda plugin: plugin.name == "InvenTreeBarcode", plugins
         ))
 
-        if internal_barcode_plugin.scan(barcode):
-            response["error"] = _("Item has already been received")
-            raise ValidationError(response)
+        if result := internal_barcode_plugin.scan(barcode):
+            if 'stockitem' in result:
+                response["error"] = _("Item has already been received")
+                raise ValidationError(response)
 
         # Now, look just for "supplier-barcode" plugins
         plugins = registry.with_mixin("supplier-barcode")
+
+        plugin_response = None
 
         for current_plugin in plugins:
 
@@ -413,17 +431,18 @@ class BarcodePOReceive(BarcodeView):
             if "error" in result:
                 logger.info("%s.scan_receive_item(...) returned an error: %s",
                             current_plugin.__class__.__name__, result["error"])
-                if not response:
+                if not plugin_response:
                     plugin = current_plugin
-                    response = result
+                    plugin_response = result
             else:
                 plugin = current_plugin
-                response = result
+                plugin_response = result
                 break
 
-        response["plugin"] = plugin.name if plugin else None
-        response["barcode_data"] = barcode
-        response["barcode_hash"] = hash_barcode(barcode)
+        response['plugin'] = plugin.name if plugin else None
+
+        if plugin_response:
+            response = {**response, **plugin_response}
 
         # A plugin has not been found!
         if plugin is None:
@@ -433,6 +452,158 @@ class BarcodePOReceive(BarcodeView):
             raise ValidationError(response)
         else:
             return Response(response)
+
+
+class BarcodeSOAllocate(BarcodeView):
+    """Endpoint for allocating stock to a sales order, by scanning barcode.
+
+    The scanned barcode should map to a StockItem object.
+
+    Additional fields can be passed to the endpoint:
+
+    - SalesOrder (Required)
+    - Line Item
+    - Shipment
+    - Quantity
+    """
+
+    role_required = [
+        'sales_order.add',
+    ]
+
+    serializer_class = barcode_serializers.BarcodeSOAllocateSerializer
+
+    def get_line_item(self, stock_item, **kwargs):
+        """Return the matching line item for the provided stock item"""
+
+        # Extract sales order object (required field)
+        sales_order = kwargs['sales_order']
+
+        # Next, check if a line-item is provided (optional field)
+        if line_item := kwargs.get('line', None):
+            return line_item
+
+        # If not provided, we need to find the correct line item
+        parts = stock_item.part.get_ancestors(include_self=True)
+
+        # Find any matching line items for the stock item
+        lines = order.models.SalesOrderLineItem.objects.filter(
+            order=sales_order,
+            part__in=parts,
+            shipped__lte=F('quantity'),
+        )
+
+        if lines.count() > 1:
+            raise ValidationError({
+                'error': _('Multiple matching line items found'),
+            })
+
+        if lines.count() == 0:
+            raise ValidationError({
+                'error': _('No matching line item found'),
+            })
+
+        return lines.first()
+
+    def get_shipment(self, **kwargs):
+        """Extract the shipment from the provided kwargs, or guess"""
+
+        sales_order = kwargs['sales_order']
+
+        if shipment := kwargs.get('shipment', None):
+            if shipment.order != sales_order:
+                raise ValidationError({
+                    'error': _('Shipment does not match sales order'),
+                })
+
+            return shipment
+
+        shipments = order.models.SalesOrderShipment.objects.filter(
+            order=sales_order,
+            delivery_date=None
+        )
+
+        if shipments.count() == 1:
+            return shipments.first()
+
+        # If shipment cannot be determined, return None
+        return None
+
+    def handle_barcode(self, barcode: str, request, **kwargs):
+        """Handle barcode scan for sales order allocation."""
+
+        logger.debug("BarcodeSOAllocate: scanned barcode - '%s'", barcode)
+
+        result = self.scan_barcode(barcode, request, **kwargs)
+
+        if result['plugin'] is None:
+            result['error'] = _('No match found for barcode data')
+            raise ValidationError(result)
+
+        # Check that the scanned barcode was a StockItem
+        if 'stockitem' not in result:
+            result['error'] = _('Barcode does not match an existing stock item')
+            raise ValidationError(result)
+
+        try:
+            stock_item_id = result['stockitem'].get('pk', None)
+            stock_item = stock.models.StockItem.objects.get(pk=stock_item_id)
+        except (ValueError, stock.models.StockItem.DoesNotExist):
+            result['error'] = _('Barcode does not match an existing stock item')
+            raise ValidationError(result)
+
+        # At this stage, we have a valid StockItem object
+        # Extract any other data from the kwargs
+        line_item = self.get_line_item(stock_item, **kwargs)
+        sales_order = kwargs['sales_order']
+        shipment = self.get_shipment(**kwargs)
+
+        if stock_item is not None and line_item is not None:
+            if stock_item.part != line_item.part:
+                result['error'] = _('Stock item does not match line item')
+                raise ValidationError(result)
+
+        quantity = kwargs.get('quantity', None)
+
+        # Override quantity for serialized items
+        if stock_item.serialized:
+            quantity = 1
+
+        if quantity is None:
+            quantity = line_item.quantity - line_item.shipped
+            quantity = min(quantity, stock_item.unallocated_quantity())
+
+        response = {
+            'stock_item': stock_item.pk if stock_item else None,
+            'part': stock_item.part.pk if stock_item else None,
+            'sales_order': sales_order.pk if sales_order else None,
+            'line_item': line_item.pk if line_item else None,
+            'shipment': shipment.pk if shipment else None,
+            'quantity': quantity
+        }
+
+        if stock_item is not None and quantity is not None:
+            if stock_item.unallocated_quantity() < quantity:
+                response['error'] = _('Insufficient stock available')
+                raise ValidationError(response)
+
+        # If we have sufficient information, we can allocate the stock item
+        if all((x is not None for x in [line_item, sales_order, shipment, quantity])):
+            order.models.SalesOrderAllocation.objects.create(
+                line=line_item,
+                shipment=shipment,
+                item=stock_item,
+                quantity=quantity,
+            )
+
+            response['success'] = _('Stock item allocated to sales order')
+
+            return Response(response)
+
+        response['error'] = _('Not enough information')
+        response['action_required'] = True
+
+        raise ValidationError(response)
 
 
 barcode_api_urls = [
@@ -447,6 +618,9 @@ barcode_api_urls = [
 
     # Allocate parts to a purchase order by scanning their barcode
     path("po-allocate/", BarcodePOAllocate.as_view(), name="api-barcode-po-allocate"),
+
+    # Allocate stock to a sales order by scanning barcode
+    path("so-allocate/", BarcodeSOAllocate.as_view(), name="api-barcode-so-allocate"),
 
     # Catch-all performs barcode 'scan'
     re_path(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),

@@ -94,8 +94,9 @@ ENTRYPOINT ["/bin/sh", "./init.sh"]
 
 FROM inventree_base as prebuild
 
+ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install -r base_requirements.txt -r requirements.txt --no-cache-dir && \
+    pip install --user -r base_requirements.txt -r requirements.txt --no-cache-dir && \
     apk --purge del .build-deps
 
 # Frontend builder image:
@@ -111,13 +112,17 @@ RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
-FROM prebuild as production
+FROM inventree_base as production
 
 ENV INVENTREE_DEBUG=False
 
 # As .git directory is not available in production image, we pass the commit information via ENV
 ENV INVENTREE_COMMIT_HASH="${commit_hash}"
 ENV INVENTREE_COMMIT_DATE="${commit_date}"
+
+# use dependencies and compiled wheels from the prebuild image
+ENV PATH=/root/.local/bin:$PATH
+COPY --from=prebuild /root/.local /root/.local
 
 # Copy source code
 COPY InvenTree ./InvenTree

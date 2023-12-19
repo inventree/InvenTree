@@ -107,6 +107,27 @@ recursive-include my_plugin/templates *
 
 Other files and directories can be copied in a similar manner.
 
+### Local Plugin Development
+
+If you are developing a plugin (either from scratch, or making changes to an existing plugin), it can be useful to install the plugin using an [editable install](https://setuptools.pypa.io/en/latest/userguide/development_mode.html).
+
+An *editable install* installs the plugin (via PIP) into your local python virtual environment, but does not *copy* the code into the environment. Instead, it loads the code directly from where it is located, and also monitors for live changes in the code. This means that you can make changes to the plugin on the fly, and the InvenTree development server will detect any code changes and re-load the plugin automatically.
+
+Note that to use an *editable install*, your plugin must be installable via PIP.
+
+#### Example
+
+To setup an editable install:
+
+- Download the source code for the plugin (or create a new plugin)
+- Ensure that your setup file (either `setup.py` or `pyproject.toml`) is valid
+- Launch a command line and activate your development virtual environment
+- `cd` into the top-level directory of your plugin project, where the setup file is located
+- Setup an editable install with the following command:
+
+```bash
+pip install --editable .
+```
 
 ### A simple example
 This example adds a new action under `/api/action/sample` using the ActionMixin.

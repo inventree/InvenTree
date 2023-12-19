@@ -189,6 +189,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'plugins/status/';
     case ApiPaths.plugin_install:
       return 'plugins/install/';
+    case ApiPaths.plugin_reload:
+      return 'plugins/reload/';
     case ApiPaths.project_code_list:
       return 'project-code/';
     case ApiPaths.custom_unit_list:

@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 import order.models
 import stock.models
-from InvenTree.status_codes import PurchaseOrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from plugin.builtin.barcodes.inventree_barcode import \
     InvenTreeInternalBarcodePlugin
 
@@ -78,7 +78,7 @@ class BarcodePOAllocateSerializer(BarcodeSerializer):
     purchase_order = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrder.objects.all(),
         required=True,
-        help_text=_('PurchaseOrder to allocate items against'),
+        help_text=_('Purchase Order to allocate items against'),
     )
 
     def validate_purchase_order(self, order: order.models.PurchaseOrder):
@@ -126,3 +126,49 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
             raise ValidationError(_("Cannot select a structural location"))
 
         return location
+
+
+class BarcodeSOAllocateSerializer(BarcodeSerializer):
+    """Serializr for allocating stock items to a sales order
+
+    The scanned barcode must map to a StockItem object
+    """
+
+    sales_order = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.SalesOrder.objects.all(),
+        required=True,
+        help_text=_('Sales Order to allocate items against'),
+    )
+
+    def validate_sales_order(self, order: order.models.SalesOrder):
+        """Validate the provided order"""
+
+        if order and order.status != SalesOrderStatus.PENDING.value:
+            raise ValidationError(_("Sales order is not pending"))
+
+        return order
+
+    line = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.SalesOrderLineItem.objects.all(),
+        required=False, allow_null=True,
+        help_text=_('Sales order line item to allocate items against'),
+    )
+
+    shipment = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.SalesOrderShipment.objects.all(),
+        required=False, allow_null=True,
+        help_text=_('Sales order shipment to allocate items against'),
+    )
+
+    def validate_shipment(self, shipment: order.models.SalesOrderShipment):
+        """Validate the provided shipment"""
+
+        if shipment and shipment.is_delivered():
+            raise ValidationError(_("Shipment has already been delivered"))
+
+        return shipment
+
+    quantity = serializers.IntegerField(
+        required=False,
+        help_text=_('Quantity to allocate'),
+    )

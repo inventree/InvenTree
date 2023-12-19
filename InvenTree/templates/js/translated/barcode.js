@@ -419,6 +419,18 @@ function barcodeScanDialog(options={}) {
     let modal = options.modal || createNewModal();
     let title = options.title || '{% trans "Scan Barcode" %}';
 
+    const matching_models = [
+        'build',
+        'manufacturerpart',
+        'part',
+        'purchaseorder',
+        'returnorder',
+        'salesorder',
+        'supplierpart',
+        'stockitem',
+        'stocklocation'
+    ];
+
     barcodeDialog(
         title,
         {
@@ -428,19 +440,24 @@ function barcodeScanDialog(options={}) {
                 if (options.onScan) {
                     options.onScan(response);
                 } else {
+                    // Find matching model
+                    matching_models.forEach(function(model) {
+                        if (model in response) {
+                            let instance = response[model];
+                            let url = instance.web_url || instance.url;
+                            if (url) {
+                                window.location.href = url;
+                                return;
+                            }
+                        }
+                    });
 
-                    let url = response.url;
-
-                    if (url) {
-                        $(modal).modal('hide');
-                        window.location.href = url;
-                    } else {
-                        showBarcodeMessage(
-                            modal,
-                            '{% trans "No URL in response" %}',
-                            'warning'
-                        );
-                    }
+                    // No match
+                    showBarcodeMessage(
+                        modal,
+                        '{% trans "No URL in response" %}',
+                        'warning'
+                    );
                 }
             }
         },
