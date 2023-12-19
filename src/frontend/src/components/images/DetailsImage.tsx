@@ -1,10 +1,12 @@
-import { Group, Paper, Text } from '@mantine/core';
-import { useHover } from '@mantine/hooks';
+import { Button, Group, Modal, Paper, Text } from '@mantine/core';
+import { useDisclosure, useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconFileUpload, IconGridDots, IconTrash } from '@tabler/icons-react';
+import { useState } from 'react';
 
 import { api } from '../../App';
 import { ActionButton } from '../buttons/ActionButton';
+import { PartThumbTable } from '../tables/part/PartThumbTable';
 import { ApiImage } from './ApiImage';
 
 export type DetailImageProps = {
@@ -12,6 +14,7 @@ export type DetailImageProps = {
   apiPath: string;
   refresh: any;
   imageActions?: DetailImageButtonProps;
+  pk: string;
 };
 
 export type DetailImageButtonProps = {
@@ -45,50 +48,62 @@ function ImageActionButtons({
   visible,
   apiPath,
   hasImage,
-  refresh
+  refresh,
+  pk,
+  setImage
 }: {
   actions?: DetailImageButtonProps;
   visible: boolean;
   apiPath: string;
   hasImage: boolean;
   refresh: any;
+  pk: string;
+  setImage: any;
 }) {
+  const [opened, { open, close }] = useDisclosure(false);
+
   return (
-    visible && (
-      <Group
-        spacing="xs"
-        style={{ zIndex: 2, position: 'absolute', top: '10px', left: '10px' }}
-      >
-        {actions.selectExisting && (
-          <ActionButton
-            icon={<IconGridDots />}
-            tooltip="Select from existing images"
-            variant="outline"
-            size="lg"
-            tooltipAlignment="top"
-          />
-        )}
-        {actions.uploadFile && (
-          <ActionButton
-            icon={<IconFileUpload />}
-            tooltip="Upload new image"
-            variant="outline"
-            size="lg"
-            tooltipAlignment="top"
-          />
-        )}
-        {actions.deleteFile && hasImage && (
-          <ActionButton
-            icon={<IconTrash color="red" />}
-            tooltip="Delete image"
-            variant="outline"
-            size="lg"
-            tooltipAlignment="top"
-            onClick={() => removeModal(apiPath, refresh)}
-          />
-        )}
-      </Group>
-    )
+    <>
+      <Modal opened={opened} onClose={close} title="Select image" size="70%">
+        <PartThumbTable pk={pk} close={close} setImage={setImage} />
+      </Modal>
+      {visible && (
+        <Group
+          spacing="xs"
+          style={{ zIndex: 2, position: 'absolute', top: '10px', left: '10px' }}
+        >
+          {actions.selectExisting && (
+            <ActionButton
+              icon={<IconGridDots />}
+              tooltip="Select from existing images"
+              variant="outline"
+              size="lg"
+              tooltipAlignment="top"
+              onClick={open}
+            />
+          )}
+          {actions.uploadFile && (
+            <ActionButton
+              icon={<IconFileUpload />}
+              tooltip="Upload new image"
+              variant="outline"
+              size="lg"
+              tooltipAlignment="top"
+            />
+          )}
+          {actions.deleteFile && hasImage && (
+            <ActionButton
+              icon={<IconTrash color="red" />}
+              tooltip="Delete image"
+              variant="outline"
+              size="lg"
+              tooltipAlignment="top"
+              onClick={() => removeModal(apiPath, refresh)}
+            />
+          )}
+        </Group>
+      )}
+    </>
   );
 }
 
@@ -96,31 +111,36 @@ function ImageActionButtons({
 export function DetailsImage(props: DetailImageProps) {
   // Displays a group of ActionButtons on hover
   const { hovered, ref } = useHover();
+  const [img, setImg] = useState(props.src ?? backup_image);
 
   return (
-    <Paper
-      ref={ref}
-      style={{
-        position: 'relative',
-        width: `${IMAGE_DIMENSION}px`,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    >
-      <ApiImage
-        src={props.src ?? backup_image}
-        style={{ zIndex: 1 }}
-        height={IMAGE_DIMENSION}
-        width={IMAGE_DIMENSION}
-      />
-      <ImageActionButtons
-        visible={hovered}
-        actions={props.imageActions}
-        apiPath={props.apiPath}
-        hasImage={props.src ? true : false}
-        refresh={props.refresh}
-      />
-    </Paper>
+    <>
+      <Paper
+        ref={ref}
+        style={{
+          position: 'relative',
+          width: `${IMAGE_DIMENSION}px`,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <ApiImage
+          src={img}
+          style={{ zIndex: 1 }}
+          height={IMAGE_DIMENSION}
+          width={IMAGE_DIMENSION}
+        />
+        <ImageActionButtons
+          visible={hovered}
+          actions={props.imageActions}
+          apiPath={props.apiPath}
+          hasImage={props.src ? true : false}
+          refresh={props.refresh}
+          pk={props.pk}
+          setImage={setImg}
+        />
+      </Paper>
+    </>
   );
 }

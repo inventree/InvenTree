@@ -421,6 +421,15 @@ class PartThumbs(ListAPI):
             'image',
         ).annotate(count=Count('image')).order_by('-count')
 
+        page = self.paginate_queryset(data)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(data, many=True)
+
+        data = serializer.data
+
         return Response(data)
 
     filter_backends = [

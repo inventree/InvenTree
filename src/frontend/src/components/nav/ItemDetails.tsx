@@ -26,8 +26,8 @@ export function ItemDetails({
         src={params.image}
         apiPath={apiPath}
         refresh={refresh}
+        pk={params.pk}
       />
-      <PartThumbTable limit={25} />
     </Paper>
   );
 }
