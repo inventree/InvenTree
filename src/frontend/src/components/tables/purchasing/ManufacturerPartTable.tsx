@@ -9,7 +9,6 @@ import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { Thumbnail } from '../../images/Thumbnail';
-import { RenderPart } from '../../render/Part';
 import { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';

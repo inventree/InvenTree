@@ -8,7 +8,6 @@ import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { PartColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, TableFilter } from '../Filter';
