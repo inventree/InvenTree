@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-19 05:36\n"
+"PO-Revision-Date: 2023-12-20 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -21,33 +21,33 @@ msgstr ""
 #: src/components/DashboardItemProxy.tsx:34
 #: src/components/tables/company/AddressTable.tsx:36
 msgid "Title"
-msgstr ""
+msgstr "Naslov"
 
 #: src/components/forms/ApiForm.tsx:129
 #: src/functions/forms.tsx:49
 #: src/functions/forms.tsx:58
 #: src/functions/forms.tsx:266
 msgid "Form Error"
-msgstr ""
+msgstr "Greška Obrasca"
 
 #: src/components/forms/ApiForm.tsx:301
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "Uspešno"
 
 #: src/components/forms/ApiForm.tsx:372
 msgid "Form Errors Exist"
-msgstr ""
+msgstr "Postoji greška obrasca"
 
 #: src/components/forms/ApiForm.tsx:425
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
-msgstr ""
+msgstr "Podnesi"
 
 #: src/components/forms/ApiForm.tsx:461
 msgid "Update"
-msgstr ""
+msgstr "Obnovi"
 
 #: src/components/forms/ApiForm.tsx:481
 #: src/components/items/ActionDropdown.tsx:173
@@ -57,18 +57,18 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:332
 #: src/pages/Notifications.tsx:79
 msgid "Delete"
-msgstr ""
+msgstr "Obriši"
 
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:33
 msgid "Login failed"
-msgstr ""
+msgstr "Neuspešna prijava"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
 #: src/functions/auth.tsx:111
 msgid "Check your input and try again."
-msgstr ""
+msgstr "Proverite svoj unos i pokušajte ponovno."
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -78,11 +78,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr ""
+msgstr "Prijava uspešna"
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr ""
+msgstr "Dobrodošli!"
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -91,11 +91,11 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:102
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "Isporuka pošte uspešna"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr ""
+msgstr "Proverite svoj inbox za link za prijavu. Ako imate račun, dobićete link za prijavu. Proverite i spam."
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -104,30 +104,30 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:72
 msgid "Input error"
-msgstr ""
+msgstr "Greška unosa"
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr ""
+msgstr "Dobrodošli, prijavite se ispod"
 
 #: src/components/forms/AuthenticationForm.tsx:91
 #: src/components/tables/settings/UserTable.tsx:163
 msgid "Username"
-msgstr ""
+msgstr "Korisničko ime"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr ""
+msgstr "Lozinka"
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr ""
+msgstr "Vaša lozinka"
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "Resetujte lozinku"
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/components/tables/company/ContactTable.tsx:47
@@ -135,13 +135,13 @@ msgstr ""
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
-msgstr ""
+msgstr "E-pošta"
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr ""
+msgstr "Poslaćemo vam link za prijavu - ako ste registrirani"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -149,24 +149,24 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr ""
+msgstr "Pošalji mi e-poštu"
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr ""
+msgstr "Koristiću korisničko ime i lozinku"
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
-msgstr ""
+msgstr "Prijavite se"
 
 #: src/components/forms/AuthenticationForm.tsx:147
 msgid "Send Email"
-msgstr ""
+msgstr "Pošalji e-poštu"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
@@ -179,44 +179,44 @@ msgstr ""
 #: src/components/tables/settings/GroupTable.tsx:100
 #: src/components/tables/stock/StockLocationTable.tsx:51
 msgid "Name"
-msgstr ""
+msgstr "Ime"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr ""
+msgstr "Niko nije ovde..."
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "Dodajte Host-a"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr ""
+msgstr "Sačuvajte"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr ""
+msgstr "Odaberite odredišnu instancu"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr ""
+msgstr "Uredite moguće opcije host-a"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "Verzija: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr ""
+msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr ""
+msgstr "Naziv: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr ""
+msgstr "Status: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
@@ -227,66 +227,66 @@ msgstr ""
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 msgid "Error"
-msgstr ""
+msgstr "Grеška"
 
 #: src/components/forms/fields/RelatedModelField.tsx:210
 #: src/pages/Index/Settings/UserSettings.tsx:64
 msgid "Search"
-msgstr ""
+msgstr "Pretraga"
 
 #: src/components/forms/fields/RelatedModelField.tsx:211
 #: src/components/modals/AboutInvenTreeModal.tsx:67
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:301
 msgid "Loading"
-msgstr ""
+msgstr "Učitavanje"
 
 #: src/components/forms/fields/RelatedModelField.tsx:213
 msgid "No results found"
-msgstr ""
+msgstr "Nema pronađenih rezultata"
 
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:49
 msgid "Thumbnail"
-msgstr ""
+msgstr "Sličice"
 
 #: src/components/items/ActionDropdown.tsx:84
 #: src/pages/build/BuildDetail.tsx:204
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Akcije Barkoda"
 
 #: src/components/items/ActionDropdown.tsx:101
 msgid "View"
-msgstr ""
+msgstr "Vid"
 
 #: src/components/items/ActionDropdown.tsx:102
 msgid "View barcode"
-msgstr ""
+msgstr "Pogledaj barkod"
 
 #: src/components/items/ActionDropdown.tsx:118
 msgid "Link Barcode"
-msgstr ""
+msgstr "Link Barkoda"
 
 #: src/components/items/ActionDropdown.tsx:119
 msgid "Link custom barcode"
-msgstr ""
+msgstr "Linkuj prilagođeni barkod"
 
 #: src/components/items/ActionDropdown.tsx:135
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Prekini vezu Barkoda"
 
 #: src/components/items/ActionDropdown.tsx:136
 msgid "Unlink custom barcode"
-msgstr ""
+msgstr "Prekini link prilagođenog barkoda"
 
 #: src/components/items/ActionDropdown.tsx:154
 #: src/components/tables/RowActions.tsx:50
 msgid "Edit"
-msgstr ""
+msgstr "Izmeni"
 
 #: src/components/items/ActionDropdown.tsx:174
 msgid "Delete item"
-msgstr ""
+msgstr "Obriši stavku"
 
 #: src/components/items/ActionDropdown.tsx:192
 #: src/components/tables/RowActions.tsx:30
