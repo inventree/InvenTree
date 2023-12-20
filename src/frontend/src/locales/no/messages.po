@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-19 05:36\n"
+"PO-Revision-Date: 2023-12-20 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2105,27 +2105,27 @@ msgstr "Produsent"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:52
 msgid "Manufacturer Part Number"
-msgstr ""
+msgstr "Produsentens delenummer"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:77
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "Rediger produsentdel"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:80
 msgid "Manufacturer part updated"
-msgstr ""
+msgstr "Produsentdel oppdatert"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:91
 msgid "Delete Manufacturer Part"
-msgstr ""
+msgstr "Slett produsentdel"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:92
 msgid "Manufacturer part deleted"
-msgstr ""
+msgstr "Produsentdel slettet"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:94
 msgid "Are you sure you want to remove this manufacturer part?"
-msgstr ""
+msgstr "Er du sikker på at du vil fjerne denne produsentdelen?"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:53
 msgid "Receive line item"
