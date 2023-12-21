@@ -604,7 +604,7 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         return reverse_lazy('api-part-list')
 
     def skip_create_fields(self):
-        """Skip these fields when instantiating a new Part instance"""
+        """Skip these fields when changing an existing Part instance"""
         fields = super().skip_create_fields()
 
         fields += [
@@ -612,7 +612,6 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
             'initial_stock',
             'initial_supplier',
             'copy_category_parameters',
-            'existing_image',
         ]
 
         return fields
