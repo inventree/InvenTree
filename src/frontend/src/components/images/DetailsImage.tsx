@@ -1,4 +1,4 @@
-import { Button, Group, Modal, Paper, Text } from '@mantine/core';
+import { Group, Modal, Paper, Text } from '@mantine/core';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconFileUpload, IconGridDots, IconTrash } from '@tabler/icons-react';
