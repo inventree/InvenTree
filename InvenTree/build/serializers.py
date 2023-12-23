@@ -23,6 +23,7 @@ from InvenTree.status_codes import StockStatus
 from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
+import common.models
 from common.serializers import ProjectCodeSerializer
 import part.filters
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
@@ -518,6 +519,16 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         super().validate(data)
 
         outputs = data.get('outputs', [])
+
+        if common.settings.prevent_build_output_complete_on_incompleted_tests():
+            errors = []
+            for output in outputs:
+                stock_item = output['output']
+                if stock_item.hasRequiredTests() and not stock_item.passedAllRequiredTests():
+                    errors.append(_(f"The {stock_item.serial} stock item was not passed on all of the required tests"))
+
+            if len(errors):
+                raise ValidationError(errors)
 
         if len(outputs) == 0:
             raise ValidationError(_("A list of build outputs must be provided"))
