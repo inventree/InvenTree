@@ -916,6 +916,10 @@ class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBar
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
 
+        if (common.settings.prevent_build_output_complete_on_incompleted_tests() and output.hasRequiredTests() and not output.passedAllRequiredTests()):
+            raise ValidationError(
+                _("The %s stock item was not passed on all of the required tests" % output.serial))
+
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
             build_item.complete_allocation(user)

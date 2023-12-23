@@ -1,5 +1,5 @@
 """Unit tests for the 'build' models"""
-
+import uuid
 from datetime import datetime, timedelta
 
 from django.test import TestCase
@@ -14,8 +14,8 @@ from InvenTree import status_codes as status
 import common.models
 import build.tasks
 from build.models import Build, BuildItem, BuildLine, generate_next_build_reference
-from part.models import Part, BomItem, BomItemSubstitute
-from stock.models import StockItem
+from part.models import Part, BomItem, BomItemSubstitute, PartTestTemplate
+from stock.models import StockItem, StockItemTestResult
 from users.models import Owner
 
 import logging
@@ -53,6 +53,76 @@ class BuildTestBase(TestCase):
             description="Why does it matter what my description is?",
             assembly=True,
             trackable=True,
+        )
+
+        # create one build with one required test template
+        cls.tested_part_with_required_test = Part.objects.create(
+            name="Part having required tests",
+            description="Why does it matter what my description is?",
+            assembly=True,
+            trackable=True,
+        )
+
+        cls.test_template_required = PartTestTemplate.objects.create(
+            part=cls.tested_part_with_required_test,
+            test_name="Required test",
+            description="Required test template description",
+            required=True,
+            requires_value=False,
+            requires_attachment=False
+        )
+
+        ref = generate_next_build_reference()
+
+        cls.build_w_tests_trackable = Build.objects.create(
+            reference=ref,
+            title="This is a build",
+            part=cls.tested_part_with_required_test,
+            quantity=1,
+            issued_by=get_user_model().objects.get(pk=1),
+        )
+
+        cls.stockitem_with_required_test = StockItem.objects.create(
+            part=cls.tested_part_with_required_test,
+            quantity=1,
+            is_building=True,
+            serial=uuid.uuid4(),
+            build=cls.build_w_tests_trackable
+        )
+
+        # now create a part with a non-required test template
+        cls.tested_part_wo_required_test = Part.objects.create(
+            name="Part with one non.required test",
+            description="Why does it matter what my description is?",
+            assembly=True,
+            trackable=True,
+        )
+
+        cls.test_template_non_required = PartTestTemplate.objects.create(
+            part=cls.tested_part_wo_required_test,
+            test_name="Required test template",
+            description="Required test template description",
+            required=False,
+            requires_value=False,
+            requires_attachment=False
+        )
+
+        ref = generate_next_build_reference()
+
+        cls.build_wo_tests_trackable = Build.objects.create(
+            reference=ref,
+            title="This is a build",
+            part=cls.tested_part_wo_required_test,
+            quantity=1,
+            issued_by=get_user_model().objects.get(pk=1),
+        )
+
+        cls.stockitem_wo_required_test = StockItem.objects.create(
+            part=cls.tested_part_wo_required_test,
+            quantity=1,
+            is_building=True,
+            serial=uuid.uuid4(),
+            build=cls.build_wo_tests_trackable
         )
 
         cls.sub_part_1 = Part.objects.create(
@@ -572,6 +642,26 @@ class BuildTest(BuildTestBase):
 
         for output in outputs:
             self.assertFalse(output.is_building)
+
+    def test_complete_with_required_tests(self):
+        """Test the prevention completion when a required test is missing feature"""
+
+        # with required tests incompleted the save should fail
+        common.models.InvenTreeSetting.set_setting('PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS', True, change_user=None)
+
+        with self.assertRaises(ValidationError):
+            self.build_w_tests_trackable.complete_build_output(self.stockitem_with_required_test, None)
+
+        # let's complete the required test and see if it could be saved
+        StockItemTestResult.objects.create(
+            stock_item=self.stockitem_with_required_test,
+            test=self.test_template_required.test_name,
+            result=True
+        )
+        self.build_w_tests_trackable.complete_build_output(self.stockitem_with_required_test, None)
+
+        # let's see if a non required test could be saved
+        self.build_wo_tests_trackable.complete_build_output(self.stockitem_wo_required_test, None)
 
     def test_overdue_notification(self):
         """Test sending of notifications when a build order is overdue."""
