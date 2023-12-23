@@ -227,7 +227,14 @@ export default function SystemSettings() {
         name: 'buildorders',
         label: t`Build Orders`,
         icon: <IconTools />,
-        content: <GlobalSettingList keys={['BUILDORDER_REFERENCE_PATTERN']} />
+        content: (
+          <GlobalSettingList
+            keys={[
+              'BUILDORDER_REFERENCE_PATTERN',
+              'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
+            ]}
+          />
+        )
       },
       {
         name: 'purchaseorders',
