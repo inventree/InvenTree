@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-21 05:01+0000\n"
-"PO-Revision-Date: 2023-12-22 07:06\n"
+"PO-Revision-Date: 2023-12-23 07:46\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -2215,7 +2215,7 @@ msgstr "严格的 URL 验证"
 
 #: common/models.py:1180
 msgid "Require schema specification when validating URLs"
-msgstr ""
+msgstr "验证 URL 时需要 schema 规范"
 
 #: common/models.py:1186
 msgid "Require confirm"
@@ -7448,15 +7448,15 @@ msgstr "找到多个匹配的行项目"
 
 #: plugin/base/barcodes/api.py:503
 msgid "No matching line item found"
-msgstr ""
+msgstr "未找到匹配的行项目"
 
 #: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
 msgid "Barcode does not match an existing stock item"
-msgstr ""
+msgstr "条形码与现有的库存项不匹配"
 
 #: plugin/base/barcodes/api.py:563
 msgid "Stock item does not match line item"
-msgstr ""
+msgstr "库存项与行项目不匹配"
 
 #: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -7465,11 +7465,11 @@ msgstr "可用库存不足"
 
 #: plugin/base/barcodes/api.py:599
 msgid "Stock item allocated to sales order"
-msgstr ""
+msgstr "库存项已分配到销售订单"
 
 #: plugin/base/barcodes/api.py:603
 msgid "Not enough information"
-msgstr ""
+msgstr "没有足够的信息"
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7507,7 +7507,7 @@ msgstr "已扫描条形码"
 
 #: plugin/base/barcodes/serializers.py:81
 msgid "Purchase Order to allocate items against"
-msgstr ""
+msgstr "根据采购订单分配项目"
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
@@ -7531,27 +7531,27 @@ msgstr "无法选择一个结构位置"
 
 #: plugin/base/barcodes/serializers.py:140
 msgid "Sales Order to allocate items against"
-msgstr ""
+msgstr "根据销售订单分配项目"
 
 #: plugin/base/barcodes/serializers.py:147
 msgid "Sales order is not pending"
-msgstr ""
+msgstr "销售订单未挂起"
 
 #: plugin/base/barcodes/serializers.py:154
 msgid "Sales order line item to allocate items against"
-msgstr ""
+msgstr "根据销售订单行项目分配项目"
 
 #: plugin/base/barcodes/serializers.py:160
 msgid "Sales order shipment to allocate items against"
-msgstr ""
+msgstr "根据销售订单发货分配项目"
 
 #: plugin/base/barcodes/serializers.py:167
 msgid "Shipment has already been delivered"
-msgstr ""
+msgstr "货物已交付"
 
 #: plugin/base/barcodes/serializers.py:173
 msgid "Quantity to allocate"
-msgstr ""
+msgstr "待分配数"
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -7643,11 +7643,11 @@ msgstr "标签页大小"
 
 #: plugin/builtin/labels/label_sheet.py:34
 msgid "Skip Labels"
-msgstr ""
+msgstr "跳过标签"
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Skip this number of labels when printing label sheets"
-msgstr ""
+msgstr "打印标签页时跳过标签的数量"
 
 #: plugin/builtin/labels/label_sheet.py:41
 msgid "Border"
@@ -7885,27 +7885,27 @@ msgstr "必须提供 URL 的软件包名称"
 
 #: plugin/serializers.py:139
 msgid "Full reload"
-msgstr ""
+msgstr "完全重载"
 
 #: plugin/serializers.py:140
 msgid "Perform a full reload of the plugin registry"
-msgstr ""
+msgstr "执行插件库的完整重载"
 
 #: plugin/serializers.py:145
 msgid "Force reload"
-msgstr ""
+msgstr "强制重载"
 
 #: plugin/serializers.py:146
 msgid "Force a reload of the plugin registry, even if it is already loaded"
-msgstr ""
+msgstr "强制重载插件库，即使已经加载"
 
 #: plugin/serializers.py:151
 msgid "Collect plugins"
-msgstr ""
+msgstr "收集插件"
 
 #: plugin/serializers.py:152
 msgid "Collect plugins and add them to the registry"
-msgstr ""
+msgstr "收集插件并添加到注册表中"
 
 #: plugin/serializers.py:172
 msgid "Activate Plugin"
@@ -9384,7 +9384,7 @@ msgstr "安装插件"
 #: templates/InvenTree/settings/plugin.html:45
 #: templates/js/translated/plugin.js:224
 msgid "Reload Plugins"
-msgstr ""
+msgstr "重载插件"
 
 #: templates/InvenTree/settings/plugin.html:55
 msgid "External plugins are not enabled for this InvenTree installation"
