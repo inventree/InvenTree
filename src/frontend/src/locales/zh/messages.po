@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-23 07:46\n"
+"PO-Revision-Date: 2023-12-26 06:47\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -2058,35 +2058,35 @@ msgstr "激活"
 
 #: src/components/tables/plugin/PluginListTable.tsx:405
 msgid "Install plugin"
-msgstr ""
+msgstr "安装插件"
 
 #: src/components/tables/plugin/PluginListTable.tsx:413
 msgid "Install"
-msgstr ""
+msgstr "安装"
 
 #: src/components/tables/plugin/PluginListTable.tsx:417
 msgid "Plugin installed successfully"
-msgstr ""
+msgstr "插件安装成功"
 
 #: src/components/tables/plugin/PluginListTable.tsx:438
 msgid "Plugins reloaded"
-msgstr ""
+msgstr "插件已重载"
 
 #: src/components/tables/plugin/PluginListTable.tsx:439
 msgid "Plugins were reloaded successfully"
-msgstr ""
+msgstr "插件重载成功"
 
 #: src/components/tables/plugin/PluginListTable.tsx:455
 msgid "Reload Plugins"
-msgstr ""
+msgstr "重载插件"
 
 #: src/components/tables/plugin/PluginListTable.tsx:464
 msgid "Install Plugin"
-msgstr ""
+msgstr "安装插件"
 
 #: src/components/tables/plugin/PluginListTable.tsx:477
 msgid "Plugin detail"
-msgstr ""
+msgstr "插件详情"
 
 #: src/components/tables/plugin/PluginListTable.tsx:510
 msgid "Sample"
