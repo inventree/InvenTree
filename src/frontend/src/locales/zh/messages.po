@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-26 06:47\n"
+"PO-Revision-Date: 2023-12-27 07:52\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -277,7 +277,7 @@ msgstr "解绑条形码"
 
 #: src/components/items/ActionDropdown.tsx:136
 msgid "Unlink custom barcode"
-msgstr "解绑自定义条码链接"
+msgstr "解绑自定义条形码链接"
 
 #: src/components/items/ActionDropdown.tsx:154
 #: src/components/tables/RowActions.tsx:50
@@ -799,7 +799,7 @@ msgstr "库存历史记录"
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:43
 msgid "Build"
-msgstr "构建..."
+msgstr "生产..."
 
 #: src/components/render/ModelType.tsx:75
 msgid "Builds"
@@ -824,7 +824,7 @@ msgstr "项目编码"
 #: src/components/render/ModelType.tsx:89
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:52
 msgid "Project Codes"
-msgstr "项目代码:"
+msgstr "项目编码:"
 
 #: src/components/render/ModelType.tsx:95
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:131
@@ -1251,7 +1251,7 @@ msgstr "订购中"
 #: src/components/tables/bom/BomTable.tsx:195
 #: src/components/tables/part/PartTable.tsx:98
 msgid "Building"
-msgstr "正在构建"
+msgstr "正在生产"
 
 #: src/components/tables/bom/BomTable.tsx:200
 #~ msgid "Validate"
@@ -1358,7 +1358,7 @@ msgstr "验证BOM行"
 
 #: src/components/tables/bom/BomTable.tsx:309
 msgid "Edit Substitutes"
-msgstr "编辑替代部件"
+msgstr "编辑替代零件"
 
 #: src/components/tables/bom/BomTable.tsx:323
 msgid "Edit Bom Item"
@@ -1374,7 +1374,7 @@ msgstr "删除BOM项目"
 
 #: src/components/tables/bom/BomTable.tsx:341
 msgid "Bom item deleted"
-msgstr "库存项目已删除"
+msgstr "库存项已删除"
 
 #: src/components/tables/bom/BomTable.tsx:343
 msgid "Are you sure you want to remove this BOM item?"
@@ -1732,7 +1732,7 @@ msgstr "参数模板已更新"
 
 #: src/components/tables/part/PartParameterTemplateTable.tsx:95
 msgid "Delete Parameter Template"
-msgstr "删除部件参数模板"
+msgstr "删除零件参数模板"
 
 #: src/components/tables/part/PartParameterTemplateTable.tsx:96
 msgid "Parameter template deleted"
@@ -1816,11 +1816,11 @@ msgstr "按拥有单位的商品筛选"
 
 #: src/components/tables/part/PartTable.tsx:209
 msgid "Has IPN"
-msgstr "有内部部件编码"
+msgstr "有内部零件编码"
 
 #: src/components/tables/part/PartTable.tsx:210
 msgid "Filter by parts which have an internal part number"
-msgstr "按具有内部商品编号的部件筛选"
+msgstr "按具有内部商品编号的零件筛选"
 
 #: src/components/tables/part/PartTable.tsx:211
 #~ msgid "Detail"
@@ -2105,27 +2105,27 @@ msgstr "制造商"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:52
 msgid "Manufacturer Part Number"
-msgstr ""
+msgstr "制造商商品编号"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:77
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "编辑制造商零件"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:80
 msgid "Manufacturer part updated"
-msgstr ""
+msgstr "制造商零件已更新"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:91
 msgid "Delete Manufacturer Part"
-msgstr ""
+msgstr "删除制造商零件"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:92
 msgid "Manufacturer part deleted"
-msgstr ""
+msgstr "制造商零件已删除"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:94
 msgid "Are you sure you want to remove this manufacturer part?"
-msgstr ""
+msgstr "您确定要删除此制造商零件吗？"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:53
 msgid "Receive line item"
@@ -2210,7 +2210,7 @@ msgstr "供应商参考信息"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:81
 msgid "MPN"
-msgstr "制造商部件编号(MPN)"
+msgstr "制造商零件编号(MPN)"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:86
 #: src/components/tables/stock/StockItemTable.tsx:269
@@ -2339,15 +2339,15 @@ msgstr "自定义单位已创建"
 
 #: src/components/tables/settings/GroupTable.tsx:48
 msgid "Group with id {id} not found"
-msgstr ""
+msgstr "未找到 ID 为 {id} 的群组"
 
 #: src/components/tables/settings/GroupTable.tsx:50
 msgid "An error occurred while fetching group details"
-msgstr ""
+msgstr "获取群组详细信息时出错"
 
 #: src/components/tables/settings/GroupTable.tsx:74
 msgid "Permission set"
-msgstr ""
+msgstr "权限设置"
 
 #: src/components/tables/settings/GroupTable.tsx:115
 msgid "Delete group"
@@ -2368,7 +2368,7 @@ msgstr "添加群组"
 
 #: src/components/tables/settings/GroupTable.tsx:131
 msgid "Added group"
-msgstr "添加群组"
+msgstr "群组已添加"
 
 #: src/components/tables/settings/GroupTable.tsx:152
 msgid "Edit group"
@@ -2376,32 +2376,32 @@ msgstr "编辑群组"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:49
 msgid "Edit project code"
-msgstr "编辑项目代码"
+msgstr "编辑项目编码"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:56
 msgid "Project code updated"
-msgstr "项目代码已更新"
+msgstr "项目编码已更新"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:66
 msgid "Delete project code"
-msgstr "删除项目代码"
+msgstr "删除项目编码"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:67
 msgid "Project code deleted"
-msgstr "项目代码已删除"
+msgstr "项目编码已删除"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:69
 msgid "Are you sure you want to remove this project code?"
-msgstr "确定要移除这个项目代码吗？"
+msgstr "确定要移除这个项目编码吗？"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:81
 #: src/components/tables/settings/ProjectCodeTable.tsx:96
 msgid "Add project code"
-msgstr "编辑项目代码"
+msgstr "编辑项目编码"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:88
 msgid "Added project code"
-msgstr "已添加项目代码"
+msgstr "已添加项目编码"
 
 #: src/components/tables/settings/UserDrawer.tsx:92
 #~ msgid "User permission changed successfully"
@@ -2429,40 +2429,40 @@ msgstr "已添加项目代码"
 
 #: src/components/tables/settings/UserTable.tsx:66
 msgid "User with id {id} not found"
-msgstr ""
+msgstr "未找到 ID 为 {id} 的用户"
 
 #: src/components/tables/settings/UserTable.tsx:68
 msgid "An error occurred while fetching user details"
-msgstr ""
+msgstr "获取用户详细信息时出错"
 
 #: src/components/tables/settings/UserTable.tsx:86
 msgid "Is Active"
-msgstr ""
+msgstr "激活"
 
 #: src/components/tables/settings/UserTable.tsx:87
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
-msgstr ""
+msgstr "指定是否将此用户视为活动用户。取消选择此选项将不会删除账户。"
 
 #: src/components/tables/settings/UserTable.tsx:91
 msgid "Is Staff"
-msgstr ""
+msgstr "员工"
 
 #: src/components/tables/settings/UserTable.tsx:92
 msgid "Designates whether the user can log into the django admin site."
-msgstr ""
+msgstr "指定用户是否可以登录 django 管理页面。"
 
 #: src/components/tables/settings/UserTable.tsx:96
 msgid "Is Superuser"
-msgstr ""
+msgstr "超级用户"
 
 #: src/components/tables/settings/UserTable.tsx:97
 msgid "Designates that this user has all permissions without explicitly assigning them."
-msgstr ""
+msgstr "指定该用户拥有所有权限，而无需明确分配。"
 
 #: src/components/tables/settings/UserTable.tsx:103
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:19
 msgid "Info"
-msgstr ""
+msgstr "信息"
 
 #: src/components/tables/settings/UserTable.tsx:106
 #~ msgid "User updated"
@@ -2470,7 +2470,7 @@ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:107
 msgid "You cannot edit the rights for the currently logged-in user."
-msgstr ""
+msgstr "您不能编辑当前登录用户的权限。"
 
 #: src/components/tables/settings/UserTable.tsx:117
 #~ msgid "user deleted"
@@ -2529,15 +2529,15 @@ msgstr "编辑用户"
 
 #: src/components/tables/stock/StockItemTable.tsx:57
 msgid "This stock item is in production"
-msgstr "该库存项目正在生产"
+msgstr "该库存项正在生产"
 
 #: src/components/tables/stock/StockItemTable.tsx:66
 msgid "This stock item has been assigned to a sales order"
-msgstr "库存项目已分配到销售订单"
+msgstr "库存项已分配到销售订单"
 
 #: src/components/tables/stock/StockItemTable.tsx:75
 msgid "This stock item has been assigned to a customer"
-msgstr "库存项目已分配给客户"
+msgstr "库存项已分配给客户"
 
 #: src/components/tables/stock/StockItemTable.tsx:84
 msgid "This stock item is installed in another stock item"
@@ -2545,15 +2545,15 @@ msgstr "此库存项已安装在另一个库存项中"
 
 #: src/components/tables/stock/StockItemTable.tsx:93
 msgid "This stock item has been consumed by a build order"
-msgstr "此库存项目已被构建订单消耗。"
+msgstr "此库存项已被生产订单消耗。"
 
 #: src/components/tables/stock/StockItemTable.tsx:102
 msgid "This stock item has expired"
-msgstr "此库存项目已过期"
+msgstr "此库存项已过期"
 
 #: src/components/tables/stock/StockItemTable.tsx:106
 msgid "This stock item is stale"
-msgstr "此库存项是陈旧品"
+msgstr "此库存项是过期项"
 
 #: src/components/tables/stock/StockItemTable.tsx:117
 msgid "This stock item is fully allocated"
@@ -2593,15 +2593,15 @@ msgstr "购买价格"
 
 #: src/components/tables/stock/StockItemTable.tsx:234
 msgid "Show stock for active parts"
-msgstr ""
+msgstr "显示激活零件的库存"
 
 #: src/components/tables/stock/StockItemTable.tsx:239
 msgid "Filter by stock status"
-msgstr ""
+msgstr "根据库存状态筛选"
 
 #: src/components/tables/stock/StockItemTable.tsx:245
 msgid "Show stock for assmebled parts"
-msgstr ""
+msgstr "显示装配零件的库存"
 
 #: src/components/tables/stock/StockItemTable.tsx:247
 #~ msgid "Test Filter"
@@ -2613,84 +2613,84 @@ msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:249
 msgid "Allocated"
-msgstr ""
+msgstr "已分配"
 
 #: src/components/tables/stock/StockItemTable.tsx:250
 msgid "Show items which have been allocated"
-msgstr ""
+msgstr "显示已分配的项目"
 
 #: src/components/tables/stock/StockItemTable.tsx:255
 msgid "Show items which are available"
-msgstr ""
+msgstr "显示可用的项目"
 
 #: src/components/tables/stock/StockItemTable.tsx:259
 #: src/components/tables/stock/StockLocationTable.tsx:26
 msgid "Include Sublocations"
-msgstr ""
+msgstr "包括子地点"
 
 #: src/components/tables/stock/StockItemTable.tsx:260
 msgid "Include stock in sublocations"
-msgstr ""
+msgstr "包括子地点的库存"
 
 #: src/components/tables/stock/StockItemTable.tsx:264
 msgid "Depleted"
-msgstr ""
+msgstr "耗尽"
 
 #: src/components/tables/stock/StockItemTable.tsx:265
 msgid "Show depleted stock items"
-msgstr ""
+msgstr "显示耗尽的库存项"
 
 #: src/components/tables/stock/StockItemTable.tsx:270
 msgid "Show items which are in stock"
-msgstr ""
+msgstr "显示库存中的项目"
 
 #: src/components/tables/stock/StockItemTable.tsx:274
 msgid "In Production"
-msgstr ""
+msgstr "生产中"
 
 #: src/components/tables/stock/StockItemTable.tsx:275
 msgid "Show items which are in production"
-msgstr ""
+msgstr "显示正在生产的项目"
 
 #: src/components/tables/stock/StockItemTable.tsx:280
 msgid "Include stock items for variant parts"
-msgstr ""
+msgstr "包括变体零件的库存项"
 
 #: src/components/tables/stock/StockItemTable.tsx:285
 msgid "Show stock items which are installed in other items"
-msgstr ""
+msgstr "显示安装在其他项目中的库存项"
 
 #: src/components/tables/stock/StockItemTable.tsx:289
 msgid "Sent to Customer"
-msgstr ""
+msgstr "发送给客户"
 
 #: src/components/tables/stock/StockItemTable.tsx:290
 msgid "Show items which have been sent to a customer"
-msgstr ""
+msgstr "显示已发送给客户的项目"
 
 #: src/components/tables/stock/StockItemTable.tsx:294
 msgid "Is Serialized"
-msgstr ""
+msgstr "已序列化"
 
 #: src/components/tables/stock/StockItemTable.tsx:295
 msgid "Show items which have a serial number"
-msgstr ""
+msgstr "显示带有序列号的项目"
 
 #: src/components/tables/stock/StockItemTable.tsx:302
 msgid "Has Batch Code"
-msgstr ""
+msgstr "有批号"
 
 #: src/components/tables/stock/StockItemTable.tsx:303
 msgid "Show items which have a batch code"
-msgstr ""
+msgstr "显示有批号的项目"
 
 #: src/components/tables/stock/StockItemTable.tsx:308
 msgid "Tracked"
-msgstr ""
+msgstr "已跟踪"
 
 #: src/components/tables/stock/StockItemTable.tsx:309
 msgid "Show tracked items"
-msgstr ""
+msgstr "显示已跟踪项目"
 
 #: src/components/tables/stock/StockItemTable.tsx:313
 msgid "Has Purchase Price"
@@ -2723,11 +2723,11 @@ msgstr "外部的"
 
 #: src/components/tables/stock/StockLocationTable.tsx:37
 msgid "Show external locations"
-msgstr ""
+msgstr "显示外部地点"
 
 #: src/components/tables/stock/StockLocationTable.tsx:41
 msgid "Has location type"
-msgstr ""
+msgstr "有位置类型"
 
 #: src/components/tables/stock/StockLocationTable.tsx:82
 msgid "Location Type"
@@ -3812,7 +3812,7 @@ msgstr "加载器"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:64
 msgid "Custom Units"
-msgstr ""
+msgstr "自定义单位"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:70
 msgid "Part Parameters"
@@ -3832,11 +3832,11 @@ msgstr "高级选项"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:23
 msgid "External plugins are not enabled for this InvenTree installation."
-msgstr ""
+msgstr "此 InventTree 未启用外部插件。"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
 msgid "Plugin Error Stack"
-msgstr ""
+msgstr "插件错误堆栈"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:40
 msgid "Plugin Settings"
