@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-27 07:52\n"
+"PO-Revision-Date: 2023-12-28 08:17\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -671,7 +671,7 @@ msgstr "标记为已读"
 #: src/pages/Index/Settings/SystemSettings.tsx:165
 #: src/pages/part/CategoryDetail.tsx:60
 msgid "Part Categories"
-msgstr "商品分类"
+msgstr "商品类别"
 
 #: src/components/nav/SearchDrawer.tsx:76
 msgid "results"
@@ -709,7 +709,7 @@ msgstr "没有可供搜索查询的结果"
 #: src/components/render/ModelType.tsx:63
 #: src/pages/stock/LocationDetail.tsx:48
 msgid "Stock Locations"
-msgstr "库存位置"
+msgstr "库存地点"
 
 #: src/components/render/Instance.tsx:135
 msgid "Unknown model: {model}"
@@ -768,7 +768,7 @@ msgstr "制造商商品"
 #: src/components/render/ModelType.tsx:48
 #: src/pages/part/CategoryDetail.tsx:102
 msgid "Part Category"
-msgstr "商品分类"
+msgstr "商品类别"
 
 #: src/components/render/ModelType.tsx:55
 #: src/pages/stock/StockDetail.tsx:220
@@ -785,7 +785,7 @@ msgstr "库存项"
 
 #: src/components/render/ModelType.tsx:62
 msgid "Stock Location"
-msgstr "库存位置"
+msgstr "库存地点"
 
 #: src/components/render/ModelType.tsx:69
 msgid "Stock History"
@@ -973,7 +973,7 @@ msgstr "链接"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:60
 #: src/pages/sales/SalesOrderDetail.tsx:46
 msgid "Line Items"
-msgstr "行条目"
+msgstr "行项目"
 
 #: src/components/tables/ColumnRenderers.tsx:84
 #: src/components/tables/build/BuildOrderTable.tsx:115
@@ -1603,7 +1603,7 @@ msgstr "寿命"
 #: src/components/tables/notifications/NotificationsTable.tsx:29
 #: src/components/tables/part/PartTable.tsx:51
 msgid "Category"
-msgstr "分类"
+msgstr "类别"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:34
 msgid "Notification"
@@ -1624,20 +1624,20 @@ msgstr "路径"
 #: src/components/tables/stock/StockLocationTable.tsx:31
 #: src/components/tables/stock/StockLocationTable.tsx:68
 msgid "Structural"
-msgstr "结构"
+msgstr "结构性"
 
 #: src/components/tables/part/PartCategoryTable.tsx:56
 #: src/components/tables/part/PartTable.tsx:185
 msgid "Include Subcategories"
-msgstr "包含子分类"
+msgstr "包含子类别"
 
 #: src/components/tables/part/PartCategoryTable.tsx:57
 msgid "Include subcategories in results"
-msgstr "在结果中包含子分类"
+msgstr "在结果中包含子类别"
 
 #: src/components/tables/part/PartCategoryTable.tsx:62
 msgid "Show structural categories"
-msgstr "显示结构性分类"
+msgstr "显示结构性类别"
 
 #: src/components/tables/part/PartParameterTable.tsx:41
 msgid "Parameter"
@@ -1796,7 +1796,7 @@ msgstr "按装配属性筛选"
 
 #: src/components/tables/part/PartTable.tsx:186
 msgid "Include parts in subcategories"
-msgstr "包括子分类中的商品"
+msgstr "包括子类别中的商品"
 
 #: src/components/tables/part/PartTable.tsx:191
 msgid "Component"
@@ -2141,7 +2141,7 @@ msgstr "编辑行项目"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:77
 msgid "Line item updated"
-msgstr "行条目已更新"
+msgstr "行项目已更新"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:110
 msgid "Part Description"
@@ -2210,7 +2210,7 @@ msgstr "供应商参考信息"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:81
 msgid "MPN"
-msgstr "制造商零件编号(MPN)"
+msgstr "制造商零件编号 (MPN)"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:86
 #: src/components/tables/stock/StockItemTable.tsx:269
@@ -2706,7 +2706,7 @@ msgstr "外部地点"
 
 #: src/components/tables/stock/StockItemTable.tsx:323
 msgid "Show items in an external location"
-msgstr "显示外部仓储地点的项目"
+msgstr "显示外部库存地点的项目"
 
 #: src/components/tables/stock/StockLocationTable.tsx:27
 msgid "Include sublocations in results"
@@ -2926,7 +2926,7 @@ msgstr "已订购商品"
 
 #: src/defaults/dashboardItems.tsx:22
 msgid "Subscribed Categories"
-msgstr "已订阅分类"
+msgstr "已订阅类别"
 
 #: src/defaults/dashboardItems.tsx:29
 msgid "Latest Parts"
@@ -3248,7 +3248,7 @@ msgstr "商品已更新"
 
 #: src/forms/PartForms.tsx:140
 msgid "Parent part category"
-msgstr "上级商品分类"
+msgstr "上级零件类别"
 
 #: src/forms/StockForms.tsx:44
 msgid "Add given quantity as packs instead of individual items"
@@ -4071,7 +4071,7 @@ msgstr "制成商品"
 
 #: src/pages/company/CompanyDetail.tsx:84
 msgid "Supplied Parts"
-msgstr "供应的商品"
+msgstr "已提供的零件"
 
 #: src/pages/company/CompanyDetail.tsx:126
 msgid "Assigned Stock"
