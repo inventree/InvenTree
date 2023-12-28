@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-21 05:01+0000\n"
-"PO-Revision-Date: 2023-12-27 07:52\n"
+"PO-Revision-Date: 2023-12-28 08:17\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -405,7 +405,7 @@ msgstr "描述 (可选)"
 
 #: InvenTree/models.py:802
 msgid "parent"
-msgstr "上级项"
+msgstr "上级"
 
 #: InvenTree/models.py:809 InvenTree/models.py:810
 #: templates/js/translated/part.js:2792 templates/js/translated/stock.js:2728
@@ -775,7 +775,7 @@ msgstr "库存手动删除"
 
 #: InvenTree/status_codes.py:105
 msgid "Location changed"
-msgstr "仓储地点已更改"
+msgstr "库存地点已更改"
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
@@ -799,7 +799,7 @@ msgstr "已删除组件项"
 
 #: InvenTree/status_codes.py:116
 msgid "Split from parent item"
-msgstr "从父项拆分"
+msgstr "从上级项拆分"
 
 #: InvenTree/status_codes.py:117
 msgid "Split child item"
@@ -1103,7 +1103,7 @@ msgstr "目标地点"
 
 #: build/models.py:232
 msgid "Select location where the completed items will be stored"
-msgstr "选择已完成项目仓储地点"
+msgstr "选择已完成项目库存地点"
 
 #: build/models.py:236
 msgid "Build Quantity"
@@ -1323,7 +1323,7 @@ msgstr "分配数量 ({q}) 不得超过可用库存数量 ({a})"
 
 #: build/models.py:1393 order/models.py:1659
 msgid "Stock item is over-allocated"
-msgstr "库存物品分配过度！"
+msgstr "库存项分配过度"
 
 #: build/models.py:1399 order/models.py:1662
 msgid "Allocation quantity must be greater than zero"
@@ -1467,7 +1467,7 @@ msgstr "废品产出的原因"
 
 #: build/serializers.py:494
 msgid "Location for completed build outputs"
-msgstr "已完成生产产出的仓储地点"
+msgstr "已完成生产产出的库存地点"
 
 #: build/serializers.py:500 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:818
@@ -1603,7 +1603,7 @@ msgstr "必须提供分配的项"
 
 #: build/serializers.py:943
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr "零件来源的仓储地点(留空则可来源于任何仓储地点)"
+msgstr "零件来源的库存地点(留空则可来源于任何库存地点)"
 
 #: build/serializers.py:951
 msgid "Exclude Location"
@@ -1611,7 +1611,7 @@ msgstr "排除地点"
 
 #: build/serializers.py:952
 msgid "Exclude stock items from this selected location"
-msgstr "从该选定的仓储地点排除库存项"
+msgstr "从该选定的库存地点排除库存项"
 
 #: build/serializers.py:957
 msgid "Interchangeable Stock"
@@ -2516,7 +2516,7 @@ msgstr "使用供应商定价"
 
 #: common/models.py:1465
 msgid "Include supplier price breaks in overall pricing calculations"
-msgstr "将供应商的价格折扣纳入总体定价计算中"
+msgstr "将供应商的价批发价纳入总体定价计算中"
 
 #: common/models.py:1471
 msgid "Purchase History Override"
@@ -2524,7 +2524,7 @@ msgstr "采购历史覆盖"
 
 #: common/models.py:1472
 msgid "Historical purchase order pricing overrides supplier price breaks"
-msgstr "历史采购订单定价覆盖供应商价格折扣"
+msgstr "历史采购订单定价覆盖供应商批发价"
 
 #: common/models.py:1478
 msgid "Use Stock Item Pricing"
@@ -2637,7 +2637,7 @@ msgstr "添加测试报告"
 
 #: common/models.py:1581
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
-msgstr "在打印测试报告时，将测试报告副本附加到相关的库存物品"
+msgstr "在打印测试报告时，将测试报告副本附加到相关的库存项"
 
 #: common/models.py:1587
 msgid "Globally Unique Serials"
@@ -3197,7 +3197,7 @@ msgstr "从搜索预览窗口中排除非活动零件"
 
 #: common/models.py:2130
 msgid "Search Categories"
-msgstr "搜索分类"
+msgstr "搜索类别"
 
 #: common/models.py:2131
 msgid "Display part categories in search preview window"
@@ -3225,7 +3225,7 @@ msgstr "搜索位置"
 
 #: common/models.py:2152
 msgid "Display stock locations in search preview window"
-msgstr "在搜索预览窗口中显示库存位置"
+msgstr "在搜索预览窗口中显示库存地点"
 
 #: common/models.py:2158
 msgid "Search Companies"
@@ -3297,7 +3297,7 @@ msgstr "搜索预览结果"
 
 #: common/models.py:2215
 msgid "Number of results to show in each section of the search preview window"
-msgstr "在搜索预览窗口每个部分显示的结果数"
+msgstr "搜索预览窗口中各部分显示的结果数"
 
 #: common/models.py:2221
 msgid "Regex Search"
@@ -3325,11 +3325,11 @@ msgstr "在某些表格中显示可用的商品数量"
 
 #: common/models.py:2242
 msgid "Escape Key Closes Forms"
-msgstr "退出键关闭表单"
+msgstr "Escape 键关闭表单"
 
 #: common/models.py:2243
 msgid "Use the escape key to close modal forms"
-msgstr "使用退出键关闭模式表单"
+msgstr "使用 escape 键关闭表单"
 
 #: common/models.py:2249
 msgid "Fixed Navbar"
@@ -3353,7 +3353,7 @@ msgstr "零件排产"
 
 #: common/models.py:2272
 msgid "Display part scheduling information"
-msgstr "显示配件日程安排"
+msgstr "显示零件计划信息"
 
 #: common/models.py:2278 part/templates/part/detail.html:62
 msgid "Part Stocktake"
@@ -3385,15 +3385,15 @@ msgstr "默认库存项模板"
 
 #: common/models.py:2305
 msgid "The stock item label template to be automatically selected"
-msgstr "自动选择的库存项标签模板"
+msgstr "自动选择库存项标签模板"
 
 #: common/models.py:2313
 msgid "Default stock location label template"
-msgstr "默认库存位置标签模板"
+msgstr "默认库存地点标签模板"
 
 #: common/models.py:2314
 msgid "The stock location label template to be automatically selected"
-msgstr "自动选择的库存项位置标签模板"
+msgstr "自动选择库存地点标签模板"
 
 #: common/models.py:2322
 msgid "Receive error reports"
@@ -3417,15 +3417,15 @@ msgstr "价格"
 
 #: common/models.py:2375
 msgid "Unit price at specified quantity"
-msgstr "按指定数量计算单位价格"
+msgstr "指定数量的单价"
 
 #: common/models.py:2534 common/models.py:2712
 msgid "Endpoint"
-msgstr "终结点"
+msgstr "端点"
 
 #: common/models.py:2535
 msgid "Endpoint at which this webhook is received"
-msgstr "接收此Webhook的终点"
+msgstr "接收此 Webhook 的端点"
 
 #: common/models.py:2544
 msgid "Name for this webhook"
@@ -3494,7 +3494,7 @@ msgstr "此消息的正文"
 
 #: common/models.py:2713
 msgid "Endpoint on which this message was received"
-msgstr "收到该消息的终点"
+msgstr "接收该信息的端点"
 
 #: common/models.py:2718
 msgid "Worked on"
@@ -3579,7 +3579,7 @@ msgstr "新建{verbose_name}"
 
 #: common/notifications.py:292
 msgid "A new order has been created and assigned to you"
-msgstr "有新订单被创建并分配给你"
+msgstr "有新订单被创建并分配给您"
 
 #: common/notifications.py:298
 #, python-brace-format
@@ -3809,7 +3809,7 @@ msgstr "供内部使用的配送便笺"
 
 #: company/models.py:388
 msgid "Link to address information (external)"
-msgstr "链接地址信息(外部)"
+msgstr "链接地址信息 (外部)"
 
 #: company/models.py:413 company/models.py:689 stock/models.py:709
 #: stock/serializers.py:205 stock/templates/stock/item_base.html:142
@@ -3846,7 +3846,7 @@ msgstr "选择制造商"
 #: templates/js/translated/purchase_order.js:1845
 #: templates/js/translated/purchase_order.js:2047
 msgid "MPN"
-msgstr "制造商零件编号(MPN)"
+msgstr "制造商零件编号 (MPN)"
 
 #: company/models.py:436
 msgid "Manufacturer Part Number"
@@ -3901,7 +3901,7 @@ msgstr "包装单位必须与基础零件单位兼容"
 
 #: company/models.py:640
 msgid "Pack units must be greater than zero"
-msgstr "包单元必须大于0"
+msgstr "包装单位必须大于 0"
 
 #: company/models.py:656
 msgid "Linked manufacturer part must reference the same base part"
@@ -3986,7 +3986,7 @@ msgstr "包装数量"
 
 #: company/models.py:743
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
-msgstr "一个包装所包含的零件个数，为空则为1个/包装"
+msgstr "一个包装所包含的零件个数。留空用于单独包装。"
 
 #: company/models.py:759 part/models.py:1860
 msgid "multiple"
@@ -4219,7 +4219,7 @@ msgstr "退货订单"
 #: company/templates/company/detail.html:146
 #: order/templates/order/return_orders.html:20
 msgid "Create new return order"
-msgstr "创建新的退货顺序"
+msgstr "创建新的退货订单"
 
 #: company/templates/company/detail.html:147
 #: order/templates/order/return_orders.html:21
@@ -4310,15 +4310,15 @@ msgstr "制造商零件"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
-msgstr "供应商零件"
+msgstr "已供应零件"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
-msgstr "供应的库存物品"
+msgstr "已提供的库存项"
 
 #: company/templates/company/sidebar.html:25
 msgid "Assigned Stock Items"
-msgstr "分配的库存物品"
+msgstr "分配的库存项"
 
 #: company/templates/company/sidebar.html:33
 msgid "Contacts"
@@ -4340,7 +4340,7 @@ msgstr "供应商商品"
 #: company/templates/company/supplier_part.html:50
 #: templates/js/translated/company.js:1516
 msgid "Supplier part actions"
-msgstr "供应商配件操作"
+msgstr "供应商零件操作"
 
 #: company/templates/company/supplier_part.html:55
 #: company/templates/company/supplier_part.html:56
@@ -4385,7 +4385,7 @@ msgstr "没有可用的供应商信息"
 #: templates/js/translated/purchase_order.js:1844
 #: templates/js/translated/purchase_order.js:2022
 msgid "SKU"
-msgstr "库存量单位"
+msgstr "库存单位 (SKU)"
 
 #: company/templates/company/supplier_part.html:206
 msgid "Supplier Part Stock"
@@ -4414,7 +4414,7 @@ msgstr "价格信息"
 #: templates/js/translated/company.js:398
 #: templates/js/translated/pricing.js:684
 msgid "Add Price Break"
-msgstr "新增价格限制"
+msgstr "新增批发价"
 
 #: company/templates/company/supplier_part.html:276
 msgid "Supplier Part QR Code"
@@ -4422,7 +4422,7 @@ msgstr "供应商零件二维码"
 
 #: company/templates/company/supplier_part.html:287
 msgid "Link Barcode to Supplier Part"
-msgstr "绑定二维码到供应商"
+msgstr "链接条形码与供应商零件"
 
 #: company/templates/company/supplier_part.html:359
 msgid "Update Part Availability"
@@ -4715,7 +4715,7 @@ msgstr "订单无法完成，因为有不完整的行项目"
 
 #: order/models.py:1124
 msgid "Item quantity"
-msgstr "物品数量"
+msgstr "项目数量"
 
 #: order/models.py:1136
 msgid "Line item reference"
@@ -4727,11 +4727,11 @@ msgstr "行项目注释"
 
 #: order/models.py:1149
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr "此行项目的目标日期(留空以使用从订单起的目标日期)"
+msgstr "此行项目的目标日期 (留空以使用从订单起的目标日期)"
 
 #: order/models.py:1167
 msgid "Line item description (optional)"
-msgstr "行项目描述(可选)"
+msgstr "行项目描述 (可选)"
 
 #: order/models.py:1172
 msgid "Context"
@@ -4747,7 +4747,7 @@ msgstr "单价"
 
 #: order/models.py:1212
 msgid "Supplier part must match supplier"
-msgstr "供应商配件必须匹配供应商"
+msgstr "供应商零件必须匹配供应商"
 
 #: order/models.py:1220
 msgid "deleted"
@@ -4789,7 +4789,7 @@ msgstr "采购订单价"
 
 #: order/models.py:1273
 msgid "Where does the Purchaser want this item to be stored?"
-msgstr "采购方希望将此物品存放在何处?"
+msgstr "采购方希望将此物品存放在何处？"
 
 #: order/models.py:1338
 msgid "Virtual part cannot be assigned to a sales order"
@@ -4802,11 +4802,11 @@ msgstr "只有可销售产品可以分配销售订单"
 #: order/models.py:1369 part/templates/part/part_pricing.html:107
 #: part/templates/part/prices.html:139 templates/js/translated/pricing.js:957
 msgid "Sale Price"
-msgstr "销售价格"
+msgstr "售出价格"
 
 #: order/models.py:1370
 msgid "Unit sale price"
-msgstr "销售订单价"
+msgstr "售出价格单位"
 
 #: order/models.py:1380
 msgid "Shipped quantity"
@@ -4863,15 +4863,15 @@ msgstr "物流已发出"
 
 #: order/models.py:1520
 msgid "Shipment has no allocated stock items"
-msgstr "装运没有分配的库存物品"
+msgstr "装运没有分配的库存项"
 
 #: order/models.py:1633 order/models.py:1635
 msgid "Stock item has not been assigned"
-msgstr "库存物品尚未分配"
+msgstr "库存项尚未分配"
 
 #: order/models.py:1641
 msgid "Cannot allocate stock item to a line with a different part"
-msgstr "无法将库存物品分配给与不同零件的行"
+msgstr "无法将库存项分配给不同零件的行"
 
 #: order/models.py:1643
 msgid "Cannot allocate stock to a line without a part"
@@ -4883,7 +4883,7 @@ msgstr "分配数量不能超过库存数量"
 
 #: order/models.py:1665 order/serializers.py:1146
 msgid "Quantity must be 1 for serialized stock item"
-msgstr "序列化库存物品的数量必须为1"
+msgstr "序列化库存项的数量必须为 1"
 
 #: order/models.py:1668
 msgid "Sales order does not match shipment"
@@ -4904,11 +4904,11 @@ msgstr "销售订单装运参考"
 #: order/models.py:1699 order/models.py:1992
 #: templates/js/translated/return_order.js:722
 msgid "Item"
-msgstr "物品"
+msgstr "项目"
 
 #: order/models.py:1700
 msgid "Select stock item to allocate"
-msgstr "选择要分配的库存物品"
+msgstr "选择要分配的库存项"
 
 #: order/models.py:1703
 msgid "Enter stock allocation quantity"
@@ -4932,7 +4932,7 @@ msgstr "只有序列化项目可以分配到退货订单"
 
 #: order/models.py:1993
 msgid "Select item to return from customer"
-msgstr "选择要从客户返回的项目"
+msgstr "选择要从客户退回的项目"
 
 #: order/models.py:1998
 msgid "Received Date"
@@ -4940,7 +4940,7 @@ msgstr "收到日期"
 
 #: order/models.py:1999
 msgid "The date this this return item was received"
-msgstr "收到此退货项的日期"
+msgstr "收到此退回项的日期"
 
 #: order/models.py:2010 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
@@ -4953,7 +4953,7 @@ msgstr "此行项目的输出"
 
 #: order/models.py:2016
 msgid "Cost associated with return or repair for this line item"
-msgstr "返回或修理此直线项目的相关成本"
+msgstr "此行项目退货或修理的相关费用"
 
 #: order/serializers.py:258
 msgid "Order cannot be cancelled"
@@ -4961,11 +4961,11 @@ msgstr "无法取消订单"
 
 #: order/serializers.py:273 order/serializers.py:1164
 msgid "Allow order to be closed with incomplete line items"
-msgstr "允许订单以不完整的行项目关闭"
+msgstr "允许关闭包含未完成行项目的订单"
 
 #: order/serializers.py:283 order/serializers.py:1174
 msgid "Order has incomplete line items"
-msgstr "订单有不完整的行项目"
+msgstr "订单有未完成的行项目"
 
 #: order/serializers.py:396
 msgid "Order is not open"
@@ -4993,23 +4993,23 @@ msgstr "采购订单必须匹配供应商"
 
 #: order/serializers.py:482 order/serializers.py:1250
 msgid "Line Item"
-msgstr "行条目"
+msgstr "行项目"
 
 #: order/serializers.py:488
 msgid "Line item does not match purchase order"
-msgstr "行条目与订单不匹配"
+msgstr "行项目与采购订单不匹配"
 
 #: order/serializers.py:498 order/serializers.py:617 order/serializers.py:1624
 msgid "Select destination location for received items"
-msgstr "选择入库地点"
+msgstr "选择接收项目的目的地"
 
 #: order/serializers.py:517 templates/js/translated/purchase_order.js:1126
 msgid "Enter batch code for incoming stock items"
-msgstr "输入进货物品的批量代码"
+msgstr "输入入库项目的批号"
 
 #: order/serializers.py:525 templates/js/translated/purchase_order.js:1150
 msgid "Enter serial numbers for incoming stock items"
-msgstr "输入入库存项的序列号"
+msgstr "输入入库项目的序列号"
 
 #: order/serializers.py:538 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -5041,7 +5041,7 @@ msgstr "提供条形码值必须是唯一的"
 
 #: order/serializers.py:986
 msgid "Sale price currency"
-msgstr "销售价格货币"
+msgstr "售出价格货币"
 
 #: order/serializers.py:1043
 msgid "No shipment details provided"
@@ -5049,7 +5049,7 @@ msgstr "未提供装运详情"
 
 #: order/serializers.py:1107 order/serializers.py:1259
 msgid "Line item is not associated with this order"
-msgstr "行条目没有与此订单关联"
+msgstr "行项目没有与此订单关联"
 
 #: order/serializers.py:1129
 msgid "Quantity must be positive"
@@ -5081,7 +5081,7 @@ msgstr "退货订单行项目"
 
 #: order/serializers.py:1597
 msgid "Line item does not match return order"
-msgstr "行条目与退货订单不匹配"
+msgstr "行项目与退货订单不匹配"
 
 #: order/serializers.py:1600
 msgid "Line item has already been received"
@@ -5089,7 +5089,7 @@ msgstr "已经收到的行项目"
 
 #: order/serializers.py:1631
 msgid "Items can only be received against orders which are in progress"
-msgstr "项目只能根据正在执行的订单接收。"
+msgstr "项目只能根据正在执行的订单接收"
 
 #: order/serializers.py:1710
 msgid "Line price currency"
@@ -5194,7 +5194,7 @@ msgstr "供应商信息无效"
 #: order/templates/order/order_base.html:154
 #: order/templates/order/sales_order_base.html:157
 msgid "Completed Line Items"
-msgstr "已完成单项"
+msgstr "已完成行项目"
 
 #: order/templates/order/order_base.html:160
 #: order/templates/order/sales_order_base.html:163
@@ -5329,7 +5329,7 @@ msgstr "步骤 %(step)s / %(count)s"
 #: report/templates/report/inventree_return_order_report_base.html:19
 #: report/templates/report/inventree_so_report_base.html:22
 msgid "Line Items"
-msgstr "单项"
+msgstr "行项目"
 
 #: order/templates/order/po_sidebar.html:7
 msgid "Received Stock"
@@ -5337,7 +5337,7 @@ msgstr "已入库"
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
-msgstr "采购订单"
+msgstr "采购订单项目"
 
 #: order/templates/order/purchase_order_detail.html:27
 #: order/templates/order/return_order_detail.html:24
@@ -5346,14 +5346,14 @@ msgstr "采购订单"
 #: templates/js/translated/return_order.js:459
 #: templates/js/translated/sales_order.js:237
 msgid "Add Line Item"
-msgstr "新加单项"
+msgstr "添加行项目"
 
 #: order/templates/order/purchase_order_detail.html:31
 #: order/templates/order/purchase_order_detail.html:32
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
 msgid "Receive Line Items"
-msgstr "收到单项"
+msgstr "收到行项目"
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/return_order_detail.html:45
@@ -5369,7 +5369,7 @@ msgstr "添加附加项"
 
 #: order/templates/order/purchase_order_detail.html:74
 msgid "Received Items"
-msgstr "已收到的项"
+msgstr "已收到的项目"
 
 #: order/templates/order/purchase_order_detail.html:99
 #: order/templates/order/return_order_detail.html:85
@@ -5380,7 +5380,7 @@ msgstr "订单备注"
 #: order/templates/order/return_order_base.html:18
 #: order/templates/order/sales_order_base.html:18
 msgid "Customer logo thumbnail"
-msgstr "客户logo"
+msgstr "客户 logo 缩略图"
 
 #: order/templates/order/return_order_base.html:60
 msgid "Print return order report"
@@ -5430,7 +5430,7 @@ msgstr "打印采购订单报告"
 #: order/templates/order/sales_order_base.html:88
 #: order/templates/order/sales_order_base.html:89
 msgid "Ship Items"
-msgstr "货运项目"
+msgstr "运送项目"
 
 #: order/templates/order/sales_order_base.html:92
 #: templates/js/translated/sales_order.js:484
@@ -5457,7 +5457,7 @@ msgstr "将条形码链接到销售订单"
 
 #: order/templates/order/sales_order_detail.html:18
 msgid "Sales Order Items"
-msgstr "销售订单"
+msgstr "销售订单项目"
 
 #: order/templates/order/sales_order_detail.html:67
 #: order/templates/order/so_sidebar.html:8 templates/InvenTree/index.html:284
@@ -5537,7 +5537,7 @@ msgstr "类别 ID"
 
 #: part/admin.py:43 part/admin.py:190 part/stocktake.py:221
 msgid "Category Name"
-msgstr "类比名称"
+msgstr "类别名称"
 
 #: part/admin.py:44 part/admin.py:194
 msgid "Default Location ID"
@@ -5589,11 +5589,11 @@ msgstr "最高成本"
 
 #: part/admin.py:192 part/admin.py:266 stock/admin.py:43 stock/admin.py:134
 msgid "Parent ID"
-msgstr "父类编号"
+msgstr "上级编号"
 
 #: part/admin.py:193 part/admin.py:268 stock/admin.py:44
 msgid "Parent Name"
-msgstr "父级名称:"
+msgstr "上级名称"
 
 #: part/admin.py:196 part/templates/part/category.html:88
 #: part/templates/part/category.html:101
@@ -5617,11 +5617,11 @@ msgstr "BOM 级别"
 
 #: part/admin.py:263
 msgid "BOM Item ID"
-msgstr "物料清单项目lD"
+msgstr "物料清单项目 lD"
 
 #: part/admin.py:267
 msgid "Parent IPN"
-msgstr "父级内部零件号"
+msgstr "上级内部零件号"
 
 #: part/admin.py:270 part/models.py:3673
 msgid "Part IPN"
@@ -5670,7 +5670,7 @@ msgstr "必须选择此项"
 #: part/bom.py:174 part/models.py:97 part/models.py:859
 #: part/templates/part/category.html:116 part/templates/part/part_base.html:367
 msgid "Default Location"
-msgstr "默认仓储地点"
+msgstr "默认库存地点"
 
 #: part/bom.py:175 templates/email/low_stock_notification.html:16
 msgid "Total Stock"
@@ -5698,17 +5698,17 @@ msgstr "商品类别"
 
 #: part/models.py:98
 msgid "Default location for parts in this category"
-msgstr "此类别商品的默认仓储地点"
+msgstr "此类别商品的默认库存地点"
 
 #: part/models.py:103 stock/models.py:154 templates/js/translated/stock.js:2743
 #: templates/js/translated/table_filters.js:239
 #: templates/js/translated/table_filters.js:283
 msgid "Structural"
-msgstr "结构类别"
+msgstr "结构性"
 
 #: part/models.py:105
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
-msgstr "零件可能无法直接分配到结构类别，但可以分配到子类别。注: 如果电脑是结构类别，那么硬盘，内存，CPU就是子类别."
+msgstr "零件可能无法直接分配到结构类别，但可以分配到子类别。"
 
 #: part/models.py:109
 msgid "Default keywords"
@@ -5729,21 +5729,21 @@ msgstr "图标(可选)"
 
 #: part/models.py:134
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
-msgstr "你不能使这个部分类别结构化，因为有些部分已经分配给它!"
+msgstr "您不能使这个零件类别结构化，因为有些零件已经分配给了它！"
 
 #: part/models.py:452
 msgid "Invalid choice for parent part"
-msgstr "无效的父零件选择"
+msgstr "无效的上级零件选择"
 
 #: part/models.py:495 part/models.py:498
 #, python-brace-format
 msgid "Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
-msgstr "零件'{self}' 不能用在 '{parent}' 的物料清单(接收)"
+msgstr "零件 \"{self}\" 不能用在 \"{parent}\" 的物料清单 (递归)"
 
 #: part/models.py:507
 #, python-brace-format
 msgid "Part '{parent}' is  used in BOM for '{self}' (recursive)"
-msgstr "零件'{parent}' 不能用在 '{self}' 的物料清单(递归)"
+msgstr "零件 \"{parent}\" 不能用在 \"{self}\" 的物料清单 (递归)"
 
 #: part/models.py:574
 #, python-brace-format
@@ -5764,7 +5764,7 @@ msgstr "与这个名称、内部零件号和修订版的部分已存在。"
 
 #: part/models.py:758
 msgid "Parts cannot be assigned to structural part categories!"
-msgstr "零件不能分配到结构零件类别！"
+msgstr "零件不能分配到结构性零件类别！"
 
 #: part/models.py:782 part/models.py:3670
 msgid "Part name"
@@ -5813,7 +5813,7 @@ msgstr "商品版本号"
 
 #: part/models.py:857
 msgid "Where is this item normally stored?"
-msgstr "此零件通常的仓储位置?"
+msgstr "此零件通常的存放位置?"
 
 #: part/models.py:902 part/templates/part/part_base.html:376
 msgid "Default Supplier"
@@ -5829,7 +5829,7 @@ msgstr "默认到期"
 
 #: part/models.py:911
 msgid "Expiry time (in days) for stock items of this part"
-msgstr "此部分库存物品的过期时间(天)"
+msgstr "此零件库存项的过期时间 (天)"
 
 #: part/models.py:918
 msgid "Minimum allowed stock level"
@@ -5943,7 +5943,7 @@ msgstr "最低内部价格"
 
 #: part/models.py:2881
 msgid "Minimum cost based on internal price breaks"
-msgstr "基于内部价格折算的最低成本"
+msgstr "基于内部批发价的最低成本"
 
 #: part/models.py:2886
 msgid "Maximum Internal Price"
@@ -5951,7 +5951,7 @@ msgstr "最大内部价格"
 
 #: part/models.py:2887
 msgid "Maximum cost based on internal price breaks"
-msgstr "基于内部价格折算的最高成本"
+msgstr "基于内部批发价的最高成本"
 
 #: part/models.py:2892
 msgid "Minimum Supplier Price"
@@ -6003,19 +6003,19 @@ msgstr "计算总最大成本"
 
 #: part/models.py:2940
 msgid "Minimum Sale Price"
-msgstr "最低销售价格"
+msgstr "最低售出价格"
 
 #: part/models.py:2941
 msgid "Minimum sale price based on price breaks"
-msgstr "基于价格折算的最低销售价格"
+msgstr "基于批发价的最低售出价格"
 
 #: part/models.py:2946
 msgid "Maximum Sale Price"
-msgstr "最高销售价格"
+msgstr "最高售出价格"
 
 #: part/models.py:2947
 msgid "Maximum sale price based on price breaks"
-msgstr "基于价格折算的最大销售价格"
+msgstr "基于批发价的最大售出价格"
 
 #: part/models.py:2952
 msgid "Minimum Sale Cost"
@@ -6023,7 +6023,7 @@ msgstr "最低销售成本"
 
 #: part/models.py:2953
 msgid "Minimum historical sale price"
-msgstr "历史最低销售价格"
+msgstr "历史最低售出价格"
 
 #: part/models.py:2958
 msgid "Maximum Sale Cost"
@@ -6031,7 +6031,7 @@ msgstr "最高销售成本"
 
 #: part/models.py:2959
 msgid "Maximum historical sale price"
-msgstr "历史最高销售价格"
+msgstr "历史最高售出价格"
 
 #: part/models.py:2978
 msgid "Part for stocktake"
@@ -6209,7 +6209,7 @@ msgstr "无效的参数值选择"
 
 #: part/models.py:3539
 msgid "Parent Part"
-msgstr "父零件"
+msgstr "上级零件"
 
 #: part/models.py:3544 part/models.py:3619 part/models.py:3620
 #: templates/InvenTree/settings/settings_staff_js.html:295
@@ -6242,7 +6242,7 @@ msgstr "唯一零件ID 值"
 
 #: part/models.py:3674
 msgid "Part IPN value"
-msgstr "配件IPN值"
+msgstr "零件IPN值"
 
 #: part/models.py:3677
 msgid "Level"
@@ -6258,7 +6258,7 @@ msgstr "BOM项"
 
 #: part/models.py:3765
 msgid "Select parent part"
-msgstr "选择父零件"
+msgstr "选择上级零件"
 
 #: part/models.py:3773
 msgid "Sub part"
@@ -6270,15 +6270,15 @@ msgstr "选择要用于BOM 的零件"
 
 #: part/models.py:3780
 msgid "BOM quantity for this BOM item"
-msgstr "此BOM 项目的BOM 数量"
+msgstr "此物料清单项目的数量"
 
 #: part/models.py:3785
 msgid "This BOM item is optional"
-msgstr "此BOM 项是可选的"
+msgstr "此物料清单项是可选的"
 
 #: part/models.py:3791
 msgid "This BOM item is consumable (it is not tracked in build orders)"
-msgstr "这个BOM 项目是耗材 (它没有在生产订单中被追踪)"
+msgstr "此物料清单是消耗品 (它没有在生产订单中被追踪)"
 
 #: part/models.py:3795 part/templates/part/upload_bom.html:55
 msgid "Overage"
@@ -6350,7 +6350,7 @@ msgstr "替代零件不能与主零件相同"
 
 #: part/models.py:4080
 msgid "Parent BOM item"
-msgstr "上级BOM项目"
+msgstr "上级物料清单项目"
 
 #: part/models.py:4088
 msgid "Substitute part"
@@ -6378,7 +6378,7 @@ msgstr "复制关系已经存在"
 
 #: part/serializers.py:176 part/serializers.py:199 stock/serializers.py:324
 msgid "Purchase currency of this stock item"
-msgstr "购买此库存物品的货币"
+msgstr "购买此库存项的货币"
 
 #: part/serializers.py:352
 msgid "No parts selected"
@@ -6386,7 +6386,7 @@ msgstr "没有选定零件"
 
 #: part/serializers.py:360
 msgid "Select category"
-msgstr "选择分类"
+msgstr "选择类别"
 
 #: part/serializers.py:390
 msgid "Original Part"
@@ -6438,11 +6438,11 @@ msgstr "指定此零件的初始库存数量。如果数量为零，则不添加
 
 #: part/serializers.py:426
 msgid "Initial Stock Location"
-msgstr "初始化库存位置"
+msgstr "初始化库存地点"
 
 #: part/serializers.py:426
 msgid "Specify initial stock location for this Part"
-msgstr "初始化指定此零件的库存位置"
+msgstr "初始化指定此零件的库存地点"
 
 #: part/serializers.py:436
 msgid "Select supplier (or leave blank to skip)"
@@ -6466,7 +6466,7 @@ msgstr "所选公司不是一个有效的制造商"
 
 #: part/serializers.py:477
 msgid "Manufacturer part matching this MPN already exists"
-msgstr "匹配此制造商零件号的制造商配件已存在"
+msgstr "此制造商零件编号 (MPN) 的制造商零件已存在"
 
 #: part/serializers.py:485
 msgid "Supplier part matching this SKU already exists"
@@ -6523,11 +6523,11 @@ msgstr "限制盘点报告到某个特定零件以及任何变体零件"
 
 #: part/serializers.py:1016
 msgid "Limit stocktake report to a particular part category, and any child categories"
-msgstr "限制盘点报告到某个特定零件分类以及任何子分类"
+msgstr "限制盘点报告到某个特定零件类别以及任何子类别"
 
 #: part/serializers.py:1022
 msgid "Limit stocktake report to a particular stock location, and any child locations"
-msgstr "限制盘点报告到某个特定零件库存位置以及任何子位置"
+msgstr "限制盘点报告到某个特定零件库存地点以及任何子位置"
 
 #: part/serializers.py:1027
 msgid "Exclude External Stock"
@@ -6547,7 +6547,7 @@ msgstr "生成包含计算出来的盘点数据的报告文件"
 
 #: part/serializers.py:1039
 msgid "Update Parts"
-msgstr "更新配件"
+msgstr "更新零件"
 
 #: part/serializers.py:1040
 msgid "Update specified parts with calculated stocktake data"
@@ -6644,7 +6644,7 @@ msgstr "未指定零件列"
 
 #: part/serializers.py:1640
 msgid "Multiple matching parts found"
-msgstr "找到多个匹配的配件。"
+msgstr "找到多个匹配的零件。"
 
 #: part/serializers.py:1643
 msgid "No matching part found"
@@ -6682,11 +6682,11 @@ msgstr "总费用最大值"
 
 #: part/stocktake.py:289
 msgid "Stocktake Report Available"
-msgstr "盘点报告可用"
+msgstr "库存盘点报告可用"
 
 #: part/stocktake.py:290
 msgid "A new stocktake report is available for download"
-msgstr "有新的盘点报告可供下载"
+msgstr "有新的库存盘点报告可供下载"
 
 #: part/tasks.py:33
 msgid "Low stock notification"
@@ -6789,7 +6789,7 @@ msgstr "导入零件"
 #: part/templates/part/copy_part.html:10
 #, python-format
 msgid "Make a copy of part '%(full_name)s'."
-msgstr "制作一个 '%(full_name)s'配件的副本."
+msgstr "制作一个 '%(full_name)s'零件的副本."
 
 #: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
@@ -6906,7 +6906,7 @@ msgstr "添加BOM项"
 
 #: part/templates/part/detail.html:297
 msgid "Assemblies"
-msgstr "装配件"
+msgstr "装零件"
 
 #: part/templates/part/detail.html:313
 msgid "Part Builds"
@@ -7244,7 +7244,7 @@ msgstr "最新更新"
 
 #: part/templates/part/prices.html:37 part/templates/part/prices.html:127
 msgid "Price Category"
-msgstr "价格分类"
+msgstr "价格类别"
 
 #: part/templates/part/prices.html:38 part/templates/part/prices.html:128
 msgid "Minimum"
@@ -7280,7 +7280,7 @@ msgstr "销售历史"
 
 #: part/templates/part/prices.html:157
 msgid "Sale price data is not available for this part"
-msgstr "销售价格不可用"
+msgstr "该零件的售出价格数据不可用"
 
 #: part/templates/part/prices.html:164
 msgid "Price range data is not available for this part."
@@ -7295,15 +7295,15 @@ msgstr "跳转到总览图"
 
 #: part/templates/part/prices.html:180
 msgid "Add Internal Price Break"
-msgstr "添加内部价格限制"
+msgstr "添加内部批发价"
 
 #: part/templates/part/prices.html:297
 msgid "Sale Pricing"
-msgstr "销售价格"
+msgstr "售出价格"
 
 #: part/templates/part/prices.html:303
 msgid "Add Sell Price Break"
-msgstr "添加内部价格限制"
+msgstr "添加售出批发价"
 
 #: part/templates/part/pricing_javascript.html:24
 msgid "Update Pricing"
@@ -7357,7 +7357,7 @@ msgstr "每个商品必须已经存在于数据库"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
-msgstr "创建新的配件变体"
+msgstr "创建新的零件变体"
 
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
@@ -7378,7 +7378,7 @@ msgstr "匹配参考"
 #: part/views.py:243
 #, python-brace-format
 msgid "Can't import part {new_part.name} because there is no category assigned"
-msgstr "无法导入 {new_part.name} 配件，因为没有类别指派。"
+msgstr "无法导入 {new_part.name} 零件，因为没有类别指派。"
 
 #: part/views.py:384
 msgid "Select Part Image"
@@ -7420,7 +7420,7 @@ msgstr "条形码匹配现有项目"
 
 #: plugin/base/barcodes/api.py:309
 msgid "No matching part data found"
-msgstr "没有找到匹配的配件数据"
+msgstr "没有找到匹配的零件数据"
 
 #: plugin/base/barcodes/api.py:326
 msgid "No matching supplier parts found"
@@ -7527,7 +7527,7 @@ msgstr "接收物品到的地点"
 
 #: plugin/base/barcodes/serializers.py:126
 msgid "Cannot select a structural location"
-msgstr "无法选择一个结构位置"
+msgstr "无法选择一个结构性位置"
 
 #: plugin/base/barcodes/serializers.py:140
 msgid "Sales Order to allocate items against"
@@ -7986,7 +7986,7 @@ msgstr "包括已安装的测试"
 
 #: report/models.py:342
 msgid "Include test results for stock items installed inside assembled item"
-msgstr "包含组装物品内安装的库存物品的测试结果"
+msgstr "包含组装物品内安装的库存项的测试结果"
 
 #: report/models.py:402
 msgid "Build Filters"
@@ -8096,7 +8096,7 @@ msgstr "序列号"
 
 #: report/templates/report/inventree_slr_report.html:97
 msgid "Stock location items"
-msgstr "库存位置"
+msgstr "库存地点"
 
 #: report/templates/report/inventree_test_report_base.html:21
 msgid "Stock Item Test Report"
@@ -8262,7 +8262,8 @@ msgstr "给定的供应商零件不存在"
 
 #: stock/api.py:823
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
-msgstr "供应商零件有定义的包大小，但标志use_pack_size 未设置"
+msgstr "供应商零件有定义的包装大小，但 use_pack_size 标志\n"
+"未设置"
 
 #: stock/api.py:846
 msgid "Serial numbers cannot be supplied for a non-trackable part"
@@ -8270,11 +8271,11 @@ msgstr "不能为不可跟踪的零件提供序列号"
 
 #: stock/models.py:56
 msgid "Stock Location type"
-msgstr "库存位置类型"
+msgstr "库存地点类型"
 
 #: stock/models.py:57
 msgid "Stock Location types"
-msgstr "库存位置类型"
+msgstr "库存地点类型"
 
 #: stock/models.py:86
 msgid "Default icon for all locations that have no icon set (optional)"
@@ -8284,13 +8285,13 @@ msgstr "为所有没有图标的位置设置默认图标（可选）。"
 #: stock/templates/stock/location.html:17
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
-msgstr "仓储地点"
+msgstr "库存地点"
 
 #: stock/models.py:119 stock/templates/stock/location.html:179
 #: templates/InvenTree/search.html:166 templates/js/translated/search.js:178
 #: users/models.py:194
 msgid "Stock Locations"
-msgstr "仓储地点"
+msgstr "库存地点"
 
 #: stock/models.py:148 stock/models.py:862
 #: stock/templates/stock/item_base.html:247
@@ -8303,7 +8304,7 @@ msgstr "选择所有者"
 
 #: stock/models.py:156
 msgid "Stock items may not be directly located into a structural stock locations, but may be located to child locations."
-msgstr "库存物品可能不直接位于结构库存地点，但可能位于其子地点。"
+msgstr "库存项可能不直接位于结构库存地点，但可能位于其子地点。"
 
 #: stock/models.py:162 templates/js/translated/stock.js:2752
 #: templates/js/translated/table_filters.js:243
@@ -8312,7 +8313,7 @@ msgstr "外部的"
 
 #: stock/models.py:163
 msgid "This is an external stock location"
-msgstr "这是一个外部库存位置"
+msgstr "这是一个外部库存地点"
 
 #: stock/models.py:169 templates/js/translated/stock.js:2761
 #: templates/js/translated/table_filters.js:246
@@ -8321,15 +8322,15 @@ msgstr "位置类型"
 
 #: stock/models.py:172
 msgid "Stock location type of this location"
-msgstr "此位置的库存位置类型"
+msgstr "该位置的库存地点类型"
 
 #: stock/models.py:237
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
-msgstr "您不能将此库存位置设置为结构，因为某些库存项已经位于它！"
+msgstr "您不能将此库存地点设置为结构性，因为某些库存项已经位于它！"
 
 #: stock/models.py:593
 msgid "Stock items cannot be located into structural stock locations!"
-msgstr "库存物品不能存放在结构库存位置！"
+msgstr "库存项不能存放在结构性库存地点！"
 
 #: stock/models.py:619 stock/serializers.py:229
 msgid "Stock item cannot be created for virtual parts"
@@ -8374,11 +8375,11 @@ msgstr "请为此零件选择一个供应商"
 
 #: stock/models.py:729
 msgid "Where is this stock item located?"
-msgstr "此库存项的仓储位置?"
+msgstr "此库存项的位置?"
 
 #: stock/models.py:736 stock/serializers.py:1298
 msgid "Packaging this stock item is stored in"
-msgstr "封装此库存项已保存"
+msgstr "此库存项包装存储在"
 
 #: stock/models.py:745
 msgid "Is this item installed in another item?"
@@ -8390,11 +8391,11 @@ msgstr "此条目的序列号"
 
 #: stock/models.py:775 stock/serializers.py:1283
 msgid "Batch code for this stock item"
-msgstr "批处理此库存项的代码"
+msgstr "此库存项的批号"
 
 #: stock/models.py:780
 msgid "Stock Quantity"
-msgstr "库存数量"
+msgstr "库存量"
 
 #: stock/models.py:787
 msgid "Source Build"
@@ -8402,7 +8403,7 @@ msgstr "源生产："
 
 #: stock/models.py:789
 msgid "Build for this stock item"
-msgstr "生产此库存项"
+msgstr "此库存项的生产"
 
 #: stock/models.py:795 stock/templates/stock/item_base.html:363
 msgid "Consumed By"
@@ -8410,7 +8411,7 @@ msgstr "消耗者"
 
 #: stock/models.py:797
 msgid "Build order which consumed this stock item"
-msgstr "创建消耗此库存物品的订单"
+msgstr "消耗该库存项的生产订单"
 
 #: stock/models.py:808
 msgid "Source Purchase Order"
@@ -8418,7 +8419,7 @@ msgstr "采购订单源"
 
 #: stock/models.py:811
 msgid "Purchase order for this stock item"
-msgstr "此库存物品的采购订单"
+msgstr "此库存项的采购订单"
 
 #: stock/models.py:817
 msgid "Destination Sales Order"
@@ -8426,7 +8427,7 @@ msgstr "目标销售订单"
 
 #: stock/models.py:824
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
-msgstr "库存项的过期日期。库存将被视为在此日期之后过期"
+msgstr "库存项的有效期。超过此日期，库存将被视为过期"
 
 #: stock/models.py:839
 msgid "Delete on deplete"
@@ -8455,7 +8456,7 @@ msgstr "数量必须是整数"
 #: stock/models.py:1429
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
-msgstr "数量必不可减去 有效库存({self.quantity})数量"
+msgstr "数量不得超过现有库存量 ({self.quantity})"
 
 #: stock/models.py:1432
 msgid "Serial numbers must be a list of integers"
@@ -8487,7 +8488,7 @@ msgstr "库存项已分配给客户"
 
 #: stock/models.py:1525
 msgid "Stock item is currently in production"
-msgstr "库存物品目前正在生产"
+msgstr "库存项目前正在生产"
 
 #: stock/models.py:1528
 msgid "Serialized stock cannot be merged"
@@ -8555,7 +8556,7 @@ msgstr "添加时使用包大小：数量定义为包数量"
 
 #: stock/serializers.py:321
 msgid "Purchase price of this stock item, per unit or pack"
-msgstr "购买此库存物品的价格，件或包"
+msgstr "购买此库存项的价格，件或包"
 
 #: stock/serializers.py:382
 msgid "Enter number of stock items to serialize"
@@ -8572,7 +8573,7 @@ msgstr "输入新项目的序列号"
 
 #: stock/serializers.py:411 stock/serializers.py:1151 stock/serializers.py:1422
 msgid "Destination stock location"
-msgstr "目标库存位置"
+msgstr "目标库存地点"
 
 #: stock/serializers.py:418
 msgid "Optional note field"
@@ -8693,7 +8694,7 @@ msgstr "允许含有不同供应商零件的库存项被合并"
 
 #: stock/serializers.py:1180
 msgid "At least two stock items must be provided"
-msgstr "必须提供至少两个库存物品"
+msgstr "必须提供至少两个库存项"
 
 #: stock/serializers.py:1269
 msgid "StockItem primary key value"
@@ -8854,7 +8855,7 @@ msgstr "没有制造商设置"
 
 #: stock/templates/stock/item_base.html:251
 msgid "You are not in the list of owners of this item. This stock item cannot be edited."
-msgstr "您不在此仓储地的所有者列表中，无法编辑此仓储地。"
+msgstr "您不在此商品所有者列表中。此库存项不可编辑。"
 
 #: stock/templates/stock/item_base.html:252
 #: stock/templates/stock/location.html:149
@@ -8883,7 +8884,7 @@ msgstr "此库存项已分配给生产订单"
 
 #: stock/templates/stock/item_base.html:311
 msgid "This stock item is serialized. It has a unique serial number and the quantity cannot be adjusted"
-msgstr "此库存项被序列化。它有一个唯一的序列号，不能调整数量"
+msgstr "此库存项已序列化。它有一个唯一的序列号，数量不可调整"
 
 #: stock/templates/stock/item_base.html:317
 msgid "previous page"
@@ -8908,7 +8909,7 @@ msgstr "可用数量"
 #: stock/templates/stock/item_base.html:398
 #: templates/js/translated/build.js:2368
 msgid "No location set"
-msgstr "未设置仓储地点"
+msgstr "未设置库存地点"
 
 #: stock/templates/stock/item_base.html:413
 msgid "Tests"
@@ -8952,7 +8953,7 @@ msgstr "库存项二维码"
 
 #: stock/templates/stock/item_base.html:552
 msgid "Link Barcode to Stock Item"
-msgstr "将条形码链接到股票项目"
+msgstr "将条形码链接到库存项"
 
 #: stock/templates/stock/item_base.html:616
 msgid "Select one of the part variants listed below."
@@ -8992,11 +8993,11 @@ msgstr "定位存货位置"
 
 #: stock/templates/stock/location.html:63
 msgid "Scan stock items into this location"
-msgstr "扫描库存物品到此位置"
+msgstr "扫描库存项到此位置"
 
 #: stock/templates/stock/location.html:63
 msgid "Scan In Stock Items"
-msgstr "在库存物品中扫描"
+msgstr "在库存项中扫描"
 
 #: stock/templates/stock/location.html:64
 msgid "Scan stock container into this location"
@@ -9024,7 +9025,7 @@ msgstr "删除仓储地"
 
 #: stock/templates/stock/location.html:138
 msgid "Top level stock location"
-msgstr "顶级库存位置"
+msgstr "顶级库存地点"
 
 #: stock/templates/stock/location.html:144
 msgid "Location Owner"
@@ -9042,16 +9043,16 @@ msgstr "次级位置"
 
 #: stock/templates/stock/location.html:217
 msgid "Create new stock location"
-msgstr "新建仓储地点"
+msgstr "新建库存地点"
 
 #: stock/templates/stock/location.html:218
 msgid "New Location"
-msgstr "新建仓储地点"
+msgstr "新建库存地点"
 
 #: stock/templates/stock/location.html:289
 #: templates/js/translated/stock.js:2543
 msgid "stock location"
-msgstr "库存位置"
+msgstr "库存地点"
 
 #: stock/templates/stock/location.html:317
 msgid "Scanned stock container into this location"
@@ -9059,11 +9060,11 @@ msgstr "扫描的库存容器到此位置"
 
 #: stock/templates/stock/location.html:390
 msgid "Stock Location QR Code"
-msgstr "库存位置 QR 码"
+msgstr "库存地点 QR 码"
 
 #: stock/templates/stock/location.html:401
 msgid "Link Barcode to Stock Location"
-msgstr "将条形码链接到库存位置"
+msgstr "将条形码链接到库存地点"
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
@@ -9141,7 +9142,7 @@ msgstr "已订阅零件"
 
 #: templates/InvenTree/index.html:52
 msgid "Subscribed Categories"
-msgstr "已订阅分类"
+msgstr "已订阅类别"
 
 #: templates/InvenTree/index.html:62
 msgid "Latest Parts"
@@ -9628,7 +9629,7 @@ msgstr "创建类别参数模板"
 
 #: templates/InvenTree/settings/settings_staff_js.html:440
 msgid "No stock location types found"
-msgstr "未找到库存位置类型"
+msgstr "未找到库存地点类型"
 
 #: templates/InvenTree/settings/settings_staff_js.html:461
 msgid "Location count"
@@ -9707,7 +9708,7 @@ msgstr "库存设置"
 
 #: templates/InvenTree/settings/stock.html:31
 msgid "Stock Location Types"
-msgstr "库存位置类型"
+msgstr "库存地点类型"
 
 #: templates/InvenTree/settings/user.html:13
 msgid "Account Settings"
@@ -10432,7 +10433,7 @@ msgstr "移除库存项"
 
 #: templates/js/translated/barcode.js:610
 msgid "Scan Stock Items Into Location"
-msgstr "扫描库存物品到此位置"
+msgstr "扫描库存项到此位置"
 
 #: templates/js/translated/barcode.js:612
 msgid "Scan stock item barcode to check in to this location"
@@ -10473,7 +10474,7 @@ msgstr "扫描容器条形码以鉴入到此位置"
 
 #: templates/js/translated/barcode.js:762
 msgid "Barcode does not match valid stock location"
-msgstr "条形码与有效的库存位置不匹配"
+msgstr "条形码与有效的库存地点不匹配"
 
 #: templates/js/translated/barcode.js:806
 msgid "Check Into Location"
@@ -10482,7 +10483,7 @@ msgstr "鉴入到位置"
 #: templates/js/translated/barcode.js:875
 #: templates/js/translated/barcode.js:884
 msgid "Barcode does not match a valid location"
-msgstr "条形码与有效的库存位置不匹配"
+msgstr "条形码与有效的库存地点不匹配"
 
 #: templates/js/translated/bom.js:78
 msgid "Create BOM Item"
@@ -10693,7 +10694,7 @@ msgstr "必填零件"
 
 #: templates/js/translated/bom.js:1677
 msgid "Inherited from parent BOM"
-msgstr "从父BOM继承的"
+msgstr "从上级物料清单继承"
 
 #: templates/js/translated/build.js:142
 msgid "Edit Build Order"
@@ -10846,7 +10847,7 @@ msgstr "生产输出数据将被永久删除"
 
 #: templates/js/translated/build.js:850
 msgid "Allocated stock items will be returned to stock"
-msgstr "分配的库存物品将被还原到库存"
+msgstr "分配的库存项将被还原到库存"
 
 #: templates/js/translated/build.js:868
 msgid "Delete Build Outputs"
@@ -10862,7 +10863,7 @@ msgstr "已分配数量"
 
 #: templates/js/translated/build.js:998
 msgid "Location not specified"
-msgstr "未指定仓储地点"
+msgstr "未指定库存地点"
 
 #: templates/js/translated/build.js:1020
 msgid "Complete outputs"
@@ -10918,7 +10919,7 @@ msgstr "指定库存分配数量"
 
 #: templates/js/translated/build.js:1704
 msgid "All Parts Allocated"
-msgstr "所有配件已分配"
+msgstr "所有零件已分配"
 
 #: templates/js/translated/build.js:1705
 msgid "All selected parts have been fully allocated"
@@ -10936,7 +10937,7 @@ msgstr "分配库存项以创建订单"
 #: templates/js/translated/build.js:1758
 #: templates/js/translated/sales_order.js:1283
 msgid "No matching stock locations"
-msgstr "没有匹配的库存位置"
+msgstr "没有匹配的库存地点"
 
 #: templates/js/translated/build.js:1831
 #: templates/js/translated/sales_order.js:1362
@@ -11097,7 +11098,7 @@ msgstr "增加新的公司信息"
 
 #: templates/js/translated/company.js:536
 msgid "Parts Supplied"
-msgstr "配件已提供"
+msgstr "零件已提供"
 
 #: templates/js/translated/company.js:545
 msgid "Parts Manufactured"
@@ -11278,16 +11279,16 @@ msgstr "删除供应商商品"
 #: templates/js/translated/company.js:1769
 #: templates/js/translated/pricing.js:694
 msgid "Delete Price Break"
-msgstr "删除价格差"
+msgstr "删除批发价"
 
 #: templates/js/translated/company.js:1779
 #: templates/js/translated/pricing.js:712
 msgid "Edit Price Break"
-msgstr "删除价格差"
+msgstr "删除批发价"
 
 #: templates/js/translated/company.js:1794
 msgid "No price break information found"
-msgstr "找不到价格差信息"
+msgstr "找不到批发价信息"
 
 #: templates/js/translated/company.js:1823
 msgid "Last updated"
@@ -11295,11 +11296,11 @@ msgstr "最后更新"
 
 #: templates/js/translated/company.js:1830
 msgid "Edit price break"
-msgstr "删除价格差"
+msgstr "删除批发价"
 
 #: templates/js/translated/company.js:1831
 msgid "Delete price break"
-msgstr "删除价格差"
+msgstr "删除批发价"
 
 #: templates/js/translated/filters.js:186
 #: templates/js/translated/filters.js:672
@@ -11419,7 +11420,7 @@ msgstr "错误"
 
 #: templates/js/translated/index.js:104
 msgid "No parts required for builds"
-msgstr "生产时无需配件。"
+msgstr "生产时无需零件。"
 
 #: templates/js/translated/index.js:130
 msgid "Allocated Stock"
@@ -11645,11 +11646,11 @@ msgstr "编辑商品类别"
 
 #: templates/js/translated/part.js:383
 msgid "Are you sure you want to delete this part category?"
-msgstr "您确定要删除此配件类别吗？"
+msgstr "您确定要删除此零件类别吗？"
 
 #: templates/js/translated/part.js:388
 msgid "Move to parent category"
-msgstr "移动到父类别"
+msgstr "移动到上级类别"
 
 #: templates/js/translated/part.js:397
 msgid "Delete Part Category"
@@ -11685,7 +11686,7 @@ msgstr "已编辑零件"
 
 #: templates/js/translated/part.js:474
 msgid "Create Part Variant"
-msgstr "创建新的配件变体"
+msgstr "创建新的零件变体"
 
 #: templates/js/translated/part.js:531
 msgid "Active Part"
@@ -11871,7 +11872,7 @@ msgstr "零件"
 
 #: templates/js/translated/part.js:2382
 msgid "No category"
-msgstr "没有分类"
+msgstr "没有类别"
 
 #: templates/js/translated/part.js:2529 templates/js/translated/part.js:2659
 #: templates/js/translated/stock.js:2640
@@ -11884,7 +11885,7 @@ msgstr "按网格显示"
 
 #: templates/js/translated/part.js:2643
 msgid "No subcategories found"
-msgstr "未找到子分类"
+msgstr "未找到子类别"
 
 #: templates/js/translated/part.js:2679 templates/js/translated/stock.js:2660
 msgid "Display as tree"
@@ -12017,7 +12018,7 @@ msgstr "没有可用的供应商价格"
 
 #: templates/js/translated/pricing.js:572
 msgid "No price break data available"
-msgstr "没有可用的价格折算数据"
+msgstr "没有可用的批发价数据"
 
 #: templates/js/translated/pricing.js:755
 msgid "No purchase history data available"
@@ -12033,7 +12034,7 @@ msgstr "无可用销售历史数据"
 
 #: templates/js/translated/pricing.js:916
 msgid "Sale Price History"
-msgstr "销售价格历史记录"
+msgstr "售出价格历史记录"
 
 #: templates/js/translated/pricing.js:1005
 msgid "No variant data available"
@@ -12359,7 +12360,7 @@ msgstr "没有为这批货运分配库存项"
 
 #: templates/js/translated/sales_order.js:296
 msgid "The following stock items will be shipped"
-msgstr "以下库存物品将被发货"
+msgstr "以下库存项将被发货"
 
 #: templates/js/translated/sales_order.js:336
 msgid "Complete Shipment"
@@ -12375,7 +12376,7 @@ msgstr "未找到待处理的发货"
 
 #: templates/js/translated/sales_order.js:420
 msgid "No stock items have been allocated to pending shipments"
-msgstr "未将库存物品分配给待运货物"
+msgstr "未将库存项分配给待运货物"
 
 #: templates/js/translated/sales_order.js:430
 msgid "Complete Shipments"
@@ -12464,7 +12465,7 @@ msgstr "确认库存分配"
 
 #: templates/js/translated/sales_order.js:1271
 msgid "Allocate Stock Items to Sales Order"
-msgstr "分配库存物品到销售订单"
+msgstr "分配库存项到销售订单"
 
 #: templates/js/translated/sales_order.js:1477
 msgid "No sales order allocations found"
@@ -12491,7 +12492,7 @@ msgstr "已发货到客户"
 #: templates/js/translated/sales_order.js:1631
 #: templates/js/translated/sales_order.js:1719
 msgid "Stock location not specified"
-msgstr "未指定库存位置"
+msgstr "未指定库存地点"
 
 #: templates/js/translated/sales_order.js:2008
 msgid "Allocate serial numbers"
@@ -12560,7 +12561,7 @@ msgstr "没有设置图标的所有位置的默认图标 (可选) - 探索所有
 
 #: templates/js/translated/stock.js:152
 msgid "Parent stock location"
-msgstr "父库存位置"
+msgstr "上级库存地点"
 
 #: templates/js/translated/stock.js:166
 msgid "Add Location type"
@@ -12568,11 +12569,11 @@ msgstr "添加位置类型"
 
 #: templates/js/translated/stock.js:202
 msgid "Edit Stock Location"
-msgstr "编辑仓储地点"
+msgstr "编辑库存地点"
 
 #: templates/js/translated/stock.js:217
 msgid "New Stock Location"
-msgstr "新仓储地点"
+msgstr "新库存地点"
 
 #: templates/js/translated/stock.js:219
 msgid "Create another location after this one"
@@ -12580,23 +12581,23 @@ msgstr "在此之后创建另一个位置"
 
 #: templates/js/translated/stock.js:220
 msgid "Stock location created"
-msgstr "库存位置已创建"
+msgstr "库存地点已创建"
 
 #: templates/js/translated/stock.js:234
 msgid "Are you sure you want to delete this stock location?"
-msgstr "确实要删除此仓储地点吗?"
+msgstr "确实要删除此库存地点吗?"
 
 #: templates/js/translated/stock.js:241
 msgid "Move to parent stock location"
-msgstr "移动到父库存位置"
+msgstr "移动到父库存地点"
 
 #: templates/js/translated/stock.js:250
 msgid "Delete Stock Location"
-msgstr "删除仓储地点"
+msgstr "删除库存地点"
 
 #: templates/js/translated/stock.js:254
 msgid "Action for stock items in this stock location"
-msgstr "对该库存位置中的库存项进行操作"
+msgstr "对该库存地点中的库存项进行操作"
 
 #: templates/js/translated/stock.js:259
 msgid "Action for sub-locations"
@@ -12808,7 +12809,7 @@ msgstr "分配给销售订单"
 
 #: templates/js/translated/stock.js:1754
 msgid "No stock location set"
-msgstr "未设置仓储地点"
+msgstr "未设置库存地点"
 
 #: templates/js/translated/stock.js:1810
 msgid "Change stock status"
@@ -12860,7 +12861,7 @@ msgstr "库存项已完全分配"
 
 #: templates/js/translated/stock.js:2076
 msgid "Stock item has been partially allocated"
-msgstr "库存物品已被部分分配"
+msgstr "库存项已被部分分配"
 
 #: templates/js/translated/stock.js:2079
 msgid "Stock item has been installed in another item"
@@ -12884,11 +12885,11 @@ msgstr "库存项已被拒绝"
 
 #: templates/js/translated/stock.js:2094
 msgid "Stock item is lost"
-msgstr "库存物品丢失了"
+msgstr "库存项丢失了"
 
 #: templates/js/translated/stock.js:2096
 msgid "Stock item is destroyed"
-msgstr "库存物品已被销毁。"
+msgstr "库存项已被销毁。"
 
 #: templates/js/translated/stock.js:2100
 #: templates/js/translated/table_filters.js:350
@@ -12909,7 +12910,7 @@ msgstr "没有匹配查询的库存项"
 
 #: templates/js/translated/stock.js:2544
 msgid "stock locations"
-msgstr "库存位置"
+msgstr "库存地点"
 
 #: templates/js/translated/stock.js:2699
 msgid "Load Sublocations"
@@ -13078,7 +13079,7 @@ msgstr "有位置类型"
 #: templates/js/translated/table_filters.js:279
 #: templates/js/translated/table_filters.js:707
 msgid "Include subcategories"
-msgstr "包含子分类"
+msgstr "包含子类别"
 
 #: templates/js/translated/table_filters.js:287
 #: templates/js/translated/table_filters.js:755
