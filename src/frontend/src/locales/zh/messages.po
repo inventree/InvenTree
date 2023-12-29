@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-28 08:17\n"
+"PO-Revision-Date: 2023-12-29 08:49\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -863,11 +863,11 @@ msgstr "销售订单"
 
 #: src/components/render/ModelType.tsx:114
 msgid "Sales Order Shipment"
-msgstr "销售订单发货"
+msgstr "销售订单配送"
 
 #: src/components/render/ModelType.tsx:115
 msgid "Sales Order Shipments"
-msgstr "销售订单发货"
+msgstr "销售订单配送"
 
 #: src/components/render/ModelType.tsx:121
 #: src/components/tables/sales/ReturnOrderTable.tsx:55
@@ -920,7 +920,7 @@ msgstr "用户"
 
 #: src/components/render/Order.tsx:85
 msgid "Shipment"
-msgstr "发货"
+msgstr "配送"
 
 #: src/components/render/Stock.tsx:26
 msgid "Serial Number"
@@ -998,12 +998,12 @@ msgstr "创建日期"
 
 #: src/components/tables/ColumnRenderers.tsx:121
 msgid "Shipment Date"
-msgstr "发货日期"
+msgstr "配送日期"
 
 #: src/components/tables/ColumnRenderers.tsx:142
 #: src/components/tables/settings/CurrencyTable.tsx:23
 msgid "Currency"
-msgstr "币种"
+msgstr "货币"
 
 #: src/components/tables/ColumnRenderers.tsx:156
 msgid "Total Price"
@@ -1176,7 +1176,7 @@ msgstr "操作"
 
 #: src/components/tables/bom/BomTable.tsx:71
 msgid "This BOM item is defined for a different parent"
-msgstr "此BOM 项目是为另一个父级定义的"
+msgstr "此物料清单 项目是为另一个父级定义的"
 
 #: src/components/tables/bom/BomTable.tsx:86
 msgid "Part Information"
@@ -1354,7 +1354,7 @@ msgstr "查看 物料清单"
 
 #: src/components/tables/bom/BomTable.tsx:301
 msgid "Validate BOM line"
-msgstr "验证BOM行"
+msgstr "验证物料清单行"
 
 #: src/components/tables/bom/BomTable.tsx:309
 msgid "Edit Substitutes"
@@ -1362,15 +1362,15 @@ msgstr "编辑替代零件"
 
 #: src/components/tables/bom/BomTable.tsx:323
 msgid "Edit Bom Item"
-msgstr "编辑BOM条目"
+msgstr "编辑物料清单条目"
 
 #: src/components/tables/bom/BomTable.tsx:325
 msgid "Bom item updated"
-msgstr "Bom 项目已更新"
+msgstr "物料清单 项目已更新"
 
 #: src/components/tables/bom/BomTable.tsx:340
 msgid "Delete Bom Item"
-msgstr "删除BOM项目"
+msgstr "删除物料清单项目"
 
 #: src/components/tables/bom/BomTable.tsx:341
 msgid "Bom item deleted"
@@ -1378,7 +1378,7 @@ msgstr "库存项已删除"
 
 #: src/components/tables/bom/BomTable.tsx:343
 msgid "Are you sure you want to remove this BOM item?"
-msgstr "您确定要删除此BOM项目吗？"
+msgstr "您确定要删除此物料清单项目吗？"
 
 #: src/components/tables/bom/UsedInTable.tsx:50
 msgid "Required Part"
@@ -2934,7 +2934,7 @@ msgstr "最近商品"
 
 #: src/defaults/dashboardItems.tsx:36
 msgid "BOM Waiting Validation"
-msgstr "等待验证的 BOM"
+msgstr "等待验证的 物料清单"
 
 #: src/defaults/dashboardItems.tsx:43
 msgid "Recently Updated"
@@ -4197,11 +4197,11 @@ msgstr "客户"
 
 #: src/pages/sales/SalesOrderDetail.tsx:51
 msgid "Pending Shipments"
-msgstr "待发货"
+msgstr "待配送"
 
 #: src/pages/sales/SalesOrderDetail.tsx:56
 msgid "Completed Shipments"
-msgstr "完成发货"
+msgstr "完成配送"
 
 #: src/pages/stock/LocationDetail.tsx:38
 #~ msgid "Sublocations"
