@@ -4282,4 +4282,3 @@ msgstr "L'interface utilisateur de la plateforme est optimisée pour les tablett
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Lire la documentation"
-

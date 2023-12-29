@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-19 04:30+0000\n"
+"POT-Creation-Date: 2023-12-29 15:00+0000\n"
 "PO-Revision-Date: 2023-12-11 03:45\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
@@ -3409,7 +3409,7 @@ msgid "Price break quantity"
 msgstr ""
 
 #: common/models.py:2374 company/serializers.py:485 order/admin.py:41
-#: order/models.py:1181 order/models.py:2014
+#: order/models.py:1181 order/models.py:2015
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1883
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -4570,7 +4570,7 @@ msgstr ""
 msgid "Purchase Order"
 msgstr ""
 
-#: order/api.py:1411 order/models.py:1984 order/models.py:2030
+#: order/api.py:1411 order/models.py:1985 order/models.py:2031
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4755,8 +4755,8 @@ msgid "deleted"
 msgstr ""
 
 #: order/models.py:1226 order/models.py:1310 order/models.py:1350
-#: order/models.py:1449 order/models.py:1598 order/models.py:1983
-#: order/models.py:2030 templates/js/translated/sales_order.js:1488
+#: order/models.py:1449 order/models.py:1598 order/models.py:1984
+#: order/models.py:2031 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr ""
 
@@ -4902,7 +4902,7 @@ msgstr ""
 msgid "Sales order shipment reference"
 msgstr ""
 
-#: order/models.py:1699 order/models.py:1991
+#: order/models.py:1699 order/models.py:1992
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr ""
@@ -4927,32 +4927,32 @@ msgstr ""
 msgid "Return order status"
 msgstr ""
 
-#: order/models.py:1976
+#: order/models.py:1977
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr ""
 
-#: order/models.py:1992
+#: order/models.py:1993
 msgid "Select item to return from customer"
 msgstr ""
 
-#: order/models.py:1997
+#: order/models.py:1998
 msgid "Received Date"
 msgstr ""
 
-#: order/models.py:1998
+#: order/models.py:1999
 msgid "The date this this return item was received"
 msgstr ""
 
-#: order/models.py:2009 templates/js/translated/return_order.js:733
+#: order/models.py:2010 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr ""
 
-#: order/models.py:2009
+#: order/models.py:2010
 msgid "Outcome for this line item"
 msgstr ""
 
-#: order/models.py:2015
+#: order/models.py:2016
 msgid "Cost associated with return or repair for this line item"
 msgstr ""
 
