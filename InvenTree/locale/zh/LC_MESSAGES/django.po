@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-21 05:01+0000\n"
-"PO-Revision-Date: 2023-12-28 08:17\n"
+"PO-Revision-Date: 2023-12-29 08:49\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -719,7 +719,7 @@ msgstr "正在进行"
 #: templates/js/translated/sales_order.js:1644
 #: templates/js/translated/sales_order.js:1957
 msgid "Shipped"
-msgstr "已发货"
+msgstr "已配送"
 
 #: InvenTree/status_codes.py:66
 msgid "OK"
@@ -1401,7 +1401,7 @@ msgstr "对于可追踪的零件，需要整数型数值"
 
 #: build/serializers.py:267
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr "需要整数型数值，因为BOM包含可追踪的零件"
+msgstr "需要整数型数值，因为物料清单包含可追踪的零件"
 
 #: build/serializers.py:282 order/serializers.py:524 order/serializers.py:1271
 #: stock/serializers.py:399 templates/js/translated/purchase_order.js:1149
@@ -1578,7 +1578,7 @@ msgstr "生产行项目"
 
 #: build/serializers.py:786
 msgid "bom_item.part must point to the same part as the build order"
-msgstr "bom_item.part 必须与生产订单指向相同的零件"
+msgstr "物料清单_item.part 必须与生产订单指向相同的零件"
 
 #: build/serializers.py:801 stock/serializers.py:1002
 msgid "Item must be in stock"
@@ -2339,11 +2339,11 @@ msgstr "在编辑零件时允许更改 IPN 值"
 
 #: common/models.py:1316
 msgid "Copy Part BOM Data"
-msgstr "复制零件 BOM 数据"
+msgstr "复制零件 物料清单 数据"
 
 #: common/models.py:1317
 msgid "Copy BOM data by default when duplicating a part"
-msgstr "复制零件时默认复制 BOM 数据"
+msgstr "复制零件时默认复制 物料清单 数据"
 
 #: common/models.py:1323
 msgid "Copy Part Parameter Data"
@@ -2769,7 +2769,7 @@ msgstr "生成销售订单参考字段所需参照模式"
 
 #: common/models.py:1698
 msgid "Sales Order Default Shipment"
-msgstr "销售订单默认发货"
+msgstr "销售订单默认配送方式"
 
 #: common/models.py:1699
 msgid "Enable creation of default shipment with sales orders"
@@ -2781,7 +2781,7 @@ msgstr "编辑已完成的销售订单"
 
 #: common/models.py:1706
 msgid "Allow editing of sales orders after they have been shipped or completed"
-msgstr "允许在订单发货或完成后编辑销售订单"
+msgstr "允许在订单配送或完成后编辑销售订单"
 
 #: common/models.py:1712
 msgid "Purchase Order Reference Pattern"
@@ -2797,7 +2797,7 @@ msgstr "编辑已完成的采购订单"
 
 #: common/models.py:1720
 msgid "Allow editing of purchase orders after they have been shipped or completed"
-msgstr "允许在采购订单已发货或完成后编辑订单"
+msgstr "允许在采购订单已配送或完成后编辑订单"
 
 #: common/models.py:1727
 msgid "Enable password forgot"
@@ -3125,11 +3125,11 @@ msgstr "在主页上显示逾期的销售订单"
 
 #: common/models.py:2067
 msgid "Show pending SO shipments"
-msgstr "显示待发货的销售订单"
+msgstr "显示待配送的销售订单"
 
 #: common/models.py:2068
 msgid "Show pending SO shipments on the homepage"
-msgstr "在主页上显示待发货的销售订单"
+msgstr "在主页上显示待配送的销售订单"
 
 #: common/models.py:2074
 msgid "Show News"
@@ -4592,7 +4592,7 @@ msgstr "订单货币"
 
 #: order/models.py:81 order/serializers.py:51
 msgid "Currency for this order (leave blank to use company default)"
-msgstr "订单交易的货比类型（为空则使用默认值）"
+msgstr "订单交易的货币类型（为空则使用默认值）"
 
 #: order/models.py:207
 msgid "Contact does not match selected company"
@@ -4600,11 +4600,11 @@ msgstr "联系人与所选公司不匹配"
 
 #: order/models.py:227
 msgid "Order description (optional)"
-msgstr "订单描述(可选)"
+msgstr "订单描述（可选）"
 
 #: order/models.py:232
 msgid "Select project code for this order"
-msgstr "为此订单选择工程代码"
+msgstr "为此订单选择项目编码"
 
 #: order/models.py:235 order/models.py:1143 order/models.py:1501
 msgid "Link to external page"
@@ -4632,7 +4632,7 @@ msgstr "此订单的公司地址"
 
 #: order/models.py:365 order/models.py:793
 msgid "Order reference"
-msgstr "订单参考号"
+msgstr "订单参考"
 
 #: order/models.py:373 order/models.py:818
 msgid "Purchase order status"
@@ -4669,7 +4669,7 @@ msgstr "订单完成日期"
 
 #: order/models.py:450
 msgid "Part supplier must match PO supplier"
-msgstr "零件供应商必须与 PO供应商匹配"
+msgstr "零件供应商必须与采购订单供应商匹配"
 
 #: order/models.py:634
 msgid "Quantity must be a positive number"
@@ -4681,7 +4681,7 @@ msgstr "向其出售该商品的公司"
 
 #: order/models.py:826 order/models.py:1812
 msgid "Customer Reference "
-msgstr "客户参考编 "
+msgstr "客户参考编"
 
 #: order/models.py:826 order/models.py:1813
 msgid "Customer order reference code"
@@ -4691,11 +4691,11 @@ msgstr "客户订单参考码"
 #: templates/js/translated/sales_order.js:843
 #: templates/js/translated/sales_order.js:1024
 msgid "Shipment Date"
-msgstr "发货日期"
+msgstr "配送日期"
 
 #: order/models.py:835
 msgid "shipped by"
-msgstr "发货人"
+msgstr "配送人"
 
 #: order/models.py:884
 msgid "Order cannot be completed as no parts have been assigned"
@@ -4707,7 +4707,7 @@ msgstr "只有打开订单可以标记为完成"
 
 #: order/models.py:891 templates/js/translated/sales_order.js:506
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr "由于尚未完成发货，订单无法完成"
+msgstr "由于尚未完成配送，订单无法完成"
 
 #: order/models.py:894
 msgid "Order cannot be completed as there are incomplete line items"
@@ -4735,11 +4735,11 @@ msgstr "行项目描述 (可选)"
 
 #: order/models.py:1172
 msgid "Context"
-msgstr "上下文"
+msgstr "内容"
 
 #: order/models.py:1173
 msgid "Additional context for this line"
-msgstr "此行的附加上下文："
+msgstr "此行的附加内容"
 
 #: order/models.py:1182
 msgid "Unit price"
@@ -4771,7 +4771,7 @@ msgstr "供应商商品"
 #: templates/js/translated/table_filters.js:120
 #: templates/js/translated/table_filters.js:598
 msgid "Received"
-msgstr "收到"
+msgstr "已接收"
 
 #: order/models.py:1252
 msgid "Number of items received"
@@ -4785,7 +4785,7 @@ msgstr "采购价格"
 
 #: order/models.py:1260
 msgid "Unit purchase price"
-msgstr "采购订单价"
+msgstr "购买单价"
 
 #: order/models.py:1273
 msgid "Where does the Purchaser want this item to be stored?"
@@ -4793,7 +4793,7 @@ msgstr "采购方希望将此物品存放在何处？"
 
 #: order/models.py:1338
 msgid "Virtual part cannot be assigned to a sales order"
-msgstr "虚拟产品不能分配销售订单"
+msgstr "虚拟零件不能分配销售订单"
 
 #: order/models.py:1343
 msgid "Only salable parts can be assigned to a sales order"
@@ -4810,11 +4810,11 @@ msgstr "售出价格单位"
 
 #: order/models.py:1380
 msgid "Shipped quantity"
-msgstr "发货数量"
+msgstr "配送数量"
 
 #: order/models.py:1456
 msgid "Date of shipment"
-msgstr "发货日期"
+msgstr "配送日期"
 
 #: order/models.py:1461 templates/js/translated/sales_order.js:1036
 msgid "Delivery Date"
@@ -4822,7 +4822,7 @@ msgstr "交货日期(订单)"
 
 #: order/models.py:1462
 msgid "Date of delivery of shipment"
-msgstr "物流交货日期"
+msgstr "交货日期"
 
 #: order/models.py:1469
 msgid "Checked By"
@@ -4830,16 +4830,16 @@ msgstr "审核人"
 
 #: order/models.py:1470
 msgid "User who checked this shipment"
-msgstr "物流审核人"
+msgstr "配送审核人"
 
 #: order/models.py:1477 order/models.py:1685 order/serializers.py:1282
 #: order/serializers.py:1410 templates/js/translated/model_renderers.js:446
 msgid "Shipment"
-msgstr "发货"
+msgstr "配送"
 
 #: order/models.py:1478
 msgid "Shipment number"
-msgstr "发货单号"
+msgstr "配送单号"
 
 #: order/models.py:1486
 msgid "Tracking Number"
@@ -4847,7 +4847,7 @@ msgstr "跟踪单号"
 
 #: order/models.py:1487
 msgid "Shipment tracking information"
-msgstr "发货跟踪信息"
+msgstr "配送跟踪信息"
 
 #: order/models.py:1494
 msgid "Invoice Number"
@@ -4859,11 +4859,11 @@ msgstr "与发票相关联的参考号码"
 
 #: order/models.py:1517
 msgid "Shipment has already been sent"
-msgstr "物流已发出"
+msgstr "货物已发出"
 
 #: order/models.py:1520
 msgid "Shipment has no allocated stock items"
-msgstr "装运没有分配的库存项"
+msgstr "配送没有分配的库存项"
 
 #: order/models.py:1633 order/models.py:1635
 msgid "Stock item has not been assigned"
@@ -4887,11 +4887,11 @@ msgstr "序列化库存项的数量必须为 1"
 
 #: order/models.py:1668
 msgid "Sales order does not match shipment"
-msgstr "销售订单与装运不符"
+msgstr "销售订单与配送不符"
 
 #: order/models.py:1669 plugin/base/barcodes/api.py:516
 msgid "Shipment does not match sales order"
-msgstr "装运与销售订单不符"
+msgstr "配送与销售订单不匹配"
 
 #: order/models.py:1677
 msgid "Line"
@@ -4899,7 +4899,7 @@ msgstr "行"
 
 #: order/models.py:1686
 msgid "Sales order shipment reference"
-msgstr "销售订单装运参考"
+msgstr "销售订单配送参考"
 
 #: order/models.py:1699 order/models.py:1992
 #: templates/js/translated/return_order.js:722
@@ -5045,7 +5045,7 @@ msgstr "售出价格货币"
 
 #: order/serializers.py:1043
 msgid "No shipment details provided"
-msgstr "未提供装运详情"
+msgstr "未提供配送详情"
 
 #: order/serializers.py:1107 order/serializers.py:1259
 msgid "Line item is not associated with this order"
@@ -5061,11 +5061,11 @@ msgstr "输入序列号以进行分配"
 
 #: order/serializers.py:1294 order/serializers.py:1418
 msgid "Shipment has already been shipped"
-msgstr "物流已发出"
+msgstr "已发货"
 
 #: order/serializers.py:1297 order/serializers.py:1421
 msgid "Shipment is not associated with this order"
-msgstr "货运不与此订单关联"
+msgstr "发货与此订单无关"
 
 #: order/serializers.py:1351
 msgid "No match found for the following serial numbers"
@@ -5445,7 +5445,7 @@ msgstr "采购订单没有完全分配"
 #: order/templates/order/sales_order_detail.html:99
 #: order/templates/order/so_sidebar.html:11
 msgid "Completed Shipments"
-msgstr "完成发货"
+msgstr "完成配送"
 
 #: order/templates/order/sales_order_base.html:312
 msgid "Sales Order QR Code"
@@ -5462,7 +5462,7 @@ msgstr "销售订单项目"
 #: order/templates/order/sales_order_detail.html:67
 #: order/templates/order/so_sidebar.html:8 templates/InvenTree/index.html:284
 msgid "Pending Shipments"
-msgstr "待发货"
+msgstr "待配送"
 
 #: order/templates/order/sales_order_detail.html:71
 #: templates/js/translated/bom.js:1271 templates/js/translated/filters.js:296
@@ -5471,7 +5471,7 @@ msgstr "操作"
 
 #: order/templates/order/sales_order_detail.html:80
 msgid "New Shipment"
-msgstr "新建发货单"
+msgstr "新建配送单"
 
 #: order/views.py:120
 msgid "Match Supplier Parts"
@@ -5613,7 +5613,7 @@ msgstr "商品"
 
 #: part/admin.py:261
 msgid "BOM Level"
-msgstr "BOM 级别"
+msgstr "物料清单 级别"
 
 #: part/admin.py:263
 msgid "BOM Item ID"
@@ -5641,7 +5641,7 @@ msgstr "最高价格"
 
 #: part/api.py:506
 msgid "Incoming Purchase Order"
-msgstr "传入的采购订单"
+msgstr "收到的采购订单"
 
 #: part/api.py:526
 msgid "Outgoing Sales Order"
@@ -5907,7 +5907,7 @@ msgstr "用于缓存定价计算的货币"
 
 #: part/models.py:2856
 msgid "Minimum BOM Cost"
-msgstr "最低BOM 成本"
+msgstr "最低物料清单 成本"
 
 #: part/models.py:2857
 msgid "Minimum cost of component parts"
@@ -5915,7 +5915,7 @@ msgstr "组件的最低成本"
 
 #: part/models.py:2862
 msgid "Maximum BOM Cost"
-msgstr "BOM 最高成本"
+msgstr "物料清单 最高成本"
 
 #: part/models.py:2863
 msgid "Maximum cost of component parts"
@@ -6250,11 +6250,11 @@ msgstr "级"
 
 #: part/models.py:3678
 msgid "BOM level"
-msgstr "BOM 级别"
+msgstr "物料清单 级别"
 
 #: part/models.py:3684 part/models.py:4079 stock/api.py:648
 msgid "BOM Item"
-msgstr "BOM项"
+msgstr "物料清单项"
 
 #: part/models.py:3765
 msgid "Select parent part"
@@ -6266,7 +6266,7 @@ msgstr "子零件"
 
 #: part/models.py:3774
 msgid "Select part to be used in BOM"
-msgstr "选择要用于BOM 的零件"
+msgstr "选择要用于物料清单 的零件"
 
 #: part/models.py:3780
 msgid "BOM quantity for this BOM item"
@@ -6294,7 +6294,7 @@ msgstr "物料清单项目引用"
 
 #: part/models.py:3802
 msgid "BOM item notes"
-msgstr "BOM 项目注释"
+msgstr "物料清单 项目注释"
 
 #: part/models.py:3806
 msgid "Checksum"
@@ -6310,7 +6310,7 @@ msgstr "已验证"
 
 #: part/models.py:3812
 msgid "This BOM item has been validated"
-msgstr "此BOM 项目已验证"
+msgstr "此物料清单项目已验证"
 
 #: part/models.py:3817 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1054
@@ -6321,7 +6321,7 @@ msgstr "获取继承的"
 
 #: part/models.py:3818
 msgid "This BOM item is inherited by BOMs for variant parts"
-msgstr "这个BOM 项目是由BOM继承的变体零件。"
+msgstr "此物料清单项目是由物料清单继承的变体零件"
 
 #: part/models.py:3823 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1046
@@ -6330,7 +6330,7 @@ msgstr "允许变体"
 
 #: part/models.py:3824
 msgid "Stock items for variant parts can be used for this BOM item"
-msgstr "变体零件的库存项可以用于此BOM 项目"
+msgstr "变体零件的库存项可以用于此物料清单项目"
 
 #: part/models.py:3910 stock/models.py:613
 msgid "Quantity must be integer value for trackable parts"
@@ -6342,7 +6342,7 @@ msgstr "必须指定子零件"
 
 #: part/models.py:4046
 msgid "BOM Item Substitute"
-msgstr "物料清单项目替代"
+msgstr "物料清单项目替代品"
 
 #: part/models.py:4067
 msgid "Substitute part cannot be the same as the master part"
@@ -6406,7 +6406,7 @@ msgstr "从原零件复制图像"
 
 #: part/serializers.py:400 part/templates/part/detail.html:277
 msgid "Copy BOM"
-msgstr "复制BOM"
+msgstr "复制物料清单"
 
 #: part/serializers.py:400
 msgid "Copy bill of materials from original part"
@@ -6584,7 +6584,7 @@ msgstr "更新这个零件的价格"
 #: part/serializers.py:1186
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
-msgstr "不能从提供的转换为{default_currency}"
+msgstr "无法将所提供的货币转换为 {default_currency}"
 
 #: part/serializers.py:1190
 msgid "Minimum price must not be greater than maximum price"
@@ -6596,7 +6596,7 @@ msgstr "最高价格不能低于最低价格"
 
 #: part/serializers.py:1498
 msgid "Select part to copy BOM from"
-msgstr "选择要复制BOM的零件"
+msgstr "选择要复制物料清单的零件"
 
 #: part/serializers.py:1506
 msgid "Remove Existing Data"
@@ -6604,7 +6604,7 @@ msgstr "移除现有数据"
 
 #: part/serializers.py:1507
 msgid "Remove existing BOM items before copying"
-msgstr "复制前删除现有的BOM项目"
+msgstr "复制前删除现有的物料清单项目"
 
 #: part/serializers.py:1512
 msgid "Include Inherited"
@@ -6612,7 +6612,7 @@ msgstr "包含继承的"
 
 #: part/serializers.py:1513
 msgid "Include BOM items which are inherited from templated parts"
-msgstr "包含从模板零件继承的 BOM 项目"
+msgstr "包含从模板零件继承的物料清单项目"
 
 #: part/serializers.py:1518
 msgid "Skip Invalid Rows"
@@ -6628,15 +6628,15 @@ msgstr "复制替代零件"
 
 #: part/serializers.py:1525
 msgid "Copy substitute parts when duplicate BOM items"
-msgstr "复制BOM 项目时复制替代零件"
+msgstr "复制物料清单项目时复制替代零件"
 
 #: part/serializers.py:1565
 msgid "Clear Existing BOM"
-msgstr "清除现有的BOM"
+msgstr "清除现有的物料清单"
 
 #: part/serializers.py:1566
 msgid "Delete existing BOM items before uploading"
-msgstr "上传前删除现有的 BOM 项目"
+msgstr "上传前删除现有的物料清单项目"
 
 #: part/serializers.py:1596
 msgid "No part column specified"
@@ -6664,7 +6664,7 @@ msgstr "无效的数量"
 
 #: part/serializers.py:1684
 msgid "At least one BOM item is required"
-msgstr "至少需要一个 BOM 项目"
+msgstr "至少需要一个物料清单项目"
 
 #: part/stocktake.py:223 templates/js/translated/part.js:1066
 #: templates/js/translated/part.js:1820 templates/js/translated/part.js:1875
@@ -6699,7 +6699,7 @@ msgstr "可用 {part.name}库存已经跌到设置的最低值"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
-msgstr "没有权限编辑BOM"
+msgstr "没有权限编辑物料清单"
 
 #: part/templates/part/bom.html:15
 msgid "The BOM this part has been changed, and must be validated"
@@ -6708,7 +6708,7 @@ msgstr "此物料清单中零件已被更改，必须验证"
 #: part/templates/part/bom.html:17
 #, python-format
 msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr "The BOM for <em>%(part)s</em> 的BOM被%(checker)s 在 %(check_date)s 最后更改"
+msgstr "The 物料清单 for <em>%(part)s</em> 的物料清单被%(checker)s 在 %(check_date)s 最后更改"
 
 #: part/templates/part/bom.html:21
 #, python-format
@@ -6873,7 +6873,7 @@ msgstr "添加关联"
 #: part/templates/part/detail.html:255 part/templates/part/part_sidebar.html:17
 #: report/templates/report/inventree_bill_of_materials_report.html:100
 msgid "Bill of Materials"
-msgstr "物料清单(BOM)"
+msgstr "物料清单(物料清单)"
 
 #: part/templates/part/detail.html:260
 msgid "Export actions"
@@ -6881,28 +6881,28 @@ msgstr "输出操作"
 
 #: part/templates/part/detail.html:264 templates/js/translated/bom.js:340
 msgid "Export BOM"
-msgstr "输出BOM"
+msgstr "输出物料清单"
 
 #: part/templates/part/detail.html:266
 msgid "Print BOM Report"
-msgstr "打印BOM"
+msgstr "打印物料清单"
 
 #: part/templates/part/detail.html:272
 msgid "BOM actions"
-msgstr "BOM操作"
+msgstr "物料清单操作"
 
 #: part/templates/part/detail.html:276
 msgid "Upload BOM"
-msgstr "上传BOM"
+msgstr "上传物料清单"
 
 #: part/templates/part/detail.html:278
 msgid "Validate BOM"
-msgstr "验证BOM"
+msgstr "验证物料清单"
 
 #: part/templates/part/detail.html:283 part/templates/part/detail.html:284
 #: templates/js/translated/bom.js:1314 templates/js/translated/bom.js:1315
 msgid "Add BOM Item"
-msgstr "添加BOM项"
+msgstr "添加物料清单项"
 
 #: part/templates/part/detail.html:297
 msgid "Assemblies"
@@ -7155,7 +7155,7 @@ msgstr "没有可用的供应商价格"
 #: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:90
 #: part/templates/part/prices.html:250
 msgid "BOM Pricing"
-msgstr "BOM价格"
+msgstr "物料清单价格"
 
 #: part/templates/part/part_pricing.html:66
 msgid "Unit Purchase Price"
@@ -7167,7 +7167,7 @@ msgstr "采购总价"
 
 #: part/templates/part/part_pricing.html:83
 msgid "No BOM pricing available"
-msgstr "没有可用的BOM价格"
+msgstr "没有可用的物料清单价格"
 
 #: part/templates/part/part_pricing.html:92
 msgid "Internal Price"
@@ -7320,7 +7320,7 @@ msgstr "低库存"
 
 #: part/templates/part/upload_bom.html:8
 msgid "Return to BOM"
-msgstr "返回BOM"
+msgstr "返回物料清单"
 
 #: part/templates/part/upload_bom.html:13
 msgid "Upload Bill of Materials"
@@ -7328,28 +7328,28 @@ msgstr "上传材料单"
 
 #: part/templates/part/upload_bom.html:19
 msgid "BOM upload requirements"
-msgstr "BOM 上传要求"
+msgstr "物料清单 上传要求"
 
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
 msgid "Upload BOM File"
-msgstr "上传 BOM 文件"
+msgstr "上传 物料清单 文件"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
-msgstr "提交 BOM 数据"
+msgstr "提交 物料清单 数据"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
-msgstr "BOM 上传要求"
+msgstr "物料清单 上传要求"
 
 #: part/templates/part/upload_bom.html:39
 msgid "The BOM file must contain the required named columns as provided in the "
-msgstr "部让1BOM导入文件必须包含所提供的必填列数 "
+msgstr "部让1物料清单导入文件必须包含所提供的必填列数 "
 
 #: part/templates/part/upload_bom.html:39
 msgid "BOM Upload Template"
-msgstr "BOM 上传模板"
+msgstr "物料清单 上传模板"
 
 #: part/templates/part/upload_bom.html:40
 msgid "Each part must already exist in the database"
@@ -7478,12 +7478,12 @@ msgstr "发现多个匹配的供应商条目条形码"
 #: plugin/base/barcodes/mixins.py:198
 #, python-brace-format
 msgid "Found multiple purchase orders matching '{order}'"
-msgstr "找到多个匹配'{order}'的采购订单"
+msgstr "找到多个匹配的采购订单 '{order}'"
 
 #: plugin/base/barcodes/mixins.py:201
 #, python-brace-format
 msgid "No matching purchase order for '{order}'"
-msgstr "No matching purchase order for没有找到匹配 '{order}'的采购订单"
+msgstr "没有找到匹配的采购订单  '{order}'"
 
 #: plugin/base/barcodes/mixins.py:207
 msgid "Purchase order does not match supplier"
@@ -7491,15 +7491,15 @@ msgstr "采购订单不匹配供应商"
 
 #: plugin/base/barcodes/mixins.py:436
 msgid "Failed to find pending line item for supplier part"
-msgstr "查找供应商零件待处理行项目失败"
+msgstr "未找到供应商零件待处理行项目"
 
 #: plugin/base/barcodes/mixins.py:469
 msgid "Further information required to receive line item"
-msgstr "接收行项目所需的更多信息"
+msgstr "需要更多信息以接收行项目"
 
 #: plugin/base/barcodes/mixins.py:480
 msgid "Received purchase order line item"
-msgstr "收到采购订单行项目"
+msgstr "已收到采购订单行项目"
 
 #: plugin/base/barcodes/serializers.py:21
 msgid "Scanned barcode data"
@@ -7507,15 +7507,15 @@ msgstr "已扫描条形码"
 
 #: plugin/base/barcodes/serializers.py:81
 msgid "Purchase Order to allocate items against"
-msgstr "根据采购订单分配项目"
+msgstr "根据采购订单以分配项目"
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
-msgstr "采购订单未挂起"
+msgstr "采购订单未处理"
 
 #: plugin/base/barcodes/serializers.py:105
 msgid "PurchaseOrder to receive items against"
-msgstr "采购订单接收项目"
+msgstr "根据采购订单以接收项目"
 
 #: plugin/base/barcodes/serializers.py:112
 msgid "Purchase order has not been placed"
@@ -7523,7 +7523,7 @@ msgstr "采购订单尚未提交"
 
 #: plugin/base/barcodes/serializers.py:119
 msgid "Location to receive items into"
-msgstr "接收物品到的地点"
+msgstr "项目接收地点"
 
 #: plugin/base/barcodes/serializers.py:126
 msgid "Cannot select a structural location"
@@ -7531,7 +7531,7 @@ msgstr "无法选择一个结构性位置"
 
 #: plugin/base/barcodes/serializers.py:140
 msgid "Sales Order to allocate items against"
-msgstr "根据销售订单分配项目"
+msgstr "根据销售订单以分配项目"
 
 #: plugin/base/barcodes/serializers.py:147
 msgid "Sales order is not pending"
@@ -7543,11 +7543,11 @@ msgstr "根据销售订单行项目分配项目"
 
 #: plugin/base/barcodes/serializers.py:160
 msgid "Sales order shipment to allocate items against"
-msgstr "根据销售订单发货分配项目"
+msgstr "根据销售订单配送分配项目"
 
 #: plugin/base/barcodes/serializers.py:167
 msgid "Shipment has already been delivered"
-msgstr "货物已交付"
+msgstr "已交付"
 
 #: plugin/base/barcodes/serializers.py:173
 msgid "Quantity to allocate"
@@ -7615,7 +7615,7 @@ msgstr "打开链接"
 
 #: plugin/builtin/integration/currency_exchange.py:23
 msgid "InvenTree Currency Exchange"
-msgstr "InventTree 货币交易"
+msgstr "InventTree 货币兑换"
 
 #: plugin/builtin/integration/currency_exchange.py:24
 msgid "Default currency exchange integration"
@@ -8006,15 +8006,15 @@ msgstr "零件查询筛选器 (逗号分隔的键值对列表）"
 
 #: report/models.py:479
 msgid "Purchase order query filters"
-msgstr "采购订单查询过滤器"
+msgstr "采购订单查询筛选器"
 
 #: report/models.py:517
 msgid "Sales order query filters"
-msgstr "销售订单查询过滤器"
+msgstr "销售订单查询筛选器"
 
 #: report/models.py:555
 msgid "Return order query filters"
-msgstr "退货订单查询过滤器"
+msgstr "退货订单查询筛选器"
 
 #: report/models.py:606
 msgid "Snippet"
@@ -9060,7 +9060,7 @@ msgstr "扫描的库存容器到此位置"
 
 #: stock/templates/stock/location.html:390
 msgid "Stock Location QR Code"
-msgstr "库存地点 QR 码"
+msgstr "库存地点二维码"
 
 #: stock/templates/stock/location.html:401
 msgid "Link Barcode to Stock Location"
@@ -9150,7 +9150,7 @@ msgstr "最近商品"
 
 #: templates/InvenTree/index.html:77
 msgid "BOM Waiting Validation"
-msgstr "BOM 等待验证"
+msgstr "物料清单 等待验证"
 
 #: templates/InvenTree/index.html:106
 msgid "Recently Updated"
@@ -10507,15 +10507,15 @@ msgstr "关闭"
 
 #: templates/js/translated/bom.js:306
 msgid "Download BOM Template"
-msgstr "下载 BOM 模板"
+msgstr "下载 物料清单 模板"
 
 #: templates/js/translated/bom.js:351
 msgid "Multi Level BOM"
-msgstr "多级BOM"
+msgstr "多级物料清单"
 
 #: templates/js/translated/bom.js:352
 msgid "Include BOM data for subassemblies"
-msgstr "包括子组件的 BOM 数据"
+msgstr "包括子组件的 物料清单 数据"
 
 #: templates/js/translated/bom.js:357
 msgid "Levels"
@@ -10523,7 +10523,7 @@ msgstr "等级"
 
 #: templates/js/translated/bom.js:358
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
-msgstr "选择要导出的 BOM 级别的最大数量 (0= 所有级别)"
+msgstr "选择要导出的 物料清单 级别的最大数量 (0= 所有级别)"
 
 #: templates/js/translated/bom.js:365
 msgid "Include Alternative Parts"
@@ -10531,7 +10531,7 @@ msgstr "包含替代零件"
 
 #: templates/js/translated/bom.js:366
 msgid "Include alternative parts in exported BOM"
-msgstr "在导出的BOM 中包含替代零件"
+msgstr "在导出的物料清单 中包含替代零件"
 
 #: templates/js/translated/bom.js:371
 msgid "Include Parameter Data"
@@ -10539,7 +10539,7 @@ msgstr "包含参数数据"
 
 #: templates/js/translated/bom.js:372
 msgid "Include part parameter data in exported BOM"
-msgstr "在导出的BOM 中包含零件参数"
+msgstr "在导出的物料清单 中包含零件参数"
 
 #: templates/js/translated/bom.js:377
 msgid "Include Stock Data"
@@ -10547,7 +10547,7 @@ msgstr "包括库存数据"
 
 #: templates/js/translated/bom.js:378
 msgid "Include part stock data in exported BOM"
-msgstr "在导出 BOM 中包括库存数据"
+msgstr "在导出 物料清单 中包括库存数据"
 
 #: templates/js/translated/bom.js:383
 msgid "Include Manufacturer Data"
@@ -10555,7 +10555,7 @@ msgstr "包括制造商数据"
 
 #: templates/js/translated/bom.js:384
 msgid "Include part manufacturer data in exported BOM"
-msgstr "在导出 BOM 中包含制造商数据"
+msgstr "在导出 物料清单 中包含制造商数据"
 
 #: templates/js/translated/bom.js:389
 msgid "Include Supplier Data"
@@ -10563,7 +10563,7 @@ msgstr "包含供应商数据"
 
 #: templates/js/translated/bom.js:390
 msgid "Include part supplier data in exported BOM"
-msgstr "在导出 BOM 中包含供应商数据"
+msgstr "在导出 物料清单 中包含供应商数据"
 
 #: templates/js/translated/bom.js:395
 msgid "Include Pricing Data"
@@ -10571,7 +10571,7 @@ msgstr "包含价格数据"
 
 #: templates/js/translated/bom.js:396
 msgid "Include part pricing data in exported BOM"
-msgstr "在导出 BOM 中包括零件价格数据"
+msgstr "在导出 物料清单 中包括零件价格数据"
 
 #: templates/js/translated/bom.js:591
 msgid "Remove substitute part"
@@ -10595,15 +10595,15 @@ msgstr "添加替代项"
 
 #: templates/js/translated/bom.js:702
 msgid "Edit BOM Item Substitutes"
-msgstr "编辑BOM项目替换项目"
+msgstr "编辑物料清单项目替换项目"
 
 #: templates/js/translated/bom.js:764
 msgid "All selected BOM items will be deleted"
-msgstr "所有选中的 BOM 项目将被删除"
+msgstr "所有选中的 物料清单 项目将被删除"
 
 #: templates/js/translated/bom.js:780
 msgid "Delete selected BOM items?"
-msgstr "删除选中的BOM项目吗？"
+msgstr "删除选中的物料清单项目吗？"
 
 #: templates/js/translated/bom.js:826
 msgid "Delete items"
@@ -10611,7 +10611,7 @@ msgstr "删除项目"
 
 #: templates/js/translated/bom.js:936
 msgid "Load BOM for subassembly"
-msgstr "为子组件加载BOM"
+msgstr "为子组件加载物料清单"
 
 #: templates/js/translated/bom.js:946
 msgid "Substitutes Available"
@@ -10627,11 +10627,11 @@ msgstr "替代品"
 
 #: templates/js/translated/bom.js:1139
 msgid "BOM pricing is complete"
-msgstr "BOM 定价已完成"
+msgstr "物料清单 定价已完成"
 
 #: templates/js/translated/bom.js:1144
 msgid "BOM pricing is incomplete"
-msgstr "BOM 定价未完成"
+msgstr "物料清单 定价未完成"
 
 #: templates/js/translated/bom.js:1151
 msgid "No pricing available"
@@ -10662,7 +10662,7 @@ msgstr "可耗物品"
 
 #: templates/js/translated/bom.js:1279
 msgid "Validate BOM Item"
-msgstr "验证BOM项目"
+msgstr "验证物料清单项目"
 
 #: templates/js/translated/bom.js:1281
 msgid "This line has been validated"
@@ -10674,11 +10674,11 @@ msgstr "编辑替代零件"
 
 #: templates/js/translated/bom.js:1285 templates/js/translated/bom.js:1480
 msgid "Edit BOM Item"
-msgstr "编辑BOM条目"
+msgstr "编辑物料清单条目"
 
 #: templates/js/translated/bom.js:1287
 msgid "Delete BOM Item"
-msgstr "删除BOM项目"
+msgstr "删除物料清单项目"
 
 #: templates/js/translated/bom.js:1307
 msgid "View BOM"
@@ -10686,7 +10686,7 @@ msgstr "查看 物料清单"
 
 #: templates/js/translated/bom.js:1391
 msgid "No BOM items found"
-msgstr "未找到 BOM 项目"
+msgstr "未找到 物料清单 项目"
 
 #: templates/js/translated/bom.js:1651 templates/js/translated/build.js:2476
 msgid "Required Part"
@@ -11734,7 +11734,7 @@ msgstr "您已订阅此零件的通知"
 
 #: templates/js/translated/part.js:619
 msgid "Validating the BOM will mark each line item as valid"
-msgstr "BOM 验证将标记每个行项为有效"
+msgstr "物料清单 验证将标记每个行项为有效"
 
 #: templates/js/translated/part.js:629
 msgid "Validate Bill of Materials"
@@ -11746,7 +11746,7 @@ msgstr "已验证的物料清单。"
 
 #: templates/js/translated/part.js:657
 msgid "Copy Bill of Materials"
-msgstr "复制物料清单(Bom)"
+msgstr "复制物料清单(物料清单)"
 
 #: templates/js/translated/part.js:685
 #: templates/js/translated/table_filters.js:743
@@ -12010,7 +12010,7 @@ msgstr "获取货币数据出错"
 
 #: templates/js/translated/pricing.js:321
 msgid "No BOM data available"
-msgstr "无可用的 BOM 数据"
+msgstr "无可用的 物料清单 数据"
 
 #: templates/js/translated/pricing.js:463
 msgid "No supplier pricing data available"
@@ -12080,7 +12080,7 @@ msgstr "完成采购订单"
 #: templates/js/translated/return_order.js:210
 #: templates/js/translated/sales_order.js:500
 msgid "Mark this order as complete?"
-msgstr "标记该订单为已完成?"
+msgstr "标记该订单为已完成？"
 
 #: templates/js/translated/purchase_order.js:473
 msgid "All line items have been received"
@@ -12114,7 +12114,7 @@ msgstr "下单后，行项目将不再可编辑。"
 
 #: templates/js/translated/purchase_order.js:539
 msgid "Issue Purchase Order"
-msgstr "签发采购订单"
+msgstr "发布采购订单"
 
 #: templates/js/translated/purchase_order.js:631
 msgid "At least one purchaseable part must be selected"
@@ -12310,7 +12310,7 @@ msgstr "编辑退货订单"
 
 #: templates/js/translated/return_order.js:169
 msgid "Issue Return Order"
-msgstr "问题退货订单"
+msgstr "发布退货订单"
 
 #: templates/js/translated/return_order.js:186
 msgid "Are you sure you wish to cancel this Return Order?"
@@ -12356,15 +12356,15 @@ msgstr ""
 
 #: templates/js/translated/sales_order.js:291
 msgid "No stock items have been allocated to this shipment"
-msgstr "没有为这批货运分配库存项"
+msgstr "这批货物未分配任何库存项"
 
 #: templates/js/translated/sales_order.js:296
 msgid "The following stock items will be shipped"
-msgstr "以下库存项将被发货"
+msgstr "以下库存项将被配送"
 
 #: templates/js/translated/sales_order.js:336
 msgid "Complete Shipment"
-msgstr "完成发货"
+msgstr "完成配送"
 
 #: templates/js/translated/sales_order.js:360
 msgid "Confirm Shipment"
@@ -12372,15 +12372,15 @@ msgstr "确认发货"
 
 #: templates/js/translated/sales_order.js:416
 msgid "No pending shipments found"
-msgstr "未找到待处理的发货"
+msgstr "未找到待处理的配送"
 
 #: templates/js/translated/sales_order.js:420
 msgid "No stock items have been allocated to pending shipments"
-msgstr "未将库存项分配给待运货物"
+msgstr "这批待运货物未分配任何库存项"
 
 #: templates/js/translated/sales_order.js:430
 msgid "Complete Shipments"
-msgstr "完成发货"
+msgstr "完成配送"
 
 #: templates/js/translated/sales_order.js:452
 msgid "Skip"
@@ -12436,16 +12436,16 @@ msgstr "删除配送"
 
 #: templates/js/translated/sales_order.js:981
 msgid "No matching shipments found"
-msgstr "未找到待处理的发货"
+msgstr "未找到待处理的配送"
 
 #: templates/js/translated/sales_order.js:1006
 msgid "Shipment Reference"
-msgstr "货运参考"
+msgstr "配送参考"
 
 #: templates/js/translated/sales_order.js:1030
 #: templates/js/translated/sales_order.js:1529
 msgid "Not shipped"
-msgstr "未发货"
+msgstr "未配送"
 
 #: templates/js/translated/sales_order.js:1048
 msgid "Tracking"
@@ -12487,7 +12487,7 @@ msgstr "删除库存分配"
 #: templates/js/translated/sales_order.js:1710
 #: templates/js/translated/stock.js:1744
 msgid "Shipped to customer"
-msgstr "已发货到客户"
+msgstr "已配送到客户"
 
 #: templates/js/translated/sales_order.js:1631
 #: templates/js/translated/sales_order.js:1719
@@ -12509,7 +12509,7 @@ msgstr "计算价格"
 
 #: templates/js/translated/sales_order.js:2035
 msgid "Cannot be deleted as items have been shipped"
-msgstr "由于项目已发货，无法删除"
+msgstr "由于项目已配送，无法删除"
 
 #: templates/js/translated/sales_order.js:2038
 msgid "Cannot be deleted as items have been allocated"
@@ -12986,7 +12986,7 @@ msgstr "库存项只能在符合以下标准的情况下安装"
 
 #: templates/js/translated/stock.js:3189
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
-msgstr "库存项链接到此库存项的BOM零件"
+msgstr "库存项链接到此库存项的物料清单零件"
 
 #: templates/js/translated/stock.js:3190
 msgid "The Stock Item is currently available in stock"
