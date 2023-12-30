@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-29 15:00+0000\n"
-"PO-Revision-Date: 2023-12-11 03:45\n"
+"POT-Creation-Date: 2023-12-21 05:01+0000\n"
+"PO-Revision-Date: 2023-12-30 08:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -474,13 +474,9 @@ msgstr "Willkommen bei {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Ihr Konto wurde erstellt.\n"
-"\n"
+msgstr "Ihr Konto wurde erstellt.\n\n"
 "Bitte verwenden Sie die Passwort-Zurücksetzen-Funktion, um Zugriff zu erhalten (https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -3797,7 +3793,7 @@ msgstr "Adresse Land"
 
 #: company/models.py:377
 msgid "Courier shipping notes"
-msgstr "Kurierversandnotizen"
+msgstr "Versandnotizen"
 
 #: company/models.py:378
 msgid "Notes for shipping courier"
@@ -6519,7 +6515,7 @@ msgstr ""
 
 #: part/serializers.py:791
 msgid "Image file does not exist"
-msgstr ""
+msgstr "Bilddatei existiert nicht"
 
 #: part/serializers.py:1010
 msgid "Limit stocktake report to a particular part, and any variant parts"
@@ -7311,7 +7307,7 @@ msgstr "Verkaufspreisstaffel hinzufügen"
 
 #: part/templates/part/pricing_javascript.html:24
 msgid "Update Pricing"
-msgstr ""
+msgstr "Preise aktualisieren"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
 #: templates/js/translated/part.js:2138 templates/js/translated/part.js:2140
@@ -7447,28 +7443,20 @@ msgid "No match for supplier barcode"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:498
-#, fuzzy
-#| msgid "Multiple matching parts found"
 msgid "Multiple matching line items found"
-msgstr "Mehrere übereinstimmende Teile gefunden"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:503
-#, fuzzy
-#| msgid "No matching line items"
 msgid "No matching line item found"
-msgstr "Keine passenden Positionen gefunden"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
-#, fuzzy
-#| msgid "Barcode does not match valid stock item"
 msgid "Barcode does not match an existing stock item"
-msgstr "Barcode entspricht keinem Lagerartikel"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:563
-#, fuzzy
-#| msgid "Selected stock item does not match BOM line"
 msgid "Stock item does not match line item"
-msgstr "Ausgewählter Lagerbestand stimmt nicht mit BOM-Linie überein"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -7476,16 +7464,12 @@ msgid "Insufficient stock available"
 msgstr "Unzureichender Bestand verfügbar"
 
 #: plugin/base/barcodes/api.py:599
-#, fuzzy
-#| msgid "Stock item assigned to sales order"
 msgid "Stock item allocated to sales order"
-msgstr "Lagerartikel wurde Auftrag zugewiesen"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:603
-#, fuzzy
-#| msgid "No user information"
 msgid "Not enough information"
-msgstr "Keine Benutzerinformation"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7522,10 +7506,8 @@ msgid "Scanned barcode data"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "Purchase order no longer exists"
 msgid "Purchase Order to allocate items against"
-msgstr "Bestellung existiert nicht mehr"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
@@ -7548,38 +7530,28 @@ msgid "Cannot select a structural location"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:140
-#, fuzzy
-#| msgid "Sales Order Allocations"
 msgid "Sales Order to allocate items against"
-msgstr "Verkaufsauftragszuweisungen"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:147
-#, fuzzy
-#| msgid "Sales order not found"
 msgid "Sales order is not pending"
-msgstr "Auftrag nicht gefunden"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:154
 msgid "Sales order line item to allocate items against"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:160
-#, fuzzy
-#| msgid "Sales order shipment reference"
 msgid "Sales order shipment to allocate items against"
-msgstr "Sendungsnummer-Referenz"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:167
-#, fuzzy
-#| msgid "Shipment has already been shipped"
 msgid "Shipment has already been delivered"
-msgstr "Sendung wurde bereits versandt"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:173
-#, fuzzy
-#| msgid "Quantity to order"
 msgid "Quantity to allocate"
-msgstr "Zu bestellende Menge"
+msgstr ""
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -13487,11 +13459,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
+msgstr "Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
 "%(site_name)s anzumelden.<br>Als letzten Schritt füllen Sie bitte folgendes Formular aus:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13665,3 +13635,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
