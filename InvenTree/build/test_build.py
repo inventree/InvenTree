@@ -315,7 +315,7 @@ class BuildTest(BuildTestBase):
 
     def test_init(self):
         """Perform some basic tests before we start the ball rolling"""
-        self.assertEqual(StockItem.objects.count(), 10)
+        self.assertEqual(StockItem.objects.count(), 12)
 
         # Build is PENDING
         self.assertEqual(self.build.status, status.BuildStatus.PENDING)
@@ -628,7 +628,7 @@ class BuildTest(BuildTestBase):
         self.assertEqual(BuildItem.objects.count(), 0)
 
         # New stock items should have been created!
-        self.assertEqual(StockItem.objects.count(), 13)
+        self.assertEqual(StockItem.objects.count(), 15)
 
         # This stock item has been marked as "consumed"
         item = StockItem.objects.get(pk=self.stock_1_1.pk)
