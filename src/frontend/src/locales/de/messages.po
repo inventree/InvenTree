@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-19 05:36\n"
+"PO-Revision-Date: 2023-12-31 08:48\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -492,7 +492,7 @@ msgstr "Dialog schließen"
 #: src/components/modals/ServerInfoModal.tsx:17
 #: src/pages/Index/Settings/SystemSettings.tsx:36
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: src/components/modals/ServerInfoModal.tsx:23
 msgid "Instance Name"
@@ -548,11 +548,11 @@ msgstr "Probleme erkannt"
 
 #: src/components/modals/ServerInfoModal.tsx:88
 msgid "Background Worker"
-msgstr ""
+msgstr "Hintergrund-Prozess"
 
 #: src/components/modals/ServerInfoModal.tsx:92
 msgid "Background worker not running"
-msgstr ""
+msgstr "Hintergrund-Prozess läuft nicht"
 
 #: src/components/modals/ServerInfoModal.tsx:100
 msgid "Email Settings"
@@ -566,7 +566,7 @@ msgstr "E-Mail-Einstellungen nicht konfiguriert"
 #: src/components/tables/plugin/PluginListTable.tsx:175
 #: src/components/tables/plugin/PluginListTable.tsx:287
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: src/components/modals/ServerInfoModal.tsx:118
 msgid "Server Version"
@@ -597,7 +597,7 @@ msgstr "Einstellungen"
 #: src/defaults/menuItems.tsx:63
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:109
 msgid "Admin Center"
-msgstr ""
+msgstr "Adminbereich"
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
@@ -630,7 +630,7 @@ msgstr "Übersicht über die wichtigsten Objekte, Funktionen und mögliche Anwen
 
 #: src/components/nav/NavigationDrawer.tsx:59
 msgid "Navigation"
-msgstr ""
+msgstr "Navigation"
 
 #: src/components/nav/NavigationDrawer.tsx:62
 msgid "Pages"
@@ -639,7 +639,7 @@ msgstr "Seiten"
 #: src/components/nav/NavigationDrawer.tsx:67
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:76
 msgid "Plugins"
-msgstr ""
+msgstr "Plugins"
 
 #: src/components/nav/NavigationDrawer.tsx:77
 msgid "Documentation"
@@ -695,7 +695,7 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:415
 msgid "An error occurred during search query"
-msgstr ""
+msgstr "Bei der Suchanfrage ist ein Fehler aufgetreten"
 
 #: src/components/nav/SearchDrawer.tsx:426
 msgid "No results"
@@ -703,17 +703,17 @@ msgstr "Keine Ergebnisse"
 
 #: src/components/nav/SearchDrawer.tsx:429
 msgid "No results available for search query"
-msgstr ""
+msgstr "Keine Ergebnisse für Suchanfrage verfügbar"
 
 #: src/components/nav/StockLocationTree.tsx:80
 #: src/components/render/ModelType.tsx:63
 #: src/pages/stock/LocationDetail.tsx:48
 msgid "Stock Locations"
-msgstr ""
+msgstr "Lagerorte"
 
 #: src/components/render/Instance.tsx:135
 msgid "Unknown model: {model}"
-msgstr ""
+msgstr "Unbekanntes Modell: {model}"
 
 #: src/components/render/ModelType.tsx:20
 #: src/components/tables/bom/BomTable.tsx:62
@@ -751,29 +751,29 @@ msgstr ""
 #: src/components/render/ModelType.tsx:34
 #: src/components/tables/purchasing/SupplierPartTable.tsx:57
 msgid "Supplier Part"
-msgstr ""
+msgstr "Zuliefererteil"
 
 #: src/components/render/ModelType.tsx:35
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Zuliefererteile"
 
 #: src/components/render/ModelType.tsx:41
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Herstellerteil"
 
 #: src/components/render/ModelType.tsx:42
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Herstellerteile"
 
 #: src/components/render/ModelType.tsx:48
 #: src/pages/part/CategoryDetail.tsx:102
 msgid "Part Category"
-msgstr ""
+msgstr "Teilkategorie"
 
 #: src/components/render/ModelType.tsx:55
 #: src/pages/stock/StockDetail.tsx:220
 msgid "Stock Item"
-msgstr ""
+msgstr "Lagerartikel"
 
 #: src/components/render/ModelType.tsx:56
 #: src/components/tables/stock/StockLocationTable.tsx:62
@@ -781,7 +781,7 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:36
 #: src/pages/stock/LocationDetail.tsx:82
 msgid "Stock Items"
-msgstr ""
+msgstr "Lagerartikel"
 
 #: src/components/render/ModelType.tsx:62
 msgid "Stock Location"
@@ -938,7 +938,7 @@ msgstr "Anzahl"
 #: src/components/settings/SettingItem.tsx:43
 #: src/components/settings/SettingItem.tsx:96
 msgid "Setting updated"
-msgstr ""
+msgstr "Einstellung aktualisiert"
 
 #: src/components/settings/SettingItem.tsx:44
 #: src/components/settings/SettingItem.tsx:97
@@ -967,7 +967,7 @@ msgstr "Beschreibung"
 #: src/components/tables/ColumnRenderers.tsx:48
 #: src/components/tables/company/AddressTable.tsx:104
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: src/components/tables/ColumnRenderers.tsx:57
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:60
@@ -982,7 +982,7 @@ msgstr "Positionen"
 #: src/components/tables/sales/SalesOrderTable.tsx:38
 #: src/components/tables/stock/StockItemTable.tsx:238
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: src/components/tables/ColumnRenderers.tsx:92
 msgid "Responsible"
@@ -1028,7 +1028,7 @@ msgstr "Excel"
 
 #: src/components/tables/DownloadAction.tsx:22
 msgid "Download selected data"
-msgstr ""
+msgstr "Ausgewählte Daten herunterladen"
 
 #: src/components/tables/Filter.tsx:88
 #: src/components/tables/build/BuildOrderTable.tsx:128
@@ -1038,7 +1038,7 @@ msgstr "Mir zugewiesen"
 #: src/components/tables/Filter.tsx:89
 #: src/components/tables/build/BuildOrderTable.tsx:129
 msgid "Show orders assigned to me"
-msgstr ""
+msgstr "Mir zugewiesene Aufträge anzeigen"
 
 #: src/components/tables/Filter.tsx:96
 msgid "Outstanding"
@@ -1046,7 +1046,7 @@ msgstr "Ausstehend"
 
 #: src/components/tables/Filter.tsx:97
 msgid "Show outstanding orders"
-msgstr ""
+msgstr "Offene Aufträge anzeigen"
 
 #: src/components/tables/Filter.tsx:104
 #: src/components/tables/build/BuildOrderTable.tsx:122
@@ -1055,7 +1055,7 @@ msgstr "Überfällig"
 
 #: src/components/tables/Filter.tsx:105
 msgid "Show overdue orders"
-msgstr ""
+msgstr "Überfällige Aufträge anzeigen"
 
 #: src/components/tables/FilterGroup.tsx:29
 #~ msgid "Add table filter"
@@ -1198,7 +1198,7 @@ msgstr "Ersatzspieler"
 #: src/components/tables/bom/BomTable.tsx:268
 #: src/components/tables/bom/UsedInTable.tsx:91
 msgid "Optional"
-msgstr ""
+msgstr "Optional"
 
 #: src/components/tables/bom/BomTable.tsx:129
 #: src/components/tables/bom/BomTable.tsx:273
@@ -1230,7 +1230,7 @@ msgstr "Verfügbar"
 #: src/components/tables/bom/BomTable.tsx:162
 #: src/components/tables/part/PartTable.tsx:130
 msgid "No stock"
-msgstr ""
+msgstr "Kein Bestand"
 
 #: src/components/tables/bom/BomTable.tsx:167
 #~ msgid "Available Stock"
@@ -1246,7 +1246,7 @@ msgstr ""
 
 #: src/components/tables/bom/BomTable.tsx:187
 msgid "On order"
-msgstr ""
+msgstr "Bestellt"
 
 #: src/components/tables/bom/BomTable.tsx:195
 #: src/components/tables/part/PartTable.tsx:98
@@ -1265,11 +1265,11 @@ msgstr ""
 
 #: src/components/tables/bom/BomTable.tsx:211
 msgid "Can Build"
-msgstr ""
+msgstr "Herstellbar"
 
 #: src/components/tables/bom/BomTable.tsx:215
 msgid "Consumable item"
-msgstr ""
+msgstr "Verbrauchsartikel"
 
 #: src/components/tables/bom/BomTable.tsx:228
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:213
@@ -4282,3 +4282,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
