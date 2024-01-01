@@ -2366,6 +2366,7 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         test_station: the name of the test station where the test was performed
         started_datetime: Date when the test was started
         finished_datetime: Date when the test was finished
+        is_retest: A boolean to indicate that the given test was repeated (for caching to make stat creation more efficient)
         user: User who uploaded the test result
         date: Date the test result was recorded
     """
@@ -2383,6 +2384,8 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         """Validate result is unique before saving."""
         super().clean()
         super().validate_unique()
+        if not self.pk:
+            self.is_retest = StockItemTestResult.objects.filter(stock_item=self.stock_item).filter(test=self.test).exists()
         super().save(*args, **kwargs)
 
     def clean(self):
@@ -2474,6 +2477,13 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         blank=True,
         verbose_name=_('Finished'),
         help_text=_("The timestamp of the test finish"),
+    )
+
+    is_retest = models.BooleanField(
+        default=False,
+        blank=True,
+        verbose_name=_('Retest'),
+        help_text=_("True in the case if the same test was already performed before this test run")
     )
 
     user = models.ForeignKey(
