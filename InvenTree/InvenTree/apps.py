@@ -60,6 +60,7 @@ class InvenTreeConfig(AppConfig):
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
+            self.add_user_from_file()
 
     def remove_obsolete_tasks(self):
         """Delete any obsolete scheduled tasks in the database."""
@@ -251,8 +252,34 @@ class InvenTreeConfig(AppConfig):
         except IntegrityError:
             logger.warning('The user "%s" could not be created', add_user)
 
+    def add_user_from_file(self):
+        """Add the superuser from a file."""
+        # stop if checks were already created
+        if hasattr(settings, "USER_ADDED_FILE") and settings.USER_ADDED_FILE:
+            return
+
+        # get values
+        add_password_file = get_setting(
+            "INVENTREE_ADMIN_PASSWORD_FILE", "admin_password_file", None
+        )
+
+        # no variable set -> do not try anything
+        if not add_password_file:
+            settings.USER_ADDED_FILE = True
+            return
+
+        # check if file exists
+        add_password_file = Path(str(add_password_file))
+        if not add_password_file.exists():
+            logger.warning('The file "%s" does not exist', add_password_file)
+            settings.USER_ADDED_FILE = True
+            return
+
+        # good to go -> create user
+        self._create_admin_user("admin", "", add_password_file.read_text(encoding="utf-8"))
+
         # do not try again
-        settings.USER_ADDED = True
+        settings.USER_ADDED_FILE = True
 
     def collect_notification_methods(self):
         """Collect all notification methods."""

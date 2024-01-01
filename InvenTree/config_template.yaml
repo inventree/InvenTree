@@ -96,10 +96,11 @@ timezone: UTC
 # Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD
 
-# Add new user on first startup
+# Add new user on first startup by either adding values here or from a file
 #admin_user: admin
 #admin_email: info@example.com
 #admin_password: inventree
+#admin_password_file: '/etc/inventree/admin_password.txt'
 
 # List of currencies supported by default. Add other currencies here to allow use in InvenTree
 currencies:
