@@ -234,6 +234,12 @@ class InvenTreeConfig(AppConfig):
             return
 
         # good to go -> create user
+        self._create_admin_user(add_user, add_email, add_password)
+
+        # do not try again
+        settings.USER_ADDED = True
+
+    def _create_admin_user(self, add_user, add_email, add_password):
         user = get_user_model()
         try:
             with transaction.atomic():
