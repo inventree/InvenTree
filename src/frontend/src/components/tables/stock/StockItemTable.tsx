@@ -8,9 +8,8 @@ import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
-import { StatusColumn } from '../ColumnRenderers';
+import { PartColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, TableFilter } from '../Filter';
 import { TableHoverCard } from '../TableHoverCard';
 import { InvenTreeTable } from './../InvenTreeTable';
@@ -24,24 +23,11 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'part',
       sortable: true,
       title: t`Part`,
-      render: function (record: any) {
-        let part = record.part_detail ?? {};
-        return (
-          <Group spacing="xs" noWrap={true}>
-            <Thumbnail
-              src={part?.thumbnail || part?.image}
-              alt={part?.name}
-              size={24}
-            />
-            <Text>{part?.full_name}</Text>
-          </Group>
-        );
-      }
+      render: (record: any) => PartColumn(record?.part_detail)
     },
     {
       accessor: 'part_detail.description',
       sortable: false,
-
       title: t`Description`
     },
     {

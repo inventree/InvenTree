@@ -47,7 +47,7 @@ defusedxml==0.7.1
     #   python3-openid
 diff-match-patch==20230430
     # via django-import-export
-dj-rest-auth==5.0.1
+dj-rest-auth==5.0.2
     # via -r requirements.in
 django==3.2.23
     # via
@@ -83,7 +83,7 @@ django==3.2.23
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth==0.54.0
+django-allauth==0.59.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
