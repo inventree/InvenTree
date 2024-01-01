@@ -20,7 +20,7 @@ cffi==1.16.0
     #   cryptography
 cfgv==3.4.0
     # via pre-commit
-charset-normalizer==3.3.0
+charset-normalizer==3.3.2
     # via
     #   -c src/backend/requirements.txt
     #   pdfminer-six
@@ -33,13 +33,13 @@ coverage==5.5
     #   coveralls
 coveralls==2.1.2
     # via -r src/backend/requirements-dev.in
-cryptography==41.0.4
+cryptography==41.0.6
     # via
     #   -c src/backend/requirements.txt
     #   pdfminer-six
 distlib==0.3.7
     # via virtualenv
-django==3.2.22
+django==3.2.23
     # via
     #   -c src/backend/requirements.txt
     #   django-debug-toolbar
@@ -132,7 +132,7 @@ typing-extensions==4.8.0
     #   -c src/backend/requirements.txt
     #   asgiref
     #   django-test-migrations
-urllib3==2.0.6
+urllib3==2.0.7
     # via
     #   -c src/backend/requirements.txt
     #   requests
