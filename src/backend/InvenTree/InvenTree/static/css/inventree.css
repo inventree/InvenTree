@@ -1101,3 +1101,8 @@ a {
 .large-treeview-icon {
     font-size: 1em;
 }
+
+.test-statistics-table-total-row {
+    font-weight: bold;
+    border-top-style: double;
+}
