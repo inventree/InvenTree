@@ -10,7 +10,6 @@ def generate_retest_field(apps, schema_editor):
     last_test = ""
     for result in results:
         if result.stock_item.pk == last_stock_item_pk and result.test == last_test:
-            print("same as prev")
             continue
         last_stock_item_pk = result.stock_item.pk
         last_test = result.test
