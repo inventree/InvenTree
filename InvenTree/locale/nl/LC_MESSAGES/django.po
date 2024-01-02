@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-29 15:00+0000\n"
-"PO-Revision-Date: 2023-12-11 03:45\n"
+"POT-Creation-Date: 2023-12-21 05:01+0000\n"
+"PO-Revision-Date: 2024-01-02 15:19\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -474,9 +474,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -544,7 +542,7 @@ msgstr "Afbeeldingen van externe URL downloaden is niet ingeschakeld"
 
 #: InvenTree/settings.py:833
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgaars"
 
 #: InvenTree/settings.py:834
 msgid "Czech"
@@ -640,7 +638,7 @@ msgstr "Sloveens"
 
 #: InvenTree/settings.py:857
 msgid "Serbian"
-msgstr ""
+msgstr "Servisch"
 
 #: InvenTree/settings.py:858
 msgid "Swedish"
@@ -2109,7 +2107,7 @@ msgstr "Een instelling is gewijzigd waarvoor een herstart van de server vereist 
 
 #: common/models.py:1086
 msgid "Pending migrations"
-msgstr ""
+msgstr "Migraties in behandeling"
 
 #: common/models.py:1087
 msgid "Number of pending database migrations"
@@ -3398,11 +3396,11 @@ msgstr ""
 
 #: common/models.py:2322
 msgid "Receive error reports"
-msgstr ""
+msgstr "Foutrapportages ontvangen"
 
 #: common/models.py:2323
 msgid "Receive notifications for system errors"
-msgstr ""
+msgstr "Meldingen ontvangen van systeemfouten"
 
 #: common/models.py:2367
 msgid "Price break quantity"
@@ -3507,16 +3505,16 @@ msgstr ""
 
 #: common/models.py:2873
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: common/models.py:2879 templates/js/translated/company.js:955
 #: templates/js/translated/news.js:44
 msgid "Title"
-msgstr ""
+msgstr "Titel"
 
 #: common/models.py:2889 templates/js/translated/news.js:60
 msgid "Published"
-msgstr ""
+msgstr "Gepubliceerd"
 
 #: common/models.py:2894 templates/InvenTree/settings/plugin_settings.html:32
 #: templates/js/translated/news.js:56 templates/js/translated/plugin.js:103
@@ -3525,11 +3523,11 @@ msgstr ""
 
 #: common/models.py:2899 templates/js/translated/news.js:52
 msgid "Summary"
-msgstr ""
+msgstr "Samenvatting"
 
 #: common/models.py:2904
 msgid "Read"
-msgstr ""
+msgstr "Gelezen"
 
 #: common/models.py:2905
 msgid "Was this news item read?"
@@ -3547,7 +3545,7 @@ msgstr "Afbeelding"
 
 #: common/models.py:2925
 msgid "Image file"
-msgstr ""
+msgstr "Afbeelding"
 
 #: common/models.py:2968
 msgid "Unit name must be a valid identifier"
@@ -3559,7 +3557,7 @@ msgstr ""
 
 #: common/models.py:2996 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
-msgstr ""
+msgstr "Symbool"
 
 #: common/models.py:2997
 msgid "Optional unit symbol"
@@ -3567,7 +3565,7 @@ msgstr ""
 
 #: common/models.py:3003 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
-msgstr ""
+msgstr "Definitie"
 
 #: common/models.py:3004
 msgid "Unit definition"
@@ -3576,7 +3574,7 @@ msgstr ""
 #: common/notifications.py:290
 #, python-brace-format
 msgid "New {verbose_name}"
-msgstr ""
+msgstr "Nieuw: {verbose_name}"
 
 #: common/notifications.py:292
 msgid "A new order has been created and assigned to you"
@@ -7444,28 +7442,20 @@ msgid "No match for supplier barcode"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:498
-#, fuzzy
-#| msgid "No matching line items"
 msgid "Multiple matching line items found"
-msgstr "Geen overeenkomende artikelen"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:503
-#, fuzzy
-#| msgid "No matching line items"
 msgid "No matching line item found"
-msgstr "Geen overeenkomende artikelen"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
-#, fuzzy
-#| msgid "No matching stock items"
 msgid "Barcode does not match an existing stock item"
-msgstr "Geen overeenkomende voorraadartikelen"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:563
-#, fuzzy
-#| msgid "Selected stock item does not match BOM line"
 msgid "Stock item does not match line item"
-msgstr "Geselecteerde voorraadartikelen komen niet overeen met de BOM-regel"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -7473,16 +7463,12 @@ msgid "Insufficient stock available"
 msgstr "Onvoldoende voorraad beschikbaar"
 
 #: plugin/base/barcodes/api.py:599
-#, fuzzy
-#| msgid "Stock item assigned to sales order"
 msgid "Stock item allocated to sales order"
-msgstr "Voorraadartikel toegewezen aan verkooporder"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:603
-#, fuzzy
-#| msgid "Edit company information"
 msgid "Not enough information"
-msgstr "Bedrijfsinformatie bewerken"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7519,10 +7505,8 @@ msgid "Scanned barcode data"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "Purchase order no longer exists"
 msgid "Purchase Order to allocate items against"
-msgstr "Inkooporder bestaat niet meer"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
@@ -7545,38 +7529,28 @@ msgid "Cannot select a structural location"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:140
-#, fuzzy
-#| msgid "Sales Order Allocations"
 msgid "Sales Order to allocate items against"
-msgstr "Verkoopordertoewijzingen"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:147
-#, fuzzy
-#| msgid "Sales order not found"
 msgid "Sales order is not pending"
-msgstr "Verkooporder niet gevonden"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:154
 msgid "Sales order line item to allocate items against"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:160
-#, fuzzy
-#| msgid "Sales order shipment reference"
 msgid "Sales order shipment to allocate items against"
-msgstr "Verzendreferentie verkooporder"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:167
-#, fuzzy
-#| msgid "Shipment has already been shipped"
 msgid "Shipment has already been delivered"
-msgstr "Verzending is al verzonden"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:173
-#, fuzzy
-#| msgid "Quantity to order"
 msgid "Quantity to allocate"
-msgstr "Te bestellen aantal"
+msgstr ""
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -13484,8 +13458,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13660,3 +13633,4 @@ msgstr ""
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr ""
+
