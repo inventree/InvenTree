@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-19 04:30+0000\n"
+"POT-Creation-Date: 2023-12-29 15:00+0000\n"
 "PO-Revision-Date: 2023-12-12 03:57\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -3412,7 +3412,7 @@ msgid "Price break quantity"
 msgstr "Số lượng giá phá vỡ"
 
 #: common/models.py:2374 company/serializers.py:485 order/admin.py:41
-#: order/models.py:1181 order/models.py:2014
+#: order/models.py:1181 order/models.py:2015
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1883
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -4573,7 +4573,7 @@ msgstr "Không tìm thấy đơn đặt mua phù hợp"
 msgid "Purchase Order"
 msgstr "Đơn hàng"
 
-#: order/api.py:1411 order/models.py:1984 order/models.py:2030
+#: order/api.py:1411 order/models.py:1985 order/models.py:2031
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4758,8 +4758,8 @@ msgid "deleted"
 msgstr "đã bị xóa"
 
 #: order/models.py:1226 order/models.py:1310 order/models.py:1350
-#: order/models.py:1449 order/models.py:1598 order/models.py:1983
-#: order/models.py:2030 templates/js/translated/sales_order.js:1488
+#: order/models.py:1449 order/models.py:1598 order/models.py:1984
+#: order/models.py:2031 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr "Đặt hàng"
 
@@ -4905,7 +4905,7 @@ msgstr "Dòng"
 msgid "Sales order shipment reference"
 msgstr "Tham chiếu vận đơn của đơn hàng bán"
 
-#: order/models.py:1699 order/models.py:1991
+#: order/models.py:1699 order/models.py:1992
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr "Hàng hóa"
@@ -4930,32 +4930,32 @@ msgstr "Công ty có hàng hóa sẽ được trả lại"
 msgid "Return order status"
 msgstr "Trạng thái đơn hàng trả lại"
 
-#: order/models.py:1976
+#: order/models.py:1977
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr "Chỉ hàng hóa thêo sêri mới có thể được gán vào đơn hàng trả lại"
 
-#: order/models.py:1992
+#: order/models.py:1993
 msgid "Select item to return from customer"
 msgstr "Chọn hàng hóa để trả lại từ khách hàng"
 
-#: order/models.py:1997
+#: order/models.py:1998
 msgid "Received Date"
 msgstr "Ngày nhận được"
 
-#: order/models.py:1998
+#: order/models.py:1999
 msgid "The date this this return item was received"
 msgstr "Ngày mà hàng hóa trả lại đã được nhận"
 
-#: order/models.py:2009 templates/js/translated/return_order.js:733
+#: order/models.py:2010 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr "Kết quả"
 
-#: order/models.py:2009
+#: order/models.py:2010
 msgid "Outcome for this line item"
 msgstr "Kết quả cho hàng hóa dòng này"
 
-#: order/models.py:2015
+#: order/models.py:2016
 msgid "Cost associated with return or repair for this line item"
 msgstr "Chi phí gắn với hàng trả lại hoặc sửa chữa cho dòng hàng hóa này"
 
