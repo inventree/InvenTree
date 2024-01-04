@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-29 08:49\n"
+"PO-Revision-Date: 2024-01-04 15:40\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -727,7 +727,7 @@ msgstr "未知模型: {model}"
 #: src/components/tables/stock/StockItemTable.tsx:25
 #: src/pages/part/PartDetail.tsx:336
 msgid "Part"
-msgstr "商品"
+msgstr "零件"
 
 #: src/components/render/ModelType.tsx:21
 #: src/components/tables/part/PartCategoryTable.tsx:46
@@ -755,7 +755,7 @@ msgstr "供应商商品"
 
 #: src/components/render/ModelType.tsx:35
 msgid "Supplier Parts"
-msgstr "供应商商品"
+msgstr "供应商零件"
 
 #: src/components/render/ModelType.tsx:41
 msgid "Manufacturer Part"
@@ -824,7 +824,7 @@ msgstr "项目编码"
 #: src/components/render/ModelType.tsx:89
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:52
 msgid "Project Codes"
-msgstr "项目编码:"
+msgstr "项目编码"
 
 #: src/components/render/ModelType.tsx:95
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:131
@@ -2239,31 +2239,31 @@ msgstr "添加供应商商品"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:160
 msgid "Supplier part created"
-msgstr "供应商商品已更新"
+msgstr "供应商零件已更新"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:169
 msgid "Add supplier part"
-msgstr "添加供应商商品"
+msgstr "添加供应商零件"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:191
 msgid "Edit Supplier Part"
-msgstr "编辑供应商商品"
+msgstr "编辑供应商零件"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:194
 msgid "Supplier part updated"
-msgstr "供应商商品已更新"
+msgstr "供应商零件已更新"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:205
 msgid "Delete Supplier Part"
-msgstr "删除供应商商品"
+msgstr "删除供应商零件"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:206
 msgid "Supplier part deleted"
-msgstr "供应商商品已删除"
+msgstr "供应商零件已删除"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:208
 msgid "Are you sure you want to remove this supplier part?"
-msgstr "确定要删除此供应商商品吗？"
+msgstr "确定要删除此供应商零件吗？"
 
 #: src/components/tables/sales/ReturnOrderTable.tsx:61
 #: src/components/tables/sales/SalesOrderTable.tsx:65
@@ -2322,7 +2322,7 @@ msgstr "自定义单位已删除"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:79
 msgid "Are you sure you want to remove this custom unit?"
-msgstr "您确定要删除此自定义单元吗？"
+msgstr "您确定要删除此自定义单位吗？"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:91
 #: src/components/tables/settings/CustomUnitsTable.tsx:107
@@ -3019,7 +3019,7 @@ msgstr "仪表盘"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:134
 #: src/pages/purchasing/PurchasingIndex.tsx:53
 msgid "Purchasing"
-msgstr "购买中"
+msgstr "采购中"
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:53
