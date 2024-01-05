@@ -215,6 +215,7 @@ class InvenTreeConfig(AppConfig):
         add_user = get_setting('INVENTREE_ADMIN_USER', 'admin_user')
         add_email = get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email')
         add_password = get_setting('INVENTREE_ADMIN_PASSWORD', 'admin_password')
+        add_password_file = get_setting("INVENTREE_ADMIN_PASSWORD_FILE", "admin_password_file", None)
 
         # check if all values are present
         set_variables = 0
@@ -230,8 +231,12 @@ class InvenTreeConfig(AppConfig):
 
         # not all needed variables set
         if set_variables < 3:
-            logger.warning('Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD')
             settings.USER_ADDED = True
+
+            # if a password file is present, do not warn - will be handled later
+            if add_password_file:
+                return
+            logger.warning('Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD')
             return
 
         # good to go -> create user
