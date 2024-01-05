@@ -276,7 +276,7 @@ class InvenTreeConfig(AppConfig):
             return
 
         # good to go -> create user
-        self._create_admin_user("admin", "", add_password_file.read_text(encoding="utf-8"))
+        self._create_admin_user(get_setting('INVENTREE_ADMIN_USER', 'admin_user', 'admin'), get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email', ''), add_password_file.read_text(encoding="utf-8"))
 
         # do not try again
         settings.USER_ADDED_FILE = True
