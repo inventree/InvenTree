@@ -351,10 +351,11 @@ class SupplierBarcodeMixin(BarcodeMixin):
         supplier_reference_filter = Q(supplier_reference__iexact=supplier_order_number)
 
         orders_union = orders.filter(reference_filter | supplier_reference_filter)
-        if orders_union.count() == 1:
+        orders_intersection = orders.filter(reference_filter & supplier_reference_filter)
+        if orders_union.count() == 1 or not orders_intersection:
             return orders_union
-
-        return orders.filter(reference_filter & supplier_reference_filter)
+        else:
+            return orders_intersection
 
     @staticmethod
     def get_supplier_parts(sku: str = None, supplier: Company = None, mpn: str = None):
