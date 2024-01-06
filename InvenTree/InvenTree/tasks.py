@@ -517,7 +517,16 @@ def check_for_updates():
 
     # Send notification if there is a new version
     if not isInvenTreeUpToDate():
+        logger.warning("InvenTree is not up-to-date, sending notification")
+
         plg = registry.get_plugin('InvenTreeCoreNotificationsPlugin')
+        if not plg:
+            logger.warning("Cannot send notification - plugin not found")
+            return
+        plg = plg.plugin_config()
+        if not plg:
+            logger.warning("Cannot send notification - plugin config not found")
+            return
         # Send notification
         trigger_superuser_notification(
             plg,
