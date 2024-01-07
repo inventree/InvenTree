@@ -70,4 +70,4 @@ inline-quotes = "double"
 source = "InvenTree"
 
 [tool.djlint]
-ignore = ["D018","H006","H008","H020","H021","H023","H025","H030","H031","T002"]
+ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
