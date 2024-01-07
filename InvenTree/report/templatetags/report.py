@@ -111,7 +111,8 @@ def uploaded_image(
 
     Arguments:
         filename: The filename of the image relative to the MEDIA_ROOT directory
-        replace_missing: Optionally return a placeholder image if the provided filename does not exist
+        replace_missing: Optionally return a placeholder image if the provided filename does not exist (default = True)
+        replacement_file: The filename of the placeholder image (default = 'blank_image.png')
         validate: Optionally validate that the file is a valid image file (default = True)
 
     kwargs:
@@ -229,7 +230,9 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
     """Return a fully-qualified path for a part image.
 
     Arguments:
-        part: a Part model instance
+        part: A Part model instance
+        preview: Return the preview image (default = False)
+        thumbnail: Return the thumbnail image (default = False)
 
     Raises:
         TypeError if provided part is not a Part instance
@@ -268,7 +271,9 @@ def company_image(company, preview=False, thumbnail=False, **kwargs):
     """Return a fully-qualified path for a company image.
 
     Arguments:
-        company: a Company model instance
+        company: A Company model instance
+        preview: Return the preview image (default = False)
+        thumbnail: Return the thumbnail image (default = False)
 
     Raises:
         TypeError if provided company is not a Company instance

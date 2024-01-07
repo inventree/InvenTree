@@ -28,8 +28,9 @@ def perform_stocktake(
 
     Arguments:
         target: A single Part model instance
-        commit: If True (default) save the result to the database
         user: User who requested this stocktake
+        note: Optional note to attach to the stocktake
+        commit: If True (default) save the result to the database
 
     kwargs:
         exclude_external: If True, exclude stock items in external locations (default = False)

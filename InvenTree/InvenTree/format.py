@@ -184,8 +184,9 @@ def format_money(money: Money, decimal_places: int = None, format: str = None) -
     """Format money object according to the currently set local.
 
     Args:
-        decimal_places: Number of decimal places to use
-        format: Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
+        money (Money): The money object to format
+        decimal_places (int): Number of decimal places to use
+        format (str): Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
 
     Returns:
         str: The formatted string

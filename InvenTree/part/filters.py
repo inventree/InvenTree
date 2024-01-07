@@ -244,10 +244,10 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     Parts which do not have a value for the given parameter are excluded.
 
     Arguments:
-        queryset - A queryset of Part objects
-        template_id - The ID of the template parameter to filter by
-        value - The value of the parameter to filter by
-        func - The function to use for the filter (e.g. __gt, __lt, __contains)
+        queryset: A queryset of Part objects
+        template_id (int): The ID of the template parameter to filter by
+        value (str): The value of the parameter to filter by
+        func (str): The function to use for the filter (e.g. __gt, __lt, __contains)
 
     Returns:
         A queryset of Part objects filtered by the given parameter
@@ -262,8 +262,9 @@ def order_by_parameter(queryset, template_id: int, ascending=True):
     Parts which do not have a value for the given parameter are ordered last.
 
     Arguments:
-        queryset - A queryset of Part objects
-        template_id - The ID of the template parameter to order by
+        queryset: A queryset of Part objects
+        template_id (int): The ID of the template parameter to order by
+        ascending (bool): Order by ascending or descending (default = True)
 
     Returns:
         A queryset of Part objects ordered by the given parameter

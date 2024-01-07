@@ -78,8 +78,8 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     """Check if a periodic task should be run, based on the provided setting name.
 
     Arguments:
-        task_name: The name of the task being run, e.g. 'dummy_task'
-        setting_name: The name of the global setting, e.g. 'INVENTREE_DUMMY_TASK_INTERVAL'
+        task_name (str): The name of the task being run, e.g. 'dummy_task'
+        n_days (int): The number of days between task runs (default = 1)
 
     Returns:
         bool: If the task should be run *now*, or wait another day

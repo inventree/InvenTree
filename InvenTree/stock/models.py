@@ -1669,6 +1669,7 @@ class StockItem(
         Args:
             quantity: Number of stock items to remove from this entity, and pass to the next
             location: Where to move the new StockItem to
+            user: User performing the action
 
         kwargs:
             notes: Optional notes for tracking

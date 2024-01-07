@@ -333,8 +333,8 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         """Method for updating the object in the database. Default implementation is very simple, but can be overridden if required.
 
         Args:
-            object - The current object, to be updated
-            form - The validated form
+            object: The current object, to be updated
+            form: The validated form
 
         Returns:
             object instance for supplied form

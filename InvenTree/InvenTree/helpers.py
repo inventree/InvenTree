@@ -334,10 +334,9 @@ def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
     """Generate a string for a barcode. Adds some global InvenTree parameters.
 
     Args:
-        object_type: string describing the object type e.g. 'StockItem'
-        object_id: ID (Primary Key) of the object in the database
-        object_url: url for JSON API detail view of the object
-        data: Python dict object containing extra data which will be rendered to string (must only contain stringable values)
+        cls_name: string describing the object type e.g. 'StockItem'
+        object_pk (int): ID (Primary Key) of the object in the database
+        object_data: Python dict object containing extra data which will be rendered to string (must only contain stringable values)
 
     Returns:
         json string of the supplied data plus some other data

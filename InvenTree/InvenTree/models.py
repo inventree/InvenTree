@@ -95,6 +95,7 @@ class MetadataMixin(models.Model):
 
         Args:
             key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
+            backup_value: Value that should be used if no value is found
 
         Returns:
             Python dict object containing requested metadata. If no matching metadata is found, returns None
