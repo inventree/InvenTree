@@ -74,8 +74,6 @@ packaging==23.2
     #   build
 pdfminer-six==20221105
     # via -r requirements-dev.in
-pep8-naming==0.13.3
-    # via -r requirements-dev.in
 pip-tools==7.3.0
     # via -r requirements-dev.in
 platformdirs==3.11.0
