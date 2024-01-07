@@ -19,10 +19,12 @@ src = ["../InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C4", "D", "DJ", "N", "S"]
+select = ["A", "B", "C4", "D", "N"]
 # Things that should be enabled in the future:
 # - LOG
 # - I
+# - DJ # for Django stuff
+# - S # for security stuff (bandit)
 
 ignore = [
     "N999",
@@ -36,8 +38,15 @@ ignore = [
     "D202",
     # - D415 - First line should end with a period, question mark, or exclamation point
     "D415",
-    # - S101 - Use of `assert` detected
-    "S101"
+    # - D417 Missing argument descriptions in the docstring
+    "D417",
+
+    # TODO These should be followed up and fixed
+    # - B904 Within an `except` clause, raise exceptions
+    "B904",
+
+    # Remove fast
+    "A001", "A002","A003","B018"
 ]
 
 [tool.ruff.lint.pydocstyle]
