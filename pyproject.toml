@@ -63,7 +63,7 @@ section-order = [
 "django" = ["django"]
 
 [tool.ruff.format]
-quote-style = "single"
+quote-style = "preserve"
 indent-style = "space"
 skip-magic-trailing-comma = true
 line-ending = "auto"
