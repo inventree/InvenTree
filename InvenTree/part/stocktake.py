@@ -24,7 +24,7 @@ logger = logging.getLogger('inventree')
 def perform_stocktake(target: part.models.Part, user: User, note: str = '', commit=True, **kwargs):
     """Perform stocktake action on a single part.
 
-    arguments:
+    Arguments:
         target: A single Part model instance
         commit: If True (default) save the result to the database
         user: User who requested this stocktake
