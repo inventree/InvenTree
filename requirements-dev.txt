@@ -27,7 +27,7 @@ charset-normalizer==3.3.2
     #   requests
 click==8.1.7
     # via pip-tools
-coverage==5.5
+coverage[toml]==5.5
     # via
     #   -r requirements-dev.in
     #   coveralls
@@ -103,6 +103,8 @@ sqlparse==0.4.4
     #   -c requirements.txt
     #   django
     #   django-debug-toolbar
+toml==0.10.2
+    # via coverage
 tomli==2.0.1
     # via
     #   build
