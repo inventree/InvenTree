@@ -103,6 +103,8 @@ sqlparse==0.4.4
     #   -c requirements.txt
     #   django
     #   django-debug-toolbar
+toml==0.10.2
+    # via coverage
 tomli==2.0.1
     # via
     #   build
