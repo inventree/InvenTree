@@ -5,8 +5,21 @@ from django.db import migrations
 def update_tree(apps, schema_editor):
     # Update the PartCategory MPTT model
 
-    PartCategory = apps.get_model('part', 'PartCategory')
-    PartCategory.objects.rebuild()
+    try:
+        print("Rebuilding PartCategory objects")
+
+        from part.models import PartCategory
+        PartCategory.objects.rebuild()
+    except Exception:
+        print("Error rebuilding PartCategory objects")
+
+    try:
+        print("Rebuilding PartCategoryS objects - app loaded")
+
+        PartCategoryS = apps.get_model('part', 'PartCategory')
+        PartCategoryS.objects.rebuild()
+    except Exception:
+        print("Error rebuilding PartCategory objects - app loaded")
 
 
 class Migration(migrations.Migration):
