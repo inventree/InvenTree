@@ -12,7 +12,7 @@ exclude = [
     ".venv",
     ".env",
 ]
-src = ["InvenTree"]
+src = ["../InvenTree"]
 # line-length = 120
 
 [tool.ruff.extend-per-file-ignores]
@@ -69,7 +69,13 @@ skip-magic-trailing-comma = true
 line-ending = "auto"
 
 [tool.coverage.run]
-source = "InvenTree"
+source = ["InvenTree", ]
 
 [tool.djlint]
 ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
+
+[tool.isort]
+src_paths=["InvenTree", ]
+skip_glob ="*/migrations/*.py"
+known_django="django"
+sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
