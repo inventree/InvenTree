@@ -13,6 +13,7 @@ exclude = [
     ".env",
 ]
 src = ["../InvenTree"]
+# line-length = 120
 
 [tool.ruff.extend-per-file-ignores]
 "__init__.py" = ["D104"]
@@ -35,6 +36,8 @@ ignore = [
     "D202",
     # - D415 - First line should end with a period, question mark, or exclamation point
     "D415",
+    # - S101 - Use of `assert` detected
+    "S101"
 ]
 
 [tool.ruff.lint.pydocstyle]
@@ -57,14 +60,10 @@ known-first-party = ["src", "plugin", "InvenTree", "common"]
 "django" = ["django"]
 
 [tool.ruff.format]
-quote-style = "single"
+quote-style = "preserve"
 indent-style = "space"
-skip-magic-trailing-comma = false
+skip-magic-trailing-comma = true
 line-ending = "auto"
-
-[tool.ruff.flake8-quotes]
-docstring-quotes = "double"
-inline-quotes = "double"
 
 [tool.coverage.run]
 source = "InvenTree"

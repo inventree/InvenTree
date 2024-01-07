@@ -19,8 +19,9 @@ repos:
     rev: v0.1.11
     hooks:
     - id: ruff
-      args: [--fix]
+      args: [--fix, --preview]
     - id: ruff-format
+      args: [--preview]
 -   repo: https://github.com/pycqa/isort
     rev: '5.12.0'
     hooks:
