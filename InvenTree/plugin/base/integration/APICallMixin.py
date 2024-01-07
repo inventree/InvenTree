@@ -93,7 +93,7 @@ class APICallMixin:
         Check the mixin class docstring for a full example.
         """
         headers = {'Content-Type': 'application/json'}
-        if getattr(self, 'API_TOKEN_SETTING'):
+        if getattr(self, 'API_TOKEN_SETTING', None):
             token = self.get_setting(self.API_TOKEN_SETTING)
 
             if token:

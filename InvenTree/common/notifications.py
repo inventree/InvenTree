@@ -336,9 +336,9 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
 
     # Try with some defaults
     if not obj_ref_value:
-        obj_ref_value = getattr(obj, 'pk')
+        obj_ref_value = getattr(obj, 'pk', None)
     if not obj_ref_value:
-        obj_ref_value = getattr(obj, 'id')
+        obj_ref_value = getattr(obj, 'id', None)
     if not obj_ref_value:
         raise KeyError(f"Could not resolve an object reference for '{str(obj)}' with {obj_ref}, pk, id")
 
