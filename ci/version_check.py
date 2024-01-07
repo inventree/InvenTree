@@ -14,6 +14,7 @@ import json
 import os
 import re
 import sys
+from pathlib import Path
 
 import requests
 
@@ -91,8 +92,6 @@ def check_version_number(version_string, allow_duplicate=False):
 
 
 if __name__ == '__main__':
-    here = os.path.abspath(os.path.dirname(__file__))
-
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'
     GITHUB_REF_TYPE = os.environ['GITHUB_REF_TYPE']
 
@@ -118,7 +117,7 @@ if __name__ == '__main__':
         text = f.read()
 
         # Extract the InvenTree software version
-        results = re.findall(r'INVENTREE_SW_VERSION = "(.*)"', text)
+        results = re.findall(r"""INVENTREE_SW_VERSION = '(.*)'""", text)
 
         if len(results) != 1:
             print(f'Could not find INVENTREE_SW_VERSION in {version_file}')
