@@ -109,7 +109,8 @@ if __name__ == '__main__':
     print(f'GITHUB_REF_TYPE: {GITHUB_REF_TYPE}')
     print(f'GITHUB_BASE_REF: {GITHUB_BASE_REF}')
 
-    version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
+    here = Path(__file__).parent.absolute()
+    version_file = here.joinpath('..', 'InvenTree', 'InvenTree', 'version.py')
 
     version = None
 
