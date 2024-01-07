@@ -15,17 +15,17 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: mixed-line-ending
--   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.11
-    hooks:
-    - id: ruff
-      args: [--fix, --preview]
-    - id: ruff-format
-      args: [--preview]
 -   repo: https://github.com/pycqa/isort
     rev: '5.12.0'
     hooks:
     -   id: isort
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.11
+    hooks:
+    - id: ruff-format
+      args: [--preview]
+    - id: ruff
+      args: [--fix, --preview]
 -   repo: https://github.com/jazzband/pip-tools
     rev: 7.3.0
     hooks:
