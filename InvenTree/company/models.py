@@ -29,8 +29,12 @@ import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
-                              InvenTreeNotesMixin, MetadataMixin)
+from InvenTree.models import (
+    InvenTreeAttachment,
+    InvenTreeBarcodeMixin,
+    InvenTreeNotesMixin,
+    MetadataMixin,
+)
 from InvenTree.status_codes import PurchaseOrderStatusGroups
 
 
@@ -87,7 +91,8 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
     class Meta:
         """Metaclass defines extra model options"""
-        ordering = ['name', ]
+
+        ordering = ['name']
         constraints = [
             UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
         ]
@@ -98,9 +103,12 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         """Return the API URL associated with the Company model"""
         return reverse('api-company-list')
 
-    name = models.CharField(max_length=100, blank=False,
-                            help_text=_('Company name'),
-                            verbose_name=_('Company name'))
+    name = models.CharField(
+        max_length=100,
+        blank=False,
+        help_text=_('Company name'),
+        verbose_name=_('Company name'),
+    )
 
     description = models.CharField(
         max_length=500,
@@ -110,41 +118,62 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     )
 
     website = InvenTreeURLField(
-        blank=True,
-        verbose_name=_('Website'),
-        help_text=_('Company website URL')
+        blank=True, verbose_name=_('Website'), help_text=_('Company website URL')
     )
 
-    phone = models.CharField(max_length=50,
-                             verbose_name=_('Phone number'),
-                             blank=True, help_text=_('Contact phone number'))
+    phone = models.CharField(
+        max_length=50,
+        verbose_name=_('Phone number'),
+        blank=True,
+        help_text=_('Contact phone number'),
+    )
 
-    email = models.EmailField(blank=True, null=True,
-                              verbose_name=_('Email'), help_text=_('Contact email address'))
+    email = models.EmailField(
+        blank=True,
+        null=True,
+        verbose_name=_('Email'),
+        help_text=_('Contact email address'),
+    )
 
-    contact = models.CharField(max_length=100,
-                               verbose_name=_('Contact'),
-                               blank=True, help_text=_('Point of contact'))
+    contact = models.CharField(
+        max_length=100,
+        verbose_name=_('Contact'),
+        blank=True,
+        help_text=_('Point of contact'),
+    )
 
-    link = InvenTreeURLField(blank=True, verbose_name=_('Link'), help_text=_('Link to external company information'))
+    link = InvenTreeURLField(
+        blank=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external company information'),
+    )
 
     image = StdImageField(
         upload_to=rename_company_image,
         null=True,
         blank=True,
-        variations={
-            'thumbnail': (128, 128),
-            'preview': (256, 256),
-        },
+        variations={'thumbnail': (128, 128), 'preview': (256, 256)},
         delete_orphans=True,
         verbose_name=_('Image'),
     )
 
-    is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
+    is_customer = models.BooleanField(
+        default=False,
+        verbose_name=_('is customer'),
+        help_text=_('Do you sell items to this company?'),
+    )
 
-    is_supplier = models.BooleanField(default=True, verbose_name=_('is supplier'), help_text=_('Do you purchase items from this company?'))
+    is_supplier = models.BooleanField(
+        default=True,
+        verbose_name=_('is supplier'),
+        help_text=_('Do you purchase items from this company?'),
+    )
 
-    is_manufacturer = models.BooleanField(default=False, verbose_name=_('is manufacturer'), help_text=_('Does this company manufacture parts?'))
+    is_manufacturer = models.BooleanField(
+        default=False,
+        verbose_name=_('is manufacturer'),
+        help_text=_('Does this company manufacture parts?'),
+    )
 
     currency = models.CharField(
         max_length=3,
@@ -207,13 +236,18 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     @property
     def parts(self):
         """Return SupplierPart objects which are supplied or manufactured by this company."""
-        return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id)).distinct()
+        return SupplierPart.objects.filter(
+            Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id)
+        ).distinct()
 
     @property
     def stock_items(self):
         """Return a list of all stock items supplied or manufactured by this company."""
         stock = apps.get_model('stock', 'StockItem')
-        return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).distinct()
+        return stock.objects.filter(
+            Q(supplier_part__supplier=self.id)
+            | Q(supplier_part__manufacturer_part__manufacturer=self.id)
+        ).distinct()
 
 
 class CompanyAttachment(InvenTreeAttachment):
@@ -229,7 +263,8 @@ class CompanyAttachment(InvenTreeAttachment):
         return os.path.join('company_files', str(self.company.pk))
 
     company = models.ForeignKey(
-        Company, on_delete=models.CASCADE,
+        Company,
+        on_delete=models.CASCADE,
         verbose_name=_('Company'),
         related_name='attachments',
     )
@@ -251,8 +286,9 @@ class Contact(MetadataMixin, models.Model):
         """Return the API URL associated with the Contcat model"""
         return reverse('api-contact-list')
 
-    company = models.ForeignKey(Company, related_name='contacts',
-                                on_delete=models.CASCADE)
+    company = models.ForeignKey(
+        Company, related_name='contacts', on_delete=models.CASCADE
+    )
 
     name = models.CharField(max_length=100)
 
@@ -281,6 +317,7 @@ class Address(models.Model):
 
     class Meta:
         """Metaclass defines extra model options"""
+
         verbose_name_plural = "Addresses"
 
     def __init__(self, *args, **kwargs):
@@ -289,13 +326,14 @@ class Address(models.Model):
 
     def __str__(self):
         """Defines string representation of address to supple a one-line to API calls"""
-        available_lines = [self.line1,
-                           self.line2,
-                           self.postal_code,
-                           self.postal_city,
-                           self.province,
-                           self.country
-                           ]
+        available_lines = [
+            self.line1,
+            self.line2,
+            self.postal_code,
+            self.postal_city,
+            self.province,
+            self.country,
+        ]
 
         populated_lines = []
         for line in available_lines:
@@ -309,7 +347,9 @@ class Address(models.Model):
 
         - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
         """
-        others = list(Address.objects.filter(company=self.company).exclude(pk=self.pk).all())
+        others = list(
+            Address.objects.filter(company=self.company).exclude(pk=self.pk).all()
+        )
 
         # If this is the *only* address for this company, make it the primary one
         if len(others) == 0:
@@ -329,63 +369,88 @@ class Address(models.Model):
         """Return the API URL associated with the Contcat model"""
         return reverse('api-address-list')
 
-    company = models.ForeignKey(Company, related_name='addresses',
-                                on_delete=models.CASCADE,
-                                verbose_name=_('Company'),
-                                help_text=_('Select company'))
+    company = models.ForeignKey(
+        Company,
+        related_name='addresses',
+        on_delete=models.CASCADE,
+        verbose_name=_('Company'),
+        help_text=_('Select company'),
+    )
 
-    title = models.CharField(max_length=100,
-                             verbose_name=_('Address title'),
-                             help_text=_('Title describing the address entry'),
-                             blank=False)
+    title = models.CharField(
+        max_length=100,
+        verbose_name=_('Address title'),
+        help_text=_('Title describing the address entry'),
+        blank=False,
+    )
 
-    primary = models.BooleanField(default=False,
-                                  verbose_name=_('Primary address'),
-                                  help_text=_('Set as primary address'))
+    primary = models.BooleanField(
+        default=False,
+        verbose_name=_('Primary address'),
+        help_text=_('Set as primary address'),
+    )
 
-    line1 = models.CharField(max_length=50,
-                             verbose_name=_('Line 1'),
-                             help_text=_('Address line 1'),
-                             blank=True)
+    line1 = models.CharField(
+        max_length=50,
+        verbose_name=_('Line 1'),
+        help_text=_('Address line 1'),
+        blank=True,
+    )
 
-    line2 = models.CharField(max_length=50,
-                             verbose_name=_('Line 2'),
-                             help_text=_('Address line 2'),
-                             blank=True)
+    line2 = models.CharField(
+        max_length=50,
+        verbose_name=_('Line 2'),
+        help_text=_('Address line 2'),
+        blank=True,
+    )
 
-    postal_code = models.CharField(max_length=10,
-                                   verbose_name=_('Postal code'),
-                                   help_text=_('Postal code'),
-                                   blank=True)
+    postal_code = models.CharField(
+        max_length=10,
+        verbose_name=_('Postal code'),
+        help_text=_('Postal code'),
+        blank=True,
+    )
 
-    postal_city = models.CharField(max_length=50,
-                                   verbose_name=_('City/Region'),
-                                   help_text=_('Postal code city/region'),
-                                   blank=True)
+    postal_city = models.CharField(
+        max_length=50,
+        verbose_name=_('City/Region'),
+        help_text=_('Postal code city/region'),
+        blank=True,
+    )
 
-    province = models.CharField(max_length=50,
-                                verbose_name=_('State/Province'),
-                                help_text=_('State or province'),
-                                blank=True)
+    province = models.CharField(
+        max_length=50,
+        verbose_name=_('State/Province'),
+        help_text=_('State or province'),
+        blank=True,
+    )
 
-    country = models.CharField(max_length=50,
-                               verbose_name=_('Country'),
-                               help_text=_('Address country'),
-                               blank=True)
+    country = models.CharField(
+        max_length=50,
+        verbose_name=_('Country'),
+        help_text=_('Address country'),
+        blank=True,
+    )
 
-    shipping_notes = models.CharField(max_length=100,
-                                      verbose_name=_('Courier shipping notes'),
-                                      help_text=_('Notes for shipping courier'),
-                                      blank=True)
+    shipping_notes = models.CharField(
+        max_length=100,
+        verbose_name=_('Courier shipping notes'),
+        help_text=_('Notes for shipping courier'),
+        blank=True,
+    )
 
-    internal_shipping_notes = models.CharField(max_length=100,
-                                               verbose_name=_('Internal shipping notes'),
-                                               help_text=_('Shipping notes for internal use'),
-                                               blank=True)
+    internal_shipping_notes = models.CharField(
+        max_length=100,
+        verbose_name=_('Internal shipping notes'),
+        help_text=_('Shipping notes for internal use'),
+        blank=True,
+    )
 
-    link = InvenTreeURLField(blank=True,
-                             verbose_name=_('Link'),
-                             help_text=_('Link to address information (external)'))
+    link = InvenTreeURLField(
+        blank=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to address information (external)'),
+    )
 
 
 class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
@@ -401,6 +466,7 @@ class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
 
     class Meta:
         """Metaclass defines extra model options"""
+
         unique_together = ('part', 'manufacturer', 'MPN')
 
     @staticmethod
@@ -408,23 +474,21 @@ class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
         """Return the API URL associated with the ManufacturerPart instance"""
         return reverse('api-manufacturer-part-list')
 
-    part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
-                             related_name='manufacturer_parts',
-                             verbose_name=_('Base Part'),
-                             limit_choices_to={
-                                 'purchaseable': True,
-                             },
-                             help_text=_('Select part'),
-                             )
+    part = models.ForeignKey(
+        'part.Part',
+        on_delete=models.CASCADE,
+        related_name='manufacturer_parts',
+        verbose_name=_('Base Part'),
+        limit_choices_to={'purchaseable': True},
+        help_text=_('Select part'),
+    )
 
     manufacturer = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
         null=True,
         related_name='manufactured_parts',
-        limit_choices_to={
-            'is_manufacturer': True
-        },
+        limit_choices_to={'is_manufacturer': True},
         verbose_name=_('Manufacturer'),
         help_text=_('Select manufacturer'),
     )
@@ -433,19 +497,22 @@ class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
         null=True,
         max_length=100,
         verbose_name=_('MPN'),
-        help_text=_('Manufacturer Part Number')
+        help_text=_('Manufacturer Part Number'),
     )
 
     link = InvenTreeURLField(
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Link'),
-        help_text=_('URL for external manufacturer part link')
+        help_text=_('URL for external manufacturer part link'),
     )
 
     description = models.CharField(
-        max_length=250, blank=True, null=True,
+        max_length=250,
+        blank=True,
+        null=True,
         verbose_name=_('Description'),
-        help_text=_('Manufacturer part description')
+        help_text=_('Manufacturer part description'),
     )
 
     tags = TaggableManager(blank=True)
@@ -456,12 +523,20 @@ class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
         manufacturer_part = None
 
         try:
-            manufacturer_part = ManufacturerPart.objects.get(part=part, manufacturer=manufacturer, MPN=mpn)
+            manufacturer_part = ManufacturerPart.objects.get(
+                part=part, manufacturer=manufacturer, MPN=mpn
+            )
         except ManufacturerPart.DoesNotExist:
             pass
 
         if not manufacturer_part:
-            manufacturer_part = ManufacturerPart(part=part, manufacturer=manufacturer, MPN=mpn, description=description, link=link)
+            manufacturer_part = ManufacturerPart(
+                part=part,
+                manufacturer=manufacturer,
+                MPN=mpn,
+                description=description,
+                link=link,
+            )
             manufacturer_part.save()
 
         return manufacturer_part
@@ -491,8 +566,12 @@ class ManufacturerPartAttachment(InvenTreeAttachment):
         """Return the subdirectory where attachment files for the ManufacturerPart model are located"""
         return os.path.join("manufacturer_part_files", str(self.manufacturer_part.id))
 
-    manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
-                                          verbose_name=_('Manufacturer Part'), related_name='attachments')
+    manufacturer_part = models.ForeignKey(
+        ManufacturerPart,
+        on_delete=models.CASCADE,
+        verbose_name=_('Manufacturer Part'),
+        related_name='attachments',
+    )
 
 
 class ManufacturerPartParameter(models.Model):
@@ -505,6 +584,7 @@ class ManufacturerPartParameter(models.Model):
 
     class Meta:
         """Metaclass defines extra model options"""
+
         unique_together = ('manufacturer_part', 'name')
 
     @staticmethod
@@ -523,21 +603,22 @@ class ManufacturerPartParameter(models.Model):
         max_length=500,
         blank=False,
         verbose_name=_('Name'),
-        help_text=_('Parameter name')
+        help_text=_('Parameter name'),
     )
 
     value = models.CharField(
         max_length=500,
         blank=False,
         verbose_name=_('Value'),
-        help_text=_('Parameter value')
+        help_text=_('Parameter value'),
     )
 
     units = models.CharField(
         max_length=64,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Units'),
-        help_text=_('Parameter units')
+        help_text=_('Parameter units'),
     )
 
 
@@ -551,10 +632,10 @@ class SupplierPartManager(models.Manager):
     def get_queryset(self):
         """Prefetch related fields when querying against the SupplierPart model"""
         # Always prefetch related models
-        return super().get_queryset().prefetch_related(
-            'part',
-            'supplier',
-            'manufacturer_part__manufacturer',
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related('part', 'supplier', 'manufacturer_part__manufacturer')
         )
 
 
@@ -580,6 +661,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     class Meta:
         """Metaclass defines extra model options"""
+
         unique_together = ('part', 'supplier', 'SKU')
 
         # This model was moved from the 'Part' app
@@ -600,11 +682,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     def api_instance_filters(self):
         """Return custom API filters for this particular instance"""
-        return {
-            'manufacturer_part': {
-                'part': self.part.pk
-            }
-        }
+        return {'manufacturer_part': {'part': self.part.pk}}
 
     def clean(self):
         """Custom clean action for the SupplierPart model:
@@ -624,14 +702,17 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
             try:
                 # Attempt conversion to specified unit
                 native_value = InvenTree.conversion.convert_physical_value(
-                    self.pack_quantity, self.part.units,
-                    strip_units=False
+                    self.pack_quantity, self.part.units, strip_units=False
                 )
 
                 # If part units are not provided, value must be dimensionless
-                if not self.part.units and not InvenTree.conversion.is_dimensionless(native_value):
+                if not self.part.units and not InvenTree.conversion.is_dimensionless(
+                    native_value
+                ):
                     raise ValidationError({
-                        'pack_quantity': _("Pack units must be compatible with the base part units")
+                        'pack_quantity': _(
+                            "Pack units must be compatible with the base part units"
+                        )
                     })
 
                 # Native value must be greater than zero
@@ -644,16 +725,15 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
                 self.pack_quantity_native = Decimal(native_value.magnitude)
 
             except ValidationError as e:
-                raise ValidationError({
-                    'pack_quantity': e.messages
-                })
+                raise ValidationError({'pack_quantity': e.messages})
 
         # Ensure that the linked manufacturer_part points to the same part!
         if self.manufacturer_part and self.part:
-
             if self.manufacturer_part.part != self.part:
                 raise ValidationError({
-                    'manufacturer_part': _("Linked manufacturer part must reference the same base part"),
+                    'manufacturer_part': _(
+                        "Linked manufacturer part must reference the same base part"
+                    )
                 })
 
     def save(self, *args, **kwargs):
@@ -666,7 +746,9 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
             # Retrieve manufacturer part
             try:
-                manufacturer_part = ManufacturerPart.objects.get(manufacturer__name=manufacturer_name, MPN=MPN)
+                manufacturer_part = ManufacturerPart.objects.get(
+                    manufacturer__name=manufacturer_name, MPN=MPN
+                )
             except (ValueError, Company.DoesNotExist):
                 # ManufacturerPart does not exist
                 pass
@@ -676,7 +758,9 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
                 # Connect ManufacturerPart to SupplierPart
                 self.manufacturer_part = manufacturer_part
             else:
-                raise ValidationError(f'SupplierPart {self.__str__} is already linked to {self.manufacturer_part}')
+                raise ValidationError(
+                    f'SupplierPart {self.__str__} is already linked to {self.manufacturer_part}'
+                )
 
         self.clean()
         self.validate_unique()
@@ -684,17 +768,17 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         super().save(*args, **kwargs)
 
     part = models.ForeignKey(
-        'part.Part', on_delete=models.CASCADE,
+        'part.Part',
+        on_delete=models.CASCADE,
         related_name='supplier_parts',
         verbose_name=_('Base Part'),
-        limit_choices_to={
-            'purchaseable': True,
-        },
+        limit_choices_to={'purchaseable': True},
         help_text=_('Select part'),
     )
 
     supplier = models.ForeignKey(
-        Company, on_delete=models.CASCADE,
+        Company,
+        on_delete=models.CASCADE,
         related_name='supplied_parts',
         limit_choices_to={'is_supplier': True},
         verbose_name=_('Supplier'),
@@ -704,49 +788,70 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
     SKU = models.CharField(
         max_length=100,
         verbose_name=__("SKU = Stock Keeping Unit (supplier part number)", 'SKU'),
-        help_text=_('Supplier stock keeping unit')
+        help_text=_('Supplier stock keeping unit'),
     )
 
     manufacturer_part = models.ForeignKey(
-        ManufacturerPart, on_delete=models.CASCADE,
-        blank=True, null=True,
+        ManufacturerPart,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
         related_name='supplier_parts',
         verbose_name=_('Manufacturer Part'),
         help_text=_('Select manufacturer part'),
     )
 
     link = InvenTreeURLField(
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Link'),
-        help_text=_('URL for external supplier part link')
+        help_text=_('URL for external supplier part link'),
     )
 
     description = models.CharField(
-        max_length=250, blank=True, null=True,
+        max_length=250,
+        blank=True,
+        null=True,
         verbose_name=_('Description'),
-        help_text=_('Supplier part description')
+        help_text=_('Supplier part description'),
     )
 
     note = models.CharField(
-        max_length=100, blank=True, null=True,
+        max_length=100,
+        blank=True,
+        null=True,
         verbose_name=_('Note'),
-        help_text=_('Notes')
+        help_text=_('Notes'),
     )
 
-    base_cost = models.DecimalField(max_digits=10, decimal_places=3, default=0, validators=[MinValueValidator(0)], verbose_name=_('base cost'), help_text=_('Minimum charge (e.g. stocking fee)'))
+    base_cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=3,
+        default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('base cost'),
+        help_text=_('Minimum charge (e.g. stocking fee)'),
+    )
 
-    packaging = models.CharField(max_length=50, blank=True, null=True, verbose_name=_('Packaging'), help_text=_('Part packaging'))
+    packaging = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name=_('Packaging'),
+        help_text=_('Part packaging'),
+    )
 
     pack_quantity = models.CharField(
         max_length=25,
         verbose_name=_('Pack Quantity'),
-        help_text=_('Total quantity supplied in a single pack. Leave empty for single items.'),
+        help_text=_(
+            'Total quantity supplied in a single pack. Leave empty for single items.'
+        ),
         blank=True,
     )
 
     pack_quantity_native = RoundingDecimalField(
-        max_digits=20, decimal_places=10, default=1,
-        null=True,
+        max_digits=20, decimal_places=10, default=1, null=True
     )
 
     def base_quantity(self, quantity=1) -> Decimal:
@@ -756,20 +861,29 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
         return q
 
-    multiple = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name=_('multiple'), help_text=_('Order multiple'))
+    multiple = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name=_('multiple'),
+        help_text=_('Order multiple'),
+    )
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
     # lead_time = models.DurationField(blank=True, null=True)
 
     available = models.DecimalField(
-        max_digits=10, decimal_places=3, default=0,
+        max_digits=10,
+        decimal_places=3,
+        default=0,
         validators=[MinValueValidator(0)],
         verbose_name=_('Available'),
         help_text=_('Quantity available from supplier'),
     )
 
     availability_updated = models.DateTimeField(
-        null=True, blank=True, verbose_name=_('Availability Updated'),
+        null=True,
+        blank=True,
+        verbose_name=_('Availability Updated'),
         help_text=_('Date of last update of availability data'),
     )
 
@@ -821,17 +935,15 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():
             return
 
-        SupplierPriceBreak.objects.create(
-            part=self,
-            quantity=quantity,
-            price=price
-        )
+        SupplierPriceBreak.objects.create(part=self, quantity=quantity, price=price)
 
     get_price = common.models.get_price
 
     def open_orders(self):
         """Return a database query for PurchaseOrder line items for this SupplierPart, limited to purchase orders that are open / outstanding."""
-        return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
+        return self.purchase_order_line_items.prefetch_related('order').filter(
+            order__status__in=PurchaseOrderStatusGroups.OPEN
+        )
 
     def on_order(self):
         """Return the total quantity of items currently on order.
@@ -852,7 +964,10 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     def purchase_orders(self):
         """Returns a list of purchase orders relating to this supplier part."""
-        return [line.order for line in self.purchase_order_line_items.all().prefetch_related('order')]
+        return [
+            line.order
+            for line in self.purchase_order_line_items.all().prefetch_related('order')
+        ]
 
     @property
     def pretty_name(self):
@@ -891,6 +1006,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
 
     class Meta:
         """Metaclass defines extra model options"""
+
         unique_together = ("part", "quantity")
 
         # This model was moved from the 'Part' app
@@ -905,22 +1021,31 @@ class SupplierPriceBreak(common.models.PriceBreak):
         """Return the API URL associated with the SupplierPriceBreak model"""
         return reverse('api-part-supplier-price-list')
 
-    part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
+    part = models.ForeignKey(
+        SupplierPart,
+        on_delete=models.CASCADE,
+        related_name='pricebreaks',
+        verbose_name=_('Part'),
+    )
 
 
-@receiver(post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break')
+@receiver(
+    post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break'
+)
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated"""
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-
         if instance.part and instance.part.part:
             instance.part.part.schedule_pricing_update(create=True)
 
 
-@receiver(post_delete, sender=SupplierPriceBreak, dispatch_uid='post_delete_supplier_price_break')
+@receiver(
+    post_delete,
+    sender=SupplierPriceBreak,
+    dispatch_uid='post_delete_supplier_price_break',
+)
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted"""
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-
         if instance.part and instance.part.part:
             instance.part.part.schedule_pricing_update(create=False)

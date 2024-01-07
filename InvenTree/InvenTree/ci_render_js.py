@@ -24,22 +24,14 @@ class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
 
         here = os.path.abspath(os.path.dirname(__file__))
 
-        output_dir = os.path.join(
-            here,
-            '..',
-            '..',
-            'js_tmp',
-        )
+        output_dir = os.path.join(here, '..', '..', 'js_tmp')
 
         output_dir = os.path.abspath(output_dir)
 
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)
 
-        output_file = os.path.join(
-            output_dir,
-            filename,
-        )
+        output_file = os.path.join(output_dir, filename)
 
         with open(output_file, 'wb') as output:
             output.write(response.content)
@@ -48,12 +40,7 @@ class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
         """Download files in directory."""
         here = os.path.abspath(os.path.dirname(__file__))
 
-        js_template_dir = os.path.join(
-            here,
-            '..',
-            'templates',
-            'js',
-        )
+        js_template_dir = os.path.join(here, '..', 'templates', 'js')
 
         directory = os.path.join(js_template_dir, subdir)
 

@@ -26,14 +26,16 @@ def get_existing_release_tags():
     headers = None
 
     if token:
-        headers = {
-            "Authorization": f"Bearer {token}"
-        }
+        headers = {"Authorization": f"Bearer {token}"}
 
-    response = requests.get('https://api.github.com/repos/inventree/inventree/releases', headers=headers)
+    response = requests.get(
+        'https://api.github.com/repos/inventree/inventree/releases', headers=headers
+    )
 
     if response.status_code != 200:
-        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')
+        raise ValueError(
+            f'Unexpected status code from GitHub API: {response.status_code}'
+        )
 
     data = json.loads(response.text)
 
@@ -65,7 +67,9 @@ def check_version_number(version_string, allow_duplicate=False):
     match = re.match(r"^(\d+)\.(\d+)\.(\d+)(?: dev)?$", version_string)
 
     if not match or len(match.groups()) != 3:
-        raise ValueError(f"Version string '{version_string}' did not match required pattern")
+        raise ValueError(
+            f"Version string '{version_string}' did not match required pattern"
+        )
 
     version_tuple = [int(x) for x in match.groups()]
 
@@ -87,7 +91,6 @@ def check_version_number(version_string, allow_duplicate=False):
 
 
 if __name__ == '__main__':
-
     here = os.path.abspath(os.path.dirname(__file__))
 
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'
@@ -111,7 +114,6 @@ if __name__ == '__main__':
     version = None
 
     with open(version_file, 'r') as f:
-
         text = f.read()
 
         # Extract the InvenTree software version
@@ -178,7 +180,6 @@ if __name__ == '__main__':
 
     # Ref: https://getridbug.com/python/how-to-set-environment-variables-in-github-actions-using-python/
     with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
-
         # Construct tag string
         tags = ",".join([f"inventree/inventree:{tag}" for tag in docker_tags])
 

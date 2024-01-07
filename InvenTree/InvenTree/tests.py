@@ -104,13 +104,7 @@ class ConversionTest(TestCase):
 
     def test_invalid_units(self):
         """Test conversion with bad units"""
-        tests = {
-            '3': '10',
-            '13': '-?-',
-            '-3': 'xyz',
-            '-12': '-12',
-            '1/0': '1/0',
-        }
+        tests = {'3': '10', '13': '-?-', '-3': 'xyz', '-12': '-12', '1/0': '1/0'}
 
         for val, unit in tests.items():
             with self.assertRaises(ValidationError):
@@ -118,12 +112,7 @@ class ConversionTest(TestCase):
 
     def test_invalid_values(self):
         """Test conversion of invalid inputs"""
-        inputs = [
-            '-x',
-            '1/0',
-            'xyz',
-            '12B45C'
-        ]
+        inputs = ['-x', '1/0', 'xyz', '12B45C']
 
         for val in inputs:
             # Test with a provided unit
@@ -148,9 +137,7 @@ class ConversionTest(TestCase):
 
         # Create a new custom unit
         CustomUnit.objects.create(
-            name='fanciful_unit',
-            definition='henry / mm',
-            symbol='hpmm',
+            name='fanciful_unit', definition='henry / mm', symbol='hpmm'
         )
 
         # Reload registry
@@ -171,7 +158,9 @@ class ConversionTest(TestCase):
 
         for val, expected in tests.items():
             # Convert, and leave units
-            q = InvenTree.conversion.convert_physical_value(val, 'henry / km', strip_units=False)
+            q = InvenTree.conversion.convert_physical_value(
+                val, 'henry / km', strip_units=False
+            )
             self.assertAlmostEqual(float(q.magnitude), expected, 2)
 
             # Convert and strip units
@@ -250,12 +239,7 @@ class FormatTest(TestCase):
         self.assertIn('date', info)
 
         # Try with invalid strings
-        for fmt in [
-            'PO-{{xyz}',
-            'PO-{xyz}}',
-            'PO-{xyz}-{',
-        ]:
-
+        for fmt in ['PO-{{xyz}', 'PO-{xyz}}', 'PO-{xyz}-{']:
             with self.assertRaises(ValueError):
                 InvenTree.format.parse_format_string(fmt)
 
@@ -278,7 +262,7 @@ class FormatTest(TestCase):
             "ABC-hello-123": "???-{q}-###",
             "BO-1234": "BO-{ref}",
             "111.222.fred.china": "???.###.{name}.{place}",
-            "PO-1234": "PO-{ref:04d}"
+            "PO-1234": "PO-{ref:04d}",
         }.items():
             self.assertTrue(InvenTree.format.validate_string(value, pattern))
 
@@ -287,7 +271,7 @@ class FormatTest(TestCase):
             "ABC-hello-123": "###-{q}-???",
             "BO-1234": "BO.{ref}",
             "BO-####": "BO-{pattern}-{next}",
-            "BO-123d": "BO-{ref:04d}"
+            "BO-123d": "BO-{ref:04d}",
         }.items():
             self.assertFalse(InvenTree.format.validate_string(value, pattern))
 
@@ -296,20 +280,13 @@ class FormatTest(TestCase):
         # Simple tests based on a straight-forward format string
         fmt = "PO-###-{ref:04d}"
 
-        tests = {
-            "123": "PO-123-123",
-            "456": "PO-123-456",
-            "789": "PO-123-789",
-        }
+        tests = {"123": "PO-123-123", "456": "PO-123-456", "789": "PO-123-789"}
 
         for k, v in tests.items():
             self.assertEqual(InvenTree.format.extract_named_group('ref', v, fmt), k)
 
         # However these ones should fail
-        tests = {
-            'abc': 'PO-123-abc',
-            'xyz': 'PO-123-xyz',
-        }
+        tests = {'abc': 'PO-123-abc', 'xyz': 'PO-123-xyz'}
 
         for v in tests.values():
             with self.assertRaises(ValueError):
@@ -319,11 +296,7 @@ class FormatTest(TestCase):
         fmt = "PO-{date}-{test}-???-{ref}-###"
         val = "PO-2022-02-01-hello-ABC-12345-222"
 
-        data = {
-            'date': '2022-02-01',
-            'test': 'hello',
-            'ref': '12345',
-        }
+        data = {'date': '2022-02-01', 'test': 'hello', 'ref': '12345'}
 
         for k, v in data.items():
             self.assertEqual(InvenTree.format.extract_named_group(k, val, fmt), v)
@@ -332,60 +305,46 @@ class FormatTest(TestCase):
 
         # Raises a ValueError as the format string is bad
         with self.assertRaises(ValueError):
-            InvenTree.format.extract_named_group(
-                "test",
-                "PO-1234-5",
-                "PO-{test}-{"
-            )
+            InvenTree.format.extract_named_group("test", "PO-1234-5", "PO-{test}-{")
 
         # Raises a NameError as the named group does not exist in the format string
         with self.assertRaises(NameError):
-            InvenTree.format.extract_named_group(
-                "missing",
-                "PO-12345",
-                "PO-{test}",
-            )
+            InvenTree.format.extract_named_group("missing", "PO-12345", "PO-{test}")
 
         # Raises a ValueError as the value does not match the format string
         with self.assertRaises(ValueError):
-            InvenTree.format.extract_named_group(
-                "test",
-                "PO-1234",
-                "PO-{test}-1234",
-            )
+            InvenTree.format.extract_named_group("test", "PO-1234", "PO-{test}-1234")
 
         with self.assertRaises(ValueError):
-            InvenTree.format.extract_named_group(
-                "test",
-                "PO-ABC-xyz",
-                "PO-###-{test}",
-            )
+            InvenTree.format.extract_named_group("test", "PO-ABC-xyz", "PO-###-{test}")
 
     def test_currency_formatting(self):
         """Test that currency formatting works correctly for multiple currencies"""
 
         test_data = (
-            (Money(  3651.285718, "USD"), 4, "$3,651.2857"     ),  # noqa: E201,E202
+            (Money(3651.285718, "USD"), 4, "$3,651.2857"),  # noqa: E201,E202
             (Money(487587.849178, "CAD"), 5, "CA$487,587.84918"),  # noqa: E201,E202
-            (Money(     0.348102, "EUR"), 1, "€0.3"            ),  # noqa: E201,E202
-            (Money(     0.916530, "GBP"), 1, "£0.9"            ),  # noqa: E201,E202
-            (Money(    61.031024, "JPY"), 3, "¥61.031"         ),  # noqa: E201,E202
-            (Money( 49609.694602, "JPY"), 1, "¥49,609.7"       ),  # noqa: E201,E202
-            (Money(155565.264777, "AUD"), 2, "A$155,565.26"    ),  # noqa: E201,E202
-            (Money(     0.820437, "CNY"), 4, "CN¥0.8204"       ),  # noqa: E201,E202
-            (Money(  7587.849178, "EUR"), 0, "€7,588"          ),  # noqa: E201,E202
-            (Money(     0.348102, "GBP"), 3, "£0.348"          ),  # noqa: E201,E202
-            (Money(     0.652923, "CHF"), 0, "CHF1"            ),  # noqa: E201,E202
-            (Money(     0.820437, "CNY"), 1, "CN¥0.8"          ),  # noqa: E201,E202
-            (Money(98789.5295680, "CHF"), 0, "CHF98,790"       ),  # noqa: E201,E202
-            (Money(     0.585787, "USD"), 1, "$0.6"            ),  # noqa: E201,E202
-            (Money(     0.690541, "CAD"), 3, "CA$0.691"        ),  # noqa: E201,E202
-            (Money(   427.814104, "AUD"), 5, "A$427.81410"     ),  # noqa: E201,E202
+            (Money(0.348102, "EUR"), 1, "€0.3"),  # noqa: E201,E202
+            (Money(0.916530, "GBP"), 1, "£0.9"),  # noqa: E201,E202
+            (Money(61.031024, "JPY"), 3, "¥61.031"),  # noqa: E201,E202
+            (Money(49609.694602, "JPY"), 1, "¥49,609.7"),  # noqa: E201,E202
+            (Money(155565.264777, "AUD"), 2, "A$155,565.26"),  # noqa: E201,E202
+            (Money(0.820437, "CNY"), 4, "CN¥0.8204"),  # noqa: E201,E202
+            (Money(7587.849178, "EUR"), 0, "€7,588"),  # noqa: E201,E202
+            (Money(0.348102, "GBP"), 3, "£0.348"),  # noqa: E201,E202
+            (Money(0.652923, "CHF"), 0, "CHF1"),  # noqa: E201,E202
+            (Money(0.820437, "CNY"), 1, "CN¥0.8"),  # noqa: E201,E202
+            (Money(98789.5295680, "CHF"), 0, "CHF98,790"),  # noqa: E201,E202
+            (Money(0.585787, "USD"), 1, "$0.6"),  # noqa: E201,E202
+            (Money(0.690541, "CAD"), 3, "CA$0.691"),  # noqa: E201,E202
+            (Money(427.814104, "AUD"), 5, "A$427.81410"),  # noqa: E201,E202
         )
 
         with self.settings(LANGUAGE_CODE="en-us"):
             for value, decimal_places, expected_result in test_data:
-                result = InvenTree.format.format_money(value, decimal_places=decimal_places)
+                result = InvenTree.format.format_money(
+                    value, decimal_places=decimal_places
+                )
                 assert result == expected_result
 
 
@@ -414,10 +373,15 @@ class TestHelpers(TestCase):
 
         for url, expected in tests.items():
             # Test with supplied base URL
-            self.assertEqual(InvenTree.helpers_model.construct_absolute_url(url, site_url=base), expected)
+            self.assertEqual(
+                InvenTree.helpers_model.construct_absolute_url(url, site_url=base),
+                expected,
+            )
 
             # Test without supplied base URL
-            self.assertEqual(InvenTree.helpers_model.construct_absolute_url(url), expected)
+            self.assertEqual(
+                InvenTree.helpers_model.construct_absolute_url(url), expected
+            )
 
     def test_image_url(self):
         """Test if a filename looks like an image."""
@@ -453,7 +417,9 @@ class TestHelpers(TestCase):
         """Test static url helpers."""
         self.assertEqual(helpers.getStaticUrl('test.jpg'), '/static/test.jpg')
         self.assertEqual(helpers.getBlankImage(), '/static/img/blank_image.png')
-        self.assertEqual(helpers.getBlankThumbnail(), '/static/img/blank_image.thumbnail.png')
+        self.assertEqual(
+            helpers.getBlankThumbnail(), '/static/img/blank_image.thumbnail.png'
+        )
 
     def testMediaUrl(self):
         """Test getMediaUrl."""
@@ -476,12 +442,7 @@ class TestHelpers(TestCase):
     def test_download_image(self):
         """Test function for downloading image from remote URL"""
         # Run check with a sequence of bad URLs
-        for url in [
-            "blog",
-            "htp://test.com/?",
-            "google",
-            "\\invalid-url"
-        ]:
+        for url in ["blog", "htp://test.com/?", "google", "\\invalid-url"]:
             with self.assertRaises(django_exceptions.ValidationError):
                 InvenTree.helpers_model.download_image_from_url(url)
 
@@ -496,9 +457,10 @@ class TestHelpers(TestCase):
 
             with self.assertRaises(expected_error):
                 while tries < retries:
-
                     try:
-                        InvenTree.helpers_model.download_image_from_url(url, timeout=timeout)
+                        InvenTree.helpers_model.download_image_from_url(
+                            url, timeout=timeout
+                        )
                         break
                     except Exception as exc:
                         if type(exc) is expected_error:
@@ -520,14 +482,18 @@ class TestHelpers(TestCase):
 
         large_img = "https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg"
 
-        InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 1, change_user=None)
+        InvenTreeSetting.set_setting(
+            'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 1, change_user=None
+        )
 
         # Attempt to download an image which is too large
         with self.assertRaises(ValueError):
             InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
 
         # Increase allowable download size
-        InvenTreeSetting.set_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None)
+        InvenTreeSetting.set_setting(
+            'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 5, change_user=None
+        )
 
         # Download a valid image (should not throw an error)
         InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
@@ -584,13 +550,7 @@ class TestMakeBarcode(TestCase):
     def test_barcode_extended(self):
         """Test creation of barcode with extended data."""
         bc = helpers.MakeBarcode(
-            "part",
-            3,
-            {
-                "id": 3,
-                "url": "www.google.com",
-            },
-            brief=False
+            "part", 3, {"id": 3, "url": "www.google.com"}, brief=False
         )
 
         self.assertIn('part', bc)
@@ -604,10 +564,7 @@ class TestMakeBarcode(TestCase):
 
     def test_barcode_brief(self):
         """Test creation of simple barcode."""
-        bc = helpers.MakeBarcode(
-            "stockitem",
-            7,
-        )
+        bc = helpers.MakeBarcode("stockitem", 7)
 
         data = json.loads(bc)
         self.assertEqual(len(data), 1)
@@ -626,9 +583,7 @@ class TestDownloadFile(TestCase):
 class TestMPTT(TestCase):
     """Tests for the MPTT tree models."""
 
-    fixtures = [
-        'location',
-    ]
+    fixtures = ['location']
 
     @classmethod
     def setUpTestData(cls):
@@ -848,7 +803,7 @@ class TestVersionNumber(TestCase):
         """Test that the git commit information is extracted successfully."""
         envs = {
             'INVENTREE_COMMIT_HASH': 'abcdef',
-            'INVENTREE_COMMIT_DATE': '2022-12-31'
+            'INVENTREE_COMMIT_DATE': '2022-12-31',
         }
 
         # Check that the environment variables take priority
@@ -861,10 +816,16 @@ class TestVersionNumber(TestCase):
 
         # Check that the current .git values work too
 
-        hash = str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
+        hash = str(
+            subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
+        ).strip()
         self.assertEqual(hash, version.inventreeCommitHash())
 
-        d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip().split(' ')[0]
+        d = (
+            str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8')
+            .strip()
+            .split(' ')[0]
+        )
         self.assertEqual(d, version.inventreeCommitDate())
 
 
@@ -975,16 +936,14 @@ class TestSettings(InvenTreeTestCase):
         self.assertEqual(user_count(), 1)
 
         # not enough set
-        self.run_reload({
-            'INVENTREE_ADMIN_USER': 'admin'
-        })
+        self.run_reload({'INVENTREE_ADMIN_USER': 'admin'})
         self.assertEqual(user_count(), 1)
 
         # enough set
         self.run_reload({
             'INVENTREE_ADMIN_USER': 'admin',  # set username
             'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
-            'INVENTREE_ADMIN_PASSWORD': 'password123'  # set password
+            'INVENTREE_ADMIN_PASSWORD': 'password123',  # set password
         })
         self.assertEqual(user_count(), 2)
 
@@ -1027,27 +986,27 @@ class TestSettings(InvenTreeTestCase):
         """Test get_config_file."""
         # normal run - not configured
 
-        valid = [
-            'inventree/config.yaml',
-            'inventree/data/config.yaml',
-        ]
+        valid = ['inventree/config.yaml', 'inventree/data/config.yaml']
 
-        self.assertTrue(any(opt in str(config.get_config_file()).lower() for opt in valid))
+        self.assertTrue(
+            any(opt in str(config.get_config_file()).lower() for opt in valid)
+        )
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
-            self.assertIn('inventree/my_special_conf.yaml', str(config.get_config_file()).lower())
+            self.assertIn(
+                'inventree/my_special_conf.yaml', str(config.get_config_file()).lower()
+            )
 
     def test_helpers_plugin_file(self):
         """Test get_plugin_file."""
         # normal run - not configured
 
-        valid = [
-            'inventree/plugins.txt',
-            'inventree/data/plugins.txt',
-        ]
+        valid = ['inventree/plugins.txt', 'inventree/data/plugins.txt']
 
-        self.assertTrue(any(opt in str(config.get_plugin_file()).lower() for opt in valid))
+        self.assertTrue(
+            any(opt in str(config.get_plugin_file()).lower() for opt in valid)
+        )
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
@@ -1064,11 +1023,15 @@ class TestSettings(InvenTreeTestCase):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
         # test typecasting to dict - None should be mapped to empty dict
-        self.assertEqual(config.get_setting(TEST_ENV_NAME, None, None, typecast=dict), {})
+        self.assertEqual(
+            config.get_setting(TEST_ENV_NAME, None, None, typecast=dict), {}
+        )
 
         # test typecasting to dict - valid JSON string should be mapped to corresponding dict
         with self.in_env_context({TEST_ENV_NAME: '{"a": 1}'}):
-            self.assertEqual(config.get_setting(TEST_ENV_NAME, None, typecast=dict), {"a": 1})
+            self.assertEqual(
+                config.get_setting(TEST_ENV_NAME, None, typecast=dict), {"a": 1}
+            )
 
         # test typecasting to dict - invalid JSON string should be mapped to empty dict
         with self.in_env_context({TEST_ENV_NAME: "{'a': 1}"}):
@@ -1096,7 +1059,9 @@ class TestInstanceName(InvenTreeTestCase):
     def test_instance_url(self):
         """Test instance url settings."""
         # Set up required setting
-        InvenTreeSetting.set_setting("INVENTREE_BASE_URL", "http://127.1.2.3", self.user)
+        InvenTreeSetting.set_setting(
+            "INVENTREE_BASE_URL", "http://127.1.2.3", self.user
+        )
 
         # The site should also be changed
         site_obj = Site.objects.all().order_by('id').first()
@@ -1106,12 +1071,7 @@ class TestInstanceName(InvenTreeTestCase):
 class TestOffloadTask(InvenTreeTestCase):
     """Tests for offloading tasks to the background worker"""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'stock',
-    ]
+    fixtures = ['category', 'part', 'location', 'stock']
 
     def test_offload_tasks(self):
         """Test that we can offload various tasks to the background worker thread.
@@ -1127,38 +1087,38 @@ class TestOffloadTask(InvenTreeTestCase):
         Ref: https://github.com/inventree/InvenTree/pull/3273
         """
 
-        self.assertTrue(offload_task(
-            'dummy_tasks.stock',
-            item=StockItem.objects.get(pk=1),
-            loc=StockLocation.objects.get(pk=1),
-            force_async=True
-        ))
+        self.assertTrue(
+            offload_task(
+                'dummy_tasks.stock',
+                item=StockItem.objects.get(pk=1),
+                loc=StockLocation.objects.get(pk=1),
+                force_async=True,
+            )
+        )
 
-        self.assertTrue(offload_task(
-            'dummy_task.numbers',
-            1, 2, 3, 4, 5,
-            force_async=True
-        ))
+        self.assertTrue(
+            offload_task('dummy_task.numbers', 1, 2, 3, 4, 5, force_async=True)
+        )
 
         # Offload a dummy task, but force sync
         # This should fail, because the function does not exist
         with self.assertLogs(logger='inventree', level='WARNING') as log:
-            self.assertFalse(offload_task(
-                'dummy_task.numbers',
-                1, 1, 1,
-                force_sync=True
-            ))
+            self.assertFalse(
+                offload_task('dummy_task.numbers', 1, 1, 1, force_sync=True)
+            )
 
             self.assertIn("Malformed function path", str(log.output))
 
         # Offload dummy task with a Part instance
         # This should succeed, ensuring that the Part instance is correctly pickled
-        self.assertTrue(offload_task(
-            'dummy_tasks.parts',
-            part=Part.objects.get(pk=1),
-            cat=PartCategory.objects.get(pk=1),
-            force_async=True
-        ))
+        self.assertTrue(
+            offload_task(
+                'dummy_tasks.parts',
+                part=Part.objects.get(pk=1),
+                cat=PartCategory.objects.get(pk=1),
+                force_async=True,
+            )
+        )
 
     def test_daily_holdoff(self):
         """Tests for daily task holdoff helper functions"""
@@ -1180,7 +1140,9 @@ class TestOffloadTask(InvenTreeTestCase):
             # An attempt has been logged, but it is too recent
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
-            self.assertIn("Last attempt for 'dummy_task' was too recent", str(cm.output))
+            self.assertIn(
+                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+            )
 
         # Mark last attempt a few days ago - should now return True
         t_old = datetime.now() - timedelta(days=3)
@@ -1191,13 +1153,17 @@ class TestOffloadTask(InvenTreeTestCase):
         self.assertTrue(result)
 
         # Last attempt should have been updated
-        self.assertNotEqual(t_old, InvenTreeSetting.get_setting('_dummy_task_ATTEMPT', '', cache=False))
+        self.assertNotEqual(
+            t_old, InvenTreeSetting.get_setting('_dummy_task_ATTEMPT', '', cache=False)
+        )
 
         # Last attempt should prevent us now
         with self.assertLogs(logger='inventree', level='INFO') as cm:
             result = InvenTree.tasks.check_daily_holdoff('dummy_task')
             self.assertFalse(result)
-            self.assertIn("Last attempt for 'dummy_task' was too recent", str(cm.output))
+            self.assertIn(
+                "Last attempt for 'dummy_task' was too recent", str(cm.output)
+            )
 
         # Configure so a task was successful too recently
         InvenTreeSetting.set_setting('_dummy_task_ATTEMPT', t_old, None)

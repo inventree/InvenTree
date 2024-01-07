@@ -22,12 +22,20 @@ class ExampleScheduledTaskPluginTests(TestCase):
         self.assertEqual(plg.member_func(), False)
 
         # check that the tasks are defined
-        self.assertEqual(plg.get_task_names(), ['plugin.schedule.member', 'plugin.schedule.hello', 'plugin.schedule.world'])
+        self.assertEqual(
+            plg.get_task_names(),
+            [
+                'plugin.schedule.member',
+                'plugin.schedule.hello',
+                'plugin.schedule.world',
+            ],
+        )
 
         # register
         plg.register_tasks()
         # check that schedule was registers
         from django_q.models import Schedule
+
         scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
         self.assertEqual(len(scheduled_plugin_tasks), 3)
 
@@ -70,11 +78,13 @@ class ScheduledTaskPluginTests(TestCase):
 
     def test_init(self):
         """Check that all MixinImplementationErrors raise."""
+
         class Base(ScheduleMixin, InvenTreePlugin):
             NAME = 'APlugin'
 
         class NoSchedules(Base):
             """Plugin without schedules."""
+
             pass
 
         with self.assertRaises(MixinImplementationError):
@@ -86,12 +96,7 @@ class ScheduledTaskPluginTests(TestCase):
             This plugin is missing a func
             """
 
-            SCHEDULED_TASKS = {
-                'test': {
-                    'schedule': 'I',
-                    'minutes': 30,
-                },
-            }
+            SCHEDULED_TASKS = {'test': {'schedule': 'I', 'minutes': 30}}
 
             def test(self):
                 pass  # pragma: no cover
@@ -105,12 +110,7 @@ class ScheduledTaskPluginTests(TestCase):
             This plugin is missing a schedule
             """
 
-            SCHEDULED_TASKS = {
-                'test': {
-                    'func': 'test',
-                    'minutes': 30,
-                },
-            }
+            SCHEDULED_TASKS = {'test': {'func': 'test', 'minutes': 30}}
 
         with self.assertRaises(MixinImplementationError):
             WrongFuncSchedules1()
@@ -121,12 +121,7 @@ class ScheduledTaskPluginTests(TestCase):
             This plugin is missing a schedule
             """
 
-            SCHEDULED_TASKS = {
-                'test': {
-                    'func': 'test',
-                    'minutes': 30,
-                },
-            }
+            SCHEDULED_TASKS = {'test': {'func': 'test', 'minutes': 30}}
 
         with self.assertRaises(MixinImplementationError):
             WrongFuncSchedules2()
@@ -138,11 +133,7 @@ class ScheduledTaskPluginTests(TestCase):
             """
 
             SCHEDULED_TASKS = {
-                'test': {
-                    'func': 'test',
-                    'schedule': 'XX',
-                    'minutes': 30,
-                },
+                'test': {'func': 'test', 'schedule': 'XX', 'minutes': 30}
             }
 
         with self.assertRaises(MixinImplementationError):
@@ -154,12 +145,7 @@ class ScheduledTaskPluginTests(TestCase):
             This plugin is missing a minute marker for its schedule
             """
 
-            SCHEDULED_TASKS = {
-                'test': {
-                    'func': 'test',
-                    'schedule': 'I',
-                },
-            }
+            SCHEDULED_TASKS = {'test': {'func': 'test', 'schedule': 'I'}}
 
         with self.assertRaises(MixinImplementationError):
             WrongFuncSchedules4()

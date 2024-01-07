@@ -9,8 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import Resolver404, include, re_path, resolve, reverse_lazy
 
-from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
-                                    BaseRequire2FAMiddleware)
+from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
 
 from InvenTree.urls import frontendpatterns
@@ -64,11 +63,20 @@ class AuthRequiredMiddleware(object):
             elif request.path_info.startswith('/accounts/'):
                 authorized = True
 
-            elif request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/') or request.path_info.startswith('/assets/') or request.path_info == f'/{settings.FRONTEND_URL_BASE}':
+            elif (
+                request.path_info.startswith(f'/{settings.FRONTEND_URL_BASE}/')
+                or request.path_info.startswith('/assets/')
+                or request.path_info == f'/{settings.FRONTEND_URL_BASE}'
+            ):
                 authorized = True
 
-            elif 'Authorization' in request.headers.keys() or 'authorization' in request.headers.keys():
-                auth = request.headers.get('Authorization', request.headers.get('authorization')).strip()
+            elif (
+                'Authorization' in request.headers.keys()
+                or 'authorization' in request.headers.keys()
+            ):
+                auth = request.headers.get(
+                    'Authorization', request.headers.get('authorization')
+                ).strip()
 
                 if auth.lower().startswith('token') and len(auth.split()) == 2:
                     token_key = auth.split()[1]
@@ -78,7 +86,6 @@ class AuthRequiredMiddleware(object):
                         token = ApiToken.objects.get(key=token_key)
 
                         if token.active and token.user:
-
                             # Provide the user information to the request
                             request.user = token.user
                             authorized = True
@@ -99,17 +106,16 @@ class AuthRequiredMiddleware(object):
                 ]
 
                 # Do not redirect requests to any of these paths
-                paths_ignore = [
-                    '/api/',
-                    '/js/',
-                    '/media/',
-                    '/static/',
-                ]
+                paths_ignore = ['/api/', '/js/', '/media/', '/static/']
 
-                if path not in urls and not any(path.startswith(p) for p in paths_ignore):
+                if path not in urls and not any(
+                    path.startswith(p) for p in paths_ignore
+                ):
                     # Save the 'next' parameter to pass through to the login view
 
-                    return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
+                    return redirect(
+                        f'{reverse_lazy("account_login")}?next={request.path}'
+                    )
                 # Return a 401 (Unauthorized) response code for this request
                 return HttpResponse('Unauthorized', status=401)
 
@@ -123,6 +129,7 @@ url_matcher = re_path('', include(frontendpatterns))
 
 class Check2FAMiddleware(BaseRequire2FAMiddleware):
     """Check if user is required to have MFA enabled."""
+
     def require_2fa(self, request):
         """Use setting to check if MFA should be enforced for frontend page."""
         from common.models import InvenTreeSetting
@@ -137,6 +144,7 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
 
 class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
     """This function ensures only frontend code triggers the MFA auth cycle."""
+
     def process_request(self, request):
         """Check if requested url is forntend and enforce MFA check."""
         try:
@@ -148,6 +156,7 @@ class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
     """Middleware to check if HTTP-header based auth is enabled and to set it up."""
+
     header = settings.REMOTE_LOGIN_HEADER
 
     def process_request(self, request):

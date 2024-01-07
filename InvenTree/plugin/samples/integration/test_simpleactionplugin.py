@@ -21,16 +21,15 @@ class SimpleActionPluginTests(InvenTreeTestCase):
     def test_function(self):
         """Check if functions work."""
         # test functions
-        response = self.client.post('/api/action/', data={'action': "simple", 'data': {'foo': "bar", }})
+        response = self.client.post(
+            '/api/action/', data={'action': "simple", 'data': {'foo': "bar"}}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             str(response.content, encoding='utf8'),
             {
                 "action": 'simple',
                 "result": True,
-                "info": {
-                    "user": self.username,
-                    "hello": "world",
-                },
-            }
+                "info": {"user": self.username, "hello": "world"},
+            },
         )

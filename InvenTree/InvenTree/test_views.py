@@ -60,25 +60,11 @@ class ViewTests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
         content = response.content.decode()
 
-        user_panels = [
-            'account',
-            'user-display',
-            'user-home',
-            'user-reports',
-        ]
+        user_panels = ['account', 'user-display', 'user-home', 'user-reports']
 
-        staff_panels = [
-            'server',
-            'login',
-            'barcodes',
-            'pricing',
-            'parts',
-            'stock',
-        ]
+        staff_panels = ['server', 'login', 'barcodes', 'pricing', 'parts', 'stock']
 
-        plugin_panels = [
-            'plugin',
-        ]
+        plugin_panels = ['plugin']
 
         # Default user has staff access, so all panels will be present
         for panel in user_panels + staff_panels + plugin_panels:
@@ -87,8 +73,7 @@ class ViewTests(InvenTreeTestCase):
 
         # Now create a user who does not have staff access
         pleb_user = get_user_model().objects.create_user(
-            username='pleb',
-            password='notstaff',
+            username='pleb', password='notstaff'
         )
 
         pleb_user.groups.add(self.group)
@@ -98,10 +83,7 @@ class ViewTests(InvenTreeTestCase):
 
         self.client.logout()
 
-        result = self.client.login(
-            username='pleb',
-            password='notstaff',
-        )
+        result = self.client.login(username='pleb', password='notstaff')
 
         self.assertTrue(result)
 
@@ -127,6 +109,8 @@ class ViewTests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 302)
 
         # Try login with url
-        response = self.client.get(f"/accounts/login/?next=/&login={self.username}&password={self.password}")
+        response = self.client.get(
+            f"/accounts/login/?next=/&login={self.username}&password={self.password}"
+        )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, '/')

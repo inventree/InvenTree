@@ -25,6 +25,7 @@ class LocateMixin:
 
     class MixinMeta:
         """Meta for mixin."""
+
         MIXIN_NAME = "Locate"
 
     def __init__(self):

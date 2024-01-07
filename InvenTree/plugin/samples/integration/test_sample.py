@@ -50,6 +50,7 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
         self.assertEqual(plugin.check_settings(), (True, []))
 
         # validator
+
     def test_settings_validator(self):
         """Test settings validator for plugins."""
         plugin = registry.get_plugin('sample')

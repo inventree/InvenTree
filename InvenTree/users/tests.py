@@ -29,7 +29,9 @@ class RuleSetModelTest(TestCase):
         extra = [name for name in keys if name not in RuleSet.RULESET_NAMES]
 
         if len(extra) > 0:  # pragma: no cover
-            print("The following rulesets have been improperly added to RULESET_MODELS:")
+            print(
+                "The following rulesets have been improperly added to RULESET_MODELS:"
+            )
             for e in extra:
                 print("-", e)
 
@@ -61,21 +63,23 @@ class RuleSetModelTest(TestCase):
 
         # Now check that each defined model is a valid table name
         for key in RuleSet.RULESET_MODELS.keys():
-
             models = RuleSet.RULESET_MODELS[key]
 
             for m in models:
-
                 assigned_models.add(m)
 
         missing_models = set()
 
         for model in available_tables:
-            if model not in assigned_models and model not in RuleSet.RULESET_IGNORE:  # pragma: no cover
+            if (
+                model not in assigned_models and model not in RuleSet.RULESET_IGNORE
+            ):  # pragma: no cover
                 missing_models.add(model)
 
         if len(missing_models) > 0:  # pragma: no cover
-            print("The following database models are not covered by the defined RuleSet permissions:")
+            print(
+                "The following database models are not covered by the defined RuleSet permissions:"
+            )
             for m in missing_models:
                 print("-", m)
 
@@ -115,7 +119,6 @@ class RuleSetModelTest(TestCase):
         permission_set = set()
 
         for models in RuleSet.RULESET_MODELS.values():
-
             for model in models:
                 permission_set.add(model)
 
@@ -208,7 +211,9 @@ class OwnerModelTest(InvenTreeTestCase):
 
         # not authed
         self.do_request(reverse('api-owner-list'), {}, 401)
-        self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 401)
+        self.do_request(
+            reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 401
+        )
 
         self.client.login(username=self.username, password=self.password)
         # user list
@@ -230,7 +235,9 @@ class OwnerModelTest(InvenTreeTestCase):
         # self.assertEqual(response['owner_id'], group.pk)
 
         # own user detail
-        response_detail = self.do_request(reverse('api-user-detail', kwargs={'pk': self.user.id}), {}, 200)
+        response_detail = self.do_request(
+            reverse('api-user-detail', kwargs={'pk': self.user.id}), {}, 200
+        )
         self.assertEqual(response_detail['username'], self.username)
 
         response_me = self.do_request(reverse('api-user-me'), {}, 200)
@@ -251,5 +258,7 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(response['token'], token.first().key)
 
         # test user is associated with token
-        response = self.do_request(reverse('api-user-me'), {'name': 'another-token'}, 200)
+        response = self.do_request(
+            reverse('api-user-me'), {'name': 'another-token'}, 200
+        )
         self.assertEqual(response['username'], self.username)

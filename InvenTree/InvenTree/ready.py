@@ -31,7 +31,9 @@ def isInMainThread():
     return True
 
 
-def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False):
+def canAppAccessDatabase(
+    allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False
+):
     """Returns True if the apps.py file can access database records.
 
     There are some circumstances where we don't want the ready function in apps.py

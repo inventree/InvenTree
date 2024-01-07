@@ -16,10 +16,7 @@ class SimpleActionPlugin(ActionMixin, InvenTreePlugin):
 
     def get_info(self, user, data=None):
         """Sample method."""
-        return {
-            "user": user.username,
-            "hello": "world",
-        }
+        return {"user": user.username, "hello": "world"}
 
     def get_result(self, user=None, data=None):
         """Sample method."""

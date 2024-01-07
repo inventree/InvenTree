@@ -1,6 +1,5 @@
 """Mixin class for making calls to an external API"""
 
-
 import json as json_pkg
 import logging
 
@@ -56,6 +55,7 @@ class APICallMixin:
             return self.api_call('api/users/2')
     ```
     """
+
     API_METHOD = 'https'
     API_URL_SETTING = None
     API_TOKEN_SETTING = None
@@ -64,6 +64,7 @@ class APICallMixin:
 
     class MixinMeta:
         """Meta options for this mixin."""
+
         MIXIN_NAME = 'API calls'
 
     def __init__(self):
@@ -109,7 +110,17 @@ class APICallMixin:
             groups.append(f'{key}={",".join([str(a) for a in val])}')
         return f'?{"&".join(groups)}'
 
-    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, data=None, json=None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False):
+    def api_call(
+        self,
+        endpoint: str,
+        method: str = 'GET',
+        url_args: dict = None,
+        data=None,
+        json=None,
+        headers: dict = None,
+        simple_response: bool = True,
+        endpoint_is_url: bool = False,
+    ):
         """Do an API call.
 
         Simplest call example:
@@ -140,17 +151,13 @@ class APICallMixin:
         if endpoint_is_url:
             url = endpoint
         else:
-
             if endpoint.startswith('/'):
                 endpoint = endpoint[1:]
 
             url = f'{self.api_url}/{endpoint}'
 
         # build kwargs for call
-        kwargs = {
-            'url': url,
-            'headers': headers,
-        }
+        kwargs = {'url': url, 'headers': headers}
 
         if data and json:
             raise ValueError('You can either pass `data` or `json` to this function.')

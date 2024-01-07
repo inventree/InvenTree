@@ -1,4 +1,5 @@
 """Sample implementation for IntegrationPlugin."""
+
 from plugin import InvenTreePlugin
 from plugin.mixins import UrlsMixin
 

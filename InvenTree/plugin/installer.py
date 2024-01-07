@@ -28,9 +28,7 @@ def pip_command(*args):
     logger.info("Running pip command: %s", ' '.join(command))
 
     return subprocess.check_output(
-        command,
-        cwd=settings.BASE_DIR.parent,
-        stderr=subprocess.STDOUT,
+        command, cwd=settings.BASE_DIR.parent, stderr=subprocess.STDOUT
     )
 
 
@@ -137,7 +135,9 @@ def install_plugin(url=None, packagename=None, user=None):
     - We must detect that we are running within a virtual environment
     """
     if user and not user.is_staff:
-        raise ValidationError(_("Permission denied: only staff users can install plugins"))
+        raise ValidationError(
+            _("Permission denied: only staff users can install plugins")
+        )
 
     logger.debug("install_plugin: %s, %s", url, packagename)
 
@@ -155,7 +155,9 @@ def install_plugin(url=None, packagename=None, user=None):
 
     if url:
         # use custom registration / VCS
-        if True in [identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn', ]]:
+        if True in [
+            identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn']
+        ]:
             # using a VCS provider
             if packagename:
                 full_pkg = f'{packagename}@{url}'
@@ -197,9 +199,7 @@ def install_plugin(url=None, packagename=None, user=None):
         output = error.output.decode('utf-8')
         logger.exception("Plugin installation failed: %s", str(output))
 
-        errors = [
-            _("Plugin installation failed"),
-        ]
+        errors = [_("Plugin installation failed")]
 
         for msg in output.split("\n"):
             msg = msg.strip()
@@ -217,6 +217,7 @@ def install_plugin(url=None, packagename=None, user=None):
 
     # Reload the plugin registry, to discover the new plugin
     from plugin.registry import registry
+
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     return ret

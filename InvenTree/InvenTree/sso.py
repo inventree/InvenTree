@@ -1,6 +1,5 @@
 """Helper functions for Single Sign On functionality"""
 
-
 import logging
 
 from common.models import InvenTreeSetting

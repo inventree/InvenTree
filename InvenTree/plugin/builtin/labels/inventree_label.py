@@ -30,7 +30,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             'description': _('Enable debug mode - returns raw HTML instead of PDF'),
             'validator': bool,
             'default': False,
-        },
+        }
     }
 
     def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
@@ -45,7 +45,6 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         output_file = None
 
         for item in items:
-
             label.object_to_print = item
 
             outputs.append(self.print_label(label, request, debug=debug, **kwargs))
@@ -70,15 +69,12 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             output_file = ContentFile(pdf, 'labels.pdf')
 
         # Save the generated file to the database
-        output = LabelOutput.objects.create(
-            label=output_file,
-            user=request.user
-        )
+        output = LabelOutput.objects.create(label=output_file, user=request.user)
 
         return JsonResponse({
             'file': output.label.url,
             'success': True,
-            'message': f'{len(items)} labels generated'
+            'message': f'{len(items)} labels generated',
         })
 
     def print_label(self, label: LabelTemplate, request, **kwargs):

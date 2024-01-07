@@ -17,12 +17,7 @@ print("- Response 200 OK")
 
 data = json.loads(response.text)
 
-required_keys = [
-    'server',
-    'version',
-    'apiVersion',
-    'worker_running',
-]
+required_keys = ['server', 'version', 'apiVersion', 'worker_running']
 
 for key in required_keys:
     assert key in data

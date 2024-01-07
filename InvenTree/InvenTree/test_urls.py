@@ -44,7 +44,7 @@ class URLTest(TestCase):
             ('part', 'templates'),
             ('report', 'templates'),
             ('stock', 'templates'),
-            ('templates', ),
+            ('templates',),
         ]
 
         template_files = []
@@ -53,11 +53,9 @@ class URLTest(TestCase):
         tld = os.path.join(here, '..')
 
         for directory in template_dirs:
-
             template_dir = os.path.join(tld, *directory)
 
             for path in Path(template_dir).rglob(suffix):
-
                 f = os.path.abspath(path)
 
                 if f not in template_files:
@@ -72,22 +70,15 @@ class URLTest(TestCase):
         pattern = "{% url ['\"]([^'\"]+)['\"]([^%]*)%}"
 
         with open(input_file, 'r') as f:
-
             data = f.read()
 
             results = re.findall(pattern, data)
 
         for result in results:
             if len(result) == 2:
-                urls.append([
-                    result[0].strip(),
-                    result[1].strip()
-                ])
+                urls.append([result[0].strip(), result[1].strip()])
             elif len(result) == 1:  # pragma: no cover
-                urls.append([
-                    result[0].strip(),
-                    ''
-                ])
+                urls.append([result[0].strip(), ''])
 
         return urls
 

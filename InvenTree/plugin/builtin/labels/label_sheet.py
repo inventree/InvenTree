@@ -26,26 +26,26 @@ class LabelPrintingOptionsSerializer(serializers.Serializer):
         choices=report.helpers.report_page_size_options(),
         default='A4',
         label=_('Page Size'),
-        help_text=_('Page size for the label sheet')
+        help_text=_('Page size for the label sheet'),
     )
 
     skip = serializers.IntegerField(
         default=0,
         label=_('Skip Labels'),
         help_text=_('Skip this number of labels when printing label sheets'),
-        min_value=0
+        min_value=0,
     )
 
     border = serializers.BooleanField(
         default=False,
         label=_('Border'),
-        help_text=_('Print a border around each label')
+        help_text=_('Print a border around each label'),
     )
 
     landscape = serializers.BooleanField(
         default=False,
         label=_('Landscape'),
-        help_text=_('Print the label sheet in landscape mode')
+        help_text=_('Print the label sheet in landscape mode'),
     )
 
 
@@ -118,8 +118,9 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         idx = 0
 
         while idx < n_labels:
-
-            if page := self.print_page(label, items[idx:idx + n_cells], request, **document_data):
+            if page := self.print_page(
+                label, items[idx : idx + n_cells], request, **document_data
+            ):
                 pages.append(page)
 
             idx += n_cells
@@ -136,15 +137,12 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
         output_file = ContentFile(document, 'labels.pdf')
 
-        output = LabelOutput.objects.create(
-            label=output_file,
-            user=request.user
-        )
+        output = LabelOutput.objects.create(label=output_file, user=request.user)
 
         return JsonResponse({
             'file': output.label.url,
             'success': True,
-            'message': f'{len(items)} labels generated'
+            'message': f'{len(items)} labels generated',
         })
 
     def print_page(self, label: LabelTemplate, items: list, request, **kwargs):
@@ -173,7 +171,6 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
             html += "<tr class='label-sheet-row'>"
 
             for col in range(n_cols):
-
                 # Cell index
                 idx = row * n_cols + col
 
@@ -190,9 +187,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
                         # Render the individual label template
                         # Note that we disable @page styling for this
                         cell = label.render_as_string(
-                            request,
-                            target_object=items[idx],
-                            insert_page_style=False
+                            request, target_object=items[idx], insert_page_style=False
                         )
                         html += cell
                     except Exception as exc:
@@ -229,18 +224,22 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         cell_styles = []
 
         for row in range(n_rows):
-            cell_styles.append(f"""
+            cell_styles.append(
+                f"""
             .label-sheet-row-{row} {{
                 top: {row * label_height}mm;
             }}
-            """)
+            """
+            )
 
         for col in range(n_cols):
-            cell_styles.append(f"""
+            cell_styles.append(
+                f"""
             .label-sheet-col-{col} {{
                 left: {col * label_width}mm;
             }}
-            """)
+            """
+            )
 
         cell_styles = "\n".join(cell_styles)
 

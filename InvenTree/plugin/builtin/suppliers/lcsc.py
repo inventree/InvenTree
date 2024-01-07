@@ -50,10 +50,7 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
         # Extract fields
         fields = SupplierBarcodeMixin.split_fields(
-            barcode_data,
-            delimiter=',',
-            header='{',
-            trailer='}',
+            barcode_data, delimiter=',', header='{', trailer='}'
         )
 
         fields = dict(pair.split(":") for pair in fields)

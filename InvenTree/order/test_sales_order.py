@@ -11,9 +11,13 @@ import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
 from InvenTree import status_codes as status
-from order.models import (SalesOrder, SalesOrderAllocation,
-                          SalesOrderExtraLine, SalesOrderLineItem,
-                          SalesOrderShipment)
+from order.models import (
+    SalesOrder,
+    SalesOrderAllocation,
+    SalesOrderExtraLine,
+    SalesOrderLineItem,
+    SalesOrderShipment,
+)
 from part.models import Part
 from stock.models import StockItem
 from users.models import Owner
@@ -22,15 +26,15 @@ from users.models import Owner
 class SalesOrderTest(TestCase):
     """Run tests to ensure that the SalesOrder model is working correctly."""
 
-    fixtures = [
-        'users',
-    ]
+    fixtures = ['users']
 
     @classmethod
     def setUpTestData(cls):
         """Initial setup for this set of unit tests"""
         # Create a Company to ship the goods to
-        cls.customer = Company.objects.create(name="ABC Co", description="My customer", is_customer=True)
+        cls.customer = Company.objects.create(
+            name="ABC Co", description="My customer", is_customer=True
+        )
 
         # Create a Part to ship
         cls.part = Part.objects.create(
@@ -53,22 +57,23 @@ class SalesOrderTest(TestCase):
 
         # Create a SalesOrder to ship against
         cls.order = SalesOrder.objects.create(
-            customer=cls.customer,
-            reference='SO-1234',
-            customer_reference='ABC 55555'
+            customer=cls.customer, reference='SO-1234', customer_reference='ABC 55555'
         )
 
         # Create a Shipment against this SalesOrder
         cls.shipment = SalesOrderShipment.objects.create(
-            order=cls.order,
-            reference='SO-001',
+            order=cls.order, reference='SO-001'
         )
 
         # Create a line item
-        cls.line = SalesOrderLineItem.objects.create(quantity=50, order=cls.order, part=cls.part)
+        cls.line = SalesOrderLineItem.objects.create(
+            quantity=50, order=cls.order, part=cls.part
+        )
 
         # Create an extra line
-        cls.extraline = SalesOrderExtraLine.objects.create(quantity=1, order=cls.order, reference="Extra line")
+        cls.extraline = SalesOrderExtraLine.objects.create(
+            quantity=1, order=cls.order, reference="Extra line"
+        )
 
     def test_so_reference(self):
         """Unit tests for sales order generation"""
@@ -120,7 +125,9 @@ class SalesOrderTest(TestCase):
     def test_add_duplicate_line_item(self):
         """Adding a duplicate line item to a SalesOrder is accepted"""
         for ii in range(1, 5):
-            SalesOrderLineItem.objects.create(order=self.order, part=self.part, quantity=ii)
+            SalesOrderLineItem.objects.create(
+                order=self.order, part=self.part, quantity=ii
+            )
 
     def allocate_stock(self, full=True):
         """Allocate stock to the order"""
@@ -128,13 +135,14 @@ class SalesOrderTest(TestCase):
             line=self.line,
             shipment=self.shipment,
             item=StockItem.objects.get(pk=self.Sa.pk),
-            quantity=25)
+            quantity=25,
+        )
 
         SalesOrderAllocation.objects.create(
             line=self.line,
             shipment=self.shipment,
             item=StockItem.objects.get(pk=self.Sb.pk),
-            quantity=25 if full else 20
+            quantity=25 if full else 20,
         )
 
     def test_over_allocate(self):
@@ -145,10 +153,7 @@ class SalesOrderTest(TestCase):
         # First three allocations should succeed
         for _i in range(3):
             allocation = SalesOrderAllocation.objects.create(
-                line=self.line,
-                item=SA,
-                quantity=3,
-                shipment=self.shipment
+                line=self.line, item=SA, quantity=3, shipment=self.shipment
             )
 
         # Editing an existing allocation with a larger quantity should fail
@@ -160,10 +165,7 @@ class SalesOrderTest(TestCase):
         # Next allocation should fail
         with self.assertRaises(ValidationError):
             allocation = SalesOrderAllocation.objects.create(
-                line=self.line,
-                item=SA,
-                quantity=3,
-                shipment=self.shipment
+                line=self.line, item=SA, quantity=3, shipment=self.shipment
             )
 
             allocation.clean()
@@ -191,7 +193,7 @@ class SalesOrderTest(TestCase):
             line=self.line,
             shipment=self.shipment,
             item=StockItem.objects.get(pk=self.Sc.pk),
-            quantity=50
+            quantity=50,
         )
         self.assertEqual(self.line.allocated_quantity(), 50)
 
@@ -279,13 +281,13 @@ class SalesOrderTest(TestCase):
     def test_default_shipment(self):
         """Test sales order default shipment creation"""
         # Default setting value should be False
-        self.assertEqual(False, InvenTreeSetting.get_setting('SALESORDER_DEFAULT_SHIPMENT'))
+        self.assertEqual(
+            False, InvenTreeSetting.get_setting('SALESORDER_DEFAULT_SHIPMENT')
+        )
 
         # Create an order
         order_1 = SalesOrder.objects.create(
-            customer=self.customer,
-            reference='1235',
-            customer_reference='ABC 55556'
+            customer=self.customer, reference='1235', customer_reference='ABC 55556'
         )
 
         # Order should have no shipments when setting is False
@@ -293,13 +295,13 @@ class SalesOrderTest(TestCase):
 
         # Update setting to True
         InvenTreeSetting.set_setting('SALESORDER_DEFAULT_SHIPMENT', True, None)
-        self.assertEqual(True, InvenTreeSetting.get_setting('SALESORDER_DEFAULT_SHIPMENT'))
+        self.assertEqual(
+            True, InvenTreeSetting.get_setting('SALESORDER_DEFAULT_SHIPMENT')
+        )
 
         # Create a second order
         order_2 = SalesOrder.objects.create(
-            customer=self.customer,
-            reference='1236',
-            customer_reference='ABC 55557'
+            customer=self.customer, reference='1236', customer_reference='ABC 55557'
         )
 
         # Order should have one shipment
@@ -326,7 +328,7 @@ class SalesOrderTest(TestCase):
         order.tasks.check_overdue_sales_orders()
 
         messages = NotificationMessage.objects.filter(
-            category='order.overdue_sales_order',
+            category='order.overdue_sales_order'
         )
 
         self.assertEqual(len(messages), 1)
@@ -341,12 +343,10 @@ class SalesOrderTest(TestCase):
             customer=self.customer,
             reference='1234567',
             created_by=get_user_model().objects.get(pk=3),
-            responsible=Owner.create(obj=Group.objects.get(pk=3))
+            responsible=Owner.create(obj=Group.objects.get(pk=3)),
         )
 
-        messages = NotificationMessage.objects.filter(
-            category='order.new_salesorder',
-        )
+        messages = NotificationMessage.objects.filter(category='order.new_salesorder')
 
         # A notification should have been generated for user 4 (who is a member of group 3)
         self.assertTrue(messages.filter(user__pk=4).exists())
@@ -356,7 +356,12 @@ class SalesOrderTest(TestCase):
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
-        for model in [SalesOrder, SalesOrderLineItem, SalesOrderExtraLine, SalesOrderShipment]:
+        for model in [
+            SalesOrder,
+            SalesOrderLineItem,
+            SalesOrderExtraLine,
+            SalesOrderShipment,
+        ]:
             p = model.objects.first()
 
             self.assertIsNone(p.get_metadata('test'))

@@ -51,7 +51,9 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
         """
         from stock.models import StockLocation
 
-        logger.info("SampleLocatePlugin attempting to locate location ID %s", location_pk)
+        logger.info(
+            "SampleLocatePlugin attempting to locate location ID %s", location_pk
+        )
 
         try:
             location = StockLocation.objects.get(pk=location_pk)

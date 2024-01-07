@@ -72,7 +72,7 @@ def do_translate(parser, token):
         option = remaining.pop(0)
         if option in seen:
             raise TemplateSyntaxError(
-                "The '%s' option was specified more than once." % option,
+                "The '%s' option was specified more than once." % option
             )
         elif option == "noop":
             noop = True
@@ -87,7 +87,7 @@ def do_translate(parser, token):
             if value in invalid_context:
                 raise TemplateSyntaxError(
                     "Invalid argument '%s' provided to the '%s' tag for the context "
-                    "option" % (value, bits[0]),
+                    "option" % (value, bits[0])
                 )
             message_context = parser.compile_filter(value)
         elif option == "as":
@@ -102,10 +102,7 @@ def do_translate(parser, token):
             raise TemplateSyntaxError(
                 "Unknown argument for '%s' tag: '%s'. The only options "
                 "available are 'noop', 'context' \"xxx\", and 'as VAR'."
-                % (
-                    bits[0],
-                    option,
-                )
+                % (bits[0], option)
             )
         seen.add(option)
 
@@ -118,13 +115,21 @@ register.tag("blocktranslate", django.templatetags.i18n.do_block_translate)
 
 register.tag("language", django.templatetags.i18n.language)
 
-register.tag("get_available_languages", django.templatetags.i18n.do_get_available_languages)
+register.tag(
+    "get_available_languages", django.templatetags.i18n.do_get_available_languages
+)
 register.tag("get_language_info", django.templatetags.i18n.do_get_language_info)
-register.tag("get_language_info_list", django.templatetags.i18n.do_get_language_info_list)
+register.tag(
+    "get_language_info_list", django.templatetags.i18n.do_get_language_info_list
+)
 register.tag("get_current_language", django.templatetags.i18n.do_get_current_language)
-register.tag("get_current_language_bidi", django.templatetags.i18n.do_get_current_language_bidi)
+register.tag(
+    "get_current_language_bidi", django.templatetags.i18n.do_get_current_language_bidi
+)
 
 register.filter("language_name", django.templatetags.i18n.language_name)
-register.filter("language_name_translated", django.templatetags.i18n.language_name_translated)
+register.filter(
+    "language_name_translated", django.templatetags.i18n.language_name_translated
+)
 register.filter("language_name_local", django.templatetags.i18n.language_name_local)
 register.filter("language_bidi", django.templatetags.i18n.language_bidi)

@@ -4,8 +4,9 @@ from django.core import mail
 
 from part.test_part import BaseNotificationIntegrationTest
 from plugin import registry
-from plugin.builtin.integration.core_notifications import \
-    InvenTreeCoreNotificationsPlugin
+from plugin.builtin.integration.core_notifications import (
+    InvenTreeCoreNotificationsPlugin,
+)
 from plugin.models import NotificationUserSetting
 
 
@@ -25,7 +26,7 @@ class CoreNotificationTestTests(BaseNotificationIntegrationTest):
             value=True,
             change_user=self.user,
             user=self.user,
-            method=InvenTreeCoreNotificationsPlugin.EmailNotification.METHOD_NAME
+            method=InvenTreeCoreNotificationsPlugin.EmailNotification.METHOD_NAME,
         )
 
         # run through

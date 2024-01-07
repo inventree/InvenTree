@@ -18,9 +18,7 @@ class StatusView(APIView):
     all available 'StockStatus' codes
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     # Override status_class for implementing subclass
     MODEL_REF = 'statusmodel'
@@ -30,7 +28,9 @@ class StatusView(APIView):
         status_model = self.kwargs.get(self.MODEL_REF, None)
 
         if status_model is None:
-            raise ValidationError(f"StatusView view called without '{self.MODEL_REF}' parameter")
+            raise ValidationError(
+                f"StatusView view called without '{self.MODEL_REF}' parameter"
+            )
 
         return status_model
 
@@ -44,10 +44,7 @@ class StatusView(APIView):
         if not issubclass(status_class, StatusCode):
             raise NotImplementedError("`status_class` not a valid StatusCode class")
 
-        data = {
-            'class': status_class.__name__,
-            'values': status_class.dict(),
-        }
+        data = {'class': status_class.__name__, 'values': status_class.dict()}
 
         return Response(data)
 
@@ -55,9 +52,7 @@ class StatusView(APIView):
 class AllStatusViews(StatusView):
     """Endpoint for listing all defined status models."""
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes"""

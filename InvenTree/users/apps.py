@@ -5,8 +5,7 @@ import logging
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 
-from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
-                             isPluginRegistryLoaded)
+from InvenTree.ready import canAppAccessDatabase, isInMainThread, isPluginRegistryLoaded
 
 logger = logging.getLogger('inventree')
 
@@ -23,7 +22,6 @@ class UsersConfig(AppConfig):
             return
 
         if canAppAccessDatabase(allow_test=True):
-
             try:
                 self.assign_permissions()
             except (OperationalError, ProgrammingError):
@@ -42,13 +40,14 @@ class UsersConfig(AppConfig):
 
         # First, delete any rule_set objects which have become outdated!
         for rule in RuleSet.objects.all():
-            if rule.name not in RuleSet.RULESET_NAMES:  # pragma: no cover  # can not change ORM without the app being loaded
+            if (
+                rule.name not in RuleSet.RULESET_NAMES
+            ):  # pragma: no cover  # can not change ORM without the app being loaded
                 logger.info("Deleting outdated ruleset: %s", rule.name)
                 rule.delete()
 
         # Update group permission assignments for all groups
         for group in Group.objects.all():
-
             update_group_roles(group)
 
     def update_owners(self):

@@ -15,8 +15,7 @@ import order.models
 import stock.models
 from InvenTree.helpers import hash_barcode
 from plugin import registry
-from plugin.builtin.barcodes.inventree_barcode import \
-    InvenTreeInternalBarcodePlugin
+from plugin.builtin.barcodes.inventree_barcode import InvenTreeInternalBarcodePlugin
 from users.models import RuleSet
 
 from . import serializers as barcode_serializers
@@ -35,9 +34,7 @@ class BarcodeView(CreateAPIView):
         return None
 
     # Default permission classes (can be overridden)
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         """Handle create method - override default create"""
@@ -60,7 +57,9 @@ class BarcodeView(CreateAPIView):
         kwargs:
             Any custom fields passed by the specific serializer
         """
-        raise NotImplementedError(f"handle_barcode not implemented for {self.__class__}")
+        raise NotImplementedError(
+            f"handle_barcode not implemented for {self.__class__}"
+        )
 
     def scan_barcode(self, barcode: str, request, **kwargs):
         """Perform a generic 'scan' of the provided barcode data.
@@ -75,15 +74,17 @@ class BarcodeView(CreateAPIView):
         response = {}
 
         for current_plugin in plugins:
-
             result = current_plugin.scan(barcode)
 
             if result is None:
                 continue
 
             if "error" in result:
-                logger.info("%s.scan(...) returned an error: %s",
-                            current_plugin.__class__.__name__, result["error"])
+                logger.info(
+                    "%s.scan(...) returned an error: %s",
+                    current_plugin.__class__.__name__,
+                    result["error"],
+                )
                 if not response:
                     plugin = current_plugin
                     response = result
@@ -169,7 +170,6 @@ class BarcodeAssign(BarcodeView):
             valid_labels.append(label)
 
             if instance := kwargs.get(label, None):
-
                 # Check that the user has the required permission
                 app_label = model._meta.app_label
                 model_name = model._meta.model_name
@@ -181,23 +181,18 @@ class BarcodeAssign(BarcodeView):
                         "error": f"You do not have the required permissions for {table}"
                     })
 
-                instance.assign_barcode(
-                    barcode_data=barcode,
-                    barcode_hash=barcode_hash,
-                )
+                instance.assign_barcode(barcode_data=barcode, barcode_hash=barcode_hash)
 
                 return Response({
                     'success': f"Assigned barcode to {label} instance",
-                    label: {
-                        'pk': instance.pk,
-                    },
+                    label: {'pk': instance.pk},
                     "barcode_data": barcode,
                     "barcode_hash": barcode_hash,
                 })
 
         # If we got here, it means that no valid model types were provided
         raise ValidationError({
-            'error': f"Missing data: provide one of '{valid_labels}'",
+            'error': f"Missing data: provide one of '{valid_labels}'"
         })
 
 
@@ -231,16 +226,14 @@ class BarcodeUnassign(BarcodeView):
 
         if len(matched_labels) > 1:
             raise ValidationError({
-                'error': f"Multiple conflicting fields: '{model_names}'",
+                'error': f"Multiple conflicting fields: '{model_names}'"
             })
 
         # At this stage, we know that we have received a single valid field
         for model in supported_models:
-
             label = model.barcode_model_type()
 
             if instance := data.get(label, None):
-
                 # Check that the user has the required permission
                 app_label = model._meta.app_label
                 model_name = model._meta.model_name
@@ -256,13 +249,11 @@ class BarcodeUnassign(BarcodeView):
                 instance.unassign_barcode()
 
                 return Response({
-                    'success': f'Barcode unassigned from {label} instance',
+                    'success': f'Barcode unassigned from {label} instance'
                 })
 
         # If we get to this point, something has gone wrong!
-        raise ValidationError({
-            'error': 'Could not unassign barcode',
-        })
+        raise ValidationError({'error': 'Could not unassign barcode'})
 
 
 class BarcodePOAllocate(BarcodeView):
@@ -275,13 +266,13 @@ class BarcodePOAllocate(BarcodeView):
     - A SupplierPart object
     """
 
-    role_required = [
-        'purchase_order.add'
-    ]
+    role_required = ['purchase_order.add']
 
     serializer_class = barcode_serializers.BarcodePOAllocateSerializer
 
-    def get_supplier_part(self, purchase_order, part=None, supplier_part=None, manufacturer_part=None):
+    def get_supplier_part(
+        self, purchase_order, part=None, supplier_part=None, manufacturer_part=None
+    ):
         """Return a single matching SupplierPart (or else raise an exception)
 
         Arguments:
@@ -305,9 +296,7 @@ class BarcodePOAllocate(BarcodeView):
         supplier_parts = company.models.SupplierPart.objects.filter(supplier=supplier)
 
         if not part and not supplier_part and not manufacturer_part:
-            raise ValidationError({
-                'error': _('No matching part data found'),
-            })
+            raise ValidationError({'error': _('No matching part data found')})
 
         if part:
             if part_id := part.get('pk', None):
@@ -319,12 +308,12 @@ class BarcodePOAllocate(BarcodeView):
 
         if manufacturer_part:
             if manufacturer_part_id := manufacturer_part.get('pk', None):
-                supplier_parts = supplier_parts.filter(manufacturer_part__pk=manufacturer_part_id)
+                supplier_parts = supplier_parts.filter(
+                    manufacturer_part__pk=manufacturer_part_id
+                )
 
         if supplier_parts.count() == 0:
-            raise ValidationError({
-                "error": _("No matching supplier parts found")
-            })
+            raise ValidationError({"error": _("No matching supplier parts found")})
 
         if supplier_parts.count() > 1:
             raise ValidationError({
@@ -377,9 +366,7 @@ class BarcodePOReceive(BarcodeView):
     - location: The destination location for the received item (optional)
     """
 
-    role_required = [
-        'purchase_order.add'
-    ]
+    role_required = ['purchase_order.add']
 
     serializer_class = barcode_serializers.BarcodePOReceiveSerializer
 
@@ -397,14 +384,11 @@ class BarcodePOReceive(BarcodeView):
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
 
-        response = {
-            "barcode_data": barcode,
-            "barcode_hash": hash_barcode(barcode)
-        }
+        response = {"barcode_data": barcode, "barcode_hash": hash_barcode(barcode)}
 
-        internal_barcode_plugin = next(filter(
-            lambda plugin: plugin.name == "InvenTreeBarcode", plugins
-        ))
+        internal_barcode_plugin = next(
+            filter(lambda plugin: plugin.name == "InvenTreeBarcode", plugins)
+        )
 
         if result := internal_barcode_plugin.scan(barcode):
             if 'stockitem' in result:
@@ -417,20 +401,19 @@ class BarcodePOReceive(BarcodeView):
         plugin_response = None
 
         for current_plugin in plugins:
-
             result = current_plugin.scan_receive_item(
-                barcode,
-                request.user,
-                purchase_order=purchase_order,
-                location=location,
+                barcode, request.user, purchase_order=purchase_order, location=location
             )
 
             if result is None:
                 continue
 
             if "error" in result:
-                logger.info("%s.scan_receive_item(...) returned an error: %s",
-                            current_plugin.__class__.__name__, result["error"])
+                logger.info(
+                    "%s.scan_receive_item(...) returned an error: %s",
+                    current_plugin.__class__.__name__,
+                    result["error"],
+                )
                 if not plugin_response:
                     plugin = current_plugin
                     plugin_response = result
@@ -467,9 +450,7 @@ class BarcodeSOAllocate(BarcodeView):
     - Quantity
     """
 
-    role_required = [
-        'sales_order.add',
-    ]
+    role_required = ['sales_order.add']
 
     serializer_class = barcode_serializers.BarcodeSOAllocateSerializer
 
@@ -488,20 +469,14 @@ class BarcodeSOAllocate(BarcodeView):
 
         # Find any matching line items for the stock item
         lines = order.models.SalesOrderLineItem.objects.filter(
-            order=sales_order,
-            part__in=parts,
-            shipped__lte=F('quantity'),
+            order=sales_order, part__in=parts, shipped__lte=F('quantity')
         )
 
         if lines.count() > 1:
-            raise ValidationError({
-                'error': _('Multiple matching line items found'),
-            })
+            raise ValidationError({'error': _('Multiple matching line items found')})
 
         if lines.count() == 0:
-            raise ValidationError({
-                'error': _('No matching line item found'),
-            })
+            raise ValidationError({'error': _('No matching line item found')})
 
         return lines.first()
 
@@ -513,14 +488,13 @@ class BarcodeSOAllocate(BarcodeView):
         if shipment := kwargs.get('shipment', None):
             if shipment.order != sales_order:
                 raise ValidationError({
-                    'error': _('Shipment does not match sales order'),
+                    'error': _('Shipment does not match sales order')
                 })
 
             return shipment
 
         shipments = order.models.SalesOrderShipment.objects.filter(
-            order=sales_order,
-            delivery_date=None
+            order=sales_order, delivery_date=None
         )
 
         if shipments.count() == 1:
@@ -579,7 +553,7 @@ class BarcodeSOAllocate(BarcodeView):
             'sales_order': sales_order.pk if sales_order else None,
             'line_item': line_item.pk if line_item else None,
             'shipment': shipment.pk if shipment else None,
-            'quantity': quantity
+            'quantity': quantity,
         }
 
         if stock_item is not None and quantity is not None:
@@ -590,10 +564,7 @@ class BarcodeSOAllocate(BarcodeView):
         # If we have sufficient information, we can allocate the stock item
         if all((x is not None for x in [line_item, sales_order, shipment, quantity])):
             order.models.SalesOrderAllocation.objects.create(
-                line=line_item,
-                shipment=shipment,
-                item=stock_item,
-                quantity=quantity,
+                line=line_item, shipment=shipment, item=stock_item, quantity=quantity
             )
 
             response['success'] = _('Stock item allocated to sales order')
@@ -609,19 +580,14 @@ class BarcodeSOAllocate(BarcodeView):
 barcode_api_urls = [
     # Link a third-party barcode to an item (e.g. Part / StockItem / etc)
     path('link/', BarcodeAssign.as_view(), name='api-barcode-link'),
-
     # Unlink a third-party barcode from an item
     path('unlink/', BarcodeUnassign.as_view(), name='api-barcode-unlink'),
-
     # Receive a purchase order item by scanning its barcode
     path("po-receive/", BarcodePOReceive.as_view(), name="api-barcode-po-receive"),
-
     # Allocate parts to a purchase order by scanning their barcode
     path("po-allocate/", BarcodePOAllocate.as_view(), name="api-barcode-po-allocate"),
-
     # Allocate stock to a sales order by scanning barcode
     path("so-allocate/", BarcodeSOAllocate.as_view(), name="api-barcode-so-allocate"),
-
     # Catch-all performs barcode 'scan'
     re_path(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),
 ]

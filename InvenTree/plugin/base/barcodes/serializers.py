@@ -8,8 +8,7 @@ from rest_framework import serializers
 import order.models
 import stock.models
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
-from plugin.builtin.barcodes.inventree_barcode import \
-    InvenTreeInternalBarcodePlugin
+from plugin.builtin.barcodes.inventree_barcode import InvenTreeInternalBarcodePlugin
 
 
 class BarcodeSerializer(serializers.Serializer):
@@ -18,7 +17,8 @@ class BarcodeSerializer(serializers.Serializer):
     MAX_BARCODE_LENGTH = 4095
 
     barcode = serializers.CharField(
-        required=True, help_text=_('Scanned barcode data'),
+        required=True,
+        help_text=_('Scanned barcode data'),
         max_length=MAX_BARCODE_LENGTH,
     )
 
@@ -32,17 +32,21 @@ class BarcodeAssignMixin(serializers.Serializer):
         super().__init__(*args, **kwargs)
 
         for model in InvenTreeInternalBarcodePlugin.get_supported_barcode_models():
-            self.fields[model.barcode_model_type()] = serializers.PrimaryKeyRelatedField(
-                queryset=model.objects.all(),
-                required=False, allow_null=True,
-                label=model._meta.verbose_name,
+            self.fields[model.barcode_model_type()] = (
+                serializers.PrimaryKeyRelatedField(
+                    queryset=model.objects.all(),
+                    required=False,
+                    allow_null=True,
+                    label=model._meta.verbose_name,
+                )
             )
 
     @staticmethod
     def get_model_fields():
         """Return a list of model fields"""
         fields = [
-            model.barcode_model_type() for model in InvenTreeInternalBarcodePlugin.get_supported_barcode_models()
+            model.barcode_model_type()
+            for model in InvenTreeInternalBarcodePlugin.get_supported_barcode_models()
         ]
 
         return fields
@@ -54,10 +58,7 @@ class BarcodeAssignSerializer(BarcodeAssignMixin, BarcodeSerializer):
     class Meta:
         """Meta class for BarcodeAssignSerializer"""
 
-        fields = [
-            'barcode',
-            *BarcodeAssignMixin.get_model_fields()
-        ]
+        fields = ['barcode', *BarcodeAssignMixin.get_model_fields()]
 
 
 class BarcodeUnassignSerializer(BarcodeAssignMixin):
@@ -101,7 +102,8 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
 
     purchase_order = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrder.objects.all(),
-        required=False, allow_null=True,
+        required=False,
+        allow_null=True,
         help_text=_('PurchaseOrder to receive items against'),
     )
 
@@ -115,7 +117,8 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
-        required=False, allow_null=True,
+        required=False,
+        allow_null=True,
         help_text=_('Location to receive items into'),
     )
 
@@ -150,13 +153,15 @@ class BarcodeSOAllocateSerializer(BarcodeSerializer):
 
     line = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderLineItem.objects.all(),
-        required=False, allow_null=True,
+        required=False,
+        allow_null=True,
         help_text=_('Sales order line item to allocate items against'),
     )
 
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
-        required=False, allow_null=True,
+        required=False,
+        allow_null=True,
         help_text=_('Sales order shipment to allocate items against'),
     )
 
@@ -169,6 +174,5 @@ class BarcodeSOAllocateSerializer(BarcodeSerializer):
         return shipment
 
     quantity = serializers.IntegerField(
-        required=False,
-        help_text=_('Quantity to allocate'),
+        required=False, help_text=_('Quantity to allocate')
     )

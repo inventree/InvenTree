@@ -30,11 +30,7 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
     VERSION = "0.2.0"
 
     SCHEDULED_TASKS = {
-        'member': {
-            'func': 'member_func',
-            'schedule': 'I',
-            'minutes': 30,
-        },
+        'member': {'func': 'member_func', 'schedule': 'I', 'minutes': 30},
         'hello': {
             'func': 'plugin.samples.integration.scheduled_task.print_hello',
             'schedule': 'I',
@@ -52,7 +48,7 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
             'description': 'Print true or false when running the periodic task',
             'validator': bool,
             'default': False,
-        },
+        }
     }
 
     def member_func(self, *args, **kwargs):

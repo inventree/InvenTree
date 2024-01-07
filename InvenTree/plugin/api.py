@@ -14,8 +14,13 @@ from common.api import GlobalSettingsPermissions
 from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import str2bool
-from InvenTree.mixins import (CreateAPI, ListAPI, RetrieveUpdateAPI,
-                              RetrieveUpdateDestroyAPI, UpdateAPI)
+from InvenTree.mixins import (
+    CreateAPI,
+    ListAPI,
+    RetrieveUpdateAPI,
+    RetrieveUpdateDestroyAPI,
+    UpdateAPI,
+)
 from InvenTree.permissions import IsSuperuser
 from plugin import registry
 from plugin.base.action.api import ActionPluginView
@@ -102,26 +107,13 @@ class PluginList(ListAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = [
-        'active',
-    ]
+    filterset_fields = ['active']
 
-    ordering_fields = [
-        'key',
-        'name',
-        'active',
-    ]
+    ordering_fields = ['key', 'name', 'active']
 
-    ordering = [
-        '-active',
-        'name',
-        'key',
-    ]
+    ordering = ['-active', 'name', 'key']
 
-    search_fields = [
-        'key',
-        'name',
-    ]
+    search_fields = ['key', 'name']
 
 
 class PluginDetail(RetrieveUpdateDestroyAPI):
@@ -176,7 +168,7 @@ class PluginActivate(UpdateAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginActivateSerializer
-    permission_classes = [IsSuperuser, ]
+    permission_classes = [IsSuperuser]
 
     def get_object(self):
         """Returns the object for the view."""
@@ -194,7 +186,7 @@ class PluginReload(CreateAPI):
 
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginReloadSerializer
-    permission_classes = [IsSuperuser,]
+    permission_classes = [IsSuperuser]
 
     def perform_create(self, serializer):
         """Saving the serializer instance performs plugin installation"""
@@ -211,18 +203,11 @@ class PluginSettingList(ListAPI):
     queryset = PluginSetting.objects.all()
     serializer_class = PluginSerializers.PluginSettingSerializer
 
-    permission_classes = [
-        GlobalSettingsPermissions,
-    ]
+    permission_classes = [GlobalSettingsPermissions]
 
-    filter_backends = [
-        DjangoFilterBackend,
-    ]
+    filter_backends = [DjangoFilterBackend]
 
-    filterset_fields = [
-        'plugin__active',
-        'plugin__key',
-    ]
+    filterset_fields = ['plugin__active', 'plugin__key']
 
 
 def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
@@ -282,7 +267,9 @@ class PluginAllSettingList(APIView):
 
     permission_classes = [GlobalSettingsPermissions]
 
-    @extend_schema(responses={200: PluginSerializers.PluginSettingSerializer(many=True)})
+    @extend_schema(
+        responses={200: PluginSerializers.PluginSettingSerializer(many=True)}
+    )
     def get(self, request, pk):
         """Get all settings for a plugin config."""
 
@@ -291,9 +278,13 @@ class PluginAllSettingList(APIView):
 
         settings = getattr(plugin, 'settings', {})
 
-        settings_dict = PluginSetting.all_settings(settings_definition=settings, plugin=plugin.plugin_config())
+        settings_dict = PluginSetting.all_settings(
+            settings_definition=settings, plugin=plugin.plugin_config()
+        )
 
-        results = PluginSerializers.PluginSettingSerializer(list(settings_dict.values()), many=True).data
+        results = PluginSerializers.PluginSettingSerializer(
+            list(settings_dict.values()), many=True
+        ).data
         return Response(results)
 
 
@@ -315,19 +306,21 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         key = self.kwargs['key']
 
         # Look up plugin
-        plugin = check_plugin(plugin_slug=self.kwargs.get('plugin'), plugin_pk=self.kwargs.get('pk'))
+        plugin = check_plugin(
+            plugin_slug=self.kwargs.get('plugin'), plugin_pk=self.kwargs.get('pk')
+        )
 
         settings = getattr(plugin, 'settings', {})
 
         if key not in settings:
-            raise NotFound(detail=f"Plugin '{plugin.slug}' has no setting matching '{key}'")
+            raise NotFound(
+                detail=f"Plugin '{plugin.slug}' has no setting matching '{key}'"
+            )
 
         return PluginSetting.get_setting_object(key, plugin=plugin.plugin_config())
 
     # Staff permission required
-    permission_classes = [
-        GlobalSettingsPermissions,
-    ]
+    permission_classes = [GlobalSettingsPermissions]
 
 
 class RegistryStatusView(APIView):
@@ -336,7 +329,7 @@ class RegistryStatusView(APIView):
     - GET: Provide status data for the plugin registry
     """
 
-    permission_classes = [IsSuperuser, ]
+    permission_classes = [IsSuperuser]
 
     serializer_class = PluginSerializers.PluginRegistryStatusSerializer
 
@@ -355,7 +348,7 @@ class RegistryStatusView(APIView):
                     })
 
         result = PluginSerializers.PluginRegistryStatusSerializer({
-            "registry_errors": error_list,
+            "registry_errors": error_list
         }).data
 
         return Response(result)
@@ -365,35 +358,73 @@ plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
     re_path(r'^barcode/', include(barcode_api_urls)),
     re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
-    re_path(r'^plugins/', include([
-        # Plugin settings URLs
-        re_path(r'^settings/', include([
-            re_path(r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),    # Used for admin interface
-            re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
-        ])),
-
-        # Detail views for a single PluginConfig item
-        path(r'<int:pk>/', include([
-            re_path(r"^settings/", include([
-                re_path(r'^(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail-pk'),
-                re_path(r"^.*$", PluginAllSettingList.as_view(), name="api-plugin-settings"),
-            ])),
-            re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-detail-activate'),
-            re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
-        ])),
-
-        # Metadata
-        re_path('^metadata/', MetadataView.as_view(), {'model': PluginConfig}, name='api-plugin-metadata'),
-
-        # Plugin management
-        re_path(r'^reload/', PluginReload.as_view(), name='api-plugin-reload'),
-        re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
-        re_path(r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'),
-
-        # Registry status
-        re_path(r"^status/", RegistryStatusView.as_view(), name="api-plugin-registry-status"),
-
-        # Anything else
-        re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
-    ]))
+    re_path(
+        r'^plugins/',
+        include([
+            # Plugin settings URLs
+            re_path(
+                r'^settings/',
+                include([
+                    re_path(
+                        r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/',
+                        PluginSettingDetail.as_view(),
+                        name='api-plugin-setting-detail',
+                    ),  # Used for admin interface
+                    re_path(
+                        r'^.*$',
+                        PluginSettingList.as_view(),
+                        name='api-plugin-setting-list',
+                    ),
+                ]),
+            ),
+            # Detail views for a single PluginConfig item
+            path(
+                r'<int:pk>/',
+                include([
+                    re_path(
+                        r"^settings/",
+                        include([
+                            re_path(
+                                r'^(?P<key>\w+)/',
+                                PluginSettingDetail.as_view(),
+                                name='api-plugin-setting-detail-pk',
+                            ),
+                            re_path(
+                                r"^.*$",
+                                PluginAllSettingList.as_view(),
+                                name="api-plugin-settings",
+                            ),
+                        ]),
+                    ),
+                    re_path(
+                        r'^activate/',
+                        PluginActivate.as_view(),
+                        name='api-plugin-detail-activate',
+                    ),
+                    re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
+                ]),
+            ),
+            # Metadata
+            re_path(
+                '^metadata/',
+                MetadataView.as_view(),
+                {'model': PluginConfig},
+                name='api-plugin-metadata',
+            ),
+            # Plugin management
+            re_path(r'^reload/', PluginReload.as_view(), name='api-plugin-reload'),
+            re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
+            re_path(
+                r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'
+            ),
+            # Registry status
+            re_path(
+                r"^status/",
+                RegistryStatusView.as_view(),
+                name="api-plugin-registry-status",
+            ),
+            # Anything else
+            re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
+        ]),
+    ),
 ]

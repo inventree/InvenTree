@@ -9,68 +9,68 @@ class PurchaseOrderStatus(StatusCode):
     """Defines a set of status codes for a PurchaseOrder."""
 
     # Order status codes
-    PENDING = 10, _("Pending"), 'secondary'     # Order is pending (not yet placed)
-    PLACED = 20, _("Placed"), 'primary'         # Order has been placed with supplier
-    COMPLETE = 30, _("Complete"), 'success'     # Order has been completed
-    CANCELLED = 40, _("Cancelled"), 'danger'    # Order was cancelled
-    LOST = 50, _("Lost"), 'warning'             # Order was lost
-    RETURNED = 60, _("Returned"), 'warning'     # Order was returned
+    PENDING = 10, _("Pending"), 'secondary'  # Order is pending (not yet placed)
+    PLACED = 20, _("Placed"), 'primary'  # Order has been placed with supplier
+    COMPLETE = 30, _("Complete"), 'success'  # Order has been completed
+    CANCELLED = 40, _("Cancelled"), 'danger'  # Order was cancelled
+    LOST = 50, _("Lost"), 'warning'  # Order was lost
+    RETURNED = 60, _("Returned"), 'warning'  # Order was returned
 
 
 class PurchaseOrderStatusGroups:
     """Groups for PurchaseOrderStatus codes."""
 
     # Open orders
-    OPEN = [
-        PurchaseOrderStatus.PENDING.value,
-        PurchaseOrderStatus.PLACED.value,
-    ]
+    OPEN = [PurchaseOrderStatus.PENDING.value, PurchaseOrderStatus.PLACED.value]
 
     # Failed orders
     FAILED = [
         PurchaseOrderStatus.CANCELLED.value,
         PurchaseOrderStatus.LOST.value,
-        PurchaseOrderStatus.RETURNED.value
+        PurchaseOrderStatus.RETURNED.value,
     ]
 
 
 class SalesOrderStatus(StatusCode):
     """Defines a set of status codes for a SalesOrder."""
 
-    PENDING = 10, _("Pending"), 'secondary'         # Order is pending
-    IN_PROGRESS = 15, _("In Progress"), 'primary'   # Order has been issued, and is in progress
-    SHIPPED = 20, _("Shipped"), 'success'           # Order has been shipped to customer
-    CANCELLED = 40, _("Cancelled"), 'danger'        # Order has been cancelled
-    LOST = 50, _("Lost"), 'warning'                 # Order was lost
-    RETURNED = 60, _("Returned"), 'warning'         # Order was returned
+    PENDING = 10, _("Pending"), 'secondary'  # Order is pending
+    IN_PROGRESS = (
+        15,
+        _("In Progress"),
+        'primary',
+    )  # Order has been issued, and is in progress
+    SHIPPED = 20, _("Shipped"), 'success'  # Order has been shipped to customer
+    CANCELLED = 40, _("Cancelled"), 'danger'  # Order has been cancelled
+    LOST = 50, _("Lost"), 'warning'  # Order was lost
+    RETURNED = 60, _("Returned"), 'warning'  # Order was returned
 
 
 class SalesOrderStatusGroups:
     """Groups for SalesOrderStatus codes."""
 
     # Open orders
-    OPEN = [
-        SalesOrderStatus.PENDING.value,
-        SalesOrderStatus.IN_PROGRESS.value,
-    ]
+    OPEN = [SalesOrderStatus.PENDING.value, SalesOrderStatus.IN_PROGRESS.value]
 
     # Completed orders
-    COMPLETE = [
-        SalesOrderStatus.SHIPPED.value,
-    ]
+    COMPLETE = [SalesOrderStatus.SHIPPED.value]
 
 
 class StockStatus(StatusCode):
     """Status codes for Stock."""
 
-    OK = 10, _("OK"), 'success'                         # Item is OK
-    ATTENTION = 50, _("Attention needed"), 'warning'    # Item requires attention
-    DAMAGED = 55, _("Damaged"), 'warning'               # Item is damaged
-    DESTROYED = 60, _("Destroyed"), 'danger'            # Item is destroyed
-    REJECTED = 65, _("Rejected"), 'danger'              # Item is rejected
-    LOST = 70, _("Lost"), 'dark'                        # Item has been lost
-    QUARANTINED = 75, _("Quarantined"), 'info'          # Item has been quarantined and is unavailable
-    RETURNED = 85, _("Returned"), 'warning'             # Item has been returned from a customer
+    OK = 10, _("OK"), 'success'  # Item is OK
+    ATTENTION = 50, _("Attention needed"), 'warning'  # Item requires attention
+    DAMAGED = 55, _("Damaged"), 'warning'  # Item is damaged
+    DESTROYED = 60, _("Destroyed"), 'danger'  # Item is destroyed
+    REJECTED = 65, _("Rejected"), 'danger'  # Item is rejected
+    LOST = 70, _("Lost"), 'dark'  # Item has been lost
+    QUARANTINED = (
+        75,
+        _("Quarantined"),
+        'info',
+    )  # Item has been quarantined and is unavailable
+    RETURNED = 85, _("Returned"), 'warning'  # Item has been returned from a customer
 
 
 class StockStatusGroups:
@@ -145,19 +145,16 @@ class StockHistoryCode(StatusCode):
 class BuildStatus(StatusCode):
     """Build status codes."""
 
-    PENDING = 10, _("Pending"), 'secondary'        # Build is pending / active
-    PRODUCTION = 20, _("Production"), 'primary'    # BuildOrder is in production
-    CANCELLED = 30, _("Cancelled"), 'danger'       # Build was cancelled
-    COMPLETE = 40, _("Complete"), 'success'        # Build is complete
+    PENDING = 10, _("Pending"), 'secondary'  # Build is pending / active
+    PRODUCTION = 20, _("Production"), 'primary'  # BuildOrder is in production
+    CANCELLED = 30, _("Cancelled"), 'danger'  # Build was cancelled
+    COMPLETE = 40, _("Complete"), 'success'  # Build is complete
 
 
 class BuildStatusGroups:
     """Groups for BuildStatus codes."""
 
-    ACTIVE_CODES = [
-        BuildStatus.PENDING.value,
-        BuildStatus.PRODUCTION.value,
-    ]
+    ACTIVE_CODES = [BuildStatus.PENDING.value, BuildStatus.PRODUCTION.value]
 
 
 class ReturnOrderStatus(StatusCode):
@@ -176,10 +173,7 @@ class ReturnOrderStatus(StatusCode):
 class ReturnOrderStatusGroups:
     """Groups for ReturnOrderStatus codes."""
 
-    OPEN = [
-        ReturnOrderStatus.PENDING.value,
-        ReturnOrderStatus.IN_PROGRESS.value,
-    ]
+    OPEN = [ReturnOrderStatus.PENDING.value, ReturnOrderStatus.IN_PROGRESS.value]
 
 
 class ReturnOrderLineStatus(StatusCode):

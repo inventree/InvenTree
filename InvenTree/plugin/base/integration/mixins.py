@@ -3,8 +3,7 @@
 import logging
 
 from InvenTree.helpers import generateTestKey
-from plugin.helpers import (MixinNotImplementedError, render_template,
-                            render_text)
+from plugin.helpers import MixinNotImplementedError, render_template, render_text
 
 logger = logging.getLogger('inventree')
 
@@ -32,7 +31,7 @@ class NavigationMixin:
         if nav_links:
             # check if needed values are configured
             for link in nav_links:
-                if False in [a in link for a in ('link', 'name', )]:
+                if False in [a in link for a in ('link', 'name')]:
                     raise MixinNotImplementedError('Wrong Link definition', link)
         return nav_links
 
@@ -111,7 +110,9 @@ class PanelMixin:
 
     def get_custom_panels(self, view, request):
         """This method *must* be implemented by the plugin class."""
-        raise MixinNotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")
+        raise MixinNotImplementedError(
+            f"{__class__} is missing the 'get_custom_panels' method"
+        )
 
     def get_panel_context(self, view, request, context):
         """Build the context data to be used for template rendering.
@@ -152,7 +153,6 @@ class PanelMixin:
         custom_panels = self.get_custom_panels(view, request) or []
 
         for panel in custom_panels:
-
             content_template = panel.get('content_template', None)
             javascript_template = panel.get('javascript_template', None)
 
@@ -174,7 +174,10 @@ class PanelMixin:
             required_keys = ['title', 'content']
 
             if any(key not in panel for key in required_keys):
-                logger.warning("Custom panel for plugin %s is missing a required parameter", __class__)
+                logger.warning(
+                    "Custom panel for plugin %s is missing a required parameter",
+                    __class__,
+                )
                 continue
 
             # Add some information on this plugin
@@ -207,4 +210,6 @@ class SettingsContentMixin:
 
     def get_settings_content(self, view, request):
         """This method *must* be implemented by the plugin class."""
-        raise MixinNotImplementedError(f"{__class__} is missing the 'get_settings_content' method")
+        raise MixinNotImplementedError(
+            f"{__class__} is missing the 'get_settings_content' method"
+        )

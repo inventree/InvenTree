@@ -1,6 +1,5 @@
 """Validation mixin class definition"""
 
-
 import part.models
 import stock.models
 
@@ -33,6 +32,7 @@ class ValidationMixin:
 
     class MixinMeta:
         """Metaclass for this mixin"""
+
         MIXIN_NAME = "Validation"
 
     def __init__(self):

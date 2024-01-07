@@ -16,9 +16,7 @@ class TestForwardMigrations(MigratorTestCase):
         Company = self.old_state.apps.get_model('company', 'company')
 
         Company.objects.create(
-            name='MSPC',
-            description='Michael Scotts Paper Company',
-            is_supplier=True
+            name='MSPC', description='Michael Scotts Paper Company', is_supplier=True
         )
 
     def test_migrations(self):
@@ -49,7 +47,10 @@ class TestManufacturerField(MigratorTestCase):
         part = Part.objects.create(
             name='Screw',
             description='A single screw',
-            level=0, tree_id=0, lft=0, rght=0
+            level=0,
+            tree_id=0,
+            lft=0,
+            rght=0,
         )
 
         # Create a company to act as the supplier
@@ -62,17 +63,11 @@ class TestManufacturerField(MigratorTestCase):
 
         # Add some SupplierPart objects
         SupplierPart.objects.create(
-            part=part,
-            supplier=supplier,
-            SKU='SCREW.001',
-            manufacturer_name='ACME',
+            part=part, supplier=supplier, SKU='SCREW.001', manufacturer_name='ACME'
         )
 
         SupplierPart.objects.create(
-            part=part,
-            supplier=supplier,
-            SKU='SCREW.002',
-            manufacturer_name='Zero Corp',
+            part=part, supplier=supplier, SKU='SCREW.002', manufacturer_name='Zero Corp'
         )
 
         self.assertEqual(Company.objects.count(), 1)
@@ -186,17 +181,12 @@ class TestManufacturerPart(MigratorTestCase):
 
         # No Manufacturer
         SupplierPart.objects.create(
-            part=part,
-            supplier=supplier_2,
-            SKU='CAP-CER-01UF-2',
-            MPN='MUR-CAP-123456',
+            part=part, supplier=supplier_2, SKU='CAP-CER-01UF-2', MPN='MUR-CAP-123456'
         )
 
         # No Manufacturer data
         SupplierPart.objects.create(
-            part=part,
-            supplier=supplier_2,
-            SKU='CAP-CER-01UF-3',
+            part=part, supplier=supplier_2, SKU='CAP-CER-01UF-3'
         )
 
     def test_manufacturer_part_objects(self):
@@ -238,17 +228,20 @@ class TestCurrencyMigration(MigratorTestCase):
         Part = self.old_state.apps.get_model('part', 'part')
 
         part = Part.objects.create(
-            name="PART", description="A purchaseable part",
+            name="PART",
+            description="A purchaseable part",
             purchaseable=True,
             level=0,
             tree_id=0,
             lft=0,
-            rght=0
+            rght=0,
         )
 
         Company = self.old_state.apps.get_model('company', 'company')
 
-        supplier = Company.objects.create(name='Supplier', description='A supplier', is_supplier=True)
+        supplier = Company.objects.create(
+            name='Supplier', description='A supplier', is_supplier=True
+        )
 
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
 
@@ -256,8 +249,12 @@ class TestCurrencyMigration(MigratorTestCase):
 
         Currency = self.old_state.apps.get_model('common', 'currency')
 
-        aud = Currency.objects.create(symbol='$', suffix='AUD', description='Australian Dollars', value=1.0)
-        usd = Currency.objects.create(symbol='$', suffix='USD', description='US Dollars', value=1.0)
+        aud = Currency.objects.create(
+            symbol='$', suffix='AUD', description='Australian Dollars', value=1.0
+        )
+        usd = Currency.objects.create(
+            symbol='$', suffix='USD', description='US Dollars', value=1.0
+        )
 
         PB = self.old_state.apps.get_model('company', 'supplierpricebreak')
 
@@ -332,12 +329,18 @@ class TestSupplierPartQuantity(MigratorTestCase):
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
 
         self.part = Part.objects.create(
-            name="PART", description="A purchaseable part",
+            name="PART",
+            description="A purchaseable part",
             purchaseable=True,
-            level=0, tree_id=0, lft=0, rght=0
+            level=0,
+            tree_id=0,
+            lft=0,
+            rght=0,
         )
 
-        self.supplier = Company.objects.create(name='Supplier', description='A supplier', is_supplier=True)
+        self.supplier = Company.objects.create(
+            name='Supplier', description='A supplier', is_supplier=True
+        )
 
         self.supplier_parts = []
 
@@ -356,7 +359,6 @@ class TestSupplierPartQuantity(MigratorTestCase):
         SupplierPart = self.new_state.apps.get_model('company', 'supplierpart')
 
         for i, sp in enumerate(SupplierPart.objects.all()):
-
             self.assertEqual(sp.pack_quantity, str(i + 1))
             self.assertEqual(sp.pack_quantity_native, i + 1)
 

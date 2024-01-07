@@ -60,7 +60,7 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             for item in barcode_data.split(" "):
                 for k, v in self.ecia_field_map().items():
                     if item.startswith(k):
-                        barcode_fields[v] = item[len(k):]
+                        barcode_fields[v] = item[len(k) :]
         else:
             return {}
 

@@ -27,7 +27,9 @@ def delete_old_notifications():
     try:
         from common.models import NotificationEntry
     except AppRegistryNotReady:  # pragma: no cover
-        logger.info("Could not perform 'delete_old_notifications' - App registry not ready")
+        logger.info(
+            "Could not perform 'delete_old_notifications' - App registry not ready"
+        )
         return
 
     before = timezone.now() - timedelta(days=90)
@@ -87,7 +89,9 @@ def delete_old_notes_images():
     try:
         from common.models import NotesImage
     except AppRegistryNotReady:
-        logger.info("Could not perform 'delete_old_notes_images' - App registry not ready")
+        logger.info(
+            "Could not perform 'delete_old_notes_images' - App registry not ready"
+        )
         return
 
     # Remove any notes which point to non-existent image files
@@ -127,7 +131,6 @@ def delete_old_notes_images():
     all_notes = NotesImage.objects.all()
 
     for image in images:
-
         found = False
         for note in all_notes:
             img_path = os.path.basename(note.image.path)

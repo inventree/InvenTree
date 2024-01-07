@@ -16,6 +16,7 @@ class Command(BaseCommand):
             print("Rebuilding Part objects")
 
             from part.models import Part
+
             Part.objects.rebuild()
         except Exception:
             print("Error rebuilding Part objects")
@@ -25,6 +26,7 @@ class Command(BaseCommand):
             print("Rebuilding PartCategory objects")
 
             from part.models import PartCategory
+
             PartCategory.objects.rebuild()
         except Exception:
             print("Error rebuilding PartCategory objects")
@@ -34,6 +36,7 @@ class Command(BaseCommand):
             print("Rebuilding StockItem objects")
 
             from stock.models import StockItem
+
             StockItem.objects.rebuild()
         except Exception:
             print("Error rebuilding StockItem objects")
@@ -43,6 +46,7 @@ class Command(BaseCommand):
             print("Rebuilding StockLocation objects")
 
             from stock.models import StockLocation
+
             StockLocation.objects.rebuild()
         except Exception:
             print("Error rebuilding StockLocation objects")
@@ -52,6 +56,7 @@ class Command(BaseCommand):
             print("Rebuilding Build objects")
 
             from build.models import Build
+
             Build.objects.rebuild()
         except Exception:
             print("Error rebuilding Build objects")

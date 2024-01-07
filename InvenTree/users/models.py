@@ -67,6 +67,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     class Meta:
         """Metaclass defines model properties"""
+
         verbose_name = _('API Token')
         verbose_name_plural = _('API Tokens')
         abstract = False
@@ -88,11 +89,10 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     key = models.CharField(
         default=default_token,
         verbose_name=_('Key'),
-        db_index=True, unique=True,
+        db_index=True,
+        unique=True,
         max_length=100,
-        validators=[
-            MinLengthValidator(50),
-        ]
+        validators=[MinLengthValidator(50)],
     )
 
     # Override the 'user' field, to allow multiple tokens per user
@@ -114,19 +114,19 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         default=default_token_expiry,
         verbose_name=_('Expiry Date'),
         help_text=_('Token expiry date'),
-        auto_now=False, auto_now_add=False,
+        auto_now=False,
+        auto_now_add=False,
     )
 
     last_seen = models.DateField(
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Last Seen'),
         help_text=_('Last time the token was used'),
     )
 
     revoked = models.BooleanField(
-        default=False,
-        verbose_name=_('Revoked'),
-        help_text=_('Token has been revoked'),
+        default=False, verbose_name=_('Revoked'), help_text=_('Token has been revoked')
     )
 
     @staticmethod
@@ -136,7 +136,9 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
         name = str(name).strip()
 
         # Remove any non-printable chars
-        name = InvenTree.helpers.remove_non_printable_characters(name, remove_newline=True)
+        name = InvenTree.helpers.remove_non_printable_characters(
+            name, remove_newline=True
+        )
         name = InvenTree.helpers.strip_html_tags(name)
 
         name = name.replace(' ', '-')
@@ -199,13 +201,9 @@ class RuleSet(models.Model):
         ('return_order', _('Return Orders')),
     ]
 
-    RULESET_NAMES = [
-        choice[0] for choice in RULESET_CHOICES
-    ]
+    RULESET_NAMES = [choice[0] for choice in RULESET_CHOICES]
 
-    RULESET_PERMISSIONS = [
-        'view', 'add', 'change', 'delete',
-    ]
+    RULESET_PERMISSIONS = ['view', 'add', 'change', 'delete']
 
     RULESET_MODELS = {
         'admin': [
@@ -261,15 +259,12 @@ class RuleSet(models.Model):
             'company_manufacturerpartattachment',
             'label_partlabel',
         ],
-        'stocktake': [
-            'part_partstocktake',
-            'part_partstocktakereport',
-        ],
+        'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
         'stock_location': [
             'stock_stocklocation',
             'stock_stocklocationtype',
             'label_stocklocationlabel',
-            'report_stocklocationreport'
+            'report_stocklocationreport',
         ],
         'stock': [
             'stock_stockitem',
@@ -331,7 +326,7 @@ class RuleSet(models.Model):
             'order_returnorderextraline',
             'order_returnorderattachment',
             'report_returnorderreport',
-        ]
+        ],
     }
 
     # Database models we ignore permission sets for
@@ -339,7 +334,6 @@ class RuleSet(models.Model):
         # Core django models (not user configurable)
         'admin_logentry',
         'contenttypes_contenttype',
-
         # Models which currently do not require permissions
         'common_colortheme',
         'common_customunit',
@@ -353,13 +347,11 @@ class RuleSet(models.Model):
         'common_webhookmessage',
         'label_labeloutput',
         'users_owner',
-
         # Third-party tables
         'error_report_error',
         'exchange_rate',
         'exchange_exchangebackend',
         'user_sessions_session',
-
         # Django-q
         'django_q_ormq',
         'django_q_failure',
@@ -368,46 +360,50 @@ class RuleSet(models.Model):
         'django_q_success',
     ]
 
-    RULESET_CHANGE_INHERIT = [
-        ('part', 'partparameter'),
-        ('part', 'bomitem'),
-    ]
+    RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
 
-    RULE_OPTIONS = [
-        'can_view',
-        'can_add',
-        'can_change',
-        'can_delete',
-    ]
+    RULE_OPTIONS = ['can_view', 'can_add', 'can_change', 'can_delete']
 
     class Meta:
         """Metaclass defines additional model properties"""
-        unique_together = (
-            ('name', 'group'),
-        )
+
+        unique_together = (('name', 'group'),)
 
     name = models.CharField(
         max_length=50,
         choices=RULESET_CHOICES,
         blank=False,
-        help_text=_('Permission set')
+        help_text=_('Permission set'),
     )
 
     group = models.ForeignKey(
         Group,
         related_name='rule_sets',
-        blank=False, null=False,
+        blank=False,
+        null=False,
         on_delete=models.CASCADE,
         help_text=_('Group'),
     )
 
-    can_view = models.BooleanField(verbose_name=_('View'), default=True, help_text=_('Permission to view items'))
+    can_view = models.BooleanField(
+        verbose_name=_('View'), default=True, help_text=_('Permission to view items')
+    )
 
-    can_add = models.BooleanField(verbose_name=_('Add'), default=False, help_text=_('Permission to add items'))
+    can_add = models.BooleanField(
+        verbose_name=_('Add'), default=False, help_text=_('Permission to add items')
+    )
 
-    can_change = models.BooleanField(verbose_name=_('Change'), default=False, help_text=_('Permissions to edit items'))
+    can_change = models.BooleanField(
+        verbose_name=_('Change'),
+        default=False,
+        help_text=_('Permissions to edit items'),
+    )
 
-    can_delete = models.BooleanField(verbose_name=_('Delete'), default=False, help_text=_('Permission to delete items'))
+    can_delete = models.BooleanField(
+        verbose_name=_('Delete'),
+        default=False,
+        help_text=_('Permission to delete items'),
+    )
 
     @classmethod
     def check_table_permission(cls, user, table, permission):
@@ -423,12 +419,11 @@ class RuleSet(models.Model):
         # Work out which roles touch the given table
         for role in cls.RULESET_NAMES:
             if table in cls.RULESET_MODELS[role]:
-
                 if check_user_role(user, role, permission):
                     return True
 
         # Check for children models which inherits from parent role
-        for (parent, child) in cls.RULESET_CHANGE_INHERIT:
+        for parent, child in cls.RULESET_CHANGE_INHERIT:
             # Get child model name
             parent_child_string = f'{parent}_{child}'
 
@@ -439,7 +434,9 @@ class RuleSet(models.Model):
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
-        logger.debug("User '%s' failed permission check for %s.%s", name, table, permission)
+        logger.debug(
+            "User '%s' failed permission check for %s.%s", name, table, permission
+        )
 
         return False
 
@@ -454,9 +451,11 @@ class RuleSet(models.Model):
         """Ruleset string representation."""
         if debug:
             # Makes debugging easier
-            return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
-                   f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
-                   f'c: {str(self.can_change).ljust(5)} | d: {str(self.can_delete).ljust(5)}'
+            return (
+                f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | '
+                f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | '
+                f'c: {str(self.can_change).ljust(5)} | d: {str(self.can_delete).ljust(5)}'
+            )
         return self.name
 
     def save(self, *args, **kwargs):
@@ -549,7 +548,6 @@ def update_group_roles(group, debug=False):
         permission_string = RuleSet.get_model_permission_string(model, action)
 
         if allowed:
-
             # An 'allowed' action is always preferenced over a 'forbidden' action
             if permission_string in permissions_to_delete:
                 permissions_to_delete.remove(permission_string)
@@ -557,7 +555,6 @@ def update_group_roles(group, debug=False):
             permissions_to_add.add(permission_string)
 
         else:
-
             # A forbidden action will be ignored if we have already allowed it
             if permission_string not in permissions_to_add:
                 permissions_to_delete.add(permission_string)
@@ -569,7 +566,6 @@ def update_group_roles(group, debug=False):
 
     # Get all the rulesets associated with this group
     for r in RuleSet.RULESET_CHOICES:
-
         rulename = r[0]
 
         if rulename in rulesets:
@@ -605,16 +601,19 @@ def update_group_roles(group, debug=False):
 
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
-            permission = Permission.objects.get(content_type=content_type, codename=perm)
+            permission = Permission.objects.get(
+                content_type=content_type, codename=perm
+            )
         except ContentType.DoesNotExist:  # pragma: no cover
-            logger.warning("Error: Could not find permission matching '%s'", permission_string)
+            logger.warning(
+                "Error: Could not find permission matching '%s'", permission_string
+            )
             permission = None
 
         return permission
 
     # Add any required permissions to the group
     for perm in permissions_to_add:
-
         # Ignore if permission is already in the group
         if perm in group_permissions:
             continue
@@ -629,7 +628,6 @@ def update_group_roles(group, debug=False):
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
-
         # Ignore if the permission is not already assigned
         if perm not in group_permissions:
             continue
@@ -644,7 +642,7 @@ def update_group_roles(group, debug=False):
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
-    for (parent, child) in RuleSet.RULESET_CHANGE_INHERIT:
+    for parent, child in RuleSet.RULESET_CHANGE_INHERIT:
         parent_child_string = f'{parent}_{child}'
 
         # Check each type of permission
@@ -662,7 +660,9 @@ def update_group_roles(group, debug=False):
                     permission = get_permission_object(child_perm)
                     if permission:
                         group.permissions.add(permission)
-                        logger.debug("Adding permission %s to group %s", child_perm, group.name)
+                        logger.debug(
+                            "Adding permission %s to group %s", child_perm, group.name
+                        )
 
 
 def clear_user_role_cache(user):
@@ -718,11 +718,8 @@ def check_user_role(user, role, permission):
     result = False
 
     for group in user.groups.all():
-
         for rule in group.rule_sets.all():
-
             if rule.name == role:
-
                 if permission == 'add' and rule.can_add:
                     result = True
                     break
@@ -756,10 +753,10 @@ class Owner(models.Model):
 
     class Meta:
         """Metaclass defines extra model properties"""
+
         # Ensure all owners are unique
         constraints = [
-            UniqueConstraint(fields=['owner_type', 'owner_id'],
-                             name='unique_owner')
+            UniqueConstraint(fields=['owner_type', 'owner_id'], name='unique_owner')
         ]
 
     @classmethod
@@ -794,7 +791,9 @@ class Owner(models.Model):
         """Returns the API endpoint URL associated with the Owner model"""
         return reverse('api-owner-list')
 
-    owner_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    owner_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, null=True, blank=True
+    )
 
     owner_id = models.PositiveIntegerField(null=True, blank=True)
 
@@ -802,7 +801,10 @@ class Owner(models.Model):
 
     def __str__(self):
         """Defines the owner string representation."""
-        if self.owner_type.name == 'user' and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+        if (
+            self.owner_type.name == 'user'
+            and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES')
+        ):
             display_name = self.owner.get_full_name()
         else:
             display_name = str(self.owner)
@@ -810,7 +812,10 @@ class Owner(models.Model):
 
     def name(self):
         """Return the 'name' of this owner."""
-        if self.owner_type.name == 'user' and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+        if (
+            self.owner_type.name == 'user'
+            and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES')
+        ):
             return self.owner.get_full_name()
         return str(self.owner)
 
@@ -839,8 +844,10 @@ class Owner(models.Model):
         user_model = get_user_model()
         owner = None
         content_type_id = 0
-        content_type_id_list = [ContentType.objects.get_for_model(Group).id,
-                                ContentType.objects.get_for_model(user_model).id]
+        content_type_id_list = [
+            ContentType.objects.get_for_model(Group).id,
+            ContentType.objects.get_for_model(user_model).id,
+        ]
 
         # If instance type is obvious: set content type
         if isinstance(user_or_group, Group):
@@ -850,8 +857,9 @@ class Owner(models.Model):
 
         if content_type_id:
             try:
-                owner = Owner.objects.get(owner_id=user_or_group.id,
-                                          owner_type=content_type_id)
+                owner = Owner.objects.get(
+                    owner_id=user_or_group.id, owner_type=content_type_id
+                )
             except Owner.DoesNotExist:
                 pass
 
@@ -870,10 +878,18 @@ class Owner(models.Model):
 
             if include_group:
                 # Include "group-type" owner in the query
-                query = Q(owner_id__in=users, owner_type=ContentType.objects.get_for_model(user_model).id) | \
-                    Q(owner_id=self.owner.id, owner_type=ContentType.objects.get_for_model(Group).id)
+                query = Q(
+                    owner_id__in=users,
+                    owner_type=ContentType.objects.get_for_model(user_model).id,
+                ) | Q(
+                    owner_id=self.owner.id,
+                    owner_type=ContentType.objects.get_for_model(Group).id,
+                )
             else:
-                query = Q(owner_id__in=users, owner_type=ContentType.objects.get_for_model(user_model).id)
+                query = Q(
+                    owner_id__in=users,
+                    owner_type=ContentType.objects.get_for_model(user_model).id,
+                )
 
             related_owners = Owner.objects.filter(query)
 

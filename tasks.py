@@ -113,10 +113,10 @@ def manage(c, cmd, pty: bool = False):
         cmd: Django command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
     """
-    c.run('cd "{path}" && python3 manage.py {cmd}'.format(
-        path=managePyDir(),
-        cmd=cmd
-    ), pty=pty)
+    c.run(
+        'cd "{path}" && python3 manage.py {cmd}'.format(path=managePyDir(), cmd=cmd),
+        pty=pty,
+    )
 
 
 def yarn(c, cmd, pty: bool = False):
@@ -133,6 +133,7 @@ def yarn(c, cmd, pty: bool = False):
 
 def node_available(versions: bool = False, bypass_yarn: bool = False):
     """Checks if the frontend environment (ie node and yarn in bash) is available."""
+
     def ret(val, val0=None, val1=None):
         if versions:
             return val, val0, val1
@@ -140,7 +141,10 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
 
     def check(cmd):
         try:
-            return str(subprocess.check_output([cmd], stderr=subprocess.STDOUT, shell=True), encoding='utf-8').strip()
+            return str(
+                subprocess.check_output([cmd], stderr=subprocess.STDOUT, shell=True),
+                encoding='utf-8',
+            ).strip()
         except subprocess.CalledProcessError:
             return None
         except FileNotFoundError:
@@ -154,7 +158,9 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
 
     # Print a warning if node is available but yarn is not
     if node_version and not yarn_passes:
-        print('Node is available but yarn is not. Install yarn if you wish to build the frontend.')
+        print(
+            'Node is available but yarn is not. Install yarn if you wish to build the frontend.'
+        )
 
     # Return the result
     return ret(yarn_passes and node_version, node_version, yarn_version)
@@ -168,7 +174,9 @@ def check_file_existance(filename: str, overwrite: bool = False):
         overwrite (bool, optional): Overwrite the file without asking. Defaults to False.
     """
     if Path(filename).is_file() and overwrite is False:
-        response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
+        response = input(
+            "Warning: file already exists. Do you want to overwrite? [y/N]: "
+        )
         response = str(response).strip().lower()
 
         if response not in ['y', 'yes']:
@@ -198,7 +206,9 @@ def install(c):
     # Install required Python packages with PIP
     c.run('pip3 install --upgrade pip')
     c.run('pip3 install --upgrade setuptools')
-    c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
+    c.run(
+        'pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt'
+    )
 
 
 @task(help={'tests': 'Set up test dataset at the end'})
@@ -256,11 +266,7 @@ def remove_mfa(c, mail=''):
     manage(c, f"remove_mfa {mail}")
 
 
-@task(
-    help={
-        'frontend': 'Build the frontend',
-    }
-)
+@task(help={'frontend': 'Build the frontend'})
 def static(c, frontend=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, "prerender")
@@ -347,7 +353,7 @@ def migrate(c):
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
-    }
+    },
 )
 def update(c, skip_backup=False, frontend: bool = False):
     """Update InvenTree installation.
@@ -390,13 +396,21 @@ def update(c, skip_backup=False, frontend: bool = False):
 
 
 # Data tasks
-@task(help={
-    'filename': "Output filename (default = 'data.json')",
-    'overwrite': "Overwrite existing files without asking first (default = off/False)",
-    'include_permissions': "Include user and group permissions in the output file (filename) (default = off/False)",
-    'delete_temp': "Delete temporary files (containing permissions) at end of run. Note that this will delete temporary files from previous runs as well. (default = off/False)"
-})
-def export_records(c, filename='data.json', overwrite=False, include_permissions=False, delete_temp=False):
+@task(
+    help={
+        'filename': "Output filename (default = 'data.json')",
+        'overwrite': "Overwrite existing files without asking first (default = off/False)",
+        'include_permissions': "Include user and group permissions in the output file (filename) (default = off/False)",
+        'delete_temp': "Delete temporary files (containing permissions) at end of run. Note that this will delete temporary files from previous runs as well. (default = off/False)",
+    }
+)
+def export_records(
+    c,
+    filename='data.json',
+    overwrite=False,
+    include_permissions=False,
+    delete_temp=False,
+):
     """Export all database records to a file.
 
     Write data to the file defined by filename.
@@ -438,7 +452,6 @@ def export_records(c, filename='data.json', overwrite=False, include_permissions
     if include_permissions is False:
         for entry in data:
             if "model" in entry:
-
                 # Clear out any permissions specified for a group
                 if entry["model"] == "auth.group":
                     entry["fields"]["permissions"] = []
@@ -458,7 +471,10 @@ def export_records(c, filename='data.json', overwrite=False, include_permissions
         os.remove(tmpfile)
 
 
-@task(help={'filename': 'Input filename', 'clear': 'Clear existing data before import'}, post=[rebuild_models, rebuild_thumbnails])
+@task(
+    help={'filename': 'Input filename', 'clear': 'Clear existing data before import'},
+    post=[rebuild_models, rebuild_thumbnails],
+)
 def import_records(c, filename='data.json', clear=False):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -482,7 +498,6 @@ def import_records(c, filename='data.json', clear=False):
 
     for entry in data:
         if "model" in entry:
-
             # Clear out any permissions specified for a group
             if entry["model"] == "auth.group":
                 entry["fields"]["permissions"] = []
@@ -530,32 +545,26 @@ def import_fixtures(c):
     fixtures = [
         # Build model
         'build',
-
         # Common models
         'settings',
-
         # Company model
         'company',
         'price_breaks',
         'supplier_part',
-
         # Order model
         'order',
-
         # Part model
         'bom',
         'category',
         'params',
         'part',
         'test_templates',
-
         # Stock model
         'location',
         'stock_tests',
         'stock',
-
         # Users
-        'users'
+        'users',
     ]
 
     command = 'loaddata ' + ' '.join(fixtures)
@@ -620,10 +629,10 @@ def test_translations(c):
 
     # compile regex
     reg = re.compile(
-        r"[a-zA-Z0-9]{1}" +  # match any single letter and number  # noqa: W504
-        r"(?![^{\(\<]*[}\)\>])" +  # that is not inside curly brackets, brackets or a tag  # noqa: W504
-        r"(?<![^\%][^\(][)][a-z])" +  # that is not a specially formatted variable with singles  # noqa: W504
-        r"(?![^\\][\n])"  # that is not a newline
+        r"[a-zA-Z0-9]{1}"  # match any single letter and number  # noqa: W504
+        + r"(?![^{\(\<]*[}\)\>])"  # that is not inside curly brackets, brackets or a tag  # noqa: W504
+        + r"(?<![^\%][^\(][)][a-z])"  # that is not a specially formatted variable with singles  # noqa: W504
+        + r"(?![^\\][\n])"  # that is not a newline
     )
     last_string = ''
 
@@ -636,11 +645,15 @@ def test_translations(c):
                     file_new.write(f'msgstr "{reg.sub("x", last_string[7:-2])}"\n')
                     last_string = ""  # reset (multi)string
                 elif line.startswith('msgid "'):
-                    last_string = last_string + line  # a new translatable string starts -> start append
+                    last_string = (
+                        last_string + line
+                    )  # a new translatable string starts -> start append
                     file_new.write(line)
                 else:
                     if last_string:
-                        last_string = last_string + line  # a string is being read in -> continue appending
+                        last_string = (
+                            last_string + line
+                        )  # a string is being read in -> continue appending
                     file_new.write(line)
 
     # change out translation files
@@ -668,7 +681,9 @@ def test_translations(c):
         'coverage': 'Run code coverage analysis (requires coverage package)',
     }
 )
-def test(c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False):
+def test(
+    c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False
+):
     """Run unit-tests for InvenTree codebase.
 
     To run only certain test, use the argument --runtest.
@@ -753,10 +768,12 @@ def setup_test(c, ignore_update=False, dev=False, path="inventree-demo-dataset")
         setup_dev(c)
 
 
-@task(help={
-    'filename': "Output filename (default = 'schema.yml')",
-    'overwrite': "Overwrite existing files without asking first (default = off/False)",
-})
+@task(
+    help={
+        'filename': "Output filename (default = 'schema.yml')",
+        'overwrite': "Overwrite existing files without asking first (default = off/False)",
+    }
+)
 def schema(c, filename='schema.yml', overwrite=False):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
@@ -767,13 +784,17 @@ def schema(c, filename='schema.yml', overwrite=False):
 def version(c):
     """Show the current version of InvenTree."""
     import InvenTree.InvenTree.version as InvenTreeVersion
-    from InvenTree.InvenTree.config import (get_config_file, get_media_dir,
-                                            get_static_dir)
+    from InvenTree.InvenTree.config import (
+        get_config_file,
+        get_media_dir,
+        get_static_dir,
+    )
 
     # Gather frontend version information
     _, node, yarn = node_available(versions=True)
 
-    print(f"""
+    print(
+        f"""
 InvenTree - inventree.org
 The Open-Source Inventory Management System\n
 
@@ -792,13 +813,16 @@ Node        {node if node else 'N/A'}
 Yarn        {yarn if yarn else 'N/A'}
 
 Commit hash:{InvenTreeVersion.inventreeCommitHash()}
-Commit date:{InvenTreeVersion.inventreeCommitDate()}""")
+Commit date:{InvenTreeVersion.inventreeCommitDate()}"""
+    )
     if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
-        print("""
+        print(
+            """
 You are probably running the package installer / single-line installer. Please mentioned that in any bug reports!
 
 Use '--list' for a list of available commands
-Use '--help' for help on a specific command""")
+Use '--help' for help on a specific command"""
+        )
 
 
 @task()
@@ -864,15 +888,25 @@ def frontend_dev(c):
     yarn(c, "yarn run dev")
 
 
-@task(help={
-    'ref': "git ref, default: current git ref",
-    'tag': "git tag to look for release",
-    'file': "destination to frontend-build.zip file",
-    'repo': "GitHub repository, default: InvenTree/inventree",
-    'extract': "Also extract and place at the correct destination, default: True",
-    'clean': "Delete old files from InvenTree/web/static/web first, default: True",
-})
-def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventree", extract=True, clean=True):
+@task(
+    help={
+        'ref': "git ref, default: current git ref",
+        'tag': "git tag to look for release",
+        'file': "destination to frontend-build.zip file",
+        'repo': "GitHub repository, default: InvenTree/inventree",
+        'extract': "Also extract and place at the correct destination, default: True",
+        'clean': "Delete old files from InvenTree/web/static/web first, default: True",
+    }
+)
+def frontend_download(
+    c,
+    ref=None,
+    tag=None,
+    file=None,
+    repo="InvenTree/inventree",
+    extract=True,
+    clean=True,
+):
     """Download a pre-build frontend from GitHub if you dont want to install nodejs on your machine.
 
     There are 3 possibilities to install the frontend:
@@ -924,11 +958,15 @@ def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventre
 
     def handle_download(url):
         # download frontend-build.zip to temporary file
-        with requests.get(url, headers=default_headers, stream=True, allow_redirects=True) as response, NamedTemporaryFile(suffix=".zip") as dst:
+        with requests.get(
+            url, headers=default_headers, stream=True, allow_redirects=True
+        ) as response, NamedTemporaryFile(suffix=".zip") as dst:
             response.raise_for_status()
 
             # auto decode the gzipped raw data
-            response.raw.read = functools.partial(response.raw.read, decode_content=True)
+            response.raw.read = functools.partial(
+                response.raw.read, decode_content=True
+            )
             with open(dst.name, "wb") as f:
                 shutil.copyfileobj(response.raw, f)
             print(f"Downloaded frontend build to temporary file: {dst.name}")
@@ -947,7 +985,9 @@ def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventre
 
     if ref is None and tag is None:
         try:
-            ref = subprocess.check_output(["git", "rev-parse", "HEAD"], encoding="utf-8").strip()
+            ref = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], encoding="utf-8"
+            ).strip()
         except Exception:
             print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
             return
@@ -958,35 +998,54 @@ def frontend_download(c, ref=None, tag=None, file=None, repo="InvenTree/inventre
     if tag:
         tag = tag.lstrip("v")
         try:
-            handle_download(f"https://github.com/{repo}/releases/download/{tag}/frontend-build.zip")
+            handle_download(
+                f"https://github.com/{repo}/releases/download/{tag}/frontend-build.zip"
+            )
         except Exception as e:
             if not isinstance(e, requests.HTTPError):
                 raise e
-            print(f"""[ERROR] An Error occurred. Unable to download frontend build, release or build does not exist,
+            print(
+                f"""[ERROR] An Error occurred. Unable to download frontend build, release or build does not exist,
 try downloading the frontend-build.zip yourself via: https://github.com/{repo}/releases
-Then try continuing by running: invoke frontend-download --file <path-to-downloaded-zip-file>""")
+Then try continuing by running: invoke frontend-download --file <path-to-downloaded-zip-file>"""
+            )
 
         return
 
     if ref:
         # get workflow run from all workflow runs on that particular ref
-        workflow_runs = requests.get(f"https://api.github.com/repos/{repo}/actions/runs?head_sha={ref}", headers=default_headers).json()
+        workflow_runs = requests.get(
+            f"https://api.github.com/repos/{repo}/actions/runs?head_sha={ref}",
+            headers=default_headers,
+        ).json()
 
         if not (qc_run := find_resource(workflow_runs["workflow_runs"], "name", "QC")):
             print("[ERROR] Cannot find any workflow runs for current sha")
             return
-        print(f"Found workflow {qc_run['name']} (run {qc_run['run_number']}-{qc_run['run_attempt']})")
+        print(
+            f"Found workflow {qc_run['name']} (run {qc_run['run_number']}-{qc_run['run_attempt']})"
+        )
 
         # get frontend-build artifact from all artifacts available for this workflow run
-        artifacts = requests.get(qc_run["artifacts_url"], headers=default_headers).json()
-        if not (frontend_artifact := find_resource(artifacts["artifacts"], "name", "frontend-build")):
+        artifacts = requests.get(
+            qc_run["artifacts_url"], headers=default_headers
+        ).json()
+        if not (
+            frontend_artifact := find_resource(
+                artifacts["artifacts"], "name", "frontend-build"
+            )
+        ):
             print("[ERROR] Cannot find frontend-build.zip attachment for current sha")
             return
-        print(f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes']/1e6:.2f}MB).")
+        print(
+            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes']/1e6:.2f}MB)."
+        )
 
-        print(f"""
+        print(
+            f"""
 GitHub doesn't allow artifact downloads from anonymous users. Either download the following file
 via your signed in browser, or consider using a point release download via invoke frontend-download --tag <git-tag>
 
     Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and
-    continue by running: invoke frontend-download --file <path-to-downloaded-zip-file>""")
+    continue by running: invoke frontend-download --file <path-to-downloaded-zip-file>"""
+        )

@@ -44,12 +44,7 @@ class ReportTagTest(TestCase):
 
     def test_getkey(self):
         """Tests for the 'getkey' template tag"""
-        data = {
-            'hello': 'world',
-            'foo': 'bar',
-            'with spaces': 'withoutspaces',
-            1: 2,
-        }
+        data = {'hello': 'world', 'foo': 'bar', 'with spaces': 'withoutspaces', 1: 2}
 
         for k, v in data.items():
             self.assertEqual(report_tags.getkey(data, k), v)
@@ -89,7 +84,9 @@ class ReportTagTest(TestCase):
             self.debug_mode(b)
 
             with self.assertRaises(FileNotFoundError):
-                report_tags.uploaded_image('/part/something/test.png', replace_missing=False)
+                report_tags.uploaded_image(
+                    '/part/something/test.png', replace_missing=False
+                )
 
             img = str(report_tags.uploaded_image('/part/something/other.png'))
 
@@ -181,10 +178,7 @@ class BarcodeTagTest(TestCase):
 
         # Generate a much larger qrcode
         qrcode = barcode_tags.qrcode(
-            "hello_world",
-            version=2,
-            box_size=50,
-            format='BMP',
+            "hello_world", version=2, box_size=50, format='BMP'
         )
         self.assertTrue(isinstance(qrcode, str))
         self.assertTrue(qrcode.startswith('data:image/bmp;'))
@@ -193,6 +187,7 @@ class BarcodeTagTest(TestCase):
 
 class ReportTest(InvenTreeAPITestCase):
     """Base class for unit testing reporting models"""
+
     fixtures = [
         'category',
         'part',
@@ -217,16 +212,9 @@ class ReportTest(InvenTreeAPITestCase):
 
     def copyReportTemplate(self, filename, description):
         """Copy the provided report template into the required media directory."""
-        src_dir = Path(__file__).parent.joinpath(
-            'templates',
-            'report'
-        )
+        src_dir = Path(__file__).parent.joinpath('templates', 'report')
 
-        template_dir = os.path.join(
-            'report',
-            'inventree',
-            self.model.getSubdir(),
-        )
+        template_dir = os.path.join('report', 'inventree', self.model.getSubdir())
 
         dst_dir = settings.MEDIA_ROOT.joinpath(template_dir)
 
@@ -240,17 +228,14 @@ class ReportTest(InvenTreeAPITestCase):
             shutil.copyfile(src_file, dst_file)
 
         # Convert to an "internal" filename
-        db_filename = os.path.join(
-            template_dir,
-            filename
-        )
+        db_filename = os.path.join(template_dir, filename)
 
         # Create a database entry for this report template!
         self.model.objects.create(
             name=os.path.splitext(filename)[0],
             description=description,
             template=db_filename,
-            enabled=True
+            enabled=True,
         )
 
     def test_list_endpoint(self):
@@ -310,6 +295,7 @@ class ReportTest(InvenTreeAPITestCase):
 
 class TestReportTest(ReportTest):
     """Unit testing class for the stock item TestReport model"""
+
     model = report_models.TestReport
 
     list_url = 'api-stockitem-testreport-list'
@@ -363,6 +349,7 @@ class TestReportTest(ReportTest):
 
 class BuildReportTest(ReportTest):
     """Unit test class for the BuildReport model"""
+
     model = report_models.BuildReport
 
     list_url = 'api-build-report-list'
@@ -398,21 +385,28 @@ class BuildReportTest(ReportTest):
         headers = response.headers
 
         self.assertEqual(headers['Content-Type'], 'application/pdf')
-        self.assertEqual(headers['Content-Disposition'], 'attachment; filename="report.pdf"')
+        self.assertEqual(
+            headers['Content-Disposition'], 'attachment; filename="report.pdf"'
+        )
 
         # Now, set the download type to be "inline"
-        inline = InvenTreeUserSetting.get_setting_object('REPORT_INLINE', cache=False, user=self.user)
+        inline = InvenTreeUserSetting.get_setting_object(
+            'REPORT_INLINE', cache=False, user=self.user
+        )
         inline.value = True
         inline.save()
 
         response = self.get(url, {'build': 1})
         headers = response.headers
         self.assertEqual(headers['Content-Type'], 'application/pdf')
-        self.assertEqual(headers['Content-Disposition'], 'inline; filename="report.pdf"')
+        self.assertEqual(
+            headers['Content-Disposition'], 'inline; filename="report.pdf"'
+        )
 
 
 class BOMReportTest(ReportTest):
     """Unit test class for the BillOfMaterialsReport model"""
+
     model = report_models.BillOfMaterialsReport
 
     list_url = 'api-bom-report-list'
@@ -421,13 +415,16 @@ class BOMReportTest(ReportTest):
 
     def setUp(self):
         """Setup function for the bill of materials Report"""
-        self.copyReportTemplate('inventree_bill_of_materials_report.html', 'bill of materials report')
+        self.copyReportTemplate(
+            'inventree_bill_of_materials_report.html', 'bill of materials report'
+        )
 
         return super().setUp()
 
 
 class PurchaseOrderReportTest(ReportTest):
     """Unit test class for the PurchaseOrderReport model"""
+
     model = report_models.PurchaseOrderReport
 
     list_url = 'api-po-report-list'
@@ -443,6 +440,7 @@ class PurchaseOrderReportTest(ReportTest):
 
 class SalesOrderReportTest(ReportTest):
     """Unit test class for the SalesOrderReport model"""
+
     model = report_models.SalesOrderReport
 
     list_url = 'api-so-report-list'
@@ -466,7 +464,9 @@ class ReturnOrderReportTest(ReportTest):
 
     def setUp(self):
         """Setup function for the ReturnOrderReport tests"""
-        self.copyReportTemplate('inventree_return_order_report.html', 'return order report')
+        self.copyReportTemplate(
+            'inventree_return_order_report.html', 'return order report'
+        )
 
         return super().setUp()
 

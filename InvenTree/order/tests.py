@@ -18,8 +18,7 @@ from part.models import Part
 from stock.models import StockItem, StockLocation
 from users.models import Owner
 
-from .models import (PurchaseOrder, PurchaseOrderExtraLine,
-                     PurchaseOrderLineItem)
+from .models import PurchaseOrder, PurchaseOrderExtraLine, PurchaseOrderLineItem
 
 
 class OrderTest(TestCase):
@@ -40,7 +39,6 @@ class OrderTest(TestCase):
     def test_basics(self):
         """Basic tests e.g. repr functions etc."""
         for pk in range(1, 8):
-
             order = PurchaseOrder.objects.get(pk=pk)
 
             self.assertEqual(order.get_absolute_url(), f'/order/purchase-order/{pk}/')
@@ -222,18 +220,12 @@ class OrderTest(TestCase):
 
         # Create a new supplier part with larger pack size
         sp_1 = SupplierPart.objects.create(
-            part=prt,
-            supplier=sup,
-            SKU='SKUx10',
-            pack_quantity='10',
+            part=prt, supplier=sup, SKU='SKUx10', pack_quantity='10'
         )
 
         # Create a new supplier part with smaller pack size
         sp_2 = SupplierPart.objects.create(
-            part=prt,
-            supplier=sup,
-            SKU='SKUx0.1',
-            pack_quantity='0.1',
+            part=prt, supplier=sup, SKU='SKUx0.1', pack_quantity='0.1'
         )
 
         # Record values before we start
@@ -244,9 +236,7 @@ class OrderTest(TestCase):
 
         # Create a new PurchaseOrder
         po = PurchaseOrder.objects.create(
-            supplier=sup,
-            reference=f"PO-{n + 1}",
-            description='Some PO',
+            supplier=sup, reference=f"PO-{n + 1}", description='Some PO'
         )
 
         # Add line items
@@ -291,15 +281,11 @@ class OrderTest(TestCase):
 
         # The 'on_order' quantity should have decreased by 10.5
         self.assertEqual(
-            prt.on_order,
-            round(on_order + Decimal(31.3) - Decimal(10.5), 1)
+            prt.on_order, round(on_order + Decimal(31.3) - Decimal(10.5), 1)
         )
 
         # The 'in_stock' quantity should have increased by 10.5
-        self.assertEqual(
-            prt.total_stock,
-            round(in_stock + Decimal(10.5), 1)
-        )
+        self.assertEqual(prt.total_stock, round(in_stock + Decimal(10.5), 1))
 
         # Check that the unit purchase price value has been updated correctly
         si = StockItem.objects.filter(supplier_part=sp_1)
@@ -341,8 +327,7 @@ class OrderTest(TestCase):
 
         for user_id in [2, 3, 4]:
             messages = common.models.NotificationMessage.objects.filter(
-                category='order.overdue_purchase_order',
-                user__id=user_id,
+                category='order.overdue_purchase_order', user__id=user_id
             )
 
             # User ID 3 is inactive, and thus should not receive notifications
@@ -373,7 +358,7 @@ class OrderTest(TestCase):
         # Initially, no notifications
 
         messages = common.models.NotificationMessage.objects.filter(
-            category='order.new_purchaseorder',
+            category='order.new_purchaseorder'
         )
 
         self.assertEqual(messages.count(), 0)

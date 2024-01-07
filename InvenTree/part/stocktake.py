@@ -21,7 +21,9 @@ import stock.models
 logger = logging.getLogger('inventree')
 
 
-def perform_stocktake(target: part.models.Part, user: User, note: str = '', commit=True, **kwargs):
+def perform_stocktake(
+    target: part.models.Part, user: User, note: str = '', commit=True, **kwargs
+):
     """Perform stocktake action on a single part.
 
     Arguments:
@@ -78,7 +80,6 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
     location_cost_max = Money(0, base_currency)
 
     for entry in stock_entries:
-
         entry_cost_min = None
         entry_cost_max = None
 
@@ -94,10 +95,13 @@ def perform_stocktake(target: part.models.Part, user: User, note: str = '', comm
 
         # Convert to base currency
         try:
-            entry_cost_min = convert_money(entry_cost_min, base_currency) * entry.quantity
-            entry_cost_max = convert_money(entry_cost_max, base_currency) * entry.quantity
+            entry_cost_min = (
+                convert_money(entry_cost_min, base_currency) * entry.quantity
+            )
+            entry_cost_max = (
+                convert_money(entry_cost_max, base_currency) * entry.quantity
+            )
         except Exception:
-
             entry_cost_min = Money(0, base_currency)
             entry_cost_max = Money(0, base_currency)
 
@@ -160,7 +164,7 @@ def generate_stocktake_report(**kwargs):
     # Determine if external locations should be excluded
     exclude_external = kwargs.get(
         'exclude_exernal',
-        common.models.InvenTreeSetting.get_setting('STOCKTAKE_EXCLUDE_EXTERNAL', False)
+        common.models.InvenTreeSetting.get_setting('STOCKTAKE_EXCLUDE_EXTERNAL', False),
     )
 
     parts = part.models.Part.objects.all()
@@ -172,9 +176,7 @@ def generate_stocktake_report(**kwargs):
     # Filter by 'Part' instance
     if p := kwargs.get('part', None):
         variants = p.get_descendants(include_self=True)
-        parts = parts.filter(
-            pk__in=[v.pk for v in variants]
-        )
+        parts = parts.filter(pk__in=[v.pk for v in variants])
 
     # Filter by 'Category' instance (cascading)
     if category := kwargs.get('category', None):
@@ -196,9 +198,7 @@ def generate_stocktake_report(**kwargs):
         # List of parts which exist within these locations
         unique_parts = items.order_by().values('part').distinct()
 
-        parts = parts.filter(
-            pk__in=[result['part'] for result in unique_parts]
-        )
+        parts = parts.filter(pk__in=[result['part'] for result in unique_parts])
 
     # Exit if filters removed all parts
     n_parts = parts.count()
@@ -239,12 +239,9 @@ def generate_stocktake_report(**kwargs):
 
     # Iterate through each Part which matches the filters above
     for p in parts:
-
         # Create a new stocktake for this part (do not commit, this will take place later on)
         stocktake = perform_stocktake(
-            p, user, commit=False,
-            exclude_external=exclude_external,
-            location=location,
+            p, user, commit=False, exclude_external=exclude_external, location=location
         )
 
         total_parts += 1
@@ -274,14 +271,11 @@ def generate_stocktake_report(**kwargs):
 
     if generate_report:
         report_instance = part.models.PartStocktakeReport.objects.create(
-            report=report_file,
-            part_count=total_parts,
-            user=user
+            report=report_file, part_count=total_parts, user=user
         )
 
         # Notify the requesting user
         if user:
-
             common.notifications.trigger_notification(
                 report_instance,
                 category='generate_stocktake_report',
@@ -289,18 +283,19 @@ def generate_stocktake_report(**kwargs):
                     'name': _('Stocktake Report Available'),
                     'message': _('A new stocktake report is available for download'),
                 },
-                targets=[
-                    user,
-                ]
+                targets=[user],
             )
 
     # If 'update_parts' is set, we save stocktake entries for each individual part
     if update_parts:
         # Use bulk_create for efficient insertion of stocktake
         part.models.PartStocktake.objects.bulk_create(
-            stocktake_instances,
-            batch_size=500,
+            stocktake_instances, batch_size=500
         )
 
     t_stocktake = time.time() - t_start
-    logger.info("Generated stocktake report for %s parts in %ss", total_parts, round(t_stocktake, 2))
+    logger.info(
+        "Generated stocktake report for %s parts in %ss",
+        total_parts,
+        round(t_stocktake, 2),
+    )

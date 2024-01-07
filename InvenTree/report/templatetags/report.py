@@ -100,7 +100,13 @@ def asset(filename):
 
 
 @register.simple_tag()
-def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png', validate=True, **kwargs):
+def uploaded_image(
+    filename,
+    replace_missing=True,
+    replacement_file='blank_image.png',
+    validate=True,
+    **kwargs,
+):
     """Return a fully-qualified path for an 'uploaded' image.
 
     Arguments:
@@ -167,12 +173,12 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         img = img.resize((width, height))
     elif width is not None:
         # Resize the image, width only
-        wpercent = (width / float(img.size[0]))
+        wpercent = width / float(img.size[0])
         hsize = int((float(img.size[1]) * float(wpercent)))
         img = img.resize((width, hsize))
     elif height is not None:
         # Resize the image, height only
-        hpercent = (height / float(img.size[1]))
+        hpercent = height / float(img.size[1])
         wsize = int((float(img.size[0]) * float(hpercent)))
         img = img.resize((wsize, height))
 
@@ -213,7 +219,9 @@ def encode_svg_image(filename):
         data = f.read()
 
     # Return the base64-encoded data
-    return "data:image/svg+xml;charset=utf-8;base64," + base64.b64encode(data).decode('utf-8')
+    return "data:image/svg+xml;charset=utf-8;base64," + base64.b64encode(data).decode(
+        'utf-8'
+    )
 
 
 @register.simple_tag()

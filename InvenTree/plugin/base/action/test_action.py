@@ -17,12 +17,15 @@ class ActionMixinTests(TestCase):
 
         Contains multiple sample plugins that are used in the tests
         """
+
         class SimplePlugin(ActionMixin, InvenTreePlugin):
             pass
+
         self.plugin = SimplePlugin()
 
         class TestActionPlugin(ActionMixin, InvenTreePlugin):
             """An action plugin."""
+
             ACTION_NAME = 'abc123'
 
             def perform_action(self, user=None, data=None):
@@ -53,21 +56,24 @@ class ActionMixinTests(TestCase):
         self.assertIsNone(self.plugin.perform_action())
         self.assertEqual(self.plugin.get_result(), False)
         self.assertIsNone(self.plugin.get_info())
-        self.assertEqual(self.plugin.get_response(), {
-            "action": '',
-            "result": False,
-            "info": None,
-        })
+        self.assertEqual(
+            self.plugin.get_response(), {"action": '', "result": False, "info": None}
+        )
 
         # overridden functions
-        self.assertEqual(self.action_plugin.perform_action(), self.ACTION_RETURN + 'action')
+        self.assertEqual(
+            self.action_plugin.perform_action(), self.ACTION_RETURN + 'action'
+        )
         self.assertEqual(self.action_plugin.get_result(), self.ACTION_RETURN + 'result')
         self.assertEqual(self.action_plugin.get_info(), self.ACTION_RETURN + 'info')
-        self.assertEqual(self.action_plugin.get_response(), {
-            "action": 'abc123',
-            "result": self.ACTION_RETURN + 'result',
-            "info": self.ACTION_RETURN + 'info',
-        })
+        self.assertEqual(
+            self.action_plugin.get_response(),
+            {
+                "action": 'abc123',
+                "result": self.ACTION_RETURN + 'result',
+                "info": self.ACTION_RETURN + 'info',
+            },
+        )
 
 
 class APITests(InvenTreeTestCase):
@@ -78,15 +84,12 @@ class APITests(InvenTreeTestCase):
         # Test empty request
         response = self.client.post('/api/action/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.data,
-            {'error': 'No action specified'}
-        )
+        self.assertEqual(response.data, {'error': 'No action specified'})
 
         # Test non-exsisting action
         response = self.client.post('/api/action/', data={'action': "nonexsisting"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.data,
-            {'error': 'No matching action found', 'action': 'nonexsisting'}
+            {'error': 'No matching action found', 'action': 'nonexsisting'},
         )

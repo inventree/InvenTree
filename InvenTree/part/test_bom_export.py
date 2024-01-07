@@ -11,12 +11,7 @@ from InvenTree.unit_test import InvenTreeTestCase
 class BomExportTest(InvenTreeTestCase):
     """Class for performing unit testing of BOM export functionality"""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'bom',
-    ]
+    fixtures = ['category', 'part', 'location', 'bom']
 
     roles = 'all'
 
@@ -37,7 +32,7 @@ class BomExportTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.headers['Content-Disposition'],
-            'attachment; filename="InvenTree_BOM_Template.xls"'
+            'attachment; filename="InvenTree_BOM_Template.xls"',
         )
 
         # Return a simple CSV template
@@ -45,7 +40,7 @@ class BomExportTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.headers['Content-Disposition'],
-            'attachment; filename="InvenTree_BOM_Template.csv"'
+            'attachment; filename="InvenTree_BOM_Template.csv"',
         )
 
         filename = '_tmp.csv'

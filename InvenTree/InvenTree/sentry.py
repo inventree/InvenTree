@@ -46,7 +46,9 @@ def init_sentry(dsn, sample_rate, tags):
         send_default_pii=True,
         ignore_errors=sentry_ignore_errors(),
         release=InvenTree.version.INVENTREE_SW_VERSION,
-        environment='development' if InvenTree.version.isInvenTreeDevelopmentVersion() else 'production'
+        environment='development'
+        if InvenTree.version.isInvenTreeDevelopmentVersion()
+        else 'production',
     )
 
     for key, val in tags.items():
@@ -62,7 +64,6 @@ def init_sentry(dsn, sample_rate, tags):
 def report_exception(exc):
     """Report an exception to sentry.io"""
     if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
-
         if not any(isinstance(exc, e) for e in sentry_ignore_errors()):
             logger.info("Reporting exception to sentry.io: %s", exc)
 

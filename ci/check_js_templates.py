@@ -30,7 +30,6 @@ def check_invalid_tag(data):
     err_count = 0
 
     for idx, line in enumerate(data):
-
         results = re.findall(pattern, line)
 
         for result in results:
@@ -61,9 +60,7 @@ def check_prohibited_tags(data):
     err_count = 0
 
     for idx, line in enumerate(data):
-
         for tag in re.findall(pattern, line):
-
             if tag not in allowed_tags:
                 print(f" > Line {idx+1} contains prohibited template tag '{tag}'")
                 err_count += 1
@@ -72,7 +69,6 @@ def check_prohibited_tags(data):
 
 
 for filename in pathlib.Path(js_i18n_dir).rglob('*.js'):
-
     print(f"Checking file 'translated/{os.path.basename(filename)}':")
 
     with open(filename, 'r') as js_file:
@@ -82,7 +78,6 @@ for filename in pathlib.Path(js_i18n_dir).rglob('*.js'):
     errors += check_prohibited_tags(data)
 
 for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
-
     print(f"Checking file 'dynamic/{os.path.basename(filename)}':")
 
     # Check that the 'dynamic' files do not contains any translated strings
@@ -94,7 +89,6 @@ for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
     err_count = 0
 
     for idx, line in enumerate(data):
-
         results = re.findall(pattern, line)
 
         if len(results) > 0:

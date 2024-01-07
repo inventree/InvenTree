@@ -39,11 +39,7 @@ def fetch_rtd_versions():
             if version == 'latest':
                 continue
 
-            versions.append({
-                'version': version,
-                'title': version,
-                'aliases': aliases,
-            })
+            versions.append({'version': version, 'title': version, 'aliases': aliases})
 
         if data['next']:
             make_request(data['next'], headers)
@@ -62,11 +58,14 @@ def fetch_rtd_versions():
 
     # Add "latest" version first
     if not any((x['title'] == 'latest' for x in versions)):
-        versions.insert(0, {
-            'title': 'Development',
-            'version': 'latest',
-            'aliases': ['main', 'latest', 'development',],
-        })
+        versions.insert(
+            0,
+            {
+                'title': 'Development',
+                'version': 'latest',
+                'aliases': ['main', 'latest', 'development'],
+            },
+        )
 
     # Ensure we have the 'latest' version
     current_version = os.environ.get('READTHEDOCS_VERSION', None)
@@ -206,7 +205,6 @@ def on_config(config, *args, **kwargs):
     releases = []
 
     for item in release_data:
-
         # Ignore draft releases
         if item['draft']:
             continue
@@ -221,11 +219,7 @@ def on_config(config, *args, **kwargs):
             continue
 
         # Check if there is a local file with release information
-        local_path = os.path.join(
-            os.path.dirname(__file__),
-            'releases',
-            f'{tag}.md',
-        )
+        local_path = os.path.join(os.path.dirname(__file__), 'releases', f'{tag}.md')
 
         if os.path.exists(local_path):
             item['local_path'] = local_path

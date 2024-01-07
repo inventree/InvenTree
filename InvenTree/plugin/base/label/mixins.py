@@ -32,6 +32,7 @@ class LabelPrintingMixin:
 
     class MixinMeta:
         """Meta options for this mixin."""
+
         MIXIN_NAME = 'Label printing'
 
     def __init__(self):  # pragma: no cover
@@ -63,18 +64,24 @@ class LabelPrintingMixin:
         pdf_data = kwargs.get('pdf_data', None)
 
         if not pdf_data:
-            pdf_data = self.render_to_pdf(label, request, **kwargs).get_document().write_pdf()
+            pdf_data = (
+                self.render_to_pdf(label, request, **kwargs).get_document().write_pdf()
+            )
 
-        dpi = kwargs.get(
-            'dpi',
-            InvenTreeSetting.get_setting('LABEL_DPI', 300)
-        )
+        dpi = kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300))
 
         # Convert to png data
         png = pdf2image.convert_from_bytes(pdf_data, dpi=dpi)[0]
         return png
 
-    def print_labels(self, label: LabelTemplate, items: list, request: Request, printing_options: dict, **kwargs):
+    def print_labels(
+        self,
+        label: LabelTemplate,
+        items: list,
+        request: Request,
+        printing_options: dict,
+        **kwargs,
+    ):
         """Print one or more labels with the provided template and items.
 
         Arguments:
@@ -149,7 +156,9 @@ class LabelPrintingMixin:
         Note that the supplied kwargs may be different if the plugin overrides the print_labels() method.
         """
         # Unimplemented (to be implemented by the particular plugin class)
-        raise MixinNotImplementedError('This Plugin must implement a `print_label` method')
+        raise MixinNotImplementedError(
+            'This Plugin must implement a `print_label` method'
+        )
 
     def offload_label(self, **kwargs):
         """Offload a single label (non-blocking)
@@ -162,13 +171,11 @@ class LabelPrintingMixin:
         # Exclude the 'pdf_file' object - cannot be pickled
         kwargs.pop('pdf_file', None)
 
-        offload_task(
-            plugin_label.print_label,
-            self.plugin_slug(),
-            **kwargs
-        )
+        offload_task(plugin_label.print_label, self.plugin_slug(), **kwargs)
 
-    def get_printing_options_serializer(self, request: Request, *args, **kwargs) -> Union[serializers.Serializer, None]:
+    def get_printing_options_serializer(
+        self, request: Request, *args, **kwargs
+    ) -> Union[serializers.Serializer, None]:
         """Return a serializer class instance with dynamic printing options.
 
         Arguments:

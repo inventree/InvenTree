@@ -33,9 +33,7 @@ def is_worker_running(**kwargs):
     now = timezone.now()
     past = now - timedelta(minutes=10)
 
-    results = Success.objects.filter(
-        started__gte=past
-    )
+    results = Success.objects.filter(started__gte=past)
 
     # If any results are returned, then the background worker is running!
     try:

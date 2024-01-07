@@ -7,19 +7,19 @@ from django.urls import reverse
 from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 
-from .models import (Part, PartCategory, PartCategoryParameterTemplate,
-                     PartParameter, PartParameterTemplate)
+from .models import (
+    Part,
+    PartCategory,
+    PartCategoryParameterTemplate,
+    PartParameter,
+    PartParameterTemplate,
+)
 
 
 class TestParams(TestCase):
     """Unit test class for testing the PartParameter model"""
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-        'params'
-    ]
+    fixtures = ['location', 'category', 'part', 'params']
 
     def test_str(self):
         """Test the str representation of the PartParameterTemplate model"""
@@ -81,12 +81,7 @@ class TestParams(TestCase):
 class TestCategoryTemplates(TransactionTestCase):
     """Test class for PartCategoryParameterTemplate model"""
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-        'params'
-    ]
+    fixtures = ['location', 'category', 'part', 'params']
 
     def test_validate(self):
         """Test that category templates are correctly applied to Part instances"""
@@ -97,9 +92,9 @@ class TestCategoryTemplates(TransactionTestCase):
         category = PartCategory.objects.get(pk=8)
 
         t1 = PartParameterTemplate.objects.get(pk=2)
-        c1 = PartCategoryParameterTemplate(category=category,
-                                           parameter_template=t1,
-                                           default_value='xyz')
+        c1 = PartCategoryParameterTemplate(
+            category=category, parameter_template=t1, default_value='xyz'
+        )
         c1.save()
 
         n = PartCategoryParameterTemplate.objects.all().count()
@@ -109,19 +104,14 @@ class TestCategoryTemplates(TransactionTestCase):
 class ParameterTests(TestCase):
     """Unit tests for parameter validation"""
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-        'params'
-    ]
+    fixtures = ['location', 'category', 'part', 'params']
 
     def test_choice_validation(self):
         """Test that parameter choices are correctly validated"""
         template = PartParameterTemplate.objects.create(
             name='My Template',
             description='A template with choices',
-            choices='red, blue, green'
+            choices='red, blue, green',
         )
 
         pass_values = ['red', 'blue', 'green']
@@ -141,7 +131,21 @@ class ParameterTests(TestCase):
     def test_unit_validation(self):
         """Test validation of 'units' field for PartParameterTemplate"""
         # Test that valid units pass
-        for unit in [None, '', '%', 'mm', 'A', 'm^2', 'Pa', 'V', 'C', 'F', 'uF', 'mF', 'millifarad']:
+        for unit in [
+            None,
+            '',
+            '%',
+            'mm',
+            'A',
+            'm^2',
+            'Pa',
+            'V',
+            'C',
+            'F',
+            'uF',
+            'mF',
+            'millifarad',
+        ]:
             tmp = PartParameterTemplate(name='test', units=unit)
             tmp.full_clean()
 
@@ -153,22 +157,29 @@ class ParameterTests(TestCase):
 
     def test_param_unit_validation(self):
         """Test that parameters are correctly validated against template units"""
-        template = PartParameterTemplate.objects.create(
-            name='My Template',
-            units='m',
-        )
+        template = PartParameterTemplate.objects.create(name='My Template', units='m')
 
         prt = Part.objects.get(pk=1)
 
         # Test that valid parameters pass
-        for value in ['1', '1m', 'm', '-4m', -2, '2.032mm', '99km', '-12 mile', 'foot', '3 yards']:
+        for value in [
+            '1',
+            '1m',
+            'm',
+            '-4m',
+            -2,
+            '2.032mm',
+            '99km',
+            '-12 mile',
+            'foot',
+            '3 yards',
+        ]:
             param = PartParameter(part=prt, template=template, data=value)
             param.full_clean()
 
         # Test that percent unit is working
         template2 = PartParameterTemplate.objects.create(
-            name='My Template 2',
-            units='%',
+            name='My Template 2', units='%'
         )
         for value in ["1", "1%", "1 percent"]:
             param = PartParameter(part=prt, template=template2, data=value)
@@ -177,7 +188,9 @@ class ParameterTests(TestCase):
         bad_values = ['3 Amps', '-3 zogs', '3.14F']
 
         # Disable enforcing of part parameter units
-        InvenTreeSetting.set_setting('PART_PARAMETER_ENFORCE_UNITS', False, change_user=None)
+        InvenTreeSetting.set_setting(
+            'PART_PARAMETER_ENFORCE_UNITS', False, change_user=None
+        )
 
         # Invalid units also pass, but will be converted to the template units
         for value in bad_values:
@@ -185,7 +198,9 @@ class ParameterTests(TestCase):
             param.full_clean()
 
         # Enable enforcing of part parameter units
-        InvenTreeSetting.set_setting('PART_PARAMETER_ENFORCE_UNITS', True, change_user=None)
+        InvenTreeSetting.set_setting(
+            'PART_PARAMETER_ENFORCE_UNITS', True, change_user=None
+        )
 
         for value in bad_values:
             param = PartParameter(part=prt, template=template, data=value)
@@ -194,10 +209,7 @@ class ParameterTests(TestCase):
 
     def test_param_unit_conversion(self):
         """Test that parameters are correctly converted to template units"""
-        template = PartParameterTemplate.objects.create(
-            name='My Template',
-            units='m',
-        )
+        template = PartParameterTemplate.objects.create(name='My Template', units='m')
 
         tests = {
             '1': 1.0,
@@ -219,14 +231,10 @@ class ParameterTests(TestCase):
 
 class PartParameterTest(InvenTreeAPITestCase):
     """Tests for the ParParameter API."""
+
     superuser = True
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'params',
-    ]
+    fixtures = ['category', 'part', 'location', 'params']
 
     def test_list_params(self):
         """Test for listing part parameters."""
@@ -237,22 +245,12 @@ class PartParameterTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 7)
 
         # Filter by part
-        response = self.get(
-            url,
-            {
-                'part': 3,
-            }
-        )
+        response = self.get(url, {'part': 3})
 
         self.assertEqual(len(response.data), 3)
 
         # Filter by template
-        response = self.get(
-            url,
-            {
-                'template': 1,
-            }
-        )
+        response = self.get(url, {'template': 1})
 
         self.assertEqual(len(response.data), 4)
 
@@ -261,10 +259,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         # Checkbox parameter cannot have "units" specified
         with self.assertRaises(django_exceptions.ValidationError):
             template = PartParameterTemplate(
-                name='test',
-                description='My description',
-                units='mm',
-                checkbox=True
+                name='test', description='My description', units='mm', checkbox=True
             )
 
             template.clean()
@@ -275,7 +270,7 @@ class PartParameterTest(InvenTreeAPITestCase):
                 name='test',
                 description='My description',
                 choices='a,b,c',
-                checkbox=True
+                checkbox=True,
             )
 
             template.clean()
@@ -283,9 +278,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         # Choices must be 'unique'
         with self.assertRaises(django_exceptions.ValidationError):
             template = PartParameterTemplate(
-                name='test',
-                description='My description',
-                choices='a,a,b',
+                name='test', description='My description', choices='a,a,b'
             )
 
             template.clean()
@@ -294,14 +287,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         """Test that we can create a param via the API."""
         url = reverse('api-part-parameter-list')
 
-        response = self.post(
-            url,
-            {
-                'part': '2',
-                'template': '3',
-                'data': 70
-            }
-        )
+        response = self.post(url, {'part': '2', 'template': '3', 'data': 70})
 
         self.assertEqual(response.status_code, 201)
 
@@ -351,9 +337,7 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         # Create a new parameter template
         template = PartParameterTemplate.objects.create(
-            name='Test Template',
-            description='My test template',
-            units='m'
+            name='Test Template', description='My test template', units='m'
         )
 
         # Create parameters for each existing part
@@ -362,7 +346,6 @@ class PartParameterTest(InvenTreeAPITestCase):
         parts = Part.objects.all().order_by('pk')
 
         for idx, part in enumerate(parts):
-
             # Skip parts every now and then
             if idx % 10 == 7:
                 continue
@@ -371,9 +354,7 @@ class PartParameterTest(InvenTreeAPITestCase):
 
             params.append(
                 PartParameter.objects.create(
-                    part=part,
-                    template=template,
-                    data=f'{idx}{suffix}'
+                    part=part, template=template, data=f'{idx}{suffix}'
                 )
             )
 
@@ -382,25 +363,15 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         response = self.get(
             url,
-            {
-                'ordering': 'parameter_{pk}'.format(pk=template.pk),
-                'parameters': 'true',
-            },
-            expected_code=200
+            {'ordering': 'parameter_{pk}'.format(pk=template.pk), 'parameters': 'true'},
+            expected_code=200,
         )
 
         # All parts should be returned
         self.assertEqual(len(response.data), len(parts))
 
         # Check that the parts are ordered correctly (in increasing order)
-        expectation = {
-            0: '0mm',
-            1: '3mm',
-            7: '4m',
-            9: '8m',
-            -2: '13m',
-            -1: None,
-        }
+        expectation = {0: '0mm', 1: '3mm', 7: '4m', 9: '8m', -2: '13m', -1: None}
 
         for idx, expected in expectation.items():
             actual = get_param_value(response, template.pk, idx)
@@ -413,16 +384,10 @@ class PartParameterTest(InvenTreeAPITestCase):
                 'ordering': '-parameter_{pk}'.format(pk=template.pk),
                 'parameters': 'true',
             },
-            expected_code=200
+            expected_code=200,
         )
 
-        expectation = {
-            0: '13m',
-            1: '11m',
-            -3: '3mm',
-            -2: '0mm',
-            -1: None,
-        }
+        expectation = {0: '13m', 1: '11m', -3: '3mm', -2: '0mm', -1: None}
 
         for idx, expected in expectation.items():
             actual = get_param_value(response, template.pk, idx)

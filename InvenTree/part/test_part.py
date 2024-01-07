@@ -10,15 +10,26 @@ from django.test import TestCase
 from allauth.account.models import EmailAddress
 
 import part.settings
-from common.models import (InvenTreeSetting, InvenTreeUserSetting,
-                           NotificationEntry, NotificationMessage)
+from common.models import (
+    InvenTreeSetting,
+    InvenTreeUserSetting,
+    NotificationEntry,
+    NotificationMessage,
+)
 from common.notifications import UIMessageNotification, storage
 from InvenTree import version
 from InvenTree.unit_test import InvenTreeTestCase
 
-from .models import (Part, PartCategory, PartCategoryStar, PartRelated,
-                     PartStar, PartStocktake, PartTestTemplate,
-                     rename_part_image)
+from .models import (
+    Part,
+    PartCategory,
+    PartCategoryStar,
+    PartRelated,
+    PartStar,
+    PartStocktake,
+    PartTestTemplate,
+    rename_part_image,
+)
 from .templatetags import inventree_extras
 
 
@@ -54,11 +65,16 @@ class TemplateTagTest(InvenTreeTestCase):
 
     def test_inventree_is_release(self):
         """Test that the release version check functions as expected"""
-        self.assertEqual(inventree_extras.inventree_is_release(), not version.isInvenTreeDevelopmentVersion())
+        self.assertEqual(
+            inventree_extras.inventree_is_release(),
+            not version.isInvenTreeDevelopmentVersion(),
+        )
 
     def test_inventree_docs_version(self):
         """Test that the documentation version template tag returns correctly"""
-        self.assertEqual(inventree_extras.inventree_docs_version(), version.inventreeDocsVersion())
+        self.assertEqual(
+            inventree_extras.inventree_docs_version(), version.inventreeDocsVersion()
+        )
 
     def test_hash(self):
         """Test that the commit hash template tag returns correctly"""
@@ -127,12 +143,7 @@ class TemplateTagTest(InvenTreeTestCase):
 class PartTest(TestCase):
     """Tests for the Part model."""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'part_pricebreaks'
-    ]
+    fixtures = ['category', 'part', 'location', 'part_pricebreaks']
 
     @classmethod
     def setUpTestData(cls):
@@ -352,12 +363,7 @@ class PartTest(TestCase):
 class TestTemplateTest(TestCase):
     """Unit test for the TestTemplate class"""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'test_templates',
-    ]
+    fixtures = ['category', 'part', 'location', 'test_templates']
 
     def test_template_count(self):
         """Tests for the test template functions"""
@@ -381,22 +387,17 @@ class TestTemplateTest(TestCase):
         variant = Part.objects.get(pk=10004)
 
         with self.assertRaises(ValidationError):
-            PartTestTemplate.objects.create(
-                part=variant,
-                test_name='Record weight'
-            )
+            PartTestTemplate.objects.create(part=variant, test_name='Record weight')
 
         with self.assertRaises(ValidationError):
             PartTestTemplate.objects.create(
-                part=variant,
-                test_name='Check that chair is especially green'
+                part=variant, test_name='Check that chair is especially green'
             )
 
         # Also should fail if we attempt to create a test that would generate the same key
         with self.assertRaises(ValidationError):
             PartTestTemplate.objects.create(
-                part=variant,
-                test_name='ReCoRD       weiGHT  '
+                part=variant, test_name='ReCoRD       weiGHT  '
             )
 
         # But we should be able to create a new one!
@@ -418,9 +419,7 @@ class PartSettingsTest(InvenTreeTestCase):
         cache.clear()
 
         part = Part.objects.create(
-            name='Test Part',
-            description='I am but a humble test part',
-            IPN='IPN-123',
+            name='Test Part', description='I am but a humble test part', IPN='IPN-123'
         )
 
         return part
@@ -474,7 +473,9 @@ class PartSettingsTest(InvenTreeTestCase):
     def test_duplicate_ipn(self):
         """Test the setting which controls duplicate IPN values."""
         # Create a part
-        Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='A')
+        Part.objects.create(
+            name='Hello', description='A thing', IPN='IPN123', revision='A'
+        )
 
         # Attempt to create a duplicate item (should fail)
         with self.assertRaises(ValidationError):
@@ -482,7 +483,9 @@ class PartSettingsTest(InvenTreeTestCase):
             part.validate_unique()
 
         # Attempt to create item with duplicate IPN (should be allowed by default)
-        Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='B')
+        Part.objects.create(
+            name='Hello', description='A thing', IPN='IPN123', revision='B'
+        )
 
         # And attempt again with the same values (should fail)
         with self.assertRaises(ValidationError):
@@ -497,12 +500,16 @@ class PartSettingsTest(InvenTreeTestCase):
             part.full_clean()
 
         # Any duplicate IPN should raise an error
-        Part.objects.create(name='xyz', revision='1', description='A part', IPN='UNIQUE')
+        Part.objects.create(
+            name='xyz', revision='1', description='A part', IPN='UNIQUE'
+        )
 
         # Case insensitive, so variations on spelling should throw an error
         for ipn in ['UNiquE', 'uniQuE', 'unique']:
             with self.assertRaises(ValidationError):
-                Part.objects.create(name='xyz', revision='2', description='A part', IPN=ipn)
+                Part.objects.create(
+                    name='xyz', revision='2', description='A part', IPN=ipn
+                )
 
         with self.assertRaises(ValidationError):
             Part.objects.create(name='zyx', description='A part', IPN='UNIQUE')
@@ -520,11 +527,7 @@ class PartSettingsTest(InvenTreeTestCase):
 class PartSubscriptionTests(InvenTreeTestCase):
     """Unit tests for part 'subscription'"""
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-    ]
+    fixtures = ['location', 'category', 'part']
 
     @classmethod
     def setUpTestData(cls):
@@ -562,9 +565,7 @@ class PartSubscriptionTests(InvenTreeTestCase):
         """Test subscription against a parent part."""
         # Construct a sub-part to star against
         sub_part = Part.objects.create(
-            name='sub_part',
-            description='a sub part',
-            variant_of=self.part,
+            name='sub_part', description='a sub part', variant_of=self.part
         )
 
         self.assertFalse(sub_part.is_starred_by(self.user))
@@ -620,12 +621,7 @@ class PartSubscriptionTests(InvenTreeTestCase):
 class BaseNotificationIntegrationTest(InvenTreeTestCase):
     """Integration test for notifications."""
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-        'stock'
-    ]
+    fixtures = ['location', 'category', 'part', 'stock']
 
     @classmethod
     def setUpTestData(cls):
@@ -652,7 +648,9 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
         # Test that notifications run through without errors
-        self.part.minimum_stock = self.part.get_stock_count() + 1  # make sure minimum is one higher than current count
+        self.part.minimum_stock = (
+            self.part.get_stock_count() + 1
+        )  # make sure minimum is one higher than current count
         self.part.save()
 
         # There should be no notification as no-one is subscribed

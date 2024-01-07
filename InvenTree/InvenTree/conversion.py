@@ -29,6 +29,7 @@ def reload_unit_registry():
     This function is called at startup, and whenever the database is updated.
     """
     import time
+
     t_start = time.time()
 
     global _unit_registry
@@ -52,7 +53,9 @@ def reload_unit_registry():
             try:
                 reg.define(cu.fmt_string())
             except Exception as e:
-                logger.exception('Failed to load custom unit: %s - %s', cu.fmt_string(), e)
+                logger.exception(
+                    'Failed to load custom unit: %s - %s', cu.fmt_string(), e
+                )
 
         # Once custom units are loaded, save registry
         _unit_registry = reg

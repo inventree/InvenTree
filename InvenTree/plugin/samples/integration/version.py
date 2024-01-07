@@ -1,4 +1,5 @@
 """Sample plugin for versioning."""
+
 from plugin import InvenTreePlugin
 
 

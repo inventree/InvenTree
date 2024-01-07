@@ -24,7 +24,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         'ILLEGAL_PART_CHARS': {
             'name': 'Illegal Part Characters',
             'description': 'Characters which are not allowed to appear in Part names',
-            'default': '!@#$%^&*()~`'
+            'default': '!@#$%^&*()~`',
         },
         'IPN_MUST_CONTAIN_Q': {
             'name': 'IPN Q Requirement',
@@ -98,7 +98,9 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if self.get_setting('SERIAL_MUST_MATCH_PART'):
             # Serial must start with the same letter as the linked part, for some reason
             if serial[0] != part.name[0]:
-                raise ValidationError("Serial number must start with same letter as part")
+                raise ValidationError(
+                    "Serial number must start with same letter as part"
+                )
 
     def validate_batch_code(self, batch_code: str, item):
         """Ensure that a particular batch code meets specification.

@@ -21,6 +21,7 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
 
     class PrintingOptionsSerializer(serializers.Serializer):
         """Serializer to return printing options."""
+
         amount = serializers.IntegerField(required=False, default=1)
 
     def print_label(self, **kwargs):

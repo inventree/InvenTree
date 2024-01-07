@@ -1,4 +1,5 @@
 """Sample plugin for calling an external API."""
+
 from plugin import InvenTreePlugin
 from plugin.mixins import APICallMixin, SettingsMixin
 
@@ -9,10 +10,7 @@ class SampleApiCallerPlugin(APICallMixin, SettingsMixin, InvenTreePlugin):
     NAME = "Sample API Caller"
 
     SETTINGS = {
-        'API_TOKEN': {
-            'name': 'API Token',
-            'protected': True,
-        },
+        'API_TOKEN': {'name': 'API Token', 'protected': True},
         'API_URL': {
             'name': 'External URL',
             'description': 'Where is your API located?',

@@ -45,8 +45,9 @@ class InvenTreeMetadata(SimpleMetadata):
         context = {}
 
         if str2bool(request.query_params.get('context', False)):
-
-            if hasattr(self, 'serializer') and hasattr(self.serializer, 'get_context_data'):
+            if hasattr(self, 'serializer') and hasattr(
+                self.serializer, 'get_context_data'
+            ):
                 context = self.serializer.get_context_data()
 
             metadata['context'] = context
@@ -91,7 +92,6 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Remove any HTTP methods that the user does not have permission for
             for method, permission in rolemap.items():
-
                 result = check(user, table, permission)
 
                 if method in actions and not result:
@@ -123,10 +123,7 @@ class InvenTreeMetadata(SimpleMetadata):
         model_class = None
 
         # Attributes to copy extra attributes from the model to the field (if they don't exist)
-        extra_attributes = [
-            'help_text',
-            'max_length',
-        ]
+        extra_attributes = ['help_text', 'max_length']
 
         try:
             model_class = serializer.Meta.model
@@ -142,11 +139,8 @@ class InvenTreeMetadata(SimpleMetadata):
 
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
-
                 if name in serializer_info.keys():
-
                     if field.has_default():
-
                         default = field.default
 
                         if callable(default):
@@ -162,13 +156,11 @@ class InvenTreeMetadata(SimpleMetadata):
 
                     for attr in extra_attributes:
                         if attr not in serializer_info[name]:
-
                             if hasattr(field, attr):
                                 serializer_info[name][attr] = getattr(field, attr)
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
-
                 if name not in serializer_info.keys():
                     # Skip relation not defined in serializer
                     continue
@@ -179,11 +171,17 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Extract and provide the "limit_choices_to" filters
                 # This is used to automatically filter AJAX requests
-                serializer_info[name]['filters'] = relation.model_field.get_limit_choices_to()
+                serializer_info[name]['filters'] = (
+                    relation.model_field.get_limit_choices_to()
+                )
 
                 for attr in extra_attributes:
-                    if attr not in serializer_info[name] and hasattr(relation.model_field, attr):
-                        serializer_info[name][attr] = getattr(relation.model_field, attr)
+                    if attr not in serializer_info[name] and hasattr(
+                        relation.model_field, attr
+                    ):
+                        serializer_info[name][attr] = getattr(
+                            relation.model_field, attr
+                        )
 
                 if name in model_default_values:
                     serializer_info[name]['default'] = model_default_values[name]
@@ -220,11 +218,9 @@ class InvenTreeMetadata(SimpleMetadata):
             """If there is an instance associated with this API View, introspect that instance to find any specific API info."""
 
             if hasattr(instance, 'api_instance_filters'):
-
                 instance_filters = instance.api_instance_filters()
 
                 for field_name, field_filters in instance_filters.items():
-
                     if field_name not in serializer_info.keys():
                         # The field might be missing, but is added later on
                         # This function seems to get called multiple times?
@@ -256,17 +252,20 @@ class InvenTreeMetadata(SimpleMetadata):
 
         # Force non-nullable fields to read as "required"
         # (even if there is a default value!)
-        if not field.allow_null and not (hasattr(field, 'allow_blank') and field.allow_blank):
+        if not field.allow_null and not (
+            hasattr(field, 'allow_blank') and field.allow_blank
+        ):
             field_info['required'] = True
 
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
-
             # If the field is a PrimaryKeyRelatedField, we can extract the model from the queryset
             if isinstance(field, serializers.PrimaryKeyRelatedField):
                 model = field.queryset.model
             else:
-                logger.debug("Could not extract model for:", field_info.get('label'), '->', field)
+                logger.debug(
+                    "Could not extract model for:", field_info.get('label'), '->', field
+                )
                 model = None
 
             if model:

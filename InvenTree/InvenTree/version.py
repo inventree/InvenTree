@@ -105,7 +105,7 @@ def inventreeDocUrl():
 
 def inventreeAppUrl():
     """Return URL for InvenTree app site."""
-    return f'{inventreeDocUrl()}/app/app',
+    return (f'{inventreeDocUrl()}/app/app',)
 
 
 def inventreeCreditsUrl():
@@ -124,7 +124,10 @@ def isInvenTreeUpToDate():
     A background task periodically queries GitHub for latest version, and stores it to the database as "_INVENTREE_LATEST_VERSION"
     """
     import common.models
-    latest = common.models.InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION', backup_value=None, create=False)
+
+    latest = common.models.InvenTreeSetting.get_setting(
+        '_INVENTREE_LATEST_VERSION', backup_value=None, create=False
+    )
 
     # No record for "latest" version - we must assume we are up to date!
     if not latest:
@@ -153,7 +156,9 @@ def parse_version_text():
         data = version.split("\n")
 
         version_split = data[0].split(' -> ')
-        version_detail = version_split[1].split(':', 1) if len(version_split) > 1 else ['', ]
+        version_detail = (
+            version_split[1].split(':', 1) if len(version_split) > 1 else ['']
+        )
         new_data = {
             "version": version_split[0].strip(),
             "date": version_detail[0].strip(),
@@ -222,7 +227,9 @@ def inventreeCommitDate():
     if main_commit is None:
         return None
 
-    commit_dt = dt.fromtimestamp(main_commit.commit_time) + td(seconds=main_commit.commit_timezone)
+    commit_dt = dt.fromtimestamp(main_commit.commit_time) + td(
+        seconds=main_commit.commit_timezone
+    )
     return str(commit_dt.date())
 
 

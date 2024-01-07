@@ -22,12 +22,15 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
         part = Part.objects.create(name="Test Part", description="Test Part")
 
         manufacturer = Company.objects.create(
-            name="Test Manufacturer", is_manufacturer=True)
+            name="Test Manufacturer", is_manufacturer=True
+        )
 
         mpart1 = ManufacturerPart.objects.create(
-            part=part, manufacturer=manufacturer, MPN="MC34063ADR")
+            part=part, manufacturer=manufacturer, MPN="MC34063ADR"
+        )
         mpart2 = ManufacturerPart.objects.create(
-            part=part, manufacturer=manufacturer, MPN="LDK320ADU33R")
+            part=part, manufacturer=manufacturer, MPN="LDK320ADU33R"
+        )
 
         supplier = Company.objects.create(name="Supplier", is_supplier=True)
         mouser = Company.objects.create(name="Mouser Test", is_supplier=True)
@@ -45,7 +48,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     def test_digikey_barcode(self):
         """Test digikey barcode"""
 
-        result = self.post(self.SCAN_URL, data={"barcode": DIGIKEY_BARCODE}, expected_code=200)
+        result = self.post(
+            self.SCAN_URL, data={"barcode": DIGIKEY_BARCODE}, expected_code=200
+        )
         self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
@@ -56,7 +61,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
 
     def test_digikey_2_barcode(self):
         """Test digikey barcode which uses 30P instead of P"""
-        result = self.post(self.SCAN_URL, data={"barcode": DIGIKEY_BARCODE_2}, expected_code=200)
+        result = self.post(
+            self.SCAN_URL, data={"barcode": DIGIKEY_BARCODE_2}, expected_code=200
+        )
         self.assertEqual(result.data['plugin'], 'DigiKeyPlugin')
 
         supplier_part_data = result.data.get("supplierpart")
@@ -72,7 +79,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     def test_mouser_barcode(self):
         """Test mouser barcode with custom order number."""
 
-        result = self.post(self.SCAN_URL, data={"barcode": MOUSER_BARCODE}, expected_code=200)
+        result = self.post(
+            self.SCAN_URL, data={"barcode": MOUSER_BARCODE}, expected_code=200
+        )
 
         supplier_part_data = result.data.get("supplierpart")
         self.assertIn('pk', supplier_part_data)
@@ -83,7 +92,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     def test_old_mouser_barcode(self):
         """Test old mouser barcode with messed up header."""
 
-        result = self.post(self.SCAN_URL, data={"barcode": MOUSER_BARCODE_OLD}, expected_code=200)
+        result = self.post(
+            self.SCAN_URL, data={"barcode": MOUSER_BARCODE_OLD}, expected_code=200
+        )
 
         supplier_part_data = result.data.get("supplierpart")
         self.assertIn('pk', supplier_part_data)
@@ -93,7 +104,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     def test_lcsc_barcode(self):
         """Test LCSC barcode."""
 
-        result = self.post(self.SCAN_URL, data={"barcode": LCSC_BARCODE}, expected_code=200)
+        result = self.post(
+            self.SCAN_URL, data={"barcode": LCSC_BARCODE}, expected_code=200
+        )
 
         self.assertEqual(result.data['plugin'], 'LCSCPlugin')
 
@@ -106,7 +119,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     def test_tme_qrcode(self):
         """Test TME QR-Code."""
 
-        result = self.post(self.SCAN_URL, data={"barcode": TME_QRCODE}, expected_code=200)
+        result = self.post(
+            self.SCAN_URL, data={"barcode": TME_QRCODE}, expected_code=200
+        )
 
         self.assertEqual(result.data['plugin'], 'TMEPlugin')
 
@@ -118,7 +133,9 @@ class SupplierBarcodeTests(InvenTreeAPITestCase):
     def test_tme_barcode2d(self):
         """Test TME DataMatrix-Code."""
 
-        result = self.post(self.SCAN_URL, data={"barcode": TME_DATAMATRIX_CODE}, expected_code=200)
+        result = self.post(
+            self.SCAN_URL, data={"barcode": TME_DATAMATRIX_CODE}, expected_code=200
+        )
 
         self.assertEqual(result.data['plugin'], 'TMEPlugin')
 
@@ -152,8 +169,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         )
 
         supplier_parts1 = [
-            SupplierPart(SKU=f"1_{i}", part=part, supplier=supplier)
-            for i in range(6)
+            SupplierPart(SKU=f"1_{i}", part=part, supplier=supplier) for i in range(6)
         ]
 
         supplier_parts1.insert(
@@ -170,13 +186,13 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
         self.purchase_order2.place_order()
         supplier_parts2 = [
-            SupplierPart(SKU=f"2_{i}", part=part, supplier=mouser)
-            for i in range(6)
+            SupplierPart(SKU=f"2_{i}", part=part, supplier=mouser) for i in range(6)
         ]
 
-        supplier_parts2.insert(3, SupplierPart(
-            SKU="42", part=part, manufacturer_part=mpart, supplier=mouser
-        ))
+        supplier_parts2.insert(
+            3,
+            SupplierPart(SKU="42", part=part, manufacturer_part=mpart, supplier=mouser),
+        )
 
         for supplier_part in supplier_parts2:
             supplier_part.save()
@@ -199,11 +215,18 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         result3 = self.post(url, data={"barcode": DIGIKEY_BARCODE}, expected_code=400)
         self.assertEqual(result3.data['error'], "Item has already been received")
 
-        result4 = self.post(url, data={"barcode": DIGIKEY_BARCODE[:-1]}, expected_code=400)
+        result4 = self.post(
+            url, data={"barcode": DIGIKEY_BARCODE[:-1]}, expected_code=400
+        )
         assert result4.data["error"].startswith(
-            "Failed to find pending line item for supplier part")
+            "Failed to find pending line item for supplier part"
+        )
 
-        result5 = self.post(reverse("api-barcode-scan"), data={"barcode": DIGIKEY_BARCODE}, expected_code=200)
+        result5 = self.post(
+            reverse("api-barcode-scan"),
+            data={"barcode": DIGIKEY_BARCODE},
+            expected_code=200,
+        )
         stock_item = StockItem.objects.get(pk=result5.data["stockitem"]["pk"])
         assert stock_item.supplier_part.SKU == "296-LM358BIDDFRCT-ND"
         assert stock_item.quantity == 10
@@ -216,7 +239,9 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
         assert "success" in result1.data
 
-        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        result2 = self.post(
+            reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE}
+        )
         stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
         assert stock_item.supplier_part.SKU == "42"
         assert stock_item.supplier_part.manufacturer_part.MPN == "MC34063ADR"
@@ -232,7 +257,9 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
         assert "success" in result1.data
 
-        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        result2 = self.post(
+            reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE}
+        )
         stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
         assert stock_item.location == stock_location
 
@@ -250,7 +277,9 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
         assert "success" in result1.data
 
-        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        result2 = self.post(
+            reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE}
+        )
         stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
         assert stock_item.location == stock_location2
 
@@ -268,7 +297,9 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         result1 = self.post(url, data={"barcode": MOUSER_BARCODE})
         assert "success" in result1.data
 
-        result2 = self.post(reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE})
+        result2 = self.post(
+            reverse("api-barcode-scan"), data={"barcode": MOUSER_BARCODE}
+        )
         stock_item = StockItem.objects.get(pk=result2.data["stockitem"]["pk"])
         assert stock_item.location == stock_location2
 
@@ -280,11 +311,14 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
         url = reverse("api-barcode-po-receive")
         barcode = MOUSER_BARCODE.replace("\x1dKP0-1337", "")
-        result1 = self.post(url, data={
-            "barcode": barcode,
-            "purchase_order": self.purchase_order2.pk,
-            "location": stock_location2.pk,
-        })
+        result1 = self.post(
+            url,
+            data={
+                "barcode": barcode,
+                "purchase_order": self.purchase_order2.pk,
+                "location": stock_location2.pk,
+            },
+        )
         assert "success" in result1.data
 
         result2 = self.post(reverse("api-barcode-scan"), data={"barcode": barcode})
@@ -326,7 +360,6 @@ DIGIKEY_BARCODE_3 = (
     "\x1d20Z0000000000000000000000000000000000000000000000000000000000000000000"
     "00000000000000000000000000000000000000000000000000000000000000000000000000"
     "0000000000000000000000000000000000"
-
 )
 
 MOUSER_BARCODE = (

@@ -1,6 +1,5 @@
 """Background task definitions for the 'part' app"""
 
-
 import logging
 import random
 import time
@@ -18,8 +17,12 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models
 import part.stocktake
-from InvenTree.tasks import (ScheduledTask, check_daily_holdoff,
-                             record_task_success, scheduled_task)
+from InvenTree.tasks import (
+    ScheduledTask,
+    check_daily_holdoff,
+    record_task_success,
+    scheduled_task,
+)
 
 logger = logging.getLogger("inventree")
 
@@ -31,23 +34,19 @@ def notify_low_stock(part: part.models.Part):
     - A notification is delivered to any users who are 'subscribed' to this part
     """
     name = _("Low stock notification")
-    message = _(f'The available stock for {part.name} has fallen below the configured minimum level')
+    message = _(
+        f'The available stock for {part.name} has fallen below the configured minimum level'
+    )
     context = {
         'part': part,
         'name': name,
         'message': message,
         'link': InvenTree.helpers_model.construct_absolute_url(part.get_absolute_url()),
-        'template': {
-            'html': 'email/low_stock_notification.html',
-            'subject': name,
-        },
+        'template': {'html': 'email/low_stock_notification.html', 'subject': name},
     }
 
     common.notifications.trigger_notification(
-        part,
-        'part.notify_low_stock',
-        target_fnc=part.get_subscribers,
-        context=context,
+        part, 'part.notify_low_stock', target_fnc=part.get_subscribers, context=context
     )
 
 
@@ -61,10 +60,7 @@ def notify_low_stock_if_required(part: part.models.Part):
 
     for p in parts:
         if p.is_part_low_on_stock():
-            InvenTree.tasks.offload_task(
-                notify_low_stock,
-                p
-            )
+            InvenTree.tasks.offload_task(notify_low_stock, p)
 
 
 def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
@@ -146,7 +142,11 @@ def scheduled_stocktake_reports():
     time.sleep(random.randint(1, 5))
 
     # First let's delete any old stocktake reports
-    delete_n_days = int(common.models.InvenTreeSetting.get_setting('STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False))
+    delete_n_days = int(
+        common.models.InvenTreeSetting.get_setting(
+            'STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False
+        )
+    )
     threshold = datetime.now() - timedelta(days=delete_n_days)
     old_reports = part.models.PartStocktakeReport.objects.filter(date__lt=threshold)
 
@@ -155,11 +155,17 @@ def scheduled_stocktake_reports():
         old_reports.delete()
 
     # Next, check if stocktake functionality is enabled
-    if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False, cache=False):
+    if not common.models.InvenTreeSetting.get_setting(
+        'STOCKTAKE_ENABLE', False, cache=False
+    ):
         logger.info("Stocktake functionality is not enabled - exiting")
         return
 
-    report_n_days = int(common.models.InvenTreeSetting.get_setting('STOCKTAKE_AUTO_DAYS', 0, cache=False))
+    report_n_days = int(
+        common.models.InvenTreeSetting.get_setting(
+            'STOCKTAKE_AUTO_DAYS', 0, cache=False
+        )
+    )
 
     if report_n_days < 1:
         logger.info("Stocktake auto reports are disabled, exiting")

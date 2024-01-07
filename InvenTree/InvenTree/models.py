@@ -58,6 +58,7 @@ class MetadataMixin(models.Model):
 
     class Meta:
         """Meta for MetadataMixin."""
+
         abstract = True
 
     def save(self, *args, **kwargs):
@@ -78,10 +79,13 @@ class MetadataMixin(models.Model):
             self.metadata = {}
 
         if type(self.metadata) is not dict:
-            raise ValidationError({'metadata': _('Metadata must be a python dict object')})
+            raise ValidationError({
+                'metadata': _('Metadata must be a python dict object')
+            })
 
     metadata = models.JSONField(
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Plugin Metadata'),
         help_text=_('JSON metadata field, for use by external plugins'),
     )
@@ -100,7 +104,9 @@ class MetadataMixin(models.Model):
 
         return self.metadata.get(key, backup_value)
 
-    def set_metadata(self, key: str, data, commit: bool = True, overwrite: bool = False):
+    def set_metadata(
+        self, key: str, data, commit: bool = True, overwrite: bool = False
+    ):
         """Save the provided metadata under the provided key.
 
         Args:
@@ -137,7 +143,6 @@ class DataImportMixin(object):
         fields = cls.IMPORT_FIELDS
 
         for name, field in fields.items():
-
             # Attempt to extract base field information from the model
             base_field = None
 
@@ -207,7 +212,10 @@ class ReferenceIndexingMixin(models.Model):
 
         # import at function level to prevent cyclic imports
         from common.models import InvenTreeSetting
-        return InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
+
+        return InvenTreeSetting.get_setting(
+            cls.REFERENCE_PATTERN_SETTING, create=False
+        ).strip()
 
     @classmethod
     def get_reference_context(cls):
@@ -216,10 +224,7 @@ class ReferenceIndexingMixin(models.Model):
         - Returns a python dict object which contains the context data for formatting the reference string.
         - The default implementation provides some default context information
         """
-        return {
-            'ref': cls.get_next_reference(),
-            'date': datetime.now(),
-        }
+        return {'ref': cls.get_next_reference(), 'date': datetime.now()}
 
     @classmethod
     def get_most_recent_item(cls):
@@ -246,7 +251,9 @@ class ReferenceIndexingMixin(models.Model):
         reference = latest.reference.strip
 
         try:
-            reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
+            reference = InvenTree.format.extract_named_group(
+                'ref', reference, cls.get_reference_pattern()
+            )
         except Exception:
             # If reference cannot be extracted using the pattern, try just the integer value
             reference = str(latest.reference_int)
@@ -340,7 +347,9 @@ class ReferenceIndexingMixin(models.Model):
             return
 
         if not InvenTree.format.validate_string(value, pattern):
-            raise ValidationError(_("Reference must match required pattern") + ": " + pattern)
+            raise ValidationError(
+                _("Reference must match required pattern") + ": " + pattern
+            )
 
         # Check that the reference field can be rebuild
         cls.rebuild_reference_field(value, validate=True)
@@ -361,7 +370,9 @@ class ReferenceIndexingMixin(models.Model):
         """
         try:
             # Extract named group based on provided pattern
-            reference = InvenTree.format.extract_named_group('ref', reference, cls.get_reference_pattern())
+            reference = InvenTree.format.extract_named_group(
+                'ref', reference, cls.get_reference_pattern()
+            )
         except Exception:
             pass
 
@@ -369,16 +380,14 @@ class ReferenceIndexingMixin(models.Model):
 
         if validate:
             if reference_int > models.BigIntegerField.MAX_BIGINT:
-                raise ValidationError({
-                    "reference": _("Reference number is too large")
-                })
+                raise ValidationError({"reference": _("Reference number is too large")})
 
         return reference_int
 
     reference_int = models.BigIntegerField(default=0)
 
 
-def extract_int(reference, clip=0x7fffffff, allow_negative=False):
+def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
     """Extract an integer out of reference."""
     # Default value if we cannot convert to an integer
     ref_int = 0
@@ -438,6 +447,7 @@ class InvenTreeAttachment(models.Model):
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
     def getSubdir(self):
@@ -472,28 +482,40 @@ class InvenTreeAttachment(models.Model):
             return os.path.basename(self.attachment.name)
         return str(self.link)
 
-    attachment = models.FileField(upload_to=rename_attachment, verbose_name=_('Attachment'),
-                                  help_text=_('Select file to attach'),
-                                  blank=True, null=True
-                                  )
-
-    link = InvenTree.fields.InvenTreeURLField(
-        blank=True, null=True,
-        verbose_name=_('Link'),
-        help_text=_('Link to external URL')
+    attachment = models.FileField(
+        upload_to=rename_attachment,
+        verbose_name=_('Attachment'),
+        help_text=_('Select file to attach'),
+        blank=True,
+        null=True,
     )
 
-    comment = models.CharField(blank=True, max_length=100, verbose_name=_('Comment'), help_text=_('File comment'))
+    link = InvenTree.fields.InvenTreeURLField(
+        blank=True,
+        null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL'),
+    )
+
+    comment = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_('Comment'),
+        help_text=_('File comment'),
+    )
 
     user = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('User'),
         help_text=_('User'),
     )
 
-    upload_date = models.DateField(auto_now_add=True, null=True, blank=True, verbose_name=_('upload date'))
+    upload_date = models.DateField(
+        auto_now_add=True, null=True, blank=True, verbose_name=_('upload date')
+    )
 
     @property
     def basename(self):
@@ -522,14 +544,36 @@ class InvenTreeAttachment(models.Model):
 
         # Check that there are no directory tricks going on...
         if new_file.parent != attachment_dir:
-            logger.error("Attempted to rename attachment outside valid directory: '%s'", new_file)
+            logger.error(
+                "Attempted to rename attachment outside valid directory: '%s'", new_file
+            )
             raise ValidationError(_("Invalid attachment directory"))
 
         # Ignore further checks if the filename is not actually being renamed
         if new_file == old_file:
             return
 
-        forbidden = ["'", '"', "#", "@", "!", "&", "^", "<", ">", ":", ";", "/", "\\", "|", "?", "*", "%", "~", "`"]
+        forbidden = [
+            "'",
+            '"',
+            "#",
+            "@",
+            "!",
+            "&",
+            "^",
+            "<",
+            ">",
+            ":",
+            ";",
+            "/",
+            "\\",
+            "|",
+            "?",
+            "*",
+            "%",
+            "~",
+            "`",
+        ]
 
         for c in forbidden:
             if c in fn:
@@ -539,7 +583,9 @@ class InvenTreeAttachment(models.Model):
             raise ValidationError(_("Filename missing extension"))
 
         if not old_file.exists():
-            logger.error("Trying to rename attachment '%s' which does not exist", old_file)
+            logger.error(
+                "Trying to rename attachment '%s' which does not exist", old_file
+            )
             return
 
         if new_file.exists():
@@ -586,10 +632,12 @@ class InvenTreeTree(MPTTModel):
 
     class Meta:
         """Metaclass defines extra model properties."""
+
         abstract = True
 
     class MPTTMeta:
         """Set insert order."""
+
         order_insertion_by = ['name']
 
     def delete(self, delete_children=False, delete_items=False):
@@ -607,13 +655,19 @@ class InvenTreeTree(MPTTModel):
             self.refresh_from_db()
         except self.__class__.DoesNotExist:
             # If the object no longer exists, raise a ValidationError
-            raise ValidationError("Object %s of type %s no longer exists", str(self), str(self.__class__))
+            raise ValidationError(
+                "Object %s of type %s no longer exists", str(self), str(self.__class__)
+            )
 
         # Cache node ID values for lower nodes, before we delete this one
-        lower_nodes = list(self.get_descendants(include_self=False).values_list('pk', flat=True))
+        lower_nodes = list(
+            self.get_descendants(include_self=False).values_list('pk', flat=True)
+        )
 
         # 1. Update nodes and items under the current node
-        self.handle_tree_delete(delete_children=delete_children, delete_items=delete_items)
+        self.handle_tree_delete(
+            delete_children=delete_children, delete_items=delete_items
+        )
 
         # 2. Delete *this* node
         super().delete()
@@ -673,9 +727,7 @@ class InvenTreeTree(MPTTModel):
         # - Move all items at any lower level to the parent of this item
         # - Delete all descendant nodes
         elif delete_children and not delete_items:
-            self.get_items(cascade=True).update(**{
-                self.ITEM_PARENT_KEY: self.parent
-            })
+            self.get_items(cascade=True).update(**{self.ITEM_PARENT_KEY: self.parent})
 
             self.delete_nodes(child_nodes)
 
@@ -690,9 +742,7 @@ class InvenTreeTree(MPTTModel):
         # - Move all items directly associated with this node up one level
         # - Move any direct child nodes up one level
         elif not delete_children and not delete_items:
-            self.get_items(cascade=False).update(**{
-                self.ITEM_PARENT_KEY: self.parent
-            })
+            self.get_items(cascade=False).update(**{self.ITEM_PARENT_KEY: self.parent})
             self.get_children().update(parent=self.parent)
 
     def delete_nodes(self, nodes):
@@ -719,8 +769,7 @@ class InvenTreeTree(MPTTModel):
         super().validate_unique(exclude)
 
         results = self.__class__.objects.filter(
-            name=self.name,
-            parent=self.parent
+            name=self.name, parent=self.parent
         ).exclude(pk=self.pk)
 
         if results.exists():
@@ -730,17 +779,11 @@ class InvenTreeTree(MPTTModel):
 
     def api_instance_filters(self):
         """Instance filters for InvenTreeTree models."""
-        return {
-            'parent': {
-                'exclude_tree': self.pk,
-            }
-        }
+        return {'parent': {'exclude_tree': self.pk}}
 
     def construct_pathstring(self):
         """Construct the pathstring for this tree node"""
-        return InvenTree.helpers.constructPathString(
-            [item.name for item in self.path]
-        )
+        return InvenTree.helpers.constructPathString([item.name for item in self.path])
 
     def save(self, *args, **kwargs):
         """Custom save method for InvenTreeTree abstract model"""
@@ -748,15 +791,12 @@ class InvenTreeTree(MPTTModel):
             super().save(*args, **kwargs)
         except InvalidMove:
             # Provide better error for parent selection
-            raise ValidationError({
-                'parent': _("Invalid choice"),
-            })
+            raise ValidationError({'parent': _("Invalid choice")})
 
         # Re-calculate the 'pathstring' field
         pathstring = self.construct_pathstring()
 
         if pathstring != self.pathstring:
-
             if 'force_insert' in kwargs:
                 del kwargs['force_insert']
 
@@ -781,33 +821,29 @@ class InvenTreeTree(MPTTModel):
                 self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
 
     name = models.CharField(
-        blank=False,
-        max_length=100,
-        verbose_name=_("Name"),
-        help_text=_("Name"),
+        blank=False, max_length=100, verbose_name=_("Name"), help_text=_("Name")
     )
 
     description = models.CharField(
         blank=True,
         max_length=250,
         verbose_name=_("Description"),
-        help_text=_("Description (optional)")
+        help_text=_("Description (optional)"),
     )
 
     # When a category is deleted, graft the children onto its parent
-    parent = TreeForeignKey('self',
-                            on_delete=models.DO_NOTHING,
-                            blank=True,
-                            null=True,
-                            verbose_name=_("parent"),
-                            related_name='children')
+    parent = TreeForeignKey(
+        'self',
+        on_delete=models.DO_NOTHING,
+        blank=True,
+        null=True,
+        verbose_name=_("parent"),
+        related_name='children',
+    )
 
     # The 'pathstring' field is calculated each time the model is saved
     pathstring = models.CharField(
-        blank=True,
-        max_length=250,
-        verbose_name=_('Path'),
-        help_text=_('Path')
+        blank=True, max_length=250, verbose_name=_('Path'), help_text=_('Path')
     )
 
     def get_items(self, cascade=False):
@@ -889,12 +925,7 @@ class InvenTreeTree(MPTTModel):
             name: <name>,
         }
         """
-        return [
-            {
-                'pk': item.pk,
-                'name': item.name
-            } for item in self.path
-        ]
+        return [{'pk': item.pk, 'name': item.name} for item in self.path]
 
     def __str__(self):
         """String representation of a category is the full path to that category."""
@@ -914,11 +945,11 @@ class InvenTreeNotesMixin(models.Model):
 
         Note: abstract must be true, as this is only a mixin, not a separate table
         """
+
         abstract = True
 
     notes = InvenTree.fields.InvenTreeNotesField(
-        verbose_name=_('Notes'),
-        help_text=_('Markdown notes (optional)'),
+        verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
     )
 
 
@@ -941,18 +972,21 @@ class InvenTreeBarcodeMixin(models.Model):
 
         Note: abstract must be true, as this is only a mixin, not a separate table
         """
+
         abstract = True
 
     barcode_data = models.CharField(
-        blank=True, max_length=500,
+        blank=True,
+        max_length=500,
         verbose_name=_('Barcode Data'),
         help_text=_('Third party barcode data'),
     )
 
     barcode_hash = models.CharField(
-        blank=True, max_length=128,
+        blank=True,
+        max_length=128,
         verbose_name=_('Barcode Hash'),
-        help_text=_('Unique hash of barcode data')
+        help_text=_('Unique hash of barcode data'),
     )
 
     @classmethod
@@ -964,17 +998,13 @@ class InvenTreeBarcodeMixin(models.Model):
     def format_barcode(self, **kwargs):
         """Return a JSON string for formatting a QR code for this model instance."""
         return InvenTree.helpers.MakeBarcode(
-            self.__class__.barcode_model_type(),
-            self.pk,
-            **kwargs
+            self.__class__.barcode_model_type(), self.pk, **kwargs
         )
 
     def format_matched_response(self):
         """Format a standard response for a matched barcode."""
 
-        data = {
-            'pk': self.pk,
-        }
+        data = {'pk': self.pk}
 
         if hasattr(self, 'get_api_url'):
             api_url = self.get_api_url()
@@ -995,7 +1025,9 @@ class InvenTreeBarcodeMixin(models.Model):
         """Check if a model instance exists with the specified third-party barcode hash."""
         return cls.objects.filter(barcode_hash=barcode_hash).first()
 
-    def assign_barcode(self, barcode_hash=None, barcode_data=None, raise_error=True, save=True):
+    def assign_barcode(
+        self, barcode_hash=None, barcode_data=None, raise_error=True, save=True
+    ):
         """Assign an external (third-party) barcode to this object."""
         # Must provide either barcode_hash or barcode_data
         if barcode_hash is None and barcode_data is None:
@@ -1044,20 +1076,24 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
             users = get_user_model().objects.filter(is_staff=True)
 
             link = InvenTree.helpers_model.construct_absolute_url(
-                reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
+                reverse(
+                    'admin:error_report_error_change', kwargs={'object_id': instance.pk}
+                )
             )
 
             context = {
                 'error': instance,
                 'name': _('Server Error'),
                 'message': _('An error has been logged by the server.'),
-                'link': link
+                'link': link,
             }
 
             target_users = []
 
             for user in users:
-                if common.models.InvenTreeUserSetting.get_setting('NOTIFICATION_ERROR_REPORT', True, user=user):
+                if common.models.InvenTreeUserSetting.get_setting(
+                    'NOTIFICATION_ERROR_REPORT', True, user=user
+                ):
                     target_users.append(user)
 
             if len(target_users) > 0:
@@ -1066,7 +1102,7 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                     'inventree.error_log',
                     context=context,
                     targets=target_users,
-                    delivery_methods={common.notifications.UIMessageNotification, },
+                    delivery_methods={common.notifications.UIMessageNotification},
                 )
 
         except Exception as exc:

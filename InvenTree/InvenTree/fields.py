@@ -35,7 +35,9 @@ class InvenTreeRestURLField(RestURLField):
 
         import common.models
 
-        strict_urls = common.models.InvenTreeSetting.get_setting('INVENTREE_STRICT_URLS', True, cache=False)
+        strict_urls = common.models.InvenTreeSetting.get_setting(
+            'INVENTREE_STRICT_URLS', True, cache=False
+        )
 
         if not strict_urls and data is not empty:
             if '://' not in data:
@@ -97,11 +99,8 @@ class InvenTreeModelMoneyField(ModelMoneyField):
 
         # If no validators are provided, add some "standard" ones
         if len(validators) == 0:
-
             if not allow_negative:
-                validators.append(
-                    MinMoneyValidator(0),
-                )
+                validators.append(MinMoneyValidator(0))
 
         kwargs['validators'] = validators
 
@@ -144,11 +143,7 @@ class DatePickerFormField(forms.DateField):
         required = kwargs.get('required', False)
         initial = kwargs.get('initial', None)
 
-        widget = forms.DateInput(
-            attrs={
-                'type': 'date',
-            }
-        )
+        widget = forms.DateInput(attrs={'type': 'date'})
 
         forms.DateField.__init__(
             self,
@@ -156,7 +151,7 @@ class DatePickerFormField(forms.DateField):
             initial=initial,
             help_text=help_text,
             widget=widget,
-            label=label
+            label=label,
         )
 
 

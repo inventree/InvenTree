@@ -1,4 +1,5 @@
 """URLs for web app."""
+
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import include, path, re_path
@@ -21,11 +22,18 @@ assets_path = path("assets/<path:path>", RedirectAssetView.as_view())
 
 
 urlpatterns = [
-    path(f"{settings.FRONTEND_URL_BASE}/", include([
-        assets_path,
-        path("set-password?uid=<uid>&token=<token>", spa_view, name="password_reset_confirm",),
-        re_path(".*", spa_view),
-    ])),
+    path(
+        f"{settings.FRONTEND_URL_BASE}/",
+        include([
+            assets_path,
+            path(
+                "set-password?uid=<uid>&token=<token>",
+                spa_view,
+                name="password_reset_confirm",
+            ),
+            re_path(".*", spa_view),
+        ]),
+    ),
     assets_path,
     path(settings.FRONTEND_URL_BASE, spa_view, name="platform"),
 ]

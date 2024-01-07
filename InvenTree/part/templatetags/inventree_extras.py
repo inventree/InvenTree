@@ -55,7 +55,6 @@ def render_date(context, date_object):
         return None
 
     if isinstance(date_object, str):
-
         date_object = date_object.strip()
 
         # Check for empty string
@@ -73,22 +72,18 @@ def render_date(context, date_object):
     user_date_format = context.get('user_date_format', None)
 
     if user_date_format is None:
-
         user = context.get('user', None)
 
         if user and user.is_authenticated:
             # User is specified - look for their date display preference
-            user_date_format = common.models.InvenTreeUserSetting.get_setting('DATE_DISPLAY_FORMAT', user=user)
+            user_date_format = common.models.InvenTreeUserSetting.get_setting(
+                'DATE_DISPLAY_FORMAT', user=user
+            )
         else:
             user_date_format = 'YYYY-MM-DD'
 
         # Convert the format string to Pythonic equivalent
-        replacements = [
-            ('YYYY', '%Y'),
-            ('MMM', '%b'),
-            ('MM', '%m'),
-            ('DD', '%d'),
-        ]
+        replacements = [('YYYY', '%Y'), ('MMM', '%b'), ('MM', '%m'), ('DD', '%d')]
 
         for o, n in replacements:
             user_date_format = user_date_format.replace(o, n)
@@ -171,11 +166,8 @@ def plugins_info(*args, **kwargs):
     plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
     # Format list
     return [
-        {
-            'name': plg.name,
-            'slug': plg.slug,
-            'version': plg.version
-        } for plg in plug_list
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
+        for plg in plug_list
     ]
 
 
@@ -344,13 +336,19 @@ def setting_object(key, *args, **kwargs):
         if issubclass(plg.__class__, InvenTreePlugin):
             plg = plg.plugin_config()
 
-        return plugin.models.PluginSetting.get_setting_object(key, plugin=plg, cache=cache)
+        return plugin.models.PluginSetting.get_setting_object(
+            key, plugin=plg, cache=cache
+        )
 
     elif 'method' in kwargs:
-        return plugin.models.NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
+        return plugin.models.NotificationUserSetting.get_setting_object(
+            key, user=kwargs['user'], method=kwargs['method'], cache=cache
+        )
 
     elif 'user' in kwargs:
-        return common.models.InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'], cache=cache)
+        return common.models.InvenTreeUserSetting.get_setting_object(
+            key, user=kwargs['user'], cache=cache
+        )
 
     else:
         return common.models.InvenTreeSetting.get_setting_object(key, cache=cache)
@@ -360,7 +358,9 @@ def setting_object(key, *args, **kwargs):
 def settings_value(key, *args, **kwargs):
     """Return a settings value specified by the given key."""
     if 'user' in kwargs:
-        if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated is False):
+        if not kwargs['user'] or (
+            kwargs['user'] and kwargs['user'].is_authenticated is False
+        ):
             return common.models.InvenTreeUserSetting.get_setting(key)
         return common.models.InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
 
@@ -465,10 +465,7 @@ def get_available_themes(*args, **kwargs):
     from common.models import ColorTheme
 
     for key, name in ColorTheme.get_color_themes_choices():
-        themes.append({
-            'key': key,
-            'name': name
-        })
+        themes.append({'key': key, 'name': name})
 
     return themes
 
@@ -570,7 +567,6 @@ class I18nStaticNode(StaticNode):
             self.original = self.path.var
 
         if hasattr(context, 'request'):
-
             # Convert the "requested" language code to a standard format
             language_code = context.request.LANGUAGE_CODE.lower().strip()
             language_code = language_code.replace('_', '-')
@@ -579,16 +575,11 @@ class I18nStaticNode(StaticNode):
             # - First, try the original requested code, e.g. 'pt-br'
             # - Next, try a simpler version of the code e.g. 'pt'
             # - Finally, fall back to english
-            options = [
-                language_code,
-                language_code.split('-')[0],
-                'en',
-            ]
+            options = [language_code, language_code.split('-')[0], 'en']
 
             for lng in options:
                 lng_file = os.path.join(
-                    djangosettings.STATIC_ROOT,
-                    self.original.format(lng=lng)
+                    djangosettings.STATIC_ROOT, self.original.format(lng=lng)
                 )
 
                 if os.path.exists(lng_file):
