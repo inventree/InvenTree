@@ -5,10 +5,7 @@ coveralls==2.1.2                        # Coveralls linking (for tracking covera
 django-debug-toolbar                    # Debug / profiling toolbar
 django-slowtests                        # Show which unit tests are running slowly
 django-test-migrations                  # Unit testing for database migrations
-flake8                                  # PEP checking
-flake8-docstrings                       # docstring format testing
 isort                                   # python import sorting
-pep8-naming                             # PEP naming convention extension
 pip-tools                               # Compile pip requirements
 pre-commit                              # Git pre-commit
 setuptools                              # Standard dependency
