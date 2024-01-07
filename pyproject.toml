@@ -1,0 +1,18 @@
+
+[tool.ruff]
+exclude=[".git","__pycache__","dist","build","test.py","tests", "venv","env",".venv",".env"]
+
+[tool.ruff.lint]
+select = ["A", "B", "C4", "D", "DJ", "LOG", "N", "I","S"]
+ignore = ["N999", ]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+section-order = ["future", "standard-library", "django", "third-party", "first-party", "local-folder" ]
+known-first-party = ["src", "plugin", "InvenTree", "common"]
+
+[tool.ruff.lint.isort.sections]
+"django" = ["django"]
