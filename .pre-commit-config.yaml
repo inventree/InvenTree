@@ -22,10 +22,13 @@ repos:
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.11
     hooks:
-    - id: ruff-format
-      args: [--preview]
+#    - id: ruff-format
+#      args: [--preview]
     - id: ruff
-      args: [--fix, --preview]
+      args: [
+        #--fix,
+        --preview
+      ]
 -   repo: https://github.com/jazzband/pip-tools
     rev: 7.3.0
     hooks:
