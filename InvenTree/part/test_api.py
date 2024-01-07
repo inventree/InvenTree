@@ -80,7 +80,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             ({'parent': 1, 'cascade': False, 'depth': 1}, 3, 'Dont cascade even with depth=1 specified with parent'),
             ({'parent': 1, 'cascade': True, 'depth': 1}, 5, 'Cascade with depth=1 with parent'),
             ({'parent': 1, 'cascade': True, 'depth': 'abcdefg'}, 5, 'Cascade with invalid depth and parent'),
-            ({'parent': 42}, 8, 'Should return everything if parent_pk is not vaild'),
+            ({'parent': 42}, 8, 'Should return everything if parent_pk is not valid'),
             ({'parent': 'null', 'exclude_tree': 1, 'cascade': True}, 2, 'Should return everything from except tree with pk=1'),
             ({'parent': 'null', 'exclude_tree': 42, 'cascade': True}, 8, 'Should return everything because exclude_tree=42 is no valid pk'),
             ({'parent': 1, 'starred': True, 'cascade': True}, 2, 'Should return the starred categories for the current user within the pk=1 tree'),

@@ -54,13 +54,6 @@ docopt==0.6.2
     # via coveralls
 filelock==3.13.1
     # via virtualenv
-flake8==6.1.0
-    # via
-    #   -r requirements-dev.in
-    #   flake8-docstrings
-    #   pep8-naming
-flake8-docstrings==1.7.0
-    # via -r requirements-dev.in
 identify==2.5.31
     # via pre-commit
 idna==3.4
@@ -73,8 +66,6 @@ importlib-metadata==6.8.0
     #   build
 isort==5.12.0
     # via -r requirements-dev.in
-mccabe==0.7.0
-    # via flake8
 nodeenv==1.8.0
     # via pre-commit
 packaging==23.2
@@ -83,24 +74,16 @@ packaging==23.2
     #   build
 pdfminer-six==20221105
     # via -r requirements-dev.in
-pep8-naming==0.13.3
-    # via -r requirements-dev.in
 pip-tools==7.3.0
     # via -r requirements-dev.in
 platformdirs==3.11.0
     # via virtualenv
 pre-commit==3.5.0
     # via -r requirements-dev.in
-pycodestyle==2.11.1
-    # via flake8
 pycparser==2.21
     # via
     #   -c requirements.txt
     #   cffi
-pydocstyle==6.3.0
-    # via flake8-docstrings
-pyflakes==3.1.0
-    # via flake8
 pyproject-hooks==1.0.0
     # via build
 pytz==2023.3.post1
@@ -115,8 +98,6 @@ requests==2.31.0
     # via
     #   -c requirements.txt
     #   coveralls
-snowballstemmer==2.2.0
-    # via pydocstyle
 sqlparse==0.4.4
     # via
     #   -c requirements.txt
