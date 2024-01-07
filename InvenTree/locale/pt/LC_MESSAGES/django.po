@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-07 19:37+0000\n"
-"PO-Revision-Date: 2023-12-11 03:46\n"
+"POT-Creation-Date: 2023-12-21 05:01+0000\n"
+"PO-Revision-Date: 2024-01-07 22:28\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -142,17 +142,17 @@ msgstr "Número de série duplicado"
 #: InvenTree/helpers.py:523 InvenTree/helpers.py:558
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr ""
+msgstr "Intervalo de grupo inválido: {group}"
 
 #: InvenTree/helpers.py:552
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr ""
+msgstr "Intervalo do grupo {group} excede a quantidade permitida ({expected_quantity})"
 
 #: InvenTree/helpers.py:576 InvenTree/helpers.py:583 InvenTree/helpers.py:598
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr ""
+msgstr "Sequência de grupo inválida:{group}"
 
 #: InvenTree/helpers.py:608
 msgid "No serial numbers found"
@@ -160,7 +160,7 @@ msgstr "Nenhum número de série foi encontrado"
 
 #: InvenTree/helpers.py:611
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr ""
+msgstr "Números de série únicos ({len(serials)}) deve corresponder a quantidade ({expected_quantity})"
 
 #: InvenTree/helpers.py:740
 msgid "Remove HTML tags from this value"
@@ -461,24 +461,23 @@ msgstr "Selecione a Moeda nas opções disponíveis"
 
 #: InvenTree/serializers.py:427
 msgid "You do not have permission to change this user role."
-msgstr ""
+msgstr "Não tem permissões para alterar este papel do usuário."
 
 #: InvenTree/serializers.py:437
 msgid "Only superusers can create new users"
-msgstr ""
+msgstr "Apenas superusuários podem criar novos usuários"
 
 #: InvenTree/serializers.py:454
 #, python-brace-format
 msgid "Welcome to {current_site.name}"
-msgstr ""
+msgstr "Bem-vindo a {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
+msgstr "Sua conta foi criada.\n\n"
+"Use a função de redefinição de senha para obter acesso (em https://{domain})."
 
 #: InvenTree/serializers.py:519
 msgid "Filename"
@@ -532,7 +531,7 @@ msgstr "Coluna duplicada: \"{col}\""
 
 #: InvenTree/serializers.py:867
 msgid "Remote Image"
-msgstr ""
+msgstr "Imagens Remota"
 
 #: InvenTree/serializers.py:868
 msgid "URL of remote image file"
@@ -544,7 +543,7 @@ msgstr "Baixar imagens de URL remota não está habilitado"
 
 #: InvenTree/settings.py:833
 msgid "Bulgarian"
-msgstr ""
+msgstr "Búlgaro"
 
 #: InvenTree/settings.py:834
 msgid "Czech"
@@ -640,7 +639,7 @@ msgstr "Esloveno"
 
 #: InvenTree/settings.py:857
 msgid "Serbian"
-msgstr ""
+msgstr "Sérvio"
 
 #: InvenTree/settings.py:858
 msgid "Swedish"
@@ -990,7 +989,7 @@ msgstr "Escolha de Produção parental inválida"
 
 #: build/models.py:127
 msgid "Build order part cannot be changed"
-msgstr ""
+msgstr "Peça da ordem de produção não pode ser alterada"
 
 #: build/models.py:171
 msgid "Build Order Reference"
@@ -2056,7 +2055,7 @@ msgstr "Descrição do projeto"
 
 #: common/models.py:135
 msgid "User or group responsible for this project"
-msgstr ""
+msgstr "Usuário ou grupo responsável por este projeto"
 
 #: common/models.py:658
 msgid "Settings key (must be unique - case insensitive)"
@@ -2097,7 +2096,7 @@ msgstr "Nome de domínio inválido: {domain}"
 
 #: common/models.py:1012
 msgid "No plugin"
-msgstr ""
+msgstr "Sem extensão"
 
 #: common/models.py:1078
 msgid "Restart required"
@@ -2109,11 +2108,11 @@ msgstr "Uma configuração que requer uma reinicialização do servidor foi alte
 
 #: common/models.py:1086
 msgid "Pending migrations"
-msgstr ""
+msgstr "Migrações pendentes"
 
 #: common/models.py:1087
 msgid "Number of pending database migrations"
-msgstr ""
+msgstr "Número de migrações pendentes na base de dados"
 
 #: common/models.py:1093
 msgid "Server Instance Name"
@@ -2165,11 +2164,11 @@ msgstr "Selecione a moeda base para cálculos de preços"
 
 #: common/models.py:1136
 msgid "Currency Update Interval"
-msgstr ""
+msgstr "Intervalo de Atualização da Moeda"
 
 #: common/models.py:1137
 msgid "How often to update exchange rates (set to zero to disable)"
-msgstr ""
+msgstr "Com que frequência atualizar as taxas de câmbio (defina como zero para desativar)"
 
 #: common/models.py:1139 common/models.py:1210 common/models.py:1228
 #: common/models.py:1235 common/models.py:1246 common/models.py:1257
@@ -2180,11 +2179,11 @@ msgstr "dias"
 
 #: common/models.py:1147
 msgid "Currency Update Plugin"
-msgstr ""
+msgstr "Extensão de Atualização de Moeda"
 
 #: common/models.py:1148
 msgid "Currency update plugin to use"
-msgstr ""
+msgstr "Extensão de Atualização de Moeda a utilizar"
 
 #: common/models.py:1154
 msgid "Download from URL"
@@ -2212,11 +2211,11 @@ msgstr "Permitir a substituição de imagens e arquivos usados baixados por usu�
 
 #: common/models.py:1179
 msgid "Strict URL Validation"
-msgstr ""
+msgstr "Validação rigorosa de URL"
 
 #: common/models.py:1180
 msgid "Require schema specification when validating URLs"
-msgstr ""
+msgstr "Exigir especificação de esquema ao validar URLs"
 
 #: common/models.py:1186
 msgid "Require confirm"
@@ -2288,7 +2287,7 @@ msgstr "Suporte aos códigos de barras"
 
 #: common/models.py:1266
 msgid "Enable barcode scanner support in the web interface"
-msgstr ""
+msgstr "Ativar suporte a leitor de código de barras na interface web"
 
 #: common/models.py:1272
 msgid "Barcode Input Delay"
@@ -2978,11 +2977,11 @@ msgstr "Relatórios de balanço serão apagados após um número de dias especif
 
 #: common/models.py:1895
 msgid "Display Users full names"
-msgstr ""
+msgstr "Mostrar nomes completos dos usuários"
 
 #: common/models.py:1896
 msgid "Display Users full names instead of usernames"
-msgstr ""
+msgstr "Mostrar Nomes Completos em vez de Nomes de Usuário"
 
 #: common/models.py:1908 common/models.py:2337
 msgid "Settings key (must be unique - case insensitive"
@@ -3370,7 +3369,7 @@ msgstr "Comprimento da Tabela de Frases"
 
 #: common/models.py:2286
 msgid "Maximum length limit for strings displayed in table views"
-msgstr ""
+msgstr "Limite máximo de comprimento para frases exibidas nas visualizações de tabela"
 
 #: common/models.py:2295
 msgid "Default part label template"
@@ -3585,11 +3584,11 @@ msgstr "Um novo pedido foi criado e atribuído a você"
 #: common/notifications.py:298
 #, python-brace-format
 msgid "{verbose_name} canceled"
-msgstr ""
+msgstr "{verbose_name} cancelado"
 
 #: common/notifications.py:300
 msgid "A order that is assigned to you was canceled"
-msgstr ""
+msgstr "Um pedido atribuído a você foi cancelado"
 
 #: common/notifications.py:306 common/notifications.py:313
 msgid "Items Received"
@@ -5530,7 +5529,7 @@ msgstr "Palavras chave"
 
 #: part/admin.py:41
 msgid "Part Image"
-msgstr ""
+msgstr "Imagem da Peça"
 
 #: part/admin.py:42 part/admin.py:189 part/stocktake.py:220
 msgid "Category ID"
@@ -5739,17 +5738,17 @@ msgstr "Escolha inválida para peça parental"
 #: part/models.py:495 part/models.py:498
 #, python-brace-format
 msgid "Part '{self}' cannot be used in BOM for '{parent}' (recursive)"
-msgstr ""
+msgstr "Peça '{self}' não pode ser utilizada na BOM para '{parent}' (recursiva)"
 
 #: part/models.py:507
 #, python-brace-format
 msgid "Part '{parent}' is  used in BOM for '{self}' (recursive)"
-msgstr ""
+msgstr "Peça '{parent}' é usada na BOM para '{self}' (recursiva)"
 
 #: part/models.py:574
 #, python-brace-format
 msgid "IPN must match regex pattern {pattern}"
-msgstr ""
+msgstr "IPN deve corresponder ao padrão regex {pattern}"
 
 #: part/models.py:644
 msgid "Stock item with this serial number already exists"
@@ -5890,7 +5889,7 @@ msgstr "Criação de Usuário"
 
 #: part/models.py:983
 msgid "Owner responsible for this part"
-msgstr ""
+msgstr "Proprietário responsável por esta peça"
 
 #: part/models.py:989 part/templates/part/part_base.html:339
 #: stock/templates/stock/item_base.html:451
@@ -5988,11 +5987,11 @@ msgstr "Custo máximo calculado das peças variáveis"
 
 #: part/models.py:2917
 msgid "Override minimum cost"
-msgstr ""
+msgstr "Sobrepor o custo mínimo"
 
 #: part/models.py:2923
 msgid "Override maximum cost"
-msgstr ""
+msgstr "Sobrepor o custo máximo"
 
 #: part/models.py:2929
 msgid "Calculated overall minimum cost"
@@ -6423,11 +6422,11 @@ msgstr "Copiar dados do parâmetro da peça original"
 
 #: part/serializers.py:410
 msgid "Copy Notes"
-msgstr ""
+msgstr "Copiar Notas"
 
 #: part/serializers.py:410
 msgid "Copy notes from original part"
-msgstr ""
+msgstr "Copiar imagem da peça original"
 
 #: part/serializers.py:420
 msgid "Initial Stock Quantity"
@@ -6508,15 +6507,15 @@ msgstr "Copiar modelos de parâmetros a partir de categoria de peça selecionada
 
 #: part/serializers.py:770
 msgid "Existing Image"
-msgstr ""
+msgstr "Imagem Existente"
 
 #: part/serializers.py:771
 msgid "Filename of an existing part image"
-msgstr ""
+msgstr "Nome de arquivo de uma imagem de peça existente"
 
 #: part/serializers.py:791
 msgid "Image file does not exist"
-msgstr ""
+msgstr "A imagem não existe"
 
 #: part/serializers.py:1010
 msgid "Limit stocktake report to a particular part, and any variant parts"
@@ -6560,19 +6559,19 @@ msgstr "Função de Balanço de Estoque não está ativada"
 
 #: part/serializers.py:1131
 msgid "Override calculated value for minimum price"
-msgstr ""
+msgstr "Sobrepor valor calculado para preço mínimo"
 
 #: part/serializers.py:1136
 msgid "Minimum price currency"
-msgstr ""
+msgstr "Moeda do preço mínimo"
 
 #: part/serializers.py:1143
 msgid "Override calculated value for maximum price"
-msgstr ""
+msgstr "Sobrepor valor calculado para preço máximo"
 
 #: part/serializers.py:1148
 msgid "Maximum price currency"
-msgstr ""
+msgstr "Moeda do preço máximo"
 
 #: part/serializers.py:1164
 msgid "Update"
@@ -6585,15 +6584,15 @@ msgstr "Atualizar preços desta peça"
 #: part/serializers.py:1186
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
-msgstr ""
+msgstr "Não foi possível converter das moedas fornecidas para {default_currency}"
 
 #: part/serializers.py:1190
 msgid "Minimum price must not be greater than maximum price"
-msgstr ""
+msgstr "Preço mínimo não pode ser maior que o preço máximo"
 
 #: part/serializers.py:1191
 msgid "Maximum price must not be less than minimum price"
-msgstr ""
+msgstr "Preço máximo não pode ser menor que o preço mínimo"
 
 #: part/serializers.py:1498
 msgid "Select part to copy BOM from"
@@ -7224,7 +7223,7 @@ msgstr "Atualizar Preço da Peça"
 
 #: part/templates/part/prices.html:17
 msgid "Override Part Pricing"
-msgstr ""
+msgstr "Sobrepor Preço da Peça"
 
 #: part/templates/part/prices.html:18
 #: templates/InvenTree/settings/settings_staff_js.html:80
@@ -7269,7 +7268,7 @@ msgstr "Preço Variável"
 
 #: part/templates/part/prices.html:106
 msgid "Pricing Overrides"
-msgstr ""
+msgstr "Sobrepor preços"
 
 #: part/templates/part/prices.html:113
 msgid "Overall Pricing"
@@ -7308,7 +7307,7 @@ msgstr "Adicionar intervalo de preço de venda"
 
 #: part/templates/part/pricing_javascript.html:24
 msgid "Update Pricing"
-msgstr ""
+msgstr "Atualizar Preços"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
 #: templates/js/translated/part.js:2138 templates/js/translated/part.js:2140
@@ -7370,7 +7369,7 @@ msgstr "Banco de dados desconhecido"
 
 #: part/templatetags/inventree_extras.py:231
 msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr ""
+msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: part/views.py:111
 msgid "Match References"
@@ -7379,7 +7378,7 @@ msgstr "Referências de combinações"
 #: part/views.py:243
 #, python-brace-format
 msgid "Can't import part {new_part.name} because there is no category assigned"
-msgstr ""
+msgstr "Não é possível importar a peça {new_part.name} pois não há uma categoria atribuída"
 
 #: part/views.py:384
 msgid "Select Part Image"
@@ -7421,51 +7420,43 @@ msgstr "Código de barras corresponde ao item existente"
 
 #: plugin/base/barcodes/api.py:309
 msgid "No matching part data found"
-msgstr ""
+msgstr "Nenhuma informação de peça correspondente encontrada"
 
 #: plugin/base/barcodes/api.py:326
 msgid "No matching supplier parts found"
-msgstr ""
+msgstr "Nenhuma peça de fornecedor correspondente encontrada"
 
 #: plugin/base/barcodes/api.py:331
 msgid "Multiple matching supplier parts found"
-msgstr ""
+msgstr "Múltiplas peças de fornecedores correspondentes encontradas"
 
 #: plugin/base/barcodes/api.py:356
 msgid "Matched supplier part"
-msgstr ""
+msgstr "Peça de fornecedor correspondente"
 
 #: plugin/base/barcodes/api.py:411
 msgid "Item has already been received"
-msgstr ""
+msgstr "Item do pedido já foi recebido"
 
 #: plugin/base/barcodes/api.py:449
 msgid "No match for supplier barcode"
-msgstr ""
+msgstr "Nenhuma correspondência para o código de barras do fornecedor"
 
 #: plugin/base/barcodes/api.py:498
-#, fuzzy
-#| msgid "Multiple matching parts found"
 msgid "Multiple matching line items found"
-msgstr "Múltiplas peças correspondentes encontradas"
+msgstr "Diversos itens de linha correspondentes encontrados"
 
 #: plugin/base/barcodes/api.py:503
-#, fuzzy
-#| msgid "No matching line items"
 msgid "No matching line item found"
-msgstr "Nenhum item de linha correspondente"
+msgstr "Nenhum item de linha correspondente encontrado"
 
 #: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
-#, fuzzy
-#| msgid "Barcode does not match valid stock item"
 msgid "Barcode does not match an existing stock item"
 msgstr "Código de barras não corresponde a item de estoque válido"
 
 #: plugin/base/barcodes/api.py:563
-#, fuzzy
-#| msgid "Selected stock item does not match BOM line"
 msgid "Stock item does not match line item"
-msgstr "Item estoque selecionado não coincide com linha da LDM"
+msgstr "Item do estoque não corresponde ao item de linha"
 
 #: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -7473,110 +7464,94 @@ msgid "Insufficient stock available"
 msgstr "Estoque insuficiente disponível"
 
 #: plugin/base/barcodes/api.py:599
-#, fuzzy
-#| msgid "Stock item assigned to sales order"
 msgid "Stock item allocated to sales order"
 msgstr "Item de estoque atribuído para pedido de venda"
 
 #: plugin/base/barcodes/api.py:603
-#, fuzzy
-#| msgid "No user information"
 msgid "Not enough information"
-msgstr "Sem informações de usuário"
+msgstr "Não há informação suficiente"
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
-msgstr ""
+msgstr "Múltiplas peças de fornecedores correspondentes encontradas para o código de barras"
 
 #: plugin/base/barcodes/mixins.py:198
 #, python-brace-format
 msgid "Found multiple purchase orders matching '{order}'"
-msgstr ""
+msgstr "Encontrados vários pedidos de compra correspondentes a '{order}'"
 
 #: plugin/base/barcodes/mixins.py:201
 #, python-brace-format
 msgid "No matching purchase order for '{order}'"
-msgstr ""
+msgstr "Nenhum pedido de compra correspondente a '{order}' encontrado"
 
 #: plugin/base/barcodes/mixins.py:207
 msgid "Purchase order does not match supplier"
-msgstr ""
+msgstr "Pedido de compra não corresponde ao fornecedor"
 
 #: plugin/base/barcodes/mixins.py:436
 msgid "Failed to find pending line item for supplier part"
-msgstr ""
+msgstr "Falha ao encontrar item de linha pendente para a parte do fornecedor"
 
 #: plugin/base/barcodes/mixins.py:469
 msgid "Further information required to receive line item"
-msgstr ""
+msgstr "Mais informações necessárias para receber o item de linha"
 
 #: plugin/base/barcodes/mixins.py:480
 msgid "Received purchase order line item"
-msgstr ""
+msgstr "Item de linha do pedido de compra recebido"
 
 #: plugin/base/barcodes/serializers.py:21
 msgid "Scanned barcode data"
-msgstr ""
+msgstr "Dados do código de barras lido"
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "Purchase order no longer exists"
 msgid "Purchase Order to allocate items against"
-msgstr "Pedido de Compra não existe mais"
+msgstr "Pedido de compra para alocar itens contra"
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
-msgstr ""
+msgstr "O pedido de compra não está pendente"
 
 #: plugin/base/barcodes/serializers.py:105
 msgid "PurchaseOrder to receive items against"
-msgstr ""
+msgstr "Pedido de compra para receber itens contra"
 
 #: plugin/base/barcodes/serializers.py:112
 msgid "Purchase order has not been placed"
-msgstr ""
+msgstr "O pedido de compra não foi realizado"
 
 #: plugin/base/barcodes/serializers.py:119
 msgid "Location to receive items into"
-msgstr ""
+msgstr "Localização para receber itens"
 
 #: plugin/base/barcodes/serializers.py:126
 msgid "Cannot select a structural location"
-msgstr ""
+msgstr "Não é possível selecionar um local estrutural"
 
 #: plugin/base/barcodes/serializers.py:140
-#, fuzzy
-#| msgid "Sales Order Allocations"
 msgid "Sales Order to allocate items against"
-msgstr "Alocações do Pedido de Vendas"
+msgstr "Pedido de compra para alocar itens contra"
 
 #: plugin/base/barcodes/serializers.py:147
-#, fuzzy
-#| msgid "Sales order not found"
 msgid "Sales order is not pending"
-msgstr "Pedido de Venda não encontrado"
+msgstr "O pedido de venda não está pendente"
 
 #: plugin/base/barcodes/serializers.py:154
 msgid "Sales order line item to allocate items against"
-msgstr ""
+msgstr "Item de linha do pedido de venda para alocar itens contra"
 
 #: plugin/base/barcodes/serializers.py:160
-#, fuzzy
-#| msgid "Sales order shipment reference"
 msgid "Sales order shipment to allocate items against"
-msgstr "Referência de remessa do pedido de venda"
+msgstr "Envio do pedido de venda para alocar itens contra"
 
 #: plugin/base/barcodes/serializers.py:167
-#, fuzzy
-#| msgid "Shipment has already been shipped"
 msgid "Shipment has already been delivered"
-msgstr "O pedido já foi enviado"
+msgstr "O envio já foi entregue"
 
 #: plugin/base/barcodes/serializers.py:173
-#, fuzzy
-#| msgid "Quantity to order"
 msgid "Quantity to allocate"
-msgstr "Quantidade de compra"
+msgstr "Quantidade a alocar"
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -7640,11 +7615,11 @@ msgstr "Abrir link"
 
 #: plugin/builtin/integration/currency_exchange.py:23
 msgid "InvenTree Currency Exchange"
-msgstr ""
+msgstr "Câmbio de Moeda InvenTree"
 
 #: plugin/builtin/integration/currency_exchange.py:24
 msgid "Default currency exchange integration"
-msgstr ""
+msgstr "Integração padrão de câmbio de moeda"
 
 #: plugin/builtin/labels/inventree_label.py:20
 msgid "InvenTree PDF label printer"
@@ -7664,112 +7639,112 @@ msgstr "Ativar o modo de depuração - retorna HTML bruto em vez de PDF"
 
 #: plugin/builtin/labels/label_sheet.py:29
 msgid "Page size for the label sheet"
-msgstr ""
+msgstr "Tamanho da página para folha de etiqueta"
 
 #: plugin/builtin/labels/label_sheet.py:34
 msgid "Skip Labels"
-msgstr ""
+msgstr "Pular Etiquetas"
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Skip this number of labels when printing label sheets"
-msgstr ""
+msgstr "Ignorar este número de etiquetas quando imprimir folhas de etiquetas"
 
 #: plugin/builtin/labels/label_sheet.py:41
 msgid "Border"
-msgstr ""
+msgstr "Borda"
 
 #: plugin/builtin/labels/label_sheet.py:42
 msgid "Print a border around each label"
-msgstr ""
+msgstr "Imprima uma borda em torno de cada etiqueta"
 
 #: plugin/builtin/labels/label_sheet.py:47 report/models.py:203
 msgid "Landscape"
-msgstr ""
+msgstr "Paisagem"
 
 #: plugin/builtin/labels/label_sheet.py:48
 msgid "Print the label sheet in landscape mode"
-msgstr ""
+msgstr "Imprimir a folha de etiqueta no modo paisagem"
 
 #: plugin/builtin/labels/label_sheet.py:60
 msgid "InvenTree Label Sheet Printer"
-msgstr ""
+msgstr "Impressora de folhas de etiqueta do InvenTree"
 
 #: plugin/builtin/labels/label_sheet.py:61
 msgid "Arrays multiple labels onto a single sheet"
-msgstr ""
+msgstr "Matriz várias etiquetas em uma única folha"
 
 #: plugin/builtin/labels/label_sheet.py:95
 msgid "Label is too large for page size"
-msgstr ""
+msgstr "A etiqueta é muito grande para tamanho de página"
 
 #: plugin/builtin/labels/label_sheet.py:128
 msgid "No labels were generated"
-msgstr ""
+msgstr "Nenhuma etiqueta foi gerada"
 
 #: plugin/builtin/suppliers/digikey.py:16
 msgid "Supplier Integration - DigiKey"
-msgstr ""
+msgstr "Integração de fornecedor - DigiKey"
 
 #: plugin/builtin/suppliers/digikey.py:17
 msgid "Provides support for scanning DigiKey barcodes"
-msgstr ""
+msgstr "Fornece suporte para escanear códigos de barras DigiKey"
 
 #: plugin/builtin/suppliers/digikey.py:26
 msgid "The Supplier which acts as 'DigiKey'"
-msgstr ""
+msgstr "O fornecedor que atua como 'DigiKey'"
 
 #: plugin/builtin/suppliers/lcsc.py:18
 msgid "Supplier Integration - LCSC"
-msgstr ""
+msgstr "Integração de fornecedor - LCSC"
 
 #: plugin/builtin/suppliers/lcsc.py:19
 msgid "Provides support for scanning LCSC barcodes"
-msgstr ""
+msgstr "Fornece suporte para escanear códigos de barras LCSC"
 
 #: plugin/builtin/suppliers/lcsc.py:27
 msgid "The Supplier which acts as 'LCSC'"
-msgstr ""
+msgstr "O fornecedor que atua como 'LCSC'"
 
 #: plugin/builtin/suppliers/mouser.py:16
 msgid "Supplier Integration - Mouser"
-msgstr ""
+msgstr "Integração de fornecedor - Mouser"
 
 #: plugin/builtin/suppliers/mouser.py:17
 msgid "Provides support for scanning Mouser barcodes"
-msgstr ""
+msgstr "Fornece suporte para escanear códigos de barras Mouser"
 
 #: plugin/builtin/suppliers/mouser.py:25
 msgid "The Supplier which acts as 'Mouser'"
-msgstr ""
+msgstr "O fornecedor que atua como 'Mouser'"
 
 #: plugin/builtin/suppliers/tme.py:18
 msgid "Supplier Integration - TME"
-msgstr ""
+msgstr "Integração de fornecedor - TME"
 
 #: plugin/builtin/suppliers/tme.py:19
 msgid "Provides support for scanning TME barcodes"
-msgstr ""
+msgstr "Fornece suporte para escanear códigos de barras TME"
 
 #: plugin/builtin/suppliers/tme.py:27
 msgid "The Supplier which acts as 'TME'"
-msgstr ""
+msgstr "O fornecedor que atua como 'TME'"
 
 #: plugin/installer.py:140
 msgid "Permission denied: only staff users can install plugins"
-msgstr ""
+msgstr "Permissão negada: somente usuários da equipe podem instalar plugins"
 
 #: plugin/installer.py:186
 msgid "Installed plugin successfully"
-msgstr ""
+msgstr "Plugin instalado com sucesso"
 
 #: plugin/installer.py:192
 #, python-brace-format
 msgid "Installed plugin into {path}"
-msgstr ""
+msgstr "Plugin instalado na {path}"
 
 #: plugin/installer.py:201
 msgid "Plugin installation failed"
-msgstr ""
+msgstr "Instalação do plugin falhou"
 
 #: plugin/models.py:28
 msgid "Plugin Configuration"
@@ -7870,11 +7845,11 @@ msgstr "Uma configuração com várias escolhas"
 
 #: plugin/samples/integration/sample_currency_exchange.py:15
 msgid "Sample currency exchange plugin"
-msgstr ""
+msgstr "Plugin de Câmbio de exemplo"
 
 #: plugin/samples/integration/sample_currency_exchange.py:18
 msgid "InvenTree Contributors"
-msgstr ""
+msgstr "Contribuidores do InvenTree"
 
 #: plugin/serializers.py:87
 msgid "Source URL"
@@ -7910,27 +7885,27 @@ msgstr "Qualquer nome do pacote URL deve ser fornecido"
 
 #: plugin/serializers.py:139
 msgid "Full reload"
-msgstr ""
+msgstr "Recarregamento completo"
 
 #: plugin/serializers.py:140
 msgid "Perform a full reload of the plugin registry"
-msgstr ""
+msgstr "Realize um recarregamento completo do registro de plugin"
 
 #: plugin/serializers.py:145
 msgid "Force reload"
-msgstr ""
+msgstr "Forçar recarregamento"
 
 #: plugin/serializers.py:146
 msgid "Force a reload of the plugin registry, even if it is already loaded"
-msgstr ""
+msgstr "Forçar um recarregamento do registro do plugin, mesmo que já esteja carregado"
 
 #: plugin/serializers.py:151
 msgid "Collect plugins"
-msgstr ""
+msgstr "Coletar plugins"
 
 #: plugin/serializers.py:152
 msgid "Collect plugins and add them to the registry"
-msgstr ""
+msgstr "Colete plugins e adicione-os ao registro"
 
 #: plugin/serializers.py:172
 msgid "Activate Plugin"
@@ -7955,19 +7930,19 @@ msgstr "Relatório de teste"
 
 #: report/helpers.py:15
 msgid "A4"
-msgstr ""
+msgstr "A4"
 
 #: report/helpers.py:16
 msgid "A3"
-msgstr ""
+msgstr "A3"
 
 #: report/helpers.py:17
 msgid "Legal"
-msgstr ""
+msgstr "Ofício"
 
 #: report/helpers.py:18
 msgid "Letter"
-msgstr ""
+msgstr "Carta"
 
 #: report/models.py:171
 msgid "Template name"
@@ -7987,11 +7962,11 @@ msgstr "Relatar número de revisão (auto-incrementos)"
 
 #: report/models.py:198
 msgid "Page size for PDF reports"
-msgstr ""
+msgstr "Tamanho da página para relatórios PDF"
 
 #: report/models.py:204
 msgid "Render report in landscape orientation"
-msgstr ""
+msgstr "Renderizar relatório em orientação paisagem"
 
 #: report/models.py:305
 msgid "Pattern for generating report filenames"
@@ -8170,19 +8145,19 @@ msgstr "Série"
 
 #: report/templatetags/report.py:95
 msgid "Asset file does not exist"
-msgstr ""
+msgstr "O arquivo não existe"
 
 #: report/templatetags/report.py:144 report/templatetags/report.py:209
 msgid "Image file not found"
-msgstr ""
+msgstr "Arquivo de imagem não encontrado"
 
 #: report/templatetags/report.py:230
 msgid "part_image tag requires a Part instance"
-msgstr ""
+msgstr "Tag part_image necessita de uma instância de Peça"
 
 #: report/templatetags/report.py:269
 msgid "company_image tag requires a Company instance"
-msgstr ""
+msgstr "Tag company_image necessita de uma instância de Empresa"
 
 #: stock/admin.py:40 stock/admin.py:126
 msgid "Location ID"
@@ -8258,15 +8233,15 @@ msgstr "Localização externa"
 
 #: stock/api.py:659
 msgid "Part Tree"
-msgstr ""
+msgstr "Árvore de Peças"
 
 #: stock/api.py:688
 msgid "Expiry date before"
-msgstr ""
+msgstr "Data de validade antes"
 
 #: stock/api.py:694
 msgid "Expiry date after"
-msgstr ""
+msgstr "Data de validade depois"
 
 #: stock/api.py:699 stock/templates/stock/item_base.html:439
 #: templates/js/translated/table_filters.js:441
@@ -8295,15 +8270,15 @@ msgstr "Números de série não podem ser fornecidos para uma parte não rastre�
 
 #: stock/models.py:56
 msgid "Stock Location type"
-msgstr ""
+msgstr "Tipo de Local de estoque"
 
 #: stock/models.py:57
 msgid "Stock Location types"
-msgstr ""
+msgstr "Tipos de Locais de estoque"
 
 #: stock/models.py:86
 msgid "Default icon for all locations that have no icon set (optional)"
-msgstr ""
+msgstr "Ícone padrão para todos os locais que não tem um ícone (opcional)"
 
 #: stock/models.py:118 stock/models.py:726
 #: stock/templates/stock/location.html:17
@@ -8342,11 +8317,11 @@ msgstr "Esta é uma localização de estoque externo"
 #: stock/models.py:169 templates/js/translated/stock.js:2761
 #: templates/js/translated/table_filters.js:246
 msgid "Location type"
-msgstr ""
+msgstr "Tipo de localização"
 
 #: stock/models.py:172
 msgid "Stock location type of this location"
-msgstr ""
+msgstr "Tipo de Local de Estoque para esta locação"
 
 #: stock/models.py:237
 msgid "You cannot make this stock location structural because some stock items are already located into it!"
@@ -8363,7 +8338,7 @@ msgstr "Item de estoque não pode ser criado para peças virtuais"
 #: stock/models.py:636
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
-msgstr ""
+msgstr "Tipo de peça('{self.supplier_part.part}') deve ser {self.part}"
 
 #: stock/models.py:644 stock/models.py:653
 msgid "Quantity must be 1 for item with a serial number"
@@ -8480,7 +8455,7 @@ msgstr "Quantidade deve ser inteira"
 #: stock/models.py:1429
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({self.quantity})"
-msgstr ""
+msgstr "Quantidade não deve exceder a quantidade em estoque ({self.quantity})"
 
 #: stock/models.py:1432
 msgid "Serial numbers must be a list of integers"
@@ -8613,11 +8588,11 @@ msgstr "Selecione o item de estoque para instalar"
 
 #: stock/serializers.py:496
 msgid "Quantity to Install"
-msgstr ""
+msgstr "Quantidade a Instalar"
 
 #: stock/serializers.py:497
 msgid "Enter the quantity of items to install"
-msgstr ""
+msgstr "Insira a quantidade de itens a instalar"
 
 #: stock/serializers.py:502 stock/serializers.py:581 stock/serializers.py:675
 #: stock/serializers.py:731
@@ -8626,7 +8601,7 @@ msgstr "Adicionar nota de transação (opcional)"
 
 #: stock/serializers.py:511
 msgid "Quantity to install must be at least 1"
-msgstr ""
+msgstr "A quantidade para instalar deve ser pelo menos 1"
 
 #: stock/serializers.py:519
 msgid "Stock item is unavailable"
@@ -8638,7 +8613,7 @@ msgstr "Peça selecionada não está na Lista de Materiais"
 
 #: stock/serializers.py:538
 msgid "Quantity to install must not exceed available quantity"
-msgstr ""
+msgstr "Quantidade a instalar não deve exceder a quantidade disponível"
 
 #: stock/serializers.py:576
 msgid "Destination location for uninstalled item"
@@ -8654,7 +8629,7 @@ msgstr "Peça selecionada não é uma opção válida para conversão"
 
 #: stock/serializers.py:639
 msgid "Cannot convert stock item with assigned SupplierPart"
-msgstr ""
+msgstr "Não é possível converter o item de estoque com a Peça de Fornecedor atribuída"
 
 #: stock/serializers.py:670
 msgid "Destination location for returned item"
@@ -9409,7 +9384,7 @@ msgstr "Instalar extensão"
 #: templates/InvenTree/settings/plugin.html:45
 #: templates/js/translated/plugin.js:224
 msgid "Reload Plugins"
-msgstr ""
+msgstr "Recarregar plugins"
 
 #: templates/InvenTree/settings/plugin.html:55
 msgid "External plugins are not enabled for this InvenTree installation"
@@ -9487,7 +9462,7 @@ msgstr "Amostra"
 
 #: templates/InvenTree/settings/plugin_settings.html:108
 msgid "This is a sample plugin"
-msgstr ""
+msgstr "Este é um plugin de exemplo"
 
 #: templates/InvenTree/settings/plugin_settings.html:113
 msgid "Commit Author"
@@ -9653,29 +9628,29 @@ msgstr "Criar Modelo de Parâmetro de Peça"
 
 #: templates/InvenTree/settings/settings_staff_js.html:440
 msgid "No stock location types found"
-msgstr ""
+msgstr "Nenhum tipo de local de estoque encontrado"
 
 #: templates/InvenTree/settings/settings_staff_js.html:461
 msgid "Location count"
-msgstr ""
+msgstr "Contagem Localizações"
 
 #: templates/InvenTree/settings/settings_staff_js.html:466
 #: templates/InvenTree/settings/settings_staff_js.html:480
 msgid "Edit Location Type"
-msgstr ""
+msgstr "Editar Tipo de localização"
 
 #: templates/InvenTree/settings/settings_staff_js.html:467
 msgid "Delete Location type"
-msgstr ""
+msgstr "Apagar Tipo de localização"
 
 #: templates/InvenTree/settings/settings_staff_js.html:490
 msgid "Delete Location Type"
-msgstr ""
+msgstr "Apagar Tipo de localização"
 
 #: templates/InvenTree/settings/settings_staff_js.html:500
 #: templates/InvenTree/settings/stock.html:35
 msgid "New Location Type"
-msgstr ""
+msgstr "Novo Tipo de localização"
 
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
@@ -9732,7 +9707,7 @@ msgstr "Configurações de Estoque"
 
 #: templates/InvenTree/settings/stock.html:31
 msgid "Stock Location Types"
-msgstr ""
+msgstr "Tipos de Locais de estoque"
 
 #: templates/InvenTree/settings/user.html:13
 msgid "Account Settings"
@@ -10237,11 +10212,11 @@ msgstr "Contate seu administrador de sistema para mais informações"
 
 #: templates/base.html:113
 msgid "Pending Database Migrations"
-msgstr ""
+msgstr "Migrações de Banco de Dados Pendentes"
 
 #: templates/base.html:116
 msgid "There are pending database migrations which require attention"
-msgstr ""
+msgstr "Existem migrações pendentes do banco de dados que requerem atenção"
 
 #: templates/email/build_order_completed.html:9
 #: templates/email/canceled_order_assigned.html:9
@@ -10348,11 +10323,11 @@ msgstr "Tempo limite da conexão atingido ao solicitar dados do servidor"
 
 #: templates/js/translated/api.js:261
 msgid "Error 503: Service Unavailable"
-msgstr ""
+msgstr "Erro 503: Serviço Indisponível"
 
 #: templates/js/translated/api.js:262
 msgid "The server is currently unavailable"
-msgstr ""
+msgstr "O servidor está atualmente indisponível"
 
 #: templates/js/translated/api.js:265
 msgid "Unhandled Error Code"
@@ -11472,27 +11447,27 @@ msgstr "selecionado"
 
 #: templates/js/translated/label.js:133
 msgid "Printing Options"
-msgstr ""
+msgstr "Opções de Impressão"
 
 #: templates/js/translated/label.js:148
 msgid "Print label"
-msgstr ""
+msgstr "Imprimir Etiqueta"
 
 #: templates/js/translated/label.js:148
 msgid "Print labels"
-msgstr ""
+msgstr "Imprimir etiquetas"
 
 #: templates/js/translated/label.js:149
 msgid "Print"
-msgstr ""
+msgstr "Imprimir"
 
 #: templates/js/translated/label.js:155
 msgid "Select label template"
-msgstr ""
+msgstr "Selecione o Modelo de Etiqueta"
 
 #: templates/js/translated/label.js:168
 msgid "Select plugin"
-msgstr ""
+msgstr "Selecione o plugin"
 
 #: templates/js/translated/label.js:187
 msgid "Labels sent to printer"
@@ -11986,7 +11961,7 @@ msgstr "Nenhuma extenssão encontrada"
 
 #: templates/js/translated/plugin.js:58
 msgid "This plugin is no longer installed"
-msgstr ""
+msgstr "Este plugin não está mais instalado"
 
 #: templates/js/translated/plugin.js:60
 msgid "This plugin is active"
@@ -11994,7 +11969,7 @@ msgstr "Esta extensão está ativa"
 
 #: templates/js/translated/plugin.js:62
 msgid "This plugin is installed but not active"
-msgstr ""
+msgstr "Este plugin está instalado mas não está ativo"
 
 #: templates/js/translated/plugin.js:117 templates/js/translated/plugin.js:186
 msgid "Disable Plugin"
@@ -12581,7 +12556,7 @@ msgstr "Confirmar Serialização de Estoque"
 
 #: templates/js/translated/stock.js:139
 msgid "Default icon for all locations that have no icon set (optional) - Explore all available icons on"
-msgstr ""
+msgstr "Ícone padrão para todas as locações que não têm um ícone definido (opcional) - Explorar todos os ícones disponíveis em"
 
 #: templates/js/translated/stock.js:152
 msgid "Parent stock location"
@@ -12589,7 +12564,7 @@ msgstr "Local de estoque parental"
 
 #: templates/js/translated/stock.js:166
 msgid "Add Location type"
-msgstr ""
+msgstr "Adicionar Tipo de localização"
 
 #: templates/js/translated/stock.js:202
 msgid "Edit Stock Location"
@@ -13097,7 +13072,7 @@ msgstr "Incluir locais"
 
 #: templates/js/translated/table_filters.js:267
 msgid "Has location type"
-msgstr ""
+msgstr "Tem Tipo de localização"
 
 #: templates/js/translated/table_filters.js:278
 #: templates/js/translated/table_filters.js:279
@@ -13484,11 +13459,9 @@ msgstr "O provedor de SSO selecionado é inválido ou não foi configurado corre
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Você está prestes a usar sua conta do %(provider_name)s para entrar no\n"
+msgstr "Você está prestes a usar sua conta do %(provider_name)s para entrar no\n"
 "%(site_name)s.<br>Como etapa final, por favor, complete o seguinte formulário:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13577,7 +13550,7 @@ msgstr "Selecione quais usuários estão atribuídos a este grupo"
 
 #: users/admin.py:226
 msgid "The following users are members of multiple groups"
-msgstr ""
+msgstr "Os seguintes usuários são membros de vários grupos"
 
 #: users/admin.py:253
 msgid "Personal info"
@@ -13593,43 +13566,43 @@ msgstr "Datas importantes"
 
 #: users/authentication.py:29 users/models.py:129
 msgid "Token has been revoked"
-msgstr ""
+msgstr "O token foi revogado"
 
 #: users/authentication.py:32
 msgid "Token has expired"
-msgstr ""
+msgstr "Token expirou"
 
 #: users/models.py:70
 msgid "API Token"
-msgstr ""
+msgstr "Token da API"
 
 #: users/models.py:71
 msgid "API Tokens"
-msgstr ""
+msgstr "Tokens de API"
 
 #: users/models.py:109
 msgid "Token Name"
-msgstr ""
+msgstr "Nome do Token"
 
 #: users/models.py:110
 msgid "Custom token name"
-msgstr ""
+msgstr "Nome de token personalizado"
 
 #: users/models.py:116
 msgid "Token expiry date"
-msgstr ""
+msgstr "Data de validade do token"
 
 #: users/models.py:122
 msgid "Last Seen"
-msgstr ""
+msgstr "Visto pela Última Vez"
 
 #: users/models.py:123
 msgid "Last time the token was used"
-msgstr ""
+msgstr "Última vez que o token foi usado"
 
 #: users/models.py:128
 msgid "Revoked"
-msgstr ""
+msgstr "Revogado"
 
 #: users/models.py:393
 msgid "Permission set"
@@ -13662,3 +13635,4 @@ msgstr "Permissões para editar itens"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Permissão para excluir itens"
+
