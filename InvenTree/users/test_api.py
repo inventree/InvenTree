@@ -14,10 +14,7 @@ class UserAPITests(InvenTreeAPITestCase):
 
     def test_user_api(self):
         """Tests for User API endpoints"""
-        response = self.get(
-            reverse('api-user-list'),
-            expected_code=200
-        )
+        response = self.get(reverse('api-user-list'), expected_code=200)
 
         # Check the correct number of results was returned
         self.assertEqual(len(response.data), User.objects.count())
@@ -29,8 +26,7 @@ class UserAPITests(InvenTreeAPITestCase):
         pk = response.data[0]['pk']
 
         response = self.get(
-            reverse('api-user-detail', kwargs={'pk': pk}),
-            expected_code=200
+            reverse('api-user-detail', kwargs={'pk': pk}), expected_code=200
         )
 
         self.assertIn('pk', response.data)
@@ -38,10 +34,7 @@ class UserAPITests(InvenTreeAPITestCase):
 
     def test_group_api(self):
         """Tests for the Group API endpoints"""
-        response = self.get(
-            reverse('api-group-list'),
-            expected_code=200,
-        )
+        response = self.get(reverse('api-group-list'), expected_code=200)
 
         self.assertIn('name', response.data[0])
 
@@ -106,7 +99,14 @@ class UserTokenTests(InvenTreeAPITestCase):
         token.refresh_from_db()
 
         # Check that the metadata has been updated
-        keys = ['user_agent', 'remote_addr', 'remote_host', 'remote_user', 'server_name', 'server_port']
+        keys = [
+            'user_agent',
+            'remote_addr',
+            'remote_host',
+            'remote_user',
+            'server_name',
+            'server_port',
+        ]
 
         for k in keys:
             self.assertIn(k, token.metadata)
@@ -115,7 +115,9 @@ class UserTokenTests(InvenTreeAPITestCase):
         """Test user token authentication"""
 
         # Create a new token
-        token_key = self.get(url=reverse('api-token'), data={'name': 'test'}, expected_code=200).data['token']
+        token_key = self.get(
+            url=reverse('api-token'), data={'name': 'test'}, expected_code=200
+        ).data['token']
 
         # Check that we can use the token to authenticate
         self.client.logout()

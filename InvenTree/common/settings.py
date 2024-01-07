@@ -20,7 +20,9 @@ def currency_code_default():
         return cached_value
 
     try:
-        code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', backup_value='', create=True, cache=True)
+        code = InvenTreeSetting.get_setting(
+            'INVENTREE_DEFAULT_CURRENCY', backup_value='', create=True, cache=True
+        )
     except Exception:  # pragma: no cover
         # Database may not yet be ready, no need to throw an error here
         code = ''

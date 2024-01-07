@@ -14,13 +14,9 @@ class OwnerSerializer(InvenTreeModelSerializer):
 
     class Meta:
         """Metaclass defines serializer fields."""
+
         model = Owner
-        fields = [
-            'pk',
-            'owner_id',
-            'name',
-            'label',
-        ]
+        fields = ['pk', 'owner_id', 'name', 'label']
 
     name = serializers.CharField(read_only=True)
 
@@ -34,7 +30,4 @@ class GroupSerializer(InvenTreeModelSerializer):
         """Metaclass defines serializer fields"""
 
         model = Group
-        fields = [
-            'pk',
-            'name',
-        ]
+        fields = ['pk', 'name']

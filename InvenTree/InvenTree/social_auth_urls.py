@@ -1,4 +1,5 @@
 """API endpoints for social authentication with allauth."""
+
 import logging
 from importlib import import_module
 
@@ -6,8 +7,7 @@ from django.urls import NoReverseMatch, include, path, reverse
 
 from allauth.account.models import EmailAddress
 from allauth.socialaccount import providers
-from allauth.socialaccount.providers.oauth2.views import (OAuth2Adapter,
-                                                          OAuth2LoginView)
+from allauth.socialaccount.providers.oauth2.views import OAuth2Adapter, OAuth2LoginView
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -23,6 +23,7 @@ logger = logging.getLogger('inventree')
 
 class GenericOAuth2ApiLoginView(OAuth2LoginView):
     """Api view to login a user with a social account"""
+
     def dispatch(self, request, *args, **kwargs):
         """Dispatch the regular login view directly."""
         return self.login(request, *args, **kwargs)
@@ -44,8 +45,16 @@ class GenericOAuth2ApiConnectView(GenericOAuth2ApiLoginView):
 def handle_oauth2(adapter: OAuth2Adapter):
     """Define urls for oauth2 endpoints."""
     return [
-        path('login/', GenericOAuth2ApiLoginView.adapter_view(adapter), name=f'{provider.id}_api_login'),
-        path('connect/', GenericOAuth2ApiConnectView.adapter_view(adapter), name=f'{provider.id}_api_connect'),
+        path(
+            'login/',
+            GenericOAuth2ApiLoginView.adapter_view(adapter),
+            name=f'{provider.id}_api_login',
+        ),
+        path(
+            'connect/',
+            GenericOAuth2ApiConnectView.adapter_view(adapter),
+            name=f'{provider.id}_api_connect',
+        ),
     ]
 
 
@@ -64,15 +73,20 @@ social_auth_urlpatterns = []
 provider_urlpatterns = []
 
 for name, provider in providers.registry.provider_map.items():
-
     try:
-        prov_mod = import_module(provider.get_package() + ".views")
+        prov_mod = import_module(provider.get_package() + '.views')
     except ImportError:
-        logger.exception("Could not import authentication provider %s", name)
+        logger.exception('Could not import authentication provider %s', name)
         continue
 
     # Try to extract the adapter class
-    adapters = [cls for cls in prov_mod.__dict__.values() if isinstance(cls, type) and not cls == OAuth2Adapter and issubclass(cls, OAuth2Adapter)]
+    adapters = [
+        cls
+        for cls in prov_mod.__dict__.values()
+        if isinstance(cls, type)
+        and not cls == OAuth2Adapter
+        and issubclass(cls, OAuth2Adapter)
+    ]
 
     # Get urls
     urls = []
@@ -80,10 +94,17 @@ for name, provider in providers.registry.provider_map.items():
         urls = handle_oauth2(adapter=adapters[0])
     else:
         if provider.id in legacy:
-            logger.warning('`%s` is not supported on platform UI. Use `%s` instead.', provider.id, legacy[provider.id])
+            logger.warning(
+                '`%s` is not supported on platform UI. Use `%s` instead.',
+                provider.id,
+                legacy[provider.id],
+            )
             continue
         else:
-            logger.error('Found handler that is not yet ready for platform UI: `%s`. Open an feature request on GitHub if you need it implemented.', provider.id)
+            logger.error(
+                'Found handler that is not yet ready for platform UI: `%s`. Open an feature request on GitHub if you need it implemented.',
+                provider.id,
+            )
             continue
     provider_urlpatterns += [path(f'{provider.id}/', include(urls))]
 
@@ -93,6 +114,7 @@ social_auth_urlpatterns += provider_urlpatterns
 
 class SocialProviderListView(ListAPI):
     """List of available social providers."""
+
     permission_classes = (AllowAny,)
 
     def get(self, request, *args, **kwargs):
@@ -102,21 +124,27 @@ class SocialProviderListView(ListAPI):
             provider_data = {
                 'id': provider.id,
                 'name': provider.name,
-                'configured': False
+                'configured': False,
             }
 
             try:
-                provider_data['login'] = request.build_absolute_uri(reverse(f'{provider.id}_api_login'))
+                provider_data['login'] = request.build_absolute_uri(
+                    reverse(f'{provider.id}_api_login')
+                )
             except NoReverseMatch:
                 provider_data['login'] = None
 
             try:
-                provider_data['connect'] = request.build_absolute_uri(reverse(f'{provider.id}_api_connect'))
+                provider_data['connect'] = request.build_absolute_uri(
+                    reverse(f'{provider.id}_api_connect')
+                )
             except NoReverseMatch:
                 provider_data['connect'] = None
 
             provider_data['configured'] = InvenTree.sso.check_provider(provider)
-            provider_data['display_name'] = InvenTree.sso.provider_display_name(provider)
+            provider_data['display_name'] = InvenTree.sso.provider_display_name(
+                provider
+            )
 
             provider_list.append(provider_data)
 
@@ -124,7 +152,7 @@ class SocialProviderListView(ListAPI):
             'sso_enabled': InvenTree.sso.login_enabled(),
             'sso_registration': InvenTree.sso.registration_enabled(),
             'mfa_required': InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA'),
-            'providers': provider_list
+            'providers': provider_list,
         }
         return Response(data)
 
@@ -151,6 +179,7 @@ class EmptyEmailAddressSerializer(InvenTreeModelSerializer):
 
 class EmailListView(ListCreateAPI):
     """List of registered email addresses for current users."""
+
     permission_classes = (IsAuthenticated,)
     serializer_class = EmailAddressSerializer
 
@@ -161,12 +190,15 @@ class EmailListView(ListCreateAPI):
 
 class EmailActionMixin(CreateAPI):
     """Mixin to modify email addresses for current users."""
+
     serializer_class = EmptyEmailAddressSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         """Filter queryset for current user."""
-        return EmailAddress.objects.filter(user=self.request.user, pk=self.kwargs['pk']).first()
+        return EmailAddress.objects.filter(
+            user=self.request.user, pk=self.kwargs['pk']
+        ).first()
 
     @extend_schema(responses={200: OpenApiResponse(response=EmailAddressSerializer)})
     def post(self, request, *args, **kwargs):

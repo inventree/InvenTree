@@ -1,6 +1,5 @@
 """JSON serializers for common components."""
 
-
 from django.urls import reverse
 
 from flags.state import flag_state
@@ -9,8 +8,10 @@ from rest_framework import serializers
 import common.models as common_models
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
-from InvenTree.serializers import (InvenTreeImageSerializerField,
-                                   InvenTreeModelSerializer)
+from InvenTree.serializers import (
+    InvenTreeImageSerializerField,
+    InvenTreeModelSerializer,
+)
 from users.serializers import OwnerSerializer
 
 
@@ -62,10 +63,7 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
         if choices:
             for choice in choices:
-                results.append({
-                    'value': choice[0],
-                    'display_name': choice[1],
-                })
+                results.append({'value': choice[0], 'display_name': choice[1]})
 
         return results
 
@@ -131,8 +129,10 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
 
     def __init__(self, *args, **kwargs):
         """Init overrides the Meta class to make it dynamic."""
+
         class CustomMeta:
             """Scaffold for custom Meta class."""
+
             fields = [
                 'pk',
                 'key',
@@ -204,10 +204,12 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
                 request = self.context['request']
                 if request.user and request.user.is_staff:
                     meta = obj.target_object._meta
-                    target['link'] = construct_absolute_url(reverse(
-                        f'admin:{meta.db_table}_change',
-                        kwargs={'object_id': obj.target_object_id}
-                    ))
+                    target['link'] = construct_absolute_url(
+                        reverse(
+                            f'admin:{meta.db_table}_change',
+                            kwargs={'object_id': obj.target_object_id},
+                        )
+                    )
 
         return target
 
@@ -257,17 +259,9 @@ class NotesImageSerializer(InvenTreeModelSerializer):
         """Meta options for NotesImageSerializer."""
 
         model = common_models.NotesImage
-        fields = [
-            'pk',
-            'image',
-            'user',
-            'date',
-        ]
+        fields = ['pk', 'image', 'user', 'date']
 
-        read_only_fields = [
-            'date',
-            'user',
-        ]
+        read_only_fields = ['date', 'user']
 
     image = InvenTreeImageSerializerField(required=True)
 
@@ -279,13 +273,7 @@ class ProjectCodeSerializer(InvenTreeModelSerializer):
         """Meta options for ProjectCodeSerializer."""
 
         model = common_models.ProjectCode
-        fields = [
-            'pk',
-            'code',
-            'description',
-            'responsible',
-            'responsible_detail',
-        ]
+        fields = ['pk', 'code', 'description', 'responsible', 'responsible_detail']
 
     responsible_detail = OwnerSerializer(source='responsible', read_only=True)
 
@@ -313,9 +301,4 @@ class CustomUnitSerializer(InvenTreeModelSerializer):
         """Meta options for CustomUnitSerializer."""
 
         model = common_models.CustomUnit
-        fields = [
-            'pk',
-            'name',
-            'symbol',
-            'definition',
-        ]
+        fields = ['pk', 'name', 'symbol', 'definition']

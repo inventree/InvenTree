@@ -66,6 +66,7 @@ class MiddlewareTests(InvenTreeTestCase):
 
     def test_error_exceptions(self):
         """Test that ignored errors are not logged."""
+
         def check(excpected_nbr=0):
             # Check that errors are empty
             errors = Error.objects.all()

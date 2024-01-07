@@ -24,7 +24,7 @@ def reload_translation_stats():
     keys = _translation_stats.keys()
 
     # Note that the names used in the stats file may not align 100%
-    for (code, _lang) in settings.LANGUAGES:
+    for code, _lang in settings.LANGUAGES:
         if code in keys:
             # Direct match, move on
             continue

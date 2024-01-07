@@ -38,9 +38,8 @@ INVENTREE_NEWS_URL = 'https://inventree.org/news/feed.atom'
 TESTING = 'test' in sys.argv or 'TESTING' in os.environ
 
 if TESTING:
-
     # Use a weaker password hasher for testing (improves testing speed)
-    PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher',]
+    PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
 
     # Enable slow-test-runner
     TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
@@ -53,7 +52,7 @@ if TESTING:
         site_packages = '/usr/local/lib/python3.9/site-packages'
 
         if site_packages not in sys.path:
-            print("Adding missing site-packages path:", site_packages)
+            print('Adding missing site-packages path:', site_packages)
             sys.path.append(site_packages)
 
 # Are environment variables manipulated by tests? Needs to be set by testing code
@@ -78,16 +77,17 @@ if version_file.exists():
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 
-ENABLE_CLASSIC_FRONTEND = get_boolean_setting('INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True)
-ENABLE_PLATFORM_FRONTEND = get_boolean_setting('INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True)
+ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
+    'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
+)
+ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
+    'INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True
+)
 
 # Configure logging settings
 log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 
-logging.basicConfig(
-    level=log_level,
-    format="%(asctime)s %(levelname)s %(message)s",
-)
+logging.basicConfig(level=log_level, format='%(asctime)s %(levelname)s %(message)s')
 
 if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
     log_level = 'WARNING'  # pragma: no cover
@@ -95,32 +95,21 @@ if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': log_level,
-    },
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'root': {'handlers': ['console'], 'level': log_level},
     'filters': {
         'require_not_maintenance_mode_503': {
-            '()': 'maintenance_mode.logging.RequireNotMaintenanceMode503',
-        },
+            '()': 'maintenance_mode.logging.RequireNotMaintenanceMode503'
+        }
     },
 }
 
 # Optionally add database-level logging
 if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):
-    LOGGING['loggers'] = {
-        'django.db.backends': {
-            'level': log_level or 'DEBUG',
-        },
-    }
+    LOGGING['loggers'] = {'django.db.backends': {'level': log_level or 'DEBUG'}}
 
 # Get a logger instance for this setup file
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 # Load SECRET_KEY
 SECRET_KEY = config.get_secret_key()
@@ -133,7 +122,7 @@ MEDIA_ROOT = config.get_media_dir()
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = get_setting(
-    "INVENTREE_ALLOWED_HOSTS",
+    'INVENTREE_ALLOWED_HOSTS',
     config_key='allowed_hosts',
     default_value=['*'],
     typecast=list,
@@ -146,13 +135,11 @@ CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
 
 # Extract CORS options from configuration file
 CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
-    "INVENTREE_CORS_ORIGIN_ALLOW_ALL",
-    config_key='cors.allow_all',
-    default_value=False,
+    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=False
 )
 
 CORS_ORIGIN_WHITELIST = get_setting(
-    "INVENTREE_CORS_ORIGIN_WHITELIST",
+    'INVENTREE_CORS_ORIGIN_WHITELIST',
     config_key='cors.whitelist',
     default_value=[],
     typecast=list,
@@ -173,9 +160,7 @@ STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
 
-STATFILES_I18_PROCESSORS = [
-    'InvenTree.context.status_codes',
-]
+STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
 
 # Color Themes Directory
 STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
@@ -189,38 +174,33 @@ DBBACKUP_SEND_EMAIL = False
 DBBACKUP_STORAGE = get_setting(
     'INVENTREE_BACKUP_STORAGE',
     'backup_storage',
-    'django.core.files.storage.FileSystemStorage'
+    'django.core.files.storage.FileSystemStorage',
 )
 
 # Default backup configuration
-DBBACKUP_STORAGE_OPTIONS = get_setting('INVENTREE_BACKUP_OPTIONS', 'backup_options', None)
+DBBACKUP_STORAGE_OPTIONS = get_setting(
+    'INVENTREE_BACKUP_OPTIONS', 'backup_options', None
+)
 if DBBACKUP_STORAGE_OPTIONS is None:
-    DBBACKUP_STORAGE_OPTIONS = {
-        'location': config.get_backup_dir(),
-    }
+    DBBACKUP_STORAGE_OPTIONS = {'location': config.get_backup_dir()}
 
 INVENTREE_ADMIN_ENABLED = get_boolean_setting(
-    'INVENTREE_ADMIN_ENABLED',
-    config_key='admin_enabled',
-    default_value=True
+    'INVENTREE_ADMIN_ENABLED', config_key='admin_enabled', default_value=True
 )
 
 # Base URL for admin pages (default="admin")
 INVENTREE_ADMIN_URL = get_setting(
-    'INVENTREE_ADMIN_URL',
-    config_key='admin_url',
-    default_value='admin'
+    'INVENTREE_ADMIN_URL', config_key='admin_url', default_value='admin'
 )
 
 INSTALLED_APPS = [
     # Admin site integration
     'django.contrib.admin',
-
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
-    'plugin.apps.PluginAppConfig',          # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
+    'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
     'label.apps.LabelConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
@@ -229,109 +209,113 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'web',
     'generic',
-    'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
-
+    'InvenTree.apps.InvenTreeConfig',  # InvenTree app runs last
     # Core django modules
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'user_sessions',                # db user sessions
+    'user_sessions',  # db user sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-
     # Maintenance
     'maintenance_mode',
-
     # Third part add-ons
-    'django_filters',                       # Extended filter functionality
-    'rest_framework',                       # DRF (Django Rest Framework)
-    'corsheaders',                          # Cross-origin Resource Sharing for DRF
-    'crispy_forms',                         # Improved form rendering
-    'import_export',                        # Import / export tables to file
-    'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
-    'mptt',                                 # Modified Preorder Tree Traversal
-    'markdownify',                          # Markdown template rendering
-    'djmoney',                              # django-money integration
-    'djmoney.contrib.exchange',             # django-money exchange rates
-    'error_report',                         # Error reporting in the admin interface
+    'django_filters',  # Extended filter functionality
+    'rest_framework',  # DRF (Django Rest Framework)
+    'corsheaders',  # Cross-origin Resource Sharing for DRF
+    'crispy_forms',  # Improved form rendering
+    'import_export',  # Import / export tables to file
+    'django_cleanup.apps.CleanupConfig',  # Automatically delete orphaned MEDIA files
+    'mptt',  # Modified Preorder Tree Traversal
+    'markdownify',  # Markdown template rendering
+    'djmoney',  # django-money integration
+    'djmoney.contrib.exchange',  # django-money exchange rates
+    'error_report',  # Error reporting in the admin interface
     'django_q',
-    'formtools',                            # Form wizard tools
-    'dbbackup',                             # Backups - django-dbbackup
-    'taggit',                               # Tagging
-    'flags',                                # Flagging - django-flags
-
-    'allauth',                              # Base app for SSO
-    'allauth.account',                      # Extend user with accounts
-    'allauth.socialaccount',                # Use 'social' providers
-
-    'django_otp',                           # OTP is needed for MFA - base package
-    'django_otp.plugins.otp_totp',          # Time based OTP
-    'django_otp.plugins.otp_static',        # Backup codes
-
-    'allauth_2fa',                          # MFA flow for allauth
-    'dj_rest_auth',                         # Authentication APIs - dj-rest-auth
-    'dj_rest_auth.registration',            # Registration APIs - dj-rest-auth'
-    'drf_spectacular',                      # API documentation
-
-    'django_ical',                          # For exporting calendars
+    'formtools',  # Form wizard tools
+    'dbbackup',  # Backups - django-dbbackup
+    'taggit',  # Tagging
+    'flags',  # Flagging - django-flags
+    'allauth',  # Base app for SSO
+    'allauth.account',  # Extend user with accounts
+    'allauth.socialaccount',  # Use 'social' providers
+    'django_otp',  # OTP is needed for MFA - base package
+    'django_otp.plugins.otp_totp',  # Time based OTP
+    'django_otp.plugins.otp_static',  # Backup codes
+    'allauth_2fa',  # MFA flow for allauth
+    'dj_rest_auth',  # Authentication APIs - dj-rest-auth
+    'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
+    'drf_spectacular',  # API documentation
+    'django_ical',  # For exporting calendars
 ]
 
-MIDDLEWARE = CONFIG.get('middleware', [
-    'django.middleware.security.SecurityMiddleware',
-    'x_forwarded_for.middleware.XForwardedForMiddleware',
-    'user_sessions.middleware.SessionMiddleware',                   # db user sessions
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'InvenTree.middleware.InvenTreeRemoteUserMiddleware',       # Remote / proxy auth
-    'django_otp.middleware.OTPMiddleware',                      # MFA support
-    'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',    # Flow control for allauth
-    'allauth.account.middleware.AccountMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware',
-    'InvenTree.middleware.Check2FAMiddleware',                  # Check if the user should be forced to use MFA
-    'maintenance_mode.middleware.MaintenanceModeMiddleware',
-    'InvenTree.middleware.InvenTreeExceptionProcessor',         # Error reporting
-])
+MIDDLEWARE = CONFIG.get(
+    'middleware',
+    [
+        'django.middleware.security.SecurityMiddleware',
+        'x_forwarded_for.middleware.XForwardedForMiddleware',
+        'user_sessions.middleware.SessionMiddleware',  # db user sessions
+        'django.middleware.locale.LocaleMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'corsheaders.middleware.CorsMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
+        'django_otp.middleware.OTPMiddleware',  # MFA support
+        'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',  # Flow control for allauth
+        'allauth.account.middleware.AccountMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'InvenTree.middleware.AuthRequiredMiddleware',
+        'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
+        'maintenance_mode.middleware.MaintenanceModeMiddleware',
+        'InvenTree.middleware.InvenTreeExceptionProcessor',  # Error reporting
+    ],
+)
 
-AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
-    'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
-    "sesame.backends.ModelBackend",                             # Magic link login django-sesame
-])
+AUTHENTICATION_BACKENDS = CONFIG.get(
+    'authentication_backends',
+    [
+        'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
+        'django.contrib.auth.backends.ModelBackend',
+        'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
+        'sesame.backends.ModelBackend',  # Magic link login django-sesame
+    ],
+)
 
 # LDAP support
-LDAP_AUTH = get_boolean_setting("INVENTREE_LDAP_ENABLED", "ldap.enabled", False)
+LDAP_AUTH = get_boolean_setting('INVENTREE_LDAP_ENABLED', 'ldap.enabled', False)
 if LDAP_AUTH:
     import ldap
     from django_auth_ldap.config import GroupOfUniqueNamesType, LDAPSearch
 
-    AUTHENTICATION_BACKENDS.append("django_auth_ldap.backend.LDAPBackend")
+    AUTHENTICATION_BACKENDS.append('django_auth_ldap.backend.LDAPBackend')
 
     # debug mode to troubleshoot configuration
-    LDAP_DEBUG = get_boolean_setting("INVENTREE_LDAP_DEBUG", "ldap.debug", False)
+    LDAP_DEBUG = get_boolean_setting('INVENTREE_LDAP_DEBUG', 'ldap.debug', False)
     if LDAP_DEBUG:
-        if "loggers" not in LOGGING:
-            LOGGING["loggers"] = {}
-        LOGGING["loggers"]["django_auth_ldap"] = {"level": "DEBUG", "handlers": ["console"]}
+        if 'loggers' not in LOGGING:
+            LOGGING['loggers'] = {}
+        LOGGING['loggers']['django_auth_ldap'] = {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
 
     # get global options from dict and use ldap.OPT_* as keys and values
-    global_options_dict = get_setting("INVENTREE_LDAP_GLOBAL_OPTIONS", "ldap.global_options", {}, dict)
+    global_options_dict = get_setting(
+        'INVENTREE_LDAP_GLOBAL_OPTIONS', 'ldap.global_options', {}, dict
+    )
     global_options = {}
     for k, v in global_options_dict.items():
         # keys are always ldap.OPT_* constants
         k_attr = getattr(ldap, k, None)
-        if not k.startswith("OPT_") or k_attr is None:
+        if not k.startswith('OPT_') or k_attr is None:
             print(f"[LDAP] ldap.global_options, key '{k}' not found, skipping...")
             continue
 
         # values can also be other strings, e.g. paths
         v_attr = v
-        if v.startswith("OPT_"):
+        if v.startswith('OPT_'):
             v_attr = getattr(ldap, v, None)
 
         if v_attr is None:
@@ -341,42 +325,65 @@ if LDAP_AUTH:
         global_options[k_attr] = v_attr
     AUTH_LDAP_GLOBAL_OPTIONS = global_options
     if LDAP_DEBUG:
-        print("[LDAP] ldap.global_options =", global_options)
+        print('[LDAP] ldap.global_options =', global_options)
 
-    AUTH_LDAP_SERVER_URI = get_setting("INVENTREE_LDAP_SERVER_URI", "ldap.server_uri")
-    AUTH_LDAP_START_TLS = get_boolean_setting("INVENTREE_LDAP_START_TLS", "ldap.start_tls", False)
-    AUTH_LDAP_BIND_DN = get_setting("INVENTREE_LDAP_BIND_DN", "ldap.bind_dn")
-    AUTH_LDAP_BIND_PASSWORD = get_setting("INVENTREE_LDAP_BIND_PASSWORD", "ldap.bind_password")
-    AUTH_LDAP_USER_SEARCH = LDAPSearch(
-        get_setting("INVENTREE_LDAP_SEARCH_BASE_DN", "ldap.search_base_dn"),
-        ldap.SCOPE_SUBTREE,
-        str(get_setting("INVENTREE_LDAP_SEARCH_FILTER_STR", "ldap.search_filter_str", "(uid= %(user)s)"))
+    AUTH_LDAP_SERVER_URI = get_setting('INVENTREE_LDAP_SERVER_URI', 'ldap.server_uri')
+    AUTH_LDAP_START_TLS = get_boolean_setting(
+        'INVENTREE_LDAP_START_TLS', 'ldap.start_tls', False
     )
-    AUTH_LDAP_USER_DN_TEMPLATE = get_setting("INVENTREE_LDAP_USER_DN_TEMPLATE", "ldap.user_dn_template")
-    AUTH_LDAP_USER_ATTR_MAP = get_setting("INVENTREE_LDAP_USER_ATTR_MAP", "ldap.user_attr_map", {
-        'first_name': 'givenName',
-        'last_name': 'sn',
-        'email': 'mail',
-    }, dict)
-    AUTH_LDAP_ALWAYS_UPDATE_USER = get_boolean_setting("INVENTREE_LDAP_ALWAYS_UPDATE_USER", "ldap.always_update_user", True)
-    AUTH_LDAP_CACHE_TIMEOUT = get_setting("INVENTREE_LDAP_CACHE_TIMEOUT", "ldap.cache_timeout", 3600, int)
+    AUTH_LDAP_BIND_DN = get_setting('INVENTREE_LDAP_BIND_DN', 'ldap.bind_dn')
+    AUTH_LDAP_BIND_PASSWORD = get_setting(
+        'INVENTREE_LDAP_BIND_PASSWORD', 'ldap.bind_password'
+    )
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
+        ldap.SCOPE_SUBTREE,
+        str(
+            get_setting(
+                'INVENTREE_LDAP_SEARCH_FILTER_STR',
+                'ldap.search_filter_str',
+                '(uid= %(user)s)',
+            )
+        ),
+    )
+    AUTH_LDAP_USER_DN_TEMPLATE = get_setting(
+        'INVENTREE_LDAP_USER_DN_TEMPLATE', 'ldap.user_dn_template'
+    )
+    AUTH_LDAP_USER_ATTR_MAP = get_setting(
+        'INVENTREE_LDAP_USER_ATTR_MAP',
+        'ldap.user_attr_map',
+        {'first_name': 'givenName', 'last_name': 'sn', 'email': 'mail'},
+        dict,
+    )
+    AUTH_LDAP_ALWAYS_UPDATE_USER = get_boolean_setting(
+        'INVENTREE_LDAP_ALWAYS_UPDATE_USER', 'ldap.always_update_user', True
+    )
+    AUTH_LDAP_CACHE_TIMEOUT = get_setting(
+        'INVENTREE_LDAP_CACHE_TIMEOUT', 'ldap.cache_timeout', 3600, int
+    )
 
     AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-        get_setting("INVENTREE_LDAP_GROUP_SEARCH", "ldap.group_search"),
+        get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
         ldap.SCOPE_SUBTREE,
-        "(objectClass=groupOfUniqueNames)",
+        '(objectClass=groupOfUniqueNames)',
     )
-    AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr="cn")
-    AUTH_LDAP_REQUIRE_GROUP = get_setting("INVENTREE_LDAP_REQUIRE_GROUP", "ldap.require_group")
-    AUTH_LDAP_DENY_GROUP = get_setting("INVENTREE_LDAP_DENY_GROUP", "ldap.deny_group")
-    AUTH_LDAP_USER_FLAGS_BY_GROUP = get_setting("INVENTREE_LDAP_USER_FLAGS_BY_GROUP", "ldap.user_flags_by_group", {}, dict)
+    AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr='cn')
+    AUTH_LDAP_REQUIRE_GROUP = get_setting(
+        'INVENTREE_LDAP_REQUIRE_GROUP', 'ldap.require_group'
+    )
+    AUTH_LDAP_DENY_GROUP = get_setting('INVENTREE_LDAP_DENY_GROUP', 'ldap.deny_group')
+    AUTH_LDAP_USER_FLAGS_BY_GROUP = get_setting(
+        'INVENTREE_LDAP_USER_FLAGS_BY_GROUP', 'ldap.user_flags_by_group', {}, dict
+    )
     AUTH_LDAP_FIND_GROUP_PERMS = True
 
-DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting('INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False)
+DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting(
+    'INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False
+)
 
 # If the debug toolbar is enabled, add the modules
 if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
-    logger.info("Running with DEBUG_TOOLBAR enabled")
+    logger.info('Running with DEBUG_TOOLBAR enabled')
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
@@ -386,9 +393,7 @@ if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
     }
 
 # Internal IP addresses allowed to see the debug toolbar
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
+INTERNAL_IPS = ['127.0.0.1']
 
 # Internal flag to determine if we are running in docker mode
 DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
@@ -396,7 +401,10 @@ DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
 if DOCKER:  # pragma: no cover
     # Internal IP addresses are different when running under docker
     hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
+    INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips] + [
+        '127.0.0.1',
+        '10.0.2.2',
+    ]
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -426,15 +434,18 @@ TEMPLATES = [
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
             ],
-            'loaders': [(
-                'InvenTree.template.InvenTreeTemplateLoader', [
-                    'plugin.template.PluginTemplateLoader',
-                    'django.template.loaders.filesystem.Loader',
-                    'django.template.loaders.app_directories.Loader',
-                ])
+            'loaders': [
+                (
+                    'InvenTree.template.InvenTreeTemplateLoader',
+                    [
+                        'plugin.template.PluginTemplateLoader',
+                        'django.template.loaders.filesystem.Loader',
+                        'django.template.loaders.app_directories.Loader',
+                    ],
+                )
             ],
         },
-    },
+    }
 ]
 
 if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
@@ -459,22 +470,24 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ],
+    'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
     'TOKEN_MODEL': 'users.models.ApiToken',
 }
 
 if DEBUG:
     # Enable browsable API if in DEBUG mode
-    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
+        'rest_framework.renderers.BrowsableAPIRenderer'
+    )
 
 # dj-rest-auth
 # JWT switch
 USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
 REST_USE_JWT = USE_JWT
 OLD_PASSWORD_FIELD_ENABLED = True
-REST_AUTH_REGISTER_SERIALIZERS = {'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'}
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'
+}
 
 # JWT settings - rest_framework_simplejwt
 if USE_JWT:
@@ -490,7 +503,10 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
     'LICENSE': {'MIT': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
-    'EXTERNAL_DOCS': {'docs': 'https://docs.inventree.org', 'web': 'https://inventree.org'},
+    'EXTERNAL_DOCS': {
+        'docs': 'https://docs.inventree.org',
+        'web': 'https://inventree.org',
+    },
     'VERSION': inventreeApiVersion(),
     'SERVE_INCLUDE_SCHEMA': False,
 }
@@ -505,7 +521,7 @@ Configure the database backend based on the user-specified values.
 - The following code lets the user "mix and match" database configuration
 """
 
-logger.debug("Configuring database backend:")
+logger.debug('Configuring database backend:')
 
 # Extract database configuration from the config.yaml file
 db_config = CONFIG.get('database', {})
@@ -519,7 +535,7 @@ db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
 
 for key in db_keys:
     # First, check the environment variables
-    env_key = f"INVENTREE_DB_{key}"
+    env_key = f'INVENTREE_DB_{key}'
     env_var = os.environ.get(env_key, None)
 
     if env_var:
@@ -528,7 +544,7 @@ for key in db_keys:
             try:
                 env_var = int(env_var)
             except ValueError:
-                logger.exception("Invalid number for %s: %s", env_key, env_var)
+                logger.exception('Invalid number for %s: %s', env_key, env_var)
         # Override configuration value
         db_config[key] = env_var
 
@@ -569,9 +585,9 @@ if 'sqlite' in db_engine:
     db_name = str(Path(db_name).resolve())
     db_config['NAME'] = db_name
 
-logger.info("DB_ENGINE: %s", db_engine)
-logger.info("DB_NAME: %s", db_name)
-logger.info("DB_HOST: %s", db_host)
+logger.info('DB_ENGINE: %s', db_engine)
+logger.info('DB_NAME: %s', db_name)
+logger.info('DB_HOST: %s', db_host)
 
 """
 In addition to base-level database configuration, we may wish to specify specific options to the database backend
@@ -584,19 +600,21 @@ Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
 # connecting to the database server (such as a replica failover) don't sit and
 # wait for possibly an hour or more, just tell the client something went wrong
 # and let the client retry when they want to.
-db_options = db_config.get("OPTIONS", db_config.get("options", {}))
+db_options = db_config.get('OPTIONS', db_config.get('options', {}))
 
 # Specific options for postgres backend
-if "postgres" in db_engine:  # pragma: no cover
-    from psycopg2.extensions import (ISOLATION_LEVEL_READ_COMMITTED,
-                                     ISOLATION_LEVEL_SERIALIZABLE)
+if 'postgres' in db_engine:  # pragma: no cover
+    from psycopg2.extensions import (
+        ISOLATION_LEVEL_READ_COMMITTED,
+        ISOLATION_LEVEL_SERIALIZABLE,
+    )
 
     # Connection timeout
-    if "connect_timeout" not in db_options:
+    if 'connect_timeout' not in db_options:
         # The DB server is in the same data center, it should not take very
         # long to connect to the database server
         # # seconds, 2 is minimum allowed by libpq
-        db_options["connect_timeout"] = int(
+        db_options['connect_timeout'] = int(
             get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 2)
         )
 
@@ -606,27 +624,37 @@ if "postgres" in db_engine:  # pragma: no cover
     # issue to resolve itself.  It it that doesn't happen whatever happened
     # is probably fatal and no amount of waiting is going to fix it.
     # # 0 - TCP Keepalives disabled; 1 - enabled
-    if "keepalives" not in db_options:
-        db_options["keepalives"] = int(
+    if 'keepalives' not in db_options:
+        db_options['keepalives'] = int(
             get_setting('INVENTREE_DB_TCP_KEEPALIVES', 'database.tcp_keepalives', 1)
         )
 
     # Seconds after connection is idle to send keep alive
-    if "keepalives_idle" not in db_options:
-        db_options["keepalives_idle"] = int(
-            get_setting('INVENTREE_DB_TCP_KEEPALIVES_IDLE', 'database.tcp_keepalives_idle', 1)
+    if 'keepalives_idle' not in db_options:
+        db_options['keepalives_idle'] = int(
+            get_setting(
+                'INVENTREE_DB_TCP_KEEPALIVES_IDLE', 'database.tcp_keepalives_idle', 1
+            )
         )
 
     # Seconds after missing ACK to send another keep alive
-    if "keepalives_interval" not in db_options:
-        db_options["keepalives_interval"] = int(
-            get_setting("INVENTREE_DB_TCP_KEEPALIVES_INTERVAL", "database.tcp_keepalives_internal", "1")
+    if 'keepalives_interval' not in db_options:
+        db_options['keepalives_interval'] = int(
+            get_setting(
+                'INVENTREE_DB_TCP_KEEPALIVES_INTERVAL',
+                'database.tcp_keepalives_internal',
+                '1',
+            )
         )
 
     # Number of missing ACKs before we close the connection
-    if "keepalives_count" not in db_options:
-        db_options["keepalives_count"] = int(
-            get_setting("INVENTREE_DB_TCP_KEEPALIVES_COUNT", "database.tcp_keepalives_count", "5")
+    if 'keepalives_count' not in db_options:
+        db_options['keepalives_count'] = int(
+            get_setting(
+                'INVENTREE_DB_TCP_KEEPALIVES_COUNT',
+                'database.tcp_keepalives_count',
+                '5',
+            )
         )
 
     # # Milliseconds for how long pending data should remain unacked
@@ -640,12 +668,18 @@ if "postgres" in db_engine:  # pragma: no cover
     # protect against simultaneous changes.
     # https://www.postgresql.org/docs/devel/transaction-iso.html
     # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
-    if "isolation_level" not in db_options:
-        serializable = get_boolean_setting('INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False)
-        db_options["isolation_level"] = ISOLATION_LEVEL_SERIALIZABLE if serializable else ISOLATION_LEVEL_READ_COMMITTED
+    if 'isolation_level' not in db_options:
+        serializable = get_boolean_setting(
+            'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
+        )
+        db_options['isolation_level'] = (
+            ISOLATION_LEVEL_SERIALIZABLE
+            if serializable
+            else ISOLATION_LEVEL_READ_COMMITTED
+        )
 
 # Specific options for MySql / MariaDB backend
-elif "mysql" in db_engine:  # pragma: no cover
+elif 'mysql' in db_engine:  # pragma: no cover
     # TODO TCP time outs and keepalives
 
     # MariaDB's default isolation level is Repeatable Read which is
@@ -654,12 +688,16 @@ elif "mysql" in db_engine:  # pragma: no cover
     # protect against siumltaneous changes.
     # https://mariadb.com/kb/en/mariadb-transactions-and-isolation-levels-for-sql-server-users/#changing-the-isolation-level
     # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
-    if "isolation_level" not in db_options:
-        serializable = get_boolean_setting('INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False)
-        db_options["isolation_level"] = "serializable" if serializable else "read committed"
+    if 'isolation_level' not in db_options:
+        serializable = get_boolean_setting(
+            'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
+        )
+        db_options['isolation_level'] = (
+            'serializable' if serializable else 'read committed'
+        )
 
 # Specific options for sqlite backend
-elif "sqlite" in db_engine:
+elif 'sqlite' in db_engine:
     # TODO: Verify timeouts are not an issue because no network is involved for SQLite
 
     # SQLite's default isolation level is Serializable due to SQLite's
@@ -672,31 +710,34 @@ elif "sqlite" in db_engine:
 db_config['OPTIONS'] = db_options
 
 # Set testing options for the database
-db_config['TEST'] = {
-    'CHARSET': 'utf8',
-}
+db_config['TEST'] = {'CHARSET': 'utf8'}
 
 # Set collation option for mysql test database
 if 'mysql' in db_engine:
     db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
-DATABASES = {
-    'default': db_config
-}
+DATABASES = {'default': db_config}
 
 # login settings
-REMOTE_LOGIN = get_boolean_setting('INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False)
-REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER')
+REMOTE_LOGIN = get_boolean_setting(
+    'INVENTREE_REMOTE_LOGIN', 'remote_login_enabled', False
+)
+REMOTE_LOGIN_HEADER = get_setting(
+    'INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER'
+)
 
 # sentry.io integration for error reporting
-SENTRY_ENABLED = get_boolean_setting('INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False)
+SENTRY_ENABLED = get_boolean_setting(
+    'INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False
+)
 
 # Default Sentry DSN (can be overridden if user wants custom sentry integration)
 SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', 'sentry_dsn', default_sentry_dsn())
-SENTRY_SAMPLE_RATE = float(get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1))
+SENTRY_SAMPLE_RATE = float(
+    get_setting('INVENTREE_SENTRY_SAMPLE_RATE', 'sentry_sample_rate', 0.1)
+)
 
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
-
     inventree_tags = {
         'testing': TESTING,
         'docker': DOCKER,
@@ -715,53 +756,47 @@ if cache_host:  # pragma: no cover
     # so don't wait too long for the cache as nothing in the cache should be
     # irreplaceable.
     _cache_options = {
-        "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
-        "SOCKET_TIMEOUT": int(os.getenv("CACHE_SOCKET_TIMEOUT", "2")),
-        "CONNECTION_POOL_KWARGS": {
-            "socket_keepalive": config.is_true(
-                os.getenv("CACHE_TCP_KEEPALIVE", "1")
-            ),
-            "socket_keepalive_options": {
-                socket.TCP_KEEPCNT: int(
-                    os.getenv("CACHE_KEEPALIVES_COUNT", "5")
-                ),
-                socket.TCP_KEEPIDLE: int(
-                    os.getenv("CACHE_KEEPALIVES_IDLE", "1")
-                ),
-                socket.TCP_KEEPINTVL: int(
-                    os.getenv("CACHE_KEEPALIVES_INTERVAL", "1")
-                ),
+        'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        'SOCKET_CONNECT_TIMEOUT': int(os.getenv('CACHE_CONNECT_TIMEOUT', '2')),
+        'SOCKET_TIMEOUT': int(os.getenv('CACHE_SOCKET_TIMEOUT', '2')),
+        'CONNECTION_POOL_KWARGS': {
+            'socket_keepalive': config.is_true(os.getenv('CACHE_TCP_KEEPALIVE', '1')),
+            'socket_keepalive_options': {
+                socket.TCP_KEEPCNT: int(os.getenv('CACHE_KEEPALIVES_COUNT', '5')),
+                socket.TCP_KEEPIDLE: int(os.getenv('CACHE_KEEPALIVES_IDLE', '1')),
+                socket.TCP_KEEPINTVL: int(os.getenv('CACHE_KEEPALIVES_INTERVAL', '1')),
                 socket.TCP_USER_TIMEOUT: int(
-                    os.getenv("CACHE_TCP_USER_TIMEOUT", "1000")
+                    os.getenv('CACHE_TCP_USER_TIMEOUT', '1000')
                 ),
             },
         },
     }
     CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": f"redis://{cache_host}:{cache_port}/0",
-            "OPTIONS": _cache_options,
-        },
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': f'redis://{cache_host}:{cache_port}/0',
+            'OPTIONS': _cache_options,
+        }
     }
 else:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        },
-    }
+    CACHES = {'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
 
-_q_worker_timeout = int(get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90))
+_q_worker_timeout = int(
+    get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
+)
 
 # django-q background worker configuration
 Q_CLUSTER = {
     'name': 'InvenTree',
     'label': 'Background Tasks',
-    'workers': int(get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)),
+    'workers': int(
+        get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)
+    ),
     'timeout': _q_worker_timeout,
     'retry': min(120, _q_worker_timeout + 30),
-    'max_attempts': int(get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)),
+    'max_attempts': int(
+        get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
+    ),
     'queue_limit': 50,
     'catch_up': False,
     'bulk': 10,
@@ -773,40 +808,30 @@ Q_CLUSTER = {
 
 # Configure django-q sentry integration
 if SENTRY_ENABLED and SENTRY_DSN:
-    Q_CLUSTER['error_reporter'] = {
-        'sentry': {
-            'dsn': SENTRY_DSN
-        }
-    }
+    Q_CLUSTER['error_reporter'] = {'sentry': {'dsn': SENTRY_DSN}}
 
 if cache_host:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
     # as well
-    Q_CLUSTER["django_redis"] = "worker"
+    Q_CLUSTER['django_redis'] = 'worker'
 
 # database user sessions
 SESSION_ENGINE = 'user_sessions.backends.db'
-LOGOUT_REDIRECT_URL = get_setting('INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index')
-SILENCED_SYSTEM_CHECKS = [
-    'admin.E410',
-]
+LOGOUT_REDIRECT_URL = get_setting(
+    'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
+)
+SILENCED_SYSTEM_CHECKS = ['admin.E410']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 # Extra (optional) URL validators
@@ -815,7 +840,7 @@ AUTH_PASSWORD_VALIDATORS = [
 EXTRA_URL_SCHEMES = get_setting('INVENTREE_EXTRA_URL_SCHEMES', 'extra_url_schemes', [])
 
 if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
-    logger.warning("extra_url_schemes not correctly formatted")
+    logger.warning('extra_url_schemes not correctly formatted')
     EXTRA_URL_SCHEMES = []
 
 # Internationalization
@@ -873,26 +898,21 @@ if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no 
     LANGUAGES.append(('xx', 'Test'))
 
     # Add custom languages not provided by Django
-    EXTRA_LANG_INFO = {
-        'xx': {
-            'code': 'xx',
-            'name': 'Test',
-            'name_local': 'Test'
-        },
-    }
+    EXTRA_LANG_INFO = {'xx': {'code': 'xx', 'name': 'Test', 'name_local': 'Test'}}
     LANG_INFO = dict(django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO)
     django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
 CURRENCIES = get_setting(
-    'INVENTREE_CURRENCIES', 'currencies',
+    'INVENTREE_CURRENCIES',
+    'currencies',
     ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD'],
     typecast=list,
 )
 
 # Ensure that at least one currency value is available
 if len(CURRENCIES) == 0:  # pragma: no cover
-    logger.warning("No currencies selected: Defaulting to USD")
+    logger.warning('No currencies selected: Defaulting to USD')
     CURRENCIES = ['USD']
 
 # Maximum number of decimal places for currency rendering
@@ -908,12 +928,18 @@ for currency in CURRENCIES:
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
 
 # Email configuration options
-EMAIL_BACKEND = get_setting('INVENTREE_EMAIL_BACKEND', 'email.backend', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_BACKEND = get_setting(
+    'INVENTREE_EMAIL_BACKEND',
+    'email.backend',
+    'django.core.mail.backends.smtp.EmailBackend',
+)
 EMAIL_HOST = get_setting('INVENTREE_EMAIL_HOST', 'email.host', '')
 EMAIL_PORT = get_setting('INVENTREE_EMAIL_PORT', 'email.port', 25, typecast=int)
 EMAIL_HOST_USER = get_setting('INVENTREE_EMAIL_USERNAME', 'email.username', '')
 EMAIL_HOST_PASSWORD = get_setting('INVENTREE_EMAIL_PASSWORD', 'email.password', '')
-EMAIL_SUBJECT_PREFIX = get_setting('INVENTREE_EMAIL_PREFIX', 'email.prefix', '[InvenTree] ')
+EMAIL_SUBJECT_PREFIX = get_setting(
+    'INVENTREE_EMAIL_PREFIX', 'email.prefix', '[InvenTree] '
+)
 EMAIL_USE_TLS = get_boolean_setting('INVENTREE_EMAIL_TLS', 'email.tls', False)
 EMAIL_USE_SSL = get_boolean_setting('INVENTREE_EMAIL_SSL', 'email.ssl', False)
 
@@ -926,9 +952,7 @@ if not DEFAULT_FROM_EMAIL:
 EMAIL_USE_LOCALTIME = False
 EMAIL_TIMEOUT = 60
 
-LOCALE_PATHS = (
-    BASE_DIR.joinpath('locale/'),
-)
+LOCALE_PATHS = (BASE_DIR.joinpath('locale/'),)
 
 TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
@@ -941,9 +965,7 @@ USE_L10N = True
 if not TESTING:
     USE_TZ = True  # pragma: no cover
 
-DATE_INPUT_FORMATS = [
-    "%Y-%m-%d",
-]
+DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
 # crispy forms use the bootstrap templates
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -954,10 +976,11 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 SITE_ID = 1
 
 # Load the allauth social backends
-SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list)
+SOCIAL_BACKENDS = get_setting(
+    'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
+)
 
 for app in SOCIAL_BACKENDS:
-
     # Ensure that the app starts with 'allauth.socialaccount.providers'
     social_prefix = 'allauth.socialaccount.providers.'
 
@@ -966,14 +989,22 @@ for app in SOCIAL_BACKENDS:
 
     INSTALLED_APPS.append(app)  # pragma: no cover
 
-SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict)
+SOCIALACCOUNT_PROVIDERS = get_setting(
+    'INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict
+)
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
 # settings for allauth
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int)
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int)
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting('INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http')
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
+    'INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int
+)
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting(
+    'INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int
+)
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
+    'INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http'
+)
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
 # 2FA
@@ -1000,21 +1031,17 @@ ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 MARKDOWNIFY = {
     'default': {
         'BLEACH': True,
-        'WHITELIST_ATTRS': [
-            'href',
-            'src',
-            'alt',
-        ],
-        'MARKDOWN_EXTENSIONS': [
-            'markdown.extensions.extra'
-        ],
+        'WHITELIST_ATTRS': ['href', 'src', 'alt'],
+        'MARKDOWN_EXTENSIONS': ['markdown.extensions.extra'],
         'WHITELIST_TAGS': [
             'a',
             'abbr',
             'b',
             'blockquote',
             'em',
-            'h1', 'h2', 'h3',
+            'h1',
+            'h2',
+            'h3',
             'i',
             'img',
             'li',
@@ -1027,46 +1054,55 @@ MARKDOWNIFY = {
             'tbody',
             'th',
             'tr',
-            'td'
+            'td',
         ],
     }
 }
 
 # Ignore these error typeps for in-database error logging
-IGNORED_ERRORS = [
-    Http404,
-    django.core.exceptions.PermissionDenied,
-]
+IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
 MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.StaticStorageBackend'
 
 # Are plugins enabled?
-PLUGINS_ENABLED = get_boolean_setting('INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False)
+PLUGINS_ENABLED = get_boolean_setting(
+    'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
+)
 
 PLUGIN_FILE = config.get_plugin_file()
 
 # Plugin test settings
-PLUGIN_TESTING = get_setting('INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING)                     # Are plugins being tested?
-PLUGIN_TESTING_SETUP = get_setting('INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False)     # Load plugins from setup hooks in testing?
-PLUGIN_TESTING_EVENTS = False                                                                           # Flag if events are tested right now
-PLUGIN_RETRY = get_setting('INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5)                                 # How often should plugin loading be tried?
-PLUGIN_FILE_CHECKED = False                                                                             # Was the plugin file checked?
+PLUGIN_TESTING = get_setting(
+    'INVENTREE_PLUGIN_TESTING', 'PLUGIN_TESTING', TESTING
+)  # Are plugins being tested?
+PLUGIN_TESTING_SETUP = get_setting(
+    'INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False
+)  # Load plugins from setup hooks in testing?
+PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
+PLUGIN_RETRY = get_setting(
+    'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5
+)  # How often should plugin loading be tried?
+PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 
 # Site URL can be specified statically, or via a run-time setting
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
 if SITE_URL:
-    logger.info("Site URL: %s", SITE_URL)
+    logger.info('Site URL: %s', SITE_URL)
 
     # Check that the site URL is valid
     validator = URLValidator()
     validator(SITE_URL)
 
 # User interface customization values
-CUSTOM_LOGO = get_custom_file('INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True)
-CUSTOM_SPLASH = get_custom_file('INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash')
+CUSTOM_LOGO = get_custom_file(
+    'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True
+)
+CUSTOM_SPLASH = get_custom_file(
+    'INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash'
+)
 
 CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
 
@@ -1075,7 +1111,7 @@ FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
 FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
 
 if DEBUG:
-    logger.info("InvenTree running with DEBUG enabled")
+    logger.info('InvenTree running with DEBUG enabled')
 
 logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
 logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
@@ -1087,7 +1123,7 @@ FLAGS = {
         {'condition': 'parameter', 'value': 'experimental='},
     ],  # Should experimental features be turned on?
     'NEXT_GEN': [
-        {'condition': 'parameter', 'value': 'ngen='},
+        {'condition': 'parameter', 'value': 'ngen='}
     ],  # Should next-gen features be turned on?
 }
 
@@ -1095,12 +1131,12 @@ FLAGS = {
 CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
 if CUSTOM_FLAGS:
     if not isinstance(CUSTOM_FLAGS, dict):
-        logger.error("Invalid custom flags, must be valid dict: %s", str(CUSTOM_FLAGS))
+        logger.error('Invalid custom flags, must be valid dict: %s', str(CUSTOM_FLAGS))
     else:
-        logger.info("Custom flags: %s", str(CUSTOM_FLAGS))
+        logger.info('Custom flags: %s', str(CUSTOM_FLAGS))
         FLAGS.update(CUSTOM_FLAGS)
 
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
 # LOGIN_REDIRECT_URL = f"/{FRONTEND_URL_BASE}/logged-in/"
-LOGIN_REDIRECT_URL = "/index/"
+LOGIN_REDIRECT_URL = '/index/'

@@ -1,11 +1,19 @@
 """API serializers for the reporting models"""
 
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
-                                   InvenTreeModelSerializer)
+from InvenTree.serializers import (
+    InvenTreeAttachmentSerializerField,
+    InvenTreeModelSerializer,
+)
 
-from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     ReturnOrderReport, SalesOrderReport, StockLocationReport,
-                     TestReport)
+from .models import (
+    BillOfMaterialsReport,
+    BuildReport,
+    PurchaseOrderReport,
+    ReturnOrderReport,
+    SalesOrderReport,
+    StockLocationReport,
+    TestReport,
+)
 
 
 class ReportSerializerBase(InvenTreeModelSerializer):
@@ -16,14 +24,7 @@ class ReportSerializerBase(InvenTreeModelSerializer):
     @staticmethod
     def report_fields():
         """Generic serializer fields for a report template"""
-        return [
-            'pk',
-            'name',
-            'description',
-            'template',
-            'filters',
-            'enabled',
-        ]
+        return ['pk', 'name', 'description', 'template', 'filters', 'enabled']
 
 
 class TestReportSerializer(ReportSerializerBase):

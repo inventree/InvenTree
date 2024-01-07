@@ -24,18 +24,14 @@ class TestSerialNumberMigration(MigratorTestCase):
             trackable=True,
             level=0,
             tree_id=0,
-            lft=0, rght=0
+            lft=0,
+            rght=0,
         )
 
         # Create some serialized stock items
         for sn in range(10, 20):
             StockItem.objects.create(
-                part=my_part,
-                quantity=1,
-                serial=sn,
-                level=0,
-                tree_id=0,
-                lft=0, rght=0
+                part=my_part, quantity=1, serial=sn, level=0, tree_id=0, lft=0, rght=0
             )
 
         # Create a stock item with a very large serial number
@@ -45,7 +41,8 @@ class TestSerialNumberMigration(MigratorTestCase):
             serial='9999999999999999999999999999999999999999999999999999999999999',
             level=0,
             tree_id=0,
-            lft=0, rght=0
+            lft=0,
+            rght=0,
         )
 
         self.big_ref_pk = item.pk
@@ -63,8 +60,11 @@ class TestSerialNumberMigration(MigratorTestCase):
         big_ref_item = StockItem.objects.get(pk=self.big_ref_pk)
 
         # Check that the StockItem maximum serial number
-        self.assertEqual(big_ref_item.serial, '9999999999999999999999999999999999999999999999999999999999999')
-        self.assertEqual(big_ref_item.serial_int, 0x7fffffff)
+        self.assertEqual(
+            big_ref_item.serial,
+            '9999999999999999999999999999999999999999999999999999999999999',
+        )
+        self.assertEqual(big_ref_item.serial_int, 0x7FFFFFFF)
 
 
 class TestScheduledForDeletionMigration(MigratorTestCase):
@@ -83,17 +83,21 @@ class TestScheduledForDeletionMigration(MigratorTestCase):
                 name=f'Part_{idx}',
                 description='Just a part, nothing to see here',
                 active=True,
-                level=0, tree_id=0,
-                lft=0, rght=0,
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
             )
 
             for jj in range(5):
                 StockItem.objects.create(
                     part=part,
                     quantity=jj + 5,
-                    level=0, tree_id=0,
-                    lft=0, rght=0,
-                    scheduled_for_deletion=True
+                    level=0,
+                    tree_id=0,
+                    lft=0,
+                    rght=0,
+                    scheduled_for_deletion=True,
                 )
 
         # For extra points, create some parent-child relationships between stock items
@@ -102,8 +106,10 @@ class TestScheduledForDeletionMigration(MigratorTestCase):
         item_1 = StockItem.objects.create(
             part=part,
             quantity=100,
-            level=0, tree_id=0,
-            lft=0, rght=0,
+            level=0,
+            tree_id=0,
+            lft=0,
+            rght=0,
             scheduled_for_deletion=True,
         )
 
@@ -111,8 +117,10 @@ class TestScheduledForDeletionMigration(MigratorTestCase):
             StockItem.objects.create(
                 part=part,
                 quantity=200,
-                level=0, tree_id=0,
-                lft=0, rght=0,
+                level=0,
+                tree_id=0,
+                lft=0,
+                rght=0,
                 scheduled_for_deletion=False,
                 parent=item_1,
             )
