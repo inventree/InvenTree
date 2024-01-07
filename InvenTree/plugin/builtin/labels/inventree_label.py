@@ -16,11 +16,11 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     which is made available for download.
     """
 
-    NAME = "InvenTreeLabel"
-    TITLE = _("InvenTree PDF label printer")
-    DESCRIPTION = _("Provides native support for printing PDF labels")
-    VERSION = "1.0.0"
-    AUTHOR = _("InvenTree contributors")
+    NAME = 'InvenTreeLabel'
+    TITLE = _('InvenTree PDF label printer')
+    DESCRIPTION = _('Provides native support for printing PDF labels')
+    VERSION = '1.0.0'
+    AUTHOR = _('InvenTree contributors')
 
     BLOCKING_PRINT = True
 

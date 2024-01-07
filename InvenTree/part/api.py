@@ -114,7 +114,7 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
         """Download the filtered queryset as a data file"""
         dataset = PartCategoryResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_Categories.{export_format}"
+        filename = f'InvenTree_Categories.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -682,23 +682,23 @@ class PartRequirements(RetrieveAPI):
         part = self.get_object()
 
         data = {
-            "available_stock": part.available_stock,
-            "on_order": part.on_order,
-            "required_build_order_quantity": part.required_build_order_quantity(),
-            "allocated_build_order_quantity": part.build_order_allocation_count(),
-            "required_sales_order_quantity": part.required_sales_order_quantity(),
-            "allocated_sales_order_quantity": part.sales_order_allocation_count(
+            'available_stock': part.available_stock,
+            'on_order': part.on_order,
+            'required_build_order_quantity': part.required_build_order_quantity(),
+            'allocated_build_order_quantity': part.build_order_allocation_count(),
+            'required_sales_order_quantity': part.required_sales_order_quantity(),
+            'allocated_sales_order_quantity': part.sales_order_allocation_count(
                 pending=True
             ),
         }
 
-        data["allocated"] = (
-            data["allocated_build_order_quantity"]
-            + data["allocated_sales_order_quantity"]
+        data['allocated'] = (
+            data['allocated_build_order_quantity']
+            + data['allocated_sales_order_quantity']
         )
-        data["required"] = (
-            data["required_build_order_quantity"]
-            + data["required_sales_order_quantity"]
+        data['required'] = (
+            data['required_build_order_quantity']
+            + data['required_sales_order_quantity']
         )
 
         return Response(data)
@@ -850,7 +850,7 @@ class PartFilter(rest_filters.FilterSet):
     IPN = rest_filters.CharFilter(
         label='Filter by exact IPN (internal part number)',
         field_name='IPN',
-        lookup_expr="iexact",
+        lookup_expr='iexact',
     )
 
     # Regex match for IPN
@@ -895,7 +895,7 @@ class PartFilter(rest_filters.FilterSet):
         return queryset.filter(Q(unallocated_stock__lte=0))
 
     convert_from = rest_filters.ModelChoiceFilter(
-        label="Can convert from",
+        label='Can convert from',
         queryset=Part.objects.all(),
         method='filter_convert_from',
     )
@@ -909,7 +909,7 @@ class PartFilter(rest_filters.FilterSet):
         return queryset
 
     exclude_tree = rest_filters.ModelChoiceFilter(
-        label="Exclude Part tree",
+        label='Exclude Part tree',
         queryset=Part.objects.all(),
         method='filter_exclude_tree',
     )
@@ -947,7 +947,7 @@ class PartFilter(rest_filters.FilterSet):
         return queryset.filter(id__in=[p.pk for p in bom_parts])
 
     has_pricing = rest_filters.BooleanFilter(
-        label="Has Pricing", method="filter_has_pricing"
+        label='Has Pricing', method='filter_has_pricing'
     )
 
     def filter_has_pricing(self, queryset, name, value):
@@ -961,7 +961,7 @@ class PartFilter(rest_filters.FilterSet):
         return queryset.filter(q_a | q_b).distinct()
 
     stocktake = rest_filters.BooleanFilter(
-        label="Has stocktake", method='filter_has_stocktake'
+        label='Has stocktake', method='filter_has_stocktake'
     )
 
     def filter_has_stocktake(self, queryset, name, value):
@@ -997,7 +997,7 @@ class PartFilter(rest_filters.FilterSet):
         return queryset.exclude(Q(in_stock=0) & ~Q(stock_item_count=0))
 
     default_location = rest_filters.ModelChoiceFilter(
-        label="Default Location", queryset=StockLocation.objects.all()
+        label='Default Location', queryset=StockLocation.objects.all()
     )
 
     is_template = rest_filters.BooleanFilter()
@@ -1095,7 +1095,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         dataset = PartResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_Parts.{export_format}"
+        filename = f'InvenTree_Parts.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -1668,7 +1668,7 @@ class BomFilter(rest_filters.FilterSet):
     )
 
     available_stock = rest_filters.BooleanFilter(
-        label="Has available stock", method="filter_available_stock"
+        label='Has available stock', method='filter_available_stock'
     )
 
     def filter_available_stock(self, queryset, name, value):
@@ -1677,7 +1677,7 @@ class BomFilter(rest_filters.FilterSet):
             return queryset.filter(available_stock__gt=0)
         return queryset.filter(available_stock=0)
 
-    on_order = rest_filters.BooleanFilter(label="On order", method="filter_on_order")
+    on_order = rest_filters.BooleanFilter(label='On order', method='filter_on_order')
 
     def filter_on_order(self, queryset, name, value):
         """Filter the queryset based on whether each line item has any stock on order"""
@@ -1686,7 +1686,7 @@ class BomFilter(rest_filters.FilterSet):
         return queryset.filter(on_order=0)
 
     has_pricing = rest_filters.BooleanFilter(
-        label="Has Pricing", method="filter_has_pricing"
+        label='Has Pricing', method='filter_has_pricing'
     )
 
     def filter_has_pricing(self, queryset, name, value):

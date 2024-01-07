@@ -65,7 +65,7 @@ def render_date(context, date_object):
         try:
             date_object = date.fromisoformat(date_object)
         except ValueError:
-            logger.warning("Tried to convert invalid date string: %s", date_object)
+            logger.warning('Tried to convert invalid date string: %s', date_object)
             return None
 
     # We may have already pre-cached the date format by calling this already!
@@ -220,7 +220,7 @@ def python_version(*args, **kwargs):
 def inventree_version(shortstring=False, *args, **kwargs):
     """Return InvenTree version string."""
     if shortstring:
-        return _(f"{version.inventreeInstanceTitle()} v{version.inventreeVersion()}")
+        return _(f'{version.inventreeInstanceTitle()} v{version.inventreeVersion()}')
     return version.inventreeVersion()
 
 
@@ -645,18 +645,18 @@ def admin_url(user, table, pk):
     from django.urls import reverse
 
     if not djangosettings.INVENTREE_ADMIN_ENABLED:
-        return ""
+        return ''
 
     if not user.is_staff:
-        return ""
+        return ''
 
     # Check the user has the correct permission
-    perm_string = f"{app}.change_{model}"
+    perm_string = f'{app}.change_{model}'
     if not user.has_perm(perm_string):
         return ''
 
     # Fallback URL
-    url = reverse(f"admin:{app}_{model}_changelist")
+    url = reverse(f'admin:{app}_{model}_changelist')
 
     if pk:
         try:

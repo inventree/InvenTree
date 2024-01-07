@@ -15,7 +15,7 @@ from error_report.middleware import ExceptionProcessor
 from InvenTree.urls import frontendpatterns
 from users.models import ApiToken
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class AuthRequiredMiddleware(object):
@@ -91,7 +91,7 @@ class AuthRequiredMiddleware(object):
                             authorized = True
 
                     except ApiToken.DoesNotExist:
-                        logger.warning("Access denied for unknown token %s", token_key)
+                        logger.warning('Access denied for unknown token %s', token_key)
 
             # No authorization was found for the request
             if not authorized:

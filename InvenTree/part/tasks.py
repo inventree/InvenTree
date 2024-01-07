@@ -24,7 +24,7 @@ from InvenTree.tasks import (
     scheduled_task,
 )
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 def notify_low_stock(part: part.models.Part):
@@ -33,7 +33,7 @@ def notify_low_stock(part: part.models.Part):
     - Triggered when the available stock for a given part falls be low the configured threhsold
     - A notification is delivered to any users who are 'subscribed' to this part
     """
-    name = _("Low stock notification")
+    name = _('Low stock notification')
     message = _(
         f'The available stock for {part.name} has fallen below the configured minimum level'
     )
@@ -70,7 +70,7 @@ def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
         pricing: The target PartPricing instance to be updated
         counter: How many times this function has been called in sequence
     """
-    logger.info("Updating part pricing for %s", pricing.part)
+    logger.info('Updating part pricing for %s', pricing.part)
 
     pricing.update_pricing(counter=counter)
 
@@ -90,7 +90,7 @@ def check_missing_pricing(limit=250):
     results = part.models.PartPricing.objects.filter(updated=None)[:limit]
 
     if results.count() > 0:
-        logger.info("Found %s parts with empty pricing", results.count())
+        logger.info('Found %s parts with empty pricing', results.count())
 
         for pp in results:
             pp.schedule_for_update()
@@ -102,7 +102,7 @@ def check_missing_pricing(limit=250):
     results = part.models.PartPricing.objects.filter(updated__lte=stale_date)[:limit]
 
     if results.count() > 0:
-        logger.info("Found %s stale pricing entries", results.count())
+        logger.info('Found %s stale pricing entries', results.count())
 
         for pp in results:
             pp.schedule_for_update()
@@ -112,7 +112,7 @@ def check_missing_pricing(limit=250):
     results = part.models.PartPricing.objects.exclude(currency=currency)
 
     if results.count() > 0:
-        logger.info("Found %s pricing entries in the wrong currency", results.count())
+        logger.info('Found %s pricing entries in the wrong currency', results.count())
 
         for pp in results:
             pp.schedule_for_update()
@@ -121,7 +121,7 @@ def check_missing_pricing(limit=250):
     results = part.models.Part.objects.filter(pricing_data=None)[:limit]
 
     if results.count() > 0:
-        logger.info("Found %s parts without pricing", results.count())
+        logger.info('Found %s parts without pricing', results.count())
 
         for p in results:
             pricing = p.pricing
@@ -151,14 +151,14 @@ def scheduled_stocktake_reports():
     old_reports = part.models.PartStocktakeReport.objects.filter(date__lt=threshold)
 
     if old_reports.count() > 0:
-        logger.info("Deleting %s stale stocktake reports", old_reports.count())
+        logger.info('Deleting %s stale stocktake reports', old_reports.count())
         old_reports.delete()
 
     # Next, check if stocktake functionality is enabled
     if not common.models.InvenTreeSetting.get_setting(
         'STOCKTAKE_ENABLE', False, cache=False
     ):
-        logger.info("Stocktake functionality is not enabled - exiting")
+        logger.info('Stocktake functionality is not enabled - exiting')
         return
 
     report_n_days = int(
@@ -168,11 +168,11 @@ def scheduled_stocktake_reports():
     )
 
     if report_n_days < 1:
-        logger.info("Stocktake auto reports are disabled, exiting")
+        logger.info('Stocktake auto reports are disabled, exiting')
         return
 
     if not check_daily_holdoff('STOCKTAKE_RECENT_REPORT', report_n_days):
-        logger.info("Stocktake report was recently generated - exiting")
+        logger.info('Stocktake report was recently generated - exiting')
         return
 
     # Let's start a new stocktake report for all parts

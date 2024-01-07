@@ -46,7 +46,7 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
 
         # check settings
         self.assertEqual(plugin.check_settings(), (False, ['API_KEY']))
-        plugin.set_setting('API_KEY', "dsfiodsfjsfdjsf")
+        plugin.set_setting('API_KEY', 'dsfiodsfjsfdjsf')
         self.assertEqual(plugin.check_settings(), (True, []))
 
         # validator

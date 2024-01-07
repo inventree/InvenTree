@@ -56,11 +56,11 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
     and returns the resulting PDF file.
     """
 
-    NAME = "InvenTreeLabelSheet"
-    TITLE = _("InvenTree Label Sheet Printer")
-    DESCRIPTION = _("Arrays multiple labels onto a single sheet")
-    VERSION = "1.0.0"
-    AUTHOR = _("InvenTree contributors")
+    NAME = 'InvenTreeLabelSheet'
+    TITLE = _('InvenTree Label Sheet Printer')
+    DESCRIPTION = _('Arrays multiple labels onto a single sheet')
+    VERSION = '1.0.0'
+    AUTHOR = _('InvenTree contributors')
 
     BLOCKING_PRINT = True
 
@@ -92,7 +92,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         n_cells = n_cols * n_rows
 
         if n_cells == 0:
-            raise ValidationError(_("Label is too large for page size"))
+            raise ValidationError(_('Label is too large for page size'))
 
         # Prepend the required number of skipped null labels
         items = [None] * skip + list(items)
@@ -101,16 +101,16 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
         # Data to pass through to each page
         document_data = {
-            "border": border,
-            "landscape": landscape,
-            "page_width": page_width,
-            "page_height": page_height,
-            "label_width": label.width,
-            "label_height": label.height,
-            "n_labels": n_labels,
-            "n_pages": math.ceil(n_labels / n_cells),
-            "n_cols": n_cols,
-            "n_rows": n_rows,
+            'border': border,
+            'landscape': landscape,
+            'page_width': page_width,
+            'page_height': page_height,
+            'label_width': label.width,
+            'label_height': label.height,
+            'n_labels': n_labels,
+            'n_pages': math.ceil(n_labels / n_cells),
+            'n_cols': n_cols,
+            'n_rows': n_rows,
         }
 
         pages = []
@@ -126,7 +126,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
             idx += n_cells
 
         if len(pages) == 0:
-            raise ValidationError(_("No labels were generated"))
+            raise ValidationError(_('No labels were generated'))
 
         # Render to a single HTML document
         html_data = self.wrap_pages(pages, **document_data)
@@ -191,16 +191,16 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
                         )
                         html += cell
                     except Exception as exc:
-                        logger.exception("Error rendering label: %s", str(exc))
+                        logger.exception('Error rendering label: %s', str(exc))
                         html += """
                         <div class='label-sheet-cell-error'></div>
                         """
 
-                html += "</td>"
+                html += '</td>'
 
-            html += "</tr>"
+            html += '</tr>'
 
-        html += "</table>"
+        html += '</table>'
 
         return html
 
@@ -241,7 +241,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
             """
             )
 
-        cell_styles = "\n".join(cell_styles)
+        cell_styles = '\n'.join(cell_styles)
 
         return f"""
         <head>

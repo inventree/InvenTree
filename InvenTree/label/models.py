@@ -25,12 +25,12 @@ from plugin.registry import registry
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
 except OSError as err:  # pragma: no cover
-    print(f"OSError: {err}")
-    print("You may require some further system packages to be installed.")
+    print(f'OSError: {err}')
+    print('You may require some further system packages to be installed.')
     sys.exit(1)
 
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 def rename_label(instance, filename):
@@ -97,7 +97,7 @@ class LabelTemplate(MetadataMixin, models.Model):
         abstract = True
 
     # Each class of label files will be stored in a separate subdirectory
-    SUBDIR = "label"
+    SUBDIR = 'label'
 
     # Object we will be printing against (will be filled out later)
     object_to_print = None
@@ -109,7 +109,7 @@ class LabelTemplate(MetadataMixin, models.Model):
 
     def __str__(self):
         """Format a string representation of a label instance"""
-        return f"{self.name} - {self.description}"
+        return f'{self.name} - {self.description}'
 
     name = models.CharField(
         blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Label name')
@@ -154,7 +154,7 @@ class LabelTemplate(MetadataMixin, models.Model):
     )
 
     filename_pattern = models.CharField(
-        default="label.pdf",
+        default='label.pdf',
         verbose_name=_('Filename Pattern'),
         help_text=_('Pattern for generating label filenames'),
         max_length=100,
@@ -265,7 +265,7 @@ class LabelTemplate(MetadataMixin, models.Model):
         wp = WeasyprintLabelMixin(
             request,
             self.template_name,
-            base_url=request.build_absolute_uri("/"),
+            base_url=request.build_absolute_uri('/'),
             presentational_hints=True,
             filename=self.generate_filename(request),
             **kwargs,
@@ -304,7 +304,7 @@ class StockItemLabel(LabelTemplate):
         """Return the API URL associated with the StockItemLabel model"""
         return reverse('api-stockitem-label-list')  # pragma: no cover
 
-    SUBDIR = "stockitem"
+    SUBDIR = 'stockitem'
 
     filters = models.CharField(
         blank=True,
@@ -343,7 +343,7 @@ class StockLocationLabel(LabelTemplate):
         """Return the API URL associated with the StockLocationLabel model"""
         return reverse('api-stocklocation-label-list')  # pragma: no cover
 
-    SUBDIR = "stocklocation"
+    SUBDIR = 'stocklocation'
 
     filters = models.CharField(
         blank=True,

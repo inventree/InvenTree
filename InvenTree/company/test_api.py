@@ -107,8 +107,8 @@ class CompanyTest(InvenTreeAPITestCase):
         response = self.post(
             url,
             {
-                'name': "Another Company",
-                'description': "Also created via the API!",
+                'name': 'Another Company',
+                'description': 'Also created via the API!',
                 'currency': 'AUD',
                 'is_supplier': False,
                 'is_manufacturer': True,
@@ -125,7 +125,7 @@ class CompanyTest(InvenTreeAPITestCase):
         # Attempt to create with invalid currency
         response = self.post(
             url,
-            {'name': "A name", 'description': 'A description', 'currency': 'POQD'},
+            {'name': 'A name', 'description': 'A description', 'currency': 'POQD'},
             expected_code=400,
         )
 
@@ -144,7 +144,7 @@ class ContactTest(InvenTreeAPITestCase):
 
         # Create some companies
         companies = [
-            Company(name=f"Company {idx}", description="Some company")
+            Company(name=f'Company {idx}', description='Some company')
             for idx in range(3)
         ]
 
@@ -155,7 +155,7 @@ class ContactTest(InvenTreeAPITestCase):
         # Create some contacts
         for cmp in Company.objects.all():
             contacts += [
-                Contact(company=cmp, name=f"My name {idx}") for idx in range(3)
+                Contact(company=cmp, name=f'My name {idx}') for idx in range(3)
             ]
 
         Contact.objects.bulk_create(contacts)
@@ -251,7 +251,7 @@ class AddressTest(InvenTreeAPITestCase):
         cls.num_addr = 3
         # Create some companies
         companies = [
-            Company(name=f"Company {idx}", description="Some company")
+            Company(name=f'Company {idx}', description='Some company')
             for idx in range(cls.num_companies)
         ]
 
@@ -262,7 +262,7 @@ class AddressTest(InvenTreeAPITestCase):
         # Create some contacts
         for cmp in Company.objects.all():
             addresses += [
-                Address(company=cmp, title=f"Address no. {idx}")
+                Address(company=cmp, title=f'Address no. {idx}')
                 for idx in range(cls.num_addr)
             ]
 

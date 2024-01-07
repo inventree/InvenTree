@@ -15,10 +15,10 @@ def calculate_coverage(filename):
     lines_uncovered = 0
 
     for line in lines:
-        if line.startswith("msgid "):
+        if line.startswith('msgid '):
             lines_count += 1
 
-        elif line.startswith("msgstr"):
+        elif line.startswith('msgstr'):
             if line.startswith('msgstr ""') or line.startswith("msgstr ''"):
                 lines_uncovered += 1
             else:
@@ -49,7 +49,7 @@ if __name__ == '__main__':
                 locales[locale] = locale_file
 
     if verbose:
-        print("-" * 16)
+        print('-' * 16)
 
     percentages = []
 
@@ -72,7 +72,7 @@ if __name__ == '__main__':
         percentages.append(percentage)
 
     if verbose:
-        print("-" * 16)
+        print('-' * 16)
 
     # write locale stats
     with open(STAT_FILE, 'w') as target:
@@ -83,4 +83,4 @@ if __name__ == '__main__':
     else:
         avg = 0
 
-    print(f"InvenTree translation coverage: {avg}%")
+    print(f'InvenTree translation coverage: {avg}%')

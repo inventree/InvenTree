@@ -37,7 +37,7 @@ def sentry_ignore_errors():
 
 def init_sentry(dsn, sample_rate, tags):
     """Initialize sentry.io error reporting"""
-    logger.info("Initializing sentry.io integration")
+    logger.info('Initializing sentry.io integration')
 
     sentry_sdk.init(
         dsn=dsn,
@@ -65,9 +65,9 @@ def report_exception(exc):
     """Report an exception to sentry.io"""
     if settings.SENTRY_ENABLED and settings.SENTRY_DSN:
         if not any(isinstance(exc, e) for e in sentry_ignore_errors()):
-            logger.info("Reporting exception to sentry.io: %s", exc)
+            logger.info('Reporting exception to sentry.io: %s', exc)
 
             try:
                 sentry_sdk.capture_exception(exc)
             except Exception:
-                logger.warning("Failed to report exception to sentry.io")
+                logger.warning('Failed to report exception to sentry.io')

@@ -261,7 +261,7 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
         order = self.context['order']
 
         if not order.can_cancel:
-            raise ValidationError(_("Order cannot be cancelled"))
+            raise ValidationError(_('Order cannot be cancelled'))
 
         order.cancel_order()
 
@@ -286,7 +286,7 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
         order = self.context['order']
 
         if not value and not order.is_complete:
-            raise ValidationError(_("Order has incomplete line items"))
+            raise ValidationError(_('Order has incomplete line items'))
 
         return value
 
@@ -390,7 +390,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
     def validate_quantity(self, quantity):
         """Validation for the 'quantity' field"""
         if quantity <= 0:
-            raise ValidationError(_("Quantity must be greater than zero"))
+            raise ValidationError(_('Quantity must be greater than zero'))
 
         return quantity
 
@@ -517,7 +517,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     def validate_quantity(self, quantity):
         """Validation for the 'quantity' field"""
         if quantity <= 0:
-            raise ValidationError(_("Quantity must be greater than zero"))
+            raise ValidationError(_('Quantity must be greater than zero'))
 
         return quantity
 
@@ -647,7 +647,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
             if not item['location']:
                 raise ValidationError({
-                    'location': _("Destination location must be specified")
+                    'location': _('Destination location must be specified')
                 })
 
         # Ensure barcodes are unique
@@ -1075,7 +1075,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         shipment = self.context.get('shipment', None)
 
         if not shipment:
-            raise ValidationError(_("No shipment details provided"))
+            raise ValidationError(_('No shipment details provided'))
 
         shipment.check_can_complete(raise_error=True)
 
@@ -1135,7 +1135,7 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
 
         # Ensure that the line item points to the correct order
         if line_item.order != order:
-            raise ValidationError(_("Line item is not associated with this order"))
+            raise ValidationError(_('Line item is not associated with this order'))
 
         return line_item
 
@@ -1154,7 +1154,7 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
     def validate_quantity(self, quantity):
         """Custom validation for the 'quantity' field"""
         if quantity <= 0:
-            raise ValidationError(_("Quantity must be positive"))
+            raise ValidationError(_('Quantity must be positive'))
 
         return quantity
 
@@ -1171,13 +1171,13 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
 
         if stock_item.serialized and quantity != 1:
             raise ValidationError({
-                'quantity': _("Quantity must be 1 for serialized stock item")
+                'quantity': _('Quantity must be 1 for serialized stock item')
             })
 
         q = normalize(stock_item.unallocated_quantity())
 
         if quantity > q:
-            raise ValidationError({'quantity': _(f"Available quantity ({q}) exceeded")})
+            raise ValidationError({'quantity': _(f'Available quantity ({q}) exceeded')})
 
         return data
 
@@ -1197,7 +1197,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         order = self.context['order']
 
         if not value and not order.is_completed():
-            raise ValidationError(_("Order has incomplete line items"))
+            raise ValidationError(_('Order has incomplete line items'))
 
         return value
 
@@ -1274,7 +1274,7 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
 
         # Ensure that the line item points to the correct order
         if line_item.order != order:
-            raise ValidationError(_("Line item is not associated with this order"))
+            raise ValidationError(_('Line item is not associated with this order'))
 
         return line_item
 
@@ -1283,8 +1283,8 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     )
 
     serial_numbers = serializers.CharField(
-        label=_("Serial Numbers"),
-        help_text=_("Enter serial numbers to allocate"),
+        label=_('Serial Numbers'),
+        help_text=_('Enter serial numbers to allocate'),
         required=True,
         allow_blank=False,
     )
@@ -1306,10 +1306,10 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         order = self.context['order']
 
         if shipment.shipment_date is not None:
-            raise ValidationError(_("Shipment has already been shipped"))
+            raise ValidationError(_('Shipment has already been shipped'))
 
         if shipment.order != order:
-            raise ValidationError(_("Shipment is not associated with this order"))
+            raise ValidationError(_('Shipment is not associated with this order'))
 
         return shipment
 
@@ -1356,16 +1356,16 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
                 serials_allocated.append(str(serial))
 
         if len(serials_not_exist) > 0:
-            error_msg = _("No match found for the following serial numbers")
-            error_msg += ": "
-            error_msg += ",".join(serials_not_exist)
+            error_msg = _('No match found for the following serial numbers')
+            error_msg += ': '
+            error_msg += ','.join(serials_not_exist)
 
             raise ValidationError({'serial_numbers': error_msg})
 
         if len(serials_allocated) > 0:
-            error_msg = _("The following serial numbers are already allocated")
-            error_msg += ": "
-            error_msg += ",".join(serials_allocated)
+            error_msg = _('The following serial numbers are already allocated')
+            error_msg += ': '
+            error_msg += ','.join(serials_allocated)
 
             raise ValidationError({'serial_numbers': error_msg})
 
@@ -1412,10 +1412,10 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
         order = self.context['order']
 
         if shipment.shipment_date is not None:
-            raise ValidationError(_("Shipment has already been shipped"))
+            raise ValidationError(_('Shipment has already been shipped'))
 
         if shipment.order != order:
-            raise ValidationError(_("Shipment is not associated with this order"))
+            raise ValidationError(_('Shipment is not associated with this order'))
 
         return shipment
 
@@ -1596,10 +1596,10 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
     def validate_line_item(self, item):
         """Validation for a single line item"""
         if item.order != self.context['order']:
-            raise ValidationError(_("Line item does not match return order"))
+            raise ValidationError(_('Line item does not match return order'))
 
         if item.received:
-            raise ValidationError(_("Line item has already been received"))
+            raise ValidationError(_('Line item has already been received'))
 
         return item
 
@@ -1628,7 +1628,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
         order = self.context['order']
         if order.status != ReturnOrderStatus.IN_PROGRESS:
             raise ValidationError(
-                _("Items can only be received against orders which are in progress")
+                _('Items can only be received against orders which are in progress')
             )
 
         data = super().validate(data)
@@ -1636,7 +1636,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
         items = data.get('items', [])
 
         if len(items) == 0:
-            raise ValidationError(_("Line items must be provided"))
+            raise ValidationError(_('Line items must be provided'))
 
         return data
 

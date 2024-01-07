@@ -13,7 +13,7 @@ from django_q.status import Stat
 import InvenTree.email
 import InvenTree.ready
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 def is_worker_running(**kwargs):
@@ -63,13 +63,13 @@ def check_system_health(**kwargs):
 
     if not is_worker_running(**kwargs):  # pragma: no cover
         result = False
-        logger.warning(_("Background worker check failed"))
+        logger.warning(_('Background worker check failed'))
 
     if not InvenTree.email.is_email_configured():  # pragma: no cover
         result = False
-        logger.warning(_("Email backend not configured"))
+        logger.warning(_('Email backend not configured'))
 
     if not result:  # pragma: no cover
-        logger.warning(_("InvenTree system health checks failed"))
+        logger.warning(_('InvenTree system health checks failed'))
 
     return result

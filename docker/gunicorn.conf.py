@@ -33,7 +33,7 @@ if workers is not None:
 if workers is None:
     workers = multiprocessing.cpu_count() * 2 + 1
 
-logger.info("Starting gunicorn server with %s workers", workers)
+logger.info('Starting gunicorn server with %s workers', workers)
 
 max_requests = 1000
 max_requests_jitter = 50

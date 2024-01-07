@@ -181,7 +181,7 @@ class SettingsList(ListAPI):
 class GlobalSettingsList(SettingsList):
     """API endpoint for accessing a list of global settings objects."""
 
-    queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith="_")
+    queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith='_')
     serializer_class = common.serializers.GlobalSettingsSerializer
 
     def list(self, request, *args, **kwargs):
@@ -214,7 +214,7 @@ class GlobalSettingsDetail(RetrieveUpdateAPI):
     """
 
     lookup_field = 'key'
-    queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith="_")
+    queryset = common.models.InvenTreeSetting.objects.exclude(key__startswith='_')
     serializer_class = common.serializers.GlobalSettingsSerializer
 
     def get_object(self):

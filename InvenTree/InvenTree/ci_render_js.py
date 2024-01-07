@@ -63,9 +63,9 @@ class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
         """Look for all javascript files."""
         n = 0
 
-        print("Rendering javascript files...")
+        print('Rendering javascript files...')
 
         n += self.download_files('translated', '/js/i18n')
         n += self.download_files('dynamic', '/js/dynamic')
 
-        print(f"Rendered {n} javascript files.")
+        print(f'Rendered {n} javascript files.')

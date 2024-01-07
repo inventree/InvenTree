@@ -31,7 +31,7 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertTrue(len(shipped_js) > 0)
         self.assertTrue(len(shipped_js) == 3)
 
-        manifest_file = Path(__file__).parent.joinpath("static/web/manifest.json")
+        manifest_file = Path(__file__).parent.joinpath('static/web/manifest.json')
         # Try with removed manifest file
         manifest_file.rename(manifest_file.with_suffix('.json.bak'))  # Rename
         resp = resp = spa_helper.spa_bundle()

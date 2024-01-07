@@ -39,10 +39,10 @@ class StatusView(APIView):
         status_class = self.get_status_model()
 
         if not inspect.isclass(status_class):
-            raise NotImplementedError("`status_class` not a class")
+            raise NotImplementedError('`status_class` not a class')
 
         if not issubclass(status_class, StatusCode):
-            raise NotImplementedError("`status_class` not a valid StatusCode class")
+            raise NotImplementedError('`status_class` not a valid StatusCode class')
 
         data = {'class': status_class.__name__, 'values': status_class.dict()}
 

@@ -98,7 +98,7 @@ class InvenTreePluginTests(TestCase):
             NAME = 'Aplugin'
             SLUG = 'a'
             TITLE = 'a title'
-            PUBLISH_DATE = "1111-11-11"
+            PUBLISH_DATE = '1111-11-11'
             AUTHOR = 'AA BB'
             DESCRIPTION = 'A description'
             VERSION = '1.2.3a'

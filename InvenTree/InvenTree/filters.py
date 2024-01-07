@@ -76,7 +76,7 @@ class InvenTreeSearchFilter(filters.SearchFilter):
 
                 if whole:
                     # Wrap the search term to enable word-boundary matching
-                    term = r"\y" + term + r"\y"
+                    term = r'\y' + term + r'\y'
 
                 terms.append(term)
 

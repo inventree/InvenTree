@@ -43,7 +43,7 @@ class UsersConfig(AppConfig):
             if (
                 rule.name not in RuleSet.RULESET_NAMES
             ):  # pragma: no cover  # can not change ORM without the app being loaded
-                logger.info("Deleting outdated ruleset: %s", rule.name)
+                logger.info('Deleting outdated ruleset: %s', rule.name)
                 rule.delete()
 
         # Update group permission assignments for all groups

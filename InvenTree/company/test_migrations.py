@@ -228,8 +228,8 @@ class TestCurrencyMigration(MigratorTestCase):
         Part = self.old_state.apps.get_model('part', 'part')
 
         part = Part.objects.create(
-            name="PART",
-            description="A purchaseable part",
+            name='PART',
+            description='A purchaseable part',
             purchaseable=True,
             level=0,
             tree_id=0,
@@ -309,7 +309,7 @@ class TestAddressMigration(MigratorTestCase):
         a2 = Address.objects.filter(company=c2.pk).first()
 
         self.assertEqual(a1.line1, self.short_l1)
-        self.assertEqual(a1.line2, "")
+        self.assertEqual(a1.line2, '')
         self.assertEqual(a2.line1, self.long_l1)
         self.assertEqual(a2.line2, self.l2)
         self.assertEqual(c1.address, '')
@@ -329,8 +329,8 @@ class TestSupplierPartQuantity(MigratorTestCase):
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
 
         self.part = Part.objects.create(
-            name="PART",
-            description="A purchaseable part",
+            name='PART',
+            description='A purchaseable part',
             purchaseable=True,
             level=0,
             tree_id=0,

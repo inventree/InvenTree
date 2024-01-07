@@ -16,7 +16,7 @@ class CurrencyExchangeMixin:
     class MixinMeta:
         """Meta options for this mixin class"""
 
-        MIXIN_NAME = "CurrentExchange"
+        MIXIN_NAME = 'CurrentExchange'
 
     def __init__(self):
         """Register the mixin"""
@@ -39,5 +39,5 @@ class CurrencyExchangeMixin:
             Can raise any exception if the update fails
         """
         raise MixinNotImplementedError(
-            "Plugin must implement update_exchange_rates method"
+            'Plugin must implement update_exchange_rates method'
         )

@@ -31,7 +31,7 @@ from plugin import registry
 
 from .version import isInvenTreeUpToDate
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 def schedule_task(taskname, **kwargs):
@@ -46,7 +46,7 @@ def schedule_task(taskname, **kwargs):
     try:
         from django_q.models import Schedule
     except AppRegistryNotReady:  # pragma: no cover
-        logger.info("Could not start background tasks - App registry not ready")
+        logger.info('Could not start background tasks - App registry not ready')
         return
 
     try:
@@ -278,13 +278,13 @@ class ScheduledTask:
     interval: str
     minutes: int = None
 
-    MINUTES = "I"
-    HOURLY = "H"
-    DAILY = "D"
-    WEEKLY = "W"
-    MONTHLY = "M"
-    QUARTERLY = "Q"
-    YEARLY = "Y"
+    MINUTES = 'I'
+    HOURLY = 'H'
+    DAILY = 'D'
+    WEEKLY = 'W'
+    MONTHLY = 'M'
+    QUARTERLY = 'Q'
+    YEARLY = 'Y'
     TYPE = [MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY]
 
 
@@ -349,7 +349,7 @@ def heartbeat():
     try:
         from django_q.models import Success
     except AppRegistryNotReady:  # pragma: no cover
-        logger.info("Could not perform heartbeat task - App registry not ready")
+        logger.info('Could not perform heartbeat task - App registry not ready')
         return
 
     threshold = timezone.now() - timedelta(minutes=30)
@@ -378,7 +378,7 @@ def delete_successful_tasks():
         results = Success.objects.filter(started__lte=threshold)
 
         if results.count() > 0:
-            logger.info("Deleting %s successful task records", results.count())
+            logger.info('Deleting %s successful task records', results.count())
             results.delete()
 
     except AppRegistryNotReady:  # pragma: no cover
@@ -402,7 +402,7 @@ def delete_failed_tasks():
         results = Failure.objects.filter(started__lte=threshold)
 
         if results.count() > 0:
-            logger.info("Deleting %s failed task records", results.count())
+            logger.info('Deleting %s failed task records', results.count())
             results.delete()
 
     except AppRegistryNotReady:  # pragma: no cover
@@ -423,7 +423,7 @@ def delete_old_error_logs():
         errors = Error.objects.filter(when__lte=threshold)
 
         if errors.count() > 0:
-            logger.info("Deleting %s old error logs", errors.count())
+            logger.info('Deleting %s old error logs', errors.count())
             errors.delete()
 
     except AppRegistryNotReady:  # pragma: no cover
@@ -449,13 +449,13 @@ def delete_old_notifications():
         items = NotificationEntry.objects.filter(updated__lte=threshold)
 
         if items.count() > 0:
-            logger.info("Deleted %s old notification entries", items.count())
+            logger.info('Deleted %s old notification entries', items.count())
             items.delete()
 
         items = NotificationMessage.objects.filter(creation__lte=threshold)
 
         if items.count() > 0:
-            logger.info("Deleted %s old notification messages", items.count())
+            logger.info('Deleted %s old notification messages', items.count())
             items.delete()
 
     except AppRegistryNotReady:
@@ -485,7 +485,7 @@ def check_for_updates():
     if not check_daily_holdoff('check_for_updates', interval):
         return
 
-    logger.info("Checking for InvenTree software updates")
+    logger.info('Checking for InvenTree software updates')
 
     headers = {}
 
@@ -494,7 +494,7 @@ def check_for_updates():
         token = os.getenv('GITHUB_TOKEN', None)
 
         if token:
-            headers['Authorization'] = f"Bearer {token}"
+            headers['Authorization'] = f'Bearer {token}'
 
     response = requests.get(
         'https://api.github.com/repos/inventree/inventree/releases/latest',
@@ -513,7 +513,7 @@ def check_for_updates():
     if not tag:
         raise ValueError("'tag_name' missing from GitHub response")  # pragma: no cover
 
-    match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
+    match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
     if len(match.groups()) != 3:  # pragma: no cover
         logger.warning("Version '%s' did not match expected pattern", tag)
@@ -534,15 +534,15 @@ def check_for_updates():
 
     # Send notification if there is a new version
     if not isInvenTreeUpToDate():
-        logger.warning("InvenTree is not up-to-date, sending notification")
+        logger.warning('InvenTree is not up-to-date, sending notification')
 
         plg = registry.get_plugin('InvenTreeCoreNotificationsPlugin')
         if not plg:
-            logger.warning("Cannot send notification - plugin not found")
+            logger.warning('Cannot send notification - plugin not found')
             return
         plg = plg.plugin_config()
         if not plg:
-            logger.warning("Cannot send notification - plugin config not found")
+            logger.warning('Cannot send notification - plugin config not found')
             return
         # Send notification
         trigger_superuser_notification(
@@ -579,7 +579,7 @@ def update_exchange_rates(force: bool = False):
         )
 
         if not check_daily_holdoff('update_exchange_rates', interval):
-            logger.info("Skipping exchange rate update (interval not reached)")
+            logger.info('Skipping exchange rate update (interval not reached)')
             return
 
     backend = InvenTreeExchange()
@@ -590,7 +590,7 @@ def update_exchange_rates(force: bool = False):
         backend.update_rates(base_currency=base)
 
         # Remove any exchange rates which are not in the provided currencies
-        Rate.objects.filter(backend="InvenTreeExchange").exclude(
+        Rate.objects.filter(backend='InvenTreeExchange').exclude(
             currency__in=currency_codes()
         ).delete()
 
@@ -598,9 +598,9 @@ def update_exchange_rates(force: bool = False):
         record_task_success('update_exchange_rates')
 
     except (AppRegistryNotReady, OperationalError, ProgrammingError):
-        logger.warning("Could not update exchange rates - database not ready")
+        logger.warning('Could not update exchange rates - database not ready')
     except Exception as e:  # pragma: no cover
-        logger.exception("Error updating exchange rates: %s", str(type(e)))
+        logger.exception('Error updating exchange rates: %s', str(type(e)))
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -620,11 +620,11 @@ def run_backup():
     if not check_daily_holdoff('run_backup', interval):
         return
 
-    logger.info("Performing automated database backup task")
+    logger.info('Performing automated database backup task')
 
-    call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
+    call_command('dbbackup', noinput=True, clean=True, compress=True, interactive=False)
     call_command(
-        "mediabackup", noinput=True, clean=True, compress=True, interactive=False
+        'mediabackup', noinput=True, clean=True, compress=True, interactive=False
     )
 
     # Record that this task was successful
@@ -653,7 +653,7 @@ def check_for_migrations():
         logger.info('There are %s pending migrations', n)
         InvenTreeSetting.set_setting('_PENDING_MIGRATIONS', n, None)
 
-    logger.info("Checking for pending database migrations")
+    logger.info('Checking for pending database migrations')
 
     # Force plugin registry reload
     registry.check_reload()
@@ -671,12 +671,12 @@ def check_for_migrations():
 
     # Test if auto-updates are enabled
     if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
-        logger.info("Auto-update is disabled - skipping migrations")
+        logger.info('Auto-update is disabled - skipping migrations')
         return
 
     # Log open migrations
     for migration in plan:
-        logger.info("- %s", str(migration[0]))
+        logger.info('- %s', str(migration[0]))
 
     # Set the application to maintenance mode - no access from now on.
     set_maintenance_mode(True)
@@ -694,13 +694,13 @@ def check_for_migrations():
         else:
             set_pending_migrations(0)
 
-            logger.info("Completed %s migrations", n)
+            logger.info('Completed %s migrations', n)
 
     # Make sure we are out of maintenance mode
     if get_maintenance_mode():
-        logger.warning("Maintenance mode was not disabled - forcing it now")
+        logger.warning('Maintenance mode was not disabled - forcing it now')
         set_maintenance_mode(False)
-        logger.info("Manually released maintenance mode")
+        logger.info('Manually released maintenance mode')
 
     # We should be current now - triggering full reload to make sure all models
     # are loaded fully in their new state.

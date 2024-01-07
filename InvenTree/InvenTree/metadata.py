@@ -69,7 +69,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
             metadata['model'] = tbl_label
 
-            table = f"{app_label}_{tbl_label}"
+            table = f'{app_label}_{tbl_label}'
 
             actions = metadata.get('actions', None)
 
@@ -87,7 +87,7 @@ class InvenTreeMetadata(SimpleMetadata):
             }
 
             # let the view define a custom rolemap
-            if hasattr(view, "rolemap"):
+            if hasattr(view, 'rolemap'):
                 rolemap.update(view.rolemap)
 
             # Remove any HTTP methods that the user does not have permission for
@@ -264,7 +264,7 @@ class InvenTreeMetadata(SimpleMetadata):
                 model = field.queryset.model
             else:
                 logger.debug(
-                    "Could not extract model for:", field_info.get('label'), '->', field
+                    'Could not extract model for:', field_info.get('label'), '->', field
                 )
                 model = None
 
@@ -286,4 +286,4 @@ class InvenTreeMetadata(SimpleMetadata):
         return field_info
 
 
-InvenTreeMetadata.label_lookup[DependentField] = "dependent field"
+InvenTreeMetadata.label_lookup[DependentField] = 'dependent field'

@@ -181,7 +181,7 @@ class ParameterTests(TestCase):
         template2 = PartParameterTemplate.objects.create(
             name='My Template 2', units='%'
         )
-        for value in ["1", "1%", "1 percent"]:
+        for value in ['1', '1%', '1 percent']:
             param = PartParameter(part=prt, template=template2, data=value)
             param.full_clean()
 

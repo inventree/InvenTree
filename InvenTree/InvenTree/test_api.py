@@ -69,11 +69,11 @@ class APITests(InvenTreeAPITestCase):
         """Helper function to use basic auth."""
         # Use basic authentication
 
-        authstring = bytes("{u}:{p}".format(u=self.username, p=self.password), "ascii")
+        authstring = bytes('{u}:{p}'.format(u=self.username, p=self.password), 'ascii')
 
         # Use "basic" auth by default
-        auth = b64encode(authstring).decode("ascii")
-        self.client.credentials(HTTP_AUTHORIZATION="Basic {auth}".format(auth=auth))
+        auth = b64encode(authstring).decode('ascii')
+        self.client.credentials(HTTP_AUTHORIZATION='Basic {auth}'.format(auth=auth))
 
     def tokenAuth(self):
         """Helper function to use token auth."""
@@ -274,7 +274,7 @@ class BulkDeleteTests(InvenTreeAPITestCase):
         )
 
         # DELETE with invalid 'items'
-        response = self.delete(url, {'items': {"hello": "world"}}, expected_code=400)
+        response = self.delete(url, {'items': {'hello': 'world'}}, expected_code=400)
 
         self.assertIn("'items' must be supplied as a list object", str(response.data))
 

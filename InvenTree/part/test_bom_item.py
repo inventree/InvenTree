@@ -70,7 +70,7 @@ class BomItemTest(TestCase):
     def test_integer_quantity(self):
         """Test integer validation for BomItem."""
         p = Part.objects.create(
-            name="test", description="part description", component=True, trackable=True
+            name='test', description='part description', component=True, trackable=True
         )
 
         # Creation of a BOMItem with a non-integer quantity of a trackable Part should fail
@@ -157,8 +157,8 @@ class BomItemTest(TestCase):
         for ii in range(5):
             # Create a new part
             sub_part = Part.objects.create(
-                name=f"Orphan {ii}",
-                description="A substitute part for the orphan part",
+                name=f'Orphan {ii}',
+                description='A substitute part for the orphan part',
                 component=True,
                 is_template=False,
                 assembly=False,
@@ -196,7 +196,7 @@ class BomItemTest(TestCase):
         """Tests for the 'consumable' BomItem field"""
         # Create an assembly part
         assembly = Part.objects.create(
-            name="An assembly", description="Made with parts", assembly=True
+            name='An assembly', description='Made with parts', assembly=True
         )
 
         # No BOM information initially
@@ -204,16 +204,16 @@ class BomItemTest(TestCase):
 
         # Create some component items
         c1 = Part.objects.create(
-            name="C1", description="Part C1 - this is just the part description"
+            name='C1', description='Part C1 - this is just the part description'
         )
         c2 = Part.objects.create(
-            name="C2", description="Part C2 - this is just the part description"
+            name='C2', description='Part C2 - this is just the part description'
         )
         c3 = Part.objects.create(
-            name="C3", description="Part C3 - this is just the part description"
+            name='C3', description='Part C3 - this is just the part description'
         )
         c4 = Part.objects.create(
-            name="C4", description="Part C4 - this is just the part description"
+            name='C4', description='Part C4 - this is just the part description'
         )
 
         for p in [c1, c2, c3, c4]:
@@ -261,20 +261,20 @@ class BomItemTest(TestCase):
         # Second test: A recursive BOM
         part_a = Part.objects.create(
             name='Part A',
-            description="A part which is called A",
+            description='A part which is called A',
             assembly=True,
             is_template=True,
             component=True,
         )
         part_b = Part.objects.create(
             name='Part B',
-            description="A part which is called B",
+            description='A part which is called B',
             assembly=True,
             component=True,
         )
         part_c = Part.objects.create(
             name='Part C',
-            description="A part which is called C",
+            description='A part which is called C',
             assembly=True,
             component=True,
         )

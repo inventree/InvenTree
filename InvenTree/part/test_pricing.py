@@ -258,8 +258,8 @@ class PartPricingTests(InvenTreeTestCase):
         for ii in range(10):
             # Create a new part for the BOM
             sub_part = part.models.Part.objects.create(
-                name=f"Sub Part {ii}",
-                description="A sub part for use in a BOM",
+                name=f'Sub Part {ii}',
+                description='A sub part for use in a BOM',
                 component=True,
                 assembly=False,
             )
@@ -403,7 +403,7 @@ class PartPricingTests(InvenTreeTestCase):
         # Create some parts
         for ii in range(100):
             part.models.Part.objects.create(
-                name=f"Part_{ii}", description="A test part"
+                name=f'Part_{ii}', description='A test part'
             )
 
         # Ensure there is no pricing data
@@ -424,7 +424,7 @@ class PartPricingTests(InvenTreeTestCase):
         but it pointed to a Part instance which was slated to be deleted inside an atomic transaction.
         """
         p = part.models.Part.objects.create(
-            name="my part", description="my part description", active=False
+            name='my part', description='my part description', active=False
         )
 
         # Create some stock items

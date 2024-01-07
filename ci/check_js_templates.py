@@ -18,14 +18,14 @@ js_dynamic_dir = os.path.join(template_dir, 'js', 'dynamic')
 
 errors = 0
 
-print("=================================")
-print("Checking static javascript files:")
-print("=================================")
+print('=================================')
+print('Checking static javascript files:')
+print('=================================')
 
 
 def check_invalid_tag(data):
     """Check for invalid tags."""
-    pattern = r"{%(\w+)"
+    pattern = r'{%(\w+)'
 
     err_count = 0
 
@@ -35,7 +35,7 @@ def check_invalid_tag(data):
         for result in results:
             err_count += 1
 
-            print(f" - Error on line {idx+1}: %{{{result[0]}")
+            print(f' - Error on line {idx+1}: %{{{result[0]}')
 
     return err_count
 
@@ -55,7 +55,7 @@ def check_prohibited_tags(data):
         'url',
     ]
 
-    pattern = r"{% (\w+)\s"
+    pattern = r'{% (\w+)\s'
 
     err_count = 0
 
@@ -94,9 +94,9 @@ for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
         if len(results) > 0:
             errors += 1
 
-            print(f" > prohibited {{% trans %}} tag found at line {idx + 1}")
+            print(f' > prohibited {{% trans %}} tag found at line {idx + 1}')
 
 if errors > 0:
-    print(f"Found {errors} incorrect template tags")
+    print(f'Found {errors} incorrect template tags')
 
 sys.exit(errors)

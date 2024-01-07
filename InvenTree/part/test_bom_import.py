@@ -33,9 +33,9 @@ class BomUploadTest(InvenTreeAPITestCase):
         for i in range(10):
             parts.append(
                 Part(
-                    name=f"Component {i}",
-                    IPN=f"CMP_{i}",
-                    description="A subcomponent that can be used in a BOM",
+                    name=f'Component {i}',
+                    IPN=f'CMP_{i}',
+                    description='A subcomponent that can be used in a BOM',
                     component=True,
                     assembly=False,
                     lft=0,

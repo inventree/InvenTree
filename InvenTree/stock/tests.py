@@ -54,10 +54,10 @@ class StockTest(StockTestBase):
 
     def test_pathstring(self):
         """Check that pathstring updates occur as expected"""
-        a = StockLocation.objects.create(name="A")
-        b = StockLocation.objects.create(name="B", parent=a)
-        c = StockLocation.objects.create(name="C", parent=b)
-        d = StockLocation.objects.create(name="D", parent=c)
+        a = StockLocation.objects.create(name='A')
+        b = StockLocation.objects.create(name='B', parent=a)
+        c = StockLocation.objects.create(name='C', parent=b)
+        d = StockLocation.objects.create(name='D', parent=c)
 
         def refresh():
             a.refresh_from_db()
@@ -66,56 +66,56 @@ class StockTest(StockTestBase):
             d.refresh_from_db()
 
         # Initial checks
-        self.assertEqual(a.pathstring, "A")
-        self.assertEqual(b.pathstring, "A/B")
-        self.assertEqual(c.pathstring, "A/B/C")
-        self.assertEqual(d.pathstring, "A/B/C/D")
+        self.assertEqual(a.pathstring, 'A')
+        self.assertEqual(b.pathstring, 'A/B')
+        self.assertEqual(c.pathstring, 'A/B/C')
+        self.assertEqual(d.pathstring, 'A/B/C/D')
 
-        c.name = "Cc"
+        c.name = 'Cc'
         c.save()
 
         refresh()
-        self.assertEqual(a.pathstring, "A")
-        self.assertEqual(b.pathstring, "A/B")
-        self.assertEqual(c.pathstring, "A/B/Cc")
-        self.assertEqual(d.pathstring, "A/B/Cc/D")
+        self.assertEqual(a.pathstring, 'A')
+        self.assertEqual(b.pathstring, 'A/B')
+        self.assertEqual(c.pathstring, 'A/B/Cc')
+        self.assertEqual(d.pathstring, 'A/B/Cc/D')
 
-        b.name = "Bb"
+        b.name = 'Bb'
         b.save()
 
         refresh()
-        self.assertEqual(a.pathstring, "A")
-        self.assertEqual(b.pathstring, "A/Bb")
-        self.assertEqual(c.pathstring, "A/Bb/Cc")
-        self.assertEqual(d.pathstring, "A/Bb/Cc/D")
+        self.assertEqual(a.pathstring, 'A')
+        self.assertEqual(b.pathstring, 'A/Bb')
+        self.assertEqual(c.pathstring, 'A/Bb/Cc')
+        self.assertEqual(d.pathstring, 'A/Bb/Cc/D')
 
-        a.name = "Aa"
+        a.name = 'Aa'
         a.save()
 
         refresh()
-        self.assertEqual(a.pathstring, "Aa")
-        self.assertEqual(b.pathstring, "Aa/Bb")
-        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
-        self.assertEqual(d.pathstring, "Aa/Bb/Cc/D")
+        self.assertEqual(a.pathstring, 'Aa')
+        self.assertEqual(b.pathstring, 'Aa/Bb')
+        self.assertEqual(c.pathstring, 'Aa/Bb/Cc')
+        self.assertEqual(d.pathstring, 'Aa/Bb/Cc/D')
 
-        d.name = "Dd"
+        d.name = 'Dd'
         d.save()
 
         refresh()
-        self.assertEqual(a.pathstring, "Aa")
-        self.assertEqual(b.pathstring, "Aa/Bb")
-        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
-        self.assertEqual(d.pathstring, "Aa/Bb/Cc/Dd")
+        self.assertEqual(a.pathstring, 'Aa')
+        self.assertEqual(b.pathstring, 'Aa/Bb')
+        self.assertEqual(c.pathstring, 'Aa/Bb/Cc')
+        self.assertEqual(d.pathstring, 'Aa/Bb/Cc/Dd')
 
         # Test a really long name
         # (it will be clipped to < 250 characters)
-        a.name = "A" * 100
+        a.name = 'A' * 100
         a.save()
-        b.name = "B" * 100
+        b.name = 'B' * 100
         b.save()
-        c.name = "C" * 100
+        c.name = 'C' * 100
         c.save()
-        d.name = "D" * 100
+        d.name = 'D' * 100
         d.save()
 
         refresh()
@@ -124,8 +124,8 @@ class StockTest(StockTestBase):
         self.assertEqual(len(c.pathstring), 249)
         self.assertEqual(len(d.pathstring), 249)
 
-        self.assertTrue(d.pathstring.startswith("AAAAAAAA"))
-        self.assertTrue(d.pathstring.endswith("DDDDDDDD"))
+        self.assertTrue(d.pathstring.startswith('AAAAAAAA'))
+        self.assertTrue(d.pathstring.endswith('DDDDDDDD'))
 
     def test_link(self):
         """Test the link URL field validation"""
@@ -460,8 +460,8 @@ class StockTest(StockTestBase):
         it = StockItem.objects.get(pk=2)
         n = it.quantity
         an = n - 10
-        customer = Company.objects.create(name="MyTestCompany")
-        order = SalesOrder.objects.create(description="Test order")
+        customer = Company.objects.create(name='MyTestCompany')
+        order = SalesOrder.objects.create(description='Test order')
         ait = it.allocateToCustomer(
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
         )
@@ -491,18 +491,18 @@ class StockTest(StockTestBase):
 
         # First establish total stock for this part
         allstock_before = StockItem.objects.filter(part=it.part).aggregate(
-            Sum("quantity")
-        )["quantity__sum"]
+            Sum('quantity')
+        )['quantity__sum']
 
         n = it.quantity
         an = n - 10
-        customer = Company.objects.create(name="MyTestCompany")
-        order = SalesOrder.objects.create(description="Test order")
+        customer = Company.objects.create(name='MyTestCompany')
+        order = SalesOrder.objects.create(description='Test order')
 
         ait = it.allocateToCustomer(
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
         )
-        ait.return_from_customer(it.location, None, notes="Stock removed from customer")
+        ait.return_from_customer(it.location, None, notes='Stock removed from customer')
 
         # When returned stock is returned to its original (parent) location, check that the parent has correct quantity
         self.assertEqual(it.quantity, n)
@@ -511,7 +511,7 @@ class StockTest(StockTestBase):
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
         )
         ait.return_from_customer(
-            self.drawer3, None, notes="Stock removed from customer"
+            self.drawer3, None, notes='Stock removed from customer'
         )
 
         # Check correct assignment of the new location
@@ -533,8 +533,8 @@ class StockTest(StockTestBase):
 
         # Establish total stock for the part after remove from customer to check that we still have the correct quantity in stock
         allstock_after = StockItem.objects.filter(part=it.part).aggregate(
-            Sum("quantity")
-        )["quantity__sum"]
+            Sum('quantity')
+        )['quantity__sum']
         self.assertEqual(allstock_before, allstock_after)
 
     def test_take_stock(self):
@@ -621,7 +621,7 @@ class StockTest(StockTestBase):
 
             self.assertEqual(item.serial_int, 12345)
 
-        item.serial = "-123"
+        item.serial = '-123'
         item.save()
 
         # Negative number should map to positive value
@@ -685,14 +685,14 @@ class StockTest(StockTestBase):
 
         # Try an invalid quantity
         with self.assertRaises(ValidationError):
-            item.serializeStock("k", [], self.user)
+            item.serializeStock('k', [], self.user)
 
         with self.assertRaises(ValidationError):
             item.serializeStock(-1, [], self.user)
 
         # Not enough serial numbers for all stock items.
         with self.assertRaises(ValidationError):
-            item.serializeStock(3, "hello", self.user)
+            item.serializeStock(3, 'hello', self.user)
 
     def test_serialize_stock_valid(self):
         """Perform valid stock serializations."""
@@ -996,7 +996,7 @@ class TestResultTest(StockTestBase):
         tests = item.test_results
         self.assertEqual(tests.count(), 4)
 
-        results = item.getTestResults(test="Temperature Test")
+        results = item.getTestResults(test='Temperature Test')
         self.assertEqual(results.count(), 2)
 
         # Passing tests
@@ -1057,25 +1057,25 @@ class TestResultTest(StockTestBase):
         item.quantity = 50
 
         # Try with an invalid batch code (according to sample validatoin plugin)
-        item.batch = "X234"
+        item.batch = 'X234'
 
         with self.assertRaises(ValidationError):
             item.save()
 
-        item.batch = "B123"
+        item.batch = 'B123'
         item.save()
 
         # Do some tests!
         StockItemTestResult.objects.create(
-            stock_item=item, test="Firmware", result=True
+            stock_item=item, test='Firmware', result=True
         )
 
         StockItemTestResult.objects.create(
-            stock_item=item, test="Paint Color", result=True, value="Red"
+            stock_item=item, test='Paint Color', result=True, value='Red'
         )
 
         StockItemTestResult.objects.create(
-            stock_item=item, test="Applied Sticker", result=False
+            stock_item=item, test='Applied Sticker', result=False
         )
 
         self.assertEqual(item.test_results.count(), 3)

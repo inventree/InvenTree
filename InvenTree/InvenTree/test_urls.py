@@ -67,7 +67,7 @@ class URLTest(TestCase):
         """Search for all instances of {% url %} in supplied template file."""
         urls = []
 
-        pattern = "{% url ['\"]([^'\"]+)['\"]([^%]*)%}"
+        pattern = '{% url [\'"]([^\'"]+)[\'"]([^%]*)%}'
 
         with open(input_file, 'r') as f:
             data = f.read()
@@ -91,16 +91,16 @@ class URLTest(TestCase):
             pk = None
 
         # TODO: Handle reverse lookup of admin URLs!
-        if url.startswith("admin:"):
+        if url.startswith('admin:'):
             return
 
         # TODO can this be more elegant?
-        if url.startswith("account_"):
+        if url.startswith('account_'):
             return
 
         if pk:
             # We will assume that there is at least one item in the database
-            reverse(url, kwargs={"pk": 1})
+            reverse(url, kwargs={'pk': 1})
         else:
             reverse(url)
 
@@ -113,14 +113,14 @@ class URLTest(TestCase):
 
     def test_html_templates(self):
         """Test all HTML templates for broken url tags."""
-        template_files = self.find_files("*.html")
+        template_files = self.find_files('*.html')
 
         for f in template_files:
             self.check_file(f)
 
     def test_js_templates(self):
         """Test all JS templates for broken url tags."""
-        template_files = self.find_files("*.js")
+        template_files = self.find_files('*.js')
 
         for f in template_files:
             self.check_file(f)

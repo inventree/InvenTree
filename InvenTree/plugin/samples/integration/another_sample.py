@@ -7,10 +7,10 @@ from plugin.mixins import UrlsMixin
 class NoIntegrationPlugin(InvenTreePlugin):
     """A basic plugin."""
 
-    NAME = "NoIntegrationPlugin"
+    NAME = 'NoIntegrationPlugin'
 
 
 class WrongIntegrationPlugin(UrlsMixin, InvenTreePlugin):
     """A basic wrong plugin with urls."""
 
-    NAME = "WrongIntegrationPlugin"
+    NAME = 'WrongIntegrationPlugin'

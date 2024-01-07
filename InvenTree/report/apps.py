@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class ReportConfig(AppConfig):

@@ -118,7 +118,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         si = stock.models.StockItem.objects.get(pk=521)
 
         self.assertEqual(si.barcode_data, bc_data)
-        self.assertEqual(si.barcode_hash, "2f5dba5c83a360599ba7665b2a4131c6")
+        self.assertEqual(si.barcode_hash, '2f5dba5c83a360599ba7665b2a4131c6')
 
         # Now test that we cannot assign this barcode to something else
         response = self.assign(

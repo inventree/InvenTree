@@ -21,7 +21,7 @@ class ActionPluginView(APIView):
         data = request.data.get('data', None)
 
         if action is None:
-            return Response({'error': _("No action specified")})
+            return Response({'error': _('No action specified')})
 
         action_plugins = registry.with_mixin('action')
         for plugin in action_plugins:
@@ -30,4 +30,4 @@ class ActionPluginView(APIView):
                 return Response(plugin.get_response(request.user, data=data))
 
         # If we got to here, no matching action was found
-        return Response({'error': _("No matching action found"), "action": action})
+        return Response({'error': _('No matching action found'), 'action': action})

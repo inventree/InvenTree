@@ -232,19 +232,19 @@ class BulkDeleteMixin:
 
         if not items and not filters:
             raise ValidationError({
-                "non_field_errors": [
-                    "List of items or filters must be provided for bulk deletion"
+                'non_field_errors': [
+                    'List of items or filters must be provided for bulk deletion'
                 ]
             })
 
         if items and type(items) is not list:
             raise ValidationError({
-                "items": ["'items' must be supplied as a list object"]
+                'items': ["'items' must be supplied as a list object"]
             })
 
         if filters and type(filters) is not dict:
             raise ValidationError({
-                "filters": ["'filters' must be supplied as a dict object"]
+                'filters': ["'filters' must be supplied as a dict object"]
             })
 
         # Keep track of how many items we deleted
@@ -266,7 +266,7 @@ class BulkDeleteMixin:
             n_deleted = queryset.count()
             queryset.delete()
 
-        return Response({'success': f"Deleted {n_deleted} items"}, status=204)
+        return Response({'success': f'Deleted {n_deleted} items'}, status=204)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
@@ -308,7 +308,7 @@ class APIDownloadMixin:
 
     def download_queryset(self, queryset, export_format):
         """This function must be implemented to provide a downloadFile request."""
-        raise NotImplementedError("download_queryset method not implemented!")
+        raise NotImplementedError('download_queryset method not implemented!')
 
 
 class AttachmentMixin:

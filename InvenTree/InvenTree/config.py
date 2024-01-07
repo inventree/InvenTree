@@ -99,9 +99,9 @@ def get_config_file(create=True) -> Path:
         )
         ensure_dir(cfg_filename.parent)
 
-        cfg_template = base_dir.joinpath("config_template.yaml")
+        cfg_template = base_dir.joinpath('config_template.yaml')
         shutil.copyfile(cfg_template, cfg_filename)
-        print(f"Created config file {cfg_filename}")
+        print(f'Created config file {cfg_filename}')
 
     return cfg_filename
 
@@ -293,14 +293,14 @@ def get_plugin_file():
 
     if not plugin_file.exists():
         logger.warning(
-            "Plugin configuration file does not exist - creating default file"
+            'Plugin configuration file does not exist - creating default file'
         )
         logger.info("Creating plugin file at '%s'", plugin_file)
         ensure_dir(plugin_file.parent)
 
         # If opening the file fails (no write permission, for example), then this will throw an error
         plugin_file.write_text(
-            "# InvenTree Plugins (uses PIP framework to install)\n\n"
+            '# InvenTree Plugins (uses PIP framework to install)\n\n'
         )
 
     return plugin_file
@@ -323,7 +323,7 @@ def get_secret_key():
     """
     # Look for environment variable
     if secret_key := get_setting('INVENTREE_SECRET_KEY', 'secret_key'):
-        logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
+        logger.info('SECRET_KEY loaded by INVENTREE_SECRET_KEY')  # pragma: no cover
         return secret_key
 
     # Look for secret key file
@@ -331,7 +331,7 @@ def get_secret_key():
         secret_key_file = Path(secret_key_file).resolve()
     else:
         # Default location for secret key file
-        secret_key_file = get_base_dir().joinpath("secret_key.txt").resolve()
+        secret_key_file = get_base_dir().joinpath('secret_key.txt').resolve()
 
     if not secret_key_file.exists():
         logger.info("Generating random key file at '%s'", secret_key_file)
@@ -367,9 +367,9 @@ def get_custom_file(
     static_storage = StaticFilesStorage()
 
     if static_storage.exists(value):
-        logger.info("Loading %s from %s directory: %s", log_ref, 'static', value)
+        logger.info('Loading %s from %s directory: %s', log_ref, 'static', value)
     elif lookup_media and default_storage.exists(value):
-        logger.info("Loading %s from %s directory: %s", log_ref, 'media', value)
+        logger.info('Loading %s from %s directory: %s', log_ref, 'media', value)
     else:
         add_dir_str = ' or media' if lookup_media else ''
         logger.warning(

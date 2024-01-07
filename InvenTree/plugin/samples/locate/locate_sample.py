@@ -17,11 +17,11 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
     This plugin class simply prints location information to the logger.
     """
 
-    NAME = "SampleLocatePlugin"
-    SLUG = "samplelocate"
-    TITLE = "Sample plugin for locating items"
+    NAME = 'SampleLocatePlugin'
+    SLUG = 'samplelocate'
+    TITLE = 'Sample plugin for locating items'
 
-    VERSION = "0.2"
+    VERSION = '0.2'
 
     def locate_stock_item(self, item_pk):
         """Locate a StockItem.
@@ -31,17 +31,17 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
         """
         from stock.models import StockItem
 
-        logger.info("SampleLocatePlugin attempting to locate item ID %s", item_pk)
+        logger.info('SampleLocatePlugin attempting to locate item ID %s', item_pk)
 
         try:
             item = StockItem.objects.get(pk=item_pk)
-            logger.info("StockItem %s located!", item_pk)
+            logger.info('StockItem %s located!', item_pk)
 
             # Tag metadata
             item.set_metadata('located', True)
 
         except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-            logger.exception("StockItem ID %s does not exist!", item_pk)
+            logger.exception('StockItem ID %s does not exist!', item_pk)
 
     def locate_stock_location(self, location_pk):
         """Locate a StockLocation.
@@ -52,7 +52,7 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
         from stock.models import StockLocation
 
         logger.info(
-            "SampleLocatePlugin attempting to locate location ID %s", location_pk
+            'SampleLocatePlugin attempting to locate location ID %s', location_pk
         )
 
         try:
@@ -63,4 +63,4 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
             location.set_metadata('located', True)
 
         except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
-            logger.exception("Location ID %s does not exist!", location_pk)
+            logger.exception('Location ID %s does not exist!', location_pk)

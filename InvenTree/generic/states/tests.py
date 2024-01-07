@@ -14,9 +14,9 @@ from .states import StatusCode
 class GeneralStatus(StatusCode):
     """Defines a set of status codes for tests."""
 
-    PENDING = 10, _("Pending"), 'secondary'
-    PLACED = 20, _("Placed"), 'primary'
-    COMPLETE = 30, _("Complete"), 'success'
+    PENDING = 10, _('Pending'), 'secondary'
+    PLACED = 20, _('Placed'), 'primary'
+    COMPLETE = 30, _('Complete'), 'success'
     ABC = None  # This should be ignored
     _DEF = None  # This should be ignored
     jkl = None  # This should be ignored
@@ -183,11 +183,11 @@ class GeneralStateTest(InvenTreeTestCase):
         # Invalid call - not a class
         with self.assertRaises(NotImplementedError) as e:
             resp = view(rqst, **{StatusView.MODEL_REF: 'invalid'})
-        self.assertEqual(str(e.exception), "`status_class` not a class")
+        self.assertEqual(str(e.exception), '`status_class` not a class')
 
         # Invalid call - not the right class
         with self.assertRaises(NotImplementedError) as e:
             resp = view(rqst, **{StatusView.MODEL_REF: object})
         self.assertEqual(
-            str(e.exception), "`status_class` not a valid StatusCode class"
+            str(e.exception), '`status_class` not a valid StatusCode class'
         )

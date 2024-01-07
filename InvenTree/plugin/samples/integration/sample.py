@@ -24,11 +24,11 @@ class SampleIntegrationPlugin(
 ):
     """A full plugin example."""
 
-    NAME = "SampleIntegrationPlugin"
-    SLUG = "sample"
-    TITLE = "Sample Plugin"
+    NAME = 'SampleIntegrationPlugin'
+    SLUG = 'sample'
+    TITLE = 'Sample Plugin'
 
-    NAVIGATION_TAB_NAME = "Sample Nav"
+    NAVIGATION_TAB_NAME = 'Sample Nav'
     NAVIGATION_TAB_ICON = 'fas fa-plus'
 
     def view_test(self, request):
@@ -66,7 +66,7 @@ class SampleIntegrationPlugin(
             'default': 123,
         },
         'CHOICE_SETTING': {
-            'name': _("Choice Setting"),
+            'name': _('Choice Setting'),
             'description': _('A setting with multiple choices'),
             'choices': [('A', 'Anaconda'), ('B', 'Bat'), ('C', 'Cat'), ('D', 'Dog')],
             'default': 'A',

@@ -32,7 +32,7 @@ from .models import (
     SalesOrderLineItem,
 )
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
@@ -115,9 +115,9 @@ class PurchaseOrderUpload(FileManagementFormView):
         'order/order_wizard/match_parts.html',
     ]
     form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match Supplier Parts"),
+        _('Upload File'),
+        _('Match Fields'),
+        _('Match Supplier Parts'),
     ]
     form_field_map = {
         'item_select': 'part',
@@ -294,7 +294,7 @@ class SalesOrderExport(AjaxView):
 
         export_format = request.GET.get('format', 'csv')
 
-        filename = f"{str(order)} - {order.customer.name}.{export_format}"
+        filename = f'{str(order)} - {order.customer.name}.{export_format}'
 
         dataset = SalesOrderLineItemResource().export(queryset=order.lines.all())
 

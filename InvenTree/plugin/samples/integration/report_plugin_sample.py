@@ -10,11 +10,11 @@ from report.models import PurchaseOrderReport
 class SampleReportPlugin(ReportMixin, InvenTreePlugin):
     """Sample plugin which provides extra context data to a report"""
 
-    NAME = "Sample Report Plugin"
-    SLUG = "samplereport"
-    TITLE = "Sample Report Plugin"
-    DESCRIPTION = "A sample plugin which provides extra context data to a report"
-    VERSION = "1.0"
+    NAME = 'Sample Report Plugin'
+    SLUG = 'samplereport'
+    TITLE = 'Sample Report Plugin'
+    DESCRIPTION = 'A sample plugin which provides extra context data to a report'
+    VERSION = '1.0'
 
     def some_custom_function(self):
         """Some custom function which is not required for the plugin to function"""

@@ -106,7 +106,7 @@ class CategoryTest(TestCase):
             letter = chr(ord('A') + idx)
 
             child = PartCategory.objects.create(
-                name=letter * 10, description=f"Subcategory {letter}", parent=parent
+                name=letter * 10, description=f'Subcategory {letter}', parent=parent
             )
 
             parent = child
@@ -114,7 +114,7 @@ class CategoryTest(TestCase):
         self.assertTrue(len(child.path), 26)
         self.assertEqual(
             child.pathstring,
-            "Cat/AAAAAAAAAA/BBBBBBBBBB/CCCCCCCCCC/DDDDDDDDDD/EEEEEEEEEE/FFFFFFFFFF/GGGGGGGGGG/HHHHHHHHHH/IIIIIIIIII/JJJJJJJJJJ/KKKKKKKKK...OO/PPPPPPPPPP/QQQQQQQQQQ/RRRRRRRRRR/SSSSSSSSSS/TTTTTTTTTT/UUUUUUUUUU/VVVVVVVVVV/WWWWWWWWWW/XXXXXXXXXX/YYYYYYYYYY/ZZZZZZZZZZ",
+            'Cat/AAAAAAAAAA/BBBBBBBBBB/CCCCCCCCCC/DDDDDDDDDD/EEEEEEEEEE/FFFFFFFFFF/GGGGGGGGGG/HHHHHHHHHH/IIIIIIIIII/JJJJJJJJJJ/KKKKKKKKK...OO/PPPPPPPPPP/QQQQQQQQQQ/RRRRRRRRRR/SSSSSSSSSS/TTTTTTTTTT/UUUUUUUUUU/VVVVVVVVVV/WWWWWWWWWW/XXXXXXXXXX/YYYYYYYYYY/ZZZZZZZZZZ',
         )
         self.assertTrue(len(child.pathstring) <= 250)
 

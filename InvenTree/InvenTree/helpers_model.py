@@ -120,7 +120,7 @@ def download_image_from_url(remote_url, timeout=2.5):
         'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT'
     )
     if user_agent:
-        headers = {"User-Agent": user_agent}
+        headers = {'User-Agent': user_agent}
     else:
         headers = None
 
@@ -135,28 +135,28 @@ def download_image_from_url(remote_url, timeout=2.5):
         # Throw an error if anything goes wrong
         response.raise_for_status()
     except requests.exceptions.ConnectionError as exc:
-        raise Exception(_("Connection error") + f": {str(exc)}")
+        raise Exception(_('Connection error') + f': {str(exc)}')
     except requests.exceptions.Timeout as exc:
         raise exc
     except requests.exceptions.HTTPError:
         raise requests.exceptions.HTTPError(
-            _("Server responded with invalid status code") + f": {response.status_code}"
+            _('Server responded with invalid status code') + f': {response.status_code}'
         )
     except Exception as exc:
-        raise Exception(_("Exception occurred") + f": {str(exc)}")
+        raise Exception(_('Exception occurred') + f': {str(exc)}')
 
     if response.status_code != 200:
         raise Exception(
-            _("Server responded with invalid status code") + f": {response.status_code}"
+            _('Server responded with invalid status code') + f': {response.status_code}'
         )
 
     try:
         content_length = int(response.headers.get('Content-Length', 0))
     except ValueError:
-        raise ValueError(_("Server responded with invalid Content-Length value"))
+        raise ValueError(_('Server responded with invalid Content-Length value'))
 
     if content_length > max_size:
-        raise ValueError(_("Image size is too large"))
+        raise ValueError(_('Image size is too large'))
 
     # Download the file, ensuring we do not exceed the reported size
     file = io.BytesIO()
@@ -168,12 +168,12 @@ def download_image_from_url(remote_url, timeout=2.5):
         dl_size += len(chunk)
 
         if dl_size > max_size:
-            raise ValueError(_("Image download exceeded maximum size"))
+            raise ValueError(_('Image download exceeded maximum size'))
 
         file.write(chunk)
 
     if dl_size == 0:
-        raise ValueError(_("Remote server returned empty response"))
+        raise ValueError(_('Remote server returned empty response'))
 
     # Now, attempt to convert the downloaded data to a valid image file
     # img.verify() will throw an exception if the image is not valid
@@ -181,7 +181,7 @@ def download_image_from_url(remote_url, timeout=2.5):
         img = Image.open(file).convert()
         img.verify()
     except Exception:
-        raise TypeError(_("Supplied URL is not a valid image file"))
+        raise TypeError(_('Supplied URL is not a valid image file'))
 
     return img
 

@@ -7,7 +7,7 @@ from plugin.mixins import APICallMixin, SettingsMixin
 class SampleApiCallerPlugin(APICallMixin, SettingsMixin, InvenTreePlugin):
     """A small api call sample."""
 
-    NAME = "Sample API Caller"
+    NAME = 'Sample API Caller'
 
     SETTINGS = {
         'API_TOKEN': {'name': 'API Token', 'protected': True},

@@ -224,7 +224,7 @@ class Order(
         if self.company and self.contact:
             if self.contact.company != self.company:
                 raise ValidationError({
-                    "contact": _("Contact does not match selected company")
+                    'contact': _('Contact does not match selected company')
                 })
 
     @classmethod
@@ -327,7 +327,7 @@ class Order(
     @classmethod
     def get_status_class(cls):
         """Return the enumeration class which represents the 'status' field for this model"""
-        raise NotImplementedError(f"get_status_class() not implemented for {__class__}")
+        raise NotImplementedError(f'get_status_class() not implemented for {__class__}')
 
 
 class PurchaseOrder(TotalPriceMixin, Order):
@@ -454,7 +454,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         max_length=64,
         blank=True,
         verbose_name=_('Supplier Reference'),
-        help_text=_("Supplier order reference code"),
+        help_text=_('Supplier order reference code'),
     )
 
     received_by = models.ForeignKey(
@@ -514,14 +514,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
             quantity = int(quantity)
             if quantity <= 0:
                 raise ValidationError({
-                    'quantity': _("Quantity must be greater than zero")
+                    'quantity': _('Quantity must be greater than zero')
                 })
         except ValueError:
-            raise ValidationError({'quantity': _("Invalid quantity provided")})
+            raise ValidationError({'quantity': _('Invalid quantity provided')})
 
         if supplier_part.supplier != self.supplier:
             raise ValidationError({
-                'supplier': _("Part supplier must match PO supplier")
+                'supplier': _('Part supplier must match PO supplier')
             })
 
         if group:
@@ -715,11 +715,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         try:
             if quantity < 0:
                 raise ValidationError({
-                    "quantity": _("Quantity must be a positive number")
+                    'quantity': _('Quantity must be a positive number')
                 })
             quantity = InvenTree.helpers.clean_decimal(quantity)
         except TypeError:
-            raise ValidationError({"quantity": _("Invalid quantity provided")})
+            raise ValidationError({'quantity': _('Invalid quantity provided')})
 
         # Create a new stock item
         if line.part and quantity > 0:
@@ -882,7 +882,7 @@ class SalesOrder(TotalPriceMixin, Order):
         limit_choices_to={'is_customer': True},
         related_name='return_orders',
         verbose_name=_('Customer'),
-        help_text=_("Company to which the items are being sold"),
+        help_text=_('Company to which the items are being sold'),
     )
 
     @property
@@ -906,7 +906,7 @@ class SalesOrder(TotalPriceMixin, Order):
         max_length=64,
         blank=True,
         verbose_name=_('Customer Reference '),
-        help_text=_("Customer order reference code"),
+        help_text=_('Customer order reference code'),
     )
 
     shipment_date = models.DateField(
@@ -979,12 +979,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
             elif self.pending_shipment_count > 0:
                 raise ValidationError(
-                    _("Order cannot be completed as there are incomplete shipments")
+                    _('Order cannot be completed as there are incomplete shipments')
                 )
 
             elif not allow_incomplete_lines and self.pending_line_count > 0:
                 raise ValidationError(
-                    _("Order cannot be completed as there are incomplete line items")
+                    _('Order cannot be completed as there are incomplete line items')
                 )
 
         except ValidationError as e:
@@ -1174,10 +1174,10 @@ class PurchaseOrderAttachment(InvenTreeAttachment):
 
     def getSubdir(self):
         """Return the directory path where PurchaseOrderAttachment files are located"""
-        return os.path.join("po_files", str(self.order.id))
+        return os.path.join('po_files', str(self.order.id))
 
     order = models.ForeignKey(
-        PurchaseOrder, on_delete=models.CASCADE, related_name="attachments"
+        PurchaseOrder, on_delete=models.CASCADE, related_name='attachments'
     )
 
 
@@ -1191,7 +1191,7 @@ class SalesOrderAttachment(InvenTreeAttachment):
 
     def getSubdir(self):
         """Return the directory path where SalesOrderAttachment files are located"""
-        return os.path.join("so_files", str(self.order.id))
+        return os.path.join('so_files', str(self.order.id))
 
     order = models.ForeignKey(
         SalesOrder, on_delete=models.CASCADE, related_name='attachments'
@@ -1342,7 +1342,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance"""
-        return "{n} x {part} from {supplier} (for {po})".format(
+        return '{n} x {part} from {supplier} (for {po})'.format(
             n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
             supplier=self.order.supplier.name if self.order.supplier else _('deleted'),
@@ -1373,7 +1373,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         null=True,
         related_name='purchase_order_line_items',
         verbose_name=_('Part'),
-        help_text=_("Supplier part"),
+        help_text=_('Supplier part'),
     )
 
     received = models.DecimalField(
@@ -1483,12 +1483,12 @@ class SalesOrderLineItem(OrderLineItem):
         if self.part:
             if self.part.virtual:
                 raise ValidationError({
-                    'part': _("Virtual part cannot be assigned to a sales order")
+                    'part': _('Virtual part cannot be assigned to a sales order')
                 })
 
             if not self.part.salable:
                 raise ValidationError({
-                    'part': _("Only salable parts can be assigned to a sales order")
+                    'part': _('Only salable parts can be assigned to a sales order')
                 })
 
     order = models.ForeignKey(
@@ -1668,10 +1668,10 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
         try:
             if self.shipment_date:
                 # Shipment has already been sent!
-                raise ValidationError(_("Shipment has already been sent"))
+                raise ValidationError(_('Shipment has already been sent'))
 
             if self.allocations.count() == 0:
-                raise ValidationError(_("Shipment has no allocated stock items"))
+                raise ValidationError(_('Shipment has no allocated stock items'))
 
         except ValidationError as e:
             if raise_error:
@@ -1807,7 +1807,7 @@ class SalesOrderAllocation(models.Model):
         # Ensure that we do not 'over allocate' a stock item
         build_allocation_count = self.item.build_allocation_count()
         sales_allocation_count = self.item.sales_order_allocation_count(
-            exclude_allocations={"pk": self.pk}
+            exclude_allocations={'pk': self.pk}
         )
 
         total_allocation = (
@@ -1954,7 +1954,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         limit_choices_to={'is_customer': True},
         related_name='sales_orders',
         verbose_name=_('Customer'),
-        help_text=_("Company from which items are being returned"),
+        help_text=_('Company from which items are being returned'),
     )
 
     @property
@@ -1973,7 +1973,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         max_length=64,
         blank=True,
         verbose_name=_('Customer Reference '),
-        help_text=_("Customer order reference code"),
+        help_text=_('Customer order reference code'),
     )
 
     issue_date = models.DateField(
@@ -2078,7 +2078,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """
         # Prevent an item from being "received" multiple times
         if line.received_date is not None:
-            logger.warning("receive_line_item called with item already returned")
+            logger.warning('receive_line_item called with item already returned')
             return
 
         stock_item = line.item
@@ -2144,7 +2144,7 @@ class ReturnOrderLineItem(OrderLineItem):
 
         if self.item and not self.item.serialized:
             raise ValidationError({
-                'item': _("Only serialized items can be assigned to a Return Order")
+                'item': _('Only serialized items can be assigned to a Return Order')
             })
 
     order = models.ForeignKey(

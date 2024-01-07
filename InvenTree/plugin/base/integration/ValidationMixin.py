@@ -33,7 +33,7 @@ class ValidationMixin:
     class MixinMeta:
         """Metaclass for this mixin"""
 
-        MIXIN_NAME = "Validation"
+        MIXIN_NAME = 'Validation'
 
     def __init__(self):
         """Register the mixin"""

@@ -62,8 +62,8 @@ class StockLocationType(MetadataMixin, models.Model):
     class Meta:
         """Metaclass defines extra model properties."""
 
-        verbose_name = _("Stock Location type")
-        verbose_name_plural = _("Stock Location types")
+        verbose_name = _('Stock Location type')
+        verbose_name_plural = _('Stock Location types')
 
     @staticmethod
     def get_api_url():
@@ -75,21 +75,21 @@ class StockLocationType(MetadataMixin, models.Model):
         return self.name
 
     name = models.CharField(
-        blank=False, max_length=100, verbose_name=_("Name"), help_text=_("Name")
+        blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
     )
 
     description = models.CharField(
         blank=True,
         max_length=250,
-        verbose_name=_("Description"),
-        help_text=_("Description (optional)"),
+        verbose_name=_('Description'),
+        help_text=_('Description (optional)'),
     )
 
     icon = models.CharField(
         blank=True,
         max_length=100,
-        verbose_name=_("Icon"),
-        help_text=_("Default icon for all locations that have no icon set (optional)"),
+        verbose_name=_('Icon'),
+        help_text=_('Default icon for all locations that have no icon set (optional)'),
     )
 
 
@@ -104,7 +104,7 @@ class StockLocationManager(TreeManager):
 
         - Joins the StockLocationType by default for speedier icon access
         """
-        return super().get_queryset().select_related("location_type")
+        return super().get_queryset().select_related('location_type')
 
 
 class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
@@ -145,9 +145,9 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     custom_icon = models.CharField(
         blank=True,
         max_length=100,
-        verbose_name=_("Icon"),
-        help_text=_("Icon (optional)"),
-        db_column="icon",
+        verbose_name=_('Icon'),
+        help_text=_('Icon (optional)'),
+        db_column='icon',
     )
 
     owner = models.ForeignKey(
@@ -178,11 +178,11 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     location_type = models.ForeignKey(
         StockLocationType,
         on_delete=models.SET_NULL,
-        verbose_name=_("Location type"),
-        related_name="stock_locations",
+        verbose_name=_('Location type'),
+        related_name='stock_locations',
         null=True,
         blank=True,
-        help_text=_("Stock location type of this location"),
+        help_text=_('Stock location type of this location'),
     )
 
     @property
@@ -197,7 +197,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         if self.location_type:
             return self.location_type.icon
 
-        return ""
+        return ''
 
     @icon.setter
     def icon(self, value):
@@ -250,8 +250,8 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         if self.pk and self.structural and self.stock_item_count(False) > 0:
             raise ValidationError(
                 _(
-                    "You cannot make this stock location structural because some stock items "
-                    "are already located into it!"
+                    'You cannot make this stock location structural because some stock items '
+                    'are already located into it!'
                 )
             )
         super().clean()
@@ -614,7 +614,7 @@ class StockItem(
         if self.location is not None and self.location.structural:
             raise ValidationError({
                 'location': _(
-                    "Stock items cannot be located into structural stock locations!"
+                    'Stock items cannot be located into structural stock locations!'
                 )
             })
 
@@ -644,7 +644,7 @@ class StockItem(
             # Virtual parts cannot have stock items created against them
             if self.part.virtual:
                 raise ValidationError({
-                    'part': _("Stock item cannot be created for virtual parts")
+                    'part': _('Stock item cannot be created for virtual parts')
                 })
         except PartModels.Part.DoesNotExist:
             # For some reason the 'clean' process sometimes throws errors because self.part does not exist
@@ -703,7 +703,7 @@ class StockItem(
         # If the item is marked as "is_building", it must point to a build!
         if self.is_building and not self.build:
             raise ValidationError({
-                'build': _("Item must have a build reference if is_building=True")
+                'build': _('Item must have a build reference if is_building=True')
             })
 
         # If the item points to a build, check that the Part references match
@@ -716,7 +716,7 @@ class StockItem(
                 pass
             else:
                 raise ValidationError({
-                    'build': _("Build reference does not point to the same part object")
+                    'build': _('Build reference does not point to the same part object')
                 })
 
     def get_absolute_url(self):
@@ -793,8 +793,8 @@ class StockItem(
         blank=True,
         limit_choices_to={'is_customer': True},
         related_name='assigned_stock',
-        help_text=_("Customer"),
-        verbose_name=_("Customer"),
+        help_text=_('Customer'),
+        verbose_name=_('Customer'),
     )
 
     serial = models.CharField(
@@ -808,7 +808,7 @@ class StockItem(
     serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
-        verbose_name=_('External Link'), blank=True, help_text=_("Link to external URL")
+        verbose_name=_('External Link'), blank=True, help_text=_('Link to external URL')
     )
 
     batch = models.CharField(
@@ -821,7 +821,7 @@ class StockItem(
     )
 
     quantity = models.DecimalField(
-        verbose_name=_("Stock Quantity"),
+        verbose_name=_('Stock Quantity'),
         max_digits=15,
         decimal_places=5,
         validators=[MinValueValidator(0)],
@@ -863,7 +863,7 @@ class StockItem(
     sales_order = models.ForeignKey(
         'order.SalesOrder',
         on_delete=models.SET_NULL,
-        verbose_name=_("Destination Sales Order"),
+        verbose_name=_('Destination Sales Order'),
         related_name='stock_items',
         null=True,
         blank=True,
@@ -1454,32 +1454,32 @@ class StockItem(
             return
 
         if not self.part.trackable:
-            raise ValidationError({"part": _("Part is not set as trackable")})
+            raise ValidationError({'part': _('Part is not set as trackable')})
 
         # Quantity must be a valid integer value
         try:
             quantity = int(quantity)
         except ValueError:
-            raise ValidationError({"quantity": _("Quantity must be integer")})
+            raise ValidationError({'quantity': _('Quantity must be integer')})
 
         if quantity <= 0:
-            raise ValidationError({"quantity": _("Quantity must be greater than zero")})
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity > self.quantity:
             raise ValidationError({
-                "quantity": _(
-                    f"Quantity must not exceed available stock quantity ({self.quantity})"
+                'quantity': _(
+                    f'Quantity must not exceed available stock quantity ({self.quantity})'
                 )
             })
 
         if type(serials) not in [list, tuple]:
             raise ValidationError({
-                "serial_numbers": _("Serial numbers must be a list of integers")
+                'serial_numbers': _('Serial numbers must be a list of integers')
             })
 
         if quantity != len(serials):
             raise ValidationError({
-                "quantity": _("Quantity does not match serial numbers")
+                'quantity': _('Quantity does not match serial numbers')
             })
 
         # Test if each of the serial numbers are valid
@@ -1487,8 +1487,8 @@ class StockItem(
 
         if len(existing) > 0:
             exists = ','.join([str(x) for x in existing])
-            msg = _("Serial numbers already exist") + f": {exists}"
-            raise ValidationError({"serial_numbers": msg})
+            msg = _('Serial numbers already exist') + f': {exists}'
+            raise ValidationError({'serial_numbers': msg})
 
         # Create a new stock item for each unique serial number
         for serial in serials:
@@ -1570,7 +1570,7 @@ class StockItem(
                 raise ValidationError(_('Stock item is currently in production'))
 
             if self.serialized:
-                raise ValidationError(_("Serialized stock cannot be merged"))
+                raise ValidationError(_('Serialized stock cannot be merged'))
 
             if other:
                 # Specific checks (rely on the 'other' part)
@@ -1581,7 +1581,7 @@ class StockItem(
 
                 # Base part must match
                 if self.part != other.part:
-                    raise ValidationError(_("Stock items must refer to the same part"))
+                    raise ValidationError(_('Stock items must refer to the same part'))
 
                 # Check if supplier part references match
                 if (
@@ -1589,12 +1589,12 @@ class StockItem(
                     and not allow_mismatched_suppliers
                 ):
                     raise ValidationError(
-                        _("Stock items must refer to the same supplier part")
+                        _('Stock items must refer to the same supplier part')
                     )
 
                 # Check if stock status codes match
                 if self.status != other.status and not allow_mismatched_status:
-                    raise ValidationError(_("Stock status codes must match"))
+                    raise ValidationError(_('Stock status codes must match'))
 
         except ValidationError as e:
             if raise_error:
@@ -1781,7 +1781,7 @@ class StockItem(
             return False
 
         if not self.in_stock:
-            raise ValidationError(_("StockItem cannot be moved as it is not in stock"))
+            raise ValidationError(_('StockItem cannot be moved as it is not in stock'))
 
         if quantity <= 0:
             return False
@@ -1957,7 +1957,7 @@ class StockItem(
             s += f' @ {self.location.name}'
 
         if self.purchase_order:
-            s += f" ({self.purchase_order})"
+            s += f' ({self.purchase_order})'
 
         return s
 
@@ -2182,7 +2182,7 @@ class StockItemAttachment(InvenTreeAttachment):
 
     def getSubdir(self):
         """Override attachment location."""
-        return os.path.join("stock_files", str(self.stock_item.id))
+        return os.path.join('stock_files', str(self.stock_item.id))
 
     stock_item = models.ForeignKey(
         StockItem, on_delete=models.CASCADE, related_name='attachments'
@@ -2297,13 +2297,13 @@ class StockItemTestResult(MetadataMixin, models.Model):
                 if template.requires_value:
                     if not self.value:
                         raise ValidationError({
-                            "value": _("Value must be provided for this test")
+                            'value': _('Value must be provided for this test')
                         })
 
                 if template.requires_attachment:
                     if not self.attachment:
                         raise ValidationError({
-                            "attachment": _("Attachment must be uploaded for this test")
+                            'attachment': _('Attachment must be uploaded for this test')
                         })
 
                 break
@@ -2341,7 +2341,7 @@ class StockItemTestResult(MetadataMixin, models.Model):
     )
 
     notes = models.CharField(
-        blank=True, max_length=500, verbose_name=_('Notes'), help_text=_("Test notes")
+        blank=True, max_length=500, verbose_name=_('Notes'), help_text=_('Test notes')
     )
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)

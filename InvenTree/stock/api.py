@@ -283,7 +283,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
         """Download the filtered queryset as a data file"""
         dataset = LocationResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_Locations.{export_format}"
+        filename = f'InvenTree_Locations.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -389,11 +389,11 @@ class StockLocationTypeList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = ["name", "location_count", "icon"]
+    ordering_fields = ['name', 'location_count', 'icon']
 
-    ordering = ["-location_count"]
+    ordering = ['-location_count']
 
-    search_fields = ["name"]
+    search_fields = ['name']
 
     def get_queryset(self):
         """Override the queryset method to include location count."""
@@ -491,9 +491,9 @@ class StockFilter(rest_filters.FilterSet):
     )
 
     # Part attribute filters
-    assembly = rest_filters.BooleanFilter(label="Assembly", field_name='part__assembly')
-    active = rest_filters.BooleanFilter(label="Active", field_name='part__active')
-    salable = rest_filters.BooleanFilter(label="Salable", field_name='part__salable')
+    assembly = rest_filters.BooleanFilter(label='Assembly', field_name='part__assembly')
+    active = rest_filters.BooleanFilter(label='Active', field_name='part__active')
+    salable = rest_filters.BooleanFilter(label='Salable', field_name='part__salable')
 
     min_stock = rest_filters.NumberFilter(
         label='Minimum stock', field_name='quantity', lookup_expr='gte'
@@ -570,14 +570,14 @@ class StockFilter(rest_filters.FilterSet):
         return queryset.filter(Q(quantity__lte=F('allocated')))
 
     batch = rest_filters.CharFilter(
-        label="Batch code filter (case insensitive)", lookup_expr='iexact'
+        label='Batch code filter (case insensitive)', lookup_expr='iexact'
     )
 
     batch_regex = rest_filters.CharFilter(
-        label="Batch code filter (regex)", field_name='batch', lookup_expr='iregex'
+        label='Batch code filter (regex)', field_name='batch', lookup_expr='iregex'
     )
 
-    is_building = rest_filters.BooleanFilter(label="In production")
+    is_building = rest_filters.BooleanFilter(label='In production')
 
     # Serial number filtering
     serial_gte = rest_filters.NumberFilter(
@@ -741,7 +741,7 @@ class StockFilter(rest_filters.FilterSet):
 
     # Stock "expiry" filters
     expiry_date_lte = InvenTreeDateFilter(
-        label=_("Expiry date before"), field_name='expiry_date', lookup_expr='lte'
+        label=_('Expiry date before'), field_name='expiry_date', lookup_expr='lte'
     )
 
     expiry_date_gte = InvenTreeDateFilter(
@@ -913,7 +913,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
             if not part.trackable:
                 raise ValidationError({
                     'serial_numbers': [
-                        _("Serial numbers cannot be supplied for a non-trackable part")
+                        _('Serial numbers cannot be supplied for a non-trackable part')
                     ]
                 })
 
@@ -939,9 +939,9 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                             errors.append(exc.message)
 
                 if len(errors) > 0:
-                    msg = _("The following serial numbers already exist or are invalid")
-                    msg += " : "
-                    msg += ",".join([str(e) for e in invalid])
+                    msg = _('The following serial numbers already exist or are invalid')
+                    msg += ' : '
+                    msg += ','.join([str(e) for e in invalid])
 
                     raise ValidationError({'serial_numbers': errors + [msg]})
 
@@ -1098,7 +1098,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     queryset = queryset.filter(part=part)
 
             except (ValueError, Part.DoesNotExist):
-                raise ValidationError({"part": "Invalid Part ID specified"})
+                raise ValidationError({'part': 'Invalid Part ID specified'})
 
         # Does the client wish to filter by stock location?
         loc_id = params.get('location', None)
@@ -1531,7 +1531,7 @@ stock_api_urls = [
                 ]),
             ),
             re_path(
-                r'^.*$', StockLocationTypeList.as_view(), name="api-location-type-list"
+                r'^.*$', StockLocationTypeList.as_view(), name='api-location-type-list'
             ),
         ]),
     ),

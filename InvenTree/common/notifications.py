@@ -311,23 +311,23 @@ class InvenTreeNotificationBodies:
     """
 
     NewOrder = NotificationBody(
-        name=_("New {verbose_name}"),
+        name=_('New {verbose_name}'),
         slug='{app_label}.new_{model_name}',
-        message=_("A new order has been created and assigned to you"),
+        message=_('A new order has been created and assigned to you'),
         template='email/new_order_assigned.html',
     )
     """Send when a new order (build, sale or purchase) was created."""
 
     OrderCanceled = NotificationBody(
-        name=_("{verbose_name} canceled"),
+        name=_('{verbose_name} canceled'),
         slug='{app_label}.canceled_{model_name}',
-        message=_("A order that is assigned to you was canceled"),
+        message=_('A order that is assigned to you was canceled'),
         template='email/canceled_order_assigned.html',
     )
     """Send when a order (sale, return or purchase) was canceled."""
 
     ItemsReceived = NotificationBody(
-        name=_("Items Received"),
+        name=_('Items Received'),
         slug='purchase_order.items_received',
         message=_('Items have been received against a purchase order'),
         template='email/purchase_order_received.html',
@@ -414,7 +414,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
             # Unhandled type
             else:
                 logger.error(
-                    "Unknown target passed to trigger_notification method: %s", target
+                    'Unknown target passed to trigger_notification method: %s', target
                 )
 
     if target_users:
@@ -515,4 +515,4 @@ def deliver_notification(
             str(obj),
         )
         if not success:
-            logger.info("There were some problems")
+            logger.info('There were some problems')

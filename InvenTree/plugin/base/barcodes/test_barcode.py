@@ -213,7 +213,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         for k in invalid_keys:
             response = self.post(self.unassign_url, {k: 123}, expected_code=400)
 
-            self.assertIn("Missing data: Provide one of", str(response.data['error']))
+            self.assertIn('Missing data: Provide one of', str(response.data['error']))
 
         valid_keys = ['build', 'salesorder', 'part']
 
@@ -221,7 +221,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         for k in valid_keys:
             response = self.post(self.unassign_url, {k: 999999999}, expected_code=400)
 
-            self.assertIn("object does not exist", str(response.data[k]))
+            self.assertIn('object does not exist', str(response.data[k]))
 
 
 class SOAllocateTest(InvenTreeAPITestCase):

@@ -18,7 +18,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
     Uses the plugin system to actually fetch the rates from an external API.
     """
 
-    name = "InvenTreeExchange"
+    name = 'InvenTreeExchange'
 
     def get_rates(self, **kwargs) -> None:
         """Set the requested currency codes and get rates."""
@@ -55,19 +55,19 @@ class InvenTreeExchange(SimpleExchangeBackend):
         try:
             rates = plugin.update_exchange_rates(base_currency, symbols)
         except Exception as exc:
-            logger.exception("Exchange rate update failed: %s", exc)
+            logger.exception('Exchange rate update failed: %s', exc)
             return {}
 
         if not rates:
             logger.warning(
-                "Exchange rate update failed - no data returned from plugin %s", slug
+                'Exchange rate update failed - no data returned from plugin %s', slug
             )
             return {}
 
         # Update exchange rates based on returned data
         if type(rates) is not dict:
             logger.warning(
-                "Invalid exchange rate data returned from plugin %s (type %s)",
+                'Invalid exchange rate data returned from plugin %s (type %s)',
                 slug,
                 type(rates),
             )
@@ -82,7 +82,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
     def update_rates(self, base_currency=None, **kwargs):
         """Call to update all exchange rates"""
         backend, _ = ExchangeBackend.objects.update_or_create(
-            name=self.name, defaults={"base_currency": base_currency}
+            name=self.name, defaults={'base_currency': base_currency}
         )
 
         if base_currency is None:
@@ -91,7 +91,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
         symbols = currency_codes()
 
         logger.info(
-            "Updating exchange rates for %s (%s currencies)",
+            'Updating exchange rates for %s (%s currencies)',
             base_currency,
             len(symbols),
         )
@@ -110,7 +110,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
             ])
         else:
             logger.info(
-                "No exchange rates returned from backend - currencies not updated"
+                'No exchange rates returned from backend - currencies not updated'
             )
 
-        logger.info("Updated exchange rates for %s", base_currency)
+        logger.info('Updated exchange rates for %s', base_currency)

@@ -81,7 +81,7 @@ class FileManagementFormView(MultiStepFormView):
         ('fields', forms.MatchFieldForm),
         ('items', forms.MatchItemForm),
     ]
-    form_steps_description = [_("Upload File"), _("Match Fields"), _("Match Items")]
+    form_steps_description = [_('Upload File'), _('Match Fields'), _('Match Items')]
     media_folder = 'file_upload/'
     extra_context_data = {}
 

@@ -45,7 +45,7 @@ class TestForwardMigrations(MigratorTestCase):
 
         for name in ['A', 'C', 'E']:
             part = Part.objects.get(name=name)
-            self.assertEqual(part.description, f"My part {name}")
+            self.assertEqual(part.description, f'My part {name}')
 
 
 class TestBomItemMigrations(MigratorTestCase):

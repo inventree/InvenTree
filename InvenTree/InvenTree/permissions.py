@@ -18,7 +18,7 @@ def get_model_for_view(view, raise_error=True):
     if hasattr(view, 'get_serializer_class'):
         return view.get_serializr_class().Meta.model
 
-    raise AttributeError(f"Serializer class not specified for {view.__class__}")
+    raise AttributeError(f'Serializer class not specified for {view.__class__}')
 
 
 class RolePermission(permissions.BasePermission):
@@ -62,7 +62,7 @@ class RolePermission(permissions.BasePermission):
         }
 
         # let the view define a custom rolemap
-        if hasattr(view, "rolemap"):
+        if hasattr(view, 'rolemap'):
             rolemap.update(view.rolemap)
 
         permission = rolemap[request.method]
@@ -78,7 +78,7 @@ class RolePermission(permissions.BasePermission):
             app_label = model._meta.app_label
             model_name = model._meta.model_name
 
-            table = f"{app_label}_{model_name}"
+            table = f'{app_label}_{model_name}'
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta,
             # then we don't need a permission

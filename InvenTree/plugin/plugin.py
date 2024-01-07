@@ -16,7 +16,7 @@ from django.utils.translation import gettext_lazy as _
 
 from plugin.helpers import get_git_log
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class MetaBase:

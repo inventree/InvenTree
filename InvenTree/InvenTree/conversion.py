@@ -127,7 +127,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
         if unit:
             raise ValidationError(_(f'Could not convert {original} to {unit}'))
         else:
-            raise ValidationError(_("Invalid quantity supplied"))
+            raise ValidationError(_('Invalid quantity supplied'))
 
     # Calculate the "magnitude" of the value, as a float
     # If the value is specified strangely (e.g. as a fraction or a dozen), this can cause issues

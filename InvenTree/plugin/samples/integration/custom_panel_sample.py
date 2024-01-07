@@ -9,11 +9,11 @@ from stock.views import StockLocationDetail
 class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
     """A sample plugin which renders some custom panels."""
 
-    NAME = "CustomPanelExample"
-    SLUG = "samplepanel"
-    TITLE = "Custom Panel Example"
-    DESCRIPTION = "An example plugin demonstrating how custom panels can be added to the user interface"
-    VERSION = "0.1"
+    NAME = 'CustomPanelExample'
+    SLUG = 'samplepanel'
+    TITLE = 'Custom Panel Example'
+    DESCRIPTION = 'An example plugin demonstrating how custom panels can be added to the user interface'
+    VERSION = '0.1'
 
     SETTINGS = {
         'ENABLE_HELLO_WORLD': {

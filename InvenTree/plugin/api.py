@@ -227,7 +227,7 @@ def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
     """
     # Make sure that a plugin reference is specified
     if plugin_slug is None and plugin_pk is None:
-        raise NotFound(detail="Plugin not specified")
+        raise NotFound(detail='Plugin not specified')
 
     # Define filter
     filter = {}
@@ -342,13 +342,13 @@ class RegistryStatusView(APIView):
             for error_detail in errors:
                 for name, message in error_detail.items():
                     error_list.append({
-                        "stage": stage,
-                        "name": name,
-                        "message": message,
+                        'stage': stage,
+                        'name': name,
+                        'message': message,
                     })
 
         result = PluginSerializers.PluginRegistryStatusSerializer({
-            "registry_errors": error_list
+            'registry_errors': error_list
         }).data
 
         return Response(result)
@@ -382,7 +382,7 @@ plugin_api_urls = [
                 r'<int:pk>/',
                 include([
                     re_path(
-                        r"^settings/",
+                        r'^settings/',
                         include([
                             re_path(
                                 r'^(?P<key>\w+)/',
@@ -390,9 +390,9 @@ plugin_api_urls = [
                                 name='api-plugin-setting-detail-pk',
                             ),
                             re_path(
-                                r"^.*$",
+                                r'^.*$',
                                 PluginAllSettingList.as_view(),
-                                name="api-plugin-settings",
+                                name='api-plugin-settings',
                             ),
                         ]),
                     ),
@@ -419,9 +419,9 @@ plugin_api_urls = [
             ),
             # Registry status
             re_path(
-                r"^status/",
+                r'^status/',
                 RegistryStatusView.as_view(),
-                name="api-plugin-registry-status",
+                name='api-plugin-registry-status',
             ),
             # Anything else
             re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),

@@ -30,11 +30,11 @@ class InvenTreeCoreNotificationsPlugin(
 ):
     """Core notification methods for InvenTree."""
 
-    NAME = "InvenTreeCoreNotificationsPlugin"
-    TITLE = _("InvenTree Notifications")
+    NAME = 'InvenTreeCoreNotificationsPlugin'
+    TITLE = _('InvenTree Notifications')
     AUTHOR = _('InvenTree contributors')
     DESCRIPTION = _('Integrated outgoing notification methods')
-    VERSION = "1.0.0"
+    VERSION = '1.0.0'
 
     SETTINGS = {
         'ENABLE_NOTIFICATION_EMAILS': {
@@ -145,28 +145,28 @@ class InvenTreeCoreNotificationsPlugin(
                     'text': str(self.context['message']),
                     'blocks': [
                         {
-                            "type": "section",
-                            "text": {
-                                "type": "plain_text",
-                                "text": str(self.context['name']),
+                            'type': 'section',
+                            'text': {
+                                'type': 'plain_text',
+                                'text': str(self.context['name']),
                             },
                         },
                         {
-                            "type": "section",
-                            "text": {
-                                "type": "mrkdwn",
-                                "text": str(self.context['message']),
+                            'type': 'section',
+                            'text': {
+                                'type': 'mrkdwn',
+                                'text': str(self.context['message']),
                             },
-                            "accessory": {
-                                "type": "button",
-                                "text": {
-                                    "type": "plain_text",
-                                    "text": str(_("Open link")),
-                                    "emoji": True,
+                            'accessory': {
+                                'type': 'button',
+                                'text': {
+                                    'type': 'plain_text',
+                                    'text': str(_('Open link')),
+                                    'emoji': True,
                                 },
-                                "value": f'{self.category}_{self.obj.pk}',
-                                "url": self.context['link'],
-                                "action_id": "button-action",
+                                'value': f'{self.category}_{self.obj.pk}',
+                                'url': self.context['link'],
+                                'action_id': 'button-action',
                             },
                         },
                     ],

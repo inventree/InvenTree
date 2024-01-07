@@ -86,7 +86,7 @@ class OrderFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
     # Filter against order status
-    status = rest_filters.NumberFilter(label="Order Status", method='filter_status')
+    status = rest_filters.NumberFilter(label='Order Status', method='filter_status')
 
     def filter_status(self, queryset, name, value):
         """Filter by integer status code"""
@@ -94,7 +94,7 @@ class OrderFilter(rest_filters.FilterSet):
 
     # Exact match for reference
     reference = rest_filters.CharFilter(
-        label='Filter by exact reference', field_name='reference', lookup_expr="iexact"
+        label='Filter by exact reference', field_name='reference', lookup_expr='iexact'
     )
 
     assigned_to_me = rest_filters.BooleanFilter(
@@ -155,7 +155,7 @@ class LineItemFilter(rest_filters.FilterSet):
     )
 
     has_pricing = rest_filters.BooleanFilter(
-        label="Has Pricing", method='filter_has_pricing'
+        label='Has Pricing', method='filter_has_pricing'
     )
 
     def filter_has_pricing(self, queryset, name, value):
@@ -271,7 +271,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         filedata = dataset.export(export_format)
 
-        filename = f"InvenTree_PurchaseOrders.{export_format}"
+        filename = f'InvenTree_PurchaseOrders.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -518,7 +518,7 @@ class PurchaseOrderLineItemList(
 
         filedata = dataset.export(export_format)
 
-        filename = f"InvenTree_PurchaseOrderItems.{export_format}"
+        filename = f'InvenTree_PurchaseOrderItems.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -567,7 +567,7 @@ class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
         """Download this queryset as a file"""
         dataset = PurchaseOrderExtraLineResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_ExtraPurchaseOrderLines.{export_format}"
+        filename = f'InvenTree_ExtraPurchaseOrderLines.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -665,7 +665,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         filedata = dataset.export(export_format)
 
-        filename = f"InvenTree_SalesOrders.{export_format}"
+        filename = f'InvenTree_SalesOrders.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -809,7 +809,7 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
         dataset = SalesOrderLineItemResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
 
-        filename = f"InvenTree_SalesOrderItems.{export_format}"
+        filename = f'InvenTree_SalesOrderItems.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -836,7 +836,7 @@ class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
         """Download this queryset as a file"""
         dataset = SalesOrderExtraLineResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_ExtraSalesOrderLines.{export_format}"
+        filename = f'InvenTree_ExtraSalesOrderLines.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -1127,7 +1127,7 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
         """Download this queryset as a file"""
         dataset = ReturnOrderResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_ReturnOrders.{export_format}"
+        filename = f'InvenTree_ReturnOrders.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -1274,7 +1274,7 @@ class ReturnOrderLineItemList(
     def download_queryset(self, queryset, export_format):
         """Download the requested queryset as a file"""
         raise NotImplementedError(
-            "download_queryset not yet implemented for this endpoint"
+            'download_queryset not yet implemented for this endpoint'
         )
 
     filter_backends = SEARCH_ORDER_FILTER
@@ -1303,7 +1303,7 @@ class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
 
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file"""
-        raise NotImplementedError("download_queryset not yet implemented")
+        raise NotImplementedError('download_queryset not yet implemented')
 
 
 class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
@@ -1339,9 +1339,9 @@ class OrderCalendarExport(ICalFeed):
 
     instance_url = get_base_url()
 
-    instance_url = instance_url.replace("http://", "").replace("https://", "")
+    instance_url = instance_url.replace('http://', '').replace('https://', '')
     timezone = settings.TIME_ZONE
-    file_name = "calendar.ics"
+    file_name = 'calendar.ics'
 
     def __call__(self, request, *args, **kwargs):
         """Overload call in order to check for authentication.
@@ -1367,8 +1367,8 @@ class OrderCalendarExport(ICalFeed):
             if len(auth) == 2:
                 # NOTE: We are only support basic authentication for now.
                 #
-                if auth[0].lower() == "basic":
-                    uname, passwd = base64.b64decode(auth[1]).decode("ascii").split(':')
+                if auth[0].lower() == 'basic':
+                    uname, passwd = base64.b64decode(auth[1]).decode('ascii').split(':')
                     user = authenticate(username=uname, password=passwd)
                     if user is not None:
                         if user.is_active:
@@ -1383,7 +1383,7 @@ class OrderCalendarExport(ICalFeed):
         # Still nothing - return Unauth. header with info on how to authenticate
         # Information is needed by client, eg Thunderbird
         response = JsonResponse({
-            "detail": "Authentication credentials were not provided."
+            'detail': 'Authentication credentials were not provided.'
         })
         response['WWW-Authenticate'] = 'Basic realm="api"'
         response.status_code = 401
@@ -1402,11 +1402,11 @@ class OrderCalendarExport(ICalFeed):
 
     def title(self, obj):
         """Return calendar title."""
-        if obj["ordertype"] == 'purchase-order':
+        if obj['ordertype'] == 'purchase-order':
             ordertype_title = _('Purchase Order')
-        elif obj["ordertype"] == 'sales-order':
+        elif obj['ordertype'] == 'sales-order':
             ordertype_title = _('Sales Order')
-        elif obj["ordertype"] == 'return-order':
+        elif obj['ordertype'] == 'return-order':
             ordertype_title = _('Return Order')
         else:
             ordertype_title = _('Unknown')
@@ -1433,7 +1433,7 @@ class OrderCalendarExport(ICalFeed):
                 ).filter(status__lt=PurchaseOrderStatus.COMPLETE.value)
             else:
                 outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
-        elif obj["ordertype"] == 'sales-order':
+        elif obj['ordertype'] == 'sales-order':
             if obj['include_completed'] is False:
                 # Do not include completed (=shipped) orders from list in this case
                 # Shipped status = 20
@@ -1442,7 +1442,7 @@ class OrderCalendarExport(ICalFeed):
                 ).filter(status__lt=SalesOrderStatus.SHIPPED.value)
             else:
                 outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
-        elif obj["ordertype"] == 'return-order':
+        elif obj['ordertype'] == 'return-order':
             if obj['include_completed'] is False:
                 # Do not include completed orders from list in this case
                 # Complete status = 30
@@ -1458,11 +1458,11 @@ class OrderCalendarExport(ICalFeed):
 
     def item_title(self, item):
         """Set the event title to the order reference"""
-        return f"{item.reference}"
+        return f'{item.reference}'
 
     def item_description(self, item):
         """Set the event description"""
-        return f"Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}"
+        return f'Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}'
 
     def item_start_datetime(self, item):
         """Set event start to target date. Goal is all-day event."""

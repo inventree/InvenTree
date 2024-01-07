@@ -115,7 +115,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
     def validate_serial(self, value):
         """Make sure serial is not to big."""
         if abs(extract_int(value)) > 0x7FFFFFFF:
-            raise serializers.ValidationError(_("Serial number is too large"))
+            raise serializers.ValidationError(_('Serial number is too large'))
         return value
 
 
@@ -196,8 +196,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         queryset=part_models.Part.objects.all(),
         many=False,
         allow_null=False,
-        help_text=_("Base Part"),
-        label=_("Part"),
+        help_text=_('Base Part'),
+        label=_('Part'),
     )
 
     location_path = serializers.ListField(
@@ -212,15 +212,15 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         required=False,
         allow_null=True,
         help_text=_(
-            "Use pack size when adding: the quantity defined is the number of packs"
+            'Use pack size when adding: the quantity defined is the number of packs'
         ),
-        label=("Use pack size"),
+        label=('Use pack size'),
     )
 
     def validate_part(self, part):
         """Ensure the provided Part instance is valid"""
         if part.virtual:
-            raise ValidationError(_("Stock item cannot be created for virtual parts"))
+            raise ValidationError(_('Stock item cannot be created for virtual parts'))
 
         return part
 
@@ -391,12 +391,12 @@ class SerializeStockItemSerializer(serializers.Serializer):
         item = self.context['item']
 
         if quantity < 0:
-            raise ValidationError(_("Quantity must be greater than zero"))
+            raise ValidationError(_('Quantity must be greater than zero'))
 
         if quantity > item.quantity:
             q = item.quantity
             raise ValidationError(
-                _(f"Quantity must not exceed available stock quantity ({q})")
+                _(f'Quantity must not exceed available stock quantity ({q})')
             )
 
         return quantity
@@ -420,8 +420,8 @@ class SerializeStockItemSerializer(serializers.Serializer):
     notes = serializers.CharField(
         required=False,
         allow_blank=True,
-        label=_("Notes"),
-        help_text=_("Optional note field"),
+        label=_('Notes'),
+        help_text=_('Optional note field'),
     )
 
     def validate(self, data):
@@ -431,7 +431,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
         item = self.context['item']
 
         if not item.part.trackable:
-            raise ValidationError(_("Serial numbers cannot be assigned to this part"))
+            raise ValidationError(_('Serial numbers cannot be assigned to this part'))
 
         # Ensure the serial numbers are valid!
         quantity = data['quantity']
@@ -448,7 +448,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
         if len(existing) > 0:
             exists = ','.join([str(x) for x in existing])
-            error = _('Serial numbers already exist') + ": " + exists
+            error = _('Serial numbers already exist') + ': ' + exists
 
             raise ValidationError({'serial_numbers': error})
 
@@ -508,7 +508,7 @@ class InstallStockItemSerializer(serializers.Serializer):
         """Validate the quantity value."""
 
         if quantity < 1:
-            raise ValidationError(_("Quantity to install must be at least 1"))
+            raise ValidationError(_('Quantity to install must be at least 1'))
 
         return quantity
 
@@ -516,14 +516,14 @@ class InstallStockItemSerializer(serializers.Serializer):
         """Validate the selected stock item."""
         if not stock_item.in_stock:
             # StockItem must be in stock to be "installed"
-            raise ValidationError(_("Stock item is unavailable"))
+            raise ValidationError(_('Stock item is unavailable'))
 
         parent_item = self.context['item']
         parent_part = parent_item.part
 
         # Check if the selected part is in the Bill of Materials of the parent item
         if not parent_part.check_if_part_in_bom(stock_item.part):
-            raise ValidationError(_("Selected part is not in the Bill of Materials"))
+            raise ValidationError(_('Selected part is not in the Bill of Materials'))
 
         return stock_item
 
@@ -536,7 +536,7 @@ class InstallStockItemSerializer(serializers.Serializer):
 
         if quantity > stock_item.quantity:
             raise ValidationError(
-                _("Quantity to install must not exceed available quantity")
+                _('Quantity to install must not exceed available quantity')
             )
 
         return data
@@ -619,7 +619,7 @@ class ConvertStockItemSerializer(serializers.Serializer):
 
         if part not in valid_options:
             raise ValidationError(
-                _("Selected part is not a valid option for conversion")
+                _('Selected part is not a valid option for conversion')
             )
 
         return part
@@ -635,7 +635,7 @@ class ConvertStockItemSerializer(serializers.Serializer):
 
         if stock_item.supplier_part is not None:
             raise ValidationError(
-                _("Cannot convert stock item with assigned SupplierPart")
+                _('Cannot convert stock item with assigned SupplierPart')
             )
 
         return data
@@ -709,7 +709,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
     def validate_items(self, items):
         """Validate the selected stock items"""
         if len(items) == 0:
-            raise ValidationError(_("No stock items selected"))
+            raise ValidationError(_('No stock items selected'))
 
         return items
 
@@ -784,16 +784,16 @@ class StockLocationTypeSerializer(InvenTree.serializers.InvenTreeModelSerializer
         """Serializer metaclass."""
 
         model = StockLocationType
-        fields = ["pk", "name", "description", "icon", "location_count"]
+        fields = ['pk', 'name', 'description', 'icon', 'location_count']
 
-        read_only_fields = ["location_count"]
+        read_only_fields = ['location_count']
 
     location_count = serializers.IntegerField(read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):
         """Add location count to each location type."""
-        return queryset.annotate(location_count=Count("stock_locations"))
+        return queryset.annotate(location_count=Count('stock_locations'))
 
 
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -870,7 +870,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
     # Detail for location type
     location_type_detail = StockLocationTypeSerializer(
-        source="location_type", read_only=True, many=False
+        source='location_type', read_only=True, many=False
     )
 
 
@@ -967,19 +967,19 @@ class StockAssignmentItemSerializer(serializers.Serializer):
         """
         # The item must currently be "in stock"
         if not item.in_stock:
-            raise ValidationError(_("Item must be in stock"))
+            raise ValidationError(_('Item must be in stock'))
 
         # The base part must be "salable"
         if not item.part.salable:
-            raise ValidationError(_("Part must be salable"))
+            raise ValidationError(_('Part must be salable'))
 
         # The item must not be allocated to a sales order
         if item.sales_order_allocations.count() > 0:
-            raise ValidationError(_("Item is allocated to a sales order"))
+            raise ValidationError(_('Item is allocated to a sales order'))
 
         # The item must not be allocated to a build order
         if item.allocations.count() > 0:
-            raise ValidationError(_("Item is allocated to a build order"))
+            raise ValidationError(_('Item is allocated to a build order'))
 
         return item
 
@@ -1027,7 +1027,7 @@ class StockAssignmentSerializer(serializers.Serializer):
         items = data.get('items', [])
 
         if len(items) == 0:
-            raise ValidationError(_("A list of stock items must be provided"))
+            raise ValidationError(_('A list of stock items must be provided'))
 
         return data
 
@@ -1262,8 +1262,8 @@ class StockAdjustmentSerializer(serializers.Serializer):
     notes = serializers.CharField(
         required=False,
         allow_blank=True,
-        label=_("Notes"),
-        help_text=_("Stock transaction notes"),
+        label=_('Notes'),
+        help_text=_('Stock transaction notes'),
     )
 
     def validate(self, data):
@@ -1273,7 +1273,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
         items = data.get('items', [])
 
         if len(items) == 0:
-            raise ValidationError(_("A list of stock items must be provided"))
+            raise ValidationError(_('A list of stock items must be provided'))
 
         return data
 

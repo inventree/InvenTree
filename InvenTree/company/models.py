@@ -96,7 +96,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         constraints = [
             UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
         ]
-        verbose_name_plural = "Companies"
+        verbose_name_plural = 'Companies'
 
     @staticmethod
     def get_api_url():
@@ -215,7 +215,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
     def __str__(self):
         """Get string representation of a Company."""
-        return f"{self.name} - {self.description}"
+        return f'{self.name} - {self.description}'
 
     def get_absolute_url(self):
         """Get the web URL for the detail view for this Company."""
@@ -318,7 +318,7 @@ class Address(models.Model):
     class Meta:
         """Metaclass defines extra model options"""
 
-        verbose_name_plural = "Addresses"
+        verbose_name_plural = 'Addresses'
 
     def __init__(self, *args, **kwargs):
         """Custom init function"""
@@ -340,7 +340,7 @@ class Address(models.Model):
             if len(line) > 0:
                 populated_lines.append(line)
 
-        return ", ".join(populated_lines)
+        return ', '.join(populated_lines)
 
     def save(self, *args, **kwargs):
         """Run checks when saving an address:
@@ -564,7 +564,7 @@ class ManufacturerPartAttachment(InvenTreeAttachment):
 
     def getSubdir(self):
         """Return the subdirectory where attachment files for the ManufacturerPart model are located"""
-        return os.path.join("manufacturer_part_files", str(self.manufacturer_part.id))
+        return os.path.join('manufacturer_part_files', str(self.manufacturer_part.id))
 
     manufacturer_part = models.ForeignKey(
         ManufacturerPart,
@@ -711,14 +711,14 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
                 ):
                     raise ValidationError({
                         'pack_quantity': _(
-                            "Pack units must be compatible with the base part units"
+                            'Pack units must be compatible with the base part units'
                         )
                     })
 
                 # Native value must be greater than zero
                 if float(native_value.magnitude) <= 0:
                     raise ValidationError({
-                        'pack_quantity': _("Pack units must be greater than zero")
+                        'pack_quantity': _('Pack units must be greater than zero')
                     })
 
                 # Update native pack units value
@@ -732,7 +732,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
             if self.manufacturer_part.part != self.part:
                 raise ValidationError({
                     'manufacturer_part': _(
-                        "Linked manufacturer part must reference the same base part"
+                        'Linked manufacturer part must reference the same base part'
                     )
                 })
 
@@ -787,7 +787,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     SKU = models.CharField(
         max_length=100,
-        verbose_name=__("SKU = Stock Keeping Unit (supplier part number)", 'SKU'),
+        verbose_name=__('SKU = Stock Keeping Unit (supplier part number)', 'SKU'),
         help_text=_('Supplier stock keeping unit'),
     )
 
@@ -1007,7 +1007,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
     class Meta:
         """Metaclass defines extra model options"""
 
-        unique_together = ("part", "quantity")
+        unique_together = ('part', 'quantity')
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpricebreak'

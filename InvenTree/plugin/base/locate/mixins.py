@@ -26,7 +26,7 @@ class LocateMixin:
     class MixinMeta:
         """Meta for mixin."""
 
-        MIXIN_NAME = "Locate"
+        MIXIN_NAME = 'Locate'
 
     def __init__(self):
         """Register the mixin."""
@@ -46,7 +46,7 @@ class LocateMixin:
 
         Note: A custom implementation could always change this behaviour
         """
-        logger.info("LocateMixin: Attempting to locate StockItem pk=%s", item_pk)
+        logger.info('LocateMixin: Attempting to locate StockItem pk=%s', item_pk)
 
         from stock.models import StockItem
 
@@ -57,7 +57,7 @@ class LocateMixin:
                 self.locate_stock_location(item.location.pk)
 
         except StockItem.DoesNotExist:  # pragma: no cover
-            logger.warning("LocateMixin: StockItem pk={item_pk} not found")
+            logger.warning('LocateMixin: StockItem pk={item_pk} not found')
             pass
 
     def locate_stock_location(self, location_pk):

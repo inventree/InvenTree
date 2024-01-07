@@ -30,8 +30,8 @@ class TestRefIntMigrations(MigratorTestCase):
         for ii in range(10):
             order = PurchaseOrder.objects.create(
                 supplier=supplier,
-                reference=f"{ii}-abcde",
-                description="Just a test order",
+                reference=f'{ii}-abcde',
+                description='Just a test order',
             )
 
             # Initially, the 'reference_int' field is unavailable
@@ -40,8 +40,8 @@ class TestRefIntMigrations(MigratorTestCase):
 
             sales_order = SalesOrder.objects.create(
                 customer=supplier,
-                reference=f"{ii}-xyz",
-                description="A test sales order",
+                reference=f'{ii}-xyz',
+                description='A test sales order',
             )
 
             # Initially, the 'reference_int' field is unavailable
@@ -67,8 +67,8 @@ class TestRefIntMigrations(MigratorTestCase):
         SalesOrder = self.new_state.apps.get_model('order', 'salesorder')
 
         for ii in range(10):
-            po = PurchaseOrder.objects.get(reference=f"{ii}-abcde")
-            so = SalesOrder.objects.get(reference=f"{ii}-xyz")
+            po = PurchaseOrder.objects.get(reference=f'{ii}-abcde')
+            so = SalesOrder.objects.get(reference=f'{ii}-xyz')
 
             # The integer reference field must have been correctly updated
             self.assertEqual(po.reference_int, ii)
@@ -166,8 +166,8 @@ class TestAdditionalLineMigration(MigratorTestCase):
         for ii in range(10):
             order = PurchaseOrder.objects.create(
                 supplier=supplier,
-                reference=f"{ii}-abcde",
-                description="Just a test order",
+                reference=f'{ii}-abcde',
+                description='Just a test order',
             )
             order.lines.create(part=supplierpart, quantity=12, received=1)
             order.lines.create(quantity=12, received=1)
@@ -188,7 +188,7 @@ class TestAdditionalLineMigration(MigratorTestCase):
         """Test that the the PO lines where converted correctly."""
         PurchaseOrder = self.new_state.apps.get_model('order', 'purchaseorder')
         for ii in range(10):
-            po = PurchaseOrder.objects.get(reference=f"{ii}-abcde")
+            po = PurchaseOrder.objects.get(reference=f'{ii}-abcde')
             self.assertEqual(po.extra_lines.count(), 1)
             self.assertEqual(po.lines.count(), 1)
 

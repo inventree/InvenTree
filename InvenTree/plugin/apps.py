@@ -28,7 +28,7 @@ class PluginAppConfig(AppConfig):
             return
 
         if not canAppAccessDatabase(allow_test=True, allow_plugins=True):
-            logger.info("Skipping plugin loading sequence")  # pragma: no cover
+            logger.info('Skipping plugin loading sequence')  # pragma: no cover
         else:
             logger.info('Loading InvenTree plugins')
 

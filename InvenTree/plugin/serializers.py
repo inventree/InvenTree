@@ -135,24 +135,24 @@ class PluginReloadSerializer(serializers.Serializer):
     full_reload = serializers.BooleanField(
         required=False,
         default=False,
-        label=_("Full reload"),
-        help_text=_("Perform a full reload of the plugin registry"),
+        label=_('Full reload'),
+        help_text=_('Perform a full reload of the plugin registry'),
     )
 
     force_reload = serializers.BooleanField(
         required=False,
         default=False,
-        label=_("Force reload"),
+        label=_('Force reload'),
         help_text=_(
-            "Force a reload of the plugin registry, even if it is already loaded"
+            'Force a reload of the plugin registry, even if it is already loaded'
         ),
     )
 
     collect_plugins = serializers.BooleanField(
         required=False,
         default=False,
-        label=_("Collect plugins"),
-        help_text=_("Collect plugins and add them to the registry"),
+        label=_('Collect plugins'),
+        help_text=_('Collect plugins and add them to the registry'),
     )
 
     def save(self):

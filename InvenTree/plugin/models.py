@@ -26,8 +26,8 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
     class Meta:
         """Meta for PluginConfig."""
 
-        verbose_name = _("Plugin Configuration")
-        verbose_name_plural = _("Plugin Configurations")
+        verbose_name = _('Plugin Configuration')
+        verbose_name_plural = _('Plugin Configurations')
 
     key = models.CharField(
         unique=True, max_length=255, verbose_name=_('Key'), help_text=_('Key of plugin')
@@ -114,7 +114,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         """Customize pickling behavior."""
         state = super().__getstate__()
         state.pop(
-            "plugin", None
+            'plugin', None
         )  # plugin cannot be pickled in some circumstances when used with drf views, remove it (#5408)
         return state
 

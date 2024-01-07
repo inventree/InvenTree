@@ -269,14 +269,14 @@ def ExportBom(
 
                             # Generate column names for this supplier
                             k_sup = (
-                                str(_("Supplier"))
-                                + "_"
+                                str(_('Supplier'))
+                                + '_'
                                 + str(mp_idx)
-                                + "_"
+                                + '_'
                                 + str(sp_idx)
                             )
                             k_sku = (
-                                str(_("SKU")) + "_" + str(mp_idx) + "_" + str(sp_idx)
+                                str(_('SKU')) + '_' + str(mp_idx) + '_' + str(sp_idx)
                             )
 
                             try:
@@ -307,8 +307,8 @@ def ExportBom(
                     supplier_sku = sp_part.SKU
 
                     # Generate column names for this supplier
-                    k_sup = str(_("Supplier")) + "_" + str(sp_idx)
-                    k_sku = str(_("SKU")) + "_" + str(sp_idx)
+                    k_sup = str(_('Supplier')) + '_' + str(sp_idx)
+                    k_sku = str(_('SKU')) + '_' + str(sp_idx)
 
                     try:
                         manufacturer_cols[k_sup].update({bom_idx: supplier_name})
@@ -322,6 +322,6 @@ def ExportBom(
 
     data = dataset.export(fmt)
 
-    filename = f"{part.full_name}_BOM.{fmt}"
+    filename = f'{part.full_name}_BOM.{fmt}'
 
     return DownloadFile(data, filename)

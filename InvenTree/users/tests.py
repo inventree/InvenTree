@@ -21,27 +21,27 @@ class RuleSetModelTest(TestCase):
         missing = [name for name in RuleSet.RULESET_NAMES if name not in keys]
 
         if len(missing) > 0:  # pragma: no cover
-            print("The following rulesets do not have models assigned:")
+            print('The following rulesets do not have models assigned:')
             for m in missing:
-                print("-", m)
+                print('-', m)
 
         # Check if models have been defined for a ruleset which is incorrect
         extra = [name for name in keys if name not in RuleSet.RULESET_NAMES]
 
         if len(extra) > 0:  # pragma: no cover
             print(
-                "The following rulesets have been improperly added to RULESET_MODELS:"
+                'The following rulesets have been improperly added to RULESET_MODELS:'
             )
             for e in extra:
-                print("-", e)
+                print('-', e)
 
         # Check that each ruleset has models assigned
         empty = [key for key in keys if len(RuleSet.RULESET_MODELS[key]) == 0]
 
         if len(empty) > 0:  # pragma: no cover
-            print("The following rulesets have empty entries in RULESET_MODELS:")
+            print('The following rulesets have empty entries in RULESET_MODELS:')
             for e in empty:
-                print("-", e)
+                print('-', e)
 
         self.assertEqual(len(missing), 0)
         self.assertEqual(len(extra), 0)
@@ -78,10 +78,10 @@ class RuleSetModelTest(TestCase):
 
         if len(missing_models) > 0:  # pragma: no cover
             print(
-                "The following database models are not covered by the defined RuleSet permissions:"
+                'The following database models are not covered by the defined RuleSet permissions:'
             )
             for m in missing_models:
-                print("-", m)
+                print('-', m)
 
         extra_models = set()
 
@@ -98,9 +98,9 @@ class RuleSetModelTest(TestCase):
                 extra_models.add(model)
 
         if len(extra_models) > 0:  # pragma: no cover
-            print("The following RuleSet permissions do not match a database model:")
+            print('The following RuleSet permissions do not match a database model:')
             for m in extra_models:
-                print("-", m)
+                print('-', m)
 
         self.assertEqual(len(missing_models), 0)
         self.assertEqual(len(extra_models), 0)
@@ -108,7 +108,7 @@ class RuleSetModelTest(TestCase):
     def test_permission_assign(self):
         """Test that the permission assigning works!"""
         # Create a new group
-        group = Group.objects.create(name="Test group")
+        group = Group.objects.create(name='Test group')
 
         rulesets = group.rule_sets.all()
 

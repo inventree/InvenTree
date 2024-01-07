@@ -12,7 +12,7 @@ class NavigationMixin:
     """Mixin that enables custom navigation links with the plugin."""
 
     NAVIGATION_TAB_NAME = None
-    NAVIGATION_TAB_ICON = "fas fa-question"
+    NAVIGATION_TAB_ICON = 'fas fa-question'
 
     class MixinMeta:
         """Meta options for this mixin."""
@@ -51,7 +51,7 @@ class NavigationMixin:
     @property
     def navigation_icon(self):
         """Icon-name for navigation tab."""
-        return getattr(self, 'NAVIGATION_TAB_ICON', "fas fa-question")
+        return getattr(self, 'NAVIGATION_TAB_ICON', 'fas fa-question')
 
 
 class PanelMixin:
@@ -175,7 +175,7 @@ class PanelMixin:
 
             if any(key not in panel for key in required_keys):
                 logger.warning(
-                    "Custom panel for plugin %s is missing a required parameter",
+                    'Custom panel for plugin %s is missing a required parameter',
                     __class__,
                 )
                 continue

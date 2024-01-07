@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         """Wait till the database is ready."""
-        self.stdout.write("Waiting for database...")
+        self.stdout.write('Waiting for database...')
 
         connected = False
 
@@ -25,12 +25,12 @@ class Command(BaseCommand):
                 connected = True
 
             except OperationalError as e:
-                self.stdout.write(f"Could not connect to database: {e}")
+                self.stdout.write(f'Could not connect to database: {e}')
             except ImproperlyConfigured as e:
-                self.stdout.write(f"Improperly configured: {e}")
+                self.stdout.write(f'Improperly configured: {e}')
             else:
                 if not connection.is_usable():
-                    self.stdout.write("Database configuration is not usable")
+                    self.stdout.write('Database configuration is not usable')
 
             if connected:
-                self.stdout.write("Database connection successful!")
+                self.stdout.write('Database connection successful!')

@@ -11,11 +11,11 @@ from plugin.mixins import CurrencyExchangeMixin
 class SampleCurrencyExchangePlugin(CurrencyExchangeMixin, InvenTreePlugin):
     """Dummy currency exchange plugin which provides fake exchange rates"""
 
-    NAME = "Sample Exchange"
-    DESCRIPTION = _("Sample currency exchange plugin")
-    SLUG = "samplecurrencyexchange"
-    VERSION = "0.1.0"
-    AUTHOR = _("InvenTree Contributors")
+    NAME = 'Sample Exchange'
+    DESCRIPTION = _('Sample currency exchange plugin')
+    SLUG = 'samplecurrencyexchange'
+    VERSION = '0.1.0'
+    AUTHOR = _('InvenTree Contributors')
 
     def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
         """Return dummy data for some currencies"""

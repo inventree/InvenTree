@@ -58,7 +58,7 @@ class BarcodeView(CreateAPIView):
             Any custom fields passed by the specific serializer
         """
         raise NotImplementedError(
-            f"handle_barcode not implemented for {self.__class__}"
+            f'handle_barcode not implemented for {self.__class__}'
         )
 
     def scan_barcode(self, barcode: str, request, **kwargs):
@@ -79,11 +79,11 @@ class BarcodeView(CreateAPIView):
             if result is None:
                 continue
 
-            if "error" in result:
+            if 'error' in result:
                 logger.info(
-                    "%s.scan(...) returned an error: %s",
+                    '%s.scan(...) returned an error: %s',
                     current_plugin.__class__.__name__,
-                    result["error"],
+                    result['error'],
                 )
                 if not response:
                     plugin = current_plugin
@@ -155,9 +155,9 @@ class BarcodeAssign(BarcodeView):
             result = plugin.scan(barcode)
 
             if result is not None:
-                result["error"] = _("Barcode matches existing item")
-                result["plugin"] = plugin.name
-                result["barcode_data"] = barcode
+                result['error'] = _('Barcode matches existing item')
+                result['plugin'] = plugin.name
+                result['barcode_data'] = barcode
 
                 raise ValidationError(result)
 
@@ -174,20 +174,20 @@ class BarcodeAssign(BarcodeView):
                 app_label = model._meta.app_label
                 model_name = model._meta.model_name
 
-                table = f"{app_label}_{model_name}"
+                table = f'{app_label}_{model_name}'
 
-                if not RuleSet.check_table_permission(request.user, table, "change"):
+                if not RuleSet.check_table_permission(request.user, table, 'change'):
                     raise PermissionDenied({
-                        "error": f"You do not have the required permissions for {table}"
+                        'error': f'You do not have the required permissions for {table}'
                     })
 
                 instance.assign_barcode(barcode_data=barcode, barcode_hash=barcode_hash)
 
                 return Response({
-                    'success': f"Assigned barcode to {label} instance",
+                    'success': f'Assigned barcode to {label} instance',
                     label: {'pk': instance.pk},
-                    "barcode_data": barcode,
-                    "barcode_hash": barcode_hash,
+                    'barcode_data': barcode,
+                    'barcode_hash': barcode_hash,
                 })
 
         # If we got here, it means that no valid model types were provided
@@ -238,11 +238,11 @@ class BarcodeUnassign(BarcodeView):
                 app_label = model._meta.app_label
                 model_name = model._meta.model_name
 
-                table = f"{app_label}_{model_name}"
+                table = f'{app_label}_{model_name}'
 
-                if not RuleSet.check_table_permission(request.user, table, "change"):
+                if not RuleSet.check_table_permission(request.user, table, 'change'):
                     raise PermissionDenied({
-                        "error": f"You do not have the required permissions for {table}"
+                        'error': f'You do not have the required permissions for {table}'
                     })
 
                 # Unassign the barcode data from the model instance
@@ -313,11 +313,11 @@ class BarcodePOAllocate(BarcodeView):
                 )
 
         if supplier_parts.count() == 0:
-            raise ValidationError({"error": _("No matching supplier parts found")})
+            raise ValidationError({'error': _('No matching supplier parts found')})
 
         if supplier_parts.count() > 1:
             raise ValidationError({
-                "error": _("Multiple matching supplier parts found")
+                'error': _('Multiple matching supplier parts found')
             })
 
         # At this stage, we have a single matching supplier part
@@ -342,7 +342,7 @@ class BarcodePOAllocate(BarcodeView):
             manufacturer_part=result.get('manufacturerpart', None),
         )
 
-        result['success'] = _("Matched supplier part")
+        result['success'] = _('Matched supplier part')
         result['supplierpart'] = supplier_part.format_matched_response()
 
         # TODO: Determine the 'quantity to order' for the supplier part
@@ -379,24 +379,24 @@ class BarcodePOReceive(BarcodeView):
         purchase_order = kwargs.get('purchase_order', None)
         location = kwargs.get('location', None)
 
-        plugins = registry.with_mixin("barcode")
+        plugins = registry.with_mixin('barcode')
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
 
-        response = {"barcode_data": barcode, "barcode_hash": hash_barcode(barcode)}
+        response = {'barcode_data': barcode, 'barcode_hash': hash_barcode(barcode)}
 
         internal_barcode_plugin = next(
-            filter(lambda plugin: plugin.name == "InvenTreeBarcode", plugins)
+            filter(lambda plugin: plugin.name == 'InvenTreeBarcode', plugins)
         )
 
         if result := internal_barcode_plugin.scan(barcode):
             if 'stockitem' in result:
-                response["error"] = _("Item has already been received")
+                response['error'] = _('Item has already been received')
                 raise ValidationError(response)
 
         # Now, look just for "supplier-barcode" plugins
-        plugins = registry.with_mixin("supplier-barcode")
+        plugins = registry.with_mixin('supplier-barcode')
 
         plugin_response = None
 
@@ -408,11 +408,11 @@ class BarcodePOReceive(BarcodeView):
             if result is None:
                 continue
 
-            if "error" in result:
+            if 'error' in result:
                 logger.info(
-                    "%s.scan_receive_item(...) returned an error: %s",
+                    '%s.scan_receive_item(...) returned an error: %s',
                     current_plugin.__class__.__name__,
-                    result["error"],
+                    result['error'],
                 )
                 if not plugin_response:
                     plugin = current_plugin
@@ -429,9 +429,9 @@ class BarcodePOReceive(BarcodeView):
 
         # A plugin has not been found!
         if plugin is None:
-            response["error"] = _("No match for supplier barcode")
+            response['error'] = _('No match for supplier barcode')
             raise ValidationError(response)
-        elif "error" in response:
+        elif 'error' in response:
             raise ValidationError(response)
         else:
             return Response(response)
@@ -583,11 +583,11 @@ barcode_api_urls = [
     # Unlink a third-party barcode from an item
     path('unlink/', BarcodeUnassign.as_view(), name='api-barcode-unlink'),
     # Receive a purchase order item by scanning its barcode
-    path("po-receive/", BarcodePOReceive.as_view(), name="api-barcode-po-receive"),
+    path('po-receive/', BarcodePOReceive.as_view(), name='api-barcode-po-receive'),
     # Allocate parts to a purchase order by scanning their barcode
-    path("po-allocate/", BarcodePOAllocate.as_view(), name="api-barcode-po-allocate"),
+    path('po-allocate/', BarcodePOAllocate.as_view(), name='api-barcode-po-allocate'),
     # Allocate stock to a sales order by scanning barcode
-    path("so-allocate/", BarcodeSOAllocate.as_view(), name="api-barcode-so-allocate"),
+    path('so-allocate/', BarcodeSOAllocate.as_view(), name='api-barcode-so-allocate'),
     # Catch-all performs barcode 'scan'
     re_path(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),
 ]

@@ -64,7 +64,7 @@ def construct_format_regex(fmt_string: str) -> str:
     Raises:
         ValueError: Format string is invalid
     """
-    pattern = "^"
+    pattern = '^'
 
     for group in string.Formatter().parse(fmt_string):
         prefix = group[0]  # Prefix (literal text appearing before this group)
@@ -87,7 +87,7 @@ def construct_format_regex(fmt_string: str) -> str:
             ':',
             ';',
             '|',
-            '\'',
+            "'",
             '"',
         ]
 
@@ -115,9 +115,9 @@ def construct_format_regex(fmt_string: str) -> str:
             # TODO: Introspect required width
             w = '+'
 
-            pattern += f"(?P<{name}>{chr}{w})"
+            pattern += f'(?P<{name}>{chr}{w})'
 
-    pattern += "$"
+    pattern += '$'
 
     return pattern
 
@@ -172,7 +172,7 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
 
     if not result:
         raise ValueError(
-            _("Provided value does not match required pattern: ") + fmt_string
+            _('Provided value does not match required pattern: ') + fmt_string
         )
 
     # And return the value we are interested in
@@ -198,7 +198,7 @@ def format_money(money: Money, decimal_places: int = None, format: str = None) -
     if format:
         pattern = parse_pattern(format)
     else:
-        pattern = locale.currency_formats["standard"]
+        pattern = locale.currency_formats['standard']
         if decimal_places is not None:
             pattern.frac_prec = (decimal_places, decimal_places)
 

@@ -28,12 +28,12 @@ from plugin.registry import registry
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
 except OSError as err:  # pragma: no cover
-    print(f"OSError: {err}")
-    print("You may require some further system packages to be installed.")
+    print(f'OSError: {err}')
+    print('You may require some further system packages to be installed.')
     sys.exit(1)
 
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 def rename_template(instance, filename):
@@ -118,7 +118,7 @@ class ReportBase(models.Model):
 
     def __str__(self):
         """Format a string representation of a report instance"""
-        return f"{self.name} - {self.description}"
+        return f'{self.name} - {self.description}'
 
     @classmethod
     def getSubdir(cls):
@@ -176,20 +176,20 @@ class ReportBase(models.Model):
     template = models.FileField(
         upload_to=rename_template,
         verbose_name=_('Template'),
-        help_text=_("Report template file"),
+        help_text=_('Report template file'),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
     )
 
     description = models.CharField(
         max_length=250,
         verbose_name=_('Description'),
-        help_text=_("Report template description"),
+        help_text=_('Report template description'),
     )
 
     revision = models.PositiveIntegerField(
         default=1,
-        verbose_name=_("Revision"),
-        help_text=_("Report revision number (auto-increments)"),
+        verbose_name=_('Revision'),
+        help_text=_('Report revision number (auto-increments)'),
         editable=False,
     )
 
@@ -295,7 +295,7 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         wp = WeasyprintReportMixin(
             request,
             self.template_name,
-            base_url=request.build_absolute_uri("/"),
+            base_url=request.build_absolute_uri('/'),
             presentational_hints=True,
             filename=self.generate_filename(request),
             **kwargs,
@@ -304,7 +304,7 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         return wp.render_to_response(self.context(request), **kwargs)
 
     filename_pattern = models.CharField(
-        default="report.pdf",
+        default='report.pdf',
         verbose_name=_('Filename Pattern'),
         help_text=_('Pattern for generating report filenames'),
         max_length=100,
@@ -335,7 +335,7 @@ class TestReport(ReportTemplateBase):
         max_length=250,
         verbose_name=_('Filters'),
         help_text=_(
-            "StockItem query filters (comma-separated list of key=value pairs)"
+            'StockItem query filters (comma-separated list of key=value pairs)'
         ),
         validators=[validate_stock_item_report_filters],
     )
@@ -612,7 +612,7 @@ class ReportSnippet(models.Model):
     description = models.CharField(
         max_length=250,
         verbose_name=_('Description'),
-        help_text=_("Snippet file description"),
+        help_text=_('Snippet file description'),
     )
 
 
@@ -650,14 +650,14 @@ class ReportAsset(models.Model):
     asset = models.FileField(
         upload_to=rename_asset,
         verbose_name=_('Asset'),
-        help_text=_("Report asset file"),
+        help_text=_('Report asset file'),
     )
 
     # Asset description (user facing string, not used internally)
     description = models.CharField(
         max_length=250,
         verbose_name=_('Description'),
-        help_text=_("Asset file description"),
+        help_text=_('Asset file description'),
     )
 
 
@@ -679,7 +679,7 @@ class StockLocationReport(ReportTemplateBase):
         max_length=250,
         verbose_name=_('Filters'),
         help_text=_(
-            "stock location query filters (comma-separated list of key=value pairs)"
+            'stock location query filters (comma-separated list of key=value pairs)'
         ),
         validators=[validate_stock_location_report_filters],
     )

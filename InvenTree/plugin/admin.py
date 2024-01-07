@@ -49,7 +49,7 @@ class PluginSettingInline(admin.TabularInline):
 class PluginConfigAdmin(admin.ModelAdmin):
     """Custom admin with restricted id fields."""
 
-    readonly_fields = ["key", "name"]
+    readonly_fields = ['key', 'name']
     list_display = [
         'name',
         'key',

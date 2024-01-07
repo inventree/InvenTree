@@ -105,9 +105,9 @@ class PartImport(FileManagementFormView):
         'part/import_wizard/match_references.html',
     ]
     form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match References"),
+        _('Upload File'),
+        _('Match Fields'),
+        _('Match References'),
     ]
 
     form_field_map = {
@@ -540,8 +540,8 @@ class PartPricing(AjaxView):
     """View for inspecting part pricing information."""
 
     model = Part
-    ajax_template_name = "part/part_pricing.html"
-    ajax_form_title = _("Part Pricing")
+    ajax_template_name = 'part/part_pricing.html'
+    ajax_form_title = _('Part Pricing')
     form_class = part_forms.PartPriceForm
 
     role_required = ['sales_order.view', 'part.view']

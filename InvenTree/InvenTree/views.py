@@ -135,13 +135,13 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
             app_label = model._meta.app_label
             model_name = model._meta.model_name
 
-            table = f"{app_label}_{model_name}"
+            table = f'{app_label}_{model_name}'
 
             permission = self.get_permission_class()
 
             if not permission:
                 raise AttributeError(
-                    f"permission_class not defined for {type(self).__name__}"
+                    f'permission_class not defined for {type(self).__name__}'
                 )
 
             # Check if the user has the required permission
@@ -396,8 +396,8 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 class EditUserView(AjaxUpdateView):
     """View for editing user information."""
 
-    ajax_template_name = "modal_form.html"
-    ajax_form_title = _("Edit User Information")
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = _('Edit User Information')
     form_class = EditUserForm
 
     def get_object(self):
@@ -408,8 +408,8 @@ class EditUserView(AjaxUpdateView):
 class SetPasswordView(AjaxUpdateView):
     """View for setting user password."""
 
-    ajax_template_name = "InvenTree/password.html"
-    ajax_form_title = _("Set Password")
+    ajax_template_name = 'InvenTree/password.html'
+    ajax_form_title = _('Set Password')
     form_class = SetPasswordForm
 
     def get_object(self):
@@ -491,14 +491,14 @@ class SearchView(TemplateView):
 class DynamicJsView(TemplateView):
     """View for returning javacsript files, which instead of being served dynamically, are passed through the django translation engine!"""
 
-    template_name = ""
+    template_name = ''
     content_type = 'text/javascript'
 
 
 class SettingsView(TemplateView):
     """View for configuring User settings."""
 
-    template_name = "InvenTree/settings/settings.html"
+    template_name = 'InvenTree/settings/settings.html'
 
     def get_context_data(self, **kwargs):
         """Add data for template."""
@@ -506,12 +506,12 @@ class SettingsView(TemplateView):
 
         ctx['settings'] = common_models.InvenTreeSetting.objects.all().order_by('key')
 
-        ctx["base_currency"] = common_settings.currency_code_default()
-        ctx["currencies"] = common_settings.currency_codes
+        ctx['base_currency'] = common_settings.currency_code_default()
+        ctx['currencies'] = common_settings.currency_codes
 
-        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
+        ctx['rates'] = Rate.objects.filter(backend='InvenTreeExchange')
 
-        ctx["categories"] = PartCategory.objects.all().order_by(
+        ctx['categories'] = PartCategory.objects.all().order_by(
             'tree_id', 'lft', 'name'
         )
 
@@ -520,16 +520,16 @@ class SettingsView(TemplateView):
             backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
             if backend.exists():
                 backend = backend.first()
-                ctx["rates_updated"] = backend.last_update
+                ctx['rates_updated'] = backend.last_update
         except Exception:
-            ctx["rates_updated"] = None
+            ctx['rates_updated'] = None
 
         # Forms and context for allauth
         ctx['add_email_form'] = AddEmailForm
-        ctx["can_add_email"] = EmailAddress.objects.can_add_email(self.request.user)
+        ctx['can_add_email'] = EmailAddress.objects.can_add_email(self.request.user)
 
         # Form and context for allauth social-accounts
-        ctx["request"] = self.request
+        ctx['request'] = self.request
         ctx['social_form'] = DisconnectForm(request=self.request)
 
         # user db sessions
@@ -552,19 +552,19 @@ class AllauthOverrides(LoginRequiredMixin):
 class CustomEmailView(AllauthOverrides, EmailView):
     """Override of allauths EmailView to always show the settings but leave the functions allow."""
 
-    success_url = reverse_lazy("settings")
+    success_url = reverse_lazy('settings')
 
 
 class CustomConnectionsView(AllauthOverrides, ConnectionsView):
     """Override of allauths ConnectionsView to always show the settings but leave the functions allow."""
 
-    success_url = reverse_lazy("settings")
+    success_url = reverse_lazy('settings')
 
 
 class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
     """Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow."""
 
-    success_url = reverse_lazy("account_login")
+    success_url = reverse_lazy('account_login')
 
 
 class UserSessionOverride:
@@ -646,18 +646,18 @@ class AppearanceSelectView(RedirectView):
 class DatabaseStatsView(AjaxView):
     """View for displaying database statistics."""
 
-    ajax_template_name = "stats.html"
-    ajax_form_title = _("System Information")
+    ajax_template_name = 'stats.html'
+    ajax_form_title = _('System Information')
 
 
 class AboutView(AjaxView):
     """A view for displaying InvenTree version information"""
 
-    ajax_template_name = "about.html"
-    ajax_form_title = _("About InvenTree")
+    ajax_template_name = 'about.html'
+    ajax_form_title = _('About InvenTree')
 
 
 class NotificationsView(TemplateView):
     """View for showing notifications."""
 
-    template_name = "InvenTree/notifications/notifications.html"
+    template_name = 'InvenTree/notifications/notifications.html'

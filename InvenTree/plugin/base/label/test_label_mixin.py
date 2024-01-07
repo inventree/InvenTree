@@ -46,7 +46,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         # Construct URL
         kwargs = {}
         if label:
-            kwargs["pk"] = label.pk
+            kwargs['pk'] = label.pk
 
         url = reverse(url_name, kwargs=kwargs)
 
@@ -133,13 +133,13 @@ class LabelMixinTests(InvenTreeAPITestCase):
         # Non-exsisting plugin
         response = self.get(f'{url}123', expected_code=404)
         self.assertIn(
-            f'Plugin \'{plugin_ref}123\' not found', str(response.content, 'utf8')
+            f"Plugin '{plugin_ref}123' not found", str(response.content, 'utf8')
         )
 
         # Inactive plugin
         response = self.get(url, expected_code=400)
         self.assertIn(
-            f'Plugin \'{plugin_ref}\' is not enabled', str(response.content, 'utf8')
+            f"Plugin '{plugin_ref}' is not enabled", str(response.content, 'utf8')
         )
 
         # Active plugin
@@ -194,27 +194,27 @@ class LabelMixinTests(InvenTreeAPITestCase):
         options = self.options(
             self.do_url(parts, plugin_ref, label), expected_code=200
         ).json()
-        self.assertTrue("amount" in options["actions"]["POST"])
+        self.assertTrue('amount' in options['actions']['POST'])
 
         plg = registry.get_plugin(plugin_ref)
-        with mock.patch.object(plg, "print_label") as print_label:
+        with mock.patch.object(plg, 'print_label') as print_label:
             # wrong value type
             res = self.post(
                 self.do_url(parts, plugin_ref, label),
-                data={"amount": "-no-valid-int-"},
+                data={'amount': '-no-valid-int-'},
                 expected_code=400,
             ).json()
-            self.assertTrue("amount" in res)
+            self.assertTrue('amount' in res)
             print_label.assert_not_called()
 
             # correct value type
             self.post(
                 self.do_url(parts, plugin_ref, label),
-                data={"amount": 13},
+                data={'amount': 13},
                 expected_code=200,
             ).json()
             self.assertEqual(
-                print_label.call_args.kwargs["printing_options"], {"amount": 13}
+                print_label.call_args.kwargs['printing_options'], {'amount': 13}
             )
 
     def test_printing_endpoints(self):

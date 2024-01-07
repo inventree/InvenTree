@@ -303,7 +303,7 @@ class ReferenceIndexingMixin(models.Model):
                 if recent:
                     reference = recent.reference
                 else:
-                    reference = ""
+                    reference = ''
 
         return reference
 
@@ -316,20 +316,20 @@ class ReferenceIndexingMixin(models.Model):
             info = InvenTree.format.parse_format_string(pattern)
         except Exception as exc:
             raise ValidationError({
-                "value": _("Improperly formatted pattern") + ": " + str(exc)
+                'value': _('Improperly formatted pattern') + ': ' + str(exc)
             })
 
         # Check that only 'allowed' keys are provided
         for key in info.keys():
             if key not in ctx.keys():
                 raise ValidationError({
-                    "value": _("Unknown format key specified") + f": '{key}'"
+                    'value': _('Unknown format key specified') + f": '{key}'"
                 })
 
         # Check that the 'ref' variable is specified
         if 'ref' not in info.keys():
             raise ValidationError({
-                'value': _("Missing required format key") + ": 'ref'"
+                'value': _('Missing required format key') + ": 'ref'"
             })
 
     @classmethod
@@ -340,7 +340,7 @@ class ReferenceIndexingMixin(models.Model):
         value = str(value).strip()
 
         if len(value) == 0:
-            raise ValidationError(_("Reference field cannot be empty"))
+            raise ValidationError(_('Reference field cannot be empty'))
 
         # An 'empty' pattern means no further validation is required
         if not pattern:
@@ -348,7 +348,7 @@ class ReferenceIndexingMixin(models.Model):
 
         if not InvenTree.format.validate_string(value, pattern):
             raise ValidationError(
-                _("Reference must match required pattern") + ": " + pattern
+                _('Reference must match required pattern') + ': ' + pattern
             )
 
         # Check that the reference field can be rebuild
@@ -380,7 +380,7 @@ class ReferenceIndexingMixin(models.Model):
 
         if validate:
             if reference_int > models.BigIntegerField.MAX_BIGINT:
-                raise ValidationError({"reference": _("Reference number is too large")})
+                raise ValidationError({'reference': _('Reference number is too large')})
 
         return reference_int
 
@@ -399,7 +399,7 @@ def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
         return 0
 
     # Look at the start of the string - can it be "integerized"?
-    result = re.match(r"^(\d+)", reference)
+    result = re.match(r'^(\d+)', reference)
 
     if result and len(result.groups()) == 1:
         ref = result.groups()[0]
@@ -455,7 +455,7 @@ class InvenTreeAttachment(models.Model):
 
         Note: Re-implement this for each subclass of InvenTreeAttachment
         """
-        return "attachments"
+        return 'attachments'
 
     def save(self, *args, **kwargs):
         """Provide better validation error."""
@@ -547,7 +547,7 @@ class InvenTreeAttachment(models.Model):
             logger.error(
                 "Attempted to rename attachment outside valid directory: '%s'", new_file
             )
-            raise ValidationError(_("Invalid attachment directory"))
+            raise ValidationError(_('Invalid attachment directory'))
 
         # Ignore further checks if the filename is not actually being renamed
         if new_file == old_file:
@@ -556,23 +556,23 @@ class InvenTreeAttachment(models.Model):
         forbidden = [
             "'",
             '"',
-            "#",
-            "@",
-            "!",
-            "&",
-            "^",
-            "<",
-            ">",
-            ":",
-            ";",
-            "/",
-            "\\",
-            "|",
-            "?",
-            "*",
-            "%",
-            "~",
-            "`",
+            '#',
+            '@',
+            '!',
+            '&',
+            '^',
+            '<',
+            '>',
+            ':',
+            ';',
+            '/',
+            '\\',
+            '|',
+            '?',
+            '*',
+            '%',
+            '~',
+            '`',
         ]
 
         for c in forbidden:
@@ -580,7 +580,7 @@ class InvenTreeAttachment(models.Model):
                 raise ValidationError(_(f"Filename contains illegal character '{c}'"))
 
         if len(fn.split('.')) < 2:
-            raise ValidationError(_("Filename missing extension"))
+            raise ValidationError(_('Filename missing extension'))
 
         if not old_file.exists():
             logger.error(
@@ -589,14 +589,14 @@ class InvenTreeAttachment(models.Model):
             return
 
         if new_file.exists():
-            raise ValidationError(_("Attachment with this filename already exists"))
+            raise ValidationError(_('Attachment with this filename already exists'))
 
         try:
             os.rename(old_file, new_file)
             self.attachment.name = os.path.join(self.getSubdir(), fn)
             self.save()
         except Exception:
-            raise ValidationError(_("Error renaming file"))
+            raise ValidationError(_('Error renaming file'))
 
     def fully_qualified_url(self):
         """Return a 'fully qualified' URL for this attachment.
@@ -656,7 +656,7 @@ class InvenTreeTree(MPTTModel):
         except self.__class__.DoesNotExist:
             # If the object no longer exists, raise a ValidationError
             raise ValidationError(
-                "Object %s of type %s no longer exists", str(self), str(self.__class__)
+                'Object %s of type %s no longer exists', str(self), str(self.__class__)
             )
 
         # Cache node ID values for lower nodes, before we delete this one
@@ -791,7 +791,7 @@ class InvenTreeTree(MPTTModel):
             super().save(*args, **kwargs)
         except InvalidMove:
             # Provide better error for parent selection
-            raise ValidationError({'parent': _("Invalid choice")})
+            raise ValidationError({'parent': _('Invalid choice')})
 
         # Re-calculate the 'pathstring' field
         pathstring = self.construct_pathstring()
@@ -821,14 +821,14 @@ class InvenTreeTree(MPTTModel):
                 self.__class__.objects.bulk_update(nodes_to_update, ['pathstring'])
 
     name = models.CharField(
-        blank=False, max_length=100, verbose_name=_("Name"), help_text=_("Name")
+        blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
     )
 
     description = models.CharField(
         blank=True,
         max_length=250,
-        verbose_name=_("Description"),
-        help_text=_("Description (optional)"),
+        verbose_name=_('Description'),
+        help_text=_('Description (optional)'),
     )
 
     # When a category is deleted, graft the children onto its parent
@@ -837,7 +837,7 @@ class InvenTreeTree(MPTTModel):
         on_delete=models.DO_NOTHING,
         blank=True,
         null=True,
-        verbose_name=_("parent"),
+        verbose_name=_('parent'),
         related_name='children',
     )
 
@@ -854,7 +854,7 @@ class InvenTreeTree(MPTTModel):
 
         The default implementation returns an empty list
         """
-        raise NotImplementedError(f"items() method not implemented for {type(self)}")
+        raise NotImplementedError(f'items() method not implemented for {type(self)}')
 
     def getUniqueParents(self):
         """Return a flat set of all parent items that exist above this node.
@@ -929,7 +929,7 @@ class InvenTreeTree(MPTTModel):
 
     def __str__(self):
         """String representation of a category is the full path to that category."""
-        return f"{self.pathstring} - {self.description}"
+        return f'{self.pathstring} - {self.description}'
 
 
 class InvenTreeNotesMixin(models.Model):
@@ -1008,7 +1008,7 @@ class InvenTreeBarcodeMixin(models.Model):
 
         if hasattr(self, 'get_api_url'):
             api_url = self.get_api_url()
-            data['api_url'] = f"{api_url}{self.pk}/"
+            data['api_url'] = f'{api_url}{self.pk}/'
 
         if hasattr(self, 'get_absolute_url'):
             data['web_url'] = self.get_absolute_url()
@@ -1040,7 +1040,7 @@ class InvenTreeBarcodeMixin(models.Model):
         # Check for existing item
         if self.__class__.lookup_barcode(barcode_hash) is not None:
             if raise_error:
-                raise ValidationError(_("Existing barcode found"))
+                raise ValidationError(_('Existing barcode found'))
             else:
                 return False
 

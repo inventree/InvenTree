@@ -168,7 +168,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             remote_img.save(buffer, format=fmt)
 
             # Construct a simplified name for the image
-            filename = f"company_{company.pk}_image.{fmt.lower()}"
+            filename = f'company_{company.pk}_image.{fmt.lower()}'
 
             company.image.save(filename, ContentFile(buffer.getvalue()))
 

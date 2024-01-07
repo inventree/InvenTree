@@ -16,12 +16,12 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
     Fetches exchange rate information from frankfurter.app
     """
 
-    NAME = "InvenTreeCurrencyExchange"
-    SLUG = "inventreecurrencyexchange"
+    NAME = 'InvenTreeCurrencyExchange'
+    SLUG = 'inventreecurrencyexchange'
     AUTHOR = _('InvenTree contributors')
-    TITLE = _("InvenTree Currency Exchange")
-    DESCRIPTION = _("Default currency exchange integration")
-    VERSION = "1.0.0"
+    TITLE = _('InvenTree Currency Exchange')
+    DESCRIPTION = _('Default currency exchange integration')
+    VERSION = '1.0.0'
 
     def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
         """Request exchange rate data from external API"""
@@ -37,7 +37,7 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
 
             return rates
         logger.warning(
-            "Failed to update exchange rates from %s: Server returned status %s",
+            'Failed to update exchange rates from %s: Server returned status %s',
             self.api_url,
             response.status_code,
         )

@@ -186,7 +186,7 @@ class LabelPrintingMixin:
             A class instance of a DRF serializer class, by default this an instance of
             self.PrintingOptionsSerializer using the *args, **kwargs if existing for this plugin
         """
-        serializer = getattr(self, "PrintingOptionsSerializer", None)
+        serializer = getattr(self, 'PrintingOptionsSerializer', None)
 
         if not serializer:
             return None

@@ -62,7 +62,7 @@ def perform_stocktake(
 
     if not pricing.is_valid:
         # If pricing is not valid, let's update
-        logger.info("Pricing not valid for %s - updating", target)
+        logger.info('Pricing not valid for %s - updating', target)
         pricing.update_pricing(cascade=False)
         pricing.refresh_from_db()
 
@@ -204,10 +204,10 @@ def generate_stocktake_report(**kwargs):
     n_parts = parts.count()
 
     if n_parts == 0:
-        logger.info("No parts selected for stocktake report - exiting")
+        logger.info('No parts selected for stocktake report - exiting')
         return
 
-    logger.info("Generating new stocktake report for %s parts", n_parts)
+    logger.info('Generating new stocktake report for %s parts', n_parts)
 
     base_currency = common.settings.currency_code_default()
 
@@ -266,7 +266,7 @@ def generate_stocktake_report(**kwargs):
     buffer.write(dataset.export('csv'))
 
     today = datetime.now().date().isoformat()
-    filename = f"InvenTree_Stocktake_{today}.csv"
+    filename = f'InvenTree_Stocktake_{today}.csv'
     report_file = ContentFile(buffer.getvalue(), name=filename)
 
     if generate_report:
@@ -295,7 +295,7 @@ def generate_stocktake_report(**kwargs):
 
     t_stocktake = time.time() - t_start
     logger.info(
-        "Generated stocktake report for %s parts in %ss",
+        'Generated stocktake report for %s parts in %ss',
         total_parts,
         round(t_stocktake, 2),
     )

@@ -206,7 +206,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         """Setup for all tests."""
 
         class MixinCls(APICallMixin, SettingsMixin, InvenTreePlugin):
-            NAME = "Sample API Caller"
+            NAME = 'Sample API Caller'
 
             SETTINGS = {
                 'API_TOKEN': {'name': 'API Token', 'protected': True},
@@ -223,7 +223,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             @property
             def api_url(self):
                 """Override API URL for this test"""
-                return "https://api.github.com"
+                return 'https://api.github.com'
 
             def get_external_url(self, simple: bool = True):
                 """Returns data from the sample endpoint."""
@@ -289,7 +289,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # api_call with post and data
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
-            json={"name": "morpheus", "job": "leader"},
+            json={'name': 'morpheus', 'job': 'leader'},
             method='POST',
             endpoint_is_url=True,
         )
@@ -321,13 +321,13 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # Too many data arguments
         with self.assertRaises(ValueError):
             self.mixin.api_call(
-                'https://reqres.in/api/users/', json={"a": 1}, data={"a": 1}
+                'https://reqres.in/api/users/', json={'a': 1}, data={'a': 1}
             )
 
         # Sending a request with a wrong data format should result in 40
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
-            data={"name": "morpheus", "job": "leader"},
+            data={'name': 'morpheus', 'job': 'leader'},
             method='POST',
             endpoint_is_url=True,
             simple_response=False,

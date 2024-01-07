@@ -32,12 +32,12 @@ class InvenTreeResource(ModelResource):
         """Override the default import_data_inner function to provide better error handling"""
         if len(dataset) > self.MAX_IMPORT_ROWS:
             raise ImportExportError(
-                f"Dataset contains too many rows (max {self.MAX_IMPORT_ROWS})"
+                f'Dataset contains too many rows (max {self.MAX_IMPORT_ROWS})'
             )
 
         if len(dataset.headers) > self.MAX_IMPORT_COLS:
             raise ImportExportError(
-                f"Dataset contains too many columns (max {self.MAX_IMPORT_COLS})"
+                f'Dataset contains too many columns (max {self.MAX_IMPORT_COLS})'
             )
 
         return super().import_data_inner(

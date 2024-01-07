@@ -119,7 +119,7 @@ def validate_overage(value):
         i = Decimal(value)
 
         if i < 0:
-            raise ValidationError(_("Overage value must not be negative"))
+            raise ValidationError(_('Overage value must not be negative'))
 
         # Looks like a number
         return True
@@ -135,15 +135,15 @@ def validate_overage(value):
             f = float(v)
 
             if f < 0:
-                raise ValidationError(_("Overage value must not be negative"))
+                raise ValidationError(_('Overage value must not be negative'))
             elif f > 100:
-                raise ValidationError(_("Overage must not exceed 100%"))
+                raise ValidationError(_('Overage must not exceed 100%'))
 
             return True
         except ValueError:
             pass
 
-    raise ValidationError(_("Invalid value for overage"))
+    raise ValidationError(_('Invalid value for overage'))
 
 
 def validate_part_name_format(value):

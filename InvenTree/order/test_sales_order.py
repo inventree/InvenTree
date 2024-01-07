@@ -33,7 +33,7 @@ class SalesOrderTest(TestCase):
         """Initial setup for this set of unit tests"""
         # Create a Company to ship the goods to
         cls.customer = Company.objects.create(
-            name="ABC Co", description="My customer", is_customer=True
+            name='ABC Co', description='My customer', is_customer=True
         )
 
         # Create a Part to ship
@@ -72,7 +72,7 @@ class SalesOrderTest(TestCase):
 
         # Create an extra line
         cls.extraline = SalesOrderExtraLine.objects.create(
-            quantity=1, order=cls.order, reference="Extra line"
+            quantity=1, order=cls.order, reference='Extra line'
         )
 
     def test_so_reference(self):

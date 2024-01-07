@@ -67,7 +67,7 @@ from .views import (
     auth_request,
 )
 
-admin.site.site_header = "InvenTree Admin"
+admin.site.site_header = 'InvenTree Admin'
 
 
 apipatterns = [
@@ -96,7 +96,7 @@ apipatterns = [
     ),
     # InvenTree information endpoints
     path(
-        "version-text", VersionTextView.as_view(), name="api-version-text"
+        'version-text', VersionTextView.as_view(), name='api-version-text'
     ),  # version text
     path('version/', VersionView.as_view(), name='api-version'),  # version info
     path('', InfoView.as_view(), name='api-inventree-info'),  # server info
@@ -153,11 +153,11 @@ apipatterns = [
     ),
     # Magic login URLs
     path(
-        "email/generate/",
+        'email/generate/',
         csrf_exempt(GetSimpleLoginView().as_view()),
-        name="sesame-generate",
+        name='sesame-generate',
     ),
-    path("email/login/", LoginView.as_view(), name="sesame-login"),
+    path('email/login/', LoginView.as_view(), name='sesame-login'),
     # Unknown endpoint
     re_path(r'^.*$', NotFoundView.as_view(), name='api-404'),
 ]
@@ -403,12 +403,12 @@ classic_frontendpatterns = [
         name='socialaccount_connections',
     ),
     re_path(
-        r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$",
+        r'^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$',
         CustomPasswordResetFromKeyView.as_view(),
-        name="account_reset_password_from_key",
+        name='account_reset_password_from_key',
     ),
     # Override login page
-    re_path("accounts/login/", CustomLoginView.as_view(), name="account_login"),
+    re_path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
     re_path(r'^accounts/', include('allauth_2fa.urls')),  # MFA support
     re_path(r'^accounts/', include('allauth.urls')),  # included urlpatterns
 ]

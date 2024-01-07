@@ -140,7 +140,7 @@ class SetPasswordForm(HelperForm):
     )
 
     old_password = forms.CharField(
-        label=_("Old password"),
+        label=_('Old password'),
         strip=False,
         required=False,
         widget=forms.PasswordInput(
@@ -178,23 +178,23 @@ class CustomSignupForm(SignupForm):
 
         # check for two mail fields
         if InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_TWICE'):
-            self.fields["email2"] = forms.EmailField(
-                label=_("Email (again)"),
+            self.fields['email2'] = forms.EmailField(
+                label=_('Email (again)'),
                 widget=forms.TextInput(
                     attrs={
-                        "type": "email",
-                        "placeholder": _("Email address confirmation"),
+                        'type': 'email',
+                        'placeholder': _('Email address confirmation'),
                     }
                 ),
             )
 
         # check for two password fields
         if not InvenTreeSetting.get_setting('LOGIN_SIGNUP_PWD_TWICE'):
-            self.fields.pop("password2")
+            self.fields.pop('password2')
 
         # reorder fields
         set_form_field_order(
-            self, ["username", "email", "email2", "password1", "password2"]
+            self, ['username', 'email', 'email2', 'password1', 'password2']
         )
 
     def clean(self):
@@ -203,10 +203,10 @@ class CustomSignupForm(SignupForm):
 
         # check for two mail fields
         if InvenTreeSetting.get_setting('LOGIN_SIGNUP_MAIL_TWICE'):
-            email = cleaned_data.get("email")
-            email2 = cleaned_data.get("email2")
+            email = cleaned_data.get('email')
+            email2 = cleaned_data.get('email2')
             if (email and email2) and email != email2:
-                self.add_error("email2", _("You must type the same email each time."))
+                self.add_error('email2', _('You must type the same email each time.'))
 
         return cleaned_data
 
@@ -221,7 +221,7 @@ def registration_enabled():
             return True
         else:
             logger.error(
-                "Registration cannot be enabled, because EMAIL_HOST is not configured."
+                'Registration cannot be enabled, because EMAIL_HOST is not configured.'
             )
     return False
 
@@ -292,7 +292,7 @@ class CustomUrlMixin:
 
     def get_email_confirmation_url(self, request, emailconfirmation):
         """Custom email confirmation (activation) url."""
-        url = reverse("account_confirm_email", args=[emailconfirmation.key])
+        url = reverse('account_confirm_email', args=[emailconfirmation.key])
         return Site.objects.get_current().domain + url
 
 

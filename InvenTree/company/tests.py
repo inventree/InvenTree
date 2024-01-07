@@ -103,9 +103,9 @@ class CompanySimpleTest(TestCase):
         """Unit tests for supplier part pricing"""
         m2x4 = Part.objects.get(name='M2x4 LPHS')
 
-        self.assertEqual(m2x4.get_price_info(5.5), "38.5 - 41.25")
-        self.assertEqual(m2x4.get_price_info(10), "70 - 75")
-        self.assertEqual(m2x4.get_price_info(100), "125 - 350")
+        self.assertEqual(m2x4.get_price_info(5.5), '38.5 - 41.25')
+        self.assertEqual(m2x4.get_price_info(10), '70 - 75')
+        self.assertEqual(m2x4.get_price_info(100), '125 - 350')
 
         pmin, pmax = m2x4.get_price_range(5)
         self.assertEqual(pmin, 35)
@@ -222,13 +222,13 @@ class AddressTest(TestCase):
 
     def test_model_str(self):
         """Test value of __str__"""
-        t = "Test address"
-        l1 = "Busy street 56"
-        l2 = "Red building"
-        pcd = "12345"
-        pct = "City"
-        pv = "Province"
-        cn = "COUNTRY"
+        t = 'Test address'
+        l1 = 'Busy street 56'
+        l2 = 'Red building'
+        pcd = '12345'
+        pct = 'City'
+        pv = 'Province'
+        cn = 'COUNTRY'
         addr = Address.objects.create(
             company=self.c,
             title=t,

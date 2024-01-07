@@ -23,7 +23,7 @@ class BarcodeMixin:
     Custom barcode plugins should use and extend this mixin as necessary.
     """
 
-    ACTION_NAME = ""
+    ACTION_NAME = ''
 
     class MixinMeta:
         """Meta options for this mixin."""
@@ -62,19 +62,19 @@ class SupplierBarcodeMixin(BarcodeMixin):
     """
 
     # Set of standard field names which can be extracted from the barcode
-    CUSTOMER_ORDER_NUMBER = "customer_order_number"
-    SUPPLIER_ORDER_NUMBER = "supplier_order_number"
-    PACKING_LIST_NUMBER = "packing_list_number"
-    SHIP_DATE = "ship_date"
-    CUSTOMER_PART_NUMBER = "customer_part_number"
-    SUPPLIER_PART_NUMBER = "supplier_part_number"
-    PURCHASE_ORDER_LINE = "purchase_order_line"
-    QUANTITY = "quantity"
-    DATE_CODE = "date_code"
-    LOT_CODE = "lot_code"
-    COUNTRY_OF_ORIGIN = "country_of_origin"
-    MANUFACTURER = "manufacturer"
-    MANUFACTURER_PART_NUMBER = "manufacturer_part_number"
+    CUSTOMER_ORDER_NUMBER = 'customer_order_number'
+    SUPPLIER_ORDER_NUMBER = 'supplier_order_number'
+    PACKING_LIST_NUMBER = 'packing_list_number'
+    SHIP_DATE = 'ship_date'
+    CUSTOMER_PART_NUMBER = 'customer_part_number'
+    SUPPLIER_PART_NUMBER = 'supplier_part_number'
+    PURCHASE_ORDER_LINE = 'purchase_order_line'
+    QUANTITY = 'quantity'
+    DATE_CODE = 'date_code'
+    LOT_CODE = 'lot_code'
+    COUNTRY_OF_ORIGIN = 'country_of_origin'
+    MANUFACTURER = 'manufacturer'
+    MANUFACTURER_PART_NUMBER = 'manufacturer_part_number'
 
     def __init__(self):
         """Register mixin."""
@@ -83,7 +83,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
     def get_field_value(self, key, backup_value=None):
         """Return the value of a barcode field."""
-        fields = getattr(self, "barcode_fields", None) or {}
+        fields = getattr(self, 'barcode_fields', None) or {}
 
         return fields.get(key, backup_value)
 
@@ -125,7 +125,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         """
         raise NotImplementedError(
-            "extract_barcode_fields must be implemented by each plugin"
+            'extract_barcode_fields must be implemented by each plugin'
         )
 
     def scan(self, barcode_data):
@@ -145,16 +145,16 @@ class SupplierBarcodeMixin(BarcodeMixin):
         )
 
         if len(supplier_parts) > 1:
-            return {"error": _("Found multiple matching supplier parts for barcode")}
+            return {'error': _('Found multiple matching supplier parts for barcode')}
         elif not supplier_parts:
             return None
 
         supplier_part = supplier_parts[0]
 
         data = {
-            "pk": supplier_part.pk,
-            "api_url": f"{SupplierPart.get_api_url()}{supplier_part.pk}/",
-            "web_url": supplier_part.get_absolute_url(),
+            'pk': supplier_part.pk,
+            'api_url': f'{SupplierPart.get_api_url()}{supplier_part.pk}/',
+            'web_url': supplier_part.get_absolute_url(),
         }
 
         return {SupplierPart.barcode_model_type(): data}
@@ -178,7 +178,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         )
 
         if len(supplier_parts) > 1:
-            return {"error": _("Found multiple matching supplier parts for barcode")}
+            return {'error': _('Found multiple matching supplier parts for barcode')}
         elif not supplier_parts:
             return None
 
@@ -196,17 +196,17 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
             if len(matching_orders) > 1:
                 return {
-                    "error": _(f"Found multiple purchase orders matching '{order}'")
+                    'error': _(f"Found multiple purchase orders matching '{order}'")
                 }
 
             if len(matching_orders) == 0:
-                return {"error": _(f"No matching purchase order for '{order}'")}
+                return {'error': _(f"No matching purchase order for '{order}'")}
 
             purchase_order = matching_orders.first()
 
         if supplier and purchase_order:
             if purchase_order.supplier != supplier:
-                return {"error": _("Purchase order does not match supplier")}
+                return {'error': _('Purchase order does not match supplier')}
 
         return self.receive_purchase_order_item(
             supplier_part,
@@ -226,17 +226,17 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if not isinstance(self, SettingsMixin):
             return None
 
-        if supplier_pk := self.get_setting("SUPPLIER_ID"):
+        if supplier_pk := self.get_setting('SUPPLIER_ID'):
             if supplier := Company.objects.get(pk=supplier_pk):
                 return supplier
             else:
                 logger.error(
-                    "No company with pk %d (set \"SUPPLIER_ID\" setting to a valid value)",
+                    'No company with pk %d (set "SUPPLIER_ID" setting to a valid value)',
                     supplier_pk,
                 )
                 return None
 
-        if not (supplier_name := getattr(self, "DEFAULT_SUPPLIER_NAME", None)):
+        if not (supplier_name := getattr(self, 'DEFAULT_SUPPLIER_NAME', None)):
             return None
 
         suppliers = Company.objects.filter(
@@ -246,7 +246,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if len(suppliers) != 1:
             return None
 
-        self.set_setting("SUPPLIER_ID", suppliers.first().pk)
+        self.set_setting('SUPPLIER_ID', suppliers.first().pk)
 
         return suppliers.first()
 
@@ -260,21 +260,21 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if it does not use the standard field names.
         """
         return {
-            "K": cls.CUSTOMER_ORDER_NUMBER,
-            "1K": cls.SUPPLIER_ORDER_NUMBER,
-            "11K": cls.PACKING_LIST_NUMBER,
-            "6D": cls.SHIP_DATE,
-            "9D": cls.DATE_CODE,
-            "10D": cls.DATE_CODE,
-            "4K": cls.PURCHASE_ORDER_LINE,
-            "14K": cls.PURCHASE_ORDER_LINE,
-            "P": cls.SUPPLIER_PART_NUMBER,
-            "1P": cls.MANUFACTURER_PART_NUMBER,
-            "30P": cls.SUPPLIER_PART_NUMBER,
-            "1T": cls.LOT_CODE,
-            "4L": cls.COUNTRY_OF_ORIGIN,
-            "1V": cls.MANUFACTURER,
-            "Q": cls.QUANTITY,
+            'K': cls.CUSTOMER_ORDER_NUMBER,
+            '1K': cls.SUPPLIER_ORDER_NUMBER,
+            '11K': cls.PACKING_LIST_NUMBER,
+            '6D': cls.SHIP_DATE,
+            '9D': cls.DATE_CODE,
+            '10D': cls.DATE_CODE,
+            '4K': cls.PURCHASE_ORDER_LINE,
+            '14K': cls.PURCHASE_ORDER_LINE,
+            'P': cls.SUPPLIER_PART_NUMBER,
+            '1P': cls.MANUFACTURER_PART_NUMBER,
+            '30P': cls.SUPPLIER_PART_NUMBER,
+            '1T': cls.LOT_CODE,
+            '4L': cls.COUNTRY_OF_ORIGIN,
+            '1V': cls.MANUFACTURER,
+            'Q': cls.QUANTITY,
         }
 
     @classmethod
@@ -324,10 +324,10 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def parse_isoiec_15434_barcode2d(barcode_data: str) -> list[str]:
         """Parse a ISO/IEC 15434 barcode, returning the split data section."""
 
-        OLD_MOUSER_HEADER = ">[)>06\x1d"
-        HEADER = "[)>\x1e06\x1d"
-        TRAILER = "\x1e\x04"
-        DELIMITER = "\x1d"
+        OLD_MOUSER_HEADER = '>[)>06\x1d'
+        HEADER = '[)>\x1e06\x1d'
+        TRAILER = '\x1e\x04'
+        DELIMITER = '\x1d'
 
         # Some old mouser barcodes start with this messed up header
         if barcode_data.startswith(OLD_MOUSER_HEADER):
@@ -419,7 +419,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         #  find incomplete line_items that match the supplier_part
         line_items = purchase_order.lines.filter(
-            part=supplier_part.pk, quantity__gt=F("received")
+            part=supplier_part.pk, quantity__gt=F('received')
         )
         if len(line_items) == 1 or not quantity:
             line_item = line_items[0]
@@ -439,7 +439,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
                     line_item = line_items.first()
 
         if not line_item:
-            return {"error": _("Failed to find pending line item for supplier part")}
+            return {'error': _('Failed to find pending line item for supplier part')}
 
         no_stock_locations = False
         if not location:
@@ -457,20 +457,20 @@ class SupplierBarcodeMixin(BarcodeMixin):
                     no_stock_locations = True
 
         response = {
-            "lineitem": {"pk": line_item.pk, "purchase_order": purchase_order.pk}
+            'lineitem': {'pk': line_item.pk, 'purchase_order': purchase_order.pk}
         }
 
         if quantity:
-            response["lineitem"]["quantity"] = quantity
+            response['lineitem']['quantity'] = quantity
         if location:
-            response["lineitem"]["location"] = location.pk
+            response['lineitem']['location'] = location.pk
 
         # if either the quantity is missing or no location is defined/found
         # -> return the line_item found, so the client can gather the missing
         #    information and complete the action with an 'api-po-receive' call
         if not quantity or (not location and not no_stock_locations):
-            response["action_required"] = _(
-                "Further information required to receive line item"
+            response['action_required'] = _(
+                'Further information required to receive line item'
             )
             return response
 
@@ -478,5 +478,5 @@ class SupplierBarcodeMixin(BarcodeMixin):
             line_item, location, quantity, user, barcode=barcode
         )
 
-        response["success"] = _("Received purchase order line item")
+        response['success'] = _('Received purchase order line item')
         return response

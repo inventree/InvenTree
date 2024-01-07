@@ -281,7 +281,7 @@ class PluginsRegistry:
         """
         # Do not reload when currently loading
         if self.is_loading:
-            logger.debug("Skipping reload - plugin registry is currently loading")
+            logger.debug('Skipping reload - plugin registry is currently loading')
             return
 
         if self.loading_lock.acquire(blocking=False):
@@ -347,7 +347,7 @@ class PluginsRegistry:
 
                     if not init_filename.exists():
                         try:
-                            init_filename.write_text("# InvenTree plugin directory\n")
+                            init_filename.write_text('# InvenTree plugin directory\n')
                         except Exception:  # pragma: no cover
                             logger.exception(
                                 "Could not create file '%s'", init_filename
@@ -415,7 +415,7 @@ class PluginsRegistry:
 
         # Log collected plugins
         logger.info('Collected %s plugins', len(collected_plugins))
-        logger.debug(", ".join([a.__module__ for a in collected_plugins]))
+        logger.debug(', '.join([a.__module__ for a in collected_plugins]))
 
         return collected_plugins
 
@@ -497,7 +497,7 @@ class PluginsRegistry:
                     raise error  # pragma: no cover
                 plg_db = None
             except IntegrityError as error:  # pragma: no cover
-                logger.exception("Error initializing plugin `%s`: %s", plg_name, error)
+                logger.exception('Error initializing plugin `%s`: %s', plg_name, error)
                 handle_error(error, log_name='init')
 
             # Append reference to plugin
@@ -533,7 +533,7 @@ class PluginsRegistry:
                     handle_error(
                         error, log_name='init'
                     )  # log error and raise it -> disable plugin
-                    logger.warning("Plugin `%s` could not be loaded", plg_name)
+                    logger.warning('Plugin `%s` could not be loaded', plg_name)
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)
@@ -694,25 +694,25 @@ class PluginsRegistry:
 
         try:
             old_hash = InvenTreeSetting.get_setting(
-                "_PLUGIN_REGISTRY_HASH", "", create=False, cache=False
+                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
             )
         except Exception:
-            old_hash = ""
+            old_hash = ''
 
         if old_hash != self.registry_hash:
             try:
                 logger.debug(
-                    "Updating plugin registry hash: %s", str(self.registry_hash)
+                    'Updating plugin registry hash: %s', str(self.registry_hash)
                 )
                 InvenTreeSetting.set_setting(
-                    "_PLUGIN_REGISTRY_HASH", self.registry_hash, change_user=None
+                    '_PLUGIN_REGISTRY_HASH', self.registry_hash, change_user=None
                 )
             except (OperationalError, ProgrammingError):
                 # Exception if the database has not been migrated yet, or is not ready
                 pass
             except Exception as exc:
                 # Some other exception, we want to know about it
-                logger.exception("Failed to update plugin registry hash: %s", str(exc))
+                logger.exception('Failed to update plugin registry hash: %s', str(exc))
 
     def calculate_plugin_hash(self):
         """Calculate a 'hash' value for the current registry
@@ -767,7 +767,7 @@ class PluginsRegistry:
             # Skip check if database cannot be accessed
             return
 
-        logger.debug("Checking plugin registry hash")
+        logger.debug('Checking plugin registry hash')
 
         # If not already cached, calculate the hash
         if not self.registry_hash:
@@ -775,14 +775,14 @@ class PluginsRegistry:
 
         try:
             reg_hash = InvenTreeSetting.get_setting(
-                "_PLUGIN_REGISTRY_HASH", "", create=False, cache=False
+                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
             )
         except Exception as exc:
-            logger.exception("Failed to retrieve plugin registry hash: %s", str(exc))
+            logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
             return
 
         if reg_hash and reg_hash != self.registry_hash:
-            logger.info("Plugin registry hash has changed - reloading")
+            logger.info('Plugin registry hash has changed - reloading')
             self.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     # endregion

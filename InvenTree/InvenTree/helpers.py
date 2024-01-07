@@ -36,7 +36,7 @@ def generateTestKey(test_name):
     Tests must be named such that they will have unique keys.
     """
     key = test_name.strip().lower()
-    key = key.replace(" ", "")
+    key = key.replace(' ', '')
 
     # Remove any characters that cannot be used to represent a variable
     key = re.sub(r'[^a-zA-Z0-9]', '', key)
@@ -56,7 +56,7 @@ def constructPathString(path, max_chars=250):
     # Replace middle elements to limit the pathstring
     if len(pathstring) > max_chars:
         n = int(max_chars / 2 - 2)
-        pathstring = pathstring[:n] + "..." + pathstring[-n:]
+        pathstring = pathstring[:n] + '...' + pathstring[-n:]
 
     return pathstring
 
@@ -82,12 +82,12 @@ def TestIfImage(img):
 
 def getBlankImage():
     """Return the qualified path for the 'blank image' placeholder."""
-    return getStaticUrl("img/blank_image.png")
+    return getStaticUrl('img/blank_image.png')
 
 
 def getBlankThumbnail():
     """Return the qualified path for the 'blank image' thumbnail placeholder."""
-    return getStaticUrl("img/blank_image.thumbnail.png")
+    return getStaticUrl('img/blank_image.thumbnail.png')
 
 
 def getLogoImage(as_file=False, custom=True):
@@ -105,13 +105,13 @@ def getLogoImage(as_file=False, custom=True):
 
         if storage is not None:
             if as_file:
-                return f"file://{storage.path(settings.CUSTOM_LOGO)}"
+                return f'file://{storage.path(settings.CUSTOM_LOGO)}'
             return storage.url(settings.CUSTOM_LOGO)
 
     # If we have got to this point, return the default logo
     if as_file:
         path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-        return f"file://{path}"
+        return f'file://{path}'
     return getStaticUrl('img/inventree.png')
 
 
@@ -124,7 +124,7 @@ def getSplashScreen(custom=True):
             return static_storage.url(settings.CUSTOM_SPLASH)
 
     # No custom splash screen
-    return static_storage.url("img/inventree_splash.jpg")
+    return static_storage.url('img/inventree_splash.jpg')
 
 
 def TestIfImageURL(url):
@@ -234,7 +234,7 @@ def increment(value):
         # Provide a default value if provided with a null input
         return '1'
 
-    pattern = r"(.*?)(\d+)?$"
+    pattern = r'(.*?)(\d+)?$'
 
     result = re.search(pattern, value)
 
@@ -293,7 +293,7 @@ def decimal2string(d):
     if '.' not in s:
         return s
 
-    return s.rstrip("0").rstrip(".")
+    return s.rstrip('0').rstrip('.')
 
 
 def decimal2money(d, currency=None):
@@ -395,7 +395,7 @@ def DownloadFile(
         length = len(bytes(data, response.charset))
     response['Content-Length'] = length
 
-    disposition = "inline" if inline else "attachment"
+    disposition = 'inline' if inline else 'attachment'
 
     response['Content-Disposition'] = f'{disposition}; filename={filename}'
 
@@ -455,7 +455,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     try:
         expected_quantity = int(expected_quantity)
     except ValueError:
-        raise ValidationError([_("Invalid quantity provided")])
+        raise ValidationError([_('Invalid quantity provided')])
 
     if input_string:
         input_string = str(input_string).strip()
@@ -463,7 +463,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         input_string = ''
 
     if len(input_string) == 0:
-        raise ValidationError([_("Empty serial number string")])
+        raise ValidationError([_('Empty serial number string')])
 
     next_value = increment_serial_number(starting_value)
 
@@ -473,7 +473,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         next_value = increment_serial_number(next_value)
 
     # Split input string by whitespace or comma (,) characters
-    groups = re.split(r"[\s,]+", input_string)
+    groups = re.split(r'[\s,]+', input_string)
 
     serials = []
     errors = []
@@ -493,7 +493,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             return
 
         if serial in serials:
-            add_error(_("Duplicate serial") + f": {serial}")
+            add_error(_('Duplicate serial') + f': {serial}')
         else:
             serials.append(serial)
 
@@ -525,7 +525,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
                 if a == b:
                     # Invalid group
-                    add_error(_(f"Invalid group range: {group}"))
+                    add_error(_(f'Invalid group range: {group}'))
                     continue
 
                 group_items = []
@@ -556,7 +556,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 if len(group_items) > remaining:
                     add_error(
                         _(
-                            f"Group range {group} exceeds allowed quantity ({expected_quantity})"
+                            f'Group range {group} exceeds allowed quantity ({expected_quantity})'
                         )
                     )
                 elif (
@@ -568,7 +568,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_error(_(f"Invalid group range: {group}"))
+                    add_error(_(f'Invalid group range: {group}'))
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
@@ -586,14 +586,14 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             sequence_count = max(0, expected_quantity - len(serials))
 
             if len(items) > 2 or len(items) == 0:
-                add_error(_(f"Invalid group sequence: {group}"))
+                add_error(_(f'Invalid group sequence: {group}'))
                 continue
             elif len(items) == 2:
                 try:
                     if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
-                    add_error(_(f"Invalid group sequence: {group}"))
+                    add_error(_(f'Invalid group sequence: {group}'))
                     continue
 
             value = items[0]
@@ -612,7 +612,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 for item in sequence_items:
                     add_serial(item)
             else:
-                add_error(_(f"Invalid group sequence: {group}"))
+                add_error(_(f'Invalid group sequence: {group}'))
 
         else:
             # At this point, we assume that the 'group' is just a single serial value
@@ -622,12 +622,12 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         raise ValidationError(errors)
 
     if len(serials) == 0:
-        raise ValidationError([_("No serial numbers found")])
+        raise ValidationError([_('No serial numbers found')])
 
     if len(errors) == 0 and len(serials) != expected_quantity:
         raise ValidationError([
             _(
-                f"Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
+                f'Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})'
             )
         ])
 
@@ -666,7 +666,7 @@ def validateFilterString(value, model=None):
         pair = group.split('=')
 
         if len(pair) != 2:
-            raise ValidationError(f"Invalid group: {group}")
+            raise ValidationError(f'Invalid group: {group}')
 
         k, v = pair
 
@@ -674,7 +674,7 @@ def validateFilterString(value, model=None):
         v = v.strip()
 
         if not k or not v:
-            raise ValidationError(f"Invalid group: {group}")
+            raise ValidationError(f'Invalid group: {group}')
 
         results[k] = v
 
@@ -745,7 +745,7 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
     if len(cleaned) != len(value) and raise_error:
         field = field_name or 'non_field_errors'
 
-        raise ValidationError({field: [_("Remove HTML tags from this value")]})
+        raise ValidationError({field: [_('Remove HTML tags from this value')]})
 
     return cleaned
 

@@ -37,9 +37,9 @@ class InvenTreeMoneySerializer(MoneyField):
 
     def __init__(self, *args, **kwargs):
         """Override default values."""
-        kwargs["max_digits"] = kwargs.get("max_digits", 19)
-        self.decimal_places = kwargs["decimal_places"] = kwargs.get("decimal_places", 6)
-        kwargs["required"] = kwargs.get("required", False)
+        kwargs['max_digits'] = kwargs.get('max_digits', 19)
+        self.decimal_places = kwargs['decimal_places'] = kwargs.get('decimal_places', 6)
+        kwargs['required'] = kwargs.get('required', False)
 
         super().__init__(*args, **kwargs)
 
@@ -57,7 +57,7 @@ class InvenTreeMoneySerializer(MoneyField):
                 amount = Decimal(amount)
                 amount = round(amount, self.decimal_places)
         except Exception:
-            raise ValidationError({self.field_name: [_("Must be a valid number")]})
+            raise ValidationError({self.field_name: [_('Must be a valid number')]})
 
         currency = data.get(
             get_currency_field_name(self.field_name), self.default_currency
@@ -134,7 +134,7 @@ class DependentField(serializers.Field):
 
     def get_child(self, raise_exception=False):
         """This method tries to extract the child based on the provided data in the request by the client."""
-        data = deepcopy(self.context["request"].data)
+        data = deepcopy(self.context['request'].data)
 
         def visit_parent(node):
             """Recursively extract the data for the parent field/serializer in reverse."""
@@ -144,7 +144,7 @@ class DependentField(serializers.Field):
                 visit_parent(node.parent)
 
             # only do for composite fields and stop right before the current field
-            if hasattr(node, "child") and node is not self and isinstance(data, dict):
+            if hasattr(node, 'child') and node is not self and isinstance(data, dict):
                 data = data.get(node.field_name, None)
 
         visit_parent(self)
@@ -424,7 +424,7 @@ class ExendedUserSerializer(UserSerializer):
                 pass
             else:
                 raise PermissionDenied(
-                    _("You do not have permission to change this user role.")
+                    _('You do not have permission to change this user role.')
                 )
         return super().validate(attrs)
 
@@ -436,7 +436,7 @@ class UserCreateSerializer(ExendedUserSerializer):
         """Expanded valiadation for auth."""
         # Check that the user trying to create a new user is a superuser
         if not self.context['request'].user.is_superuser:
-            raise serializers.ValidationError(_("Only superusers can create new users"))
+            raise serializers.ValidationError(_('Only superusers can create new users'))
 
         # Generate a random password
         password = User.objects.make_random_password(length=14)
@@ -453,9 +453,9 @@ class UserCreateSerializer(ExendedUserSerializer):
         current_site = Site.objects.get_current()
         domain = current_site.domain
         instance.email_user(
-            subject=_(f"Welcome to {current_site.name}"),
+            subject=_(f'Welcome to {current_site.name}'),
             message=_(
-                f"Your account has been created.\n\nPlease use the password reset function to get access (at https://{domain})."
+                f'Your account has been created.\n\nPlease use the password reset function to get access (at https://{domain}).'
             ),
         )
         return instance
@@ -551,7 +551,7 @@ class InvenTreeDecimalField(serializers.FloatField):
         try:
             return Decimal(str(data))
         except Exception:
-            raise serializers.ValidationError(_("Invalid value"))
+            raise serializers.ValidationError(_('Invalid value'))
 
 
 class DataFileUploadSerializer(serializers.Serializer):
@@ -571,8 +571,8 @@ class DataFileUploadSerializer(serializers.Serializer):
         fields = ['data_file']
 
     data_file = serializers.FileField(
-        label=_("Data File"),
-        help_text=_("Select data file for upload"),
+        label=_('Data File'),
+        help_text=_('Select data file for upload'),
         required=True,
         allow_empty_file=False,
     )
@@ -589,13 +589,13 @@ class DataFileUploadSerializer(serializers.Serializer):
         accepted_file_types = ['xls', 'xlsx', 'csv', 'tsv', 'xml']
 
         if ext not in accepted_file_types:
-            raise serializers.ValidationError(_("Unsupported file type"))
+            raise serializers.ValidationError(_('Unsupported file type'))
 
         # Impose a 50MB limit on uploaded BOM files
         max_upload_file_size = 50 * 1024 * 1024
 
         if data_file.size > max_upload_file_size:
-            raise serializers.ValidationError(_("File is too large"))
+            raise serializers.ValidationError(_('File is too large'))
 
         # Read file data into memory (bytes object)
         try:
@@ -616,10 +616,10 @@ class DataFileUploadSerializer(serializers.Serializer):
             raise serializers.ValidationError(str(e))
 
         if len(self.dataset.headers) == 0:
-            raise serializers.ValidationError(_("No columns found in file"))
+            raise serializers.ValidationError(_('No columns found in file'))
 
         if len(self.dataset) == 0:
-            raise serializers.ValidationError(_("No data rows found in file"))
+            raise serializers.ValidationError(_('No data rows found in file'))
 
         return data_file
 
@@ -732,10 +732,10 @@ class DataFileExtractSerializer(serializers.Serializer):
         self.rows = data.get('rows', [])
 
         if len(self.rows) == 0:
-            raise serializers.ValidationError(_("No data rows provided"))
+            raise serializers.ValidationError(_('No data rows provided'))
 
         if len(self.columns) == 0:
-            raise serializers.ValidationError(_("No data columns supplied"))
+            raise serializers.ValidationError(_('No data columns supplied'))
 
         self.validate_extracted_columns()
 
@@ -758,7 +758,7 @@ class DataFileExtractSerializer(serializers.Serializer):
             processed_row = self.process_row(self.row_to_dict(row))
 
             if processed_row:
-                rows.append({"original": row, "data": processed_row})
+                rows.append({'original': row, 'data': processed_row})
 
         return {'fields': model_fields, 'columns': self.columns, 'rows': rows}
 
@@ -834,8 +834,8 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         required=False,
         allow_blank=False,
         write_only=True,
-        label=_("Remote Image"),
-        help_text=_("URL of remote image file"),
+        label=_('Remote Image'),
+        help_text=_('URL of remote image file'),
     )
 
     def validate_remote_image(self, url):
@@ -851,7 +851,7 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
             'INVENTREE_DOWNLOAD_FROM_URL'
         ):
             raise ValidationError(
-                _("Downloading images from remote URL is not enabled")
+                _('Downloading images from remote URL is not enabled')
             )
 
         try:

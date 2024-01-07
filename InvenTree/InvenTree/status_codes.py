@@ -9,12 +9,12 @@ class PurchaseOrderStatus(StatusCode):
     """Defines a set of status codes for a PurchaseOrder."""
 
     # Order status codes
-    PENDING = 10, _("Pending"), 'secondary'  # Order is pending (not yet placed)
-    PLACED = 20, _("Placed"), 'primary'  # Order has been placed with supplier
-    COMPLETE = 30, _("Complete"), 'success'  # Order has been completed
-    CANCELLED = 40, _("Cancelled"), 'danger'  # Order was cancelled
-    LOST = 50, _("Lost"), 'warning'  # Order was lost
-    RETURNED = 60, _("Returned"), 'warning'  # Order was returned
+    PENDING = 10, _('Pending'), 'secondary'  # Order is pending (not yet placed)
+    PLACED = 20, _('Placed'), 'primary'  # Order has been placed with supplier
+    COMPLETE = 30, _('Complete'), 'success'  # Order has been completed
+    CANCELLED = 40, _('Cancelled'), 'danger'  # Order was cancelled
+    LOST = 50, _('Lost'), 'warning'  # Order was lost
+    RETURNED = 60, _('Returned'), 'warning'  # Order was returned
 
 
 class PurchaseOrderStatusGroups:
@@ -34,16 +34,16 @@ class PurchaseOrderStatusGroups:
 class SalesOrderStatus(StatusCode):
     """Defines a set of status codes for a SalesOrder."""
 
-    PENDING = 10, _("Pending"), 'secondary'  # Order is pending
+    PENDING = 10, _('Pending'), 'secondary'  # Order is pending
     IN_PROGRESS = (
         15,
-        _("In Progress"),
+        _('In Progress'),
         'primary',
     )  # Order has been issued, and is in progress
-    SHIPPED = 20, _("Shipped"), 'success'  # Order has been shipped to customer
-    CANCELLED = 40, _("Cancelled"), 'danger'  # Order has been cancelled
-    LOST = 50, _("Lost"), 'warning'  # Order was lost
-    RETURNED = 60, _("Returned"), 'warning'  # Order was returned
+    SHIPPED = 20, _('Shipped'), 'success'  # Order has been shipped to customer
+    CANCELLED = 40, _('Cancelled'), 'danger'  # Order has been cancelled
+    LOST = 50, _('Lost'), 'warning'  # Order was lost
+    RETURNED = 60, _('Returned'), 'warning'  # Order was returned
 
 
 class SalesOrderStatusGroups:
@@ -59,18 +59,18 @@ class SalesOrderStatusGroups:
 class StockStatus(StatusCode):
     """Status codes for Stock."""
 
-    OK = 10, _("OK"), 'success'  # Item is OK
-    ATTENTION = 50, _("Attention needed"), 'warning'  # Item requires attention
-    DAMAGED = 55, _("Damaged"), 'warning'  # Item is damaged
-    DESTROYED = 60, _("Destroyed"), 'danger'  # Item is destroyed
-    REJECTED = 65, _("Rejected"), 'danger'  # Item is rejected
-    LOST = 70, _("Lost"), 'dark'  # Item has been lost
+    OK = 10, _('OK'), 'success'  # Item is OK
+    ATTENTION = 50, _('Attention needed'), 'warning'  # Item requires attention
+    DAMAGED = 55, _('Damaged'), 'warning'  # Item is damaged
+    DESTROYED = 60, _('Destroyed'), 'danger'  # Item is destroyed
+    REJECTED = 65, _('Rejected'), 'danger'  # Item is rejected
+    LOST = 70, _('Lost'), 'dark'  # Item has been lost
     QUARANTINED = (
         75,
-        _("Quarantined"),
+        _('Quarantined'),
         'info',
     )  # Item has been quarantined and is unavailable
-    RETURNED = 85, _("Returned"), 'warning'  # Item has been returned from a customer
+    RETURNED = 85, _('Returned'), 'warning'  # Item has been returned from a customer
 
 
 class StockStatusGroups:
@@ -129,7 +129,7 @@ class StockHistoryCode(StatusCode):
     BUILD_CONSUMED = 57, _('Consumed by build order')
 
     # Sales order codes
-    SHIPPED_AGAINST_SALES_ORDER = 60, _("Shipped against Sales Order")
+    SHIPPED_AGAINST_SALES_ORDER = 60, _('Shipped against Sales Order')
 
     # Purchase order codes
     RECEIVED_AGAINST_PURCHASE_ORDER = 70, _('Received against Purchase Order')
@@ -145,10 +145,10 @@ class StockHistoryCode(StatusCode):
 class BuildStatus(StatusCode):
     """Build status codes."""
 
-    PENDING = 10, _("Pending"), 'secondary'  # Build is pending / active
-    PRODUCTION = 20, _("Production"), 'primary'  # BuildOrder is in production
-    CANCELLED = 30, _("Cancelled"), 'danger'  # Build was cancelled
-    COMPLETE = 40, _("Complete"), 'success'  # Build is complete
+    PENDING = 10, _('Pending'), 'secondary'  # Build is pending / active
+    PRODUCTION = 20, _('Production'), 'primary'  # BuildOrder is in production
+    CANCELLED = 30, _('Cancelled'), 'danger'  # Build was cancelled
+    COMPLETE = 40, _('Complete'), 'success'  # Build is complete
 
 
 class BuildStatusGroups:
@@ -161,13 +161,13 @@ class ReturnOrderStatus(StatusCode):
     """Defines a set of status codes for a ReturnOrder"""
 
     # Order is pending, waiting for receipt of items
-    PENDING = 10, _("Pending"), 'secondary'
+    PENDING = 10, _('Pending'), 'secondary'
 
     # Items have been received, and are being inspected
-    IN_PROGRESS = 20, _("In Progress"), 'primary'
+    IN_PROGRESS = 20, _('In Progress'), 'primary'
 
-    COMPLETE = 30, _("Complete"), 'success'
-    CANCELLED = 40, _("Cancelled"), 'danger'
+    COMPLETE = 30, _('Complete'), 'success'
+    CANCELLED = 40, _('Cancelled'), 'danger'
 
 
 class ReturnOrderStatusGroups:
@@ -179,19 +179,19 @@ class ReturnOrderStatusGroups:
 class ReturnOrderLineStatus(StatusCode):
     """Defines a set of status codes for a ReturnOrderLineItem"""
 
-    PENDING = 10, _("Pending"), 'secondary'
+    PENDING = 10, _('Pending'), 'secondary'
 
     # Item is to be returned to customer, no other action
-    RETURN = 20, _("Return"), 'success'
+    RETURN = 20, _('Return'), 'success'
 
     # Item is to be repaired, and returned to customer
-    REPAIR = 30, _("Repair"), 'primary'
+    REPAIR = 30, _('Repair'), 'primary'
 
     # Item is to be replaced (new item shipped)
-    REPLACE = 40, _("Replace"), 'warning'
+    REPLACE = 40, _('Replace'), 'warning'
 
     # Item is to be refunded (cannot be repaired)
-    REFUND = 50, _("Refund"), 'info'
+    REFUND = 50, _('Refund'), 'info'
 
     # Item is rejected
-    REJECT = 60, _("Reject"), 'danger'
+    REJECT = 60, _('Reject'), 'danger'

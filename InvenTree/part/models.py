@@ -67,7 +67,7 @@ from InvenTree.status_codes import (
 from order import models as OrderModels
 from stock import models as StockModels
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class PartCategory(MetadataMixin, InvenTreeTree):
@@ -85,8 +85,8 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     class Meta:
         """Metaclass defines extra model properties"""
 
-        verbose_name = _("Part Category")
-        verbose_name_plural = _("Part Categories")
+        verbose_name = _('Part Category')
+        verbose_name_plural = _('Part Categories')
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child categories or parts.
@@ -101,7 +101,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
     default_location = TreeForeignKey(
         'stock.StockLocation',
-        related_name="default_categories",
+        related_name='default_categories',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -129,8 +129,8 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     icon = models.CharField(
         blank=True,
         max_length=100,
-        verbose_name=_("Icon"),
-        help_text=_("Icon (optional)"),
+        verbose_name=_('Icon'),
+        help_text=_('Icon (optional)'),
     )
 
     @staticmethod
@@ -150,8 +150,8 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         if self.pk and self.structural and self.partcount(False, False) > 0:
             raise ValidationError(
                 _(
-                    "You cannot make this part category structural because some parts "
-                    "are already assigned to it!"
+                    'You cannot make this part category structural because some parts '
+                    'are already assigned to it!'
                 )
             )
         super().clean()
@@ -387,8 +387,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     class Meta:
         """Metaclass defines extra model properties"""
 
-        verbose_name = _("Part")
-        verbose_name_plural = _("Parts")
+        verbose_name = _('Part')
+        verbose_name_plural = _('Parts')
         ordering = ['name']
         constraints = [
             UniqueConstraint(fields=['name', 'IPN', 'revision'], name='unique_part')
@@ -482,7 +482,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     def __str__(self):
         """Return a string representation of the Part (for use in the admin interface)"""
-        return f"{self.full_name} - {self.description}"
+        return f'{self.full_name} - {self.description}'
 
     def get_parts_in_bom(self, **kwargs):
         """Return a list of all parts in the BOM for this part.
@@ -686,8 +686,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         if stock.exists():
             if raise_error:
                 raise ValidationError(
-                    _("Stock item with this serial number already exists")
-                    + ": "
+                    _('Stock item with this serial number already exists')
+                    + ': '
                     + serial
                 )
             else:
@@ -800,7 +800,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             .exists()
         ):
             raise ValidationError(
-                _("Part with this Name, IPN and Revision already exists.")
+                _('Part with this Name, IPN and Revision already exists.')
             )
 
     def clean(self):
@@ -815,7 +815,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         """
         if self.category is not None and self.category.structural:
             raise ValidationError({
-                'category': _("Parts cannot be assigned to structural part categories!")
+                'category': _('Parts cannot be assigned to structural part categories!')
             })
 
         super().clean()
@@ -989,7 +989,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
     units = models.CharField(
         max_length=20,
-        default="",
+        default='',
         blank=True,
         null=True,
         verbose_name=_('Units'),
@@ -1024,7 +1024,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
     salable = models.BooleanField(
         default=part_settings.part_salable_default,
         verbose_name=_('Salable'),
-        help_text=_("Can this part be sold to customers?"),
+        help_text=_('Can this part be sold to customers?'),
     )
 
     active = models.BooleanField(
@@ -1823,7 +1823,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         min_price = normalize(min_price)
         max_price = normalize(max_price)
 
-        return f"{min_price} - {max_price}"
+        return f'{min_price} - {max_price}'
 
     def get_supplier_price_range(self, quantity=1):
         """Return the supplier price range of this part:
@@ -1872,7 +1872,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         for item in self.get_bom_items().select_related('sub_part'):
             if item.sub_part.pk == self.pk:
-                logger.warning("WARNING: BomItem ID %s contains itself in BOM", item.pk)
+                logger.warning('WARNING: BomItem ID %s contains itself in BOM', item.pk)
                 continue
 
             q = decimal.Decimal(quantity)
@@ -2402,7 +2402,7 @@ class PartPricing(common.models.MetaMixin):
             result = convert_money(money, target_currency)
         except MissingRate:
             logger.warning(
-                "No currency conversion rate available for %s -> %s",
+                'No currency conversion rate available for %s -> %s',
                 money.currency,
                 target_currency,
             )
@@ -2432,7 +2432,7 @@ class PartPricing(common.models.MetaMixin):
             or not Part.objects.filter(pk=self.part.pk).exists()
         ):
             logger.warning(
-                "Referenced part instance does not exist - skipping pricing update."
+                'Referenced part instance does not exist - skipping pricing update.'
             )
             return
 
@@ -2458,13 +2458,13 @@ class PartPricing(common.models.MetaMixin):
 
         if self.scheduled_for_update:
             # Ignore if the pricing is already scheduled to be updated
-            logger.debug("Pricing for %s already scheduled for update - skipping", p)
+            logger.debug('Pricing for %s already scheduled for update - skipping', p)
             return
 
         if counter > 25:
             # Prevent infinite recursion / stack depth issues
             logger.debug(
-                counter, f"Skipping pricing update for {p} - maximum depth exceeded"
+                counter, f'Skipping pricing update for {p} - maximum depth exceeded'
             )
             return
 
@@ -3260,7 +3260,7 @@ class PartAttachment(InvenTreeAttachment):
 
     def getSubdir(self):
         """Returns the media subdirectory where part attachments are stored"""
-        return os.path.join("part_files", str(self.part.id))
+        return os.path.join('part_files', str(self.part.id))
 
     part = models.ForeignKey(
         Part,
@@ -3423,7 +3423,7 @@ class PartTestTemplate(MetadataMixin, models.Model):
         for test in tests:
             if test.key == key:
                 raise ValidationError({
-                    'test_name': _("Test with this name already exists for this part")
+                    'test_name': _('Test with this name already exists for this part')
                 })
 
         super().validate_unique(exclude)
@@ -3444,35 +3444,35 @@ class PartTestTemplate(MetadataMixin, models.Model):
     test_name = models.CharField(
         blank=False,
         max_length=100,
-        verbose_name=_("Test Name"),
-        help_text=_("Enter a name for the test"),
+        verbose_name=_('Test Name'),
+        help_text=_('Enter a name for the test'),
     )
 
     description = models.CharField(
         blank=False,
         null=True,
         max_length=100,
-        verbose_name=_("Test Description"),
-        help_text=_("Enter description for this test"),
+        verbose_name=_('Test Description'),
+        help_text=_('Enter description for this test'),
     )
 
     required = models.BooleanField(
         default=True,
-        verbose_name=_("Required"),
-        help_text=_("Is this test required to pass?"),
+        verbose_name=_('Required'),
+        help_text=_('Is this test required to pass?'),
     )
 
     requires_value = models.BooleanField(
         default=False,
-        verbose_name=_("Requires Value"),
-        help_text=_("Does this test require a value when adding a test result?"),
+        verbose_name=_('Requires Value'),
+        help_text=_('Does this test require a value when adding a test result?'),
     )
 
     requires_attachment = models.BooleanField(
         default=False,
-        verbose_name=_("Requires Attachment"),
+        verbose_name=_('Requires Attachment'),
         help_text=_(
-            "Does this test require a file attachment when adding a test result?"
+            'Does this test require a file attachment when adding a test result?'
         ),
     )
 
@@ -3503,7 +3503,7 @@ class PartParameterTemplate(MetadataMixin, models.Model):
         """Return a string representation of a PartParameterTemplate instance"""
         s = str(self.name)
         if self.units:
-            s += f" ({self.units})"
+            s += f' ({self.units})'
         return s
 
     def clean(self):
@@ -3557,8 +3557,8 @@ class PartParameterTemplate(MetadataMixin, models.Model):
             ).exclude(pk=self.pk)
 
             if others.exists():
-                msg = _("Parameter template name must be unique")
-                raise ValidationError({"name": msg})
+                msg = _('Parameter template name must be unique')
+                raise ValidationError({'name': msg})
         except PartParameterTemplate.DoesNotExist:
             pass
 
@@ -3644,7 +3644,7 @@ class PartParameter(MetadataMixin, models.Model):
 
     def __str__(self):
         """String representation of a PartParameter (used in the admin interface)"""
-        return f"{self.part.full_name} : {self.template.name} = {self.data} ({self.template.units})"
+        return f'{self.part.full_name} : {self.template.name} = {self.data} ({self.template.units})'
 
     def save(self, *args, **kwargs):
         """Custom save method for the PartParameter model."""
@@ -3856,11 +3856,11 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
     class Meta:
         """Metaclass providing extra model definition"""
 
-        verbose_name = _("BOM Item")
+        verbose_name = _('BOM Item')
 
     def __str__(self):
         """Return a string representation of this BomItem instance"""
-        return f"{decimal2string(self.quantity)} x {self.sub_part.full_name} to make {self.part.full_name}"
+        return f'{decimal2string(self.quantity)} x {self.sub_part.full_name} to make {self.part.full_name}'
 
     @staticmethod
     def get_api_url():
@@ -3968,13 +3968,13 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
     optional = models.BooleanField(
         default=False,
         verbose_name=_('Optional'),
-        help_text=_("This BOM item is optional"),
+        help_text=_('This BOM item is optional'),
     )
 
     consumable = models.BooleanField(
         default=False,
         verbose_name=_('Consumable'),
-        help_text=_("This BOM item is consumable (it is not tracked in build orders)"),
+        help_text=_('This BOM item is consumable (it is not tracked in build orders)'),
     )
 
     overage = models.CharField(
@@ -4106,8 +4106,8 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
                 if self.sub_part.trackable:
                     if self.quantity != int(self.quantity):
                         raise ValidationError({
-                            "quantity": _(
-                                "Quantity must be integer value for trackable parts"
+                            'quantity': _(
+                                'Quantity must be integer value for trackable parts'
                             )
                         })
 
@@ -4204,7 +4204,7 @@ class BomItem(DataImportMixin, MetadataMixin, models.Model):
         pmin = decimal2money(pmin)
         pmax = decimal2money(pmax)
 
-        return f"{pmin} to {pmax}"
+        return f'{pmin} to {pmax}'
 
 
 @receiver(post_save, sender=BomItem, dispatch_uid='update_bom_build_lines')
@@ -4259,7 +4259,7 @@ class BomItemSubstitute(MetadataMixin, models.Model):
     class Meta:
         """Metaclass providing extra model definition"""
 
-        verbose_name = _("BOM Item Substitute")
+        verbose_name = _('BOM Item Substitute')
 
         # Prevent duplication of substitute parts
         unique_together = ('part', 'bom_item')
@@ -4280,7 +4280,7 @@ class BomItemSubstitute(MetadataMixin, models.Model):
 
         if self.part == self.bom_item.sub_part:
             raise ValidationError({
-                "part": _("Substitute part cannot be the same as the master part")
+                'part': _('Substitute part cannot be the same as the master part')
             })
 
     @staticmethod
@@ -4345,9 +4345,9 @@ class PartRelated(MetadataMixin, models.Model):
 
         if self.part_1 == self.part_2:
             raise ValidationError(
-                _("Part relationship cannot be created between a part and itself")
+                _('Part relationship cannot be created between a part and itself')
             )
 
         # Check for inverse relationship
         if PartRelated.objects.filter(part_1=self.part_2, part_2=self.part_1).exists():
-            raise ValidationError(_("Duplicate relationship already exists"))
+            raise ValidationError(_('Duplicate relationship already exists'))

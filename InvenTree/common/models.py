@@ -220,7 +220,7 @@ class BaseInvenTreeSetting(models.Model):
 
         If a particular setting is not present, create it with the default value
         """
-        cache_key = f"BUILD_DEFAULT_VALUES:{str(cls.__name__)}"
+        cache_key = f'BUILD_DEFAULT_VALUES:{str(cls.__name__)}'
 
         if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
             # Already built default values
@@ -234,7 +234,7 @@ class BaseInvenTreeSetting(models.Model):
 
             if len(missing_keys) > 0:
                 logger.info(
-                    "Building %s default values for %s", len(missing_keys), str(cls)
+                    'Building %s default values for %s', len(missing_keys), str(cls)
                 )
                 cls.objects.bulk_create([
                     cls(key=key, value=cls.get_setting_default(key), **kwargs)
@@ -243,7 +243,7 @@ class BaseInvenTreeSetting(models.Model):
                 ])
         except Exception as exc:
             logger.exception(
-                "Failed to build default values for %s (%s)", str(cls), str(type(exc))
+                'Failed to build default values for %s (%s)', str(cls), str(type(exc))
             )
             pass
 
@@ -299,12 +299,12 @@ class BaseInvenTreeSetting(models.Model):
         - The unique KEY string
         - Any key:value kwargs associated with the particular setting type (e.g. user-id)
         """
-        key = f"{str(cls.__name__)}:{setting_key}"
+        key = f'{str(cls.__name__)}:{setting_key}'
 
         for k, v in kwargs.items():
-            key += f"_{k}:{v}"
+            key += f'_{k}:{v}'
 
-        return key.replace(" ", "")
+        return key.replace(' ', '')
 
     @classmethod
     def get_filters(cls, **kwargs):
@@ -366,14 +366,14 @@ class BaseInvenTreeSetting(models.Model):
                 )
 
             # remove any hidden settings
-            if exclude_hidden and setting.get("hidden", False):
+            if exclude_hidden and setting.get('hidden', False):
                 del settings[key.upper()]
 
         # format settings values and remove protected
         for key, setting in settings.items():
             validator = cls.get_setting_validator(key, **filters)
 
-            if cls.is_protected(key, **filters) and setting.value != "":
+            if cls.is_protected(key, **filters) and setting.value != '':
                 setting.value = '***'
             elif cls.validator_is_bool(validator):
                 setting.value = InvenTree.helpers.str2bool(setting.value)
@@ -438,7 +438,7 @@ class BaseInvenTreeSetting(models.Model):
             if setting.required:
                 value = setting.value or cls.get_setting_default(setting.key, **kwargs)
 
-                if value == "":
+                if value == '':
                     missing_settings.append(setting.key.upper())
 
         return len(missing_settings) == 0, missing_settings
@@ -766,7 +766,7 @@ class BaseInvenTreeSetting(models.Model):
         options = self.valid_options()
 
         if options and self.value not in options:
-            raise ValidationError(_("Chosen value is not a valid option"))
+            raise ValidationError(_('Chosen value is not a valid option'))
 
     def run_validator(self, validator):
         """Run a validator against the 'value' field for this InvenTreeSetting object."""
@@ -1049,7 +1049,7 @@ class BaseInvenTreeSetting(models.Model):
         """Check if this setting value is required."""
         setting = cls.get_setting_definition(key, **cls.get_filters(**kwargs))
 
-        return setting.get("required", False)
+        return setting.get('required', False)
 
     @property
     def required(self):
@@ -1131,8 +1131,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     class Meta:
         """Meta options for InvenTreeSetting."""
 
-        verbose_name = "InvenTree Setting"
-        verbose_name_plural = "InvenTree Settings"
+        verbose_name = 'InvenTree Setting'
+        verbose_name_plural = 'InvenTree Settings'
 
     def save(self, *args, **kwargs):
         """When saving a global setting, check to see if it requires a server restart.
@@ -1454,7 +1454,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Part Name Display Format'),
             'description': _('Format to display the part name'),
             'default': "{{ part.IPN if part.IPN }}{{ ' | ' if part.IPN }}{{ part.name }}{{ ' | ' if part.revision }}"
-            "{{ part.revision if part.revision }}",
+            '{{ part.revision if part.revision }}',
             'validator': InvenTree.validators.validate_part_name_format,
         },
         'PART_CATEGORY_DEFAULT_ICON': {
@@ -1860,7 +1860,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'after_save': reload_plugin_registry,
         },
-        "PROJECT_CODES_ENABLED": {
+        'PROJECT_CODES_ENABLED': {
             'name': _('Enable project codes'),
             'description': _('Enable project codes for tracking projects'),
             'default': False,
@@ -1946,8 +1946,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     class Meta:
         """Meta options for InvenTreeUserSetting."""
 
-        verbose_name = "InvenTree User Setting"
-        verbose_name_plural = "InvenTree User Settings"
+        verbose_name = 'InvenTree User Setting'
+        verbose_name_plural = 'InvenTree User Settings'
         constraints = [
             models.UniqueConstraint(fields=['key', 'user'], name='unique key and user')
         ]
@@ -2069,7 +2069,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
-        "LABEL_INLINE": {
+        'LABEL_INLINE': {
             'name': _('Inline label display'),
             'description': _(
                 'Display PDF labels in the browser, instead of downloading as a file'
@@ -2077,7 +2077,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
-        "LABEL_DEFAULT_PRINTER": {
+        'LABEL_DEFAULT_PRINTER': {
             'name': _('Default label printer'),
             'description': _(
                 'Configure which label printer should be selected by default'
@@ -2085,7 +2085,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': '',
             'choices': label_printer_options,
         },
-        "REPORT_INLINE": {
+        'REPORT_INLINE': {
             'name': _('Inline report display'),
             'description': _(
                 'Display PDF reports in the browser, instead of downloading as a file'
@@ -2112,7 +2112,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
         'SEARCH_HIDE_INACTIVE_PARTS': {
-            'name': _("Hide Inactive Parts"),
+            'name': _('Hide Inactive Parts'),
             'description': _('Excluded inactive parts from search preview window'),
             'default': False,
             'validator': bool,
@@ -2360,7 +2360,7 @@ class PriceBreak(MetaMixin):
             converted = convert_money(self.price, currency_code)
         except MissingRate:
             logger.warning(
-                "No currency conversion rate available for %s -> %s",
+                'No currency conversion rate available for %s -> %s',
                 self.price_currency,
                 currency_code,
             )
@@ -2510,11 +2510,11 @@ class WebhookEndpoint(models.Model):
     """
 
     # Token
-    TOKEN_NAME = "Token"
+    TOKEN_NAME = 'Token'
     VERIFICATION_METHOD = VerificationMethod.NONE
 
-    MESSAGE_OK = "Message was received."
-    MESSAGE_TOKEN_ERROR = "Incorrect token in header."
+    MESSAGE_OK = 'Message was received.'
+    MESSAGE_TOKEN_ERROR = 'Incorrect token in header.'
 
     endpoint_id = models.CharField(
         max_length=255,
@@ -2589,7 +2589,7 @@ class WebhookEndpoint(models.Model):
 
         This can be overridden to create your own token validation method.
         """
-        token = headers.get(self.TOKEN_NAME, "")
+        token = headers.get(self.TOKEN_NAME, '')
 
         # no token
         if self.verify == VerificationMethod.NONE:

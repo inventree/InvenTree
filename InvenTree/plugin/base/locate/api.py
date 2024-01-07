@@ -37,7 +37,7 @@ class LocatePluginView(APIView):
         # StockLocation to identify
         location_pk = request.data.get('location', None)
 
-        data = {"success": "Identification plugin activated", "plugin": plugin}
+        data = {'success': 'Identification plugin activated', 'plugin': plugin}
 
         # StockItem takes priority
         if item_pk:

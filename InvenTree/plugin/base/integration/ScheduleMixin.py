@@ -76,7 +76,7 @@ class ScheduleMixin:
                         task_keys += plugin.get_task_names()
 
         if len(task_keys) > 0:
-            logger.info("Activated %s scheduled tasks", len(task_keys))
+            logger.info('Activated %s scheduled tasks', len(task_keys))
 
         # Remove any scheduled tasks which do not match
         # This stops 'old' plugin tasks from accumulating
@@ -84,7 +84,7 @@ class ScheduleMixin:
             from django_q.models import Schedule
 
             scheduled_plugin_tasks = Schedule.objects.filter(
-                name__istartswith="plugin."
+                name__istartswith='plugin.'
             )
 
             deleted_count = 0
@@ -96,11 +96,11 @@ class ScheduleMixin:
 
             if deleted_count > 0:
                 logger.info(
-                    "Removed %s old scheduled tasks", deleted_count
+                    'Removed %s old scheduled tasks', deleted_count
                 )  # pragma: no cover
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
-            logger.warning("activate_integration_schedule failed, database not ready")
+            logger.warning('activate_integration_schedule failed, database not ready')
 
     def get_scheduled_tasks(self):
         """Returns `SCHEDULED_TASKS` context.
@@ -117,7 +117,7 @@ class ScheduleMixin:
     def validate_scheduled_tasks(self):
         """Check that the provided scheduled tasks are valid."""
         if not self.has_scheduled_tasks:
-            raise MixinImplementationError("SCHEDULED_TASKS not defined")
+            raise MixinImplementationError('SCHEDULED_TASKS not defined')
 
         for key, task in self.scheduled_tasks.items():
             if 'func' not in task:
@@ -147,7 +147,7 @@ class ScheduleMixin:
         """Task name for key."""
         # Generate a 'unique' task name
         slug = self.plugin_slug()
-        return f"plugin.{slug}.{key}"
+        return f'plugin.{slug}.{key}'
 
     def get_task_names(self):
         """All defined task names."""
@@ -194,7 +194,7 @@ class ScheduleMixin:
 
         except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready
-            logger.warning("register_tasks failed, database not ready")
+            logger.warning('register_tasks failed, database not ready')
 
     def unregister_tasks(self):
         """Deregister the tasks with the database."""
@@ -211,4 +211,4 @@ class ScheduleMixin:
                     pass
         except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready
-            logger.warning("unregister_tasks failed, database not ready")
+            logger.warning('unregister_tasks failed, database not ready')

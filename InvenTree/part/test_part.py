@@ -180,7 +180,7 @@ class PartTest(TestCase):
     def test_str(self):
         """Test string representation of a Part"""
         p = Part.objects.get(pk=100)
-        self.assertEqual(str(p), "BOB | Bob | A2 - Can we build it? Yes we can!")
+        self.assertEqual(str(p), 'BOB | Bob | A2 - Can we build it? Yes we can!')
 
     def test_duplicate(self):
         """Test that we cannot create a "duplicate" Part."""

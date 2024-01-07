@@ -74,9 +74,9 @@ provider_urlpatterns = []
 
 for name, provider in providers.registry.provider_map.items():
     try:
-        prov_mod = import_module(provider.get_package() + ".views")
+        prov_mod = import_module(provider.get_package() + '.views')
     except ImportError:
-        logger.exception("Could not import authentication provider %s", name)
+        logger.exception('Could not import authentication provider %s', name)
         continue
 
     # Try to extract the adapter class

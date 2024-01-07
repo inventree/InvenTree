@@ -25,8 +25,8 @@ def isInMainThread():
     - The RUN_MAIN env is set in that case. However if --noreload is applied, this variable
     is not set because there are no different threads.
     """
-    if "runserver" in sys.argv and "--noreload" not in sys.argv:
-        return os.environ.get('RUN_MAIN', None) == "true"
+    if 'runserver' in sys.argv and '--noreload' not in sys.argv:
+        return os.environ.get('RUN_MAIN', None) == 'true'
 
     return True
 

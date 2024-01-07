@@ -10,7 +10,7 @@ def print_hello():
 
     Contents do not matter - therefore no coverage.
     """
-    print("Hello")  # pragma: no cover
+    print('Hello')  # pragma: no cover
 
 
 def print_world():
@@ -18,16 +18,16 @@ def print_world():
 
     Contents do not matter - therefore no coverage.
     """
-    print("World")  # pragma: no cover
+    print('World')  # pragma: no cover
 
 
 class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
     """A sample plugin which provides support for scheduled tasks."""
 
-    NAME = "ScheduledTasksPlugin"
-    SLUG = "schedule"
-    TITLE = "Scheduled Tasks"
-    VERSION = "0.2.0"
+    NAME = 'ScheduledTasksPlugin'
+    SLUG = 'schedule'
+    TITLE = 'Scheduled Tasks'
+    VERSION = '0.2.0'
 
     SCHEDULED_TASKS = {
         'member': {'func': 'member_func', 'schedule': 'I', 'minutes': 30},
@@ -55,5 +55,5 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
         """A simple member function to demonstrate functionality."""
         t_or_f = self.get_setting('T_OR_F')
 
-        print(f"Called member_func - value is {t_or_f}")
+        print(f'Called member_func - value is {t_or_f}')
         return t_or_f

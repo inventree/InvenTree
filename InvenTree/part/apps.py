@@ -12,7 +12,7 @@ from InvenTree.ready import (
     isPluginRegistryLoaded,
 )
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class PartConfig(AppConfig):
@@ -67,11 +67,11 @@ class PartConfig(AppConfig):
             if items.count() > 0:
                 # Find any pricing objects which have the 'scheduled_for_update' flag set
                 logger.info(
-                    "Resetting update flags for %s pricing objects...", items.count()
+                    'Resetting update flags for %s pricing objects...', items.count()
                 )
 
                 for pricing in items:
                     pricing.scheduled_for_update = False
                     pricing.save()
         except Exception:
-            logger.exception("Failed to reset pricing flags - database not ready")
+            logger.exception('Failed to reset pricing flags - database not ready')

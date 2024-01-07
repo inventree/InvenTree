@@ -86,7 +86,7 @@ class BarcodePOAllocateSerializer(BarcodeSerializer):
         """Validate the provided order"""
 
         if order.status != PurchaseOrderStatus.PENDING.value:
-            raise ValidationError(_("Purchase order is not pending"))
+            raise ValidationError(_('Purchase order is not pending'))
 
         return order
 
@@ -111,7 +111,7 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
         """Validate the provided order"""
 
         if order and order.status != PurchaseOrderStatus.PLACED.value:
-            raise ValidationError(_("Purchase order has not been placed"))
+            raise ValidationError(_('Purchase order has not been placed'))
 
         return order
 
@@ -126,7 +126,7 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
         """Validate the provided location"""
 
         if location and location.structural:
-            raise ValidationError(_("Cannot select a structural location"))
+            raise ValidationError(_('Cannot select a structural location'))
 
         return location
 
@@ -147,7 +147,7 @@ class BarcodeSOAllocateSerializer(BarcodeSerializer):
         """Validate the provided order"""
 
         if order and order.status != SalesOrderStatus.PENDING.value:
-            raise ValidationError(_("Sales order is not pending"))
+            raise ValidationError(_('Sales order is not pending'))
 
         return order
 
@@ -169,7 +169,7 @@ class BarcodeSOAllocateSerializer(BarcodeSerializer):
         """Validate the provided shipment"""
 
         if shipment and shipment.is_delivered():
-            raise ValidationError(_("Shipment has already been delivered"))
+            raise ValidationError(_('Shipment has already been delivered'))
 
         return shipment
 

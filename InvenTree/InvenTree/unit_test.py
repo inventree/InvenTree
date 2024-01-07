@@ -39,7 +39,7 @@ def getMigrationFileNames(app):
     files = local_dir.joinpath('..', app, 'migrations').iterdir()
 
     # Regex pattern for migration files
-    regex = re.compile(r"^[\d]+_.*\.py$")
+    regex = re.compile(r'^[\d]+_.*\.py$')
 
     migration_files = []
 
@@ -241,14 +241,14 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             yield  # your test will be run here
 
         if verbose:
-            msg = "\r\n%s" % json.dumps(context.captured_queries, indent=4)
+            msg = '\r\n%s' % json.dumps(context.captured_queries, indent=4)
         else:
             msg = None
 
         n = len(context.captured_queries)
 
         if debug:
-            print(f"Expected less than {value} queries, got {n} queries")
+            print(f'Expected less than {value} queries, got {n} queries')
 
         self.assertLess(n, value, msg=msg)
 
@@ -357,7 +357,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         # Check that the response is of the correct type
         if not isinstance(response, StreamingHttpResponse):
             raise ValueError(
-                "Response is not a StreamingHttpResponse object as expected"
+                'Response is not a StreamingHttpResponse object as expected'
             )
 
         # Extract filename

@@ -69,7 +69,7 @@ def render_part_full_name(part) -> str:
             return template.render(part=part)
         except Exception as e:
             logger.warning(
-                "exception while trying to create full name for part %s: %s",
+                'exception while trying to create full name for part %s: %s',
                 part.name,
                 e,
             )
@@ -80,7 +80,7 @@ def render_part_full_name(part) -> str:
 
 
 # Subdirectory for storing part images
-PART_IMAGE_DIR = "part_images"
+PART_IMAGE_DIR = 'part_images'
 
 
 def get_part_image_directory() -> str:

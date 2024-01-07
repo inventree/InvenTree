@@ -56,14 +56,14 @@ class ReportTagTest(TestCase):
             self.debug_mode(b)
 
             with self.assertRaises(FileNotFoundError):
-                report_tags.asset("bad_file.txt")
+                report_tags.asset('bad_file.txt')
 
         # Create an asset file
         asset_dir = settings.MEDIA_ROOT.joinpath('report', 'assets')
         asset_dir.mkdir(parents=True, exist_ok=True)
         asset_path = asset_dir.joinpath('test.txt')
 
-        asset_path.write_text("dummy data")
+        asset_path.write_text('dummy data')
 
         self.debug_mode(True)
         asset = report_tags.asset('test.txt')
@@ -101,7 +101,7 @@ class ReportTagTest(TestCase):
         img_file = img_path.joinpath('test.jpg')
 
         img_path.mkdir(parents=True, exist_ok=True)
-        img_file.write_text("dummy data")
+        img_file.write_text('dummy data')
 
         # Test in debug mode. Returns blank image as dummy file is not a valid image
         self.debug_mode(True)
@@ -158,7 +158,7 @@ class BarcodeTagTest(TestCase):
 
     def test_barcode(self):
         """Test the barcode generation tag"""
-        barcode = barcode_tags.barcode("12345")
+        barcode = barcode_tags.barcode('12345')
 
         self.assertTrue(isinstance(barcode, str))
         self.assertTrue(barcode.startswith('data:image/png;'))
@@ -171,14 +171,14 @@ class BarcodeTagTest(TestCase):
     def test_qrcode(self):
         """Test the qrcode generation tag"""
         # Test with default settings
-        qrcode = barcode_tags.qrcode("hello world")
+        qrcode = barcode_tags.qrcode('hello world')
         self.assertTrue(isinstance(qrcode, str))
         self.assertTrue(qrcode.startswith('data:image/png;'))
         self.assertEqual(len(qrcode), 700)
 
         # Generate a much larger qrcode
         qrcode = barcode_tags.qrcode(
-            "hello_world", version=2, box_size=50, format='BMP'
+            'hello_world', version=2, box_size=50, format='BMP'
         )
         self.assertTrue(isinstance(qrcode, str))
         self.assertTrue(qrcode.startswith('data:image/bmp;'))

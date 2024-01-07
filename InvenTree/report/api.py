@@ -73,7 +73,7 @@ class ReportFilterMixin:
         """Return a list of database objects from query parameters"""
         if not self.ITEM_MODEL:
             raise NotImplementedError(
-                f"ITEM_MODEL attribute not defined for {__class__}"
+                f'ITEM_MODEL attribute not defined for {__class__}'
             )
 
         ids = []
@@ -184,7 +184,7 @@ class ReportPrintMixin:
         )
 
         # Start with a default report name
-        report_name = "report.pdf"
+        report_name = 'report.pdf'
 
         try:
             # Merge one or more PDF files into a single download
@@ -223,7 +223,7 @@ class ReportPrintMixin:
             if debug_mode:
                 """Concatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
 
-                html = "\n".join(outputs)
+                html = '\n'.join(outputs)
 
                 return HttpResponse(html)
             else:
@@ -320,7 +320,7 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
             # Construct a PDF file object
             try:
                 pdf = report.get_document().write_pdf()
-                pdf_content = ContentFile(pdf, "test_report.pdf")
+                pdf_content = ContentFile(pdf, 'test_report.pdf')
             except TemplateDoesNotExist:
                 return
 
@@ -328,7 +328,7 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
                 attachment=pdf_content,
                 stock_item=item,
                 user=request.user,
-                comment=_("Test report"),
+                comment=_('Test report'),
             )
 
 

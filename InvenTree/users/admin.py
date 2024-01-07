@@ -247,9 +247,9 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
         # If any, display warning message when group is saved
         if len(multiple_group_users) > 0:
             msg = (
-                _("The following users are members of multiple groups")
-                + ": "
-                + ", ".join(multiple_group_users)
+                _('The following users are members of multiple groups')
+                + ': '
+                + ', '.join(multiple_group_users)
             )
 
             messages.add_message(request, messages.WARNING, msg)

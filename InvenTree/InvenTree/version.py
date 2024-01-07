@@ -19,7 +19,7 @@ from dulwich.repo import NotGitRepository, Repo
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.14.0 dev"
+INVENTREE_SW_VERSION = '0.14.0 dev'
 
 # Discover git
 try:
@@ -32,8 +32,8 @@ except (NotGitRepository, FileNotFoundError):
 def checkMinPythonVersion():
     """Check that the Python version is at least 3.9"""
 
-    version = sys.version.split(" ")[0]
-    docs = "https://docs.inventree.org/en/stable/start/intro/#python-requirements"
+    version = sys.version.split(' ')[0]
+    docs = 'https://docs.inventree.org/en/stable/start/intro/#python-requirements'
 
     msg = f"""
     InvenTree requires Python 3.9 or above - you are running version {version}.
@@ -47,22 +47,22 @@ def checkMinPythonVersion():
     if sys.version_info.major == 3 and sys.version_info.minor < 9:
         raise RuntimeError(msg)
 
-    print(f"Python version {version} - {sys.executable}")
+    print(f'Python version {version} - {sys.executable}')
 
 
 def inventreeInstanceName():
     """Returns the InstanceName settings for the current database."""
     import common.models
 
-    return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")
+    return common.models.InvenTreeSetting.get_setting('INVENTREE_INSTANCE', '')
 
 
 def inventreeInstanceTitle():
     """Returns the InstanceTitle for the current database."""
     import common.models
 
-    if common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE_TITLE", False):
-        return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")
+    if common.models.InvenTreeSetting.get_setting('INVENTREE_INSTANCE_TITLE', False):
+        return common.models.InvenTreeSetting.get_setting('INVENTREE_INSTANCE', '')
     return 'InvenTree'
 
 
@@ -76,7 +76,7 @@ def inventreeVersionTuple(version=None):
     if version is None:
         version = INVENTREE_SW_VERSION
 
-    match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", str(version))
+    match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', str(version))
 
     return [int(g) for g in match.groups()]
 
@@ -93,14 +93,14 @@ def inventreeDocsVersion():
     Release -> "major.minor.sub" e.g. "0.5.2"
     """
     if isInvenTreeDevelopmentVersion():
-        return "latest"
+        return 'latest'
     return INVENTREE_SW_VERSION  # pragma: no cover
 
 
 def inventreeDocUrl():
     """Return URL for InvenTree documentation site."""
     tag = inventreeDocsVersion()
-    return f"https://docs.inventree.org/en/{tag}"
+    return f'https://docs.inventree.org/en/{tag}'
 
 
 def inventreeAppUrl():
@@ -110,12 +110,12 @@ def inventreeAppUrl():
 
 def inventreeCreditsUrl():
     """Return URL for InvenTree credits site."""
-    return "https://docs.inventree.org/en/latest/credits/"
+    return 'https://docs.inventree.org/en/latest/credits/'
 
 
 def inventreeGithubUrl():
     """Return URL for InvenTree github site."""
-    return "https://github.com/InvenTree/InvenTree/"
+    return 'https://github.com/InvenTree/InvenTree/'
 
 
 def isInvenTreeUpToDate():
@@ -147,26 +147,26 @@ def inventreeApiVersion():
 
 def parse_version_text():
     """Parse the version text to structured data."""
-    patched_data = INVENTREE_API_TEXT.split("\n\n")
+    patched_data = INVENTREE_API_TEXT.split('\n\n')
     # Remove first newline on latest version
-    patched_data[0] = patched_data[0].replace("\n", "", 1)
+    patched_data[0] = patched_data[0].replace('\n', '', 1)
 
     version_data = {}
     for version in patched_data:
-        data = version.split("\n")
+        data = version.split('\n')
 
         version_split = data[0].split(' -> ')
         version_detail = (
             version_split[1].split(':', 1) if len(version_split) > 1 else ['']
         )
         new_data = {
-            "version": version_split[0].strip(),
-            "date": version_detail[0].strip(),
-            "gh": version_detail[1].strip() if len(version_detail) > 1 else None,
-            "text": data[1:],
-            "latest": False,
+            'version': version_split[0].strip(),
+            'date': version_detail[0].strip(),
+            'gh': version_detail[1].strip() if len(version_detail) > 1 else None,
+            'text': data[1:],
+            'latest': False,
         }
-        version_data[new_data["version"]] = new_data
+        version_data[new_data['version']] = new_data
     return version_data
 
 
@@ -188,7 +188,7 @@ def inventreeApiText(versions: int = 10, start_version: int = 0):
         start_version = INVENTREE_API_VERSION - versions
 
     return {
-        f"v{a}": version_data.get(f"v{a}", None)
+        f'v{a}': version_data.get(f'v{a}', None)
         for a in range(start_version, start_version + versions)
     }
 

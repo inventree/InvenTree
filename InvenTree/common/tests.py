@@ -136,19 +136,19 @@ class SettingsTest(InvenTreeTestCase):
     def test_all_settings(self):
         """Make sure that the all_settings function returns correctly"""
         result = InvenTreeSetting.all_settings()
-        self.assertIn("INVENTREE_INSTANCE", result)
+        self.assertIn('INVENTREE_INSTANCE', result)
         self.assertIsInstance(result['INVENTREE_INSTANCE'], InvenTreeSetting)
 
-    @mock.patch("common.models.InvenTreeSetting.get_setting_definition")
+    @mock.patch('common.models.InvenTreeSetting.get_setting_definition')
     def test_check_all_settings(self, get_setting_definition):
         """Make sure that the check_all_settings function returns correctly"""
         # define partial schema
         settings_definition = {
-            "AB": {  # key that's has not already been accessed
-                "required": True
+            'AB': {  # key that's has not already been accessed
+                'required': True
             },
-            "CD": {"required": True, "protected": True},
-            "EF": {},
+            'CD': {'required': True, 'protected': True},
+            'EF': {},
         }
 
         def mocked(key, **kwargs):
@@ -160,28 +160,28 @@ class SettingsTest(InvenTreeTestCase):
             InvenTreeSetting.check_all_settings(
                 settings_definition=settings_definition
             ),
-            (False, ["AB", "CD"]),
+            (False, ['AB', 'CD']),
         )
-        InvenTreeSetting.set_setting('AB', "hello", self.user)
-        InvenTreeSetting.set_setting('CD', "world", self.user)
+        InvenTreeSetting.set_setting('AB', 'hello', self.user)
+        InvenTreeSetting.set_setting('CD', 'world', self.user)
         self.assertEqual(InvenTreeSetting.check_all_settings(), (True, []))
 
-    @mock.patch("common.models.InvenTreeSetting.get_setting_definition")
+    @mock.patch('common.models.InvenTreeSetting.get_setting_definition')
     def test_settings_validator(self, get_setting_definition):
         """Make sure that the validator function gets called on set setting."""
 
         def validator(x):
-            if x == "hello":
+            if x == 'hello':
                 return x
 
-            raise ValidationError(f"{x} is not valid")
+            raise ValidationError(f'{x} is not valid')
 
         mock_validator = mock.Mock(side_effect=validator)
 
         # define partial schema
         settings_definition = {
-            "AB": {  # key that's has not already been accessed
-                "validator": mock_validator
+            'AB': {  # key that's has not already been accessed
+                'validator': mock_validator
             }
         }
 
@@ -190,12 +190,12 @@ class SettingsTest(InvenTreeTestCase):
 
         get_setting_definition.side_effect = mocked
 
-        InvenTreeSetting.set_setting("AB", "hello", self.user)
-        mock_validator.assert_called_with("hello")
+        InvenTreeSetting.set_setting('AB', 'hello', self.user)
+        mock_validator.assert_called_with('hello')
 
         with self.assertRaises(ValidationError):
-            InvenTreeSetting.set_setting("AB", "world", self.user)
-        mock_validator.assert_called_with("world")
+            InvenTreeSetting.set_setting('AB', 'world', self.user)
+        mock_validator.assert_called_with('world')
 
     def run_settings_check(self, key, setting):
         """Test that all settings are valid.
@@ -322,7 +322,7 @@ class SettingsTest(InvenTreeTestCase):
         # Generate a number of new users
         for idx in range(5):
             get_user_model().objects.create(
-                username=f"User_{idx}", password="hunter42", email="email@dot.com"
+                username=f'User_{idx}', password='hunter42', email='email@dot.com'
             )
 
         key = 'SEARCH_PREVIEW_RESULTS'
@@ -333,7 +333,7 @@ class SettingsTest(InvenTreeTestCase):
             cache_key = setting.cache_key
             self.assertEqual(
                 cache_key,
-                f"InvenTreeUserSetting:SEARCH_PREVIEW_RESULTS_user:{user.username}",
+                f'InvenTreeUserSetting:SEARCH_PREVIEW_RESULTS_user:{user.username}',
             )
             InvenTreeUserSetting.set_setting(key, user.pk, None, user=user)
             self.assertIsNotNone(cache.get(cache_key))
@@ -399,7 +399,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
     def test_api_detail(self):
         """Test that we can access the detail view for a setting based on the <key>."""
         # These keys are invalid, and should return 404
-        for key in ["apple", "carrot", "dog"]:
+        for key in ['apple', 'carrot', 'dog']:
             response = self.get(
                 reverse('api-global-setting-detail', kwargs={'key': key}),
                 expected_code=404,
@@ -770,7 +770,7 @@ class WebhookMessageTests(TestCase):
         """
         response = self.client.post(
             self.url,
-            data={"this": "is a message"},
+            data={'this': 'is a message'},
             content_type=CONTENT_TYPE_JSON,
             **{'HTTP_TOKEN': str(self.endpoint_def.token)},
         )
@@ -778,7 +778,7 @@ class WebhookMessageTests(TestCase):
         assert response.status_code == HTTPStatus.OK
         assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
         message = WebhookMessage.objects.get()
-        assert message.body == {"this": "is a message"}
+        assert message.body == {'this': 'is a message'}
 
 
 class NotificationTest(InvenTreeAPITestCase):
@@ -1033,7 +1033,7 @@ class CurrencyAPITests(InvenTreeAPITestCase):
             # Delay and try again
             time.sleep(10)
 
-        raise TimeoutError("Could not refresh currency exchange data after 5 attempts")
+        raise TimeoutError('Could not refresh currency exchange data after 5 attempts')
 
 
 class NotesImageTest(InvenTreeAPITestCase):
@@ -1048,28 +1048,28 @@ class NotesImageTest(InvenTreeAPITestCase):
             reverse('api-notes-image-list'),
             data={
                 'image': SimpleUploadedFile(
-                    'test.txt', b"this is not an image file", content_type='text/plain'
+                    'test.txt', b'this is not an image file', content_type='text/plain'
                 )
             },
             format='multipart',
             expected_code=400,
         )
 
-        self.assertIn("Upload a valid image", str(response.data['image']))
+        self.assertIn('Upload a valid image', str(response.data['image']))
 
         # Test upload of an invalid image file
         response = self.post(
             reverse('api-notes-image-list'),
             data={
                 'image': SimpleUploadedFile(
-                    'test.png', b"this is not an image file", content_type='image/png'
+                    'test.png', b'this is not an image file', content_type='image/png'
                 )
             },
             format='multipart',
             expected_code=400,
         )
 
-        self.assertIn("Upload a valid image", str(response.data['image']))
+        self.assertIn('Upload a valid image', str(response.data['image']))
 
         # Check that no extra database entries have been created
         self.assertEqual(NotesImage.objects.count(), n)

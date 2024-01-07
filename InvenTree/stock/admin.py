@@ -110,7 +110,7 @@ class LocationTypeAdmin(admin.ModelAdmin):
         return (
             super()
             .get_queryset(request)
-            .annotate(location_count=Count("stock_locations"))
+            .annotate(location_count=Count('stock_locations'))
         )
 
     def location_count(self, obj):

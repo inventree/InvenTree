@@ -46,7 +46,7 @@ def report_page_size_default():
     try:
         page_size = InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4')
     except Exception as exc:
-        logger.exception("Error getting default page size: %s", str(exc))
+        logger.exception('Error getting default page size: %s', str(exc))
         page_size = 'A4'
 
     return page_size
@@ -70,4 +70,4 @@ def encode_image_base64(image, format: str = 'PNG'):
 
     img_str = base64.b64encode(buffered.getvalue())
 
-    return f"data:image/{fmt};charset=utf-8;base64," + img_str.decode()
+    return f'data:image/{fmt};charset=utf-8;base64,' + img_str.decode()

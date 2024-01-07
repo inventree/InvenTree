@@ -52,7 +52,7 @@ if TESTING:
         site_packages = '/usr/local/lib/python3.9/site-packages'
 
         if site_packages not in sys.path:
-            print("Adding missing site-packages path:", site_packages)
+            print('Adding missing site-packages path:', site_packages)
             sys.path.append(site_packages)
 
 # Are environment variables manipulated by tests? Needs to be set by testing code
@@ -87,7 +87,7 @@ ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
 # Configure logging settings
 log_level = get_setting('INVENTREE_LOG_LEVEL', 'log_level', 'WARNING')
 
-logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s %(message)s")
+logging.basicConfig(level=log_level, format='%(asctime)s %(levelname)s %(message)s')
 
 if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
     log_level = 'WARNING'  # pragma: no cover
@@ -109,7 +109,7 @@ if get_setting('INVENTREE_DB_LOGGING', 'db_logging', False):
     LOGGING['loggers'] = {'django.db.backends': {'level': log_level or 'DEBUG'}}
 
 # Get a logger instance for this setup file
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 # Load SECRET_KEY
 SECRET_KEY = config.get_secret_key()
@@ -122,7 +122,7 @@ MEDIA_ROOT = config.get_media_dir()
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = get_setting(
-    "INVENTREE_ALLOWED_HOSTS",
+    'INVENTREE_ALLOWED_HOSTS',
     config_key='allowed_hosts',
     default_value=['*'],
     typecast=list,
@@ -135,11 +135,11 @@ CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
 
 # Extract CORS options from configuration file
 CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
-    "INVENTREE_CORS_ORIGIN_ALLOW_ALL", config_key='cors.allow_all', default_value=False
+    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=False
 )
 
 CORS_ORIGIN_WHITELIST = get_setting(
-    "INVENTREE_CORS_ORIGIN_WHITELIST",
+    'INVENTREE_CORS_ORIGIN_WHITELIST',
     config_key='cors.whitelist',
     default_value=[],
     typecast=list,
@@ -279,43 +279,43 @@ AUTHENTICATION_BACKENDS = CONFIG.get(
         'django.contrib.auth.backends.RemoteUserBackend',  # proxy login
         'django.contrib.auth.backends.ModelBackend',
         'allauth.account.auth_backends.AuthenticationBackend',  # SSO login via external providers
-        "sesame.backends.ModelBackend",  # Magic link login django-sesame
+        'sesame.backends.ModelBackend',  # Magic link login django-sesame
     ],
 )
 
 # LDAP support
-LDAP_AUTH = get_boolean_setting("INVENTREE_LDAP_ENABLED", "ldap.enabled", False)
+LDAP_AUTH = get_boolean_setting('INVENTREE_LDAP_ENABLED', 'ldap.enabled', False)
 if LDAP_AUTH:
     import ldap
     from django_auth_ldap.config import GroupOfUniqueNamesType, LDAPSearch
 
-    AUTHENTICATION_BACKENDS.append("django_auth_ldap.backend.LDAPBackend")
+    AUTHENTICATION_BACKENDS.append('django_auth_ldap.backend.LDAPBackend')
 
     # debug mode to troubleshoot configuration
-    LDAP_DEBUG = get_boolean_setting("INVENTREE_LDAP_DEBUG", "ldap.debug", False)
+    LDAP_DEBUG = get_boolean_setting('INVENTREE_LDAP_DEBUG', 'ldap.debug', False)
     if LDAP_DEBUG:
-        if "loggers" not in LOGGING:
-            LOGGING["loggers"] = {}
-        LOGGING["loggers"]["django_auth_ldap"] = {
-            "level": "DEBUG",
-            "handlers": ["console"],
+        if 'loggers' not in LOGGING:
+            LOGGING['loggers'] = {}
+        LOGGING['loggers']['django_auth_ldap'] = {
+            'level': 'DEBUG',
+            'handlers': ['console'],
         }
 
     # get global options from dict and use ldap.OPT_* as keys and values
     global_options_dict = get_setting(
-        "INVENTREE_LDAP_GLOBAL_OPTIONS", "ldap.global_options", {}, dict
+        'INVENTREE_LDAP_GLOBAL_OPTIONS', 'ldap.global_options', {}, dict
     )
     global_options = {}
     for k, v in global_options_dict.items():
         # keys are always ldap.OPT_* constants
         k_attr = getattr(ldap, k, None)
-        if not k.startswith("OPT_") or k_attr is None:
+        if not k.startswith('OPT_') or k_attr is None:
             print(f"[LDAP] ldap.global_options, key '{k}' not found, skipping...")
             continue
 
         # values can also be other strings, e.g. paths
         v_attr = v
-        if v.startswith("OPT_"):
+        if v.startswith('OPT_'):
             v_attr = getattr(ldap, v, None)
 
         if v_attr is None:
@@ -325,55 +325,55 @@ if LDAP_AUTH:
         global_options[k_attr] = v_attr
     AUTH_LDAP_GLOBAL_OPTIONS = global_options
     if LDAP_DEBUG:
-        print("[LDAP] ldap.global_options =", global_options)
+        print('[LDAP] ldap.global_options =', global_options)
 
-    AUTH_LDAP_SERVER_URI = get_setting("INVENTREE_LDAP_SERVER_URI", "ldap.server_uri")
+    AUTH_LDAP_SERVER_URI = get_setting('INVENTREE_LDAP_SERVER_URI', 'ldap.server_uri')
     AUTH_LDAP_START_TLS = get_boolean_setting(
-        "INVENTREE_LDAP_START_TLS", "ldap.start_tls", False
+        'INVENTREE_LDAP_START_TLS', 'ldap.start_tls', False
     )
-    AUTH_LDAP_BIND_DN = get_setting("INVENTREE_LDAP_BIND_DN", "ldap.bind_dn")
+    AUTH_LDAP_BIND_DN = get_setting('INVENTREE_LDAP_BIND_DN', 'ldap.bind_dn')
     AUTH_LDAP_BIND_PASSWORD = get_setting(
-        "INVENTREE_LDAP_BIND_PASSWORD", "ldap.bind_password"
+        'INVENTREE_LDAP_BIND_PASSWORD', 'ldap.bind_password'
     )
     AUTH_LDAP_USER_SEARCH = LDAPSearch(
-        get_setting("INVENTREE_LDAP_SEARCH_BASE_DN", "ldap.search_base_dn"),
+        get_setting('INVENTREE_LDAP_SEARCH_BASE_DN', 'ldap.search_base_dn'),
         ldap.SCOPE_SUBTREE,
         str(
             get_setting(
-                "INVENTREE_LDAP_SEARCH_FILTER_STR",
-                "ldap.search_filter_str",
-                "(uid= %(user)s)",
+                'INVENTREE_LDAP_SEARCH_FILTER_STR',
+                'ldap.search_filter_str',
+                '(uid= %(user)s)',
             )
         ),
     )
     AUTH_LDAP_USER_DN_TEMPLATE = get_setting(
-        "INVENTREE_LDAP_USER_DN_TEMPLATE", "ldap.user_dn_template"
+        'INVENTREE_LDAP_USER_DN_TEMPLATE', 'ldap.user_dn_template'
     )
     AUTH_LDAP_USER_ATTR_MAP = get_setting(
-        "INVENTREE_LDAP_USER_ATTR_MAP",
-        "ldap.user_attr_map",
+        'INVENTREE_LDAP_USER_ATTR_MAP',
+        'ldap.user_attr_map',
         {'first_name': 'givenName', 'last_name': 'sn', 'email': 'mail'},
         dict,
     )
     AUTH_LDAP_ALWAYS_UPDATE_USER = get_boolean_setting(
-        "INVENTREE_LDAP_ALWAYS_UPDATE_USER", "ldap.always_update_user", True
+        'INVENTREE_LDAP_ALWAYS_UPDATE_USER', 'ldap.always_update_user', True
     )
     AUTH_LDAP_CACHE_TIMEOUT = get_setting(
-        "INVENTREE_LDAP_CACHE_TIMEOUT", "ldap.cache_timeout", 3600, int
+        'INVENTREE_LDAP_CACHE_TIMEOUT', 'ldap.cache_timeout', 3600, int
     )
 
     AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-        get_setting("INVENTREE_LDAP_GROUP_SEARCH", "ldap.group_search"),
+        get_setting('INVENTREE_LDAP_GROUP_SEARCH', 'ldap.group_search'),
         ldap.SCOPE_SUBTREE,
-        "(objectClass=groupOfUniqueNames)",
+        '(objectClass=groupOfUniqueNames)',
     )
-    AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr="cn")
+    AUTH_LDAP_GROUP_TYPE = GroupOfUniqueNamesType(name_attr='cn')
     AUTH_LDAP_REQUIRE_GROUP = get_setting(
-        "INVENTREE_LDAP_REQUIRE_GROUP", "ldap.require_group"
+        'INVENTREE_LDAP_REQUIRE_GROUP', 'ldap.require_group'
     )
-    AUTH_LDAP_DENY_GROUP = get_setting("INVENTREE_LDAP_DENY_GROUP", "ldap.deny_group")
+    AUTH_LDAP_DENY_GROUP = get_setting('INVENTREE_LDAP_DENY_GROUP', 'ldap.deny_group')
     AUTH_LDAP_USER_FLAGS_BY_GROUP = get_setting(
-        "INVENTREE_LDAP_USER_FLAGS_BY_GROUP", "ldap.user_flags_by_group", {}, dict
+        'INVENTREE_LDAP_USER_FLAGS_BY_GROUP', 'ldap.user_flags_by_group', {}, dict
     )
     AUTH_LDAP_FIND_GROUP_PERMS = True
 
@@ -383,7 +383,7 @@ DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting(
 
 # If the debug toolbar is enabled, add the modules
 if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
-    logger.info("Running with DEBUG_TOOLBAR enabled")
+    logger.info('Running with DEBUG_TOOLBAR enabled')
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
@@ -401,9 +401,9 @@ DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
 if DOCKER:  # pragma: no cover
     # Internal IP addresses are different when running under docker
     hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + [
-        "127.0.0.1",
-        "10.0.2.2",
+    INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips] + [
+        '127.0.0.1',
+        '10.0.2.2',
     ]
 
 # Allow secure http developer server in debug mode
@@ -521,7 +521,7 @@ Configure the database backend based on the user-specified values.
 - The following code lets the user "mix and match" database configuration
 """
 
-logger.debug("Configuring database backend:")
+logger.debug('Configuring database backend:')
 
 # Extract database configuration from the config.yaml file
 db_config = CONFIG.get('database', {})
@@ -535,7 +535,7 @@ db_keys = ['ENGINE', 'NAME', 'USER', 'PASSWORD', 'HOST', 'PORT']
 
 for key in db_keys:
     # First, check the environment variables
-    env_key = f"INVENTREE_DB_{key}"
+    env_key = f'INVENTREE_DB_{key}'
     env_var = os.environ.get(env_key, None)
 
     if env_var:
@@ -544,7 +544,7 @@ for key in db_keys:
             try:
                 env_var = int(env_var)
             except ValueError:
-                logger.exception("Invalid number for %s: %s", env_key, env_var)
+                logger.exception('Invalid number for %s: %s', env_key, env_var)
         # Override configuration value
         db_config[key] = env_var
 
@@ -585,9 +585,9 @@ if 'sqlite' in db_engine:
     db_name = str(Path(db_name).resolve())
     db_config['NAME'] = db_name
 
-logger.info("DB_ENGINE: %s", db_engine)
-logger.info("DB_NAME: %s", db_name)
-logger.info("DB_HOST: %s", db_host)
+logger.info('DB_ENGINE: %s', db_engine)
+logger.info('DB_NAME: %s', db_name)
+logger.info('DB_HOST: %s', db_host)
 
 """
 In addition to base-level database configuration, we may wish to specify specific options to the database backend
@@ -600,21 +600,21 @@ Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
 # connecting to the database server (such as a replica failover) don't sit and
 # wait for possibly an hour or more, just tell the client something went wrong
 # and let the client retry when they want to.
-db_options = db_config.get("OPTIONS", db_config.get("options", {}))
+db_options = db_config.get('OPTIONS', db_config.get('options', {}))
 
 # Specific options for postgres backend
-if "postgres" in db_engine:  # pragma: no cover
+if 'postgres' in db_engine:  # pragma: no cover
     from psycopg2.extensions import (
         ISOLATION_LEVEL_READ_COMMITTED,
         ISOLATION_LEVEL_SERIALIZABLE,
     )
 
     # Connection timeout
-    if "connect_timeout" not in db_options:
+    if 'connect_timeout' not in db_options:
         # The DB server is in the same data center, it should not take very
         # long to connect to the database server
         # # seconds, 2 is minimum allowed by libpq
-        db_options["connect_timeout"] = int(
+        db_options['connect_timeout'] = int(
             get_setting('INVENTREE_DB_TIMEOUT', 'database.timeout', 2)
         )
 
@@ -624,36 +624,36 @@ if "postgres" in db_engine:  # pragma: no cover
     # issue to resolve itself.  It it that doesn't happen whatever happened
     # is probably fatal and no amount of waiting is going to fix it.
     # # 0 - TCP Keepalives disabled; 1 - enabled
-    if "keepalives" not in db_options:
-        db_options["keepalives"] = int(
+    if 'keepalives' not in db_options:
+        db_options['keepalives'] = int(
             get_setting('INVENTREE_DB_TCP_KEEPALIVES', 'database.tcp_keepalives', 1)
         )
 
     # Seconds after connection is idle to send keep alive
-    if "keepalives_idle" not in db_options:
-        db_options["keepalives_idle"] = int(
+    if 'keepalives_idle' not in db_options:
+        db_options['keepalives_idle'] = int(
             get_setting(
                 'INVENTREE_DB_TCP_KEEPALIVES_IDLE', 'database.tcp_keepalives_idle', 1
             )
         )
 
     # Seconds after missing ACK to send another keep alive
-    if "keepalives_interval" not in db_options:
-        db_options["keepalives_interval"] = int(
+    if 'keepalives_interval' not in db_options:
+        db_options['keepalives_interval'] = int(
             get_setting(
-                "INVENTREE_DB_TCP_KEEPALIVES_INTERVAL",
-                "database.tcp_keepalives_internal",
-                "1",
+                'INVENTREE_DB_TCP_KEEPALIVES_INTERVAL',
+                'database.tcp_keepalives_internal',
+                '1',
             )
         )
 
     # Number of missing ACKs before we close the connection
-    if "keepalives_count" not in db_options:
-        db_options["keepalives_count"] = int(
+    if 'keepalives_count' not in db_options:
+        db_options['keepalives_count'] = int(
             get_setting(
-                "INVENTREE_DB_TCP_KEEPALIVES_COUNT",
-                "database.tcp_keepalives_count",
-                "5",
+                'INVENTREE_DB_TCP_KEEPALIVES_COUNT',
+                'database.tcp_keepalives_count',
+                '5',
             )
         )
 
@@ -668,18 +668,18 @@ if "postgres" in db_engine:  # pragma: no cover
     # protect against simultaneous changes.
     # https://www.postgresql.org/docs/devel/transaction-iso.html
     # https://docs.djangoproject.com/en/3.2/ref/databases/#isolation-level
-    if "isolation_level" not in db_options:
+    if 'isolation_level' not in db_options:
         serializable = get_boolean_setting(
             'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
         )
-        db_options["isolation_level"] = (
+        db_options['isolation_level'] = (
             ISOLATION_LEVEL_SERIALIZABLE
             if serializable
             else ISOLATION_LEVEL_READ_COMMITTED
         )
 
 # Specific options for MySql / MariaDB backend
-elif "mysql" in db_engine:  # pragma: no cover
+elif 'mysql' in db_engine:  # pragma: no cover
     # TODO TCP time outs and keepalives
 
     # MariaDB's default isolation level is Repeatable Read which is
@@ -688,16 +688,16 @@ elif "mysql" in db_engine:  # pragma: no cover
     # protect against siumltaneous changes.
     # https://mariadb.com/kb/en/mariadb-transactions-and-isolation-levels-for-sql-server-users/#changing-the-isolation-level
     # https://docs.djangoproject.com/en/3.2/ref/databases/#mysql-isolation-level
-    if "isolation_level" not in db_options:
+    if 'isolation_level' not in db_options:
         serializable = get_boolean_setting(
             'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
         )
-        db_options["isolation_level"] = (
-            "serializable" if serializable else "read committed"
+        db_options['isolation_level'] = (
+            'serializable' if serializable else 'read committed'
         )
 
 # Specific options for sqlite backend
-elif "sqlite" in db_engine:
+elif 'sqlite' in db_engine:
     # TODO: Verify timeouts are not an issue because no network is involved for SQLite
 
     # SQLite's default isolation level is Serializable due to SQLite's
@@ -756,30 +756,30 @@ if cache_host:  # pragma: no cover
     # so don't wait too long for the cache as nothing in the cache should be
     # irreplaceable.
     _cache_options = {
-        "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
-        "SOCKET_TIMEOUT": int(os.getenv("CACHE_SOCKET_TIMEOUT", "2")),
-        "CONNECTION_POOL_KWARGS": {
-            "socket_keepalive": config.is_true(os.getenv("CACHE_TCP_KEEPALIVE", "1")),
-            "socket_keepalive_options": {
-                socket.TCP_KEEPCNT: int(os.getenv("CACHE_KEEPALIVES_COUNT", "5")),
-                socket.TCP_KEEPIDLE: int(os.getenv("CACHE_KEEPALIVES_IDLE", "1")),
-                socket.TCP_KEEPINTVL: int(os.getenv("CACHE_KEEPALIVES_INTERVAL", "1")),
+        'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        'SOCKET_CONNECT_TIMEOUT': int(os.getenv('CACHE_CONNECT_TIMEOUT', '2')),
+        'SOCKET_TIMEOUT': int(os.getenv('CACHE_SOCKET_TIMEOUT', '2')),
+        'CONNECTION_POOL_KWARGS': {
+            'socket_keepalive': config.is_true(os.getenv('CACHE_TCP_KEEPALIVE', '1')),
+            'socket_keepalive_options': {
+                socket.TCP_KEEPCNT: int(os.getenv('CACHE_KEEPALIVES_COUNT', '5')),
+                socket.TCP_KEEPIDLE: int(os.getenv('CACHE_KEEPALIVES_IDLE', '1')),
+                socket.TCP_KEEPINTVL: int(os.getenv('CACHE_KEEPALIVES_INTERVAL', '1')),
                 socket.TCP_USER_TIMEOUT: int(
-                    os.getenv("CACHE_TCP_USER_TIMEOUT", "1000")
+                    os.getenv('CACHE_TCP_USER_TIMEOUT', '1000')
                 ),
             },
         },
     }
     CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": f"redis://{cache_host}:{cache_port}/0",
-            "OPTIONS": _cache_options,
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': f'redis://{cache_host}:{cache_port}/0',
+            'OPTIONS': _cache_options,
         }
     }
 else:
-    CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+    CACHES = {'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
 
 _q_worker_timeout = int(
     get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
@@ -813,7 +813,7 @@ if SENTRY_ENABLED and SENTRY_DSN:
 if cache_host:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
     # as well
-    Q_CLUSTER["django_redis"] = "worker"
+    Q_CLUSTER['django_redis'] = 'worker'
 
 # database user sessions
 SESSION_ENGINE = 'user_sessions.backends.db'
@@ -840,7 +840,7 @@ AUTH_PASSWORD_VALIDATORS = [
 EXTRA_URL_SCHEMES = get_setting('INVENTREE_EXTRA_URL_SCHEMES', 'extra_url_schemes', [])
 
 if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
-    logger.warning("extra_url_schemes not correctly formatted")
+    logger.warning('extra_url_schemes not correctly formatted')
     EXTRA_URL_SCHEMES = []
 
 # Internationalization
@@ -912,7 +912,7 @@ CURRENCIES = get_setting(
 
 # Ensure that at least one currency value is available
 if len(CURRENCIES) == 0:  # pragma: no cover
-    logger.warning("No currencies selected: Defaulting to USD")
+    logger.warning('No currencies selected: Defaulting to USD')
     CURRENCIES = ['USD']
 
 # Maximum number of decimal places for currency rendering
@@ -965,7 +965,7 @@ USE_L10N = True
 if not TESTING:
     USE_TZ = True  # pragma: no cover
 
-DATE_INPUT_FORMATS = ["%Y-%m-%d"]
+DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
 # crispy forms use the bootstrap templates
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -1090,7 +1090,7 @@ PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
 if SITE_URL:
-    logger.info("Site URL: %s", SITE_URL)
+    logger.info('Site URL: %s', SITE_URL)
 
     # Check that the site URL is valid
     validator = URLValidator()
@@ -1111,7 +1111,7 @@ FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
 FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
 
 if DEBUG:
-    logger.info("InvenTree running with DEBUG enabled")
+    logger.info('InvenTree running with DEBUG enabled')
 
 logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
 logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
@@ -1131,12 +1131,12 @@ FLAGS = {
 CUSTOM_FLAGS = get_setting('INVENTREE_FLAGS', 'flags', None, typecast=dict)
 if CUSTOM_FLAGS:
     if not isinstance(CUSTOM_FLAGS, dict):
-        logger.error("Invalid custom flags, must be valid dict: %s", str(CUSTOM_FLAGS))
+        logger.error('Invalid custom flags, must be valid dict: %s', str(CUSTOM_FLAGS))
     else:
-        logger.info("Custom flags: %s", str(CUSTOM_FLAGS))
+        logger.info('Custom flags: %s', str(CUSTOM_FLAGS))
         FLAGS.update(CUSTOM_FLAGS)
 
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
 # LOGIN_REDIRECT_URL = f"/{FRONTEND_URL_BASE}/logged-in/"
-LOGIN_REDIRECT_URL = "/index/"
+LOGIN_REDIRECT_URL = '/index/'

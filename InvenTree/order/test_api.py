@@ -237,7 +237,7 @@ class PurchaseOrderTest(OrderTest):
         self.assignRole('purchase_order.add')
 
         url = reverse('api-po-list')
-        huge_number = "PO-92233720368547758089999999999999999"
+        huge_number = 'PO-92233720368547758089999999999999999'
 
         response = self.post(
             url,
@@ -333,7 +333,7 @@ class PurchaseOrderTest(OrderTest):
         response = self.delete(url, expected_code=403)
 
         # Now, add the "delete" permission!
-        self.assignRole("purchase_order.delete")
+        self.assignRole('purchase_order.delete')
 
         response = self.delete(url, expected_code=204)
 
@@ -589,7 +589,7 @@ class PurchaseOrderTest(OrderTest):
 
         resp_dict = response.json()
         self.assertEqual(
-            resp_dict['detail'], "Authentication credentials were not provided."
+            resp_dict['detail'], 'Authentication credentials were not provided.'
         )
 
     def test_po_calendar_auth(self):
@@ -731,7 +731,7 @@ class PurchaseOrderReceiveTest(OrderTest):
     def test_no_items(self):
         """Test with an empty list of items."""
         data = self.post(
-            self.url, {"items": [], "location": None}, expected_code=400
+            self.url, {'items': [], 'location': None}, expected_code=400
         ).data
 
         self.assertIn('Line items must be provided', str(data))
@@ -743,14 +743,14 @@ class PurchaseOrderReceiveTest(OrderTest):
         """Test than errors are returned as expected for invalid data."""
         data = self.post(
             self.url,
-            {"items": [{"line_item": 12345, "location": 12345}]},
+            {'items': [{'line_item': 12345, 'location': 12345}]},
             expected_code=400,
         ).data
 
         items = data['items'][0]
 
         self.assertIn('Invalid pk "12345"', str(items['line_item']))
-        self.assertIn("object does not exist", str(items['location']))
+        self.assertIn('object does not exist', str(items['location']))
 
         # No new stock items have been created
         self.assertEqual(self.n, StockItem.objects.count())
@@ -760,8 +760,8 @@ class PurchaseOrderReceiveTest(OrderTest):
         data = self.post(
             self.url,
             {
-                "items": [
-                    {"line_item": 22, "location": 1, "status": 99999, "quantity": 5}
+                'items': [
+                    {'line_item': 22, 'location': 1, 'status': 99999, 'quantity': 5}
                 ]
             },
             expected_code=400,
@@ -1330,7 +1330,7 @@ class SalesOrderTest(OrderTest):
                 {'export': fmt},
                 decode=True if fmt == 'csv' else False,
                 expected_code=200,
-                expected_fn=f"InvenTree_SalesOrders.{fmt}",
+                expected_fn=f'InvenTree_SalesOrders.{fmt}',
             )
 
 
@@ -1357,7 +1357,7 @@ class SalesOrderLineItemTest(OrderTest):
                         order=so,
                         part=part,
                         quantity=(idx + 1) * 5,
-                        reference=f"Order {so.reference} - line {idx}",
+                        reference=f'Order {so.reference} - line {idx}',
                     )
                 )
 
@@ -1376,7 +1376,7 @@ class SalesOrderLineItemTest(OrderTest):
         self.assertEqual(len(response.data), n)
 
         # List *all* lines, but paginate
-        response = self.get(self.url, {"limit": 5}, expected_code=200)
+        response = self.get(self.url, {'limit': 5}, expected_code=200)
 
         self.assertEqual(response.data['count'], n)
         self.assertEqual(len(response.data['results']), 5)
@@ -1530,9 +1530,9 @@ class SalesOrderAllocateTest(OrderTest):
         data = {
             'items': [
                 {
-                    "line_item": line.pk,
-                    "stock_item": part.stock_items.last().pk,
-                    "quantity": 0,
+                    'line_item': line.pk,
+                    'stock_item': part.stock_items.last().pk,
+                    'quantity': 0,
                 }
             ]
         }
@@ -1576,16 +1576,16 @@ class SalesOrderAllocateTest(OrderTest):
         # First, check that there are no line items allocated against this SalesOrder
         self.assertEqual(self.order.stock_allocations.count(), 0)
 
-        data = {"items": [], "shipment": self.shipment.pk}
+        data = {'items': [], 'shipment': self.shipment.pk}
 
         for line in self.order.lines.all():
             stock_item = line.part.stock_items.last()
 
             # Fully-allocate each line
             data['items'].append({
-                "line_item": line.pk,
-                "stock_item": stock_item.pk,
-                "quantity": 5,
+                'line_item': line.pk,
+                'stock_item': stock_item.pk,
+                'quantity': 5,
             })
 
         self.post(self.url, data, expected_code=201)
@@ -1603,7 +1603,7 @@ class SalesOrderAllocateTest(OrderTest):
         # First, check that there are no line items allocated against this SalesOrder
         self.assertEqual(self.order.stock_allocations.count(), 0)
 
-        data = {"items": [], "shipment": self.shipment.pk}
+        data = {'items': [], 'shipment': self.shipment.pk}
 
         def check_template(line_item):
             return line_item.part.is_template
@@ -1619,9 +1619,9 @@ class SalesOrderAllocateTest(OrderTest):
 
             # Fully-allocate each line
             data['items'].append({
-                "line_item": line.pk,
-                "stock_item": stock_item.pk,
-                "quantity": 5,
+                'line_item': line.pk,
+                'stock_item': stock_item.pk,
+                'quantity': 5,
             })
 
         self.post(self.url, data, expected_code=201)
@@ -1719,8 +1719,8 @@ class SalesOrderAllocateTest(OrderTest):
                     url,
                     {
                         'order': order.pk,
-                        'reference': f"SH{idx + 1}",
-                        'tracking_number': f"TRK_{order.pk}_{idx}",
+                        'reference': f'SH{idx + 1}',
+                        'tracking_number': f'TRK_{order.pk}_{idx}',
                     },
                     expected_code=201,
                 )
@@ -1932,7 +1932,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         # Issue the order (via the API)
         self.assertIsNone(rma.issue_date)
         self.post(
-            reverse("api-return-order-issue", kwargs={"pk": rma.pk}), expected_code=201
+            reverse('api-return-order-issue', kwargs={'pk': rma.pk}), expected_code=201
         )
 
         rma.refresh_from_db()

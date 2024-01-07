@@ -26,7 +26,7 @@ import InvenTree.helpers
 import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 #  OVERRIDE START
@@ -41,7 +41,7 @@ def user_model_str(self):
     return self.username
 
 
-User.add_to_class("__str__", user_model_str)  # Overriding User.__str__
+User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 #  OVERRIDE END
 
 
@@ -445,7 +445,7 @@ class RuleSet(models.Model):
         """Construct the correctly formatted permission string, given the app_model name, and the permission type."""
         model, app = split_model(model)
 
-        return f"{app}.{permission}_{model}"
+        return f'{app}.{permission}_{model}'
 
     def __str__(self, debug=False):  # pragma: no cover
         """Ruleset string representation."""
@@ -525,7 +525,7 @@ def update_group_roles(group, debug=False):
     # and create a simplified permission key string
     for p in group.permissions.all().prefetch_related('content_type'):
         (permission, app, model) = p.natural_key()
-        permission_string = f"{app}.{permission}"
+        permission_string = f'{app}.{permission}'
         group_permissions.add(permission_string)
 
     # List of permissions which must be added to the group
@@ -543,7 +543,7 @@ def update_group_roles(group, debug=False):
             allowed: Whether or not the action is allowed
         """
         if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
-            raise ValueError(f"Action {action} is invalid")
+            raise ValueError(f'Action {action} is invalid')
 
         permission_string = RuleSet.get_model_permission_string(model, action)
 
@@ -624,7 +624,7 @@ def update_group_roles(group, debug=False):
             group.permissions.add(permission)
 
         if debug:  # pragma: no cover
-            logger.debug("Adding permission %s to group %s", perm, group.name)
+            logger.debug('Adding permission %s to group %s', perm, group.name)
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -638,7 +638,7 @@ def update_group_roles(group, debug=False):
             group.permissions.remove(permission)
 
         if debug:  # pragma: no cover
-            logger.debug("Removing permission %s from group %s", perm, group.name)
+            logger.debug('Removing permission %s from group %s', perm, group.name)
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
@@ -661,7 +661,7 @@ def update_group_roles(group, debug=False):
                     if permission:
                         group.permissions.add(permission)
                         logger.debug(
-                            "Adding permission %s to group %s", child_perm, group.name
+                            'Adding permission %s to group %s', child_perm, group.name
                         )
 
 
@@ -675,7 +675,7 @@ def clear_user_role_cache(user):
     """
     for role in RuleSet.RULESET_MODELS.keys():
         for perm in ['add', 'change', 'view', 'delete']:
-            key = f"role_{user}_{role}_{perm}"
+            key = f'role_{user}_{role}_{perm}'
             cache.delete(key)
 
 
@@ -707,7 +707,7 @@ def check_user_role(user, role, permission):
         return True
 
     # First, check the cache
-    key = f"role_{user}_{role}_{permission}"
+    key = f'role_{user}_{role}_{permission}'
 
     result = cache.get(key)
 

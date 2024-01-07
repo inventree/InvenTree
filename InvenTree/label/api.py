@@ -130,12 +130,12 @@ class LabelListView(LabelFilterMixin, ListCreateAPI):
 class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
 
-    rolemap = {"GET": "view", "POST": "view"}
+    rolemap = {'GET': 'view', 'POST': 'view'}
 
     def check_permissions(self, request):
         """Override request method to GET so that also non superusers can print using a post request."""
-        if request.method == "POST":
-            request = clone_request(request, "GET")
+        if request.method == 'POST':
+            request = clone_request(request, 'GET')
         return super().check_permissions(request)
 
     @method_decorator(never_cache)
@@ -199,7 +199,7 @@ class LabelPrintMixin(LabelFilterMixin):
         if not plugin.is_active():
             raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
 
-        if not plugin.mixin_enabled("labels"):
+        if not plugin.mixin_enabled('labels'):
             raise ValidationError(
                 f"Plugin '{plugin_key}' is not a label printing plugin"
             )

@@ -57,7 +57,7 @@ class ActionMixinTests(TestCase):
         self.assertEqual(self.plugin.get_result(), False)
         self.assertIsNone(self.plugin.get_info())
         self.assertEqual(
-            self.plugin.get_response(), {"action": '', "result": False, "info": None}
+            self.plugin.get_response(), {'action': '', 'result': False, 'info': None}
         )
 
         # overridden functions
@@ -69,9 +69,9 @@ class ActionMixinTests(TestCase):
         self.assertEqual(
             self.action_plugin.get_response(),
             {
-                "action": 'abc123',
-                "result": self.ACTION_RETURN + 'result',
-                "info": self.ACTION_RETURN + 'info',
+                'action': 'abc123',
+                'result': self.ACTION_RETURN + 'result',
+                'info': self.ACTION_RETURN + 'info',
             },
         )
 
@@ -87,7 +87,7 @@ class APITests(InvenTreeTestCase):
         self.assertEqual(response.data, {'error': 'No action specified'})
 
         # Test non-exsisting action
-        response = self.client.post('/api/action/', data={'action': "nonexsisting"})
+        response = self.client.post('/api/action/', data={'action': 'nonexsisting'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.data,

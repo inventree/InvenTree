@@ -76,9 +76,9 @@ class APICallMixin:
     def has_api_call(self):
         """Is the mixin ready to call external APIs?"""
         if not bool(self.API_URL_SETTING):
-            raise MixinNotImplementedError("API_URL_SETTING must be defined")
+            raise MixinNotImplementedError('API_URL_SETTING must be defined')
         if not bool(self.API_TOKEN_SETTING):
-            raise MixinNotImplementedError("API_TOKEN_SETTING must be defined")
+            raise MixinNotImplementedError('API_TOKEN_SETTING must be defined')
         return True
 
     @property
@@ -99,7 +99,7 @@ class APICallMixin:
 
             if token:
                 headers[self.API_TOKEN] = token
-                headers['Authorization'] = f"{self.API_TOKEN} {token}"
+                headers['Authorization'] = f'{self.API_TOKEN} {token}'
 
         return headers
 

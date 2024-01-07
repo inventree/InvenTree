@@ -76,7 +76,7 @@ def notify_overdue_sales_order(so: order.models.SalesOrder):
     context = {
         'order': so,
         'name': name,
-        'message': _(f"Sales order {so} is now overdue"),
+        'message': _(f'Sales order {so} is now overdue'),
         'link': InvenTree.helpers_model.construct_absolute_url(so.get_absolute_url()),
         'template': {'html': 'email/overdue_sales_order.html', 'subject': name},
     }

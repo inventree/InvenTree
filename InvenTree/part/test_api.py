@@ -178,14 +178,14 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # Create child categories
         for ii in range(10):
             child = PartCategory.objects.create(
-                name=f"Child cat {ii}", description="A child category", parent=cat
+                name=f'Child cat {ii}', description='A child category', parent=cat
             )
 
             # Create parts in this category
             for jj in range(10):
                 Part.objects.create(
-                    name=f"Part xyz {jj}_{ii}",
-                    description="A test part with a description",
+                    name=f'Part xyz {jj}_{ii}',
+                    description='A test part with a description',
                     category=child,
                 )
 
@@ -351,8 +351,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             for jj in range(3):
                 parts.append(
                     Part.objects.create(
-                        name=f"Part xyz {i}_{jj}",
-                        description="Child part of the deleted category",
+                        name=f'Part xyz {i}_{jj}',
+                        description='Child part of the deleted category',
                         category=cat_to_delete,
                     )
                 )
@@ -362,8 +362,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             # Create child categories under the category to be deleted
             for ii in range(3):
                 child = PartCategory.objects.create(
-                    name=f"Child parent_cat {i}_{ii}",
-                    description="A child category of the deleted category",
+                    name=f'Child parent_cat {i}_{ii}',
+                    description='A child category of the deleted category',
                     parent=cat_to_delete,
                 )
                 child_categories.append(child)
@@ -372,8 +372,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 for jj in range(3):
                     child_categories_parts.append(
                         Part.objects.create(
-                            name=f"Part xyz {i}_{jj}_{ii}",
-                            description="Child part in the child category of the deleted category",
+                            name=f'Part xyz {i}_{jj}_{ii}',
+                            description='Child part in the child category of the deleted category',
                             category=child,
                         )
                     )
@@ -438,8 +438,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # Make sure that we get an error if we try to create part in the structural category
         with self.assertRaises(ValidationError):
             part = Part.objects.create(
-                name="-",
-                description="Part which shall not be created",
+                name='-',
+                description='Part which shall not be created',
                 category=structural_category,
             )
 
@@ -456,8 +456,8 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         # Create the test part assigned to a non-structural category
         part = Part.objects.create(
-            name="-",
-            description="Part which category will be changed to structural",
+            name='-',
+            description='Part which category will be changed to structural',
             category=non_structural_category,
         )
 
@@ -752,8 +752,8 @@ class PartAPITest(PartAPITestBase):
         for color in ['Red', 'Green', 'Blue', 'Yellow', 'Pink', 'Black']:
             variants.append(
                 Part.objects.create(
-                    name=f"{color} Variant",
-                    description="Variant part with a specific color",
+                    name=f'{color} Variant',
+                    description='Variant part with a specific color',
                     variant_of=master_part,
                     category=category,
                 )
@@ -839,7 +839,7 @@ class PartAPITest(PartAPITestBase):
         # Try to post a new test with the same name (should fail)
         response = self.post(
             url,
-            data={'part': 10004, 'test_name': "   newtest", 'description': 'dafsdf'},
+            data={'part': 10004, 'test_name': '   newtest', 'description': 'dafsdf'},
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -971,8 +971,8 @@ class PartAPITest(PartAPITestBase):
 
         for i in range(10):
             gcv = Part.objects.create(
-                name=f"GC Var {i}",
-                description="Green chair variant",
+                name=f'GC Var {i}',
+                description='Green chair variant',
                 variant_of=green_chair,
             )
 
@@ -1237,10 +1237,10 @@ class PartCreationTests(PartAPITestBase):
         """Test that non-standard ASCII chars are accepted."""
         url = reverse('api-part-list')
 
-        name = "KaltgerÃ¤testecker"
-        description = "Gerät KaltgerÃ¤testecker strange chars should get through"
+        name = 'KaltgerÃ¤testecker'
+        description = 'Gerät KaltgerÃ¤testecker strange chars should get through'
 
-        data = {"name": name, "description": description, "category": 2}
+        data = {'name': name, 'description': description, 'category': 2}
 
         response = self.post(url, data, expected_code=201)
 
@@ -1284,7 +1284,7 @@ class PartCreationTests(PartAPITestBase):
             PartCategoryParameterTemplate.objects.create(
                 parameter_template=PartParameterTemplate.objects.get(pk=pk),
                 category=cat,
-                default_value=f"Value {pk}",
+                default_value=f'Value {pk}',
             )
 
         self.assertEqual(cat.parameter_templates.count(), 3)
@@ -1630,8 +1630,8 @@ class PartListTests(PartAPITestBase):
         for ii in range(100):
             parts.append(
                 Part(
-                    name=f"Extra part {ii}",
-                    description="A new part which will appear via the API",
+                    name=f'Extra part {ii}',
+                    description='A new part which will appear via the API',
                     level=0,
                     tree_id=0,
                     lft=0,
@@ -1975,15 +1975,15 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         # First, create some parts
         paint = PartCategory.objects.create(
-            parent=None, name="Paint", description="Paints and such"
+            parent=None, name='Paint', description='Paints and such'
         )
 
         for color in ['Red', 'Green', 'Blue', 'Orange', 'Yellow']:
             p = Part.objects.create(
                 category=paint,
                 units='litres',
-                name=f"{color} Paint",
-                description=f"Paint which is {color} in color",
+                name=f'{color} Paint',
+                description=f'Paint which is {color} in color',
             )
 
             # Create multiple supplier parts in different sizes
@@ -1991,7 +1991,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
                 sp = SupplierPart.objects.create(
                     part=p,
                     supplier=supplier,
-                    SKU=f"PNT-{color}-{pk_sz}L",
+                    SKU=f'PNT-{color}-{pk_sz}L',
                     pack_quantity=str(pk_sz),
                 )
 
@@ -2137,7 +2137,7 @@ class BomItemTest(InvenTreeAPITestCase):
         url = reverse('api-bom-list')
 
         # Order by increasing quantity
-        response = self.get(f"{url}?ordering=+quantity", expected_code=200)
+        response = self.get(f'{url}?ordering=+quantity', expected_code=200)
 
         self.assertEqual(len(response.data), 6)
 
@@ -2147,7 +2147,7 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertTrue(q1 < q2)
 
         # Order by decreasing quantity
-        response = self.get(f"{url}?ordering=-quantity", expected_code=200)
+        response = self.get(f'{url}?ordering=-quantity', expected_code=200)
 
         self.assertEqual(q1, response.data[-1]['quantity'])
         self.assertEqual(q2, response.data[0]['quantity'])
@@ -2247,8 +2247,8 @@ class BomItemTest(InvenTreeAPITestCase):
         for ii in range(5):
             # Create a variant part!
             variant = Part.objects.create(
-                name=f"Variant_{ii}",
-                description="A variant part, with a description",
+                name=f'Variant_{ii}',
+                description='A variant part, with a description',
                 component=True,
                 variant_of=sub_part,
             )
@@ -2295,7 +2295,7 @@ class BomItemTest(InvenTreeAPITestCase):
         bom_item = BomItem.objects.get(pk=1)
 
         # Filter stock items which can be assigned against this stock item
-        response = self.get(stock_url, {"bom_item": bom_item.pk}, expected_code=200)
+        response = self.get(stock_url, {'bom_item': bom_item.pk}, expected_code=200)
 
         n_items = len(response.data)
 
@@ -2304,8 +2304,8 @@ class BomItemTest(InvenTreeAPITestCase):
         # Let's make some!
         for ii in range(5):
             sub_part = Part.objects.create(
-                name=f"Substitute {ii}",
-                description="A substitute part",
+                name=f'Substitute {ii}',
+                description='A substitute part',
                 component=True,
                 is_template=False,
                 assembly=False,
@@ -2322,7 +2322,7 @@ class BomItemTest(InvenTreeAPITestCase):
             self.assertEqual(len(response.data), 1)
 
             # We should also have more stock available to allocate against this BOM item!
-            response = self.get(stock_url, {"bom_item": bom_item.pk}, expected_code=200)
+            response = self.get(stock_url, {'bom_item': bom_item.pk}, expected_code=200)
 
             self.assertEqual(len(response.data), n_items + ii + 1)
 
@@ -2355,8 +2355,8 @@ class BomItemTest(InvenTreeAPITestCase):
 
         for i in range(5):
             assy = Part.objects.create(
-                name=f"Assy_{i}",
-                description="An assembly made of other parts",
+                name=f'Assy_{i}',
+                description='An assembly made of other parts',
                 active=True,
                 assembly=True,
             )
@@ -2368,8 +2368,8 @@ class BomItemTest(InvenTreeAPITestCase):
         # Create some sub-components
         for i in range(5):
             cmp = Part.objects.create(
-                name=f"Component_{i}",
-                description="A sub component",
+                name=f'Component_{i}',
+                description='A sub component',
                 active=True,
                 component=True,
             )
@@ -2403,8 +2403,8 @@ class BomItemTest(InvenTreeAPITestCase):
         for i in range(10):
             # Create a variant part
             vp = Part.objects.create(
-                name=f"Var {i}",
-                description="Variant part description field",
+                name=f'Var {i}',
+                description='Variant part description field',
                 variant_of=bom_item.sub_part,
             )
 
@@ -2523,7 +2523,7 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
         p.active = False
         p.save()
 
-        response = self.delete(reverse("api-part-detail", kwargs={"pk": 1}))
+        response = self.delete(reverse('api-part-detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 204)
 
         with self.assertRaises(Part.DoesNotExist):
@@ -2588,7 +2588,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
             # Initially no stocktake information available
             self.assertIsNone(p.latest_stocktake)
 
-            note = f"Note {p.pk}"
+            note = f'Note {p.pk}'
             quantity = p.pk + 5
 
             self.post(

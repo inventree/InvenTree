@@ -19,7 +19,7 @@ from InvenTree.ready import (
     isPluginRegistryLoaded,
 )
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 def hashFile(filename):

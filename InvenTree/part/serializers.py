@@ -55,7 +55,7 @@ from .models import (
     PartTestTemplate,
 )
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -220,7 +220,7 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
         """Check that file is an image."""
         validate = imghdr.what(value)
         if not validate:
-            raise serializers.ValidationError("File is not an image")
+            raise serializers.ValidationError('File is not an image')
         return value
 
     image = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
@@ -346,7 +346,7 @@ class PartSetCategorySerializer(serializers.Serializer):
     def validate_parts(self, parts):
         """Validate the selected parts"""
         if len(parts) == 0:
-            raise serializers.ValidationError(_("No parts selected"))
+            raise serializers.ValidationError(_('No parts selected'))
 
         return parts
 
@@ -881,7 +881,7 @@ class PartSerializer(
                     )
                 except IntegrityError:
                     logger.exception(
-                        "Could not create new PartParameter for part %s", instance
+                        'Could not create new PartParameter for part %s', instance
                     )
 
         # Create initial stock entry
@@ -945,7 +945,7 @@ class PartSerializer(
             remote_img.save(buffer, format=fmt)
 
             # Construct a simplified name for the image
-            filename = f"part_{part.pk}_image.{fmt.lower()}"
+            filename = f'part_{part.pk}_image.{fmt.lower()}'
 
             part.image.save(filename, ContentFile(buffer.getvalue()))
 
@@ -1071,12 +1071,12 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
         # Stocktake functionality must be enabled
         if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
             raise serializers.ValidationError(
-                _("Stocktake functionality is not enabled")
+                _('Stocktake functionality is not enabled')
             )
 
         # Check that background worker is running
         if not InvenTree.status.is_worker_running():
-            raise serializers.ValidationError(_("Background worker check failed"))
+            raise serializers.ValidationError(_('Background worker check failed'))
 
         return data
 
@@ -1381,7 +1381,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     def validate_quantity(self, quantity):
         """Perform validation for the BomItem quantity field"""
         if quantity <= 0:
-            raise serializers.ValidationError(_("Quantity must be greater than zero"))
+            raise serializers.ValidationError(_('Quantity must be greater than zero'))
 
         return quantity
 
@@ -1680,7 +1680,7 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
 
         if not any(col in self.columns for col in part_columns):
             # At least one part column is required!
-            raise serializers.ValidationError(_("No part column specified"))
+            raise serializers.ValidationError(_('No part column specified'))
 
     @staticmethod
     def process_row(row):
@@ -1768,7 +1768,7 @@ class BomImportSubmitSerializer(serializers.Serializer):
         items = data['items']
 
         if len(items) == 0:
-            raise serializers.ValidationError(_("At least one BOM item is required"))
+            raise serializers.ValidationError(_('At least one BOM item is required'))
 
         data = super().validate(data)
 
@@ -1798,7 +1798,7 @@ class BomImportSubmitSerializer(serializers.Serializer):
                 bom_items.append(BomItem(**item))
 
             if len(bom_items) > 0:
-                logger.info("Importing %s BOM items", len(bom_items))
+                logger.info('Importing %s BOM items', len(bom_items))
                 BomItem.objects.bulk_create(bom_items)
 
         except Exception as e:
