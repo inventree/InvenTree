@@ -37,7 +37,7 @@ cryptography==41.0.7
     # via
     #   -c requirements.txt
     #   pdfminer-six
-distlib==0.3.7
+distlib==0.3.8
     # via virtualenv
 django==4.1.13
     # via
@@ -54,14 +54,14 @@ docopt==0.6.2
     # via coveralls
 filelock==3.13.1
     # via virtualenv
-flake8==6.1.0
+flake8==7.0.0
     # via
     #   -r requirements-dev.in
     #   flake8-docstrings
     #   pep8-naming
 flake8-docstrings==1.7.0
     # via -r requirements-dev.in
-identify==2.5.32
+identify==2.5.33
     # via pre-commit
 idna==3.6
     # via
@@ -71,7 +71,7 @@ importlib-metadata==6.8.0
     # via
     #   -c requirements.txt
     #   build
-isort==5.12.0
+isort==5.13.2
     # via -r requirements-dev.in
 mccabe==0.7.0
     # via flake8
@@ -81,7 +81,7 @@ packaging==23.2
     # via
     #   -c requirements.txt
     #   build
-pdfminer-six==20221105
+pdfminer-six==20231228
     # via -r requirements-dev.in
 pep8-naming==0.13.3
     # via -r requirements-dev.in
@@ -89,7 +89,7 @@ pip-tools==7.3.0
     # via -r requirements-dev.in
 platformdirs==4.1.0
     # via virtualenv
-pre-commit==3.5.0
+pre-commit==3.6.0
     # via -r requirements-dev.in
 pycodestyle==2.11.1
     # via flake8
@@ -99,7 +99,7 @@ pycparser==2.21
     #   cffi
 pydocstyle==6.3.0
     # via flake8-docstrings
-pyflakes==3.1.0
+pyflakes==3.2.0
     # via flake8
 pyproject-hooks==1.0.0
     # via build
@@ -123,7 +123,7 @@ tomli==2.0.1
     #   build
     #   pip-tools
     #   pyproject-hooks
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via
     #   -c requirements.txt
     #   asgiref
