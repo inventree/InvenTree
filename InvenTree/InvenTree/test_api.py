@@ -257,12 +257,12 @@ class APITests(InvenTreeAPITestCase):
 
 
 class BulkDeleteTests(InvenTreeAPITestCase):
-    """Unit tests for the BulkDelete endpoints"""
+    """Unit tests for the BulkDelete endpoints."""
 
     superuser = True
 
     def test_errors(self):
-        """Test that the correct errors are thrown"""
+        """Test that the correct errors are thrown."""
         url = reverse('api-stock-test-result-list')
 
         # DELETE without any of the required fields
@@ -285,7 +285,7 @@ class BulkDeleteTests(InvenTreeAPITestCase):
 
 
 class SearchTests(InvenTreeAPITestCase):
-    """Unit tests for global search endpoint"""
+    """Unit tests for global search endpoint."""
 
     fixtures = [
         'category',
@@ -299,7 +299,7 @@ class SearchTests(InvenTreeAPITestCase):
     ]
 
     def test_empty(self):
-        """Test empty request"""
+        """Test empty request."""
         data = ['', None, {}]
 
         for d in data:
@@ -307,7 +307,7 @@ class SearchTests(InvenTreeAPITestCase):
             self.assertIn('Search term must be provided', str(response.data))
 
     def test_results(self):
-        """Test individual result types"""
+        """Test individual result types."""
         response = self.post(
             reverse('api-search'),
             {'search': 'chair', 'limit': 3, 'part': {}, 'build': {}},
@@ -339,7 +339,7 @@ class SearchTests(InvenTreeAPITestCase):
         self.assertNotIn('build', response.data)
 
     def test_permissions(self):
-        """Test that users with insufficient permissions are handled correctly"""
+        """Test that users with insufficient permissions are handled correctly."""
         # First, remove all roles
         for ruleset in self.group.rule_sets.all():
             ruleset.can_view = False

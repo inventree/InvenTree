@@ -29,5 +29,4 @@ class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
     def extract_barcode_fields(self, barcode_data: str) -> dict[str, str]:
         """Get supplier_part and barcode_fields from Mouser DataMatrix-Code."""
-
         return self.parse_ecia_barcode2d(barcode_data)

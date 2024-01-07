@@ -62,7 +62,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for PartCategory."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartCategory
         fields = [
@@ -83,7 +83,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Optionally add or remove extra fields"""
+        """Optionally add or remove extra fields."""
         path_detail = kwargs.pop('path_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -97,7 +97,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Annotate extra information to the queryset"""
+        """Annotate extra information to the queryset."""
         # Annotate the number of 'parts' which exist in each category (including subcategories!)
         queryset = queryset.annotate(part_count=part.filters.annotate_category_parts())
 
@@ -120,7 +120,7 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for PartCategory tree."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartCategory
         fields = ['pk', 'name', 'parent', 'icon', 'structural']
@@ -130,7 +130,7 @@ class PartAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializ
     """Serializer for the PartAttachment class."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartAttachment
 
@@ -143,7 +143,7 @@ class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer)
     """Serializer for the PartTestTemplate class."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartTestTemplate
 
@@ -165,7 +165,7 @@ class PartSalePriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for sale prices for Part model."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartSellPriceBreak
         fields = ['pk', 'part', 'quantity', 'price', 'price_currency']
@@ -183,7 +183,7 @@ class PartInternalPriceSerializer(InvenTree.serializers.InvenTreeModelSerializer
     """Serializer for internal prices for Part model."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartInternalPriceBreak
         fields = ['pk', 'part', 'quantity', 'price', 'price_currency']
@@ -211,7 +211,7 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for updating Part thumbnail."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = Part
         fields = ['image']
@@ -230,17 +230,17 @@ class PartParameterTemplateSerializer(InvenTree.serializers.InvenTreeModelSerial
     """JSON serializer for the PartParameterTemplate model."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartParameterTemplate
         fields = ['pk', 'name', 'units', 'description', 'checkbox', 'choices']
 
 
 class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for Part (brief detail)"""
+    """Serializer for Part (brief detail)."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = Part
         fields = [
@@ -268,7 +268,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         read_only_fields = ['barcode_hash']
 
     def __init__(self, *args, **kwargs):
-        """Custom initialization routine for the PartBrief serializer"""
+        """Custom initialization routine for the PartBrief serializer."""
         pricing = kwargs.pop('pricing', True)
 
         super().__init__(*args, **kwargs)
@@ -292,7 +292,7 @@ class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """JSON serializers for the PartParameter model."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartParameter
         fields = [
@@ -328,10 +328,10 @@ class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class PartSetCategorySerializer(serializers.Serializer):
-    """Serializer for changing PartCategory for multiple Part objects"""
+    """Serializer for changing PartCategory for multiple Part objects."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = ['parts', 'category']
 
@@ -344,7 +344,7 @@ class PartSetCategorySerializer(serializers.Serializer):
     )
 
     def validate_parts(self, parts):
-        """Validate the selected parts"""
+        """Validate the selected parts."""
         if len(parts) == 0:
             raise serializers.ValidationError(_('No parts selected'))
 
@@ -361,7 +361,7 @@ class PartSetCategorySerializer(serializers.Serializer):
 
     @transaction.atomic
     def save(self):
-        """Save the serializer to change the location of the selected parts"""
+        """Save the serializer to change the location of the selected parts."""
         data = self.validated_data
         parts = data['parts']
         category = data['category']
@@ -444,7 +444,7 @@ class InitialStockSerializer(serializers.Serializer):
 
 
 class InitialSupplierSerializer(serializers.Serializer):
-    """Serializer for adding initial supplier / manufacturer information"""
+    """Serializer for adding initial supplier / manufacturer information."""
 
     supplier = serializers.PrimaryKeyRelatedField(
         queryset=company.models.Company.objects.all(),
@@ -479,7 +479,7 @@ class InitialSupplierSerializer(serializers.Serializer):
     )
 
     def validate_supplier(self, company):
-        """Validation for the provided Supplier"""
+        """Validation for the provided Supplier."""
         if company and not company.is_supplier:
             raise serializers.ValidationError(
                 _('Selected company is not a valid supplier')
@@ -488,7 +488,7 @@ class InitialSupplierSerializer(serializers.Serializer):
         return company
 
     def validate_manufacturer(self, company):
-        """Validation for the provided Manufacturer"""
+        """Validation for the provided Manufacturer."""
         if company and not company.is_manufacturer:
             raise serializers.ValidationError(
                 _('Selected company is not a valid manufacturer')
@@ -497,7 +497,7 @@ class InitialSupplierSerializer(serializers.Serializer):
         return company
 
     def validate(self, data):
-        """Extra validation for this serializer"""
+        """Extra validation for this serializer."""
         if company.models.ManufacturerPart.objects.filter(
             manufacturer=data.get('manufacturer', None), MPN=data.get('mpn', '')
         ).exists():
@@ -525,7 +525,7 @@ class PartSerializer(
     """
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = Part
         partial = True
@@ -593,7 +593,7 @@ class PartSerializer(
     tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
-        """Custom initialization method for PartSerializer:
+        """Custom initialization method for PartSerializer.
 
         - Allows us to optionally pass extra fields based on the query.
         """
@@ -625,11 +625,11 @@ class PartSerializer(
             self.fields.pop('pricing_max')
 
     def get_api_url(self):
-        """Return the API url associated with this serializer"""
+        """Return the API url associated with this serializer."""
         return reverse_lazy('api-part-list')
 
     def skip_create_fields(self):
-        """Skip these fields when instantiating a new Part instance"""
+        """Skip these fields when instantiating a new Part instance."""
         fields = super().skip_create_fields()
 
         fields += [
@@ -808,7 +808,7 @@ class PartSerializer(
     )
 
     def validate_existing_image(self, img):
-        """Validate the selected image file"""
+        """Validate the selected image file."""
         if not img:
             return img
 
@@ -824,7 +824,7 @@ class PartSerializer(
 
     @transaction.atomic
     def create(self, validated_data):
-        """Custom method for creating a new Part instance using this serializer"""
+        """Custom method for creating a new Part instance using this serializer."""
         duplicate = validated_data.pop('duplicate', None)
         initial_stock = validated_data.pop('initial_stock', None)
         initial_supplier = validated_data.pop('initial_supplier', None)
@@ -922,7 +922,7 @@ class PartSerializer(
         return instance
 
     def save(self):
-        """Save the Part instance"""
+        """Save the Part instance."""
         super().save()
 
         part = self.instance
@@ -953,10 +953,10 @@ class PartSerializer(
 
 
 class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for the PartStocktake model"""
+    """Serializer for the PartStocktake model."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = PartStocktake
         fields = [
@@ -989,7 +989,7 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     cost_max_currency = InvenTree.serializers.InvenTreeCurrencySerializer()
 
     def save(self):
-        """Called when this serializer is saved"""
+        """Called when this serializer is saved."""
         data = self.validated_data
 
         # Add in user information automatically
@@ -1000,10 +1000,10 @@ class PartStocktakeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for stocktake report class"""
+    """Serializer for stocktake report class."""
 
     class Meta:
-        """Metaclass defines serializer fields"""
+        """Metaclass defines serializer fields."""
 
         model = PartStocktakeReport
         fields = ['pk', 'date', 'report', 'part_count', 'user', 'user_detail']
@@ -1016,7 +1016,7 @@ class PartStocktakeReportSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
 
 class PartStocktakeReportGenerateSerializer(serializers.Serializer):
-    """Serializer class for manually generating a new PartStocktakeReport via the API"""
+    """Serializer class for manually generating a new PartStocktakeReport via the API."""
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(),
@@ -1067,7 +1067,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        """Custom validation for this serializer"""
+        """Custom validation for this serializer."""
         # Stocktake functionality must be enabled
         if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
             raise serializers.ValidationError(
@@ -1081,7 +1081,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Saving this serializer instance requests generation of a new stocktake report"""
+        """Saving this serializer instance requests generation of a new stocktake report."""
         data = self.validated_data
         user = self.context['request'].user
 
@@ -1100,10 +1100,10 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
 
 
 class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for Part pricing information"""
+    """Serializer for Part pricing information."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartPricing
         fields = [
@@ -1236,8 +1236,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     )
 
     def validate(self, data):
-        """Validate supplied pricing data"""
-
+        """Validate supplied pricing data."""
         super().validate(data)
 
         # Check that override_min is not greater than override_max
@@ -1270,8 +1269,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return data
 
     def save(self):
-        """Called when the serializer is saved"""
-
+        """Called when the serializer is saved."""
         super().save()
 
         # Update part pricing
@@ -1283,7 +1281,7 @@ class PartRelationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a PartRelated model."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartRelated
         fields = ['pk', 'part_1', 'part_1_detail', 'part_2', 'part_2_detail']
@@ -1296,7 +1294,7 @@ class PartStarSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a PartStar object."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartStar
         fields = ['pk', 'part', 'partname', 'user', 'username']
@@ -1309,7 +1307,7 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
     """Serializer for the BomItemSubstitute class."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = BomItemSubstitute
         fields = ['pk', 'bom_item', 'part', 'part_detail']
@@ -1323,7 +1321,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for BomItem object."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = BomItem
         fields = [
@@ -1355,7 +1353,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Determine if extra detail fields are to be annotated on this serializer
+        """Determine if extra detail fields are to be annotated on this serializer.
 
         - part_detail and sub_part_detail serializers are only included if requested.
         - This saves a bunch of database requests
@@ -1379,7 +1377,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 
     def validate_quantity(self, quantity):
-        """Perform validation for the BomItem quantity field"""
+        """Perform validation for the BomItem quantity field."""
         if quantity <= 0:
             raise serializers.ValidationError(_('Quantity must be greater than zero'))
 
@@ -1417,7 +1415,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     @staticmethod
     def setup_eager_loading(queryset):
-        """Prefetch against the provided queryset to speed up database access"""
+        """Prefetch against the provided queryset to speed up database access."""
         queryset = queryset.prefetch_related('part')
         queryset = queryset.prefetch_related('part__category')
         queryset = queryset.prefetch_related('part__stock_items')
@@ -1441,7 +1439,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Annotate the BomItem queryset with extra information:
+        """Annotate the BomItem queryset with extra information.
 
         Annotations:
             available_stock: The amount of stock available for the sub_part Part object
@@ -1549,7 +1547,7 @@ class CategoryParameterTemplateSerializer(
     """Serializer for the PartCategoryParameterTemplate model."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         model = PartCategoryParameterTemplate
         fields = [
@@ -1572,7 +1570,7 @@ class PartCopyBOMSerializer(serializers.Serializer):
     """Serializer for copying a BOM from another part."""
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         fields = [
             'part',
@@ -1640,7 +1638,7 @@ class BomImportUploadSerializer(InvenTree.serializers.DataFileUploadSerializer):
     TARGET_MODEL = BomItem
 
     class Meta:
-        """Metaclass defining serializer fields"""
+        """Metaclass defining serializer fields."""
 
         fields = ['data_file', 'part', 'clear_existing_bom']
 
@@ -1654,7 +1652,7 @@ class BomImportUploadSerializer(InvenTree.serializers.DataFileUploadSerializer):
     )
 
     def save(self):
-        """The uploaded data file has been validated, accept the submitted data"""
+        """The uploaded data file has been validated, accept the submitted data."""
         data = self.validated_data
 
         if data.get('clear_existing_bom', False):
@@ -1673,7 +1671,7 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
     TARGET_MODEL = BomItem
 
     def validate_extracted_columns(self):
-        """Validate that the extracted columns are correct"""
+        """Validate that the extracted columns are correct."""
         super().validate_extracted_columns()
 
         part_columns = ['part', 'part_name', 'part_ipn', 'part_id']
@@ -1684,7 +1682,7 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
 
     @staticmethod
     def process_row(row):
-        """Process a single row from the loaded BOM file"""
+        """Process a single row from the loaded BOM file."""
         # Skip any rows which are at a lower "level"
         level = row.get('level', None)
 
@@ -1761,9 +1759,9 @@ class BomImportSubmitSerializer(serializers.Serializer):
     items = BomItemSerializer(many=True, required=True)
 
     def validate(self, data):
-        """Validate the submitted BomItem data:
+        """Validate the submitted BomItem data.
 
-        - At least one line (BomItem) is required
+        At least one line (BomItem) is required
         """
         items = data['items']
 
@@ -1775,8 +1773,9 @@ class BomImportSubmitSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """POST: Perform final save of submitted BOM data:
+        """POST: Perform final save of submitted BOM data.
 
+        Actions:
         - By this stage each line in the BOM has been validated
         - Individually 'save' (create) each BomItem line
         """

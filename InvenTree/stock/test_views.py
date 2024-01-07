@@ -28,10 +28,10 @@ class StockListTest(StockViewTestCase):
 
 
 class StockDetailTest(StockViewTestCase):
-    """Unit test for the 'stock detail' page"""
+    """Unit test for the 'stock detail' page."""
 
     def test_basic_info(self):
-        """Test that basic stock item info is rendered"""
+        """Test that basic stock item info is rendered."""
         url = reverse('stock-item-detail', kwargs={'pk': 1})
 
         response = self.client.get(url)

@@ -43,7 +43,7 @@ from users.serializers import OwnerSerializer
 
 
 class TotalPriceMixin(serializers.Serializer):
-    """Serializer mixin which provides total price fields"""
+    """Serializer mixin which provides total price fields."""
 
     total_price = InvenTreeMoneySerializer(allow_null=True, read_only=True)
 
@@ -57,7 +57,7 @@ class TotalPriceMixin(serializers.Serializer):
 
 
 class AbstractOrderSerializer(serializers.Serializer):
-    """Abstract serializer class which provides fields common to all order types"""
+    """Abstract serializer class which provides fields common to all order types."""
 
     # Number of line items in this order
     line_items = serializers.IntegerField(read_only=True)
@@ -98,20 +98,20 @@ class AbstractOrderSerializer(serializers.Serializer):
     barcode_hash = serializers.CharField(read_only=True)
 
     def validate_reference(self, reference):
-        """Custom validation for the reference field"""
+        """Custom validation for the reference field."""
         self.Meta.model.validate_reference_field(reference)
         return reference
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Add extra information to the queryset"""
+        """Add extra information to the queryset."""
         queryset = queryset.annotate(line_items=SubqueryCount('lines'))
 
         return queryset
 
     @staticmethod
     def order_fields(extra_fields):
-        """Construct a set of fields for this serializer"""
+        """Construct a set of fields for this serializer."""
         return [
             'pk',
             'creation_date',
@@ -141,7 +141,7 @@ class AbstractExtraLineSerializer(serializers.Serializer):
     """Abstract Serializer for a ExtraLine object."""
 
     def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer"""
+        """Initialization routine for the serializer."""
         order_detail = kwargs.pop('order_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -202,7 +202,7 @@ class PurchaseOrderSerializer(
         }
 
     def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer"""
+        """Initialization routine for the serializer."""
         supplier_detail = kwargs.pop('supplier_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -257,7 +257,7 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
         return {'can_cancel': self.order.can_cancel}
 
     def save(self):
-        """Save the serializer to 'cancel' the order"""
+        """Save the serializer to 'cancel' the order."""
         order = self.context['order']
 
         if not order.can_cancel:
@@ -282,7 +282,7 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
     )
 
     def validate_accept_incomplete(self, value):
-        """Check if the 'accept_incomplete' field is required"""
+        """Check if the 'accept_incomplete' field is required."""
         order = self.context['order']
 
         if not value and not order.is_complete:
@@ -297,7 +297,7 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
         return {'is_complete': order.is_complete}
 
     def save(self):
-        """Save the serializer to 'complete' the order"""
+        """Save the serializer to 'complete' the order."""
         order = self.context['order']
         order.complete_order()
 
@@ -311,13 +311,13 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
         fields = []
 
     def save(self):
-        """Save the serializer to 'place' the order"""
+        """Save the serializer to 'place' the order."""
         order = self.context['order']
         order.place_order()
 
 
 class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
-    """Serializer class for the PurchaseOrderLineItem model"""
+    """Serializer class for the PurchaseOrderLineItem model."""
 
     class Meta:
         """Metaclass options."""
@@ -346,7 +346,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer"""
+        """Initialization routine for the serializer."""
         part_detail = kwargs.pop('part_detail', False)
 
         order_detail = kwargs.pop('order_detail', False)
@@ -362,10 +362,10 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Add some extra annotations to this queryset:
+        """Add some extra annotations to this queryset.
 
-        - Total price = purchase_price * quantity
-        - "Overdue" status (boolean field)
+        - "total_price" = purchase_price * quantity
+        - "overdue" status (boolean field)
         """
         queryset = queryset.annotate(
             total_price=ExpressionWrapper(
@@ -388,14 +388,14 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField(min_value=0, required=True)
 
     def validate_quantity(self, quantity):
-        """Validation for the 'quantity' field"""
+        """Validation for the 'quantity' field."""
         if quantity <= 0:
             raise ValidationError(_('Quantity must be greater than zero'))
 
         return quantity
 
     def validate_purchase_order(self, purchase_order):
-        """Validation for the 'purchase_order' field"""
+        """Validation for the 'purchase_order' field."""
         if purchase_order.status not in PurchaseOrderStatusGroups.OPEN:
             raise ValidationError(_('Order is not open'))
 
@@ -428,7 +428,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
     order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
 
     def validate(self, data):
-        """Custom validation for the serializer:
+        """Custom validation for the serializer.
 
         - Ensure the supplier_part field is supplied
         - Ensure the purchase_order field is supplied
@@ -495,7 +495,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     def validate_line_item(self, item):
-        """Validation for the 'line_item' field"""
+        """Validation for the 'line_item' field."""
         if item.order != self.context['order']:
             raise ValidationError(_('Line item does not match purchase order'))
 
@@ -515,7 +515,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     def validate_quantity(self, quantity):
-        """Validation for the 'quantity' field"""
+        """Validation for the 'quantity' field."""
         if quantity <= 0:
             raise ValidationError(_('Quantity must be greater than zero'))
 
@@ -564,7 +564,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         return barcode
 
     def validate(self, data):
-        """Custom validation for the serializer:
+        """Custom validation for the serializer.
 
         - Integer quantity must be provided for serialized stock
         - Validate serial numbers (if provided)
@@ -619,7 +619,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        """Custom validation for the serializer:
+        """Custom validation for the serializer.
 
         - Ensure line items are provided
         - Check that a location is specified
@@ -714,7 +714,7 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
 class SalesOrderSerializer(
     TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
 ):
-    """Serializer for the SalesOrder model class"""
+    """Serializer for the SalesOrder model class."""
 
     class Meta:
         """Metaclass options."""
@@ -735,7 +735,7 @@ class SalesOrderSerializer(
         extra_kwargs = {'order_currency': {'required': False}}
 
     def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer"""
+        """Initialization routine for the serializer."""
         customer_detail = kwargs.pop('customer_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -775,15 +775,15 @@ class SalesOrderSerializer(
 
 
 class SalesOrderIssueSerializer(serializers.Serializer):
-    """Serializer for issuing a SalesOrder"""
+    """Serializer for issuing a SalesOrder."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = []
 
     def save(self):
-        """Save the serializer to 'issue' the order"""
+        """Save the serializer to 'issue' the order."""
         order = self.context['order']
         order.issue_order()
 
@@ -818,7 +818,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer"""
+        """Initialization routine for the serializer."""
         order_detail = kwargs.pop('order_detail', False)
         part_detail = kwargs.pop('part_detail', True)
         item_detail = kwargs.pop('item_detail', True)
@@ -901,7 +901,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer:
+        """Initialization routine for the serializer.
 
         - Add extra related serializer information if required
         """
@@ -926,7 +926,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Add some extra annotations to this queryset:
+        """Add some extra annotations to this queryset.
 
         - "overdue" status (boolean field)
         - "available_quantity"
@@ -1066,7 +1066,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        """Custom validation for the serializer:
+        """Custom validation for the serializer.
 
         - Ensure the shipment reference is provided
         """
@@ -1082,7 +1082,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         return data
 
     def save(self):
-        """Save the serializer to complete the SalesOrderShipment"""
+        """Save the serializer to complete the SalesOrderShipment."""
         shipment = self.context.get('shipment', None)
 
         if not shipment:
@@ -1127,7 +1127,7 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
     )
 
     def validate_line_item(self, line_item):
-        """Custom validation for the 'line_item' field:
+        """Custom validation for the 'line_item' field.
 
         - Ensure the line_item is associated with the particular SalesOrder
         """
@@ -1152,14 +1152,14 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
     )
 
     def validate_quantity(self, quantity):
-        """Custom validation for the 'quantity' field"""
+        """Custom validation for the 'quantity' field."""
         if quantity <= 0:
             raise ValidationError(_('Quantity must be positive'))
 
         return quantity
 
     def validate(self, data):
-        """Custom validation for the serializer:
+        """Custom validation for the serializer.
 
         - Ensure that the quantity is 1 for serialized stock
         - Quantity cannot exceed the available amount
@@ -1193,7 +1193,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
     )
 
     def validate_accept_incomplete(self, value):
-        """Check if the 'accept_incomplete' field is required"""
+        """Check if the 'accept_incomplete' field is required."""
         order = self.context['order']
 
         if not value and not order.is_completed():
@@ -1202,7 +1202,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         return value
 
     def get_context_data(self):
-        """Custom context data for this serializer"""
+        """Custom context data for this serializer."""
         order = self.context['order']
 
         return {
@@ -1211,7 +1211,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         }
 
     def validate(self, data):
-        """Custom validation for the serializer"""
+        """Custom validation for the serializer."""
         data = super().validate(data)
 
         order = self.context['order']
@@ -1224,7 +1224,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Save the serializer to complete the SalesOrder"""
+        """Save the serializer to complete the SalesOrder."""
         request = self.context['request']
         order = self.context['order']
         data = self.validated_data
@@ -1240,13 +1240,13 @@ class SalesOrderCancelSerializer(serializers.Serializer):
     """Serializer for marking a SalesOrder as cancelled."""
 
     def get_context_data(self):
-        """Add extra context data to the serializer"""
+        """Add extra context data to the serializer."""
         order = self.context['order']
 
         return {'can_cancel': order.can_cancel}
 
     def save(self):
-        """Save the serializer to cancel the order"""
+        """Save the serializer to cancel the order."""
         order = self.context['order']
 
         order.cancel_order()
@@ -1298,7 +1298,7 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     )
 
     def validate_shipment(self, shipment):
-        """Validate the shipment:
+        """Validate the shipment.
 
         - Must point to the same order
         - Must not be shipped
@@ -1314,7 +1314,7 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         return shipment
 
     def validate(self, data):
-        """Validation for the serializer:
+        """Validation for the serializer.
 
         - Ensure the serial_numbers and quantity fields match
         - Check that all serial numbers exist
@@ -1374,7 +1374,7 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Allocate stock items against the sales order"""
+        """Allocate stock items against the sales order."""
         data = self.validated_data
 
         line_item = data['line_item']
@@ -1481,10 +1481,10 @@ class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
 class ReturnOrderSerializer(
     AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
 ):
-    """Serializer for the ReturnOrder model class"""
+    """Serializer for the ReturnOrder model class."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = order.models.ReturnOrder
 
@@ -1499,7 +1499,7 @@ class ReturnOrderSerializer(
         read_only_fields = ['creation_date']
 
     def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer"""
+        """Initialization routine for the serializer."""
         customer_detail = kwargs.pop('customer_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -1509,7 +1509,7 @@ class ReturnOrderSerializer(
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Custom annotation for the serializer queryset"""
+        """Custom annotation for the serializer queryset."""
         queryset = AbstractOrderSerializer.annotate_queryset(queryset)
 
         queryset = queryset.annotate(
@@ -1536,52 +1536,52 @@ class ReturnOrderSerializer(
 
 
 class ReturnOrderIssueSerializer(serializers.Serializer):
-    """Serializer for issuing a ReturnOrder"""
+    """Serializer for issuing a ReturnOrder."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = []
 
     def save(self):
-        """Save the serializer to 'issue' the order"""
+        """Save the serializer to 'issue' the order."""
         order = self.context['order']
         order.issue_order()
 
 
 class ReturnOrderCancelSerializer(serializers.Serializer):
-    """Serializer for cancelling a ReturnOrder"""
+    """Serializer for cancelling a ReturnOrder."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = []
 
     def save(self):
-        """Save the serializer to 'cancel' the order"""
+        """Save the serializer to 'cancel' the order."""
         order = self.context['order']
         order.cancel_order()
 
 
 class ReturnOrderCompleteSerializer(serializers.Serializer):
-    """Serializer for completing a ReturnOrder"""
+    """Serializer for completing a ReturnOrder."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = []
 
     def save(self):
-        """Save the serializer to 'complete' the order"""
+        """Save the serializer to 'complete' the order."""
         order = self.context['order']
         order.complete_order()
 
 
 class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
-    """Serializer for receiving a single line item against a ReturnOrder"""
+    """Serializer for receiving a single line item against a ReturnOrder."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = ['item']
 
@@ -1594,7 +1594,7 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     def validate_line_item(self, item):
-        """Validation for a single line item"""
+        """Validation for a single line item."""
         if item.order != self.context['order']:
             raise ValidationError(_('Line item does not match return order'))
 
@@ -1605,10 +1605,10 @@ class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):
 
 
 class ReturnOrderReceiveSerializer(serializers.Serializer):
-    """Serializer for receiving items against a ReturnOrder"""
+    """Serializer for receiving items against a ReturnOrder."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = ['items', 'location']
 
@@ -1624,7 +1624,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        """Perform data validation for this serializer"""
+        """Perform data validation for this serializer."""
         order = self.context['order']
         if order.status != ReturnOrderStatus.IN_PROGRESS:
             raise ValidationError(
@@ -1642,7 +1642,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
     @transaction.atomic
     def save(self):
-        """Saving this serializer marks the returned items as received"""
+        """Saving this serializer marks the returned items as received."""
         order = self.context['order']
         request = self.context['request']
 
@@ -1657,10 +1657,10 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
 
 class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
-    """Serializer for a ReturnOrderLineItem object"""
+    """Serializer for a ReturnOrderLineItem object."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = order.models.ReturnOrderLineItem
 
@@ -1683,7 +1683,7 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Initialization routine for the serializer"""
+        """Initialization routine for the serializer."""
         order_detail = kwargs.pop('order_detail', False)
         item_detail = kwargs.pop('item_detail', False)
         part_detail = kwargs.pop('part_detail', False)
@@ -1712,10 +1712,10 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
 class ReturnOrderExtraLineSerializer(
     AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
-    """Serializer for a ReturnOrderExtraLine object"""
+    """Serializer for a ReturnOrderExtraLine object."""
 
     class Meta(AbstractExtraLineMeta):
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = order.models.ReturnOrderExtraLine
 
@@ -1723,10 +1723,10 @@ class ReturnOrderExtraLineSerializer(
 
 
 class ReturnOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the ReturnOrderAttachment model"""
+    """Serializer for the ReturnOrderAttachment model."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = order.models.ReturnOrderAttachment
 

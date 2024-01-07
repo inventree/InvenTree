@@ -86,7 +86,7 @@ class PluginsRegistry:
 
     @property
     def is_loading(self):
-        """Return True if the plugin registry is currently loading"""
+        """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
     def get_plugin(self, slug):
@@ -308,7 +308,7 @@ class PluginsRegistry:
             logger.info('Plugin Registry: Loaded %s plugins', len(self.plugins))
 
     def plugin_dirs(self):
-        """Construct a list of directories from where plugins can be loaded"""
+        """Construct a list of directories from where plugins can be loaded."""
         # Builtin plugins are *always* loaded
         dirs = ['plugin.builtin']
 
@@ -687,7 +687,7 @@ class PluginsRegistry:
 
     # region plugin registry hash calculations
     def update_plugin_hash(self):
-        """When the state of the plugin registry changes, update the hash"""
+        """When the state of the plugin registry changes, update the hash."""
         from common.models import InvenTreeSetting
 
         self.registry_hash = self.calculate_plugin_hash()
@@ -715,7 +715,7 @@ class PluginsRegistry:
                 logger.exception('Failed to update plugin registry hash: %s', str(exc))
 
     def calculate_plugin_hash(self):
-        """Calculate a 'hash' value for the current registry
+        """Calculate a 'hash' value for the current registry.
 
         This is used to detect changes in the plugin registry,
         and to inform other processes that the plugin registry has changed
@@ -756,7 +756,7 @@ class PluginsRegistry:
         return str(data.hexdigest())
 
     def check_reload(self):
-        """Determine if the registry needs to be reloaded"""
+        """Determine if the registry needs to be reloaded."""
         from common.models import InvenTreeSetting
 
         if settings.TESTING:

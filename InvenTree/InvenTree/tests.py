@@ -40,10 +40,10 @@ from .validators import validate_overage
 
 
 class ConversionTest(TestCase):
-    """Tests for conversion of physical units"""
+    """Tests for conversion of physical units."""
 
     def test_prefixes(self):
-        """Test inputs where prefixes are used"""
+        """Test inputs where prefixes are used."""
         tests = {
             '3': 3,
             '3m': 3,
@@ -58,7 +58,7 @@ class ConversionTest(TestCase):
             self.assertAlmostEqual(q, expected, 3)
 
     def test_base_units(self):
-        """Test conversion to specified base units"""
+        """Test conversion to specified base units."""
         tests = {
             '3': 3,
             '3 dozen': 36,
@@ -76,7 +76,7 @@ class ConversionTest(TestCase):
             self.assertAlmostEqual(float(q.magnitude), expected, places=2)
 
     def test_dimensionless_units(self):
-        """Tests for 'dimensionless' unit quantities"""
+        """Tests for 'dimensionless' unit quantities."""
         # Test some dimensionless units
         tests = {
             'ea': 1,
@@ -103,7 +103,7 @@ class ConversionTest(TestCase):
             self.assertAlmostEqual(q, expected, 3)
 
     def test_invalid_units(self):
-        """Test conversion with bad units"""
+        """Test conversion with bad units."""
         tests = {'3': '10', '13': '-?-', '-3': 'xyz', '-12': '-12', '1/0': '1/0'}
 
         for val, unit in tests.items():
@@ -111,7 +111,7 @@ class ConversionTest(TestCase):
                 InvenTree.conversion.convert_physical_value(val, unit)
 
     def test_invalid_values(self):
-        """Test conversion of invalid inputs"""
+        """Test conversion of invalid inputs."""
         inputs = ['-x', '1/0', 'xyz', '12B45C']
 
         for val in inputs:
@@ -124,7 +124,7 @@ class ConversionTest(TestCase):
                 InvenTree.conversion.convert_physical_value(val)
 
     def test_custom_units(self):
-        """Tests for custom unit conversion"""
+        """Tests for custom unit conversion."""
         # Start with an empty set of units
         CustomUnit.objects.all().delete()
         InvenTree.conversion.reload_unit_registry()
@@ -193,8 +193,7 @@ class ValidatorTest(TestCase):
             validate_overage('aaaa')
 
     def test_url_validation(self):
-        """Test for AllowedURLValidator"""
-
+        """Test for AllowedURLValidator."""
         from common.models import InvenTreeSetting
         from part.models import Part, PartCategory
 
@@ -225,10 +224,10 @@ class ValidatorTest(TestCase):
 
 
 class FormatTest(TestCase):
-    """Unit tests for custom string formatting functionality"""
+    """Unit tests for custom string formatting functionality."""
 
     def test_parse(self):
-        """Tests for the 'parse_format_string' function"""
+        """Tests for the 'parse_format_string' function."""
         # Extract data from a valid format string
         fmt = 'PO-{abc:02f}-{ref:04d}-{date}-???'
 
@@ -244,7 +243,7 @@ class FormatTest(TestCase):
                 InvenTree.format.parse_format_string(fmt)
 
     def test_create_regex(self):
-        """Test function for creating a regex from a format string"""
+        """Test function for creating a regex from a format string."""
         tests = {
             'PO-123-{ref:04f}': r'^PO\-123\-(?P<ref>.+)$',
             '{PO}-???-{ref}-{date}-22': r'^(?P<PO>.+)\-...\-(?P<ref>.+)\-(?P<date>.+)\-22$',
@@ -256,7 +255,7 @@ class FormatTest(TestCase):
             self.assertEqual(InvenTree.format.construct_format_regex(fmt), reg)
 
     def test_validate_format(self):
-        """Test that string validation works as expected"""
+        """Test that string validation works as expected."""
         # These tests should pass
         for value, pattern in {
             'ABC-hello-123': '???-{q}-###',
@@ -276,7 +275,7 @@ class FormatTest(TestCase):
             self.assertFalse(InvenTree.format.validate_string(value, pattern))
 
     def test_extract_value(self):
-        """Test that we can extract named values based on a format string"""
+        """Test that we can extract named values based on a format string."""
         # Simple tests based on a straight-forward format string
         fmt = 'PO-###-{ref:04d}'
 
@@ -319,8 +318,7 @@ class FormatTest(TestCase):
             InvenTree.format.extract_named_group('test', 'PO-ABC-xyz', 'PO-###-{test}')
 
     def test_currency_formatting(self):
-        """Test that currency formatting works correctly for multiple currencies"""
-
+        """Test that currency formatting works correctly for multiple currencies."""
         test_data = (
             (Money(3651.285718, 'USD'), 4, '$3,651.2857'),  # noqa: E201,E202
             (Money(487587.849178, 'CAD'), 5, 'CA$487,587.84918'),  # noqa: E201,E202
@@ -352,7 +350,7 @@ class TestHelpers(TestCase):
     """Tests for InvenTree helper functions."""
 
     def test_absolute_url(self):
-        """Test helper function for generating an absolute URL"""
+        """Test helper function for generating an absolute URL."""
         base = 'https://demo.inventree.org:12345'
 
         InvenTreeSetting.set_setting('INVENTREE_BASE_URL', base, change_user=None)
@@ -431,7 +429,7 @@ class TestHelpers(TestCase):
         self.assertEqual(helpers.decimal2string('test'), 'test')
 
     def test_logo_image(self):
-        """Test for retrieving logo image"""
+        """Test for retrieving logo image."""
         # By default, there is no custom logo provided
         logo = helpers.getLogoImage()
         self.assertEqual(logo, '/static/img/inventree.png')
@@ -440,7 +438,7 @@ class TestHelpers(TestCase):
         self.assertEqual(logo, f'file://{settings.STATIC_ROOT}/img/inventree.png')
 
     def test_download_image(self):
-        """Test function for downloading image from remote URL"""
+        """Test function for downloading image from remote URL."""
         # Run check with a sequence of bad URLs
         for url in ['blog', 'htp://test.com/?', 'google', '\\invalid-url']:
             with self.assertRaises(django_exceptions.ValidationError):
@@ -452,7 +450,6 @@ class TestHelpers(TestCase):
             As the httpstat.us service occasionally refuses a connection,
             we will simply try multiple times
             """
-
             tries = 0
 
             with self.assertRaises(expected_error):
@@ -499,7 +496,7 @@ class TestHelpers(TestCase):
         InvenTree.helpers_model.download_image_from_url(large_img, timeout=10)
 
     def test_model_mixin(self):
-        """Test the getModelsWithMixin function"""
+        """Test the getModelsWithMixin function."""
         from InvenTree.models import InvenTreeBarcodeMixin
 
         models = InvenTree.helpers_model.getModelsWithMixin(InvenTreeBarcodeMixin)
@@ -1069,7 +1066,7 @@ class TestInstanceName(InvenTreeTestCase):
 
 
 class TestOffloadTask(InvenTreeTestCase):
-    """Tests for offloading tasks to the background worker"""
+    """Tests for offloading tasks to the background worker."""
 
     fixtures = ['category', 'part', 'location', 'stock']
 
@@ -1086,7 +1083,6 @@ class TestOffloadTask(InvenTreeTestCase):
 
         Ref: https://github.com/inventree/InvenTree/pull/3273
         """
-
         self.assertTrue(
             offload_task(
                 'dummy_tasks.stock',
@@ -1121,7 +1117,7 @@ class TestOffloadTask(InvenTreeTestCase):
         )
 
     def test_daily_holdoff(self):
-        """Tests for daily task holdoff helper functions"""
+        """Tests for daily task holdoff helper functions."""
         import InvenTree.tasks
 
         with self.assertLogs(logger='inventree', level='INFO') as cm:
@@ -1179,10 +1175,10 @@ class TestOffloadTask(InvenTreeTestCase):
 
 
 class BarcodeMixinTest(InvenTreeTestCase):
-    """Tests for the InvenTreeBarcodeMixin mixin class"""
+    """Tests for the InvenTreeBarcodeMixin mixin class."""
 
     def test_barcode_model_type(self):
-        """Test that the barcode_model_type property works for each class"""
+        """Test that the barcode_model_type property works for each class."""
         from part.models import Part
         from stock.models import StockItem, StockLocation
 
@@ -1191,7 +1187,7 @@ class BarcodeMixinTest(InvenTreeTestCase):
         self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
 
     def test_barcode_hash(self):
-        """Test that the barcode hashing function provides correct results"""
+        """Test that the barcode hashing function provides correct results."""
         # Test multiple values for the hashing function
         # This is to ensure that the hash function is always "backwards compatible"
         hashing_tests = {
@@ -1226,7 +1222,7 @@ class MagicLoginTest(InvenTreeTestCase):
     """Test magic login token generation."""
 
     def test_generation(self):
-        """Test that magic login tokens are generated correctly"""
+        """Test that magic login tokens are generated correctly."""
         # User does not exists
         resp = self.client.post(reverse('sesame-generate'), {'email': 1})
         self.assertEqual(resp.status_code, 200)

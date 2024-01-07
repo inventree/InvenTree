@@ -1,4 +1,4 @@
-"""Stocktake report functionality"""
+"""Stocktake report functionality."""
 
 import io
 import logging

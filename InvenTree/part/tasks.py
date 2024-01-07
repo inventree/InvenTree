@@ -1,4 +1,4 @@
-"""Background task definitions for the 'part' app"""
+"""Background task definitions for the 'part' app."""
 
 import logging
 import random
@@ -28,8 +28,9 @@ logger = logging.getLogger('inventree')
 
 
 def notify_low_stock(part: part.models.Part):
-    """Notify interested users that a part is 'low stock':
+    """Notify interested users that a part is 'low stock'.
 
+    Rules:
     - Triggered when the available stock for a given part falls be low the configured threhsold
     - A notification is delivered to any users who are 'subscribed' to this part
     """
@@ -64,7 +65,7 @@ def notify_low_stock_if_required(part: part.models.Part):
 
 
 def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
-    """Update cached pricing data for the specified PartPricing instance
+    """Update cached pricing data for the specified PartPricing instance.
 
     Arguments:
         pricing: The target PartPricing instance to be updated
@@ -77,8 +78,9 @@ def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
 
 @scheduled_task(ScheduledTask.DAILY)
 def check_missing_pricing(limit=250):
-    """Check for parts with missing or outdated pricing information:
+    """Check for parts with missing or outdated pricing information.
 
+    Tests for the following conditions:
     - Pricing information does not exist
     - Pricing information is "old"
     - Pricing information is in the wrong currency

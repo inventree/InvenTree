@@ -1,4 +1,4 @@
-"""Admin functionality for the 'order' app"""
+"""Admin functionality for the 'order' app."""
 
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
@@ -12,36 +12,36 @@ from order import models
 
 
 class ProjectCodeResourceMixin:
-    """Mixin for exporting project code data"""
+    """Mixin for exporting project code data."""
 
     project_code = Field(attribute='project_code', column_name=_('Project Code'))
 
     def dehydrate_project_code(self, order):
-        """Return the project code value, not the pk"""
+        """Return the project code value, not the pk."""
         if order.project_code:
             return order.project_code.code
         return ''
 
 
 class TotalPriceResourceMixin:
-    """Mixin for exporting total price data"""
+    """Mixin for exporting total price data."""
 
     total_price = Field(attribute='total_price', column_name=_('Total Price'))
 
     def dehydrate_total_price(self, order):
-        """Return the total price amount, not the object itself"""
+        """Return the total price amount, not the object itself."""
         if order.total_price:
             return order.total_price.amount
         return ''
 
 
 class PriceResourceMixin:
-    """Mixin for 'price' field"""
+    """Mixin for 'price' field."""
 
     price = Field(attribute='price', column_name=_('Price'))
 
     def dehydrate_price(self, line):
-        """Return the price amount, not the object itself"""
+        """Return the price amount, not the object itself."""
         if line.price:
             return line.price.amount
         return ''
@@ -49,7 +49,7 @@ class PriceResourceMixin:
 
 # region general classes
 class GeneralExtraLineAdmin:
-    """Admin class template for the 'ExtraLineItem' models"""
+    """Admin class template for the 'ExtraLineItem' models."""
 
     list_display = ('order', 'quantity', 'reference')
 
@@ -59,7 +59,7 @@ class GeneralExtraLineAdmin:
 
 
 class GeneralExtraLineMeta:
-    """Metaclass template for the 'ExtraLineItem' models"""
+    """Metaclass template for the 'ExtraLineItem' models."""
 
     skip_unchanged = True
     report_skipped = False
@@ -70,14 +70,14 @@ class GeneralExtraLineMeta:
 
 
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
-    """Inline admin class for the PurchaseOrderLineItem model"""
+    """Inline admin class for the PurchaseOrderLineItem model."""
 
     model = models.PurchaseOrderLineItem
     extra = 0
 
 
 class PurchaseOrderAdmin(ImportExportModelAdmin):
-    """Admin class for the PurchaseOrder model"""
+    """Admin class for the PurchaseOrder model."""
 
     exclude = ['reference_int']
 
@@ -91,7 +91,7 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
 
 
 class SalesOrderAdmin(ImportExportModelAdmin):
-    """Admin class for the SalesOrder model"""
+    """Admin class for the SalesOrder model."""
 
     exclude = ['reference_int']
 
@@ -108,7 +108,7 @@ class PurchaseOrderResource(
     """Class for managing import / export of PurchaseOrder data."""
 
     class Meta:
-        """Metaclass"""
+        """Metaclass."""
 
         model = models.PurchaseOrder
         skip_unchanged = True
@@ -130,7 +130,7 @@ class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of PurchaseOrderLineItem data."""
 
     class Meta:
-        """Metaclass"""
+        """Metaclass."""
 
         model = models.PurchaseOrderLineItem
         skip_unchanged = True
@@ -146,7 +146,7 @@ class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
     SKU = Field(attribute='part__SKU', readonly=True)
 
     def dehydrate_purchase_price(self, line):
-        """Return a string value of the 'purchase_price' field, rather than the 'Money' object"""
+        """Return a string value of the 'purchase_price' field, rather than the 'Money' object."""
         if line.purchase_price:
             return line.purchase_price.amount
         return ''
@@ -167,7 +167,7 @@ class SalesOrderResource(
     """Class for managing import / export of SalesOrder data."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = models.SalesOrder
         skip_unchanged = True
@@ -189,7 +189,7 @@ class SalesOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of SalesOrderLineItem data."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = models.SalesOrderLineItem
         skip_unchanged = True
@@ -224,7 +224,7 @@ class SalesOrderExtraLineResource(PriceResourceMixin, InvenTreeResource):
 
 
 class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
-    """Admin class for the PurchaseOrderLine model"""
+    """Admin class for the PurchaseOrderLine model."""
 
     resource_class = PurchaseOrderLineItemResource
 
@@ -236,13 +236,13 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
 
 
 class PurchaseOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
-    """Admin class for the PurchaseOrderExtraLine model"""
+    """Admin class for the PurchaseOrderExtraLine model."""
 
     resource_class = PurchaseOrderExtraLineResource
 
 
 class SalesOrderLineItemAdmin(ImportExportModelAdmin):
-    """Admin class for the SalesOrderLine model"""
+    """Admin class for the SalesOrderLine model."""
 
     resource_class = SalesOrderLineItemResource
 
@@ -259,13 +259,13 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
 
 
 class SalesOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
-    """Admin class for the SalesOrderExtraLine model"""
+    """Admin class for the SalesOrderExtraLine model."""
 
     resource_class = SalesOrderExtraLineResource
 
 
 class SalesOrderShipmentAdmin(ImportExportModelAdmin):
-    """Admin class for the SalesOrderShipment model"""
+    """Admin class for the SalesOrderShipment model."""
 
     list_display = ['order', 'shipment_date', 'reference']
 
@@ -275,7 +275,7 @@ class SalesOrderShipmentAdmin(ImportExportModelAdmin):
 
 
 class SalesOrderAllocationAdmin(ImportExportModelAdmin):
-    """Admin class for the SalesOrderAllocation model"""
+    """Admin class for the SalesOrderAllocation model."""
 
     list_display = ('line', 'item', 'quantity')
 
@@ -285,10 +285,10 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
 class ReturnOrderResource(
     ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource
 ):
-    """Class for managing import / export of ReturnOrder data"""
+    """Class for managing import / export of ReturnOrder data."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = models.ReturnOrder
         skip_unchanged = True
@@ -297,7 +297,7 @@ class ReturnOrderResource(
 
 
 class ReturnOrderAdmin(ImportExportModelAdmin):
-    """Admin class for the ReturnOrder model"""
+    """Admin class for the ReturnOrder model."""
 
     exclude = ['reference_int']
 
@@ -309,10 +309,10 @@ class ReturnOrderAdmin(ImportExportModelAdmin):
 
 
 class ReturnOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
-    """Class for managing import / export of ReturnOrderLineItem data"""
+    """Class for managing import / export of ReturnOrderLineItem data."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = models.ReturnOrderLineItem
         skip_unchanged = True
@@ -321,7 +321,7 @@ class ReturnOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
 
 
 class ReturnOrderLineItemAdmin(ImportExportModelAdmin):
-    """Admin class for ReturnOrderLine model"""
+    """Admin class for ReturnOrderLine model."""
 
     resource_class = ReturnOrderLineItemResource
 
@@ -329,16 +329,16 @@ class ReturnOrderLineItemAdmin(ImportExportModelAdmin):
 
 
 class ReturnOrderExtraLineClass(PriceResourceMixin, InvenTreeResource):
-    """Class for managing import/export of ReturnOrderExtraLine data"""
+    """Class for managing import/export of ReturnOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = models.ReturnOrderExtraLine
 
 
 class ReturnOrdeerExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
-    """Admin class for the ReturnOrderExtraLine model"""
+    """Admin class for the ReturnOrderExtraLine model."""
 
     resource_class = ReturnOrderExtraLineClass
 

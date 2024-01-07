@@ -24,7 +24,7 @@ class StatusView(APIView):
     MODEL_REF = 'statusmodel'
 
     def get_status_model(self, *args, **kwargs):
-        """Return the StatusCode model based on extra parameters passed to the view"""
+        """Return the StatusCode model based on extra parameters passed to the view."""
         status_model = self.kwargs.get(self.MODEL_REF, None)
 
         if status_model is None:
@@ -35,7 +35,7 @@ class StatusView(APIView):
         return status_model
 
     def get(self, request, *args, **kwargs):
-        """Perform a GET request to learn information about status codes"""
+        """Perform a GET request to learn information about status codes."""
         status_class = self.get_status_model()
 
         if not inspect.isclass(status_class):
@@ -55,7 +55,7 @@ class AllStatusViews(StatusView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        """Perform a GET request to learn information about status codes"""
+        """Perform a GET request to learn information about status codes."""
         data = {}
 
         for status_class in StatusCode.__subclasses__():

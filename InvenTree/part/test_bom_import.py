@@ -16,7 +16,7 @@ class BomUploadTest(InvenTreeAPITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        """Create BOM data as part of setup routine"""
+        """Create BOM data as part of setup routine."""
         super().setUpTestData()
 
         Part.objects.rebuild()
@@ -55,7 +55,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         expected_code=None,
         content_type='text/plain',
     ):
-        """Helper function for submitting a BOM file"""
+        """Helper function for submitting a BOM file."""
         bom_file = SimpleUploadedFile(filename, file_data, content_type=content_type)
 
         if clear_existing is None:
@@ -102,7 +102,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         )
 
     def test_missing_rows(self):
-        """Test upload of an invalid file (without data rows)"""
+        """Test upload of an invalid file (without data rows)."""
         dataset = tablib.Dataset()
 
         dataset.headers = ['apple', 'banana']

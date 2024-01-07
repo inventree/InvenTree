@@ -1,4 +1,4 @@
-"""Admin classes"""
+"""Admin classes."""
 
 from django.contrib import admin
 from django.http.request import HttpRequest
@@ -10,7 +10,7 @@ from import_export.resources import ModelResource
 
 
 class InvenTreeResource(ModelResource):
-    """Custom subclass of the ModelResource class provided by django-import-export"
+    """Custom subclass of the ModelResource class provided by django-import-export".
 
     Ensures that exported data are escaped to prevent malicious formula injection.
     Ref: https://owasp.org/www-community/attacks/CSV_Injection
@@ -29,7 +29,7 @@ class InvenTreeResource(ModelResource):
         rollback_on_validation_errors=None,
         **kwargs,
     ):
-        """Override the default import_data_inner function to provide better error handling"""
+        """Override the default import_data_inner function to provide better error handling."""
         if len(dataset) > self.MAX_IMPORT_ROWS:
             raise ImportExportError(
                 f'Dataset contains too many rows (max {self.MAX_IMPORT_ROWS})'
@@ -73,7 +73,7 @@ class InvenTreeResource(ModelResource):
         return row
 
     def get_fields(self, **kwargs):
-        """Return fields, with some common exclusions"""
+        """Return fields, with some common exclusions."""
         fields = super().get_fields(**kwargs)
 
         fields_to_exclude = ['metadata', 'lft', 'rght', 'tree_id', 'level']
@@ -82,10 +82,10 @@ class InvenTreeResource(ModelResource):
 
 
 class CustomRateAdmin(RateAdmin):
-    """Admin interface for the Rate class"""
+    """Admin interface for the Rate class."""
 
     def has_add_permission(self, request: HttpRequest) -> bool:
-        """Disable the 'add' permission for Rate objects"""
+        """Disable the 'add' permission for Rate objects."""
         return False
 
 

@@ -9,14 +9,14 @@ from InvenTree.unit_test import InvenTreeTestCase
 
 
 class BomExportTest(InvenTreeTestCase):
-    """Class for performing unit testing of BOM export functionality"""
+    """Class for performing unit testing of BOM export functionality."""
 
     fixtures = ['category', 'part', 'location', 'bom']
 
     roles = 'all'
 
     def setUp(self):
-        """Perform test setup functions"""
+        """Perform test setup functions."""
         super().setUp()
 
         part.models.Part.objects.rebuild()

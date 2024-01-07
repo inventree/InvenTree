@@ -1,4 +1,4 @@
-"""Sample plugin which demonstrates custom validation functionality"""
+"""Sample plugin which demonstrates custom validation functionality."""
 
 from datetime import datetime
 
@@ -52,12 +52,13 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
     }
 
     def validate_part_name(self, name: str, part):
-        """Custom validation for Part name field:
+        """Custom validation for Part name field.
 
+        Rules:
         - Name must be shorter than the description field
         - Name cannot contain illegal characters
 
-        These examples are silly, but serve to demonstrate how the feature could be used
+        These examples are silly, but serve to demonstrate how the feature could be used.
         """
         if len(part.description) < len(name):
             raise ValidationError('Part description cannot be shorter than the name')
@@ -69,7 +70,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
                 raise ValidationError(f"Illegal character in part name: '{c}'")
 
     def validate_part_ipn(self, ipn: str, part):
-        """Validate part IPN
+        """Validate part IPN.
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
@@ -87,7 +88,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
                 raise ValidationError('Value must be less than 100')
 
     def validate_serial_number(self, serial: str, part):
-        """Validate serial number for a given StockItem
+        """Validate serial number for a given StockItem.
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """

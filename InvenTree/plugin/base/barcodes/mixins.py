@@ -130,7 +130,6 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
     def scan(self, barcode_data):
         """Try to match a supplier barcode to a supplier part."""
-
         barcode_data = str(barcode_data).strip()
 
         self.barcode_fields = self.extract_barcode_fields(barcode_data)
@@ -161,7 +160,6 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
     def scan_receive_item(self, barcode_data, user, purchase_order=None, location=None):
         """Try to scan a supplier barcode to receive a purchase order item."""
-
         barcode_data = str(barcode_data).strip()
 
         self.barcode_fields = self.extract_barcode_fields(barcode_data)
@@ -222,7 +220,6 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         If it's not defined, try to guess it and set it if possible.
         """
-
         if not isinstance(self, SettingsMixin):
             return None
 
@@ -252,7 +249,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
     @classmethod
     def ecia_field_map(cls):
-        """Return a dict mapping ECIA field names to internal field names
+        """Return a dict mapping ECIA field names to internal field names.
 
         Ref: https://www.ecianow.org/assets/docs/ECIA_Specifications.pdf
 
@@ -279,7 +276,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
     @classmethod
     def parse_ecia_barcode2d(cls, barcode_data: str) -> dict[str, str]:
-        """Parse a standard ECIA 2D barcode
+        """Parse a standard ECIA 2D barcode.
 
         Ref: https://www.ecianow.org/assets/docs/ECIA_Specifications.pdf
 
@@ -289,7 +286,6 @@ class SupplierBarcodeMixin(BarcodeMixin):
         Returns:
             A dict containing the parsed barcode fields
         """
-
         # Split data into separate fields
         fields = cls.parse_isoiec_15434_barcode2d(barcode_data)
 
@@ -310,8 +306,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def split_fields(
         barcode_data: str, delimiter: str = ',', header: str = '', trailer: str = ''
     ) -> list[str]:
-        """Generic method for splitting barcode data into separate fields"""
-
+        """Generic method for splitting barcode data into separate fields."""
         if header and barcode_data.startswith(header):
             barcode_data = barcode_data[len(header) :]
 
@@ -323,7 +318,6 @@ class SupplierBarcodeMixin(BarcodeMixin):
     @staticmethod
     def parse_isoiec_15434_barcode2d(barcode_data: str) -> list[str]:
         """Parse a ISO/IEC 15434 barcode, returning the split data section."""
-
         OLD_MOUSER_HEADER = '>[)>06\x1d'
         HEADER = '[)>\x1e06\x1d'
         TRAILER = '\x1e\x04'
@@ -345,8 +339,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
     def get_purchase_orders(
         customer_order_number, supplier_order_number, supplier: Company = None
     ):
-        """Attempt to find a purchase order from the extracted customer and supplier order numbers"""
-
+        """Attempt to find a purchase order from the extracted customer and supplier order numbers."""
         orders = PurchaseOrder.objects.filter(status=PurchaseOrderStatus.PLACED.value)
 
         if supplier:
@@ -409,7 +402,6 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 - on partial success: the "lineitem" with quantity and location (both can be None)
                 - on failure: an "error" message
         """
-
         if quantity:
             try:
                 quantity = Decimal(quantity)

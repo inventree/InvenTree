@@ -6,7 +6,7 @@ from InvenTree import unit_test
 
 
 class TestForwardMigrations(MigratorTestCase):
-    """Unit testing class for testing 'company' app migrations"""
+    """Unit testing class for testing 'company' app migrations."""
 
     migrate_from = ('company', unit_test.getOldestMigrationFile('company'))
     migrate_to = ('company', unit_test.getNewestMigrationFile('company'))
@@ -20,7 +20,7 @@ class TestForwardMigrations(MigratorTestCase):
         )
 
     def test_migrations(self):
-        """Test the database state after applying all migrations"""
+        """Test the database state after applying all migrations."""
         Company = self.new_state.apps.get_model('company', 'company')
 
         self.assertEqual(Company.objects.count(), 1)
@@ -33,8 +33,9 @@ class TestManufacturerField(MigratorTestCase):
     migrate_to = ('company', '0019_auto_20200413_0642')
 
     def prepare(self):
-        """Prepare the database by adding some test data 'before' the change:
+        """Prepare the database by adding some test data 'before' the change.
 
+        Changes:
         - Part object
         - Company object (supplier)
         - SupplierPart object
@@ -99,8 +100,9 @@ class TestManufacturerPart(MigratorTestCase):
     migrate_to = ('company', '0037_supplierpart_update_3')
 
     def prepare(self):
-        """Prepare the database by adding some test data 'before' the change:
+        """Prepare the database by adding some test data 'before' the change.
 
+        Changes:
         - Part object
         - Company object (supplier)
         - SupplierPart object
@@ -217,8 +219,9 @@ class TestCurrencyMigration(MigratorTestCase):
     migrate_to = ('company', '0026_auto_20201110_1011')
 
     def prepare(self):
-        """Prepare some data:
+        """Prepare some data.
 
+        Changes:
         - A part to buy
         - A supplier to buy from
         - A supplier part
@@ -269,7 +272,7 @@ class TestCurrencyMigration(MigratorTestCase):
             self.assertIsNone(pb.price)
 
     def test_currency_migration(self):
-        """Test database state after applying migrations"""
+        """Test database state after applying migrations."""
         PB = self.new_state.apps.get_model('company', 'supplierpricebreak')
 
         for pb in PB.objects.all():
@@ -278,7 +281,7 @@ class TestCurrencyMigration(MigratorTestCase):
 
 
 class TestAddressMigration(MigratorTestCase):
-    """Test moving address data into Address model"""
+    """Test moving address data into Address model."""
 
     migrate_from = ('company', '0063_auto_20230502_1956')
     migrate_to = ('company', '0064_move_address_field_to_address_model')
@@ -289,14 +292,14 @@ class TestAddressMigration(MigratorTestCase):
     l2 = 'splitting functionality'
 
     def prepare(self):
-        """Set up some companies with addresses"""
+        """Set up some companies with addresses."""
         Company = self.old_state.apps.get_model('company', 'company')
 
         Company.objects.create(name='Company 1', address=self.short_l1)
         Company.objects.create(name='Company 2', address=self.long_l1 + self.l2)
 
     def test_address_migration(self):
-        """Test database state after applying the migration"""
+        """Test database state after applying the migration."""
         Address = self.new_state.apps.get_model('company', 'address')
         Company = self.new_state.apps.get_model('company', 'company')
 
@@ -323,7 +326,7 @@ class TestSupplierPartQuantity(MigratorTestCase):
     migrate_to = ('company', unit_test.getNewestMigrationFile('company'))
 
     def prepare(self):
-        """Prepare a number of SupplierPart objects"""
+        """Prepare a number of SupplierPart objects."""
         Part = self.old_state.apps.get_model('part', 'part')
         Company = self.old_state.apps.get_model('company', 'company')
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')

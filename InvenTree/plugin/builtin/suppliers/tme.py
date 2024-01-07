@@ -42,7 +42,6 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
     def extract_barcode_fields(self, barcode_data: str) -> dict[str, str]:
         """Get supplier_part and barcode_fields from TME QR-Code or DataMatrix-Code."""
-
         barcode_fields = {}
 
         if self.TME_IS_QRCODE_REGEX.fullmatch(barcode_data):

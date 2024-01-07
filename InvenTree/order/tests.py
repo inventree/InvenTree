@@ -1,4 +1,4 @@
-"""Various unit tests for order models"""
+"""Various unit tests for order models."""
 
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -49,7 +49,7 @@ class OrderTest(TestCase):
         self.assertEqual(str(line), '100 x ACME0001 from ACME (for PO-0001 - ACME)')
 
     def test_rebuild_reference(self):
-        """Test that the reference_int field is correctly updated when the model is saved"""
+        """Test that the reference_int field is correctly updated when the model is saved."""
         order = PurchaseOrder.objects.get(pk=1)
         order.save()
         self.assertEqual(order.reference_int, 1)
@@ -214,7 +214,7 @@ class OrderTest(TestCase):
         self.assertEqual(order.status, PurchaseOrderStatus.COMPLETE)
 
     def test_receive_pack_size(self):
-        """Test receiving orders from suppliers with different pack_size values"""
+        """Test receiving orders from suppliers with different pack_size values."""
         prt = Part.objects.get(pk=1)
         sup = Company.objects.get(pk=1)
 
@@ -305,7 +305,7 @@ class OrderTest(TestCase):
         self.assertEqual(si.purchase_price, Money(100, 'USD'))
 
     def test_overdue_notification(self):
-        """Test overdue purchase order notification
+        """Test overdue purchase order notification.
 
         Ensure that a notification is sent when a PurchaseOrder becomes overdue
         """
@@ -343,7 +343,7 @@ class OrderTest(TestCase):
             self.assertEqual(msg.name, 'Overdue Purchase Order')
 
     def test_new_po_notification(self):
-        """Test that a notification is sent when a new PurchaseOrder is created
+        """Test that a notification is sent when a new PurchaseOrder is created.
 
         - The responsible user(s) should receive a notification
         - The creating user should *not* receive a notification

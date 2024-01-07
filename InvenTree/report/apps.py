@@ -1,4 +1,4 @@
-"""Config options for the 'report' app"""
+"""Config options for the 'report' app."""
 
 import logging
 import os
@@ -15,7 +15,7 @@ logger = logging.getLogger('inventree')
 
 
 class ReportConfig(AppConfig):
-    """Configuration class for the 'report' app"""
+    """Configuration class for the 'report' app."""
 
     name = 'report'
 
@@ -120,7 +120,7 @@ class ReportConfig(AppConfig):
         self.create_default_reports(TestReport, reports)
 
     def create_default_bill_of_materials_reports(self):
-        """Create database entries for the default Bill of Material templates (if they do not already exist)"""
+        """Create database entries for the default Bill of Material templates (if they do not already exist)."""
         try:
             from .models import BillOfMaterialsReport
         except Exception:  # pragma: no cover
@@ -139,7 +139,7 @@ class ReportConfig(AppConfig):
         self.create_default_reports(BillOfMaterialsReport, reports)
 
     def create_default_build_reports(self):
-        """Create database entries for the default BuildReport templates (if they do not already exist)"""
+        """Create database entries for the default BuildReport templates (if they do not already exist)."""
         try:
             from .models import BuildReport
         except Exception:  # pragma: no cover
@@ -158,7 +158,7 @@ class ReportConfig(AppConfig):
         self.create_default_reports(BuildReport, reports)
 
     def create_default_purchase_order_reports(self):
-        """Create database entries for the default SalesOrderReport templates (if they do not already exist)"""
+        """Create database entries for the default SalesOrderReport templates (if they do not already exist)."""
         try:
             from .models import PurchaseOrderReport
         except Exception:  # pragma: no cover
@@ -177,7 +177,7 @@ class ReportConfig(AppConfig):
         self.create_default_reports(PurchaseOrderReport, reports)
 
     def create_default_sales_order_reports(self):
-        """Create database entries for the default Sales Order report templates (if they do not already exist)"""
+        """Create database entries for the default Sales Order report templates (if they do not already exist)."""
         try:
             from .models import SalesOrderReport
         except Exception:  # pragma: no cover
@@ -196,7 +196,7 @@ class ReportConfig(AppConfig):
         self.create_default_reports(SalesOrderReport, reports)
 
     def create_default_return_order_reports(self):
-        """Create database entries for the default ReturnOrderReport templates"""
+        """Create database entries for the default ReturnOrderReport templates."""
         try:
             from report.models import ReturnOrderReport
         except Exception:  # pragma: no cover
@@ -215,7 +215,7 @@ class ReportConfig(AppConfig):
         self.create_default_reports(ReturnOrderReport, reports)
 
     def create_default_stock_location_reports(self):
-        """Create database entries for the default StockLocationReport templates"""
+        """Create database entries for the default StockLocationReport templates."""
         try:
             from report.models import StockLocationReport
         except Exception:  # pragma: no cover

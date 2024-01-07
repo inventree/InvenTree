@@ -44,7 +44,6 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
         Example LCSC QR-Code: {pbn:PICK2009291337,on:SO2009291337,pc:C312270}
         """
-
         if not self.LCSC_BARCODE_REGEX.fullmatch(barcode_data):
             return {}
 

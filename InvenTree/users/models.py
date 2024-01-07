@@ -1,4 +1,4 @@
-"""Database model definitions for the 'users' app"""
+"""Database model definitions for the 'users' app."""
 
 import datetime
 import logging
@@ -33,8 +33,7 @@ logger = logging.getLogger('inventree')
 # Overrides Django User model __str__ with a custom function to be able to change
 # string representation of a user
 def user_model_str(self):
-    """Function to override the default Django User __str__"""
-
+    """Function to override the default Django User __str__."""
     if common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
         if self.first_name or self.last_name:
             return f'{self.first_name} {self.last_name}'
@@ -46,40 +45,39 @@ User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 
 
 def default_token():
-    """Generate a default value for the token"""
+    """Generate a default value for the token."""
     return ApiToken.generate_key()
 
 
 def default_token_expiry():
-    """Generate an expiry date for a newly created token"""
-
+    """Generate an expiry date for a newly created token."""
     # TODO: Custom value for default expiry timeout
     # TODO: For now, tokens last for 1 year
     return datetime.datetime.now().date() + datetime.timedelta(days=365)
 
 
 class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
-    """Extends the default token model provided by djangorestframework.authtoken, as follows:
+    """Extends the default token model provided by djangorestframework.authtoken.
 
+    Extensions:
     - Adds an 'expiry' date - tokens can be set to expire after a certain date
     - Adds a 'name' field - tokens can be given a custom name (in addition to the user information)
     """
 
     class Meta:
-        """Metaclass defines model properties"""
+        """Metaclass defines model properties."""
 
         verbose_name = _('API Token')
         verbose_name_plural = _('API Tokens')
         abstract = False
 
     def __str__(self):
-        """String representation uses the redacted token"""
+        """String representation uses the redacted token."""
         return self.token
 
     @classmethod
     def generate_key(cls, prefix='inv-'):
-        """Generate a new token key - with custom prefix"""
-
+        """Generate a new token key - with custom prefix."""
         # Suffix is the date of creation
         suffix = '-' + str(datetime.datetime.now().date().isoformat().replace('-', ''))
 
@@ -131,8 +129,7 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
     @staticmethod
     def sanitize_name(name: str):
-        """Sanitize the provide name value"""
-
+        """Sanitize the provide name value."""
         name = str(name).strip()
 
         # Remove any non-printable chars
@@ -154,7 +151,6 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
 
         The *raw* key value should never be displayed anywhere!
         """
-
         # If the token has not yet been saved, return the raw key
         if self.pk is None:
             return self.key
@@ -166,13 +162,13 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     @property
     @admin.display(boolean=True, description=_('Expired'))
     def expired(self):
-        """Test if this token has expired"""
+        """Test if this token has expired."""
         return self.expiry is not None and self.expiry < datetime.datetime.now().date()
 
     @property
     @admin.display(boolean=True, description=_('Active'))
     def active(self):
-        """Test if this token is active"""
+        """Test if this token is active."""
         return not self.revoked and not self.expired
 
 
@@ -365,7 +361,7 @@ class RuleSet(models.Model):
     RULE_OPTIONS = ['can_view', 'can_add', 'can_change', 'can_delete']
 
     class Meta:
-        """Metaclass defines additional model properties"""
+        """Metaclass defines additional model properties."""
 
         unique_together = (('name', 'group'),)
 
@@ -459,7 +455,7 @@ class RuleSet(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        """Intercept the 'save' functionality to make additional permission changes:
+        """Intercept the 'save' functionality to make additional permission changes.
 
         It does not make sense to be able to change / create something,
         but not be able to view it!
@@ -680,7 +676,7 @@ def clear_user_role_cache(user):
 
 
 def get_user_roles(user):
-    """Return all roles available to a given user"""
+    """Return all roles available to a given user."""
     roles = set()
 
     for group in user.groups.all():
@@ -752,7 +748,7 @@ class Owner(models.Model):
     """
 
     class Meta:
-        """Metaclass defines extra model properties"""
+        """Metaclass defines extra model properties."""
 
         # Ensure all owners are unique
         constraints = [
@@ -788,7 +784,7 @@ class Owner(models.Model):
 
     @staticmethod
     def get_api_url():  # pragma: no cover
-        """Returns the API endpoint URL associated with the Owner model"""
+        """Returns the API endpoint URL associated with the Owner model."""
         return reverse('api-owner-list')
 
     owner_type = models.ForeignKey(
@@ -921,7 +917,7 @@ def delete_owner(sender, instance, **kwargs):
 
 @receiver(post_save, sender=get_user_model(), dispatch_uid='clear_user_cache')
 def clear_user_cache(sender, instance, **kwargs):
-    """Callback function when a user object is saved"""
+    """Callback function when a user object is saved."""
     clear_user_role_cache(instance)
 
 

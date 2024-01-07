@@ -30,7 +30,7 @@ def page_sizes():
 
 
 def page_size(page_code):
-    """Return the page size associated with a particular page code"""
+    """Return the page size associated with a particular page code."""
     if page_code in page_sizes():
         return page_sizes()[page_code]
 
@@ -53,7 +53,7 @@ def report_page_size_default():
 
 
 def encode_image_base64(image, format: str = 'PNG'):
-    """Return a base-64 encoded image which can be rendered in an <img> tag
+    """Return a base-64 encoded image which can be rendered in an <img> tag.
 
     Arguments:
         image {Image} -- Image object
@@ -62,7 +62,6 @@ def encode_image_base64(image, format: str = 'PNG'):
     Returns:
         str -- Base64 encoded image data e.g. 'data:image/png;base64,xxxxxxxxx'
     """
-
     fmt = format.lower()
 
     buffered = io.BytesIO()

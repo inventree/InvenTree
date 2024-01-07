@@ -1,4 +1,4 @@
-"""Custom query filters for the Part models
+"""Custom query filters for the Part models.
 
 The code here makes heavy use of subquery annotations!
 
@@ -89,7 +89,7 @@ def annotate_on_order_quantity(reference: str = ''):
 
 
 def annotate_total_stock(reference: str = ''):
-    """Annotate 'total stock' quantity against a queryset:
+    """Annotate 'total stock' quantity against a queryset.
 
     - This function calculates the 'total stock' for a given part
     - Finds all stock items associated with each part (using the provided filter)
@@ -128,7 +128,7 @@ def annotate_build_order_requirements(reference: str = ''):
 
 
 def annotate_build_order_allocations(reference: str = ''):
-    """Annotate the total quantity of each part allocated to build orders:
+    """Annotate the total quantity of each part allocated to build orders.
 
     - This function calculates the total part quantity allocated to open build orders
     - Finds all build order allocations for each part (using the provided filter)
@@ -151,7 +151,7 @@ def annotate_build_order_allocations(reference: str = ''):
 
 
 def annotate_sales_order_allocations(reference: str = ''):
-    """Annotate the total quantity of each part allocated to sales orders:
+    """Annotate the total quantity of each part allocated to sales orders.
 
     - This function calculates the total part quantity allocated to open sales orders"
     - Finds all sales order allocations for each part (using the provided filter)
@@ -180,7 +180,7 @@ def annotate_sales_order_allocations(reference: str = ''):
 def variant_stock_query(
     reference: str = '', filter: Q = stock.models.StockItem.IN_STOCK_FILTER
 ):
-    """Create a queryset to retrieve all stock items for variant parts under the specified part
+    """Create a queryset to retrieve all stock items for variant parts under the specified part.
 
     - Useful for annotating a queryset with aggregated information about variant parts
 
@@ -196,7 +196,7 @@ def variant_stock_query(
 
 
 def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
-    """Create a subquery annotation for all variant part stock items on the given parent query
+    """Create a subquery annotation for all variant part stock items on the given parent query.
 
     Args:
         subquery: A 'variant_stock_query' Q object
@@ -239,7 +239,7 @@ def annotate_category_parts():
 
 
 def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
-    """Filter the given queryset by a given template parameter
+    """Filter the given queryset by a given template parameter.
 
     Parts which do not have a value for the given parameter are excluded.
 
@@ -257,7 +257,7 @@ def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
 
 
 def order_by_parameter(queryset, template_id: int, ascending=True):
-    """Order the given queryset by a given template parameter
+    """Order the given queryset by a given template parameter.
 
     Parts which do not have a value for the given parameter are ordered last.
 

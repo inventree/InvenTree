@@ -196,7 +196,7 @@ def uploaded_image(
 
 @register.simple_tag()
 def encode_svg_image(filename):
-    """Return a base64-encoded svg image data string"""
+    """Return a base64-encoded svg image data string."""
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
@@ -249,7 +249,7 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
 
 @register.simple_tag()
 def part_parameter(part: Part, parameter_name: str):
-    """Return a PartParameter object for the given part and parameter name
+    """Return a PartParameter object for the given part and parameter name.
 
     Arguments:
         part: A Part object
@@ -324,25 +324,25 @@ def add(x, y, *args, **kwargs):
 
 @register.simple_tag()
 def subtract(x, y):
-    """Subtract one number from another"""
+    """Subtract one number from another."""
     return x - y
 
 
 @register.simple_tag()
 def multiply(x, y):
-    """Multiply two numbers together"""
+    """Multiply two numbers together."""
     return x * y
 
 
 @register.simple_tag()
 def divide(x, y):
-    """Divide one number by another"""
+    """Divide one number by another."""
     return x / y
 
 
 @register.simple_tag
 def render_currency(money, **kwargs):
-    """Render a currency / Money object"""
+    """Render a currency / Money object."""
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 

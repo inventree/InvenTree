@@ -1,4 +1,4 @@
-"""Gunicorn configuration script for InvenTree web server"""
+"""Gunicorn configuration script for InvenTree web server."""
 
 import multiprocessing
 

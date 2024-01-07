@@ -1,4 +1,4 @@
-"""API functionality for the 'label' app"""
+"""API functionality for the 'label' app."""
 
 from django.core.exceptions import FieldError, ValidationError
 from django.http import JsonResponse
@@ -42,7 +42,7 @@ class LabelFilterMixin:
     ITEM_KEY = 'item'
 
     def get_items(self):
-        """Return a list of database objects from query parameter"""
+        """Return a list of database objects from query parameter."""
         ids = []
 
         # Construct a list of possible query parameter value options
@@ -140,7 +140,7 @@ class LabelPrintMixin(LabelFilterMixin):
 
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
-        """Prevent caching when printing report templates"""
+        """Prevent caching when printing report templates."""
         return super().dispatch(*args, **kwargs)
 
     def get_serializer(self, *args, **kwargs):
@@ -160,7 +160,7 @@ class LabelPrintMixin(LabelFilterMixin):
         return serializer
 
     def get(self, request, *args, **kwargs):
-        """Perform a GET request against this endpoint to print labels"""
+        """Perform a GET request against this endpoint to print labels."""
         common.models.InvenTreeUserSetting.set_setting(
             'DEFAULT_' + self.ITEM_KEY.upper() + '_LABEL_TEMPLATE',
             self.get_object().pk,
@@ -170,7 +170,7 @@ class LabelPrintMixin(LabelFilterMixin):
         return self.print(request, self.get_items())
 
     def post(self, request, *args, **kwargs):
-        """Perform a GET request against this endpoint to print labels"""
+        """Perform a GET request against this endpoint to print labels."""
         return self.get(request, *args, **kwargs)
 
     def get_plugin(self, request):
@@ -245,7 +245,7 @@ class LabelPrintMixin(LabelFilterMixin):
 
 
 class StockItemLabelMixin:
-    """Mixin for StockItemLabel endpoints"""
+    """Mixin for StockItemLabel endpoints."""
 
     queryset = label.models.StockItemLabel.objects.all()
     serializer_class = label.serializers.StockItemLabelSerializer
@@ -280,7 +280,7 @@ class StockItemLabelPrint(StockItemLabelMixin, LabelPrintMixin, RetrieveAPI):
 
 
 class StockLocationLabelMixin:
-    """Mixin for StockLocationLabel endpoints"""
+    """Mixin for StockLocationLabel endpoints."""
 
     queryset = label.models.StockLocationLabel.objects.all()
     serializer_class = label.serializers.StockLocationLabelSerializer
@@ -315,7 +315,7 @@ class StockLocationLabelPrint(StockLocationLabelMixin, LabelPrintMixin, Retrieve
 
 
 class PartLabelMixin:
-    """Mixin for PartLabel endpoints"""
+    """Mixin for PartLabel endpoints."""
 
     queryset = label.models.PartLabel.objects.all()
     serializer_class = label.serializers.PartLabelSerializer
@@ -343,7 +343,7 @@ class PartLabelPrint(PartLabelMixin, LabelPrintMixin, RetrieveAPI):
 
 
 class BuildLineLabelMixin:
-    """Mixin class for BuildLineLabel endpoints"""
+    """Mixin class for BuildLineLabel endpoints."""
 
     queryset = label.models.BuildLineLabel.objects.all()
     serializer_class = label.serializers.BuildLineLabelSerializer
@@ -353,19 +353,19 @@ class BuildLineLabelMixin:
 
 
 class BuildLineLabelList(BuildLineLabelMixin, LabelListView):
-    """API endpoint for viewing a list of BuildLineLabel objects"""
+    """API endpoint for viewing a list of BuildLineLabel objects."""
 
     pass
 
 
 class BuildLineLabelDetail(BuildLineLabelMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single BuildLineLabel object"""
+    """API endpoint for a single BuildLineLabel object."""
 
     pass
 
 
 class BuildLineLabelPrint(BuildLineLabelMixin, LabelPrintMixin, RetrieveAPI):
-    """API endpoint for printing a BuildLineLabel object"""
+    """API endpoint for printing a BuildLineLabel object."""
 
     pass
 

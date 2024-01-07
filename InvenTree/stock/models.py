@@ -119,7 +119,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     objects = StockLocationManager()
 
     class Meta:
-        """Metaclass defines extra model properties"""
+        """Metaclass defines extra model properties."""
 
         verbose_name = _('Stock Location')
         verbose_name_plural = _('Stock Locations')
@@ -131,7 +131,6 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
-
         super().delete(
             delete_children=kwargs.get('delete_sub_locations', False),
             delete_items=kwargs.get('delete_stock_items', False),
@@ -201,8 +200,9 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
     @icon.setter
     def icon(self, value):
-        """Setter to keep model API compatibility. But be careful:
+        """Setter to keep model API compatibility.
 
+        But be careful:
         If the field gets loaded as default value by any form which is later saved,
         the location no longer inherits its icon from the location type.
         """
@@ -243,9 +243,9 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         return owner.is_user_allowed(user, include_group=True)
 
     def clean(self):
-        """Custom clean action for the StockLocation model:
+        """Custom clean action for the StockLocation model.
 
-        - Ensure stock location can't be made structural if stock items already located to them
+        Ensure stock location can't be made structural if stock items already located to them
         """
         if self.pk and self.structural and self.stock_item_count(False) > 0:
             raise ValidationError(
@@ -288,7 +288,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         return self.stock_item_count()
 
     def get_items(self, cascade=False):
-        """Return a queryset for all stock items under this category"""
+        """Return a queryset for all stock items under this category."""
         return self.get_stock_items(cascade=cascade)
 
 
@@ -904,7 +904,7 @@ class StockItem(
 
     @property
     def status_text(self):
-        """Return the text representation of the status field"""
+        """Return the text representation of the status field."""
         return StockStatus.text(self.status)
 
     purchase_price = InvenTreeModelMoneyField(
@@ -1752,7 +1752,7 @@ class StockItem(
 
     @classmethod
     def optional_transfer_fields(cls):
-        """Returns a list of optional fields for a stock transfer"""
+        """Returns a list of optional fields for a stock transfer."""
         return ['batch', 'status', 'packaging']
 
     @transaction.atomic

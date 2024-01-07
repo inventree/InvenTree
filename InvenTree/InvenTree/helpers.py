@@ -116,7 +116,7 @@ def getLogoImage(as_file=False, custom=True):
 
 
 def getSplashScreen(custom=True):
-    """Return the InvenTree splash screen, or a custom splash if available"""
+    """Return the InvenTree splash screen, or a custom splash if available."""
     static_storage = StaticFilesStorage()
 
     if custom and settings.CUSTOM_SPLASH:
@@ -161,7 +161,7 @@ def str2bool(text, test=True):
 
 
 def str2int(text, default=None):
-    """Convert a string to int if possible
+    """Convert a string to int if possible.
 
     Args:
         text: Int like string
@@ -479,13 +479,12 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     errors = []
 
     def add_error(error: str):
-        """Helper function for adding an error message"""
+        """Helper function for adding an error message."""
         if error not in errors:
             errors.append(error)
 
     def add_serial(serial):
-        """Helper function to check for duplicated values"""
-
+        """Helper function to check for duplicated values."""
         serial = serial.strip()
 
         # Ignore blank / empty serials
@@ -753,7 +752,7 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
 def remove_non_printable_characters(
     value: str, remove_newline=True, remove_ascii=True, remove_unicode=True
 ):
-    """Remove non-printable / control characters from the provided string"""
+    """Remove non-printable / control characters from the provided string."""
     cleaned = value
 
     if remove_ascii:

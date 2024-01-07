@@ -41,7 +41,7 @@ class LabelPrintingMixin:
         self.add_mixin('labels', True, __class__)
 
     def render_to_pdf(self, label: LabelTemplate, request, **kwargs):
-        """Render this label to PDF format
+        """Render this label to PDF format.
 
         Arguments:
             label: The LabelTemplate object to render
@@ -50,7 +50,7 @@ class LabelPrintingMixin:
         return label.render(request)
 
     def render_to_html(self, label: LabelTemplate, request, **kwargs):
-        """Render this label to HTML format
+        """Render this label to HTML format.
 
         Arguments:
             label: The LabelTemplate object to render
@@ -59,7 +59,7 @@ class LabelPrintingMixin:
         return label.render_as_string(request)
 
     def render_to_png(self, label: LabelTemplate, request=None, **kwargs):
-        """Render this label to PNG format"""
+        """Render this label to PNG format."""
         # Check if pdf data is provided
         pdf_data = kwargs.get('pdf_data', None)
 
@@ -140,7 +140,7 @@ class LabelPrintingMixin:
         })
 
     def print_label(self, **kwargs):
-        """Print a single label (blocking)
+        """Print a single label (blocking).
 
         kwargs:
             pdf_file: The PDF file object of the rendered label (WeasyTemplateResponse object)
@@ -161,7 +161,7 @@ class LabelPrintingMixin:
         )
 
     def offload_label(self, **kwargs):
-        """Offload a single label (non-blocking)
+        """Offload a single label (non-blocking).
 
         Instead of immediately printing the label (which is a blocking process),
         this method should offload the label to a background worker process.
