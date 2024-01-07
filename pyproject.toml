@@ -57,7 +57,7 @@ known-first-party = ["src", "plugin", "InvenTree", "common"]
 "django" = ["django"]
 
 [tool.ruff.format]
-quote-style = "double"
+quote-style = "single"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
