@@ -82,7 +82,7 @@ django==4.1.13
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth==0.54.0
+django-allauth==0.59.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
@@ -110,7 +110,7 @@ django-import-export==3.3.3
     # via -r requirements.in
 django-js-asset==2.1.0
     # via django-mptt
-django-maintenance-mode==0.20.0
+django-maintenance-mode==0.21.0
     # via -r requirements.in
 django-markdownify==0.9.3
     # via -r requirements.in
@@ -234,7 +234,7 @@ python-dateutil==2.8.2
     #   icalendar
 python-dotenv==1.0.0
     # via -r requirements.in
-python-fsutil==0.11.0
+python-fsutil==0.12.0
     # via django-maintenance-mode
 python3-openid==3.2.0
     # via django-allauth

@@ -288,6 +288,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'InvenTree.middleware.InvenTreeRemoteUserMiddleware',       # Remote / proxy auth
     'django_otp.middleware.OTPMiddleware',                      # MFA support
     'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',    # Flow control for allauth
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware',
@@ -826,6 +827,8 @@ LANGUAGE_COOKIE_AGE = 2592000
 # If a new language translation is supported, it must be added here
 # After adding a new language, run the following command:
 # python manage.py makemessages -l <language_code> -e html,js,py --no-wrap
+# where <language_code> is the code for the new language
+# Additionally, update the /src/frontend/.linguirc file
 LANGUAGES = [
     ('bg', _('Bulgarian')),
     ('cs', _('Czech')),
@@ -851,6 +854,7 @@ LANGUAGES = [
     ('pt-br', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
     ('sl', _('Slovenian')),
+    ('sr', _('Serbian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
@@ -952,6 +956,13 @@ SITE_ID = 1
 SOCIAL_BACKENDS = get_setting('INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list)
 
 for app in SOCIAL_BACKENDS:
+
+    # Ensure that the app starts with 'allauth.socialaccount.providers'
+    social_prefix = 'allauth.socialaccount.providers.'
+
+    if not app.startswith(social_prefix):  # pragma: no cover
+        app = social_prefix + app
+
     INSTALLED_APPS.append(app)  # pragma: no cover
 
 SOCIALACCOUNT_PROVIDERS = get_setting('INVENTREE_SOCIAL_PROVIDERS', 'social_providers', None, typecast=dict)

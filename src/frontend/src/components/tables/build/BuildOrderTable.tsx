@@ -18,6 +18,7 @@ import {
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
+import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -101,26 +102,39 @@ function buildOrderTableColumns(): TableColumn[] {
 export function BuildOrderTable({ params = {} }: { params?: any }) {
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
 
-  const tableFilters = useMemo(() => {
+  const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
-        // TODO: Filter by status code
         name: 'active',
         type: 'boolean',
-        label: t`Active`
+        label: t`Active`,
+        description: t`Show active orders`
+      },
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.build)
       },
       {
         name: 'overdue',
         type: 'boolean',
-        label: t`Overdue`
+        label: t`Overdue`,
+        description: t`Show overdue status`
       },
       {
         name: 'assigned_to_me',
         type: 'boolean',
-        label: t`Assigned to me`
+        label: t`Assigned to me`,
+        description: t`Show orders assigned to me`
       }
       // TODO: 'assigned to' filter
       // TODO: 'issued by' filter
+      // {
+      //   name: 'has_project_code',
+      //   title: t`Has Project Code`,
+      //   description: t`Show orders with project code`,
+      // }
       // TODO: 'has project code' filter (see table_filters.js)
       // TODO: 'project code' filter (see table_filters.js)
     ];

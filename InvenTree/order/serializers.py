@@ -247,14 +247,14 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
         self.order = self.context['order']
 
         return {
-            'can_cancel': self.order.can_cancel(),
+            'can_cancel': self.order.can_cancel,
         }
 
     def save(self):
         """Save the serializer to 'cancel' the order"""
         order = self.context['order']
 
-        if not order.can_cancel():
+        if not order.can_cancel:
             raise ValidationError(_("Order cannot be cancelled"))
 
         order.cancel_order()
@@ -1219,7 +1219,7 @@ class SalesOrderCancelSerializer(serializers.Serializer):
         order = self.context['order']
 
         return {
-            'can_cancel': order.can_cancel(),
+            'can_cancel': order.can_cancel,
         }
 
     def save(self):

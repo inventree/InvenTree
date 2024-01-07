@@ -8,6 +8,7 @@ import {
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { formatPriceRange } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { bomItemFields } from '../../../forms/BomForms';
@@ -142,14 +143,8 @@ export function BomTable({
         title: t`Price Range`,
 
         sortable: false,
-        render: (row) => {
-          let min_price = row.pricing_min || row.pricing_max;
-          let max_price = row.pricing_max || row.pricing_min;
-
-          // TODO: Custom price range rendering component
-          // TODO: Footer component for price range
-          return `${min_price} - ${max_price}`;
-        }
+        render: (record: any) =>
+          formatPriceRange(record.pricing_min, record.pricing_max)
       },
       {
         accessor: 'available_stock',
@@ -239,11 +234,50 @@ export function BomTable({
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
+        name: 'sub_part_trackable',
+        label: t`Trackable Part`,
+        description: t`Show trackable items`
+      },
+      {
+        name: 'sub_part_assembly',
+        label: t`Assembled Part`,
+        description: t`Show asssmbled items`
+      },
+      {
+        name: 'available_stock',
+        label: t`Has Available Stock`,
+        description: t`Show items with available stock`
+      },
+      {
+        name: 'on_order',
+        label: t`On Order`,
+        description: t`Show items on order`
+      },
+      {
+        name: 'validated',
+        label: t`Validated`,
+        description: t`Show validated items`
+      },
+      {
+        name: 'inherited',
+        label: t`Gets Inherited`,
+        description: t`Show inherited items`
+      },
+      {
+        name: 'optional',
+        label: t`Optional`,
+        description: t`Show optional items`
+      },
+      {
         name: 'consumable',
         label: t`Consumable`,
-        type: 'boolean'
+        description: t`Show consumable items`
+      },
+      {
+        name: 'has_pricing',
+        label: t`Has Pricing`,
+        description: t`Show items with pricing`
       }
-      // TODO: More BOM table filters here
     ];
   }, [partId, params]);
 

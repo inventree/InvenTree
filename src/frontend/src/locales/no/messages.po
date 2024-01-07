@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-11-30 01:56\n"
+"PO-Revision-Date: 2023-12-20 05:40\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -21,40 +21,54 @@ msgstr ""
 #: src/components/DashboardItemProxy.tsx:34
 #: src/components/tables/company/AddressTable.tsx:36
 msgid "Title"
-msgstr ""
+msgstr "Tittel"
 
 #: src/components/forms/ApiForm.tsx:129
-#: src/functions/forms.tsx:48
-#: src/functions/forms.tsx:57
-#: src/functions/forms.tsx:260
+#: src/functions/forms.tsx:49
+#: src/functions/forms.tsx:58
+#: src/functions/forms.tsx:266
 msgid "Form Error"
-msgstr ""
+msgstr "Skjemafeil"
 
-#: src/components/forms/ApiForm.tsx:296
+#: src/components/forms/ApiForm.tsx:301
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "Suksess"
 
-#: src/components/forms/ApiForm.tsx:368
+#: src/components/forms/ApiForm.tsx:372
 msgid "Form Errors Exist"
-msgstr ""
+msgstr "Skjemafeil eksisterer"
 
-#: src/components/forms/ApiForm.tsx:421
+#: src/components/forms/ApiForm.tsx:425
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
-msgstr ""
+msgstr "Send"
+
+#: src/components/forms/ApiForm.tsx:461
+msgid "Update"
+msgstr "Oppdater"
+
+#: src/components/forms/ApiForm.tsx:481
+#: src/components/items/ActionDropdown.tsx:173
+#: src/components/tables/RowActions.tsx:70
+#: src/functions/forms.tsx:306
+#: src/hooks/UseForm.tsx:117
+#: src/pages/Index/Scan.tsx:332
+#: src/pages/Notifications.tsx:79
+msgid "Delete"
+msgstr "Slett"
 
 #: src/components/forms/AuthenticationForm.tsx:44
 #: src/functions/auth.tsx:33
 msgid "Login failed"
-msgstr ""
+msgstr "Innloggingen mislyktes"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
 #: src/functions/auth.tsx:111
 msgid "Check your input and try again."
-msgstr ""
+msgstr "Kontroller inndataene og prøv igjen."
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -64,11 +78,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr ""
+msgstr "Innlogging vellykket"
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr ""
+msgstr "Velkommen tilbake!"
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -77,11 +91,11 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:64
 #: src/functions/auth.tsx:102
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "Levering av e-post vellykket"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr ""
+msgstr "Sjekk innboksen din for innloggingslenken. Hvis du har en konto, får du en innloggingslenke. Sjekk også i spam."
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -90,46 +104,44 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:72
 msgid "Input error"
-msgstr ""
+msgstr "Inndatafeil"
 
 #: src/components/forms/AuthenticationForm.tsx:84
 msgid "Welcome, log in below"
-msgstr ""
+msgstr "Velkommen, logg inn nedenfor"
 
 #: src/components/forms/AuthenticationForm.tsx:91
-#: src/components/tables/settings/UserDrawer.tsx:159
-#: src/components/tables/settings/UserTable.tsx:56
+#: src/components/tables/settings/UserTable.tsx:163
 msgid "Username"
-msgstr ""
+msgstr "Brukernavn"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr ""
+msgstr "Passord"
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Your password"
-msgstr ""
+msgstr "Ditt passord"
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "Tilbakestill passord"
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/components/tables/company/ContactTable.tsx:47
-#: src/components/tables/settings/UserDrawer.tsx:163
-#: src/components/tables/settings/UserTable.tsx:50
+#: src/components/tables/settings/UserTable.tsx:157
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
-msgstr ""
+msgstr "E-post"
 
 #: src/components/forms/AuthenticationForm.tsx:118
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr ""
+msgstr "Vi sender deg en lenke for å logge inn - hvis du er registrert"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -137,363 +149,362 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:134
 msgid "Send me an email"
-msgstr ""
+msgstr "Send meg en e-post"
 
 #: src/components/forms/AuthenticationForm.tsx:136
 msgid "I will use username and password"
-msgstr ""
+msgstr "Jeg vil bruke brukernavn og passord"
 
 #: src/components/forms/AuthenticationForm.tsx:145
 msgid "Log In"
-msgstr ""
+msgstr "Logg inn"
 
 #: src/components/forms/AuthenticationForm.tsx:147
 msgid "Send Email"
-msgstr ""
+msgstr "Send e-post"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr ""
+msgstr "Vert"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
 #: src/components/tables/company/ContactTable.tsx:35
-#: src/components/tables/part/PartCategoryTable.tsx:24
-#: src/components/tables/part/PartParameterTemplateTable.tsx:29
+#: src/components/tables/part/PartCategoryTable.tsx:26
+#: src/components/tables/part/PartParameterTemplateTable.tsx:51
+#: src/components/tables/plugin/PluginErrorTable.tsx:33
+#: src/components/tables/plugin/PluginListTable.tsx:157
 #: src/components/tables/settings/CustomUnitsTable.tsx:31
-#: src/components/tables/settings/GroupTable.tsx:28
-#: src/components/tables/stock/StockLocationTable.tsx:25
+#: src/components/tables/settings/GroupTable.tsx:100
+#: src/components/tables/stock/StockLocationTable.tsx:51
 msgid "Name"
-msgstr ""
+msgstr "Navn"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr ""
+msgstr "Ingen her..."
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "Legg til vert"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr ""
+msgstr "Lagre"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr ""
+msgstr "Velg destinasjons-instans"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr ""
+msgstr "Rediger mulige vertsalternativer"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "Versjon: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr ""
+msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr ""
+msgstr "Navn: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr ""
+msgstr "Status: <0>arbeider</0> ({0}), <1>utvidelser</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
-#: src/components/tables/InvenTreeTable.tsx:393
-#: src/components/tables/plugin/PluginListTable.tsx:163
+#: src/components/tables/InvenTreeTable.tsx:331
+#: src/components/tables/plugin/PluginListTable.tsx:364
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 msgid "Error"
-msgstr ""
+msgstr "Feil"
 
-#: src/components/forms/fields/RelatedModelField.tsx:199
+#: src/components/forms/fields/RelatedModelField.tsx:210
 #: src/pages/Index/Settings/UserSettings.tsx:64
 msgid "Search"
-msgstr ""
+msgstr "Søk"
 
-#: src/components/forms/fields/RelatedModelField.tsx:200
+#: src/components/forms/fields/RelatedModelField.tsx:211
 #: src/components/modals/AboutInvenTreeModal.tsx:67
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:301
 msgid "Loading"
-msgstr ""
+msgstr "Laster"
 
-#: src/components/forms/fields/RelatedModelField.tsx:202
+#: src/components/forms/fields/RelatedModelField.tsx:213
 msgid "No results found"
-msgstr ""
+msgstr "Ingen resultater funnet"
 
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:49
 msgid "Thumbnail"
-msgstr ""
+msgstr "Miniatyrbilde"
 
 #: src/components/items/ActionDropdown.tsx:84
-#: src/pages/build/BuildDetail.tsx:206
+#: src/pages/build/BuildDetail.tsx:204
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Strekkodehandlinger"
 
 #: src/components/items/ActionDropdown.tsx:101
 msgid "View"
-msgstr ""
+msgstr "Visning"
 
 #: src/components/items/ActionDropdown.tsx:102
 msgid "View barcode"
-msgstr ""
+msgstr "Vis strekkode"
 
 #: src/components/items/ActionDropdown.tsx:118
 msgid "Link Barcode"
-msgstr ""
+msgstr "Koble mot strekkode"
 
 #: src/components/items/ActionDropdown.tsx:119
 msgid "Link custom barcode"
-msgstr ""
+msgstr "Koble til egendefinert strekkode"
 
 #: src/components/items/ActionDropdown.tsx:135
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Fjern strekkodekobling"
 
 #: src/components/items/ActionDropdown.tsx:136
 msgid "Unlink custom barcode"
-msgstr ""
+msgstr "Koble fra egendefinert strekkode"
 
 #: src/components/items/ActionDropdown.tsx:154
-#: src/components/tables/RowActions.tsx:44
+#: src/components/tables/RowActions.tsx:50
 msgid "Edit"
-msgstr ""
-
-#: src/components/items/ActionDropdown.tsx:173
-#: src/components/tables/RowActions.tsx:61
-#: src/functions/forms.tsx:300
-#: src/hooks/UseForm.tsx:109
-#: src/pages/Index/Scan.tsx:332
-#: src/pages/Notifications.tsx:79
-msgid "Delete"
-msgstr ""
+msgstr "Rediger"
 
 #: src/components/items/ActionDropdown.tsx:174
 msgid "Delete item"
-msgstr ""
+msgstr "Slett element"
 
 #: src/components/items/ActionDropdown.tsx:192
-#: src/components/tables/RowActions.tsx:27
+#: src/components/tables/RowActions.tsx:30
 #: src/pages/stock/StockDetail.tsx:195
 msgid "Duplicate"
-msgstr ""
+msgstr "Dupliser"
 
 #: src/components/items/ActionDropdown.tsx:193
 msgid "Duplicate item"
-msgstr ""
+msgstr "Dupliser element"
 
 #: src/components/items/CopyButton.tsx:18
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Kopier til utklippstavle"
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr ""
+msgstr "Les mer"
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:385
+#: src/components/tables/InvenTreeTable.tsx:323
 msgid "Unknown error"
-msgstr ""
+msgstr "Ukjent feil"
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr ""
+msgstr "En feil har oppstått:"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "Les mer"
+
+#: src/components/items/InfoItem.tsx:25
+msgid "None"
+msgstr "Ingen"
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "InvenTree-logo"
 
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:30
 msgid "This information is only available for staff users"
-msgstr ""
+msgstr "Denne informasjonen er bare tilgjengelig for ansatte"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr ""
+msgstr "Denne funksjonen/knappen/nettstedet er en plassholder for en funksjon som ikke er implementert, bare delvis eller beregnet på testing."
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr ""
+msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
-msgstr ""
+msgstr "Denne ruten er en plassholder."
 
 #: src/components/items/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr ""
+msgstr "Skann QR-kode"
 
 #: src/components/items/YesNoButton.tsx:16
+#: src/components/tables/Filter.tsx:51
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: src/components/items/YesNoButton.tsx:16
+#: src/components/tables/Filter.tsx:52
 msgid "No"
-msgstr ""
+msgstr "Nei"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:85
 msgid "Your InvenTree version status is"
-msgstr ""
+msgstr "Din InvenTree versjonstatus er"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:89
 msgid "Development Version"
-msgstr ""
+msgstr "Utviklingsversjon"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:93
 msgid "Up to Date"
-msgstr ""
+msgstr "Oppdatert"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:97
 msgid "Update Available"
-msgstr ""
+msgstr "Oppdatering er tilgjengelig"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:102
 msgid "Version Information"
-msgstr ""
+msgstr "Versjoninformasjon"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:110
 msgid "InvenTree Version"
-msgstr ""
+msgstr "InvenTree-versjon"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:116
 msgid "Commit Hash"
-msgstr ""
+msgstr "Commit-hash"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:121
 msgid "Commit Date"
-msgstr ""
+msgstr "Commit-dato"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:126
 msgid "Commit Branch"
-msgstr ""
+msgstr "Commit Branch"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:131
 #: src/components/modals/ServerInfoModal.tsx:124
 msgid "API Version"
-msgstr ""
+msgstr "API-versjon"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:134
 msgid "Python Version"
-msgstr ""
+msgstr "Python-versjon"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:137
 msgid "Django Version"
-msgstr ""
+msgstr "Django-versjon"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:147
 msgid "Links"
-msgstr ""
+msgstr "Lenker"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:153
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "InvenTree-dokumentasjon"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:154
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "Vis koden på GitHub"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:155
 msgid "Credits"
-msgstr ""
+msgstr "Krediteringer"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:156
 msgid "Mobile App"
-msgstr ""
+msgstr "Mobilapp"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:157
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "Send feilrapport"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:167
 msgid "Copy version information"
-msgstr ""
+msgstr "Kopiér versjonsinformasjon"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
-msgstr ""
+msgstr "Ukjent svar"
 
 #: src/components/modals/QrCodeModal.tsx:102
 #: src/pages/Index/Scan.tsx:618
 msgid "Error while getting camera"
-msgstr ""
+msgstr "Feil under henting av kamera"
 
 #: src/components/modals/QrCodeModal.tsx:125
 #: src/pages/Index/Scan.tsx:641
 msgid "Error while scanning"
-msgstr ""
+msgstr "Feil under skanning"
 
 #: src/components/modals/QrCodeModal.tsx:139
 #: src/pages/Index/Scan.tsx:655
 msgid "Error while stopping"
-msgstr ""
+msgstr "Feil under stans"
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/defaults/menuItems.tsx:21
 #: src/pages/Index/Scan.tsx:724
 msgid "Scanning"
-msgstr ""
+msgstr "Skanner"
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/pages/Index/Scan.tsx:724
 msgid "Not scanning"
-msgstr ""
+msgstr "Skanner ikke"
 
 #: src/components/modals/QrCodeModal.tsx:159
 #: src/pages/Index/Scan.tsx:730
 msgid "Select Camera"
-msgstr ""
+msgstr "Velg kamera"
 
 #: src/components/modals/QrCodeModal.tsx:169
 #: src/pages/Index/Scan.tsx:716
 msgid "Start scanning"
-msgstr ""
+msgstr "Start skanningen"
 
 #: src/components/modals/QrCodeModal.tsx:176
 #: src/pages/Index/Scan.tsx:710
 msgid "Stop scanning"
-msgstr ""
+msgstr "Stopp skanning"
 
 #: src/components/modals/QrCodeModal.tsx:181
 msgid "No scans yet!"
-msgstr ""
+msgstr "Ingen skanninger enda!"
 
 #: src/components/modals/QrCodeModal.tsx:201
 #: src/components/modals/ServerInfoModal.tsx:137
 msgid "Close modal"
-msgstr ""
+msgstr "Lukk modal"
 
 #: src/components/modals/ServerInfoModal.tsx:17
-#: src/pages/Index/Settings/SystemSettings.tsx:42
+#: src/pages/Index/Settings/SystemSettings.tsx:36
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: src/components/modals/ServerInfoModal.tsx:23
 msgid "Instance Name"
-msgstr ""
+msgstr "Instansnavn"
 
 #: src/components/modals/ServerInfoModal.tsx:29
 msgid "Database"
-msgstr ""
+msgstr "Database"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 msgid "Debug Mode"
-msgstr ""
+msgstr "Feilsøkingsmodus"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 #~ msgid "Bebug Mode"
@@ -501,1327 +512,1624 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:41
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Serveren kjører i debug-modus"
 
 #: src/components/modals/ServerInfoModal.tsx:48
 msgid "Docker Mode"
-msgstr ""
+msgstr "Docker-modus"
 
 #: src/components/modals/ServerInfoModal.tsx:51
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Serveren er distribuert ved hjelp av docker"
 
 #: src/components/modals/ServerInfoModal.tsx:57
 msgid "Plugin Support"
-msgstr ""
+msgstr "Støtte for utvidelser"
 
 #: src/components/modals/ServerInfoModal.tsx:62
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Utvidelsesstøtte aktivert"
 
 #: src/components/modals/ServerInfoModal.tsx:64
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Utvidelsesstøtte deaktivert"
 
 #: src/components/modals/ServerInfoModal.tsx:71
 msgid "Server status"
-msgstr ""
+msgstr "Serverstatus"
 
 #: src/components/modals/ServerInfoModal.tsx:77
 msgid "Healthy"
-msgstr ""
+msgstr "Frisk"
 
 #: src/components/modals/ServerInfoModal.tsx:79
 msgid "Issues detected"
-msgstr ""
+msgstr "Problemer oppdaget"
 
 #: src/components/modals/ServerInfoModal.tsx:88
 msgid "Background Worker"
-msgstr ""
+msgstr "Bakgrunnsarbeider"
 
 #: src/components/modals/ServerInfoModal.tsx:92
 msgid "Background worker not running"
-msgstr ""
+msgstr "Bakgrunnsarbeider kjører ikke"
 
 #: src/components/modals/ServerInfoModal.tsx:100
 msgid "Email Settings"
-msgstr ""
+msgstr "E-Post-Innstillinger"
 
 #: src/components/modals/ServerInfoModal.tsx:104
 msgid "Email settings not configured"
-msgstr ""
+msgstr "E-postinnstillinger ikke konfigurert"
 
 #: src/components/modals/ServerInfoModal.tsx:112
-#: src/components/tables/plugin/PluginListTable.tsx:86
+#: src/components/tables/plugin/PluginListTable.tsx:175
+#: src/components/tables/plugin/PluginListTable.tsx:287
 msgid "Version"
-msgstr ""
+msgstr "Versjon"
 
 #: src/components/modals/ServerInfoModal.tsx:118
 msgid "Server Version"
-msgstr ""
+msgstr "Serverversjon"
+
+#: src/components/nav/MainMenu.tsx:38
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
+msgid "Settings"
+msgstr "Innstillinger"
 
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
 #~ msgid "Profile"
 #~ msgstr "Profile"
 
-#: src/components/nav/MainMenu.tsx:44
-#: src/defaults/menuItems.tsx:63
-#: src/pages/Index/Settings/AdminCenter.tsx:98
-msgid "Admin Center"
-msgstr ""
-
-#: src/components/nav/MainMenu.tsx:48
-#: src/pages/Index/Settings/AdminCenter.tsx:44
-msgid "Settings"
-msgstr ""
-
-#: src/components/nav/MainMenu.tsx:51
+#: src/components/nav/MainMenu.tsx:41
 #: src/defaults/menuItems.tsx:15
 msgid "Account settings"
-msgstr ""
+msgstr "Kontoinnstillinger"
+
+#: src/components/nav/MainMenu.tsx:49
+#: src/defaults/menuItems.tsx:58
+#: src/pages/Index/Settings/SystemSettings.tsx:267
+msgid "System Settings"
+msgstr "Systeminnstillinger"
 
 #: src/components/nav/MainMenu.tsx:59
-#: src/defaults/menuItems.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:296
-msgid "System Settings"
-msgstr ""
-
-#: src/components/nav/MainMenu.tsx:68
-#: src/components/nav/NavigationDrawer.tsx:67
-#: src/pages/Index/Settings/PluginSettings.tsx:32
-msgid "Plugins"
-msgstr ""
+#: src/defaults/menuItems.tsx:63
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:109
+msgid "Admin Center"
+msgstr "Adminsenter"
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
 #~ msgstr "Current language {locale}"
 
+#: src/components/nav/MainMenu.tsx:69
+msgid "Logout"
+msgstr "Logg ut"
+
 #: src/components/nav/MainMenu.tsx:71
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
 
-#: src/components/nav/MainMenu.tsx:79
-msgid "Logout"
-msgstr ""
-
 #: src/components/nav/NavHoverMenu.tsx:61
 msgid "Open Navigation"
-msgstr ""
+msgstr "Åpne Navigasjon"
 
 #: src/components/nav/NavHoverMenu.tsx:79
 msgid "View all"
-msgstr ""
+msgstr "Vis alle"
 
 #: src/components/nav/NavHoverMenu.tsx:93
 #: src/components/nav/NavHoverMenu.tsx:103
 msgid "Get started"
-msgstr ""
+msgstr "Kom i gang"
 
 #: src/components/nav/NavHoverMenu.tsx:96
 msgid "Overview over high-level objects, functions and possible usecases."
-msgstr ""
+msgstr "Oversikt over objekter, funksjoner og mulige bruksområder."
 
 #: src/components/nav/NavigationDrawer.tsx:59
 msgid "Navigation"
-msgstr ""
+msgstr "Navigasjon"
 
 #: src/components/nav/NavigationDrawer.tsx:62
 msgid "Pages"
-msgstr ""
+msgstr "Sider"
+
+#: src/components/nav/NavigationDrawer.tsx:67
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:76
+msgid "Plugins"
+msgstr "Utvidelser"
 
 #: src/components/nav/NavigationDrawer.tsx:77
 msgid "Documentation"
-msgstr ""
+msgstr "Dokumentasjon"
 
 #: src/components/nav/NavigationDrawer.tsx:80
 msgid "About"
-msgstr ""
+msgstr "Om"
 
 #: src/components/nav/NotificationDrawer.tsx:70
-#: src/pages/Index/Settings/SystemSettings.tsx:124
+#: src/pages/Index/Settings/SystemSettings.tsx:101
 #: src/pages/Index/Settings/UserSettings.tsx:94
 #: src/pages/Notifications.tsx:28
 #: src/pages/Notifications.tsx:100
 msgid "Notifications"
-msgstr ""
+msgstr "Varlser"
 
 #: src/components/nav/NotificationDrawer.tsx:87
 msgid "You have no unread notifications."
-msgstr ""
+msgstr "Du har ingen uleste varsler."
 
-#: src/components/nav/NotificationDrawer.tsx:111
+#: src/components/nav/NotificationDrawer.tsx:122
 #: src/pages/Notifications.tsx:36
 msgid "Mark as read"
-msgstr ""
+msgstr "Merk som lest"
 
 #: src/components/nav/PartCategoryTree.tsx:80
 #: src/components/render/ModelType.tsx:49
-#: src/pages/Index/Settings/SystemSettings.tsx:188
+#: src/pages/Index/Settings/SystemSettings.tsx:165
 #: src/pages/part/CategoryDetail.tsx:60
 msgid "Part Categories"
-msgstr ""
+msgstr "Delkategorier"
 
 #: src/components/nav/SearchDrawer.tsx:76
 msgid "results"
-msgstr ""
+msgstr "resultater"
 
 #: src/components/nav/SearchDrawer.tsx:337
 msgid "Enter search text"
-msgstr ""
+msgstr "Skriv inn søketekst"
 
 #: src/components/nav/SearchDrawer.tsx:364
 msgid "Search Options"
-msgstr ""
+msgstr "Alternativer for søk"
 
 #: src/components/nav/SearchDrawer.tsx:367
 msgid "Regex search"
-msgstr ""
+msgstr "Regex-søk"
 
 #: src/components/nav/SearchDrawer.tsx:377
 msgid "Whole word search"
-msgstr ""
+msgstr "Helordsøk"
 
 #: src/components/nav/SearchDrawer.tsx:415
 msgid "An error occurred during search query"
-msgstr ""
+msgstr "Det oppstod en feil under søk"
 
 #: src/components/nav/SearchDrawer.tsx:426
 msgid "No results"
-msgstr ""
+msgstr "Ingen resultater"
 
 #: src/components/nav/SearchDrawer.tsx:429
 msgid "No results available for search query"
-msgstr ""
+msgstr "Ingen resultater tilgjengelig for søk"
 
 #: src/components/nav/StockLocationTree.tsx:80
 #: src/components/render/ModelType.tsx:63
 #: src/pages/stock/LocationDetail.tsx:48
 msgid "Stock Locations"
-msgstr ""
+msgstr "Lagerplasseringer"
 
 #: src/components/render/Instance.tsx:135
 msgid "Unknown model: {model}"
-msgstr ""
+msgstr "Ukjent modell: {model}"
 
 #: src/components/render/ModelType.tsx:20
-#: src/components/tables/bom/BomTable.tsx:61
-#: src/components/tables/build/BuildOrderTable.tsx:38
+#: src/components/tables/bom/BomTable.tsx:62
+#: src/components/tables/build/BuildOrderTable.tsx:39
 #: src/components/tables/part/PartParameterTable.tsx:34
-#: src/components/tables/part/PartTable.tsx:26
+#: src/components/tables/part/PartTable.tsx:27
 #: src/components/tables/part/RelatedPartTable.tsx:41
+#: src/components/tables/purchasing/ManufacturerPartTable.tsx:30
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:96
 #: src/components/tables/purchasing/SupplierPartTable.tsx:35
-#: src/components/tables/stock/StockItemTable.tsx:26
-#: src/pages/part/PartDetail.tsx:328
+#: src/components/tables/stock/StockItemTable.tsx:25
+#: src/pages/part/PartDetail.tsx:336
 msgid "Part"
-msgstr ""
+msgstr "Del"
 
 #: src/components/render/ModelType.tsx:21
-#: src/components/tables/part/PartCategoryTable.tsx:36
+#: src/components/tables/part/PartCategoryTable.tsx:46
 #: src/defaults/links.tsx:27
 #: src/defaults/menuItems.tsx:33
-#: src/pages/Index/Settings/SystemSettings.tsx:193
+#: src/pages/Index/Settings/SystemSettings.tsx:170
 #: src/pages/part/CategoryDetail.tsx:46
 #: src/pages/part/CategoryDetail.tsx:82
-#: src/pages/part/PartDetail.tsx:243
+#: src/pages/part/PartDetail.tsx:251
 msgid "Parts"
-msgstr ""
+msgstr "Deler"
 
 #: src/components/render/ModelType.tsx:27
 msgid "Part Parameter Template"
-msgstr ""
+msgstr "Mal for Delparameter"
 
 #: src/components/render/ModelType.tsx:28
 msgid "Part Parameter Templates"
-msgstr ""
+msgstr "Maler for Delparameter"
 
 #: src/components/render/ModelType.tsx:34
-#: src/components/tables/purchasing/SupplierPartTable.tsx:63
+#: src/components/tables/purchasing/SupplierPartTable.tsx:57
 msgid "Supplier Part"
-msgstr ""
+msgstr "Leverandørdel"
 
 #: src/components/render/ModelType.tsx:35
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Leverandørdeler"
 
 #: src/components/render/ModelType.tsx:41
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Produsentdel"
 
 #: src/components/render/ModelType.tsx:42
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Produsentdeler"
 
 #: src/components/render/ModelType.tsx:48
 #: src/pages/part/CategoryDetail.tsx:102
 msgid "Part Category"
-msgstr ""
+msgstr "Delkategori"
 
 #: src/components/render/ModelType.tsx:55
 #: src/pages/stock/StockDetail.tsx:220
 msgid "Stock Item"
-msgstr ""
+msgstr "Lagervare"
 
 #: src/components/render/ModelType.tsx:56
-#: src/components/tables/stock/StockLocationTable.tsx:36
+#: src/components/tables/stock/StockLocationTable.tsx:62
 #: src/pages/company/CompanyDetail.tsx:99
 #: src/pages/stock/LocationDetail.tsx:36
 #: src/pages/stock/LocationDetail.tsx:82
 msgid "Stock Items"
-msgstr ""
+msgstr "Lagervarer"
 
 #: src/components/render/ModelType.tsx:62
 msgid "Stock Location"
-msgstr ""
+msgstr "Lagerplassering"
 
 #: src/components/render/ModelType.tsx:69
 msgid "Stock History"
-msgstr ""
+msgstr "Lagerhistorikk"
 
 #: src/components/render/ModelType.tsx:70
 msgid "Stock Histories"
-msgstr ""
+msgstr "Lagerhistorikk"
 
 #: src/components/render/ModelType.tsx:74
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:43
 msgid "Build"
-msgstr ""
+msgstr "Produksjon"
 
 #: src/components/render/ModelType.tsx:75
 msgid "Builds"
-msgstr ""
+msgstr "Produksjoner"
 
 #: src/components/render/ModelType.tsx:81
 #: src/pages/company/CompanyDetail.tsx:199
 msgid "Company"
-msgstr ""
+msgstr "Firma"
 
 #: src/components/render/ModelType.tsx:82
 msgid "Companies"
-msgstr ""
+msgstr "Firma"
 
 #: src/components/render/ModelType.tsx:88
-#: src/components/tables/ColumnRenderers.tsx:66
+#: src/components/tables/ColumnRenderers.tsx:72
 #: src/components/tables/TableHoverCard.tsx:58
 #: src/components/tables/settings/ProjectCodeTable.tsx:33
 msgid "Project Code"
-msgstr ""
+msgstr "Prosjektkode"
 
 #: src/components/render/ModelType.tsx:89
-#: src/pages/Index/Settings/SystemSettings.tsx:106
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:52
 msgid "Project Codes"
-msgstr ""
+msgstr "Prosjektkoder"
 
 #: src/components/render/ModelType.tsx:95
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:131
 msgid "Purchase Order"
-msgstr ""
+msgstr "Innkjøpsordre"
 
 #: src/components/render/ModelType.tsx:96
-#: src/pages/Index/Settings/SystemSettings.tsx:263
+#: src/pages/Index/Settings/SystemSettings.tsx:234
 #: src/pages/company/CompanyDetail.tsx:90
-#: src/pages/part/PartDetail.tsx:175
+#: src/pages/part/PartDetail.tsx:183
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Innkjøpsordrer"
 
 #: src/components/render/ModelType.tsx:102
 msgid "Purchase Order Line"
-msgstr ""
+msgstr "Ordrelinje for innkjøpsordre"
 
 #: src/components/render/ModelType.tsx:103
 msgid "Purchase Order Lines"
-msgstr ""
+msgstr "Ordrelinjer for innkjøpsordre"
 
 #: src/components/render/ModelType.tsx:107
-#: src/components/tables/sales/SalesOrderTable.tsx:37
+#: src/components/tables/sales/SalesOrderTable.tsx:58
 #: src/pages/sales/SalesOrderDetail.tsx:96
 msgid "Sales Order"
-msgstr ""
+msgstr "Salgsordre"
 
 #: src/components/render/ModelType.tsx:108
-#: src/pages/Index/Settings/SystemSettings.tsx:276
+#: src/pages/Index/Settings/SystemSettings.tsx:247
 #: src/pages/company/CompanyDetail.tsx:108
-#: src/pages/part/PartDetail.tsx:181
+#: src/pages/part/PartDetail.tsx:189
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
-msgstr ""
+msgstr "Salgsordrer"
 
 #: src/components/render/ModelType.tsx:114
 msgid "Sales Order Shipment"
-msgstr ""
+msgstr "Salgsordreforsendelse"
 
 #: src/components/render/ModelType.tsx:115
 msgid "Sales Order Shipments"
-msgstr ""
+msgstr "Salgsordreforsendelser"
 
 #: src/components/render/ModelType.tsx:121
-#: src/components/tables/sales/ReturnOrderTable.tsx:36
+#: src/components/tables/sales/ReturnOrderTable.tsx:55
 #: src/pages/sales/ReturnOrderDetail.tsx:68
 msgid "Return Order"
-msgstr ""
+msgstr "Returordre"
 
 #: src/components/render/ModelType.tsx:122
 #: src/pages/company/CompanyDetail.tsx:117
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
-msgstr ""
+msgstr "Returordrer"
 
 #: src/components/render/ModelType.tsx:128
 #: src/components/tables/company/AddressTable.tsx:49
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: src/components/render/ModelType.tsx:129
 #: src/pages/company/CompanyDetail.tsx:138
 msgid "Addresses"
-msgstr ""
+msgstr "Adresser"
 
 #: src/components/render/ModelType.tsx:135
 msgid "Contact"
-msgstr ""
+msgstr "Kontakt"
 
 #: src/components/render/ModelType.tsx:136
 #: src/pages/company/CompanyDetail.tsx:132
 msgid "Contacts"
-msgstr ""
+msgstr "Kontakter"
 
 #: src/components/render/ModelType.tsx:142
 msgid "Owner"
-msgstr ""
+msgstr "Eier"
 
 #: src/components/render/ModelType.tsx:143
 msgid "Owners"
-msgstr ""
+msgstr "Eiere"
 
 #: src/components/render/ModelType.tsx:149
 msgid "User"
-msgstr ""
+msgstr "Bruker"
 
 #: src/components/render/ModelType.tsx:150
-#: src/pages/Index/Settings/AdminCenter.tsx:34
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:46
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
-msgstr ""
+msgstr "Brukere"
 
 #: src/components/render/Order.tsx:85
 msgid "Shipment"
-msgstr ""
+msgstr "Forsendelse"
 
 #: src/components/render/Stock.tsx:26
 msgid "Serial Number"
-msgstr ""
+msgstr "Serienummer"
 
 #: src/components/render/Stock.tsx:28
-#: src/components/tables/bom/BomTable.tsx:102
+#: src/components/tables/bom/BomTable.tsx:103
 #: src/components/tables/bom/UsedInTable.tsx:68
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:122
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:150
-#: src/pages/build/BuildDetail.tsx:77
+#: src/pages/build/BuildDetail.tsx:75
 msgid "Quantity"
-msgstr ""
+msgstr "Antall"
 
-#: src/components/settings/SettingItem.tsx:32
-#: src/components/settings/SettingItem.tsx:74
+#: src/components/settings/SettingItem.tsx:43
+#: src/components/settings/SettingItem.tsx:96
 msgid "Setting updated"
-msgstr ""
+msgstr "Innstilling oppdatert"
 
-#: src/components/settings/SettingItem.tsx:33
-#: src/components/settings/SettingItem.tsx:75
+#: src/components/settings/SettingItem.tsx:44
+#: src/components/settings/SettingItem.tsx:97
 msgid "{0} updated successfully"
-msgstr ""
+msgstr "{0} oppdatert"
 
-#: src/components/settings/SettingItem.tsx:41
+#: src/components/settings/SettingItem.tsx:52
 msgid "Error editing setting"
-msgstr ""
+msgstr "Feil ved endring av innstilling"
 
-#: src/components/settings/SettingItem.tsx:61
+#: src/components/settings/SettingItem.tsx:89
 msgid "Edit Setting"
-msgstr ""
+msgstr "Rediger innstilling"
 
-#: src/components/tables/ColumnRenderers.tsx:33
-#: src/components/tables/bom/BomTable.tsx:93
-#: src/components/tables/build/BuildOrderTable.tsx:56
-#: src/components/tables/part/PartParameterTable.tsx:65
-#: src/components/tables/part/PartParameterTemplateTable.tsx:40
+#: src/components/tables/ColumnRenderers.tsx:39
+#: src/components/tables/bom/BomTable.tsx:94
+#: src/components/tables/build/BuildOrderTable.tsx:57
+#: src/components/tables/part/PartParameterTable.tsx:52
 #: src/components/tables/part/RelatedPartTable.tsx:60
-#: src/components/tables/plugin/PluginListTable.tsx:73
-#: src/components/tables/stock/StockItemTable.tsx:45
+#: src/components/tables/plugin/PluginListTable.tsx:160
+#: src/components/tables/plugin/PluginListTable.tsx:274
+#: src/components/tables/stock/StockItemTable.tsx:31
 msgid "Description"
-msgstr ""
+msgstr "Beskrivelse"
 
-#: src/components/tables/ColumnRenderers.tsx:42
+#: src/components/tables/ColumnRenderers.tsx:48
 #: src/components/tables/company/AddressTable.tsx:104
 msgid "Link"
-msgstr ""
+msgstr "Lenke"
 
-#: src/components/tables/ColumnRenderers.tsx:51
+#: src/components/tables/ColumnRenderers.tsx:57
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:60
 #: src/pages/sales/SalesOrderDetail.tsx:46
 msgid "Line Items"
-msgstr ""
+msgstr "Ordrelinjer"
 
-#: src/components/tables/ColumnRenderers.tsx:78
+#: src/components/tables/ColumnRenderers.tsx:84
+#: src/components/tables/build/BuildOrderTable.tsx:115
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:41
+#: src/components/tables/sales/ReturnOrderTable.tsx:37
+#: src/components/tables/sales/SalesOrderTable.tsx:38
+#: src/components/tables/stock/StockItemTable.tsx:238
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
-#: src/components/tables/ColumnRenderers.tsx:86
+#: src/components/tables/ColumnRenderers.tsx:92
 msgid "Responsible"
-msgstr ""
+msgstr "Ansvarlig"
 
-#: src/components/tables/ColumnRenderers.tsx:96
+#: src/components/tables/ColumnRenderers.tsx:102
 msgid "Target Date"
-msgstr ""
+msgstr "Måldato"
 
-#: src/components/tables/ColumnRenderers.tsx:106
+#: src/components/tables/ColumnRenderers.tsx:112
 msgid "Creation Date"
-msgstr ""
+msgstr "Opprettelsesdato"
 
-#: src/components/tables/ColumnRenderers.tsx:115
+#: src/components/tables/ColumnRenderers.tsx:121
 msgid "Shipment Date"
-msgstr ""
+msgstr "Forsendelsesdato"
 
-#: src/components/tables/ColumnRenderers.tsx:136
+#: src/components/tables/ColumnRenderers.tsx:142
 #: src/components/tables/settings/CurrencyTable.tsx:23
 msgid "Currency"
-msgstr ""
+msgstr "Valuta"
 
-#: src/components/tables/ColumnRenderers.tsx:150
+#: src/components/tables/ColumnRenderers.tsx:156
 msgid "Total Price"
-msgstr ""
+msgstr "Total pris"
 
 #: src/components/tables/ColumnSelect.tsx:17
 #: src/components/tables/ColumnSelect.tsx:24
 msgid "Select Columns"
-msgstr ""
+msgstr "Velg Kolonner"
 
 #: src/components/tables/DownloadAction.tsx:12
 msgid "CSV"
-msgstr ""
+msgstr "CSV"
 
 #: src/components/tables/DownloadAction.tsx:13
 msgid "TSV"
-msgstr ""
+msgstr "TSV"
 
 #: src/components/tables/DownloadAction.tsx:14
 msgid "Excel"
-msgstr ""
+msgstr "Excel"
 
 #: src/components/tables/DownloadAction.tsx:22
 msgid "Download selected data"
-msgstr ""
+msgstr "Last ned valgte data"
 
-#: src/components/tables/FilterBadge.tsx:44
-msgid "Remove filter"
-msgstr ""
+#: src/components/tables/Filter.tsx:88
+#: src/components/tables/build/BuildOrderTable.tsx:128
+msgid "Assigned to me"
+msgstr "Tilordnet meg"
+
+#: src/components/tables/Filter.tsx:89
+#: src/components/tables/build/BuildOrderTable.tsx:129
+msgid "Show orders assigned to me"
+msgstr "Vis ordre tildelt meg"
+
+#: src/components/tables/Filter.tsx:96
+msgid "Outstanding"
+msgstr "Utestående"
+
+#: src/components/tables/Filter.tsx:97
+msgid "Show outstanding orders"
+msgstr "Vis utestående ordre"
+
+#: src/components/tables/Filter.tsx:104
+#: src/components/tables/build/BuildOrderTable.tsx:122
+msgid "Overdue"
+msgstr "Forfalt"
+
+#: src/components/tables/Filter.tsx:105
+msgid "Show overdue orders"
+msgstr "Vis forfalte ordrer"
 
 #: src/components/tables/FilterGroup.tsx:29
-msgid "Add table filter"
-msgstr ""
+#~ msgid "Add table filter"
+#~ msgstr "Add table filter"
 
 #: src/components/tables/FilterGroup.tsx:44
-msgid "Clear all filters"
-msgstr ""
+#~ msgid "Clear all filters"
+#~ msgstr "Clear all filters"
 
 #: src/components/tables/FilterGroup.tsx:51
-msgid "Add filter"
-msgstr ""
+#~ msgid "Add filter"
+#~ msgstr "Add filter"
+
+#: src/components/tables/FilterSelectDrawer.tsx:51
+msgid "Remove filter"
+msgstr "Fjern filter"
+
+#: src/components/tables/FilterSelectDrawer.tsx:145
+msgid "Select filter"
+msgstr "Velg filter"
+
+#: src/components/tables/FilterSelectDrawer.tsx:146
+msgid "Filter"
+msgstr "Filter"
+
+#: src/components/tables/FilterSelectDrawer.tsx:153
+#: src/components/tables/part/PartParameterTable.tsx:59
+msgid "Value"
+msgstr "Verdi"
+
+#: src/components/tables/FilterSelectDrawer.tsx:154
+msgid "Select filter value"
+msgstr "Velg filterverdi"
+
+#: src/components/tables/FilterSelectDrawer.tsx:188
+msgid "Table Filters"
+msgstr "Tabellfiltre"
+
+#: src/components/tables/FilterSelectDrawer.tsx:209
+#: src/components/tables/plugin/PluginListTable.tsx:333
+#: src/contexts/ThemeContext.tsx:64
+#: src/functions/forms.tsx:202
+#: src/hooks/UseForm.tsx:38
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: src/components/tables/FilterSelectDrawer.tsx:219
+msgid "Add Filter"
+msgstr "Legg til filter"
+
+#: src/components/tables/FilterSelectDrawer.tsx:228
+msgid "Clear Filters"
+msgstr "Fjern filtre"
 
 #: src/components/tables/FilterSelectModal.tsx:56
-msgid "True"
-msgstr ""
+#~ msgid "True"
+#~ msgstr "True"
 
 #: src/components/tables/FilterSelectModal.tsx:57
-msgid "False"
-msgstr ""
+#~ msgid "False"
+#~ msgstr "False"
 
 #: src/components/tables/FilterSelectModal.tsx:143
-msgid "Add Table Filter"
-msgstr ""
+#~ msgid "Add Table Filter"
+#~ msgstr "Add Table Filter"
 
 #: src/components/tables/FilterSelectModal.tsx:145
-msgid "Select from the available filters"
-msgstr ""
+#~ msgid "Select from the available filters"
+#~ msgstr "Select from the available filters"
 
-#: src/components/tables/FilterSelectModal.tsx:149
-msgid "Filter"
-msgstr ""
-
-#: src/components/tables/FilterSelectModal.tsx:150
-msgid "Select filter"
-msgstr ""
-
-#: src/components/tables/FilterSelectModal.tsx:159
-#: src/components/tables/part/PartParameterTable.tsx:72
-msgid "Value"
-msgstr ""
-
-#: src/components/tables/FilterSelectModal.tsx:160
-msgid "Select filter value"
-msgstr ""
-
-#: src/components/tables/FilterSelectModal.tsx:166
-#: src/components/tables/plugin/PluginListTable.tsx:132
-#: src/contexts/ThemeContext.tsx:64
-#: src/functions/forms.tsx:201
-#: src/hooks/UseForm.tsx:36
-msgid "Cancel"
-msgstr ""
-
-#: src/components/tables/FilterSelectModal.tsx:172
-msgid "Add Filter"
-msgstr ""
-
-#: src/components/tables/InvenTreeTable.tsx:73
-#: src/components/tables/InvenTreeTable.tsx:329
-#: src/components/tables/InvenTreeTable.tsx:350
+#: src/components/tables/InvenTreeTable.tsx:71
+#: src/components/tables/InvenTreeTable.tsx:267
+#: src/components/tables/InvenTreeTable.tsx:288
 msgid "No records found"
-msgstr ""
+msgstr "Ingen poster funnet"
 
-#: src/components/tables/InvenTreeTable.tsx:364
+#: src/components/tables/InvenTreeTable.tsx:302
 msgid "Server returned incorrect data type"
-msgstr ""
+msgstr "Serveren returnerte feil datatype"
 
-#: src/components/tables/InvenTreeTable.tsx:372
+#: src/components/tables/InvenTreeTable.tsx:310
 msgid "Bad request"
-msgstr ""
+msgstr "Ugyldig forespørsel"
 
-#: src/components/tables/InvenTreeTable.tsx:375
+#: src/components/tables/InvenTreeTable.tsx:313
 msgid "Unauthorized"
-msgstr ""
+msgstr "Uautorisert"
 
-#: src/components/tables/InvenTreeTable.tsx:378
+#: src/components/tables/InvenTreeTable.tsx:316
 msgid "Forbidden"
-msgstr ""
+msgstr "Forbudt"
 
-#: src/components/tables/InvenTreeTable.tsx:381
+#: src/components/tables/InvenTreeTable.tsx:319
 msgid "Not found"
-msgstr ""
+msgstr "Ikke funnet"
 
-#: src/components/tables/InvenTreeTable.tsx:441
-#: src/components/tables/InvenTreeTable.tsx:442
+#: src/components/tables/InvenTreeTable.tsx:374
+#: src/components/tables/InvenTreeTable.tsx:375
 msgid "Barcode actions"
-msgstr ""
+msgstr "Strekkodehandlinger"
 
-#: src/components/tables/InvenTreeTable.tsx:450
-#: src/components/tables/InvenTreeTable.tsx:451
+#: src/components/tables/InvenTreeTable.tsx:383
+#: src/components/tables/InvenTreeTable.tsx:384
 msgid "Print actions"
-msgstr ""
+msgstr "Utskriftshandlinger"
 
-#: src/components/tables/InvenTreeTable.tsx:465
+#: src/components/tables/InvenTreeTable.tsx:400
 msgid "Refresh data"
-msgstr ""
+msgstr "Oppdater data"
 
-#: src/components/tables/InvenTreeTable.tsx:484
+#: src/components/tables/InvenTreeTable.tsx:419
 msgid "Table filters"
-msgstr ""
+msgstr "Tabellfiltre"
 
-#: src/components/tables/RowActions.tsx:140
+#: src/components/tables/RowActions.tsx:149
 msgid "Actions"
-msgstr ""
+msgstr "Handlinger"
 
-#: src/components/tables/bom/BomTable.tsx:70
+#: src/components/tables/bom/BomTable.tsx:71
 msgid "This BOM item is defined for a different parent"
-msgstr ""
+msgstr "Denne BOM-artikkelen er definert for en annen overordnet del"
 
-#: src/components/tables/bom/BomTable.tsx:85
+#: src/components/tables/bom/BomTable.tsx:86
 msgid "Part Information"
-msgstr ""
+msgstr "Delinformasjon"
 
-#: src/components/tables/bom/BomTable.tsx:98
+#: src/components/tables/bom/BomTable.tsx:99
 #: src/components/tables/bom/UsedInTable.tsx:76
-#: src/components/tables/build/BuildOrderTable.tsx:32
+#: src/components/tables/build/BuildOrderTable.tsx:33
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:117
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:40
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:61
 msgid "Reference"
-msgstr ""
+msgstr "Referanse"
 
-#: src/components/tables/bom/BomTable.tsx:110
+#: src/components/tables/bom/BomTable.tsx:111
 msgid "Substitutes"
-msgstr ""
+msgstr "Erstatninger"
 
-#: src/components/tables/bom/BomTable.tsx:124
+#: src/components/tables/bom/BomTable.tsx:125
+#: src/components/tables/bom/BomTable.tsx:268
+#: src/components/tables/bom/UsedInTable.tsx:91
 msgid "Optional"
-msgstr ""
+msgstr "Valgfritt"
 
-#: src/components/tables/bom/BomTable.tsx:128
-#: src/components/tables/bom/BomTable.tsx:243
+#: src/components/tables/bom/BomTable.tsx:129
+#: src/components/tables/bom/BomTable.tsx:273
 msgid "Consumable"
-msgstr ""
+msgstr "Forbruksvare"
 
-#: src/components/tables/bom/BomTable.tsx:132
+#: src/components/tables/bom/BomTable.tsx:133
 msgid "Allow Variants"
-msgstr ""
+msgstr "Tillat Varianter"
 
-#: src/components/tables/bom/BomTable.tsx:136
+#: src/components/tables/bom/BomTable.tsx:137
+#: src/components/tables/bom/BomTable.tsx:263
+#: src/components/tables/bom/UsedInTable.tsx:86
 msgid "Gets Inherited"
-msgstr ""
+msgstr "Arves"
 
-#: src/components/tables/bom/BomTable.tsx:142
-#: src/components/tables/part/PartTable.tsx:156
+#: src/components/tables/bom/BomTable.tsx:143
+#: src/components/tables/part/PartTable.tsx:157
 msgid "Price Range"
-msgstr ""
+msgstr "Prisområde"
 
-#: src/components/tables/bom/BomTable.tsx:156
-#: src/components/tables/part/PartTable.tsx:121
-#: src/components/tables/stock/StockItemTable.tsx:147
+#: src/components/tables/bom/BomTable.tsx:151
+#: src/components/tables/part/PartTable.tsx:122
+#: src/components/tables/stock/StockItemTable.tsx:133
+#: src/components/tables/stock/StockItemTable.tsx:254
 msgid "Available"
-msgstr ""
+msgstr "Tilgjengelig"
 
-#: src/components/tables/bom/BomTable.tsx:167
-#: src/components/tables/part/PartTable.tsx:129
+#: src/components/tables/bom/BomTable.tsx:162
+#: src/components/tables/part/PartTable.tsx:130
 msgid "No stock"
-msgstr ""
+msgstr "Ingen lagerbeholdning"
 
 #: src/components/tables/bom/BomTable.tsx:167
 #~ msgid "Available Stock"
 #~ msgstr "Available Stock"
 
-#: src/components/tables/bom/BomTable.tsx:175
+#: src/components/tables/bom/BomTable.tsx:170
 msgid "Includes substitute stock"
-msgstr ""
+msgstr "Inkluderer erstatningsbeholdning"
 
-#: src/components/tables/bom/BomTable.tsx:184
+#: src/components/tables/bom/BomTable.tsx:179
 msgid "Includes variant stock"
-msgstr ""
+msgstr "Inkluderer variantbeholdning"
 
-#: src/components/tables/bom/BomTable.tsx:192
+#: src/components/tables/bom/BomTable.tsx:187
 msgid "On order"
-msgstr ""
+msgstr "I bestilling"
 
-#: src/components/tables/bom/BomTable.tsx:200
-#: src/components/tables/part/PartTable.tsx:97
+#: src/components/tables/bom/BomTable.tsx:195
+#: src/components/tables/part/PartTable.tsx:98
 msgid "Building"
-msgstr ""
+msgstr "Produseres"
 
 #: src/components/tables/bom/BomTable.tsx:200
 #~ msgid "Validate"
 #~ msgstr "Validate"
 
-#: src/components/tables/bom/BomTable.tsx:209
-#: src/components/tables/part/PartTable.tsx:148
-#: src/components/tables/stock/StockItemTable.tsx:183
+#: src/components/tables/bom/BomTable.tsx:204
+#: src/components/tables/part/PartTable.tsx:149
+#: src/components/tables/stock/StockItemTable.tsx:169
 msgid "Stock Information"
-msgstr ""
+msgstr "Lagerinformasjon"
 
-#: src/components/tables/bom/BomTable.tsx:216
+#: src/components/tables/bom/BomTable.tsx:211
 msgid "Can Build"
-msgstr ""
+msgstr "Kan Produsere"
 
-#: src/components/tables/bom/BomTable.tsx:220
+#: src/components/tables/bom/BomTable.tsx:215
 msgid "Consumable item"
-msgstr ""
+msgstr "Forbruksvare"
 
-#: src/components/tables/bom/BomTable.tsx:233
+#: src/components/tables/bom/BomTable.tsx:228
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:213
-#: src/components/tables/purchasing/SupplierPartTable.tsx:130
-#: src/pages/build/BuildDetail.tsx:169
+#: src/components/tables/purchasing/SupplierPartTable.tsx:124
+#: src/pages/build/BuildDetail.tsx:167
 #: src/pages/company/CompanyDetail.tsx:156
-#: src/pages/part/PartDetail.tsx:228
+#: src/pages/part/PartDetail.tsx:236
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:90
 #: src/pages/sales/ReturnOrderDetail.tsx:50
 #: src/pages/sales/SalesOrderDetail.tsx:78
 #: src/pages/stock/StockDetail.tsx:120
 msgid "Notes"
-msgstr ""
+msgstr "Notater"
 
-#: src/components/tables/bom/BomTable.tsx:256
-msgid "View BOM"
-msgstr ""
+#: src/components/tables/bom/BomTable.tsx:238
+msgid "Trackable Part"
+msgstr "Sporbar del"
 
-#: src/components/tables/bom/BomTable.tsx:267
-msgid "Validate BOM line"
-msgstr ""
+#: src/components/tables/bom/BomTable.tsx:239
+msgid "Show trackable items"
+msgstr "Vis sporbare deler"
 
-#: src/components/tables/bom/BomTable.tsx:275
-msgid "Edit Substitutes"
-msgstr ""
-
-#: src/components/tables/bom/BomTable.tsx:289
-msgid "Edit Bom Item"
-msgstr ""
-
-#: src/components/tables/bom/BomTable.tsx:291
-msgid "Bom item updated"
-msgstr ""
-
-#: src/components/tables/bom/BomTable.tsx:306
-msgid "Delete Bom Item"
-msgstr ""
-
-#: src/components/tables/bom/BomTable.tsx:307
-msgid "Bom item deleted"
-msgstr ""
-
-#: src/components/tables/bom/BomTable.tsx:309
-msgid "Are you sure you want to remove this BOM item?"
-msgstr ""
-
+#: src/components/tables/bom/BomTable.tsx:243
 #: src/components/tables/bom/UsedInTable.tsx:31
 msgid "Assembled Part"
-msgstr ""
+msgstr "Sammenstilt del"
+
+#: src/components/tables/bom/BomTable.tsx:244
+msgid "Show asssmbled items"
+msgstr "Vis sammenstilte elementer"
+
+#: src/components/tables/bom/BomTable.tsx:248
+msgid "Has Available Stock"
+msgstr "Har tilgjengelig lagerbeholdning"
+
+#: src/components/tables/bom/BomTable.tsx:249
+msgid "Show items with available stock"
+msgstr "Vis elementer med tilgjengelig lagerbeholdning"
+
+#: src/components/tables/bom/BomTable.tsx:253
+#: src/components/tables/part/PartTable.tsx:92
+msgid "On Order"
+msgstr "I bestilling"
+
+#: src/components/tables/bom/BomTable.tsx:254
+msgid "Show items on order"
+msgstr "Vis elementer i bestilling"
+
+#: src/components/tables/bom/BomTable.tsx:258
+msgid "Validated"
+msgstr "Godkjent"
+
+#: src/components/tables/bom/BomTable.tsx:259
+msgid "Show validated items"
+msgstr "Vis godkjente elementer"
+
+#: src/components/tables/bom/BomTable.tsx:264
+#: src/components/tables/bom/UsedInTable.tsx:87
+msgid "Show inherited items"
+msgstr "Vis arvede elementer"
+
+#: src/components/tables/bom/BomTable.tsx:269
+#: src/components/tables/bom/UsedInTable.tsx:92
+msgid "Show optional items"
+msgstr "Vis valgfrie elementer"
+
+#: src/components/tables/bom/BomTable.tsx:274
+msgid "Show consumable items"
+msgstr "Vis forbruksartikler"
+
+#: src/components/tables/bom/BomTable.tsx:278
+msgid "Has Pricing"
+msgstr "Har prising"
+
+#: src/components/tables/bom/BomTable.tsx:279
+msgid "Show items with pricing"
+msgstr "Vis varer med priser"
+
+#: src/components/tables/bom/BomTable.tsx:290
+msgid "View BOM"
+msgstr "Vis BOM"
+
+#: src/components/tables/bom/BomTable.tsx:301
+msgid "Validate BOM line"
+msgstr "Godkjenn BOM-linje"
+
+#: src/components/tables/bom/BomTable.tsx:309
+msgid "Edit Substitutes"
+msgstr "Rediger erstatninger"
+
+#: src/components/tables/bom/BomTable.tsx:323
+msgid "Edit Bom Item"
+msgstr "Rediger Bom-artikkel"
+
+#: src/components/tables/bom/BomTable.tsx:325
+msgid "Bom item updated"
+msgstr "BOM-artikkel oppdatert"
+
+#: src/components/tables/bom/BomTable.tsx:340
+msgid "Delete Bom Item"
+msgstr "Slett BOM-artikkel"
+
+#: src/components/tables/bom/BomTable.tsx:341
+msgid "Bom item deleted"
+msgstr "BOM-artikkel slettet"
+
+#: src/components/tables/bom/BomTable.tsx:343
+msgid "Are you sure you want to remove this BOM item?"
+msgstr "Er du sikker på at du vil fjerne dette BOM-elementet?"
 
 #: src/components/tables/bom/UsedInTable.tsx:50
 msgid "Required Part"
-msgstr ""
+msgstr "Påkrevd del"
 
-#: src/components/tables/build/BuildOrderTable.tsx:62
+#: src/components/tables/bom/UsedInTable.tsx:96
+#: src/components/tables/build/BuildOrderTable.tsx:110
+#: src/components/tables/part/PartTable.tsx:173
+#: src/components/tables/part/PartVariantTable.tsx:15
+#: src/components/tables/plugin/PluginListTable.tsx:178
+#: src/components/tables/plugin/PluginListTable.tsx:500
+#: src/components/tables/settings/UserTable.tsx:194
+#: src/components/tables/stock/StockItemTable.tsx:233
+msgid "Active"
+msgstr "Aktiv"
+
+#: src/components/tables/bom/UsedInTable.tsx:97
+msgid "Show active assemblies"
+msgstr "Vis aktive sammenstillinger"
+
+#: src/components/tables/bom/UsedInTable.tsx:101
+#: src/components/tables/part/PartTable.tsx:197
+#: src/components/tables/part/PartVariantTable.tsx:30
+msgid "Trackable"
+msgstr "Sporbar"
+
+#: src/components/tables/bom/UsedInTable.tsx:102
+msgid "Show trackable assemblies"
+msgstr "Vis sporbare sammenstillinger"
+
+#: src/components/tables/build/BuildOrderTable.tsx:63
 msgid "Progress"
-msgstr ""
+msgstr "Fremgang"
 
-#: src/components/tables/build/BuildOrderTable.tsx:75
+#: src/components/tables/build/BuildOrderTable.tsx:76
 msgid "Priority"
-msgstr ""
+msgstr "Prioritet"
 
-#: src/components/tables/build/BuildOrderTable.tsx:83
+#: src/components/tables/build/BuildOrderTable.tsx:84
 msgid "Completed"
-msgstr ""
+msgstr "Fullført"
 
-#: src/components/tables/build/BuildOrderTable.tsx:89
+#: src/components/tables/build/BuildOrderTable.tsx:90
 msgid "Issued By"
-msgstr ""
+msgstr "Utstedt av"
 
 #: src/components/tables/build/BuildOrderTable.tsx:99
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:79
 #~ msgid "Created"
 #~ msgstr "Created"
 
-#: src/components/tables/build/BuildOrderTable.tsx:110
-#: src/components/tables/part/PartTable.tsx:175
-#: src/components/tables/plugin/PluginListTable.tsx:218
-#: src/components/tables/settings/UserDrawer.tsx:181
-#: src/components/tables/settings/UserTable.tsx:87
-msgid "Active"
-msgstr ""
+#: src/components/tables/build/BuildOrderTable.tsx:111
+msgid "Show active orders"
+msgstr "Vis aktive ordrer"
 
-#: src/components/tables/build/BuildOrderTable.tsx:115
-msgid "Overdue"
-msgstr ""
+#: src/components/tables/build/BuildOrderTable.tsx:116
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:42
+#: src/components/tables/sales/ReturnOrderTable.tsx:38
+#: src/components/tables/sales/SalesOrderTable.tsx:39
+msgid "Filter by order status"
+msgstr "Filtrer etter ordrestatus"
 
-#: src/components/tables/build/BuildOrderTable.tsx:120
-msgid "Assigned to me"
-msgstr ""
+#: src/components/tables/build/BuildOrderTable.tsx:123
+msgid "Show overdue status"
+msgstr "Vis utløpt status"
 
 #: src/components/tables/company/AddressTable.tsx:42
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:143
 msgid "Primary"
-msgstr ""
+msgstr "Primær"
 
 #: src/components/tables/company/AddressTable.tsx:68
 msgid "Postal Code"
-msgstr ""
+msgstr "Postnummer"
 
 #: src/components/tables/company/AddressTable.tsx:74
 msgid "City"
-msgstr ""
+msgstr "By"
 
 #: src/components/tables/company/AddressTable.tsx:80
 msgid "State / Province"
-msgstr ""
+msgstr "Delstat/provins"
 
 #: src/components/tables/company/AddressTable.tsx:86
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: src/components/tables/company/AddressTable.tsx:92
 msgid "Courier Notes"
-msgstr ""
+msgstr "Notater for bud"
 
 #: src/components/tables/company/AddressTable.tsx:98
 msgid "Internal Notes"
-msgstr ""
+msgstr "Interne notater"
 
 #: src/components/tables/company/AddressTable.tsx:128
 msgid "Edit Address"
-msgstr ""
+msgstr "Rediger adresse"
 
 #: src/components/tables/company/AddressTable.tsx:130
 msgid "Address updated"
-msgstr ""
+msgstr "Adresse oppdatert"
 
 #: src/components/tables/company/AddressTable.tsx:141
 msgid "Delete Address"
-msgstr ""
+msgstr "Slett adresse"
 
 #: src/components/tables/company/AddressTable.tsx:142
 msgid "Address deleted"
-msgstr ""
+msgstr "Adresse slettet"
 
 #: src/components/tables/company/AddressTable.tsx:144
 msgid "Are you sure you want to delete this address?"
-msgstr ""
+msgstr "Er du sikker på at du vil slette denne adressen?"
 
 #: src/components/tables/company/AddressTable.tsx:160
 #: src/components/tables/company/AddressTable.tsx:174
 msgid "Add Address"
-msgstr ""
+msgstr "Legg til adresse"
 
 #: src/components/tables/company/AddressTable.tsx:162
 msgid "Address created"
-msgstr ""
+msgstr "Adresse opprettet"
 
 #: src/components/tables/company/CompanyTable.tsx:32
 msgid "Company Name"
-msgstr ""
+msgstr "Bedriftsnavn"
 
 #: src/components/tables/company/CompanyTable.tsx:50
 #: src/defaults/links.tsx:10
 msgid "Website"
-msgstr ""
+msgstr "Nettside"
 
 #: src/components/tables/company/ContactTable.tsx:41
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: src/components/tables/company/ContactTable.tsx:53
 msgid "Role"
-msgstr ""
+msgstr "Rolle"
 
 #: src/components/tables/company/ContactTable.tsx:76
 msgid "Edit Contact"
-msgstr ""
+msgstr "Rediger kontakt"
 
 #: src/components/tables/company/ContactTable.tsx:78
 msgid "Contact updated"
-msgstr ""
+msgstr "Kontakten er oppdatert"
 
 #: src/components/tables/company/ContactTable.tsx:89
 msgid "Delete Contact"
-msgstr ""
+msgstr "Slett kontakt"
 
 #: src/components/tables/company/ContactTable.tsx:90
 msgid "Contact deleted"
-msgstr ""
+msgstr "Kontakten er slettet"
 
 #: src/components/tables/company/ContactTable.tsx:92
 msgid "Are you sure you want to delete this contact?"
-msgstr ""
+msgstr "Er du sikker på at du vil slette denne kontakten?"
 
 #: src/components/tables/company/ContactTable.tsx:108
 msgid "Create Contact"
-msgstr ""
+msgstr "Opprett kontakt"
 
 #: src/components/tables/company/ContactTable.tsx:110
 msgid "Contact created"
-msgstr ""
+msgstr "Kontakt opprettet"
 
 #: src/components/tables/company/ContactTable.tsx:122
 msgid "Add contact"
-msgstr ""
+msgstr "Legg til kontakt"
 
 #: src/components/tables/general/AttachmentTable.tsx:30
 msgid "Attachment"
-msgstr ""
+msgstr "Vedlegg"
 
 #: src/components/tables/general/AttachmentTable.tsx:47
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 #: src/components/tables/general/AttachmentTable.tsx:56
 msgid "Uploaded"
-msgstr ""
+msgstr "Opplastet"
 
 #: src/components/tables/general/AttachmentTable.tsx:160
 msgid "File uploaded"
-msgstr ""
+msgstr "Fil lastet opp"
 
 #: src/components/tables/general/AttachmentTable.tsx:161
 msgid "File {0} uploaded successfully"
-msgstr ""
+msgstr "Filen {0} ble vellykket opplastet"
 
 #: src/components/tables/general/AttachmentTable.tsx:172
 msgid "Upload Error"
-msgstr ""
+msgstr "Opplastningsfeil"
 
 #: src/components/tables/general/AttachmentTable.tsx:173
 msgid "File could not be uploaded"
-msgstr ""
+msgstr "Kunne ikke laste opp filen"
 
 #: src/components/tables/general/AttachmentTable.tsx:186
 msgid "Add attachment"
-msgstr ""
+msgstr "Legg til vedlegg"
 
 #: src/components/tables/general/AttachmentTable.tsx:205
 msgid "Add external link"
-msgstr ""
+msgstr "Ny ekstern lenke"
 
 #: src/components/tables/general/AttachmentTable.tsx:236
 msgid "No attachments found"
-msgstr ""
+msgstr "Ingen vedlegg funnet"
 
 #: src/components/tables/general/AttachmentTable.tsx:251
 msgid "Upload attachment"
-msgstr ""
+msgstr "Last opp vedlegg"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:24
 msgid "Age"
-msgstr ""
+msgstr "Alder"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:29
-#: src/components/tables/part/PartTable.tsx:50
+#: src/components/tables/part/PartTable.tsx:51
 msgid "Category"
-msgstr ""
+msgstr "Kategori"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:34
 msgid "Notification"
-msgstr ""
+msgstr "Varsel"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:38
+#: src/components/tables/plugin/PluginErrorTable.tsx:37
 msgid "Message"
-msgstr ""
+msgstr "Melding"
 
-#: src/components/tables/part/PartCategoryTable.tsx:31
-#: src/components/tables/stock/StockLocationTable.tsx:31
+#: src/components/tables/part/PartCategoryTable.tsx:33
+#: src/components/tables/stock/StockLocationTable.tsx:57
 msgid "Path"
-msgstr ""
+msgstr "Sti"
 
-#: src/components/tables/part/PartParameterTable.tsx:54
+#: src/components/tables/part/PartCategoryTable.tsx:38
+#: src/components/tables/part/PartCategoryTable.tsx:61
+#: src/components/tables/stock/StockLocationTable.tsx:31
+#: src/components/tables/stock/StockLocationTable.tsx:68
+msgid "Structural"
+msgstr "Strukturell"
+
+#: src/components/tables/part/PartCategoryTable.tsx:56
+#: src/components/tables/part/PartTable.tsx:185
+msgid "Include Subcategories"
+msgstr "Inkluder underkategorier"
+
+#: src/components/tables/part/PartCategoryTable.tsx:57
+msgid "Include subcategories in results"
+msgstr "Inkluder underkategorier i resultatene"
+
+#: src/components/tables/part/PartCategoryTable.tsx:62
+msgid "Show structural categories"
+msgstr "Vis strukturelle kategorier"
+
+#: src/components/tables/part/PartParameterTable.tsx:41
 msgid "Parameter"
-msgstr ""
+msgstr "Parametre"
 
-#: src/components/tables/part/PartParameterTable.tsx:93
-#: src/components/tables/part/PartParameterTemplateTable.tsx:35
-#: src/components/tables/part/PartTable.tsx:45
+#: src/components/tables/part/PartParameterTable.tsx:80
+#: src/components/tables/part/PartParameterTemplateTable.tsx:57
+#: src/components/tables/part/PartTable.tsx:46
 msgid "Units"
-msgstr ""
+msgstr "Enheter"
 
-#: src/components/tables/part/PartParameterTable.tsx:118
+#: src/components/tables/part/PartParameterTable.tsx:100
+#: src/components/tables/part/PartParameterTable.tsx:106
 msgid "Edit Part Parameter"
-msgstr ""
+msgstr "Rediger del-parameter"
 
-#: src/components/tables/part/PartParameterTable.tsx:126
+#: src/components/tables/part/PartParameterTable.tsx:114
 msgid "Part parameter updated"
-msgstr ""
+msgstr "Del-parameter oppdatert"
 
-#: src/components/tables/part/PartParameterTable.tsx:140
+#: src/components/tables/part/PartParameterTable.tsx:123
+#: src/components/tables/part/PartParameterTable.tsx:129
 msgid "Delete Part Parameter"
-msgstr ""
+msgstr "Slett del-parameter"
 
-#: src/components/tables/part/PartParameterTable.tsx:141
+#: src/components/tables/part/PartParameterTable.tsx:130
 msgid "Part parameter deleted"
-msgstr ""
+msgstr "Del-parameter slettet"
 
-#: src/components/tables/part/PartParameterTable.tsx:143
+#: src/components/tables/part/PartParameterTable.tsx:132
 msgid "Are you sure you want to remove this parameter?"
-msgstr ""
+msgstr "Er du sikker på at du vil fjerne dette parameteret?"
 
-#: src/components/tables/part/PartParameterTable.tsx:161
+#: src/components/tables/part/PartParameterTable.tsx:150
 msgid "Add Part Parameter"
-msgstr ""
+msgstr "Legg til del-parameter"
+
+#: src/components/tables/part/PartParameterTable.tsx:159
+msgid "Part parameter added"
+msgstr "Del-parameter lagt til"
 
 #: src/components/tables/part/PartParameterTable.tsx:170
-msgid "Part parameter added"
-msgstr ""
-
-#: src/components/tables/part/PartParameterTable.tsx:181
 msgid "Add parameter"
-msgstr ""
+msgstr "Legg til parameter"
 
-#: src/components/tables/part/PartParameterTable.tsx:198
+#: src/components/tables/part/PartParameterTable.tsx:187
+#: src/components/tables/stock/StockItemTable.tsx:279
 msgid "Include Variants"
-msgstr ""
+msgstr "Inkluder varianter"
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:45
+#: src/components/tables/part/PartParameterTemplateTable.tsx:31
+#: src/components/tables/part/PartParameterTemplateTable.tsx:63
 msgid "Checkbox"
-msgstr ""
+msgstr "Sjekkboks"
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:49
+#: src/components/tables/part/PartParameterTemplateTable.tsx:32
+msgid "Show checkbox templates"
+msgstr "Vis sjekkboks-maler"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:36
+msgid "Has choices"
+msgstr "Har valg"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:37
+msgid "Show templates with choices"
+msgstr "Vis maler med valg"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:41
+#: src/components/tables/part/PartTable.tsx:203
+msgid "Has Units"
+msgstr "Har enheter"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:42
+msgid "Show templates with units"
+msgstr "Vis maler med enheter"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:67
 msgid "Choices"
-msgstr ""
+msgstr "Valg"
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:64
+#: src/components/tables/part/PartParameterTemplateTable.tsx:82
 msgid "Edit Parameter Template"
-msgstr ""
-
-#: src/components/tables/part/PartParameterTemplateTable.tsx:66
-msgid "Parameter template updated"
-msgstr ""
-
-#: src/components/tables/part/PartParameterTemplateTable.tsx:77
-msgid "Delete Parameter Template"
-msgstr ""
-
-#: src/components/tables/part/PartParameterTemplateTable.tsx:78
-msgid "Parameter template deleted"
-msgstr ""
-
-#: src/components/tables/part/PartParameterTemplateTable.tsx:80
-msgid "Are you sure you want to remove this parameter template?"
-msgstr ""
+msgstr "Rediger parametermal"
 
 #: src/components/tables/part/PartParameterTemplateTable.tsx:83
 #~ msgid "Remove parameter template"
 #~ msgstr "Remove parameter template"
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:92
+#: src/components/tables/part/PartParameterTemplateTable.tsx:84
+msgid "Parameter template updated"
+msgstr "Parametermal oppdatert"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:95
+msgid "Delete Parameter Template"
+msgstr "Slett parametermal"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:96
+msgid "Parameter template deleted"
+msgstr "Parametermal slettet"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:98
+msgid "Are you sure you want to remove this parameter template?"
+msgstr "Er du sikker på at du vil fjerne denne parametermalen?"
+
+#: src/components/tables/part/PartParameterTemplateTable.tsx:110
 msgid "Create Parameter Template"
-msgstr ""
+msgstr "Opprett parametermal"
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:94
+#: src/components/tables/part/PartParameterTemplateTable.tsx:112
 msgid "Parameter template created"
-msgstr ""
+msgstr "Parametermal opprettet"
 
-#: src/components/tables/part/PartParameterTemplateTable.tsx:102
+#: src/components/tables/part/PartParameterTemplateTable.tsx:120
 msgid "Add parameter template"
-msgstr ""
+msgstr "Legg til parametermal"
 
-#: src/components/tables/part/PartTable.tsx:39
+#: src/components/tables/part/PartTable.tsx:40
 msgid "IPN"
-msgstr ""
+msgstr "IPN"
 
-#: src/components/tables/part/PartTable.tsx:62
-#: src/components/tables/stock/StockItemTable.tsx:50
+#: src/components/tables/part/PartTable.tsx:63
+#: src/components/tables/stock/StockItemTable.tsx:36
 #: src/defaults/links.tsx:28
 #: src/defaults/menuItems.tsx:38
-#: src/pages/Index/Settings/SystemSettings.tsx:230
-#: src/pages/part/PartDetail.tsx:98
+#: src/pages/Index/Settings/SystemSettings.tsx:201
+#: src/pages/part/PartDetail.tsx:99
 #: src/pages/stock/LocationDetail.tsx:63
 #: src/pages/stock/StockDetail.tsx:135
 msgid "Stock"
-msgstr ""
+msgstr "Lagerbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:82
+#: src/components/tables/part/PartTable.tsx:83
 msgid "Minimum stock"
-msgstr ""
+msgstr "Minimumsbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:91
-msgid "On Order"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:104
+#: src/components/tables/part/PartTable.tsx:105
 msgid "Build Order Allocations"
-msgstr ""
+msgstr "Produksjonsordre-tildelinger"
 
-#: src/components/tables/part/PartTable.tsx:113
+#: src/components/tables/part/PartTable.tsx:114
 msgid "Sales Order Allocations"
-msgstr ""
+msgstr "Salgsordretildelinger"
 
-#: src/components/tables/part/PartTable.tsx:176
+#: src/components/tables/part/PartTable.tsx:174
 msgid "Filter by part active status"
-msgstr ""
+msgstr "Filtrer etter del aktiv-status"
 
-#: src/components/tables/part/PartTable.tsx:181
+#: src/components/tables/part/PartTable.tsx:179
+#: src/components/tables/stock/StockItemTable.tsx:244
 msgid "Assembly"
-msgstr ""
+msgstr "Sammenstilling"
 
-#: src/components/tables/part/PartTable.tsx:182
+#: src/components/tables/part/PartTable.tsx:180
 msgid "Filter by assembly attribute"
-msgstr ""
+msgstr "Filtrer etter sammenstillingsattributt"
 
-#: src/components/tables/part/PartTable.tsx:187
-msgid "Include Subcategories"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:188
+#: src/components/tables/part/PartTable.tsx:186
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Inkluder deler i underkategorier"
 
-#: src/components/tables/part/PartTable.tsx:193
+#: src/components/tables/part/PartTable.tsx:191
 msgid "Component"
-msgstr ""
+msgstr "Komponent"
 
-#: src/components/tables/part/PartTable.tsx:194
+#: src/components/tables/part/PartTable.tsx:192
 msgid "Filter by component attribute"
-msgstr ""
+msgstr "Filtrer etter komponentattributt"
 
-#: src/components/tables/part/PartTable.tsx:199
-msgid "Trackable"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:200
+#: src/components/tables/part/PartTable.tsx:198
 msgid "Filter by trackable attribute"
-msgstr ""
+msgstr "Filtrer etter sporbar attributt"
 
-#: src/components/tables/part/PartTable.tsx:205
-msgid "Has Units"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:206
+#: src/components/tables/part/PartTable.tsx:204
 msgid "Filter by parts which have units"
-msgstr ""
+msgstr "Filtrer etter deler som har enheter"
 
-#: src/components/tables/part/PartTable.tsx:211
+#: src/components/tables/part/PartTable.tsx:209
 msgid "Has IPN"
-msgstr ""
+msgstr "Har IPN"
+
+#: src/components/tables/part/PartTable.tsx:210
+msgid "Filter by parts which have an internal part number"
+msgstr "Filtrer etter deler som har internt delnummer"
 
 #: src/components/tables/part/PartTable.tsx:211
 #~ msgid "Detail"
 #~ msgstr "Detail"
 
-#: src/components/tables/part/PartTable.tsx:212
-msgid "Filter by parts which have an internal part number"
-msgstr ""
-
-#: src/components/tables/part/PartTable.tsx:217
+#: src/components/tables/part/PartTable.tsx:215
 msgid "Has Stock"
-msgstr ""
+msgstr "Har beholdning"
 
-#: src/components/tables/part/PartTable.tsx:218
+#: src/components/tables/part/PartTable.tsx:216
 msgid "Filter by parts which have stock"
-msgstr ""
+msgstr "Filtrer etter deler som har lagerbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:223
+#: src/components/tables/part/PartTable.tsx:221
 #: src/defaults/dashboardItems.tsx:50
 msgid "Low Stock"
-msgstr ""
+msgstr "Lav lagerbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:224
+#: src/components/tables/part/PartTable.tsx:222
 msgid "Filter by parts which have low stock"
-msgstr ""
+msgstr "Filtrer etter deler som har lav lagerbeholdning"
 
-#: src/components/tables/part/PartTable.tsx:229
+#: src/components/tables/part/PartTable.tsx:227
 msgid "Purchaseable"
-msgstr ""
+msgstr "Kjøpbar"
 
-#: src/components/tables/part/PartTable.tsx:230
+#: src/components/tables/part/PartTable.tsx:228
 msgid "Filter by parts which are purchaseable"
-msgstr ""
+msgstr "Filtrer etter deler som kan kjøpes"
 
-#: src/components/tables/part/PartTable.tsx:235
+#: src/components/tables/part/PartTable.tsx:233
 msgid "Salable"
-msgstr ""
+msgstr "Salgbar"
 
-#: src/components/tables/part/PartTable.tsx:236
+#: src/components/tables/part/PartTable.tsx:234
 msgid "Filter by parts which are salable"
-msgstr ""
+msgstr "Filtrer etter deler som kan selges"
 
-#: src/components/tables/part/PartTable.tsx:241
-#: src/components/tables/part/PartTable.tsx:245
+#: src/components/tables/part/PartTable.tsx:239
+#: src/components/tables/part/PartTable.tsx:243
+#: src/components/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
-msgstr ""
+msgstr "Virtuell"
 
-#: src/components/tables/part/PartTable.tsx:242
+#: src/components/tables/part/PartTable.tsx:240
 msgid "Filter by parts which are virtual"
-msgstr ""
+msgstr "Filtrer etter deler som er virtuelle"
 
-#: src/components/tables/part/PartTable.tsx:246
+#: src/components/tables/part/PartTable.tsx:244
 msgid "Not Virtual"
-msgstr ""
+msgstr "Ikke virtuell"
+
+#: src/components/tables/part/PartVariantTable.tsx:16
+msgid "Show active variants"
+msgstr "Vis aktive varianter"
+
+#: src/components/tables/part/PartVariantTable.tsx:20
+msgid "Template"
+msgstr "Mal"
+
+#: src/components/tables/part/PartVariantTable.tsx:21
+msgid "Show template variants"
+msgstr "Vis malvarianter"
+
+#: src/components/tables/part/PartVariantTable.tsx:26
+msgid "Show virtual variants"
+msgstr "Vis virtuelle varianter"
+
+#: src/components/tables/part/PartVariantTable.tsx:31
+msgid "Show trackable variants"
+msgstr "Vis sporbare varianter"
 
 #: src/components/tables/part/RelatedPartTable.tsx:71
 msgid "Add Related Part"
-msgstr ""
+msgstr "Legg til relatert del"
 
 #: src/components/tables/part/RelatedPartTable.tsx:79
 msgid "Related Part"
-msgstr ""
+msgstr "Relatert Del"
 
 #: src/components/tables/part/RelatedPartTable.tsx:82
 msgid "Related part added"
-msgstr ""
+msgstr "Relatert del lagt til"
 
 #: src/components/tables/part/RelatedPartTable.tsx:92
 msgid "Add related part"
-msgstr ""
+msgstr "Legg til relatert del"
 
 #: src/components/tables/part/RelatedPartTable.tsx:113
 msgid "Delete Related Part"
-msgstr ""
+msgstr "Slett relatert del"
 
 #: src/components/tables/part/RelatedPartTable.tsx:114
 msgid "Related part deleted"
-msgstr ""
+msgstr "Relatert del slettet"
 
 #: src/components/tables/part/RelatedPartTable.tsx:115
 msgid "Are you sure you want to remove this relationship?"
-msgstr ""
+msgstr "Er du sikker på at du vil fjerne denne relasjonen?"
 
-#: src/components/tables/plugin/PluginListTable.tsx:28
-msgid "Plugin is active"
-msgstr ""
+#: src/components/tables/plugin/PluginErrorTable.tsx:29
+msgid "Stage"
+msgstr "Stadium"
 
-#: src/components/tables/plugin/PluginListTable.tsx:34
-msgid "Plugin is inactive"
-msgstr ""
-
-#: src/components/tables/plugin/PluginListTable.tsx:41
-msgid "Plugin is not installed"
-msgstr ""
-
-#: src/components/tables/plugin/PluginListTable.tsx:58
-msgid "Plugin"
-msgstr ""
-
-#: src/components/tables/plugin/PluginListTable.tsx:80
-msgid "Description not available"
-msgstr ""
+#: src/components/tables/plugin/PluginListTable.tsx:103
+msgid "Plugin with id {id} not found"
+msgstr "Utvidelse med id {id} ikke funnet"
 
 #: src/components/tables/plugin/PluginListTable.tsx:105
-msgid "Activate Plugin"
-msgstr ""
-
-#: src/components/tables/plugin/PluginListTable.tsx:105
-msgid "Deactivate Plugin"
-msgstr ""
-
-#: src/components/tables/plugin/PluginListTable.tsx:114
-msgid "Confirm plugin activation"
-msgstr ""
-
-#: src/components/tables/plugin/PluginListTable.tsx:115
-msgid "Confirm plugin deactivation"
-msgstr ""
-
-#: src/components/tables/plugin/PluginListTable.tsx:121
-msgid "The following plugin will be activated"
-msgstr ""
+msgid "An error occurred while fetching plugin details"
+msgstr "Det oppstod en feil under henting av utvidelsesdetaljer"
 
 #: src/components/tables/plugin/PluginListTable.tsx:122
-msgid "The following plugin will be deactivated"
-msgstr ""
+msgid "Plugin Actions"
+msgstr "Handlinger for utvidelser"
 
-#: src/components/tables/plugin/PluginListTable.tsx:133
-msgid "Confirm"
-msgstr ""
+#: src/components/tables/plugin/PluginListTable.tsx:126
+#: src/components/tables/plugin/PluginListTable.tsx:129
+msgid "Edit plugin"
+msgstr "Rediger utvidelse"
 
-#: src/components/tables/plugin/PluginListTable.tsx:143
-msgid "Activating plugin"
-msgstr ""
+#: src/components/tables/plugin/PluginListTable.tsx:140
+#: src/components/tables/plugin/PluginListTable.tsx:141
+msgid "Reload"
+msgstr "Last på nytt"
 
-#: src/components/tables/plugin/PluginListTable.tsx:143
-msgid "Deactivating plugin"
-msgstr ""
+#: src/components/tables/plugin/PluginListTable.tsx:154
+msgid "Plugin information"
+msgstr "Informasjon om utvidelse"
 
-#: src/components/tables/plugin/PluginListTable.tsx:153
-msgid "Plugin updated"
-msgstr ""
+#: src/components/tables/plugin/PluginListTable.tsx:165
+msgid "Author"
+msgstr "Forfatter"
 
-#: src/components/tables/plugin/PluginListTable.tsx:155
-msgid "The plugin was activated"
-msgstr ""
+#: src/components/tables/plugin/PluginListTable.tsx:170
+msgid "Date"
+msgstr "Dato"
 
-#: src/components/tables/plugin/PluginListTable.tsx:156
-msgid "The plugin was deactivated"
-msgstr ""
+#: src/components/tables/plugin/PluginListTable.tsx:186
+msgid "Package information"
+msgstr "Informasjon om pakken"
 
-#: src/components/tables/plugin/PluginListTable.tsx:164
-msgid "Error updating plugin"
-msgstr ""
+#: src/components/tables/plugin/PluginListTable.tsx:191
+msgid "Installation path"
+msgstr "Installasjonssti"
 
-#: src/components/tables/plugin/PluginListTable.tsx:181
-msgid "Deactivate"
-msgstr ""
-
-#: src/components/tables/plugin/PluginListTable.tsx:190
-msgid "Activate"
-msgstr ""
-
-#: src/components/tables/plugin/PluginListTable.tsx:223
+#: src/components/tables/plugin/PluginListTable.tsx:196
+#: src/components/tables/plugin/PluginListTable.tsx:505
 msgid "Builtin"
-msgstr ""
+msgstr "Innebygd"
 
-#: src/components/tables/plugin/PluginListTable.tsx:228
+#: src/components/tables/plugin/PluginListTable.tsx:207
+msgid "Plugin settings"
+msgstr "Innstillinger for Utvidelser"
+
+#: src/components/tables/plugin/PluginListTable.tsx:224
+msgid "Plugin is active"
+msgstr "Utvidelsen er aktiv"
+
+#: src/components/tables/plugin/PluginListTable.tsx:230
+msgid "Plugin is inactive"
+msgstr "Utvidelsen er inaktiv"
+
+#: src/components/tables/plugin/PluginListTable.tsx:237
+msgid "Plugin is not installed"
+msgstr "Utvidelsen er ikke installert"
+
+#: src/components/tables/plugin/PluginListTable.tsx:259
+msgid "Plugin"
+msgstr "Utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:281
+msgid "Description not available"
+msgstr "Beskrivelse ikke tilgjengelig"
+
+#: src/components/tables/plugin/PluginListTable.tsx:306
+msgid "Activate Plugin"
+msgstr "Aktivér utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:306
+msgid "Deactivate Plugin"
+msgstr "Deaktivér utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:315
+msgid "Confirm plugin activation"
+msgstr "Bekreft aktivering av utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:316
+msgid "Confirm plugin deactivation"
+msgstr "Bekreft deaktivering av utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:322
+msgid "The following plugin will be activated"
+msgstr "Følgende utvidelse vil bli aktivert"
+
+#: src/components/tables/plugin/PluginListTable.tsx:323
+msgid "The following plugin will be deactivated"
+msgstr "Følgende utvidelse vil bli deaktivert"
+
+#: src/components/tables/plugin/PluginListTable.tsx:334
+msgid "Confirm"
+msgstr "Bekreft"
+
+#: src/components/tables/plugin/PluginListTable.tsx:344
+msgid "Activating plugin"
+msgstr "Aktiverer utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:344
+msgid "Deactivating plugin"
+msgstr "Deaktiverer utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:354
+msgid "Plugin updated"
+msgstr "Utvidelse oppdatert"
+
+#: src/components/tables/plugin/PluginListTable.tsx:356
+msgid "The plugin was activated"
+msgstr "Utvidelsen ble aktivert"
+
+#: src/components/tables/plugin/PluginListTable.tsx:357
+msgid "The plugin was deactivated"
+msgstr "Utvidelsen ble deaktivert"
+
+#: src/components/tables/plugin/PluginListTable.tsx:365
+msgid "Error updating plugin"
+msgstr "Feil ved oppdatering av utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:382
+msgid "Deactivate"
+msgstr "Deaktiver"
+
+#: src/components/tables/plugin/PluginListTable.tsx:391
+msgid "Activate"
+msgstr "Aktivér"
+
+#: src/components/tables/plugin/PluginListTable.tsx:405
+msgid "Install plugin"
+msgstr "Installer Utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:413
+msgid "Install"
+msgstr "Installer"
+
+#: src/components/tables/plugin/PluginListTable.tsx:417
+msgid "Plugin installed successfully"
+msgstr "Utvidelse installert"
+
+#: src/components/tables/plugin/PluginListTable.tsx:438
+msgid "Plugins reloaded"
+msgstr "Utvidelser lastet inn på nytt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:439
+msgid "Plugins were reloaded successfully"
+msgstr "Utvidelser ble lastet inn på nytt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:455
+msgid "Reload Plugins"
+msgstr "Last utvidelser på nytt"
+
+#: src/components/tables/plugin/PluginListTable.tsx:464
+msgid "Install Plugin"
+msgstr "Installer Utvidelse"
+
+#: src/components/tables/plugin/PluginListTable.tsx:477
+msgid "Plugin detail"
+msgstr "Utvidelesdetaljer"
+
+#: src/components/tables/plugin/PluginListTable.tsx:510
 msgid "Sample"
-msgstr ""
+msgstr "Eksempel"
 
-#: src/components/tables/plugin/PluginListTable.tsx:233
+#: src/components/tables/plugin/PluginListTable.tsx:515
+#: src/components/tables/stock/StockItemTable.tsx:284
 msgid "Installed"
-msgstr ""
+msgstr "Installert"
+
+#: src/components/tables/purchasing/ManufacturerPartTable.tsx:37
+#: src/components/tables/purchasing/SupplierPartTable.tsx:65
+#: src/pages/company/ManufacturerDetail.tsx:8
+msgid "Manufacturer"
+msgstr "Produsent"
+
+#: src/components/tables/purchasing/ManufacturerPartTable.tsx:52
+msgid "Manufacturer Part Number"
+msgstr "Produsentens delenummer"
+
+#: src/components/tables/purchasing/ManufacturerPartTable.tsx:77
+msgid "Edit Manufacturer Part"
+msgstr "Rediger produsentdel"
+
+#: src/components/tables/purchasing/ManufacturerPartTable.tsx:80
+msgid "Manufacturer part updated"
+msgstr "Produsentdel oppdatert"
+
+#: src/components/tables/purchasing/ManufacturerPartTable.tsx:91
+msgid "Delete Manufacturer Part"
+msgstr "Slett produsentdel"
+
+#: src/components/tables/purchasing/ManufacturerPartTable.tsx:92
+msgid "Manufacturer part deleted"
+msgstr "Produsentdel slettet"
+
+#: src/components/tables/purchasing/ManufacturerPartTable.tsx:94
+msgid "Are you sure you want to remove this manufacturer part?"
+msgstr "Er du sikker på at du vil fjerne denne produsentdelen?"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:53
 msgid "Receive line item"
-msgstr ""
+msgstr "Motta ordrelinje"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:55
 #~ msgid "Receive"
@@ -1829,692 +2137,852 @@ msgstr ""
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:74
 msgid "Edit Line Item"
-msgstr ""
+msgstr "Rediger ordrelinje"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:77
 msgid "Line item updated"
-msgstr ""
+msgstr "Ordrelinje oppdatert"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:110
 msgid "Part Description"
-msgstr ""
+msgstr "Delbeskrivelse"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:135
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:171
-#: src/components/tables/purchasing/SupplierPartTable.tsx:102
-#: src/components/tables/purchasing/SupplierPartTable.tsx:122
+#: src/components/tables/purchasing/SupplierPartTable.tsx:96
+#: src/components/tables/purchasing/SupplierPartTable.tsx:116
 msgid "Pack Quantity"
-msgstr ""
+msgstr "Pakkeantall"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:141
 msgid "Total Quantity"
-msgstr ""
+msgstr "Totalt Antall"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:157
 msgid "Received"
-msgstr ""
+msgstr "Mottatt"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:176
 msgid "Supplier Code"
-msgstr ""
+msgstr "Leverandørkode"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:183
 msgid "Supplier Link"
-msgstr ""
+msgstr "Leverandørlenke"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:190
 msgid "Manufacturer Code"
-msgstr ""
+msgstr "Produsentens kode"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:198
 msgid "Unit Price"
-msgstr ""
+msgstr "Enhetspris"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:204
 msgid "Destination"
-msgstr ""
+msgstr "Destinasjon"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:222
 msgid "Add Line Item"
-msgstr ""
+msgstr "Legg til ordrelinje"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:228
 msgid "Line item added"
-msgstr ""
+msgstr "Ordrelinje lagt til"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:237
 msgid "Add line item"
-msgstr ""
+msgstr "Legg til ordrelinje"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:243
 msgid "Receive items"
-msgstr ""
+msgstr "Motta artikler"
 
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:48
-#: src/components/tables/purchasing/SupplierPartTable.tsx:48
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:69
+#: src/components/tables/purchasing/SupplierPartTable.tsx:42
 #: src/pages/company/SupplierDetail.tsx:8
 msgid "Supplier"
-msgstr ""
+msgstr "Leverandør"
 
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:64
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:85
 msgid "Supplier Reference"
-msgstr ""
+msgstr "Leverandørreferanse"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:71
-#: src/pages/company/ManufacturerDetail.tsx:8
-msgid "Manufacturer"
-msgstr ""
-
-#: src/components/tables/purchasing/SupplierPartTable.tsx:87
+#: src/components/tables/purchasing/SupplierPartTable.tsx:81
 msgid "MPN"
-msgstr ""
+msgstr "MPN"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:92
+#: src/components/tables/purchasing/SupplierPartTable.tsx:86
+#: src/components/tables/stock/StockItemTable.tsx:269
 msgid "In Stock"
-msgstr ""
+msgstr "På lager"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:97
+#: src/components/tables/purchasing/SupplierPartTable.tsx:91
 msgid "Packaging"
-msgstr ""
+msgstr "Emballasje"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:113
+#: src/components/tables/purchasing/SupplierPartTable.tsx:107
 msgid "Base units"
-msgstr ""
+msgstr "Basisenhet"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:135
+#: src/components/tables/purchasing/SupplierPartTable.tsx:129
 msgid "Availability"
-msgstr ""
+msgstr "Tilgjengelighet"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:144
+#: src/components/tables/purchasing/SupplierPartTable.tsx:138
 msgid "Updated"
-msgstr ""
+msgstr "Oppdatert"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:163
+#: src/components/tables/purchasing/SupplierPartTable.tsx:157
 msgid "Add Supplier Part"
-msgstr ""
+msgstr "Legg til leverandørdel"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:166
+#: src/components/tables/purchasing/SupplierPartTable.tsx:160
 msgid "Supplier part created"
-msgstr ""
+msgstr "Leverandørdel opprettet"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:175
+#: src/components/tables/purchasing/SupplierPartTable.tsx:169
 msgid "Add supplier part"
-msgstr ""
+msgstr "Legg til leverandørdel"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:196
+#: src/components/tables/purchasing/SupplierPartTable.tsx:191
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "Rediger Leverandørdel"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:199
+#: src/components/tables/purchasing/SupplierPartTable.tsx:194
 msgid "Supplier part updated"
-msgstr ""
+msgstr "Leverandørdel oppdatert"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:210
+#: src/components/tables/purchasing/SupplierPartTable.tsx:205
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Slett Leverandørdel"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:211
+#: src/components/tables/purchasing/SupplierPartTable.tsx:206
 msgid "Supplier part deleted"
-msgstr ""
+msgstr "Leverandørdel slettet"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:213
+#: src/components/tables/purchasing/SupplierPartTable.tsx:208
 msgid "Are you sure you want to remove this supplier part?"
-msgstr ""
+msgstr "Er du sikker på at du vil fjerne denne leverandørdelen?"
 
-#: src/components/tables/sales/ReturnOrderTable.tsx:42
-#: src/components/tables/sales/SalesOrderTable.tsx:44
+#: src/components/tables/sales/ReturnOrderTable.tsx:61
+#: src/components/tables/sales/SalesOrderTable.tsx:65
 #: src/pages/company/CustomerDetail.tsx:8
 msgid "Customer"
-msgstr ""
+msgstr "Kunde"
 
-#: src/components/tables/sales/ReturnOrderTable.tsx:58
-#: src/components/tables/sales/SalesOrderTable.tsx:60
+#: src/components/tables/sales/ReturnOrderTable.tsx:77
+#: src/components/tables/sales/SalesOrderTable.tsx:81
 msgid "Customer Reference"
-msgstr ""
+msgstr "Kundereferanse"
 
-#: src/components/tables/sales/ReturnOrderTable.tsx:69
+#: src/components/tables/sales/ReturnOrderTable.tsx:88
 msgid "Total Cost"
-msgstr ""
+msgstr "Total kostnad"
 
 #: src/components/tables/settings/CurrencyTable.tsx:28
 msgid "Rate"
-msgstr ""
+msgstr "Kurs"
 
 #: src/components/tables/settings/CurrencyTable.tsx:40
 msgid "Exchange rates updated"
-msgstr ""
+msgstr "Valutakurser oppdatert"
 
 #: src/components/tables/settings/CurrencyTable.tsx:46
 msgid "Exchange rate update error"
-msgstr ""
+msgstr "Feil udner oppdatering av valutakurs"
 
 #: src/components/tables/settings/CurrencyTable.tsx:57
 msgid "Refresh currency exchange rates"
-msgstr ""
+msgstr "Oppdater valutakursene"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:37
 msgid "Definition"
-msgstr ""
+msgstr "Definisjon"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:43
 msgid "Symbol"
-msgstr ""
+msgstr "Symbol"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:59
 msgid "Edit custom unit"
-msgstr ""
+msgstr "Rediger egendefinert enhet"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:66
 msgid "Custom unit updated"
-msgstr ""
+msgstr "Egendefinert enhet oppdatert"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:76
 msgid "Delete custom unit"
-msgstr ""
+msgstr "Slett egendefinert enhet"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:77
 msgid "Custom unit deleted"
-msgstr ""
+msgstr "Egendefinert enhet slettet"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:79
 msgid "Are you sure you want to remove this custom unit?"
-msgstr ""
+msgstr "Er du sikker på at du vil fjerne denne egendefinerte enheten?"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:91
 #: src/components/tables/settings/CustomUnitsTable.tsx:107
 msgid "Add custom unit"
-msgstr ""
+msgstr "Legg til egendefinert enhet"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:97
 msgid "Custom unit created"
-msgstr ""
-
-#: src/components/tables/settings/GroupTable.tsx:40
-msgid "Edit group"
-msgstr ""
+msgstr "Egendefinert enhet opprettet"
 
 #: src/components/tables/settings/GroupTable.tsx:45
-msgid "Group updated"
-msgstr ""
+#~ msgid "Group updated"
+#~ msgstr "Group updated"
 
-#: src/components/tables/settings/GroupTable.tsx:54
+#: src/components/tables/settings/GroupTable.tsx:48
+msgid "Group with id {id} not found"
+msgstr "Gruppe med id {id} er ikke funnet"
+
+#: src/components/tables/settings/GroupTable.tsx:50
+msgid "An error occurred while fetching group details"
+msgstr "Det oppstod en feil under henting av gruppedetaljer"
+
+#: src/components/tables/settings/GroupTable.tsx:74
+msgid "Permission set"
+msgstr "Tillatelse satt"
+
+#: src/components/tables/settings/GroupTable.tsx:115
 msgid "Delete group"
-msgstr ""
+msgstr "Slett gruppe"
 
-#: src/components/tables/settings/GroupTable.tsx:55
+#: src/components/tables/settings/GroupTable.tsx:116
 msgid "Group deleted"
-msgstr ""
+msgstr "Gruppe slettet"
 
-#: src/components/tables/settings/GroupTable.tsx:57
+#: src/components/tables/settings/GroupTable.tsx:118
 msgid "Are you sure you want to delete this group?"
-msgstr ""
+msgstr "Er du sikker på at du vil slette denne gruppen?"
 
-#: src/components/tables/settings/GroupTable.tsx:67
-#: src/components/tables/settings/GroupTable.tsx:81
+#: src/components/tables/settings/GroupTable.tsx:128
+#: src/components/tables/settings/GroupTable.tsx:142
 msgid "Add group"
-msgstr ""
+msgstr "Legg til gruppe"
 
-#: src/components/tables/settings/GroupTable.tsx:70
+#: src/components/tables/settings/GroupTable.tsx:131
 msgid "Added group"
-msgstr ""
+msgstr "Gruppe lagt til"
+
+#: src/components/tables/settings/GroupTable.tsx:152
+msgid "Edit group"
+msgstr "Rediger gruppe"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:49
 msgid "Edit project code"
-msgstr ""
+msgstr "Rediger prosjektkode"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:56
 msgid "Project code updated"
-msgstr ""
+msgstr "Prosjektkoden er oppdatert"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:66
 msgid "Delete project code"
-msgstr ""
+msgstr "Slett prosjektkode"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:67
 msgid "Project code deleted"
-msgstr ""
+msgstr "Prosjektkoden er slettet"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:69
 msgid "Are you sure you want to remove this project code?"
-msgstr ""
+msgstr "Er du sikker på at du vil fjerne denne prosjektkoden?"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:81
 #: src/components/tables/settings/ProjectCodeTable.tsx:96
 msgid "Add project code"
-msgstr ""
+msgstr "Legg til prosjektkode"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:88
 msgid "Added project code"
-msgstr ""
+msgstr "Prosjektkode lagt til"
 
 #: src/components/tables/settings/UserDrawer.tsx:92
-msgid "User permission changed successfully"
-msgstr ""
+#~ msgid "User permission changed successfully"
+#~ msgstr "User permission changed successfully"
 
 #: src/components/tables/settings/UserDrawer.tsx:93
-msgid "Some changes might only take effect after the user refreshes their login."
-msgstr ""
+#~ msgid "Some changes might only take effect after the user refreshes their login."
+#~ msgstr "Some changes might only take effect after the user refreshes their login."
 
 #: src/components/tables/settings/UserDrawer.tsx:118
-msgid "Changed user active status successfully"
-msgstr ""
+#~ msgid "Changed user active status successfully"
+#~ msgstr "Changed user active status successfully"
 
 #: src/components/tables/settings/UserDrawer.tsx:119
-msgid "Set to {active}"
-msgstr ""
+#~ msgid "Set to {active}"
+#~ msgstr "Set to {active}"
 
 #: src/components/tables/settings/UserDrawer.tsx:142
-msgid "User details for {0}"
-msgstr ""
-
-#: src/components/tables/settings/UserDrawer.tsx:148
-#: src/pages/company/CompanyDetail.tsx:73
-#: src/pages/part/PartDetail.tsx:87
-#: src/pages/stock/StockDetail.tsx:69
-msgid "Details"
-msgstr ""
-
-#: src/components/tables/settings/UserDrawer.tsx:165
-#: src/components/tables/settings/UserTable.tsx:61
-msgid "First Name"
-msgstr ""
-
-#: src/components/tables/settings/UserDrawer.tsx:170
-#: src/components/tables/settings/UserTable.tsx:66
-msgid "Last Name"
-msgstr ""
+#~ msgid "User details for {0}"
+#~ msgstr "User details for {0}"
 
 #: src/components/tables/settings/UserDrawer.tsx:176
-msgid "Rights"
-msgstr ""
+#~ msgid "Rights"
+#~ msgstr "Rights"
 
-#: src/components/tables/settings/UserDrawer.tsx:184
-#: src/components/tables/settings/UserTable.tsx:79
-msgid "Staff"
-msgstr ""
+#: src/components/tables/settings/UserTable.tsx:66
+msgid "User with id {id} not found"
+msgstr "Bruker med Id {id} ble ikke funnet"
 
-#: src/components/tables/settings/UserDrawer.tsx:190
-#: src/components/tables/settings/UserTable.tsx:83
-msgid "Superuser"
-msgstr ""
+#: src/components/tables/settings/UserTable.tsx:68
+msgid "An error occurred while fetching user details"
+msgstr "Det oppstod en feil under henting av brukerdetaljer"
 
-#: src/components/tables/settings/UserDrawer.tsx:200
-#: src/components/tables/settings/UserTable.tsx:72
-#: src/pages/Index/Settings/AdminCenter.tsx:38
-msgid "Groups"
-msgstr ""
+#: src/components/tables/settings/UserTable.tsx:86
+msgid "Is Active"
+msgstr "Er aktiv"
 
-#: src/components/tables/settings/UserDrawer.tsx:204
-msgid "No groups"
-msgstr ""
+#: src/components/tables/settings/UserTable.tsx:87
+msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
+msgstr "Markerer om denne brukeren skal behandles som aktiv. Fjern avmerkingen istedet for å slette kontoer."
 
-#: src/components/tables/settings/UserTable.tsx:99
-msgid "Edit user"
-msgstr ""
+#: src/components/tables/settings/UserTable.tsx:91
+msgid "Is Staff"
+msgstr "Er ansatte"
+
+#: src/components/tables/settings/UserTable.tsx:92
+msgid "Designates whether the user can log into the django admin site."
+msgstr "Markerer om brukeren kan logge inn til Django-administrasjonssiden."
+
+#: src/components/tables/settings/UserTable.tsx:96
+msgid "Is Superuser"
+msgstr "Er Superbruker"
+
+#: src/components/tables/settings/UserTable.tsx:97
+msgid "Designates that this user has all permissions without explicitly assigning them."
+msgstr "Markerer at denne brukeren har alle tillatelser uten å eksplisitt tilordne dem."
+
+#: src/components/tables/settings/UserTable.tsx:103
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:19
+msgid "Info"
+msgstr "Info"
 
 #: src/components/tables/settings/UserTable.tsx:106
-msgid "User updated"
-msgstr ""
+#~ msgid "User updated"
+#~ msgstr "User updated"
 
-#: src/components/tables/settings/UserTable.tsx:115
-msgid "Delete user"
-msgstr ""
-
-#: src/components/tables/settings/UserTable.tsx:116
-msgid "User deleted"
-msgstr ""
+#: src/components/tables/settings/UserTable.tsx:107
+msgid "You cannot edit the rights for the currently logged-in user."
+msgstr "Du kan ikke redigere rettighetene for brukeren som er logget inn."
 
 #: src/components/tables/settings/UserTable.tsx:117
 #~ msgid "user deleted"
 #~ msgstr "user deleted"
 
-#: src/components/tables/settings/UserTable.tsx:118
+#: src/components/tables/settings/UserTable.tsx:121
+#: src/components/tables/settings/UserTable.tsx:179
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:18
+msgid "Groups"
+msgstr "Grupper"
+
+#: src/components/tables/settings/UserTable.tsx:133
+msgid "No groups"
+msgstr "Ingen grupper"
+
+#: src/components/tables/settings/UserTable.tsx:168
+msgid "First Name"
+msgstr "Fornavn"
+
+#: src/components/tables/settings/UserTable.tsx:173
+msgid "Last Name"
+msgstr "Etternavn"
+
+#: src/components/tables/settings/UserTable.tsx:186
+msgid "Staff"
+msgstr "Personale"
+
+#: src/components/tables/settings/UserTable.tsx:190
+msgid "Superuser"
+msgstr "Superbruker"
+
+#: src/components/tables/settings/UserTable.tsx:209
+msgid "Delete user"
+msgstr "Slett bruker"
+
+#: src/components/tables/settings/UserTable.tsx:210
+msgid "User deleted"
+msgstr "Bruker slettet"
+
+#: src/components/tables/settings/UserTable.tsx:212
 msgid "Are you sure you want to delete this user?"
-msgstr ""
+msgstr "Er du sikker på at du vil slette denne brukeren?"
 
-#: src/components/tables/settings/UserTable.tsx:128
-#: src/components/tables/settings/UserTable.tsx:144
+#: src/components/tables/settings/UserTable.tsx:222
+#: src/components/tables/settings/UserTable.tsx:238
 msgid "Add user"
-msgstr ""
+msgstr "Legg til bruker"
 
-#: src/components/tables/settings/UserTable.tsx:136
+#: src/components/tables/settings/UserTable.tsx:230
 msgid "Added user"
-msgstr ""
+msgstr "Bruker lagt til"
 
-#: src/components/tables/stock/StockItemTable.tsx:71
+#: src/components/tables/settings/UserTable.tsx:247
+msgid "Edit user"
+msgstr "Rediger bruker"
+
+#: src/components/tables/stock/StockItemTable.tsx:57
 msgid "This stock item is in production"
-msgstr ""
+msgstr "Denne lagervaren er i produksjon"
 
-#: src/components/tables/stock/StockItemTable.tsx:80
+#: src/components/tables/stock/StockItemTable.tsx:66
 msgid "This stock item has been assigned to a sales order"
-msgstr ""
+msgstr "Denne lagervaren har blitt tildelt en salgsordre"
 
-#: src/components/tables/stock/StockItemTable.tsx:89
+#: src/components/tables/stock/StockItemTable.tsx:75
 msgid "This stock item has been assigned to a customer"
-msgstr ""
+msgstr "Denne lagervaren har blitt tilordnet en kunde"
 
-#: src/components/tables/stock/StockItemTable.tsx:98
+#: src/components/tables/stock/StockItemTable.tsx:84
 msgid "This stock item is installed in another stock item"
-msgstr ""
+msgstr "Denne lagervaren er montert i en annen lagervare"
 
-#: src/components/tables/stock/StockItemTable.tsx:107
+#: src/components/tables/stock/StockItemTable.tsx:93
 msgid "This stock item has been consumed by a build order"
-msgstr ""
+msgstr "Denne lagervaren har blitt konsumert av en produksjonsordre"
 
-#: src/components/tables/stock/StockItemTable.tsx:116
+#: src/components/tables/stock/StockItemTable.tsx:102
 msgid "This stock item has expired"
-msgstr ""
+msgstr "Denne lagervaren har utløpt"
 
-#: src/components/tables/stock/StockItemTable.tsx:120
+#: src/components/tables/stock/StockItemTable.tsx:106
 msgid "This stock item is stale"
-msgstr ""
+msgstr "Denne lagervaren er gammel"
 
-#: src/components/tables/stock/StockItemTable.tsx:131
+#: src/components/tables/stock/StockItemTable.tsx:117
 msgid "This stock item is fully allocated"
-msgstr ""
+msgstr "Denne lagervaren er i sin helhet tilordnet"
 
-#: src/components/tables/stock/StockItemTable.tsx:138
+#: src/components/tables/stock/StockItemTable.tsx:124
 msgid "This stock item is partially allocated"
-msgstr ""
+msgstr "Denne lagervaren er delvis tilordnet"
 
-#: src/components/tables/stock/StockItemTable.tsx:156
+#: src/components/tables/stock/StockItemTable.tsx:142
 msgid "No stock available"
-msgstr ""
+msgstr "Ingen lagerbeholdning tilgjengelig"
 
-#: src/components/tables/stock/StockItemTable.tsx:167
+#: src/components/tables/stock/StockItemTable.tsx:153
 msgid "This stock item has been depleted"
-msgstr ""
+msgstr "Denne lagervaren er oppbrukt"
 
-#: src/components/tables/stock/StockItemTable.tsx:194
+#: src/components/tables/stock/StockItemTable.tsx:180
 msgid "Batch"
-msgstr ""
+msgstr "Batch"
 
-#: src/components/tables/stock/StockItemTable.tsx:200
+#: src/components/tables/stock/StockItemTable.tsx:186
 msgid "Location"
-msgstr ""
+msgstr "Plassering"
 
-#: src/components/tables/stock/StockItemTable.tsx:211
+#: src/components/tables/stock/StockItemTable.tsx:197
 msgid "Expiry Date"
-msgstr ""
+msgstr "Utløpsdato"
 
-#: src/components/tables/stock/StockItemTable.tsx:218
+#: src/components/tables/stock/StockItemTable.tsx:204
 msgid "Last Updated"
-msgstr ""
+msgstr "Sist oppdatert"
 
-#: src/components/tables/stock/StockItemTable.tsx:227
+#: src/components/tables/stock/StockItemTable.tsx:213
 msgid "Purchase Price"
-msgstr ""
+msgstr "Innkjøpspris"
+
+#: src/components/tables/stock/StockItemTable.tsx:234
+msgid "Show stock for active parts"
+msgstr "Vis lagerbeholdning for aktive deler"
+
+#: src/components/tables/stock/StockItemTable.tsx:239
+msgid "Filter by stock status"
+msgstr "Filtrer etter lagerstatus"
+
+#: src/components/tables/stock/StockItemTable.tsx:245
+msgid "Show stock for assmebled parts"
+msgstr "Vis lagerbeholdning for sammensatte deler"
 
 #: src/components/tables/stock/StockItemTable.tsx:247
-msgid "Test Filter"
-msgstr ""
+#~ msgid "Test Filter"
+#~ msgstr "Test Filter"
 
 #: src/components/tables/stock/StockItemTable.tsx:248
-msgid "This is a test filter"
-msgstr ""
+#~ msgid "This is a test filter"
+#~ msgstr "This is a test filter"
 
-#: src/components/tables/stock/StockLocationTable.tsx:42
-msgid "Structural"
-msgstr ""
+#: src/components/tables/stock/StockItemTable.tsx:249
+msgid "Allocated"
+msgstr "Tildelt"
 
-#: src/components/tables/stock/StockLocationTable.tsx:49
+#: src/components/tables/stock/StockItemTable.tsx:250
+msgid "Show items which have been allocated"
+msgstr "Vis elementer som har blitt tildelt"
+
+#: src/components/tables/stock/StockItemTable.tsx:255
+msgid "Show items which are available"
+msgstr "Vis elementer som er tilgjengelige"
+
+#: src/components/tables/stock/StockItemTable.tsx:259
+#: src/components/tables/stock/StockLocationTable.tsx:26
+msgid "Include Sublocations"
+msgstr "Inkluder underplasseringer"
+
+#: src/components/tables/stock/StockItemTable.tsx:260
+msgid "Include stock in sublocations"
+msgstr "Inkluder lager i underplasseringer"
+
+#: src/components/tables/stock/StockItemTable.tsx:264
+msgid "Depleted"
+msgstr "Oppbrukt"
+
+#: src/components/tables/stock/StockItemTable.tsx:265
+msgid "Show depleted stock items"
+msgstr "Vis oppbrukte lagervarer"
+
+#: src/components/tables/stock/StockItemTable.tsx:270
+msgid "Show items which are in stock"
+msgstr "Vis elementer som er på lager"
+
+#: src/components/tables/stock/StockItemTable.tsx:274
+msgid "In Production"
+msgstr "Under produksjon"
+
+#: src/components/tables/stock/StockItemTable.tsx:275
+msgid "Show items which are in production"
+msgstr "Vis elementer som er under produksjon"
+
+#: src/components/tables/stock/StockItemTable.tsx:280
+msgid "Include stock items for variant parts"
+msgstr "Inkluder lagervarer for variantdeler"
+
+#: src/components/tables/stock/StockItemTable.tsx:285
+msgid "Show stock items which are installed in other items"
+msgstr "Vis lagervarer som er installert i andre elementer"
+
+#: src/components/tables/stock/StockItemTable.tsx:289
+msgid "Sent to Customer"
+msgstr "Sendt til kunde"
+
+#: src/components/tables/stock/StockItemTable.tsx:290
+msgid "Show items which have been sent to a customer"
+msgstr "Vis elementer som er sendt til en kunde"
+
+#: src/components/tables/stock/StockItemTable.tsx:294
+msgid "Is Serialized"
+msgstr "Er serialisert"
+
+#: src/components/tables/stock/StockItemTable.tsx:295
+msgid "Show items which have a serial number"
+msgstr "Vis elementer som har et serienummer"
+
+#: src/components/tables/stock/StockItemTable.tsx:302
+msgid "Has Batch Code"
+msgstr "Har batchkode"
+
+#: src/components/tables/stock/StockItemTable.tsx:303
+msgid "Show items which have a batch code"
+msgstr "Vis elementer som har en batchkode"
+
+#: src/components/tables/stock/StockItemTable.tsx:308
+msgid "Tracked"
+msgstr "Spores"
+
+#: src/components/tables/stock/StockItemTable.tsx:309
+msgid "Show tracked items"
+msgstr "Vis sporede deler"
+
+#: src/components/tables/stock/StockItemTable.tsx:313
+msgid "Has Purchase Price"
+msgstr "Har innkjøpspris"
+
+#: src/components/tables/stock/StockItemTable.tsx:314
+msgid "Show items which have a purchase price"
+msgstr "Vis elementer som har innkjøpspris"
+
+#: src/components/tables/stock/StockItemTable.tsx:322
+msgid "External Location"
+msgstr "Ekstern plassering"
+
+#: src/components/tables/stock/StockItemTable.tsx:323
+msgid "Show items in an external location"
+msgstr "Vis elementer ved en ekstern plassering"
+
+#: src/components/tables/stock/StockLocationTable.tsx:27
+msgid "Include sublocations in results"
+msgstr "Inkluder underkategorier i resultatene"
+
+#: src/components/tables/stock/StockLocationTable.tsx:32
+msgid "Show structural locations"
+msgstr "Vis strukturelle plasseringer"
+
+#: src/components/tables/stock/StockLocationTable.tsx:36
+#: src/components/tables/stock/StockLocationTable.tsx:75
 msgid "External"
-msgstr ""
+msgstr "Ekstern"
 
-#: src/components/tables/stock/StockLocationTable.tsx:56
+#: src/components/tables/stock/StockLocationTable.tsx:37
+msgid "Show external locations"
+msgstr "Vis eksterne plasseringer"
+
+#: src/components/tables/stock/StockLocationTable.tsx:41
+msgid "Has location type"
+msgstr "Har plasseringstype"
+
+#: src/components/tables/stock/StockLocationTable.tsx:82
 msgid "Location Type"
-msgstr ""
+msgstr "Plasseringstype"
 
 #: src/components/widgets/DisplayWidget.tsx:11
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:16
 msgid "Display Settings"
-msgstr ""
+msgstr "Visningsinnstillinger"
 
 #: src/components/widgets/DisplayWidget.tsx:15
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:22
 msgid "Color Mode"
-msgstr ""
+msgstr "Fargemodus"
 
 #: src/components/widgets/DisplayWidget.tsx:21
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:32
 msgid "Language"
-msgstr ""
+msgstr "Språk"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
-msgstr ""
+msgstr "Noe er nytt: Plattformgrensesnittet"
 
 #: src/components/widgets/FeedbackWidget.tsx:20
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr ""
+msgstr "Vi bygger et nytt brukergrensesnitt med en moderne stack. Det dere ser er ikke bestemt og vil bli redesignet men viser UX-mulighetene vi vil ha fremover."
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
-msgstr ""
+msgstr "Gi tilbakemelding"
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
-msgstr ""
+msgstr "Komme i gang"
 
 #: src/components/widgets/MarkdownEditor.tsx:109
 msgid "Failed to upload image"
-msgstr ""
+msgstr "Opplasting av bilde mislyktes"
 
 #: src/components/widgets/MarkdownEditor.tsx:147
 msgid "Notes saved"
-msgstr ""
+msgstr "Notater lagret"
 
 #: src/components/widgets/MarkdownEditor.tsx:155
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Kunne ikke lagre notater"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
-msgstr ""
+msgstr "Oppsett"
 
 #: src/components/widgets/WidgetLayout.tsx:186
 msgid "Reset Layout"
-msgstr ""
+msgstr "Tilbakestill oppsett"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
-msgstr ""
+msgstr "Stopp redigering"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
-msgstr ""
+msgstr "Rediger oppsett"
 
 #: src/components/widgets/WidgetLayout.tsx:205
 msgid "Appearance"
-msgstr ""
+msgstr "Utseende"
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
-msgstr ""
+msgstr "Vis bokser"
 
 #: src/contexts/LanguageContext.tsx:14
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgarsk"
 
 #: src/contexts/LanguageContext.tsx:15
 msgid "Czech"
-msgstr ""
+msgstr "Tsjekkisk"
 
 #: src/contexts/LanguageContext.tsx:16
 msgid "Danish"
-msgstr ""
+msgstr "Dansk"
 
 #: src/contexts/LanguageContext.tsx:17
 msgid "German"
-msgstr ""
+msgstr "Tysk"
 
 #: src/contexts/LanguageContext.tsx:18
 msgid "Greek"
-msgstr ""
+msgstr "Gresk"
 
 #: src/contexts/LanguageContext.tsx:19
 msgid "English"
-msgstr ""
+msgstr "Engelsk"
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Spanish"
-msgstr ""
+msgstr "Spansk"
 
 #: src/contexts/LanguageContext.tsx:21
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spansk (Meksikansk)"
 
 #: src/contexts/LanguageContext.tsx:22
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persisk"
 
 #: src/contexts/LanguageContext.tsx:23
 msgid "Finnish"
-msgstr ""
+msgstr "Finsk"
 
 #: src/contexts/LanguageContext.tsx:24
 msgid "French"
-msgstr ""
+msgstr "Fransk"
 
 #: src/contexts/LanguageContext.tsx:25
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebraisk"
 
 #: src/contexts/LanguageContext.tsx:26
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: src/contexts/LanguageContext.tsx:27
 msgid "Hungarian"
-msgstr ""
+msgstr "Ungarsk"
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "Italian"
-msgstr ""
+msgstr "Italiensk"
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Japanese"
-msgstr ""
+msgstr "Japansk"
 
 #: src/contexts/LanguageContext.tsx:30
 msgid "Korean"
-msgstr ""
+msgstr "Koreansk"
 
 #: src/contexts/LanguageContext.tsx:31
 msgid "Dutch"
-msgstr ""
+msgstr "Nederlandsk"
 
 #: src/contexts/LanguageContext.tsx:32
 msgid "Norwegian"
-msgstr ""
+msgstr "Norsk"
 
 #: src/contexts/LanguageContext.tsx:33
 msgid "Polish"
-msgstr ""
+msgstr "Polsk"
 
 #: src/contexts/LanguageContext.tsx:34
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugisisk"
 
 #: src/contexts/LanguageContext.tsx:35
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugisisk (Brasil)"
 
 #: src/contexts/LanguageContext.tsx:36
 msgid "Russian"
-msgstr ""
+msgstr "Russisk"
 
 #: src/contexts/LanguageContext.tsx:37
 msgid "Slovenian"
-msgstr ""
+msgstr "Slovensk"
 
 #: src/contexts/LanguageContext.tsx:38
 msgid "Swedish"
-msgstr ""
+msgstr "Svensk"
 
 #: src/contexts/LanguageContext.tsx:39
 msgid "Thai"
-msgstr ""
+msgstr "Thailandsk"
 
 #: src/contexts/LanguageContext.tsx:40
 msgid "Turkish"
-msgstr ""
+msgstr "Tyrkisk"
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamesisk"
 
 #: src/contexts/LanguageContext.tsx:42
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Kinesisk (forenklet)"
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Kinesisk (tradisjonell)"
 
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Abonnerte deler"
 
 #: src/defaults/dashboardItems.tsx:22
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Abonnerte kategorier"
 
 #: src/defaults/dashboardItems.tsx:29
 msgid "Latest Parts"
-msgstr ""
+msgstr "Siste deler"
 
 #: src/defaults/dashboardItems.tsx:36
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "BOM venter godkjenning"
 
 #: src/defaults/dashboardItems.tsx:43
 msgid "Recently Updated"
-msgstr ""
+msgstr "Nylig oppdatert"
 
 #: src/defaults/dashboardItems.tsx:57
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Oppbrukt lagerbeholdning"
 
 #: src/defaults/dashboardItems.tsx:64
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Nødvendig for produksjonsordre"
 
 #: src/defaults/dashboardItems.tsx:71
 msgid "Expired Stock"
-msgstr ""
+msgstr "Utløpt lagerbeholdning"
 
 #: src/defaults/dashboardItems.tsx:78
 msgid "Stale Stock"
-msgstr ""
+msgstr "Gammel lagerbeholdning"
 
 #: src/defaults/dashboardItems.tsx:85
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Produksjonsordre som pågår"
 
 #: src/defaults/dashboardItems.tsx:92
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Forfalte Produksjonsordre"
 
 #: src/defaults/dashboardItems.tsx:99
 msgid "Outstanding Purchase Orders"
-msgstr ""
+msgstr "Utestående innkjøpsordre"
 
 #: src/defaults/dashboardItems.tsx:106
 msgid "Overdue Purchase Orders"
-msgstr ""
+msgstr "Forfalte innkjøpsordre"
 
 #: src/defaults/dashboardItems.tsx:113
 msgid "Outstanding Sales Orders"
-msgstr ""
+msgstr "Utestående salgsordre"
 
 #: src/defaults/dashboardItems.tsx:120
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Forfalte salgsordre"
 
 #: src/defaults/dashboardItems.tsx:127
 msgid "Current News"
-msgstr ""
+msgstr "Aktuelle nyheter"
 
 #: src/defaults/defaultHostList.tsx:8
 #~ msgid "InvenTree Demo"
@@ -2526,23 +2994,23 @@ msgstr ""
 
 #: src/defaults/links.tsx:15
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: src/defaults/links.tsx:20
 msgid "Demo"
-msgstr ""
+msgstr "Demo"
 
 #: src/defaults/links.tsx:25
 #: src/defaults/menuItems.tsx:9
 msgid "Home"
-msgstr ""
+msgstr "Hjem"
 
 #: src/defaults/links.tsx:26
 #: src/defaults/menuItems.tsx:28
 #: src/pages/Index/Dashboard.tsx:19
 #: src/pages/Index/Settings/UserSettings.tsx:41
 msgid "Dashboard"
-msgstr ""
+msgstr "Dashbord"
 
 #: src/defaults/links.tsx:30
 #: src/defaults/menuItems.tsx:48
@@ -2551,7 +3019,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:134
 #: src/pages/purchasing/PurchasingIndex.tsx:53
 msgid "Purchasing"
-msgstr ""
+msgstr "Innkjøp"
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:53
@@ -2560,50 +3028,50 @@ msgstr ""
 #: src/pages/sales/SalesIndex.tsx:45
 #: src/pages/sales/SalesOrderDetail.tsx:99
 msgid "Sales"
-msgstr ""
+msgstr "Salg"
 
 #: src/defaults/links.tsx:34
 #: src/defaults/menuItems.tsx:71
 #: src/pages/Index/Playground.tsx:171
 msgid "Playground"
-msgstr ""
+msgstr "Lekeplass"
 
 #: src/defaults/links.tsx:48
 msgid "Getting Started"
-msgstr ""
+msgstr "Komme i gang"
 
 #: src/defaults/links.tsx:49
 msgid "Getting started with InvenTree"
-msgstr ""
+msgstr "Komme i gang med InvenTree"
 
 #: src/defaults/links.tsx:55
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/defaults/links.tsx:56
 msgid "InvenTree API documentation"
-msgstr ""
+msgstr "InvenTree-API-dokumentasjon"
 
 #: src/defaults/links.tsx:61
 msgid "Developer Manual"
-msgstr ""
+msgstr "Utviklermanual"
 
 #: src/defaults/links.tsx:62
 msgid "InvenTree developer manual"
-msgstr ""
+msgstr "InvenTree utviklermanual"
 
 #: src/defaults/links.tsx:67
 msgid "FAQ"
-msgstr ""
+msgstr "FAQ"
 
 #: src/defaults/links.tsx:68
 msgid "Frequently asked questions"
-msgstr ""
+msgstr "Ofte stilte spørsmål"
 
 #: src/defaults/links.tsx:76
 #: src/defaults/links.tsx:95
 msgid "System Information"
-msgstr ""
+msgstr "Systeminformasjon"
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
@@ -2616,23 +3084,23 @@ msgstr ""
 #: src/defaults/links.tsx:85
 #: src/defaults/links.tsx:101
 msgid "About InvenTree"
-msgstr ""
+msgstr "Om InvenTree"
 
 #: src/defaults/links.tsx:96
 msgid "About this Inventree instance"
-msgstr ""
+msgstr "Om denne InvenTree-instansen"
 
 #: src/defaults/links.tsx:102
 msgid "About the InvenTree org"
-msgstr ""
+msgstr "Om InvenTree-organisasjonen"
 
 #: src/defaults/links.tsx:107
 msgid "Licenses"
-msgstr ""
+msgstr "Lisenser"
 
 #: src/defaults/links.tsx:108
 msgid "Licenses for packages used by InvenTree"
-msgstr ""
+msgstr "Lisenser for pakker brukt av InvenTree"
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -2660,7 +3128,7 @@ msgstr ""
 
 #: src/defaults/menuItems.tsx:17
 msgid "User attributes and design settings."
-msgstr ""
+msgstr "Brukerattributter og designinnstillinger."
 
 #: src/defaults/menuItems.tsx:21
 #~ msgid "Free for everyone"
@@ -2672,7 +3140,7 @@ msgstr ""
 
 #: src/defaults/menuItems.tsx:23
 msgid "View for interactive scanning and multiple actions."
-msgstr ""
+msgstr "Side for interaktiv skanning og flere handlinger."
 
 #: src/defaults/menuItems.tsx:24
 #~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
@@ -2712,107 +3180,107 @@ msgstr ""
 
 #: src/forms/AttachmentForms.tsx:57
 msgid "Add File"
-msgstr ""
+msgstr "Legg til Fil"
 
 #: src/forms/AttachmentForms.tsx:57
 msgid "Add Link"
-msgstr ""
+msgstr "Legg til lenke"
 
 #: src/forms/AttachmentForms.tsx:58
 msgid "File added"
-msgstr ""
+msgstr "Fil lagt til"
 
 #: src/forms/AttachmentForms.tsx:58
 msgid "Link added"
-msgstr ""
+msgstr "Lenke lagt til"
 
 #: src/forms/AttachmentForms.tsx:99
 msgid "Edit File"
-msgstr ""
+msgstr "Rediger fil"
 
 #: src/forms/AttachmentForms.tsx:99
 msgid "Edit Link"
-msgstr ""
+msgstr "Rediger lenke"
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "File updated"
-msgstr ""
+msgstr "Fil oppdatert"
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "Link updated"
-msgstr ""
+msgstr "Lenke oppdatert"
 
 #: src/forms/AttachmentForms.tsx:124
 msgid "Delete Attachment"
-msgstr ""
+msgstr "Slett vedlegg"
 
 #: src/forms/AttachmentForms.tsx:125
 msgid "Attachment deleted"
-msgstr ""
+msgstr "Vedlegg slettet"
 
 #: src/forms/AttachmentForms.tsx:128
 msgid "Are you sure you want to delete this attachment?"
-msgstr ""
+msgstr "Er du sikker på at du vil slette dette vedlegget?"
 
-#: src/forms/CompanyForms.tsx:120
+#: src/forms/CompanyForms.tsx:134
 msgid "Edit Company"
-msgstr ""
+msgstr "Rediger Bedrift"
 
-#: src/forms/CompanyForms.tsx:124
+#: src/forms/CompanyForms.tsx:138
 msgid "Company updated"
-msgstr ""
+msgstr "Bedriften er oppdatert"
 
 #: src/forms/PartForms.tsx:106
 msgid "Create Part"
-msgstr ""
+msgstr "Opprett Del"
 
 #: src/forms/PartForms.tsx:108
 msgid "Part created"
-msgstr ""
+msgstr "Del opprettet"
 
 #: src/forms/PartForms.tsx:125
 msgid "Edit Part"
-msgstr ""
+msgstr "Rediger del"
 
 #: src/forms/PartForms.tsx:129
 msgid "Part updated"
-msgstr ""
+msgstr "Delen er oppdatert"
 
 #: src/forms/PartForms.tsx:140
 msgid "Parent part category"
-msgstr ""
+msgstr "Overordnet del-kategori"
 
 #: src/forms/StockForms.tsx:44
 msgid "Add given quantity as packs instead of individual items"
-msgstr ""
+msgstr "Legg til gitt mengde som pakker i stedet for enkeltprodukter"
 
 #: src/forms/StockForms.tsx:55
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "Angi innledende antall for denne lagervaren"
 
 #: src/forms/StockForms.tsx:60
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Serienumre"
 
 #: src/forms/StockForms.tsx:61
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr ""
+msgstr "Angi serienumre for ny lagerbeholdning (eller la stå tom)"
 
 #: src/forms/StockForms.tsx:110
 msgid "Create Stock Item"
-msgstr ""
+msgstr "Opprett lagervare"
 
 #: src/forms/StockForms.tsx:131
 msgid "Edit Stock Item"
-msgstr ""
+msgstr "Rediger lagervare"
 
 #: src/forms/StockForms.tsx:132
 msgid "Stock item updated"
-msgstr ""
+msgstr "Lagervare oppdatert"
 
 #: src/functions/auth.tsx:34
 msgid "Error fetching token from server."
-msgstr ""
+msgstr "Feil ved henting av token fra serveren."
 
 #: src/functions/auth.tsx:36
 #~ msgid "Logout successfull"
@@ -2820,77 +3288,77 @@ msgstr ""
 
 #: src/functions/auth.tsx:57
 msgid "Logout successful"
-msgstr ""
+msgstr "Utlogging vellykket"
 
 #: src/functions/auth.tsx:58
 msgid "See you soon."
-msgstr ""
+msgstr "Sees snart."
 
 #: src/functions/auth.tsx:103
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
-msgstr ""
+msgstr "Sjekk innboksen for en nullstillingslenke. Dette fungerer bare hvis du har en konto. Sjekk også i spam."
 
 #: src/functions/auth.tsx:110
 #: src/pages/Auth/Set-Password.tsx:39
 msgid "Reset failed"
-msgstr ""
+msgstr "Tilbakestilling feilet"
 
 #: src/functions/auth.tsx:134
 msgid "Already logged in"
-msgstr ""
+msgstr "Allerede logget inn"
 
 #: src/functions/auth.tsx:135
 msgid "Found an existing login - using it to log you in."
-msgstr ""
+msgstr "Fant en eksisterende pålogging - bruker den til å logge deg på."
 
-#: src/functions/forms.tsx:49
+#: src/functions/forms.tsx:50
 msgid "Form method not provided"
-msgstr ""
+msgstr "Skjemametode ikke angitt"
 
-#: src/functions/forms.tsx:58
+#: src/functions/forms.tsx:59
 msgid "Response did not contain action data"
-msgstr ""
-
-#: src/functions/forms.tsx:187
-msgid "Invalid Form"
-msgstr ""
+msgstr "Responsen inneholdt ikke handlingsdata"
 
 #: src/functions/forms.tsx:188
+msgid "Invalid Form"
+msgstr "Ugyldig skjema"
+
+#: src/functions/forms.tsx:189
 msgid "method parameter not supplied"
-msgstr ""
+msgstr "metodeparameter er ikke angitt"
 
 #: src/functions/notifications.tsx:9
 msgid "Not implemented"
-msgstr ""
+msgstr "Ikke implementert"
 
 #: src/functions/notifications.tsx:10
 msgid "This feature is not yet implemented"
-msgstr ""
+msgstr "Denne funksjonen er ikke implementert ennå"
 
 #: src/functions/notifications.tsx:20
 msgid "Permission denied"
-msgstr ""
+msgstr "Tillatelse nektet"
 
 #: src/functions/notifications.tsx:21
 msgid "You do not have permission to perform this action"
-msgstr ""
+msgstr "Du har ikke rettigheter til å utføre denne handlingen"
 
 #: src/functions/notifications.tsx:32
 msgid "Invalid Return Code"
-msgstr ""
+msgstr "Ugyldig returkode"
 
 #: src/functions/notifications.tsx:33
 msgid "Server returned status {returnCode}"
-msgstr ""
+msgstr "Serveren returnerte status {returnCode}"
 
 #: src/pages/Auth/Logged-In.tsx:22
 msgid "Checking if you are already logged in"
-msgstr ""
+msgstr "Sjekker om du allerede er innlogget"
 
 #: src/pages/Auth/Login.tsx:25
 #: src/pages/Index/Scan.tsx:318
 msgid "No selection"
-msgstr ""
+msgstr "Ingen utvalg"
 
 #: src/pages/Auth/Login.tsx:121
 #~ msgid "Edit host options"
@@ -2899,59 +3367,59 @@ msgstr ""
 #: src/pages/Auth/Reset.tsx:41
 #: src/pages/Auth/Set-Password.tsx:112
 msgid "Send mail"
-msgstr ""
+msgstr "Send e-post"
 
 #: src/pages/Auth/Set-Password.tsx:30
 msgid "Token invalid"
-msgstr ""
+msgstr "Ugyldig token"
 
 #: src/pages/Auth/Set-Password.tsx:31
 msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Du må oppgi et gyldig token for å angi et nytt passord. Sjekk innboksen for en tilbakestillingslenke."
 
 #: src/pages/Auth/Set-Password.tsx:49
 msgid "No token provided"
-msgstr ""
+msgstr "Ingen token oppgitt"
 
 #: src/pages/Auth/Set-Password.tsx:50
 msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
-msgstr ""
+msgstr "Du må oppgi et token for å angi et nytt passord. Sjekk innboksen for en tilbakestillingslenke."
 
 #: src/pages/Auth/Set-Password.tsx:73
 msgid "Password set"
-msgstr ""
+msgstr "Passord angitt"
 
 #: src/pages/Auth/Set-Password.tsx:74
 msgid "The password was set successfully. You can now login with your new password"
-msgstr ""
+msgstr "Passordet er blitt satt. Du kan nå logge inn med ditt nye passord"
 
 #: src/pages/Auth/Set-Password.tsx:101
 msgid "Set new password"
-msgstr ""
+msgstr "Angi nytt passord"
 
 #: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
-msgstr ""
+msgstr "Feil: {0}"
 
 #: src/pages/ErrorPage.tsx:28
 msgid "Sorry, an unexpected error has occurred."
-msgstr ""
+msgstr "Beklager, en uventet feil har oppstått."
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
-msgstr ""
+msgstr "Automatisk oppdatering"
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
-msgstr ""
+msgstr "Denne siden er erstatning for den gamle startsiden med samme informasjon. Denne siden vil bli foreldet og erstattet av hjemmesiden."
 
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
-msgstr ""
+msgstr "Velkommen til dashbordet ditt{0}"
 
 #: src/pages/Index/Playground.tsx:176
 msgid "This page is a showcase for the possibilities of Platform UI."
-msgstr ""
+msgstr "Denne siden er et utstillingsvindu for Platform UI."
 
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
@@ -3091,351 +3559,371 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:214
 msgid "Manual input"
-msgstr ""
+msgstr "Manuell innskriving"
 
 #: src/pages/Index/Scan.tsx:215
 msgid "Image Barcode"
-msgstr ""
+msgstr "Bilde-strekkode"
 
 #: src/pages/Index/Scan.tsx:245
 msgid "Selected elements are not known"
-msgstr ""
+msgstr "Valgte elementer er ikke kjent"
 
 #: src/pages/Index/Scan.tsx:252
 msgid "Multiple object types selected"
-msgstr ""
+msgstr "Flere objekttyper er valgt"
 
 #: src/pages/Index/Scan.tsx:259
 msgid "Actions for {0}"
-msgstr ""
+msgstr "Handlinger for {0}"
 
 #: src/pages/Index/Scan.tsx:262
 #: src/pages/stock/StockDetail.tsx:168
 msgid "Count"
-msgstr ""
+msgstr "Tell"
 
 #: src/pages/Index/Scan.tsx:276
 msgid "Scan Page"
-msgstr ""
+msgstr "Skann side"
 
 #: src/pages/Index/Scan.tsx:279
 msgid "This page can be used for continuously scanning items and taking actions on them."
-msgstr ""
+msgstr "Denne siden kan brukes til kontinuerlig skanning av elementer og til å utføre handlinger på dem."
 
 #: src/pages/Index/Scan.tsx:294
 msgid "Select the input method you want to use to scan items."
-msgstr ""
+msgstr "Velg hvilken inndatametode du vil bruke til å skanne elementer."
 
 #: src/pages/Index/Scan.tsx:296
 msgid "Input"
-msgstr ""
+msgstr "Inndata"
 
 #: src/pages/Index/Scan.tsx:303
 msgid "Select input method"
-msgstr ""
+msgstr "Velg inndatametode"
 
 #: src/pages/Index/Scan.tsx:304
 msgid "Nothing found"
-msgstr ""
+msgstr "Ingenting funnet"
 
 #: src/pages/Index/Scan.tsx:312
 msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
-msgstr ""
+msgstr "Avhengig av valgte delhandlinger vil bli vist her. Ikke alle strekkodetyper støttes for øyeblikket."
 
 #: src/pages/Index/Scan.tsx:314
 msgid "Action"
-msgstr ""
+msgstr "Handling"
 
 #: src/pages/Index/Scan.tsx:323
 msgid "{0} items selected"
-msgstr ""
+msgstr "{0} elementer valgt"
 
 #: src/pages/Index/Scan.tsx:326
 msgid "General Actions"
-msgstr ""
+msgstr "Generelle handliger"
 
 #: src/pages/Index/Scan.tsx:339
 msgid "Lookup part"
-msgstr ""
+msgstr "Slå opp del"
 
 #: src/pages/Index/Scan.tsx:346
 msgid "Open Link"
-msgstr ""
+msgstr "Åpne lenke"
 
 #: src/pages/Index/Scan.tsx:361
 msgid "History is locally kept in this browser."
-msgstr ""
+msgstr "Historikk holdes lokalt i denne nettleseren."
 
 #: src/pages/Index/Scan.tsx:362
 msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
-msgstr ""
+msgstr "Historien ligger i denne nettleserens lokale lagringsplass. Så den vil ikke bli delt med andre brukere eller andre enheter, men er vedvarende ved gjennom nyinnlasting. Du kan velge elementer i historien for å utføre handlinger på dem. For å legge til elementer, skan/skriv dem inn i Input området."
 
 #: src/pages/Index/Scan.tsx:364
 #: src/pages/Notifications.tsx:56
 msgid "History"
-msgstr ""
+msgstr "Logg"
 
 #: src/pages/Index/Scan.tsx:430
 msgid "No history"
-msgstr ""
+msgstr "Ingen historikk"
 
 #: src/pages/Index/Scan.tsx:449
 msgid "Item"
-msgstr ""
+msgstr "Artikkel"
 
 #: src/pages/Index/Scan.tsx:452
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: src/pages/Index/Scan.tsx:455
 msgid "Source"
-msgstr ""
+msgstr "Kilde"
 
 #: src/pages/Index/Scan.tsx:458
 msgid "Scanned at"
-msgstr ""
+msgstr "Skannet ved"
 
 #: src/pages/Index/Scan.tsx:510
 msgid "Enter item serial or data"
-msgstr ""
+msgstr "Legg inn elementets serienummer eller data"
 
 #: src/pages/Index/Scan.tsx:522
 msgid "Add dummy item"
-msgstr ""
+msgstr "Legg til dummyelement"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:32
 msgid "Account Details"
-msgstr ""
+msgstr "Kontodetaljer"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 msgid "First name: {0}"
-msgstr ""
+msgstr "Fornavn: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 msgid "Last name: {0}"
-msgstr ""
+msgstr "Etternavn: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:39
 msgid "Use pseudo language"
-msgstr ""
+msgstr "Bruk pseudo-språk"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:53
 msgid "Single Sign On Accounts"
-msgstr ""
+msgstr "\"Single Sign On\"-kontoer"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:78
 msgid "Not enabled"
-msgstr ""
+msgstr "Ikke aktivert"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:63
 msgid "Single Sign On is not enabled for this server"
-msgstr ""
+msgstr "Single Sign On er ikke aktivert for denne serveren"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:67
 msgid "Multifactor"
-msgstr ""
+msgstr "Multifaktor"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:81
 msgid "Multifactor authentication is not configured for your account"
-msgstr ""
+msgstr "Multifaktor-autentisering er ikke konfigurert for din konto"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:131
 msgid "The following email addresses are associated with your account:"
-msgstr ""
+msgstr "Følgende e-postadresser er tilknyttet din konto:"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:148
 msgid "Verified"
-msgstr ""
+msgstr "Bekreftet"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:152
 msgid "Unverified"
-msgstr ""
+msgstr "Ubekreftet"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:165
 msgid "Add Email Address"
-msgstr ""
+msgstr "Legg til e-postadresse"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:168
 msgid "E-Mail"
-msgstr ""
+msgstr "E-post"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:169
 msgid "E-Mail address"
-msgstr ""
+msgstr "E-postadresse"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:179
 msgid "Make Primary"
-msgstr ""
+msgstr "Gjør til primær"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:182
 msgid "Re-send Verification"
-msgstr ""
+msgstr "Re-send bekreftelse"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:185
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:291
 #: src/pages/stock/StockDetail.tsx:178
 msgid "Remove"
-msgstr ""
+msgstr "Fjern"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:191
 msgid "Add Email"
-msgstr ""
+msgstr "Legg til e-post"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:255
 msgid "Provider has not been configured"
-msgstr ""
+msgstr "Leverandør er ikke konfigurert"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:265
 msgid "Not configured"
-msgstr ""
+msgstr "Ikke konfigurert"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:268
 msgid "There are no social network accounts connected to this account."
-msgstr ""
+msgstr "Det finnes ingen sosiale nettverkskontoer koblet til denne kontoen."
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:278
 msgid "You can sign in to your account using any of the following third party accounts"
-msgstr ""
+msgstr "Du kan logge inn på kontoen din ved hjelp av følgende tredjepartskontoer"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:68
 msgid "bars"
-msgstr ""
+msgstr "streker"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:69
 msgid "oval"
-msgstr ""
+msgstr "oval"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:70
 msgid "dots"
-msgstr ""
+msgstr "prikker"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:81
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:87
 msgid "Primary color"
-msgstr ""
+msgstr "Hovedfarge"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:100
 msgid "White color"
-msgstr ""
+msgstr "Hvit farge"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:108
 msgid "Black color"
-msgstr ""
+msgstr "Svart farge"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:116
 msgid "Border Radius"
-msgstr ""
+msgstr "Kantradius"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:132
 msgid "Loader"
-msgstr ""
+msgstr "Laster"
 
 #: src/pages/Index/Settings/AdminCenter.tsx:30
-msgid "User Management"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter.tsx:48
-msgid "Select settings relevant for user lifecycle. More available in"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter.tsx:54
-msgid "System settings"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter.tsx:74
-msgid "Quick Actions"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter.tsx:79
-msgid "Add a new user"
-msgstr ""
+#~ msgid "User Management"
+#~ msgstr "User Management"
 
 #: src/pages/Index/Settings/AdminCenter.tsx:91
 #~ msgid "Advanced Amininistrative Options for InvenTree"
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
-#: src/pages/Index/Settings/AdminCenter.tsx:99
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:64
+msgid "Custom Units"
+msgstr "Egendefinerte enheter"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:70
+msgid "Part Parameters"
+msgstr "Delparametere"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:86
+msgid "Quick Actions"
+msgstr "Hurtighandlinger"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:91
+msgid "Add a new user"
+msgstr "Legg til en ny bruker"
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:110
 msgid "Advanced Options"
-msgstr ""
+msgstr "Avanserte Innstillinger"
 
-#: src/pages/Index/Settings/PluginSettings.tsx:47
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:23
+msgid "External plugins are not enabled for this InvenTree installation."
+msgstr "Eksterne utvidelser er ikke aktivert for denne InvenTree-installasjonen."
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
+msgid "Plugin Error Stack"
+msgstr "Utvidelse feilstack"
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:40
 msgid "Plugin Settings"
-msgstr ""
+msgstr "Innstillinger for Utvidelser"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:70
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
+#~ msgid "Warning"
+#~ msgstr "Warning"
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:47
+#~ msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
+#~ msgstr "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
+
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:30
+msgid "Select settings relevant for user lifecycle. More available in"
+msgstr "Velg innstillinger som er relevante for brukerens livssyklus. Mer tilgjengelig i"
+
+#: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:35
+msgid "System settings"
+msgstr "Systeminnstillinger"
+
+#: src/pages/Index/Settings/SystemSettings.tsx:65
 msgid "Login"
-msgstr ""
+msgstr "Innlogging"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:92
+#: src/pages/Index/Settings/SystemSettings.tsx:87
 msgid "Barcodes"
-msgstr ""
+msgstr "Strekkoder"
+
+#: src/pages/Index/Settings/SystemSettings.tsx:106
+#: src/pages/part/PartDetail.tsx:152
+msgid "Pricing"
+msgstr "Prising"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:118
-msgid "Physical Units"
-msgstr ""
+#~ msgid "Physical Units"
+#~ msgstr "Physical Units"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:129
-#: src/pages/part/PartDetail.tsx:151
-msgid "Pricing"
-msgstr ""
-
-#: src/pages/Index/Settings/SystemSettings.tsx:158
+#: src/pages/Index/Settings/SystemSettings.tsx:135
 msgid "Exchange Rates"
-msgstr ""
+msgstr "Valutakurser"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:166
+#: src/pages/Index/Settings/SystemSettings.tsx:143
 msgid "Labels"
-msgstr ""
+msgstr "Etiketter"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:172
+#: src/pages/Index/Settings/SystemSettings.tsx:149
 #: src/pages/Index/Settings/UserSettings.tsx:99
 msgid "Reporting"
-msgstr ""
+msgstr "Rapportering"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:224
-msgid "Part Parameters"
-msgstr ""
-
-#: src/pages/Index/Settings/SystemSettings.tsx:252
-#: src/pages/part/PartDetail.tsx:199
+#: src/pages/Index/Settings/SystemSettings.tsx:223
+#: src/pages/part/PartDetail.tsx:207
 msgid "Stocktake"
-msgstr ""
+msgstr "Lagertelling"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:257
-#: src/pages/build/BuildDetail.tsx:262
+#: src/pages/Index/Settings/SystemSettings.tsx:228
+#: src/pages/build/BuildDetail.tsx:260
 #: src/pages/build/BuildIndex.tsx:36
-#: src/pages/part/PartDetail.tsx:130
+#: src/pages/part/PartDetail.tsx:131
 #: src/pages/sales/SalesOrderDetail.tsx:61
 msgid "Build Orders"
-msgstr ""
+msgstr "Produksjonsordrer"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:299
+#: src/pages/Index/Settings/SystemSettings.tsx:270
 msgid "Switch to User Setting"
-msgstr ""
+msgstr "Bytt til brukerinnstilling"
 
 #: src/pages/Index/Settings/UserSettings.tsx:29
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: src/pages/Index/Settings/UserSettings.tsx:35
 msgid "Security"
-msgstr ""
+msgstr "Sikkerhet"
 
 #: src/pages/Index/Settings/UserSettings.tsx:46
 msgid "Display Options"
-msgstr ""
+msgstr "Visningsvalg"
 
 #: src/pages/Index/Settings/UserSettings.tsx:115
 msgid "Account Settings"
-msgstr ""
+msgstr "Kontoinnstillinger"
 
 #: src/pages/Index/Settings/UserSettings.tsx:119
 msgid "Switch to System Setting"
-msgstr ""
+msgstr "Bytt til systeminnstilling"
 
 #: src/pages/Index/UserSettings.tsx:103
 #~ msgid "User Settings"
@@ -3447,61 +3935,61 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr ""
+msgstr "Ikke funnet"
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
-msgstr ""
+msgstr "Beklager, denne siden er ikke kjent eller ble flyttet."
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
-msgstr ""
+msgstr "Gå til startsiden"
 
 #: src/pages/Notifications.tsx:64
 msgid "Mark as unread"
-msgstr ""
+msgstr "Marker som ulest"
 
-#: src/pages/build/BuildDetail.tsx:73
+#: src/pages/build/BuildDetail.tsx:71
 msgid "Base Part"
-msgstr ""
+msgstr "Basisdel"
 
-#: src/pages/build/BuildDetail.tsx:81
+#: src/pages/build/BuildDetail.tsx:79
 msgid "Build Status"
-msgstr ""
+msgstr "Produksjonsstatus"
 
-#: src/pages/build/BuildDetail.tsx:102
+#: src/pages/build/BuildDetail.tsx:100
 msgid "Build Details"
-msgstr ""
+msgstr "Produksjonsdetaljer"
 
-#: src/pages/build/BuildDetail.tsx:108
+#: src/pages/build/BuildDetail.tsx:106
 msgid "Allocate Stock"
-msgstr ""
+msgstr "Tildel lagerbeholdning"
 
-#: src/pages/build/BuildDetail.tsx:114
+#: src/pages/build/BuildDetail.tsx:112
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Ufullstendige artikler"
 
-#: src/pages/build/BuildDetail.tsx:120
+#: src/pages/build/BuildDetail.tsx:118
 msgid "Completed Outputs"
-msgstr ""
+msgstr "Fullførte artikler"
 
-#: src/pages/build/BuildDetail.tsx:133
+#: src/pages/build/BuildDetail.tsx:131
 msgid "Consumed Stock"
-msgstr ""
+msgstr "Brukt lagerbeholdning"
 
-#: src/pages/build/BuildDetail.tsx:145
+#: src/pages/build/BuildDetail.tsx:143
 msgid "Child Build Orders"
-msgstr ""
+msgstr "Underordnede Produksjonsordrer"
 
-#: src/pages/build/BuildDetail.tsx:157
+#: src/pages/build/BuildDetail.tsx:155
 #: src/pages/company/CompanyDetail.tsx:144
-#: src/pages/part/PartDetail.tsx:216
+#: src/pages/part/PartDetail.tsx:224
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:78
 #: src/pages/sales/ReturnOrderDetail.tsx:38
 #: src/pages/sales/SalesOrderDetail.tsx:66
 #: src/pages/stock/StockDetail.tsx:108
 msgid "Attachments"
-msgstr ""
+msgstr "Vedlegg"
 
 #: src/pages/build/BuildDetail.tsx:185
 #: src/pages/part/PartDetail.tsx:269
@@ -3510,17 +3998,17 @@ msgstr ""
 #~ msgstr "View part barcode"
 
 #: src/pages/build/BuildDetail.tsx:190
+msgid "Edit Build Order"
+msgstr "Rediger produksjonsordre"
+
+#: src/pages/build/BuildDetail.tsx:190
 #: src/pages/part/PartDetail.tsx:274
 #~ msgid "Link custom barcode to part"
 #~ msgstr "Link custom barcode to part"
 
 #: src/pages/build/BuildDetail.tsx:192
-msgid "Edit Build Order"
-msgstr ""
-
-#: src/pages/build/BuildDetail.tsx:194
 msgid "Build Order updated"
-msgstr ""
+msgstr "Produksjonsordre oppdatert"
 
 #: src/pages/build/BuildDetail.tsx:196
 #: src/pages/part/PartDetail.tsx:280
@@ -3531,61 +4019,67 @@ msgstr ""
 #~ msgid "Build Order"
 #~ msgstr "Build Order"
 
-#: src/pages/build/BuildDetail.tsx:220
+#: src/pages/build/BuildDetail.tsx:218
 msgid "Reporting Actions"
-msgstr ""
+msgstr "Rapporthandlinger"
 
 #: src/pages/build/BuildDetail.tsx:221
 #~ msgid "Edit build order"
 #~ msgstr "Edit build order"
 
-#: src/pages/build/BuildDetail.tsx:225
+#: src/pages/build/BuildDetail.tsx:223
 msgid "Report"
-msgstr ""
+msgstr "Rapport"
 
-#: src/pages/build/BuildDetail.tsx:226
+#: src/pages/build/BuildDetail.tsx:224
 msgid "Print build report"
-msgstr ""
+msgstr "Skriv ut produksjonsrapport"
 
 #: src/pages/build/BuildDetail.tsx:226
 #~ msgid "Duplicate build order"
 #~ msgstr "Duplicate build order"
 
+#: src/pages/build/BuildDetail.tsx:230
+msgid "Build Order Actions"
+msgstr "Produksjonsordre-handlinger"
+
 #: src/pages/build/BuildDetail.tsx:231
 #~ msgid "Delete build order"
 #~ msgstr "Delete build order"
 
-#: src/pages/build/BuildDetail.tsx:232
-msgid "Build Order Actions"
-msgstr ""
-
 #: src/pages/build/BuildIndex.tsx:21
 msgid "Add Build Order"
-msgstr ""
+msgstr "Legg til produksjonsordre"
 
 #: src/pages/build/BuildIndex.tsx:23
 msgid "Build order created"
-msgstr ""
+msgstr "Produksjonsordre opprettet"
 
 #: src/pages/build/BuildIndex.tsx:39
 msgid "New Build Order"
-msgstr ""
+msgstr "Ny produksjonsordre"
+
+#: src/pages/company/CompanyDetail.tsx:73
+#: src/pages/part/PartDetail.tsx:88
+#: src/pages/stock/StockDetail.tsx:69
+msgid "Details"
+msgstr "Detaljer"
 
 #: src/pages/company/CompanyDetail.tsx:78
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Produserte deler"
 
 #: src/pages/company/CompanyDetail.tsx:84
 msgid "Supplied Parts"
-msgstr ""
+msgstr "Leverte Deler"
 
 #: src/pages/company/CompanyDetail.tsx:126
 msgid "Assigned Stock"
-msgstr ""
+msgstr "Tildelt lagerbeholdning"
 
 #: src/pages/company/CompanyDetail.tsx:173
 msgid "Company Actions"
-msgstr ""
+msgstr "Bedriftshandlinger"
 
 #: src/pages/company/CompanyDetail.tsx:175
 #~ msgid "Edit company"
@@ -3600,72 +4094,72 @@ msgstr ""
 #~ msgstr "Subcategories"
 
 #: src/pages/part/CategoryDetail.tsx:72
-#: src/pages/part/PartDetail.tsx:92
+#: src/pages/part/PartDetail.tsx:93
 msgid "Parameters"
-msgstr ""
+msgstr "Parametere"
 
-#: src/pages/part/PartDetail.tsx:110
+#: src/pages/part/PartDetail.tsx:111
 msgid "Variants"
-msgstr ""
+msgstr "Varianter"
 
-#: src/pages/part/PartDetail.tsx:117
+#: src/pages/part/PartDetail.tsx:118
 #: src/pages/stock/StockDetail.tsx:81
 msgid "Allocations"
-msgstr ""
+msgstr "Tildelinger"
 
-#: src/pages/part/PartDetail.tsx:123
+#: src/pages/part/PartDetail.tsx:124
 msgid "Bill of Materials"
-msgstr ""
+msgstr "Stykkliste (BOM)"
 
-#: src/pages/part/PartDetail.tsx:144
+#: src/pages/part/PartDetail.tsx:145
 msgid "Used In"
-msgstr ""
+msgstr "Brukt i"
 
-#: src/pages/part/PartDetail.tsx:156
+#: src/pages/part/PartDetail.tsx:157
 #: src/pages/purchasing/PurchasingIndex.tsx:38
 msgid "Manufacturers"
-msgstr ""
+msgstr "Produsenter"
 
-#: src/pages/part/PartDetail.tsx:162
+#: src/pages/part/PartDetail.tsx:170
 #: src/pages/purchasing/PurchasingIndex.tsx:27
 msgid "Suppliers"
-msgstr ""
+msgstr "Leverandører"
 
-#: src/pages/part/PartDetail.tsx:194
+#: src/pages/part/PartDetail.tsx:202
 msgid "Scheduling"
-msgstr ""
+msgstr "Planlegging"
 
-#: src/pages/part/PartDetail.tsx:204
+#: src/pages/part/PartDetail.tsx:212
 msgid "Test Templates"
-msgstr ""
+msgstr "Testmaler"
 
-#: src/pages/part/PartDetail.tsx:210
+#: src/pages/part/PartDetail.tsx:218
 msgid "Related Parts"
-msgstr ""
+msgstr "Relaterte Deler"
 
-#: src/pages/part/PartDetail.tsx:278
+#: src/pages/part/PartDetail.tsx:286
 msgid "Stock Actions"
-msgstr ""
+msgstr "Lagerhandlinger"
 
-#: src/pages/part/PartDetail.tsx:283
+#: src/pages/part/PartDetail.tsx:291
 msgid "Count Stock"
-msgstr ""
+msgstr "Tell beholdning"
 
-#: src/pages/part/PartDetail.tsx:284
+#: src/pages/part/PartDetail.tsx:292
 msgid "Count part stock"
-msgstr ""
+msgstr "Tell delbeholdning"
 
-#: src/pages/part/PartDetail.tsx:288
+#: src/pages/part/PartDetail.tsx:296
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Overfør lager"
 
-#: src/pages/part/PartDetail.tsx:289
+#: src/pages/part/PartDetail.tsx:297
 msgid "Transfer part stock"
-msgstr ""
+msgstr "Overfør delbeholdning"
 
-#: src/pages/part/PartDetail.tsx:295
+#: src/pages/part/PartDetail.tsx:303
 msgid "Part Actions"
-msgstr ""
+msgstr "Delhandlinger"
 
 #: src/pages/part/PartDetail.tsx:310
 #~ msgid "Edit part"
@@ -3687,27 +4181,27 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:33
 #: src/pages/sales/SalesOrderDetail.tsx:41
 msgid "Order Details"
-msgstr ""
+msgstr "Ordredetaljer"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:66
 msgid "Received Stock"
-msgstr ""
+msgstr "Mottatt lagerbeholdning"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:119
 msgid "Order Actions"
-msgstr ""
+msgstr "Ordrehandlinger"
 
 #: src/pages/sales/SalesIndex.tsx:33
 msgid "Customers"
-msgstr ""
+msgstr "Kunder"
 
 #: src/pages/sales/SalesOrderDetail.tsx:51
 msgid "Pending Shipments"
-msgstr ""
+msgstr "Ventende forsendelser"
 
 #: src/pages/sales/SalesOrderDetail.tsx:56
 msgid "Completed Shipments"
-msgstr ""
+msgstr "Fullførte forsendelser"
 
 #: src/pages/stock/LocationDetail.tsx:38
 #~ msgid "Sublocations"
@@ -3715,19 +4209,19 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:75
 msgid "Stock Tracking"
-msgstr ""
+msgstr "Sporing av lager"
 
 #: src/pages/stock/StockDetail.tsx:89
 msgid "Test Data"
-msgstr ""
+msgstr "Testdata"
 
 #: src/pages/stock/StockDetail.tsx:95
 msgid "Installed Items"
-msgstr ""
+msgstr "Installerte artikler"
 
 #: src/pages/stock/StockDetail.tsx:102
 msgid "Child Items"
-msgstr ""
+msgstr "Underordnede artikler"
 
 #: src/pages/stock/StockDetail.tsx:155
 #~ msgid "Link custom barcode to stock item"
@@ -3739,35 +4233,35 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:164
 msgid "Stock Operations"
-msgstr ""
+msgstr "Lagerhandlinger"
 
 #: src/pages/stock/StockDetail.tsx:169
 msgid "Count stock"
-msgstr ""
+msgstr "Tell beholdning"
 
 #: src/pages/stock/StockDetail.tsx:173
 msgid "Add"
-msgstr ""
+msgstr "Legg til"
 
 #: src/pages/stock/StockDetail.tsx:174
 msgid "Add stock"
-msgstr ""
+msgstr "Legg til lager"
 
 #: src/pages/stock/StockDetail.tsx:179
 msgid "Remove stock"
-msgstr ""
+msgstr "Fjern lager"
 
 #: src/pages/stock/StockDetail.tsx:183
 msgid "Transfer"
-msgstr ""
+msgstr "Overfør"
 
 #: src/pages/stock/StockDetail.tsx:184
 msgid "Transfer stock"
-msgstr ""
+msgstr "Overfør lager"
 
 #: src/pages/stock/StockDetail.tsx:196
 msgid "Duplicate stock item"
-msgstr ""
+msgstr "Dupliser lagervare"
 
 #: src/pages/stock/StockDetail.tsx:205
 #~ msgid "Edit stock item"
@@ -3779,13 +4273,12 @@ msgstr ""
 
 #: src/views/MobileAppView.tsx:14
 msgid "Mobile viewport detected"
-msgstr ""
+msgstr "Mobilvisning oppdaget"
 
 #: src/views/MobileAppView.tsx:17
 msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
-msgstr ""
+msgstr "Plattformgrensesnittet er optimalisert for Nettbrett og Desktop, du kan bruke den offisielle appen for en mobil opplevelse."
 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
-msgstr ""
-
+msgstr "Les dokumentasjonen"

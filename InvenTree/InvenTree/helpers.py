@@ -832,6 +832,7 @@ def inheritors(cls):
     """Return all classes that are subclasses from the supplied cls."""
     subcls = set()
     work = [cls]
+
     while work:
         parent = work.pop()
         for child in parent.__subclasses__():

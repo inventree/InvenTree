@@ -33,6 +33,7 @@ class InvenTreeConfig(AppConfig):
         - Starting regular tasks
         - Updating exchange rates
         - Collecting notification methods
+        - Collecting state transition methods
         - Adding users set in the current environment
         """
         # skip loading if plugin registry is not loaded or we run in a background thread
@@ -52,12 +53,14 @@ class InvenTreeConfig(AppConfig):
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
         self.collect_notification_methods()
+        self.collect_state_transition_methods()
 
         # Ensure the unit registry is loaded
         InvenTree.conversion.get_unit_registry()
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
+            self.add_user_from_file()
 
     def remove_obsolete_tasks(self):
         """Delete any obsolete scheduled tasks in the database."""
@@ -212,6 +215,7 @@ class InvenTreeConfig(AppConfig):
         add_user = get_setting('INVENTREE_ADMIN_USER', 'admin_user')
         add_email = get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email')
         add_password = get_setting('INVENTREE_ADMIN_PASSWORD', 'admin_password')
+        add_password_file = get_setting("INVENTREE_ADMIN_PASSWORD_FILE", "admin_password_file", None)
 
         # check if all values are present
         set_variables = 0
@@ -227,11 +231,21 @@ class InvenTreeConfig(AppConfig):
 
         # not all needed variables set
         if set_variables < 3:
-            logger.warning('Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD')
             settings.USER_ADDED = True
+
+            # if a password file is present, do not warn - will be handled later
+            if add_password_file:
+                return
+            logger.warning('Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD')
             return
 
         # good to go -> create user
+        self._create_admin_user(add_user, add_email, add_password)
+
+        # do not try again
+        settings.USER_ADDED = True
+
+    def _create_admin_user(self, add_user, add_email, add_password):
         user = get_user_model()
         try:
             with transaction.atomic():
@@ -243,11 +257,43 @@ class InvenTreeConfig(AppConfig):
         except IntegrityError:
             logger.warning('The user "%s" could not be created', add_user)
 
+    def add_user_from_file(self):
+        """Add the superuser from a file."""
+        # stop if checks were already created
+        if hasattr(settings, "USER_ADDED_FILE") and settings.USER_ADDED_FILE:
+            return
+
+        # get values
+        add_password_file = get_setting(
+            "INVENTREE_ADMIN_PASSWORD_FILE", "admin_password_file", None
+        )
+
+        # no variable set -> do not try anything
+        if not add_password_file:
+            settings.USER_ADDED_FILE = True
+            return
+
+        # check if file exists
+        add_password_file = Path(str(add_password_file))
+        if not add_password_file.exists():
+            logger.warning('The file "%s" does not exist', add_password_file)
+            settings.USER_ADDED_FILE = True
+            return
+
+        # good to go -> create user
+        self._create_admin_user(get_setting('INVENTREE_ADMIN_USER', 'admin_user', 'admin'), get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email', ''), add_password_file.read_text(encoding="utf-8"))
+
         # do not try again
-        settings.USER_ADDED = True
+        settings.USER_ADDED_FILE = True
 
     def collect_notification_methods(self):
         """Collect all notification methods."""
         from common.notifications import storage
+
+        storage.collect()
+
+    def collect_state_transition_methods(self):
+        """Collect all state transition methods."""
+        from generic.states import storage
 
         storage.collect()
