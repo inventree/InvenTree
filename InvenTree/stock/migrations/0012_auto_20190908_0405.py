@@ -2,13 +2,12 @@
 
 from django.db import migrations
 
-from stock import models
-
 
 def update_tree(apps, schema_editor):
     # Update the StockLocation MPTT model
 
-    models.StockLocation.objects.rebuild()
+    StockLocation = apps.get_model('stock', 'StockLocation')
+    StockLocation.objects.rebuild()
 
 
 class Migration(migrations.Migration):
