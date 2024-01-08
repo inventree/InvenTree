@@ -7,7 +7,11 @@ from part.models import Part
 
 def update_tree(apps, schema_editor):
     # Update the MPTT for Part model
-    Part.objects.rebuild()
+    try:
+        print("Rebuilding Part objects")
+        Part.objects.rebuild()
+    except Exception as exc:
+        print("Error rebuilding Part objects", exc)
 
 
 class Migration(migrations.Migration):
