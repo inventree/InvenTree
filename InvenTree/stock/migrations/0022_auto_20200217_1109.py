@@ -7,7 +7,12 @@ def update_stock_item_tree(apps, schema_editor):
     # Update the StockItem MPTT model
 
     StockItem = apps.get_model('stock', 'StockItem')
-    StockItem.objects.rebuild()
+    try:
+        print("Rebuilding StockItem objects")
+        StockItem.objects.rebuild()
+        print("Rebuilding StockItem objects - done")
+    except Exception as exc:
+        print("Error rebuilding StockItem objects", exc)
 
 
 class Migration(migrations.Migration):

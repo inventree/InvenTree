@@ -7,7 +7,12 @@ def update_tree(apps, schema_editor):
     # Update the StockLocation MPTT model
 
     StockLocation = apps.get_model('stock', 'StockLocation')
-    StockLocation.objects.rebuild()
+    try:
+        print("Rebuilding StockLocation objects")
+        StockLocation.objects.rebuild()
+        print("Rebuilding StockLocation objects - done")
+    except Exception as exc:
+        print("Error rebuilding StockLocation objects", exc)
 
 
 class Migration(migrations.Migration):

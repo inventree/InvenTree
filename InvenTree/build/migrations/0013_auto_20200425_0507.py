@@ -3,12 +3,19 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import mptt.fields
-from build.models import Build
 
 
 def update_tree(apps, schema_editor):
     # Update the Build MPTT model
-    Build.objects.rebuild()
+
+    Build = apps.get_model('build', 'Build')
+
+    try:
+        print("Rebuilding Build objects")
+        Build.objects.rebuild()
+        print("Rebuilding Build objects - done")
+    except Exception as exc:
+        print("Error rebuilding Build objects", exc)
 
 
 class Migration(migrations.Migration):
