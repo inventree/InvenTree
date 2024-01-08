@@ -10,16 +10,16 @@ def update_tree(apps, schema_editor):
 
         from part.models import PartCategory
         PartCategory.objects.rebuild()
-    except Exception:
-        print("Error rebuilding PartCategory objects")
+    except Exception as exc:
+        print("Error rebuilding PartCategory objects", exc)
 
     try:
         print("Rebuilding PartCategoryS objects - app loaded")
 
         PartCategoryS = apps.get_model('part', 'PartCategory')
         PartCategoryS.objects.rebuild()
-    except Exception:
-        print("Error rebuilding PartCategory objects - app loaded")
+    except Exception as exc:
+        print("Error rebuilding PartCategory objects - app loaded", exc)
 
 
 class Migration(migrations.Migration):
