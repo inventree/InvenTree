@@ -427,6 +427,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         If the part image has been updated, then check if the "old" (previous) image is still used by another part.
         If not, it is considered "orphaned" and will be deleted.
         """
+        _new = False
         if self.pk:
             try:
                 previous = Part.objects.get(pk=self.pk)
@@ -442,6 +443,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                         previous.image.delete(save=False)
             except Part.DoesNotExist:
                 pass
+        else:
+            _new = True
 
         self.full_clean()
 
@@ -452,7 +455,9 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                 'variant_of': _('Invalid choice for parent part'),
             })
 
-        self.ensure_trackable()
+        if _new:
+            # Only run if the check was not run previously (due to not existing in the database)
+            self.ensure_trackable()
 
     def __str__(self):
         """Return a string representation of the Part (for use in the admin interface)"""
@@ -771,11 +776,9 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         # Run custom validation for the name field
         self.validate_name()
 
-        try:
+        if self.pk:
+            # Only run if the part already exists in the database
             self.ensure_trackable()
-        except ValueError as e:
-            print(e)
-            pass
 
     def ensure_trackable(self):
         """Ensure that trackable is set correctly downline."""
