@@ -252,7 +252,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
-          pip-dependency: psycopg2 django-redis>=5.0.0
+          pip-dependency: psycopg django-redis>=5.0.0
           dev-install: true
           update: true
       - name: Run Tests
@@ -334,7 +334,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
-          pip-dependency: psycopg2
+          pip-dependency: psycopg
           dev-install: true
           update: true
       - name: Run Tests
