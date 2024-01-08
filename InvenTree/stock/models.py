@@ -98,7 +98,8 @@ class StockLocationManager(TreeManager):
 
         - Joins the StockLocationType by default for speedier icon access
         """
-        return super().get_queryset().select_related("location_type")
+        # return super().get_queryset().select_related("location_type")
+        return super().get_queryset()
 
 
 class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
