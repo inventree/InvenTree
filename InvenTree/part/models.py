@@ -452,6 +452,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                 'variant_of': _('Invalid choice for parent part'),
             })
 
+        self.ensure_trackable()
+
     def __str__(self):
         """Return a string representation of the Part (for use in the admin interface)"""
         return f"{self.full_name} - {self.description}"
@@ -769,6 +771,14 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         # Run custom validation for the name field
         self.validate_name()
 
+        try:
+            self.ensure_trackable()
+        except ValueError as e:
+            print(e)
+            pass
+
+    def ensure_trackable(self):
+        """Ensure that trackable is set correctly downline."""
         if self.trackable:
             for part in self.get_used_in():
 
