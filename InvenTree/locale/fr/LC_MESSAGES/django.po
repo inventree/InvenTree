@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-07 19:37+0000\n"
-"PO-Revision-Date: 2024-01-03 15:34\n"
+"POT-Creation-Date: 2023-12-21 05:01+0000\n"
+"PO-Revision-Date: 2024-01-08 22:29\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -474,13 +474,9 @@ msgstr "Bienvenue sur {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Votre compte a été créé.\n"
-"\n"
+msgstr "Votre compte a été créé.\n\n"
 "Veuillez utiliser la fonction de réinitialisation du mot de passe pour avoir accès (à https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -535,7 +531,7 @@ msgstr "Colonne duliquée : '{col}'"
 
 #: InvenTree/serializers.py:867
 msgid "Remote Image"
-msgstr ""
+msgstr "Images distantes"
 
 #: InvenTree/serializers.py:868
 msgid "URL of remote image file"
@@ -643,7 +639,7 @@ msgstr "Slovénien"
 
 #: InvenTree/settings.py:857
 msgid "Serbian"
-msgstr ""
+msgstr "Serbe"
 
 #: InvenTree/settings.py:858
 msgid "Swedish"
@@ -1467,7 +1463,7 @@ msgstr "Abandonner les allocations de stock pour les sorties abandonnées"
 
 #: build/serializers.py:434
 msgid "Reason for scrapping build output(s)"
-msgstr ""
+msgstr "Motif de l'élimination des produits de construction(s)"
 
 #: build/serializers.py:494
 msgid "Location for completed build outputs"
@@ -1578,7 +1574,7 @@ msgstr "La sortie de la construction doit pointer vers la même construction"
 
 #: build/serializers.py:772
 msgid "Build Line Item"
-msgstr ""
+msgstr "Élément de la ligne de construction"
 
 #: build/serializers.py:786
 msgid "bom_item.part must point to the same part as the build order"
@@ -2219,7 +2215,7 @@ msgstr "Validation stricte d'URL"
 
 #: common/models.py:1180
 msgid "Require schema specification when validating URLs"
-msgstr ""
+msgstr "Spécification du schéma nécessaire lors de la validation des URL"
 
 #: common/models.py:1186
 msgid "Require confirm"
@@ -2492,7 +2488,7 @@ msgstr "Icône par défaut de la catégorie de la pièce (vide signifie aucune i
 
 #: common/models.py:1435
 msgid "Enforce Parameter Units"
-msgstr ""
+msgstr "Renforcer les unités des paramètres"
 
 #: common/models.py:1436
 msgid "If units are provided, parameter values must match the specified units"
@@ -13463,8 +13459,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13639,3 +13634,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
