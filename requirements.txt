@@ -51,7 +51,7 @@ diff-match-patch==20230430
     # via django-import-export
 dj-rest-auth==5.0.2
     # via -r requirements.in
-django==4.1.13
+django==4.2.9
     # via
     #   -r requirements.in
     #   dj-rest-auth
@@ -165,9 +165,7 @@ et-xmlfile==1.1.0
 feedparser==6.0.11
     # via -r requirements.in
 fonttools[woff]==4.47.0
-    # via
-    #   fonttools
-    #   weasyprint
+    # via weasyprint
 gunicorn==21.2.0
     # via -r requirements.in
 html5lib==1.1

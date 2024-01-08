@@ -4,7 +4,7 @@ import json
 
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
@@ -42,7 +42,7 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
 
         return [
             re_path(r'^hi/', self.view_test, name='hi'),
-            re_path(r'^ho/', include(he_urls), name='ho'),
+            path('ho/', include(he_urls), name='ho'),
         ]
 
     SETTINGS = {

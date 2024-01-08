@@ -246,7 +246,7 @@ class GetAuthToken(APIView):
                 token = ApiToken.objects.create(user=request.user, name=name)
 
             # Add some metadata about the request
-            token.set_metadata('user_agent', request.META.get('HTTP_USER_AGENT', ''))
+            token.set_metadata('user_agent', request.headers.get('user-agent', ''))
             token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
             token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
             token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
@@ -273,12 +273,12 @@ user_urls = [
     re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
     re_path(r'^me/', MeUserDetail.as_view(), name='api-user-me'),
 
-    re_path(r'^owner/', include([
+    path('owner/', include([
         path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
         re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
     ])),
 
-    re_path(r'^group/', include([
+    path('group/', include([
         re_path(r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'),
         re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
     ])),

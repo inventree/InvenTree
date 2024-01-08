@@ -20,10 +20,10 @@ stock_item_detail_urls = [
 
 stock_urls = [
     # Stock location
-    re_path(r'^location/', include(location_urls)),
+    path('location/', include(location_urls)),
 
     # Individual stock items
-    re_path(r'^item/(?P<pk>\d+)/', include(stock_item_detail_urls)),
+    path('item/<int:pk>/', include(stock_item_detail_urls)),
 
     # Default to the stock index page
     re_path(r'^.*$', views.StockIndex.as_view(), name='stock-index'),

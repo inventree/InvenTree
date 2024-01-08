@@ -358,7 +358,7 @@ class BuildLineLabelPrint(BuildLineLabelMixin, LabelPrintMixin, RetrieveAPI):
 label_api_urls = [
 
     # Stock item labels
-    re_path(r'stock/', include([
+    path('stock/', include([
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
@@ -371,7 +371,7 @@ label_api_urls = [
     ])),
 
     # Stock location labels
-    re_path(r'location/', include([
+    path('location/', include([
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
@@ -384,7 +384,7 @@ label_api_urls = [
     ])),
 
     # Part labels
-    re_path(r'^part/', include([
+    path('part/', include([
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'^print/', PartLabelPrint.as_view(), name='api-part-label-print'),
@@ -397,7 +397,7 @@ label_api_urls = [
     ])),
 
     # BuildLine labels
-    re_path(r'^buildline/', include([
+    path('buildline/', include([
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'^print/', BuildLineLabelPrint.as_view(), name='api-buildline-label-print'),

@@ -58,17 +58,17 @@ apipatterns = [
     # Global search
     path('search/', APISearchView.as_view(), name='api-search'),
 
-    re_path(r'^settings/', include(common.api.settings_api_urls)),
-    re_path(r'^part/', include(part.api.part_api_urls)),
-    re_path(r'^bom/', include(part.api.bom_api_urls)),
-    re_path(r'^company/', include(company.api.company_api_urls)),
-    re_path(r'^stock/', include(stock.api.stock_api_urls)),
-    re_path(r'^build/', include(build.api.build_api_urls)),
-    re_path(r'^order/', include(order.api.order_api_urls)),
-    re_path(r'^label/', include(label.api.label_api_urls)),
-    re_path(r'^report/', include(report.api.report_api_urls)),
-    re_path(r'^user/', include(users.api.user_urls)),
-    re_path(r'^admin/', include(common.api.admin_api_urls)),
+    path('settings/', include(common.api.settings_api_urls)),
+    path('part/', include(part.api.part_api_urls)),
+    path('bom/', include(part.api.bom_api_urls)),
+    path('company/', include(company.api.company_api_urls)),
+    path('stock/', include(stock.api.stock_api_urls)),
+    path('build/', include(build.api.build_api_urls)),
+    path('order/', include(order.api.order_api_urls)),
+    path('label/', include(label.api.label_api_urls)),
+    path('report/', include(report.api.report_api_urls)),
+    path('user/', include(users.api.user_urls)),
+    path('admin/', include(common.api.admin_api_urls)),
 
     # Plugin endpoints
     path('', include(plugin.api.plugin_api_urls)),
@@ -168,35 +168,35 @@ translated_javascript_urls = [
 
 backendpatterns = [
     # "Dynamic" javascript files which are rendered using InvenTree templating.
-    re_path(r'^js/dynamic/', include(dynamic_javascript_urls)),
-    re_path(r'^js/i18n/', include(translated_javascript_urls)),
+    path('js/dynamic/', include(dynamic_javascript_urls)),
+    path('js/i18n/', include(translated_javascript_urls)),
 
-    re_path(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('auth/', include('rest_framework.urls', namespace='rest_framework')),
     re_path(r'^auth/?', auth_request),
 
-    re_path(r'^api/', include(apipatterns)),
+    path('api/', include(apipatterns)),
     re_path(r'^api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
 
 classic_frontendpatterns = [
 
     # Apps
-    re_path(r'^build/', include(build_urls)),
-    re_path(r'^common/', include(common_urls)),
-    re_path(r'^company/', include(company_urls)),
-    re_path(r'^order/', include(order_urls)),
-    re_path(r'^manufacturer-part/', include(manufacturer_part_urls)),
-    re_path(r'^part/', include(part_urls)),
-    re_path(r'^stock/', include(stock_urls)),
-    re_path(r'^supplier-part/', include(supplier_part_urls)),
+    path('build/', include(build_urls)),
+    path('common/', include(common_urls)),
+    path('company/', include(company_urls)),
+    path('order/', include(order_urls)),
+    path('manufacturer-part/', include(manufacturer_part_urls)),
+    path('part/', include(part_urls)),
+    path('stock/', include(stock_urls)),
+    path('supplier-part/', include(supplier_part_urls)),
 
     re_path(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     re_path(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
 
     re_path(r'^index/', IndexView.as_view(), name='index'),
-    re_path(r'^notifications/', include(notifications_urls)),
+    path('notifications/', include(notifications_urls)),
     re_path(r'^search/', SearchView.as_view(), name='search'),
-    re_path(r'^settings/', include(settings_urls)),
+    path('settings/', include(settings_urls)),
     re_path(r'^about/', AboutView.as_view(), name='about'),
     re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
@@ -213,8 +213,8 @@ classic_frontendpatterns = [
     # Override login page
     re_path("accounts/login/", CustomLoginView.as_view(), name="account_login"),
 
-    re_path(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
-    re_path(r'^accounts/', include('allauth.urls')),        # included urlpatterns
+    path('accounts/', include('allauth_2fa.urls')),    # MFA support
+    path('accounts/', include('allauth.urls')),        # included urlpatterns
 ]
 
 urlpatterns = []

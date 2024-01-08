@@ -488,7 +488,7 @@ class StockLocationReportPrint(StockLocationReportMixin, ReportPrintMixin, Retri
 report_api_urls = [
 
     # Purchase order reports
-    re_path(r'po/', include([
+    path('po/', include([
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/', PurchaseOrderReportPrint.as_view(), name='api-po-report-print'),
@@ -501,7 +501,7 @@ report_api_urls = [
     ])),
 
     # Sales order reports
-    re_path(r'so/', include([
+    path('so/', include([
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/', SalesOrderReportPrint.as_view(), name='api-so-report-print'),
@@ -513,7 +513,7 @@ report_api_urls = [
     ])),
 
     # Return order reports
-    re_path(r'ro/', include([
+    path('ro/', include([
         path(r'<int:pk>/', include([
             path(r'print/', ReturnOrderReportPrint.as_view(), name='api-return-order-report-print'),
             re_path(r'metadata/', MetadataView.as_view(), {'model': ReturnOrderReport}, name='api-so-report-metadata'),
@@ -523,7 +523,7 @@ report_api_urls = [
     ])),
 
     # Build reports
-    re_path(r'build/', include([
+    path('build/', include([
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
@@ -536,7 +536,7 @@ report_api_urls = [
     ])),
 
     # Bill of Material reports
-    re_path(r'bom/', include([
+    path('bom/', include([
 
         # Detail views
         path(r'<int:pk>/', include([
@@ -550,7 +550,7 @@ report_api_urls = [
     ])),
 
     # Stock item test reports
-    re_path(r'test/', include([
+    path('test/', include([
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
@@ -563,7 +563,7 @@ report_api_urls = [
     ])),
 
     # Stock Location reports (Stock Location Reports -> sir)
-    re_path(r'slr/', include([
+    path('slr/', include([
         # Detail views
         path(r'<int:pk>/', include([
             re_path(r'print/?', StockLocationReportPrint.as_view(), name='api-stocklocation-report-print'),

@@ -587,19 +587,19 @@ class BuildAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
 build_api_urls = [
 
     # Attachments
-    re_path(r'^attachment/', include([
+    path('attachment/', include([
         path(r'<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
         re_path(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
     ])),
 
     # Build lines
-    re_path(r'^line/', include([
+    path('line/', include([
         path(r'<int:pk>/', BuildLineDetail.as_view(), name='api-build-line-detail'),
         re_path(r'^.*$', BuildLineList.as_view(), name='api-build-line-list'),
     ])),
 
     # Build Items
-    re_path(r'^item/', include([
+    path('item/', include([
         path(r'<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': BuildItem}, name='api-build-item-metadata'),
             re_path(r'^.*$', BuildItemDetail.as_view(), name='api-build-item-detail'),

@@ -363,18 +363,18 @@ class RegistryStatusView(APIView):
 
 plugin_api_urls = [
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
-    re_path(r'^barcode/', include(barcode_api_urls)),
+    path('barcode/', include(barcode_api_urls)),
     re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
-    re_path(r'^plugins/', include([
+    path('plugins/', include([
         # Plugin settings URLs
-        re_path(r'^settings/', include([
+        path('settings/', include([
             re_path(r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),    # Used for admin interface
             re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
         ])),
 
         # Detail views for a single PluginConfig item
         path(r'<int:pk>/', include([
-            re_path(r"^settings/", include([
+            path("settings/", include([
                 re_path(r'^(?P<key>\w+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail-pk'),
                 re_path(r"^.*$", PluginAllSettingList.as_view(), name="api-plugin-settings"),
             ])),

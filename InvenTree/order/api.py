@@ -1487,10 +1487,10 @@ class OrderCalendarExport(ICalFeed):
 order_api_urls = [
 
     # API endpoints for purchase orders
-    re_path(r'^po/', include([
+    path('po/', include([
 
         # Purchase order attachments
-        re_path(r'attachment/', include([
+        path('attachment/', include([
             path('<int:pk>/', PurchaseOrderAttachmentDetail.as_view(), name='api-po-attachment-detail'),
             re_path(r'^.*$', PurchaseOrderAttachmentList.as_view(), name='api-po-attachment-list'),
         ])),
@@ -1515,7 +1515,7 @@ order_api_urls = [
     ])),
 
     # API endpoints for purchase order line items
-    re_path(r'^po-line/', include([
+    path('po-line/', include([
         path('<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': models.PurchaseOrderLineItem}, name='api-po-line-metadata'),
             re_path(r'^.*$', PurchaseOrderLineItemDetail.as_view(), name='api-po-line-detail'),
@@ -1524,7 +1524,7 @@ order_api_urls = [
     ])),
 
     # API endpoints for purchase order extra line
-    re_path(r'^po-extra-line/', include([
+    path('po-extra-line/', include([
         path('<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': models.PurchaseOrderExtraLine}, name='api-po-extra-line-metadata'),
             re_path(r'^.*$', PurchaseOrderExtraLineDetail.as_view(), name='api-po-extra-line-detail'),
@@ -1533,13 +1533,13 @@ order_api_urls = [
     ])),
 
     # API endpoints for sales ordesr
-    re_path(r'^so/', include([
-        re_path(r'attachment/', include([
+    path('so/', include([
+        path('attachment/', include([
             path('<int:pk>/', SalesOrderAttachmentDetail.as_view(), name='api-so-attachment-detail'),
             re_path(r'^.*$', SalesOrderAttachmentList.as_view(), name='api-so-attachment-list'),
         ])),
 
-        re_path(r'^shipment/', include([
+        path('shipment/', include([
             path(r'<int:pk>/', include([
                 path('ship/', SalesOrderShipmentComplete.as_view(), name='api-so-shipment-ship'),
                 re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrderShipment}, name='api-so-shipment-metadata'),
@@ -1569,7 +1569,7 @@ order_api_urls = [
     ])),
 
     # API endpoints for sales order line items
-    re_path(r'^so-line/', include([
+    path('so-line/', include([
         path('<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrderLineItem}, name='api-so-line-metadata'),
             re_path(r'^.*$', SalesOrderLineItemDetail.as_view(), name='api-so-line-detail'),
@@ -1578,7 +1578,7 @@ order_api_urls = [
     ])),
 
     # API endpoints for sales order extra line
-    re_path(r'^so-extra-line/', include([
+    path('so-extra-line/', include([
         path('<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrderExtraLine}, name='api-so-extra-line-metadata'),
             re_path(r'^.*$', SalesOrderExtraLineDetail.as_view(), name='api-so-extra-line-detail'),
@@ -1587,15 +1587,15 @@ order_api_urls = [
     ])),
 
     # API endpoints for sales order allocations
-    re_path(r'^so-allocation/', include([
+    path('so-allocation/', include([
         path('<int:pk>/', SalesOrderAllocationDetail.as_view(), name='api-so-allocation-detail'),
         re_path(r'^.*$', SalesOrderAllocationList.as_view(), name='api-so-allocation-list'),
     ])),
 
     # API endpoints for return orders
-    re_path(r'^ro/', include([
+    path('ro/', include([
 
-        re_path(r'^attachment/', include([
+        path('attachment/', include([
             path('<int:pk>/', ReturnOrderAttachmentDetail.as_view(), name='api-return-order-attachment-detail'),
             re_path(r'^.*$', ReturnOrderAttachmentList.as_view(), name='api-return-order-attachment-list'),
         ])),
@@ -1618,7 +1618,7 @@ order_api_urls = [
     ])),
 
     # API endpoints for return order lines
-    re_path(r'^ro-line/', include([
+    path('ro-line/', include([
         path('<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderLineItem}, name='api-return-order-line-metadata'),
             re_path(r'^.*$', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
@@ -1631,7 +1631,7 @@ order_api_urls = [
     ])),
 
     # API endpoints for return order extra line
-    re_path(r'^ro-extra-line/', include([
+    path('ro-extra-line/', include([
         path('<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderExtraLine}, name='api-return-order-extra-line-metadata'),
             re_path(r'^.*$', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),

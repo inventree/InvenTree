@@ -30,7 +30,7 @@ category_urls = [
 part_urls = [
 
     # Upload a part
-    re_path(r'^import/$', views.PartImport.as_view(), name='part-import'),
+    path('import/', views.PartImport.as_view(), name='part-import'),
     re_path(r'^import/?', views.PartImportTemplate.as_view(), name='part-template-download'),
     re_path(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
 
@@ -38,7 +38,7 @@ part_urls = [
     path(r'<int:pk>/', include(part_detail_urls)),
 
     # Part category
-    re_path(r'^category/', include(category_urls)),
+    path('category/', include(category_urls)),
 
     # Individual part using IPN as slug
     re_path(r'^(?P<slug>[-\w]+)/', views.PartDetailFromIPN.as_view(), name='part-detail-from-ipn'),

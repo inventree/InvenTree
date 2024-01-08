@@ -51,7 +51,7 @@ return_order_urls = [
 
 
 order_urls = [
-    re_path(r'^purchase-order/', include(purchase_order_urls)),
-    re_path(r'^sales-order/', include(sales_order_urls)),
-    re_path(r'^return-order/', include(return_order_urls)),
+    path('purchase-order/', include(purchase_order_urls)),
+    path('sales-order/', include(sales_order_urls)),
+    path('return-order/', include(return_order_urls)),
 ]

@@ -13,6 +13,7 @@ from users.models import ApiToken, Owner, RuleSet
 User = get_user_model()
 
 
+@admin.register(ApiToken)
 class ApiTokenAdmin(admin.ModelAdmin):
     """Admin class for the ApiToken model."""
 
@@ -258,6 +259,7 @@ class InvenTreeUserAdmin(UserAdmin):
     )
 
 
+@admin.register(Owner)
 class OwnerAdmin(admin.ModelAdmin):
     """Custom admin interface for the Owner model."""
     pass
@@ -268,7 +270,3 @@ admin.site.register(Group, RoleGroupAdmin)
 
 admin.site.unregister(User)
 admin.site.register(User, InvenTreeUserAdmin)
-
-admin.site.register(Owner, OwnerAdmin)
-
-admin.site.register(ApiToken, ApiTokenAdmin)

@@ -535,7 +535,7 @@ class FlagDetail(RetrieveAPI):
 
 settings_api_urls = [
     # User settings
-    re_path(r'^user/', include([
+    path('user/', include([
         # User Settings Detail
         re_path(r'^(?P<key>\w+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
 
@@ -544,7 +544,7 @@ settings_api_urls = [
     ])),
 
     # Notification settings
-    re_path(r'^notification/', include([
+    path('notification/', include([
         # Notification Settings Detail
         path(r'<int:pk>/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
 
@@ -553,7 +553,7 @@ settings_api_urls = [
     ])),
 
     # Global settings
-    re_path(r'^global/', include([
+    path('global/', include([
         # Global Settings Detail
         re_path(r'^(?P<key>\w+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
 
@@ -570,7 +570,7 @@ common_api_urls = [
     re_path(r'^notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'),
 
     # Project codes
-    re_path(r'^project-code/', include([
+    path('project-code/', include([
         path(r'<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': common.models.ProjectCode}, name='api-project-code-metadata'),
             re_path(r'^.*$', ProjectCodeDetail.as_view(), name='api-project-code-detail'),
@@ -579,7 +579,7 @@ common_api_urls = [
     ])),
 
     # Custom physical units
-    re_path(r'^units/', include([
+    path('units/', include([
         path(r'<int:pk>/', include([
             re_path(r'^.*$', CustomUnitDetail.as_view(), name='api-custom-unit-detail'),
         ])),
@@ -587,13 +587,13 @@ common_api_urls = [
     ])),
 
     # Currencies
-    re_path(r'^currency/', include([
+    path('currency/', include([
         re_path(r'^exchange/', CurrencyExchangeView.as_view(), name='api-currency-exchange'),
         re_path(r'^refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'),
     ])),
 
     # Notifications
-    re_path(r'^notifications/', include([
+    path('notifications/', include([
         # Individual purchase order detail URLs
         path(r'<int:pk>/', include([
             re_path(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
@@ -606,7 +606,7 @@ common_api_urls = [
     ])),
 
     # News
-    re_path(r'^news/', include([
+    path('news/', include([
         path(r'<int:pk>/', include([
             re_path(r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'),
         ])),

@@ -1441,7 +1441,7 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
 
 
 stock_api_urls = [
-    re_path(r'^location/', include([
+    path('location/', include([
 
         re_path(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
 
@@ -1457,7 +1457,7 @@ stock_api_urls = [
     ])),
 
     # Stock location type endpoints
-    re_path(r'^location-type/', include([
+    path('location-type/', include([
         path(r'<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': StockLocationType}, name='api-location-type-metadata'),
             re_path(r'^.*$', StockLocationTypeDetail.as_view(), name='api-location-type-detail'),
@@ -1475,13 +1475,13 @@ stock_api_urls = [
     re_path(r'^change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
 
     # StockItemAttachment API endpoints
-    re_path(r'^attachment/', include([
+    path('attachment/', include([
         path(r'<int:pk>/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
         path('', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
     ])),
 
     # StockItemTestResult API endpoints
-    re_path(r'^test/', include([
+    path('test/', include([
         path(r'<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': StockItemTestResult}, name='api-stock-test-result-metadata'),
             re_path(r'^.*$', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
@@ -1490,7 +1490,7 @@ stock_api_urls = [
     ])),
 
     # StockItemTracking API endpoints
-    re_path(r'^track/', include([
+    path('track/', include([
         path(r'<int:pk>/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
 
         # Stock tracking status code information

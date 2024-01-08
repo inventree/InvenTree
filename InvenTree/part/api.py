@@ -1924,11 +1924,11 @@ class BomItemSubstituteDetail(RetrieveUpdateDestroyAPI):
 part_api_urls = [
 
     # Base URL for PartCategory API endpoints
-    re_path(r'^category/', include([
+    path('category/', include([
         re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
 
-        re_path(r'^parameters/', include([
-            re_path(r'^(?P<pk>\d+)/', include([
+        path('parameters/', include([
+            path('<int:pk>/', include([
                 re_path(r'^metadata/', MetadataView.as_view(), {'model': PartCategoryParameterTemplate}, name='api-part-category-parameter-metadata'),
                 re_path(r'^.*$', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
             ])),
@@ -1948,7 +1948,7 @@ part_api_urls = [
     ])),
 
     # Base URL for PartTestTemplate API endpoints
-    re_path(r'^test-template/', include([
+    path('test-template/', include([
         path(r'<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': PartTestTemplate}, name='api-part-test-template-metadata'),
             re_path(r'^.*$', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
@@ -1957,25 +1957,25 @@ part_api_urls = [
     ])),
 
     # Base URL for PartAttachment API endpoints
-    re_path(r'^attachment/', include([
+    path('attachment/', include([
         path(r'<int:pk>/', PartAttachmentDetail.as_view(), name='api-part-attachment-detail'),
         path('', PartAttachmentList.as_view(), name='api-part-attachment-list'),
     ])),
 
     # Base URL for part sale pricing
-    re_path(r'^sale-price/', include([
+    path('sale-price/', include([
         path(r'<int:pk>/', PartSalePriceDetail.as_view(), name='api-part-sale-price-detail'),
         re_path(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
     ])),
 
     # Base URL for part internal pricing
-    re_path(r'^internal-price/', include([
+    path('internal-price/', include([
         path(r'<int:pk>/', PartInternalPriceDetail.as_view(), name='api-part-internal-price-detail'),
         re_path(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
     ])),
 
     # Base URL for PartRelated API endpoints
-    re_path(r'^related/', include([
+    path('related/', include([
         path(r'<int:pk>/', include([
             re_path(r'^metadata/', MetadataView.as_view(), {'model': PartRelated}, name='api-part-related-metadata'),
             re_path(r'^.*$', PartRelatedDetail.as_view(), name='api-part-related-detail'),
@@ -1984,9 +1984,9 @@ part_api_urls = [
     ])),
 
     # Base URL for PartParameter API endpoints
-    re_path(r'^parameter/', include([
+    path('parameter/', include([
         path('template/', include([
-            re_path(r'^(?P<pk>\d+)/', include([
+            path('<int:pk>/', include([
                 re_path(r'^metadata/?', MetadataView.as_view(), {'model': PartParameterTemplate}, name='api-part-parameter-template-metadata'),
                 re_path(r'^.*$', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
             ])),
@@ -2001,7 +2001,7 @@ part_api_urls = [
     ])),
 
     # Part stocktake data
-    re_path(r'^stocktake/', include([
+    path('stocktake/', include([
 
         path(r'report/', include([
             path('generate/', PartStocktakeReportGenerate.as_view(), name='api-part-stocktake-report-generate'),
@@ -2012,7 +2012,7 @@ part_api_urls = [
         re_path(r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
     ])),
 
-    re_path(r'^thumbs/', include([
+    path('thumbs/', include([
         path('', PartThumbs.as_view(), name='api-part-thumbs'),
         re_path(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
@@ -2059,7 +2059,7 @@ part_api_urls = [
 
 bom_api_urls = [
 
-    re_path(r'^substitute/', include([
+    path('substitute/', include([
 
         # Detail view
         path(r'<int:pk>/', include([
