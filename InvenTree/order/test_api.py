@@ -357,6 +357,39 @@ class PurchaseOrderTest(OrderTest):
             expected_code=201,
         )
 
+    def test_po_creation_date(self):
+        """Test that we can create set the creation_date field of PurchaseOrder via the API."""
+        self.assignRole('purchase_order.add')
+
+        response = self.post(
+            reverse('api-po-list'),
+            {
+                'reference': 'PO-19881110',
+                'supplier': 1,
+                'description': 'PO created on 1988-11-10',
+                'creation_date': '1988-11-10',
+            },
+            expected_code=201
+        )
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.creation_date, datetime(1988, 11, 10).date())
+
+        """Ensure if we do not pass the creation_date field than the current date will be saved"""
+        creation_date = datetime.now().date()
+        response = self.post(
+            reverse('api-po-list'),
+            {
+                'reference': 'PO-11111111',
+                'supplier': 1,
+                'description': 'Check that the creation date is today',
+            },
+            expected_code=201
+        )
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.creation_date, creation_date)
+
     def test_po_duplicate(self):
         """Test that we can duplicate a PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
