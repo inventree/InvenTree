@@ -607,9 +607,12 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         """Skip these fields when instantiating a new Part instance"""
         fields = super().skip_create_fields()
 
+        # Placed by itself to prevent changing of order in array
+        # This to prevent being popped by call in self.__init__
+        fields += ['existing_image']
+
         fields += [
             'duplicate',
-            'existing_image',
             'initial_stock',
             'initial_supplier',
             'copy_category_parameters',
