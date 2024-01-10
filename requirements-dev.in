@@ -2,7 +2,6 @@
 -c requirements.txt
 coverage[toml]                          # Unit test coverage
 coveralls==2.1.2                        # Coveralls linking (for tracking coverage)  # PINNED 2022-06-28 - Old version needed for correct upload
-django-debug-toolbar                    # Debug / profiling toolbar
 django-slowtests                        # Show which unit tests are running slowly
 django-test-migrations                  # Unit testing for database migrations
 isort                                   # python import sorting
