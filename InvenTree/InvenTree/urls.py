@@ -444,12 +444,6 @@ if settings.DEBUG:
     # Media file access
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-    # Debug toolbar access (only allowed in DEBUG mode)
-    if settings.DEBUG_TOOLBAR_ENABLED:
-        import debug_toolbar
-
-        urlpatterns = [path('__debug__/', include(debug_toolbar.urls))] + urlpatterns
-
 # Redirect for favicon.ico
 urlpatterns.append(
     path(
