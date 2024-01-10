@@ -20,11 +20,13 @@ class ReportConfig(AppConfig):
 
     def ready(self):
         """This function is called whenever the report app is loaded."""
-        from InvenTree.ready import (canAppAccessDatabase, isImportingData,
-                                     isInMainThread, isPluginRegistryLoaded)
+        import InvenTree.ready
 
         # skip loading if plugin registry is not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
+        if not InvenTree.ready.isPluginRegistryLoaded() or not InvenTree.ready.isInMainThread():
+            return
+
+        if InvenTree.ready.isRunningMigrations():
             return
 
         # Configure logging for PDF generation (disable "info" messages)
@@ -32,7 +34,7 @@ class ReportConfig(AppConfig):
         logging.getLogger('weasyprint').setLevel(logging.WARNING)
 
         # Create entries for default report templates
-        if canAppAccessDatabase(allow_test=False) and not isImportingData():
+        if InvenTree.ready.canAppAccessDatabase(allow_test=False) and not InvenTree.ready.isImportingData():
 
             try:
                 self.create_default_test_reports()

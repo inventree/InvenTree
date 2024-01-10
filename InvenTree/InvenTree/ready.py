@@ -16,7 +16,11 @@ def isImportingData():
 
 def isRunningMigrations():
     """Return True if the database is currently running migrations."""
-    return 'migrate' in sys.argv or 'makemigrations' in sys.argv
+    return any((x in sys.argv for x in [
+        'migrate',
+        'makemigrations',
+        'showmigrations'
+    ]))
 
 
 def isInMainThread():
