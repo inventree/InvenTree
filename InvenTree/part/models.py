@@ -393,7 +393,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         ]
 
     class MPTTMeta:
-        """MPTT metaclass definitions."""
+        """MPTT Metaclass options."""
 
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'

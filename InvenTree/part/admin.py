@@ -17,7 +17,7 @@ class PartResource(InvenTreeResource):
     """Class for managing Part data import/export."""
 
     class Meta:
-        """Metaclass definition."""
+        """Metaclass options."""
 
         model = models.Part
         skip_unchanged = True
@@ -197,7 +197,7 @@ class PartImportResource(InvenTreeResource):
     """Class for managing Part data import/export."""
 
     class Meta(PartResource.Meta):
-        """Metaclass definition."""
+        """Metaclass options."""
 
         skip_unchanged = True
         report_skipped = False
@@ -279,7 +279,7 @@ class PartCategoryResource(InvenTreeResource):
     """Class for managing PartCategory data import/export."""
 
     class Meta:
-        """Metaclass definition."""
+        """Metaclass options."""
 
         model = models.PartCategory
         skip_unchanged = True
@@ -371,7 +371,7 @@ class BomItemResource(InvenTreeResource):
     """Class for managing BomItem data import/export."""
 
     class Meta:
-        """Metaclass definition."""
+        """Metaclass options."""
 
         model = models.BomItem
         skip_unchanged = True
@@ -519,7 +519,7 @@ class ParameterTemplateResource(InvenTreeResource):
     CONVERT_NULL_FIELDS = ['choices', 'units']
 
     class Meta:
-        """Metaclass definition."""
+        """Metaclass options."""
 
         model = models.PartParameterTemplate
         skip_unchanged = True
@@ -543,7 +543,7 @@ class ParameterResource(InvenTreeResource):
     """Class for managing PartParameter data import/export."""
 
     class Meta:
-        """Metaclass definition."""
+        """Metaclass options."""
 
         model = models.PartParameter
         skip_unchanged = True
@@ -582,7 +582,7 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
     """Admin class for the PartSellPriceBreak model."""
 
     class Meta:
-        """Metaclass definition."""
+        """Metaclass options."""
 
         model = models.PartSellPriceBreak
 
@@ -593,7 +593,7 @@ class PartInternalPriceBreakAdmin(admin.ModelAdmin):
     """Admin class for the PartInternalPriceBreak model."""
 
     class Meta:
-        """Metaclass definition."""
+        """Metaclass options."""
 
         model = models.PartInternalPriceBreak
 
