@@ -1,5 +1,5 @@
 # Please keep this list sorted - if you pin a version provide a reason
-Django<5.0                              # Django package
+Django<4.2                              # Django package
 coreapi                                 # API documentation for djangorestframework
 cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
 django-allauth                          # SSO for external providers via OpenID

@@ -273,7 +273,7 @@ rpds-py==0.16.2
     # via
     #   jsonschema
     #   referencing
-sentry-sdk==1.39.1
+sentry-sdk==1.39.2
     # via
     #   -r requirements.in
     #   django-q-sentry
