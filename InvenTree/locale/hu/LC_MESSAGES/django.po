@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-07 19:37+0000\n"
-"PO-Revision-Date: 2023-12-11 03:45\n"
+"POT-Creation-Date: 2024-01-10 11:02+0000\n"
+"PO-Revision-Date: 2024-01-10 11:09\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -474,13 +474,9 @@ msgstr "Üdvözöljük a {current_site.name}-on"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Felhasználói fiókját létrehoztuk.\n"
-"\n"
+msgstr "Felhasználói fiókját létrehoztuk.\n\n"
 "Bejelentkezéshez használja a jelszó beállítás funkciót (at https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -1494,8 +1490,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:507
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:576
@@ -6713,13 +6708,12 @@ msgstr "A alkatrészhez tartozó alkatrészjegyzék megváltozott és jóvá kel
 
 #: part/templates/part/bom.html:17
 #, python-format
-msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr "A <em>%(part)s</em> alkatrészhez tartozó alkatrészjegyzéket utoljára %(checker)s ellenőrizte %(check_date)s-n"
+msgid "This BOM was last checked by %(checker)s on %(check_date)s"
+msgstr ""
 
 #: part/templates/part/bom.html:21
-#, python-format
-msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr "A <em>%(part)s</em> alkatrészhez tartozó alkatrészjegyzék még nincs jóváhagyva."
+msgid "This BOM has not been validated."
+msgstr ""
 
 #: part/templates/part/category.html:35
 msgid "Perform stocktake for this part category"
@@ -7449,28 +7443,20 @@ msgid "No match for supplier barcode"
 msgstr "Beszállítói vonalkód nem található"
 
 #: plugin/base/barcodes/api.py:498
-#, fuzzy
-#| msgid "Multiple matching supplier parts found"
 msgid "Multiple matching line items found"
-msgstr "Több beszállítói alkatrész található"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:503
-#, fuzzy
-#| msgid "No matching line items"
 msgid "No matching line item found"
-msgstr "Nincs egyező sortétel"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
-#, fuzzy
-#| msgid "Barcode does not match valid stock item"
 msgid "Barcode does not match an existing stock item"
-msgstr "Vonalkód nem egyezik egy ismert készlet tétellel sem"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:563
-#, fuzzy
-#| msgid "Selected stock item does not match BOM line"
 msgid "Stock item does not match line item"
-msgstr "A készlet tétel nem egyezik az alkatrészjegyzékkel"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -7478,16 +7464,12 @@ msgid "Insufficient stock available"
 msgstr "Nincs elegendő"
 
 #: plugin/base/barcodes/api.py:599
-#, fuzzy
-#| msgid "Stock item assigned to sales order"
 msgid "Stock item allocated to sales order"
-msgstr "Készlet tétel hozzárendelve egy vevői rendeléshez"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:603
-#, fuzzy
-#| msgid "No user information"
 msgid "Not enough information"
-msgstr "Nincs felhasználói információ"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7524,10 +7506,8 @@ msgid "Scanned barcode data"
 msgstr "Beolvasott vonalkód"
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Purchase Order to allocate items against"
-msgstr "Tételekhez rendelendő Beszerzési Rendelés"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
@@ -7550,40 +7530,28 @@ msgid "Cannot select a structural location"
 msgstr "Struktúrális hely nem választható"
 
 #: plugin/base/barcodes/serializers.py:140
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Sales Order to allocate items against"
-msgstr "Tételekhez rendelendő Beszerzési Rendelés"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:147
-#, fuzzy
-#| msgid "Purchase order is not pending"
 msgid "Sales order is not pending"
-msgstr "Beszerzési rendelés nincs függőben"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:154
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Sales order line item to allocate items against"
-msgstr "Tételekhez rendelendő Beszerzési Rendelés"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:160
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Sales order shipment to allocate items against"
-msgstr "Tételekhez rendelendő Beszerzési Rendelés"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:167
-#, fuzzy
-#| msgid "Shipment has already been shipped"
 msgid "Shipment has already been delivered"
-msgstr "Szállítmány kiszállítva"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:173
-#, fuzzy
-#| msgid "Quantity to Install"
 msgid "Quantity to allocate"
-msgstr "Beépítendő mennyiség"
+msgstr ""
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -13491,8 +13459,7 @@ msgstr "A kiválasztott SSO kiszolgáló érvénytelen, vagy nincs megfelelően 
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "A %(provider_name)s felhasználói fiókodat fogod használni a %(site_name)s belépéshez.<br>Kérlek töltsd ki az alábbi adatokat:"
 
@@ -13667,3 +13634,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
