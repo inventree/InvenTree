@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-07 19:37+0000\n"
-"PO-Revision-Date: 2023-12-12 03:57\n"
+"POT-Creation-Date: 2024-01-10 11:02+0000\n"
+"PO-Revision-Date: 2024-01-10 11:09\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -474,13 +474,9 @@ msgstr "Velkommen til {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Kontoen din har blitt opprettet.\n"
-"\n"
+msgstr "Kontoen din har blitt opprettet.\n\n"
 "Vennligst bruk funksjonen for tilbakestilling av passord for å få tilgang (på https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -643,7 +639,7 @@ msgstr "Slovensk"
 
 #: InvenTree/settings.py:857
 msgid "Serbian"
-msgstr ""
+msgstr "Serbisk"
 
 #: InvenTree/settings.py:858
 msgid "Swedish"
@@ -6711,13 +6707,12 @@ msgstr "Stykklisten har blitt endret og må godkjennes"
 
 #: part/templates/part/bom.html:17
 #, python-format
-msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr "Stykklisten for <em>%(part)s</em> ble sist sjekket av %(checker)s den %(check_date)s"
+msgid "This BOM was last checked by %(checker)s on %(check_date)s"
+msgstr ""
 
 #: part/templates/part/bom.html:21
-#, python-format
-msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr "Stykklisten for <em>%(part)s</em> er ikke godkjent."
+msgid "This BOM has not been validated."
+msgstr ""
 
 #: part/templates/part/category.html:35
 msgid "Perform stocktake for this part category"
@@ -7447,28 +7442,20 @@ msgid "No match for supplier barcode"
 msgstr "Ingen treff for leverandørstrekkode"
 
 #: plugin/base/barcodes/api.py:498
-#, fuzzy
-#| msgid "Multiple matching supplier parts found"
 msgid "Multiple matching line items found"
-msgstr "Flere samsvarende leverandørdeler funnet"
+msgstr "Flere samsvarende elementer funnet"
 
 #: plugin/base/barcodes/api.py:503
-#, fuzzy
-#| msgid "No matching line items"
 msgid "No matching line item found"
-msgstr "Ingen samsvarende ordrelinjer"
+msgstr "Ingen samsvarende element funnet"
 
 #: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
-#, fuzzy
-#| msgid "Barcode does not match valid stock item"
 msgid "Barcode does not match an existing stock item"
-msgstr "Strekkoden samsvarer ikke med gyldig lagervare"
+msgstr "Strekkoden samsvarer ikke med eksisterende lagervare"
 
 #: plugin/base/barcodes/api.py:563
-#, fuzzy
-#| msgid "Selected stock item does not match BOM line"
 msgid "Stock item does not match line item"
-msgstr "Valgt lagervare samsvarer ikke med BOM-linjen"
+msgstr "Lagervare samsvarer ikke med linjeelement"
 
 #: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -7476,16 +7463,12 @@ msgid "Insufficient stock available"
 msgstr "Utilstrekkelig lagerbeholdning"
 
 #: plugin/base/barcodes/api.py:599
-#, fuzzy
-#| msgid "Stock item assigned to sales order"
 msgid "Stock item allocated to sales order"
 msgstr "Lagervaren er tildelt en salgsordre"
 
 #: plugin/base/barcodes/api.py:603
-#, fuzzy
-#| msgid "No user information"
 msgid "Not enough information"
-msgstr "Ingen brukerinformasjon"
+msgstr "Ikke nok informasjon"
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7522,8 +7505,6 @@ msgid "Scanned barcode data"
 msgstr "Skannet strekkodedata"
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Purchase Order to allocate items against"
 msgstr "Innkjøpsordre å tildele artikler mot"
 
@@ -7548,40 +7529,28 @@ msgid "Cannot select a structural location"
 msgstr "Kan ikke velge en strukturell plassering"
 
 #: plugin/base/barcodes/serializers.py:140
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Sales Order to allocate items against"
-msgstr "Innkjøpsordre å tildele artikler mot"
+msgstr "Salgsordre å tildele artikler mot"
 
 #: plugin/base/barcodes/serializers.py:147
-#, fuzzy
-#| msgid "Purchase order is not pending"
 msgid "Sales order is not pending"
-msgstr "Innkjøpsordre er ikke ventende"
+msgstr "Salgsordre er ikke ventende"
 
 #: plugin/base/barcodes/serializers.py:154
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Sales order line item to allocate items against"
-msgstr "Innkjøpsordre å tildele artikler mot"
+msgstr "Salgsordrelinje å tildele artikler mot"
 
 #: plugin/base/barcodes/serializers.py:160
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Sales order shipment to allocate items against"
-msgstr "Innkjøpsordre å tildele artikler mot"
+msgstr "Salgsordre-forsendelse å tildele artikler mot"
 
 #: plugin/base/barcodes/serializers.py:167
-#, fuzzy
-#| msgid "Shipment has already been shipped"
 msgid "Shipment has already been delivered"
-msgstr "Forsendelsen er allerede sendt"
+msgstr "Forsendelsen er allerede levert"
 
 #: plugin/base/barcodes/serializers.py:173
-#, fuzzy
-#| msgid "Quantity to Install"
 msgid "Quantity to allocate"
-msgstr "Antall å installere"
+msgstr "Antall å tildele"
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -13489,11 +13458,9 @@ msgstr "Valgt SSO-leverandør er ugyldig, eller den er ikke riktig konfigurert"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
+msgstr "Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
 "%(site_name)s.<br>Som et siste steg, vennligst fullfør skjemaet:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13667,3 +13634,4 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
+
