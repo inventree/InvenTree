@@ -36,7 +36,7 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
         "pm": SupplierBarcodeMixin.MANUFACTURER_PART_NUMBER,
         "pc": SupplierBarcodeMixin.SUPPLIER_PART_NUMBER,
         "qty": SupplierBarcodeMixin.QUANTITY,
-        "on": SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER,
+        "on": SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER,
     }
 
     def extract_barcode_fields(self, barcode_data: str) -> dict[str, str]:
