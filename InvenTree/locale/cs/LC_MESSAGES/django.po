@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-21 05:01+0000\n"
-"PO-Revision-Date: 2024-01-08 22:30\n"
+"POT-Creation-Date: 2024-01-10 11:02+0000\n"
+"PO-Revision-Date: 2024-01-10 11:09\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -6706,12 +6706,11 @@ msgstr ""
 
 #: part/templates/part/bom.html:17
 #, python-format
-msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
+msgid "This BOM was last checked by %(checker)s on %(check_date)s"
 msgstr ""
 
 #: part/templates/part/bom.html:21
-#, python-format
-msgid "The BOM for <em>%(part)s</em> has not been validated."
+msgid "This BOM has not been validated."
 msgstr ""
 
 #: part/templates/part/category.html:35
