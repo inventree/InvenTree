@@ -12,10 +12,9 @@ from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError
 
 import InvenTree.conversion
+import InvenTree.ready
 import InvenTree.tasks
 from InvenTree.config import get_setting
-from InvenTree.ready import (canAppAccessDatabase, isInMainThread,
-                             isInTestMode, isPluginRegistryLoaded)
 
 logger = logging.getLogger("inventree")
 
@@ -37,17 +36,21 @@ class InvenTreeConfig(AppConfig):
         - Adding users set in the current environment
         """
         # skip loading if plugin registry is not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
+        if not InvenTree.ready.isPluginRegistryLoaded() or not InvenTree.ready.isInMainThread():
             return
 
-        if canAppAccessDatabase() or settings.TESTING_ENV:
+        # Skip if running migrations
+        if InvenTree.ready.isRunningMigrations():
+            return
+
+        if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
 
             self.remove_obsolete_tasks()
 
             self.collect_tasks()
             self.start_background_tasks()
 
-            if not isInTestMode():  # pragma: no cover
+            if not InvenTree.ready.isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
                 # Let the background worker check for migrations
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
@@ -58,7 +61,7 @@ class InvenTreeConfig(AppConfig):
         # Ensure the unit registry is loaded
         InvenTree.conversion.get_unit_registry()
 
-        if canAppAccessDatabase() or settings.TESTING_ENV:
+        if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
             self.add_user_from_file()
 
