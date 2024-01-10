@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-07 19:37+0000\n"
-"PO-Revision-Date: 2023-12-11 03:46\n"
+"POT-Creation-Date: 2024-01-10 11:02+0000\n"
+"PO-Revision-Date: 2024-01-10 11:09\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -474,9 +474,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -6708,12 +6706,11 @@ msgstr ""
 
 #: part/templates/part/bom.html:17
 #, python-format
-msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
+msgid "This BOM was last checked by %(checker)s on %(check_date)s"
 msgstr ""
 
 #: part/templates/part/bom.html:21
-#, python-format
-msgid "The BOM for <em>%(part)s</em> has not been validated."
+msgid "This BOM has not been validated."
 msgstr ""
 
 #: part/templates/part/category.html:35
@@ -7444,28 +7441,20 @@ msgid "No match for supplier barcode"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:498
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Multiple matching line items found"
-msgstr "Eşleşen eylem bulunamadı"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:503
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching line item found"
-msgstr "Eşleşen eylem bulunamadı"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
-#, fuzzy
-#| msgid "Barcode does not match a valid location"
 msgid "Barcode does not match an existing stock item"
-msgstr "Barkod geçerli bir konumla eşleşmiyor"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:563
-#, fuzzy
-#| msgid "Quantity does not match serial numbers"
 msgid "Stock item does not match line item"
-msgstr "Miktar seri numaları ile eşleşmiyor"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -7473,16 +7462,12 @@ msgid "Insufficient stock available"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:599
-#, fuzzy
-#| msgid "Stock quantity to allocate to build"
 msgid "Stock item allocated to sales order"
-msgstr "Yapım işi için tahsis edilen stok miktarı"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:603
-#, fuzzy
-#| msgid "copy version information"
 msgid "Not enough information"
-msgstr "sürüm bilgisini kopyala"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7563,10 +7548,8 @@ msgid "Shipment has already been delivered"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:173
-#, fuzzy
-#| msgid "Stock quantity to allocate to build"
 msgid "Quantity to allocate"
-msgstr "Yapım işi için tahsis edilen stok miktarı"
+msgstr ""
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -13474,8 +13457,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13650,3 +13632,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
