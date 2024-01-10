@@ -5,8 +5,7 @@ import logging
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 
-from InvenTree.ready import (canAppAccessDatabase, isImportingData,
-                             isInMainThread, isPluginRegistryLoaded)
+import InvenTree.ready
 
 logger = logging.getLogger("inventree")
 
@@ -18,10 +17,13 @@ class PartConfig(AppConfig):
     def ready(self):
         """This function is called whenever the Part app is loaded."""
         # skip loading if plugin registry is not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
+        if not InvenTree.ready.isPluginRegistryLoaded() or not InvenTree.ready.isInMainThread():
             return
 
-        if canAppAccessDatabase():
+        if InvenTree.ready.isRunningMigrations():
+            return
+
+        if InvenTree.ready.canAppAccessDatabase():
             self.update_trackable_status()
             self.reset_part_pricing_flags()
 
@@ -51,7 +53,7 @@ class PartConfig(AppConfig):
         """
         from .models import PartPricing
 
-        if isImportingData():
+        if InvenTree.ready.isImportingData():
             return
 
         try:
