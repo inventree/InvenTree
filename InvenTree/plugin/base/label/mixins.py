@@ -82,7 +82,7 @@ class LabelPrintingMixin:
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
 
-        Keyword arguments:
+        Keyword Arguments:
             printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
 
         Returns:

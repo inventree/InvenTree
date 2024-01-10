@@ -189,7 +189,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
             plugin = kwargs.pop('plugin', None)
 
             if plugin:
-                mixin_settings = getattr(registry, 'mixins_settings')
+                mixin_settings = getattr(registry, 'mixins_settings', None)
                 if mixin_settings:
                     kwargs['settings'] = mixin_settings.get(plugin.key, {})
 
