@@ -592,7 +592,10 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
         if not create:
             # These fields are only used for the LIST API endpoint
-            for f in self.skip_create_fields()[2:]:
+            for f in self.skip_create_fields():
+                # Fields required for certain operations, but are not part of the model
+                if f in ["remote_image", "existing_image"]:
+                    continue
                 self.fields.pop(f)
 
         if not pricing:
@@ -607,15 +610,12 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
         """Skip these fields when instantiating a new Part instance"""
         fields = super().skip_create_fields()
 
-        # Placed by itself to prevent changing of order in array
-        # This to prevent being popped by call in self.__init__
-        fields += ['existing_image']
-
         fields += [
             'duplicate',
             'initial_stock',
             'initial_supplier',
             'copy_category_parameters',
+            'existing_image',
         ]
 
         return fields
