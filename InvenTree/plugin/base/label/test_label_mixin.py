@@ -7,17 +7,17 @@ from unittest import mock
 from django.apps import apps
 from django.urls import reverse
 
-from pdfminer.high_level import extract_text
-from PIL import Image
-
-from InvenTree.unit_test import InvenTreeAPITestCase
 from label.models import PartLabel, StockItemLabel, StockLocationLabel
 from part.models import Part
+from pdfminer.high_level import extract_text
+from PIL import Image
+from stock.models import StockItem, StockLocation
+
+from InvenTree.unit_test import InvenTreeAPITestCase
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.helpers import MixinNotImplementedError
 from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
-from stock.models import StockItem, StockLocation
 
 
 class LabelMixinTests(InvenTreeAPITestCase):
@@ -130,7 +130,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         url = self.do_url([part], plugin_ref, label)
 
-        # Non-exsisting plugin
+        # Non-existing plugin
         response = self.get(f'{url}123', expected_code=404)
         self.assertIn(
             f"Plugin '{plugin_ref}123' not found", str(response.content, 'utf8')

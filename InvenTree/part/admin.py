@@ -3,14 +3,14 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
+from company.models import SupplierPart
 from import_export import widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
+from stock.models import StockLocation
 
-from company.models import SupplierPart
 from InvenTree.admin import InvenTreeResource
 from part import models
-from stock.models import StockLocation
 
 
 class PartResource(InvenTreeResource):
@@ -512,8 +512,27 @@ class BomItemAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('part', 'sub_part')
 
 
+class ParameterTemplateResource(InvenTreeResource):
+    """Class for managing ParameterTemplate import/export."""
+
+    # The following fields will be converted from None to ''
+    CONVERT_NULL_FIELDS = ['choices', 'units']
+
+    class Meta:
+        """Metaclass definition."""
+
+        model = models.PartParameterTemplate
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+
+        exclude = ['metadata']
+
+
 class ParameterTemplateAdmin(ImportExportModelAdmin):
     """Admin class for the PartParameterTemplate model."""
+
+    resource_class = ParameterTemplateResource
 
     list_display = ('name', 'units')
 

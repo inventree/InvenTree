@@ -86,10 +86,10 @@ class APITests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, {'error': 'No action specified'})
 
-        # Test non-exsisting action
-        response = self.client.post('/api/action/', data={'action': 'nonexsisting'})
+        # Test non-existing action
+        response = self.client.post('/api/action/', data={'action': "nonexisting"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.data,
-            {'error': 'No matching action found', 'action': 'nonexsisting'},
+            {'error': 'No matching action found', 'action': 'nonexisting'},
         )

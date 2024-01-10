@@ -9,17 +9,17 @@ import django.http
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
-import tablib
-from djmoney.money import Money
-from rest_framework import status
-
 import build.models
 import company.models
 import part.models
+import tablib
 from common.models import InvenTreeSetting
+from djmoney.money import Money
+from part.models import Part
+from rest_framework import status
+
 from InvenTree.status_codes import StockHistoryCode, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
-from part.models import Part
 from stock.models import (
     StockItem,
     StockItemTestResult,

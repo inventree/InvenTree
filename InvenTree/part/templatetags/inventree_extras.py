@@ -13,13 +13,14 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import common.models
-import InvenTree.helpers
-import InvenTree.helpers_model
 import plugin.models
 from common.settings import currency_code_default
-from InvenTree import settings, version
 from plugin import registry
 from plugin.plugin import InvenTreePlugin
+
+import InvenTree.helpers
+import InvenTree.helpers_model
+from InvenTree import settings, version
 
 register = template.Library()
 
@@ -535,8 +536,11 @@ def authorized_owners(group):
 @register.simple_tag()
 def object_link(url_name, pk, ref):
     """Return highlighted link to object."""
-    ref_url = reverse(url_name, kwargs={'pk': pk})
-    return mark_safe(f'<b><a href="{ref_url}">{ref}</a></b>')
+    try:
+        ref_url = reverse(url_name, kwargs={'pk': pk})
+        return mark_safe(f'<b><a href="{ref_url}">{ref}</a></b>')
+    except NoReverseMatch:
+        return None
 
 
 @register.simple_tag()

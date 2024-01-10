@@ -9,11 +9,11 @@ from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
 
+from common.models import InvenTreeSetting
 from django_q.models import Schedule
 from error_report.models import Error
 
 import InvenTree.tasks
-from common.models import InvenTreeSetting
 
 threshold = timezone.now() - timedelta(days=30)
 threshold_low = threshold - timedelta(days=1)
@@ -82,9 +82,9 @@ class InvenTreeTaskTests(TestCase):
         # Non existent function
         with self.assertWarnsMessage(
             UserWarning,
-            "WARNING: 'InvenTree.test_tasks.doesnotexsist' not started - No function named 'doesnotexsist'",
+            "WARNING: 'InvenTree.test_tasks.doesnotexist' not started - No function named 'doesnotexist'",
         ):
-            InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexsist')
+            InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexist')
 
     def test_task_hearbeat(self):
         """Test the task heartbeat."""

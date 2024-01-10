@@ -11,15 +11,16 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
-import PIL
-from rest_framework import status
-from rest_framework.test import APIClient
-
 import build.models
 import company.models
 import order.models
+import PIL
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
+from rest_framework import status
+from rest_framework.test import APIClient
+from stock.models import StockItem, StockLocation
+
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatusGroups, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import (
@@ -34,7 +35,6 @@ from part.models import (
     PartStocktake,
     PartTestTemplate,
 )
-from stock.models import StockItem, StockLocation
 
 
 class PartCategoryAPITest(InvenTreeAPITestCase):

@@ -23,6 +23,13 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import common.models
+import common.settings
+import users.models
+from build import models as BuildModels
+from common.models import InvenTreeSetting
+from common.settings import currency_code_default
+from company.models import SupplierPart
 from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
@@ -30,22 +37,17 @@ from djmoney.money import Money
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
+from order import models as OrderModels
 from stdimage.models import StdImageField
+from stock import models as StockModels
 from taggit.managers import TaggableManager
 
-import common.models
-import common.settings
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.ready
 import InvenTree.tasks
 import part.helpers as part_helpers
 import part.settings as part_settings
-import users.models
-from build import models as BuildModels
-from common.models import InvenTreeSetting
-from common.settings import currency_code_default
-from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
@@ -64,8 +66,6 @@ from InvenTree.status_codes import (
     SalesOrderStatus,
     SalesOrderStatusGroups,
 )
-from order import models as OrderModels
-from stock import models as StockModels
 
 logger = logging.getLogger('inventree')
 
@@ -663,8 +663,9 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         if not check_duplicates:
             return
 
-        from part.models import Part
         from stock.models import StockItem
+
+        from part.models import Part
 
         if common.models.InvenTreeSetting.get_setting(
             'SERIAL_NUMBER_GLOBALLY_UNIQUE', False
@@ -3525,7 +3526,10 @@ class PartParameterTemplate(MetadataMixin, models.Model):
                 })
 
         # Check that 'choices' are in fact valid
-        self.choices = self.choices.strip()
+        if self.choices is None:
+            self.choices = ''
+        else:
+            self.choices = str(self.choices).strip()
 
         if self.choices:
             choice_set = set()

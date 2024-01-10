@@ -19,6 +19,9 @@ class InvenTreeResource(ModelResource):
     MAX_IMPORT_ROWS = 1000
     MAX_IMPORT_COLS = 100
 
+    # List of fields which should be converted to empty strings if they are null
+    CONVERT_NULL_FIELDS = []
+
     def import_data_inner(
         self,
         dataset,
@@ -79,6 +82,12 @@ class InvenTreeResource(ModelResource):
         fields_to_exclude = ['metadata', 'lft', 'rght', 'tree_id', 'level']
 
         return [f for f in fields if f.column_name not in fields_to_exclude]
+
+    def before_import_row(self, row, row_number=None, **kwargs):
+        """Run custom code before importing each row."""
+        for field in self.CONVERT_NULL_FIELDS:
+            if field in row and row[field] is None:
+                row[field] = ''
 
 
 class CustomRateAdmin(RateAdmin):
