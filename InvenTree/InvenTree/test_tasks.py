@@ -75,8 +75,8 @@ class InvenTreeTaskTests(TestCase):
             InvenTree.tasks.offload_task('InvenTreeABC.test_tasks.doesnotmatter')
 
         # Non existent function
-        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree.test_tasks.doesnotexsist' not started - No function named 'doesnotexsist'"):
-            InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexsist')
+        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree.test_tasks.doesnotexist' not started - No function named 'doesnotexist'"):
+            InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexist')
 
     def test_task_hearbeat(self):
         """Test the task heartbeat."""
