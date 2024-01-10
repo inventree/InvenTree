@@ -642,12 +642,11 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
         # Wrong key
         url = reverse(
             'api-plugin-setting-detail',
-            kwargs={'plugin': 'sample', 'key': 'doesnotexsist'},
+            kwargs={'plugin': 'sample', 'key': 'doesnotexist'},
         )
         response = self.get(url, expected_code=404)
         self.assertIn(
-            "Plugin 'sample' has no setting matching 'doesnotexsist'",
-            str(response.data),
+            "Plugin 'sample' has no setting matching 'doesnotexist'", str(response.data)
         )
 
     def test_invalid_setting_key(self):

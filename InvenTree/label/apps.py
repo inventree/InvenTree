@@ -12,12 +12,7 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
-from InvenTree.ready import (
-    canAppAccessDatabase,
-    isImportingData,
-    isInMainThread,
-    isPluginRegistryLoaded,
-)
+import InvenTree.ready
 
 logger = logging.getLogger('inventree')
 
@@ -41,10 +36,19 @@ class LabelConfig(AppConfig):
     def ready(self):
         """This function is called whenever the label app is loaded."""
         # skip loading if plugin registry is not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
+        if (
+            not InvenTree.ready.isPluginRegistryLoaded()
+            or not InvenTree.ready.isInMainThread()
+        ):
             return
 
-        if canAppAccessDatabase(allow_test=False) and not isImportingData():
+        if InvenTree.ready.isRunningMigrations():
+            return
+
+        if (
+            InvenTree.ready.canAppAccessDatabase(allow_test=False)
+            and not InvenTree.ready.isImportingData()
+        ):
             try:
                 self.create_labels()  # pragma: no cover
             except (

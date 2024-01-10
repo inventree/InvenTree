@@ -2456,7 +2456,7 @@ class ColorTheme(models.Model):
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
         if not settings.STATIC_COLOR_THEMES_DIR.exists():
-            logger.error('Theme directory does not exists')
+            logger.error('Theme directory does not exist')
             return []
 
         # Get files list from css/color-themes/ folder

@@ -3527,7 +3527,10 @@ class PartParameterTemplate(MetadataMixin, models.Model):
                 })
 
         # Check that 'choices' are in fact valid
-        self.choices = self.choices.strip()
+        if self.choices is None:
+            self.choices = ''
+        else:
+            self.choices = str(self.choices).strip()
 
         if self.choices:
             choice_set = set()

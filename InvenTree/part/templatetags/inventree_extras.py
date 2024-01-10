@@ -536,8 +536,11 @@ def authorized_owners(group):
 @register.simple_tag()
 def object_link(url_name, pk, ref):
     """Return highlighted link to object."""
-    ref_url = reverse(url_name, kwargs={'pk': pk})
-    return mark_safe(f'<b><a href="{ref_url}">{ref}</a></b>')
+    try:
+        ref_url = reverse(url_name, kwargs={'pk': pk})
+        return mark_safe(f'<b><a href="{ref_url}">{ref}</a></b>')
+    except NoReverseMatch:
+        return None
 
 
 @register.simple_tag()

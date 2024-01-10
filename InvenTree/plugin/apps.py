@@ -27,7 +27,9 @@ class PluginAppConfig(AppConfig):
         if not isInMainThread():
             return
 
-        if not canAppAccessDatabase(allow_test=True, allow_plugins=True):
+        if not canAppAccessDatabase(
+            allow_test=True, allow_plugins=True, allow_shell=True
+        ):
             logger.info('Skipping plugin loading sequence')  # pragma: no cover
         else:
             logger.info('Loading InvenTree plugins')

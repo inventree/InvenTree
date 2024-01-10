@@ -76,32 +76,6 @@ class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
     extra = 0
 
 
-class PurchaseOrderAdmin(ImportExportModelAdmin):
-    """Admin class for the PurchaseOrder model"""
-
-    exclude = ['reference_int']
-
-    list_display = ('reference', 'supplier', 'status', 'description', 'creation_date')
-
-    search_fields = ['reference', 'supplier__name', 'description']
-
-    inlines = [PurchaseOrderLineItemInlineAdmin]
-
-    autocomplete_fields = ('supplier',)
-
-
-class SalesOrderAdmin(ImportExportModelAdmin):
-    """Admin class for the SalesOrder model"""
-
-    exclude = ['reference_int']
-
-    list_display = ('reference', 'customer', 'status', 'description', 'creation_date')
-
-    search_fields = ['reference', 'customer__name', 'description']
-
-    autocomplete_fields = ('customer',)
-
-
 class PurchaseOrderResource(
     ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource
 ):
@@ -124,6 +98,60 @@ class PurchaseOrderResource(
     overdue = Field(
         attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True
     )
+
+
+class PurchaseOrderAdmin(ImportExportModelAdmin):
+    """Admin class for the PurchaseOrder model"""
+
+    resource_class = PurchaseOrderResource
+
+    exclude = ['reference_int']
+
+    list_display = ('reference', 'supplier', 'status', 'description', 'creation_date')
+
+    search_fields = ['reference', 'supplier__name', 'description']
+
+    inlines = [PurchaseOrderLineItemInlineAdmin]
+
+    autocomplete_fields = ('supplier',)
+
+
+class SalesOrderResource(
+    ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource
+):
+    """Class for managing import / export of SalesOrder data."""
+
+    class Meta:
+        """Metaclass options"""
+
+        model = models.SalesOrder
+        skip_unchanged = True
+        clean_model_instances = True
+        exclude = ['metadata']
+
+    # Add number of line items
+    line_items = Field(
+        attribute='line_count', widget=widgets.IntegerWidget(), readonly=True
+    )
+
+    # Is this order overdue?
+    overdue = Field(
+        attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True
+    )
+
+
+class SalesOrderAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrder model"""
+
+    resource_class = SalesOrderResource
+
+    exclude = ['reference_int']
+
+    list_display = ('reference', 'customer', 'status', 'description', 'creation_date')
+
+    search_fields = ['reference', 'customer__name', 'description']
+
+    autocomplete_fields = ('customer',)
 
 
 class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
@@ -159,30 +187,6 @@ class PurchaseOrderExtraLineResource(PriceResourceMixin, InvenTreeResource):
         """Metaclass options."""
 
         model = models.PurchaseOrderExtraLine
-
-
-class SalesOrderResource(
-    ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource
-):
-    """Class for managing import / export of SalesOrder data."""
-
-    class Meta:
-        """Metaclass options"""
-
-        model = models.SalesOrder
-        skip_unchanged = True
-        clean_model_instances = True
-        exclude = ['metadata']
-
-    # Add number of line items
-    line_items = Field(
-        attribute='line_count', widget=widgets.IntegerWidget(), readonly=True
-    )
-
-    # Is this order overdue?
-    overdue = Field(
-        attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True
-    )
 
 
 class SalesOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
@@ -298,6 +302,8 @@ class ReturnOrderResource(
 
 class ReturnOrderAdmin(ImportExportModelAdmin):
     """Admin class for the ReturnOrder model"""
+
+    resource_class = ReturnOrderResource
 
     exclude = ['reference_int']
 

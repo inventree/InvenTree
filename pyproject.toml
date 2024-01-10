@@ -77,3 +77,9 @@ source = ["InvenTree", ]
 
 [tool.djlint]
 ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
+
+[tool.isort]
+src_paths=["InvenTree", ]
+skip_glob ="*/migrations/*.py"
+known_django="django"
+sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
