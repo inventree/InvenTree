@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-21 05:01+0000\n"
-"PO-Revision-Date: 2024-01-07 22:28\n"
+"POT-Creation-Date: 2024-01-10 11:02+0000\n"
+"PO-Revision-Date: 2024-01-10 11:09\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -6707,13 +6707,12 @@ msgstr "A LDM dessa peça foi alterada, e deve ser validada"
 
 #: part/templates/part/bom.html:17
 #, python-format
-msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr "A LDM de <em>%(part)s</em> foi verificada pela última vez por %(checker)s em %(check_date)s"
+msgid "This BOM was last checked by %(checker)s on %(check_date)s"
+msgstr ""
 
 #: part/templates/part/bom.html:21
-#, python-format
-msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr "A LDM para <em>%(part)s</em> não foi validada."
+msgid "This BOM has not been validated."
+msgstr ""
 
 #: part/templates/part/category.html:35
 msgid "Perform stocktake for this part category"
