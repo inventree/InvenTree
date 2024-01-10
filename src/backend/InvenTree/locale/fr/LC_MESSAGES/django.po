@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-19 04:30+0000\n"
-"PO-Revision-Date: 2023-12-11 03:45\n"
+"POT-Creation-Date: 2023-12-21 05:01+0000\n"
+"PO-Revision-Date: 2024-01-03 15:34\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -474,13 +474,9 @@ msgstr "Bienvenue sur {current_site.name}"
 
 #: InvenTree/serializers.py:455
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Votre compte a été créé.\n"
-"\n"
+msgstr "Votre compte a été créé.\n\n"
 "Veuillez utiliser la fonction de réinitialisation du mot de passe pour avoir accès (à https://{domain})."
 
 #: InvenTree/serializers.py:519
@@ -2215,7 +2211,7 @@ msgstr "Permettre de remplacer l'agent utilisateur utilisé pour télécharger d
 
 #: common/models.py:1179
 msgid "Strict URL Validation"
-msgstr ""
+msgstr "Validation stricte d'URL"
 
 #: common/models.py:1180
 msgid "Require schema specification when validating URLs"
@@ -3412,7 +3408,7 @@ msgid "Price break quantity"
 msgstr ""
 
 #: common/models.py:2374 company/serializers.py:485 order/admin.py:41
-#: order/models.py:1181 order/models.py:2014
+#: order/models.py:1181 order/models.py:2015
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1883
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -4573,7 +4569,7 @@ msgstr "Aucun bon de commande correspondant n'a été trouvé"
 msgid "Purchase Order"
 msgstr "Commande d’achat"
 
-#: order/api.py:1411 order/models.py:1984 order/models.py:2030
+#: order/api.py:1411 order/models.py:1985 order/models.py:2031
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4758,8 +4754,8 @@ msgid "deleted"
 msgstr "supprimé"
 
 #: order/models.py:1226 order/models.py:1310 order/models.py:1350
-#: order/models.py:1449 order/models.py:1598 order/models.py:1983
-#: order/models.py:2030 templates/js/translated/sales_order.js:1488
+#: order/models.py:1449 order/models.py:1598 order/models.py:1984
+#: order/models.py:2031 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr "Commande"
 
@@ -4905,7 +4901,7 @@ msgstr "Ligne"
 msgid "Sales order shipment reference"
 msgstr ""
 
-#: order/models.py:1699 order/models.py:1991
+#: order/models.py:1699 order/models.py:1992
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr "Article"
@@ -4930,32 +4926,32 @@ msgstr ""
 msgid "Return order status"
 msgstr "Statut du retour de commande"
 
-#: order/models.py:1976
+#: order/models.py:1977
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr ""
 
-#: order/models.py:1992
+#: order/models.py:1993
 msgid "Select item to return from customer"
 msgstr ""
 
-#: order/models.py:1997
+#: order/models.py:1998
 msgid "Received Date"
 msgstr ""
 
-#: order/models.py:1998
+#: order/models.py:1999
 msgid "The date this this return item was received"
 msgstr ""
 
-#: order/models.py:2009 templates/js/translated/return_order.js:733
+#: order/models.py:2010 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr ""
 
-#: order/models.py:2009
+#: order/models.py:2010
 msgid "Outcome for this line item"
 msgstr ""
 
-#: order/models.py:2015
+#: order/models.py:2016
 msgid "Cost associated with return or repair for this line item"
 msgstr ""
 
@@ -7447,28 +7443,20 @@ msgid "No match for supplier barcode"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:498
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Multiple matching line items found"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:503
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching line item found"
-msgstr "Aucune action correspondante trouvée"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:545 plugin/base/barcodes/api.py:552
-#, fuzzy
-#| msgid "Barcode does not match a valid location"
 msgid "Barcode does not match an existing stock item"
-msgstr "Le code-barres ne correspond pas à un emplacement valide"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:563
-#, fuzzy
-#| msgid "Selected stock item does not match BOM line"
 msgid "Stock item does not match line item"
-msgstr "L'article de stock sélectionné ne correspond pas à la ligne BOM"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:587 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -7476,16 +7464,12 @@ msgid "Insufficient stock available"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:599
-#, fuzzy
-#| msgid "Stock item assigned to sales order"
 msgid "Stock item allocated to sales order"
-msgstr "L'article en stock a été assigné à une commande de vente"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:603
-#, fuzzy
-#| msgid "No user information"
 msgid "Not enough information"
-msgstr "Pas d'informations sur l'utilisateur"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:146 plugin/base/barcodes/mixins.py:181
 msgid "Found multiple matching supplier parts for barcode"
@@ -7522,10 +7506,8 @@ msgid "Scanned barcode data"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "Purchase order no longer exists"
 msgid "Purchase Order to allocate items against"
-msgstr "Le bon de commande n'existe plus"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:88
 msgid "Purchase order is not pending"
@@ -7548,38 +7530,28 @@ msgid "Cannot select a structural location"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:140
-#, fuzzy
-#| msgid "Sales Order Default Shipment"
 msgid "Sales Order to allocate items against"
-msgstr "Expédition par défaut du bon de commande"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:147
-#, fuzzy
-#| msgid "Order is not open"
 msgid "Sales order is not pending"
-msgstr "La commande n'est pas ouverte"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:154
 msgid "Sales order line item to allocate items against"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:160
-#, fuzzy
-#| msgid "Shipment has no allocated stock items"
 msgid "Sales order shipment to allocate items against"
-msgstr "L'expédition n'a pas d'articles en stock alloués"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:167
-#, fuzzy
-#| msgid "Shipment has already been sent"
 msgid "Shipment has already been delivered"
-msgstr "Le colis a déjà été envoyé"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:173
-#, fuzzy
-#| msgid "Stock quantity to allocate to build"
 msgid "Quantity to allocate"
-msgstr "Quantité de stock à allouer à la construction"
+msgstr ""
 
 #: plugin/base/label/label.py:40
 msgid "Label printing failed"
@@ -13487,8 +13459,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13663,3 +13634,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:410
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+

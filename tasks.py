@@ -347,9 +347,10 @@ def migrate(c):
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
+        'no_frontend': 'Skip frontend compilation/download step'
     }
 )
-def update(c, skip_backup=False, frontend: bool = False):
+def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = False):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -378,8 +379,7 @@ def update(c, skip_backup=False, frontend: bool = False):
     # If:
     # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
     # - `--no-frontend` flag is set
-    # if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
-    if not frontend:
+    if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
         return
 
     # Decide if we should compile the frontend or try to download it
