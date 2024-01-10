@@ -69,6 +69,7 @@ secret_key.txt
 .idea/
 *.code-workspace
 .bash_history
+.DS_Store
 
 # https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
 .vscode/*

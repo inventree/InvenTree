@@ -650,7 +650,7 @@ class StockFilter(rest_filters.FilterSet):
         method='filter_bom_item'
     )
 
-    def filter_bom_item(self, queryset, name, bom_item):
+    def filter_bom_item(self, queryset, name, bom_item: BomItem):
         """Filter based on BOM item"""
 
         return queryset.filter(bom_item.get_stock_filter())
@@ -661,7 +661,7 @@ class StockFilter(rest_filters.FilterSet):
         method='filter_part_tree'
     )
 
-    def filter_part_tree(self, queryset, name, part_tree):
+    def filter_part_tree(self, queryset, name, part_tree: Part):
         """Filter based on part tree"""
         return queryset.filter(
             part__tree_id=part_tree.tree_id
@@ -673,7 +673,7 @@ class StockFilter(rest_filters.FilterSet):
         method='filter_company'
     )
 
-    def filter_company(self, queryset, name, company):
+    def filter_company(self, queryset, name, company: int):
         """Filter by company (either manufacturer or supplier)"""
         return queryset.filter(
             Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company)

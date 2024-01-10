@@ -222,12 +222,7 @@ class GetAuthToken(GenericAPIView):
     ]
 
     def get(self, request, *args, **kwargs):
-        """Return an API token if the user is authenticated
-
-        - If the user already has a matching token, delete it and create a new one
-        - Existing tokens are *never* exposed again via the API
-        - Once the token is provided, it can be used for auth until it expires
-        """
+        """Return an API token if the user is authenticated"""
 
         if request.user.is_authenticated:
 

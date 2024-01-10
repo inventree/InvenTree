@@ -11,7 +11,6 @@ from rest_framework import permissions, serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from rest_framework.views import APIView
 
 import InvenTree.version
 import users.models
@@ -334,7 +333,7 @@ class AttachmentMixin:
         attachment.save()
 
 
-class APISearchView(APIView):
+class APISearchView(GenericAPIView):
     """A general-purpose 'search' API endpoint
 
     Returns hits against a number of different models simultaneously,
