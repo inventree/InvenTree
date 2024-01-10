@@ -145,7 +145,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         url = self.do_url([part], plugin_ref, label)
 
-        # Non-exsisting plugin
+        # Non-existing plugin
         response = self.get(f'{url}123', expected_code=404)
         self.assertIn(f'Plugin \'{plugin_ref}123\' not found', str(response.content, 'utf8'))
 
