@@ -17,6 +17,7 @@ from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
 from allauth_2fa.utils import user_has_valid_totp_device
+from common.models import InvenTreeSetting
 from crispy_forms.bootstrap import AppendedText, PrependedAppendedText, PrependedText
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
@@ -24,7 +25,6 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 
 import InvenTree.sso
-from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
 
 logger = logging.getLogger('inventree')

@@ -7,9 +7,13 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-import order.tasks
 from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
+from part.models import Part
+from stock.models import StockItem
+from users.models import Owner
+
+import order.tasks
 from InvenTree import status_codes as status
 from order.models import (
     SalesOrder,
@@ -18,9 +22,6 @@ from order.models import (
     SalesOrderLineItem,
     SalesOrderShipment,
 )
-from part.models import Part
-from stock.models import StockItem
-from users.models import Owner
 
 
 class SalesOrderTest(TestCase):

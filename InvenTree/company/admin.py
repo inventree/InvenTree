@@ -5,9 +5,9 @@ from django.contrib import admin
 from import_export import widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
+from part.models import Part
 
 from InvenTree.admin import InvenTreeResource
-from part.models import Part
 
 from .models import (
     Address,

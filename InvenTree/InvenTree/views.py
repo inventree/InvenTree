@@ -17,17 +17,16 @@ from django.views import View
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 from django.views.generic.base import RedirectView, TemplateView
 
+import common.models as common_models
+import common.settings as common_settings
 from allauth.account.forms import AddEmailForm
 from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, LoginView, PasswordResetFromKeyView
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
-
-import common.models as common_models
-import common.settings as common_settings
 from part.models import PartCategory
+from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 from users.models import RuleSet, check_user_role
 
 from .forms import EditUserForm, SetPasswordForm

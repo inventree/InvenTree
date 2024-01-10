@@ -4,6 +4,7 @@ from django.conf import settings
 from django.test import TestCase
 
 from common.models import InvenTreeSetting
+
 from plugin import InvenTreePlugin, registry
 from plugin.base.event.events import trigger_event
 from plugin.helpers import MixinNotImplementedError

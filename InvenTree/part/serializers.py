@@ -15,15 +15,17 @@ from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
+import common.models
+import common.settings
+import company.models
+import stock.models
+import users.models
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
-import common.models
-import common.settings
-import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status
@@ -31,8 +33,6 @@ import part.filters
 import part.helpers as part_helpers
 import part.stocktake
 import part.tasks
-import stock.models
-import users.models
 from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 

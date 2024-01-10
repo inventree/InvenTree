@@ -1,13 +1,13 @@
 """API for location plugins."""
 
+from plugin.registry import registry
 from rest_framework import permissions
 from rest_framework.exceptions import NotFound, ParseError
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from stock.models import StockItem, StockLocation
 
 from InvenTree.tasks import offload_task
-from plugin.registry import registry
-from stock.models import StockItem, StockLocation
 
 
 class LocatePluginView(APIView):

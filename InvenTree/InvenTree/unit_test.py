@@ -15,10 +15,9 @@ from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
-from rest_framework.test import APITestCase
-
 from plugin import registry
 from plugin.models import PluginConfig
+from rest_framework.test import APITestCase
 
 
 def addUserPermission(user, permission):

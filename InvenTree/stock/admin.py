@@ -4,15 +4,15 @@ from django.contrib import admin
 from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
 
+from build.models import Build
+from company.models import Company, SupplierPart
 from import_export import widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-
-from build.models import Build
-from company.models import Company, SupplierPart
-from InvenTree.admin import InvenTreeResource
 from order.models import PurchaseOrder, SalesOrder
 from part.models import Part
+
+from InvenTree.admin import InvenTreeResource
 
 from .models import (
     StockItem,

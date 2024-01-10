@@ -18,18 +18,21 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from jinja2 import Template
-from mptt.managers import TreeManager
-from mptt.models import MPTTModel, TreeForeignKey
-from taggit.managers import TaggableManager
-
 import common.models
-import InvenTree.helpers
-import InvenTree.ready
-import InvenTree.tasks
 import label.models
 import report.models
 from company import models as CompanyModels
+from jinja2 import Template
+from mptt.managers import TreeManager
+from mptt.models import MPTTModel, TreeForeignKey
+from part import models as PartModels
+from plugin.events import trigger_event
+from taggit.managers import TaggableManager
+from users.models import Owner
+
+import InvenTree.helpers
+import InvenTree.ready
+import InvenTree.tasks
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.models import (
     InvenTreeAttachment,
@@ -45,9 +48,6 @@ from InvenTree.status_codes import (
     StockStatus,
     StockStatusGroups,
 )
-from part import models as PartModels
-from plugin.events import trigger_event
-from users.models import Owner
 
 
 class StockLocationType(MetadataMixin, models.Model):

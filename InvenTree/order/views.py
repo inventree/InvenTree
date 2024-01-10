@@ -16,11 +16,12 @@ from common.files import FileManager
 from common.forms import MatchFieldForm, UploadFileForm
 from common.views import FileManagementFormView
 from company.models import SupplierPart  # ManufacturerPart
-from InvenTree.helpers import DownloadFile
-from InvenTree.views import AjaxView, InvenTreeRoleMixin
 from part.models import Part
 from part.views import PartPricing
 from plugin.views import InvenTreePluginViewMixin
+
+from InvenTree.helpers import DownloadFile
+from InvenTree.views import AjaxView, InvenTreeRoleMixin
 
 from . import forms as order_forms
 from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource

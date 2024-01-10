@@ -10,20 +10,20 @@ from django.core.validators import URLValidator
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.translation import gettext_lazy as _
 
-import requests
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
-from PIL import Image
-
 import common.models
-import InvenTree
-import InvenTree.helpers_model
-import InvenTree.version
+import requests
 from common.notifications import (
     InvenTreeNotificationBodies,
     NotificationBody,
     trigger_notification,
 )
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
+from PIL import Image
+
+import InvenTree
+import InvenTree.helpers_model
+import InvenTree.version
 from InvenTree.format import format_money
 
 logger = logging.getLogger('inventree')

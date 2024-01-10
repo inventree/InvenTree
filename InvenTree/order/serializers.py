@@ -8,11 +8,6 @@ from django.db import models, transaction
 from django.db.models import BooleanField, Case, ExpressionWrapper, F, Q, Value, When
 from django.utils.translation import gettext_lazy as _
 
-from rest_framework import serializers
-from rest_framework.serializers import ValidationError
-from sql_util.utils import SubqueryCount
-
-import order.models
 import part.filters
 import stock.models
 import stock.serializers
@@ -23,6 +18,13 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
+from part.serializers import PartBriefSerializer
+from rest_framework import serializers
+from rest_framework.serializers import ValidationError
+from sql_util.utils import SubqueryCount
+from users.serializers import OwnerSerializer
+
+import order.models
 from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, str2bool
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializer,
@@ -38,8 +40,6 @@ from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockStatus,
 )
-from part.serializers import PartBriefSerializer
-from users.serializers import OwnerSerializer
 
 
 class TotalPriceMixin(serializers.Serializer):

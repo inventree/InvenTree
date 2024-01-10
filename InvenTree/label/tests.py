@@ -11,12 +11,13 @@ from django.http import JsonResponse
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
-from InvenTree.helpers import validateFilterString
-from InvenTree.unit_test import InvenTreeAPITestCase
-from label.models import LabelOutput
 from part.models import Part
 from plugin.registry import registry
 from stock.models import StockItem
+
+from InvenTree.helpers import validateFilterString
+from InvenTree.unit_test import InvenTreeAPITestCase
+from label.models import LabelOutput
 
 from .models import PartLabel, StockItemLabel, StockLocationLabel
 

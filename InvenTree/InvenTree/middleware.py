@@ -11,9 +11,9 @@ from django.urls import Resolver404, include, re_path, resolve, reverse_lazy
 
 from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
+from users.models import ApiToken
 
 from InvenTree.urls import frontendpatterns
-from users.models import ApiToken
 
 logger = logging.getLogger('inventree')
 

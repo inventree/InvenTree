@@ -3,9 +3,9 @@
 from django.db.models import Q
 from django.urls import include, path, re_path
 
+import part.models
 from django_filters import rest_framework as rest_filters
 
-import part.models
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,

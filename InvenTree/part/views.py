@@ -15,11 +15,12 @@ from common.files import FileManager
 from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
+from plugin.views import InvenTreePluginViewMixin
+from stock.models import StockItem, StockLocation
+
 from InvenTree.helpers import str2bool, str2int
 from InvenTree.views import AjaxUpdateView, AjaxView, InvenTreeRoleMixin
 from part.helpers import PART_IMAGE_DIR
-from plugin.views import InvenTreePluginViewMixin
-from stock.models import StockItem, StockLocation
 
 from . import forms as part_forms
 from . import settings as part_settings

@@ -1,6 +1,7 @@
 """Utility class to enable simpler imports."""
 
 from common.notifications import BulkNotificationMethod, SingleNotificationMethod
+
 from plugin.base.action.mixins import ActionMixin
 from plugin.base.barcodes.mixins import BarcodeMixin, SupplierBarcodeMixin
 from plugin.base.event.mixins import EventMixin

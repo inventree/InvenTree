@@ -9,14 +9,14 @@ from django.conf import settings
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from PIL import Image
-
-import InvenTree.helpers
-import InvenTree.helpers_model
 import report.helpers
 from common.models import InvenTreeSetting
 from company.models import Company
 from part.models import Part
+from PIL import Image
+
+import InvenTree.helpers
+import InvenTree.helpers_model
 
 register = template.Library()
 

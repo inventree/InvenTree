@@ -5,11 +5,12 @@ import io
 from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
+import part.filters
+from part.serializers import PartBriefSerializer
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
-import part.filters
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializer,
     InvenTreeCurrencySerializer,
@@ -20,7 +21,6 @@ from InvenTree.serializers import (
     InvenTreeTagModelSerializer,
     RemoteImageMixin,
 )
-from part.serializers import PartBriefSerializer
 
 from .models import (
     Address,

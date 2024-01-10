@@ -2,9 +2,8 @@
 
 from functools import wraps
 
-from rest_framework import permissions
-
 import users.models
+from rest_framework import permissions
 
 
 def get_model_for_view(view, raise_error=True):

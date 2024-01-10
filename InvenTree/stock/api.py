@@ -10,19 +10,27 @@ from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import rest_framework as rest_filters
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
-
 import common.models
 import common.settings
-import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
+from django_filters import rest_framework as rest_filters
 from generic.states.api import StatusView
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder, SalesOrderAllocation
+from order.serializers import (
+    PurchaseOrderSerializer,
+    ReturnOrderSerializer,
+    SalesOrderSerializer,
+)
+from part.models import BomItem, Part, PartCategory
+from part.serializers import PartBriefSerializer
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
+
+import stock.serializers as StockSerializers
 from InvenTree.api import (
     APIDownloadMixin,
     AttachmentMixin,
@@ -51,14 +59,6 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.status_codes import StockHistoryCode, StockStatus
-from order.models import PurchaseOrder, ReturnOrder, SalesOrder, SalesOrderAllocation
-from order.serializers import (
-    PurchaseOrderSerializer,
-    ReturnOrderSerializer,
-    SalesOrderSerializer,
-)
-from part.models import BomItem, Part, PartCategory
-from part.serializers import PartBriefSerializer
 from stock.admin import LocationResource, StockItemResource
 from stock.models import (
     StockItem,

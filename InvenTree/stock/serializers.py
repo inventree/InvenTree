@@ -9,22 +9,22 @@ from django.db.models import BooleanField, Case, Count, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
+import common.models
+import company.models
+import part.models as part_models
+from company.serializers import SupplierPartSerializer
+from part.serializers import PartBriefSerializer
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
-import common.models
-import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status_codes
-import part.models as part_models
 import stock.filters
-from company.serializers import SupplierPartSerializer
 from InvenTree.models import extract_int
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
-from part.serializers import PartBriefSerializer
 
 from .models import (
     StockItem,

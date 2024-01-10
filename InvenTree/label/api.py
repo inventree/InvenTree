@@ -6,23 +6,23 @@ from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page, never_cache
 
+import build.models
+import common.models
 from django_filters.rest_framework import DjangoFilterBackend
+from part.models import Part
+from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
+from plugin.registry import registry
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 from rest_framework.request import clone_request
+from stock.models import StockItem, StockLocation
 
-import build.models
-import common.models
 import InvenTree.helpers
 import label.models
 import label.serializers
 from InvenTree.api import MetadataView
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
-from part.models import Part
-from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
-from plugin.registry import registry
-from stock.models import StockItem, StockLocation
 
 
 class LabelFilterMixin:

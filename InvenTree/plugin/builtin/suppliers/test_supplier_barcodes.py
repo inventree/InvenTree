@@ -3,10 +3,11 @@
 from django.urls import reverse
 
 from company.models import Company, ManufacturerPart, SupplierPart
-from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import PurchaseOrder, PurchaseOrderLineItem
 from part.models import Part
 from stock.models import StockItem, StockLocation
+
+from InvenTree.unit_test import InvenTreeAPITestCase
 
 
 class SupplierBarcodeTests(InvenTreeAPITestCase):

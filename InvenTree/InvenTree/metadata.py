@@ -2,13 +2,13 @@
 
 import logging
 
+import users.models
 from rest_framework import serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.utils import model_meta
 
 import InvenTree.permissions
-import users.models
 from InvenTree.helpers import str2bool
 from InvenTree.serializers import DependentField
 

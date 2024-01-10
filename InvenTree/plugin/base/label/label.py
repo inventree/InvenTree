@@ -6,6 +6,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 import common.notifications
+
 from InvenTree.exceptions import log_error
 from plugin.registry import registry
 

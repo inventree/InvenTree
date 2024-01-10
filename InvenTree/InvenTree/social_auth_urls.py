@@ -8,13 +8,13 @@ from django.urls import NoReverseMatch, include, path, reverse
 from allauth.account.models import EmailAddress
 from allauth.socialaccount import providers
 from allauth.socialaccount.providers.oauth2.views import OAuth2Adapter, OAuth2LoginView
+from common.models import InvenTreeSetting
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 import InvenTree.sso
-from common.models import InvenTreeSetting
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI
 from InvenTree.serializers import InvenTreeModelSerializer
 

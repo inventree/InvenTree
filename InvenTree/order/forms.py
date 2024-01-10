@@ -4,6 +4,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from common.forms import MatchItemForm
+
 from InvenTree.fields import InvenTreeMoneyField
 from InvenTree.helpers import clean_decimal
 

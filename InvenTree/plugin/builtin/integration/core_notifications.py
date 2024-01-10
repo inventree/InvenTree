@@ -3,10 +3,10 @@
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
+import common.models
 import requests
 from allauth.account.models import EmailAddress
 
-import common.models
 import InvenTree.email
 import InvenTree.helpers
 import InvenTree.tasks

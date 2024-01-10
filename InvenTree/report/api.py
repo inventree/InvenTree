@@ -9,19 +9,19 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.response import Response
-
 import build.models
 import common.models
-import InvenTree.helpers
 import order.models
 import part.models
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
+from stock.models import StockItem, StockItemAttachment, StockLocation
+
+import InvenTree.helpers
 from InvenTree.api import MetadataView
 from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
-from stock.models import StockItem, StockItemAttachment, StockLocation
 
 from .models import (
     BillOfMaterialsReport,

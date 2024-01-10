@@ -8,12 +8,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
-import common.models
-import InvenTree.helpers
-from InvenTree.ready import isImportingData
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginConfig
 from users.models import Owner
+
+import common.models
+import InvenTree.helpers
+from InvenTree.ready import isImportingData
 
 logger = logging.getLogger('inventree')
 

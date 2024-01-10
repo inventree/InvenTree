@@ -4,6 +4,7 @@ from django.urls import reverse
 
 import part.models
 import stock.models
+
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 

@@ -8,10 +8,9 @@ import logging
 from django.core.management.base import BaseCommand
 from django.db.utils import OperationalError, ProgrammingError
 
-from PIL import UnidentifiedImageError
-
 from company.models import Company
 from part.models import Part
+from PIL import UnidentifiedImageError
 
 logger = logging.getLogger('inventree')
 

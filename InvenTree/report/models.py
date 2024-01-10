@@ -18,12 +18,13 @@ import build.models
 import common.models
 import order.models
 import part.models
-import report.helpers
 import stock.models
+from plugin.registry import registry
+
+import report.helpers
 from InvenTree.helpers import validateFilterString
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
-from plugin.registry import registry
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin

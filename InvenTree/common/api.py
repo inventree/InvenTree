@@ -10,6 +10,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from generic.states.api import AllStatusViews, StatusView
+from plugin.models import NotificationUserSetting
+from plugin.serializers import NotificationUserSettingSerializer
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.permissions import IsAdminUser
@@ -18,7 +21,6 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
-from generic.states.api import AllStatusViews, StatusView
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
@@ -31,8 +33,6 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.permissions import IsStaffOrReadOnly, IsSuperuser
-from plugin.models import NotificationUserSetting
-from plugin.serializers import NotificationUserSettingSerializer
 
 
 class CsrfExemptMixin(object):

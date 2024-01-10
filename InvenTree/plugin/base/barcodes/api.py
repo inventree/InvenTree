@@ -6,17 +6,17 @@ from django.db.models import F
 from django.urls import path, re_path
 from django.utils.translation import gettext_lazy as _
 
+import order.models
+import stock.models
 from rest_framework import permissions
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
+from users.models import RuleSet
 
-import order.models
-import stock.models
 from InvenTree.helpers import hash_barcode
 from plugin import registry
 from plugin.builtin.barcodes.inventree_barcode import InvenTreeInternalBarcodePlugin
-from users.models import RuleSet
 
 from . import serializers as barcode_serializers
 

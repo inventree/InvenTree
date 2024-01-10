@@ -2,10 +2,11 @@
 
 from django.urls import reverse
 
-from InvenTree.unit_test import InvenTreeAPITestCase
 from plugin import InvenTreePlugin, MixinNotImplementedError, registry
 from plugin.base.locate.mixins import LocateMixin
 from stock.models import StockItem, StockLocation
+
+from InvenTree.unit_test import InvenTreeAPITestCase
 
 
 class LocatePluginTests(InvenTreeAPITestCase):
