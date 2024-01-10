@@ -377,21 +377,6 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_FIND_GROUP_PERMS = True
 
-DEBUG_TOOLBAR_ENABLED = DEBUG and get_setting(
-    'INVENTREE_DEBUG_TOOLBAR', 'debug_toolbar', False
-)
-
-# If the debug toolbar is enabled, add the modules
-if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
-    logger.info('Running with DEBUG_TOOLBAR enabled')
-    INSTALLED_APPS.append('debug_toolbar')
-    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
-
-    DEBUG_TOOLBAR_CONFIG = {
-        'RESULTS_CACHE_SIZE': 100,
-        'OBSERVE_REQUEST_CALLBACK': lambda x: False,
-    }
-
 # Internal IP addresses allowed to see the debug toolbar
 INTERNAL_IPS = ['127.0.0.1']
 
@@ -447,12 +432,6 @@ TEMPLATES = [
         },
     }
 ]
-
-if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
-    # Note that the APP_DIRS value must be set when using debug_toolbar
-    # But this will kill template loading for plugins
-    TEMPLATES[0]['APP_DIRS'] = True
-    del TEMPLATES[0]['OPTIONS']['loaders']
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
