@@ -6,7 +6,7 @@ import logging
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
-from django.db.models import F
+from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 
 from company.models import Company, SupplierPart
@@ -352,12 +352,19 @@ class SupplierBarcodeMixin(BarcodeMixin):
         if supplier:
             orders = orders.filter(supplier=supplier)
 
-        if customer_order_number:
-            orders = orders.filter(reference__iexact=customer_order_number)
-        elif supplier_order_number:
-            orders = orders.filter(supplier_reference__iexact=supplier_order_number)
+        # this works because reference and supplier_reference are not nullable, so if
+        # customer_order_number or supplier_order_number is None, the query won't return anything
+        reference_filter = Q(reference__iexact=customer_order_number)
+        supplier_reference_filter = Q(supplier_reference__iexact=supplier_order_number)
 
-        return orders
+        orders_union = orders.filter(reference_filter | supplier_reference_filter)
+        if orders_union.count() == 1:
+            return orders_union
+        else:
+            orders_intersection = orders.filter(
+                reference_filter & supplier_reference_filter
+            )
+            return orders_intersection if orders_intersection else orders_union
 
     @staticmethod
     def get_supplier_parts(sku: str = None, supplier: Company = None, mpn: str = None):
