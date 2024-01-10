@@ -28,8 +28,6 @@ InvenTree relies on the following Python libraries:
 | [rapidfuzz](https://pypi.org/project/rapidfuzz/) | MIT | Fuzzy string matching |
 | [django-stdimage](https://pypi.org/project/django-stdimage/) | MIT | Advanced image fields for django |
 | [django-weasyprint](https://pypi.org/project/django-weasyprint/) | Apache 2.0 | PDF generation |
-| [django-debug-toolbar](https://pypi.org/project/django-debug-toolbar/) | BSD | Debug interface |
-| [django-admin-shell](https://pypi.org/project/django-admin-shell/) | MIT | Command line shell for the admin interface |
 | [django-money](https://pypi.org/project/django-money/) | BSD | Currency support |
 | [certifi](https://pypi.org/project/certifi/) | MPL 2.0 | Web certification |
 | [django-error-report](https://pypi.org/project/django-error-report/) | BSD | Error / excepttion management |
