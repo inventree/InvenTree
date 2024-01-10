@@ -34,10 +34,11 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
     # Custom field mapping
     TME_QRCODE_FIELDS = {
-        'PN': SupplierBarcodeMixin.SUPPLIER_PART_NUMBER,
-        'PO': SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER,
-        'MPN': SupplierBarcodeMixin.MANUFACTURER_PART_NUMBER,
-        'QTY': SupplierBarcodeMixin.QUANTITY,
+        "PN": SupplierBarcodeMixin.SUPPLIER_PART_NUMBER,
+        "CPO": SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER,
+        "PO": SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER,
+        "MPN": SupplierBarcodeMixin.MANUFACTURER_PART_NUMBER,
+        "QTY": SupplierBarcodeMixin.QUANTITY,
     }
 
     def extract_barcode_fields(self, barcode_data: str) -> dict[str, str]:

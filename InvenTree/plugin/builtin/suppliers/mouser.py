@@ -29,4 +29,11 @@ class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
     def extract_barcode_fields(self, barcode_data: str) -> dict[str, str]:
         """Get supplier_part and barcode_fields from Mouser DataMatrix-Code."""
-        return self.parse_ecia_barcode2d(barcode_data)
+        barcode_fields = self.parse_ecia_barcode2d(barcode_data)
+
+        # Mouser uses the custom order number ('K') field of the 2D barcode for both,
+        # the order number and the customer order number
+        if order_number := barcode_fields.get(self.CUSTOMER_ORDER_NUMBER):
+            barcode_fields.setdefault(self.SUPPLIER_ORDER_NUMBER, order_number)
+
+        return barcode_fields
