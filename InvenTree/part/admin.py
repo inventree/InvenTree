@@ -356,8 +356,31 @@ class BomItemAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('part', 'sub_part',)
 
 
+class ParameterTemplateResource(InvenTreeResource):
+    """Class for managing ParameterTemplate import/export"""
+
+    # The following fields will be converted from None to ''
+    CONVERT_NULL_FIELDS = [
+        'choices',
+        'units'
+    ]
+
+    class Meta:
+        """Metaclass definition"""
+        model = models.PartParameterTemplate
+        skip_unchanged = True
+        report_skipped = False
+        clean_model_instances = True
+
+        exclude = [
+            'metadata',
+        ]
+
+
 class ParameterTemplateAdmin(ImportExportModelAdmin):
     """Admin class for the PartParameterTemplate model"""
+
+    resource_class = ParameterTemplateResource
 
     list_display = ('name', 'units')
 

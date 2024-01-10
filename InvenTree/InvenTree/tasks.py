@@ -25,6 +25,9 @@ from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
                                    set_maintenance_mode)
 
 from InvenTree.config import get_setting
+from plugin import registry
+
+from .version import isInvenTreeUpToDate
 
 logger = logging.getLogger("inventree")
 
@@ -451,6 +454,7 @@ def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
         import common.models
+        from common.notifications import trigger_superuser_notification
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
@@ -510,6 +514,24 @@ def check_for_updates():
 
     # Record that this task was successful
     record_task_success('check_for_updates')
+
+    # Send notification if there is a new version
+    if not isInvenTreeUpToDate():
+        logger.warning("InvenTree is not up-to-date, sending notification")
+
+        plg = registry.get_plugin('InvenTreeCoreNotificationsPlugin')
+        if not plg:
+            logger.warning("Cannot send notification - plugin not found")
+            return
+        plg = plg.plugin_config()
+        if not plg:
+            logger.warning("Cannot send notification - plugin config not found")
+            return
+        # Send notification
+        trigger_superuser_notification(
+            plg,
+            f'An update for InvenTree to version {tag} is available',
+        )
 
 
 @scheduled_task(ScheduledTask.DAILY)
