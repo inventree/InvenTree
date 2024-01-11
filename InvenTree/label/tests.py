@@ -24,12 +24,7 @@ from .models import PartLabel, StockItemLabel, StockLocationLabel
 class LabelTest(InvenTreeAPITestCase):
     """Unit test class for label models"""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'stock'
-    ]
+    fixtures = ['category', 'part', 'location', 'stock']
 
     @classmethod
     def setUpTestData(cls):
@@ -49,12 +44,9 @@ class LabelTest(InvenTreeAPITestCase):
 
     def test_default_files(self):
         """Test that label files exist in the MEDIA directory."""
+
         def test_subdir(ref_name):
-            item_dir = settings.MEDIA_ROOT.joinpath(
-                'label',
-                'inventree',
-                ref_name,
-            )
+            item_dir = settings.MEDIA_ROOT.joinpath('label', 'inventree', ref_name)
             self.assertTrue(len([item_dir.iterdir()]) > 0)
 
         test_subdir('stockitem')
@@ -63,13 +55,13 @@ class LabelTest(InvenTreeAPITestCase):
 
     def test_filters(self):
         """Test the label filters."""
-        filter_string = "part__pk=10"
+        filter_string = 'part__pk=10'
 
         filters = validateFilterString(filter_string, model=StockItem)
 
         self.assertEqual(type(filters), dict)
 
-        bad_filter_string = "part_pk=10"
+        bad_filter_string = 'part_pk=10'
 
         with self.assertRaises(ValidationError):
             validateFilterString(bad_filter_string, model=StockItem)
@@ -115,14 +107,11 @@ class LabelTest(InvenTreeAPITestCase):
         buffer = io.StringIO()
         buffer.write(label_data)
 
-        template = ContentFile(buffer.getvalue(), "label.html")
+        template = ContentFile(buffer.getvalue(), 'label.html')
 
         # Construct a label template
         label = PartLabel.objects.create(
-            name='test',
-            description='Test label',
-            enabled=True,
-            label=template,
+            name='test', description='Test label', enabled=True, label=template
         )
 
         # Ensure we are in "debug" mode (so the report is generated as HTML)
@@ -151,7 +140,7 @@ class LabelTest(InvenTreeAPITestCase):
             content = f.read()
 
         # Test that each element has been rendered correctly
-        self.assertIn(f"part: {part_pk} - {part_name}", content)
+        self.assertIn(f'part: {part_pk} - {part_name}', content)
         self.assertIn(f'data: {{"part": {part_pk}}}', content)
         self.assertIn(f'http://testserver/part/{part_pk}/', content)
 

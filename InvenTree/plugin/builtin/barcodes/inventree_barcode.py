@@ -21,11 +21,11 @@ from plugin.mixins import BarcodeMixin
 class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     """Builtin BarcodePlugin for matching and generating internal barcodes."""
 
-    NAME = "InvenTreeBarcode"
-    TITLE = _("InvenTree Barcodes")
-    DESCRIPTION = _("Provides native support for barcodes")
-    VERSION = "2.0.0"
-    AUTHOR = _("InvenTree contributors")
+    NAME = 'InvenTreeBarcode'
+    TITLE = _('InvenTree Barcodes')
+    DESCRIPTION = _('Provides native support for barcodes')
+    VERSION = '2.0.0'
+    AUTHOR = _('InvenTree contributors')
 
     @staticmethod
     def get_supported_barcode_models():

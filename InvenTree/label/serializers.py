@@ -1,8 +1,10 @@
 """API serializers for the label app"""
 
 import label.models
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
-                                   InvenTreeModelSerializer)
+from InvenTree.serializers import (
+    InvenTreeAttachmentSerializerField,
+    InvenTreeModelSerializer,
+)
 
 
 class LabelSerializerBase(InvenTreeModelSerializer):
@@ -13,14 +15,7 @@ class LabelSerializerBase(InvenTreeModelSerializer):
     @staticmethod
     def label_fields():
         """Generic serializer fields for a label template"""
-        return [
-            'pk',
-            'name',
-            'description',
-            'label',
-            'filters',
-            'enabled',
-        ]
+        return ['pk', 'name', 'description', 'label', 'filters', 'enabled']
 
 
 class StockItemLabelSerializer(LabelSerializerBase):

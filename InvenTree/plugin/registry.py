@@ -21,14 +21,22 @@ from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
-                                   set_maintenance_mode)
+from maintenance_mode.core import (
+    get_maintenance_mode,
+    maintenance_mode_on,
+    set_maintenance_mode,
+)
 
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
 
-from .helpers import (IntegrationPluginError, get_entrypoints, get_plugins,
-                      handle_error, log_error)
+from .helpers import (
+    IntegrationPluginError,
+    get_entrypoints,
+    get_plugins,
+    handle_error,
+    log_error,
+)
 from .plugin import InvenTreePlugin
 
 logger = logging.getLogger('inventree')
@@ -50,25 +58,31 @@ class PluginsRegistry:
         Set up all needed references for internal and external states.
         """
         # plugin registry
-        self.plugins: Dict[str, InvenTreePlugin] = {}           # List of active instances
-        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}  # List of inactive instances
-        self.plugins_full: Dict[str, InvenTreePlugin] = {}      # List of all plugin instances
+        self.plugins: Dict[str, InvenTreePlugin] = {}  # List of active instances
+        self.plugins_inactive: Dict[
+            str, InvenTreePlugin
+        ] = {}  # List of inactive instances
+        self.plugins_full: Dict[
+            str, InvenTreePlugin
+        ] = {}  # List of all plugin instances
 
         # Keep an internal hash of the plugin registry state
         self.registry_hash = None
 
-        self.plugin_modules: List[InvenTreePlugin] = []         # Holds all discovered plugins
-        self.mixin_modules: Dict[str, Any] = {}                 # Holds all discovered mixins
+        self.plugin_modules: List[InvenTreePlugin] = []  # Holds all discovered plugins
+        self.mixin_modules: Dict[str, Any] = {}  # Holds all discovered mixins
 
-        self.errors = {}                                        # Holds discovering errors
+        self.errors = {}  # Holds discovering errors
 
-        self.loading_lock = Lock()                              # Lock to prevent multiple loading at the same time
+        self.loading_lock = Lock()  # Lock to prevent multiple loading at the same time
 
         # flags
-        self.plugins_loaded = False                             # Marks if the registry fully loaded and all django apps are reloaded
-        self.apps_loading = True                                # Marks if apps were reloaded yet
+        self.plugins_loaded = (
+            False  # Marks if the registry fully loaded and all django apps are reloaded
+        )
+        self.apps_loading = True  # Marks if apps were reloaded yet
 
-        self.installed_apps = []                                # Holds all added plugin_paths
+        self.installed_apps = []  # Holds all added plugin_paths
 
     @property
     def is_loading(self):
@@ -134,7 +148,6 @@ class PluginsRegistry:
 
         for plugin in self.plugins.values():
             if plugin.mixin_enabled(mixin):
-
                 if active is not None:
                     # Filter by 'active' status of plugin
                     if active != plugin.is_active():
@@ -148,6 +161,7 @@ class PluginsRegistry:
                 result.append(plugin)
 
         return result
+
     # endregion
 
     # region loading / unloading
@@ -179,7 +193,11 @@ class PluginsRegistry:
                 logger.info('Database not accessible while loading plugins')
                 break
             except IntegrationPluginError as error:
-                logger.exception('[PLUGIN] Encountered an error with %s:\n%s', error.path, error.message)
+                logger.exception(
+                    '[PLUGIN] Encountered an error with %s:\n%s',
+                    error.path,
+                    error.message,
+                )
                 log_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
@@ -196,7 +214,9 @@ class PluginsRegistry:
                         print('[PLUGIN] Max retries, breaking loading')
                     break
                 if settings.PLUGIN_TESTING:
-                    print(f'[PLUGIN] Above error occurred during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
+                    print(
+                        f'[PLUGIN] Above error occurred during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left'
+                    )
 
                 # now the loading will re-start up with init
 
@@ -216,6 +236,7 @@ class PluginsRegistry:
         # Trigger plugins_loaded event
         if canAppAccessDatabase():
             from plugin.events import trigger_event
+
             trigger_event('plugins_loaded')
 
     def _unload_plugins(self, force_reload: bool = False):
@@ -243,7 +264,12 @@ class PluginsRegistry:
 
         logger.info('Finished unloading plugins')
 
-    def reload_plugins(self, full_reload: bool = False, force_reload: bool = False, collect: bool = False):
+    def reload_plugins(
+        self,
+        full_reload: bool = False,
+        force_reload: bool = False,
+        collect: bool = False,
+    ):
         """Reload the plugin registry.
 
         This should be considered the single point of entry for loading plugins!
@@ -255,12 +281,16 @@ class PluginsRegistry:
         """
         # Do not reload when currently loading
         if self.is_loading:
-            logger.debug("Skipping reload - plugin registry is currently loading")
+            logger.debug('Skipping reload - plugin registry is currently loading')
             return
 
         if self.loading_lock.acquire(blocking=False):
-
-            logger.info('Plugin Registry: Reloading plugins - Force: %s, Full: %s, Collect: %s', force_reload, full_reload, collect)
+            logger.info(
+                'Plugin Registry: Reloading plugins - Force: %s, Full: %s, Collect: %s',
+                force_reload,
+                full_reload,
+                collect,
+            )
 
             with maintenance_mode_on():
                 if collect:
@@ -280,7 +310,7 @@ class PluginsRegistry:
     def plugin_dirs(self):
         """Construct a list of directories from where plugins can be loaded"""
         # Builtin plugins are *always* loaded
-        dirs = ['plugin.builtin', ]
+        dirs = ['plugin.builtin']
 
         if settings.PLUGINS_ENABLED:
             # Any 'external' plugins are only loaded if PLUGINS_ENABLED is set to True
@@ -307,7 +337,9 @@ class PluginsRegistry:
                         try:
                             pd.mkdir(exist_ok=True)
                         except Exception:  # pragma: no cover
-                            logger.exception("Could not create plugin directory '%s'", pd)
+                            logger.exception(
+                                "Could not create plugin directory '%s'", pd
+                            )
                             continue
 
                     # Ensure the directory has an __init__.py file
@@ -315,9 +347,11 @@ class PluginsRegistry:
 
                     if not init_filename.exists():
                         try:
-                            init_filename.write_text("# InvenTree plugin directory\n")
+                            init_filename.write_text('# InvenTree plugin directory\n')
                         except Exception:  # pragma: no cover
-                            logger.exception("Could not create file '%s'", init_filename)
+                            logger.exception(
+                                "Could not create file '%s'", init_filename
+                            )
                             continue
 
                     # By this point, we have confirmed that the directory at least exists
@@ -340,7 +374,6 @@ class PluginsRegistry:
 
         # Collect plugins from paths
         for plugin in self.plugin_dirs():
-
             logger.debug("Loading plugins from directory '%s'", plugin)
 
             parent_path = None
@@ -354,7 +387,9 @@ class PluginsRegistry:
 
             # Gather Modules
             if parent_path:
-                raw_module = imp.load_source(plugin, str(parent_obj.joinpath('__init__.py')))
+                raw_module = imp.load_source(
+                    plugin, str(parent_obj.joinpath('__init__.py'))
+                )
             else:
                 raw_module = importlib.import_module(plugin)
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
@@ -364,9 +399,10 @@ class PluginsRegistry:
 
         # From this point any plugins are considered "external" and only loaded if plugins are explicitly enabled
         if settings.PLUGINS_ENABLED:
-
             # Check if not running in testing mode and apps should be loaded from hooks
-            if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
+            if (not settings.PLUGIN_TESTING) or (
+                settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP
+            ):
                 # Collect plugins from setup entry points
                 for entry in get_entrypoints():
                     try:
@@ -379,7 +415,7 @@ class PluginsRegistry:
 
         # Log collected plugins
         logger.info('Collected %s plugins', len(collected_plugins))
-        logger.debug(", ".join([a.__module__ for a in collected_plugins]))
+        logger.debug(', '.join([a.__module__ for a in collected_plugins]))
 
         return collected_plugins
 
@@ -436,15 +472,15 @@ class PluginsRegistry:
         logger.debug('Starting plugin initialization')
 
         # Fetch and cache list of existing plugin configuration instances
-        plugin_configs = {
-            cfg.key: cfg for cfg in PluginConfig.objects.all()
-        }
+        plugin_configs = {cfg.key: cfg for cfg in PluginConfig.objects.all()}
 
         # Initialize plugins
         for plg in self.plugin_modules:
             # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
             plg_name = plg.NAME
-            plg_key = slugify(plg.SLUG if getattr(plg, 'SLUG', None) else plg_name)  # keys are slugs!
+            plg_key = slugify(
+                plg.SLUG if getattr(plg, 'SLUG', None) else plg_name
+            )  # keys are slugs!
 
             try:
                 if plg_key in plugin_configs:
@@ -452,14 +488,16 @@ class PluginsRegistry:
                     plg_db = plugin_configs[plg_key]
                 else:
                     # Configuration needs to be created
-                    plg_db, _created = PluginConfig.objects.get_or_create(key=plg_key, name=plg_name)
+                    plg_db, _created = PluginConfig.objects.get_or_create(
+                        key=plg_key, name=plg_name
+                    )
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
                     raise error  # pragma: no cover
                 plg_db = None
-            except (IntegrityError) as error:  # pragma: no cover
-                logger.exception("Error initializing plugin `%s`: %s", plg_name, error)
+            except IntegrityError as error:  # pragma: no cover
+                logger.exception('Error initializing plugin `%s`: %s', plg_name, error)
                 handle_error(error, log_name='init')
 
             # Append reference to plugin
@@ -492,8 +530,10 @@ class PluginsRegistry:
                     dt = time.time() - t_start
                     logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
                 except Exception as error:
-                    handle_error(error, log_name='init')  # log error and raise it -> disable plugin
-                    logger.warning("Plugin `%s` could not be loaded", plg_name)
+                    handle_error(
+                        error, log_name='init'
+                    )  # log error and raise it -> disable plugin
+                    logger.warning('Plugin `%s` could not be loaded', plg_name)
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)
@@ -501,13 +541,17 @@ class PluginsRegistry:
                 plg_i.db = plg_db
 
                 # Run version check for plugin
-                if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
+                if (
+                    plg_i.MIN_VERSION or plg_i.MAX_VERSION
+                ) and not plg_i.check_version():
                     # Disable plugin
                     safe_reference(plugin=plg_i, key=plg_key, active=False)
 
                     p = plg_name
                     v = version.inventreeVersion()
-                    _msg = _(f"Plugin '{p}' is not compatible with the current InvenTree version {v}")
+                    _msg = _(
+                        f"Plugin '{p}' is not compatible with the current InvenTree version {v}"
+                    )
                     if v := plg_i.MIN_VERSION:
                         _msg += _(f'Plugin requires at least version {v}')
                     if v := plg_i.MAX_VERSION:
@@ -525,7 +569,11 @@ class PluginsRegistry:
         order = self.DEFAULT_MIXIN_ORDER
 
         # Append mixins that are not defined in the default list
-        order += [m.get('cls') for m in self.mixin_modules.values() if m.get('cls') not in order]
+        order += [
+            m.get('cls')
+            for m in self.mixin_modules.values()
+            if m.get('cls') not in order
+        ]
 
         # Final list of mixins
         return order
@@ -546,7 +594,9 @@ class PluginsRegistry:
 
         for mixin in self.__get_mixin_order():
             if hasattr(mixin, '_activate_mixin'):
-                mixin._activate_mixin(self, plugins, force_reload=force_reload, full_reload=full_reload)
+                mixin._activate_mixin(
+                    self, plugins, force_reload=force_reload, full_reload=full_reload
+                )
 
         logger.debug('Done activating')
 
@@ -561,6 +611,7 @@ class PluginsRegistry:
                 mixin._deactivate_mixin(self, force_reload=force_reload)
 
         logger.debug('Finished deactivating plugins')
+
     # endregion
 
     # region mixin specific loading ...
@@ -617,13 +668,14 @@ class PluginsRegistry:
         from plugin.urls import get_plugin_urls
 
         for index, url in enumerate(urlpatterns):
-
             app_name = getattr(url, 'app_name', None)
 
             admin_url = settings.INVENTREE_ADMIN_URL
 
             if app_name == 'admin':
-                urlpatterns[index] = path(f'{admin_url}/', admin.site.urls, name='inventree-admin')
+                urlpatterns[index] = path(
+                    f'{admin_url}/', admin.site.urls, name='inventree-admin'
+                )
 
             if app_name == 'plugin':
                 urlpatterns[index] = get_plugin_urls()
@@ -641,20 +693,26 @@ class PluginsRegistry:
         self.registry_hash = self.calculate_plugin_hash()
 
         try:
-            old_hash = InvenTreeSetting.get_setting("_PLUGIN_REGISTRY_HASH", "", create=False, cache=False)
+            old_hash = InvenTreeSetting.get_setting(
+                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+            )
         except Exception:
-            old_hash = ""
+            old_hash = ''
 
         if old_hash != self.registry_hash:
             try:
-                logger.debug("Updating plugin registry hash: %s", str(self.registry_hash))
-                InvenTreeSetting.set_setting("_PLUGIN_REGISTRY_HASH", self.registry_hash, change_user=None)
+                logger.debug(
+                    'Updating plugin registry hash: %s', str(self.registry_hash)
+                )
+                InvenTreeSetting.set_setting(
+                    '_PLUGIN_REGISTRY_HASH', self.registry_hash, change_user=None
+                )
             except (OperationalError, ProgrammingError):
                 # Exception if the database has not been migrated yet, or is not ready
                 pass
             except Exception as exc:
                 # Some other exception, we want to know about it
-                logger.exception("Failed to update plugin registry hash: %s", str(exc))
+                logger.exception('Failed to update plugin registry hash: %s', str(exc))
 
     def calculate_plugin_hash(self):
         """Calculate a 'hash' value for the current registry
@@ -680,12 +738,18 @@ class PluginsRegistry:
             'ENABLE_PLUGINS_NAVIGATION',
             'ENABLE_PLUGINS_APP',
             'ENABLE_PLUGINS_SCHEDULE',
-            'ENABLE_PLUGINS_EVENTS'
+            'ENABLE_PLUGINS_EVENTS',
         ]
 
         for k in keys:
             try:
-                data.update(str(InvenTreeSetting.get_setting(k, False, cache=False, create=False)).encode())
+                data.update(
+                    str(
+                        InvenTreeSetting.get_setting(
+                            k, False, cache=False, create=False
+                        )
+                    ).encode()
+                )
             except Exception:
                 pass
 
@@ -703,20 +767,22 @@ class PluginsRegistry:
             # Skip check if database cannot be accessed
             return
 
-        logger.debug("Checking plugin registry hash")
+        logger.debug('Checking plugin registry hash')
 
         # If not already cached, calculate the hash
         if not self.registry_hash:
             self.registry_hash = self.calculate_plugin_hash()
 
         try:
-            reg_hash = InvenTreeSetting.get_setting("_PLUGIN_REGISTRY_HASH", "", create=False, cache=False)
+            reg_hash = InvenTreeSetting.get_setting(
+                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+            )
         except Exception as exc:
-            logger.exception("Failed to retrieve plugin registry hash: %s", str(exc))
+            logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
             return
 
         if reg_hash and reg_hash != self.registry_hash:
-            logger.info("Plugin registry hash has changed - reloading")
+            logger.info('Plugin registry hash has changed - reloading')
             self.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     # endregion

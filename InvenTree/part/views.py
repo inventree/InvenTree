@@ -60,14 +60,13 @@ class PartIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
 
 class PartImport(FileManagementFormView):
     """Part: Upload file, match to fields and import parts(using multi-Step form)"""
+
     permission_required = 'part.add'
 
     class PartFileManager(FileManager):
         """Import field definitions"""
-        REQUIRED_HEADERS = [
-            'Name',
-            'Description',
-        ]
+
+        REQUIRED_HEADERS = ['Name', 'Description']
 
         OPTIONAL_MATCH_HEADERS = [
             'Category',
@@ -106,9 +105,9 @@ class PartImport(FileManagementFormView):
         'part/import_wizard/match_references.html',
     ]
     form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match References"),
+        _('Upload File'),
+        _('Match Fields'),
+        _('Match References'),
     ]
 
     form_field_map = {
@@ -147,9 +146,13 @@ class PartImport(FileManagementFormView):
         self.allowed_items = {}
         self.matches = {}
 
-        self.allowed_items['Category'] = PartCategory.objects.all().exclude(structural=True)
+        self.allowed_items['Category'] = PartCategory.objects.all().exclude(
+            structural=True
+        )
         self.matches['Category'] = ['name__icontains']
-        self.allowed_items['default_location'] = StockLocation.objects.all().exclude(structural=True)
+        self.allowed_items['default_location'] = StockLocation.objects.all().exclude(
+            structural=True
+        )
         self.matches['default_location'] = ['name__icontains']
         self.allowed_items['default_supplier'] = SupplierPart.objects.all()
         self.matches['default_supplier'] = ['SKU__icontains']
@@ -169,7 +172,6 @@ class PartImport(FileManagementFormView):
         for row in self.rows:
             # check each submitted column
             for idx in col_ids:
-
                 try:
                     data = row['data'][col_ids[idx]]['cell']
                 except (IndexError, TypeError):
@@ -177,8 +179,14 @@ class PartImport(FileManagementFormView):
 
                 if idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
                     try:
-                        exact_match = self.allowed_items[idx].get(**{a: data for a in self.matches[idx]})
-                    except (ValueError, self.allowed_items[idx].model.DoesNotExist, self.allowed_items[idx].model.MultipleObjectsReturned):
+                        exact_match = self.allowed_items[idx].get(**{
+                            a: data for a in self.matches[idx]
+                        })
+                    except (
+                        ValueError,
+                        self.allowed_items[idx].model.DoesNotExist,
+                        self.allowed_items[idx].model.MultipleObjectsReturned,
+                    ):
                         exact_match = None
 
                     row['match_options_' + idx] = self.allowed_items[idx]
@@ -197,14 +205,19 @@ class PartImport(FileManagementFormView):
 
         # Create Part instances
         for part_data in items.values():
-
             # set related parts
             optional_matches = {}
             for idx in self.file_manager.OPTIONAL_MATCH_HEADERS:
                 if idx.lower() in part_data:
                     try:
-                        optional_matches[idx] = self.allowed_items[idx].get(pk=int(part_data[idx.lower()]))
-                    except (ValueError, self.allowed_items[idx].model.DoesNotExist, self.allowed_items[idx].model.MultipleObjectsReturned):
+                        optional_matches[idx] = self.allowed_items[idx].get(
+                            pk=int(part_data[idx.lower()])
+                        )
+                    except (
+                        ValueError,
+                        self.allowed_items[idx].model.DoesNotExist,
+                        self.allowed_items[idx].model.MultipleObjectsReturned,
+                    ):
                         optional_matches[idx] = None
                 else:
                     optional_matches[idx] = None
@@ -228,19 +241,39 @@ class PartImport(FileManagementFormView):
                 active=str2bool(part_data.get('active', True)),
                 base_cost=str2int(part_data.get('base_cost'), 0),
                 multiple=str2int(part_data.get('multiple'), 1),
-                assembly=str2bool(part_data.get('assembly', part_settings.part_assembly_default())),
-                component=str2bool(part_data.get('component', part_settings.part_component_default())),
-                is_template=str2bool(part_data.get('is_template', part_settings.part_template_default())),
-                purchaseable=str2bool(part_data.get('purchaseable', part_settings.part_purchaseable_default())),
-                salable=str2bool(part_data.get('salable', part_settings.part_salable_default())),
-                trackable=str2bool(part_data.get('trackable', part_settings.part_trackable_default())),
-                virtual=str2bool(part_data.get('virtual', part_settings.part_virtual_default())),
+                assembly=str2bool(
+                    part_data.get('assembly', part_settings.part_assembly_default())
+                ),
+                component=str2bool(
+                    part_data.get('component', part_settings.part_component_default())
+                ),
+                is_template=str2bool(
+                    part_data.get('is_template', part_settings.part_template_default())
+                ),
+                purchaseable=str2bool(
+                    part_data.get(
+                        'purchaseable', part_settings.part_purchaseable_default()
+                    )
+                ),
+                salable=str2bool(
+                    part_data.get('salable', part_settings.part_salable_default())
+                ),
+                trackable=str2bool(
+                    part_data.get('trackable', part_settings.part_trackable_default())
+                ),
+                virtual=str2bool(
+                    part_data.get('virtual', part_settings.part_virtual_default())
+                ),
                 image=part_data.get('image', None),
             )
 
             # check if there's a category assigned, if not skip this part or else bad things happen
             if not optional_matches['Category']:
-                import_error.append(_(f"Can't import part {new_part.name} because there is no category assigned"))
+                import_error.append(
+                    _(
+                        f"Can't import part {new_part.name} because there is no category assigned"
+                    )
+                )
                 continue
 
             try:
@@ -264,8 +297,14 @@ class PartImport(FileManagementFormView):
             alert = f"<strong>{_('Part-Import')}</strong><br>{_(f'Imported {import_done} parts')}"
             messages.success(self.request, alert)
         if import_error:
-            error_text = '\n'.join([f'<li><strong>{import_error.count(a)}</strong>: {a}</li>' for a in set(import_error)])
-            messages.error(self.request, f"<strong>{_('Some errors occurred:')}</strong><br><ul>{error_text}</ul>")
+            error_text = '\n'.join([
+                f'<li><strong>{import_error.count(a)}</strong>: {a}</li>'
+                for a in set(import_error)
+            ])
+            messages.error(
+                self.request,
+                f"<strong>{_('Some errors occurred:')}</strong><br><ul>{error_text}</ul>",
+            )
 
         return HttpResponseRedirect(reverse('part-index'))
 
@@ -285,6 +324,7 @@ class PartImportTemplate(AjaxView):
 
 class PartImportAjax(FileManagementAjaxView, PartImport):
     """Multi-step form wizard for importing Part data"""
+
     ajax_form_steps_template = [
         'part/import_wizard/ajax_part_upload.html',
         'part/import_wizard/ajax_match_fields.html',
@@ -383,9 +423,7 @@ class PartImageSelect(AjaxUpdateView):
     ajax_template_name = 'part/select_image.html'
     ajax_form_title = _('Select Part Image')
 
-    fields = [
-        'image',
-    ]
+    fields = ['image']
 
     def post(self, request, *args, **kwargs):
         """Perform POST action to assign selected image to the Part instance"""
@@ -403,7 +441,6 @@ class PartImageSelect(AjaxUpdateView):
 
             # Ensure that the image already exists
             if os.path.exists(img_path):
-
                 part.image = os.path.join(PART_IMAGE_DIR, img)
                 part.save()
 
@@ -481,31 +518,30 @@ class BomDownload(AjaxView):
         if not IsValidBOMFormat(export_format):
             export_format = 'csv'
 
-        return ExportBom(part,
-                         fmt=export_format,
-                         cascade=cascade,
-                         max_levels=levels,
-                         parameter_data=parameter_data,
-                         stock_data=stock_data,
-                         supplier_data=supplier_data,
-                         manufacturer_data=manufacturer_data,
-                         pricing_data=pricing_data,
-                         substitute_part_data=substitute_part_data,
-                         )
+        return ExportBom(
+            part,
+            fmt=export_format,
+            cascade=cascade,
+            max_levels=levels,
+            parameter_data=parameter_data,
+            stock_data=stock_data,
+            supplier_data=supplier_data,
+            manufacturer_data=manufacturer_data,
+            pricing_data=pricing_data,
+            substitute_part_data=substitute_part_data,
+        )
 
     def get_data(self):
         """Return a custom message"""
-        return {
-            'info': 'Exported BOM'
-        }
+        return {'info': 'Exported BOM'}
 
 
 class PartPricing(AjaxView):
     """View for inspecting part pricing information."""
 
     model = Part
-    ajax_template_name = "part/part_pricing.html"
-    ajax_form_title = _("Part Pricing")
+    ajax_template_name = 'part/part_pricing.html'
+    ajax_form_title = _('Part Pricing')
     form_class = part_forms.PartPriceForm
 
     role_required = ['sales_order.view', 'part.view']
@@ -534,11 +570,7 @@ class PartPricing(AjaxView):
 
         part = self.get_part()
 
-        ctx = {
-            'part': part,
-            'quantity': quantity,
-            'currency': currency,
-        }
+        ctx = {'part': part, 'quantity': quantity, 'currency': currency}
 
         if part is None:
             return ctx
@@ -569,8 +601,9 @@ class PartPricing(AjaxView):
 
         # BOM pricing information
         if part.bom_count > 0:
-
-            use_internal = InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+            use_internal = InvenTreeSetting.get_setting(
+                'PART_BOM_USE_INTERNAL_PRICE', False
+            )
             bom_price = part.get_bom_price_range(quantity, internal=use_internal)
             purchase_price = part.get_bom_price_range(quantity, purchase=True)
 
@@ -594,12 +627,20 @@ class PartPricing(AjaxView):
                 min_bom_purchase_price /= scaler
                 max_bom_purchase_price /= scaler
                 if min_bom_purchase_price:
-                    ctx['min_total_bom_purchase_price'] = round(min_bom_purchase_price, 3)
-                    ctx['min_unit_bom_purchase_price'] = round(min_bom_purchase_price / quantity, 3)
+                    ctx['min_total_bom_purchase_price'] = round(
+                        min_bom_purchase_price, 3
+                    )
+                    ctx['min_unit_bom_purchase_price'] = round(
+                        min_bom_purchase_price / quantity, 3
+                    )
 
                 if max_bom_purchase_price:
-                    ctx['max_total_bom_purchase_price'] = round(max_bom_purchase_price, 3)
-                    ctx['max_unit_bom_purchase_price'] = round(max_bom_purchase_price / quantity, 3)
+                    ctx['max_total_bom_purchase_price'] = round(
+                        max_bom_purchase_price, 3
+                    )
+                    ctx['max_unit_bom_purchase_price'] = round(
+                        max_bom_purchase_price / quantity, 3
+                    )
 
         # internal part pricing information
         internal_part_price = part.get_internal_price(quantity)
@@ -624,7 +665,9 @@ class PartPricing(AjaxView):
         init = self.get_initials()
         qty = self.get_quantity()
 
-        return self.renderJsonResponse(request, self.form_class(initial=init), context=self.get_pricing(qty))
+        return self.renderJsonResponse(
+            request, self.form_class(initial=init), context=self.get_pricing(qty)
+        )
 
     def post(self, request, *args, **kwargs):
         """Perform custom POST action for this view"""
@@ -647,7 +690,9 @@ class PartPricing(AjaxView):
         # Always mark the form as 'invalid' (the user may wish to keep getting pricing data)
         data['form_valid'] = False
 
-        return self.renderJsonResponse(request, form, data=data, context=self.get_pricing(quantity, currency))
+        return self.renderJsonResponse(
+            request, form, data=data, context=self.get_pricing(quantity, currency)
+        )
 
 
 class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
@@ -676,11 +721,9 @@ class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         category = kwargs.get('object', None)
 
         if category:
-
             # Insert "starred" information
             context['starred_directly'] = category.is_starred_by(
-                self.request.user,
-                include_parents=False,
+                self.request.user, include_parents=False
             )
 
             if context['starred_directly']:

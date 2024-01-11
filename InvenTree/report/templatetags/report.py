@@ -63,7 +63,7 @@ def getkey(container: dict, key):
         key: The 'key' to be found within the dict
     """
     if type(container) is not dict:
-        logger.warning("getkey() called with non-dict object")
+        logger.warning('getkey() called with non-dict object')
         return None
 
     if key in container:
@@ -92,15 +92,21 @@ def asset(filename):
     full_path = settings.MEDIA_ROOT.joinpath('report', 'assets', filename).resolve()
 
     if not full_path.exists() or not full_path.is_file():
-        raise FileNotFoundError(_("Asset file does not exist") + f": '{filename}'")
+        raise FileNotFoundError(_('Asset file does not exist') + f": '{filename}'")
 
     if debug_mode:
         return os.path.join(settings.MEDIA_URL, 'report', 'assets', filename)
-    return f"file://{full_path}"
+    return f'file://{full_path}'
 
 
 @register.simple_tag()
-def uploaded_image(filename, replace_missing=True, replacement_file='blank_image.png', validate=True, **kwargs):
+def uploaded_image(
+    filename,
+    replace_missing=True,
+    replacement_file='blank_image.png',
+    validate=True,
+    **kwargs,
+):
     """Return a fully-qualified path for an 'uploaded' image.
 
     Arguments:
@@ -141,7 +147,7 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         exists = False
 
     if not exists and not replace_missing:
-        raise FileNotFoundError(_("Image file not found") + f": '{filename}'")
+        raise FileNotFoundError(_('Image file not found') + f": '{filename}'")
 
     if debug_mode:
         # In debug mode, return a web path (rather than an encoded image blob)
@@ -167,12 +173,12 @@ def uploaded_image(filename, replace_missing=True, replacement_file='blank_image
         img = img.resize((width, height))
     elif width is not None:
         # Resize the image, width only
-        wpercent = (width / float(img.size[0]))
+        wpercent = width / float(img.size[0])
         hsize = int((float(img.size[1]) * float(wpercent)))
         img = img.resize((width, hsize))
     elif height is not None:
         # Resize the image, height only
-        hpercent = (height / float(img.size[1]))
+        hpercent = height / float(img.size[1])
         wsize = int((float(img.size[0]) * float(hpercent)))
         img = img.resize((wsize, height))
 
@@ -206,14 +212,16 @@ def encode_svg_image(filename):
             exists = False
 
     if not exists:
-        raise FileNotFoundError(_("Image file not found") + f": '{filename}'")
+        raise FileNotFoundError(_('Image file not found') + f": '{filename}'")
 
     # Read the file data
     with open(full_path, 'rb') as f:
         data = f.read()
 
     # Return the base64-encoded data
-    return "data:image/svg+xml;charset=utf-8;base64," + base64.b64encode(data).decode('utf-8')
+    return 'data:image/svg+xml;charset=utf-8;base64,' + base64.b64encode(data).decode(
+        'utf-8'
+    )
 
 
 @register.simple_tag()
@@ -227,7 +235,7 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
         TypeError if provided part is not a Part instance
     """
     if type(part) is not Part:
-        raise TypeError(_("part_image tag requires a Part instance"))
+        raise TypeError(_('part_image tag requires a Part instance'))
 
     if preview:
         img = part.image.preview.name
@@ -266,7 +274,7 @@ def company_image(company, preview=False, thumbnail=False, **kwargs):
         TypeError if provided company is not a Company instance
     """
     if type(company) is not Company:
-        raise TypeError(_("company_image tag requires a Company instance"))
+        raise TypeError(_('company_image tag requires a Company instance'))
 
     if preview:
         img = company.image.preview.name

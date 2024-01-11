@@ -8,17 +8,9 @@ from InvenTree.unit_test import InvenTreeAPITestCase
 class TestReportTests(InvenTreeAPITestCase):
     """Tests for the StockItem TestReport templates."""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'stock',
-    ]
+    fixtures = ['category', 'part', 'location', 'stock']
 
-    roles = [
-        'stock.view',
-        'stock_location.view',
-    ]
+    roles = ['stock.view', 'stock_location.view']
 
     list_url = reverse('api-stockitem-testreport-list')
 
@@ -42,22 +34,10 @@ class TestReportTests(InvenTreeAPITestCase):
         self.assertEqual(len(response), 0)
 
         # TODO - Add some tests to this response
-        response = self.do_list(
-            {
-                'item': 10,
-            }
-        )
+        response = self.do_list({'item': 10})
 
         # TODO - Add some tests to this response
-        response = self.do_list(
-            {
-                'item': 100000,
-            }
-        )
+        response = self.do_list({'item': 100000})
 
         # TODO - Add some tests to this response
-        response = self.do_list(
-            {
-                'items': [10, 11, 12],
-            }
-        )
+        response = self.do_list({'items': [10, 11, 12]})

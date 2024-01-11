@@ -27,7 +27,9 @@ def delete_old_notifications():
     try:
         from common.models import NotificationEntry
     except AppRegistryNotReady:  # pragma: no cover
-        logger.info("Could not perform 'delete_old_notifications' - App registry not ready")
+        logger.info(
+            "Could not perform 'delete_old_notifications' - App registry not ready"
+        )
         return
 
     before = timezone.now() - timedelta(days=90)
@@ -49,7 +51,7 @@ def update_news_feed():
     try:
         d = feedparser.parse(settings.INVENTREE_NEWS_URL)
     except Exception as entry:  # pragma: no cover
-        logger.warning("update_news_feed: Error parsing the newsfeed", entry)
+        logger.warning('update_news_feed: Error parsing the newsfeed', entry)
         return
 
     # Get a reference list
@@ -87,13 +89,15 @@ def delete_old_notes_images():
     try:
         from common.models import NotesImage
     except AppRegistryNotReady:
-        logger.info("Could not perform 'delete_old_notes_images' - App registry not ready")
+        logger.info(
+            "Could not perform 'delete_old_notes_images' - App registry not ready"
+        )
         return
 
     # Remove any notes which point to non-existent image files
     for note in NotesImage.objects.all():
         if not os.path.exists(note.image.path):
-            logger.info("Deleting note %s - image file does not exist", note.image.path)
+            logger.info('Deleting note %s - image file does not exist', note.image.path)
             note.delete()
 
     note_classes = getModelsWithMixin(InvenTreeNotesMixin)
@@ -112,7 +116,7 @@ def delete_old_notes_images():
                 break
 
         if not found:
-            logger.info("Deleting note %s - image file not linked to a note", img)
+            logger.info('Deleting note %s - image file not linked to a note', img)
             note.delete()
 
     # Finally, remove any images in the notes dir which are not linked to a note
@@ -127,7 +131,6 @@ def delete_old_notes_images():
     all_notes = NotesImage.objects.all()
 
     for image in images:
-
         found = False
         for note in all_notes:
             img_path = os.path.basename(note.image.path)
@@ -136,5 +139,5 @@ def delete_old_notes_images():
                 break
 
         if not found:
-            logger.info("Deleting note %s - image file not linked to a note", image)
+            logger.info('Deleting note %s - image file not linked to a note', image)
             os.remove(os.path.join(notes_dir, image))
