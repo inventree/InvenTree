@@ -4,12 +4,7 @@
 import os
 import sys
 
-from InvenTree.config import get_boolean_setting
 from tracing import setup_instruments, setup_tracing
-
-TRACING_ENABLED = get_boolean_setting(
-    'INVENTREE_TRACING_ENABLED', 'tracing_enabled', False
-)
 
 
 def main():
@@ -17,8 +12,7 @@ def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InvenTree.settings')
 
     # Run tracing/logging instrumentation
-    if TRACING_ENABLED:
-        setup_instruments()
+    setup_instruments()
 
     try:
         from django.core.management import execute_from_command_line
@@ -32,6 +26,5 @@ def main():
 
 
 if __name__ == '__main__':
-    if TRACING_ENABLED:
-        setup_tracing()
+    setup_tracing()
     main()

@@ -1,7 +1,6 @@
 """OpenTelemetry setup functions."""
 
 import logging
-import os
 
 from opentelemetry import metrics, trace
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
@@ -21,11 +20,19 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 
-from InvenTree.config import get_setting
+from InvenTree.config import get_boolean_setting, get_setting
+
+
+def tracing_enabled():
+    """Return True if tracing is possible."""
+    return get_boolean_setting('INVENTREE_TRACING_ENABLED', 'tracing_enabled', False)
 
 
 def setup_tracing():
     """Setup tracing for the application in the current context."""
+    if not tracing_enabled():
+        return
+
     # gather the required environment variables
     headers, endpoint, resource = setup_src()
     console_log = False
@@ -85,6 +92,9 @@ def setup_src():
 
 def setup_instruments():
     """Run auto-insturmentation for OpenTelemetry tracing."""
+    if not tracing_enabled():
+        return
+
     DjangoInstrumentor().instrument()
     RedisInstrumentor().instrument()
     RequestsInstrumentor().instrument()
