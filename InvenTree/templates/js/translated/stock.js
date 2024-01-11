@@ -1367,9 +1367,9 @@ function noResultBadge() {
     return `<span class='badge badge-right rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
 }
 
-function formatDate(row, options={}) {
+function formatDate(row, date, options={}) {
     // Function for formatting date field
-    var html = renderDate(row.date, options);
+    var html = renderDate(date, options);
 
     if (row.user_detail && !options.no_user_detail) {
         html += `<span class='badge badge-right rounded-pill bg-secondary'>${row.user_detail.username}</span>`;
@@ -1537,7 +1537,7 @@ function loadStockTestResultsTable(table, options) {
                 title: '{% trans "Test Date" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    return formatDate(row);
+                    return formatDate(row, row.date);
                 },
             },
             {
@@ -1551,7 +1551,7 @@ function loadStockTestResultsTable(table, options) {
                 sortable: true,
                 visible: false,
                 formatter: function(value, row) {
-                    return formatDate(row, {showTime: true, no_user_detail: true});
+                    return formatDate(row, row.started_datetime, {showTime: true, no_user_detail: true});
                 },
             },
             {
@@ -1560,7 +1560,7 @@ function loadStockTestResultsTable(table, options) {
                 sortable: true,
                 visible: false,
                 formatter: function(value, row) {
-                    return formatDate(row, {showTime: true, no_user_detail: true});
+                    return formatDate(row, row.finished_datetime, {showTime: true, no_user_detail: true});
                 },
             },
             {
