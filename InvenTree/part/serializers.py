@@ -91,7 +91,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
         if not path_detail:
             self.fields.pop('path')
 
-    def get_starred(self, category):
+    def get_starred(self, category) -> bool:
         """Return True if the category is directly "starred" by the current user."""
         return category in self.context.get('starred_categories', [])
 
@@ -720,7 +720,7 @@ class PartSerializer(
 
         return queryset
 
-    def get_starred(self, part):
+    def get_starred(self, part) -> bool:
         """Return "true" if the part is starred by the current user."""
         return part in self.starred_parts
 

@@ -2809,12 +2809,12 @@ class NotificationMessage(models.Model):
         """Return API endpoint."""
         return reverse('api-notifications-list')
 
-    def age(self):
+    def age(self) -> int:
         """Age of the message in seconds."""
         delta = now() - self.creation
         return delta.seconds
 
-    def age_human(self):
+    def age_human(self) -> str:
         """Humanized age."""
         return naturaltime(self.creation)
 

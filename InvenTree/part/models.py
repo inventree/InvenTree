@@ -742,7 +742,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         return stock[0].serial
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings."""
         return part_helpers.render_part_full_name(self)
 
@@ -756,7 +756,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             return helpers.getMediaUrl(self.image.url)
         return helpers.getBlankImage()
 
-    def get_thumbnail_url(self):
+    def get_thumbnail_url(self) -> str:
         """Return the URL of the image thumbnail for this part."""
         if self.image:
             return helpers.getMediaUrl(self.image.thumbnail.url)
