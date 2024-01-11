@@ -845,3 +845,8 @@ def inheritors(cls):
                 subcls.add(child)
                 work.append(child)
     return subcls
+
+
+def is_ajax(request):
+    """Check if the current request is an AJAX request."""
+    return request.headers.get('x-requested-with') == 'XMLHttpRequest'
