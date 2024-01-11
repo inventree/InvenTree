@@ -25,7 +25,7 @@ from InvenTree.version import inventreeVersion
 
 
 def setup_tracing(endpoint: str, headers: dict, resources_input: dict | None = None):
-    """Setup tracing for the application in the current context.
+    """Set up tracing for the application in the current context.
 
     Args:
         endpoint: The endpoint to send the traces to.
