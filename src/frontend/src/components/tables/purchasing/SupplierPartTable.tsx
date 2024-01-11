@@ -13,7 +13,7 @@ import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn } from '../ColumnRenderers';
+import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -35,13 +35,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         title: t`Part`,
         switchable: 'part' in params,
         sortable: true,
-        render: (record: any) => {
-          let part = record?.part_detail ?? {};
-
-          return (
-            <Thumbnail src={part?.thumbnail ?? part.image} text={part.name} />
-          );
-        }
+        render: (record: any) => PartColumn(record?.part_detail)
       },
       {
         accessor: 'supplier',
@@ -179,7 +173,8 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
   }, [user]);
 
   const editSupplierPartFields = useSupplierPartFields({
-    hidePart: true
+    hidePart: true,
+    partPk: params?.part
   });
 
   // Row action callback

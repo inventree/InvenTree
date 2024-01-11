@@ -9,10 +9,7 @@ from .files import FileManager
 class UploadFileForm(forms.Form):
     """Step 1 of FileManagementFormView."""
 
-    file = forms.FileField(
-        label=_('File'),
-        help_text=_('Select file to upload'),
-    )
+    file = forms.FileField(label=_('File'), help_text=_('Select file to upload'))
 
     def __init__(self, *args, **kwargs):
         """Update label and help_text."""
@@ -67,9 +64,7 @@ class MatchFieldForm(forms.Form):
             self.fields[field_name] = forms.ChoiceField(
                 choices=[('', '-' * 10)] + headers_choices,
                 required=False,
-                widget=forms.Select(attrs={
-                    'class': 'select fieldselect',
-                })
+                widget=forms.Select(attrs={'class': 'select fieldselect'}),
             )
             if col['guess']:
                 self.fields[field_name].initial = col['guess']
@@ -107,7 +102,9 @@ class MatchItemForm(forms.Form):
                     field_name = col_guess.lower() + '-' + str(row['index'])
 
                     # check if field def was overridden
-                    overriden_field = self.get_special_field(col_guess, row, file_manager)
+                    overriden_field = self.get_special_field(
+                        col_guess, row, file_manager
+                    )
                     if overriden_field:
                         self.fields[field_name] = overriden_field
 
@@ -117,23 +114,23 @@ class MatchItemForm(forms.Form):
                         value = row.get(col_guess.lower(), '')
                         # Set field input box
                         self.fields[field_name] = forms.CharField(
-                            required=True,
-                            initial=value,
+                            required=True, initial=value
                         )
 
                     # Create item selection box
                     elif col_guess in file_manager.OPTIONAL_MATCH_HEADERS:
                         # Get item options
-                        item_options = [(option.id, option) for option in row['match_options_' + col_guess]]
+                        item_options = [
+                            (option.id, option)
+                            for option in row['match_options_' + col_guess]
+                        ]
                         # Get item match
                         item_match = row['match_' + col_guess]
                         # Set field select box
                         self.fields[field_name] = forms.ChoiceField(
                             choices=[('', '-' * 10)] + item_options,
                             required=False,
-                            widget=forms.Select(attrs={
-                                'class': 'select bomselect',
-                            })
+                            widget=forms.Select(attrs={'class': 'select bomselect'}),
                         )
                         # Update select box when match was found
                         if item_match:
@@ -142,7 +139,9 @@ class MatchItemForm(forms.Form):
                     # Create item selection box
                     elif col_guess in file_manager.ITEM_MATCH_HEADERS:
                         # Get item options
-                        item_options = [(option.id, option) for option in row['item_options']]
+                        item_options = [
+                            (option.id, option) for option in row['item_options']
+                        ]
                         # Get item match
                         item_match = row['item_match']
                         # Set field name
@@ -151,9 +150,7 @@ class MatchItemForm(forms.Form):
                         self.fields[field_name] = forms.ChoiceField(
                             choices=[('', '-' * 10)] + item_options,
                             required=False,
-                            widget=forms.Select(attrs={
-                                'class': 'select bomselect',
-                            })
+                            widget=forms.Select(attrs={'class': 'select bomselect'}),
                         )
                         # Update select box when match was found
                         if item_match:
@@ -169,8 +166,7 @@ class MatchItemForm(forms.Form):
                         value = row.get(col_guess.lower(), '')
                         # Set field input box
                         self.fields[field_name] = forms.CharField(
-                            required=False,
-                            initial=value,
+                            required=False, initial=value
                         )
 
     def get_special_field(self, col_guess, row, file_manager):

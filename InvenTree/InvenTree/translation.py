@@ -1,4 +1,4 @@
-"""Translation helper functions"""
+"""Translation helper functions."""
 
 import json
 
@@ -9,7 +9,7 @@ _translation_stats = None
 
 
 def reload_translation_stats():
-    """Reload the translation stats from the compiled file"""
+    """Reload the translation stats from the compiled file."""
     global _translation_stats
 
     STATS_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
@@ -24,7 +24,7 @@ def reload_translation_stats():
     keys = _translation_stats.keys()
 
     # Note that the names used in the stats file may not align 100%
-    for (code, _lang) in settings.LANGUAGES:
+    for code, _lang in settings.LANGUAGES:
         if code in keys:
             # Direct match, move on
             continue
@@ -39,7 +39,7 @@ def reload_translation_stats():
 
 
 def get_translation_percent(lang_code):
-    """Return the translation percentage for the given language code"""
+    """Return the translation percentage for the given language code."""
     if _translation_stats is None:
         reload_translation_stats()
 

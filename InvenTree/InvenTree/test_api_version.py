@@ -1,6 +1,5 @@
 """Tests for api_version."""
 
-
 from django.urls import reverse
 
 from InvenTree.api_version import INVENTREE_API_VERSION

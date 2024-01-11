@@ -17,22 +17,34 @@ import common.models as common_models
 from common.settings import settings
 from company.models import SupplierPart
 from generic.states.api import StatusView
-from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView, MetadataView)
+from InvenTree.api import (
+    APIDownloadMixin,
+    AttachmentMixin,
+    ListCreateDestroyAPIView,
+    MetadataView,
+)
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
-from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
-                              RetrieveUpdateDestroyAPI)
-from InvenTree.status_codes import (PurchaseOrderStatus,
-                                    PurchaseOrderStatusGroups,
-                                    ReturnOrderLineStatus, ReturnOrderStatus,
-                                    SalesOrderStatus, SalesOrderStatusGroups)
+from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.status_codes import (
+    PurchaseOrderStatus,
+    PurchaseOrderStatusGroups,
+    ReturnOrderLineStatus,
+    ReturnOrderStatus,
+    SalesOrderStatus,
+    SalesOrderStatusGroups,
+)
 from order import models, serializers
-from order.admin import (PurchaseOrderExtraLineResource,
-                         PurchaseOrderLineItemResource, PurchaseOrderResource,
-                         ReturnOrderResource, SalesOrderExtraLineResource,
-                         SalesOrderLineItemResource, SalesOrderResource)
+from order.admin import (
+    PurchaseOrderExtraLineResource,
+    PurchaseOrderLineItemResource,
+    PurchaseOrderResource,
+    ReturnOrderResource,
+    SalesOrderExtraLineResource,
+    SalesOrderLineItemResource,
+    SalesOrderResource,
+)
 from part.models import Part
 from users.models import Owner
 
@@ -41,7 +53,7 @@ class GeneralExtraLineList(APIDownloadMixin):
     """General template for ExtraLine API classes."""
 
     def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint"""
+        """Return the serializer instance for this endpoint."""
         try:
             params = self.request.query_params3
 
@@ -54,53 +66,40 @@ class GeneralExtraLineList(APIDownloadMixin):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        """Return the annotated queryset for this endpoint"""
+        """Return the annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'order',
-        )
+        queryset = queryset.prefetch_related('order')
 
         return queryset
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = [
-        'quantity',
-        'note',
-        'reference',
-    ]
+    ordering_fields = ['quantity', 'note', 'reference']
 
-    search_fields = [
-        'quantity',
-        'note',
-        'reference',
-        'description',
-    ]
+    search_fields = ['quantity', 'note', 'reference', 'description']
 
-    filterset_fields = [
-        'order',
-    ]
+    filterset_fields = ['order']
 
 
 class OrderFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
     # Filter against order status
-    status = rest_filters.NumberFilter(label="Order Status", method='filter_status')
+    status = rest_filters.NumberFilter(label='Order Status', method='filter_status')
 
     def filter_status(self, queryset, name, value):
-        """Filter by integer status code"""
+        """Filter by integer status code."""
         return queryset.filter(status=value)
 
     # Exact match for reference
     reference = rest_filters.CharFilter(
-        label='Filter by exact reference',
-        field_name='reference',
-        lookup_expr="iexact"
+        label='Filter by exact reference', field_name='reference', lookup_expr='iexact'
     )
 
-    assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
+    assigned_to_me = rest_filters.BooleanFilter(
+        label='assigned_to_me', method='filter_assigned_to_me'
+    )
 
     def filter_assigned_to_me(self, queryset, name, value):
         """Filter by orders which are assigned to the current user."""
@@ -122,38 +121,45 @@ class OrderFilter(rest_filters.FilterSet):
             return queryset.filter(self.Meta.model.overdue_filter())
         return queryset.exclude(self.Meta.model.overdue_filter())
 
-    outstanding = rest_filters.BooleanFilter(label='outstanding', method='filter_outstanding')
+    outstanding = rest_filters.BooleanFilter(
+        label='outstanding', method='filter_outstanding'
+    )
 
     def filter_outstanding(self, queryset, name, value):
-        """Generic filter for determining if an order is 'outstanding'"""
+        """Generic filter for determining if an order is 'outstanding'."""
         if str2bool(value):
             return queryset.filter(status__in=self.Meta.model.get_status_class().OPEN)
         return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
     project_code = rest_filters.ModelChoiceFilter(
-        queryset=common_models.ProjectCode.objects.all(),
-        field_name='project_code'
+        queryset=common_models.ProjectCode.objects.all(), field_name='project_code'
     )
 
-    has_project_code = rest_filters.BooleanFilter(label='has_project_code', method='filter_has_project_code')
+    has_project_code = rest_filters.BooleanFilter(
+        label='has_project_code', method='filter_has_project_code'
+    )
 
     def filter_has_project_code(self, queryset, name, value):
-        """Filter by whether or not the order has a project code"""
+        """Filter by whether or not the order has a project code."""
         if str2bool(value):
             return queryset.exclude(project_code=None)
         return queryset.filter(project_code=None)
 
 
 class LineItemFilter(rest_filters.FilterSet):
-    """Base class for custom API filters for order line item list(s)"""
+    """Base class for custom API filters for order line item list(s)."""
 
     # Filter by order status
-    order_status = rest_filters.NumberFilter(label='order_status', field_name='order__status')
+    order_status = rest_filters.NumberFilter(
+        label='order_status', field_name='order__status'
+    )
 
-    has_pricing = rest_filters.BooleanFilter(label="Has Pricing", method='filter_has_pricing')
+    has_pricing = rest_filters.BooleanFilter(
+        label='Has Pricing', method='filter_has_pricing'
+    )
 
     def filter_has_pricing(self, queryset, name, value):
-        """Filter by whether or not the line item has pricing information"""
+        """Filter by whether or not the line item has pricing information."""
         filters = {self.Meta.price_field: None}
 
         if str2bool(value):
@@ -168,21 +174,21 @@ class PurchaseOrderFilter(OrderFilter):
         """Metaclass options."""
 
         model = models.PurchaseOrder
-        fields = [
-            'supplier',
-        ]
+        fields = ['supplier']
 
 
 class PurchaseOrderMixin:
-    """Mixin class for PurchaseOrder endpoints"""
+    """Mixin class for PurchaseOrder endpoints."""
 
     queryset = models.PurchaseOrder.objects.all()
     serializer_class = serializers.PurchaseOrderSerializer
 
     def get_serializer(self, *args, **kwargs):
-        """Return the serializer instance for this endpoint"""
+        """Return the serializer instance for this endpoint."""
         try:
-            kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
+            kwargs['supplier_detail'] = str2bool(
+                self.request.query_params.get('supplier_detail', False)
+            )
         except AttributeError:
             pass
 
@@ -192,13 +198,10 @@ class PurchaseOrderMixin:
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        """Return the annotated queryset for this endpoint"""
+        """Return the annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'supplier',
-            'lines',
-        )
+        queryset = queryset.prefetch_related('supplier', 'lines')
 
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
 
@@ -227,7 +230,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
                 duplicate_order = models.PurchaseOrder.objects.get(pk=duplicate_order)
             except (ValueError, models.PurchaseOrder.DoesNotExist):
                 raise ValidationError({
-                    'duplicate_order': [_('No matching purchase order found')],
+                    'duplicate_order': [_('No matching purchase order found')]
                 })
 
         serializer = self.get_serializer(data=data)
@@ -240,7 +243,6 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
             # Duplicate line items from other order if required
             if duplicate_order is not None:
-
                 if duplicate_line_items:
                     for line in duplicate_order.lines.all():
                         # Copy the line across to the new order
@@ -259,20 +261,22 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
                         line.save()
 
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a file"""
+        """Download the filtered queryset as a file."""
         dataset = PurchaseOrderResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
 
-        filename = f"InvenTree_PurchaseOrders.{export_format}"
+        filename = f'InvenTree_PurchaseOrders.{export_format}'
 
         return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
-        """Custom queryset filtering"""
+        """Custom queryset filtering."""
         # Perform basic filtering
         queryset = super().filter_queryset(queryset)
 
@@ -284,7 +288,9 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
         if part is not None:
             try:
                 part = Part.objects.get(pk=part)
-                queryset = queryset.filter(id__in=[p.id for p in part.purchase_orders()])
+                queryset = queryset.filter(
+                    id__in=[p.id for p in part.purchase_orders()]
+                )
             except (Part.DoesNotExist, ValueError):
                 pass
 
@@ -294,7 +300,9 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
         if supplier_part is not None:
             try:
                 supplier_part = SupplierPart.objects.get(pk=supplier_part)
-                queryset = queryset.filter(id__in=[p.id for p in supplier_part.purchase_orders()])
+                queryset = queryset.filter(
+                    id__in=[p.id for p in supplier_part.purchase_orders()]
+                )
             except (ValueError, SupplierPart.DoesNotExist):
                 pass
 
@@ -339,6 +347,7 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
 class PurchaseOrderDetail(PurchaseOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a PurchaseOrder object."""
+
     pass
 
 
@@ -353,7 +362,9 @@ class PurchaseOrderContextMixin:
 
         # Pass the purchase order through to the serializer for validation
         try:
-            context['order'] = models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+            context['order'] = models.PurchaseOrder.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
         except Exception:
             pass
 
@@ -408,17 +419,15 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
 
     class Meta:
         """Metaclass options."""
+
         price_field = 'purchase_price'
         model = models.PurchaseOrderLineItem
-        fields = [
-            'order',
-            'part',
-        ]
+        fields = ['order', 'part']
 
     pending = rest_filters.BooleanFilter(label='pending', method='filter_pending')
 
     def filter_pending(self, queryset, name, value):
-        """Filter by "pending" status (order status = pending)"""
+        """Filter by "pending" status (order status = pending)."""
         if str2bool(value):
             return queryset.filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
         return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
@@ -426,7 +435,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
     def filter_received(self, queryset, name, value):
-        """Filter by lines which are "received" (or "not" received)
+        """Filter by lines which are "received" (or "not" received).
 
         A line is considered "received" when received >= quantity
         """
@@ -435,28 +444,36 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         if str2bool(value):
             return queryset.filter(q)
         # Only count "pending" orders
-        return queryset.exclude(q).filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
+        return queryset.exclude(q).filter(
+            order__status__in=PurchaseOrderStatusGroups.OPEN
+        )
 
 
 class PurchaseOrderLineItemMixin:
-    """Mixin class for PurchaseOrderLineItem endpoints"""
+    """Mixin class for PurchaseOrderLineItem endpoints."""
 
     queryset = models.PurchaseOrderLineItem.objects.all()
     serializer_class = serializers.PurchaseOrderLineItemSerializer
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint"""
+        """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(queryset)
+        queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(
+            queryset
+        )
 
         return queryset
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint"""
+        """Return serializer instance for this endpoint."""
         try:
-            kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
-            kwargs['order_detail'] = str2bool(self.request.query_params.get('order_detail', False))
+            kwargs['part_detail'] = str2bool(
+                self.request.query_params.get('part_detail', False)
+            )
+            kwargs['order_detail'] = str2bool(
+                self.request.query_params.get('order_detail', False)
+            )
         except AttributeError:
             pass
 
@@ -465,7 +482,9 @@ class PurchaseOrderLineItemMixin:
         return self.serializer_class(*args, **kwargs)
 
 
-class PurchaseOrderLineItemList(PurchaseOrderLineItemMixin, APIDownloadMixin, ListCreateDestroyAPIView):
+class PurchaseOrderLineItemList(
+    PurchaseOrderLineItemMixin, APIDownloadMixin, ListCreateDestroyAPIView
+):
     """API endpoint for accessing a list of PurchaseOrderLineItem objects.
 
     - GET: Return a list of PurchaseOrder Line Item objects
@@ -494,12 +513,12 @@ class PurchaseOrderLineItemList(PurchaseOrderLineItemMixin, APIDownloadMixin, Li
         return queryset
 
     def download_queryset(self, queryset, export_format):
-        """Download the requested queryset as a file"""
+        """Download the requested queryset as a file."""
         dataset = PurchaseOrderLineItemResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
 
-        filename = f"InvenTree_PurchaseOrderItems.{export_format}"
+        filename = f'InvenTree_PurchaseOrderItems.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -534,6 +553,7 @@ class PurchaseOrderLineItemList(PurchaseOrderLineItemMixin, APIDownloadMixin, Li
 
 class PurchaseOrderLineItemDetail(PurchaseOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for PurchaseOrderLineItem object."""
+
     pass
 
 
@@ -544,10 +564,10 @@ class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
     def download_queryset(self, queryset, export_format):
-        """Download this queryset as a file"""
+        """Download this queryset as a file."""
         dataset = PurchaseOrderExtraLineResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_ExtraPurchaseOrderLines.{export_format}"
+        filename = f'InvenTree_ExtraPurchaseOrderLines.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -560,14 +580,12 @@ class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
 
 class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)"""
+    """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)."""
 
     queryset = models.SalesOrderAttachment.objects.all()
     serializer_class = serializers.SalesOrderAttachmentSerializer
 
-    filterset_fields = [
-        'order',
-    ]
+    filterset_fields = ['order']
 
 
 class SalesOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
@@ -584,21 +602,21 @@ class SalesOrderFilter(OrderFilter):
         """Metaclass options."""
 
         model = models.SalesOrder
-        fields = [
-            'customer',
-        ]
+        fields = ['customer']
 
 
 class SalesOrderMixin:
-    """Mixin class for SalesOrder endpoints"""
+    """Mixin class for SalesOrder endpoints."""
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderSerializer
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint"""
+        """Return serializer instance for this endpoint."""
         try:
-            kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
+            kwargs['customer_detail'] = str2bool(
+                self.request.query_params.get('customer_detail', False)
+            )
         except AttributeError:
             pass
 
@@ -608,13 +626,10 @@ class SalesOrderMixin:
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint"""
+        """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'customer',
-            'lines'
-        )
+        queryset = queryset.prefetch_related('customer', 'lines')
 
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 
@@ -640,15 +655,17 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
         item.save()
 
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def download_queryset(self, queryset, export_format):
-        """Download this queryset as a file"""
+        """Download this queryset as a file."""
         dataset = SalesOrderResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
 
-        filename = f"InvenTree_SalesOrders.{export_format}"
+        filename = f'InvenTree_SalesOrders.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -685,9 +702,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
         'project_code': ['project_code__code'],
     }
 
-    filterset_fields = [
-        'customer',
-    ]
+    filterset_fields = ['customer']
 
     ordering_fields = [
         'creation_date',
@@ -715,6 +730,7 @@ class SalesOrderList(SalesOrderMixin, APIDownloadMixin, ListCreateAPI):
 
 class SalesOrderDetail(SalesOrderMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrder object."""
+
     pass
 
 
@@ -723,12 +739,10 @@ class SalesOrderLineItemFilter(LineItemFilter):
 
     class Meta:
         """Metaclass options."""
+
         price_field = 'sale_price'
         model = models.SalesOrderLineItem
-        fields = [
-            'order',
-            'part',
-        ]
+        fields = ['order', 'part']
 
     completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
 
@@ -745,13 +759,13 @@ class SalesOrderLineItemFilter(LineItemFilter):
 
 
 class SalesOrderLineItemMixin:
-    """Mixin class for SalesOrderLineItem endpoints"""
+    """Mixin class for SalesOrderLineItem endpoints."""
 
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SalesOrderLineItemSerializer
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer for this endpoint with extra data as requested"""
+        """Return serializer for this endpoint with extra data as requested."""
         try:
             params = self.request.query_params
 
@@ -768,7 +782,7 @@ class SalesOrderLineItemMixin:
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint"""
+        """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related(
@@ -791,32 +805,24 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
     filterset_class = SalesOrderLineItemFilter
 
     def download_queryset(self, queryset, export_format):
-        """Download the requested queryset as a file"""
+        """Download the requested queryset as a file."""
         dataset = SalesOrderLineItemResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
 
-        filename = f"InvenTree_SalesOrderItems.{export_format}"
+        filename = f'InvenTree_SalesOrderItems.{export_format}'
 
         return DownloadFile(filedata, filename)
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = [
-        'part__name',
-        'quantity',
-        'reference',
-        'target_date',
-    ]
+    ordering_fields = ['part__name', 'quantity', 'reference', 'target_date']
 
-    search_fields = [
-        'part__name',
-        'quantity',
-        'reference',
-    ]
+    search_fields = ['part__name', 'quantity', 'reference']
 
 
 class SalesOrderLineItemDetail(SalesOrderLineItemMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrderLineItem object."""
+
     pass
 
 
@@ -827,10 +833,10 @@ class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     serializer_class = serializers.SalesOrderExtraLineSerializer
 
     def download_queryset(self, queryset, export_format):
-        """Download this queryset as a file"""
+        """Download this queryset as a file."""
         dataset = SalesOrderExtraLineResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_ExtraSalesOrderLines.{export_format}"
+        filename = f'InvenTree_ExtraSalesOrderLines.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -848,7 +854,7 @@ class SalesOrderContextMixin:
     queryset = models.SalesOrder.objects.all()
 
     def get_serializer_context(self):
-        """Add the 'order' reference to the serializer context for any classes which inherit this mixin"""
+        """Add the 'order' reference to the serializer context for any classes which inherit this mixin."""
         ctx = super().get_serializer_context()
 
         ctx['request'] = self.request
@@ -862,12 +868,14 @@ class SalesOrderContextMixin:
 
 
 class SalesOrderCancel(SalesOrderContextMixin, CreateAPI):
-    """API endpoint to cancel a SalesOrder"""
+    """API endpoint to cancel a SalesOrder."""
+
     serializer_class = serializers.SalesOrderCancelSerializer
 
 
 class SalesOrderIssue(SalesOrderContextMixin, CreateAPI):
-    """API endpoint to issue a SalesOrder"""
+    """API endpoint to issue a SalesOrder."""
+
     serializer_class = serializers.SalesOrderIssueSerializer
 
 
@@ -927,7 +935,7 @@ class SalesOrderAllocationList(ListAPI):
         return self.serializer_class(*args, **kwargs)
 
     def filter_queryset(self, queryset):
-        """Custom queryset filtering"""
+        """Custom queryset filtering."""
         queryset = super().filter_queryset(queryset)
 
         # Filter by order
@@ -967,14 +975,12 @@ class SalesOrderAllocationList(ListAPI):
             else:
                 queryset = queryset.exclude(
                     line__order__status__in=SalesOrderStatusGroups.OPEN,
-                    shipment__shipment_date=None
+                    shipment__shipment_date=None,
                 )
 
         return queryset
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
+    filter_backends = [rest_filters.DjangoFilterBackend]
 
 
 class SalesOrderShipmentFilter(rest_filters.FilterSet):
@@ -984,14 +990,12 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         """Metaclass options."""
 
         model = models.SalesOrderShipment
-        fields = [
-            'order',
-        ]
+        fields = ['order']
 
     shipped = rest_filters.BooleanFilter(label='shipped', method='filter_shipped')
 
     def filter_shipped(self, queryset, name, value):
-        """Filter SalesOrder list by 'shipped' status (boolean)"""
+        """Filter SalesOrder list by 'shipped' status (boolean)."""
         if str2bool(value):
             return queryset.exclude(shipment_date=None)
         return queryset.filter(shipment_date=None)
@@ -999,7 +1003,7 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
     delivered = rest_filters.BooleanFilter(label='delivered', method='filter_delivered')
 
     def filter_delivered(self, queryset, name, value):
-        """Filter SalesOrder list by 'delivered' status (boolean)"""
+        """Filter SalesOrder list by 'delivered' status (boolean)."""
         if str2bool(value):
             return queryset.exclude(delivery_date=None)
         return queryset.filter(delivery_date=None)
@@ -1012,9 +1016,7 @@ class SalesOrderShipmentList(ListCreateAPI):
     serializer_class = serializers.SalesOrderShipmentSerializer
     filterset_class = SalesOrderShipmentFilter
 
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-    ]
+    filter_backends = [rest_filters.DjangoFilterBackend]
 
 
 class SalesOrderShipmentDetail(RetrieveUpdateDestroyAPI):
@@ -1046,14 +1048,12 @@ class SalesOrderShipmentComplete(CreateAPI):
 
 
 class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)"""
+    """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)."""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
     serializer_class = serializers.PurchaseOrderAttachmentSerializer
 
-    filterset_fields = [
-        'order',
-    ]
+    filterset_fields = ['order']
 
 
 class PurchaseOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
@@ -1064,25 +1064,23 @@ class PurchaseOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
 
 
 class ReturnOrderFilter(OrderFilter):
-    """Custom API filters for the ReturnOrderList endpoint"""
+    """Custom API filters for the ReturnOrderList endpoint."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = models.ReturnOrder
-        fields = [
-            'customer',
-        ]
+        fields = ['customer']
 
 
 class ReturnOrderMixin:
-    """Mixin class for ReturnOrder endpoints"""
+    """Mixin class for ReturnOrder endpoints."""
 
     queryset = models.ReturnOrder.objects.all()
     serializer_class = serializers.ReturnOrderSerializer
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint"""
+        """Return serializer instance for this endpoint."""
         try:
             kwargs['customer_detail'] = str2bool(
                 self.request.query_params.get('customer_detail', False)
@@ -1096,12 +1094,10 @@ class ReturnOrderMixin:
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint"""
+        """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'customer',
-        )
+        queryset = queryset.prefetch_related('customer')
 
         queryset = serializers.ReturnOrderSerializer.annotate_queryset(queryset)
 
@@ -1109,7 +1105,7 @@ class ReturnOrderMixin:
 
 
 class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
-    """API endpoint for accessing a list of ReturnOrder objects"""
+    """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
 
@@ -1123,13 +1119,15 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
         item.save()
 
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def download_queryset(self, queryset, export_format):
-        """Download this queryset as a file"""
+        """Download this queryset as a file."""
         dataset = ReturnOrderResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_ReturnOrders.{export_format}"
+        filename = f'InvenTree_ReturnOrders.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -1163,12 +1161,13 @@ class ReturnOrderList(ReturnOrderMixin, APIDownloadMixin, ListCreateAPI):
 
 
 class ReturnOrderDetail(ReturnOrderMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a single ReturnOrder object"""
+    """API endpoint for detail view of a single ReturnOrder object."""
+
     pass
 
 
 class ReturnOrderContextMixin:
-    """Simple mixin class to add a ReturnOrder to the serializer context"""
+    """Simple mixin class to add a ReturnOrder to the serializer context."""
 
     queryset = models.ReturnOrder.objects.all()
 
@@ -1178,7 +1177,9 @@ class ReturnOrderContextMixin:
 
         # Pass the ReturnOrder instance through to the serializer for validation
         try:
-            context['order'] = models.ReturnOrder.objects.get(pk=self.kwargs.get('pk', None))
+            context['order'] = models.ReturnOrder.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
         except Exception:
             pass
 
@@ -1188,58 +1189,59 @@ class ReturnOrderContextMixin:
 
 
 class ReturnOrderCancel(ReturnOrderContextMixin, CreateAPI):
-    """API endpoint to cancel a ReturnOrder"""
+    """API endpoint to cancel a ReturnOrder."""
+
     serializer_class = serializers.ReturnOrderCancelSerializer
 
 
 class ReturnOrderComplete(ReturnOrderContextMixin, CreateAPI):
-    """API endpoint to complete a ReturnOrder"""
+    """API endpoint to complete a ReturnOrder."""
+
     serializer_class = serializers.ReturnOrderCompleteSerializer
 
 
 class ReturnOrderIssue(ReturnOrderContextMixin, CreateAPI):
-    """API endpoint to issue (place) a ReturnOrder"""
+    """API endpoint to issue (place) a ReturnOrder."""
+
     serializer_class = serializers.ReturnOrderIssueSerializer
 
 
 class ReturnOrderReceive(ReturnOrderContextMixin, CreateAPI):
-    """API endpoint to receive items against a ReturnOrder"""
+    """API endpoint to receive items against a ReturnOrder."""
 
     queryset = models.ReturnOrder.objects.none()
     serializer_class = serializers.ReturnOrderReceiveSerializer
 
 
 class ReturnOrderLineItemFilter(LineItemFilter):
-    """Custom filters for the ReturnOrderLineItemList endpoint"""
+    """Custom filters for the ReturnOrderLineItemList endpoint."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
+
         price_field = 'price'
         model = models.ReturnOrderLineItem
-        fields = [
-            'order',
-            'item',
-        ]
+        fields = ['order', 'item']
 
     outcome = rest_filters.NumberFilter(label='outcome')
 
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
     def filter_received(self, queryset, name, value):
-        """Filter by 'received' field"""
+        """Filter by 'received' field."""
         if str2bool(value):
             return queryset.exclude(received_date=None)
         return queryset.filter(received_date=None)
 
 
 class ReturnOrderLineItemMixin:
-    """Mixin class for ReturnOrderLineItem endpoints"""
+    """Mixin class for ReturnOrderLineItem endpoints."""
 
     queryset = models.ReturnOrderLineItem.objects.all()
     serializer_class = serializers.ReturnOrderLineItemSerializer
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer for this endpoint with extra data as requested"""
+        """Return serializer for this endpoint with extra data as requested."""
         try:
             params = self.request.query_params
 
@@ -1254,34 +1256,30 @@ class ReturnOrderLineItemMixin:
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for this endpoint"""
+        """Return annotated queryset for this endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
 
-        queryset = queryset.prefetch_related(
-            'order',
-            'item',
-            'item__part',
-        )
+        queryset = queryset.prefetch_related('order', 'item', 'item__part')
 
         return queryset
 
 
-class ReturnOrderLineItemList(ReturnOrderLineItemMixin, APIDownloadMixin, ListCreateAPI):
-    """API endpoint for accessing a list of ReturnOrderLineItemList objects"""
+class ReturnOrderLineItemList(
+    ReturnOrderLineItemMixin, APIDownloadMixin, ListCreateAPI
+):
+    """API endpoint for accessing a list of ReturnOrderLineItemList objects."""
 
     filterset_class = ReturnOrderLineItemFilter
 
     def download_queryset(self, queryset, export_format):
-        """Download the requested queryset as a file"""
-        raise NotImplementedError("download_queryset not yet implemented for this endpoint")
+        """Download the requested queryset as a file."""
+        raise NotImplementedError(
+            'download_queryset not yet implemented for this endpoint'
+        )
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = [
-        'reference',
-        'target_date',
-        'received_date',
-    ]
+    ordering_fields = ['reference', 'target_date', 'received_date']
 
     search_fields = [
         'item_serial',
@@ -1292,48 +1290,47 @@ class ReturnOrderLineItemList(ReturnOrderLineItemMixin, APIDownloadMixin, ListCr
 
 
 class ReturnOrderLineItemDetail(ReturnOrderLineItemMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a ReturnOrderLineItem object"""
+    """API endpoint for detail view of a ReturnOrderLineItem object."""
+
     pass
 
 
 class ReturnOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
-    """API endpoint for accessing a list of ReturnOrderExtraLine objects"""
+    """API endpoint for accessing a list of ReturnOrderExtraLine objects."""
 
     queryset = models.ReturnOrderExtraLine.objects.all()
     serializer_class = serializers.ReturnOrderExtraLineSerializer
 
     def download_queryset(self, queryset, export_format):
-        """Download this queryset as a file"""
-        raise NotImplementedError("download_queryset not yet implemented")
+        """Download this queryset as a file."""
+        raise NotImplementedError('download_queryset not yet implemented')
 
 
 class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for detail view of a ReturnOrderExtraLine object"""
+    """API endpoint for detail view of a ReturnOrderExtraLine object."""
 
     queryset = models.ReturnOrderExtraLine.objects.all()
     serializer_class = serializers.ReturnOrderExtraLineSerializer
 
 
 class ReturnOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a ReturnOrderAttachment (file upload)"""
+    """API endpoint for listing (and creating) a ReturnOrderAttachment (file upload)."""
 
     queryset = models.ReturnOrderAttachment.objects.all()
     serializer_class = serializers.ReturnOrderAttachmentSerializer
 
-    filterset_fields = [
-        'order',
-    ]
+    filterset_fields = ['order']
 
 
 class ReturnOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for the ReturnOrderAttachment model"""
+    """Detail endpoint for the ReturnOrderAttachment model."""
 
     queryset = models.ReturnOrderAttachment.objects.all()
     serializer_class = serializers.ReturnOrderAttachmentSerializer
 
 
 class OrderCalendarExport(ICalFeed):
-    """Calendar export for Purchase/Sales Orders
+    """Calendar export for Purchase/Sales Orders.
 
     Optional parameters:
     - include_completed: true/false
@@ -1342,9 +1339,9 @@ class OrderCalendarExport(ICalFeed):
 
     instance_url = get_base_url()
 
-    instance_url = instance_url.replace("http://", "").replace("https://", "")
+    instance_url = instance_url.replace('http://', '').replace('https://', '')
     timezone = settings.TIME_ZONE
-    file_name = "calendar.ics"
+    file_name = 'calendar.ics'
 
     def __call__(self, request, *args, **kwargs):
         """Overload call in order to check for authentication.
@@ -1370,8 +1367,8 @@ class OrderCalendarExport(ICalFeed):
             if len(auth) == 2:
                 # NOTE: We are only support basic authentication for now.
                 #
-                if auth[0].lower() == "basic":
-                    uname, passwd = base64.b64decode(auth[1]).decode("ascii").split(':')
+                if auth[0].lower() == 'basic':
+                    uname, passwd = base64.b64decode(auth[1]).decode('ascii').split(':')
                     user = authenticate(username=uname, password=passwd)
                     if user is not None:
                         if user.is_active:
@@ -1385,13 +1382,15 @@ class OrderCalendarExport(ICalFeed):
 
         # Still nothing - return Unauth. header with info on how to authenticate
         # Information is needed by client, eg Thunderbird
-        response = JsonResponse({"detail": "Authentication credentials were not provided."})
+        response = JsonResponse({
+            'detail': 'Authentication credentials were not provided.'
+        })
         response['WWW-Authenticate'] = 'Basic realm="api"'
         response.status_code = 401
         return response
 
     def get_object(self, request, *args, **kwargs):
-        """This is where settings from the URL etc will be obtained"""
+        """This is where settings from the URL etc will be obtained."""
         # Help:
         # https://django.readthedocs.io/en/stable/ref/contrib/syndication.html
 
@@ -1403,11 +1402,11 @@ class OrderCalendarExport(ICalFeed):
 
     def title(self, obj):
         """Return calendar title."""
-        if obj["ordertype"] == 'purchase-order':
+        if obj['ordertype'] == 'purchase-order':
             ordertype_title = _('Purchase Order')
-        elif obj["ordertype"] == 'sales-order':
+        elif obj['ordertype'] == 'sales-order':
             ordertype_title = _('Sales Order')
-        elif obj["ordertype"] == 'return-order':
+        elif obj['ordertype'] == 'return-order':
             ordertype_title = _('Return Order')
         else:
             ordertype_title = _('Unknown')
@@ -1429,21 +1428,27 @@ class OrderCalendarExport(ICalFeed):
             if obj['include_completed'] is False:
                 # Do not include completed orders from list in this case
                 # Completed status = 30
-                outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False).filter(status__lt=PurchaseOrderStatus.COMPLETE.value)
+                outlist = models.PurchaseOrder.objects.filter(
+                    target_date__isnull=False
+                ).filter(status__lt=PurchaseOrderStatus.COMPLETE.value)
             else:
                 outlist = models.PurchaseOrder.objects.filter(target_date__isnull=False)
-        elif obj["ordertype"] == 'sales-order':
+        elif obj['ordertype'] == 'sales-order':
             if obj['include_completed'] is False:
                 # Do not include completed (=shipped) orders from list in this case
                 # Shipped status = 20
-                outlist = models.SalesOrder.objects.filter(target_date__isnull=False).filter(status__lt=SalesOrderStatus.SHIPPED.value)
+                outlist = models.SalesOrder.objects.filter(
+                    target_date__isnull=False
+                ).filter(status__lt=SalesOrderStatus.SHIPPED.value)
             else:
                 outlist = models.SalesOrder.objects.filter(target_date__isnull=False)
-        elif obj["ordertype"] == 'return-order':
+        elif obj['ordertype'] == 'return-order':
             if obj['include_completed'] is False:
                 # Do not include completed orders from list in this case
                 # Complete status = 30
-                outlist = models.ReturnOrder.objects.filter(target_date__isnull=False).filter(status__lt=ReturnOrderStatus.COMPLETE.value)
+                outlist = models.ReturnOrder.objects.filter(
+                    target_date__isnull=False
+                ).filter(status__lt=ReturnOrderStatus.COMPLETE.value)
             else:
                 outlist = models.ReturnOrder.objects.filter(target_date__isnull=False)
         else:
@@ -1452,12 +1457,12 @@ class OrderCalendarExport(ICalFeed):
         return outlist
 
     def item_title(self, item):
-        """Set the event title to the order reference"""
-        return f"{item.reference}"
+        """Set the event title to the order reference."""
+        return f'{item.reference}'
 
     def item_description(self, item):
-        """Set the event description"""
-        return f"Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}"
+        """Set the event description."""
+        return f'Company: {item.company.name}\nStatus: {item.get_status_display()}\nDescription: {item.description}'
 
     def item_start_datetime(self, item):
         """Set event start to target date. Goal is all-day event."""
@@ -1472,11 +1477,11 @@ class OrderCalendarExport(ICalFeed):
         return item.creation_date
 
     def item_class(self, item):
-        """Set item class to PUBLIC"""
+        """Set item class to PUBLIC."""
         return 'PUBLIC'
 
     def item_guid(self, item):
-        """Return globally unique UID for event"""
+        """Return globally unique UID for event."""
         return f'po_{item.pk}_{item.reference.replace(" ","-")}@{self.instance_url}'
 
     def item_link(self, item):
@@ -1485,160 +1490,405 @@ class OrderCalendarExport(ICalFeed):
 
 
 order_api_urls = [
-
     # API endpoints for purchase orders
-    re_path(r'^po/', include([
-
-        # Purchase order attachments
-        re_path(r'attachment/', include([
-            path('<int:pk>/', PurchaseOrderAttachmentDetail.as_view(), name='api-po-attachment-detail'),
-            re_path(r'^.*$', PurchaseOrderAttachmentList.as_view(), name='api-po-attachment-list'),
-        ])),
-
-        # Individual purchase order detail URLs
-        path(r'<int:pk>/', include([
-            re_path(r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'),
-            re_path(r'^complete/', PurchaseOrderComplete.as_view(), name='api-po-complete'),
-            re_path(r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.PurchaseOrder}, name='api-po-metadata'),
-            re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
-
-            # PurchaseOrder detail API endpoint
-            re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
-        ])),
-
-        # Purchase order status code information
-        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: PurchaseOrderStatus}, name='api-po-status-codes'),
-
-        # Purchase order list
-        re_path(r'^.*$', PurchaseOrderList.as_view(), name='api-po-list'),
-    ])),
-
+    re_path(
+        r'^po/',
+        include([
+            # Purchase order attachments
+            re_path(
+                r'attachment/',
+                include([
+                    path(
+                        '<int:pk>/',
+                        PurchaseOrderAttachmentDetail.as_view(),
+                        name='api-po-attachment-detail',
+                    ),
+                    re_path(
+                        r'^.*$',
+                        PurchaseOrderAttachmentList.as_view(),
+                        name='api-po-attachment-list',
+                    ),
+                ]),
+            ),
+            # Individual purchase order detail URLs
+            path(
+                r'<int:pk>/',
+                include([
+                    re_path(
+                        r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
+                    ),
+                    re_path(
+                        r'^complete/',
+                        PurchaseOrderComplete.as_view(),
+                        name='api-po-complete',
+                    ),
+                    re_path(
+                        r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'
+                    ),
+                    re_path(
+                        r'^metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.PurchaseOrder},
+                        name='api-po-metadata',
+                    ),
+                    re_path(
+                        r'^receive/',
+                        PurchaseOrderReceive.as_view(),
+                        name='api-po-receive',
+                    ),
+                    # PurchaseOrder detail API endpoint
+                    re_path(
+                        r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'
+                    ),
+                ]),
+            ),
+            # Purchase order status code information
+            re_path(
+                r'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: PurchaseOrderStatus},
+                name='api-po-status-codes',
+            ),
+            # Purchase order list
+            re_path(r'^.*$', PurchaseOrderList.as_view(), name='api-po-list'),
+        ]),
+    ),
     # API endpoints for purchase order line items
-    re_path(r'^po-line/', include([
-        path('<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.PurchaseOrderLineItem}, name='api-po-line-metadata'),
-            re_path(r'^.*$', PurchaseOrderLineItemDetail.as_view(), name='api-po-line-detail'),
-        ])),
-        re_path(r'^.*$', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
-    ])),
-
+    re_path(
+        r'^po-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'^metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.PurchaseOrderLineItem},
+                        name='api-po-line-metadata',
+                    ),
+                    re_path(
+                        r'^.*$',
+                        PurchaseOrderLineItemDetail.as_view(),
+                        name='api-po-line-detail',
+                    ),
+                ]),
+            ),
+            re_path(
+                r'^.*$', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'
+            ),
+        ]),
+    ),
     # API endpoints for purchase order extra line
-    re_path(r'^po-extra-line/', include([
-        path('<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.PurchaseOrderExtraLine}, name='api-po-extra-line-metadata'),
-            re_path(r'^.*$', PurchaseOrderExtraLineDetail.as_view(), name='api-po-extra-line-detail'),
-        ])),
-        path('', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'),
-    ])),
-
+    re_path(
+        r'^po-extra-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'^metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.PurchaseOrderExtraLine},
+                        name='api-po-extra-line-metadata',
+                    ),
+                    re_path(
+                        r'^.*$',
+                        PurchaseOrderExtraLineDetail.as_view(),
+                        name='api-po-extra-line-detail',
+                    ),
+                ]),
+            ),
+            path(
+                '', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'
+            ),
+        ]),
+    ),
     # API endpoints for sales ordesr
-    re_path(r'^so/', include([
-        re_path(r'attachment/', include([
-            path('<int:pk>/', SalesOrderAttachmentDetail.as_view(), name='api-so-attachment-detail'),
-            re_path(r'^.*$', SalesOrderAttachmentList.as_view(), name='api-so-attachment-list'),
-        ])),
-
-        re_path(r'^shipment/', include([
-            path(r'<int:pk>/', include([
-                path('ship/', SalesOrderShipmentComplete.as_view(), name='api-so-shipment-ship'),
-                re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrderShipment}, name='api-so-shipment-metadata'),
-                re_path(r'^.*$', SalesOrderShipmentDetail.as_view(), name='api-so-shipment-detail'),
-            ])),
-            re_path(r'^.*$', SalesOrderShipmentList.as_view(), name='api-so-shipment-list'),
-        ])),
-
-        # Sales order detail view
-        path(r'<int:pk>/', include([
-            re_path(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
-            re_path(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
-            re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
-            re_path(r'^issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
-            re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrder}, name='api-so-metadata'),
-
-            # SalesOrder detail endpoint
-            re_path(r'^.*$', SalesOrderDetail.as_view(), name='api-so-detail'),
-        ])),
-
-        # Sales order status code information
-        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: SalesOrderStatus}, name='api-so-status-codes'),
-
-        # Sales order list view
-        re_path(r'^.*$', SalesOrderList.as_view(), name='api-so-list'),
-    ])),
-
+    re_path(
+        r'^so/',
+        include([
+            re_path(
+                r'attachment/',
+                include([
+                    path(
+                        '<int:pk>/',
+                        SalesOrderAttachmentDetail.as_view(),
+                        name='api-so-attachment-detail',
+                    ),
+                    re_path(
+                        r'^.*$',
+                        SalesOrderAttachmentList.as_view(),
+                        name='api-so-attachment-list',
+                    ),
+                ]),
+            ),
+            re_path(
+                r'^shipment/',
+                include([
+                    path(
+                        r'<int:pk>/',
+                        include([
+                            path(
+                                'ship/',
+                                SalesOrderShipmentComplete.as_view(),
+                                name='api-so-shipment-ship',
+                            ),
+                            re_path(
+                                r'^metadata/',
+                                MetadataView.as_view(),
+                                {'model': models.SalesOrderShipment},
+                                name='api-so-shipment-metadata',
+                            ),
+                            re_path(
+                                r'^.*$',
+                                SalesOrderShipmentDetail.as_view(),
+                                name='api-so-shipment-detail',
+                            ),
+                        ]),
+                    ),
+                    re_path(
+                        r'^.*$',
+                        SalesOrderShipmentList.as_view(),
+                        name='api-so-shipment-list',
+                    ),
+                ]),
+            ),
+            # Sales order detail view
+            path(
+                r'<int:pk>/',
+                include([
+                    re_path(
+                        r'^allocate/',
+                        SalesOrderAllocate.as_view(),
+                        name='api-so-allocate',
+                    ),
+                    re_path(
+                        r'^allocate-serials/',
+                        SalesOrderAllocateSerials.as_view(),
+                        name='api-so-allocate-serials',
+                    ),
+                    re_path(
+                        r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'
+                    ),
+                    re_path(r'^issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
+                    re_path(
+                        r'^complete/',
+                        SalesOrderComplete.as_view(),
+                        name='api-so-complete',
+                    ),
+                    re_path(
+                        r'^metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.SalesOrder},
+                        name='api-so-metadata',
+                    ),
+                    # SalesOrder detail endpoint
+                    re_path(r'^.*$', SalesOrderDetail.as_view(), name='api-so-detail'),
+                ]),
+            ),
+            # Sales order status code information
+            re_path(
+                r'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: SalesOrderStatus},
+                name='api-so-status-codes',
+            ),
+            # Sales order list view
+            re_path(r'^.*$', SalesOrderList.as_view(), name='api-so-list'),
+        ]),
+    ),
     # API endpoints for sales order line items
-    re_path(r'^so-line/', include([
-        path('<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrderLineItem}, name='api-so-line-metadata'),
-            re_path(r'^.*$', SalesOrderLineItemDetail.as_view(), name='api-so-line-detail'),
-        ])),
-        path('', SalesOrderLineItemList.as_view(), name='api-so-line-list'),
-    ])),
-
+    re_path(
+        r'^so-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'^metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.SalesOrderLineItem},
+                        name='api-so-line-metadata',
+                    ),
+                    re_path(
+                        r'^.*$',
+                        SalesOrderLineItemDetail.as_view(),
+                        name='api-so-line-detail',
+                    ),
+                ]),
+            ),
+            path('', SalesOrderLineItemList.as_view(), name='api-so-line-list'),
+        ]),
+    ),
     # API endpoints for sales order extra line
-    re_path(r'^so-extra-line/', include([
-        path('<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.SalesOrderExtraLine}, name='api-so-extra-line-metadata'),
-            re_path(r'^.*$', SalesOrderExtraLineDetail.as_view(), name='api-so-extra-line-detail'),
-        ])),
-        path('', SalesOrderExtraLineList.as_view(), name='api-so-extra-line-list'),
-    ])),
-
+    re_path(
+        r'^so-extra-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'^metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.SalesOrderExtraLine},
+                        name='api-so-extra-line-metadata',
+                    ),
+                    re_path(
+                        r'^.*$',
+                        SalesOrderExtraLineDetail.as_view(),
+                        name='api-so-extra-line-detail',
+                    ),
+                ]),
+            ),
+            path('', SalesOrderExtraLineList.as_view(), name='api-so-extra-line-list'),
+        ]),
+    ),
     # API endpoints for sales order allocations
-    re_path(r'^so-allocation/', include([
-        path('<int:pk>/', SalesOrderAllocationDetail.as_view(), name='api-so-allocation-detail'),
-        re_path(r'^.*$', SalesOrderAllocationList.as_view(), name='api-so-allocation-list'),
-    ])),
-
+    re_path(
+        r'^so-allocation/',
+        include([
+            path(
+                '<int:pk>/',
+                SalesOrderAllocationDetail.as_view(),
+                name='api-so-allocation-detail',
+            ),
+            re_path(
+                r'^.*$',
+                SalesOrderAllocationList.as_view(),
+                name='api-so-allocation-list',
+            ),
+        ]),
+    ),
     # API endpoints for return orders
-    re_path(r'^ro/', include([
-
-        re_path(r'^attachment/', include([
-            path('<int:pk>/', ReturnOrderAttachmentDetail.as_view(), name='api-return-order-attachment-detail'),
-            re_path(r'^.*$', ReturnOrderAttachmentList.as_view(), name='api-return-order-attachment-list'),
-        ])),
-
-        # Return Order detail endpoints
-        path('<int:pk>/', include([
-            re_path(r'cancel/', ReturnOrderCancel.as_view(), name='api-return-order-cancel'),
-            re_path(r'complete/', ReturnOrderComplete.as_view(), name='api-return-order-complete'),
-            re_path(r'issue/', ReturnOrderIssue.as_view(), name='api-return-order-issue'),
-            re_path(r'receive/', ReturnOrderReceive.as_view(), name='api-return-order-receive'),
-            re_path(r'metadata/', MetadataView.as_view(), {'model': models.ReturnOrder}, name='api-return-order-metadata'),
-            re_path(r'.*$', ReturnOrderDetail.as_view(), name='api-return-order-detail'),
-        ])),
-
-        # Return order status code information
-        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: ReturnOrderStatus}, name='api-return-order-status-codes'),
-
-        # Return Order list
-        re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
-    ])),
-
+    re_path(
+        r'^ro/',
+        include([
+            re_path(
+                r'^attachment/',
+                include([
+                    path(
+                        '<int:pk>/',
+                        ReturnOrderAttachmentDetail.as_view(),
+                        name='api-return-order-attachment-detail',
+                    ),
+                    re_path(
+                        r'^.*$',
+                        ReturnOrderAttachmentList.as_view(),
+                        name='api-return-order-attachment-list',
+                    ),
+                ]),
+            ),
+            # Return Order detail endpoints
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'cancel/',
+                        ReturnOrderCancel.as_view(),
+                        name='api-return-order-cancel',
+                    ),
+                    re_path(
+                        r'complete/',
+                        ReturnOrderComplete.as_view(),
+                        name='api-return-order-complete',
+                    ),
+                    re_path(
+                        r'issue/',
+                        ReturnOrderIssue.as_view(),
+                        name='api-return-order-issue',
+                    ),
+                    re_path(
+                        r'receive/',
+                        ReturnOrderReceive.as_view(),
+                        name='api-return-order-receive',
+                    ),
+                    re_path(
+                        r'metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.ReturnOrder},
+                        name='api-return-order-metadata',
+                    ),
+                    re_path(
+                        r'.*$',
+                        ReturnOrderDetail.as_view(),
+                        name='api-return-order-detail',
+                    ),
+                ]),
+            ),
+            # Return order status code information
+            re_path(
+                r'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: ReturnOrderStatus},
+                name='api-return-order-status-codes',
+            ),
+            # Return Order list
+            re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
+        ]),
+    ),
     # API endpoints for return order lines
-    re_path(r'^ro-line/', include([
-        path('<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderLineItem}, name='api-return-order-line-metadata'),
-            re_path(r'^.*$', ReturnOrderLineItemDetail.as_view(), name='api-return-order-line-detail'),
-        ])),
-
-        # Return order line item status code information
-        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: ReturnOrderLineStatus}, name='api-return-order-line-status-codes'),
-
-        path('', ReturnOrderLineItemList.as_view(), name='api-return-order-line-list'),
-    ])),
-
+    re_path(
+        r'^ro-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'^metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.ReturnOrderLineItem},
+                        name='api-return-order-line-metadata',
+                    ),
+                    re_path(
+                        r'^.*$',
+                        ReturnOrderLineItemDetail.as_view(),
+                        name='api-return-order-line-detail',
+                    ),
+                ]),
+            ),
+            # Return order line item status code information
+            re_path(
+                r'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: ReturnOrderLineStatus},
+                name='api-return-order-line-status-codes',
+            ),
+            path(
+                '', ReturnOrderLineItemList.as_view(), name='api-return-order-line-list'
+            ),
+        ]),
+    ),
     # API endpoints for return order extra line
-    re_path(r'^ro-extra-line/', include([
-        path('<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': models.ReturnOrderExtraLine}, name='api-return-order-extra-line-metadata'),
-            re_path(r'^.*$', ReturnOrderExtraLineDetail.as_view(), name='api-return-order-extra-line-detail'),
-        ])),
-        path('', ReturnOrderExtraLineList.as_view(), name='api-return-order-extra-line-list'),
-    ])),
-
+    re_path(
+        r'^ro-extra-line/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'^metadata/',
+                        MetadataView.as_view(),
+                        {'model': models.ReturnOrderExtraLine},
+                        name='api-return-order-extra-line-metadata',
+                    ),
+                    re_path(
+                        r'^.*$',
+                        ReturnOrderExtraLineDetail.as_view(),
+                        name='api-return-order-extra-line-detail',
+                    ),
+                ]),
+            ),
+            path(
+                '',
+                ReturnOrderExtraLineList.as_view(),
+                name='api-return-order-extra-line-list',
+            ),
+        ]),
+    ),
     # API endpoint for subscribing to ICS calendar of purchase/sales/return orders
-    re_path(r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order)/calendar.ics', OrderCalendarExport(), name='api-po-so-calendar'),
+    re_path(
+        r'^calendar/(?P<ordertype>purchase-order|sales-order|return-order)/calendar.ics',
+        OrderCalendarExport(),
+        name='api-po-so-calendar',
+    ),
 ]

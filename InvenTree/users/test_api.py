@@ -1,4 +1,4 @@
-"""API tests for various user / auth API endpoints"""
+"""API tests for various user / auth API endpoints."""
 
 import datetime
 
@@ -10,14 +10,11 @@ from users.models import ApiToken
 
 
 class UserAPITests(InvenTreeAPITestCase):
-    """Tests for user API endpoints"""
+    """Tests for user API endpoints."""
 
     def test_user_api(self):
-        """Tests for User API endpoints"""
-        response = self.get(
-            reverse('api-user-list'),
-            expected_code=200
-        )
+        """Tests for User API endpoints."""
+        response = self.get(reverse('api-user-list'), expected_code=200)
 
         # Check the correct number of results was returned
         self.assertEqual(len(response.data), User.objects.count())
@@ -29,19 +26,15 @@ class UserAPITests(InvenTreeAPITestCase):
         pk = response.data[0]['pk']
 
         response = self.get(
-            reverse('api-user-detail', kwargs={'pk': pk}),
-            expected_code=200
+            reverse('api-user-detail', kwargs={'pk': pk}), expected_code=200
         )
 
         self.assertIn('pk', response.data)
         self.assertIn('username', response.data)
 
     def test_group_api(self):
-        """Tests for the Group API endpoints"""
-        response = self.get(
-            reverse('api-group-list'),
-            expected_code=200,
-        )
+        """Tests for the Group API endpoints."""
+        response = self.get(reverse('api-group-list'), expected_code=200)
 
         self.assertIn('name', response.data[0])
 
@@ -57,11 +50,10 @@ class UserAPITests(InvenTreeAPITestCase):
 
 
 class UserTokenTests(InvenTreeAPITestCase):
-    """Tests for user token functionality"""
+    """Tests for user token functionality."""
 
     def test_token_generation(self):
-        """Test user token generation"""
-
+        """Test user token generation."""
         url = reverse('api-token')
 
         self.assertEqual(ApiToken.objects.count(), 0)
@@ -106,16 +98,24 @@ class UserTokenTests(InvenTreeAPITestCase):
         token.refresh_from_db()
 
         # Check that the metadata has been updated
-        keys = ['user_agent', 'remote_addr', 'remote_host', 'remote_user', 'server_name', 'server_port']
+        keys = [
+            'user_agent',
+            'remote_addr',
+            'remote_host',
+            'remote_user',
+            'server_name',
+            'server_port',
+        ]
 
         for k in keys:
             self.assertIn(k, token.metadata)
 
     def test_token_auth(self):
-        """Test user token authentication"""
-
+        """Test user token authentication."""
         # Create a new token
-        token_key = self.get(url=reverse('api-token'), data={'name': 'test'}, expected_code=200).data['token']
+        token_key = self.get(
+            url=reverse('api-token'), data={'name': 'test'}, expected_code=200
+        ).data['token']
 
         # Check that we can use the token to authenticate
         self.client.logout()

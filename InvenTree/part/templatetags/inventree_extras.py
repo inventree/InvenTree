@@ -55,7 +55,6 @@ def render_date(context, date_object):
         return None
 
     if isinstance(date_object, str):
-
         date_object = date_object.strip()
 
         # Check for empty string
@@ -66,29 +65,25 @@ def render_date(context, date_object):
         try:
             date_object = date.fromisoformat(date_object)
         except ValueError:
-            logger.warning("Tried to convert invalid date string: %s", date_object)
+            logger.warning('Tried to convert invalid date string: %s', date_object)
             return None
 
     # We may have already pre-cached the date format by calling this already!
     user_date_format = context.get('user_date_format', None)
 
     if user_date_format is None:
-
         user = context.get('user', None)
 
         if user and user.is_authenticated:
             # User is specified - look for their date display preference
-            user_date_format = common.models.InvenTreeUserSetting.get_setting('DATE_DISPLAY_FORMAT', user=user)
+            user_date_format = common.models.InvenTreeUserSetting.get_setting(
+                'DATE_DISPLAY_FORMAT', user=user
+            )
         else:
             user_date_format = 'YYYY-MM-DD'
 
         # Convert the format string to Pythonic equivalent
-        replacements = [
-            ('YYYY', '%Y'),
-            ('MMM', '%b'),
-            ('MM', '%m'),
-            ('DD', '%d'),
-        ]
+        replacements = [('YYYY', '%Y'), ('MMM', '%b'), ('MM', '%m'), ('DD', '%d')]
 
         for o, n in replacements:
             user_date_format = user_date_format.replace(o, n)
@@ -103,7 +98,7 @@ def render_date(context, date_object):
 
 @register.simple_tag
 def render_currency(money, **kwargs):
-    """Render a currency / Money object"""
+    """Render a currency / Money object."""
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
@@ -127,7 +122,7 @@ def to_list(*args):
 
 @register.simple_tag()
 def part_allocation_count(build, part, *args, **kwargs):
-    """Return the total number of <part> allocated to <build>"""
+    """Return the total number of <part> allocated to <build>."""
     return InvenTree.helpers.decimal2string(build.getAllocatedQuantity(part))
 
 
@@ -171,11 +166,8 @@ def plugins_info(*args, **kwargs):
     plug_list = [plg for plg in registry.plugins.values() if plg.plugin_config().active]
     # Format list
     return [
-        {
-            'name': plg.name,
-            'slug': plg.slug,
-            'version': plg.version
-        } for plg in plug_list
+        {'name': plg.name, 'slug': plg.slug, 'version': plg.version}
+        for plg in plug_list
     ]
 
 
@@ -193,7 +185,7 @@ def inventree_instance_name(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_title(*args, **kwargs):
-    """Return the title for the current instance - respecting the settings"""
+    """Return the title for the current instance - respecting the settings."""
     return version.inventreeInstanceTitle()
 
 
@@ -214,7 +206,7 @@ def inventree_splash(**kwargs):
 
 @register.simple_tag()
 def inventree_base_url(*args, **kwargs):
-    """Return the base URL of the InvenTree server"""
+    """Return the base URL of the InvenTree server."""
     return InvenTree.helpers_model.get_base_url()
 
 
@@ -228,25 +220,25 @@ def python_version(*args, **kwargs):
 def inventree_version(shortstring=False, *args, **kwargs):
     """Return InvenTree version string."""
     if shortstring:
-        return _(f"{version.inventreeInstanceTitle()} v{version.inventreeVersion()}")
+        return _(f'{version.inventreeInstanceTitle()} v{version.inventreeVersion()}')
     return version.inventreeVersion()
 
 
 @register.simple_tag()
 def inventree_is_development(*args, **kwargs):
-    """Returns True if this is a development version of InvenTree"""
+    """Returns True if this is a development version of InvenTree."""
     return version.isInvenTreeDevelopmentVersion()
 
 
 @register.simple_tag()
 def inventree_is_release(*args, **kwargs):
-    """Returns True if this is a release version of InvenTree"""
+    """Returns True if this is a release version of InvenTree."""
     return not version.isInvenTreeDevelopmentVersion()
 
 
 @register.simple_tag()
 def inventree_docs_version(*args, **kwargs):
-    """Returns the InvenTree documentation version"""
+    """Returns the InvenTree documentation version."""
     return version.inventreeDocsVersion()
 
 
@@ -344,13 +336,19 @@ def setting_object(key, *args, **kwargs):
         if issubclass(plg.__class__, InvenTreePlugin):
             plg = plg.plugin_config()
 
-        return plugin.models.PluginSetting.get_setting_object(key, plugin=plg, cache=cache)
+        return plugin.models.PluginSetting.get_setting_object(
+            key, plugin=plg, cache=cache
+        )
 
     elif 'method' in kwargs:
-        return plugin.models.NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'], cache=cache)
+        return plugin.models.NotificationUserSetting.get_setting_object(
+            key, user=kwargs['user'], method=kwargs['method'], cache=cache
+        )
 
     elif 'user' in kwargs:
-        return common.models.InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'], cache=cache)
+        return common.models.InvenTreeUserSetting.get_setting_object(
+            key, user=kwargs['user'], cache=cache
+        )
 
     else:
         return common.models.InvenTreeSetting.get_setting_object(key, cache=cache)
@@ -360,7 +358,9 @@ def setting_object(key, *args, **kwargs):
 def settings_value(key, *args, **kwargs):
     """Return a settings value specified by the given key."""
     if 'user' in kwargs:
-        if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated is False):
+        if not kwargs['user'] or (
+            kwargs['user'] and kwargs['user'].is_authenticated is False
+        ):
             return common.models.InvenTreeUserSetting.get_setting(key)
         return common.models.InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
 
@@ -429,7 +429,7 @@ def progress_bar(val, max_val, *args, **kwargs):
 
 @register.simple_tag()
 def get_color_theme_css(username):
-    """Return the custom theme .css file for the selected user"""
+    """Return the custom theme .css file for the selected user."""
     user_theme_name = get_user_color_theme(username)
     # Build path to CSS sheet
     inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
@@ -443,7 +443,6 @@ def get_color_theme_css(username):
 @register.simple_tag()
 def get_user_color_theme(username):
     """Get current user color theme."""
-
     from common.models import ColorTheme
 
     try:
@@ -465,10 +464,7 @@ def get_available_themes(*args, **kwargs):
     from common.models import ColorTheme
 
     for key, name in ColorTheme.get_color_themes_choices():
-        themes.append({
-            'key': key,
-            'name': name
-        })
+        themes.append({'key': key, 'name': name})
 
     return themes
 
@@ -491,7 +487,7 @@ def primitive_to_javascript(primitive):
 
 @register.simple_tag()
 def js_bool(val):
-    """Return a javascript boolean value (true or false)"""
+    """Return a javascript boolean value (true or false)."""
     if val:
         return 'true'
     return 'false'
@@ -539,8 +535,11 @@ def authorized_owners(group):
 @register.simple_tag()
 def object_link(url_name, pk, ref):
     """Return highlighted link to object."""
-    ref_url = reverse(url_name, kwargs={'pk': pk})
-    return mark_safe(f'<b><a href="{ref_url}">{ref}</a></b>')
+    try:
+        ref_url = reverse(url_name, kwargs={'pk': pk})
+        return mark_safe(f'<b><a href="{ref_url}">{ref}</a></b>')
+    except NoReverseMatch:
+        return None
 
 
 @register.simple_tag()
@@ -570,7 +569,6 @@ class I18nStaticNode(StaticNode):
             self.original = self.path.var
 
         if hasattr(context, 'request'):
-
             # Convert the "requested" language code to a standard format
             language_code = context.request.LANGUAGE_CODE.lower().strip()
             language_code = language_code.replace('_', '-')
@@ -579,16 +577,11 @@ class I18nStaticNode(StaticNode):
             # - First, try the original requested code, e.g. 'pt-br'
             # - Next, try a simpler version of the code e.g. 'pt'
             # - Finally, fall back to english
-            options = [
-                language_code,
-                language_code.split('-')[0],
-                'en',
-            ]
+            options = [language_code, language_code.split('-')[0], 'en']
 
             for lng in options:
                 lng_file = os.path.join(
-                    djangosettings.STATIC_ROOT,
-                    self.original.format(lng=lng)
+                    djangosettings.STATIC_ROOT, self.original.format(lng=lng)
                 )
 
                 if os.path.exists(lng_file):
@@ -605,14 +598,14 @@ if settings.DEBUG:
 
     @register.simple_tag()
     def i18n_static(url_name):
-        """Simple tag to enable {% url %} functionality instead of {% static %}"""
+        """Simple tag to enable {% url %} functionality instead of {% static %}."""
         return reverse(url_name)
 
 else:  # pragma: no cover
 
     @register.tag('i18n_static')
     def do_i18n_static(parser, token):
-        """Overrides normal static, adds language - lookup for prerenderd files #1485
+        """Overrides normal static, adds language - lookup for prerenderd files #1485.
 
         Usage (like static):
         {% i18n_static path [as varname] %}
@@ -629,8 +622,7 @@ else:  # pragma: no cover
 
 @register.simple_tag()
 def admin_index(user):
-    """Return a URL for the admin interface"""
-
+    """Return a URL for the admin interface."""
     if not djangosettings.INVENTREE_ADMIN_ENABLED:
         return ''
 
@@ -648,24 +640,23 @@ def admin_url(user, table, pk):
     - If the user is not a staff user, an empty URL is returned
     - If the user does not have the correct permission, an empty URL is returned
     """
-
     app, model = table.strip().split('.')
 
     from django.urls import reverse
 
     if not djangosettings.INVENTREE_ADMIN_ENABLED:
-        return ""
+        return ''
 
     if not user.is_staff:
-        return ""
+        return ''
 
     # Check the user has the correct permission
-    perm_string = f"{app}.change_{model}"
+    perm_string = f'{app}.change_{model}'
     if not user.has_perm(perm_string):
         return ''
 
     # Fallback URL
-    url = reverse(f"admin:{app}_{model}_changelist")
+    url = reverse(f'admin:{app}_{model}_changelist')
 
     if pk:
         try:

@@ -1,4 +1,4 @@
-"""Unit tests for the models in the 'company' app"""
+"""Unit tests for the models in the 'company' app."""
 
 import os
 from decimal import Decimal
@@ -8,12 +8,18 @@ from django.test import TestCase
 
 from part.models import Part
 
-from .models import (Address, Company, Contact, ManufacturerPart, SupplierPart,
-                     rename_company_image)
+from .models import (
+    Address,
+    Company,
+    Contact,
+    ManufacturerPart,
+    SupplierPart,
+    rename_company_image,
+)
 
 
 class CompanySimpleTest(TestCase):
-    """Unit tests for the Company model"""
+    """Unit tests for the Company model."""
 
     fixtures = [
         'company',
@@ -28,14 +34,16 @@ class CompanySimpleTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        """Perform initialization for the tests in this class"""
+        """Perform initialization for the tests in this class."""
         super().setUpTestData()
 
-        Company.objects.create(name='ABC Co.',
-                               description='Seller of ABC products',
-                               website='www.abc-sales.com',
-                               is_customer=False,
-                               is_supplier=True)
+        Company.objects.create(
+            name='ABC Co.',
+            description='Seller of ABC products',
+            website='www.abc-sales.com',
+            is_customer=False,
+            is_supplier=True,
+        )
 
         cls.acme0001 = SupplierPart.objects.get(SKU='ACME0001')
         cls.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
@@ -43,18 +51,18 @@ class CompanySimpleTest(TestCase):
         cls.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
 
     def test_company_model(self):
-        """Tests for the company model data"""
+        """Tests for the company model data."""
         c = Company.objects.get(name='ABC Co.')
         self.assertEqual(c.name, 'ABC Co.')
         self.assertEqual(str(c), 'ABC Co. - Seller of ABC products')
 
     def test_company_url(self):
-        """Test the detail URL for a company"""
+        """Test the detail URL for a company."""
         c = Company.objects.get(pk=1)
         self.assertEqual(c.get_absolute_url(), '/company/1/')
 
     def test_image_renamer(self):
-        """Test the company image upload functionality"""
+        """Test the company image upload functionality."""
         c = Company.objects.get(pk=1)
         rn = rename_company_image(c, 'test.png')
         self.assertEqual(rn, 'company_images' + os.path.sep + 'company_1_img.png')
@@ -63,7 +71,7 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(rn, 'company_images' + os.path.sep + 'company_1_img')
 
     def test_price_breaks(self):
-        """Unit tests for price breaks"""
+        """Unit tests for price breaks."""
         self.assertTrue(self.acme0001.has_price_breaks)
         self.assertTrue(self.acme0002.has_price_breaks)
         self.assertTrue(self.zergm312.has_price_breaks)
@@ -92,12 +100,12 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(p(55), 68.75)
 
     def test_part_pricing(self):
-        """Unit tests for supplier part pricing"""
+        """Unit tests for supplier part pricing."""
         m2x4 = Part.objects.get(name='M2x4 LPHS')
 
-        self.assertEqual(m2x4.get_price_info(5.5), "38.5 - 41.25")
-        self.assertEqual(m2x4.get_price_info(10), "70 - 75")
-        self.assertEqual(m2x4.get_price_info(100), "125 - 350")
+        self.assertEqual(m2x4.get_price_info(5.5), '38.5 - 41.25')
+        self.assertEqual(m2x4.get_price_info(10), '70 - 75')
+        self.assertEqual(m2x4.get_price_info(100), '125 - 350')
 
         pmin, pmax = m2x4.get_price_range(5)
         self.assertEqual(pmin, 35)
@@ -113,18 +121,14 @@ class CompanySimpleTest(TestCase):
         """Test validation for currency selection."""
         # Create a company with a valid currency code (should pass)
         company = Company.objects.create(
-            name='Test',
-            description='Toast',
-            currency='AUD',
+            name='Test', description='Toast', currency='AUD'
         )
 
         company.full_clean()
 
         # Create a company with an invalid currency code (should fail)
         company = Company.objects.create(
-            name='test',
-            description='Toasty',
-            currency='XZY',
+            name='test', description='Toasty', currency='XZY'
         )
 
         with self.assertRaises(ValidationError):
@@ -149,12 +153,14 @@ class CompanySimpleTest(TestCase):
 
 
 class ContactSimpleTest(TestCase):
-    """Unit tests for the Contact model"""
+    """Unit tests for the Contact model."""
 
     def setUp(self):
-        """Initialization for the tests in this class"""
+        """Initialization for the tests in this class."""
         # Create a simple company
-        self.c = Company.objects.create(name='Test Corp.', description='We make stuff good')
+        self.c = Company.objects.create(
+            name='Test Corp.', description='We make stuff good'
+        )
 
         # Add some contacts
         Contact.objects.create(name='Joe Smith', company=self.c)
@@ -162,37 +168,39 @@ class ContactSimpleTest(TestCase):
         Contact.objects.create(name='Sally Smith', company=self.c)
 
     def test_exists(self):
-        """Test that contacts exist"""
+        """Test that contacts exist."""
         self.assertEqual(Contact.objects.count(), 3)
 
     def test_delete(self):
-        """Test deletion of a Contact instance"""
+        """Test deletion of a Contact instance."""
         # Remove the parent company
         Company.objects.get(pk=self.c.pk).delete()
         self.assertEqual(Contact.objects.count(), 0)
 
 
 class AddressTest(TestCase):
-    """Unit tests for the Address model"""
+    """Unit tests for the Address model."""
 
     def setUp(self):
-        """Initialization for the tests in this class"""
+        """Initialization for the tests in this class."""
         # Create a simple company
-        self.c = Company.objects.create(name='Test Corp.', description='We make stuff good')
+        self.c = Company.objects.create(
+            name='Test Corp.', description='We make stuff good'
+        )
 
     def test_create(self):
-        """Test that object creation with only company supplied is successful"""
+        """Test that object creation with only company supplied is successful."""
         Address.objects.create(company=self.c)
         self.assertEqual(Address.objects.count(), 1)
 
     def test_delete(self):
-        """Test Address deletion"""
+        """Test Address deletion."""
         addr = Address.objects.create(company=self.c)
         addr.delete()
         self.assertEqual(Address.objects.count(), 0)
 
     def test_primary_constraint(self):
-        """Test that there can only be one company-'primary=true' pair"""
+        """Test that there can only be one company-'primary=true' pair."""
         Address.objects.create(company=self.c, primary=True)
         Address.objects.create(company=self.c, primary=False)
 
@@ -208,50 +216,45 @@ class AddressTest(TestCase):
         self.assertTrue(Address.objects.last().primary)
 
     def test_first_address_is_primary(self):
-        """Test that first address related to company is always set to primary"""
+        """Test that first address related to company is always set to primary."""
         addr = Address.objects.create(company=self.c)
         self.assertTrue(addr.primary)
 
     def test_model_str(self):
-        """Test value of __str__"""
-        t = "Test address"
-        l1 = "Busy street 56"
-        l2 = "Red building"
-        pcd = "12345"
-        pct = "City"
-        pv = "Province"
-        cn = "COUNTRY"
-        addr = Address.objects.create(company=self.c,
-                                      title=t,
-                                      line1=l1,
-                                      line2=l2,
-                                      postal_code=pcd,
-                                      postal_city=pct,
-                                      province=pv,
-                                      country=cn)
+        """Test value of __str__."""
+        t = 'Test address'
+        l1 = 'Busy street 56'
+        l2 = 'Red building'
+        pcd = '12345'
+        pct = 'City'
+        pv = 'Province'
+        cn = 'COUNTRY'
+        addr = Address.objects.create(
+            company=self.c,
+            title=t,
+            line1=l1,
+            line2=l2,
+            postal_code=pcd,
+            postal_city=pct,
+            province=pv,
+            country=cn,
+        )
         self.assertEqual(str(addr), f'{l1}, {l2}, {pcd}, {pct}, {pv}, {cn}')
 
-        addr2 = Address.objects.create(company=self.c,
-                                       title=t,
-                                       line1=l1,
-                                       postal_code=pcd)
+        addr2 = Address.objects.create(
+            company=self.c, title=t, line1=l1, postal_code=pcd
+        )
 
         self.assertEqual(str(addr2), f'{l1}, {pcd}')
 
 
 class ManufacturerPartSimpleTest(TestCase):
-    """Unit tests for the ManufacturerPart model"""
+    """Unit tests for the ManufacturerPart model."""
 
-    fixtures = [
-        'category',
-        'company',
-        'location',
-        'part',
-        'manufacturer_part',
-    ]
+    fixtures = ['category', 'company', 'location', 'part', 'manufacturer_part']
 
     def setUp(self):
-        """Initialization for the unit tests in this class"""
+        """Initialization for the unit tests in this class."""
         # Create a manufacturer part
         self.part = Part.objects.get(pk=1)
         manufacturer = Company.objects.get(pk=1)
@@ -266,15 +269,13 @@ class ManufacturerPartSimpleTest(TestCase):
         # Create a supplier part
         supplier = Company.objects.get(pk=5)
         supplier_part = SupplierPart.objects.create(
-            part=self.part,
-            supplier=supplier,
-            SKU='SKU_TEST',
+            part=self.part, supplier=supplier, SKU='SKU_TEST'
         )
 
         supplier_part.save()
 
     def test_exists(self):
-        """That that a ManufacturerPart has been created"""
+        """That that a ManufacturerPart has been created."""
         self.assertEqual(ManufacturerPart.objects.count(), 4)
 
         # Check that manufacturer part was created from supplier part creation
@@ -282,7 +283,7 @@ class ManufacturerPartSimpleTest(TestCase):
         self.assertEqual(manufacturer_parts.count(), 1)
 
     def test_delete(self):
-        """Test deletion of a ManufacturerPart"""
+        """Test deletion of a ManufacturerPart."""
         Part.objects.get(pk=self.part.id).delete()
         # Check that ManufacturerPart was deleted
         self.assertEqual(ManufacturerPart.objects.count(), 3)
