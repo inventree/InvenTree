@@ -4,15 +4,10 @@
 import os
 import sys
 
-from tracing import setup_instruments, setup_tracing
-
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InvenTree.settings')
-
-    # Run tracing/logging instrumentation
-    setup_instruments()
 
     try:
         from django.core.management import execute_from_command_line
@@ -26,5 +21,4 @@ def main():
 
 
 if __name__ == '__main__':
-    setup_tracing()
     main()

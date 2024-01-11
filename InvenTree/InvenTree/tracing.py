@@ -21,20 +21,30 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 
 from InvenTree.config import get_boolean_setting, get_setting
+from InvenTree.version import inventreeVersion
 
 
-def tracing_enabled():
-    """Return True if tracing is possible."""
-    return get_boolean_setting('INVENTREE_TRACING_ENABLED', 'tracing_enabled', False)
+def setup_tracing(endpoint: str, headers: dict, resources_input: dict | None = None):
+    """Setup tracing for the application in the current context.
 
+    Args:
+        endpoint: The endpoint to send the traces to.
+        headers: The headers to send with the traces.
+        resources_input: The resources to send with the traces.
+    """
+    if resources_input is None:
+        resources_input = {}
 
-def setup_tracing():
-    """Setup tracing for the application in the current context."""
-    if not tracing_enabled():
-        return
-
+    # Initialize the OTLP Resource
+    resource = resources.Resource(
+        attributes={
+            resources.SERVICE_NAME: 'BACKEND',
+            resources.SERVICE_NAMESPACE: 'INVENTREE',
+            resources.SERVICE_VERSION: inventreeVersion(),
+            **resources_input,
+        }
+    )
     # Gather the required environment variables
-    headers, endpoint, resource = setup_src()
     console_log = False
 
     # Spans / Tracs
@@ -73,27 +83,8 @@ def setup_tracing():
     logger.addHandler(handler)
 
 
-def setup_src():
-    """Parsing the variables for the OpenTelemetry exporter."""
-    headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing_headers', None, dict)
-    endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing_endpoint', None)
-
-    # Initialize the OTLP Resource
-    resource = resources.Resource(
-        attributes={
-            resources.SERVICE_NAME: 'BACKEND',
-            resources.SERVICE_NAMESPACE: 'INVENTREE',
-        }
-    )
-
-    return headers, endpoint, resource
-
-
 def setup_instruments():
     """Run auto-insturmentation for OpenTelemetry tracing."""
-    if not tracing_enabled():
-        return
-
     DjangoInstrumentor().instrument()
     RedisInstrumentor().instrument()
     RequestsInstrumentor().instrument()
