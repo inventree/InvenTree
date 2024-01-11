@@ -148,7 +148,7 @@ class BarcodeAssign(BarcodeView):
         """
 
         # Here we only check against 'InvenTree' plugins
-        inventree_barcode_plugin = registry.get_plugin("inventreebarcode")
+        inventree_barcode_plugin = registry.get_plugin('inventreebarcode')
 
         # First check if the provided barcode matches an existing database entry
         if inventree_barcode_plugin:
