@@ -15,13 +15,9 @@ def define_env(env):
 
         assets = []
 
-        allowed = [
-            '.png',
-            '.jpg',
-        ]
+        allowed = ['.png', '.jpg']
 
         for asset in os.listdir(directory):
-
             if any(asset.endswith(x) for x in allowed):
                 assets.append(os.path.join(subdir, asset))
 

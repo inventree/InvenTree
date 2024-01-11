@@ -86,7 +86,7 @@ def exception_handler(exc, context):
             # If in DEBUG mode, provide error information in the response
             error_detail = str(exc)
         else:
-            error_detail = _("Error details can be found in the admin panel")
+            error_detail = _('Error details can be found in the admin panel')
 
         response_data = {
             'error': type(exc).__name__,

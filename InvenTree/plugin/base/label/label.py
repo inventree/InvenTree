@@ -36,17 +36,16 @@ def print_label(plugin_slug: str, **kwargs):
         plugin.print_label(**kwargs)
     except Exception as e:  # pragma: no cover
         # Plugin threw an error - notify the user who attempted to print
-        ctx = {
-            'name': _('Label printing failed'),
-            'message': str(e),
-        }
+        ctx = {'name': _('Label printing failed'), 'message': str(e)}
 
         user = kwargs.get('user', None)
 
         if user:
             # Log an error message to the database
             log_error('plugin.print_label')
-            logger.exception("Label printing failed: Sending notification to user '%s'", user)  # pragma: no cover
+            logger.exception(
+                "Label printing failed: Sending notification to user '%s'", user
+            )  # pragma: no cover
 
             # Throw an error against the plugin instance
             common.notifications.trigger_notification(
@@ -54,7 +53,7 @@ def print_label(plugin_slug: str, **kwargs):
                 'label.printing_failed',
                 targets=[user],
                 context=ctx,
-                delivery_methods={common.notifications.UIMessageNotification, },
+                delivery_methods={common.notifications.UIMessageNotification},
             )
 
         if settings.TESTING:

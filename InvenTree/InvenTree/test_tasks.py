@@ -67,15 +67,23 @@ class InvenTreeTaskTests(TestCase):
 
         # Error runs
         # Malformed taskname
-        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree' not started - Malformed function path"):
+        with self.assertWarnsMessage(
+            UserWarning, "WARNING: 'InvenTree' not started - Malformed function path"
+        ):
             InvenTree.tasks.offload_task('InvenTree')
 
         # Non existent app
-        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTreeABC.test_tasks.doesnotmatter' not started - No module named 'InvenTreeABC.test_tasks'"):
+        with self.assertWarnsMessage(
+            UserWarning,
+            "WARNING: 'InvenTreeABC.test_tasks.doesnotmatter' not started - No module named 'InvenTreeABC.test_tasks'",
+        ):
             InvenTree.tasks.offload_task('InvenTreeABC.test_tasks.doesnotmatter')
 
         # Non existent function
-        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree.test_tasks.doesnotexist' not started - No function named 'doesnotexist'"):
+        with self.assertWarnsMessage(
+            UserWarning,
+            "WARNING: 'InvenTree.test_tasks.doesnotexist' not started - No function named 'doesnotexist'",
+        ):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexist')
 
     def test_task_hearbeat(self):
@@ -86,7 +94,9 @@ class InvenTreeTaskTests(TestCase):
         """Test the task delete_successful_tasks."""
         from django_q.models import Success
 
-        Success.objects.create(name='abc', func='abc', stopped=threshold, started=threshold_low)
+        Success.objects.create(
+            name='abc', func='abc', stopped=threshold, started=threshold_low
+        )
         InvenTree.tasks.offload_task(InvenTree.tasks.delete_successful_tasks)
         results = Success.objects.filter(started__lte=threshold)
         self.assertEqual(len(results), 0)
@@ -99,14 +109,14 @@ class InvenTreeTaskTests(TestCase):
         error_obj.save()
 
         # Check that it is not empty
-        errors = Error.objects.filter(when__lte=threshold,)
+        errors = Error.objects.filter(when__lte=threshold)
         self.assertNotEqual(len(errors), 0)
 
         # Run action
         InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_error_logs)
 
         # Check that it is empty again
-        errors = Error.objects.filter(when__lte=threshold,)
+        errors = Error.objects.filter(when__lte=threshold)
         self.assertEqual(len(errors), 0)
 
     def test_task_check_for_updates(self):
@@ -146,7 +156,9 @@ class InvenTreeTaskTests(TestCase):
         # Cleanup
         try:
             migration_name = InvenTree.tasks.get_migration_plan()[0][0].name + '.py'
-            migration_path = settings.BASE_DIR / 'InvenTree' / 'migrations' / migration_name
+            migration_path = (
+                settings.BASE_DIR / 'InvenTree' / 'migrations' / migration_name
+            )
             migration_path.unlink()
         except IndexError:  # pragma: no cover
             pass

@@ -12,10 +12,7 @@ from .models import Address, Company, Contact, ManufacturerPart, SupplierPart
 class CompanyTest(InvenTreeAPITestCase):
     """Series of tests for the Company DRF API."""
 
-    roles = [
-        'purchase_order.add',
-        'purchase_order.change',
-    ]
+    roles = ['purchase_order.add', 'purchase_order.change']
 
     @classmethod
     def setUpTestData(cls):
@@ -23,9 +20,18 @@ class CompanyTest(InvenTreeAPITestCase):
         super().setUpTestData()
 
         # Create some company objects to work with
-        cls.acme = Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
-        Company.objects.create(name='Drippy Cup Co.', description='Customer', is_customer=True, is_supplier=False)
-        Company.objects.create(name='Sippy Cup Emporium', description='Another supplier')
+        cls.acme = Company.objects.create(
+            name='ACME', description='Supplier', is_customer=False, is_supplier=True
+        )
+        Company.objects.create(
+            name='Drippy Cup Co.',
+            description='Customer',
+            is_customer=True,
+            is_supplier=False,
+        )
+        Company.objects.create(
+            name='Sippy Cup Emporium', description='Another supplier'
+        )
 
     def test_company_list(self):
         """Test the list API endpoint for the Company model"""
@@ -82,22 +88,13 @@ class CompanyTest(InvenTreeAPITestCase):
         url = reverse('api-company-list')
 
         # Name is required
-        response = self.post(
-            url,
-            {
-                'description': 'A description!',
-            },
-            expected_code=400
-        )
+        response = self.post(url, {'description': 'A description!'}, expected_code=400)
 
         # Minimal example, checking default values
         response = self.post(
             url,
-            {
-                'name': 'My API Company',
-                'description': 'A company created via the API',
-            },
-            expected_code=201
+            {'name': 'My API Company', 'description': 'A company created via the API'},
+            expected_code=201,
         )
 
         self.assertTrue(response.data['is_supplier'])
@@ -110,14 +107,14 @@ class CompanyTest(InvenTreeAPITestCase):
         response = self.post(
             url,
             {
-                'name': "Another Company",
-                'description': "Also created via the API!",
+                'name': 'Another Company',
+                'description': 'Also created via the API!',
                 'currency': 'AUD',
                 'is_supplier': False,
                 'is_manufacturer': True,
                 'is_customer': True,
             },
-            expected_code=201
+            expected_code=201,
         )
 
         self.assertEqual(response.data['currency'], 'AUD')
@@ -128,12 +125,8 @@ class CompanyTest(InvenTreeAPITestCase):
         # Attempt to create with invalid currency
         response = self.post(
             url,
-            {
-                'name': "A name",
-                'description': 'A description',
-                'currency': 'POQD',
-            },
-            expected_code=400
+            {'name': 'A name', 'description': 'A description', 'currency': 'POQD'},
+            expected_code=400,
         )
 
         self.assertTrue('currency' in response.data)
@@ -151,10 +144,8 @@ class ContactTest(InvenTreeAPITestCase):
 
         # Create some companies
         companies = [
-            Company(
-                name=f"Company {idx}",
-                description="Some company"
-            ) for idx in range(3)
+            Company(name=f'Company {idx}', description='Some company')
+            for idx in range(3)
         ]
 
         Company.objects.bulk_create(companies)
@@ -164,10 +155,7 @@ class ContactTest(InvenTreeAPITestCase):
         # Create some contacts
         for cmp in Company.objects.all():
             contacts += [
-                Contact(
-                    company=cmp,
-                    name=f"My name {idx}",
-                ) for idx in range(3)
+                Contact(company=cmp, name=f'My name {idx}') for idx in range(3)
             ]
 
         Contact.objects.bulk_create(contacts)
@@ -187,13 +175,7 @@ class ContactTest(InvenTreeAPITestCase):
 
         # Filter by particular company
         for cmp in Company.objects.all():
-            response = self.get(
-                self.url,
-                {
-                    'company': cmp.pk,
-                },
-                expected_code=200
-            )
+            response = self.get(self.url, {'company': cmp.pk}, expected_code=200)
 
             self.assertEqual(len(response.data), 3)
 
@@ -205,23 +187,13 @@ class ContactTest(InvenTreeAPITestCase):
 
         # Without required permissions, creation should fail
         self.post(
-            self.url,
-            {
-                'company': company.pk,
-                'name': 'Joe Bloggs',
-            },
-            expected_code=403
+            self.url, {'company': company.pk, 'name': 'Joe Bloggs'}, expected_code=403
         )
 
         self.assignRole('return_order.add')
 
         self.post(
-            self.url,
-            {
-                'company': company.pk,
-                'name': 'Joe Bloggs',
-            },
-            expected_code=201
+            self.url, {'company': company.pk, 'name': 'Joe Bloggs'}, expected_code=201
         )
 
         self.assertEqual(Contact.objects.count(), n + 1)
@@ -239,23 +211,11 @@ class ContactTest(InvenTreeAPITestCase):
         for key in ['pk', 'name', 'role']:
             self.assertIn(key, data)
 
-        self.patch(
-            url,
-            {
-                'role': 'model',
-            },
-            expected_code=403
-        )
+        self.patch(url, {'role': 'model'}, expected_code=403)
 
         self.assignRole('purchase_order.change')
 
-        self.patch(
-            url,
-            {
-                'role': 'x',
-            },
-            expected_code=200
-        )
+        self.patch(url, {'role': 'x'}, expected_code=200)
 
         # Get the contact again
         contact = Contact.objects.first()
@@ -291,10 +251,8 @@ class AddressTest(InvenTreeAPITestCase):
         cls.num_addr = 3
         # Create some companies
         companies = [
-            Company(
-                name=f"Company {idx}",
-                description="Some company"
-            ) for idx in range(cls.num_companies)
+            Company(name=f'Company {idx}', description='Some company')
+            for idx in range(cls.num_companies)
         ]
 
         Company.objects.bulk_create(companies)
@@ -304,10 +262,8 @@ class AddressTest(InvenTreeAPITestCase):
         # Create some contacts
         for cmp in Company.objects.all():
             addresses += [
-                Address(
-                    company=cmp,
-                    title=f"Address no. {idx}",
-                ) for idx in range(cls.num_addr)
+                Address(company=cmp, title=f'Address no. {idx}')
+                for idx in range(cls.num_addr)
             ]
 
         cls.url = reverse('api-address-list')
@@ -332,21 +288,11 @@ class AddressTest(InvenTreeAPITestCase):
         """Test creating a new address"""
         company = Company.objects.first()
 
-        self.post(self.url,
-                  {
-                      'company': company.pk,
-                      'title': 'HQ'
-                  },
-                  expected_code=403)
+        self.post(self.url, {'company': company.pk, 'title': 'HQ'}, expected_code=403)
 
         self.assignRole('purchase_order.add')
 
-        self.post(self.url,
-                  {
-                      'company': company.pk,
-                      'title': 'HQ'
-                  },
-                  expected_code=201)
+        self.post(self.url, {'company': company.pk, 'title': 'HQ'}, expected_code=201)
 
     def test_get(self):
         """Test that objects are properly returned from a get"""
@@ -357,7 +303,15 @@ class AddressTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['pk'], addr.pk)
 
-        for key in ['title', 'line1', 'line2', 'postal_code', 'postal_city', 'province', 'country']:
+        for key in [
+            'title',
+            'line1',
+            'line2',
+            'postal_code',
+            'postal_city',
+            'province',
+            'country',
+        ]:
             self.assertIn(key, response.data)
 
     def test_edit(self):
@@ -366,23 +320,11 @@ class AddressTest(InvenTreeAPITestCase):
 
         url = reverse('api-address-detail', kwargs={'pk': addr.pk})
 
-        self.patch(
-            url,
-            {
-                'title': 'Hello'
-            },
-            expected_code=403
-        )
+        self.patch(url, {'title': 'Hello'}, expected_code=403)
 
         self.assignRole('purchase_order.change')
 
-        self.patch(
-            url,
-            {
-                'title': 'World'
-            },
-            expected_code=200
-        )
+        self.patch(url, {'title': 'World'}, expected_code=200)
 
         data = self.get(url, expected_code=200).data
 
@@ -415,10 +357,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         'supplier_part',
     ]
 
-    roles = [
-        'part.add',
-        'part.change',
-    ]
+    roles = ['part.add', 'part.change']
 
     def test_manufacturer_part_list(self):
         """Test the ManufacturerPart API list functionality"""
@@ -429,11 +368,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 3)
 
         # Create manufacturer part
-        data = {
-            'part': 1,
-            'manufacturer': 7,
-            'MPN': 'MPN_TEST',
-        }
+        data = {'part': 1, 'manufacturer': 7, 'MPN': 'MPN_TEST'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['MPN'], 'MPN_TEST')
@@ -456,9 +391,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['MPN'], 'MPN123')
 
         # Change the MPN
-        data = {
-            'MPN': 'MPN-TEST-123',
-        }
+        data = {'MPN': 'MPN-TEST-123'}
 
         response = self.client.patch(url, data, format='json')
 
@@ -485,7 +418,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
                 'MPN': 'PART_NUMBER',
                 'link': 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E',
             },
-            expected_code=201
+            expected_code=201,
         )
 
         pk = response.data['pk']
@@ -503,10 +436,16 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Check link is not modified
-        self.assertEqual(response.data['link'], 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E')
+        self.assertEqual(
+            response.data['link'],
+            'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E',
+        )
 
         # Check link is not modified
-        self.assertEqual(response.data['link'], 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E')
+        self.assertEqual(
+            response.data['link'],
+            'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E',
+        )
 
 
 class SupplierPartTest(InvenTreeAPITestCase):
@@ -521,12 +460,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
         'supplier_part',
     ]
 
-    roles = [
-        'part.add',
-        'part.change',
-        'part.add',
-        'purchase_order.change',
-    ]
+    roles = ['part.add', 'part.change', 'part.add', 'purchase_order.change']
 
     def test_supplier_part_list(self):
         """Test the SupplierPart API list functionality"""
@@ -543,10 +477,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
             self.assertEqual(len(response.data), supplier.supplied_parts.count())
 
         # Filter by Part reference
-        expected = {
-            1: 4,
-            25: 2,
-        }
+        expected = {1: 4, 25: 2}
 
         for pk, n in expected.items():
             response = self.get(url, {'part': pk}, expected_code=200)
@@ -559,12 +490,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
         # Should fail when sending an invalid 'available' field
         response = self.post(
             url,
-            {
-                'part': 1,
-                'supplier': 2,
-                'SKU': 'QQ',
-                'available': 'not a number',
-            },
+            {'part': 1, 'supplier': 2, 'SKU': 'QQ', 'available': 'not a number'},
             expected_code=400,
         )
 
@@ -572,13 +498,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
 
         # Create a SupplierPart without specifying available quantity
         response = self.post(
-            url,
-            {
-                'part': 1,
-                'supplier': 2,
-                'SKU': 'QQ',
-            },
-            expected_code=201
+            url, {'part': 1, 'supplier': 2, 'SKU': 'QQ'}, expected_code=201
         )
 
         sp = SupplierPart.objects.get(pk=response.data['pk'])
@@ -589,9 +509,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
         # Now, *update* the available quantity via the API
         self.patch(
             reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
-            {
-                'available': 1234,
-            },
+            {'available': 1234},
             expected_code=200,
         )
 
@@ -602,12 +520,7 @@ class SupplierPartTest(InvenTreeAPITestCase):
         # We should also be able to create a SupplierPart with initial 'available' quantity
         response = self.post(
             url,
-            {
-                'part': 1,
-                'supplier': 2,
-                'SKU': 'QQQ',
-                'available': 999,
-            },
+            {'part': 1, 'supplier': 2, 'SKU': 'QQQ', 'available': 999},
             expected_code=201,
         )
 
@@ -629,11 +542,7 @@ class CompanyMetadataAPITest(InvenTreeAPITestCase):
         'supplier_part',
     ]
 
-    roles = [
-        'company.change',
-        'purchase_order.change',
-        'part.change',
-    ]
+    roles = ['company.change', 'purchase_order.change', 'part.change']
 
     def metatester(self, apikey, model):
         """Generic tester"""
@@ -651,17 +560,15 @@ class CompanyMetadataAPITest(InvenTreeAPITestCase):
 
         self.patch(
             url,
-            {
-                'metadata': {
-                    f'abc-{numstr}': f'xyz-{apikey}-{numstr}',
-                }
-            },
-            expected_code=200
+            {'metadata': {f'abc-{numstr}': f'xyz-{apikey}-{numstr}'}},
+            expected_code=200,
         )
 
         # Refresh
         modeldata.refresh_from_db()
-        self.assertEqual(modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}')
+        self.assertEqual(
+            modeldata.get_metadata(f'abc-{numstr}'), f'xyz-{apikey}-{numstr}'
+        )
 
     def test_metadata(self):
         """Test all endpoints"""

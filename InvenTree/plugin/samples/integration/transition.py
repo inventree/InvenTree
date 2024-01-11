@@ -10,7 +10,7 @@ from plugin import InvenTreePlugin
 class SampleTransitionPlugin(InvenTreePlugin):
     """A sample plugin which shows how state transitions might be implemented."""
 
-    NAME = "SampleTransitionPlugin"
+    NAME = 'SampleTransitionPlugin'
 
     class ReturnChangeHandler(TransitionMethod):
         """Transition method for PurchaseOrder objects."""
@@ -18,7 +18,9 @@ class SampleTransitionPlugin(InvenTreePlugin):
         def transition(current_state, target_state, instance, default_action, **kwargs):  # noqa: N805
             """Example override function for state transition."""
             # Only act on ReturnOrders that should be completed
-            if not isinstance(instance, ReturnOrder) or not (target_state == ReturnOrderStatus.COMPLETE.value):
+            if not isinstance(instance, ReturnOrder) or not (
+                target_state == ReturnOrderStatus.COMPLETE.value
+            ):
                 return False
 
             # Only allow proceeding if the return order has a responsible user assigned
@@ -28,8 +30,10 @@ class SampleTransitionPlugin(InvenTreePlugin):
                 trigger_notification(
                     instance,
                     'sampel_123_456',
-                    targets=[instance.created_by, ],
-                    context={'message': "Return order without responsible owner can not be completed!"},
+                    targets=[instance.created_by],
+                    context={
+                        'message': 'Return order without responsible owner can not be completed!'
+                    },
                 )
                 return True  # True means nothing will happen
             return False  # Do not act

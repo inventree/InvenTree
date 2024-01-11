@@ -1,8 +1,12 @@
 """Tests for basic notification methods and functions in InvenTree."""
 
 import plugin.templatetags.plugin_extras as plugin_tags
-from common.notifications import (BulkNotificationMethod, NotificationMethod,
-                                  SingleNotificationMethod, storage)
+from common.notifications import (
+    BulkNotificationMethod,
+    NotificationMethod,
+    SingleNotificationMethod,
+    storage,
+)
 from part.test_part import BaseNotificationIntegrationTest
 from plugin.models import NotificationUserSetting
 
@@ -23,37 +27,31 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
                 """A comment so we do not need a pass."""
 
         class NoNameNotificationMethod(NotificationMethod):
-
             def send(self):
                 """A comment so we do not need a pass."""
 
         class WrongContextNotificationMethod(NotificationMethod):
             METHOD_NAME = 'WrongContextNotification'
-            CONTEXT_EXTRA = [
-                'aa',
-                ('aa', 'bb', ),
-                ('templates', 'ccc', ),
-                (123, )
-            ]
+            CONTEXT_EXTRA = ['aa', ('aa', 'bb'), ('templates', 'ccc'), (123,)]
 
             def send(self):
                 """A comment so we do not need a pass."""
 
         # no send / send bulk
         with self.assertRaises(NotImplementedError):
-            FalseNotificationMethod('', '', '', '', )
+            FalseNotificationMethod('', '', '', '')
 
         # no METHOD_NAME
         with self.assertRaises(NotImplementedError):
-            NoNameNotificationMethod('', '', '', '', )
+            NoNameNotificationMethod('', '', '', '')
 
         # a not existent context check
         with self.assertRaises(NotImplementedError):
-            WrongContextNotificationMethod('', '', '', '', )
+            WrongContextNotificationMethod('', '', '', '')
 
         # no get_targets
         with self.assertRaises(NotImplementedError):
-            AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2, }, )
+            AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2})
 
     def test_failing_passing(self):
         """Ensure that an error in one deliverymethod is not blocking all mehthods."""
@@ -67,7 +65,7 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
             METHOD_NAME = 'ErrorImplementation'
 
             def get_targets(self):
-                return [1, ]
+                return [1]
 
             def send(self, target):
                 raise KeyError('This could be any error')
@@ -91,7 +89,7 @@ class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
             METHOD_NAME = 'WrongImplementationBulk'
 
             def get_targets(self):
-                return [1, ]
+                return [1]
 
         with self.assertLogs(logger='inventree', level='ERROR'):
             self._notification_run(WrongImplementation)
@@ -113,10 +111,11 @@ class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
             METHOD_NAME = 'WrongImplementationSingle'
 
             def get_targets(self):
-                return [1, ]
+                return [1]
 
         with self.assertLogs(logger='inventree', level='ERROR'):
             self._notification_run(WrongImplementation)
+
 
 # A integration test for notifications is provided in test_part.PartNotificationTest
 
@@ -144,7 +143,7 @@ class NotificationUserSettingTests(BaseNotificationIntegrationTest):
             }
 
             def get_targets(self):
-                return [1, ]
+                return [1]
 
             def send_bulk(self):
                 return True
@@ -158,10 +157,14 @@ class NotificationUserSettingTests(BaseNotificationIntegrationTest):
         # assertions for settings
         self.assertEqual(setting.name, 'Enable test notifications')
         self.assertEqual(setting.default_value, True)
-        self.assertEqual(setting.description, 'Allow sending of test for event notifications')
+        self.assertEqual(
+            setting.description, 'Allow sending of test for event notifications'
+        )
         self.assertEqual(setting.units, 'alpha')
 
         # test tag and array
-        self.assertEqual(plugin_tags.notification_settings_list({'user': self.user}), array)
+        self.assertEqual(
+            plugin_tags.notification_settings_list({'user': self.user}), array
+        )
         self.assertEqual(array[0]['key'], 'NOTIFICATION_METHOD_TEST')
         self.assertEqual(array[0]['method'], 'test')

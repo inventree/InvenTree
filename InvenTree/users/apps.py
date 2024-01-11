@@ -18,7 +18,10 @@ class UsersConfig(AppConfig):
     def ready(self):
         """Called when the 'users' app is loaded at runtime"""
         # skip loading if plugin registry is not loaded or we run in a background thread
-        if not InvenTree.ready.isPluginRegistryLoaded() or not InvenTree.ready.isInMainThread():
+        if (
+            not InvenTree.ready.isPluginRegistryLoaded()
+            or not InvenTree.ready.isInMainThread()
+        ):
             return
 
         # Skip if running migrations
@@ -26,7 +29,6 @@ class UsersConfig(AppConfig):
             return
 
         if InvenTree.ready.canAppAccessDatabase(allow_test=True):
-
             try:
                 self.assign_permissions()
             except (OperationalError, ProgrammingError):
@@ -45,13 +47,14 @@ class UsersConfig(AppConfig):
 
         # First, delete any rule_set objects which have become outdated!
         for rule in RuleSet.objects.all():
-            if rule.name not in RuleSet.RULESET_NAMES:  # pragma: no cover  # can not change ORM without the app being loaded
-                logger.info("Deleting outdated ruleset: %s", rule.name)
+            if (
+                rule.name not in RuleSet.RULESET_NAMES
+            ):  # pragma: no cover  # can not change ORM without the app being loaded
+                logger.info('Deleting outdated ruleset: %s', rule.name)
                 rule.delete()
 
         # Update group permission assignments for all groups
         for group in Group.objects.all():
-
             update_group_roles(group)
 
     def update_owners(self):

@@ -24,10 +24,15 @@ from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as order_forms
 from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
-from .models import (PurchaseOrder, PurchaseOrderLineItem, ReturnOrder,
-                     SalesOrder, SalesOrderLineItem)
+from .models import (
+    PurchaseOrder,
+    PurchaseOrderLineItem,
+    ReturnOrder,
+    SalesOrder,
+    SalesOrderLineItem,
+)
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
@@ -46,6 +51,7 @@ class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
 
 class SalesOrderIndex(InvenTreeRoleMixin, ListView):
     """SalesOrder index (list) view class"""
+
     model = SalesOrder
     template_name = 'order/sales_orders.html'
     context_object_name = 'orders'
@@ -71,7 +77,9 @@ class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView)
     """Detail view for a SalesOrder object."""
 
     context_object_name = 'order'
-    queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
+    queryset = SalesOrder.objects.all().prefetch_related(
+        'lines__allocations__item__purchase_order'
+    )
     template_name = 'order/sales_order_detail.html'
 
 
@@ -88,20 +96,12 @@ class PurchaseOrderUpload(FileManagementFormView):
 
     class OrderFileManager(FileManager):
         """Specify required fields"""
-        REQUIRED_HEADERS = [
-            'Quantity',
-        ]
 
-        ITEM_MATCH_HEADERS = [
-            'Manufacturer_MPN',
-            'Supplier_SKU',
-        ]
+        REQUIRED_HEADERS = ['Quantity']
 
-        OPTIONAL_HEADERS = [
-            'Purchase_Price',
-            'Reference',
-            'Notes',
-        ]
+        ITEM_MATCH_HEADERS = ['Manufacturer_MPN', 'Supplier_SKU']
+
+        OPTIONAL_HEADERS = ['Purchase_Price', 'Reference', 'Notes']
 
     name = 'order'
     form_list = [
@@ -115,9 +115,9 @@ class PurchaseOrderUpload(FileManagementFormView):
         'order/order_wizard/match_parts.html',
     ]
     form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match Supplier Parts"),
+        _('Upload File'),
+        _('Match Fields'),
+        _('Match Supplier Parts'),
     ]
     form_field_map = {
         'item_select': 'part',
@@ -150,7 +150,9 @@ class PurchaseOrderUpload(FileManagementFormView):
         """
         order = self.get_order()
 
-        self.allowed_items = SupplierPart.objects.filter(supplier=order.supplier).prefetch_related('manufacturer_part')
+        self.allowed_items = SupplierPart.objects.filter(
+            supplier=order.supplier
+        ).prefetch_related('manufacturer_part')
 
         # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
         q_idx = self.get_column_index('Quantity')
@@ -161,7 +163,6 @@ class PurchaseOrderUpload(FileManagementFormView):
         n_idx = self.get_column_index('Notes')
 
         for row in self.rows:
-
             # Initially use a quantity of zero
             quantity = Decimal(0)
 
@@ -191,7 +192,11 @@ class PurchaseOrderUpload(FileManagementFormView):
                 try:
                     # Attempt SupplierPart lookup based on SKU value
                     exact_match_part = self.allowed_items.get(SKU__contains=sku)
-                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                except (
+                    ValueError,
+                    SupplierPart.DoesNotExist,
+                    SupplierPart.MultipleObjectsReturned,
+                ):
                     exact_match_part = None
 
             # Check if there is a column corresponding to "Manufacturer MPN" and no exact match found yet
@@ -200,8 +205,14 @@ class PurchaseOrderUpload(FileManagementFormView):
 
                 try:
                     # Attempt SupplierPart lookup based on MPN value
-                    exact_match_part = self.allowed_items.get(manufacturer_part__MPN__contains=mpn)
-                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                    exact_match_part = self.allowed_items.get(
+                        manufacturer_part__MPN__contains=mpn
+                    )
+                except (
+                    ValueError,
+                    SupplierPart.DoesNotExist,
+                    SupplierPart.MultipleObjectsReturned,
+                ):
                     exact_match_part = None
 
             # Supply list of part options for each row, sorted by how closely they match the part name
@@ -239,7 +250,9 @@ class PurchaseOrderUpload(FileManagementFormView):
         # Create PurchaseOrderLineItem instances
         for purchase_order_item in items.values():
             try:
-                supplier_part = SupplierPart.objects.get(pk=int(purchase_order_item['part']))
+                supplier_part = SupplierPart.objects.get(
+                    pk=int(purchase_order_item['part'])
+                )
             except (ValueError, SupplierPart.DoesNotExist):
                 continue
 
@@ -259,7 +272,9 @@ class PurchaseOrderUpload(FileManagementFormView):
                     # PurchaseOrderLineItem already exists
                     pass
 
-        return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
+        return HttpResponseRedirect(
+            reverse('po-detail', kwargs={'pk': self.kwargs['pk']})
+        )
 
 
 class SalesOrderExport(AjaxView):
@@ -279,7 +294,7 @@ class SalesOrderExport(AjaxView):
 
         export_format = request.GET.get('format', 'csv')
 
-        filename = f"{str(order)} - {order.customer.name}.{export_format}"
+        filename = f'{str(order)} - {order.customer.name}.{export_format}'
 
         dataset = SalesOrderLineItemResource().export(queryset=order.lines.all())
 
@@ -320,6 +335,7 @@ class LineItemPricing(PartPricing):
 
     class EnhancedForm(PartPricing.form_class):
         """Extra form options"""
+
         pk = IntegerField(widget=HiddenInput())
         so_line = IntegerField(widget=HiddenInput())
 
@@ -401,7 +417,9 @@ class LineItemPricing(PartPricing):
                     # check qunatity and update if different
                     if so_line.quantity != quantity:
                         so_line.quantity = quantity
-                        note = _('Updated {part} unit-price to {price} and quantity to {qty}')
+                        note = _(
+                            'Updated {part} unit-price to {price} and quantity to {qty}'
+                        )
 
                     # update sale_price
                     so_line.sale_price = price
@@ -410,7 +428,11 @@ class LineItemPricing(PartPricing):
                     # parse response
                     data = {
                         'form_valid': True,
-                        'success': note.format(part=str(so_line.part), price=str(so_line.sale_price), qty=quantity)
+                        'success': note.format(
+                            part=str(so_line.part),
+                            price=str(so_line.sale_price),
+                            qty=quantity,
+                        ),
                     }
                     return JsonResponse(data=data)
 

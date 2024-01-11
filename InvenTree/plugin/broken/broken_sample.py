@@ -1,4 +1,5 @@
 """Sample of a broken plugin."""
+
 from plugin import InvenTreePlugin
 
 

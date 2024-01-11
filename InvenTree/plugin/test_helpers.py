@@ -10,6 +10,7 @@ class HelperTests(TestCase):
 
     def test_render_template(self):
         """Check if render_template helper works."""
+
         class ErrorSource:
             slug = 'sampleplg'
 
@@ -18,6 +19,8 @@ class HelperTests(TestCase):
         self.assertEqual(response, '<h1>123</h1>\n')
 
         # Wrong sample
-        response = render_template(ErrorSource(), 'sample/wrongsample.html', {'abc': 123})
+        response = render_template(
+            ErrorSource(), 'sample/wrongsample.html', {'abc': 123}
+        )
         self.assertTrue('lert alert-block alert-danger' in response)
         self.assertTrue('Template file <em>sample/wrongsample.html</em>' in response)

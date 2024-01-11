@@ -31,9 +31,7 @@ from .views import AjaxView
 class VersionView(APIView):
     """Simple JSON endpoint for InvenTree version information."""
 
-    permission_classes = [
-        permissions.IsAdminUser,
-    ]
+    permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
@@ -47,20 +45,21 @@ class VersionView(APIView):
                 'commit_date': InvenTree.version.inventreeCommitDate(),
                 'commit_branch': InvenTree.version.inventreeBranch(),
                 'python': InvenTree.version.inventreePythonVersion(),
-                'django': InvenTree.version.inventreeDjangoVersion()
+                'django': InvenTree.version.inventreeDjangoVersion(),
             },
             'links': {
                 'doc': InvenTree.version.inventreeDocUrl(),
                 'code': InvenTree.version.inventreeGithubUrl(),
                 'credit': InvenTree.version.inventreeCreditsUrl(),
                 'app': InvenTree.version.inventreeAppUrl(),
-                'bug': f'{InvenTree.version.inventreeGithubUrl()}/issues'
-            }
+                'bug': f'{InvenTree.version.inventreeGithubUrl()}/issues',
+            },
         })
 
 
 class VersionSerializer(serializers.Serializer):
     """Serializer for a single version."""
+
     version = serializers.CharField()
     date = serializers.CharField()
     gh = serializers.CharField()
@@ -69,16 +68,19 @@ class VersionSerializer(serializers.Serializer):
 
     class Meta:
         """Meta class for VersionSerializer."""
+
         fields = ['version', 'date', 'gh', 'text', 'latest']
 
 
 class VersionApiSerializer(serializers.Serializer):
     """Serializer for the version api endpoint."""
+
     VersionSerializer(many=True)
 
 
 class VersionTextView(ListAPI):
     """Simple JSON endpoint for InvenTree version text."""
+
     permission_classes = [permissions.IsAdminUser]
 
     @extend_schema(responses={200: OpenApiResponse(response=VersionApiSerializer)})
@@ -119,10 +121,10 @@ class InfoView(AjaxView):
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
             'system_health': check_system_health() if is_staff else None,
-            'database': InvenTree.version.inventreeDatabase()if is_staff else None,
+            'database': InvenTree.version.inventreeDatabase() if is_staff else None,
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,
             'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
-            'target': InvenTree.version.inventreeTarget()if is_staff else None,
+            'target': InvenTree.version.inventreeTarget() if is_staff else None,
         }
 
         return JsonResponse(data)
@@ -130,7 +132,9 @@ class InfoView(AjaxView):
     def check_auth_header(self, request):
         """Check if user is authenticated via a token in the header."""
         # TODO @matmair: remove after refacgtor of Token check is done
-        headers = request.headers.get('Authorization', request.headers.get('authorization'))
+        headers = request.headers.get(
+            'Authorization', request.headers.get('authorization')
+        )
         if not headers:
             return False
 
@@ -160,7 +164,7 @@ class NotFoundView(AjaxView):
                 'detail': _('API endpoint not found'),
                 'url': request.build_absolute_uri(),
             },
-            status=404
+            status=404,
         )
 
     def options(self, request, *args, **kwargs):
@@ -228,24 +232,25 @@ class BulkDeleteMixin:
 
         if not items and not filters:
             raise ValidationError({
-                "non_field_errors": ["List of items or filters must be provided for bulk deletion"],
+                'non_field_errors': [
+                    'List of items or filters must be provided for bulk deletion'
+                ]
             })
 
         if items and type(items) is not list:
             raise ValidationError({
-                "items": ["'items' must be supplied as a list object"]
+                'items': ["'items' must be supplied as a list object"]
             })
 
         if filters and type(filters) is not dict:
             raise ValidationError({
-                "filters": ["'filters' must be supplied as a dict object"]
+                'filters': ["'filters' must be supplied as a dict object"]
             })
 
         # Keep track of how many items we deleted
         n_deleted = 0
 
         with transaction.atomic():
-
             # Start with *all* models and perform basic filtering
             queryset = model.objects.all()
             queryset = self.filter_delete_queryset(queryset, request)
@@ -261,16 +266,12 @@ class BulkDeleteMixin:
             n_deleted = queryset.count()
             queryset.delete()
 
-        return Response(
-            {
-                'success': f"Deleted {n_deleted} items",
-            },
-            status=204
-        )
+        return Response({'success': f'Deleted {n_deleted} items'}, status=204)
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
     """Custom API endpoint which provides BulkDelete functionality in addition to List and Create"""
+
     ...
 
 
@@ -307,24 +308,17 @@ class APIDownloadMixin:
 
     def download_queryset(self, queryset, export_format):
         """This function must be implemented to provide a downloadFile request."""
-        raise NotImplementedError("download_queryset method not implemented!")
+        raise NotImplementedError('download_queryset method not implemented!')
 
 
 class AttachmentMixin:
     """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-        RolePermission,
-    ]
+    permission_classes = [permissions.IsAuthenticated, RolePermission]
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    search_fields = [
-        'attachment',
-        'comment',
-        'link',
-    ]
+    search_fields = ['attachment', 'comment', 'link']
 
     def perform_create(self, serializer):
         """Save the user information when a file is uploaded."""
@@ -342,9 +336,7 @@ class APISearchView(APIView):
     Is much more efficient and simplifies code!
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_result_types(self):
         """Construct a list of search types we can return"""
@@ -384,14 +376,11 @@ class APISearchView(APIView):
         }
 
         if 'search' not in data:
-            raise ValidationError({
-                'search': 'Search term must be provided',
-            })
+            raise ValidationError({'search': 'Search term must be provided'})
 
         for key, cls in self.get_result_types().items():
             # Only return results which are specifically requested
             if key in data:
-
                 params = data[key]
 
                 for k, v in pass_through_params.items():
@@ -418,16 +407,18 @@ class APISearchView(APIView):
                 table = f'{app_label}_{model_name}'
 
                 try:
-                    if users.models.RuleSet.check_table_permission(request.user, table, 'view'):
+                    if users.models.RuleSet.check_table_permission(
+                        request.user, table, 'view'
+                    ):
                         results[key] = view.list(request, *args, **kwargs).data
                     else:
                         results[key] = {
-                            'error': _('User does not have permission to view this model')
+                            'error': _(
+                                'User does not have permission to view this model'
+                            )
                         }
                 except Exception as exc:
-                    results[key] = {
-                        'error': str(exc)
-                    }
+                    results[key] = {'error': str(exc)}
 
         return Response(results)
 
@@ -442,7 +433,9 @@ class MetadataView(RetrieveUpdateAPI):
         model = self.kwargs.get(self.MODEL_REF, None)
 
         if model is None:
-            raise ValidationError(f"MetadataView called without '{self.MODEL_REF}' parameter")
+            raise ValidationError(
+                f"MetadataView called without '{self.MODEL_REF}' parameter"
+            )
 
         return model
 

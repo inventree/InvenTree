@@ -1,4 +1,5 @@
 """Tests for PUI backend stuff."""
+
 import json
 import os
 from pathlib import Path
@@ -23,23 +24,29 @@ class TemplateTagTest(InvenTreeTestCase):
     def test_spa_bundle(self):
         """Test the 'spa_bundle' template tag"""
         resp = spa_helper.spa_bundle()
-        self.assertTrue(resp.startswith('<link rel="stylesheet" href="/static/web/assets/index'))
+        self.assertTrue(
+            resp.startswith('<link rel="stylesheet" href="/static/web/assets/index')
+        )
         shipped_js = resp.split('<script type="module" src="')[1:]
         self.assertTrue(len(shipped_js) > 0)
         self.assertTrue(len(shipped_js) == 3)
 
-        manifest_file = Path(__file__).parent.joinpath("static/web/manifest.json")
+        manifest_file = Path(__file__).parent.joinpath('static/web/manifest.json')
         # Try with removed manifest file
         manifest_file.rename(manifest_file.with_suffix('.json.bak'))  # Rename
         resp = resp = spa_helper.spa_bundle()
         self.assertIsNone(resp)
-        manifest_file.with_suffix('.json.bak').rename(manifest_file.with_suffix('.json'))  # Name back
+        manifest_file.with_suffix('.json.bak').rename(
+            manifest_file.with_suffix('.json')
+        )  # Name back
 
     def test_spa_settings(self):
         """Test the 'spa_settings' template tag"""
         resp = spa_helper.spa_settings()
         self.assertTrue(resp.startswith('<script>window.INVENTREE_SETTINGS='))
-        settings_data_string = resp.replace('<script>window.INVENTREE_SETTINGS=', '').replace('</script>', '')
+        settings_data_string = resp.replace(
+            '<script>window.INVENTREE_SETTINGS=', ''
+        ).replace('</script>', '')
         settings_data = json.loads(settings_data_string)
         self.assertSettings(settings_data)
 
@@ -61,8 +68,8 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertTrue(rsp['show_server_selector'])
 
         # No debug, serverlist -> no selector
-        envs = {'INVENTREE_PUI_SETTINGS': json.dumps({'server_list': ['aa', 'bb',]})}
+        envs = {'INVENTREE_PUI_SETTINGS': json.dumps({'server_list': ['aa', 'bb']})}
         with mock.patch.dict(os.environ, envs):
             rsp = get_frontend_settings(False)
             self.assertFalse('show_server_selector' in rsp)
-            self.assertEqual(rsp['server_list'], ['aa', 'bb',])
+            self.assertEqual(rsp['server_list'], ['aa', 'bb'])

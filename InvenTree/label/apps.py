@@ -14,7 +14,7 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 import InvenTree.ready
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 def hashFile(filename):
@@ -36,23 +36,37 @@ class LabelConfig(AppConfig):
     def ready(self):
         """This function is called whenever the label app is loaded."""
         # skip loading if plugin registry is not loaded or we run in a background thread
-        if not InvenTree.ready.isPluginRegistryLoaded() or not InvenTree.ready.isInMainThread():
+        if (
+            not InvenTree.ready.isPluginRegistryLoaded()
+            or not InvenTree.ready.isInMainThread()
+        ):
             return
 
         if InvenTree.ready.isRunningMigrations():
             return
 
-        if InvenTree.ready.canAppAccessDatabase(allow_test=False) and not InvenTree.ready.isImportingData():
+        if (
+            InvenTree.ready.canAppAccessDatabase(allow_test=False)
+            and not InvenTree.ready.isImportingData()
+        ):
             try:
                 self.create_labels()  # pragma: no cover
-            except (AppRegistryNotReady, IntegrityError, OperationalError, ProgrammingError):
+            except (
+                AppRegistryNotReady,
+                IntegrityError,
+                OperationalError,
+                ProgrammingError,
+            ):
                 # Database might not yet be ready
-                warnings.warn('Database was not ready for creating labels', stacklevel=2)
+                warnings.warn(
+                    'Database was not ready for creating labels', stacklevel=2
+                )
 
     def create_labels(self):
         """Create all default templates."""
         # Test if models are ready
         import label.models
+
         assert bool(label.models.StockLocationLabel is not None)
 
         # Create the categories
@@ -66,7 +80,7 @@ class LabelConfig(AppConfig):
                     'description': 'Simple QR code label',
                     'width': 24,
                     'height': 24,
-                },
+                }
             ],
         )
 
@@ -87,8 +101,8 @@ class LabelConfig(AppConfig):
                     'description': 'Label with QR code and name of location',
                     'width': 50,
                     'height': 24,
-                }
-            ]
+                },
+            ],
         )
 
         self.create_labels_category(
@@ -109,7 +123,7 @@ class LabelConfig(AppConfig):
                     'width': 70,
                     'height': 24,
                 },
-            ]
+            ],
         )
 
         self.create_labels_category(
@@ -122,24 +136,16 @@ class LabelConfig(AppConfig):
                     'description': 'Example build line label',
                     'width': 125,
                     'height': 48,
-                },
-            ]
+                }
+            ],
         )
 
     def create_labels_category(self, model, ref_name, labels):
         """Create folder and database entries for the default templates, if they do not already exist."""
         # Create root dir for templates
-        src_dir = Path(__file__).parent.joinpath(
-            'templates',
-            'label',
-            ref_name,
-        )
+        src_dir = Path(__file__).parent.joinpath('templates', 'label', ref_name)
 
-        dst_dir = settings.MEDIA_ROOT.joinpath(
-            'label',
-            'inventree',
-            ref_name,
-        )
+        dst_dir = settings.MEDIA_ROOT.joinpath('label', 'inventree', ref_name)
 
         if not dst_dir.exists():
             logger.info("Creating required directory: '%s'", dst_dir)
@@ -151,12 +157,7 @@ class LabelConfig(AppConfig):
 
     def create_template_label(self, model, src_dir, ref_name, label):
         """Ensure a label template is in place."""
-        filename = os.path.join(
-            'label',
-            'inventree',
-            ref_name,
-            label['file']
-        )
+        filename = os.path.join('label', 'inventree', ref_name, label['file'])
 
         src_file = src_dir.joinpath(label['file'])
         dst_file = settings.MEDIA_ROOT.joinpath(filename)
@@ -187,7 +188,10 @@ class LabelConfig(AppConfig):
             if model.objects.filter(label=filename).exists():
                 return  # pragma: no cover
         except Exception:
-            logger.exception("Failed to query label for '%s' - you should run 'invoke update' first!", filename)
+            logger.exception(
+                "Failed to query label for '%s' - you should run 'invoke update' first!",
+                filename,
+            )
 
         logger.info("Creating entry for %s '%s'", model, label['name'])
 

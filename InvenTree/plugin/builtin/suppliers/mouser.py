@@ -12,18 +12,18 @@ from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 class MouserPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the Mouser API into Inventree."""
 
-    NAME = "MouserPlugin"
-    TITLE = _("Supplier Integration - Mouser")
-    DESCRIPTION = _("Provides support for scanning Mouser barcodes")
-    VERSION = "1.0.0"
-    AUTHOR = _("InvenTree contributors")
+    NAME = 'MouserPlugin'
+    TITLE = _('Supplier Integration - Mouser')
+    DESCRIPTION = _('Provides support for scanning Mouser barcodes')
+    VERSION = '1.0.0'
+    AUTHOR = _('InvenTree contributors')
 
-    DEFAULT_SUPPLIER_NAME = "Mouser"
+    DEFAULT_SUPPLIER_NAME = 'Mouser'
     SETTINGS = {
-        "SUPPLIER_ID": {
-            "name": _("Supplier"),
-            "description": _("The Supplier which acts as 'Mouser'"),
-            "model": "company.company",
+        'SUPPLIER_ID': {
+            'name': _('Supplier'),
+            'description': _("The Supplier which acts as 'Mouser'"),
+            'model': 'company.company',
         }
     }
 

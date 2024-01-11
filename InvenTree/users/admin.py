@@ -18,17 +18,34 @@ class ApiTokenAdmin(admin.ModelAdmin):
 
     list_display = ('token', 'user', 'name', 'expiry', 'active')
     list_filter = ('user', 'revoked')
-    fields = ('token', 'user', 'name', 'created', 'last_seen', 'revoked', 'expiry', 'metadata')
+    fields = (
+        'token',
+        'user',
+        'name',
+        'created',
+        'last_seen',
+        'revoked',
+        'expiry',
+        'metadata',
+    )
 
     def get_fields(self, request, obj=None):
         """Return list of fields to display."""
 
         if obj:
-            fields = ['token',]
+            fields = ['token']
         else:
-            fields = ['key',]
+            fields = ['key']
 
-        fields += ['user', 'name', 'created', 'last_seen', 'revoked', 'expiry', 'metadata']
+        fields += [
+            'user',
+            'name',
+            'created',
+            'last_seen',
+            'revoked',
+            'expiry',
+            'metadata',
+        ]
 
         return fields
 
@@ -67,12 +84,10 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
 
     class Meta:
         """Metaclass defines extra fields"""
+
         model = Group
         exclude = []
-        fields = [
-            'name',
-            'users',
-        ]
+        fields = ['name', 'users']
 
     def __init__(self, *args, **kwargs):  # pragma: no cover
         """Populate the 'users' field with the users in the current group"""
@@ -88,7 +103,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
         required=False,
         widget=FilteredSelectMultiple('users', False),
         label=_('Users'),
-        help_text=_('Select which users are assigned to this group')
+        help_text=_('Select which users are assigned to this group'),
     )
 
     def save_m2m(self):  # pragma: no cover
@@ -109,12 +124,21 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
 
     form = InvenTreeGroupAdminForm
 
-    inlines = [
-        RuleSetInline,
-    ]
+    inlines = [RuleSetInline]
 
-    list_display = ('name', 'admin', 'part_category', 'part', 'stocktake', 'stock_location',
-                    'stock_item', 'build', 'purchase_order', 'sales_order', 'return_order')
+    list_display = (
+        'name',
+        'admin',
+        'part_category',
+        'part',
+        'stocktake',
+        'stock_location',
+        'stock_item',
+        'build',
+        'purchase_order',
+        'sales_order',
+        'return_order',
+    )
 
     def get_rule_set(self, obj, rule_set_type):
         """Return list of permissions for the given ruleset."""
@@ -222,14 +246,13 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
 
         # If any, display warning message when group is saved
         if len(multiple_group_users) > 0:
-
-            msg = _("The following users are members of multiple groups") + ": " + ", ".join(multiple_group_users)
-
-            messages.add_message(
-                request,
-                messages.WARNING,
-                msg
+            msg = (
+                _('The following users are members of multiple groups')
+                + ': '
+                + ', '.join(multiple_group_users)
             )
+
+            messages.add_message(request, messages.WARNING, msg)
 
     def save_formset(self, request, form, formset, change):
         """Save the inline formset"""
@@ -247,19 +270,29 @@ class InvenTreeUserAdmin(UserAdmin):
 
     (And it's confusing!)
     """
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'last_login')  # display last connection for each user in user admin panel.
+
+    list_display = (
+        'username',
+        'email',
+        'first_name',
+        'last_name',
+        'is_staff',
+        'last_login',
+    )  # display last connection for each user in user admin panel.
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
-        (_('Permissions'), {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups'),
-        }),
+        (
+            _('Permissions'),
+            {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups')},
+        ),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
 
 
 class OwnerAdmin(admin.ModelAdmin):
     """Custom admin interface for the Owner model."""
+
     pass
 
 

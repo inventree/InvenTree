@@ -19,14 +19,16 @@ def validate_json(value):
         raise ValidationError(str(e))
 
 
-class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin):
+class SampleIntegrationPlugin(
+    AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin
+):
     """A full plugin example."""
 
-    NAME = "SampleIntegrationPlugin"
-    SLUG = "sample"
-    TITLE = "Sample Plugin"
+    NAME = 'SampleIntegrationPlugin'
+    SLUG = 'sample'
+    TITLE = 'Sample Plugin'
 
-    NAVIGATION_TAB_NAME = "Sample Nav"
+    NAVIGATION_TAB_NAME = 'Sample Nav'
     NAVIGATION_TAB_ICON = 'fas fa-plus'
 
     def view_test(self, request):
@@ -64,14 +66,9 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             'default': 123,
         },
         'CHOICE_SETTING': {
-            'name': _("Choice Setting"),
+            'name': _('Choice Setting'),
             'description': _('A setting with multiple choices'),
-            'choices': [
-                ('A', 'Anaconda'),
-                ('B', 'Bat'),
-                ('C', 'Cat'),
-                ('D', 'Dog'),
-            ],
+            'choices': [('A', 'Anaconda'), ('B', 'Bat'), ('C', 'Cat'), ('D', 'Dog')],
             'default': 'A',
         },
         'SELECT_COMPANY': {
@@ -94,9 +91,7 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             'name': 'JSON validator Setting',
             'description': 'A setting using a JSON validator',
             'validator': validate_json,
-        }
+        },
     }
 
-    NAVIGATION = [
-        {'name': 'SampleIntegration', 'link': 'plugin:sample:hi'},
-    ]
+    NAVIGATION = [{'name': 'SampleIntegration', 'link': 'plugin:sample:hi'}]

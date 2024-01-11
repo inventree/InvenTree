@@ -16,11 +16,12 @@ import InvenTree.ready
 import InvenTree.tasks
 from InvenTree.config import get_setting
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class InvenTreeConfig(AppConfig):
     """AppConfig for inventree app."""
+
     name = 'InvenTree'
 
     def ready(self):
@@ -36,7 +37,10 @@ class InvenTreeConfig(AppConfig):
         - Adding users set in the current environment
         """
         # skip loading if plugin registry is not loaded or we run in a background thread
-        if not InvenTree.ready.isPluginRegistryLoaded() or not InvenTree.ready.isInMainThread():
+        if (
+            not InvenTree.ready.isPluginRegistryLoaded()
+            or not InvenTree.ready.isInMainThread()
+        ):
             return
 
         # Skip if running migrations
@@ -44,7 +48,6 @@ class InvenTreeConfig(AppConfig):
             return
 
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
-
             self.remove_obsolete_tasks()
 
             self.collect_tasks()
@@ -81,11 +84,11 @@ class InvenTreeConfig(AppConfig):
         try:
             Schedule.objects.filter(func__in=obsolete).delete()
         except Exception:
-            logger.exception("Failed to remove obsolete tasks - database not ready")
+            logger.exception('Failed to remove obsolete tasks - database not ready')
 
     def start_background_tasks(self):
         """Start all background tests for InvenTree."""
-        logger.info("Starting background tasks...")
+        logger.info('Starting background tasks...')
 
         from django_q.models import Schedule
 
@@ -102,15 +105,16 @@ class InvenTreeConfig(AppConfig):
         tasks = InvenTree.tasks.tasks.task_list
 
         for task in tasks:
-
             ref_name = f'{task.func.__module__}.{task.func.__name__}'
 
             if ref_name in existing_tasks.keys():
                 # This task already exists - update the details if required
                 existing_task = existing_tasks[ref_name]
 
-                if existing_task.schedule_type != task.interval or existing_task.minutes != task.minutes:
-
+                if (
+                    existing_task.schedule_type != task.interval
+                    or existing_task.minutes != task.minutes
+                ):
                     existing_task.schedule_type = task.interval
                     existing_task.minutes = task.minutes
                     tasks_to_update.append(existing_task)
@@ -128,20 +132,17 @@ class InvenTreeConfig(AppConfig):
 
         if len(tasks_to_create) > 0:
             Schedule.objects.bulk_create(tasks_to_create)
-            logger.info("Created %s new scheduled tasks", len(tasks_to_create))
+            logger.info('Created %s new scheduled tasks', len(tasks_to_create))
 
         if len(tasks_to_update) > 0:
             Schedule.objects.bulk_update(tasks_to_update, ['schedule_type', 'minutes'])
-            logger.info("Updated %s existing scheduled tasks", len(tasks_to_update))
+            logger.info('Updated %s existing scheduled tasks', len(tasks_to_update))
 
         # Put at least one task onto the background worker stack,
         # which will be processed as soon as the worker comes online
-        InvenTree.tasks.offload_task(
-            InvenTree.tasks.heartbeat,
-            force_async=True,
-        )
+        InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat, force_async=True)
 
-        logger.info("Started %s scheduled background tasks...", len(tasks))
+        logger.info('Started %s scheduled background tasks...', len(tasks))
 
     def collect_tasks(self):
         """Collect all background tasks."""
@@ -153,7 +154,7 @@ class InvenTreeConfig(AppConfig):
                 try:
                     import_module(f'{app.module.__package__}.tasks')
                 except Exception as e:  # pragma: no cover
-                    logger.exception("Error loading tasks for %s: %s", app_name, e)
+                    logger.exception('Error loading tasks for %s: %s', app_name, e)
 
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.
@@ -184,16 +185,20 @@ class InvenTreeConfig(AppConfig):
 
                 if last_update is None:
                     # Never been updated
-                    logger.info("Exchange backend has never been updated")
+                    logger.info('Exchange backend has never been updated')
                     update = True
 
                 # Backend currency has changed?
                 if base_currency != backend.base_currency:
-                    logger.info("Base currency changed from %s to %s", backend.base_currency, base_currency)
+                    logger.info(
+                        'Base currency changed from %s to %s',
+                        backend.base_currency,
+                        base_currency,
+                    )
                     update = True
 
-        except (ExchangeBackend.DoesNotExist):
-            logger.info("Exchange backend not found - updating")
+        except ExchangeBackend.DoesNotExist:
+            logger.info('Exchange backend not found - updating')
             update = True
 
         except Exception:
@@ -204,9 +209,9 @@ class InvenTreeConfig(AppConfig):
             try:
                 update_exchange_rates()
             except OperationalError:
-                logger.warning("Could not update exchange rates - database not ready")
+                logger.warning('Could not update exchange rates - database not ready')
             except Exception as e:
-                logger.exception("Error updating exchange rates: %s (%s)", e, type(e))
+                logger.exception('Error updating exchange rates: %s (%s)', e, type(e))
 
     def add_user_on_startup(self):
         """Add a user on startup."""
@@ -218,7 +223,9 @@ class InvenTreeConfig(AppConfig):
         add_user = get_setting('INVENTREE_ADMIN_USER', 'admin_user')
         add_email = get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email')
         add_password = get_setting('INVENTREE_ADMIN_PASSWORD', 'admin_password')
-        add_password_file = get_setting("INVENTREE_ADMIN_PASSWORD_FILE", "admin_password_file", None)
+        add_password_file = get_setting(
+            'INVENTREE_ADMIN_PASSWORD_FILE', 'admin_password_file', None
+        )
 
         # check if all values are present
         set_variables = 0
@@ -239,7 +246,9 @@ class InvenTreeConfig(AppConfig):
             # if a password file is present, do not warn - will be handled later
             if add_password_file:
                 return
-            logger.warning('Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD')
+            logger.warning(
+                'Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD'
+            )
             return
 
         # good to go -> create user
@@ -253,9 +262,11 @@ class InvenTreeConfig(AppConfig):
         try:
             with transaction.atomic():
                 if user.objects.filter(username=add_user).exists():
-                    logger.info("User %s already exists - skipping creation", add_user)
+                    logger.info('User %s already exists - skipping creation', add_user)
                 else:
-                    new_user = user.objects.create_superuser(add_user, add_email, add_password)
+                    new_user = user.objects.create_superuser(
+                        add_user, add_email, add_password
+                    )
                     logger.info('User %s was created!', str(new_user))
         except IntegrityError:
             logger.warning('The user "%s" could not be created', add_user)
@@ -263,12 +274,12 @@ class InvenTreeConfig(AppConfig):
     def add_user_from_file(self):
         """Add the superuser from a file."""
         # stop if checks were already created
-        if hasattr(settings, "USER_ADDED_FILE") and settings.USER_ADDED_FILE:
+        if hasattr(settings, 'USER_ADDED_FILE') and settings.USER_ADDED_FILE:
             return
 
         # get values
         add_password_file = get_setting(
-            "INVENTREE_ADMIN_PASSWORD_FILE", "admin_password_file", None
+            'INVENTREE_ADMIN_PASSWORD_FILE', 'admin_password_file', None
         )
 
         # no variable set -> do not try anything
@@ -284,7 +295,11 @@ class InvenTreeConfig(AppConfig):
             return
 
         # good to go -> create user
-        self._create_admin_user(get_setting('INVENTREE_ADMIN_USER', 'admin_user', 'admin'), get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email', ''), add_password_file.read_text(encoding="utf-8"))
+        self._create_admin_user(
+            get_setting('INVENTREE_ADMIN_USER', 'admin_user', 'admin'),
+            get_setting('INVENTREE_ADMIN_EMAIL', 'admin_email', ''),
+            add_password_file.read_text(encoding='utf-8'),
+        )
 
         # do not try again
         settings.USER_ADDED_FILE = True
