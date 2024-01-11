@@ -209,6 +209,7 @@ class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
     EXTRA_FIELDS = ['method']
 
     method = serializers.CharField(read_only=True)
+    typ = serializers.CharField(read_only=True)
 
 
 class PluginRegistryErrorSerializer(serializers.Serializer):
