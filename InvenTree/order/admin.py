@@ -7,6 +7,7 @@ from import_export import widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
+import stock.models
 from InvenTree.admin import InvenTreeResource
 from order import models
 
@@ -172,6 +173,11 @@ class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
     MPN = Field(attribute='part__MPN', readonly=True)
 
     SKU = Field(attribute='part__SKU', readonly=True)
+
+    destination = Field(
+        attribute='destination',
+        widget=widgets.ForeignKeyWidget(stock.models.StockLocation),
+    )
 
     def dehydrate_purchase_price(self, line):
         """Return a string value of the 'purchase_price' field, rather than the 'Money' object."""
