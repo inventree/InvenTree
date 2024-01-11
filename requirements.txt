@@ -174,7 +174,9 @@ et-xmlfile==1.1.0
 feedparser==6.0.10
     # via -r requirements.in
 fonttools[woff]==4.44.0
-    # via weasyprint
+    # via
+    #   fonttools
+    #   weasyprint
 googleapis-common-protos==1.62.0
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -190,7 +192,10 @@ icalendar==5.0.11
 idna==3.4
     # via requests
 importlib-metadata==6.8.0
-    # via opentelemetry-api
+    # via
+    #   django-q2
+    #   markdown
+    #   opentelemetry-api
 inflection==0.5.1
     # via drf-spectacular
 itypes==1.2.0
@@ -378,6 +383,7 @@ tinycss2==1.2.1
     #   weasyprint
 typing-extensions==4.8.0
     # via
+    #   asgiref
     #   opentelemetry-sdk
     #   py-moneyed
     #   qrcode
