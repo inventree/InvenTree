@@ -640,6 +640,7 @@ class PartSerializer(
             'initial_stock',
             'initial_supplier',
             'copy_category_parameters',
+            'existing_image',
         ]
 
         return fields
