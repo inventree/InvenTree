@@ -592,7 +592,10 @@ class PartSerializer(InvenTree.serializers.RemoteImageMixin, InvenTree.serialize
 
         if not create:
             # These fields are only used for the LIST API endpoint
-            for f in self.skip_create_fields()[1:]:
+            for f in self.skip_create_fields():
+                # Fields required for certain operations, but are not part of the model
+                if f in ["remote_image", "existing_image"]:
+                    continue
                 self.fields.pop(f)
 
         if not pricing:
