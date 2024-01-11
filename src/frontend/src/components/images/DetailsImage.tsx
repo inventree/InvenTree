@@ -3,7 +3,6 @@ import {
   Button,
   Group,
   Image,
-  MantineTheme,
   Modal,
   Paper,
   Text,
