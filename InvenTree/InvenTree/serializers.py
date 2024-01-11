@@ -12,9 +12,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-import common.models as common_models
 import tablib
-from common.settings import currency_code_default, currency_code_mappings
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
@@ -25,6 +23,8 @@ from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
+import common.models as common_models
+from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 from InvenTree.helpers_model import download_image_from_url
 

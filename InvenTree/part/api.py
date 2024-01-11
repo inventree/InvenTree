@@ -8,16 +8,15 @@ from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-import order.models
-from build.models import Build, BuildItem
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from stock.models import StockLocation
 
+import order.models
 import part.filters
+from build.models import Build, BuildItem
 from InvenTree.api import (
     APIDownloadMixin,
     AttachmentMixin,
@@ -55,6 +54,7 @@ from InvenTree.status_codes import (
     SalesOrderStatusGroups,
 )
 from part.admin import PartCategoryResource, PartResource
+from stock.models import StockLocation
 
 from . import serializers as part_serializers
 from . import views

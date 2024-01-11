@@ -25,9 +25,9 @@ from maintenance_mode.core import (
     maintenance_mode_on,
     set_maintenance_mode,
 )
-from plugin import registry
 
 from InvenTree.config import get_setting
+from plugin import registry
 
 from .version import isInvenTreeUpToDate
 
@@ -91,7 +91,6 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     which are used to keep a running track of when the particular task was was last run.
     """
     from common.models import InvenTreeSetting
-
     from InvenTree.ready import isInTestMode
 
     if n_days <= 0:
@@ -368,8 +367,9 @@ def heartbeat():
 def delete_successful_tasks():
     """Delete successful task logs which are older than a specified period."""
     try:
-        from common.models import InvenTreeSetting
         from django_q.models import Success
+
+        from common.models import InvenTreeSetting
 
         days = InvenTreeSetting.get_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
         threshold = timezone.now() - timedelta(days=days)
@@ -391,8 +391,9 @@ def delete_successful_tasks():
 def delete_failed_tasks():
     """Delete failed task logs which are older than a specified period."""
     try:
-        from common.models import InvenTreeSetting
         from django_q.models import Failure
+
+        from common.models import InvenTreeSetting
 
         days = InvenTreeSetting.get_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
         threshold = timezone.now() - timedelta(days=days)
@@ -412,8 +413,9 @@ def delete_failed_tasks():
 def delete_old_error_logs():
     """Delete old error logs from the server."""
     try:
-        from common.models import InvenTreeSetting
         from error_report.models import Error
+
+        from common.models import InvenTreeSetting
 
         days = InvenTreeSetting.get_setting('INVENTREE_DELETE_ERRORS_DAYS', 30)
         threshold = timezone.now() - timedelta(days=days)
@@ -556,10 +558,10 @@ def update_exchange_rates(force: bool = False):
         force: If True, force the update to run regardless of the last update time
     """
     try:
-        from common.models import InvenTreeSetting
-        from common.settings import currency_code_default, currency_codes
         from djmoney.contrib.exchange.models import Rate
 
+        from common.models import InvenTreeSetting
+        from common.settings import currency_code_default, currency_codes
         from InvenTree.exchange import InvenTreeExchange
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!

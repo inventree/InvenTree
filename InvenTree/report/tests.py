@@ -11,15 +11,15 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils.safestring import SafeString
 
-from build.models import Build
-from common.models import InvenTreeSetting, InvenTreeUserSetting
 from PIL import Image
-from stock.models import StockItem, StockItemAttachment
 
 import report.models as report_models
+from build.models import Build
+from common.models import InvenTreeSetting, InvenTreeUserSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
+from stock.models import StockItem, StockItemAttachment
 
 
 class ReportTagTest(TestCase):

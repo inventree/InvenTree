@@ -4,9 +4,10 @@ import logging
 
 from django.db.transaction import atomic
 
-from common.settings import currency_code_default, currency_codes
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+
+from common.settings import currency_code_default, currency_codes
 
 logger = logging.getLogger('inventree')
 

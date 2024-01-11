@@ -5,21 +5,21 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
-import users.models
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiResponse, extend_schema
-from part.templatetags.inventree_extras import plugins_info
-from plugin.serializers import MetadataSerializer
 from rest_framework import permissions, serializers
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
-from users.models import ApiToken
 
 import InvenTree.version
+import users.models
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
+from part.templatetags.inventree_extras import plugins_info
+from plugin.serializers import MetadataSerializer
+from users.models import ApiToken
 
 from .email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI

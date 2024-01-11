@@ -19,9 +19,9 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-import common.models as common_models
 from rest_framework.authtoken.models import Token as AuthToken
 
+import common.models as common_models
 import InvenTree.helpers
 import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase

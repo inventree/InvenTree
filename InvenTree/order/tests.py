@@ -8,15 +8,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
 
-import common.models
-from company.models import Company, SupplierPart
 from djmoney.money import Money
+
+import common.models
+import order.tasks
+from company.models import Company, SupplierPart
+from InvenTree.status_codes import PurchaseOrderStatus
 from part.models import Part
 from stock.models import StockItem, StockLocation
 from users.models import Owner
-
-import order.tasks
-from InvenTree.status_codes import PurchaseOrderStatus
 
 from .models import PurchaseOrder, PurchaseOrderExtraLine, PurchaseOrderLineItem
 

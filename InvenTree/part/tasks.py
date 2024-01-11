@@ -12,7 +12,6 @@ import common.models
 import common.notifications
 import common.settings
 import company.models
-
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks

@@ -4,10 +4,9 @@ from django.urls import reverse
 
 import company.models
 import order.models
+from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 from stock.models import StockItem
-
-from InvenTree.unit_test import InvenTreeAPITestCase
 
 
 class BarcodeAPITest(InvenTreeAPITestCase):

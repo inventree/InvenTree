@@ -15,11 +15,11 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 import PIL
-from plugin import registry
-from plugin.models import NotificationUserSetting
 
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
+from plugin import registry
+from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (
@@ -876,9 +876,8 @@ class CommonTest(InvenTreeAPITestCase):
 
     def test_restart_flag(self):
         """Test that the restart flag is reset on start."""
-        from plugin import registry
-
         import common.models
+        from plugin import registry
 
         # set flag true
         common.models.InvenTreeSetting.set_setting(

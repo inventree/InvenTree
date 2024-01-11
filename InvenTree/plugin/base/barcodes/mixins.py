@@ -11,9 +11,8 @@ from django.utils.translation import gettext_lazy as _
 
 from company.models import Company, SupplierPart
 from order.models import PurchaseOrder, PurchaseOrderStatus
-from stock.models import StockLocation
-
 from plugin.base.integration.SettingsMixin import SettingsMixin
+from stock.models import StockLocation
 
 logger = logging.getLogger('inventree')
 

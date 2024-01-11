@@ -3,14 +3,14 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from company.models import SupplierPart
 from import_export import widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from stock.models import StockLocation
 
+from company.models import SupplierPart
 from InvenTree.admin import InvenTreeResource
 from part import models
+from stock.models import StockLocation
 
 
 class PartResource(InvenTreeResource):

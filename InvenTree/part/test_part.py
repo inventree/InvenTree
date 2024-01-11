@@ -8,6 +8,8 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from allauth.account.models import EmailAddress
+
+import part.settings
 from common.models import (
     InvenTreeSetting,
     InvenTreeUserSetting,
@@ -15,8 +17,6 @@ from common.models import (
     NotificationMessage,
 )
 from common.notifications import UIMessageNotification, storage
-
-import part.settings
 from InvenTree import version
 from InvenTree.unit_test import InvenTreeTestCase
 

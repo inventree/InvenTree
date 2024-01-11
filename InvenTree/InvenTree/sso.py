@@ -3,7 +3,6 @@
 import logging
 
 from common.models import InvenTreeSetting
-
 from InvenTree.helpers import str2bool
 
 logger = logging.getLogger('inventree')

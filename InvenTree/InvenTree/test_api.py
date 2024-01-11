@@ -5,9 +5,9 @@ from base64 import b64encode
 from django.urls import reverse
 
 from rest_framework import status
-from users.models import RuleSet, update_group_roles
 
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from users.models import RuleSet, update_group_roles
 
 
 class HTMLAPITests(InvenTreeTestCase):

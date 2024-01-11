@@ -19,11 +19,11 @@ from django.utils.translation import gettext_lazy as _
 
 import regex
 from bleach import clean
-from common.settings import currency_code_default
 from djmoney.money import Money
 from PIL import Image
 
 import InvenTree.version
+from common.settings import currency_code_default
 
 from .settings import MEDIA_URL, STATIC_URL
 

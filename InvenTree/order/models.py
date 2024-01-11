@@ -17,25 +17,23 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-import common.models as common_models
-import stock.models
-import users.models as UserModels
-from common.notifications import InvenTreeNotificationBodies
-from common.settings import currency_code_default
-from company.models import Address, Company, Contact, SupplierPart
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from generic.states import StateTransitionMixin
 from mptt.models import TreeForeignKey
-from part import models as PartModels
-from plugin.events import trigger_event
 
+import common.models as common_models
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import stock.models
+import users.models as UserModels
+from common.notifications import InvenTreeNotificationBodies
+from common.settings import currency_code_default
+from company.models import Address, Company, Contact, SupplierPart
+from generic.states import StateTransitionMixin
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (
     InvenTreeModelMoneyField,
@@ -62,6 +60,8 @@ from InvenTree.status_codes import (
     StockHistoryCode,
     StockStatus,
 )
+from part import models as PartModels
+from plugin.events import trigger_event
 
 logger = logging.getLogger('inventree')
 

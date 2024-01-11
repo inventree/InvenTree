@@ -5,7 +5,6 @@ from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
-
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 from .models import (

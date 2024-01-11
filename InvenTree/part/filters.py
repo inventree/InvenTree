@@ -36,10 +36,10 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 
-import stock.models
 from sql_util.utils import SubquerySum
 
 import part.models
+import stock.models
 from InvenTree.status_codes import (
     BuildStatusGroups,
     PurchaseOrderStatusGroups,

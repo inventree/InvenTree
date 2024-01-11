@@ -12,7 +12,7 @@ exclude = [
     ".venv",
     ".env",
 ]
-src = ["../InvenTree"]
+src = ["InvenTree"]
 # line-length = 120
 
 [tool.ruff.extend-per-file-ignores]
@@ -63,7 +63,7 @@ section-order = [
 "django" = ["django"]
 
 [tool.ruff.format]
-quote-style = "preserve"
+quote-style = "single"
 indent-style = "space"
 skip-magic-trailing-comma = true
 line-ending = "auto"

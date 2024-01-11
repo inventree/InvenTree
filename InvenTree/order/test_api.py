@@ -9,14 +9,12 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
-from common.settings import currency_codes
-from company.models import Company
 from djmoney.money import Money
 from icalendar import Calendar
-from part.models import Part
 from rest_framework import status
-from stock.models import StockItem
 
+from common.settings import currency_codes
+from company.models import Company
 from InvenTree.status_codes import (
     PurchaseOrderStatus,
     ReturnOrderLineStatus,
@@ -27,6 +25,8 @@ from InvenTree.status_codes import (
 )
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
+from part.models import Part
+from stock.models import StockItem
 
 
 class OrderTest(InvenTreeAPITestCase):

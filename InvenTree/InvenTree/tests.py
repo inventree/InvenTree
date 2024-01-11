@@ -17,22 +17,22 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 import pint.errors
-from common.models import CustomUnit, InvenTreeSetting
-from common.settings import currency_codes
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
-from part.models import Part, PartCategory
 from sesame.utils import get_user
-from stock.models import StockItem, StockLocation
 
 import InvenTree.conversion
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
+from common.models import CustomUnit, InvenTreeSetting
+from common.settings import currency_codes
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
+from part.models import Part, PartCategory
+from stock.models import StockItem, StockLocation
 
 from . import config, helpers, ready, status, version
 from .tasks import offload_task

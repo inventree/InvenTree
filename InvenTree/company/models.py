@@ -15,19 +15,19 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy as __
 
-import common.models
-import common.settings
-from common.settings import currency_code_default
 from moneyed import CURRENCIES
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
+import common.models
+import common.settings
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
+from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from InvenTree.models import (
     InvenTreeAttachment,

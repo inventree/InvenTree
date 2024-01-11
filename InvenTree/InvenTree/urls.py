@@ -10,6 +10,14 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
+from dj_rest_auth.registration.views import (
+    ConfirmEmailView,
+    SocialAccountDisconnectView,
+    SocialAccountListView,
+)
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
+from sesame.views import LoginView
+
 import build.api
 import common.api
 import company.api
@@ -23,16 +31,9 @@ import users.api
 from build.urls import build_urls
 from common.urls import common_urls
 from company.urls import company_urls, manufacturer_part_urls, supplier_part_urls
-from dj_rest_auth.registration.views import (
-    ConfirmEmailView,
-    SocialAccountDisconnectView,
-    SocialAccountListView,
-)
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from order.urls import order_urls
 from part.urls import part_urls
 from plugin.urls import get_plugin_urls
-from sesame.views import LoginView
 from stock.urls import stock_urls
 from web.urls import urlpatterns as platform_urls
 

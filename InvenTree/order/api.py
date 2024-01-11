@@ -7,18 +7,16 @@ from django.http.response import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-import common.models as common_models
-from common.settings import settings
-from company.models import SupplierPart
 from django_filters import rest_framework as rest_filters
 from django_ical.views import ICalFeed
-from generic.states.api import StatusView
-from part.models import Part
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from users.models import Owner
 
+import common.models as common_models
+from common.settings import settings
+from company.models import SupplierPart
+from generic.states.api import StatusView
 from InvenTree.api import (
     APIDownloadMixin,
     AttachmentMixin,
@@ -47,6 +45,8 @@ from order.admin import (
     SalesOrderLineItemResource,
     SalesOrderResource,
 )
+from part.models import Part
+from users.models import Owner
 
 
 class GeneralExtraLineList(APIDownloadMixin):

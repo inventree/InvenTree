@@ -8,7 +8,6 @@ from collections import OrderedDict
 from django.utils.translation import gettext as _
 
 from company.models import ManufacturerPart, SupplierPart
-
 from InvenTree.helpers import DownloadFile, GetExportFormats, normalize, str2bool
 
 from .admin import BomItemResource

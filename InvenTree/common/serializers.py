@@ -4,7 +4,6 @@ from django.urls import reverse
 
 from flags.state import flag_state
 from rest_framework import serializers
-from users.serializers import OwnerSerializer
 
 import common.models as common_models
 from InvenTree.helpers import get_objectreference
@@ -13,6 +12,7 @@ from InvenTree.serializers import (
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
 )
+from users.serializers import OwnerSerializer
 
 
 class SettingsValueField(serializers.Field):
