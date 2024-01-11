@@ -20,7 +20,6 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 
-from InvenTree.config import get_boolean_setting, get_setting
 from InvenTree.version import inventreeVersion
 
 
