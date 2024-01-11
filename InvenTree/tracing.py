@@ -33,7 +33,7 @@ def setup_tracing():
     if not tracing_enabled():
         return
 
-    # gather the required environment variables
+    # Gather the required environment variables
     headers, endpoint, resource = setup_src()
     console_log = False
 
@@ -65,7 +65,6 @@ def setup_tracing():
     # Logs
     log_exporter = OTLPLogExporter(headers=headers, endpoint=endpoint)
     log_provider = logs.LoggerProvider(resource=resource)
-    # logs.set_log_emitter_provider(log_provider)
     log_provider.add_log_record_processor(
         logs_export.BatchLogRecordProcessor(log_exporter)
     )
