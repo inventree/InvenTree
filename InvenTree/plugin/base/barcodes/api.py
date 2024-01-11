@@ -144,15 +144,15 @@ class BarcodeAssign(BarcodeView):
         Checks inputs and assign barcode (hash) to StockItem.
         """
         # Here we only check against 'InvenTree' plugins
-        plugins = registry.with_mixin('barcode', builtin=True)
+        inventree_barcode_plugin = registry.get_plugin('inventreebarcode')
 
         # First check if the provided barcode matches an existing database entry
-        for plugin in plugins:
-            result = plugin.scan(barcode)
+        if inventree_barcode_plugin:
+            result = inventree_barcode_plugin.scan(barcode)
 
             if result is not None:
                 result['error'] = _('Barcode matches existing item')
-                result['plugin'] = plugin.name
+                result['plugin'] = inventree_barcode_plugin.name
                 result['barcode_data'] = barcode
 
                 raise ValidationError(result)
