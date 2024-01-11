@@ -1575,7 +1575,7 @@ class PartDetailTests(PartAPITestBase):
         self.assertEqual(response.data['image'], image_name)
 
     def test_update_existing_image(self):
-        """Test that we can update the image of an existing part with an already existing image"""
+        """Test that we can update the image of an existing part with an already existing image."""
         # First, upload an image for an existing part
         p = Part.objects.first()
 
@@ -1587,10 +1587,7 @@ class PartDetailTests(PartAPITestBase):
         # Upload the image to a part
         with open(fn, 'rb') as img_file:
             response = self.upload_client.patch(
-                reverse('api-part-detail', kwargs={'pk': p.pk}),
-                {
-                    'image': img_file,
-                },
+                reverse('api-part-detail', kwargs={'pk': p.pk}), {'image': img_file}
             )
 
             self.assertEqual(response.status_code, 200)
@@ -1603,9 +1600,9 @@ class PartDetailTests(PartAPITestBase):
             {
                 'name': 'Some New Part',
                 'description': 'Description of the part',
-                'category': 1
+                'category': 1,
             },
-            expected_code=201
+            expected_code=201,
         )
 
         self.assertEqual(response.data['image'], None)
@@ -1614,10 +1611,8 @@ class PartDetailTests(PartAPITestBase):
         # Add image from the first part to the new part
         response = self.patch(
             reverse('api-part-detail', kwargs={'pk': part_pk}),
-            {
-                'existing_image': image_name
-            },
-            expected_code=200
+            {'existing_image': image_name},
+            expected_code=200,
         )
 
         self.assertEqual(response.data['image'], image_name)
@@ -1626,10 +1621,8 @@ class PartDetailTests(PartAPITestBase):
         last_p = Part.objects.last()
         response = self.patch(
             reverse('api-part-detail', kwargs={'pk': last_p.pk}),
-            {
-                'existing_image': 'bogus_image.jpg'
-            },
-            expected_code=400
+            {'existing_image': 'bogus_image.jpg'},
+            expected_code=400,
         )
 
     def test_details(self):
