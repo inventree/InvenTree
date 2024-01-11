@@ -10,7 +10,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 import common.models
-
 import InvenTree.models
 from plugin import InvenTreePlugin, registry
 

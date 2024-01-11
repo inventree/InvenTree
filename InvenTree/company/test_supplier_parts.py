@@ -4,10 +4,9 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 
-from part.models import Part
-
 from company.models import Company, SupplierPart
 from InvenTree.unit_test import InvenTreeTestCase
+from part.models import Part
 
 
 class SupplierPartPackUnitsTests(InvenTreeTestCase):

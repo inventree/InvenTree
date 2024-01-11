@@ -2,9 +2,8 @@
 
 from common.notifications import trigger_notification
 from generic.states import TransitionMethod
-from order.models import ReturnOrder
-
 from InvenTree.status_codes import ReturnOrderStatus
+from order.models import ReturnOrder
 from plugin import InvenTreePlugin
 
 

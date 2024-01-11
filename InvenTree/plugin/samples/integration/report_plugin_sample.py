@@ -2,10 +2,9 @@
 
 import random
 
-from report.models import PurchaseOrderReport
-
 from plugin import InvenTreePlugin
 from plugin.mixins import ReportMixin
+from report.models import PurchaseOrderReport
 
 
 class SampleReportPlugin(ReportMixin, InvenTreePlugin):

@@ -13,14 +13,13 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 import common.models
-import plugin.models
-from common.settings import currency_code_default
-from plugin import registry
-from plugin.plugin import InvenTreePlugin
-
 import InvenTree.helpers
 import InvenTree.helpers_model
+import plugin.models
+from common.settings import currency_code_default
 from InvenTree import settings, version
+from plugin import registry
+from plugin.plugin import InvenTreePlugin
 
 register = template.Library()
 

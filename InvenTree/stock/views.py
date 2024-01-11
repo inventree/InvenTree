@@ -5,9 +5,8 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView
 
 import common.settings
-from plugin.views import InvenTreePluginViewMixin
-
 from InvenTree.views import InvenTreeRoleMixin
+from plugin.views import InvenTreePluginViewMixin
 
 from .models import StockItem, StockLocation
 

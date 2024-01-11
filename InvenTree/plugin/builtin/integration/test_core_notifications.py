@@ -3,7 +3,6 @@
 from django.core import mail
 
 from part.test_part import BaseNotificationIntegrationTest
-
 from plugin import registry
 from plugin.builtin.integration.core_notifications import (
     InvenTreeCoreNotificationsPlugin,

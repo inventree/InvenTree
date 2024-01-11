@@ -4,6 +4,7 @@ from django import template
 
 import barcode as python_barcode
 import qrcode as python_qrcode
+
 import report.helpers
 
 register = template.Library()

@@ -4,9 +4,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from plugin.views import InvenTreePluginViewMixin
-
 from InvenTree.views import InvenTreeRoleMixin
+from plugin.views import InvenTreePluginViewMixin
 
 from .models import Company, ManufacturerPart, SupplierPart
 

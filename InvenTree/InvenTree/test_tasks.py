@@ -9,11 +9,11 @@ from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
 
-from common.models import InvenTreeSetting
 from django_q.models import Schedule
 from error_report.models import Error
 
 import InvenTree.tasks
+from common.models import InvenTreeSetting
 
 threshold = timezone.now() - timedelta(days=30)
 threshold_low = threshold - timedelta(days=1)

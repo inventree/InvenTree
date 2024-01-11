@@ -2,12 +2,11 @@
 
 """Provides extra global data to all templates."""
 
-from generic.states import StatusCode
-from users.models import RuleSet, check_user_role
-
 import InvenTree.email
 import InvenTree.status
+from generic.states import StatusCode
 from InvenTree.helpers import inheritors
+from users.models import RuleSet, check_user_role
 
 
 def health_status(request):

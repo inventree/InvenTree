@@ -8,7 +8,6 @@ PLUGIN_BASE = 'plugin'  # Constant for links
 def get_plugin_urls():
     """Returns a urlpattern that can be integrated into the global urls."""
     from common.models import InvenTreeSetting
-
     from plugin import registry
 
     urls = []

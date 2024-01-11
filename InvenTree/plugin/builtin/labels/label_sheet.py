@@ -8,11 +8,11 @@ from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
-import report.helpers
 import weasyprint
-from label.models import LabelOutput, LabelTemplate
 from rest_framework import serializers
 
+import report.helpers
+from label.models import LabelOutput, LabelTemplate
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
 

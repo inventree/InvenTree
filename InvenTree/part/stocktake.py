@@ -9,14 +9,14 @@ from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
-import common.models
-import stock.models
 import tablib
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
+import common.models
 import InvenTree.helpers
 import part.models
+import stock.models
 
 logger = logging.getLogger('inventree')
 

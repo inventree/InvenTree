@@ -2,8 +2,9 @@
 
 from functools import wraps
 
-import users.models
 from rest_framework import permissions
+
+import users.models
 
 
 def get_model_for_view(view, raise_error=True):

@@ -3,10 +3,10 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-import order.models
-import stock.models
 from rest_framework import serializers
 
+import order.models
+import stock.models
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from plugin.builtin.barcodes.inventree_barcode import InvenTreeInternalBarcodePlugin
 

@@ -5,12 +5,11 @@ from datetime import datetime, timedelta
 from django.utils.translation import gettext_lazy as _
 
 import common.notifications
-from plugin.events import trigger_event
-
 import InvenTree.helpers_model
 import order.models
 from InvenTree.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from InvenTree.tasks import ScheduledTask, scheduled_task
+from plugin.events import trigger_event
 
 
 def notify_overdue_purchase_order(po: order.models.PurchaseOrder):

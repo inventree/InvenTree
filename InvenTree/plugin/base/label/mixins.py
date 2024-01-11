@@ -5,12 +5,12 @@ from typing import Union
 from django.http import JsonResponse
 
 import pdf2image
-from common.models import InvenTreeSetting
-from label.models import LabelTemplate
 from rest_framework import serializers
 from rest_framework.request import Request
 
+from common.models import InvenTreeSetting
 from InvenTree.tasks import offload_task
+from label.models import LabelTemplate
 from plugin.base.label import label as plugin_label
 from plugin.helpers import MixinNotImplementedError
 

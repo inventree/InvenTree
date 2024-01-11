@@ -164,9 +164,9 @@ class InvenTreeConfig(AppConfig):
         b) The base exchange rate has been altered
         """
         try:
-            from common.settings import currency_code_default
             from djmoney.contrib.exchange.models import ExchangeBackend
 
+            from common.settings import currency_code_default
             from InvenTree.tasks import update_exchange_rates
         except AppRegistryNotReady:  # pragma: no cover
             pass

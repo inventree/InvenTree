@@ -5,7 +5,6 @@ from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 from label.models import LabelOutput, LabelTemplate
-
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
 

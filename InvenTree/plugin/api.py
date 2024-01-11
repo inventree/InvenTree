@@ -2,7 +2,6 @@
 
 from django.urls import include, path, re_path
 
-from common.api import GlobalSettingsPermissions
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
@@ -11,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import plugin.serializers as PluginSerializers
+from common.api import GlobalSettingsPermissions
 from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.helpers import str2bool

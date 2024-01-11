@@ -2,15 +2,15 @@
 
 from django.core.exceptions import ObjectDoesNotExist
 
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
+
 import common.models
 import common.settings
 import company.models
 import order.models
-import stock.models
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
-
 import part.models
+import stock.models
 from InvenTree.status_codes import PurchaseOrderStatus
 from InvenTree.unit_test import InvenTreeTestCase
 
