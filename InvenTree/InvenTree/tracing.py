@@ -23,13 +23,19 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 from InvenTree.version import inventreeVersion
 
 
-def setup_tracing(endpoint: str, headers: dict, resources_input: dict | None = None):
+def setup_tracing(
+    endpoint: str,
+    headers: dict,
+    resources_input: dict | None = None,
+    console: bool = False,
+):
     """Set up tracing for the application in the current context.
 
     Args:
         endpoint: The endpoint to send the traces to.
         headers: The headers to send with the traces.
         resources_input: The resources to send with the traces.
+        console: Whether to output the traces to the console.
     """
     if resources_input is None:
         resources_input = {}
@@ -43,8 +49,6 @@ def setup_tracing(endpoint: str, headers: dict, resources_input: dict | None = N
             **resources_input,
         }
     )
-    # Gather the required environment variables
-    console_log = False
 
     # Spans / Tracs
     span_exporter = OTLPSpanExporter(headers=headers, endpoint=endpoint)
@@ -53,7 +57,7 @@ def setup_tracing(endpoint: str, headers: dict, resources_input: dict | None = N
     trace.set_tracer_provider(trace_provider)
     trace_provider.add_span_processor(trace_processor)
     # For debugging purposes, export the traces to the console
-    if console_log:
+    if console:
         trace_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
 
     # Metrics
@@ -63,7 +67,7 @@ def setup_tracing(endpoint: str, headers: dict, resources_input: dict | None = N
     metric_readers = [metric_perodic_reader]
 
     # For debugging purposes, export the metrics to the console
-    if console_log:
+    if console:
         console_metric_exporter = ConsoleMetricExporter()
         console_metric_reader = PeriodicExportingMetricReader(console_metric_exporter)
         metric_readers.append(console_metric_reader)

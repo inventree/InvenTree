@@ -742,7 +742,12 @@ if TRACING_ENABLED:  # pragma: no cover
         cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
         tracing_ressources = {**cstm_tags, **_t_ressources}
 
-        setup_tracing(_t_endpoint, _t_headers, tracing_ressources)
+        setup_tracing(
+            _t_endpoint,
+            _t_headers,
+            tracing_ressources,
+            get_boolean_setting('INVENTREE_TRACING_CONSOLE', 'tracing_console', False),
+        )
         # Run tracing/logging instrumentation
         setup_instruments()
     else:
