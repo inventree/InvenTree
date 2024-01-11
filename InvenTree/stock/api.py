@@ -27,7 +27,7 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
                                SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter)
-from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
+from InvenTree.helpers import (DownloadFile, extract_serial_numbers, is_ajax, isNull,
                                str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
@@ -963,7 +963,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         if page is not None:
             return self.get_paginated_response(data)
-        elif request.is_ajax():
+        elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
@@ -1346,7 +1346,7 @@ class StockTrackingList(ListAPI):
 
         if page is not None:
             return self.get_paginated_response(data)
-        if request.is_ajax():
+        if is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 

@@ -33,7 +33,7 @@ from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
 from .forms import EditUserForm, SetPasswordForm
-from .helpers import remove_non_printable_characters, strip_html_tags
+from .helpers import is_ajax, remove_non_printable_characters, strip_html_tags
 
 
 def auth_request(request):
@@ -258,7 +258,7 @@ class AjaxMixin(InvenTreeRoleMixin):
         if not data:
             data = {}
 
-        if not request.is_ajax():
+        if not is_ajax(request):
             return HttpResponseRedirect('/')
 
         if context is None:
