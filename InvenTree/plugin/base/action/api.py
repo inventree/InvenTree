@@ -12,9 +12,7 @@ from plugin import registry
 class ActionPluginView(APIView):
     """Endpoint for running custom action plugins."""
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         """This function checks if all required info was submitted and then performs a plugin_action or returns an error."""
@@ -23,9 +21,7 @@ class ActionPluginView(APIView):
         data = request.data.get('data', None)
 
         if action is None:
-            return Response({
-                'error': _("No action specified")
-            })
+            return Response({'error': _('No action specified')})
 
         action_plugins = registry.with_mixin('action')
         for plugin in action_plugins:
@@ -34,7 +30,4 @@ class ActionPluginView(APIView):
                 return Response(plugin.get_response(request.user, data=data))
 
         # If we got to here, no matching action was found
-        return Response({
-            'error': _("No matching action found"),
-            "action": action,
-        })
+        return Response({'error': _('No matching action found'), 'action': action})

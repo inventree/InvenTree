@@ -32,6 +32,7 @@ class LabelPrintingMixin:
 
     class MixinMeta:
         """Meta options for this mixin."""
+
         MIXIN_NAME = 'Label printing'
 
     def __init__(self):  # pragma: no cover
@@ -40,7 +41,7 @@ class LabelPrintingMixin:
         self.add_mixin('labels', True, __class__)
 
     def render_to_pdf(self, label: LabelTemplate, request, **kwargs):
-        """Render this label to PDF format
+        """Render this label to PDF format.
 
         Arguments:
             label: The LabelTemplate object to render
@@ -49,7 +50,7 @@ class LabelPrintingMixin:
         return label.render(request)
 
     def render_to_html(self, label: LabelTemplate, request, **kwargs):
-        """Render this label to HTML format
+        """Render this label to HTML format.
 
         Arguments:
             label: The LabelTemplate object to render
@@ -58,23 +59,29 @@ class LabelPrintingMixin:
         return label.render_as_string(request)
 
     def render_to_png(self, label: LabelTemplate, request=None, **kwargs):
-        """Render this label to PNG format"""
+        """Render this label to PNG format."""
         # Check if pdf data is provided
         pdf_data = kwargs.get('pdf_data', None)
 
         if not pdf_data:
-            pdf_data = self.render_to_pdf(label, request, **kwargs).get_document().write_pdf()
+            pdf_data = (
+                self.render_to_pdf(label, request, **kwargs).get_document().write_pdf()
+            )
 
-        dpi = kwargs.get(
-            'dpi',
-            InvenTreeSetting.get_setting('LABEL_DPI', 300)
-        )
+        dpi = kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300))
 
         # Convert to png data
         png = pdf2image.convert_from_bytes(pdf_data, dpi=dpi)[0]
         return png
 
-    def print_labels(self, label: LabelTemplate, items: list, request: Request, printing_options: dict, **kwargs):
+    def print_labels(
+        self,
+        label: LabelTemplate,
+        items: list,
+        request: Request,
+        printing_options: dict,
+        **kwargs,
+    ):
         """Print one or more labels with the provided template and items.
 
         Arguments:
@@ -82,7 +89,7 @@ class LabelPrintingMixin:
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
 
-        Keyword arguments:
+        Keyword Arguments:
             printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
 
         Returns:
@@ -133,7 +140,7 @@ class LabelPrintingMixin:
         })
 
     def print_label(self, **kwargs):
-        """Print a single label (blocking)
+        """Print a single label (blocking).
 
         kwargs:
             pdf_file: The PDF file object of the rendered label (WeasyTemplateResponse object)
@@ -149,10 +156,12 @@ class LabelPrintingMixin:
         Note that the supplied kwargs may be different if the plugin overrides the print_labels() method.
         """
         # Unimplemented (to be implemented by the particular plugin class)
-        raise MixinNotImplementedError('This Plugin must implement a `print_label` method')
+        raise MixinNotImplementedError(
+            'This Plugin must implement a `print_label` method'
+        )
 
     def offload_label(self, **kwargs):
-        """Offload a single label (non-blocking)
+        """Offload a single label (non-blocking).
 
         Instead of immediately printing the label (which is a blocking process),
         this method should offload the label to a background worker process.
@@ -162,13 +171,11 @@ class LabelPrintingMixin:
         # Exclude the 'pdf_file' object - cannot be pickled
         kwargs.pop('pdf_file', None)
 
-        offload_task(
-            plugin_label.print_label,
-            self.plugin_slug(),
-            **kwargs
-        )
+        offload_task(plugin_label.print_label, self.plugin_slug(), **kwargs)
 
-    def get_printing_options_serializer(self, request: Request, *args, **kwargs) -> Union[serializers.Serializer, None]:
+    def get_printing_options_serializer(
+        self, request: Request, *args, **kwargs
+    ) -> Union[serializers.Serializer, None]:
         """Return a serializer class instance with dynamic printing options.
 
         Arguments:
@@ -179,7 +186,7 @@ class LabelPrintingMixin:
             A class instance of a DRF serializer class, by default this an instance of
             self.PrintingOptionsSerializer using the *args, **kwargs if existing for this plugin
         """
-        serializer = getattr(self, "PrintingOptionsSerializer", None)
+        serializer = getattr(self, 'PrintingOptionsSerializer', None)
 
         if not serializer:
             return None

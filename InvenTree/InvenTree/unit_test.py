@@ -1,4 +1,4 @@
-"""Helper functions for unit testing / CI"""
+"""Helper functions for unit testing / CI."""
 
 import csv
 import io
@@ -39,7 +39,7 @@ def getMigrationFileNames(app):
     files = local_dir.joinpath('..', app, 'migrations').iterdir()
 
     # Regex pattern for migration files
-    regex = re.compile(r"^[\d]+_.*\.py$")
+    regex = re.compile(r'^[\d]+_.*\.py$')
 
     migration_files = []
 
@@ -56,7 +56,6 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
     oldest_file = None
 
     for f in getMigrationFileNames(app):
-
         if ignore_initial and f.startswith('0001_initial'):
             continue
 
@@ -110,14 +109,12 @@ class UserMixin:
 
     @classmethod
     def setUpTestData(cls):
-        """Run setup for all tests in a given class"""
+        """Run setup for all tests in a given class."""
         super().setUpTestData()
 
         # Create a user to log in with
         cls.user = get_user_model().objects.create_user(
-            username=cls.username,
-            password=cls.password,
-            email=cls.email
+            username=cls.username, password=cls.password, email=cls.email
         )
 
         # Create a group for the user
@@ -142,7 +139,7 @@ class UserMixin:
                 cls.assignRole(role=role, group=cls.group)
 
     def setUp(self):
-        """Run setup for individual test methods"""
+        """Run setup for individual test methods."""
         if self.auto_login:
             self.client.login(username=self.username, password=self.password)
 
@@ -163,15 +160,15 @@ class UserMixin:
             raise TypeError('assignRole: assign_all must be a boolean value')
 
         if not role and not assign_all:
-            raise ValueError('assignRole: either role must be provided, or assign_all must be set')
+            raise ValueError(
+                'assignRole: either role must be provided, or assign_all must be set'
+            )
 
         if not assign_all and role:
             rule, perm = role.split('.')
 
         for ruleset in group.rule_sets.all():
-
             if assign_all or ruleset.name == rule:
-
                 if assign_all or perm == 'view':
                     ruleset.can_view = True
                 elif assign_all or perm == 'change':
@@ -201,41 +198,28 @@ class PluginMixin:
 
 
 class ExchangeRateMixin:
-    """Mixin class for generating exchange rate data"""
+    """Mixin class for generating exchange rate data."""
 
     def generate_exchange_rates(self):
-        """Helper function which generates some exchange rates to work with"""
-        rates = {
-            'AUD': 1.5,
-            'CAD': 1.7,
-            'GBP': 0.9,
-            'USD': 1.0,
-        }
+        """Helper function which generates some exchange rates to work with."""
+        rates = {'AUD': 1.5, 'CAD': 1.7, 'GBP': 0.9, 'USD': 1.0}
 
         # Create a dummy backend
-        ExchangeBackend.objects.create(
-            name='InvenTreeExchange',
-            base_currency='USD',
-        )
+        ExchangeBackend.objects.create(name='InvenTreeExchange', base_currency='USD')
 
         backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
 
         items = []
 
         for currency, rate in rates.items():
-            items.append(
-                Rate(
-                    currency=currency,
-                    value=rate,
-                    backend=backend,
-                )
-            )
+            items.append(Rate(currency=currency, value=rate, backend=backend))
 
         Rate.objects.bulk_create(items)
 
 
 class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
     """Testcase with user setup buildin."""
+
     pass
 
 
@@ -243,7 +227,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
     @contextmanager
-    def assertNumQueriesLessThan(self, value, using='default', verbose=False, debug=False):
+    def assertNumQueriesLessThan(
+        self, value, using='default', verbose=False, debug=False
+    ):
         """Context manager to check that the number of queries is less than a certain value.
 
         Example:
@@ -252,29 +238,30 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         Ref: https://stackoverflow.com/questions/1254170/django-is-there-a-way-to-count-sql-queries-from-an-unit-test/59089020#59089020
         """
         with CaptureQueriesContext(connections[using]) as context:
-            yield   # your test will be run here
+            yield  # your test will be run here
 
         if verbose:
-            msg = "\r\n%s" % json.dumps(context.captured_queries, indent=4)
+            msg = '\r\n%s' % json.dumps(context.captured_queries, indent=4)
         else:
             msg = None
 
         n = len(context.captured_queries)
 
         if debug:
-            print(f"Expected less than {value} queries, got {n} queries")
+            print(f'Expected less than {value} queries, got {n} queries')
 
         self.assertLess(n, value, msg=msg)
 
     def checkResponse(self, url, method, expected_code, response):
-        """Debug output for an unexpected response"""
+        """Debug output for an unexpected response."""
         # No expected code, return
         if expected_code is None:
             return
 
         if expected_code != response.status_code:
-
-            print(f"Unexpected {method} response at '{url}': status_code = {response.status_code}")
+            print(
+                f"Unexpected {method} response at '{url}': status_code = {response.status_code}"
+            )
 
             if hasattr(response, 'data'):
                 print('data:', response.data)
@@ -359,7 +346,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         return response
 
-    def download_file(self, url, data, expected_code=None, expected_fn=None, decode=True):
+    def download_file(
+        self, url, data, expected_code=None, expected_fn=None, decode=True
+    ):
         """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
 
@@ -367,7 +356,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         # Check that the response is of the correct type
         if not isinstance(response, StreamingHttpResponse):
-            raise ValueError("Response is not a StreamingHttpResponse object as expected")
+            raise ValueError(
+                'Response is not a StreamingHttpResponse object as expected'
+            )
 
         # Extract filename
         disposition = response.headers['Content-Disposition']
@@ -394,7 +385,14 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         return file
 
-    def process_csv(self, file_object, delimiter=',', required_cols=None, excluded_cols=None, required_rows=None):
+    def process_csv(
+        self,
+        file_object,
+        delimiter=',',
+        required_cols=None,
+        excluded_cols=None,
+        required_rows=None,
+    ):
         """Helper function to process and validate a downloaded csv file."""
         # Check that the correct object type has been passed
         self.assertTrue(isinstance(file_object, io.StringIO))

@@ -1,4 +1,4 @@
-"""Default label printing plugin (supports PDF generation)"""
+"""Default label printing plugin (supports PDF generation)."""
 
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
@@ -16,11 +16,11 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     which is made available for download.
     """
 
-    NAME = "InvenTreeLabel"
-    TITLE = _("InvenTree PDF label printer")
-    DESCRIPTION = _("Provides native support for printing PDF labels")
-    VERSION = "1.0.0"
-    AUTHOR = _("InvenTree contributors")
+    NAME = 'InvenTreeLabel'
+    TITLE = _('InvenTree PDF label printer')
+    DESCRIPTION = _('Provides native support for printing PDF labels')
+    VERSION = '1.0.0'
+    AUTHOR = _('InvenTree contributors')
 
     BLOCKING_PRINT = True
 
@@ -30,11 +30,11 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             'description': _('Enable debug mode - returns raw HTML instead of PDF'),
             'validator': bool,
             'default': False,
-        },
+        }
     }
 
     def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
-        """Handle printing of multiple labels
+        """Handle printing of multiple labels.
 
         - Label outputs are concatenated together, and we return a single PDF file.
         - If DEBUG mode is enabled, we return a single HTML file.
@@ -45,7 +45,6 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         output_file = None
 
         for item in items:
-
             label.object_to_print = item
 
             outputs.append(self.print_label(label, request, debug=debug, **kwargs))
@@ -70,15 +69,12 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
             output_file = ContentFile(pdf, 'labels.pdf')
 
         # Save the generated file to the database
-        output = LabelOutput.objects.create(
-            label=output_file,
-            user=request.user
-        )
+        output = LabelOutput.objects.create(label=output_file, user=request.user)
 
         return JsonResponse({
             'file': output.label.url,
             'success': True,
-            'message': f'{len(items)} labels generated'
+            'message': f'{len(items)} labels generated',
         })
 
     def print_label(self, label: LabelTemplate, request, **kwargs):

@@ -1,4 +1,5 @@
 """Classes and functions for plugin controlled object state transitions."""
+
 import InvenTree.helpers
 
 
@@ -15,8 +16,10 @@ class TransitionMethod:
         - The needed functions are implemented
         """
         # Check if a sending fnc is defined
-        if (not hasattr(self, 'transition')):
-            raise NotImplementedError('A TransitionMethod must define a `transition` method')
+        if not hasattr(self, 'transition'):
+            raise NotImplementedError(
+                'A TransitionMethod must define a `transition` method'
+            )
 
 
 class TransitionMethodStorageClass:
@@ -62,7 +65,9 @@ class StateTransitionMixin:
     ```
     """
 
-    def handle_transition(self, current_state, target_state, instance, default_action, **kwargs):
+    def handle_transition(
+        self, current_state, target_state, instance, default_action, **kwargs
+    ):
         """Handle a state transition for an object.
 
         Args:
@@ -71,10 +76,11 @@ class StateTransitionMixin:
             instance: Object instance
             default_action: Default action to be taken if none of the transitions returns a boolean true value
         """
-
         # Check if there is a custom override function for this transition
         for override in storage.list:
-            rslt = override.transition(current_state, target_state, instance, default_action, **kwargs)
+            rslt = override.transition(
+                current_state, target_state, instance, default_action, **kwargs
+            )
             if rslt:
                 return rslt
 

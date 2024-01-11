@@ -14,29 +14,29 @@ from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
 class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the LCSC API into Inventree."""
 
-    NAME = "LCSCPlugin"
-    TITLE = _("Supplier Integration - LCSC")
-    DESCRIPTION = _("Provides support for scanning LCSC barcodes")
-    VERSION = "1.0.0"
-    AUTHOR = _("InvenTree contributors")
+    NAME = 'LCSCPlugin'
+    TITLE = _('Supplier Integration - LCSC')
+    DESCRIPTION = _('Provides support for scanning LCSC barcodes')
+    VERSION = '1.0.0'
+    AUTHOR = _('InvenTree contributors')
 
-    DEFAULT_SUPPLIER_NAME = "LCSC"
+    DEFAULT_SUPPLIER_NAME = 'LCSC'
     SETTINGS = {
-        "SUPPLIER_ID": {
-            "name": _("Supplier"),
-            "description": _("The Supplier which acts as 'LCSC'"),
-            "model": "company.company",
+        'SUPPLIER_ID': {
+            'name': _('Supplier'),
+            'description': _("The Supplier which acts as 'LCSC'"),
+            'model': 'company.company',
         }
     }
 
-    LCSC_BARCODE_REGEX = re.compile(r"^{((?:[^:,]+:[^:,]*,)*(?:[^:,]+:[^:,]*))}$")
+    LCSC_BARCODE_REGEX = re.compile(r'^{((?:[^:,]+:[^:,]*,)*(?:[^:,]+:[^:,]*))}$')
 
     # Custom field mapping for LCSC barcodes
     LCSC_FIELDS = {
-        "pm": SupplierBarcodeMixin.MANUFACTURER_PART_NUMBER,
-        "pc": SupplierBarcodeMixin.SUPPLIER_PART_NUMBER,
-        "qty": SupplierBarcodeMixin.QUANTITY,
-        "on": SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER,
+        'pm': SupplierBarcodeMixin.MANUFACTURER_PART_NUMBER,
+        'pc': SupplierBarcodeMixin.SUPPLIER_PART_NUMBER,
+        'qty': SupplierBarcodeMixin.QUANTITY,
+        'on': SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER,
     }
 
     def extract_barcode_fields(self, barcode_data: str) -> dict[str, str]:
@@ -44,19 +44,15 @@ class LCSCPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
 
         Example LCSC QR-Code: {pbn:PICK2009291337,on:SO2009291337,pc:C312270}
         """
-
         if not self.LCSC_BARCODE_REGEX.fullmatch(barcode_data):
             return {}
 
         # Extract fields
         fields = SupplierBarcodeMixin.split_fields(
-            barcode_data,
-            delimiter=',',
-            header='{',
-            trailer='}',
+            barcode_data, delimiter=',', header='{', trailer='}'
         )
 
-        fields = dict(pair.split(":") for pair in fields)
+        fields = dict(pair.split(':') for pair in fields)
 
         barcode_fields = {}
 

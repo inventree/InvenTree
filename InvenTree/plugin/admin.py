@@ -39,9 +39,7 @@ class PluginSettingInline(admin.TabularInline):
 
     model = models.PluginSetting
 
-    read_only_fields = [
-        'key',
-    ]
+    read_only_fields = ['key']
 
     def has_add_permission(self, request, obj):
         """The plugin settings should not be meddled with manually."""
@@ -51,12 +49,20 @@ class PluginSettingInline(admin.TabularInline):
 class PluginConfigAdmin(admin.ModelAdmin):
     """Custom admin with restricted id fields."""
 
-    readonly_fields = ["key", "name", ]
-    list_display = ['name', 'key', '__str__', 'active', 'is_builtin', 'is_sample', 'is_installed']
+    readonly_fields = ['key', 'name']
+    list_display = [
+        'name',
+        'key',
+        '__str__',
+        'active',
+        'is_builtin',
+        'is_sample',
+        'is_installed',
+    ]
     list_filter = ['active']
-    actions = [plugin_activate, plugin_deactivate, ]
-    inlines = [PluginSettingInline, ]
-    exclude = ['metadata', ]
+    actions = [plugin_activate, plugin_deactivate]
+    inlines = [PluginSettingInline]
+    exclude = ['metadata']
 
 
 class NotificationUserSettingAdmin(admin.ModelAdmin):
@@ -64,9 +70,7 @@ class NotificationUserSettingAdmin(admin.ModelAdmin):
 
     model = models.NotificationUserSetting
 
-    read_only_fields = [
-        'key',
-    ]
+    read_only_fields = ['key']
 
     def has_add_permission(self, request):
         """Notifications should not be changed."""

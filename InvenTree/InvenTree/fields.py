@@ -31,11 +31,12 @@ class InvenTreeRestURLField(RestURLField):
         self.validators[-1].schemes = allowable_url_schemes()
 
     def run_validation(self, data=empty):
-        """Override default validation behaviour for this field type"""
-
+        """Override default validation behaviour for this field type."""
         import common.models
 
-        strict_urls = common.models.InvenTreeSetting.get_setting('INVENTREE_STRICT_URLS', True, cache=False)
+        strict_urls = common.models.InvenTreeSetting.get_setting(
+            'INVENTREE_STRICT_URLS', True, cache=False
+        )
 
         if not strict_urls and data is not empty:
             if '://' not in data:
@@ -51,7 +52,7 @@ class InvenTreeURLField(models.URLField):
     default_validators = [AllowedURLValidator()]
 
     def __init__(self, **kwargs):
-        """Initialization method for InvenTreeURLField"""
+        """Initialization method for InvenTreeURLField."""
         # Max length for InvenTreeURLField is set to 200
         kwargs['max_length'] = 200
         super().__init__(**kwargs)
@@ -97,11 +98,8 @@ class InvenTreeModelMoneyField(ModelMoneyField):
 
         # If no validators are provided, add some "standard" ones
         if len(validators) == 0:
-
             if not allow_negative:
-                validators.append(
-                    MinMoneyValidator(0),
-                )
+                validators.append(MinMoneyValidator(0))
 
         kwargs['validators'] = validators
 
@@ -144,11 +142,7 @@ class DatePickerFormField(forms.DateField):
         required = kwargs.get('required', False)
         initial = kwargs.get('initial', None)
 
-        widget = forms.DateInput(
-            attrs={
-                'type': 'date',
-            }
-        )
+        widget = forms.DateInput(attrs={'type': 'date'})
 
         forms.DateField.__init__(
             self,
@@ -156,7 +150,7 @@ class DatePickerFormField(forms.DateField):
             initial=initial,
             help_text=help_text,
             widget=widget,
-            label=label
+            label=label,
         )
 
 
@@ -204,13 +198,13 @@ class RoundingDecimalField(models.DecimalField):
 
 
 class InvenTreeNotesField(models.TextField):
-    """Custom implementation of a 'notes' field"""
+    """Custom implementation of a 'notes' field."""
 
     # Maximum character limit for the various 'notes' fields
     NOTES_MAX_LENGTH = 50000
 
     def __init__(self, **kwargs):
-        """Configure default initial values for this field"""
+        """Configure default initial values for this field."""
         kwargs['max_length'] = self.NOTES_MAX_LENGTH
         kwargs['verbose_name'] = _('Notes')
         kwargs['blank'] = True

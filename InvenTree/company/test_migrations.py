@@ -6,7 +6,7 @@ from InvenTree import unit_test
 
 
 class TestForwardMigrations(MigratorTestCase):
-    """Unit testing class for testing 'company' app migrations"""
+    """Unit testing class for testing 'company' app migrations."""
 
     migrate_from = ('company', unit_test.getOldestMigrationFile('company'))
     migrate_to = ('company', unit_test.getNewestMigrationFile('company'))
@@ -16,13 +16,11 @@ class TestForwardMigrations(MigratorTestCase):
         Company = self.old_state.apps.get_model('company', 'company')
 
         Company.objects.create(
-            name='MSPC',
-            description='Michael Scotts Paper Company',
-            is_supplier=True
+            name='MSPC', description='Michael Scotts Paper Company', is_supplier=True
         )
 
     def test_migrations(self):
-        """Test the database state after applying all migrations"""
+        """Test the database state after applying all migrations."""
         Company = self.new_state.apps.get_model('company', 'company')
 
         self.assertEqual(Company.objects.count(), 1)
@@ -35,8 +33,9 @@ class TestManufacturerField(MigratorTestCase):
     migrate_to = ('company', '0019_auto_20200413_0642')
 
     def prepare(self):
-        """Prepare the database by adding some test data 'before' the change:
+        """Prepare the database by adding some test data 'before' the change.
 
+        Changes:
         - Part object
         - Company object (supplier)
         - SupplierPart object
@@ -49,7 +48,10 @@ class TestManufacturerField(MigratorTestCase):
         part = Part.objects.create(
             name='Screw',
             description='A single screw',
-            level=0, tree_id=0, lft=0, rght=0
+            level=0,
+            tree_id=0,
+            lft=0,
+            rght=0,
         )
 
         # Create a company to act as the supplier
@@ -62,17 +64,11 @@ class TestManufacturerField(MigratorTestCase):
 
         # Add some SupplierPart objects
         SupplierPart.objects.create(
-            part=part,
-            supplier=supplier,
-            SKU='SCREW.001',
-            manufacturer_name='ACME',
+            part=part, supplier=supplier, SKU='SCREW.001', manufacturer_name='ACME'
         )
 
         SupplierPart.objects.create(
-            part=part,
-            supplier=supplier,
-            SKU='SCREW.002',
-            manufacturer_name='Zero Corp',
+            part=part, supplier=supplier, SKU='SCREW.002', manufacturer_name='Zero Corp'
         )
 
         self.assertEqual(Company.objects.count(), 1)
@@ -104,8 +100,9 @@ class TestManufacturerPart(MigratorTestCase):
     migrate_to = ('company', '0037_supplierpart_update_3')
 
     def prepare(self):
-        """Prepare the database by adding some test data 'before' the change:
+        """Prepare the database by adding some test data 'before' the change.
 
+        Changes:
         - Part object
         - Company object (supplier)
         - SupplierPart object
@@ -186,17 +183,12 @@ class TestManufacturerPart(MigratorTestCase):
 
         # No Manufacturer
         SupplierPart.objects.create(
-            part=part,
-            supplier=supplier_2,
-            SKU='CAP-CER-01UF-2',
-            MPN='MUR-CAP-123456',
+            part=part, supplier=supplier_2, SKU='CAP-CER-01UF-2', MPN='MUR-CAP-123456'
         )
 
         # No Manufacturer data
         SupplierPart.objects.create(
-            part=part,
-            supplier=supplier_2,
-            SKU='CAP-CER-01UF-3',
+            part=part, supplier=supplier_2, SKU='CAP-CER-01UF-3'
         )
 
     def test_manufacturer_part_objects(self):
@@ -227,8 +219,9 @@ class TestCurrencyMigration(MigratorTestCase):
     migrate_to = ('company', '0026_auto_20201110_1011')
 
     def prepare(self):
-        """Prepare some data:
+        """Prepare some data.
 
+        Changes:
         - A part to buy
         - A supplier to buy from
         - A supplier part
@@ -238,17 +231,20 @@ class TestCurrencyMigration(MigratorTestCase):
         Part = self.old_state.apps.get_model('part', 'part')
 
         part = Part.objects.create(
-            name="PART", description="A purchaseable part",
+            name='PART',
+            description='A purchaseable part',
             purchaseable=True,
             level=0,
             tree_id=0,
             lft=0,
-            rght=0
+            rght=0,
         )
 
         Company = self.old_state.apps.get_model('company', 'company')
 
-        supplier = Company.objects.create(name='Supplier', description='A supplier', is_supplier=True)
+        supplier = Company.objects.create(
+            name='Supplier', description='A supplier', is_supplier=True
+        )
 
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
 
@@ -256,8 +252,12 @@ class TestCurrencyMigration(MigratorTestCase):
 
         Currency = self.old_state.apps.get_model('common', 'currency')
 
-        aud = Currency.objects.create(symbol='$', suffix='AUD', description='Australian Dollars', value=1.0)
-        usd = Currency.objects.create(symbol='$', suffix='USD', description='US Dollars', value=1.0)
+        aud = Currency.objects.create(
+            symbol='$', suffix='AUD', description='Australian Dollars', value=1.0
+        )
+        usd = Currency.objects.create(
+            symbol='$', suffix='USD', description='US Dollars', value=1.0
+        )
 
         PB = self.old_state.apps.get_model('company', 'supplierpricebreak')
 
@@ -272,7 +272,7 @@ class TestCurrencyMigration(MigratorTestCase):
             self.assertIsNone(pb.price)
 
     def test_currency_migration(self):
-        """Test database state after applying migrations"""
+        """Test database state after applying migrations."""
         PB = self.new_state.apps.get_model('company', 'supplierpricebreak')
 
         for pb in PB.objects.all():
@@ -281,7 +281,7 @@ class TestCurrencyMigration(MigratorTestCase):
 
 
 class TestAddressMigration(MigratorTestCase):
-    """Test moving address data into Address model"""
+    """Test moving address data into Address model."""
 
     migrate_from = ('company', '0063_auto_20230502_1956')
     migrate_to = ('company', '0064_move_address_field_to_address_model')
@@ -292,14 +292,14 @@ class TestAddressMigration(MigratorTestCase):
     l2 = 'splitting functionality'
 
     def prepare(self):
-        """Set up some companies with addresses"""
+        """Set up some companies with addresses."""
         Company = self.old_state.apps.get_model('company', 'company')
 
         Company.objects.create(name='Company 1', address=self.short_l1)
         Company.objects.create(name='Company 2', address=self.long_l1 + self.l2)
 
     def test_address_migration(self):
-        """Test database state after applying the migration"""
+        """Test database state after applying the migration."""
         Address = self.new_state.apps.get_model('company', 'address')
         Company = self.new_state.apps.get_model('company', 'company')
 
@@ -312,7 +312,7 @@ class TestAddressMigration(MigratorTestCase):
         a2 = Address.objects.filter(company=c2.pk).first()
 
         self.assertEqual(a1.line1, self.short_l1)
-        self.assertEqual(a1.line2, "")
+        self.assertEqual(a1.line2, '')
         self.assertEqual(a2.line1, self.long_l1)
         self.assertEqual(a2.line2, self.l2)
         self.assertEqual(c1.address, '')
@@ -326,18 +326,24 @@ class TestSupplierPartQuantity(MigratorTestCase):
     migrate_to = ('company', unit_test.getNewestMigrationFile('company'))
 
     def prepare(self):
-        """Prepare a number of SupplierPart objects"""
+        """Prepare a number of SupplierPart objects."""
         Part = self.old_state.apps.get_model('part', 'part')
         Company = self.old_state.apps.get_model('company', 'company')
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
 
         self.part = Part.objects.create(
-            name="PART", description="A purchaseable part",
+            name='PART',
+            description='A purchaseable part',
             purchaseable=True,
-            level=0, tree_id=0, lft=0, rght=0
+            level=0,
+            tree_id=0,
+            lft=0,
+            rght=0,
         )
 
-        self.supplier = Company.objects.create(name='Supplier', description='A supplier', is_supplier=True)
+        self.supplier = Company.objects.create(
+            name='Supplier', description='A supplier', is_supplier=True
+        )
 
         self.supplier_parts = []
 
@@ -356,7 +362,6 @@ class TestSupplierPartQuantity(MigratorTestCase):
         SupplierPart = self.new_state.apps.get_model('company', 'supplierpart')
 
         for i, sp in enumerate(SupplierPart.objects.all()):
-
             self.assertEqual(sp.pack_quantity, str(i + 1))
             self.assertEqual(sp.pack_quantity_native, i + 1)
 

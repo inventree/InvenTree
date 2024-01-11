@@ -81,11 +81,7 @@ class FileManagementFormView(MultiStepFormView):
         ('fields', forms.MatchFieldForm),
         ('items', forms.MatchItemForm),
     ]
-    form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match Items"),
-    ]
+    form_steps_description = [_('Upload File'), _('Match Fields'), _('Match Items')]
     media_folder = 'file_upload/'
     extra_context_data = {}
 
@@ -95,8 +91,12 @@ class FileManagementFormView(MultiStepFormView):
         super().__init__(self, *args, **kwargs)
 
         # Check for file manager class
-        if not hasattr(self, 'file_manager_class') and not issubclass(self.file_manager_class, FileManager):
-            raise NotImplementedError('A subclass of a file manager class needs to be set!')
+        if not hasattr(self, 'file_manager_class') and not issubclass(
+            self.file_manager_class, FileManager
+        ):
+            raise NotImplementedError(
+                'A subclass of a file manager class needs to be set!'
+            )
 
     def get_context_data(self, form=None, **kwargs):
         """Handle context data."""
@@ -106,7 +106,6 @@ class FileManagementFormView(MultiStepFormView):
         context = super().get_context_data(form=form, **kwargs)
 
         if self.steps.current in ('fields', 'items'):
-
             # Get columns and row data
             self.columns = self.file_manager.columns()
             self.rows = self.file_manager.rows()
@@ -140,7 +139,9 @@ class FileManagementFormView(MultiStepFormView):
                 # Get file
                 file = upload_files.get('upload-file', None)
                 if file:
-                    self.file_manager = self.file_manager_class(file=file, name=self.name)
+                    self.file_manager = self.file_manager_class(
+                        file=file, name=self.name
+                    )
 
     def get_form_kwargs(self, step=None):
         """Update kwargs to dynamically build forms."""
@@ -150,15 +151,11 @@ class FileManagementFormView(MultiStepFormView):
         if step == 'upload':
             # Dynamically build upload form
             if self.name:
-                kwargs = {
-                    'name': self.name
-                }
+                kwargs = {'name': self.name}
                 return kwargs
         elif step == 'fields':
             # Dynamically build match field form
-            kwargs = {
-                'file_manager': self.file_manager
-            }
+            kwargs = {'file_manager': self.file_manager}
             return kwargs
         elif step == 'items':
             # Dynamically build match item form
@@ -206,7 +203,6 @@ class FileManagementFormView(MultiStepFormView):
         self.row_data = {}
 
         for item, value in form_data.items():
-
             # Column names as passed as col_name_<idx> where idx is an integer
 
             # Extract the column names
@@ -220,7 +216,6 @@ class FileManagementFormView(MultiStepFormView):
 
             # Extract the column selections (in the 'select fields' view)
             if item.startswith('fields-'):
-
                 try:
                     col_name = item.replace('fields-', '')
                 except ValueError:
@@ -258,10 +253,7 @@ class FileManagementFormView(MultiStepFormView):
             self.columns = []
 
             for idx, value in self.column_names.items():
-                header = ({
-                    'name': value,
-                    'guess': self.column_selections.get(idx, ''),
-                })
+                header = {'name': value, 'guess': self.column_selections.get(idx, '')}
                 self.columns.append(header)
 
         if self.row_data:
@@ -280,18 +272,10 @@ class FileManagementFormView(MultiStepFormView):
                         'guess': self.column_selections[idx],
                     }
 
-                    cell_data = {
-                        'cell': item,
-                        'idx': idx,
-                        'column': column_data,
-                    }
+                    cell_data = {'cell': item, 'idx': idx, 'column': column_data}
                     data.append(cell_data)
 
-                row = {
-                    'index': row_idx,
-                    'data': data,
-                    'errors': {},
-                }
+                row = {'index': row_idx, 'data': data, 'errors': {}}
 
                 self.rows.append(row)
 
@@ -344,11 +328,7 @@ class FileManagementFormView(MultiStepFormView):
             try:
                 if idx not in items:
                     # Insert into items
-                    items.update({
-                        idx: {
-                            self.form_field_map[field]: form_value,
-                        }
-                    })
+                    items.update({idx: {self.form_field_map[field]: form_value}})
                 else:
                     # Update items
                     items[idx][self.form_field_map[field]] = form_value
@@ -383,14 +363,15 @@ class FileManagementFormView(MultiStepFormView):
         duplicates = []
 
         for col in self.column_names:
-
             if col in self.column_selections:
                 guess = self.column_selections[col]
             else:
                 guess = None
 
             if guess:
-                n = list(self.column_selections.values()).count(self.column_selections[col])
+                n = list(self.column_selections.values()).count(
+                    self.column_selections[col]
+                )
                 if n > 1 and self.column_selections[col] not in duplicates:
                     duplicates.append(self.column_selections[col])
 
@@ -459,7 +440,9 @@ class FileManagementAjaxView(AjaxView):
         wizard_back = self.request.POST.get('act-btn_back', None)
         if wizard_back:
             back_step_index = self.get_step_index() - 1
-            self.storage.current_step = list(self.get_form_list().keys())[back_step_index]
+            self.storage.current_step = list(self.get_form_list().keys())[
+                back_step_index
+            ]
             return self.renderJsonResponse(request, data={'form_valid': None})
 
         # validate form
@@ -499,13 +482,19 @@ class FileManagementAjaxView(AjaxView):
             data = {}
 
         self.setTemplate()
-        return super().renderJsonResponse(request, form=form, data=data, context=context)
+        return super().renderJsonResponse(
+            request, form=form, data=data, context=context
+        )
 
     def get_data(self) -> dict:
         """Get extra context data."""
         data = super().get_data()
         data['hideErrorMessage'] = '1'  # hide the error
-        buttons = [{'name': 'back', 'title': _('Previous Step')}] if self.get_step_index() > 0 else []
+        buttons = (
+            [{'name': 'back', 'title': _('Previous Step')}]
+            if self.get_step_index() > 0
+            else []
+        )
         data['buttons'] = buttons  # set buttons
         return data
 

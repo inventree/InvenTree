@@ -1,4 +1,4 @@
-"""Various helper functions for the part app"""
+"""Various helper functions for the part app."""
 
 import logging
 import os
@@ -20,7 +20,6 @@ def compile_full_name_template(*args, **kwargs):
 
     This function is called whenever the 'PART_NAME_FORMAT' setting is changed.
     """
-
     from common.models import InvenTreeSetting
 
     global _part_full_name_template
@@ -29,7 +28,10 @@ def compile_full_name_template(*args, **kwargs):
     template_string = InvenTreeSetting.get_setting('PART_NAME_FORMAT', '')
 
     # Skip if the template string has not changed
-    if template_string == _part_full_name_template_string and _part_full_name_template is not None:
+    if (
+        template_string == _part_full_name_template_string
+        and _part_full_name_template is not None
+    ):
         return _part_full_name_template
 
     # Cache the template string
@@ -38,7 +40,7 @@ def compile_full_name_template(*args, **kwargs):
     env = Environment(
         autoescape=select_autoescape(default_for_string=False, default=False),
         variable_start_string='{{',
-        variable_end_string='}}'
+        variable_end_string='}}',
     )
 
     # Compile the template
@@ -58,14 +60,17 @@ def render_part_full_name(part) -> str:
     Args:
         part: The Part object to render
     """
-
     template = compile_full_name_template()
 
     if template:
         try:
             return template.render(part=part)
         except Exception as e:
-            logger.warning("exception while trying to create full name for part %s: %s", part.name, e)
+            logger.warning(
+                'exception while trying to create full name for part %s: %s',
+                part.name,
+                e,
+            )
 
     # Fallback to the default format
     elements = [el for el in [part.IPN, part.name, part.revision] if el]
@@ -73,7 +78,7 @@ def render_part_full_name(part) -> str:
 
 
 # Subdirectory for storing part images
-PART_IMAGE_DIR = "part_images"
+PART_IMAGE_DIR = 'part_images'
 
 
 def get_part_image_directory() -> str:
@@ -84,11 +89,9 @@ def get_part_image_directory() -> str:
 
     TODO: Future work may be needed here to support other storage backends, such as S3
     """
-
-    part_image_directory = os.path.abspath(os.path.join(
-        settings.MEDIA_ROOT,
-        PART_IMAGE_DIR,
-    ))
+    part_image_directory = os.path.abspath(
+        os.path.join(settings.MEDIA_ROOT, PART_IMAGE_DIR)
+    )
 
     # Create the directory if it does not exist
     if not os.path.exists(part_image_directory):

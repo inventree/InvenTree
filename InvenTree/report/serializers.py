@@ -1,33 +1,34 @@
-"""API serializers for the reporting models"""
+"""API serializers for the reporting models."""
 
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
-                                   InvenTreeModelSerializer)
+from InvenTree.serializers import (
+    InvenTreeAttachmentSerializerField,
+    InvenTreeModelSerializer,
+)
 
-from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     ReturnOrderReport, SalesOrderReport, StockLocationReport,
-                     TestReport)
+from .models import (
+    BillOfMaterialsReport,
+    BuildReport,
+    PurchaseOrderReport,
+    ReturnOrderReport,
+    SalesOrderReport,
+    StockLocationReport,
+    TestReport,
+)
 
 
 class ReportSerializerBase(InvenTreeModelSerializer):
-    """Base class for report serializer"""
+    """Base class for report serializer."""
 
     template = InvenTreeAttachmentSerializerField(required=True)
 
     @staticmethod
     def report_fields():
-        """Generic serializer fields for a report template"""
-        return [
-            'pk',
-            'name',
-            'description',
-            'template',
-            'filters',
-            'enabled',
-        ]
+        """Generic serializer fields for a report template."""
+        return ['pk', 'name', 'description', 'template', 'filters', 'enabled']
 
 
 class TestReportSerializer(ReportSerializerBase):
-    """Serializer class for the TestReport model"""
+    """Serializer class for the TestReport model."""
 
     class Meta:
         """Metaclass options."""
@@ -37,7 +38,7 @@ class TestReportSerializer(ReportSerializerBase):
 
 
 class BuildReportSerializer(ReportSerializerBase):
-    """Serializer class for the BuildReport model"""
+    """Serializer class for the BuildReport model."""
 
     class Meta:
         """Metaclass options."""
@@ -47,7 +48,7 @@ class BuildReportSerializer(ReportSerializerBase):
 
 
 class BOMReportSerializer(ReportSerializerBase):
-    """Serializer class for the BillOfMaterialsReport model"""
+    """Serializer class for the BillOfMaterialsReport model."""
 
     class Meta:
         """Metaclass options."""
@@ -57,7 +58,7 @@ class BOMReportSerializer(ReportSerializerBase):
 
 
 class PurchaseOrderReportSerializer(ReportSerializerBase):
-    """Serializer class for the PurchaseOrdeReport model"""
+    """Serializer class for the PurchaseOrdeReport model."""
 
     class Meta:
         """Metaclass options."""
@@ -67,7 +68,7 @@ class PurchaseOrderReportSerializer(ReportSerializerBase):
 
 
 class SalesOrderReportSerializer(ReportSerializerBase):
-    """Serializer class for the SalesOrderReport model"""
+    """Serializer class for the SalesOrderReport model."""
 
     class Meta:
         """Metaclass options."""
@@ -77,20 +78,20 @@ class SalesOrderReportSerializer(ReportSerializerBase):
 
 
 class ReturnOrderReportSerializer(ReportSerializerBase):
-    """Serializer class for the ReturnOrderReport model"""
+    """Serializer class for the ReturnOrderReport model."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = ReturnOrderReport
         fields = ReportSerializerBase.report_fields()
 
 
 class StockLocationReportSerializer(ReportSerializerBase):
-    """Serializer class for the StockLocationReport model"""
+    """Serializer class for the StockLocationReport model."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = StockLocationReport
         fields = ReportSerializerBase.report_fields()

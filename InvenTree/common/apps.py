@@ -4,7 +4,7 @@ import logging
 
 from django.apps import AppConfig
 
-from InvenTree.ready import isImportingData
+import InvenTree.ready
 
 logger = logging.getLogger('inventree')
 
@@ -19,6 +19,9 @@ class CommonConfig(AppConfig):
 
     def ready(self):
         """Initialize restart flag clearance on startup."""
+        if InvenTree.ready.isRunningMigrations():
+            return
+
         self.clear_restart_flag()
 
     def clear_restart_flag(self):
@@ -26,10 +29,14 @@ class CommonConfig(AppConfig):
         try:
             import common.models
 
-            if common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED', backup_value=False, create=False, cache=False):
-                logger.info("Clearing SERVER_RESTART_REQUIRED flag")
+            if common.models.InvenTreeSetting.get_setting(
+                'SERVER_RESTART_REQUIRED', backup_value=False, create=False, cache=False
+            ):
+                logger.info('Clearing SERVER_RESTART_REQUIRED flag')
 
-                if not isImportingData():
-                    common.models.InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', False, None)
+                if not InvenTree.ready.isImportingData():
+                    common.models.InvenTreeSetting.set_setting(
+                        'SERVER_RESTART_REQUIRED', False, None
+                    )
         except Exception:
             pass

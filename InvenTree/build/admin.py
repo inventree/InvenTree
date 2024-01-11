@@ -84,7 +84,7 @@ class BuildAdmin(ImportExportModelAdmin):
 
 
 class BuildItemAdmin(admin.ModelAdmin):
-    """Class for managing the BuildItem model via the admin interface"""
+    """Class for managing the BuildItem model via the admin interface."""
 
     list_display = (
         'stock_item',
