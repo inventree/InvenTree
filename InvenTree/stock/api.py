@@ -38,6 +38,7 @@ from InvenTree.filters import (
 from InvenTree.helpers import (
     DownloadFile,
     extract_serial_numbers,
+    is_ajax,
     isNull,
     str2bool,
     str2int,
@@ -1025,7 +1026,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         if page is not None:
             return self.get_paginated_response(data)
-        elif request.is_ajax():
+        elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
@@ -1396,7 +1397,7 @@ class StockTrackingList(ListAPI):
 
         if page is not None:
             return self.get_paginated_response(data)
-        if request.is_ajax():
+        if is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
