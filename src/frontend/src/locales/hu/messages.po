@@ -667,7 +667,7 @@ msgid "Mark as read"
 msgstr "Megjelölés olvasottként"
 
 #: src/components/nav/PartCategoryTree.tsx:80
-#: src/components/render/ModelType.tsx:49
+#: src/components/render/ModelType.tsx:53
 #: src/pages/Index/Settings/SystemSettings.tsx:165
 #: src/pages/part/CategoryDetail.tsx:60
 msgid "Part Categories"
@@ -706,7 +706,7 @@ msgid "No results available for search query"
 msgstr "Nincs találat a keresésre"
 
 #: src/components/nav/StockLocationTree.tsx:80
-#: src/components/render/ModelType.tsx:63
+#: src/components/render/ModelType.tsx:69
 #: src/pages/stock/LocationDetail.tsx:48
 msgid "Stock Locations"
 msgstr "Készlethelyek"
@@ -715,7 +715,7 @@ msgstr "Készlethelyek"
 msgid "Unknown model: {model}"
 msgstr "Ismeretlen model: {model}"
 
-#: src/components/render/ModelType.tsx:20
+#: src/components/render/ModelType.tsx:21
 #: src/components/tables/bom/BomTable.tsx:62
 #: src/components/tables/build/BuildOrderTable.tsx:39
 #: src/components/tables/part/PartParameterTable.tsx:34
@@ -729,7 +729,7 @@ msgstr "Ismeretlen model: {model}"
 msgid "Part"
 msgstr "Alkatrész"
 
-#: src/components/render/ModelType.tsx:21
+#: src/components/render/ModelType.tsx:22
 #: src/components/tables/part/PartCategoryTable.tsx:46
 #: src/defaults/links.tsx:27
 #: src/defaults/menuItems.tsx:33
@@ -740,42 +740,42 @@ msgstr "Alkatrész"
 msgid "Parts"
 msgstr "Alkatrészek"
 
-#: src/components/render/ModelType.tsx:27
+#: src/components/render/ModelType.tsx:29
 msgid "Part Parameter Template"
 msgstr "Alkatrész paraméter sablon"
 
-#: src/components/render/ModelType.tsx:28
+#: src/components/render/ModelType.tsx:30
 msgid "Part Parameter Templates"
 msgstr "Alkatrész paraméter sablonok"
 
-#: src/components/render/ModelType.tsx:34
+#: src/components/render/ModelType.tsx:36
 #: src/components/tables/purchasing/SupplierPartTable.tsx:57
 msgid "Supplier Part"
 msgstr "Beszállítói alkatrész"
 
-#: src/components/render/ModelType.tsx:35
+#: src/components/render/ModelType.tsx:37
 msgid "Supplier Parts"
 msgstr "Beszállítói alkatrészek"
 
-#: src/components/render/ModelType.tsx:41
+#: src/components/render/ModelType.tsx:44
 msgid "Manufacturer Part"
 msgstr "Gyártói alkatrész"
 
-#: src/components/render/ModelType.tsx:42
+#: src/components/render/ModelType.tsx:45
 msgid "Manufacturer Parts"
 msgstr "Gyártói alkatrészek"
 
-#: src/components/render/ModelType.tsx:48
+#: src/components/render/ModelType.tsx:52
 #: src/pages/part/CategoryDetail.tsx:102
 msgid "Part Category"
 msgstr "Alkatrész kategória"
 
-#: src/components/render/ModelType.tsx:55
+#: src/components/render/ModelType.tsx:60
 #: src/pages/stock/StockDetail.tsx:220
 msgid "Stock Item"
 msgstr "Készlet tétel"
 
-#: src/components/render/ModelType.tsx:56
+#: src/components/render/ModelType.tsx:61
 #: src/components/tables/stock/StockLocationTable.tsx:62
 #: src/pages/company/CompanyDetail.tsx:99
 #: src/pages/stock/LocationDetail.tsx:36
@@ -783,55 +783,55 @@ msgstr "Készlet tétel"
 msgid "Stock Items"
 msgstr "Készlet tételek"
 
-#: src/components/render/ModelType.tsx:62
+#: src/components/render/ModelType.tsx:68
 msgid "Stock Location"
 msgstr "Készlet hely"
 
-#: src/components/render/ModelType.tsx:69
+#: src/components/render/ModelType.tsx:76
 msgid "Stock History"
 msgstr "Készlettörténet"
 
-#: src/components/render/ModelType.tsx:70
+#: src/components/render/ModelType.tsx:77
 msgid "Stock Histories"
 msgstr "Készlettörténet"
 
-#: src/components/render/ModelType.tsx:74
+#: src/components/render/ModelType.tsx:81
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:43
 msgid "Build"
 msgstr "Gyártás"
 
-#: src/components/render/ModelType.tsx:75
+#: src/components/render/ModelType.tsx:82
 msgid "Builds"
 msgstr "Gyártások"
 
-#: src/components/render/ModelType.tsx:81
+#: src/components/render/ModelType.tsx:89
 #: src/pages/company/CompanyDetail.tsx:199
 msgid "Company"
 msgstr "Cég"
 
-#: src/components/render/ModelType.tsx:82
+#: src/components/render/ModelType.tsx:90
 msgid "Companies"
 msgstr "Cégek"
 
-#: src/components/render/ModelType.tsx:88
+#: src/components/render/ModelType.tsx:97
 #: src/components/tables/ColumnRenderers.tsx:72
 #: src/components/tables/TableHoverCard.tsx:58
 #: src/components/tables/settings/ProjectCodeTable.tsx:33
 msgid "Project Code"
 msgstr "Projektszám"
 
-#: src/components/render/ModelType.tsx:89
+#: src/components/render/ModelType.tsx:98
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:52
 msgid "Project Codes"
 msgstr "Projektszámok"
 
-#: src/components/render/ModelType.tsx:95
+#: src/components/render/ModelType.tsx:104
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:131
 msgid "Purchase Order"
 msgstr "Beszerzési rendelés"
 
-#: src/components/render/ModelType.tsx:96
+#: src/components/render/ModelType.tsx:105
 #: src/pages/Index/Settings/SystemSettings.tsx:234
 #: src/pages/company/CompanyDetail.tsx:90
 #: src/pages/part/PartDetail.tsx:183
@@ -839,21 +839,21 @@ msgstr "Beszerzési rendelés"
 msgid "Purchase Orders"
 msgstr "Beszerzési rendelések"
 
-#: src/components/render/ModelType.tsx:102
+#: src/components/render/ModelType.tsx:112
 msgid "Purchase Order Line"
 msgstr "Beszerzési rendelés tétel"
 
-#: src/components/render/ModelType.tsx:103
+#: src/components/render/ModelType.tsx:113
 msgid "Purchase Order Lines"
 msgstr "Beszerzési rendelés tételei"
 
-#: src/components/render/ModelType.tsx:107
+#: src/components/render/ModelType.tsx:117
 #: src/components/tables/sales/SalesOrderTable.tsx:58
 #: src/pages/sales/SalesOrderDetail.tsx:96
 msgid "Sales Order"
 msgstr "Vevői rendelés"
 
-#: src/components/render/ModelType.tsx:108
+#: src/components/render/ModelType.tsx:118
 #: src/pages/Index/Settings/SystemSettings.tsx:247
 #: src/pages/company/CompanyDetail.tsx:108
 #: src/pages/part/PartDetail.tsx:189
@@ -861,58 +861,58 @@ msgstr "Vevői rendelés"
 msgid "Sales Orders"
 msgstr "Vevői rendelések"
 
-#: src/components/render/ModelType.tsx:114
+#: src/components/render/ModelType.tsx:125
 msgid "Sales Order Shipment"
 msgstr "Vevői rendelés szállítmány"
 
-#: src/components/render/ModelType.tsx:115
+#: src/components/render/ModelType.tsx:126
 msgid "Sales Order Shipments"
 msgstr "Vevői rendelés szállítmányok"
 
-#: src/components/render/ModelType.tsx:121
+#: src/components/render/ModelType.tsx:132
 #: src/components/tables/sales/ReturnOrderTable.tsx:55
 #: src/pages/sales/ReturnOrderDetail.tsx:68
 msgid "Return Order"
 msgstr "Visszavétel"
 
-#: src/components/render/ModelType.tsx:122
+#: src/components/render/ModelType.tsx:133
 #: src/pages/company/CompanyDetail.tsx:117
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
 msgstr "Visszavételek"
 
-#: src/components/render/ModelType.tsx:128
+#: src/components/render/ModelType.tsx:140
 #: src/components/tables/company/AddressTable.tsx:49
 msgid "Address"
 msgstr "Cím"
 
-#: src/components/render/ModelType.tsx:129
+#: src/components/render/ModelType.tsx:141
 #: src/pages/company/CompanyDetail.tsx:138
 msgid "Addresses"
 msgstr "Címek"
 
-#: src/components/render/ModelType.tsx:135
+#: src/components/render/ModelType.tsx:147
 msgid "Contact"
 msgstr "Kapcsolat"
 
-#: src/components/render/ModelType.tsx:136
+#: src/components/render/ModelType.tsx:148
 #: src/pages/company/CompanyDetail.tsx:132
 msgid "Contacts"
 msgstr "Kapcsolatok"
 
-#: src/components/render/ModelType.tsx:142
+#: src/components/render/ModelType.tsx:154
 msgid "Owner"
 msgstr "Tulajdonos"
 
-#: src/components/render/ModelType.tsx:143
+#: src/components/render/ModelType.tsx:155
 msgid "Owners"
 msgstr "Tulajdonosok"
 
-#: src/components/render/ModelType.tsx:149
+#: src/components/render/ModelType.tsx:161
 msgid "User"
 msgstr "Felhasználó"
 
-#: src/components/render/ModelType.tsx:150
+#: src/components/render/ModelType.tsx:162
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:46
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
