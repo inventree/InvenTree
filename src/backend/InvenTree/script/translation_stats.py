@@ -15,11 +15,10 @@ def calculate_coverage(filename):
     lines_uncovered = 0
 
     for line in lines:
-
-        if line.startswith("msgid "):
+        if line.startswith('msgid '):
             lines_count += 1
 
-        elif line.startswith("msgstr"):
+        elif line.startswith('msgstr'):
             if line.startswith('msgstr ""') or line.startswith("msgstr ''"):
                 lines_uncovered += 1
             else:
@@ -30,10 +29,11 @@ def calculate_coverage(filename):
 
 
 if __name__ == '__main__':
-
     MY_DIR = os.path.dirname(os.path.realpath(__file__))
     LC_DIR = os.path.abspath(os.path.join(MY_DIR, '..', 'locale'))
-    STAT_FILE = os.path.abspath(os.path.join(MY_DIR, '..', 'InvenTree/locale_stats.json'))
+    STAT_FILE = os.path.abspath(
+        os.path.join(MY_DIR, '..', 'InvenTree/locale_stats.json')
+    )
 
     locales = {}
     locales_perc = {}
@@ -43,14 +43,13 @@ if __name__ == '__main__':
     for locale in os.listdir(LC_DIR):
         path = os.path.join(LC_DIR, locale)
         if os.path.exists(path) and os.path.isdir(path):
-
             locale_file = os.path.join(path, 'LC_MESSAGES', 'django.po')
 
             if os.path.exists(locale_file) and os.path.isfile(locale_file):
                 locales[locale] = locale_file
 
     if verbose:
-        print("-" * 16)
+        print('-' * 16)
 
     percentages = []
 
@@ -73,7 +72,7 @@ if __name__ == '__main__':
         percentages.append(percentage)
 
     if verbose:
-        print("-" * 16)
+        print('-' * 16)
 
     # write locale stats
     with open(STAT_FILE, 'w') as target:
@@ -84,4 +83,4 @@ if __name__ == '__main__':
     else:
         avg = 0
 
-    print(f"InvenTree translation coverage: {avg}%")
+    print(f'InvenTree translation coverage: {avg}%')

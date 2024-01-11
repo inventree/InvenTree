@@ -1,4 +1,3 @@
-
 """Unit tests for the BomItem model"""
 
 from decimal import Decimal
@@ -70,7 +69,9 @@ class BomItemTest(TestCase):
 
     def test_integer_quantity(self):
         """Test integer validation for BomItem."""
-        p = Part.objects.create(name="test", description="part description", component=True, trackable=True)
+        p = Part.objects.create(
+            name='test', description='part description', component=True, trackable=True
+        )
 
         # Creation of a BOMItem with a non-integer quantity of a trackable Part should fail
         with self.assertRaises(django_exceptions.ValidationError):
@@ -134,22 +135,19 @@ class BomItemTest(TestCase):
         self.bob.get_price(1)
         self.assertEqual(
             self.bob.get_bom_price_range(1, internal=True),
-            (Decimal(29.5), Decimal(89.5))
+            (Decimal(29.5), Decimal(89.5)),
         )
         # remove internal price for R_2K2_0805
         self.r1.internal_price_breaks.delete()
         self.assertEqual(
             self.bob.get_bom_price_range(1, internal=True),
-            (Decimal(27.5), Decimal(87.5))
+            (Decimal(27.5), Decimal(87.5)),
         )
 
     def test_substitutes(self):
         """Tests for BOM item substitutes."""
         # We will make some substitute parts for the "orphan" part
-        bom_item = BomItem.objects.get(
-            part=self.bob,
-            sub_part=self.orphan
-        )
+        bom_item = BomItem.objects.get(part=self.bob, sub_part=self.orphan)
 
         # No substitute parts available
         self.assertEqual(bom_item.substitutes.count(), 0)
@@ -157,11 +155,10 @@ class BomItemTest(TestCase):
         subs = []
 
         for ii in range(5):
-
             # Create a new part
             sub_part = Part.objects.create(
-                name=f"Orphan {ii}",
-                description="A substitute part for the orphan part",
+                name=f'Orphan {ii}',
+                description='A substitute part for the orphan part',
                 component=True,
                 is_template=False,
                 assembly=False,
@@ -170,28 +167,19 @@ class BomItemTest(TestCase):
             subs.append(sub_part)
 
             # Link it as a substitute part
-            BomItemSubstitute.objects.create(
-                bom_item=bom_item,
-                part=sub_part
-            )
+            BomItemSubstitute.objects.create(bom_item=bom_item, part=sub_part)
 
             # Try to link it again (this should fail as it is a duplicate substitute)
             with self.assertRaises(django_exceptions.ValidationError):
                 with transaction.atomic():
-                    BomItemSubstitute.objects.create(
-                        bom_item=bom_item,
-                        part=sub_part
-                    )
+                    BomItemSubstitute.objects.create(bom_item=bom_item, part=sub_part)
 
         # There should be now 5 substitute parts available
         self.assertEqual(bom_item.substitutes.count(), 5)
 
         # Try to create a substitute which points to the same sub-part (should fail)
         with self.assertRaises(django_exceptions.ValidationError):
-            BomItemSubstitute.objects.create(
-                bom_item=bom_item,
-                part=self.orphan,
-            )
+            BomItemSubstitute.objects.create(bom_item=bom_item, part=self.orphan)
 
         # Remove one substitute part
         bom_item.substitutes.last().delete()
@@ -207,45 +195,42 @@ class BomItemTest(TestCase):
     def test_consumable(self):
         """Tests for the 'consumable' BomItem field"""
         # Create an assembly part
-        assembly = Part.objects.create(name="An assembly", description="Made with parts", assembly=True)
+        assembly = Part.objects.create(
+            name='An assembly', description='Made with parts', assembly=True
+        )
 
         # No BOM information initially
         self.assertEqual(assembly.can_build, 0)
 
         # Create some component items
-        c1 = Part.objects.create(name="C1", description="Part C1 - this is just the part description")
-        c2 = Part.objects.create(name="C2", description="Part C2 - this is just the part description")
-        c3 = Part.objects.create(name="C3", description="Part C3 - this is just the part description")
-        c4 = Part.objects.create(name="C4", description="Part C4 - this is just the part description")
+        c1 = Part.objects.create(
+            name='C1', description='Part C1 - this is just the part description'
+        )
+        c2 = Part.objects.create(
+            name='C2', description='Part C2 - this is just the part description'
+        )
+        c3 = Part.objects.create(
+            name='C3', description='Part C3 - this is just the part description'
+        )
+        c4 = Part.objects.create(
+            name='C4', description='Part C4 - this is just the part description'
+        )
 
         for p in [c1, c2, c3, c4]:
             # Ensure we have stock
             stock.models.StockItem.objects.create(part=p, quantity=1000)
 
         # Create some BOM items
-        BomItem.objects.create(
-            part=assembly,
-            sub_part=c1,
-            quantity=10
-        )
+        BomItem.objects.create(part=assembly, sub_part=c1, quantity=10)
 
         self.assertEqual(assembly.can_build, 100)
 
-        BomItem.objects.create(
-            part=assembly,
-            sub_part=c2,
-            quantity=50,
-            consumable=True
-        )
+        BomItem.objects.create(part=assembly, sub_part=c2, quantity=50, consumable=True)
 
         # A 'consumable' BomItem does not alter the can_build calculation
         self.assertEqual(assembly.can_build, 100)
 
-        BomItem.objects.create(
-            part=assembly,
-            sub_part=c3,
-            quantity=50,
-        )
+        BomItem.objects.create(part=assembly, sub_part=c3, quantity=50)
 
         self.assertEqual(assembly.can_build, 20)
 
@@ -271,16 +256,28 @@ class BomItemTest(TestCase):
 
         # First test: A BOM item which points to itself
         with self.assertRaises(django_exceptions.ValidationError):
-            BomItem.objects.create(
-                part=self.bob,
-                sub_part=self.bob,
-                quantity=1
-            )
+            BomItem.objects.create(part=self.bob, sub_part=self.bob, quantity=1)
 
         # Second test: A recursive BOM
-        part_a = Part.objects.create(name='Part A', description="A part which is called A", assembly=True, is_template=True, component=True)
-        part_b = Part.objects.create(name='Part B', description="A part which is called B", assembly=True, component=True)
-        part_c = Part.objects.create(name='Part C', description="A part which is called C", assembly=True, component=True)
+        part_a = Part.objects.create(
+            name='Part A',
+            description='A part which is called A',
+            assembly=True,
+            is_template=True,
+            component=True,
+        )
+        part_b = Part.objects.create(
+            name='Part B',
+            description='A part which is called B',
+            assembly=True,
+            component=True,
+        )
+        part_c = Part.objects.create(
+            name='Part C',
+            description='A part which is called C',
+            assembly=True,
+            component=True,
+        )
 
         BomItem.objects.create(part=part_a, sub_part=part_b, quantity=10)
         BomItem.objects.create(part=part_b, sub_part=part_c, quantity=10)
@@ -292,7 +289,13 @@ class BomItemTest(TestCase):
             BomItem.objects.create(part=part_c, sub_part=part_b, quantity=10)
 
         # Third test: A recursive BOM with a variant part
-        part_v = Part.objects.create(name='Part V', description='A part which is called V', variant_of=part_a, assembly=True, component=True)
+        part_v = Part.objects.create(
+            name='Part V',
+            description='A part which is called V',
+            variant_of=part_a,
+            assembly=True,
+            component=True,
+        )
 
         with self.assertRaises(django_exceptions.ValidationError):
             BomItem.objects.create(part=part_a, sub_part=part_v, quantity=10)

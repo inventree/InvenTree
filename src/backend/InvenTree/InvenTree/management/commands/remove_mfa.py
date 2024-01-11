@@ -18,7 +18,12 @@ class Command(BaseCommand):
         if not mail:
             raise KeyError('A mail is required')
         user = get_user_model()
-        mfa_user = [*set(user.objects.filter(email=mail) | user.objects.filter(emailaddress__email=mail))]
+        mfa_user = [
+            *set(
+                user.objects.filter(email=mail)
+                | user.objects.filter(emailaddress__email=mail)
+            )
+        ]
 
         if len(mfa_user) == 0:
             print('No user with this mail associated')

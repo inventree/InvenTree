@@ -4,7 +4,7 @@
 class ActionMixin:
     """Mixin that enables custom actions."""
 
-    ACTION_NAME = ""
+    ACTION_NAME = ''
 
     class MixinMeta:
         """Meta options for this mixin."""
@@ -47,7 +47,7 @@ class ActionMixin:
         Default implementation is a simple response which can be overridden.
         """
         return {
-            "action": self.action_name(),
-            "result": self.get_result(user, data),
-            "info": self.get_info(user, data),
+            'action': self.action_name(),
+            'result': self.get_result(user, data),
+            'info': self.get_info(user, data),
         }

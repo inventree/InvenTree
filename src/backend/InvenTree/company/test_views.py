@@ -36,7 +36,9 @@ class CompanyViewTest(InvenTreeTestCase):
 
     def test_manufacturer_part_detail_view(self):
         """Test the manufacturer part detail view."""
-        response = self.client.get(reverse('manufacturer-part-detail', kwargs={'pk': 1}))
+        response = self.client.get(
+            reverse('manufacturer-part-detail', kwargs={'pk': 1})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'MPN123')
 

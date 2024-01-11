@@ -13,17 +13,16 @@ exclude = [
     ".env",
     "src/backend/plugins/*",
 ]
-src = ["../src/backend/InvenTree"]
+src = ["src/backend/InvenTree"]
 # line-length = 120
 
 [tool.ruff.extend-per-file-ignores]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C4", "D", "N"]
+select = ["A", "B", "C4", "D", "I", "N"]
 # Things that should be enabled in the future:
 # - LOG
-# - I
 # - DJ # for Django stuff
 # - S # for security stuff (bandit)
 
@@ -64,13 +63,12 @@ section-order = [
     "first-party",
     "local-folder",
 ]
-known-first-party = ["src", "plugin", "InvenTree", "common"]
 
 [tool.ruff.lint.isort.sections]
 "django" = ["django"]
 
 [tool.ruff.format]
-quote-style = "preserve"
+quote-style = "single"
 indent-style = "space"
 skip-magic-trailing-comma = true
 line-ending = "auto"

@@ -31,5 +31,5 @@ def annotate_location_items(filter: Q = None):
             ).values('total')
         ),
         0,
-        output_field=IntegerField()
+        output_field=IntegerField(),
     )

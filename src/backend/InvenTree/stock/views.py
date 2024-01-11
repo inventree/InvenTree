@@ -34,7 +34,9 @@ class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
         # No 'ownership' checks are necessary for the top-level StockLocation view
         context['user_owns_location'] = True
         context['location_owner'] = None
-        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting(
+            'STOCK_OWNERSHIP_CONTROL'
+        )
 
         return context
 
@@ -51,9 +53,13 @@ class StockLocationDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailVi
         """Extend template context."""
         context = super().get_context_data(**kwargs)
 
-        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting(
+            'STOCK_OWNERSHIP_CONTROL'
+        )
         context['location_owner'] = context['location'].get_location_owner()
-        context['user_owns_location'] = context['location'].check_ownership(self.request.user)
+        context['user_owns_location'] = context['location'].check_ownership(
+            self.request.user
+        )
 
         return context
 
@@ -74,14 +80,18 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
             data['previous'] = self.object.get_next_serialized_item(reverse=True)
             data['next'] = self.object.get_next_serialized_item()
 
-        data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting(
+            'STOCK_OWNERSHIP_CONTROL'
+        )
         data['item_owner'] = self.object.get_item_owner()
         data['user_owns_item'] = self.object.check_ownership(self.request.user)
 
         # Allocation information
         data['allocated_to_sales_orders'] = self.object.sales_order_allocation_count()
         data['allocated_to_build_orders'] = self.object.build_allocation_count()
-        data['allocated_to_orders'] = data['allocated_to_sales_orders'] + data['allocated_to_build_orders']
+        data['allocated_to_orders'] = (
+            data['allocated_to_sales_orders'] + data['allocated_to_build_orders']
+        )
         data['available'] = max(0, self.object.quantity - data['allocated_to_orders'])
 
         return data

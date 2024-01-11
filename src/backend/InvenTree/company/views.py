@@ -44,14 +44,14 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
                 'button_text': _('New Customer'),
                 'filters': {'is_customer': 'true'},
                 'pagetype': 'customers',
-            }
+            },
         }
 
         default = {
             'title': _('Companies'),
             'button_text': _('New Company'),
             'filters': {},
-            'pagetype': 'companies'
+            'pagetype': 'companies',
         }
 
         context = None
@@ -88,6 +88,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
 
 class CompanyDetail(InvenTreePluginViewMixin, DetailView):
     """Detail view for Company object."""
+
     context_obect_name = 'company'
     template_name = 'company/detail.html'
     queryset = Company.objects.all()
@@ -97,6 +98,7 @@ class CompanyDetail(InvenTreePluginViewMixin, DetailView):
 
 class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):
     """Detail view for ManufacturerPart."""
+
     model = ManufacturerPart
     template_name = 'company/manufacturer_part_detail.html'
     context_object_name = 'part'
@@ -106,6 +108,7 @@ class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):
 
 class SupplierPartDetail(InvenTreePluginViewMixin, DetailView):
     """Detail view for SupplierPart."""
+
     model = SupplierPart
     template_name = 'company/supplier_part_detail.html'
     context_object_name = 'part'

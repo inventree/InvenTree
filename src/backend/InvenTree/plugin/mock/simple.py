@@ -7,4 +7,4 @@ class SimplePlugin(InvenTreePlugin):
     """A very simple plugin."""
 
     NAME = 'SimplePlugin'
-    SLUG = "simple"
+    SLUG = 'simple'

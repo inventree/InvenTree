@@ -8,8 +8,14 @@ from django.test import TestCase
 
 from part.models import Part
 
-from .models import (Address, Company, Contact, ManufacturerPart, SupplierPart,
-                     rename_company_image)
+from .models import (
+    Address,
+    Company,
+    Contact,
+    ManufacturerPart,
+    SupplierPart,
+    rename_company_image,
+)
 
 
 class CompanySimpleTest(TestCase):
@@ -31,11 +37,13 @@ class CompanySimpleTest(TestCase):
         """Perform initialization for the tests in this class"""
         super().setUpTestData()
 
-        Company.objects.create(name='ABC Co.',
-                               description='Seller of ABC products',
-                               website='www.abc-sales.com',
-                               is_customer=False,
-                               is_supplier=True)
+        Company.objects.create(
+            name='ABC Co.',
+            description='Seller of ABC products',
+            website='www.abc-sales.com',
+            is_customer=False,
+            is_supplier=True,
+        )
 
         cls.acme0001 = SupplierPart.objects.get(SKU='ACME0001')
         cls.acme0002 = SupplierPart.objects.get(SKU='ACME0002')
@@ -95,9 +103,9 @@ class CompanySimpleTest(TestCase):
         """Unit tests for supplier part pricing"""
         m2x4 = Part.objects.get(name='M2x4 LPHS')
 
-        self.assertEqual(m2x4.get_price_info(5.5), "38.5 - 41.25")
-        self.assertEqual(m2x4.get_price_info(10), "70 - 75")
-        self.assertEqual(m2x4.get_price_info(100), "125 - 350")
+        self.assertEqual(m2x4.get_price_info(5.5), '38.5 - 41.25')
+        self.assertEqual(m2x4.get_price_info(10), '70 - 75')
+        self.assertEqual(m2x4.get_price_info(100), '125 - 350')
 
         pmin, pmax = m2x4.get_price_range(5)
         self.assertEqual(pmin, 35)
@@ -113,18 +121,14 @@ class CompanySimpleTest(TestCase):
         """Test validation for currency selection."""
         # Create a company with a valid currency code (should pass)
         company = Company.objects.create(
-            name='Test',
-            description='Toast',
-            currency='AUD',
+            name='Test', description='Toast', currency='AUD'
         )
 
         company.full_clean()
 
         # Create a company with an invalid currency code (should fail)
         company = Company.objects.create(
-            name='test',
-            description='Toasty',
-            currency='XZY',
+            name='test', description='Toasty', currency='XZY'
         )
 
         with self.assertRaises(ValidationError):
@@ -154,7 +158,9 @@ class ContactSimpleTest(TestCase):
     def setUp(self):
         """Initialization for the tests in this class"""
         # Create a simple company
-        self.c = Company.objects.create(name='Test Corp.', description='We make stuff good')
+        self.c = Company.objects.create(
+            name='Test Corp.', description='We make stuff good'
+        )
 
         # Add some contacts
         Contact.objects.create(name='Joe Smith', company=self.c)
@@ -178,7 +184,9 @@ class AddressTest(TestCase):
     def setUp(self):
         """Initialization for the tests in this class"""
         # Create a simple company
-        self.c = Company.objects.create(name='Test Corp.', description='We make stuff good')
+        self.c = Company.objects.create(
+            name='Test Corp.', description='We make stuff good'
+        )
 
     def test_create(self):
         """Test that object creation with only company supplied is successful"""
@@ -214,27 +222,28 @@ class AddressTest(TestCase):
 
     def test_model_str(self):
         """Test value of __str__"""
-        t = "Test address"
-        l1 = "Busy street 56"
-        l2 = "Red building"
-        pcd = "12345"
-        pct = "City"
-        pv = "Province"
-        cn = "COUNTRY"
-        addr = Address.objects.create(company=self.c,
-                                      title=t,
-                                      line1=l1,
-                                      line2=l2,
-                                      postal_code=pcd,
-                                      postal_city=pct,
-                                      province=pv,
-                                      country=cn)
+        t = 'Test address'
+        l1 = 'Busy street 56'
+        l2 = 'Red building'
+        pcd = '12345'
+        pct = 'City'
+        pv = 'Province'
+        cn = 'COUNTRY'
+        addr = Address.objects.create(
+            company=self.c,
+            title=t,
+            line1=l1,
+            line2=l2,
+            postal_code=pcd,
+            postal_city=pct,
+            province=pv,
+            country=cn,
+        )
         self.assertEqual(str(addr), f'{l1}, {l2}, {pcd}, {pct}, {pv}, {cn}')
 
-        addr2 = Address.objects.create(company=self.c,
-                                       title=t,
-                                       line1=l1,
-                                       postal_code=pcd)
+        addr2 = Address.objects.create(
+            company=self.c, title=t, line1=l1, postal_code=pcd
+        )
 
         self.assertEqual(str(addr2), f'{l1}, {pcd}')
 
@@ -242,13 +251,7 @@ class AddressTest(TestCase):
 class ManufacturerPartSimpleTest(TestCase):
     """Unit tests for the ManufacturerPart model"""
 
-    fixtures = [
-        'category',
-        'company',
-        'location',
-        'part',
-        'manufacturer_part',
-    ]
+    fixtures = ['category', 'company', 'location', 'part', 'manufacturer_part']
 
     def setUp(self):
         """Initialization for the unit tests in this class"""
@@ -266,9 +269,7 @@ class ManufacturerPartSimpleTest(TestCase):
         # Create a supplier part
         supplier = Company.objects.get(pk=5)
         supplier_part = SupplierPart.objects.create(
-            part=self.part,
-            supplier=supplier,
-            SKU='SKU_TEST',
+            part=self.part, supplier=supplier, SKU='SKU_TEST'
         )
 
         supplier_part.save()

@@ -16,11 +16,7 @@ def isImportingData():
 
 def isRunningMigrations():
     """Return True if the database is currently running migrations."""
-    return any((x in sys.argv for x in [
-        'migrate',
-        'makemigrations',
-        'showmigrations'
-    ]))
+    return any((x in sys.argv for x in ['migrate', 'makemigrations', 'showmigrations']))
 
 
 def isInMainThread():
@@ -29,13 +25,15 @@ def isInMainThread():
     - The RUN_MAIN env is set in that case. However if --noreload is applied, this variable
     is not set because there are no different threads.
     """
-    if "runserver" in sys.argv and "--noreload" not in sys.argv:
-        return os.environ.get('RUN_MAIN', None) == "true"
+    if 'runserver' in sys.argv and '--noreload' not in sys.argv:
+        return os.environ.get('RUN_MAIN', None) == 'true'
 
     return True
 
 
-def canAppAccessDatabase(allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False):
+def canAppAccessDatabase(
+    allow_test: bool = False, allow_plugins: bool = False, allow_shell: bool = False
+):
     """Returns True if the apps.py file can access database records.
 
     There are some circumstances where we don't want the ready function in apps.py

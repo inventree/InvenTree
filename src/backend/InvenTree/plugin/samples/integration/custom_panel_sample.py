@@ -9,11 +9,11 @@ from stock.views import StockLocationDetail
 class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
     """A sample plugin which renders some custom panels."""
 
-    NAME = "CustomPanelExample"
-    SLUG = "samplepanel"
-    TITLE = "Custom Panel Example"
-    DESCRIPTION = "An example plugin demonstrating how custom panels can be added to the user interface"
-    VERSION = "0.1"
+    NAME = 'CustomPanelExample'
+    SLUG = 'samplepanel'
+    TITLE = 'Custom Panel Example'
+    DESCRIPTION = 'An example plugin demonstrating how custom panels can be added to the user interface'
+    VERSION = '0.1'
 
     SETTINGS = {
         'ENABLE_HELLO_WORLD': {
@@ -27,7 +27,7 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
             'description': 'Enable a panel with rendering issues',
             'default': False,
             'validator': bool,
-        }
+        },
     }
 
     def get_panel_context(self, view, request, context):
@@ -51,12 +51,11 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
         panels = [
             {
                 # Simple panel without any actual content
-                'title': 'No Content',
+                'title': 'No Content'
             }
         ]
 
         if self.get_setting('ENABLE_HELLO_WORLD'):
-
             # We can use template rendering in the raw content
             content = """
             <strong>Hello world!</strong>
@@ -81,7 +80,6 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
             })
 
         if self.get_setting('ENABLE_BROKEN_PANEL'):
-
             # Enabling this panel will cause panel rendering to break,
             # due to the invalid tags
             panels.append({
@@ -103,7 +101,6 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
         # This panel will *only* display on the StockLocation view,
         # and *only* if the StockLocation has *no* child locations
         if isinstance(view, StockLocationDetail):
-
             try:
                 loc = view.get_object()
 

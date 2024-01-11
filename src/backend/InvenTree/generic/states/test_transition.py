@@ -35,8 +35,7 @@ class TransitionTests(InvenTreeTestCase):
     def test_class(self):
         """Ensure that the class itself works."""
 
-        class ErrorImplementation(TransitionMethod):
-            ...
+        class ErrorImplementation(TransitionMethod): ...
 
         with self.assertRaises(NotImplementedError):
             ErrorImplementation()
@@ -90,7 +89,6 @@ class TransitionTests(InvenTreeTestCase):
 
         class ValidImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
-
                 global raise_function
 
                 if raise_function:
@@ -103,7 +101,9 @@ class TransitionTests(InvenTreeTestCase):
         self.assertIn(ValidImplementation, storage.list)
 
         # Ensure that the function is called
-        self.assertEqual(StateTransitionMixin.handle_transition(0, 1, self, self, dflt), 1234)
+        self.assertEqual(
+            StateTransitionMixin.handle_transition(0, 1, self, self, dflt), 1234
+        )
 
         _clean_storage([ValidImplementationNoEffect, ValidImplementation])
 

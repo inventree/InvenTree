@@ -15,4 +15,4 @@ class TaskTest(TestCase):
         """Test that the task `delete_old_notifications` runs through without errors."""
         # check empty run
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
-        offload_task(common_tasks.delete_old_notifications,)
+        offload_task(common_tasks.delete_old_notifications)

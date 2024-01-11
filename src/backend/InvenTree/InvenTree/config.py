@@ -51,7 +51,11 @@ def to_dict(value):
     try:
         return json.loads(value)
     except Exception as error:
-        logger.exception("Failed to parse value '%s' as JSON with error %s. Ensure value is a valid JSON string.", value, error)
+        logger.exception(
+            "Failed to parse value '%s' as JSON with error %s. Ensure value is a valid JSON string.",
+            value,
+            error,
+        )
     return {}
 
 
@@ -90,12 +94,14 @@ def get_config_file(create=True) -> Path:
         cfg_filename = base_dir.joinpath('config.yaml').resolve()
 
     if not cfg_filename.exists() and create:
-        print("InvenTree configuration file 'config.yaml' not found - creating default file")
+        print(
+            "InvenTree configuration file 'config.yaml' not found - creating default file"
+        )
         ensure_dir(cfg_filename.parent)
 
-        cfg_template = base_dir.joinpath("config_template.yaml")
+        cfg_template = base_dir.joinpath('config_template.yaml')
         shutil.copyfile(cfg_template, cfg_filename)
-        print(f"Created config file {cfg_filename}")
+        print(f'Created config file {cfg_filename}')
 
     return cfg_filename
 
@@ -153,7 +159,13 @@ def do_typecast(value, type, var_name=None):
             return val
         except Exception as error:
             if var_name:
-                logger.exception("Failed to typecast '%s' with value '%s' to type '%s' with error %s", var_name, value, type, error)
+                logger.exception(
+                    "Failed to typecast '%s' with value '%s' to type '%s' with error %s",
+                    var_name,
+                    value,
+                    type,
+                    error,
+                )
     return value
 
 
@@ -174,7 +186,12 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
     def set_metadata(source: str):
         """Set lookup metadata for the setting."""
         key = env_var or config_key
-        CONFIG_LOOKUPS[key] = {'env_var': env_var, 'config_key': config_key, 'source': source, 'accessed': datetime.datetime.now()}
+        CONFIG_LOOKUPS[key] = {
+            'env_var': env_var,
+            'config_key': config_key,
+            'source': source,
+            'accessed': datetime.datetime.now(),
+        }
 
     # First, try to load from the environment variables
     if env_var is not None:
@@ -192,7 +209,6 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
         # Hack to allow 'path traversal' in configuration file
         for key in config_key.strip().split('.'):
-
             if type(cfg_data) is not dict or key not in cfg_data:
                 result = None
                 break
@@ -276,12 +292,16 @@ def get_plugin_file():
         plugin_file = Path(plugin_file)
 
     if not plugin_file.exists():
-        logger.warning("Plugin configuration file does not exist - creating default file")
+        logger.warning(
+            'Plugin configuration file does not exist - creating default file'
+        )
         logger.info("Creating plugin file at '%s'", plugin_file)
         ensure_dir(plugin_file.parent)
 
         # If opening the file fails (no write permission, for example), then this will throw an error
-        plugin_file.write_text("# InvenTree Plugins (uses PIP framework to install)\n\n")
+        plugin_file.write_text(
+            '# InvenTree Plugins (uses PIP framework to install)\n\n'
+        )
 
     return plugin_file
 
@@ -303,7 +323,7 @@ def get_secret_key():
     """
     # Look for environment variable
     if secret_key := get_setting('INVENTREE_SECRET_KEY', 'secret_key'):
-        logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
+        logger.info('SECRET_KEY loaded by INVENTREE_SECRET_KEY')  # pragma: no cover
         return secret_key
 
     # Look for secret key file
@@ -311,7 +331,7 @@ def get_secret_key():
         secret_key_file = Path(secret_key_file).resolve()
     else:
         # Default location for secret key file
-        secret_key_file = get_base_dir().joinpath("secret_key.txt").resolve()
+        secret_key_file = get_base_dir().joinpath('secret_key.txt').resolve()
 
     if not secret_key_file.exists():
         logger.info("Generating random key file at '%s'", secret_key_file)
@@ -329,7 +349,9 @@ def get_secret_key():
     return key_data
 
 
-def get_custom_file(env_ref: str, conf_ref: str, log_ref: str, lookup_media: bool = False):
+def get_custom_file(
+    env_ref: str, conf_ref: str, log_ref: str, lookup_media: bool = False
+):
     """Returns the checked path to a custom file.
 
     Set lookup_media to True to also search in the media folder.
@@ -345,12 +367,17 @@ def get_custom_file(env_ref: str, conf_ref: str, log_ref: str, lookup_media: boo
     static_storage = StaticFilesStorage()
 
     if static_storage.exists(value):
-        logger.info("Loading %s from %s directory: %s", log_ref, 'static', value)
+        logger.info('Loading %s from %s directory: %s', log_ref, 'static', value)
     elif lookup_media and default_storage.exists(value):
-        logger.info("Loading %s from %s directory: %s", log_ref, 'media', value)
+        logger.info('Loading %s from %s directory: %s', log_ref, 'media', value)
     else:
         add_dir_str = ' or media' if lookup_media else ''
-        logger.warning("The %s file '%s' could not be found in the static %s directories", log_ref, value, add_dir_str)
+        logger.warning(
+            "The %s file '%s' could not be found in the static %s directories",
+            log_ref,
+            value,
+            add_dir_str,
+        )
         value = False
 
     return value
@@ -364,16 +391,21 @@ def get_frontend_settings(debug=True):
     """
 
     # Legacy settings
-    pui_settings = get_setting('INVENTREE_PUI_SETTINGS', 'pui_settings', {}, typecast=dict)
+    pui_settings = get_setting(
+        'INVENTREE_PUI_SETTINGS', 'pui_settings', {}, typecast=dict
+    )
 
     if len(pui_settings) > 0:
         warnings.warn(
             "The 'INVENTREE_PUI_SETTINGS' key is deprecated. Please use 'INVENTREE_FRONTEND_SETTINGS' instead",
-            DeprecationWarning, stacklevel=2
+            DeprecationWarning,
+            stacklevel=2,
         )
 
     # New settings
-    frontend_settings = get_setting('INVENTREE_FRONTEND_SETTINGS', 'frontend_settings', {}, typecast=dict)
+    frontend_settings = get_setting(
+        'INVENTREE_FRONTEND_SETTINGS', 'frontend_settings', {}, typecast=dict
+    )
 
     # Merge settings
     settings = {**pui_settings, **frontend_settings}
@@ -385,10 +417,13 @@ def get_frontend_settings(debug=True):
         if base_url:
             warnings.warn(
                 "The 'INVENTREE_PUI_URL_BASE' key is deprecated. Please use 'INVENTREE_FRONTEND_URL_BASE' instead",
-                DeprecationWarning, stacklevel=2
+                DeprecationWarning,
+                stacklevel=2,
             )
         else:
-            base_url = get_setting('INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform')
+            base_url = get_setting(
+                'INVENTREE_FRONTEND_URL_BASE', 'frontend_url_base', 'platform'
+            )
 
         settings['base_url'] = base_url
 

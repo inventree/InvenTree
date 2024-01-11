@@ -27,8 +27,10 @@ class PluginAppConfig(AppConfig):
         if not isInMainThread():
             return
 
-        if not canAppAccessDatabase(allow_test=True, allow_plugins=True, allow_shell=True):
-            logger.info("Skipping plugin loading sequence")  # pragma: no cover
+        if not canAppAccessDatabase(
+            allow_test=True, allow_plugins=True, allow_shell=True
+        ):
+            logger.info('Skipping plugin loading sequence')  # pragma: no cover
         else:
             logger.info('Loading InvenTree plugins')
 
@@ -36,14 +38,19 @@ class PluginAppConfig(AppConfig):
                 # this is the first startup
                 try:
                     from common.models import InvenTreeSetting
-                    if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False, cache=False):
+
+                    if InvenTreeSetting.get_setting(
+                        'PLUGIN_ON_STARTUP', create=False, cache=False
+                    ):
                         # make sure all plugins are installed
                         registry.install_plugin_file()
                 except Exception:  # pragma: no cover
                     pass
 
                 # Perform a full reload of the plugin registry
-                registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+                registry.reload_plugins(
+                    full_reload=True, force_reload=True, collect=True
+                )
 
                 # drop out of maintenance
                 # makes sure we did not have an error in reloading and maintenance is still active
