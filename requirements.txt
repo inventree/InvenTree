@@ -51,7 +51,7 @@ diff-match-patch==20230430
     # via django-import-export
 dj-rest-auth==5.0.2
     # via -r requirements.in
-django==4.1.13
+django==4.2.9
     # via
     #   -r requirements.in
     #   dj-rest-auth
