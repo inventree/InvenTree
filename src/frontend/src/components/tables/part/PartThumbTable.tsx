@@ -1,32 +1,47 @@
+import { t } from '@lingui/macro';
 import { Button, Paper, Skeleton, Text, TextInput } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 
 import { api } from '../../../App';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 
+/**
+ * Input props to table
+ */
 export type ThumbTableProps = {
   pk: string;
   limit?: number;
   offset?: number;
   search?: string;
-  close: any;
-  setImage: any;
+  close: () => void;
+  setImage: (image: string) => void;
 };
 
+/**
+ * Data per image returned from API
+ */
+type ImageElement = {
+  image: string;
+  count: number;
+};
+
+/**
+ * Input props for each thumbnail in the table
+ */
 type ThumbProps = {
   selected: string | null;
-  element: any;
-  setImage: any;
+  element: ImageElement;
+  selectImage: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-/*
+/**
  * Renders a single image thumbnail
  */
-function PartThumbComponent({ selected, element, setImage }: ThumbProps) {
+function PartThumbComponent({ selected, element, selectImage }: ThumbProps) {
   const { hovered, ref } = useHover();
 
   const hoverColor = 'rgba(127,127,127,0.2)';
@@ -40,7 +55,9 @@ function PartThumbComponent({ selected, element, setImage }: ThumbProps) {
     color = hoverColor;
   }
 
-  const src = element?.image ? `/media/${element?.image}` : undefined;
+  const src: string | undefined = element?.image
+    ? `/media/${element?.image}`
+    : undefined;
 
   return (
     <Paper
@@ -54,7 +71,7 @@ function PartThumbComponent({ selected, element, setImage }: ThumbProps) {
         placeContent: 'center space-between'
       }}
       ref={ref}
-      onClick={() => setImage(element.image)}
+      onClick={() => selectImage(element.image)}
     >
       <div
         style={{
@@ -72,14 +89,14 @@ function PartThumbComponent({ selected, element, setImage }: ThumbProps) {
   );
 }
 
-/*
+/**
  * Changes a part's image to the supplied URL and updates the DOM accordingly
  */
 async function setNewImage(
   image: string | null,
   pk: string,
-  close: any,
-  setImage: any
+  close: () => void,
+  setImage: (image: string) => void
 ) {
   // No need to do anything if no image is selected
   if (image === null) {
@@ -97,7 +114,7 @@ async function setNewImage(
   }
 }
 
-/*
+/**
  * Renders a "table" of thumbnails
  */
 export function PartThumbTable({
@@ -108,9 +125,9 @@ export function PartThumbTable({
   close,
   setImage
 }: ThumbTableProps) {
-  const [img, setImg] = useState(null);
-  const [filterInput, setFilterInput] = useState('');
-  const [filterQuery, setFilter] = useState(search);
+  const [img, selectImage] = useState<string | null>(null);
+  const [filterInput, setFilterInput] = useState<string>('');
+  const [filterQuery, setFilter] = useState<string>(search);
 
   // Keep search filters from updating while user is typing
   useEffect(() => {
@@ -148,12 +165,12 @@ export function PartThumbTable({
           }}
         >
           {!thumbQuery.isFetching
-            ? thumbQuery.data?.data.map((data: any, index: number) => (
+            ? thumbQuery.data?.data.map((data: ImageElement, index: number) => (
                 <PartThumbComponent
                   element={data}
                   key={index}
                   selected={img}
-                  setImage={setImg}
+                  selectImage={selectImage}
                 />
               ))
             : [...Array(limit)].map((elem, idx) => (
@@ -182,7 +199,7 @@ export function PartThumbTable({
         }}
       >
         <TextInput
-          placeholder="Search..."
+          placeholder={t`Search...`}
           onChange={(event) => {
             setFilterInput(event.currentTarget.value);
           }}
