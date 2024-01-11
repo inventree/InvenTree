@@ -81,6 +81,8 @@ class VersionApiSerializer(serializers.Serializer):
 class VersionTextView(ListAPI):
     """Simple JSON endpoint for InvenTree version text."""
 
+    serializer_class = VersionSerializer
+
     permission_classes = [permissions.IsAdminUser]
 
     @extend_schema(responses={200: OpenApiResponse(response=VersionApiSerializer)})

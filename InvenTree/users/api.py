@@ -7,8 +7,9 @@ from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
 from rest_framework import exceptions, permissions
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.serializers import Serializer
 
 import InvenTree.helpers
 from InvenTree.filters import SEARCH_ORDER_FILTER
@@ -20,8 +21,8 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
-from users.models import ApiToken, Owner, RuleSet, check_user_role
-from users.serializers import GroupSerializer, OwnerSerializer
+from users.models import ApiToken, Owner
+from users.serializers import GroupSerializer, OwnerSerializer, RoleSerializer
 
 logger = logging.getLogger('inventree')
 
@@ -99,43 +100,18 @@ class OwnerDetail(RetrieveAPI):
     serializer_class = OwnerSerializer
 
 
-class RoleDetails(APIView):
+class RoleDetails(RetrieveAPI):
     """API endpoint which lists the available role permissions for the current user.
 
     (Requires authentication)
     """
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = RoleSerializer
 
-    def get(self, request, *args, **kwargs):
-        """Return the list of roles / permissions available to the current user."""
-        user = request.user
-
-        roles = {}
-
-        for ruleset in RuleSet.RULESET_CHOICES:
-            role, _text = ruleset
-
-            permissions = []
-
-            for permission in RuleSet.RULESET_PERMISSIONS:
-                if check_user_role(user, role, permission):
-                    permissions.append(permission)
-
-            if len(permissions) > 0:
-                roles[role] = permissions
-            else:
-                roles[role] = None  # pragma: no cover
-
-        data = {
-            'user': user.pk,
-            'username': user.username,
-            'roles': roles,
-            'is_staff': user.is_staff,
-            'is_superuser': user.is_superuser,
-        }
-
-        return Response(data)
+    def get_object(self):
+        """Return the current user."""
+        return self.request.user
 
 
 class UserDetail(RetrieveUpdateDestroyAPI):
@@ -199,10 +175,12 @@ class GroupList(ListCreateAPI):
     ordering_fields = ['name']
 
 
-class GetAuthToken(APIView):
+class GetAuthToken(GenericAPIView):
     """Return authentication token for an authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
+
+    serializer_class = Serializer
 
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated.
