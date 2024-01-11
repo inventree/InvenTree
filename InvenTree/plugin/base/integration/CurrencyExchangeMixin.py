@@ -1,10 +1,10 @@
-"""Plugin mixin class for supporting currency exchange data"""
+"""Plugin mixin class for supporting currency exchange data."""
 
 from plugin.helpers import MixinNotImplementedError
 
 
 class CurrencyExchangeMixin:
-    """Mixin class which provides support for currency exchange rates
+    """Mixin class which provides support for currency exchange rates.
 
     Nominally this plugin mixin would be used to interface with an external API,
     to periodically retrieve currency exchange rate information.
@@ -14,12 +14,12 @@ class CurrencyExchangeMixin:
     """
 
     class MixinMeta:
-        """Meta options for this mixin class"""
+        """Meta options for this mixin class."""
 
         MIXIN_NAME = 'CurrentExchange'
 
     def __init__(self):
-        """Register the mixin"""
+        """Register the mixin."""
         super().__init__()
         self.add_mixin('currencyexchange', True, __class__)
 

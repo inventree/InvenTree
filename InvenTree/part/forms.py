@@ -37,7 +37,7 @@ class PartPriceForm(forms.Form):
     """Simple form for viewing part pricing information."""
 
     class Meta:
-        """Metaclass defines fields for this form"""
+        """Metaclass defines fields for this form."""
 
         model = Part
         fields = ['quantity']

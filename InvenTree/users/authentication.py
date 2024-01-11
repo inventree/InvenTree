@@ -1,4 +1,4 @@
-"""Custom token authentication class for InvenTree API"""
+"""Custom token authentication class for InvenTree API."""
 
 import datetime
 
@@ -11,8 +11,9 @@ from users.models import ApiToken
 
 
 class ApiTokenAuthentication(TokenAuthentication):
-    """Custom implementation of TokenAuthentication class, with custom features:
+    """Custom implementation of TokenAuthentication class, with custom features.
 
+    Changes:
     - Tokens can be revoked
     - Tokens can expire
     """
@@ -21,7 +22,6 @@ class ApiTokenAuthentication(TokenAuthentication):
 
     def authenticate_credentials(self, key):
         """Adds additional checks to the default token authentication method."""
-
         # If this runs without error, then the token is valid (so far)
         (user, token) = super().authenticate_credentials(key)
 

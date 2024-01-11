@@ -98,7 +98,7 @@ def render_date(context, date_object):
 
 @register.simple_tag
 def render_currency(money, **kwargs):
-    """Render a currency / Money object"""
+    """Render a currency / Money object."""
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
@@ -122,7 +122,7 @@ def to_list(*args):
 
 @register.simple_tag()
 def part_allocation_count(build, part, *args, **kwargs):
-    """Return the total number of <part> allocated to <build>"""
+    """Return the total number of <part> allocated to <build>."""
     return InvenTree.helpers.decimal2string(build.getAllocatedQuantity(part))
 
 
@@ -185,7 +185,7 @@ def inventree_instance_name(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_title(*args, **kwargs):
-    """Return the title for the current instance - respecting the settings"""
+    """Return the title for the current instance - respecting the settings."""
     return version.inventreeInstanceTitle()
 
 
@@ -206,7 +206,7 @@ def inventree_splash(**kwargs):
 
 @register.simple_tag()
 def inventree_base_url(*args, **kwargs):
-    """Return the base URL of the InvenTree server"""
+    """Return the base URL of the InvenTree server."""
     return InvenTree.helpers_model.get_base_url()
 
 
@@ -226,19 +226,19 @@ def inventree_version(shortstring=False, *args, **kwargs):
 
 @register.simple_tag()
 def inventree_is_development(*args, **kwargs):
-    """Returns True if this is a development version of InvenTree"""
+    """Returns True if this is a development version of InvenTree."""
     return version.isInvenTreeDevelopmentVersion()
 
 
 @register.simple_tag()
 def inventree_is_release(*args, **kwargs):
-    """Returns True if this is a release version of InvenTree"""
+    """Returns True if this is a release version of InvenTree."""
     return not version.isInvenTreeDevelopmentVersion()
 
 
 @register.simple_tag()
 def inventree_docs_version(*args, **kwargs):
-    """Returns the InvenTree documentation version"""
+    """Returns the InvenTree documentation version."""
     return version.inventreeDocsVersion()
 
 
@@ -429,7 +429,7 @@ def progress_bar(val, max_val, *args, **kwargs):
 
 @register.simple_tag()
 def get_color_theme_css(username):
-    """Return the custom theme .css file for the selected user"""
+    """Return the custom theme .css file for the selected user."""
     user_theme_name = get_user_color_theme(username)
     # Build path to CSS sheet
     inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
@@ -443,7 +443,6 @@ def get_color_theme_css(username):
 @register.simple_tag()
 def get_user_color_theme(username):
     """Get current user color theme."""
-
     from common.models import ColorTheme
 
     try:
@@ -488,7 +487,7 @@ def primitive_to_javascript(primitive):
 
 @register.simple_tag()
 def js_bool(val):
-    """Return a javascript boolean value (true or false)"""
+    """Return a javascript boolean value (true or false)."""
     if val:
         return 'true'
     return 'false'
@@ -599,14 +598,14 @@ if settings.DEBUG:
 
     @register.simple_tag()
     def i18n_static(url_name):
-        """Simple tag to enable {% url %} functionality instead of {% static %}"""
+        """Simple tag to enable {% url %} functionality instead of {% static %}."""
         return reverse(url_name)
 
 else:  # pragma: no cover
 
     @register.tag('i18n_static')
     def do_i18n_static(parser, token):
-        """Overrides normal static, adds language - lookup for prerenderd files #1485
+        """Overrides normal static, adds language - lookup for prerenderd files #1485.
 
         Usage (like static):
         {% i18n_static path [as varname] %}
@@ -623,8 +622,7 @@ else:  # pragma: no cover
 
 @register.simple_tag()
 def admin_index(user):
-    """Return a URL for the admin interface"""
-
+    """Return a URL for the admin interface."""
     if not djangosettings.INVENTREE_ADMIN_ENABLED:
         return ''
 
@@ -642,7 +640,6 @@ def admin_url(user, table, pk):
     - If the user is not a staff user, an empty URL is returned
     - If the user does not have the correct permission, an empty URL is returned
     """
-
     app, model = table.strip().split('.')
 
     from django.urls import reverse

@@ -18,7 +18,6 @@ def checkPythonVersion():
 
     If the python version is not sufficient, exits with a non-zero exit code.
     """
-
     REQ_MAJOR = 3
     REQ_MINOR = 9
 

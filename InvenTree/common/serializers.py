@@ -23,14 +23,14 @@ class SettingsValueField(serializers.Field):
         return instance
 
     def to_representation(self, instance):
-        """Return the value of the setting:
+        """Return the value of the setting.
 
-        - Protected settings are returned as '***'
+        Protected settings are returned as '***'
         """
         return '***' if instance.protected else str(instance.value)
 
     def to_internal_value(self, data):
-        """Return the internal value of the setting"""
+        """Return the internal value of the setting."""
         return str(data)
 
 

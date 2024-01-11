@@ -1,4 +1,4 @@
-"""Unit tests for Company views (see views.py)"""
+"""Unit tests for Company views (see views.py)."""
 
 from django.urls import reverse
 

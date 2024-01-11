@@ -90,7 +90,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
     """
 
     class Meta:
-        """Metaclass defines extra model options"""
+        """Metaclass defines extra model options."""
 
         ordering = ['name']
         constraints = [
@@ -100,7 +100,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the Company model"""
+        """Return the API URL associated with the Company model."""
         return reverse('api-company-list')
 
     name = models.CharField(
@@ -186,7 +186,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
     @property
     def address(self):
-        """Return the string representation for the primary address
+        """Return the string representation for the primary address.
 
         This property exists for backwards compatibility
         """
@@ -196,7 +196,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
     @property
     def primary_address(self):
-        """Returns address object of primary address. Parsed by serializer"""
+        """Returns address object of primary address. Parsed by serializer."""
         return Address.objects.filter(company=self.id).filter(primary=True).first()
 
     @property
@@ -251,15 +251,15 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
 
 
 class CompanyAttachment(InvenTreeAttachment):
-    """Model for storing file or URL attachments against a Company object"""
+    """Model for storing file or URL attachments against a Company object."""
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with this model"""
+        """Return the API URL associated with this model."""
         return reverse('api-company-attachment-list')
 
     def getSubdir(self):
-        """Return the subdirectory where these attachments are uploaded"""
+        """Return the subdirectory where these attachments are uploaded."""
         return os.path.join('company_files', str(self.company.pk))
 
     company = models.ForeignKey(
@@ -283,7 +283,7 @@ class Contact(MetadataMixin, models.Model):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the Contcat model"""
+        """Return the API URL associated with the Contcat model."""
         return reverse('api-contact-list')
 
     company = models.ForeignKey(
@@ -300,7 +300,7 @@ class Contact(MetadataMixin, models.Model):
 
 
 class Address(models.Model):
-    """An address represents a physical location where the company is located. It is possible for a company to have multiple locations
+    """An address represents a physical location where the company is located. It is possible for a company to have multiple locations.
 
     Attributes:
         company: Company link for this address
@@ -316,16 +316,16 @@ class Address(models.Model):
     """
 
     class Meta:
-        """Metaclass defines extra model options"""
+        """Metaclass defines extra model options."""
 
         verbose_name_plural = 'Addresses'
 
     def __init__(self, *args, **kwargs):
-        """Custom init function"""
+        """Custom init function."""
         super().__init__(*args, **kwargs)
 
     def __str__(self):
-        """Defines string representation of address to supple a one-line to API calls"""
+        """Defines string representation of address to supple a one-line to API calls."""
         available_lines = [
             self.line1,
             self.line2,
@@ -343,8 +343,9 @@ class Address(models.Model):
         return ', '.join(populated_lines)
 
     def save(self, *args, **kwargs):
-        """Run checks when saving an address:
+        """Run checks when saving an address.
 
+        Rules:
         - If this address is marked as "primary", ensure that all other addresses for this company are marked as non-primary
         """
         others = list(
@@ -366,7 +367,7 @@ class Address(models.Model):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the Contcat model"""
+        """Return the API URL associated with the Contcat model."""
         return reverse('api-address-list')
 
     company = models.ForeignKey(
@@ -465,13 +466,13 @@ class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
     """
 
     class Meta:
-        """Metaclass defines extra model options"""
+        """Metaclass defines extra model options."""
 
         unique_together = ('part', 'manufacturer', 'MPN')
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the ManufacturerPart instance"""
+        """Return the API URL associated with the ManufacturerPart instance."""
         return reverse('api-manufacturer-part-list')
 
     part = models.ForeignKey(
@@ -542,7 +543,7 @@ class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
         return manufacturer_part
 
     def __str__(self):
-        """Format a string representation of a ManufacturerPart"""
+        """Format a string representation of a ManufacturerPart."""
         s = ''
 
         if self.manufacturer:
@@ -559,11 +560,11 @@ class ManufacturerPartAttachment(InvenTreeAttachment):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the ManufacturerPartAttachment model"""
+        """Return the API URL associated with the ManufacturerPartAttachment model."""
         return reverse('api-manufacturer-part-attachment-list')
 
     def getSubdir(self):
-        """Return the subdirectory where attachment files for the ManufacturerPart model are located"""
+        """Return the subdirectory where attachment files for the ManufacturerPart model are located."""
         return os.path.join('manufacturer_part_files', str(self.manufacturer_part.id))
 
     manufacturer_part = models.ForeignKey(
@@ -583,13 +584,13 @@ class ManufacturerPartParameter(models.Model):
     """
 
     class Meta:
-        """Metaclass defines extra model options"""
+        """Metaclass defines extra model options."""
 
         unique_together = ('manufacturer_part', 'name')
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the ManufacturerPartParameter model"""
+        """Return the API URL associated with the ManufacturerPartParameter model."""
         return reverse('api-manufacturer-part-parameter-list')
 
     manufacturer_part = models.ForeignKey(
@@ -630,7 +631,7 @@ class SupplierPartManager(models.Manager):
     """
 
     def get_queryset(self):
-        """Prefetch related fields when querying against the SupplierPart model"""
+        """Prefetch related fields when querying against the SupplierPart model."""
         # Always prefetch related models
         return (
             super()
@@ -660,7 +661,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
     """
 
     class Meta:
-        """Metaclass defines extra model options"""
+        """Metaclass defines extra model options."""
 
         unique_together = ('part', 'supplier', 'SKU')
 
@@ -673,20 +674,21 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the SupplierPart model"""
+        """Return the API URL associated with the SupplierPart model."""
         return reverse('api-supplier-part-list')
 
     def get_absolute_url(self):
-        """Return the web URL of the detail view for this SupplierPart"""
+        """Return the web URL of the detail view for this SupplierPart."""
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
 
     def api_instance_filters(self):
-        """Return custom API filters for this particular instance"""
+        """Return custom API filters for this particular instance."""
         return {'manufacturer_part': {'part': self.part.pk}}
 
     def clean(self):
-        """Custom clean action for the SupplierPart model:
+        """Custom clean action for the SupplierPart model.
 
+        Rules:
         - Ensure that manufacturer_part.part and part are the same!
         """
         super().clean()
@@ -888,7 +890,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
     )
 
     def update_available_quantity(self, quantity):
-        """Update the available quantity for this SupplierPart"""
+        """Update the available quantity for this SupplierPart."""
         self.available = quantity
         self.availability_updated = datetime.now()
         self.save()
@@ -911,7 +913,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     @property
     def has_price_breaks(self):
-        """Return True if this SupplierPart has associated price breaks"""
+        """Return True if this SupplierPart has associated price breaks."""
         return self.price_breaks.count() > 0
 
     @property
@@ -921,7 +923,7 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     @property
     def unit_pricing(self):
-        """Return the single-quantity pricing for this SupplierPart"""
+        """Return the single-quantity pricing for this SupplierPart."""
         return self.get_price(1)
 
     def add_price_break(self, quantity, price) -> None:
@@ -971,11 +973,11 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
 
     @property
     def pretty_name(self):
-        """Format a 'pretty' name for this SupplierPart"""
+        """Format a 'pretty' name for this SupplierPart."""
         return str(self)
 
     def __str__(self):
-        """Format a string representation of a SupplierPart"""
+        """Format a string representation of a SupplierPart."""
         s = ''
 
         if self.part.IPN:
@@ -1005,7 +1007,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
     """
 
     class Meta:
-        """Metaclass defines extra model options"""
+        """Metaclass defines extra model options."""
 
         unique_together = ('part', 'quantity')
 
@@ -1013,12 +1015,12 @@ class SupplierPriceBreak(common.models.PriceBreak):
         db_table = 'part_supplierpricebreak'
 
     def __str__(self):
-        """Format a string representation of a SupplierPriceBreak instance"""
+        """Format a string representation of a SupplierPriceBreak instance."""
         return f'{self.part.SKU} - {self.price} @ {self.quantity}'
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the SupplierPriceBreak model"""
+        """Return the API URL associated with the SupplierPriceBreak model."""
         return reverse('api-part-supplier-price-list')
 
     part = models.ForeignKey(
@@ -1033,7 +1035,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
     post_save, sender=SupplierPriceBreak, dispatch_uid='post_save_supplier_price_break'
 )
 def after_save_supplier_price(sender, instance, created, **kwargs):
-    """Callback function when a SupplierPriceBreak is created or updated"""
+    """Callback function when a SupplierPriceBreak is created or updated."""
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
         if instance.part and instance.part.part:
             instance.part.part.schedule_pricing_update(create=True)
@@ -1045,7 +1047,7 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
     dispatch_uid='post_delete_supplier_price_break',
 )
 def after_delete_supplier_price(sender, instance, **kwargs):
-    """Callback function when a SupplierPriceBreak is deleted"""
+    """Callback function when a SupplierPriceBreak is deleted."""
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
         if instance.part and instance.part.part:
             instance.part.part.schedule_pricing_update(create=False)

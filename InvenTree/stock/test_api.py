@@ -66,7 +66,7 @@ class StockLocationTest(StockAPITestCase):
         StockLocation.objects.create(name='top', description='top category')
 
     def test_list(self):
-        """Test the StockLocationList API endpoint"""
+        """Test the StockLocationList API endpoint."""
         test_cases = [
             ({}, 8, 'no parameters'),
             ({'parent': 1, 'cascade': False}, 2, 'Filter by parent, no cascading'),
@@ -165,7 +165,7 @@ class StockLocationTest(StockAPITestCase):
         self.post(self.list_url, data, expected_code=201)
 
     def test_stock_location_delete(self):
-        """Test stock location deletion with different parameters"""
+        """Test stock location deletion with different parameters."""
 
         class Target(IntEnum):
             move_sub_locations_to_parent_move_stockitems_to_parent = (0,)
@@ -294,7 +294,7 @@ class StockLocationTest(StockAPITestCase):
                     self.assertEqual(child.parent, parent_stock_location)
 
     def test_stock_location_structural(self):
-        """Test the effectiveness of structural stock locations
+        """Test the effectiveness of structural stock locations.
 
         Make sure:
         - Stock items cannot be created in structural locations
@@ -530,7 +530,7 @@ class StockItemListTest(StockAPITestCase):
         return response.data
 
     def test_top_level_filtering(self):
-        """Test filtering against "top level" stock location"""
+        """Test filtering against "top level" stock location."""
         # No filters, should return *all* items
         response = self.get(self.list_url, {}, expected_code=200)
         self.assertEqual(len(response.data), StockItem.objects.count())
@@ -628,7 +628,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 1)
 
     def test_filter_by_company(self):
-        """Test that we can filter stock items by company"""
+        """Test that we can filter stock items by company."""
         for cmp in company.models.Company.objects.all():
             self.get_stock(company=cmp.pk)
 
@@ -787,14 +787,14 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(dataset), 17)
 
     def test_filter_by_allocated(self):
-        """Test that we can filter by "allocated" status:
+        """Test that we can filter by "allocated" status.
 
+        Rules:
         - Only return stock items which are 'allocated'
         - Either to a build order or sales order
         - Test that the results are "distinct" (no duplicated results)
         - Ref: https://github.com/inventree/InvenTree/pull/5916
         """
-
         # Create a build order to allocate to
         assembly = part.models.Part.objects.create(
             name='F Assembly', description='Assembly for filter test', assembly=True
@@ -1284,7 +1284,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(sub_item.location.pk, 1)
 
     def test_return_from_customer(self):
-        """Test that we can return a StockItem from a customer, via the API"""
+        """Test that we can return a StockItem from a customer, via the API."""
         # Assign item to customer
         item = StockItem.objects.get(pk=521)
         customer = company.models.Company.objects.get(pk=4)
@@ -1316,7 +1316,7 @@ class StockItemTest(StockAPITestCase):
         self.assertIsNone(item.customer)
 
     def test_convert_to_variant(self):
-        """Test that we can convert a StockItem to a variant part via the API"""
+        """Test that we can convert a StockItem to a variant part via the API."""
         category = part.models.PartCategory.objects.get(pk=3)
 
         # First, construct a set of template / variant parts
@@ -1361,7 +1361,7 @@ class StockItemTest(StockAPITestCase):
             self.assertEqual(stock_item.part, variant)
 
     def test_set_status(self):
-        """Test API endpoint for setting StockItem status"""
+        """Test API endpoint for setting StockItem status."""
         url = reverse('api-stock-change-status')
 
         prt = Part.objects.first()
@@ -1612,7 +1612,7 @@ class StockTestResultTest(StockAPITestCase):
             self.assertIsNotNone(response.data['attachment'])
 
     def test_bulk_delete(self):
-        """Test that the BulkDelete endpoint works for this model"""
+        """Test that the BulkDelete endpoint works for this model."""
         n = StockItemTestResult.objects.count()
 
         tests = []
@@ -1849,7 +1849,7 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
     roles = ['stock.change', 'stock_location.change']
 
     def metatester(self, apikey, model):
-        """Generic tester"""
+        """Generic tester."""
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
@@ -1875,7 +1875,7 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
         )
 
     def test_metadata(self):
-        """Test all endpoints"""
+        """Test all endpoints."""
         for apikey, model in {
             'api-location-metadata': StockLocation,
             'api-stock-test-result-metadata': StockItemTestResult,

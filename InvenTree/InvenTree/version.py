@@ -30,8 +30,7 @@ except (NotGitRepository, FileNotFoundError):
 
 
 def checkMinPythonVersion():
-    """Check that the Python version is at least 3.9"""
-
+    """Check that the Python version is at least 3.9."""
     version = sys.version.split(' ')[0]
     docs = 'https://docs.inventree.org/en/stable/start/intro/#python-requirements'
 
@@ -199,7 +198,7 @@ def inventreeDjangoVersion():
 
 
 def inventreePythonVersion():
-    """Returns the version of python"""
+    """Returns the version of python."""
     return sys.version.split(' ')[0]
 
 

@@ -1,4 +1,4 @@
-"""Plugin mixin class for ReportContextMixin"""
+"""Plugin mixin class for ReportContextMixin."""
 
 
 class ReportMixin:

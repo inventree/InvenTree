@@ -1,4 +1,4 @@
-"""Various unit tests for Part Parameters"""
+"""Various unit tests for Part Parameters."""
 
 import django.core.exceptions as django_exceptions
 from django.test import TestCase, TransactionTestCase
@@ -17,12 +17,12 @@ from .models import (
 
 
 class TestParams(TestCase):
-    """Unit test class for testing the PartParameter model"""
+    """Unit test class for testing the PartParameter model."""
 
     fixtures = ['location', 'category', 'part', 'params']
 
     def test_str(self):
-        """Test the str representation of the PartParameterTemplate model"""
+        """Test the str representation of the PartParameterTemplate model."""
         t1 = PartParameterTemplate.objects.get(pk=1)
         self.assertEqual(str(t1), 'Length (mm)')
 
@@ -33,7 +33,7 @@ class TestParams(TestCase):
         self.assertEqual(str(c1), 'Mechanical | Length | 2.8')
 
     def test_validate(self):
-        """Test validation for part templates"""
+        """Test validation for part templates."""
         n = PartParameterTemplate.objects.all().count()
 
         t1 = PartParameterTemplate(name='abcde', units='dd')
@@ -65,7 +65,7 @@ class TestParams(TestCase):
             self.assertEqual(len(p.metadata.keys()), 4)
 
     def test_get_parameter(self):
-        """Test the Part.get_parameter method"""
+        """Test the Part.get_parameter method."""
         prt = Part.objects.get(pk=3)
 
         # Check that we can get a parameter by name
@@ -79,12 +79,12 @@ class TestParams(TestCase):
 
 
 class TestCategoryTemplates(TransactionTestCase):
-    """Test class for PartCategoryParameterTemplate model"""
+    """Test class for PartCategoryParameterTemplate model."""
 
     fixtures = ['location', 'category', 'part', 'params']
 
     def test_validate(self):
-        """Test that category templates are correctly applied to Part instances"""
+        """Test that category templates are correctly applied to Part instances."""
         # Category templates
         n = PartCategoryParameterTemplate.objects.all().count()
         self.assertEqual(n, 2)
@@ -102,12 +102,12 @@ class TestCategoryTemplates(TransactionTestCase):
 
 
 class ParameterTests(TestCase):
-    """Unit tests for parameter validation"""
+    """Unit tests for parameter validation."""
 
     fixtures = ['location', 'category', 'part', 'params']
 
     def test_choice_validation(self):
-        """Test that parameter choices are correctly validated"""
+        """Test that parameter choices are correctly validated."""
         template = PartParameterTemplate.objects.create(
             name='My Template',
             description='A template with choices',
@@ -129,7 +129,7 @@ class ParameterTests(TestCase):
                 param.full_clean()
 
     def test_unit_validation(self):
-        """Test validation of 'units' field for PartParameterTemplate"""
+        """Test validation of 'units' field for PartParameterTemplate."""
         # Test that valid units pass
         for unit in [
             None,
@@ -156,7 +156,7 @@ class ParameterTests(TestCase):
                 tmp.full_clean()
 
     def test_param_unit_validation(self):
-        """Test that parameters are correctly validated against template units"""
+        """Test that parameters are correctly validated against template units."""
         template = PartParameterTemplate.objects.create(name='My Template', units='m')
 
         prt = Part.objects.get(pk=1)
@@ -208,7 +208,7 @@ class ParameterTests(TestCase):
                 param.full_clean()
 
     def test_param_unit_conversion(self):
-        """Test that parameters are correctly converted to template units"""
+        """Test that parameters are correctly converted to template units."""
         template = PartParameterTemplate.objects.create(name='My Template', units='m')
 
         tests = {
@@ -325,7 +325,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         """Test that we can order parts by a specified parameter."""
 
         def get_param_value(response, template, index):
-            """Helper function to extract a parameter value from a response"""
+            """Helper function to extract a parameter value from a response."""
             params = response.data[index]['parameters']
 
             for param in params:

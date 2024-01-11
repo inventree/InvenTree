@@ -24,21 +24,20 @@ logger = logging.getLogger('inventree')
 
 
 class BarcodeView(CreateAPIView):
-    """Custom view class for handling a barcode scan"""
+    """Custom view class for handling a barcode scan."""
 
     # Default serializer class (can be overridden)
     serializer_class = barcode_serializers.BarcodeSerializer
 
     def queryset(self):
-        """This API view does not have a queryset"""
+        """This API view does not have a queryset."""
         return None
 
     # Default permission classes (can be overridden)
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        """Handle create method - override default create"""
-
+        """Handle create method - override default create."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
@@ -66,7 +65,6 @@ class BarcodeView(CreateAPIView):
 
         Check each loaded plugin, and return the first valid match
         """
-
         plugins = registry.with_mixin('barcode')
 
         # Look for a barcode plugin which knows how to deal with this barcode
@@ -111,7 +109,7 @@ class BarcodeScan(BarcodeView):
     """
 
     def handle_barcode(self, barcode: str, request, **kwargs):
-        """Perform barcode scan action
+        """Perform barcode scan action.
 
         Arguments:
             barcode: Raw barcode value
@@ -120,7 +118,6 @@ class BarcodeScan(BarcodeView):
         kwargs:
             Any custom fields passed by the specific serializer
         """
-
         result = self.scan_barcode(barcode, request, **kwargs)
 
         if result['plugin'] is None:
@@ -146,7 +143,6 @@ class BarcodeAssign(BarcodeView):
 
         Checks inputs and assign barcode (hash) to StockItem.
         """
-
         # Here we only check against 'InvenTree' plugins
         inventree_barcode_plugin = registry.get_plugin('inventreebarcode')
 
@@ -197,13 +193,12 @@ class BarcodeAssign(BarcodeView):
 
 
 class BarcodeUnassign(BarcodeView):
-    """Endpoint for unlinking / unassigning a custom barcode from a database object"""
+    """Endpoint for unlinking / unassigning a custom barcode from a database object."""
 
     serializer_class = barcode_serializers.BarcodeUnassignSerializer
 
     def create(self, request, *args, **kwargs):
         """Respond to a barcode unassign request."""
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
@@ -257,7 +252,7 @@ class BarcodeUnassign(BarcodeView):
 
 
 class BarcodePOAllocate(BarcodeView):
-    """Endpoint for allocating parts to a purchase order by scanning their barcode
+    """Endpoint for allocating parts to a purchase order by scanning their barcode.
 
     Note that the scanned barcode may point to:
 
@@ -273,7 +268,7 @@ class BarcodePOAllocate(BarcodeView):
     def get_supplier_part(
         self, purchase_order, part=None, supplier_part=None, manufacturer_part=None
     ):
-        """Return a single matching SupplierPart (or else raise an exception)
+        """Return a single matching SupplierPart (or else raise an exception).
 
         Arguments:
             purchase_order: PurchaseOrder object
@@ -288,7 +283,6 @@ class BarcodePOAllocate(BarcodeView):
             ValidationError if no matching SupplierPart is found
 
         """
-
         import company.models
 
         supplier = purchase_order.supplier
@@ -324,8 +318,7 @@ class BarcodePOAllocate(BarcodeView):
         return supplier_parts.first()
 
     def handle_barcode(self, barcode: str, request, **kwargs):
-        """Scan the provided barcode data"""
-
+        """Scan the provided barcode data."""
         # The purchase order is provided as part of the request
         purchase_order = kwargs.get('purchase_order')
 
@@ -372,7 +365,6 @@ class BarcodePOReceive(BarcodeView):
 
     def handle_barcode(self, barcode: str, request, **kwargs):
         """Handle a barcode scan for a purchase order item."""
-
         logger.debug("BarcodePOReceive: scanned barcode - '%s'", barcode)
 
         # Extract optional fields from the dataset
@@ -455,8 +447,7 @@ class BarcodeSOAllocate(BarcodeView):
     serializer_class = barcode_serializers.BarcodeSOAllocateSerializer
 
     def get_line_item(self, stock_item, **kwargs):
-        """Return the matching line item for the provided stock item"""
-
+        """Return the matching line item for the provided stock item."""
         # Extract sales order object (required field)
         sales_order = kwargs['sales_order']
 
@@ -481,8 +472,7 @@ class BarcodeSOAllocate(BarcodeView):
         return lines.first()
 
     def get_shipment(self, **kwargs):
-        """Extract the shipment from the provided kwargs, or guess"""
-
+        """Extract the shipment from the provided kwargs, or guess."""
         sales_order = kwargs['sales_order']
 
         if shipment := kwargs.get('shipment', None):
@@ -505,7 +495,6 @@ class BarcodeSOAllocate(BarcodeView):
 
     def handle_barcode(self, barcode: str, request, **kwargs):
         """Handle barcode scan for sales order allocation."""
-
         logger.debug("BarcodeSOAllocate: scanned barcode - '%s'", barcode)
 
         result = self.scan_barcode(barcode, request, **kwargs)

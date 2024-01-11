@@ -78,8 +78,8 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     """Check if a periodic task should be run, based on the provided setting name.
 
     Arguments:
-        task_name: The name of the task being run, e.g. 'dummy_task'
-        setting_name: The name of the global setting, e.g. 'INVENTREE_DUMMY_TASK_INTERVAL'
+        task_name (str): The name of the task being run, e.g. 'dummy_task'
+        n_days (int): The number of days between task runs (default = 1)
 
     Returns:
         bool: If the task should be run *now*, or wait another day
@@ -151,7 +151,7 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
 
 
 def record_task_attempt(task_name: str):
-    """Record that a multi-day task has been attempted *now*"""
+    """Record that a multi-day task has been attempted *now*."""
     from common.models import InvenTreeSetting
 
     logger.info("Logging task attempt for '%s'", task_name)
@@ -162,7 +162,7 @@ def record_task_attempt(task_name: str):
 
 
 def record_task_success(task_name: str):
-    """Record that a multi-day task was successful *now*"""
+    """Record that a multi-day task was successful *now*."""
     from common.models import InvenTreeSetting
 
     InvenTreeSetting.set_setting(
@@ -365,7 +365,7 @@ def heartbeat():
 
 @scheduled_task(ScheduledTask.DAILY)
 def delete_successful_tasks():
-    """Delete successful task logs which are older than a specified period"""
+    """Delete successful task logs which are older than a specified period."""
     try:
         from django_q.models import Success
 
@@ -389,7 +389,7 @@ def delete_successful_tasks():
 
 @scheduled_task(ScheduledTask.DAILY)
 def delete_failed_tasks():
-    """Delete failed task logs which are older than a specified period"""
+    """Delete failed task logs which are older than a specified period."""
     try:
         from django_q.models import Failure
 
@@ -435,7 +435,7 @@ def delete_old_error_logs():
 
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_notifications():
-    """Delete old notification logs"""
+    """Delete old notification logs."""
     try:
         from common.models import (
             InvenTreeSetting,
@@ -552,7 +552,7 @@ def check_for_updates():
 
 @scheduled_task(ScheduledTask.DAILY)
 def update_exchange_rates(force: bool = False):
-    """Update currency exchange rates
+    """Update currency exchange rates.
 
     Arguments:
         force: If True, force the update to run regardless of the last update time
@@ -648,8 +648,7 @@ def check_for_migrations():
     from plugin import registry
 
     def set_pending_migrations(n: int):
-        """Helper function to inform the user about pending migrations"""
-
+        """Helper function to inform the user about pending migrations."""
         logger.info('There are %s pending migrations', n)
         InvenTreeSetting.set_setting('_PENDING_MIGRATIONS', n, None)
 

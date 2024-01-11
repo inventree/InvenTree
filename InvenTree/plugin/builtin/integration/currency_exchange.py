@@ -24,7 +24,7 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
     VERSION = '1.0.0'
 
     def update_exchange_rates(self, base_currency: str, symbols: list[str]) -> dict:
-        """Request exchange rate data from external API"""
+        """Request exchange rate data from external API."""
         response = self.api_call(
             'latest',
             url_args={'from': [base_currency], 'to': symbols},
@@ -45,5 +45,5 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
 
     @property
     def api_url(self):
-        """Return the API URL for this plugin"""
+        """Return the API URL for this plugin."""
         return 'https://api.frankfurter.app'

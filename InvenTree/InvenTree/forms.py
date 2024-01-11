@@ -151,7 +151,7 @@ class SetPasswordForm(HelperForm):
 
 # override allauth
 class CustomLoginForm(LoginForm):
-    """Custom login form to override default allauth behaviour"""
+    """Custom login form to override default allauth behaviour."""
 
     def login(self, request, redirect_url=None):
         """Perform login action.
@@ -317,7 +317,7 @@ class CustomAccountAdapter(
         return False
 
     def get_email_confirmation_url(self, request, emailconfirmation):
-        """Construct the email confirmation url"""
+        """Construct the email confirmation url."""
         from InvenTree.helpers_model import construct_absolute_url
 
         url = super().get_email_confirmation_url(request, emailconfirmation)
@@ -363,7 +363,6 @@ class CustomSocialAccountAdapter(
         self, request, provider_id, error=None, exception=None, extra_context=None
     ):
         """Callback method for authentication errors."""
-
         # Log the error to the database
         log_error(request.path if request else 'sso')
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
