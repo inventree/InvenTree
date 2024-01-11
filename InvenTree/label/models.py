@@ -48,28 +48,28 @@ def rename_label_output(instance, filename):
 
 
 def validate_stock_item_filters(filters):
-    """Validate query filters for the StockItemLabel model"""
+    """Validate query filters for the StockItemLabel model."""
     filters = validateFilterString(filters, model=stock.models.StockItem)
 
     return filters
 
 
 def validate_stock_location_filters(filters):
-    """Validate query filters for the StockLocationLabel model"""
+    """Validate query filters for the StockLocationLabel model."""
     filters = validateFilterString(filters, model=stock.models.StockLocation)
 
     return filters
 
 
 def validate_part_filters(filters):
-    """Validate query filters for the PartLabel model"""
+    """Validate query filters for the PartLabel model."""
     filters = validateFilterString(filters, model=part.models.Part)
 
     return filters
 
 
 def validate_build_line_filters(filters):
-    """Validate query filters for the BuildLine model"""
+    """Validate query filters for the BuildLine model."""
     filters = validateFilterString(filters, model=build.models.BuildLine)
 
     return filters
@@ -82,7 +82,7 @@ class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
     pdf_attachment = True
 
     def __init__(self, request, template, **kwargs):
-        """Initialize a label mixin with certain properties"""
+        """Initialize a label mixin with certain properties."""
         self.request = request
         self.template_name = template
         self.pdf_filename = kwargs.get('filename', 'label.pdf')
@@ -104,11 +104,11 @@ class LabelTemplate(MetadataMixin, models.Model):
 
     @property
     def template(self):
-        """Return the file path of the template associated with this label instance"""
+        """Return the file path of the template associated with this label instance."""
         return self.label.path
 
     def __str__(self):
-        """Format a string representation of a label instance"""
+        """Format a string representation of a label instance."""
         return f'{self.name} - {self.description}'
 
     name = models.CharField(
@@ -196,7 +196,6 @@ class LabelTemplate(MetadataMixin, models.Model):
 
         This is inserted at the top of the style block for a given label
         """
-
         width = kwargs.get('width', self.width)
         height = kwargs.get('height', self.height)
         margin = kwargs.get('margin', 0)
@@ -215,7 +214,6 @@ class LabelTemplate(MetadataMixin, models.Model):
             request: The HTTP request object
             kwargs: Additional keyword arguments
         """
-
         context = self.get_context_data(request)
 
         # By default, each label is supplied with '@page' data
@@ -242,8 +240,7 @@ class LabelTemplate(MetadataMixin, models.Model):
         return context
 
     def render_as_string(self, request, target_object=None, **kwargs):
-        """Render the label to a HTML string"""
-
+        """Render the label to a HTML string."""
         if target_object:
             self.object_to_print = target_object
 
@@ -256,7 +253,6 @@ class LabelTemplate(MetadataMixin, models.Model):
 
         Uses django-weasyprint plugin to render HTML template
         """
-
         if target_object:
             self.object_to_print = target_object
 
@@ -275,7 +271,7 @@ class LabelTemplate(MetadataMixin, models.Model):
 
 
 class LabelOutput(models.Model):
-    """Class representing a label output file
+    """Class representing a label output file.
 
     'Printing' a label may generate a file object (such as PDF)
     which is made available for download.
@@ -301,7 +297,7 @@ class StockItemLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the StockItemLabel model"""
+        """Return the API URL associated with the StockItemLabel model."""
         return reverse('api-stockitem-label-list')  # pragma: no cover
 
     SUBDIR = 'stockitem'
@@ -340,7 +336,7 @@ class StockLocationLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the StockLocationLabel model"""
+        """Return the API URL associated with the StockLocationLabel model."""
         return reverse('api-stocklocation-label-list')  # pragma: no cover
 
     SUBDIR = 'stocklocation'
@@ -365,7 +361,7 @@ class PartLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        """Return the API url associated with the PartLabel model"""
+        """Return the API url associated with the PartLabel model."""
         return reverse('api-part-label-list')  # pragma: no cover
 
     SUBDIR = 'part'
@@ -396,11 +392,11 @@ class PartLabel(LabelTemplate):
 
 
 class BuildLineLabel(LabelTemplate):
-    """Template for printing labels against BuildLine objects"""
+    """Template for printing labels against BuildLine objects."""
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the BuildLineLabel model"""
+        """Return the API URL associated with the BuildLineLabel model."""
         return reverse('api-buildline-label-list')
 
     SUBDIR = 'buildline'

@@ -95,6 +95,7 @@ class MetadataMixin(models.Model):
 
         Args:
             key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
+            backup_value: Value that should be used if no value is found
 
         Returns:
             Python dict object containing requested metadata. If no matching metadata is found, returns None
@@ -228,7 +229,7 @@ class ReferenceIndexingMixin(models.Model):
 
     @classmethod
     def get_most_recent_item(cls):
-        """Return the item which is 'most recent'
+        """Return the item which is 'most recent'.
 
         In practice, this means the item with the highest reference value
         """
@@ -270,7 +271,7 @@ class ReferenceIndexingMixin(models.Model):
 
     @classmethod
     def generate_reference(cls):
-        """Generate the next 'reference' field based on specified pattern"""
+        """Generate the next 'reference' field based on specified pattern."""
         fmt = cls.get_reference_pattern()
         ctx = cls.get_reference_context()
 
@@ -309,7 +310,7 @@ class ReferenceIndexingMixin(models.Model):
 
     @classmethod
     def validate_reference_pattern(cls, pattern):
-        """Ensure that the provided pattern is valid"""
+        """Ensure that the provided pattern is valid."""
         ctx = cls.get_reference_context()
 
         try:
@@ -334,7 +335,7 @@ class ReferenceIndexingMixin(models.Model):
 
     @classmethod
     def validate_reference_field(cls, value):
-        """Check that the provided 'reference' value matches the requisite pattern"""
+        """Check that the provided 'reference' value matches the requisite pattern."""
         pattern = cls.get_reference_pattern()
 
         value = str(value).strip()
@@ -713,7 +714,6 @@ class InvenTreeTree(MPTTModel):
         C) delete_children = False and delete_items = True
         D) delete_children = False and delete_items = False
         """
-
         child_nodes = self.get_descendants(include_self=False)
 
         # Case A: Delete all child items, and all child nodes.
@@ -756,7 +756,6 @@ class InvenTreeTree(MPTTModel):
         Arguments:
             nodes: A queryset of nodes to delete
         """
-
         nodes.update(parent=None)
         nodes.delete()
 
@@ -782,11 +781,11 @@ class InvenTreeTree(MPTTModel):
         return {'parent': {'exclude_tree': self.pk}}
 
     def construct_pathstring(self):
-        """Construct the pathstring for this tree node"""
+        """Construct the pathstring for this tree node."""
         return InvenTree.helpers.constructPathString([item.name for item in self.path])
 
     def save(self, *args, **kwargs):
-        """Custom save method for InvenTreeTree abstract model"""
+        """Custom save method for InvenTreeTree abstract model."""
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
@@ -1003,7 +1002,6 @@ class InvenTreeBarcodeMixin(models.Model):
 
     def format_matched_response(self):
         """Format a standard response for a matched barcode."""
-
         data = {'pk': self.pk}
 
         if hasattr(self, 'get_api_url'):
@@ -1017,7 +1015,7 @@ class InvenTreeBarcodeMixin(models.Model):
 
     @property
     def barcode(self):
-        """Format a minimal barcode string (e.g. for label printing)"""
+        """Format a minimal barcode string (e.g. for label printing)."""
         return self.format_barcode(brief=True)
 
     @classmethod
@@ -1055,7 +1053,7 @@ class InvenTreeBarcodeMixin(models.Model):
         return True
 
     def unassign_barcode(self):
-        """Unassign custom barcode from this model"""
+        """Unassign custom barcode from this model."""
         self.barcode_data = ''
         self.barcode_hash = ''
 

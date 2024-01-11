@@ -1,4 +1,4 @@
-"""Unit tests for the various part API endpoints"""
+"""Unit tests for the various part API endpoints."""
 
 import os
 from datetime import datetime
@@ -64,7 +64,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
     ]
 
     def test_category_list(self):
-        """Test the PartCategoryList API endpoint"""
+        """Test the PartCategoryList API endpoint."""
         url = reverse('api-part-category-list')
 
         # star categories manually for tests as it is not possible with fixures
@@ -167,7 +167,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 )
 
     def test_part_count(self):
-        """Test that the 'part_count' field is annotated correctly"""
+        """Test that the 'part_count' field is annotated correctly."""
         url = reverse('api-part-category-list')
 
         # Create a parent category
@@ -206,7 +206,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['part_count'], 100)
 
     def test_category_parameters(self):
-        """Test that the PartCategoryParameterTemplate API function work"""
+        """Test that the PartCategoryParameterTemplate API function work."""
         url = reverse('api-part-category-parameter-list')
 
         response = self.get(url, {}, expected_code=200)
@@ -288,7 +288,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             self.assertEqual(response.data['description'], val)
 
     def test_invisible_chars(self):
-        """Test that invisible characters are removed from the input data"""
+        """Test that invisible characters are removed from the input data."""
         url = reverse('api-part-category-detail', kwargs={'pk': 1})
 
         values = [
@@ -304,7 +304,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             self.assertEqual(response.data['description'], 'A part category')
 
     def test_category_delete(self):
-        """Test category deletion with different parameters"""
+        """Test category deletion with different parameters."""
 
         class Target(IntEnum):
             move_subcategories_to_parent_move_parts_to_parent = (0,)
@@ -419,7 +419,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                     self.assertEqual(child.parent, parent_category)
 
     def test_structural(self):
-        """Test the effectiveness of structural categories
+        """Test the effectiveness of structural categories.
 
         Make sure:
         - Parts cannot be created in structural categories
@@ -471,7 +471,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(part.category.pk, non_structural_category.pk)
 
     def test_path_detail(self):
-        """Test path_detail information"""
+        """Test path_detail information."""
         url = reverse('api-part-category-detail', kwargs={'pk': 5})
 
         # First, request without path detail
@@ -578,7 +578,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
 
 
 class PartAPITestBase(InvenTreeAPITestCase):
-    """Base class for running tests on the Part API endpoints"""
+    """Base class for running tests on the Part API endpoints."""
 
     fixtures = [
         'category',
@@ -669,7 +669,7 @@ class PartAPITest(PartAPITestBase):
         self.assertEqual(len(response.data), 12)
 
     def test_cat_detail(self):
-        """Test the PartCategoryDetail API endpoint"""
+        """Test the PartCategoryDetail API endpoint."""
         url = reverse('api-part-category-detail', kwargs={'pk': 4})
         response = self.get(url)
 
@@ -688,7 +688,7 @@ class PartAPITest(PartAPITestBase):
         self.assertIsNone(response.data['parent'])
 
     def test_filter_parts(self):
-        """Test part filtering using the API"""
+        """Test part filtering using the API."""
         url = reverse('api-part-list')
         data = {'cascade': True}
         response = self.get(url, data)
@@ -707,7 +707,7 @@ class PartAPITest(PartAPITestBase):
             self.assertEqual(part['category'], 2)
 
     def test_filter_by_in_bom(self):
-        """Test that we can filter part list by the 'in_bom_for' parameter"""
+        """Test that we can filter part list by the 'in_bom_for' parameter."""
         url = reverse('api-part-list')
 
         response = self.get(url, {'in_bom_for': 100}, expected_code=200)
@@ -715,7 +715,7 @@ class PartAPITest(PartAPITestBase):
         self.assertEqual(len(response.data), 4)
 
     def test_filter_by_related(self):
-        """Test that we can filter by the 'related' status"""
+        """Test that we can filter by the 'related' status."""
         url = reverse('api-part-list')
 
         # Initially there are no relations, so this should return zero results
@@ -735,7 +735,7 @@ class PartAPITest(PartAPITestBase):
         self.assertEqual(len(response.data), 2)
 
     def test_filter_by_convert(self):
-        """Test that we can correctly filter the Part list by conversion options"""
+        """Test that we can correctly filter the Part list by conversion options."""
         category = PartCategory.objects.get(pk=3)
 
         # First, construct a set of template / variant parts
@@ -799,7 +799,7 @@ class PartAPITest(PartAPITestBase):
         self.assertEqual(len(response.data), 3)
 
     def test_test_templates(self):
-        """Test the PartTestTemplate API"""
+        """Test the PartTestTemplate API."""
         url = reverse('api-part-test-template-list')
 
         # List ALL items
@@ -870,8 +870,9 @@ class PartAPITest(PartAPITestBase):
             self.assertEqual(len(data['results']), n)
 
     def test_template_filters(self):
-        """Unit tests for API filters related to template parts:
+        """Unit tests for API filters related to template parts.
 
+        Test:
         - variant_of : Return children of specified part
         - ancestor : Return descendants of specified part
 
@@ -1029,8 +1030,7 @@ class PartAPITest(PartAPITestBase):
                     self.assertEqual(part.category.name, row['Category Name'])
 
     def test_date_filters(self):
-        """Test that the creation date filters work correctly"""
-
+        """Test that the creation date filters work correctly."""
         url = reverse('api-part-list')
 
         response = self.get(url)
@@ -1064,10 +1064,10 @@ class PartAPITest(PartAPITestBase):
 
 
 class PartCreationTests(PartAPITestBase):
-    """Tests for creating new Part instances via the API"""
+    """Tests for creating new Part instances via the API."""
 
     def test_default_values(self):
-        """Tests for 'default' values:
+        """Tests for 'default' values.
 
         Ensure that unspecified fields revert to "default" values
         (as specified in the model field definition)
@@ -1121,7 +1121,7 @@ class PartCreationTests(PartAPITestBase):
         """Tests for initial stock quantity creation."""
 
         def submit(stock_data, expected_code=None):
-            """Helper function for submitting with initial stock data"""
+            """Helper function for submitting with initial stock data."""
             data = {
                 'category': 1,
                 'name': "My lil' test part",
@@ -1162,7 +1162,7 @@ class PartCreationTests(PartAPITestBase):
         """Tests for initial creation of supplier / manufacturer data."""
 
         def submit(supplier_data, expected_code=400):
-            """Helper function for submitting with supplier data"""
+            """Helper function for submitting with supplier data."""
             data = {
                 'name': 'My test part',
                 'description': 'A test part thingy',
@@ -1248,7 +1248,7 @@ class PartCreationTests(PartAPITestBase):
         self.assertEqual(response.data['description'], description)
 
     def test_duplication(self):
-        """Test part duplication options"""
+        """Test part duplication options."""
         # Run a matrix of tests
         for bom in [True, False]:
             for img in [True, False]:
@@ -1276,7 +1276,7 @@ class PartCreationTests(PartAPITestBase):
                     self.assertEqual(part.parameters.count(), 2 if params else 0)
 
     def test_category_parameters(self):
-        """Test that category parameters are correctly applied"""
+        """Test that category parameters are correctly applied."""
         cat = PartCategory.objects.get(pk=1)
 
         # Add some parameter template to the parent category
@@ -1325,7 +1325,7 @@ class PartDetailTests(PartAPITestBase):
 
     @classmethod
     def setUpTestData(cls):
-        """Custom setup routine for this class"""
+        """Custom setup routine for this class."""
         super().setUpTestData()
 
         # Create a custom APIClient for file uploads
@@ -1334,7 +1334,7 @@ class PartDetailTests(PartAPITestBase):
         cls.upload_client.force_authenticate(user=cls.user)
 
     def test_part_operations(self):
-        """Test that Part instances can be adjusted via the API"""
+        """Test that Part instances can be adjusted via the API."""
         n = Part.objects.count()
 
         # Create a part
@@ -1530,8 +1530,7 @@ class PartDetailTests(PartAPITestBase):
             self.assertIsNotNone(p.image)
 
     def test_existing_image(self):
-        """Test that we can allocate an existing uploaded image to a new Part"""
-
+        """Test that we can allocate an existing uploaded image to a new Part."""
         # First, upload an image for an existing part
         p = Part.objects.first()
 
@@ -1662,7 +1661,7 @@ class PartDetailTests(PartAPITestBase):
         self.assertEqual(data['unallocated_stock'], 9000)
 
     def test_path_detail(self):
-        """Check that path_detail can be requested against the serializer"""
+        """Check that path_detail can be requested against the serializer."""
         response = self.get(
             reverse('api-part-detail', kwargs={'pk': 1}),
             {'path_detail': True},
@@ -1674,10 +1673,10 @@ class PartDetailTests(PartAPITestBase):
 
 
 class PartListTests(PartAPITestBase):
-    """Unit tests for the Part List API endpoint"""
+    """Unit tests for the Part List API endpoint."""
 
     def test_query_count(self):
-        """Test that the query count is unchanged, independent of query results"""
+        """Test that the query count is unchanged, independent of query results."""
         queries = [{'limit': 1}, {'limit': 10}, {'limit': 50}, {'category': 1}, {}]
 
         url = reverse('api-part-list')
@@ -1722,14 +1721,14 @@ class PartListTests(PartAPITestBase):
 
 
 class PartNotesTests(InvenTreeAPITestCase):
-    """Tests for the 'notes' field (markdown field)"""
+    """Tests for the 'notes' field (markdown field)."""
 
     fixtures = ['category', 'part', 'location', 'company']
 
     roles = ['part.change', 'part.add']
 
     def test_long_notes(self):
-        """Test that very long notes field is rejected"""
+        """Test that very long notes field is rejected."""
         # Ensure that we cannot upload a very long piece of text
         url = reverse('api-part-detail', kwargs={'pk': 1})
 
@@ -1741,7 +1740,7 @@ class PartNotesTests(InvenTreeAPITestCase):
         )
 
     def test_multiline_formatting(self):
-        """Ensure that markdown formatting is retained"""
+        """Ensure that markdown formatting is retained."""
         url = reverse('api-part-detail', kwargs={'pk': 1})
 
         notes = """
@@ -1765,18 +1764,18 @@ class PartNotesTests(InvenTreeAPITestCase):
 
 
 class PartPricingDetailTests(InvenTreeAPITestCase):
-    """Tests for the part pricing API endpoint"""
+    """Tests for the part pricing API endpoint."""
 
     fixtures = ['category', 'part', 'location']
 
     roles = ['part.change']
 
     def url(self, pk):
-        """Construct a pricing URL"""
+        """Construct a pricing URL."""
         return reverse('api-part-pricing', kwargs={'pk': pk})
 
     def test_pricing_detail(self):
-        """Test an empty pricing detail"""
+        """Test an empty pricing detail."""
         response = self.get(self.url(1), expected_code=200)
 
         # Check for expected fields
@@ -1823,7 +1822,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        """Create test data as part of setup routine"""
+        """Create test data as part of setup routine."""
         super().setUpTestData()
 
         # Ensure the part "variant" tree is correctly structured
@@ -1849,7 +1848,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         )
 
     def get_part_data(self):
-        """Helper function for retrieving part data"""
+        """Helper function for retrieving part data."""
         url = reverse('api-part-list')
 
         response = self.get(url)
@@ -2119,7 +2118,7 @@ class BomItemTest(InvenTreeAPITestCase):
     roles = ['part.add', 'part.change', 'part.delete']
 
     def setUp(self):
-        """Set up the test case"""
+        """Set up the test case."""
         super().setUp()
 
         # Rebuild part tree so BOM items validate correctly
@@ -2166,7 +2165,7 @@ class BomItemTest(InvenTreeAPITestCase):
                 self.assertTrue(key in el)
 
     def test_bom_list_search(self):
-        """Test that we can search the BOM list API endpoint"""
+        """Test that we can search the BOM list API endpoint."""
         url = reverse('api-bom-list')
 
         response = self.get(url, expected_code=200)
@@ -2191,7 +2190,7 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 0)
 
     def test_bom_list_ordering(self):
-        """Test that the BOM list results can be ordered"""
+        """Test that the BOM list results can be ordered."""
         url = reverse('api-bom-list')
 
         # Order by increasing quantity
@@ -2227,7 +2226,6 @@ class BomItemTest(InvenTreeAPITestCase):
 
     def test_get_bom_detail(self):
         """Get the detail view for a single BomItem object."""
-
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
 
         response = self.get(url, expected_code=200)
@@ -2476,12 +2474,12 @@ class BomItemTest(InvenTreeAPITestCase):
 
 
 class PartAttachmentTest(InvenTreeAPITestCase):
-    """Unit tests for the PartAttachment API endpoint"""
+    """Unit tests for the PartAttachment API endpoint."""
 
     fixtures = ['category', 'part', 'location']
 
     def test_add_attachment(self):
-        """Test that we can create a new PartAttachment via the API"""
+        """Test that we can create a new PartAttachment via the API."""
         url = reverse('api-part-attachment-list')
 
         # Upload without permission
@@ -2525,7 +2523,7 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
 
 class PartInternalPriceBreakTest(InvenTreeAPITestCase):
-    """Unit tests for the PartInternalPrice API endpoints"""
+    """Unit tests for the PartInternalPrice API endpoints."""
 
     fixtures = [
         'category',
@@ -2551,7 +2549,7 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
     ]
 
     def test_create_price_breaks(self):
-        """Test we can create price breaks at various quantities"""
+        """Test we can create price breaks at various quantities."""
         url = reverse('api-part-internal-price-list')
 
         breaks = [
@@ -2589,7 +2587,7 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
 
 
 class PartStocktakeTest(InvenTreeAPITestCase):
-    """Unit tests for the part stocktake functionality"""
+    """Unit tests for the part stocktake functionality."""
 
     superuser = False
     is_staff = False
@@ -2597,7 +2595,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
     fixtures = ['category', 'part', 'location', 'stock']
 
     def test_list_endpoint(self):
-        """Test the list endpoint for the stocktake data"""
+        """Test the list endpoint for the stocktake data."""
         url = reverse('api-part-stocktake-list')
 
         self.assignRole('part.view')
@@ -2636,7 +2634,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), total)
 
     def test_create_stocktake(self):
-        """Test that stocktake entries can be created via the API"""
+        """Test that stocktake entries can be created via the API."""
         url = reverse('api-part-stocktake-list')
 
         self.assignRole('stocktake.add')
@@ -2695,7 +2693,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         self.delete(url, expected_code=204)
 
     def test_report_list(self):
-        """Test for PartStocktakeReport list endpoint"""
+        """Test for PartStocktakeReport list endpoint."""
         from part.stocktake import generate_stocktake_report
 
         # Initially, no stocktake records are available
@@ -2728,7 +2726,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
         self.assertTrue(data['report'].endswith('.csv'))
 
     def test_report_generate(self):
-        """Test API functionality for generating a new stocktake report"""
+        """Test API functionality for generating a new stocktake report."""
         url = reverse('api-part-stocktake-report-generate')
 
         # Permission denied, initially
@@ -2767,12 +2765,12 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
     roles = ['part.change', 'part_category.change']
 
     def setUp(self):
-        """Setup unit tets"""
+        """Setup unit tets."""
         super().setUp()
         Part.objects.rebuild()
 
     def metatester(self, apikey, model):
-        """Generic tester"""
+        """Generic tester."""
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
@@ -2798,7 +2796,7 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
         )
 
     def test_metadata(self):
-        """Test all endpoints"""
+        """Test all endpoints."""
         for apikey, model in {
             'api-part-category-parameter-metadata': PartCategoryParameterTemplate,
             'api-part-category-metadata': PartCategory,
@@ -2814,10 +2812,10 @@ class PartMetadataAPITest(InvenTreeAPITestCase):
 
 
 class PartSchedulingTest(PartAPITestBase):
-    """Unit tests for the 'part scheduling' API endpoint"""
+    """Unit tests for the 'part scheduling' API endpoint."""
 
     def test_get_schedule(self):
-        """Test that the scheduling endpoint returns OK"""
+        """Test that the scheduling endpoint returns OK."""
         part_ids = [1, 3, 100, 101]
 
         for pk in part_ids:

@@ -52,7 +52,7 @@ class CompanyList(ListCreateAPI):
     queryset = Company.objects.all()
 
     def get_queryset(self):
-        """Return annotated queryset for the company list endpoint"""
+        """Return annotated queryset for the company list endpoint."""
         queryset = super().get_queryset()
         queryset = CompanySerializer.annotate_queryset(queryset)
 
@@ -76,7 +76,7 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
     serializer_class = CompanySerializer
 
     def get_queryset(self):
-        """Return annotated queryset for the company detail endpoint"""
+        """Return annotated queryset for the company detail endpoint."""
         queryset = super().get_queryset()
         queryset = CompanySerializer.annotate_queryset(queryset)
 
@@ -84,7 +84,7 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
 
 
 class CompanyAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for the CompanyAttachment model"""
+    """API endpoint for the CompanyAttachment model."""
 
     queryset = CompanyAttachment.objects.all()
     serializer_class = CompanyAttachmentSerializer
@@ -100,7 +100,7 @@ class CompanyAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
 
 
 class ContactList(ListCreateDestroyAPIView):
-    """API endpoint for list view of Company model"""
+    """API endpoint for list view of Company model."""
 
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
@@ -117,14 +117,14 @@ class ContactList(ListCreateDestroyAPIView):
 
 
 class ContactDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint for Company model"""
+    """Detail endpoint for Company model."""
 
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
 
 
 class AddressList(ListCreateDestroyAPIView):
-    """API endpoint for list view of Address model"""
+    """API endpoint for list view of Address model."""
 
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
@@ -139,7 +139,7 @@ class AddressList(ListCreateDestroyAPIView):
 
 
 class AddressDetail(RetrieveUpdateDestroyAPI):
-    """API endpoint for a single Address object"""
+    """API endpoint for a single Address object."""
 
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
@@ -173,7 +173,7 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
     filterset_class = ManufacturerPartFilter
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint"""
+        """Return serializer instance for this endpoint."""
         # Do we wish to include extra detail?
         try:
             params = self.request.query_params
@@ -233,10 +233,10 @@ class ManufacturerPartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI
 
 
 class ManufacturerPartParameterFilter(rest_filters.FilterSet):
-    """Custom filterset for the ManufacturerPartParameterList API endpoint"""
+    """Custom filterset for the ManufacturerPartParameterList API endpoint."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = ManufacturerPartParameter
         fields = ['name', 'value', 'units', 'manufacturer_part']
@@ -258,7 +258,7 @@ class ManufacturerPartParameterList(ListCreateDestroyAPIView):
     filterset_class = ManufacturerPartParameterFilter
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint"""
+        """Return serializer instance for this endpoint."""
         # Do we wish to include any extra detail?
         try:
             params = self.request.query_params
@@ -288,10 +288,10 @@ class ManufacturerPartParameterDetail(RetrieveUpdateDestroyAPI):
 
 
 class SupplierPartFilter(rest_filters.FilterSet):
-    """API filters for the SupplierPartList endpoint"""
+    """API filters for the SupplierPartList endpoint."""
 
     class Meta:
-        """Metaclass option"""
+        """Metaclass option."""
 
         model = SupplierPart
         fields = [
@@ -325,7 +325,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
     filterset_class = SupplierPartFilter
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryest object for the SupplierPart list"""
+        """Return annotated queryest object for the SupplierPart list."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = SupplierPartSerializer.annotate_queryset(queryset)
 
@@ -354,7 +354,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         return queryset
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint"""
+        """Return serializer instance for this endpoint."""
         # Do we wish to include extra detail?
         try:
             params = self.request.query_params
@@ -425,10 +425,10 @@ class SupplierPartDetail(RetrieveUpdateDestroyAPI):
 
 
 class SupplierPriceBreakFilter(rest_filters.FilterSet):
-    """Custom API filters for the SupplierPriceBreak list endpoint"""
+    """Custom API filters for the SupplierPriceBreak list endpoint."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = SupplierPriceBreak
         fields = ['part', 'quantity']
@@ -456,7 +456,7 @@ class SupplierPriceBreakList(ListCreateAPI):
     filterset_class = SupplierPriceBreakFilter
 
     def get_serializer(self, *args, **kwargs):
-        """Return serializer instance for this endpoint"""
+        """Return serializer instance for this endpoint."""
         try:
             params = self.request.query_params
 

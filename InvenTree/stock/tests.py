@@ -18,7 +18,7 @@ from .models import StockItem, StockItemTestResult, StockItemTracking, StockLoca
 
 
 class StockTestBase(InvenTreeTestCase):
-    """Base class for running Stock tests"""
+    """Base class for running Stock tests."""
 
     fixtures = [
         'category',
@@ -53,7 +53,7 @@ class StockTest(StockTestBase):
     """Tests to ensure that the stock location tree functions correctly."""
 
     def test_pathstring(self):
-        """Check that pathstring updates occur as expected"""
+        """Check that pathstring updates occur as expected."""
         a = StockLocation.objects.create(name='A')
         b = StockLocation.objects.create(name='B', parent=a)
         c = StockLocation.objects.create(name='C', parent=b)
@@ -128,7 +128,7 @@ class StockTest(StockTestBase):
         self.assertTrue(d.pathstring.endswith('DDDDDDDD'))
 
     def test_link(self):
-        """Test the link URL field validation"""
+        """Test the link URL field validation."""
         item = StockItem.objects.get(pk=1)
 
         # Check that invalid URLs fail
@@ -163,14 +163,14 @@ class StockTest(StockTestBase):
 
     @override_settings(EXTRA_URL_SCHEMES=['ssh'])
     def test_exteneded_schema(self):
-        """Test that extended URL schemes are allowed"""
+        """Test that extended URL schemes are allowed."""
         item = StockItem.objects.get(pk=1)
         item.link = 'ssh://user:pwd@deb.org:223'
         item.save()
         item.full_clean()
 
     def test_serial_numbers(self):
-        """Test serial number uniqueness"""
+        """Test serial number uniqueness."""
         # Ensure that 'global uniqueness' setting is enabled
         InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', True, self.user)
 
@@ -456,7 +456,7 @@ class StockTest(StockTestBase):
         self.assertFalse(it.add_stock(-10, None))
 
     def test_allocate_to_customer(self):
-        """Test allocating stock to a customer"""
+        """Test allocating stock to a customer."""
         it = StockItem.objects.get(pk=2)
         n = it.quantity
         an = n - 10
@@ -486,7 +486,7 @@ class StockTest(StockTestBase):
         self.assertIn('Allocated some stock', track.notes)
 
     def test_return_from_customer(self):
-        """Test removing previous allocated stock from customer"""
+        """Test removing previous allocated stock from customer."""
         it = StockItem.objects.get(pk=2)
 
         # First establish total stock for this part
@@ -887,10 +887,10 @@ class StockTest(StockTestBase):
 
 
 class StockBarcodeTest(StockTestBase):
-    """Run barcode tests for the stock app"""
+    """Run barcode tests for the stock app."""
 
     def test_stock_item_barcode_basics(self):
-        """Simple tests for the StockItem barcode integration"""
+        """Simple tests for the StockItem barcode integration."""
         item = StockItem.objects.get(pk=1)
 
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
@@ -906,7 +906,7 @@ class StockBarcodeTest(StockTestBase):
         self.assertEqual(barcode, '{"stockitem": 1}')
 
     def test_location_barcode_basics(self):
-        """Simple tests for the StockLocation barcode integration"""
+        """Simple tests for the StockLocation barcode integration."""
         self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
 
         loc = StockLocation.objects.get(pk=1)

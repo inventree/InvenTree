@@ -62,7 +62,6 @@ class BarcodeAPITest(InvenTreeAPITestCase):
 
     def test_find_part(self):
         """Test that we can lookup a part based on ID."""
-
         part = Part.objects.first()
 
         response = self.post(
@@ -83,7 +82,6 @@ class BarcodeAPITest(InvenTreeAPITestCase):
 
     def test_find_stock_item(self):
         """Test that we can lookup a stock item based on ID."""
-
         item = StockItem.objects.first()
 
         response = self.post(
@@ -205,8 +203,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         )
 
     def test_unassign_endpoint(self):
-        """Test that the unassign endpoint works as expected"""
-
+        """Test that the unassign endpoint works as expected."""
         invalid_keys = ['cat', 'dog', 'fish']
 
         # Invalid key should fail
@@ -225,7 +222,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
 
 
 class SOAllocateTest(InvenTreeAPITestCase):
-    """Unit tests for the barcode endpoint for allocating items to a sales order"""
+    """Unit tests for the barcode endpoint for allocating items to a sales order."""
 
     fixtures = ['category', 'company', 'part', 'location', 'stock']
 
@@ -263,12 +260,11 @@ class SOAllocateTest(InvenTreeAPITestCase):
         )
 
     def setUp(self):
-        """Setup method for each test"""
+        """Setup method for each test."""
         super().setUp()
 
     def postBarcode(self, barcode, expected_code=None, **kwargs):
         """Post barcode and return results."""
-
         data = {'barcode': barcode, **kwargs}
 
         response = self.post(
@@ -278,24 +274,21 @@ class SOAllocateTest(InvenTreeAPITestCase):
         return response.data
 
     def test_no_data(self):
-        """Test when no data is provided"""
-
+        """Test when no data is provided."""
         result = self.postBarcode('', expected_code=400)
 
         self.assertIn('This field may not be blank', str(result['barcode']))
         self.assertIn('This field is required', str(result['sales_order']))
 
     def test_invalid_sales_order(self):
-        """Test when an invalid sales order is provided"""
-
+        """Test when an invalid sales order is provided."""
         # Test with an invalid sales order ID
         result = self.postBarcode('', sales_order=999999999, expected_code=400)
 
         self.assertIn('object does not exist', str(result['sales_order']))
 
     def test_invalid_barcode(self):
-        """Test when an invalid barcode is provided (does not match stock item)"""
-
+        """Test when an invalid barcode is provided (does not match stock item)."""
         # Test with an invalid barcode
         result = self.postBarcode(
             '123456789', sales_order=self.sales_order.pk, expected_code=400
@@ -323,8 +316,7 @@ class SOAllocateTest(InvenTreeAPITestCase):
         self.assertIn('does not match an existing stock item', str(result['error']))
 
     def test_submit(self):
-        """Test data submission"""
-
+        """Test data submission."""
         # Create a shipment for a different order
         other_order = order.models.SalesOrder.objects.create(customer=self.customer)
 

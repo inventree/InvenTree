@@ -321,12 +321,12 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
 
     @classmethod
     def check_is_builtin(cls) -> bool:
-        """Determine if a particular plugin class is a 'builtin' plugin"""
+        """Determine if a particular plugin class is a 'builtin' plugin."""
         return str(cls.check_package_path()).startswith('plugin/builtin')
 
     @property
     def is_builtin(self) -> bool:
-        """Is this plugin is builtin"""
+        """Is this plugin is builtin."""
         return self.check_is_builtin()
 
     @classmethod

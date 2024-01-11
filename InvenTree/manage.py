@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""InvenTree / django management commands"""
+"""InvenTree / django management commands."""
 
 import os
 import sys

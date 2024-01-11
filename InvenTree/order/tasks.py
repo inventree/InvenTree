@@ -1,4 +1,4 @@
-"""Background tasks for the 'order' app"""
+"""Background tasks for the 'order' app."""
 
 from datetime import datetime, timedelta
 
@@ -13,7 +13,7 @@ from plugin.events import trigger_event
 
 
 def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
-    """Notify users that a PurchaseOrder has just become 'overdue'"""
+    """Notify users that a PurchaseOrder has just become 'overdue'."""
     targets = []
 
     if po.created_by:
@@ -45,8 +45,9 @@ def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
 
 @scheduled_task(ScheduledTask.DAILY)
 def check_overdue_purchase_orders():
-    """Check if any outstanding PurchaseOrders have just become overdue:
+    """Check if any outstanding PurchaseOrders have just become overdue.
 
+    Rules:
     - This check is performed daily
     - Look at the 'target_date' of any outstanding PurchaseOrder objects
     - If the 'target_date' expired *yesterday* then the order is just out of date
@@ -62,7 +63,7 @@ def check_overdue_purchase_orders():
 
 
 def notify_overdue_sales_order(so: order.models.SalesOrder):
-    """Notify appropriate users that a SalesOrder has just become 'overdue'"""
+    """Notify appropriate users that a SalesOrder has just become 'overdue'."""
     targets = []
 
     if so.created_by:
@@ -94,7 +95,7 @@ def notify_overdue_sales_order(so: order.models.SalesOrder):
 
 @scheduled_task(ScheduledTask.DAILY)
 def check_overdue_sales_orders():
-    """Check if any outstanding SalesOrders have just become overdue
+    """Check if any outstanding SalesOrders have just become overdue.
 
     - This check is performed daily
     - Look at the 'target_date' of any outstanding SalesOrder objects

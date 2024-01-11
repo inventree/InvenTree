@@ -29,6 +29,5 @@ class DigiKeyPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     }
 
     def extract_barcode_fields(self, barcode_data) -> dict[str, str]:
-        """Extract barcode fields from a DigiKey plugin"""
-
+        """Extract barcode fields from a DigiKey plugin."""
         return self.parse_ecia_barcode2d(barcode_data)

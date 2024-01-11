@@ -1,4 +1,4 @@
-"""Admin classes for the 'users' app"""
+"""Admin classes for the 'users' app."""
 
 from django import forms
 from django.contrib import admin, messages
@@ -31,7 +31,6 @@ class ApiTokenAdmin(admin.ModelAdmin):
 
     def get_fields(self, request, obj=None):
         """Return list of fields to display."""
-
         if obj:
             fields = ['token']
         else:
@@ -50,8 +49,7 @@ class ApiTokenAdmin(admin.ModelAdmin):
         return fields
 
     def get_readonly_fields(self, request, obj=None):
-        """Some fields are read-only after creation"""
-
+        """Some fields are read-only after creation."""
         ro = ['created', 'last_seen']
 
         if obj:
@@ -83,14 +81,14 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
     """
 
     class Meta:
-        """Metaclass defines extra fields"""
+        """Metaclass defines extra fields."""
 
         model = Group
         exclude = []
         fields = ['name', 'users']
 
     def __init__(self, *args, **kwargs):  # pragma: no cover
-        """Populate the 'users' field with the users in the current group"""
+        """Populate the 'users' field with the users in the current group."""
         super().__init__(*args, **kwargs)
 
         if self.instance.pk:
@@ -107,11 +105,11 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
     )
 
     def save_m2m(self):  # pragma: no cover
-        """Add the users to the Group"""
+        """Add the users to the Group."""
         self.instance.user_set.set(self.cleaned_data['users'])
 
     def save(self, *args, **kwargs):  # pragma: no cover
-        """Custom save method for Group admin form"""
+        """Custom save method for Group admin form."""
         # Default save
         instance = super().save()
         # Save many-to-many data
@@ -151,7 +149,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
                 break
 
         def append_permission_level(permission_level, next_level):
-            """Append permission level"""
+            """Append permission level."""
             if not permission_level:
                 return next_level
 
@@ -179,47 +177,47 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
         return permission_level
 
     def admin(self, obj):
-        """Return the ruleset for the admin role"""
+        """Return the ruleset for the admin role."""
         return self.get_rule_set(obj, 'admin')
 
     def part_category(self, obj):
-        """Return the ruleset for the PartCategory role"""
+        """Return the ruleset for the PartCategory role."""
         return self.get_rule_set(obj, 'part_category')
 
     def part(self, obj):
-        """Return the ruleset for the Part role"""
+        """Return the ruleset for the Part role."""
         return self.get_rule_set(obj, 'part')
 
     def stocktake(self, obj):
-        """Return the ruleset for the Stocktake role"""
+        """Return the ruleset for the Stocktake role."""
         return self.get_rule_set(obj, 'stocktake')
 
     def stock_location(self, obj):
-        """Return the ruleset for the StockLocation role"""
+        """Return the ruleset for the StockLocation role."""
         return self.get_rule_set(obj, 'stock_location')
 
     def stock_item(self, obj):
-        """Return the ruleset for the StockItem role"""
+        """Return the ruleset for the StockItem role."""
         return self.get_rule_set(obj, 'stock')
 
     def build(self, obj):
-        """Return the ruleset for the BuildOrder role"""
+        """Return the ruleset for the BuildOrder role."""
         return self.get_rule_set(obj, 'build')
 
     def purchase_order(self, obj):
-        """Return the ruleset for the PurchaseOrder role"""
+        """Return the ruleset for the PurchaseOrder role."""
         return self.get_rule_set(obj, 'purchase_order')
 
     def sales_order(self, obj):
-        """Return the ruleset for the SalesOrder role"""
+        """Return the ruleset for the SalesOrder role."""
         return self.get_rule_set(obj, 'sales_order')
 
     def return_order(self, obj):
-        """Return the ruleset ofr the ReturnOrder role"""
+        """Return the ruleset ofr the ReturnOrder role."""
         return self.get_rule_set(obj, 'return_order')
 
     def get_formsets_with_inlines(self, request, obj=None):
-        """Return all inline formsets"""
+        """Return all inline formsets."""
         for inline in self.get_inline_instances(request, obj):
             # Hide RuleSetInline in the 'Add role' view
             if not isinstance(inline, RuleSetInline) or obj is not None:
@@ -255,7 +253,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
             messages.add_message(request, messages.WARNING, msg)
 
     def save_formset(self, request, form, formset, change):
-        """Save the inline formset"""
+        """Save the inline formset."""
         # Save inline Rulesets
         formset.save()
         # Save Group instance and update permissions

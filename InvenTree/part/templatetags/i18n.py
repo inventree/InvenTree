@@ -17,7 +17,7 @@ register = template.Library()
 
 @register.simple_tag()
 def translation_stats(lang_code):
-    """Return the translation percentage for the given language code"""
+    """Return the translation percentage for the given language code."""
     if lang_code is None:
         return None
 
@@ -25,10 +25,10 @@ def translation_stats(lang_code):
 
 
 class CustomTranslateNode(TranslateNode):
-    """Custom translation node class, which sanitizes the translated strings for javascript use"""
+    """Custom translation node class, which sanitizes the translated strings for javascript use."""
 
     def render(self, context):
-        """Custom render function overrides / extends default behaviour"""
+        """Custom render function overrides / extends default behaviour."""
         result = super().render(context)
 
         result = bleach.clean(result)
@@ -52,7 +52,7 @@ class CustomTranslateNode(TranslateNode):
 @register.tag('translate')
 @register.tag('trans')
 def do_translate(parser, token):
-    """Custom translation function, lifted from https://github.com/django/django/blob/main/django/templatetags/i18n.py
+    """Custom translation function, lifted from https://github.com/django/django/blob/main/django/templatetags/i18n.py.
 
     The only difference is that we pass this to our custom rendering node class
     """

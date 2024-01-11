@@ -75,7 +75,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
-            """Return a meta-value associated with this plugin"""
+            """Return a meta-value associated with this plugin."""
             # Ignore if the plugin config is not defined
             if not plugin:
                 return None
@@ -155,7 +155,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
     @admin.display(boolean=True, description=_('Builtin Plugin'))
     def is_builtin(self) -> bool:
-        """Return True if this is a 'builtin' plugin"""
+        """Return True if this is a 'builtin' plugin."""
         if not self.plugin:
             return False
 

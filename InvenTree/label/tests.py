@@ -1,4 +1,4 @@
-"""Tests for labels"""
+"""Tests for labels."""
 
 import io
 import json
@@ -22,13 +22,13 @@ from .models import PartLabel, StockItemLabel, StockLocationLabel
 
 
 class LabelTest(InvenTreeAPITestCase):
-    """Unit test class for label models"""
+    """Unit test class for label models."""
 
     fixtures = ['category', 'part', 'location', 'stock']
 
     @classmethod
     def setUpTestData(cls):
-        """Ensure that some label instances exist as part of init routine"""
+        """Ensure that some label instances exist as part of init routine."""
         super().setUpTestData()
         apps.get_app_config('label').create_labels()
 

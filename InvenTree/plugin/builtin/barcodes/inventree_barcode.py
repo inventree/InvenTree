@@ -29,12 +29,11 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
     @staticmethod
     def get_supported_barcode_models():
-        """Returns a list of database models which support barcode functionality"""
+        """Returns a list of database models which support barcode functionality."""
         return getModelsWithMixin(InvenTreeBarcodeMixin)
 
     def format_matched_response(self, label, model, instance):
-        """Format a response for the scanned data"""
-
+        """Format a response for the scanned data."""
         return {label: instance.format_matched_response()}
 
     def scan(self, barcode_data):
@@ -42,7 +41,6 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
         Here we are looking for a dict object which contains a reference to a particular InvenTree database object
         """
-
         # Attempt to coerce the barcode data into a dict object
         # This is the internal barcode representation that InvenTree uses
         barcode_dict = None

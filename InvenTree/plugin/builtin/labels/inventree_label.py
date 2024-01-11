@@ -1,4 +1,4 @@
-"""Default label printing plugin (supports PDF generation)"""
+"""Default label printing plugin (supports PDF generation)."""
 
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
@@ -34,7 +34,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     }
 
     def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
-        """Handle printing of multiple labels
+        """Handle printing of multiple labels.
 
         - Label outputs are concatenated together, and we return a single PDF file.
         - If DEBUG mode is enabled, we return a single HTML file.

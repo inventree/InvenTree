@@ -36,12 +36,13 @@ class PartIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
     context_object_name = 'parts'
 
     def get_queryset(self):
-        """Custom queryset lookup to prefetch related fields"""
+        """Custom queryset lookup to prefetch related fields."""
         return Part.objects.all().select_related('category')
 
     def get_context_data(self, **kwargs):
-        """Returns custom context data for the PartIndex view:
+        """Returns custom context data for the PartIndex view.
 
+        Context:
         - children: Number of child categories
         - category_count: Number of child categories
         - part_count: Number of parts contained
@@ -59,12 +60,12 @@ class PartIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
 
 
 class PartImport(FileManagementFormView):
-    """Part: Upload file, match to fields and import parts(using multi-Step form)"""
+    """Part: Upload file, match to fields and import parts(using multi-Step form)."""
 
     permission_required = 'part.add'
 
     class PartFileManager(FileManager):
-        """Import field definitions"""
+        """Import field definitions."""
 
         REQUIRED_HEADERS = ['Name', 'Description']
 
@@ -316,14 +317,14 @@ class PartImportTemplate(AjaxView):
     """
 
     def get(self, request, *args, **kwargs):
-        """Perform a GET request to download the 'Part import' template"""
+        """Perform a GET request to download the 'Part import' template."""
         export_format = request.GET.get('format', 'csv')
 
         return MakePartTemplate(export_format)
 
 
 class PartImportAjax(FileManagementAjaxView, PartImport):
-    """Multi-step form wizard for importing Part data"""
+    """Multi-step form wizard for importing Part data."""
 
     ajax_form_steps_template = [
         'part/import_wizard/ajax_part_upload.html',
@@ -332,7 +333,7 @@ class PartImportAjax(FileManagementAjaxView, PartImport):
     ]
 
     def validate(self, obj, form, **kwargs):
-        """Validation is performed based on the current form step"""
+        """Validation is performed based on the current form step."""
         return PartImport.validate(self, self.steps.current, form, **kwargs)
 
 
@@ -362,7 +363,7 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         return Decimal(self.request.POST.get('quantity', 1))
 
     def get_part(self):
-        """Return the Part instance associated with this view"""
+        """Return the Part instance associated with this view."""
         return self.get_object()
 
     def get_initials(self):
@@ -370,7 +371,7 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         return {'quantity': self.get_quantity()}
 
     def post(self, request, *args, **kwargs):
-        """POST action performs as a GET action"""
+        """POST action performs as a GET action."""
         self.object = self.get_object()
         kwargs['object'] = self.object
         ctx = self.get_context_data(**kwargs)
@@ -378,7 +379,7 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
 
 class PartDetailFromIPN(PartDetail):
-    """Part detail view using the IPN (internal part number) of the Part as the lookup field"""
+    """Part detail view using the IPN (internal part number) of the Part as the lookup field."""
 
     slug_field = 'IPN'
     slug_url_kwarg = 'slug'
@@ -426,7 +427,7 @@ class PartImageSelect(AjaxUpdateView):
     fields = ['image']
 
     def post(self, request, *args, **kwargs):
-        """Perform POST action to assign selected image to the Part instance"""
+        """Perform POST action to assign selected image to the Part instance."""
         part = self.get_object()
         form = self.get_form()
 
@@ -467,7 +468,7 @@ class BomUploadTemplate(AjaxView):
     """
 
     def get(self, request, *args, **kwargs):
-        """Perform a GET request to download the 'BOM upload' template"""
+        """Perform a GET request to download the 'BOM upload' template."""
         export_format = request.GET.get('format', 'csv')
 
         return MakeBomTemplate(export_format)
@@ -484,7 +485,7 @@ class BomDownload(AjaxView):
     model = Part
 
     def get(self, request, *args, **kwargs):
-        """Perform GET request to download BOM data"""
+        """Perform GET request to download BOM data."""
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
         export_format = request.GET.get('format', 'csv')
@@ -532,7 +533,7 @@ class BomDownload(AjaxView):
         )
 
     def get_data(self):
-        """Return a custom message"""
+        """Return a custom message."""
         return {'info': 'Exported BOM'}
 
 
@@ -551,7 +552,7 @@ class PartPricing(AjaxView):
         return Decimal(self.request.POST.get('quantity', 1))
 
     def get_part(self):
-        """Return the Part instance associated with this view"""
+        """Return the Part instance associated with this view."""
         try:
             return Part.objects.get(id=self.kwargs['pk'])
         except Part.DoesNotExist:
@@ -661,7 +662,7 @@ class PartPricing(AjaxView):
         return {'quantity': self.get_quantity()}
 
     def get(self, request, *args, **kwargs):
-        """Perform custom GET action for this view"""
+        """Perform custom GET action for this view."""
         init = self.get_initials()
         qty = self.get_quantity()
 
@@ -670,7 +671,7 @@ class PartPricing(AjaxView):
         )
 
     def post(self, request, *args, **kwargs):
-        """Perform custom POST action for this view"""
+        """Perform custom POST action for this view."""
         currency = None
 
         quantity = self.get_quantity()
@@ -704,8 +705,9 @@ class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     template_name = 'part/category.html'
 
     def get_context_data(self, **kwargs):
-        """Returns custom context data for the CategoryDetail view:
+        """Returns custom context data for the CategoryDetail view.
 
+        Context:
         - part_count: Number of parts in this category
         - starred_directly: True if this category is starred directly by the requesting user
         - starred: True if this category is starred by the requesting user

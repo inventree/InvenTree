@@ -77,7 +77,7 @@ class StatusCode(BaseEnum):
 
     @classmethod
     def values(cls, key=None):
-        """Return a dict representation containing all required information"""
+        """Return a dict representation containing all required information."""
         elements = [itm for itm in cls if cls._is_element(itm.name)]
         if key is None:
             return elements
@@ -148,7 +148,7 @@ class StatusCode(BaseEnum):
 
     @classmethod
     def dict(cls, key=None):
-        """Return a dict representation containing all required information"""
+        """Return a dict representation containing all required information."""
         return {
             x.name: {'color': x.color, 'key': x.value, 'label': x.label, 'name': x.name}
             for x in cls.values(key)

@@ -158,7 +158,7 @@ class BuildStatusGroups:
 
 
 class ReturnOrderStatus(StatusCode):
-    """Defines a set of status codes for a ReturnOrder"""
+    """Defines a set of status codes for a ReturnOrder."""
 
     # Order is pending, waiting for receipt of items
     PENDING = 10, _('Pending'), 'secondary'
@@ -177,7 +177,7 @@ class ReturnOrderStatusGroups:
 
 
 class ReturnOrderLineStatus(StatusCode):
-    """Defines a set of status codes for a ReturnOrderLineItem"""
+    """Defines a set of status codes for a ReturnOrderLineItem."""
 
     PENDING = 10, _('Pending'), 'secondary'
 

@@ -63,7 +63,6 @@ class AllowedURLValidator(validators.URLValidator):
 
     def __call__(self, value):
         """Validate the URL."""
-
         import common.models
 
         self.schemes = allowable_url_schemes()

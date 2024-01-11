@@ -22,7 +22,7 @@ class GeneralStatus(StatusCode):
     jkl = None  # This should be ignored
 
     def GHI(self):  # This should be ignored
-        """A invalid function"""
+        """A invalid function."""
         pass
 
 
@@ -36,7 +36,7 @@ class GeneralStateTest(InvenTreeTestCase):
         self.assertEqual(GeneralStatus.COMPLETE, 30)
 
     def test_code_functions(self):
-        """Test that the status code class functions work correctly"""
+        """Test that the status code class functions work correctly."""
         # render
         self.assertEqual(
             GeneralStatus.render(10),

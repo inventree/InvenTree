@@ -1,4 +1,4 @@
-"""Unit tests for data migrations in the 'stock' app"""
+"""Unit tests for data migrations in the 'stock' app."""
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
@@ -6,13 +6,13 @@ from InvenTree import unit_test
 
 
 class TestSerialNumberMigration(MigratorTestCase):
-    """Test data migration which updates serial numbers"""
+    """Test data migration which updates serial numbers."""
 
     migrate_from = ('stock', '0067_alter_stockitem_part')
     migrate_to = ('stock', unit_test.getNewestMigrationFile('stock'))
 
     def prepare(self):
-        """Create initial data for this migration"""
+        """Create initial data for this migration."""
         Part = self.old_state.apps.get_model('part', 'part')
         StockItem = self.old_state.apps.get_model('stock', 'stockitem')
 
@@ -48,7 +48,7 @@ class TestSerialNumberMigration(MigratorTestCase):
         self.big_ref_pk = item.pk
 
     def test_migrations(self):
-        """Test that the migrations have been applied correctly"""
+        """Test that the migrations have been applied correctly."""
         StockItem = self.new_state.apps.get_model('stock', 'stockitem')
 
         # Check that the serial number integer conversion has been applied correctly
@@ -68,13 +68,13 @@ class TestSerialNumberMigration(MigratorTestCase):
 
 
 class TestScheduledForDeletionMigration(MigratorTestCase):
-    """Test data migration for removing 'scheduled_for_deletion' field"""
+    """Test data migration for removing 'scheduled_for_deletion' field."""
 
     migrate_from = ('stock', '0066_stockitem_scheduled_for_deletion')
     migrate_to = ('stock', unit_test.getNewestMigrationFile('stock'))
 
     def prepare(self):
-        """Create some initial stock items"""
+        """Create some initial stock items."""
         Part = self.old_state.apps.get_model('part', 'part')
         StockItem = self.old_state.apps.get_model('stock', 'stockitem')
 
@@ -128,7 +128,7 @@ class TestScheduledForDeletionMigration(MigratorTestCase):
         self.assertEqual(StockItem.objects.count(), 29)
 
     def test_migration(self):
-        """Test that all stock items were actually removed"""
+        """Test that all stock items were actually removed."""
         StockItem = self.new_state.apps.get_model('stock', 'stockitem')
 
         # All the "scheduled for deletion" items have been removed

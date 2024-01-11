@@ -134,14 +134,14 @@ class SettingsTest(InvenTreeTestCase):
         self.assertNotIn('SERVER_RESTART_REQUIRED', result)
 
     def test_all_settings(self):
-        """Make sure that the all_settings function returns correctly"""
+        """Make sure that the all_settings function returns correctly."""
         result = InvenTreeSetting.all_settings()
         self.assertIn('INVENTREE_INSTANCE', result)
         self.assertIsInstance(result['INVENTREE_INSTANCE'], InvenTreeSetting)
 
     @mock.patch('common.models.InvenTreeSetting.get_setting_definition')
     def test_check_all_settings(self, get_setting_definition):
-        """Make sure that the check_all_settings function returns correctly"""
+        """Make sure that the check_all_settings function returns correctly."""
         # define partial schema
         settings_definition = {
             'AB': {  # key that's has not already been accessed
@@ -295,7 +295,7 @@ class SettingsTest(InvenTreeTestCase):
                     )  # pragma: no cover
 
     def test_global_setting_caching(self):
-        """Test caching operations for the global settings class"""
+        """Test caching operations for the global settings class."""
         key = 'PART_NAME_FORMAT'
 
         cache_key = InvenTreeSetting.create_cache_key(key)
@@ -316,7 +316,7 @@ class SettingsTest(InvenTreeTestCase):
             self.assertEqual(InvenTreeSetting.get_setting(key), val)
 
     def test_user_setting_caching(self):
-        """Test caching operation for the user settings class"""
+        """Test caching operation for the user settings class."""
         cache.clear()
 
         # Generate a number of new users
@@ -348,7 +348,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the global settings API."""
 
     def setUp(self):
-        """Ensure cache is cleared as part of test setup"""
+        """Ensure cache is cleared as part of test setup."""
         cache.clear()
         return super().setUp()
 
@@ -825,7 +825,7 @@ class NotificationTest(InvenTreeAPITestCase):
         response = self.post(url, {}, expected_code=405)
 
     def test_bulk_delete(self):
-        """Tests for bulk deletion of user notifications"""
+        """Tests for bulk deletion of user notifications."""
         from error_report.models import Error
 
         # Create some notification messages by throwing errors
@@ -1004,17 +1004,17 @@ class ColorThemeTest(TestCase):
 
 
 class CurrencyAPITests(InvenTreeAPITestCase):
-    """Unit tests for the currency exchange API endpoints"""
+    """Unit tests for the currency exchange API endpoints."""
 
     def test_exchange_endpoint(self):
-        """Test that the currency exchange endpoint works as expected"""
+        """Test that the currency exchange endpoint works as expected."""
         response = self.get(reverse('api-currency-exchange'), expected_code=200)
 
         self.assertIn('base_currency', response.data)
         self.assertIn('exchange_rates', response.data)
 
     def test_refresh_endpoint(self):
-        """Call the 'refresh currencies' endpoint"""
+        """Call the 'refresh currencies' endpoint."""
         from djmoney.contrib.exchange.models import Rate
 
         # Delete any existing exchange rate data
@@ -1074,7 +1074,7 @@ class NotesImageTest(InvenTreeAPITestCase):
         self.assertEqual(NotesImage.objects.count(), n)
 
     def test_valid_image(self):
-        """Test upload of a valid image file"""
+        """Test upload of a valid image file."""
         n = NotesImage.objects.count()
 
         # Construct a simple image file
@@ -1100,16 +1100,16 @@ class NotesImageTest(InvenTreeAPITestCase):
 
 
 class ProjectCodesTest(InvenTreeAPITestCase):
-    """Units tests for the ProjectCodes model and API endpoints"""
+    """Units tests for the ProjectCodes model and API endpoints."""
 
     @property
     def url(self):
-        """Return the URL for the project code list endpoint"""
+        """Return the URL for the project code list endpoint."""
         return reverse('api-project-code-list')
 
     @classmethod
     def setUpTestData(cls):
-        """Create some initial project codes"""
+        """Create some initial project codes."""
         super().setUpTestData()
 
         codes = [
@@ -1122,12 +1122,12 @@ class ProjectCodesTest(InvenTreeAPITestCase):
         ProjectCode.objects.bulk_create(codes)
 
     def test_list(self):
-        """Test that the list endpoint works as expected"""
+        """Test that the list endpoint works as expected."""
         response = self.get(self.url, expected_code=200)
         self.assertEqual(len(response.data), ProjectCode.objects.count())
 
     def test_delete(self):
-        """Test we can delete a project code via the API"""
+        """Test we can delete a project code via the API."""
         n = ProjectCode.objects.count()
 
         # Get the first project code
@@ -1143,7 +1143,7 @@ class ProjectCodesTest(InvenTreeAPITestCase):
         self.assertEqual(ProjectCode.objects.count(), n - 1)
 
     def test_duplicate_code(self):
-        """Test that we cannot create two project codes with the same code"""
+        """Test that we cannot create two project codes with the same code."""
         # Create a new project code
         response = self.post(
             self.url,
@@ -1157,7 +1157,7 @@ class ProjectCodesTest(InvenTreeAPITestCase):
         )
 
     def test_write_access(self):
-        """Test that non-staff users have read-only access"""
+        """Test that non-staff users have read-only access."""
         # By default user has staff access, can create a new project code
         response = self.post(
             self.url,
@@ -1196,16 +1196,16 @@ class ProjectCodesTest(InvenTreeAPITestCase):
 
 
 class CustomUnitAPITest(InvenTreeAPITestCase):
-    """Unit tests for the CustomUnit API"""
+    """Unit tests for the CustomUnit API."""
 
     @property
     def url(self):
-        """Return the API endpoint for the CustomUnit list"""
+        """Return the API endpoint for the CustomUnit list."""
         return reverse('api-custom-unit-list')
 
     @classmethod
     def setUpTestData(cls):
-        """Construct some initial test fixture data"""
+        """Construct some initial test fixture data."""
         super().setUpTestData()
 
         units = [
@@ -1222,12 +1222,12 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         CustomUnit.objects.bulk_create(units)
 
     def test_list(self):
-        """Test API list functionality"""
+        """Test API list functionality."""
         response = self.get(self.url, expected_code=200)
         self.assertEqual(len(response.data), CustomUnit.objects.count())
 
     def test_edit(self):
-        """Test edit permissions for CustomUnit model"""
+        """Test edit permissions for CustomUnit model."""
         unit = CustomUnit.objects.first()
 
         # Try to edit without permission
@@ -1254,7 +1254,7 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
         self.assertEqual(unit.name, 'new_unit_name')
 
     def test_validation(self):
-        """Test that validation works as expected"""
+        """Test that validation works as expected."""
         unit = CustomUnit.objects.first()
 
         self.user.is_staff = True

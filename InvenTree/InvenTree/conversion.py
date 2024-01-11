@@ -151,7 +151,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
 
 
 def is_dimensionless(value):
-    """Determine if the provided value is 'dimensionless'
+    """Determine if the provided value is 'dimensionless'.
 
     A dimensionless value might look like:
 

@@ -1,4 +1,4 @@
-"""App configuration class for the 'users' app"""
+"""App configuration class for the 'users' app."""
 
 import logging
 
@@ -11,12 +11,12 @@ logger = logging.getLogger('inventree')
 
 
 class UsersConfig(AppConfig):
-    """Config class for the 'users' app"""
+    """Config class for the 'users' app."""
 
     name = 'users'
 
     def ready(self):
-        """Called when the 'users' app is loaded at runtime"""
+        """Called when the 'users' app is loaded at runtime."""
         # skip loading if plugin registry is not loaded or we run in a background thread
         if (
             not InvenTree.ready.isPluginRegistryLoaded()
@@ -40,7 +40,7 @@ class UsersConfig(AppConfig):
                 pass
 
     def assign_permissions(self):
-        """Update role permissions for existing groups"""
+        """Update role permissions for existing groups."""
         from django.contrib.auth.models import Group
 
         from users.models import RuleSet, update_group_roles
@@ -58,7 +58,7 @@ class UsersConfig(AppConfig):
             update_group_roles(group)
 
     def update_owners(self):
-        """Create an 'owner' object for each user and group instance"""
+        """Create an 'owner' object for each user and group instance."""
         from django.contrib.auth import get_user_model
         from django.contrib.auth.models import Group
 
