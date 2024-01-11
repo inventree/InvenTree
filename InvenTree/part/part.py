@@ -25,10 +25,7 @@ def MakePartTemplate(fmt):
     # This will then export just the row headers!
     query = Part.objects.filter(pk=None)
 
-    dataset = PartImportResource().export(
-        queryset=query,
-        importing=True
-    )
+    dataset = PartImportResource().export(queryset=query, importing=True)
 
     data = dataset.export(fmt)
 

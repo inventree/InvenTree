@@ -1,4 +1,5 @@
 """Generic implementation of status for InvenTree models."""
+
 import enum
 import re
 
@@ -148,12 +149,10 @@ class StatusCode(BaseEnum):
     @classmethod
     def dict(cls, key=None):
         """Return a dict representation containing all required information"""
-        return {x.name: {
-            'color': x.color,
-            'key': x.value,
-            'label': x.label,
-            'name': x.name,
-        } for x in cls.values(key)}
+        return {
+            x.name: {'color': x.color, 'key': x.value, 'label': x.label, 'name': x.name}
+            for x in cls.values(key)
+        }
 
     @classmethod
     def list(cls):

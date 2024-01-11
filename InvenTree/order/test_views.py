@@ -7,6 +7,7 @@ from InvenTree.unit_test import InvenTreeTestCase
 
 class OrderViewTestCase(InvenTreeTestCase):
     """Base unit test class for order views"""
+
     fixtures = [
         'category',
         'part',
@@ -35,6 +36,7 @@ class OrderViewTestCase(InvenTreeTestCase):
 
 class PurchaseOrderListTest(OrderViewTestCase):
     """Unit tests for the PurchaseOrder index page"""
+
     def test_order_list(self):
         """Tests for the PurchaseOrder index page"""
         response = self.client.get(reverse('purchase-order-index'))
@@ -54,7 +56,10 @@ class PurchaseOrderTests(OrderViewTestCase):
 
     def test_po_export(self):
         """Export PurchaseOrder."""
-        response = self.client.get(reverse('po-export', args=(1,)), headers={"x-requested-with": 'XMLHttpRequest'})
+        response = self.client.get(
+            reverse('po-export', args=(1,)),
+            headers={'x-requested-with': 'XMLHttpRequest'},
+        )
 
         # Response should be streaming-content (file download)
         self.assertIn('streaming_content', dir(response))

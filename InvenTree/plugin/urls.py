@@ -13,7 +13,9 @@ def get_plugin_urls():
     urls = []
 
     # Only allow custom routing if the setting is enabled
-    if InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL', False, create=False, cache=False):
+    if InvenTreeSetting.get_setting(
+        'ENABLE_PLUGINS_URL', False, create=False, cache=False
+    ):
         for plugin in registry.plugins.values():
             if plugin.mixin_enabled('urls'):
                 urls.append(plugin.urlpatterns)

@@ -31,11 +31,20 @@ import label.models
 import report.models
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from InvenTree.models import (InvenTreeAttachment, InvenTreeBarcodeMixin,
-                              InvenTreeNotesMixin, InvenTreeTree,
-                              MetadataMixin, extract_int)
-from InvenTree.status_codes import (SalesOrderStatusGroups, StockHistoryCode,
-                                    StockStatus, StockStatusGroups)
+from InvenTree.models import (
+    InvenTreeAttachment,
+    InvenTreeBarcodeMixin,
+    InvenTreeNotesMixin,
+    InvenTreeTree,
+    MetadataMixin,
+    extract_int,
+)
+from InvenTree.status_codes import (
+    SalesOrderStatusGroups,
+    StockHistoryCode,
+    StockStatus,
+    StockStatusGroups,
+)
 from part import models as PartModels
 from plugin.events import trigger_event
 from users.models import Owner
@@ -53,8 +62,8 @@ class StockLocationType(MetadataMixin, models.Model):
     class Meta:
         """Metaclass defines extra model properties."""
 
-        verbose_name = _("Stock Location type")
-        verbose_name_plural = _("Stock Location types")
+        verbose_name = _('Stock Location type')
+        verbose_name_plural = _('Stock Location types')
 
     @staticmethod
     def get_api_url():
@@ -66,24 +75,21 @@ class StockLocationType(MetadataMixin, models.Model):
         return self.name
 
     name = models.CharField(
-        blank=False,
-        max_length=100,
-        verbose_name=_("Name"),
-        help_text=_("Name"),
+        blank=False, max_length=100, verbose_name=_('Name'), help_text=_('Name')
     )
 
     description = models.CharField(
         blank=True,
         max_length=250,
-        verbose_name=_("Description"),
-        help_text=_("Description (optional)")
+        verbose_name=_('Description'),
+        help_text=_('Description (optional)'),
     )
 
     icon = models.CharField(
         blank=True,
         max_length=100,
-        verbose_name=_("Icon"),
-        help_text=_("Default icon for all locations that have no icon set (optional)")
+        verbose_name=_('Icon'),
+        help_text=_('Default icon for all locations that have no icon set (optional)'),
     )
 
 
@@ -140,37 +146,44 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     custom_icon = models.CharField(
         blank=True,
         max_length=100,
-        verbose_name=_("Icon"),
-        help_text=_("Icon (optional)"),
-        db_column="icon",
+        verbose_name=_('Icon'),
+        help_text=_('Icon (optional)'),
+        db_column='icon',
     )
 
-    owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
-                              verbose_name=_('Owner'),
-                              help_text=_('Select Owner'),
-                              related_name='stock_locations')
+    owner = models.ForeignKey(
+        Owner,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Owner'),
+        help_text=_('Select Owner'),
+        related_name='stock_locations',
+    )
 
     structural = models.BooleanField(
         default=False,
         verbose_name=_('Structural'),
         help_text=_(
             'Stock items may not be directly located into a structural stock locations, '
-            'but may be located to child locations.'),
+            'but may be located to child locations.'
+        ),
     )
 
     external = models.BooleanField(
         default=False,
         verbose_name=_('External'),
-        help_text=_('This is an external stock location')
+        help_text=_('This is an external stock location'),
     )
 
     location_type = models.ForeignKey(
         StockLocationType,
         on_delete=models.SET_NULL,
-        verbose_name=_("Location type"),
-        related_name="stock_locations",
-        null=True, blank=True,
-        help_text=_("Stock location type of this location"),
+        verbose_name=_('Location type'),
+        related_name='stock_locations',
+        null=True,
+        blank=True,
+        help_text=_('Stock location type of this location'),
     )
 
     @property
@@ -185,7 +198,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         if self.location_type:
             return self.location_type.icon
 
-        return ""
+        return ''
 
     @icon.setter
     def icon(self, value):
@@ -213,7 +226,9 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        ownership_enabled = common.models.InvenTreeSetting.get_setting(
+            'STOCK_OWNERSHIP_CONTROL'
+        )
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -235,8 +250,11 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
         """
         if self.pk and self.structural and self.stock_item_count(False) > 0:
             raise ValidationError(
-                _("You cannot make this stock location structural because some stock items "
-                  "are already located into it!"))
+                _(
+                    'You cannot make this stock location structural because some stock items '
+                    'are already located into it!'
+                )
+            )
         super().clean()
 
     def get_absolute_url(self):
@@ -250,7 +268,9 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
             cascade: If True, also look under sublocations (default = True)
         """
         if cascade:
-            query = StockItem.objects.filter(location__in=self.getUniqueChildren(include_self=True))
+            query = StockItem.objects.filter(
+                location__in=self.getUniqueChildren(include_self=True)
+            )
         else:
             query = StockItem.objects.filter(location=self.pk)
 
@@ -293,7 +313,9 @@ def generate_batch_code():
             return batch
 
     # If we get to this point, no plugin was able to generate a new batch code
-    batch_template = common.models.InvenTreeSetting.get_setting('STOCK_BATCH_CODE_TEMPLATE', '')
+    batch_template = common.models.InvenTreeSetting.get_setting(
+        'STOCK_BATCH_CODE_TEMPLATE', ''
+    )
 
     now = datetime.now()
 
@@ -318,13 +340,21 @@ def default_delete_on_deplete():
     Now, there is a user-configurable setting to govern default behaviour.
     """
     try:
-        return common.models.InvenTreeSetting.get_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
+        return common.models.InvenTreeSetting.get_setting(
+            'STOCK_DELETE_DEPLETED_DEFAULT', True
+        )
     except (IntegrityError, OperationalError):
         # Revert to original default behaviour
         return True
 
 
-class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, common.models.MetaMixin, MPTTModel):
+class StockItem(
+    InvenTreeBarcodeMixin,
+    InvenTreeNotesMixin,
+    MetadataMixin,
+    common.models.MetaMixin,
+    MPTTModel,
+):
     """A StockItem object represents a quantity of physical instances of a part.
 
     Attributes:
@@ -359,11 +389,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
     def api_instance_filters(self):
         """Custom API instance filters."""
-        return {
-            'parent': {
-                'exclude_tree': self.pk,
-            }
-        }
+        return {'parent': {'exclude_tree': self.pk}}
 
     tags = TaggableManager(blank=True)
 
@@ -375,11 +401,15 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         customer=None,
         consumed_by=None,
         is_building=False,
-        status__in=StockStatusGroups.AVAILABLE_CODES
+        status__in=StockStatusGroups.AVAILABLE_CODES,
     )
 
     # A query filter which can be used to filter StockItem objects which have expired
-    EXPIRED_FILTER = IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=datetime.now().date())
+    EXPIRED_FILTER = (
+        IN_STOCK_FILTER
+        & ~Q(expiry_date=None)
+        & Q(expiry_date__lt=datetime.now().date())
+    )
 
     def update_serial_number(self):
         """Update the 'serial_int' field, to be an integer representation of the serial number.
@@ -401,7 +431,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             if serial_int is not None:
                 # Save the first returned result
                 # Ensure that it is clipped within a range allowed in the database schema
-                clip = 0x7fffffff
+                clip = 0x7FFFFFFF
 
                 serial_int = abs(serial_int)
 
@@ -506,10 +536,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
                 if add_note and len(deltas) > 0:
                     self.add_tracking_entry(
-                        StockHistoryCode.EDITED,
-                        user,
-                        deltas=deltas,
-                        notes=notes,
+                        StockHistoryCode.EDITED, user, deltas=deltas, notes=notes
                     )
 
             except (ValueError, StockItem.DoesNotExist):
@@ -519,10 +546,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         # If user information is provided, and no existing note exists, create one!
         if user and self.tracking_info.count() == 0:
-
-            tracking_info = {
-                'status': self.status,
-            }
+            tracking_info = {'status': self.status}
 
             self.add_tracking_entry(
                 StockHistoryCode.CREATED,
@@ -541,7 +565,11 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
     @property
     def serialized(self):
         """Return True if this StockItem is serialized."""
-        return self.serial is not None and len(str(self.serial).strip()) > 0 and self.quantity == 1
+        return (
+            self.serial is not None
+            and len(str(self.serial).strip()) > 0
+            and self.quantity == 1
+        )
 
     def validate_unique(self, exclude=None):
         """Test that this StockItem is "unique".
@@ -553,15 +581,12 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         # If the serial number is set, make sure it is not a duplicate
         if self.serial:
-
             self.serial = str(self.serial).strip()
 
             try:
                 self.part.validate_serial_number(self.serial, self, raise_error=True)
             except ValidationError as exc:
-                raise ValidationError({
-                    'serial': exc.message,
-                })
+                raise ValidationError({'serial': exc.message})
 
     def validate_batch_code(self):
         """Ensure that the batch code is valid for this StockItem.
@@ -575,9 +600,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             try:
                 plugin.validate_batch_code(self.batch, self)
             except ValidationError as exc:
-                raise ValidationError({
-                    'batch': exc.message
-                })
+                raise ValidationError({'batch': exc.message})
 
     def clean(self):
         """Validate the StockItem object (separate to field validation).
@@ -590,8 +613,11 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         - Quantity must be 1 if the StockItem has a serial number
         """
         if self.location is not None and self.location.structural:
-            raise ValidationError(
-                {'location': _("Stock items cannot be located into structural stock locations!")})
+            raise ValidationError({
+                'location': _(
+                    'Stock items cannot be located into structural stock locations!'
+                )
+            })
 
         super().clean()
 
@@ -611,13 +637,15 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             if self.part.trackable:
                 if self.quantity != int(self.quantity):
                     raise ValidationError({
-                        'quantity': _('Quantity must be integer value for trackable parts')
+                        'quantity': _(
+                            'Quantity must be integer value for trackable parts'
+                        )
                     })
 
             # Virtual parts cannot have stock items created against them
             if self.part.virtual:
                 raise ValidationError({
-                    'part': _("Stock item cannot be created for virtual parts"),
+                    'part': _('Stock item cannot be created for virtual parts')
                 })
         except PartModels.Part.DoesNotExist:
             # For some reason the 'clean' process sometimes throws errors because self.part does not exist
@@ -626,24 +654,29 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             pass
 
         if self.quantity < 0:
-            raise ValidationError({
-                'quantity': _('Quantity must be greater than zero')
-            })
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         # The 'supplier_part' field must point to the same part!
         try:
             if self.supplier_part is not None:
                 if self.supplier_part.part != self.part:
-                    raise ValidationError({'supplier_part': _(f"Part type ('{self.supplier_part.part}') must be {self.part}")
-                                           })
+                    raise ValidationError({
+                        'supplier_part': _(
+                            f"Part type ('{self.supplier_part.part}') must be {self.part}"
+                        )
+                    })
 
             if self.part is not None:
                 # A part with a serial number MUST have the quantity set to 1
                 if self.serial:
                     if self.quantity > 1:
                         raise ValidationError({
-                            'quantity': _('Quantity must be 1 for item with a serial number'),
-                            'serial': _('Serial number cannot be set if quantity greater than 1')
+                            'quantity': _(
+                                'Quantity must be 1 for item with a serial number'
+                            ),
+                            'serial': _(
+                                'Serial number cannot be set if quantity greater than 1'
+                            ),
                         })
 
                     if self.quantity == 0:
@@ -651,7 +684,9 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
                     elif self.quantity > 1:
                         raise ValidationError({
-                            'quantity': _('Quantity must be 1 for item with a serial number')
+                            'quantity': _(
+                                'Quantity must be 1 for item with a serial number'
+                            )
                         })
 
                     # Serial numbered items cannot be deleted on depletion
@@ -664,19 +699,16 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
         # Ensure that the item cannot be assigned to itself
         if self.belongs_to and self.belongs_to.pk == self.pk:
-            raise ValidationError({
-                'belongs_to': _('Item cannot belong to itself')
-            })
+            raise ValidationError({'belongs_to': _('Item cannot belong to itself')})
 
         # If the item is marked as "is_building", it must point to a build!
         if self.is_building and not self.build:
             raise ValidationError({
-                'build': _("Item must have a build reference if is_building=True")
+                'build': _('Item must have a build reference if is_building=True')
             })
 
         # If the item points to a build, check that the Part references match
         if self.build:
-
             if self.part == self.build.part:
                 # Part references match exactly
                 pass
@@ -685,7 +717,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
                 pass
             else:
                 raise ValidationError({
-                    'build': _("Build reference does not point to the same part object")
+                    'build': _('Build reference does not point to the same part object')
                 })
 
     def get_absolute_url(self):
@@ -701,21 +733,25 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         'self',
         verbose_name=_('Parent Stock Item'),
         on_delete=models.DO_NOTHING,
-        blank=True, null=True,
-        related_name='children'
+        blank=True,
+        null=True,
+        related_name='children',
     )
 
     part = models.ForeignKey(
-        'part.Part', on_delete=models.CASCADE,
+        'part.Part',
+        on_delete=models.CASCADE,
         verbose_name=_('Base Part'),
         related_name='stock_items',
         help_text=_('Base part'),
-        limit_choices_to={
-            'virtual': False
-        })
+        limit_choices_to={'virtual': False},
+    )
 
     supplier_part = models.ForeignKey(
-        'company.SupplierPart', blank=True, null=True, on_delete=models.SET_NULL,
+        'company.SupplierPart',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_('Supplier Part'),
         help_text=_('Select a matching supplier part for this stock item'),
         related_name='stock_items',
@@ -723,18 +759,21 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
     # Note: When a StockLocation is deleted, stock items are updated via a signal
     location = TreeForeignKey(
-        StockLocation, on_delete=models.DO_NOTHING,
+        StockLocation,
+        on_delete=models.DO_NOTHING,
         verbose_name=_('Stock Location'),
         related_name='stock_items',
-        blank=True, null=True,
-        help_text=_('Where is this stock item located?')
+        blank=True,
+        null=True,
+        help_text=_('Where is this stock item located?'),
     )
 
     packaging = models.CharField(
         max_length=50,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Packaging'),
-        help_text=_('Packaging this stock item is stored in')
+        help_text=_('Packaging this stock item is stored in'),
     )
 
     # When deleting a stock item with installed items, those installed items are also installed
@@ -742,108 +781,127 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         'self',
         verbose_name=_('Installed In'),
         on_delete=models.CASCADE,
-        related_name='installed_parts', blank=True, null=True,
-        help_text=_('Is this item installed in another item?')
+        related_name='installed_parts',
+        blank=True,
+        null=True,
+        help_text=_('Is this item installed in another item?'),
     )
 
     customer = models.ForeignKey(
         CompanyModels.Company,
         on_delete=models.SET_NULL,
-        null=True, blank=True,
+        null=True,
+        blank=True,
         limit_choices_to={'is_customer': True},
         related_name='assigned_stock',
-        help_text=_("Customer"),
-        verbose_name=_("Customer"),
+        help_text=_('Customer'),
+        verbose_name=_('Customer'),
     )
 
     serial = models.CharField(
         verbose_name=_('Serial Number'),
-        max_length=100, blank=True, null=True,
-        help_text=_('Serial number for this item')
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text=_('Serial number for this item'),
     )
 
     serial_int = models.IntegerField(default=0)
 
     link = InvenTreeURLField(
-        verbose_name=_('External Link'),
-        blank=True,
-        help_text=_("Link to external URL")
+        verbose_name=_('External Link'), blank=True, help_text=_('Link to external URL')
     )
 
     batch = models.CharField(
         verbose_name=_('Batch Code'),
-        max_length=100, blank=True, null=True,
+        max_length=100,
+        blank=True,
+        null=True,
         help_text=_('Batch code for this stock item'),
         default=generate_batch_code,
     )
 
     quantity = models.DecimalField(
-        verbose_name=_("Stock Quantity"),
-        max_digits=15, decimal_places=5, validators=[MinValueValidator(0)],
-        default=1
+        verbose_name=_('Stock Quantity'),
+        max_digits=15,
+        decimal_places=5,
+        validators=[MinValueValidator(0)],
+        default=1,
     )
 
     build = models.ForeignKey(
-        'build.Build', on_delete=models.SET_NULL,
+        'build.Build',
+        on_delete=models.SET_NULL,
         verbose_name=_('Source Build'),
-        blank=True, null=True,
+        blank=True,
+        null=True,
         help_text=_('Build for this stock item'),
         related_name='build_outputs',
     )
 
     consumed_by = models.ForeignKey(
-        'build.Build', on_delete=models.CASCADE,
+        'build.Build',
+        on_delete=models.CASCADE,
         verbose_name=_('Consumed By'),
-        blank=True, null=True,
+        blank=True,
+        null=True,
         help_text=_('Build order which consumed this stock item'),
         related_name='consumed_stock',
     )
 
-    is_building = models.BooleanField(
-        default=False,
-    )
+    is_building = models.BooleanField(default=False)
 
     purchase_order = models.ForeignKey(
         'order.PurchaseOrder',
         on_delete=models.SET_NULL,
         verbose_name=_('Source Purchase Order'),
         related_name='stock_items',
-        blank=True, null=True,
-        help_text=_('Purchase order for this stock item')
+        blank=True,
+        null=True,
+        help_text=_('Purchase order for this stock item'),
     )
 
     sales_order = models.ForeignKey(
         'order.SalesOrder',
         on_delete=models.SET_NULL,
-        verbose_name=_("Destination Sales Order"),
+        verbose_name=_('Destination Sales Order'),
         related_name='stock_items',
-        null=True, blank=True)
+        null=True,
+        blank=True,
+    )
 
     expiry_date = models.DateField(
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('Expiry Date'),
-        help_text=_('Expiry date for stock item. Stock will be considered expired after this date'),
+        help_text=_(
+            'Expiry date for stock item. Stock will be considered expired after this date'
+        ),
     )
 
     stocktake_date = models.DateField(blank=True, null=True)
 
     stocktake_user = models.ForeignKey(
-        User, on_delete=models.SET_NULL,
-        blank=True, null=True,
-        related_name='stocktake_stock'
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='stocktake_stock',
     )
 
     review_needed = models.BooleanField(default=False)
 
     delete_on_deplete = models.BooleanField(
         default=default_delete_on_deplete,
-        verbose_name=_('Delete on deplete'), help_text=_('Delete this Stock Item when stock is depleted')
+        verbose_name=_('Delete on deplete'),
+        help_text=_('Delete this Stock Item when stock is depleted'),
     )
 
     status = models.PositiveIntegerField(
         default=StockStatus.OK.value,
         choices=StockStatus.items(),
-        validators=[MinValueValidator(0)])
+        validators=[MinValueValidator(0)],
+    )
 
     @property
     def status_text(self):
@@ -859,10 +917,15 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         help_text=_('Single unit purchase price at time of purchase'),
     )
 
-    owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
-                              verbose_name=_('Owner'),
-                              help_text=_('Select Owner'),
-                              related_name='stock_items')
+    owner = models.ForeignKey(
+        Owner,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Owner'),
+        help_text=_('Select Owner'),
+        related_name='stock_items',
+    )
 
     @transaction.atomic
     def convert_to_variant(self, variant, user, notes=None):
@@ -881,9 +944,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         self.add_tracking_entry(
             StockHistoryCode.CONVERTED_TO_VARIANT,
             user,
-            deltas={
-                'part': variant.pk,
-            },
+            deltas={'part': variant.pk},
             notes=_('Converted to part') + ': ' + variant.full_name,
         )
 
@@ -911,7 +972,9 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        ownership_enabled = common.models.InvenTreeSetting.get_setting(
+            'STOCK_OWNERSHIP_CONTROL'
+        )
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -980,7 +1043,9 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         # Delete outstanding BuildOrder allocations
         self.allocations.all().delete()
 
-    def allocateToCustomer(self, customer, quantity=None, order=None, user=None, notes=None):
+    def allocateToCustomer(
+        self, customer, quantity=None, order=None, user=None, notes=None
+    ):
         """Allocate a StockItem to a customer.
 
         This action can be called by the following processes:
@@ -1021,18 +1086,9 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             code = StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
             deltas['salesorder'] = order.pk
 
-        item.add_tracking_entry(
-            code,
-            user,
-            deltas,
-            notes=notes,
-        )
+        item.add_tracking_entry(code, user, deltas, notes=notes)
 
-        trigger_event(
-            'stockitem.assignedtocustomer',
-            id=self.id,
-            customer=customer.id,
-        )
+        trigger_event('stockitem.assignedtocustomer', id=self.id, customer=customer.id)
 
         # Return the reference to the stock item
         return item
@@ -1046,9 +1102,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         """
         notes = kwargs.get('notes', '')
 
-        tracking_info = {
-            'location': location.pk,
-        }
+        tracking_info = {'location': location.pk}
 
         if self.customer:
             tracking_info['customer'] = self.customer.id
@@ -1059,7 +1113,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             user,
             notes=notes,
             deltas=tracking_info,
-            location=location
+            location=location,
         )
 
         self.customer = None
@@ -1067,18 +1121,12 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         self.sales_order = None
         self.location = location
 
-        trigger_event(
-            'stockitem.returnedfromcustomer',
-            id=self.id,
-        )
+        trigger_event('stockitem.returnedfromcustomer', id=self.id)
 
         """If new location is the same as the parent location, merge this stock back in the parent"""
         if self.parent and self.location == self.parent.location:
             self.parent.merge_stock_items(
-                {self},
-                user=user,
-                location=location,
-                notes=notes
+                {self}, user=user, location=location, notes=notes
             )
         else:
             self.save(add_note=False)
@@ -1124,14 +1172,12 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         if active is True:
             query = query.filter(
                 line__order__status__in=SalesOrderStatusGroups.OPEN,
-                shipment__shipment_date=None
+                shipment__shipment_date=None,
             )
         elif active is False:
             query = query.exclude(
-                line__order__status__in=SalesOrderStatusGroups.OPEN,
-            ).exclude(
-                shipment__shipment_date=None
-            )
+                line__order__status__in=SalesOrderStatusGroups.OPEN
+            ).exclude(shipment__shipment_date=None)
 
         return query
 
@@ -1191,7 +1237,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         items = StockItem.objects.filter(belongs_to=self)
 
         for item in items:
-
             # Prevent duplication or recursion
             if item == self or item in installed:
                 continue
@@ -1202,7 +1247,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
                 sub_items = item.get_installed_items(cascade=True)
 
                 for sub_item in sub_items:
-
                     # Prevent recursion
                     if sub_item == self or sub_item in installed:
                         continue
@@ -1237,19 +1281,14 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         stock_item.consumed_by = build
         stock_item.save(add_note=False)
 
-        deltas = {
-            'stockitem': self.pk,
-        }
+        deltas = {'stockitem': self.pk}
 
         if build is not None:
             deltas['buildorder'] = build.pk
 
         # Add a transaction note to the other item
         stock_item.add_tracking_entry(
-            StockHistoryCode.INSTALLED_INTO_ASSEMBLY,
-            user,
-            notes=notes,
-            deltas=deltas,
+            StockHistoryCode.INSTALLED_INTO_ASSEMBLY, user, notes=notes, deltas=deltas
         )
 
         # Add a transaction note to this item (the assembly)
@@ -1257,9 +1296,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             StockHistoryCode.INSTALLED_CHILD_ITEM,
             user,
             notes=notes,
-            deltas={
-                'stockitem': stock_item.pk,
-            }
+            deltas={'stockitem': stock_item.pk},
         )
 
     @transaction.atomic
@@ -1281,15 +1318,11 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         self.belongs_to.add_tracking_entry(
             StockHistoryCode.REMOVED_CHILD_ITEM,
             user,
-            deltas={
-                'stockitem': self.pk,
-            },
+            deltas={'stockitem': self.pk},
             notes=notes,
         )
 
-        tracking_info = {
-            'stockitem': self.belongs_to.pk
-        }
+        tracking_info = {'stockitem': self.belongs_to.pk}
 
         self.add_tracking_entry(
             StockHistoryCode.REMOVED_FROM_ASSEMBLY,
@@ -1360,7 +1393,14 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         """Is tracking info available?"""
         return self.tracking_info_count > 0
 
-    def add_tracking_entry(self, entry_type: int, user: User, deltas: dict = None, notes: str = '', **kwargs):
+    def add_tracking_entry(
+        self,
+        entry_type: int,
+        user: User,
+        deltas: dict = None,
+        notes: str = '',
+        **kwargs,
+    ):
         """Add a history tracking entry for this StockItem.
 
         Args:
@@ -1415,37 +1455,44 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             return
 
         if not self.part.trackable:
-            raise ValidationError({"part": _("Part is not set as trackable")})
+            raise ValidationError({'part': _('Part is not set as trackable')})
 
         # Quantity must be a valid integer value
         try:
             quantity = int(quantity)
         except ValueError:
-            raise ValidationError({"quantity": _("Quantity must be integer")})
+            raise ValidationError({'quantity': _('Quantity must be integer')})
 
         if quantity <= 0:
-            raise ValidationError({"quantity": _("Quantity must be greater than zero")})
+            raise ValidationError({'quantity': _('Quantity must be greater than zero')})
 
         if quantity > self.quantity:
-            raise ValidationError({"quantity": _(f"Quantity must not exceed available stock quantity ({self.quantity})")})
+            raise ValidationError({
+                'quantity': _(
+                    f'Quantity must not exceed available stock quantity ({self.quantity})'
+                )
+            })
 
         if type(serials) not in [list, tuple]:
-            raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
+            raise ValidationError({
+                'serial_numbers': _('Serial numbers must be a list of integers')
+            })
 
         if quantity != len(serials):
-            raise ValidationError({"quantity": _("Quantity does not match serial numbers")})
+            raise ValidationError({
+                'quantity': _('Quantity does not match serial numbers')
+            })
 
         # Test if each of the serial numbers are valid
         existing = self.part.find_conflicting_serial_numbers(serials)
 
         if len(existing) > 0:
             exists = ','.join([str(x) for x in existing])
-            msg = _("Serial numbers already exist") + f": {exists}"
-            raise ValidationError({"serial_numbers": msg})
+            msg = _('Serial numbers already exist') + f': {exists}'
+            raise ValidationError({'serial_numbers': msg})
 
         # Create a new stock item for each unique serial number
         for serial in serials:
-
             # Create a copy of this StockItem
             new_item = StockItem.objects.get(pk=self.pk)
             new_item.quantity = 1
@@ -1470,10 +1517,8 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
                 StockHistoryCode.ASSIGNED_SERIAL,
                 user,
                 notes=notes,
-                deltas={
-                    'serial': serial,
-                },
-                location=location
+                deltas={'serial': serial},
+                location=location,
             )
 
         # Remove the equivalent number of items
@@ -1483,7 +1528,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
     def copyHistoryFrom(self, other):
         """Copy stock history from another StockItem."""
         for item in other.tracking_info.all():
-
             item.item = self
             item.pk = None
             item.save()
@@ -1496,7 +1540,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             filters = {}
 
         for result in other.test_results.all().filter(**filters):
-
             # Create a copy of the test result by nulling-out the pk
             result.pk = None
             result.stock_item = self
@@ -1511,7 +1554,9 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         try:
             # Generic checks (do not rely on the 'other' part)
             if self.sales_order:
-                raise ValidationError(_('Stock item has been assigned to a sales order'))
+                raise ValidationError(
+                    _('Stock item has been assigned to a sales order')
+                )
 
             if self.belongs_to:
                 raise ValidationError(_('Stock item is installed in another item'))
@@ -1526,7 +1571,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
                 raise ValidationError(_('Stock item is currently in production'))
 
             if self.serialized:
-                raise ValidationError(_("Serialized stock cannot be merged"))
+                raise ValidationError(_('Serialized stock cannot be merged'))
 
             if other:
                 # Specific checks (rely on the 'other' part)
@@ -1537,15 +1582,20 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
 
                 # Base part must match
                 if self.part != other.part:
-                    raise ValidationError(_("Stock items must refer to the same part"))
+                    raise ValidationError(_('Stock items must refer to the same part'))
 
                 # Check if supplier part references match
-                if self.supplier_part != other.supplier_part and not allow_mismatched_suppliers:
-                    raise ValidationError(_("Stock items must refer to the same supplier part"))
+                if (
+                    self.supplier_part != other.supplier_part
+                    and not allow_mismatched_suppliers
+                ):
+                    raise ValidationError(
+                        _('Stock items must refer to the same supplier part')
+                    )
 
                 # Check if stock status codes match
                 if self.status != other.status and not allow_mismatched_status:
-                    raise ValidationError(_("Stock status codes must match"))
+                    raise ValidationError(_('Stock status codes must match'))
 
         except ValidationError as e:
             if raise_error:
@@ -1580,18 +1630,15 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
                 return
 
         for other in other_items:
-
             self.quantity += other.quantity
 
             # Any "build order allocations" for the other item must be assigned to this one
             for allocation in other.allocations.all():
-
                 allocation.stock_item = self
                 allocation.save()
 
             # Any "sales order allocations" for the other item must be assigned to this one
             for allocation in other.sales_order_allocations.all():
-
                 allocation.stock_item = self()
                 allocation.save()
 
@@ -1607,9 +1654,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             user,
             quantity=self.quantity,
             notes=notes,
-            deltas={
-                'location': location.pk,
-            }
+            deltas={'location': location.pk},
         )
 
         self.location = location
@@ -1670,9 +1715,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         else:
             new_stock.location = self.location
 
-        deltas = {
-            'stockitem': self.pk,
-        }
+        deltas = {'stockitem': self.pk}
 
         # Optional fields which can be supplied in a 'move' call
         for field in StockItem.optional_transfer_fields():
@@ -1739,7 +1782,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             return False
 
         if not self.in_stock:
-            raise ValidationError(_("StockItem cannot be moved as it is not in stock"))
+            raise ValidationError(_('StockItem cannot be moved as it is not in stock'))
 
         if quantity <= 0:
             return False
@@ -1779,12 +1822,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
                 setattr(self, field, kwargs[field])
                 tracking_info[field] = kwargs[field]
 
-        self.add_tracking_entry(
-            tracking_code,
-            user,
-            notes=notes,
-            deltas=tracking_info,
-        )
+        self.add_tracking_entry(tracking_code, user, notes=notes, deltas=tracking_info)
 
         self.save()
 
@@ -1840,14 +1878,11 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         self.stocktake_user = user
 
         if self.updateQuantity(count):
-
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_COUNT,
                 user,
                 notes=notes,
-                deltas={
-                    'quantity': float(self.quantity),
-                }
+                deltas={'quantity': float(self.quantity)},
             )
 
         return True
@@ -1873,21 +1908,19 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             return False
 
         if self.updateQuantity(self.quantity + quantity):
-
             self.add_tracking_entry(
                 StockHistoryCode.STOCK_ADD,
                 user,
                 notes=notes,
-                deltas={
-                    'added': float(quantity),
-                    'quantity': float(self.quantity),
-                }
+                deltas={'added': float(quantity), 'quantity': float(self.quantity)},
             )
 
         return True
 
     @transaction.atomic
-    def take_stock(self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE, **kwargs):
+    def take_stock(
+        self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE, **kwargs
+    ):
         """Remove items from stock."""
         # Cannot remove items from a serialized part
         if self.serialized:
@@ -1902,11 +1935,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             return False
 
         if self.updateQuantity(self.quantity - quantity):
-
-            deltas = {
-                'removed': float(quantity),
-                'quantity': float(self.quantity),
-            }
+            deltas = {'removed': float(quantity), 'quantity': float(self.quantity)}
 
             if location := kwargs.get('location', None):
                 deltas['location'] = location.pk
@@ -1914,12 +1943,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             if stockitem := kwargs.get('stockitem', None):
                 deltas['stockitem'] = stockitem.pk
 
-            self.add_tracking_entry(
-                code,
-                user,
-                notes=notes,
-                deltas=deltas,
-            )
+            self.add_tracking_entry(code, user, notes=notes, deltas=deltas)
 
         return True
 
@@ -1934,7 +1958,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
             s += f' @ {self.location.name}'
 
         if self.purchase_order:
-            s += f" ({self.purchase_order})"
+            s += f' ({self.purchase_order})'
 
         return s
 
@@ -2043,11 +2067,7 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
                 else:
                     failed += 1
 
-        return {
-            'total': total,
-            'passed': passed,
-            'failed': failed,
-        }
+        return {'total': total, 'passed': passed, 'failed': failed}
 
     @property
     def required_test_count(self):
@@ -2071,7 +2091,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         item_query = StockItem.objects.filter(pk=self.pk)
 
         for test_report in report.models.TestReport.objects.filter(enabled=True):
-
             # Attempt to validate report filter (skip if invalid)
             try:
                 filters = InvenTree.helpers.validateFilterString(test_report.filters)
@@ -2094,7 +2113,6 @@ class StockItem(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, commo
         item_query = StockItem.objects.filter(pk=self.pk)
 
         for lbl in label.models.StockItemLabel.objects.filter(enabled=True):
-
             try:
                 filters = InvenTree.helpers.validateFilterString(lbl.filters)
 
@@ -2131,7 +2149,9 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
 
     if not InvenTree.ready.isImportingData():
         # Run this check in the background
-        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
+        InvenTree.tasks.offload_task(
+            part_tasks.notify_low_stock_if_required, instance.part
+        )
 
         # Schedule an update on parent part pricing
         if InvenTree.ready.canAppAccessDatabase(allow_test=True):
@@ -2145,7 +2165,9 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
 
     if created and not InvenTree.ready.isImportingData():
         # Run this check in the background
-        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
+        InvenTree.tasks.offload_task(
+            part_tasks.notify_low_stock_if_required, instance.part
+        )
 
         if InvenTree.ready.canAppAccessDatabase(allow_test=True):
             instance.part.schedule_pricing_update(create=True)
@@ -2161,12 +2183,10 @@ class StockItemAttachment(InvenTreeAttachment):
 
     def getSubdir(self):
         """Override attachment location."""
-        return os.path.join("stock_files", str(self.stock_item.id))
+        return os.path.join('stock_files', str(self.stock_item.id))
 
     stock_item = models.ForeignKey(
-        StockItem,
-        on_delete=models.CASCADE,
-        related_name='attachments'
+        StockItem, on_delete=models.CASCADE, related_name='attachments'
     )
 
 
@@ -2206,23 +2226,20 @@ class StockItemTracking(models.Model):
 
         return getattr(self, 'title', '')
 
-    tracking_type = models.IntegerField(
-        default=StockHistoryCode.LEGACY,
-    )
+    tracking_type = models.IntegerField(default=StockHistoryCode.LEGACY)
 
     item = models.ForeignKey(
-        StockItem,
-        on_delete=models.CASCADE,
-        related_name='tracking_info'
+        StockItem, on_delete=models.CASCADE, related_name='tracking_info'
     )
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
 
     notes = models.CharField(
-        blank=True, null=True,
+        blank=True,
+        null=True,
         max_length=512,
         verbose_name=_('Notes'),
-        help_text=_('Entry notes')
+        help_text=_('Entry notes'),
     )
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
@@ -2232,7 +2249,9 @@ class StockItemTracking(models.Model):
 
 def rename_stock_item_test_result_attachment(instance, filename):
     """Rename test result."""
-    return os.path.join('stock_files', str(instance.stock_item.pk), os.path.basename(filename))
+    return os.path.join(
+        'stock_files', str(instance.stock_item.pk), os.path.basename(filename)
+    )
 
 
 class StockItemTestResult(MetadataMixin, models.Model):
@@ -2276,17 +2295,16 @@ class StockItemTestResult(MetadataMixin, models.Model):
 
         for template in templates:
             if key == template.key:
-
                 if template.requires_value:
                     if not self.value:
                         raise ValidationError({
-                            "value": _("Value must be provided for this test"),
+                            'value': _('Value must be provided for this test')
                         })
 
                 if template.requires_attachment:
                     if not self.attachment:
                         raise ValidationError({
-                            "attachment": _("Attachment must be uploaded for this test"),
+                            'attachment': _('Attachment must be uploaded for this test')
                         })
 
                 break
@@ -2297,49 +2315,36 @@ class StockItemTestResult(MetadataMixin, models.Model):
         return InvenTree.helpers.generateTestKey(self.test)
 
     stock_item = models.ForeignKey(
-        StockItem,
-        on_delete=models.CASCADE,
-        related_name='test_results'
+        StockItem, on_delete=models.CASCADE, related_name='test_results'
     )
 
     test = models.CharField(
-        blank=False, max_length=100,
-        verbose_name=_('Test'),
-        help_text=_('Test name')
+        blank=False, max_length=100, verbose_name=_('Test'), help_text=_('Test name')
     )
 
     result = models.BooleanField(
-        default=False,
-        verbose_name=_('Result'),
-        help_text=_('Test result')
+        default=False, verbose_name=_('Result'), help_text=_('Test result')
     )
 
     value = models.CharField(
-        blank=True, max_length=500,
+        blank=True,
+        max_length=500,
         verbose_name=_('Value'),
-        help_text=_('Test output value')
+        help_text=_('Test output value'),
     )
 
     attachment = models.FileField(
-        null=True, blank=True,
+        null=True,
+        blank=True,
         upload_to=rename_stock_item_test_result_attachment,
         verbose_name=_('Attachment'),
         help_text=_('Test result attachment'),
     )
 
     notes = models.CharField(
-        blank=True, max_length=500,
-        verbose_name=_('Notes'),
-        help_text=_("Test notes"),
+        blank=True, max_length=500, verbose_name=_('Notes'), help_text=_('Test notes')
     )
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True, null=True
-    )
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
-    date = models.DateTimeField(
-        auto_now_add=True,
-        editable=False
-    )
+    date = models.DateTimeField(auto_now_add=True, editable=False)

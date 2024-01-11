@@ -11,20 +11,26 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class ReportConfig(AppConfig):
     """Configuration class for the 'report' app"""
+
     name = 'report'
 
     def ready(self):
         """This function is called whenever the report app is loaded."""
-        from InvenTree.ready import (canAppAccessDatabase, isImportingData,
-                                     isInMainThread, isPluginRegistryLoaded)
+        import InvenTree.ready
 
         # skip loading if plugin registry is not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
+        if (
+            not InvenTree.ready.isPluginRegistryLoaded()
+            or not InvenTree.ready.isInMainThread()
+        ):
+            return
+
+        if InvenTree.ready.isRunningMigrations():
             return
 
         # Configure logging for PDF generation (disable "info" messages)
@@ -32,8 +38,10 @@ class ReportConfig(AppConfig):
         logging.getLogger('weasyprint').setLevel(logging.WARNING)
 
         # Create entries for default report templates
-        if canAppAccessDatabase(allow_test=False) and not isImportingData():
-
+        if (
+            InvenTree.ready.canAppAccessDatabase(allow_test=False)
+            and not InvenTree.ready.isImportingData()
+        ):
             try:
                 self.create_default_test_reports()
                 self.create_default_build_reports()
@@ -42,24 +50,24 @@ class ReportConfig(AppConfig):
                 self.create_default_sales_order_reports()
                 self.create_default_return_order_reports()
                 self.create_default_stock_location_reports()
-            except (AppRegistryNotReady, IntegrityError, OperationalError, ProgrammingError):
+            except (
+                AppRegistryNotReady,
+                IntegrityError,
+                OperationalError,
+                ProgrammingError,
+            ):
                 # Database might not yet be ready
-                warnings.warn('Database was not ready for creating reports', stacklevel=2)
+                warnings.warn(
+                    'Database was not ready for creating reports', stacklevel=2
+                )
 
     def create_default_reports(self, model, reports):
         """Copy default report files across to the media directory."""
         # Source directory for report templates
-        src_dir = Path(__file__).parent.joinpath(
-            'templates',
-            'report',
-        )
+        src_dir = Path(__file__).parent.joinpath('templates', 'report')
 
         # Destination directory
-        dst_dir = settings.MEDIA_ROOT.joinpath(
-            'report',
-            'inventree',
-            model.getSubdir(),
-        )
+        dst_dir = settings.MEDIA_ROOT.joinpath('report', 'inventree', model.getSubdir())
 
         if not dst_dir.exists():
             logger.info("Creating missing directory: '%s'", dst_dir)
@@ -67,13 +75,9 @@ class ReportConfig(AppConfig):
 
         # Copy each report template across (if required)
         for report in reports:
-
             # Destination filename
             filename = os.path.join(
-                'report',
-                'inventree',
-                model.getSubdir(),
-                report['file'],
+                'report', 'inventree', model.getSubdir(), report['file']
             )
 
             src_file = src_dir.joinpath(report['file'])
@@ -94,7 +98,7 @@ class ReportConfig(AppConfig):
                     name=report['name'],
                     description=report['description'],
                     template=filename,
-                    enabled=True
+                    enabled=True,
                 )
 
             except Exception:
@@ -114,7 +118,7 @@ class ReportConfig(AppConfig):
                 'file': 'inventree_test_report.html',
                 'name': 'InvenTree Test Report',
                 'description': 'Stock item test report',
-            },
+            }
         ]
 
         self.create_default_reports(TestReport, reports)

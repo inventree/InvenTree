@@ -5,23 +5,29 @@ import logging
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 
-from InvenTree.ready import (canAppAccessDatabase, isImportingData,
-                             isInMainThread, isPluginRegistryLoaded)
+import InvenTree.ready
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class PartConfig(AppConfig):
     """Config class for the 'part' app"""
+
     name = 'part'
 
     def ready(self):
         """This function is called whenever the Part app is loaded."""
         # skip loading if plugin registry is not loaded or we run in a background thread
-        if not isPluginRegistryLoaded() or not isInMainThread():
+        if (
+            not InvenTree.ready.isPluginRegistryLoaded()
+            or not InvenTree.ready.isInMainThread()
+        ):
             return
 
-        if canAppAccessDatabase():
+        if InvenTree.ready.isRunningMigrations():
+            return
+
+        if InvenTree.ready.canAppAccessDatabase():
             self.update_trackable_status()
             self.reset_part_pricing_flags()
 
@@ -33,7 +39,9 @@ class PartConfig(AppConfig):
         from .models import BomItem
 
         try:
-            items = BomItem.objects.filter(part__trackable=False, sub_part__trackable=True)
+            items = BomItem.objects.filter(
+                part__trackable=False, sub_part__trackable=True
+            )
 
             for item in items:
                 logger.info("Marking part '%s' as trackable", item.part.name)
@@ -51,7 +59,7 @@ class PartConfig(AppConfig):
         """
         from .models import PartPricing
 
-        if isImportingData():
+        if InvenTree.ready.isImportingData():
             return
 
         try:
@@ -59,10 +67,12 @@ class PartConfig(AppConfig):
 
             if items.count() > 0:
                 # Find any pricing objects which have the 'scheduled_for_update' flag set
-                logger.info("Resetting update flags for %s pricing objects...", items.count())
+                logger.info(
+                    'Resetting update flags for %s pricing objects...', items.count()
+                )
 
                 for pricing in items:
                     pricing.scheduled_for_update = False
                     pricing.save()
         except Exception:
-            logger.exception("Failed to reset pricing flags - database not ready")
+            logger.exception('Failed to reset pricing flags - database not ready')

@@ -12,8 +12,13 @@ from rest_framework.views import APIView
 
 import InvenTree.helpers
 from InvenTree.filters import SEARCH_ORDER_FILTER
-from InvenTree.mixins import (ListAPI, ListCreateAPI, RetrieveAPI,
-                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
+from InvenTree.mixins import (
+    ListAPI,
+    ListCreateAPI,
+    RetrieveAPI,
+    RetrieveUpdateAPI,
+    RetrieveUpdateDestroyAPI,
+)
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
@@ -52,10 +57,11 @@ class OwnerList(ListAPI):
         # Get a list of all matching users, depending on the *is_active* flag
         if is_active is not None:
             is_active = InvenTree.helpers.str2bool(is_active)
-            matching_user_ids = User.objects.filter(is_active=is_active).values_list('pk', flat=True)
+            matching_user_ids = User.objects.filter(is_active=is_active).values_list(
+                'pk', flat=True
+            )
 
         for result in queryset.all():
-
             name = str(result.name()).lower().strip()
             search_match = True
 
@@ -71,7 +77,10 @@ class OwnerList(ListAPI):
 
             if is_active is not None:
                 # Skip any users which do not match the required *is_active* value
-                if result.owner_type.name == 'user' and result.owner_id not in matching_user_ids:
+                if (
+                    result.owner_type.name == 'user'
+                    and result.owner_id not in matching_user_ids
+                ):
                     continue
 
             # If we get here, there is no reason *not* to include this result
@@ -96,9 +105,7 @@ class RoleDetails(APIView):
     (Requires authentication)
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         """Return the list of roles / permissions available to the current user"""
@@ -107,14 +114,12 @@ class RoleDetails(APIView):
         roles = {}
 
         for ruleset in RuleSet.RULESET_CHOICES:
-
             role, _text = ruleset
 
             permissions = []
 
             for permission in RuleSet.RULESET_PERMISSIONS:
                 if check_user_role(user, role, permission):
-
                     permissions.append(permission)
 
             if len(permissions) > 0:
@@ -138,9 +143,7 @@ class UserDetail(RetrieveUpdateDestroyAPI):
 
     queryset = User.objects.all()
     serializer_class = ExendedUserSerializer
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
@@ -156,16 +159,10 @@ class UserList(ListCreateAPI):
 
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = SEARCH_ORDER_FILTER
 
-    search_fields = [
-        'first_name',
-        'last_name',
-        'username',
-    ]
+    search_fields = ['first_name', 'last_name', 'username']
 
     ordering_fields = [
         'email',
@@ -177,11 +174,7 @@ class UserList(ListCreateAPI):
         'is_active',
     ]
 
-    filterset_fields = [
-        'is_staff',
-        'is_active',
-        'is_superuser',
-    ]
+    filterset_fields = ['is_staff', 'is_active', 'is_superuser']
 
 
 class GroupDetail(RetrieveUpdateDestroyAPI):
@@ -189,9 +182,7 @@ class GroupDetail(RetrieveUpdateDestroyAPI):
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class GroupList(ListCreateAPI):
@@ -199,27 +190,19 @@ class GroupList(ListCreateAPI):
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    search_fields = [
-        'name',
-    ]
+    search_fields = ['name']
 
-    ordering_fields = [
-        'name',
-    ]
+    ordering_fields = ['name']
 
 
 class GetAuthToken(APIView):
     """Return authentication token for an authenticated user."""
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated
@@ -230,7 +213,6 @@ class GetAuthToken(APIView):
         """
 
         if request.user.is_authenticated:
-
             user = request.user
             name = request.query_params.get('name', '')
 
@@ -239,7 +221,9 @@ class GetAuthToken(APIView):
             today = datetime.date.today()
 
             # Find existing token, which has not expired
-            token = ApiToken.objects.filter(user=user, name=name, revoked=False, expiry__gte=today).first()
+            token = ApiToken.objects.filter(
+                user=user, name=name, revoked=False, expiry__gte=today
+            ).first()
 
             if not token:
                 # User is authenticated, and requesting a token against the provided name.
@@ -253,13 +237,11 @@ class GetAuthToken(APIView):
             token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
             token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
-            data = {
-                'token': token.key,
-                'name': token.name,
-                'expiry': token.expiry,
-            }
+            data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
 
-            logger.info("Created new API token for user '%s' (name='%s')", user.username, name)
+            logger.info(
+                "Created new API token for user '%s' (name='%s')", user.username, name
+            )
 
             return Response(data)
 
@@ -268,22 +250,25 @@ class GetAuthToken(APIView):
 
 
 user_urls = [
-
     re_path(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
     re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
     re_path(r'^me/', MeUserDetail.as_view(), name='api-user-me'),
-
-    path('owner/', include([
-        path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
-        re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
-    ])),
-
-    path('group/', include([
-        re_path(r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'),
-        re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
-    ])),
-
+    path(
+        'owner/',
+        include([
+            path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
+            re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
+        ]),
+    ),
+    path(
+        'group/',
+        include([
+            re_path(
+                r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'
+            ),
+            re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
+        ]),
+    ),
     re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),
-
     path('', UserList.as_view(), name='api-user-list'),
 ]

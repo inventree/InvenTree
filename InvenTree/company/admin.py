@@ -9,9 +9,16 @@ from import_export.fields import Field
 from InvenTree.admin import InvenTreeResource
 from part.models import Part
 
-from .models import (Address, Company, Contact, ManufacturerPart,
-                     ManufacturerPartAttachment, ManufacturerPartParameter,
-                     SupplierPart, SupplierPriceBreak)
+from .models import (
+    Address,
+    Company,
+    Contact,
+    ManufacturerPart,
+    ManufacturerPartAttachment,
+    ManufacturerPartParameter,
+    SupplierPart,
+    SupplierPriceBreak,
+)
 
 
 class CompanyResource(InvenTreeResource):
@@ -19,6 +26,7 @@ class CompanyResource(InvenTreeResource):
 
     class Meta:
         """Metaclass defines extra options"""
+
         model = Company
         skip_unchanged = True
         report_skipped = False
@@ -33,10 +41,7 @@ class CompanyAdmin(ImportExportModelAdmin):
 
     list_display = ('name', 'website', 'contact')
 
-    search_fields = [
-        'name',
-        'description',
-    ]
+    search_fields = ['name', 'description']
 
 
 class SupplierPartResource(InvenTreeResource):
@@ -44,6 +49,7 @@ class SupplierPartResource(InvenTreeResource):
 
     class Meta:
         """Metaclass defines extra admin options"""
+
         model = SupplierPart
         skip_unchanged = True
         report_skipped = True
@@ -72,18 +78,11 @@ class SupplierPartAdmin(ImportExportModelAdmin):
 
     list_display = ('part', 'supplier', 'SKU')
 
-    search_fields = [
-        'supplier__name',
-        'part__name',
-        'manufacturer_part__MPN',
-        'SKU',
-    ]
+    search_fields = ['supplier__name', 'part__name', 'manufacturer_part__MPN', 'SKU']
 
-    inlines = [
-        SupplierPriceBreakInline,
-    ]
+    inlines = [SupplierPriceBreakInline]
 
-    autocomplete_fields = ('part', 'supplier', 'manufacturer_part',)
+    autocomplete_fields = ('part', 'supplier', 'manufacturer_part')
 
 
 class ManufacturerPartResource(InvenTreeResource):
@@ -91,6 +90,7 @@ class ManufacturerPartResource(InvenTreeResource):
 
     class Meta:
         """Metaclass defines extra admin options"""
+
         model = ManufacturerPart
         skip_unchanged = True
         report_skipped = True
@@ -100,7 +100,9 @@ class ManufacturerPartResource(InvenTreeResource):
 
     part_name = Field(attribute='part__full_name', readonly=True)
 
-    manufacturer = Field(attribute='manufacturer', widget=widgets.ForeignKeyWidget(Company))
+    manufacturer = Field(
+        attribute='manufacturer', widget=widgets.ForeignKeyWidget(Company)
+    )
 
     manufacturer_name = Field(attribute='manufacturer__name', readonly=True)
 
@@ -113,13 +115,9 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
 
     list_display = ('part', 'manufacturer', 'MPN')
 
-    search_fields = [
-        'manufacturer__name',
-        'part__name',
-        'MPN',
-    ]
+    search_fields = ['manufacturer__name', 'part__name', 'MPN']
 
-    autocomplete_fields = ('part', 'manufacturer',)
+    autocomplete_fields = ('part', 'manufacturer')
 
 
 @admin.register(ManufacturerPartAttachment)
@@ -136,6 +134,7 @@ class ManufacturerPartParameterResource(InvenTreeResource):
 
     class Meta:
         """Metaclass defines extra admin options"""
+
         model = ManufacturerPartParameter
         skip_unchanged = True
         report_skipped = True
@@ -150,11 +149,7 @@ class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
 
     list_display = ('manufacturer_part', 'name', 'value')
 
-    search_fields = [
-        'manufacturer_part__manufacturer__name',
-        'name',
-        'value'
-    ]
+    search_fields = ['manufacturer_part__manufacturer__name', 'name', 'value']
 
     autocomplete_fields = ('manufacturer_part',)
 
@@ -164,6 +159,7 @@ class SupplierPriceBreakResource(InvenTreeResource):
 
     class Meta:
         """Metaclass defines extra admin options"""
+
         model = SupplierPriceBreak
         skip_unchanged = True
         report_skipped = False
@@ -198,6 +194,7 @@ class AddressResource(InvenTreeResource):
 
     class Meta:
         """Metaclass defining extra options"""
+
         model = Address
         skip_unchanged = True
         report_skipped = False
@@ -214,11 +211,7 @@ class AddressAdmin(ImportExportModelAdmin):
 
     list_display = ('company', 'line1', 'postal_code', 'country')
 
-    search_fields = [
-        'company',
-        'country',
-        'postal_code',
-    ]
+    search_fields = ['company', 'country', 'postal_code']
 
 
 class ContactResource(InvenTreeResource):
@@ -226,6 +219,7 @@ class ContactResource(InvenTreeResource):
 
     class Meta:
         """Metaclass defining extra options"""
+
         model = Contact
         skip_unchanged = True
         report_skipped = False
@@ -242,8 +236,4 @@ class ContactAdmin(ImportExportModelAdmin):
 
     list_display = ('company', 'name', 'role', 'email', 'phone')
 
-    search_fields = [
-        'company',
-        'name',
-        'email',
-    ]
+    search_fields = ['company', 'name', 'email']

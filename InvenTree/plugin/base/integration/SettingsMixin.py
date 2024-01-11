@@ -1,4 +1,5 @@
 """Plugin mixin class for SettingsMixin."""
+
 import logging
 from typing import TYPE_CHECKING, Dict
 
@@ -10,8 +11,10 @@ logger = logging.getLogger('inventree')
 if TYPE_CHECKING:
     from common.models import SettingsKeyType
 else:
+
     class SettingsKeyType:
         """Dummy class, so that python throws no error"""
+
         pass
 
 
@@ -22,6 +25,7 @@ class SettingsMixin:
 
     class MixinMeta:
         """Meta for mixin."""
+
         MIXIN_NAME = 'Settings'
 
     def __init__(self):
@@ -74,7 +78,9 @@ class SettingsMixin:
         from plugin.models import PluginConfig, PluginSetting
 
         try:
-            plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
+            plugin, _ = PluginConfig.objects.get_or_create(
+                key=self.plugin_slug(), name=self.plugin_name()
+            )
         except (OperationalError, ProgrammingError):  # pragma: no cover
             plugin = None
 
@@ -96,4 +102,6 @@ class SettingsMixin:
         """
         from plugin.models import PluginSetting
 
-        return PluginSetting.check_all_settings(settings_definition=self.settings, plugin=self.plugin_config())
+        return PluginSetting.check_all_settings(
+            settings_definition=self.settings, plugin=self.plugin_config()
+        )

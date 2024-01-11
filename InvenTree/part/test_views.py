@@ -10,14 +10,7 @@ from .models import Part
 class PartViewTestCase(InvenTreeTestCase):
     """Base class for unit testing the various Part views"""
 
-    fixtures = [
-        'category',
-        'part',
-        'bom',
-        'location',
-        'company',
-        'supplier_part',
-    ]
+    fixtures = ['category', 'part', 'bom', 'location', 'company', 'supplier_part']
 
     roles = 'all'
     superuser = True
@@ -72,7 +65,9 @@ class PartDetailTest(PartViewTestCase):
             index_redirect = False
             detail_redirect = False
 
-            response = self.client.get(reverse('part-detail-from-ipn', args=(ipn_test,)))
+            response = self.client.get(
+                reverse('part-detail-from-ipn', args=(ipn_test,))
+            )
 
             # Check for PartIndex redirect
             try:
@@ -110,6 +105,9 @@ class PartDetailTest(PartViewTestCase):
 
     def test_bom_download(self):
         """Test downloading a BOM for a valid part."""
-        response = self.client.get(reverse('api-bom-download', args=(1,)), headers={"x-requested-with": 'XMLHttpRequest'})
+        response = self.client.get(
+            reverse('api-bom-download', args=(1,)),
+            headers={'x-requested-with': 'XMLHttpRequest'},
+        )
         self.assertEqual(response.status_code, 200)
         self.assertIn('streaming_content', dir(response))

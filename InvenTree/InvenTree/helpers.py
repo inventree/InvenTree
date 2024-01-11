@@ -36,7 +36,7 @@ def generateTestKey(test_name):
     Tests must be named such that they will have unique keys.
     """
     key = test_name.strip().lower()
-    key = key.replace(" ", "")
+    key = key.replace(' ', '')
 
     # Remove any characters that cannot be used to represent a variable
     key = re.sub(r'[^a-zA-Z0-9]', '', key)
@@ -56,7 +56,7 @@ def constructPathString(path, max_chars=250):
     # Replace middle elements to limit the pathstring
     if len(pathstring) > max_chars:
         n = int(max_chars / 2 - 2)
-        pathstring = pathstring[:n] + "..." + pathstring[-n:]
+        pathstring = pathstring[:n] + '...' + pathstring[-n:]
 
     return pathstring
 
@@ -82,19 +82,18 @@ def TestIfImage(img):
 
 def getBlankImage():
     """Return the qualified path for the 'blank image' placeholder."""
-    return getStaticUrl("img/blank_image.png")
+    return getStaticUrl('img/blank_image.png')
 
 
 def getBlankThumbnail():
     """Return the qualified path for the 'blank image' thumbnail placeholder."""
-    return getStaticUrl("img/blank_image.thumbnail.png")
+    return getStaticUrl('img/blank_image.thumbnail.png')
 
 
 def getLogoImage(as_file=False, custom=True):
     """Return the InvenTree logo image, or a custom logo if available."""
     """Return the path to the logo-file."""
     if custom and settings.CUSTOM_LOGO:
-
         static_storage = StaticFilesStorage()
 
         if static_storage.exists(settings.CUSTOM_LOGO):
@@ -106,13 +105,13 @@ def getLogoImage(as_file=False, custom=True):
 
         if storage is not None:
             if as_file:
-                return f"file://{storage.path(settings.CUSTOM_LOGO)}"
+                return f'file://{storage.path(settings.CUSTOM_LOGO)}'
             return storage.url(settings.CUSTOM_LOGO)
 
     # If we have got to this point, return the default logo
     if as_file:
         path = settings.STATIC_ROOT.joinpath('img/inventree.png')
-        return f"file://{path}"
+        return f'file://{path}'
     return getStaticUrl('img/inventree.png')
 
 
@@ -121,12 +120,11 @@ def getSplashScreen(custom=True):
     static_storage = StaticFilesStorage()
 
     if custom and settings.CUSTOM_SPLASH:
-
         if static_storage.exists(settings.CUSTOM_SPLASH):
             return static_storage.url(settings.CUSTOM_SPLASH)
 
     # No custom splash screen
-    return static_storage.url("img/inventree_splash.jpg")
+    return static_storage.url('img/inventree_splash.jpg')
 
 
 def TestIfImageURL(url):
@@ -135,10 +133,15 @@ def TestIfImageURL(url):
     Simply tests the extension against a set of allowed values
     """
     return os.path.splitext(os.path.basename(url))[-1].lower() in [
-        '.jpg', '.jpeg', '.j2k',
-        '.png', '.bmp',
-        '.tif', '.tiff',
-        '.webp', '.gif',
+        '.jpg',
+        '.jpeg',
+        '.j2k',
+        '.png',
+        '.bmp',
+        '.tif',
+        '.tiff',
+        '.webp',
+        '.gif',
     ]
 
 
@@ -153,8 +156,8 @@ def str2bool(text, test=True):
         True if the text looks like the selected boolean value
     """
     if test:
-        return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', 'on', ]
-    return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off', ]
+        return str(text).lower() in ['1', 'y', 'yes', 't', 'true', 'ok', 'on']
+    return str(text).lower() in ['0', 'n', 'no', 'none', 'f', 'false', 'off']
 
 
 def str2int(text, default=None):
@@ -191,7 +194,15 @@ def isNull(text):
     Returns:
         True if the text looks like a null value
     """
-    return str(text).strip().lower() in ['top', 'null', 'none', 'empty', 'false', '-1', '']
+    return str(text).strip().lower() in [
+        'top',
+        'null',
+        'none',
+        'empty',
+        'false',
+        '-1',
+        '',
+    ]
 
 
 def normalize(d):
@@ -223,7 +234,7 @@ def increment(value):
         # Provide a default value if provided with a null input
         return '1'
 
-    pattern = r"(.*?)(\d+)?$"
+    pattern = r'(.*?)(\d+)?$'
 
     result = re.search(pattern, value)
 
@@ -282,7 +293,7 @@ def decimal2string(d):
     if '.' not in s:
         return s
 
-    return s.rstrip("0").rstrip(".")
+    return s.rstrip('0').rstrip('.')
 
 
 def decimal2money(d, currency=None):
@@ -354,17 +365,12 @@ def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
 
 def GetExportFormats():
     """Return a list of allowable file formats for exporting data."""
-    return [
-        'csv',
-        'tsv',
-        'xls',
-        'xlsx',
-        'json',
-        'yaml',
-    ]
+    return ['csv', 'tsv', 'xls', 'xlsx', 'json', 'yaml']
 
 
-def DownloadFile(data, filename, content_type='application/text', inline=False) -> StreamingHttpResponse:
+def DownloadFile(
+    data, filename, content_type='application/text', inline=False
+) -> StreamingHttpResponse:
     """Create a dynamic file for the user to download.
 
     Args:
@@ -389,7 +395,7 @@ def DownloadFile(data, filename, content_type='application/text', inline=False) 
         length = len(bytes(data, response.charset))
     response['Content-Length'] = length
 
-    disposition = "inline" if inline else "attachment"
+    disposition = 'inline' if inline else 'attachment'
 
     response['Content-Disposition'] = f'{disposition}; filename={filename}'
 
@@ -449,7 +455,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     try:
         expected_quantity = int(expected_quantity)
     except ValueError:
-        raise ValidationError([_("Invalid quantity provided")])
+        raise ValidationError([_('Invalid quantity provided')])
 
     if input_string:
         input_string = str(input_string).strip()
@@ -457,7 +463,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         input_string = ''
 
     if len(input_string) == 0:
-        raise ValidationError([_("Empty serial number string")])
+        raise ValidationError([_('Empty serial number string')])
 
     next_value = increment_serial_number(starting_value)
 
@@ -467,7 +473,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         next_value = increment_serial_number(next_value)
 
     # Split input string by whitespace or comma (,) characters
-    groups = re.split(r"[\s,]+", input_string)
+    groups = re.split(r'[\s,]+', input_string)
 
     serials = []
     errors = []
@@ -487,7 +493,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             return
 
         if serial in serials:
-            add_error(_("Duplicate serial") + f": {serial}")
+            add_error(_('Duplicate serial') + f': {serial}')
         else:
             serials.append(serial)
 
@@ -502,7 +508,6 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             return serials
 
     for group in groups:
-
         # Calculate the "remaining" quantity of serial numbers
         remaining = expected_quantity - len(serials)
 
@@ -520,7 +525,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
 
                 if a == b:
                     # Invalid group
-                    add_error(_(f"Invalid group range: {group}"))
+                    add_error(_(f'Invalid group range: {group}'))
                     continue
 
                 group_items = []
@@ -549,13 +554,21 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                         break
 
                 if len(group_items) > remaining:
-                    add_error(_(f"Group range {group} exceeds allowed quantity ({expected_quantity})"))
-                elif len(group_items) > 0 and group_items[0] == a and group_items[-1] == b:
+                    add_error(
+                        _(
+                            f'Group range {group} exceeds allowed quantity ({expected_quantity})'
+                        )
+                    )
+                elif (
+                    len(group_items) > 0
+                    and group_items[0] == a
+                    and group_items[-1] == b
+                ):
                     # In this case, the range extraction looks like it has worked
                     for item in group_items:
                         add_serial(item)
                 else:
-                    add_error(_(f"Invalid group range: {group}"))
+                    add_error(_(f'Invalid group range: {group}'))
 
             else:
                 # In the case of a different number of hyphens, simply add the entire group
@@ -573,20 +586,24 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
             sequence_count = max(0, expected_quantity - len(serials))
 
             if len(items) > 2 or len(items) == 0:
-                add_error(_(f"Invalid group sequence: {group}"))
+                add_error(_(f'Invalid group sequence: {group}'))
                 continue
             elif len(items) == 2:
                 try:
                     if items[1]:
                         sequence_count = int(items[1]) + 1
                 except ValueError:
-                    add_error(_(f"Invalid group sequence: {group}"))
+                    add_error(_(f'Invalid group sequence: {group}'))
                     continue
 
             value = items[0]
 
             # Keep incrementing up to the specified quantity
-            while value is not None and value not in sequence_items and counter < sequence_count:
+            while (
+                value is not None
+                and value not in sequence_items
+                and counter < sequence_count
+            ):
                 sequence_items.append(value)
                 value = increment_serial_number(value)
                 counter += 1
@@ -595,7 +612,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
                 for item in sequence_items:
                     add_serial(item)
             else:
-                add_error(_(f"Invalid group sequence: {group}"))
+                add_error(_(f'Invalid group sequence: {group}'))
 
         else:
             # At this point, we assume that the 'group' is just a single serial value
@@ -605,10 +622,14 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
         raise ValidationError(errors)
 
     if len(serials) == 0:
-        raise ValidationError([_("No serial numbers found")])
+        raise ValidationError([_('No serial numbers found')])
 
     if len(errors) == 0 and len(serials) != expected_quantity:
-        raise ValidationError([_(f"Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})")])
+        raise ValidationError([
+            _(
+                f'Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})'
+            )
+        ])
 
     return serials
 
@@ -645,9 +666,7 @@ def validateFilterString(value, model=None):
         pair = group.split('=')
 
         if len(pair) != 2:
-            raise ValidationError(
-                f"Invalid group: {group}"
-            )
+            raise ValidationError(f'Invalid group: {group}')
 
         k, v = pair
 
@@ -655,9 +674,7 @@ def validateFilterString(value, model=None):
         v = v.strip()
 
         if not k or not v:
-            raise ValidationError(
-                f"Invalid group: {group}"
-            )
+            raise ValidationError(f'Invalid group: {group}')
 
         results[k] = v
 
@@ -666,9 +683,7 @@ def validateFilterString(value, model=None):
         try:
             model.objects.filter(**results)
         except FieldError as e:
-            raise ValidationError(
-                str(e),
-            )
+            raise ValidationError(str(e))
 
     return results
 
@@ -706,7 +721,11 @@ def clean_decimal(number):
         # Number cannot be converted to Decimal (eg. a string containing letters)
         return Decimal(0)
 
-    return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
+    return (
+        clean_number.quantize(Decimal(1))
+        if clean_number == clean_number.to_integral()
+        else clean_number.normalize()
+    )
 
 
 def strip_html_tags(value: str, raise_error=True, field_name=None):
@@ -714,55 +733,45 @@ def strip_html_tags(value: str, raise_error=True, field_name=None):
 
     If raise_error is True, a ValidationError will be thrown if HTML tags are detected
     """
-    cleaned = clean(
-        value,
-        strip=True,
-        tags=[],
-        attributes=[],
-    )
+    cleaned = clean(value, strip=True, tags=[], attributes=[])
 
     # Add escaped characters back in
-    replacements = {
-        '&gt;': '>',
-        '&lt;': '<',
-        '&amp;': '&',
-    }
+    replacements = {'&gt;': '>', '&lt;': '<', '&amp;': '&'}
 
     for o, r in replacements.items():
         cleaned = cleaned.replace(o, r)
 
     # If the length changed, it means that HTML tags were removed!
     if len(cleaned) != len(value) and raise_error:
-
         field = field_name or 'non_field_errors'
 
-        raise ValidationError({
-            field: [_("Remove HTML tags from this value")]
-        })
+        raise ValidationError({field: [_('Remove HTML tags from this value')]})
 
     return cleaned
 
 
-def remove_non_printable_characters(value: str, remove_newline=True, remove_ascii=True, remove_unicode=True):
+def remove_non_printable_characters(
+    value: str, remove_newline=True, remove_ascii=True, remove_unicode=True
+):
     """Remove non-printable / control characters from the provided string"""
     cleaned = value
 
     if remove_ascii:
         # Remove ASCII control characters
         # Note that we do not sub out 0x0A (\n) here, it is done separately below
-        cleaned = regex.sub(u'[\x00-\x09]+', '', cleaned)
-        cleaned = regex.sub(u'[\x0b-\x1F\x7F]+', '', cleaned)
+        cleaned = regex.sub('[\x00-\x09]+', '', cleaned)
+        cleaned = regex.sub('[\x0b-\x1f\x7f]+', '', cleaned)
 
     if remove_newline:
-        cleaned = regex.sub(u'[\x0a]+', '', cleaned)
+        cleaned = regex.sub('[\x0a]+', '', cleaned)
 
     if remove_unicode:
         # Remove Unicode control characters
         if remove_newline:
-            cleaned = regex.sub(u'[^\P{C}]+', '', cleaned)
+            cleaned = regex.sub('[^\P{C}]+', '', cleaned)
         else:
             # Use 'negative-lookahead' to exclude newline character
-            cleaned = regex.sub(u'(?![\x0A])[^\P{C}]+', '', cleaned)
+            cleaned = regex.sub('(?![\x0a])[^\P{C}]+', '', cleaned)
 
     return cleaned
 
@@ -783,7 +792,9 @@ def hash_barcode(barcode_data):
     return str(hash.hexdigest())
 
 
-def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):
+def get_objectreference(
+    obj, type_ref: str = 'content_type', object_ref: str = 'object_id'
+):
     """Lookup method for the GenericForeignKey fields.
 
     Attributes:
@@ -821,11 +832,7 @@ def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = '
     ret = {}
     if url_fnc:
         ret['link'] = url_fnc()
-    return {
-        'name': str(item),
-        'model': str(model_cls._meta.verbose_name),
-        **ret
-    }
+    return {'name': str(item), 'model': str(model_cls._meta.verbose_name), **ret}
 
 
 def inheritors(cls):
