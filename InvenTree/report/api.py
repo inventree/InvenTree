@@ -621,7 +621,7 @@ report_api_urls = [
                         name='api-build-report-metadata',
                     ),
                     re_path(
-                        r'^.$',
+                        r'^.*$',
                         BuildReportDetail.as_view(),
                         name='api-build-report-detail',
                     ),
