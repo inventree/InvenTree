@@ -730,27 +730,27 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
 
 # OpenTelemetry tracing
 TRACING_ENABLED = get_boolean_setting(
-    'INVENTREE_TRACING_ENABLED', 'tracing_enabled', False
+    'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
 )
 if TRACING_ENABLED:  # pragma: no cover
-    _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing_endpoint', None)
-    _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing_headers', None, dict)
+    _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
+    _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
     if _t_endpoint and _t_headers:
-        _t_ressources = get_setting(
-            'INVENTREE_TRACING_RESSOURCES', 'tracing_ressources', {}, dict
+        _t_resources = get_setting(
+            'INVENTREE_TRACING_RESOURCES', 'tracing.resources', {}, dict
         )
         cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
-        tracing_ressources = {**cstm_tags, **_t_ressources}
+        tracing_resources = {**cstm_tags, **_t_resources}
 
         setup_tracing(
             _t_endpoint,
             _t_headers,
-            tracing_ressources,
-            get_boolean_setting('INVENTREE_TRACING_CONSOLE', 'tracing_console', False),
-            get_setting('INVENTREE_TRACING_AUTH', 'tracing_auth', {}),
-            get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing_is_http', False),
+            tracing_resources,
+            get_boolean_setting('INVENTREE_TRACING_CONSOLE', 'tracing.console', False),
+            get_setting('INVENTREE_TRACING_AUTH', 'tracing.auth', {}),
+            get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', False),
             get_boolean_setting(
-                'INVENTREE_TRACING_APPEND_HTTP', 'tracing_append_http', True
+                'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
             ),
         )
         # Run tracing/logging instrumentation
