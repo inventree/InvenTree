@@ -5,9 +5,6 @@ import logging
 from typing import Optional
 
 from opentelemetry import metrics, trace
-from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
-from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.redis import RedisInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
@@ -34,6 +31,8 @@ def setup_tracing(
     resources_input: Optional[dict] = None,
     console: bool = False,
     auth: Optional[dict] = None,
+    is_http: bool = False,
+    append_http: bool = True,
 ):
     """Set up tracing for the application in the current context.
 
@@ -71,8 +70,29 @@ def setup_tracing(
         }
     )
 
+    # Import the OTLP exporters
+    if is_http:
+        from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
+        from opentelemetry.exporter.otlp.proto.http.metric_exporter import (
+            OTLPMetricExporter,
+        )
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
+            OTLPSpanExporter,
+        )
+    else:
+        from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
+        from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+            OTLPMetricExporter,
+        )
+        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+            OTLPSpanExporter,
+        )
+
     # Spans / Tracs
-    span_exporter = OTLPSpanExporter(headers=headers, endpoint=endpoint)
+    span_exporter = OTLPSpanExporter(
+        headers=headers,
+        endpoint=endpoint if not (is_http and append_http) else f'{endpoint}/v1/traces',
+    )
     trace_processor = BatchSpanProcessor(span_exporter)
     trace_provider = TracerProvider(resource=resource)
     trace.set_tracer_provider(trace_provider)
@@ -83,7 +103,12 @@ def setup_tracing(
 
     # Metrics
     metric_perodic_reader = PeriodicExportingMetricReader(
-        OTLPMetricExporter(headers=headers, endpoint=endpoint)
+        OTLPMetricExporter(
+            headers=headers,
+            endpoint=endpoint
+            if not (is_http and append_http)
+            else f'{endpoint}/v1/metrics',
+        )
     )
     metric_readers = [metric_perodic_reader]
 
@@ -97,7 +122,10 @@ def setup_tracing(
     metrics.set_meter_provider(meter_provider)
 
     # Logs
-    log_exporter = OTLPLogExporter(headers=headers, endpoint=endpoint)
+    log_exporter = OTLPLogExporter(
+        headers=headers,
+        endpoint=endpoint if not (is_http and append_http) else f'{endpoint}/v1/logs',
+    )
     log_provider = logs.LoggerProvider(resource=resource)
     log_provider.add_log_record_processor(
         logs_export.BatchLogRecordProcessor(log_exporter)

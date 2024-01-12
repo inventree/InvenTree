@@ -748,6 +748,10 @@ if TRACING_ENABLED:  # pragma: no cover
             tracing_ressources,
             get_boolean_setting('INVENTREE_TRACING_CONSOLE', 'tracing_console', False),
             get_setting('INVENTREE_TRACING_AUTH', 'tracing_auth', {}),
+            get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing_is_http', False),
+            get_boolean_setting(
+                'INVENTREE_TRACING_APPEND_HTTP', 'tracing_append_http', True
+            ),
         )
         # Run tracing/logging instrumentation
         setup_instruments()
