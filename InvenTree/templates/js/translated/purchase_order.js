@@ -1604,7 +1604,7 @@ function loadPurchaseOrderTable(table, options) {
                             date = order.target_date;
                         }
 
-                        let title = order.reference; 
+                        let title = order.reference;
 
                         if (order.supplier_detail) {
                             title += `- ${order.supplier_detail.name}`;
