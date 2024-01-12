@@ -1,12 +1,10 @@
 import { t } from '@lingui/macro';
-import { IconTrash } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { openDeleteApiForm } from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { ActionButton } from '../../buttons/ActionButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction } from '../RowActions';

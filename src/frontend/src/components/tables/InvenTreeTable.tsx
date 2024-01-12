@@ -395,11 +395,11 @@ export function InvenTreeTable<T = any>({
               items: selection
             }
           })
-          .then((response) => {
+          .then((_response) => {
             // Refresh the table
             refetch();
           })
-          .catch((error) => {
+          .catch((_error) => {
             console.warn(`Bulk delete operation failed at ${url}`);
           });
       }
