@@ -528,7 +528,7 @@ report_api_urls = [
         path(r'<int:pk>/', include([
             re_path(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
             re_path(r'metadata/', MetadataView.as_view(), {'model': BuildReport}, name='api-build-report-metadata'),
-            re_path(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
+            re_path(r'^.*$', BuildReportDetail.as_view(), name='api-build-report-detail'),
         ])),
 
         # List view
