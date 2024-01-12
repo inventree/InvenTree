@@ -297,18 +297,18 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
         # Make sure the expected keys are in the response
-        self.assertIn('pk', response)
-        self.assertIn('name', response)
-        self.assertIn('description', response)
-        self.assertIn('template', response)
-        self.assertIn('filters', response)
-        self.assertIn('enabled', response)
+        self.assertIn('pk', response.data)
+        self.assertIn('name', response.data)
+        self.assertIn('description', response.data)
+        self.assertIn('template', response.data)
+        self.assertIn('filters', response.data)
+        self.assertIn('enabled', response.data)
 
-        self.assertEqual(response['name'], 'New report')
+        self.assertEqual(response.data['name'], 'New report')
         self.assertEqual(
-            response['name'], 'A fancy new report created through API test'
+            response.data['name'], 'A fancy new report created through API test'
         )
-        self.assertTrue(response['template'].endswith('ExampleTemplate.html'))
+        self.assertTrue(response.data['template'].endswith('ExampleTemplate.html'))
 
     def test_detail_endpoint(self):
         """Test that the DETAIL endpoint works for each report."""
@@ -327,12 +327,12 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
         # Make sure the expected keys are in the response
-        self.assertIn('pk', response)
-        self.assertIn('name', response)
-        self.assertIn('description', response)
-        self.assertIn('template', response)
-        self.assertIn('filters', response)
-        self.assertIn('enabled', response)
+        self.assertIn('pk', response.data)
+        self.assertIn('name', response.data)
+        self.assertIn('description', response.data)
+        self.assertIn('template', response.data)
+        self.assertIn('filters', response.data)
+        self.assertIn('enabled', response.data)
 
         # Check PATCH method
         response = self.patch(
@@ -342,14 +342,14 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
         # Make sure the expected keys are in the response
-        self.assertIn('pk', response)
-        self.assertIn('name', response)
-        self.assertIn('description', response)
-        self.assertIn('template', response)
-        self.assertIn('filters', response)
-        self.assertIn('enabled', response)
+        self.assertIn('pk', response.data)
+        self.assertIn('name', response.data)
+        self.assertIn('description', response.data)
+        self.assertIn('template', response.data)
+        self.assertIn('filters', response.data)
+        self.assertIn('enabled', response.data)
 
-        self.assertEqual(response['name'], 'Changed name during test')
+        self.assertEqual(response.data['name'], 'Changed name during test')
 
         # Delete the last report
         response = self.delete(reverse(self.detail_url, kwargs={'pk': reports[-1].pk}))
