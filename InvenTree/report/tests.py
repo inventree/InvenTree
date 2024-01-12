@@ -352,6 +352,10 @@ class ReportTest(InvenTreeAPITestCase):
 
         self.assertEqual(response['name'], 'Changed name during test')
 
+        # Delete the last report
+        response = self.delete(f'{url}/{reports[-1].pk}')
+        self.assertEqual(response.status_code, 204)
+
     def test_metadata(self):
         """Unit tests for the metadata field."""
         if self.model is not None:
