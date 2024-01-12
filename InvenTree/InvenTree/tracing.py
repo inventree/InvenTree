@@ -1,5 +1,6 @@
 """OpenTelemetry setup functions."""
 
+import base64
 import logging
 from typing import Optional
 
@@ -23,12 +24,16 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 
 from InvenTree.version import inventreeVersion
 
+# Logger configuration
+logger = logging.getLogger('inventree')
+
 
 def setup_tracing(
     endpoint: str,
     headers: dict,
     resources_input: Optional[dict] = None,
     console: bool = False,
+    auth: Optional[dict] = None,
 ):
     """Set up tracing for the application in the current context.
 
@@ -40,6 +45,18 @@ def setup_tracing(
     """
     if resources_input is None:
         resources_input = {}
+    if auth is None:
+        auth = {}
+
+    # Setup the auth headers
+    if 'basic' in auth:
+        basic_auth = auth['basic']
+        if 'username' in basic_auth and 'password' in basic_auth:
+            auth_raw = f'{basic_auth["username"]}:{basic_auth["password"]}'
+            auth_token = base64.b64encode(auth_raw.encode('utf-8')).decode('utf-8')
+            headers['Authorization'] = f'Basic {auth_token}'
+        else:
+            logger.warning('Basic auth is missing username or password')
 
     # Initialize the OTLP Resource
     resource = resources.Resource(

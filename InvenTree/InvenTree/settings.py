@@ -747,6 +747,7 @@ if TRACING_ENABLED:  # pragma: no cover
             _t_headers,
             tracing_ressources,
             get_boolean_setting('INVENTREE_TRACING_CONSOLE', 'tracing_console', False),
+            get_setting('INVENTREE_TRACING_AUTH', 'tracing_auth', {}),
         )
         # Run tracing/logging instrumentation
         setup_instruments()
