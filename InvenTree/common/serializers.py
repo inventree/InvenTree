@@ -313,6 +313,6 @@ class ErrorMessageSerializer(InvenTreeModelSerializer):
 
         model = Error
 
-        fields = ['when', 'info', 'data', 'path']
+        fields = ['when', 'info', 'data', 'path', 'pk']
 
-        read_only_fields = ['when', 'info', 'data', 'path']
+        read_only_fields = ['when', 'info', 'data', 'path', 'pk']
