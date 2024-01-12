@@ -2,6 +2,7 @@
 
 from django.urls import reverse
 
+from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
 
@@ -302,3 +303,16 @@ class CustomUnitSerializer(InvenTreeModelSerializer):
 
         model = common_models.CustomUnit
         fields = ['pk', 'name', 'symbol', 'definition']
+
+
+class ErrorMessageSerializer(InvenTreeModelSerializer):
+    """DRF serializer for server error messages."""
+
+    class Meta:
+        """Metaclass options for ErrorMessageSerializer."""
+
+        model = Error
+
+        fields = ['when', 'info', 'data', 'path']
+
+        read_only_fields = ['when', 'info', 'data', 'path']
