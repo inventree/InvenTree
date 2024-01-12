@@ -58,6 +58,9 @@ def setup_tracing(
         else:
             logger.warning('Basic auth is missing username or password')
 
+    # Clean up headers
+    headers = {k: v for k, v in headers.items() if v is not None}
+
     # Initialize the OTLP Resource
     resource = resources.Resource(
         attributes={
