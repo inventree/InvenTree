@@ -678,7 +678,7 @@ common_api_urls = [
     ),
     # Error information
     re_path(
-        r'^errors/',
+        r'^error-report/',
         include([
             path(r'<int:pk>/', ErrorMessageDetail.as_view(), name='api-error-detail'),
             re_path(r'^.*$', ErrorMessageList.as_view(), name='api-error-list'),
