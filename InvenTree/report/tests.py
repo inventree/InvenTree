@@ -275,10 +275,10 @@ class ReportTest(InvenTreeAPITestCase):
 
     def test_create_endpoint(self):
         """Test that the DETAIL endpoint works for each report."""
-        if not self.detail_url:
+        if not self.list_url:
             return
 
-        url = reverse(self.detail_url)
+        url = reverse(self.list_url)
 
         # Create a new report
         response = self.post(
@@ -315,8 +315,6 @@ class ReportTest(InvenTreeAPITestCase):
         if not self.detail_url:
             return
 
-        url = reverse(self.detail_url)
-
         reports = self.model.objects.all()
 
         n = len(reports)
@@ -325,7 +323,7 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertGreaterEqual(n, 1)
 
         # Check detail page for first report
-        response = self.get(f'{url}/{reports[0].pk}')
+        response = self.get(reverse(self.detail_url, kwargs={'pk': reports[0].pk}))
         self.assertEqual(response.status_code, 200)
 
         # Make sure the expected keys are in the response
@@ -338,7 +336,8 @@ class ReportTest(InvenTreeAPITestCase):
 
         # Check PATCH method
         response = self.patch(
-            f'{url}/{reports[0].pk}', {'name': 'Changed name during test'}
+            reverse(self.detail_url, kwargs={'pk': reports[0].pk}),
+            {'name': 'Changed name during test'},
         )
         self.assertEqual(response.status_code, 200)
 
@@ -353,7 +352,7 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertEqual(response['name'], 'Changed name during test')
 
         # Delete the last report
-        response = self.delete(f'{url}/{reports[-1].pk}')
+        response = self.delete(reverse(self.detail_url, kwargs={'pk': reports[-1].pk}))
         self.assertEqual(response.status_code, 204)
 
     def test_metadata(self):
