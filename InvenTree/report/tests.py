@@ -293,8 +293,8 @@ class ReportTest(InvenTreeAPITestCase):
                     '{% extends "label/report_base.html" %}<pre>TEST REPORT</pre>{% endblock content %}',
                 )
             },
+            expected_code=200,
         )
-        self.assertEqual(response.status_code, 200)
 
         # Make sure the expected keys are in the response
         self.assertIn('pk', response.data)
@@ -323,8 +323,9 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertGreaterEqual(n, 1)
 
         # Check detail page for first report
-        response = self.get(reverse(self.detail_url, kwargs={'pk': reports[0].pk}))
-        self.assertEqual(response.status_code, 200)
+        response = self.get(
+            reverse(self.detail_url, kwargs={'pk': reports[0].pk}), expected_code=200
+        )
 
         # Make sure the expected keys are in the response
         self.assertIn('pk', response.data)
@@ -338,8 +339,8 @@ class ReportTest(InvenTreeAPITestCase):
         response = self.patch(
             reverse(self.detail_url, kwargs={'pk': reports[0].pk}),
             {'name': 'Changed name during test'},
+            expected_code=200,
         )
-        self.assertEqual(response.status_code, 200)
 
         # Make sure the expected keys are in the response
         self.assertIn('pk', response.data)
@@ -352,8 +353,9 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['name'], 'Changed name during test')
 
         # Delete the last report
-        response = self.delete(reverse(self.detail_url, kwargs={'pk': reports[-1].pk}))
-        self.assertEqual(response.status_code, 204)
+        response = self.delete(
+            reverse(self.detail_url, kwargs={'pk': reports[-1].pk}), expected_code=204
+        )
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
