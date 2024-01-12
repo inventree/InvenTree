@@ -485,7 +485,7 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
-class ErrorMessageList(ListAPI):
+class ErrorMessageList(BulkDeleteMixin, ListAPI):
     """List view for server error messages."""
 
     queryset = Error.objects.all()
