@@ -225,7 +225,6 @@ class RuleSet(models.Model):
             'plugin_pluginconfig',
             'plugin_pluginsetting',
             'plugin_notificationusersetting',
-            'common_newsfeedentry',
             'taggit_tag',
             'taggit_taggeditem',
             'flags_flagstate',

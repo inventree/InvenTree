@@ -218,27 +218,6 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 
 
-class NewsFeedEntrySerializer(InvenTreeModelSerializer):
-    """Serializer for the NewsFeedEntry model."""
-
-    class Meta:
-        """Meta options for NewsFeedEntrySerializer."""
-
-        model = common_models.NewsFeedEntry
-        fields = [
-            'pk',
-            'feed_id',
-            'title',
-            'link',
-            'published',
-            'author',
-            'summary',
-            'read',
-        ]
-
-    read = serializers.BooleanField()
-
-
 class ConfigSerializer(serializers.Serializer):
     """Serializer for the InvenTree configuration.
 

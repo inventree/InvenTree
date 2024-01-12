@@ -39,48 +39,6 @@ def delete_old_notifications():
 
 
 @scheduled_task(ScheduledTask.DAILY)
-def update_news_feed():
-    """Update the newsfeed."""
-    try:
-        from common.models import NewsFeedEntry
-    except AppRegistryNotReady:  # pragma: no cover
-        logger.info("Could not perform 'update_news_feed' - App registry not ready")
-        return
-
-    # Fetch and parse feed
-    try:
-        d = feedparser.parse(settings.INVENTREE_NEWS_URL)
-    except Exception as entry:  # pragma: no cover
-        logger.warning('update_news_feed: Error parsing the newsfeed', entry)
-        return
-
-    # Get a reference list
-    id_list = [a.feed_id for a in NewsFeedEntry.objects.all()]
-
-    # Iterate over entries
-    for entry in d.entries:
-        # Check if id already exists
-        if entry.id in id_list:
-            continue
-
-        # Create entry
-        try:
-            NewsFeedEntry.objects.create(
-                feed_id=entry.id,
-                title=entry.title,
-                link=entry.link,
-                published=entry.published,
-                author=entry.author,
-                summary=entry.summary,
-            )
-        except (IntegrityError, OperationalError):
-            # Sometimes errors-out on database start-up
-            pass
-
-    logger.info('update_news_feed: Sync done')
-
-
-@scheduled_task(ScheduledTask.DAILY)
 def delete_old_notes_images():
     """Remove old notes images from the database.
 

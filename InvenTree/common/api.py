@@ -387,28 +387,6 @@ class NotificationReadAll(NotificationMessageMixin, RetrieveAPI):
             )
 
 
-class NewsFeedMixin:
-    """Generic mixin for NewsFeedEntry."""
-
-    queryset = common.models.NewsFeedEntry.objects.all()
-    serializer_class = common.serializers.NewsFeedEntrySerializer
-    permission_classes = [IsAdminUser]
-
-
-class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
-    """List view for all news items."""
-
-    filter_backends = ORDER_FILTER
-
-    ordering_fields = ['published', 'author', 'read']
-
-    filterset_fields = ['read']
-
-
-class NewsFeedEntryDetail(NewsFeedMixin, RetrieveUpdateDestroyAPI):
-    """Detail view for an individual news feed object."""
-
-
 class ConfigList(ListAPI):
     """List view for all accessed configurations."""
 
@@ -642,21 +620,6 @@ common_api_urls = [
             ),
             # Notification messages list
             re_path(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
-        ]),
-    ),
-    # News
-    re_path(
-        r'^news/',
-        include([
-            path(
-                r'<int:pk>/',
-                include([
-                    re_path(
-                        r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'
-                    )
-                ]),
-            ),
-            re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),
         ]),
     ),
     # Flags
