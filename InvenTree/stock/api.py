@@ -27,8 +27,8 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView, MetadataView)
 from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
                                SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter)
-from InvenTree.helpers import (DownloadFile, extract_serial_numbers, is_ajax, isNull,
-                               str2bool, str2int)
+from InvenTree.helpers import (DownloadFile, extract_serial_numbers, is_ajax,
+                               isNull, str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateDestroyAPI)
