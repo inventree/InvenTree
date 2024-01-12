@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 161
 
 INVENTREE_API_TEXT = """
 
-v161 -> 2024-01-13 :
+v161 -> 2024-01-13 : https://github.com/inventree/InvenTree/pull/6222
     - Adds API endpoint for system error information
 
 v160 -> 2023-12-11 : https://github.com/inventree/InvenTree/pull/6072
