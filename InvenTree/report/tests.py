@@ -273,6 +273,85 @@ class ReportTest(InvenTreeAPITestCase):
         response = self.get(url, {'enabled': False})
         self.assertEqual(len(response.data), n)
 
+    def test_create_endpoint(self):
+        """Test that the DETAIL endpoint works for each report."""
+        if not self.detail_url:
+            return
+
+        url = reverse(self.detail_url)
+
+        # Create a new report
+        response = self.post(
+            url,
+            data={
+                'name': 'New report',
+                'description': 'A fancy new report created through API test',
+            },
+            files={
+                'template': (
+                    'ExampleTemplate.html',
+                    '{% extends "label/report_base.html" %}<pre>TEST REPORT</pre>{% endblock content %}',
+                )
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Make sure the expected keys are in the response
+        self.assertIn('pk', response)
+        self.assertIn('name', response)
+        self.assertIn('description', response)
+        self.assertIn('template', response)
+        self.assertIn('filters', response)
+        self.assertIn('enabled', response)
+
+        self.assertEqual(response['name'], 'New report')
+        self.assertEqual(
+            response['name'], 'A fancy new report created through API test'
+        )
+        self.assertTrue(response['template'].endswith('ExampleTemplate.html'))
+
+    def test_detail_endpoint(self):
+        """Test that the DETAIL endpoint works for each report."""
+        if not self.detail_url:
+            return
+
+        url = reverse(self.detail_url)
+
+        reports = self.model.objects.all()
+
+        n = len(reports)
+
+        # Make sure at least one report defined
+        self.assertGreaterEqual(n, 1)
+
+        # Check detail page for first report
+        response = self.get(f'{url}/{reports[0].pk}')
+        self.assertEqual(response.status_code, 200)
+
+        # Make sure the expected keys are in the response
+        self.assertIn('pk', response)
+        self.assertIn('name', response)
+        self.assertIn('description', response)
+        self.assertIn('template', response)
+        self.assertIn('filters', response)
+        self.assertIn('enabled', response)
+
+        # Check PATCH method
+        response = self.patch(
+            f'{url}/{reports[0].pk}', {'name': 'Changed name during test'}
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Make sure the expected keys are in the response
+        self.assertIn('pk', response)
+        self.assertIn('name', response)
+        self.assertIn('description', response)
+        self.assertIn('template', response)
+        self.assertIn('filters', response)
+        self.assertIn('enabled', response)
+
+        self.assertEqual(response['name'], 'Changed name during test')
+
     def test_metadata(self):
         """Unit tests for the metadata field."""
         if self.model is not None:
