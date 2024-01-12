@@ -1,6 +1,7 @@
 """OpenTelemetry setup functions."""
 
 import logging
+from typing import Optional
 
 from opentelemetry import metrics, trace
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
@@ -26,7 +27,7 @@ from InvenTree.version import inventreeVersion
 def setup_tracing(
     endpoint: str,
     headers: dict,
-    resources_input: dict | None = None,
+    resources_input: Optional[dict] = None,
     console: bool = False,
 ):
     """Set up tracing for the application in the current context.
