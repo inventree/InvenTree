@@ -22,8 +22,8 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
 from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
                                SEARCH_ORDER_FILTER_ALIAS, InvenTreeDateFilter,
                                InvenTreeSearchFilter)
-from InvenTree.helpers import (DownloadFile, increment_serial_number, isNull,
-                               str2bool, str2int)
+from InvenTree.helpers import (DownloadFile, increment_serial_number, is_ajax,
+                               isNull, str2bool, str2int)
 from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
                               ListAPI, ListCreateAPI, RetrieveAPI,
                               RetrieveUpdateAPI, RetrieveUpdateDestroyAPI,
@@ -1069,7 +1069,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         """
         if page is not None:
             return self.get_paginated_response(data)
-        elif request.is_ajax():
+        elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
@@ -1740,7 +1740,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         """
         if page is not None:
             return self.get_paginated_response(data)
-        elif request.is_ajax():
+        elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
