@@ -274,7 +274,7 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), n)
 
     def test_create_endpoint(self):
-        """Test that the DETAIL endpoint works for each report."""
+        """Test that creating a new report works for each report."""
         if not self.list_url:
             return
 
