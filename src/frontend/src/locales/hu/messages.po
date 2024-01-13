@@ -51,6 +51,7 @@ msgstr ""
 
 #: src/components/forms/ApiForm.tsx:481
 #: src/components/items/ActionDropdown.tsx:173
+#: src/components/tables/InvenTreeTable.tsx:383
 #: src/components/tables/RowActions.tsx:70
 #: src/functions/forms.tsx:306
 #: src/hooks/UseForm.tsx:117
@@ -114,6 +115,10 @@ msgstr "Üdvözlet, bejelentkezés lent"
 #: src/components/tables/settings/UserTable.tsx:163
 msgid "Username"
 msgstr "Felhasználónév"
+
+#: src/components/forms/AuthenticationForm.tsx:92
+msgid "Your username"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:106
@@ -220,7 +225,7 @@ msgstr "Státusz: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
-#: src/components/tables/InvenTreeTable.tsx:331
+#: src/components/tables/InvenTreeTable.tsx:343
 #: src/components/tables/plugin/PluginListTable.tsx:364
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -307,7 +312,7 @@ msgid "Read More"
 msgstr "Tudj meg többet"
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/components/tables/InvenTreeTable.tsx:323
+#: src/components/tables/InvenTreeTable.tsx:335
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
@@ -595,7 +600,7 @@ msgstr "Rendszerbeállítások"
 
 #: src/components/nav/MainMenu.tsx:59
 #: src/defaults/menuItems.tsx:63
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:109
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:120
 msgid "Admin Center"
 msgstr "Admin központ"
 
@@ -637,7 +642,7 @@ msgid "Pages"
 msgstr "Oldalak"
 
 #: src/components/nav/NavigationDrawer.tsx:67
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:76
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:87
 msgid "Plugins"
 msgstr "Pluginok"
 
@@ -822,7 +827,7 @@ msgid "Project Code"
 msgstr "Projektszám"
 
 #: src/components/render/ModelType.tsx:98
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:52
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:63
 msgid "Project Codes"
 msgstr "Projektszámok"
 
@@ -913,7 +918,7 @@ msgid "User"
 msgstr "Felhasználó"
 
 #: src/components/render/ModelType.tsx:162
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:46
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:51
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
 msgstr "Felhasználók"
@@ -1095,6 +1100,7 @@ msgid "Table Filters"
 msgstr ""
 
 #: src/components/tables/FilterSelectDrawer.tsx:209
+#: src/components/tables/InvenTreeTable.tsx:384
 #: src/components/tables/plugin/PluginListTable.tsx:333
 #: src/contexts/ThemeContext.tsx:64
 #: src/functions/forms.tsx:202
@@ -1126,47 +1132,68 @@ msgstr ""
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/InvenTreeTable.tsx:71
-#: src/components/tables/InvenTreeTable.tsx:267
-#: src/components/tables/InvenTreeTable.tsx:288
+#: src/components/tables/InvenTreeTable.tsx:83
+#: src/components/tables/InvenTreeTable.tsx:279
+#: src/components/tables/InvenTreeTable.tsx:300
 msgid "No records found"
 msgstr "Nincs találat"
 
-#: src/components/tables/InvenTreeTable.tsx:302
+#: src/components/tables/InvenTreeTable.tsx:314
 msgid "Server returned incorrect data type"
 msgstr "A szerver hibás adattípust küldött vissza"
 
-#: src/components/tables/InvenTreeTable.tsx:310
+#: src/components/tables/InvenTreeTable.tsx:322
 msgid "Bad request"
 msgstr "Hibás kérés"
 
-#: src/components/tables/InvenTreeTable.tsx:313
+#: src/components/tables/InvenTreeTable.tsx:325
 msgid "Unauthorized"
 msgstr "Jogosulatlan"
 
-#: src/components/tables/InvenTreeTable.tsx:316
+#: src/components/tables/InvenTreeTable.tsx:328
 msgid "Forbidden"
 msgstr "Tiltott"
 
-#: src/components/tables/InvenTreeTable.tsx:319
+#: src/components/tables/InvenTreeTable.tsx:331
 msgid "Not found"
 msgstr "Nem található"
 
-#: src/components/tables/InvenTreeTable.tsx:374
-#: src/components/tables/InvenTreeTable.tsx:375
+#: src/components/tables/InvenTreeTable.tsx:373
+#: src/components/tables/InvenTreeTable.tsx:457
+msgid "Delete selected records"
+msgstr ""
+
+#: src/components/tables/InvenTreeTable.tsx:377
+msgid "Are you sure you want to delete the selected records?"
+msgstr ""
+
+#: src/components/tables/InvenTreeTable.tsx:379
+msgid "This action cannot be undone!"
+msgstr ""
+
+#: src/components/tables/InvenTreeTable.tsx:405
+msgid "Deleted records"
+msgstr ""
+
+#: src/components/tables/InvenTreeTable.tsx:406
+msgid "Records were deleted successfully"
+msgstr ""
+
+#: src/components/tables/InvenTreeTable.tsx:438
+#: src/components/tables/InvenTreeTable.tsx:439
 msgid "Barcode actions"
 msgstr "Vonalkód műveletek"
 
-#: src/components/tables/InvenTreeTable.tsx:383
-#: src/components/tables/InvenTreeTable.tsx:384
+#: src/components/tables/InvenTreeTable.tsx:447
+#: src/components/tables/InvenTreeTable.tsx:448
 msgid "Print actions"
 msgstr "Nyomtatási műveletek"
 
-#: src/components/tables/InvenTreeTable.tsx:400
+#: src/components/tables/InvenTreeTable.tsx:473
 msgid "Refresh data"
 msgstr "Adatok frissítése"
 
-#: src/components/tables/InvenTreeTable.tsx:419
+#: src/components/tables/InvenTreeTable.tsx:492
 msgid "Table filters"
 msgstr "Táblaszűrők"
 
@@ -1615,6 +1642,7 @@ msgid "Message"
 msgstr "Üzenet"
 
 #: src/components/tables/part/PartCategoryTable.tsx:33
+#: src/components/tables/settings/ErrorTable.tsx:34
 #: src/components/tables/stock/StockLocationTable.tsx:57
 msgid "Path"
 msgstr "Elérési út"
@@ -2332,6 +2360,30 @@ msgstr "Egyedi mértékegység hozzáadása"
 #: src/components/tables/settings/CustomUnitsTable.tsx:97
 msgid "Custom unit created"
 msgstr "Egyedi mértékegység létrehozva"
+
+#: src/components/tables/settings/ErrorTable.tsx:29
+msgid "When"
+msgstr ""
+
+#: src/components/tables/settings/ErrorTable.tsx:39
+msgid "Error Information"
+msgstr ""
+
+#: src/components/tables/settings/ErrorTable.tsx:51
+msgid "Delete error report"
+msgstr ""
+
+#: src/components/tables/settings/ErrorTable.tsx:53
+msgid "Error report deleted"
+msgstr ""
+
+#: src/components/tables/settings/ErrorTable.tsx:54
+msgid "Are you sure you want to delete this error report?"
+msgstr ""
+
+#: src/components/tables/settings/ErrorTable.tsx:67
+msgid "Error Details"
+msgstr ""
 
 #: src/components/tables/settings/GroupTable.tsx:45
 #~ msgid "Group updated"
@@ -3810,23 +3862,27 @@ msgstr "Betöltő"
 #~ msgid "Advanced Amininistrative Options for InvenTree"
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:64
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:57
+msgid "Error Reports"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:75
 msgid "Custom Units"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:70
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:81
 msgid "Part Parameters"
 msgstr "Alkatrész paraméterek"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:86
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:97
 msgid "Quick Actions"
 msgstr "Gyors műveletek"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:91
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:102
 msgid "Add a new user"
 msgstr "Új felhasználó hozzáadása"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:110
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:121
 msgid "Advanced Options"
 msgstr "További beállítások"
 
