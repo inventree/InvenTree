@@ -8,6 +8,7 @@ from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+import django_q.models
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from error_report.models import Error
@@ -530,6 +531,15 @@ class BackgroundTaskOverview(APIView):
         return Response(serializer.data)
 
 
+class QueuedTaskList(ListAPI):
+    """Provides a read-only list of currently queued tasks."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    queryset = django_q.models.OrmQ.objects.all()
+    serializer_class = common.serializers.QueuedTaskSerializer
+
+
 class FlagList(ListAPI):
     """List view for feature flags."""
 
@@ -615,7 +625,10 @@ common_api_urls = [
     re_path(
         r'^background-task/',
         include([
-            re_path(r'^.*$', BackgroundTaskOverview.as_view(), name='api-task-overview')
+            re_path(r'^queued/', QueuedTaskList.as_view(), name='api-queued-task-list'),
+            re_path(
+                r'^.*$', BackgroundTaskOverview.as_view(), name='api-task-overview'
+            ),
         ]),
     ),
     # Project codes

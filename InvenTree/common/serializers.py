@@ -3,6 +3,7 @@
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+import django_q.models
 from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
@@ -344,4 +345,26 @@ class TaskOverviewSerializer(serializers.Serializer):
         label=_('Failed Tasks'),
         help_text='Number of failed background tasks',
         read_only=True,
+    )
+
+
+class QueuedTaskSerializer(InvenTreeModelSerializer):
+    """Serializer for an individual queued task object."""
+
+    class Meta:
+        """Metaclass options for the serializer."""
+
+        model = django_q.models.OrmQ
+        fields = ['pk', 'key', 'task_id', 'name', 'func', 'args', 'kwargs']
+
+    task_id = serializers.CharField(label=_('Task ID'), help_text=_('Unique task ID'))
+
+    name = serializers.CharField(label=_('Name'), help_text=_('Task name'))
+
+    func = serializers.CharField(label=_('Function'), help_text=_('Function name'))
+
+    args = serializers.CharField(label=_('Arguments'), help_text=_('Task arguments'))
+
+    kwargs = serializers.CharField(
+        label=_('Keyword Arguments'), help_text=_('Task keyword arguments')
     )
