@@ -52,7 +52,7 @@ class VersionView(APIView):
                 'code': InvenTree.version.inventreeGithubUrl(),
                 'credit': InvenTree.version.inventreeCreditsUrl(),
                 'app': InvenTree.version.inventreeAppUrl(),
-                'bug': f'{InvenTree.version.inventreeGithubUrl()}/issues',
+                'bug': f'{InvenTree.version.inventreeGithubUrl()}issues',
             },
         })
 
