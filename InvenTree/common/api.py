@@ -540,6 +540,15 @@ class QueuedTaskList(ListAPI):
     serializer_class = common.serializers.QueuedTaskSerializer
 
 
+class ScheduledTaskList(ListAPI):
+    """Provides a read-only list of currently scheduled tasks."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    queryset = django_q.models.Schedule.objects.all()
+    serializer_class = common.serializers.ScheduledTaskSerializer
+
+
 class FlagList(ListAPI):
     """List view for feature flags."""
 
@@ -626,6 +635,11 @@ common_api_urls = [
         r'^background-task/',
         include([
             re_path(r'^queued/', QueuedTaskList.as_view(), name='api-queued-task-list'),
+            re_path(
+                r'^scheduled/',
+                ScheduledTaskList.as_view(),
+                name='api-scheduled-task-list',
+            ),
             re_path(
                 r'^.*$', BackgroundTaskOverview.as_view(), name='api-task-overview'
             ),

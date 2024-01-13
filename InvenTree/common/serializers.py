@@ -368,3 +368,23 @@ class QueuedTaskSerializer(InvenTreeModelSerializer):
     kwargs = serializers.CharField(
         label=_('Keyword Arguments'), help_text=_('Task keyword arguments')
     )
+
+
+class ScheduledTaskSerializer(InvenTreeModelSerializer):
+    """Serializer for an individual scheduled task object."""
+
+    class Meta:
+        """Metaclass options for the serializer."""
+
+        model = django_q.models.Schedule
+        fields = [
+            'pk',
+            'name',
+            'func',
+            'args',
+            'kwargs',
+            'schedule_type',
+            'repeats',
+            'next_run',
+            'task',
+        ]
