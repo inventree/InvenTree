@@ -492,6 +492,14 @@ class ErrorMessageList(BulkDeleteMixin, ListAPI):
     serializer_class = common.serializers.ErrorMessageSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering = '-when'
+
+    ordering_fields = ['when', 'info']
+
+    search_fields = ['info', 'data']
+
 
 class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
     """Detail view for a single error message."""

@@ -19,11 +19,13 @@ export default function ErrorReportTable() {
     return [
       {
         accessor: 'when',
-        title: t`When`
+        title: t`When`,
+        sortable: true
       },
       {
         accessor: 'path',
-        title: t`Path`
+        title: t`Path`,
+        sortable: true
       },
       {
         accessor: 'info',

@@ -333,6 +333,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required."""
         # Check if 'available' quantity was supplied
+
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
         brief = kwargs.pop('brief', False)
