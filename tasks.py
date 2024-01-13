@@ -292,23 +292,24 @@ def translate_stats(c):
 
 
 @task(post=[translate_stats])
-def translate(c):
+def translate(c, ignore_static=False, no_frontend=False):
     """Rebuild translation source files. Advanced use only!
 
     Note: This command should not be used on a local install,
     it is performed as part of the InvenTree translation toolchain.
     """
-    # Translate applicable .py / .html / .js / .tsx files
+    # Translate applicable .py / .html / .js files
     manage(c, 'makemessages --all -e py,html,js --no-wrap')
     manage(c, 'compilemessages')
 
-    if node_available():
+    if not no_frontend and node_available():
         frontend_install(c)
         frontend_trans(c)
         frontend_build(c)
 
     # Update static files
-    static(c)
+    if not ignore_static:
+        static(c)
 
 
 @task
