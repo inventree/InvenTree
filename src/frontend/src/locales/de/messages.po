@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-12-31 08:48\n"
+"PO-Revision-Date: 2024-01-13 12:15\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -118,7 +118,7 @@ msgstr "Nutzername"
 
 #: src/components/forms/AuthenticationForm.tsx:92
 msgid "Your username"
-msgstr ""
+msgstr "Ihr Benutzername"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:106
@@ -414,7 +414,7 @@ msgstr "Django-Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:147
 msgid "Links"
-msgstr ""
+msgstr "Links"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:153
 msgid "InvenTree Documentation"
@@ -468,7 +468,7 @@ msgstr "Scannen"
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/pages/Index/Scan.tsx:724
 msgid "Not scanning"
-msgstr ""
+msgstr "Es wird nicht gescannt"
 
 #: src/components/modals/QrCodeModal.tsx:159
 #: src/pages/Index/Scan.tsx:730
@@ -478,12 +478,12 @@ msgstr "Kamera auswählen"
 #: src/components/modals/QrCodeModal.tsx:169
 #: src/pages/Index/Scan.tsx:716
 msgid "Start scanning"
-msgstr ""
+msgstr "Scan starten"
 
 #: src/components/modals/QrCodeModal.tsx:176
 #: src/pages/Index/Scan.tsx:710
 msgid "Stop scanning"
-msgstr ""
+msgstr "Scan stoppen"
 
 #: src/components/modals/QrCodeModal.tsx:181
 msgid "No scans yet!"
@@ -676,7 +676,7 @@ msgstr "Als gelesen markieren"
 #: src/pages/Index/Settings/SystemSettings.tsx:165
 #: src/pages/part/CategoryDetail.tsx:60
 msgid "Part Categories"
-msgstr ""
+msgstr "Teil-Kategorien"
 
 #: src/components/nav/SearchDrawer.tsx:76
 msgid "results"
@@ -696,7 +696,7 @@ msgstr "Regex Suche"
 
 #: src/components/nav/SearchDrawer.tsx:377
 msgid "Whole word search"
-msgstr ""
+msgstr "Volltextsuche"
 
 #: src/components/nav/SearchDrawer.tsx:415
 msgid "An error occurred during search query"
@@ -747,11 +747,11 @@ msgstr "Teile"
 
 #: src/components/render/ModelType.tsx:29
 msgid "Part Parameter Template"
-msgstr ""
+msgstr "Teil Parametervorlage"
 
 #: src/components/render/ModelType.tsx:30
 msgid "Part Parameter Templates"
-msgstr ""
+msgstr "Teil Parametervorlagen"
 
 #: src/components/render/ModelType.tsx:36
 #: src/components/tables/purchasing/SupplierPartTable.tsx:57
@@ -798,7 +798,7 @@ msgstr "Lagerhistorie"
 
 #: src/components/render/ModelType.tsx:77
 msgid "Stock Histories"
-msgstr ""
+msgstr "Bestandshistorie"
 
 #: src/components/render/ModelType.tsx:81
 #: src/defaults/links.tsx:29
@@ -808,7 +808,7 @@ msgstr "Version"
 
 #: src/components/render/ModelType.tsx:82
 msgid "Builds"
-msgstr ""
+msgstr "Builds"
 
 #: src/components/render/ModelType.tsx:89
 #: src/pages/company/CompanyDetail.tsx:199
@@ -4338,3 +4338,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
