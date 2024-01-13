@@ -9,6 +9,7 @@ import {
 } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { modals } from '@mantine/modals';
+import { showNotification } from '@mantine/notifications';
 import { IconFilter, IconRefresh, IconTrash } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -398,6 +399,13 @@ export function InvenTreeTable<T = any>({
           .then((_response) => {
             // Refresh the table
             refetch();
+
+            // Show notification
+            showNotification({
+              title: t`Deleted records`,
+              message: t`Records were deleted successfully`,
+              color: 'green'
+            });
           })
           .catch((_error) => {
             console.warn(`Bulk delete operation failed at ${url}`);

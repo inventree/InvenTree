@@ -1,10 +1,13 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { Drawer, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { openDeleteApiForm } from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
+import { StylishText } from '../../items/StylishText';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction } from '../RowActions';
@@ -14,6 +17,10 @@ import { RowAction, RowDeleteAction } from '../RowActions';
  */
 export default function ErrorReportTable() {
   const table = useTable('error-report');
+
+  const [error, setError] = useState<string>('');
+
+  const [opened, { open, close }] = useDisclosure(false);
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -52,15 +59,33 @@ export default function ErrorReportTable() {
   }, []);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiPaths.error_report_list)}
-      tableState={table}
-      columns={columns}
-      props={{
-        enableBulkDelete: true,
-        enableSelection: true,
-        rowActions: rowActions
-      }}
-    />
+    <>
+      <Drawer
+        opened={opened}
+        size="xl"
+        position="right"
+        title={<StylishText>{t`Error Details`}</StylishText>}
+        onClose={close}
+      >
+        {error.split('\n').map((line: string) => {
+          return <Text size="sm">{line}</Text>;
+        })}
+      </Drawer>
+      <InvenTreeTable
+        url={apiUrl(ApiPaths.error_report_list)}
+        tableState={table}
+        columns={columns}
+        props={{
+          enableBulkDelete: true,
+          enableSelection: true,
+          rowActions: rowActions,
+          onRowClick: (row) => {
+            console.log(row);
+            setError(row.data);
+            open();
+          }
+        }}
+      />
+    </>
   );
 }
