@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from error_report.models import Error
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.permissions import IsAdminUser
@@ -462,6 +463,30 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
+class ErrorMessageList(BulkDeleteMixin, ListAPI):
+    """List view for server error messages."""
+
+    queryset = Error.objects.all()
+    serializer_class = common.serializers.ErrorMessageSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering = '-when'
+
+    ordering_fields = ['when', 'info']
+
+    search_fields = ['info', 'data']
+
+
+class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a single error message."""
+
+    queryset = Error.objects.all()
+    serializer_class = common.serializers.ErrorMessageSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+
 class FlagList(ListAPI):
     """List view for feature flags."""
 
@@ -620,6 +645,14 @@ common_api_urls = [
             ),
             # Notification messages list
             re_path(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
+        ]),
+    ),
+    # Error information
+    re_path(
+        r'^error-report/',
+        include([
+            path(r'<int:pk>/', ErrorMessageDetail.as_view(), name='api-error-detail'),
+            re_path(r'^.*$', ErrorMessageList.as_view(), name='api-error-list'),
         ]),
     ),
     # Flags
