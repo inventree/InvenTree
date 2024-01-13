@@ -549,6 +549,15 @@ class ScheduledTaskList(ListAPI):
     serializer_class = common.serializers.ScheduledTaskSerializer
 
 
+class FailedTaskList(ListAPI):
+    """Provides a read-only list of currently failed tasks."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    queryset = django_q.models.Failure.objects.all()
+    serializer_class = common.serializers.FailedTaskSerializer
+
+
 class FlagList(ListAPI):
     """List view for feature flags."""
 
@@ -640,6 +649,7 @@ common_api_urls = [
                 ScheduledTaskList.as_view(),
                 name='api-scheduled-task-list',
             ),
+            re_path(r'^failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
             re_path(
                 r'^.*$', BackgroundTaskOverview.as_view(), name='api-task-overview'
             ),

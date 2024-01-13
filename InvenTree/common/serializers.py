@@ -388,3 +388,23 @@ class ScheduledTaskSerializer(InvenTreeModelSerializer):
             'next_run',
             'task',
         ]
+
+
+class FailedTaskSerializer(InvenTreeModelSerializer):
+    """Serializer for an individual failed task object."""
+
+    class Meta:
+        """Metaclass options for the serializer."""
+
+        model = django_q.models.Failure
+        fields = [
+            'id',
+            'name',
+            'func',
+            'args',
+            'kwargs',
+            'started',
+            'stopped',
+            'attempt_count',
+            'result',
+        ]
