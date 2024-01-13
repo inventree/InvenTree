@@ -347,7 +347,7 @@ def heartbeat():
     (There is probably a less "hacky" way of achieving this)?
     """
     try:
-        from django_q.models import Success
+        from django_q.models import OrmQ, Success
     except AppRegistryNotReady:  # pragma: no cover
         logger.info('Could not perform heartbeat task - App registry not ready')
         return
@@ -361,6 +361,11 @@ def heartbeat():
     )
 
     heartbeats.delete()
+
+    # Clear out any other pending heartbeat tasks
+    for task in OrmQ.objects.all():
+        if task.func() == 'InvenTree.tasks.heartbeat':
+            task.delete()
 
 
 @scheduled_task(ScheduledTask.DAILY)
