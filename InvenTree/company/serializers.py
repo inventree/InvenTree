@@ -337,6 +337,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
         read_only_fields = [
             'availability_updated',
             'barcode_hash',
+            'pack_quantity_native',
         ]
 
     tags = TagListSerializerField(required=False)
@@ -374,6 +375,8 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(read_only=True)
     available = serializers.FloatField(required=False)
+
+    pack_quantity_native = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
