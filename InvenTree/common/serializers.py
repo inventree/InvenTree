@@ -1,6 +1,7 @@
 """JSON serializers for common components."""
 
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from error_report.models import Error
 from flags.state import flag_state
@@ -316,3 +317,31 @@ class ErrorMessageSerializer(InvenTreeModelSerializer):
         fields = ['when', 'info', 'data', 'path', 'pk']
 
         read_only_fields = ['when', 'info', 'data', 'path', 'pk']
+
+
+class TaskOverviewSerializer(serializers.Serializer):
+    """Serializer for background task overview."""
+
+    is_running = serializers.BooleanField(
+        label=_('Is Running'),
+        help_text='Boolean value to indicate if the background worker process is running.',
+        read_only=True,
+    )
+
+    queued_tasks = serializers.IntegerField(
+        label=_('Queued Tasks'),
+        help_text='Number of active background tasks',
+        read_only=True,
+    )
+
+    scheduled_tasks = serializers.IntegerField(
+        label=_('Scheduled Tasks'),
+        help_text='Number of scheduled background tasks',
+        read_only=True,
+    )
+
+    failed_tasks = serializers.IntegerField(
+        label=_('Failed Tasks'),
+        help_text='Number of failed background tasks',
+        read_only=True,
+    )

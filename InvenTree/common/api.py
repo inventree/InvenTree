@@ -509,6 +509,27 @@ class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
 
+class BackgroundTaskOverview(APIView):
+    """Provides an overview of the background task queue status."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def get(self, request, format=None):
+        """Return information about the current status of the background task queue."""
+        import django_q.models as q_models
+
+        import InvenTree.status
+
+        serializer = common.serializers.TaskOverviewSerializer({
+            'is_running': InvenTree.status.is_worker_running(),
+            'queued_tasks': q_models.OrmQ.objects.count(),
+            'scheduled_tasks': q_models.Schedule.objects.count(),
+            'failed_tasks': q_models.Failure.objects.count(),
+        })
+
+        return Response(serializer.data)
+
+
 class FlagList(ListAPI):
     """List view for feature flags."""
 
@@ -589,6 +610,13 @@ common_api_urls = [
     # Uploaded images for notes
     re_path(
         r'^notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'
+    ),
+    # Background task information
+    re_path(
+        r'^background-task/',
+        include([
+            re_path(r'^.*$', BackgroundTaskOverview.as_view(), name='api-task-overview')
+        ]),
     ),
     # Project codes
     re_path(
