@@ -13,12 +13,18 @@ export default function PendingTasksTable() {
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'name',
-        title: t`Name`
+        accessor: 'func',
+        title: t`Task`,
+        sortable: true
       },
       {
-        accessor: 'func',
-        title: t`Task`
+        accessor: 'lock',
+        title: t`Task Created`,
+        sortable: true
+      },
+      {
+        accessor: 'name',
+        title: t`Name`
       }
     ];
   }, []);

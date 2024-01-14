@@ -356,9 +356,11 @@ class PendingTaskSerializer(InvenTreeModelSerializer):
         """Metaclass options for the serializer."""
 
         model = django_q.models.OrmQ
-        fields = ['pk', 'key', 'task_id', 'name', 'func', 'args', 'kwargs']
+        fields = ['pk', 'key', 'lock', 'task_id', 'name', 'func', 'args', 'kwargs']
 
     task_id = serializers.CharField(label=_('Task ID'), help_text=_('Unique task ID'))
+
+    lock = serializers.DateTimeField(label=_('Lock'), help_text=_('Lock time'))
 
     name = serializers.CharField(label=_('Name'), help_text=_('Task name'))
 

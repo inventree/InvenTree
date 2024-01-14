@@ -568,6 +568,12 @@ class FailedTaskList(ListAPI):
     queryset = django_q.models.Failure.objects.all()
     serializer_class = common.serializers.FailedTaskSerializer
 
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['pk', 'func', 'started', 'stopped']
+
+    search_fields = ['func']
+
 
 class FlagList(ListAPI):
     """List view for feature flags."""

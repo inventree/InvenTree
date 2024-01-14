@@ -14,15 +14,18 @@ export default function FailedTasksTable() {
     return [
       {
         accessor: 'func',
-        title: t`Task`
+        title: t`Task`,
+        sortable: true
       },
       {
         accessor: 'started',
-        title: t`Started`
+        title: t`Started`,
+        sortable: true
       },
       {
         accessor: 'stopped',
-        title: t`Stopped`
+        title: t`Stopped`,
+        sortable: true
       },
       {
         accessor: 'attempt_count',
