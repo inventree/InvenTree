@@ -329,8 +329,8 @@ class TaskOverviewSerializer(serializers.Serializer):
         read_only=True,
     )
 
-    queued_tasks = serializers.IntegerField(
-        label=_('Queued Tasks'),
+    pending_tasks = serializers.IntegerField(
+        label=_('Pending Tasks'),
         help_text='Number of active background tasks',
         read_only=True,
     )
@@ -348,8 +348,8 @@ class TaskOverviewSerializer(serializers.Serializer):
     )
 
 
-class QueuedTaskSerializer(InvenTreeModelSerializer):
-    """Serializer for an individual queued task object."""
+class PendingTaskSerializer(InvenTreeModelSerializer):
+    """Serializer for an individual pending task object."""
 
     class Meta:
         """Metaclass options for the serializer."""

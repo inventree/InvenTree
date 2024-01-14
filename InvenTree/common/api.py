@@ -523,7 +523,7 @@ class BackgroundTaskOverview(APIView):
 
         serializer = common.serializers.TaskOverviewSerializer({
             'is_running': InvenTree.status.is_worker_running(),
-            'queued_tasks': q_models.OrmQ.objects.count(),
+            'pending_tasks': q_models.OrmQ.objects.count(),
             'scheduled_tasks': q_models.Schedule.objects.count(),
             'failed_tasks': q_models.Failure.objects.count(),
         })
@@ -531,13 +531,13 @@ class BackgroundTaskOverview(APIView):
         return Response(serializer.data)
 
 
-class QueuedTaskList(ListAPI):
-    """Provides a read-only list of currently queued tasks."""
+class PendingTaskList(ListAPI):
+    """Provides a read-only list of currently pending tasks."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
     queryset = django_q.models.OrmQ.objects.all()
-    serializer_class = common.serializers.QueuedTaskSerializer
+    serializer_class = common.serializers.PendingTaskSerializer
 
 
 class ScheduledTaskList(ListAPI):
@@ -643,7 +643,9 @@ common_api_urls = [
     re_path(
         r'^background-task/',
         include([
-            re_path(r'^queued/', QueuedTaskList.as_view(), name='api-queued-task-list'),
+            re_path(
+                r'^pending/', PendingTaskList.as_view(), name='api-pending-task-list'
+            ),
             re_path(
                 r'^scheduled/',
                 ScheduledTaskList.as_view(),
