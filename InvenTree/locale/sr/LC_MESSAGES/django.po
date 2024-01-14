@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-13 08:29+0000\n"
+"POT-Creation-Date: 2024-01-14 02:31+0000\n"
 "PO-Revision-Date: 2023-12-19 05:36\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
@@ -874,6 +874,14 @@ msgstr ""
 
 #: InvenTree/status_codes.py:197
 msgid "Reject"
+msgstr ""
+
+#: InvenTree/templatetags/inventree_extras.py:177
+msgid "Unknown database"
+msgstr ""
+
+#: InvenTree/templatetags/inventree_extras.py:223
+msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 msgstr ""
 
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
@@ -7363,14 +7371,6 @@ msgstr ""
 
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
-msgstr ""
-
-#: part/templatetags/inventree_extras.py:177
-msgid "Unknown database"
-msgstr ""
-
-#: part/templatetags/inventree_extras.py:223
-msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 msgstr ""
 
 #: part/views.py:111

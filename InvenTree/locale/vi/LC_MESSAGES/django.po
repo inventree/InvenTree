@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-13 08:29+0000\n"
+"POT-Creation-Date: 2024-01-14 02:31+0000\n"
 "PO-Revision-Date: 2023-12-12 03:57\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -875,6 +875,14 @@ msgstr "Hoàn tiền"
 #: InvenTree/status_codes.py:197
 msgid "Reject"
 msgstr "Từ chối"
+
+#: InvenTree/templatetags/inventree_extras.py:177
+msgid "Unknown database"
+msgstr "Không rõ cơ sở dữ liệu"
+
+#: InvenTree/templatetags/inventree_extras.py:223
+msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
+msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
@@ -7367,14 +7375,6 @@ msgstr "Tạo biến thể sản phẩm mới"
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
 msgstr "Tạo sản phẩm biến thể mới từ mẫu này"
-
-#: part/templatetags/inventree_extras.py:177
-msgid "Unknown database"
-msgstr "Không rõ cơ sở dữ liệu"
-
-#: part/templatetags/inventree_extras.py:223
-msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: part/views.py:111
 msgid "Match References"

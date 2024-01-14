@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-13 08:29+0000\n"
+"POT-Creation-Date: 2024-01-14 02:31+0000\n"
 "PO-Revision-Date: 2023-12-11 03:45\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -875,6 +875,14 @@ msgstr "Visszatérítés"
 #: InvenTree/status_codes.py:197
 msgid "Reject"
 msgstr "Elutasított"
+
+#: InvenTree/templatetags/inventree_extras.py:177
+msgid "Unknown database"
+msgstr "Ismeretlen adatbázis"
+
+#: InvenTree/templatetags/inventree_extras.py:223
+msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
+msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
@@ -7369,14 +7377,6 @@ msgstr "Alkatrész változat létrehozása"
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
 msgstr "Új alkatrészváltozat létrehozása ebből a sablonból"
-
-#: part/templatetags/inventree_extras.py:177
-msgid "Unknown database"
-msgstr "Ismeretlen adatbázis"
-
-#: part/templatetags/inventree_extras.py:223
-msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: part/views.py:111
 msgid "Match References"

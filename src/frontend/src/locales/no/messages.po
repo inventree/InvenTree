@@ -240,7 +240,7 @@ msgid "Search"
 msgstr "Søk"
 
 #: src/components/forms/fields/RelatedModelField.tsx:211
-#: src/components/modals/AboutInvenTreeModal.tsx:67
+#: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:301
 msgid "Loading"
@@ -333,7 +333,7 @@ msgid "InvenTree Logo"
 msgstr "InvenTree-logo"
 
 #: src/components/items/OnlyStaff.tsx:9
-#: src/components/modals/AboutInvenTreeModal.tsx:30
+#: src/components/modals/AboutInvenTreeModal.tsx:44
 msgid "This information is only available for staff users"
 msgstr "Denne informasjonen er bare tilgjengelig for ansatte"
 
@@ -363,82 +363,87 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nei"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:85
-msgid "Your InvenTree version status is"
-msgstr "Din InvenTree versjonstatus er"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:89
-msgid "Development Version"
-msgstr "Utviklingsversjon"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:93
-msgid "Up to Date"
-msgstr "Oppdatert"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:97
-msgid "Update Available"
-msgstr "Oppdatering er tilgjengelig"
-
-#: src/components/modals/AboutInvenTreeModal.tsx:102
+#: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Version Information"
 msgstr "Versjoninformasjon"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:110
+#: src/components/modals/AboutInvenTreeModal.tsx:103
+msgid "Your InvenTree version status is"
+msgstr "Din InvenTree versjonstatus er"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:107
+msgid "Development Version"
+msgstr "Utviklingsversjon"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:111
+msgid "Up to Date"
+msgstr "Oppdatert"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:115
+msgid "Update Available"
+msgstr "Oppdatering er tilgjengelig"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:125
 msgid "InvenTree Version"
 msgstr "InvenTree-versjon"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:116
+#: src/components/modals/AboutInvenTreeModal.tsx:131
 msgid "Commit Hash"
 msgstr "Commit-hash"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:121
+#: src/components/modals/AboutInvenTreeModal.tsx:136
 msgid "Commit Date"
 msgstr "Commit-dato"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:126
+#: src/components/modals/AboutInvenTreeModal.tsx:141
 msgid "Commit Branch"
 msgstr "Commit Branch"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:131
-#: src/components/modals/ServerInfoModal.tsx:124
+#: src/components/modals/AboutInvenTreeModal.tsx:146
+#: src/components/modals/ServerInfoModal.tsx:133
 msgid "API Version"
 msgstr "API-versjon"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:134
+#: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Python Version"
 msgstr "Python-versjon"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:137
+#: src/components/modals/AboutInvenTreeModal.tsx:152
 msgid "Django Version"
 msgstr "Django-versjon"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:147
+#: src/components/modals/AboutInvenTreeModal.tsx:162
 msgid "Links"
 msgstr "Lenker"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:153
+#: src/components/modals/AboutInvenTreeModal.tsx:168
 msgid "InvenTree Documentation"
 msgstr "InvenTree-dokumentasjon"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:154
+#: src/components/modals/AboutInvenTreeModal.tsx:169
 msgid "View Code on GitHub"
 msgstr "Vis koden på GitHub"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:155
+#: src/components/modals/AboutInvenTreeModal.tsx:170
 msgid "Credits"
 msgstr "Krediteringer"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:156
+#: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Mobile App"
 msgstr "Mobilapp"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:157
+#: src/components/modals/AboutInvenTreeModal.tsx:172
 msgid "Submit Bug Report"
 msgstr "Send feilrapport"
 
-#: src/components/modals/AboutInvenTreeModal.tsx:167
+#: src/components/modals/AboutInvenTreeModal.tsx:183
 msgid "Copy version information"
 msgstr "Kopiér versjonsinformasjon"
+
+#: src/components/modals/AboutInvenTreeModal.tsx:192
+#: src/components/modals/ServerInfoModal.tsx:147
+msgid "Dismiss"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
@@ -490,90 +495,89 @@ msgid "No scans yet!"
 msgstr "Ingen skanninger enda!"
 
 #: src/components/modals/QrCodeModal.tsx:201
-#: src/components/modals/ServerInfoModal.tsx:137
 msgid "Close modal"
 msgstr "Lukk modal"
 
-#: src/components/modals/ServerInfoModal.tsx:17
-#: src/pages/Index/Settings/SystemSettings.tsx:36
+#: src/components/modals/ServerInfoModal.tsx:26
+#: src/pages/Index/Settings/SystemSettings.tsx:37
 msgid "Server"
 msgstr "Server"
 
-#: src/components/modals/ServerInfoModal.tsx:23
+#: src/components/modals/ServerInfoModal.tsx:32
 msgid "Instance Name"
 msgstr "Instansnavn"
 
-#: src/components/modals/ServerInfoModal.tsx:29
+#: src/components/modals/ServerInfoModal.tsx:38
 msgid "Database"
 msgstr "Database"
-
-#: src/components/modals/ServerInfoModal.tsx:38
-msgid "Debug Mode"
-msgstr "Feilsøkingsmodus"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 #~ msgid "Bebug Mode"
 #~ msgstr "Bebug Mode"
 
-#: src/components/modals/ServerInfoModal.tsx:41
+#: src/components/modals/ServerInfoModal.tsx:47
+msgid "Debug Mode"
+msgstr "Feilsøkingsmodus"
+
+#: src/components/modals/ServerInfoModal.tsx:50
 msgid "Server is running in debug mode"
 msgstr "Serveren kjører i debug-modus"
 
-#: src/components/modals/ServerInfoModal.tsx:48
+#: src/components/modals/ServerInfoModal.tsx:57
 msgid "Docker Mode"
 msgstr "Docker-modus"
 
-#: src/components/modals/ServerInfoModal.tsx:51
+#: src/components/modals/ServerInfoModal.tsx:60
 msgid "Server is deployed using docker"
 msgstr "Serveren er distribuert ved hjelp av docker"
 
-#: src/components/modals/ServerInfoModal.tsx:57
+#: src/components/modals/ServerInfoModal.tsx:66
 msgid "Plugin Support"
 msgstr "Støtte for utvidelser"
 
-#: src/components/modals/ServerInfoModal.tsx:62
+#: src/components/modals/ServerInfoModal.tsx:71
 msgid "Plugin support enabled"
 msgstr "Utvidelsesstøtte aktivert"
 
-#: src/components/modals/ServerInfoModal.tsx:64
+#: src/components/modals/ServerInfoModal.tsx:73
 msgid "Plugin support disabled"
 msgstr "Utvidelsesstøtte deaktivert"
 
-#: src/components/modals/ServerInfoModal.tsx:71
+#: src/components/modals/ServerInfoModal.tsx:80
 msgid "Server status"
 msgstr "Serverstatus"
 
-#: src/components/modals/ServerInfoModal.tsx:77
+#: src/components/modals/ServerInfoModal.tsx:86
 msgid "Healthy"
 msgstr "Frisk"
 
-#: src/components/modals/ServerInfoModal.tsx:79
+#: src/components/modals/ServerInfoModal.tsx:88
 msgid "Issues detected"
 msgstr "Problemer oppdaget"
 
-#: src/components/modals/ServerInfoModal.tsx:88
+#: src/components/modals/ServerInfoModal.tsx:97
 msgid "Background Worker"
 msgstr "Bakgrunnsarbeider"
 
-#: src/components/modals/ServerInfoModal.tsx:92
+#: src/components/modals/ServerInfoModal.tsx:101
 msgid "Background worker not running"
 msgstr "Bakgrunnsarbeider kjører ikke"
 
-#: src/components/modals/ServerInfoModal.tsx:100
+#: src/components/modals/ServerInfoModal.tsx:109
 msgid "Email Settings"
 msgstr "E-Post-Innstillinger"
 
-#: src/components/modals/ServerInfoModal.tsx:104
+#: src/components/modals/ServerInfoModal.tsx:113
 msgid "Email settings not configured"
 msgstr "E-postinnstillinger ikke konfigurert"
 
-#: src/components/modals/ServerInfoModal.tsx:112
+#: src/components/modals/ServerInfoModal.tsx:121
 #: src/components/tables/plugin/PluginListTable.tsx:175
 #: src/components/tables/plugin/PluginListTable.tsx:287
 msgid "Version"
 msgstr "Versjon"
 
-#: src/components/modals/ServerInfoModal.tsx:118
+#: src/components/modals/ServerInfoModal.tsx:127
 msgid "Server Version"
 msgstr "Serverversjon"
 
@@ -594,7 +598,7 @@ msgstr "Kontoinnstillinger"
 
 #: src/components/nav/MainMenu.tsx:49
 #: src/defaults/menuItems.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:267
+#: src/pages/Index/Settings/SystemSettings.tsx:282
 msgid "System Settings"
 msgstr "Systeminnstillinger"
 
@@ -655,7 +659,7 @@ msgid "About"
 msgstr "Om"
 
 #: src/components/nav/NotificationDrawer.tsx:70
-#: src/pages/Index/Settings/SystemSettings.tsx:101
+#: src/pages/Index/Settings/SystemSettings.tsx:102
 #: src/pages/Index/Settings/UserSettings.tsx:94
 #: src/pages/Notifications.tsx:28
 #: src/pages/Notifications.tsx:100
@@ -666,14 +670,20 @@ msgstr "Varlser"
 msgid "You have no unread notifications."
 msgstr "Du har ingen uleste varsler."
 
-#: src/components/nav/NotificationDrawer.tsx:122
+#: src/components/nav/NotificationDrawer.tsx:102
+#: src/components/nav/NotificationDrawer.tsx:108
+#: src/components/tables/notifications/NotificationsTable.tsx:34
+msgid "Notification"
+msgstr "Varsel"
+
+#: src/components/nav/NotificationDrawer.tsx:128
 #: src/pages/Notifications.tsx:36
 msgid "Mark as read"
 msgstr "Merk som lest"
 
 #: src/components/nav/PartCategoryTree.tsx:80
 #: src/components/render/ModelType.tsx:53
-#: src/pages/Index/Settings/SystemSettings.tsx:165
+#: src/pages/Index/Settings/SystemSettings.tsx:166
 #: src/pages/part/CategoryDetail.tsx:60
 msgid "Part Categories"
 msgstr "Delkategorier"
@@ -736,9 +746,9 @@ msgstr "Del"
 
 #: src/components/render/ModelType.tsx:22
 #: src/components/tables/part/PartCategoryTable.tsx:46
-#: src/defaults/links.tsx:27
+#: src/defaults/links.tsx:28
 #: src/defaults/menuItems.tsx:33
-#: src/pages/Index/Settings/SystemSettings.tsx:170
+#: src/pages/Index/Settings/SystemSettings.tsx:171
 #: src/pages/part/CategoryDetail.tsx:46
 #: src/pages/part/CategoryDetail.tsx:82
 #: src/pages/part/PartDetail.tsx:251
@@ -801,7 +811,7 @@ msgid "Stock Histories"
 msgstr "Lagerhistorikk"
 
 #: src/components/render/ModelType.tsx:81
-#: src/defaults/links.tsx:29
+#: src/defaults/links.tsx:30
 #: src/defaults/menuItems.tsx:43
 msgid "Build"
 msgstr "Produksjon"
@@ -837,7 +847,7 @@ msgid "Purchase Order"
 msgstr "Innkjøpsordre"
 
 #: src/components/render/ModelType.tsx:105
-#: src/pages/Index/Settings/SystemSettings.tsx:234
+#: src/pages/Index/Settings/SystemSettings.tsx:235
 #: src/pages/company/CompanyDetail.tsx:90
 #: src/pages/part/PartDetail.tsx:183
 #: src/pages/purchasing/PurchasingIndex.tsx:20
@@ -859,7 +869,7 @@ msgid "Sales Order"
 msgstr "Salgsordre"
 
 #: src/components/render/ModelType.tsx:118
-#: src/pages/Index/Settings/SystemSettings.tsx:247
+#: src/pages/Index/Settings/SystemSettings.tsx:248
 #: src/pages/company/CompanyDetail.tsx:108
 #: src/pages/part/PartDetail.tsx:189
 #: src/pages/sales/SalesIndex.tsx:21
@@ -881,6 +891,7 @@ msgid "Return Order"
 msgstr "Returordre"
 
 #: src/components/render/ModelType.tsx:133
+#: src/pages/Index/Settings/SystemSettings.tsx:262
 #: src/pages/company/CompanyDetail.tsx:117
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
@@ -1535,7 +1546,7 @@ msgid "Company Name"
 msgstr "Bedriftsnavn"
 
 #: src/components/tables/company/CompanyTable.tsx:50
-#: src/defaults/links.tsx:10
+#: src/defaults/links.tsx:11
 msgid "Website"
 msgstr "Nettside"
 
@@ -1631,10 +1642,6 @@ msgstr "Alder"
 #: src/components/tables/part/PartTable.tsx:51
 msgid "Category"
 msgstr "Kategori"
-
-#: src/components/tables/notifications/NotificationsTable.tsx:34
-msgid "Notification"
-msgstr "Varsel"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:38
 #: src/components/tables/plugin/PluginErrorTable.tsx:37
@@ -1788,9 +1795,9 @@ msgstr "IPN"
 
 #: src/components/tables/part/PartTable.tsx:63
 #: src/components/tables/stock/StockItemTable.tsx:36
-#: src/defaults/links.tsx:28
+#: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
-#: src/pages/Index/Settings/SystemSettings.tsx:201
+#: src/pages/Index/Settings/SystemSettings.tsx:202
 #: src/pages/part/PartDetail.tsx:99
 #: src/pages/stock/LocationDetail.tsx:63
 #: src/pages/stock/StockDetail.tsx:135
@@ -3044,27 +3051,27 @@ msgstr "Aktuelle nyheter"
 #~ msgid "Local Server"
 #~ msgstr "Local Server"
 
-#: src/defaults/links.tsx:15
+#: src/defaults/links.tsx:16
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/defaults/links.tsx:20
+#: src/defaults/links.tsx:21
 msgid "Demo"
 msgstr "Demo"
 
-#: src/defaults/links.tsx:25
+#: src/defaults/links.tsx:26
 #: src/defaults/menuItems.tsx:9
 msgid "Home"
 msgstr "Hjem"
 
-#: src/defaults/links.tsx:26
+#: src/defaults/links.tsx:27
 #: src/defaults/menuItems.tsx:28
 #: src/pages/Index/Dashboard.tsx:19
 #: src/pages/Index/Settings/UserSettings.tsx:41
 msgid "Dashboard"
 msgstr "Dashbord"
 
-#: src/defaults/links.tsx:30
+#: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/SupplierDetail.tsx:9
@@ -3073,7 +3080,7 @@ msgstr "Dashbord"
 msgid "Purchasing"
 msgstr "Innkjøp"
 
-#: src/defaults/links.tsx:31
+#: src/defaults/links.tsx:32
 #: src/defaults/menuItems.tsx:53
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:71
@@ -3082,75 +3089,75 @@ msgstr "Innkjøp"
 msgid "Sales"
 msgstr "Salg"
 
-#: src/defaults/links.tsx:34
+#: src/defaults/links.tsx:35
 #: src/defaults/menuItems.tsx:71
 #: src/pages/Index/Playground.tsx:171
 msgid "Playground"
 msgstr "Lekeplass"
 
-#: src/defaults/links.tsx:48
+#: src/defaults/links.tsx:49
 msgid "Getting Started"
 msgstr "Komme i gang"
 
-#: src/defaults/links.tsx:49
+#: src/defaults/links.tsx:50
 msgid "Getting started with InvenTree"
 msgstr "Komme i gang med InvenTree"
 
-#: src/defaults/links.tsx:55
+#: src/defaults/links.tsx:56
 msgid "API"
 msgstr "API"
 
-#: src/defaults/links.tsx:56
+#: src/defaults/links.tsx:57
 msgid "InvenTree API documentation"
 msgstr "InvenTree-API-dokumentasjon"
 
-#: src/defaults/links.tsx:61
+#: src/defaults/links.tsx:62
 msgid "Developer Manual"
 msgstr "Utviklermanual"
 
-#: src/defaults/links.tsx:62
+#: src/defaults/links.tsx:63
 msgid "InvenTree developer manual"
 msgstr "InvenTree utviklermanual"
 
-#: src/defaults/links.tsx:67
+#: src/defaults/links.tsx:68
 msgid "FAQ"
 msgstr "FAQ"
 
-#: src/defaults/links.tsx:68
+#: src/defaults/links.tsx:69
 msgid "Frequently asked questions"
 msgstr "Ofte stilte spørsmål"
-
-#: src/defaults/links.tsx:76
-#: src/defaults/links.tsx:95
-msgid "System Information"
-msgstr "Systeminformasjon"
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
 #~ msgstr "Instance"
 
+#: src/defaults/links.tsx:79
+#: src/defaults/links.tsx:104
+msgid "System Information"
+msgstr "Systeminformasjon"
+
 #: src/defaults/links.tsx:83
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
-#: src/defaults/links.tsx:85
-#: src/defaults/links.tsx:101
+#: src/defaults/links.tsx:92
+#: src/defaults/links.tsx:110
 msgid "About InvenTree"
 msgstr "Om InvenTree"
 
-#: src/defaults/links.tsx:96
+#: src/defaults/links.tsx:105
 msgid "About this Inventree instance"
 msgstr "Om denne InvenTree-instansen"
 
-#: src/defaults/links.tsx:102
+#: src/defaults/links.tsx:111
 msgid "About the InvenTree org"
 msgstr "Om InvenTree-organisasjonen"
 
-#: src/defaults/links.tsx:107
+#: src/defaults/links.tsx:116
 msgid "Licenses"
 msgstr "Lisenser"
 
-#: src/defaults/links.tsx:108
+#: src/defaults/links.tsx:117
 msgid "Licenses for packages used by InvenTree"
 msgstr "Lisenser for pakker brukt av InvenTree"
 
@@ -3914,15 +3921,15 @@ msgstr "Velg innstillinger som er relevante for brukerens livssyklus. Mer tilgje
 msgid "System settings"
 msgstr "Systeminnstillinger"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:65
+#: src/pages/Index/Settings/SystemSettings.tsx:66
 msgid "Login"
 msgstr "Innlogging"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:87
+#: src/pages/Index/Settings/SystemSettings.tsx:88
 msgid "Barcodes"
 msgstr "Strekkoder"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:106
+#: src/pages/Index/Settings/SystemSettings.tsx:107
 #: src/pages/part/PartDetail.tsx:152
 msgid "Pricing"
 msgstr "Prising"
@@ -3931,25 +3938,25 @@ msgstr "Prising"
 #~ msgid "Physical Units"
 #~ msgstr "Physical Units"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:135
+#: src/pages/Index/Settings/SystemSettings.tsx:136
 msgid "Exchange Rates"
 msgstr "Valutakurser"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:143
+#: src/pages/Index/Settings/SystemSettings.tsx:144
 msgid "Labels"
 msgstr "Etiketter"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:149
+#: src/pages/Index/Settings/SystemSettings.tsx:150
 #: src/pages/Index/Settings/UserSettings.tsx:99
 msgid "Reporting"
 msgstr "Rapportering"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:223
+#: src/pages/Index/Settings/SystemSettings.tsx:224
 #: src/pages/part/PartDetail.tsx:207
 msgid "Stocktake"
 msgstr "Lagertelling"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:228
+#: src/pages/Index/Settings/SystemSettings.tsx:229
 #: src/pages/build/BuildDetail.tsx:260
 #: src/pages/build/BuildIndex.tsx:36
 #: src/pages/part/PartDetail.tsx:131
@@ -3957,7 +3964,7 @@ msgstr "Lagertelling"
 msgid "Build Orders"
 msgstr "Produksjonsordrer"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:270
+#: src/pages/Index/Settings/SystemSettings.tsx:285
 msgid "Switch to User Setting"
 msgstr "Bytt til brukerinnstilling"
 
@@ -4338,4 +4345,3 @@ msgstr "Plattformgrensesnittet er optimalisert for Nettbrett og Desktop, du kan 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Les dokumentasjonen"
-

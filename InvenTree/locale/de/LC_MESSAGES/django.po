@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-13 08:29+0000\n"
+"POT-Creation-Date: 2024-01-14 02:31+0000\n"
 "PO-Revision-Date: 2023-12-30 08:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -875,6 +875,14 @@ msgstr "Rückerstattung"
 #: InvenTree/status_codes.py:197
 msgid "Reject"
 msgstr "Ablehnen"
+
+#: InvenTree/templatetags/inventree_extras.py:177
+msgid "Unknown database"
+msgstr "Unbekannte Datenbank"
+
+#: InvenTree/templatetags/inventree_extras.py:223
+msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
+msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
@@ -7367,14 +7375,6 @@ msgstr "Neue Teilevariante anlegen"
 #: part/templates/part/variant_part.html:10
 msgid "Create a new variant part from this template"
 msgstr "Ein neues Variantenteil aus dieser Vorlage erstellen"
-
-#: part/templatetags/inventree_extras.py:177
-msgid "Unknown database"
-msgstr "Unbekannte Datenbank"
-
-#: part/templatetags/inventree_extras.py:223
-msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
 
 #: part/views.py:111
 msgid "Match References"
