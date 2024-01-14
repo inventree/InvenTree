@@ -15,6 +15,10 @@ const ScheduledTasksTable = Loadable(
   )
 );
 
+const FailedTasksTable = Loadable(
+  lazy(() => import('../../../../components/tables/settings/FailedTasksTable'))
+);
+
 export default function TaskManagementPanel() {
   return (
     <Stack>
@@ -25,6 +29,7 @@ export default function TaskManagementPanel() {
       <ScheduledTasksTable />
       <Divider />
       <StylishText size="lg">{t`Failed Tasks`}</StylishText>
+      <FailedTasksTable />
     </Stack>
   );
 }
