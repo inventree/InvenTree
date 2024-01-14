@@ -548,6 +548,17 @@ class ScheduledTaskList(ListAPI):
     queryset = django_q.models.Schedule.objects.all()
     serializer_class = common.serializers.ScheduledTaskSerializer
 
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['pk', 'func', 'last_run', 'next_run']
+
+    search_fields = ['func']
+
+    def get_queryset(self):
+        """Return annotated queryset."""
+        queryset = super().get_queryset()
+        return common.serializers.ScheduledTaskSerializer.annotate_queryset(queryset)
+
 
 class FailedTaskList(ListAPI):
     """Provides a read-only list of currently failed tasks."""

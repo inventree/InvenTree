@@ -1,5 +1,6 @@
 """JSON serializers for common components."""
 
+from django.db.models import OuterRef, Subquery
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -385,9 +386,30 @@ class ScheduledTaskSerializer(InvenTreeModelSerializer):
             'kwargs',
             'schedule_type',
             'repeats',
+            'last_run',
             'next_run',
+            'success',
             'task',
         ]
+
+    last_run = serializers.DateTimeField()
+    success = serializers.BooleanField()
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add custom annotations to the queryset.
+
+        - last_run: The last time the task was run
+        - success: The outcome status of the last run
+        """
+        task = django_q.models.Task.objects.filter(id=OuterRef('task'))
+
+        queryset = queryset.annotate(
+            last_run=Subquery(task.values('started')[:1]),
+            success=Subquery(task.values('success')[:1]),
+        )
+
+        return queryset
 
 
 class FailedTaskSerializer(InvenTreeModelSerializer):

@@ -1,4 +1,6 @@
 import { t } from '@lingui/macro';
+import { Group, Text } from '@mantine/core';
+import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -14,11 +16,34 @@ export default function ScheduledTasksTable() {
     return [
       {
         accessor: 'func',
-        title: t`Task`
+        title: t`Task`,
+        sortable: true
+      },
+      {
+        accessor: 'last_run',
+        title: t`Last Run`,
+        sortable: true,
+        render: (record: any) => {
+          if (!record.last_run) {
+            return '-';
+          }
+
+          return (
+            <Group position="apart">
+              <Text>{record.last_run}</Text>
+              {record.success ? (
+                <IconCircleCheck color="green" />
+              ) : (
+                <IconCircleX color="red" />
+              )}
+            </Group>
+          );
+        }
       },
       {
         accessor: 'next_run',
-        title: t`Scheduled`
+        title: t`Scheduled`,
+        sortable: true
       }
     ];
   }, []);
