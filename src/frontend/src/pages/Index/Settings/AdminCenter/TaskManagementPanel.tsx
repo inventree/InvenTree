@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Divider, Stack } from '@mantine/core';
+import { Accordion, Divider, Stack } from '@mantine/core';
 import { lazy } from 'react';
 
 import { StylishText } from '../../../../components/items/StylishText';
@@ -21,15 +21,31 @@ const FailedTasksTable = Loadable(
 
 export default function TaskManagementPanel() {
   return (
-    <Stack>
-      <StylishText size="lg">{t`Pending Tasks`}</StylishText>
-      <PendingTasksTable />
-      <Divider />
-      <StylishText size="lg">{t`Scheduled Tasks`}</StylishText>
-      <ScheduledTasksTable />
-      <Divider />
-      <StylishText size="lg">{t`Failed Tasks`}</StylishText>
-      <FailedTasksTable />
-    </Stack>
+    <Accordion defaultValue="pending">
+      <Accordion.Item value="pending">
+        <Accordion.Control>
+          <StylishText size="lg">{t`Pending Tasks`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <PendingTasksTable />
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item value="scheduled">
+        <Accordion.Control>
+          <StylishText size="lg">{t`Scheduled Tasks`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <ScheduledTasksTable />
+        </Accordion.Panel>
+      </Accordion.Item>
+      <Accordion.Item value="failed">
+        <Accordion.Control>
+          <StylishText size="lg">{t`Failed Tasks`}</StylishText>
+        </Accordion.Control>
+        <Accordion.Panel>
+          <FailedTasksTable />
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 }
