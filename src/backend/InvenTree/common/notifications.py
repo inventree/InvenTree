@@ -263,7 +263,7 @@ class UIMessageNotification(SingleNotificationMethod):
     METHOD_NAME = 'ui_message'
 
     def get_targets(self):
-        """Only send notifications for active users"""
+        """Only send notifications for active users."""
         return [target for target in self.targets if target.is_active]
 
     def send(self, target):
@@ -439,7 +439,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
         # Set delivery flag
         common.models.NotificationEntry.notify(category, obj_ref_value)
     else:
-        logger.info("No possible users for notification '%s'", category)
+        logger.debug("No possible users for notification '%s'", category)
 
 
 def trigger_superuser_notification(plugin: PluginConfig, msg: str):

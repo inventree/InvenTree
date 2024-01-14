@@ -20,8 +20,7 @@ import requests
 
 
 def get_existing_release_tags():
-    """Request information on existing releases via the GitHub API"""
-
+    """Request information on existing releases via the GitHub API."""
     # Check for github token
     token = os.getenv('GITHUB_TOKEN', None)
     headers = None
@@ -61,7 +60,6 @@ def check_version_number(version_string, allow_duplicate=False):
 
     Returns True if the provided version is the 'newest' InvenTree release
     """
-
     print(f"Checking version '{version_string}'")
 
     # Check that the version string matches the required format

@@ -1,4 +1,4 @@
-"""Custom string formatting functions and helpers"""
+"""Custom string formatting functions and helpers."""
 
 import re
 import string
@@ -42,7 +42,7 @@ def parse_format_string(fmt_string: str) -> dict:
 
 
 def construct_format_regex(fmt_string: str) -> str:
-    r"""Construct a regular expression based on a provided format string
+    r"""Construct a regular expression based on a provided format string.
 
     This function turns a python format string into a regular expression,
     which can be used for two purposes:
@@ -143,7 +143,7 @@ def validate_string(value: str, fmt_string: str) -> str:
 
 
 def extract_named_group(name: str, value: str, fmt_string: str) -> str:
-    """Extract a named value from the provided string, given the provided format string
+    """Extract a named value from the provided string, given the provided format string.
 
     Args:
         name: Name of group to extract e.g. 'ref'
@@ -181,11 +181,12 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
 
 
 def format_money(money: Money, decimal_places: int = None, format: str = None) -> str:
-    """Format money object according to the currently set local
+    """Format money object according to the currently set local.
 
     Args:
-        decimal_places: Number of decimal places to use
-        format: Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
+        money (Money): The money object to format
+        decimal_places (int): Number of decimal places to use
+        format (str): Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
 
     Returns:
         str: The formatted string

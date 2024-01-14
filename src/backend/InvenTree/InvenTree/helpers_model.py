@@ -73,7 +73,7 @@ def construct_absolute_url(*arg, **kwargs):
 
 
 def get_base_url(**kwargs):
-    """Return the base URL for the InvenTree server"""
+    """Return the base URL for the InvenTree server."""
     return construct_absolute_url('', **kwargs)
 
 
@@ -193,7 +193,7 @@ def render_currency(
     min_decimal_places=None,
     max_decimal_places=None,
 ):
-    """Render a currency / Money object to a formatted string (e.g. for reports)
+    """Render a currency / Money object to a formatted string (e.g. for reports).
 
     Arguments:
         money: The Money instance to be rendered

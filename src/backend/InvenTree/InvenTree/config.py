@@ -60,7 +60,7 @@ def to_dict(value):
 
 
 def is_true(x):
-    """Shortcut function to determine if a value "looks" like a boolean"""
+    """Shortcut function to determine if a value "looks" like a boolean."""
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true', 'on']
 
 
@@ -226,12 +226,12 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
 
 def get_boolean_setting(env_var=None, config_key=None, default_value=False):
-    """Helper function for retrieving a boolean configuration setting"""
+    """Helper function for retrieving a boolean configuration setting."""
     return is_true(get_setting(env_var, config_key, default_value))
 
 
 def get_media_dir(create=True):
-    """Return the absolute path for the 'media' directory (where uploaded files are stored)"""
+    """Return the absolute path for the 'media' directory (where uploaded files are stored)."""
     md = get_setting('INVENTREE_MEDIA_ROOT', 'media_root')
 
     if not md:
@@ -246,7 +246,7 @@ def get_media_dir(create=True):
 
 
 def get_static_dir(create=True):
-    """Return the absolute path for the 'static' directory (where static files are stored)"""
+    """Return the absolute path for the 'static' directory (where static files are stored)."""
     sd = get_setting('INVENTREE_STATIC_ROOT', 'static_root')
 
     if not sd:
@@ -261,7 +261,7 @@ def get_static_dir(create=True):
 
 
 def get_backup_dir(create=True):
-    """Return the absolute path for the backup directory"""
+    """Return the absolute path for the backup directory."""
     bd = get_setting('INVENTREE_BACKUP_DIR', 'backup_dir')
 
     if not bd:
@@ -307,7 +307,7 @@ def get_plugin_file():
 
 
 def get_plugin_dir():
-    """Returns the path of the custom plugins directory"""
+    """Returns the path of the custom plugins directory."""
     return get_setting('INVENTREE_PLUGIN_DIR', 'plugin_dir')
 
 
@@ -389,7 +389,6 @@ def get_frontend_settings(debug=True):
     Note that the new config settings use the 'FRONTEND' key,
     whereas the legacy key was 'PUI' (platform UI) which is now deprecated
     """
-
     # Legacy settings
     pui_settings = get_setting(
         'INVENTREE_PUI_SETTINGS', 'pui_settings', {}, typecast=dict

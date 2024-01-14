@@ -18,7 +18,6 @@ class DiffMixin:
         Returns:
             object: Instance of the object saved in the database
         """
-
         if self.pk:
             try:
                 return self.__class__.objects.get(pk=self.pk)
@@ -36,7 +35,6 @@ class DiffMixin:
         Returns:
             dict: Dict of field deltas
         """
-
         db_instance = self.get_db_instance()
 
         if db_instance is None:
@@ -58,7 +56,6 @@ class DiffMixin:
 
     def has_field_changed(self, field_name):
         """Determine if a particular field has changed."""
-
         return field_name in self.get_field_deltas()
 
 

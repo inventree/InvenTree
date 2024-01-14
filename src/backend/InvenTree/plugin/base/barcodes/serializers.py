@@ -1,4 +1,4 @@
-"""DRF serializers for barcode scanning API"""
+"""DRF serializers for barcode scanning API."""
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -12,7 +12,7 @@ from plugin.builtin.barcodes.inventree_barcode import InvenTreeInternalBarcodePl
 
 
 class BarcodeSerializer(serializers.Serializer):
-    """Generic serializer for receiving barcode data"""
+    """Generic serializer for receiving barcode data."""
 
     MAX_BARCODE_LENGTH = 4095
 
@@ -24,11 +24,10 @@ class BarcodeSerializer(serializers.Serializer):
 
 
 class BarcodeAssignMixin(serializers.Serializer):
-    """Serializer for linking and unlinking barcode to an internal class"""
+    """Serializer for linking and unlinking barcode to an internal class."""
 
     def __init__(self, *args, **kwargs):
-        """Generate serializer fields for each supported model type"""
-
+        """Generate serializer fields for each supported model type."""
         super().__init__(*args, **kwargs)
 
         for model in InvenTreeInternalBarcodePlugin.get_supported_barcode_models():
@@ -43,7 +42,7 @@ class BarcodeAssignMixin(serializers.Serializer):
 
     @staticmethod
     def get_model_fields():
-        """Return a list of model fields"""
+        """Return a list of model fields."""
         fields = [
             model.barcode_model_type()
             for model in InvenTreeInternalBarcodePlugin.get_supported_barcode_models()
@@ -53,19 +52,19 @@ class BarcodeAssignMixin(serializers.Serializer):
 
 
 class BarcodeAssignSerializer(BarcodeAssignMixin, BarcodeSerializer):
-    """Serializer class for linking a barcode to an internal model"""
+    """Serializer class for linking a barcode to an internal model."""
 
     class Meta:
-        """Meta class for BarcodeAssignSerializer"""
+        """Meta class for BarcodeAssignSerializer."""
 
         fields = ['barcode', *BarcodeAssignMixin.get_model_fields()]
 
 
 class BarcodeUnassignSerializer(BarcodeAssignMixin):
-    """Serializer class for unlinking a barcode from an internal model"""
+    """Serializer class for unlinking a barcode from an internal model."""
 
     class Meta:
-        """Meta class for BarcodeUnlinkSerializer"""
+        """Meta class for BarcodeUnlinkSerializer."""
 
         fields = BarcodeAssignMixin.get_model_fields()
 
@@ -83,8 +82,7 @@ class BarcodePOAllocateSerializer(BarcodeSerializer):
     )
 
     def validate_purchase_order(self, order: order.models.PurchaseOrder):
-        """Validate the provided order"""
-
+        """Validate the provided order."""
         if order.status != PurchaseOrderStatus.PENDING.value:
             raise ValidationError(_('Purchase order is not pending'))
 
@@ -108,8 +106,7 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
     )
 
     def validate_purchase_order(self, order: order.models.PurchaseOrder):
-        """Validate the provided order"""
-
+        """Validate the provided order."""
         if order and order.status != PurchaseOrderStatus.PLACED.value:
             raise ValidationError(_('Purchase order has not been placed'))
 
@@ -123,8 +120,7 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
     )
 
     def validate_location(self, location: stock.models.StockLocation):
-        """Validate the provided location"""
-
+        """Validate the provided location."""
         if location and location.structural:
             raise ValidationError(_('Cannot select a structural location'))
 
@@ -132,7 +128,7 @@ class BarcodePOReceiveSerializer(BarcodeSerializer):
 
 
 class BarcodeSOAllocateSerializer(BarcodeSerializer):
-    """Serializr for allocating stock items to a sales order
+    """Serializr for allocating stock items to a sales order.
 
     The scanned barcode must map to a StockItem object
     """
@@ -144,8 +140,7 @@ class BarcodeSOAllocateSerializer(BarcodeSerializer):
     )
 
     def validate_sales_order(self, order: order.models.SalesOrder):
-        """Validate the provided order"""
-
+        """Validate the provided order."""
         if order and order.status != SalesOrderStatus.PENDING.value:
             raise ValidationError(_('Sales order is not pending'))
 
@@ -166,8 +161,7 @@ class BarcodeSOAllocateSerializer(BarcodeSerializer):
     )
 
     def validate_shipment(self, shipment: order.models.SalesOrderShipment):
-        """Validate the provided shipment"""
-
+        """Validate the provided shipment."""
         if shipment and shipment.is_delivered():
             raise ValidationError(_('Shipment has already been delivered'))
 

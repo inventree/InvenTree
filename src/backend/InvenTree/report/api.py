@@ -1,4 +1,4 @@
-"""API functionality for the 'report' app"""
+"""API functionality for the 'report' app."""
 
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.base import ContentFile
@@ -70,7 +70,7 @@ class ReportFilterMixin:
     ITEM_KEY = 'item'
 
     def get_items(self):
-        """Return a list of database objects from query parameters"""
+        """Return a list of database objects from query parameters."""
         if not self.ITEM_MODEL:
             raise NotImplementedError(
                 f'ITEM_MODEL attribute not defined for {__class__}'
@@ -153,7 +153,7 @@ class ReportPrintMixin:
 
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
-        """Prevent caching when printing report templates"""
+        """Prevent caching when printing report templates."""
         return super().dispatch(*args, **kwargs)
 
     def report_callback(self, object, report, request):
@@ -283,7 +283,7 @@ class ReportPrintMixin:
 
 
 class StockItemTestReportMixin(ReportFilterMixin):
-    """Mixin for StockItemTestReport report template"""
+    """Mixin for StockItemTestReport report template."""
 
     ITEM_MODEL = StockItem
     ITEM_KEY = 'item'
@@ -313,7 +313,7 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
     """API endpoint for printing a TestReport object."""
 
     def report_callback(self, item, report, request):
-        """Callback to (optionally) save a copy of the generated report"""
+        """Callback to (optionally) save a copy of the generated report."""
         if common.models.InvenTreeSetting.get_setting(
             'REPORT_ATTACH_TEST_REPORT', cache=False
         ):
@@ -333,7 +333,7 @@ class StockItemTestReportPrint(StockItemTestReportMixin, ReportPrintMixin, Retri
 
 
 class BOMReportMixin(ReportFilterMixin):
-    """Mixin for BillOfMaterialsReport report template"""
+    """Mixin for BillOfMaterialsReport report template."""
 
     ITEM_MODEL = part.models.Part
     ITEM_KEY = 'part'
@@ -367,7 +367,7 @@ class BOMReportPrint(BOMReportMixin, ReportPrintMixin, RetrieveAPI):
 
 
 class BuildReportMixin(ReportFilterMixin):
-    """Mixin for the BuildReport report template"""
+    """Mixin for the BuildReport report template."""
 
     ITEM_MODEL = build.models.Build
     ITEM_KEY = 'build'
@@ -401,7 +401,7 @@ class BuildReportPrint(BuildReportMixin, ReportPrintMixin, RetrieveAPI):
 
 
 class PurchaseOrderReportMixin(ReportFilterMixin):
-    """Mixin for the PurchaseOrderReport report template"""
+    """Mixin for the PurchaseOrderReport report template."""
 
     ITEM_MODEL = order.models.PurchaseOrder
     ITEM_KEY = 'order'
@@ -411,7 +411,7 @@ class PurchaseOrderReportMixin(ReportFilterMixin):
 
 
 class PurchaseOrderReportList(PurchaseOrderReportMixin, ReportListView):
-    """API list endpoint for the PurchaseOrderReport model"""
+    """API list endpoint for the PurchaseOrderReport model."""
 
     pass
 
@@ -429,7 +429,7 @@ class PurchaseOrderReportPrint(PurchaseOrderReportMixin, ReportPrintMixin, Retri
 
 
 class SalesOrderReportMixin(ReportFilterMixin):
-    """Mixin for the SalesOrderReport report template"""
+    """Mixin for the SalesOrderReport report template."""
 
     ITEM_MODEL = order.models.SalesOrder
     ITEM_KEY = 'order'
@@ -439,7 +439,7 @@ class SalesOrderReportMixin(ReportFilterMixin):
 
 
 class SalesOrderReportList(SalesOrderReportMixin, ReportListView):
-    """API list endpoint for the SalesOrderReport model"""
+    """API list endpoint for the SalesOrderReport model."""
 
     pass
 
@@ -457,7 +457,7 @@ class SalesOrderReportPrint(SalesOrderReportMixin, ReportPrintMixin, RetrieveAPI
 
 
 class ReturnOrderReportMixin(ReportFilterMixin):
-    """Mixin for the ReturnOrderReport report template"""
+    """Mixin for the ReturnOrderReport report template."""
 
     ITEM_MODEL = order.models.ReturnOrder
     ITEM_KEY = 'order'
@@ -467,25 +467,25 @@ class ReturnOrderReportMixin(ReportFilterMixin):
 
 
 class ReturnOrderReportList(ReturnOrderReportMixin, ReportListView):
-    """API list endpoint for the ReturnOrderReport model"""
+    """API list endpoint for the ReturnOrderReport model."""
 
     pass
 
 
 class ReturnOrderReportDetail(ReturnOrderReportMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single ReturnOrderReport object"""
+    """API endpoint for a single ReturnOrderReport object."""
 
     pass
 
 
 class ReturnOrderReportPrint(ReturnOrderReportMixin, ReportPrintMixin, RetrieveAPI):
-    """API endpoint for printing a ReturnOrderReport object"""
+    """API endpoint for printing a ReturnOrderReport object."""
 
     pass
 
 
 class StockLocationReportMixin(ReportFilterMixin):
-    """Mixin for StockLocation report template"""
+    """Mixin for StockLocation report template."""
 
     ITEM_MODEL = StockLocation
     ITEM_KEY = 'location'
@@ -494,7 +494,7 @@ class StockLocationReportMixin(ReportFilterMixin):
 
 
 class StockLocationReportList(StockLocationReportMixin, ReportListView):
-    """API list endpoint for the StockLocationReportList model"""
+    """API list endpoint for the StockLocationReportList model."""
 
     pass
 
@@ -506,7 +506,7 @@ class StockLocationReportDetail(StockLocationReportMixin, RetrieveUpdateDestroyA
 
 
 class StockLocationReportPrint(StockLocationReportMixin, ReportPrintMixin, RetrieveAPI):
-    """API endpoint for printing a StockLocationReportPrint object"""
+    """API endpoint for printing a StockLocationReportPrint object."""
 
     pass
 
@@ -621,7 +621,7 @@ report_api_urls = [
                         name='api-build-report-metadata',
                     ),
                     re_path(
-                        r'^.$',
+                        r'^.*$',
                         BuildReportDetail.as_view(),
                         name='api-build-report-detail',
                     ),

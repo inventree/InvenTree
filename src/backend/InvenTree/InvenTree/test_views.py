@@ -28,7 +28,7 @@ class ViewTests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 302)
 
     def get_index_page(self):
-        """Retrieve the index page (used for subsequent unit tests)"""
+        """Retrieve the index page (used for subsequent unit tests)."""
         response = self.client.get('/index/')
 
         self.assertEqual(response.status_code, 200)
@@ -44,7 +44,7 @@ class ViewTests(InvenTreeTestCase):
         # TODO: In future, run the javascript and ensure that the panels get created!
 
     def test_settings_page(self):
-        """Test that the 'settings' page loads correctly"""
+        """Test that the 'settings' page loads correctly."""
         # Settings page loads
         url = reverse('settings')
 
@@ -102,7 +102,7 @@ class ViewTests(InvenTreeTestCase):
             self.assertNotIn(f'panel-{panel}', content)
 
     def test_url_login(self):
-        """Test logging in via arguments"""
+        """Test logging in via arguments."""
         # Log out
         self.client.logout()
         response = self.client.get('/index/')

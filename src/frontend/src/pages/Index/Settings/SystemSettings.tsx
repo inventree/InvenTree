@@ -14,7 +14,8 @@ import {
   IconSitemap,
   IconTag,
   IconTools,
-  IconTruckDelivery
+  IconTruckDelivery,
+  IconTruckReturn
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
@@ -252,6 +253,20 @@ export default function SystemSettings() {
               'SALESORDER_REFERENCE_PATTERN',
               'SALESORDER_DEFAULT_SHIPMENT',
               'SALESORDER_EDIT_COMPLETED_ORDERS'
+            ]}
+          />
+        )
+      },
+      {
+        name: 'returnorders',
+        label: t`Return Orders`,
+        icon: <IconTruckReturn />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'RETURNORDER_ENABLED',
+              'RETURNORDER_REFERENCE_PATTERN',
+              'RETURNORDER_EDIT_COMPLETED_ORDERS'
             ]}
           />
         )

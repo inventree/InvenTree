@@ -36,7 +36,7 @@ from .models import (
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
-    """Serializer for Company object (limited detail)"""
+    """Serializer for Company object (limited detail)."""
 
     class Meta:
         """Metaclass options."""
@@ -50,10 +50,10 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
 
 
 class AddressSerializer(InvenTreeModelSerializer):
-    """Serializer for the Address Model"""
+    """Serializer for the Address Model."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = Address
         fields = [
@@ -74,10 +74,10 @@ class AddressSerializer(InvenTreeModelSerializer):
 
 
 class AddressBriefSerializer(InvenTreeModelSerializer):
-    """Serializer for Address Model (limited)"""
+    """Serializer for Address Model (limited)."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = Address
         fields = [
@@ -94,7 +94,7 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
 
 
 class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
-    """Serializer for Company object (full detail)"""
+    """Serializer for Company object (full detail)."""
 
     class Meta:
         """Metaclass options."""
@@ -127,7 +127,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Annotate the supplied queryset with aggregated information"""
+        """Annotate the supplied queryset with aggregated information."""
         # Add count of parts manufactured
         queryset = queryset.annotate(
             parts_manufactured=SubqueryCount('manufactured_parts')
@@ -154,7 +154,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
     )
 
     def save(self):
-        """Save the Company instance"""
+        """Save the Company instance."""
         super().save()
 
         company = self.instance
@@ -176,10 +176,10 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
 
 
 class CompanyAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the CompanyAttachment class"""
+    """Serializer for the CompanyAttachment class."""
 
     class Meta:
-        """Metaclass defines serializer options"""
+        """Metaclass defines serializer options."""
 
         model = CompanyAttachment
 
@@ -187,10 +187,10 @@ class CompanyAttachmentSerializer(InvenTreeAttachmentSerializer):
 
 
 class ContactSerializer(InvenTreeModelSerializer):
-    """Serializer class for the Contact model"""
+    """Serializer class for the Contact model."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         model = Contact
         fields = ['pk', 'company', 'name', 'phone', 'email', 'role']
@@ -220,7 +220,7 @@ class ManufacturerPartSerializer(InvenTreeTagModelSerializer):
     tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required"""
+        """Initialize this serializer with extra detail fields as required."""
         part_detail = kwargs.pop('part_detail', True)
         manufacturer_detail = kwargs.pop('manufacturer_detail', True)
         prettify = kwargs.pop('pretty', False)
@@ -278,7 +278,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required"""
+        """Initialize this serializer with extra detail fields as required."""
         man_detail = kwargs.pop('manufacturer_part_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -326,13 +326,18 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
             'tags',
         ]
 
-        read_only_fields = ['availability_updated', 'barcode_hash']
+        read_only_fields = [
+            'availability_updated',
+            'barcode_hash',
+            'pack_quantity_native',
+        ]
 
     tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra detail fields as required"""
+        """Initialize this serializer with extra detail fields as required."""
         # Check if 'available' quantity was supplied
+
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
         brief = kwargs.pop('brief', False)
@@ -363,6 +368,8 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(read_only=True)
     available = serializers.FloatField(required=False)
+
+    pack_quantity_native = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -395,7 +402,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Annotate the SupplierPart queryset with extra fields:
+        """Annotate the SupplierPart queryset with extra fields.
 
         Fields:
             in_stock: Current stock quantity for each SupplierPart
@@ -405,7 +412,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
         return queryset
 
     def update(self, supplier_part, data):
-        """Custom update functionality for the serializer"""
+        """Custom update functionality for the serializer."""
         available = data.pop('available', None)
 
         response = super().update(supplier_part, data)
@@ -457,7 +464,7 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Initialize this serializer with extra fields as required"""
+        """Initialize this serializer with extra fields as required."""
         supplier_detail = kwargs.pop('supplier_detail', False)
         part_detail = kwargs.pop('part_detail', False)
 

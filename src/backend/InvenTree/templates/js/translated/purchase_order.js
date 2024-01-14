@@ -1595,9 +1595,8 @@ function loadPurchaseOrderTable(table, options) {
                 success: function(response) {
                     for (var idx = 0; idx < response.length; idx++) {
 
-                        var order = response[idx];
-
-                        var date = order.creation_date;
+                        let order = response[idx];
+                        let date = order.creation_date;
 
                         if (order.complete_date) {
                             date = order.complete_date;
@@ -1605,9 +1604,13 @@ function loadPurchaseOrderTable(table, options) {
                             date = order.target_date;
                         }
 
-                        var title = `${order.reference} - ${order.supplier_detail.name}`;
+                        let title = order.reference;
 
-                        var color = '#4c68f5';
+                        if (order.supplier_detail) {
+                            title += `- ${order.supplier_detail.name}`;
+                        }
+
+                        let color = '#4c68f5';
 
                         if (order.complete_date) {
                             color = '#25c235';

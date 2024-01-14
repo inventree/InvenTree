@@ -1,4 +1,4 @@
-"""Admin functionality for the 'report' app"""
+"""Admin functionality for the 'report' app."""
 
 from django.contrib import admin
 
@@ -16,19 +16,19 @@ from .models import (
 
 
 class ReportTemplateAdmin(admin.ModelAdmin):
-    """Admin class for the various reporting models"""
+    """Admin class for the various reporting models."""
 
     list_display = ('name', 'description', 'template', 'filters', 'enabled', 'revision')
 
 
 class ReportSnippetAdmin(admin.ModelAdmin):
-    """Admin class for the ReportSnippet model"""
+    """Admin class for the ReportSnippet model."""
 
     list_display = ('id', 'snippet', 'description')
 
 
 class ReportAssetAdmin(admin.ModelAdmin):
-    """Admin class for the ReportAsset model"""
+    """Admin class for the ReportAsset model."""
 
     list_display = ('id', 'asset', 'description')
 

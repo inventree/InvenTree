@@ -222,7 +222,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
             @property
             def api_url(self):
-                """Override API URL for this test"""
+                """Override API URL for this test."""
                 return 'https://api.github.com'
 
             def get_external_url(self, simple: bool = True):

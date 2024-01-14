@@ -1,6 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
+  IconExclamationCircle,
   IconList,
   IconListDetails,
   IconPlugConnected,
@@ -21,6 +22,10 @@ const UserManagementPanel = Loadable(
 
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
+);
+
+const ErrorReportTable = Loadable(
+  lazy(() => import('../../../../components/tables/settings/ErrorTable'))
 );
 
 const ProjectCodeTable = Loadable(
@@ -46,6 +51,12 @@ export default function AdminCenter() {
         label: t`Users`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />
+      },
+      {
+        name: 'errors',
+        label: t`Error Reports`,
+        icon: <IconExclamationCircle />,
+        content: <ErrorReportTable />
       },
       {
         name: 'projectcodes',

@@ -23,7 +23,6 @@ def dflt(*args, **kwargs):
 
 def _clean_storage(refs):
     """Clean the storage."""
-
     for ref in refs:
         del ref
     storage.collect()
@@ -44,7 +43,6 @@ class TransitionTests(InvenTreeTestCase):
 
     def test_storage(self):
         """Ensure that the storage collection mechanism works."""
-
         global raise_storage
         global raise_function
 
@@ -54,7 +52,6 @@ class TransitionTests(InvenTreeTestCase):
         class RaisingImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
                 """Custom transition method."""
-
                 global raise_storage
 
                 if raise_storage:
@@ -75,7 +72,6 @@ class TransitionTests(InvenTreeTestCase):
 
     def test_function(self):
         """Ensure that a TransitionMethod's function is called."""
-
         global raise_storage
         global raise_function
 

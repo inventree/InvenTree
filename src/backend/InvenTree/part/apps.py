@@ -1,4 +1,4 @@
-"""part app specification"""
+"""part app specification."""
 
 import logging
 
@@ -11,7 +11,7 @@ logger = logging.getLogger('inventree')
 
 
 class PartConfig(AppConfig):
-    """Config class for the 'part' app"""
+    """Config class for the 'part' app."""
 
     name = 'part'
 

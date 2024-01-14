@@ -1,4 +1,4 @@
-"""Various helper functions for the part app"""
+"""Various helper functions for the part app."""
 
 import logging
 import os
@@ -20,7 +20,6 @@ def compile_full_name_template(*args, **kwargs):
 
     This function is called whenever the 'PART_NAME_FORMAT' setting is changed.
     """
-
     from common.models import InvenTreeSetting
 
     global _part_full_name_template
@@ -61,7 +60,6 @@ def render_part_full_name(part) -> str:
     Args:
         part: The Part object to render
     """
-
     template = compile_full_name_template()
 
     if template:
@@ -91,7 +89,6 @@ def get_part_image_directory() -> str:
 
     TODO: Future work may be needed here to support other storage backends, such as S3
     """
-
     part_image_directory = os.path.abspath(
         os.path.join(settings.MEDIA_ROOT, PART_IMAGE_DIR)
     )

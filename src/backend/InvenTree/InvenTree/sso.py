@@ -1,4 +1,4 @@
-"""Helper functions for Single Sign On functionality"""
+"""Helper functions for Single Sign On functionality."""
 
 import logging
 
@@ -9,8 +9,7 @@ logger = logging.getLogger('inventree')
 
 
 def get_provider_app(provider):
-    """Return the SocialApp object for the given provider"""
-
+    """Return the SocialApp object for the given provider."""
     from allauth.socialaccount.models import SocialApp
 
     try:
@@ -36,7 +35,6 @@ def check_provider(provider, raise_error=False):
     - Provider must either have a registered SocialApp
     - Must have at least one site enabled
     """
-
     import allauth.app_settings
 
     # First, check that the provider is enabled
@@ -56,8 +54,7 @@ def check_provider(provider, raise_error=False):
 
 
 def provider_display_name(provider):
-    """Return the 'display name' for the given provider"""
-
+    """Return the 'display name' for the given provider."""
     if app := get_provider_app(provider):
         return app.name
 
@@ -66,15 +63,15 @@ def provider_display_name(provider):
 
 
 def login_enabled() -> bool:
-    """Return True if SSO login is enabled"""
+    """Return True if SSO login is enabled."""
     return str2bool(InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO'))
 
 
 def registration_enabled() -> bool:
-    """Return True if SSO registration is enabled"""
+    """Return True if SSO registration is enabled."""
     return str2bool(InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'))
 
 
 def auto_registration_enabled() -> bool:
-    """Return True if SSO auto-registration is enabled"""
+    """Return True if SSO auto-registration is enabled."""
     return str2bool(InvenTreeSetting.get_setting('LOGIN_SIGNUP_SSO_AUTO'))

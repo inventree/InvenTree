@@ -10,7 +10,7 @@ from plugin.models import PluginConfig
 
 
 class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
-    """Tests the plugin API endpoints"""
+    """Tests the plugin API endpoints."""
 
     roles = ['admin.add', 'admin.view', 'admin.change', 'admin.delete']
 
@@ -206,7 +206,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.assertEqual(str(exc.exception.detail), "Plugin '123' not installed")
 
     def test_plugin_settings(self):
-        """Test plugin settings access via the API"""
+        """Test plugin settings access via the API."""
         # Ensure we have superuser permissions
         self.user.is_superuser = True
         self.user.save()

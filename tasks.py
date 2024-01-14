@@ -18,7 +18,6 @@ def checkPythonVersion():
 
     If the python version is not sufficient, exits with a non-zero exit code.
     """
-
     REQ_MAJOR = 3
     REQ_MINOR = 9
 
@@ -127,7 +126,6 @@ def yarn(c, cmd, pty: bool = False):
         cmd: Yarn command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
     """
-
     path = localDir().joinpath('src').joinpath('frontend')
     c.run(f'cd "{path}" && {cmd}', pty=pty)
 
@@ -294,23 +292,24 @@ def translate_stats(c):
 
 
 @task(post=[translate_stats])
-def translate(c):
+def translate(c, ignore_static=False, no_frontend=False):
     """Rebuild translation source files. Advanced use only!
 
     Note: This command should not be used on a local install,
     it is performed as part of the InvenTree translation toolchain.
     """
-    # Translate applicable .py / .html / .js / .tsx files
+    # Translate applicable .py / .html / .js files
     manage(c, 'makemessages --all -e py,html,js --no-wrap')
     manage(c, 'compilemessages')
 
-    if node_available():
+    if not no_frontend and node_available():
         frontend_install(c)
         frontend_trans(c)
         frontend_build(c)
 
     # Update static files
-    static(c)
+    if not ignore_static:
+        static(c)
 
 
 @task
@@ -731,7 +730,6 @@ def test(
 @task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset'):
     """Setup a testing environment."""
-
     from src.backend.InvenTree.InvenTree.config import get_media_dir
 
     if not ignore_update:

@@ -75,10 +75,10 @@ class InvenTreeMoneySerializer(MoneyField):
 
 
 class InvenTreeCurrencySerializer(serializers.ChoiceField):
-    """Custom serializers for selecting currency option"""
+    """Custom serializers for selecting currency option."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize the currency serializer"""
+        """Initialize the currency serializer."""
         choices = currency_code_mappings()
 
         allow_blank = kwargs.get('allow_blank', False) or kwargs.get(
@@ -289,7 +289,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return self.instance
 
     def create(self, validated_data):
-        """Custom create method which supports field adjustment"""
+        """Custom create method which supports field adjustment."""
         initial_data = validated_data.copy()
 
         # Remove any fields which do not exist on the model
@@ -494,7 +494,7 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
 
     @staticmethod
     def attachment_fields(extra_fields=None):
-        """Default set of fields for an attachment serializer"""
+        """Default set of fields for an attachment serializer."""
         fields = [
             'pk',
             'attachment',
@@ -827,7 +827,7 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
     """
 
     def skip_create_fields(self):
-        """Ensure the 'remote_image' field is skipped when creating a new instance"""
+        """Ensure the 'remote_image' field is skipped when creating a new instance."""
         return ['remote_image']
 
     remote_image = serializers.URLField(

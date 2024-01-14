@@ -1,4 +1,4 @@
-"""Unit tests for Part Views (see views.py)"""
+"""Unit tests for Part Views (see views.py)."""
 
 from django.urls import reverse
 
@@ -8,7 +8,7 @@ from .models import Part
 
 
 class PartViewTestCase(InvenTreeTestCase):
-    """Base class for unit testing the various Part views"""
+    """Base class for unit testing the various Part views."""
 
     fixtures = ['category', 'part', 'bom', 'location', 'company', 'supplier_part']
 
@@ -17,10 +17,10 @@ class PartViewTestCase(InvenTreeTestCase):
 
 
 class PartListTest(PartViewTestCase):
-    """Unit tests for the PartList view"""
+    """Unit tests for the PartList view."""
 
     def test_part_index(self):
-        """Test that the PartIndex page returns successfully"""
+        """Test that the PartIndex page returns successfully."""
         response = self.client.get(reverse('part-index'))
         self.assertEqual(response.status_code, 200)
 
@@ -31,7 +31,7 @@ class PartListTest(PartViewTestCase):
 
 
 class PartDetailTest(PartViewTestCase):
-    """Unit tests for the PartDetail view"""
+    """Unit tests for the PartDetail view."""
 
     def test_part_detail(self):
         """Test that we can retrieve a part detail page."""
@@ -51,8 +51,9 @@ class PartDetailTest(PartViewTestCase):
         self.assertEqual(response.context['category'], part.category)
 
     def test_part_detail_from_ipn(self):
-        """Test that we can retrieve a part detail page from part IPN:
+        """Test that we can retrieve a part detail page from part IPN.
 
+        Rules:
         - if no part with matching IPN -> return part index
         - if unique IPN match -> return part detail page
         - if multiple IPN matches -> return part index
@@ -61,7 +62,7 @@ class PartDetailTest(PartViewTestCase):
         pk = 1
 
         def test_ipn_match(index_result=False, detail_result=False):
-            """Helper function for matching IPN detail view"""
+            """Helper function for matching IPN detail view."""
             index_redirect = False
             detail_redirect = False
 

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 else:
 
     class SettingsKeyType:
-        """Dummy class, so that python throws no error"""
+        """Dummy class, so that python throws no error."""
 
         pass
 

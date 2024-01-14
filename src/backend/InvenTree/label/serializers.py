@@ -1,4 +1,4 @@
-"""API serializers for the label app"""
+"""API serializers for the label app."""
 
 import label.models
 from InvenTree.serializers import (
@@ -8,13 +8,13 @@ from InvenTree.serializers import (
 
 
 class LabelSerializerBase(InvenTreeModelSerializer):
-    """Base class for label serializer"""
+    """Base class for label serializer."""
 
     label = InvenTreeAttachmentSerializerField(required=True)
 
     @staticmethod
     def label_fields():
-        """Generic serializer fields for a label template"""
+        """Generic serializer fields for a label template."""
         return ['pk', 'name', 'description', 'label', 'filters', 'enabled']
 
 
@@ -49,7 +49,7 @@ class PartLabelSerializer(LabelSerializerBase):
 
 
 class BuildLineLabelSerializer(LabelSerializerBase):
-    """Serializes a BuildLineLabel object"""
+    """Serializes a BuildLineLabel object."""
 
     class Meta:
         """Metaclass options."""

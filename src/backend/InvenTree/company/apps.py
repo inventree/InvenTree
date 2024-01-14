@@ -1,10 +1,10 @@
-"""Config for the 'company' app"""
+"""Config for the 'company' app."""
 
 from django.apps import AppConfig
 
 
 class CompanyConfig(AppConfig):
-    """Config class for the 'company' app"""
+    """Config class for the 'company' app."""
 
     name = 'company'
 

@@ -111,7 +111,8 @@ def uploaded_image(
 
     Arguments:
         filename: The filename of the image relative to the MEDIA_ROOT directory
-        replace_missing: Optionally return a placeholder image if the provided filename does not exist
+        replace_missing: Optionally return a placeholder image if the provided filename does not exist (default = True)
+        replacement_file: The filename of the placeholder image (default = 'blank_image.png')
         validate: Optionally validate that the file is a valid image file (default = True)
 
     kwargs:
@@ -196,7 +197,7 @@ def uploaded_image(
 
 @register.simple_tag()
 def encode_svg_image(filename):
-    """Return a base64-encoded svg image data string"""
+    """Return a base64-encoded svg image data string."""
     if type(filename) is SafeString:
         # Prepend an empty string to enforce 'stringiness'
         filename = '' + filename
@@ -229,7 +230,9 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
     """Return a fully-qualified path for a part image.
 
     Arguments:
-        part: a Part model instance
+        part: A Part model instance
+        preview: Return the preview image (default = False)
+        thumbnail: Return the thumbnail image (default = False)
 
     Raises:
         TypeError if provided part is not a Part instance
@@ -249,7 +252,7 @@ def part_image(part: Part, preview=False, thumbnail=False, **kwargs):
 
 @register.simple_tag()
 def part_parameter(part: Part, parameter_name: str):
-    """Return a PartParameter object for the given part and parameter name
+    """Return a PartParameter object for the given part and parameter name.
 
     Arguments:
         part: A Part object
@@ -268,7 +271,9 @@ def company_image(company, preview=False, thumbnail=False, **kwargs):
     """Return a fully-qualified path for a company image.
 
     Arguments:
-        company: a Company model instance
+        company: A Company model instance
+        preview: Return the preview image (default = False)
+        thumbnail: Return the thumbnail image (default = False)
 
     Raises:
         TypeError if provided company is not a Company instance
@@ -324,25 +329,25 @@ def add(x, y, *args, **kwargs):
 
 @register.simple_tag()
 def subtract(x, y):
-    """Subtract one number from another"""
+    """Subtract one number from another."""
     return x - y
 
 
 @register.simple_tag()
 def multiply(x, y):
-    """Multiply two numbers together"""
+    """Multiply two numbers together."""
     return x * y
 
 
 @register.simple_tag()
 def divide(x, y):
-    """Divide one number by another"""
+    """Divide one number by another."""
     return x / y
 
 
 @register.simple_tag
 def render_currency(money, **kwargs):
-    """Render a currency / Money object"""
+    """Render a currency / Money object."""
     return InvenTree.helpers_model.render_currency(money, **kwargs)
 
 
