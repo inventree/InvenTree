@@ -17,7 +17,7 @@ import users.models
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
-from part.templatetags.inventree_extras import plugins_info
+from InvenTree.templatetags.inventree_extras import plugins_info
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
