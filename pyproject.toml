@@ -33,10 +33,6 @@ ignore = [
 	"N806",
 	# - N812 - lowercase imported as non-lowercase
 	"N812",
-    # - D202 - No blank lines allowed after function docstring
-    "D202",
-    # - D415 - First line should end with a period, question mark, or exclamation point
-    "D415",
     # - D417 Missing argument descriptions in the docstring
     "D417",
 
@@ -79,7 +75,7 @@ source = ["InvenTree", ]
 ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
 
 [tool.isort]
-src_paths=["InvenTree", ]
+src_paths=["InvenTree", "../InvenTree"]
 skip_glob ="*/migrations/*.py"
 known_django="django"
 sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]

@@ -188,7 +188,7 @@ class InvenTreePluginTests(TestCase):
             )
 
     def test_version(self):
-        """Test Version checks"""
+        """Test Version checks."""
         self.assertFalse(self.plugin_version.check_version([0, 0, 3]))
         self.assertTrue(self.plugin_version.check_version([0, 1, 0]))
         self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
@@ -201,7 +201,7 @@ class RegistryTests(TestCase):
     """Tests for registry loading methods."""
 
     def mockDir(self) -> str:
-        """Returns path to mock dir"""
+        """Returns path to mock dir."""
         return str(Path(__file__).parent.joinpath('mock').absolute())
 
     def run_package_test(self, directory):

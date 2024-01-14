@@ -1,5 +1,6 @@
-"""URL lookup for Part app. Provides URL endpoints for:
+"""URL lookup for Part app.
 
+Provides URL endpoints for:
 - Display / Create / Edit / Delete PartCategory
 - Display / Create / Edit / Delete Part
 - Create / Edit / Delete PartAttachment

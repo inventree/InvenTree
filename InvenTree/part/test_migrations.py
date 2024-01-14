@@ -32,7 +32,7 @@ class TestForwardMigrations(MigratorTestCase):
             print(p.is_template)
 
     def test_models_exist(self):
-        """Test that the Part model can still be accessed at the end of schema migration"""
+        """Test that the Part model can still be accessed at the end of schema migration."""
         Part = self.new_state.apps.get_model('part', 'part')
 
         self.assertEqual(Part.objects.count(), 5)
@@ -49,13 +49,13 @@ class TestForwardMigrations(MigratorTestCase):
 
 
 class TestBomItemMigrations(MigratorTestCase):
-    """Tests for BomItem migrations"""
+    """Tests for BomItem migrations."""
 
     migrate_from = ('part', '0002_auto_20190520_2204')
     migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
 
     def prepare(self):
-        """Create initial dataset"""
+        """Create initial dataset."""
         Part = self.old_state.apps.get_model('part', 'part')
         BomItem = self.old_state.apps.get_model('part', 'bomitem')
 
@@ -73,7 +73,7 @@ class TestBomItemMigrations(MigratorTestCase):
             print(b.validated)
 
     def test_validated_field(self):
-        """Test that the 'validated' field is added to the BomItem objects"""
+        """Test that the 'validated' field is added to the BomItem objects."""
         BomItem = self.new_state.apps.get_model('part', 'bomitem')
 
         self.assertEqual(BomItem.objects.count(), 2)
@@ -83,13 +83,13 @@ class TestBomItemMigrations(MigratorTestCase):
 
 
 class TestParameterMigrations(MigratorTestCase):
-    """Unit test for part parameter migrations"""
+    """Unit test for part parameter migrations."""
 
     migrate_from = ('part', '0106_part_tags')
     migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
 
     def prepare(self):
-        """Create some parts, and templates with parameters"""
+        """Create some parts, and templates with parameters."""
         Part = self.old_state.apps.get_model('part', 'part')
         PartParameter = self.old_state.apps.get_model('part', 'partparameter')
         PartParameterTemlate = self.old_state.apps.get_model(
@@ -117,7 +117,7 @@ class TestParameterMigrations(MigratorTestCase):
         PartParameter.objects.create(part=b, template=t2, data='abc')
 
     def test_data_migration(self):
-        """Test that the template units and values have been updated correctly"""
+        """Test that the template units and values have been updated correctly."""
         Part = self.new_state.apps.get_model('part', 'part')
         PartParameter = self.new_state.apps.get_model('part', 'partparameter')
         PartParameterTemlate = self.new_state.apps.get_model(
@@ -155,13 +155,13 @@ class TestParameterMigrations(MigratorTestCase):
 
 
 class PartUnitsMigrationTest(MigratorTestCase):
-    """Test for data migration of Part.units field"""
+    """Test for data migration of Part.units field."""
 
     migrate_from = ('part', '0109_auto_20230517_1048')
     migrate_to = ('part', unit_test.getNewestMigrationFile('part'))
 
     def prepare(self):
-        """Prepare some parts with units"""
+        """Prepare some parts with units."""
         Part = self.old_state.apps.get_model('part', 'part')
 
         units = ['mm', 'INCH', '', '%']
@@ -178,7 +178,7 @@ class PartUnitsMigrationTest(MigratorTestCase):
             )
 
     def test_units_migration(self):
-        """Test that the units have migrated OK"""
+        """Test that the units have migrated OK."""
         Part = self.new_state.apps.get_model('part', 'part')
 
         part_1 = Part.objects.get(name='Part 1')
@@ -193,7 +193,7 @@ class PartUnitsMigrationTest(MigratorTestCase):
 
 
 class TestPartParameterTemplateMigration(MigratorTestCase):
-    """Test for data migration of PartParameterTemplate
+    """Test for data migration of PartParameterTemplate.
 
     Ref: https://github.com/inventree/InvenTree/pull/4987
     """
@@ -202,7 +202,7 @@ class TestPartParameterTemplateMigration(MigratorTestCase):
     migrate_to = ('part', '0113_auto_20230531_1205')
 
     def prepare(self):
-        """Prepare some parts with units"""
+        """Prepare some parts with units."""
         PartParameterTemplate = self.old_state.apps.get_model(
             'part', 'partparametertemplate'
         )
@@ -220,7 +220,7 @@ class TestPartParameterTemplateMigration(MigratorTestCase):
             template.checkbox
 
     def test_units_migration(self):
-        """Test that the new fields have been added correctly"""
+        """Test that the new fields have been added correctly."""
         PartParameterTemplate = self.new_state.apps.get_model(
             'part', 'partparametertemplate'
         )

@@ -80,7 +80,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
 
     @atomic
     def update_rates(self, base_currency=None, **kwargs):
-        """Call to update all exchange rates"""
+        """Call to update all exchange rates."""
         backend, _ = ExchangeBackend.objects.update_or_create(
             name=self.name, defaults={'base_currency': base_currency}
         )

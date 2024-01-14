@@ -2,6 +2,7 @@
 
 from django.urls import reverse
 
+from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
 
@@ -23,14 +24,14 @@ class SettingsValueField(serializers.Field):
         return instance
 
     def to_representation(self, instance):
-        """Return the value of the setting:
+        """Return the value of the setting.
 
-        - Protected settings are returned as '***'
+        Protected settings are returned as '***'
         """
         return '***' if instance.protected else str(instance.value)
 
     def to_internal_value(self, data):
-        """Return the internal value of the setting"""
+        """Return the internal value of the setting."""
         return str(data)
 
 
@@ -302,3 +303,16 @@ class CustomUnitSerializer(InvenTreeModelSerializer):
 
         model = common_models.CustomUnit
         fields = ['pk', 'name', 'symbol', 'definition']
+
+
+class ErrorMessageSerializer(InvenTreeModelSerializer):
+    """DRF serializer for server error messages."""
+
+    class Meta:
+        """Metaclass options for ErrorMessageSerializer."""
+
+        model = Error
+
+        fields = ['when', 'info', 'data', 'path', 'pk']
+
+        read_only_fields = ['when', 'info', 'data', 'path', 'pk']

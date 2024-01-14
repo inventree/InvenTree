@@ -22,7 +22,7 @@ class TemplateTagTest(InvenTreeTestCase):
         self.assertTrue('environment' in settings_data)
 
     def test_spa_bundle(self):
-        """Test the 'spa_bundle' template tag"""
+        """Test the 'spa_bundle' template tag."""
         resp = spa_helper.spa_bundle()
         self.assertTrue(
             resp.startswith('<link rel="stylesheet" href="/static/web/assets/index')
@@ -41,7 +41,7 @@ class TemplateTagTest(InvenTreeTestCase):
         )  # Name back
 
     def test_spa_settings(self):
-        """Test the 'spa_settings' template tag"""
+        """Test the 'spa_settings' template tag."""
         resp = spa_helper.spa_settings()
         self.assertTrue(resp.startswith('<script>window.INVENTREE_SETTINGS='))
         settings_data_string = resp.replace(

@@ -1,4 +1,4 @@
-"""Unit tests for the BomItem model"""
+"""Unit tests for the BomItem model."""
 
 from decimal import Decimal
 
@@ -12,7 +12,7 @@ from .models import BomItem, BomItemSubstitute, Part
 
 
 class BomItemTest(TestCase):
-    """Class for unit testing BomItem model"""
+    """Class for unit testing BomItem model."""
 
     fixtures = [
         'category',
@@ -26,7 +26,7 @@ class BomItemTest(TestCase):
     ]
 
     def setUp(self):
-        """Create initial data"""
+        """Create initial data."""
         super().setUp()
 
         Part.objects.rebuild()
@@ -36,19 +36,19 @@ class BomItemTest(TestCase):
         self.r1 = Part.objects.get(name='R_2K2_0805')
 
     def test_str(self):
-        """Test the string representation of a BOMItem"""
+        """Test the string representation of a BOMItem."""
         b = BomItem.objects.get(id=1)
         self.assertEqual(str(b), '10 x M2x4 LPHS to make BOB | Bob | A2')
 
     def test_has_bom(self):
-        """Test the has_bom attribute"""
+        """Test the has_bom attribute."""
         self.assertFalse(self.orphan.has_bom)
         self.assertTrue(self.bob.has_bom)
 
         self.assertEqual(self.bob.bom_count, 4)
 
     def test_in_bom(self):
-        """Test BOM aggregation"""
+        """Test BOM aggregation."""
         parts = self.bob.getRequiredParts()
 
         self.assertIn(self.orphan, parts)
@@ -56,7 +56,7 @@ class BomItemTest(TestCase):
         self.assertTrue(self.bob.check_if_part_in_bom(self.orphan))
 
     def test_used_in(self):
-        """Test that the 'used_in_count' attribute is calculated correctly"""
+        """Test that the 'used_in_count' attribute is calculated correctly."""
         self.assertEqual(self.bob.used_in_count, 1)
         self.assertEqual(self.orphan.used_in_count, 1)
 
@@ -131,7 +131,7 @@ class BomItemTest(TestCase):
         self.assertNotEqual(h1, h2)
 
     def test_pricing(self):
-        """Test BOM pricing"""
+        """Test BOM pricing."""
         self.bob.get_price(1)
         self.assertEqual(
             self.bob.get_bom_price_range(1, internal=True),
@@ -193,7 +193,7 @@ class BomItemTest(TestCase):
         self.assertEqual(bom_item.substitutes.count(), 0)
 
     def test_consumable(self):
-        """Tests for the 'consumable' BomItem field"""
+        """Tests for the 'consumable' BomItem field."""
         # Create an assembly part
         assembly = Part.objects.create(
             name='An assembly', description='Made with parts', assembly=True
@@ -252,8 +252,7 @@ class BomItemTest(TestCase):
             self.assertEqual(len(p.metadata.keys()), 4)
 
     def test_invalid_bom(self):
-        """Test that ValidationError is correctly raised for an invalid BOM item"""
-
+        """Test that ValidationError is correctly raised for an invalid BOM item."""
         # First test: A BOM item which points to itself
         with self.assertRaises(django_exceptions.ValidationError):
             BomItem.objects.create(part=self.bob, sub_part=self.bob, quantity=1)

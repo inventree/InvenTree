@@ -1,4 +1,4 @@
-"""Very simple sample plugin"""
+"""Very simple sample plugin."""
 
 from plugin import InvenTreePlugin
 

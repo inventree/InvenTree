@@ -1,4 +1,4 @@
-"""DRF API definition for the 'users' app"""
+"""DRF API definition for the 'users' app."""
 
 import datetime
 import logging
@@ -108,7 +108,7 @@ class RoleDetails(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        """Return the list of roles / permissions available to the current user"""
+        """Return the list of roles / permissions available to the current user."""
         user = request.user
 
         roles = {}
@@ -150,7 +150,7 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
     """Detail endpoint for current user."""
 
     def get_object(self):
-        """Always return the current user object"""
+        """Always return the current user object."""
         return self.request.user
 
 
@@ -178,7 +178,7 @@ class UserList(ListCreateAPI):
 
 
 class GroupDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint for a particular auth group"""
+    """Detail endpoint for a particular auth group."""
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -186,7 +186,7 @@ class GroupDetail(RetrieveUpdateDestroyAPI):
 
 
 class GroupList(ListCreateAPI):
-    """List endpoint for all auth groups"""
+    """List endpoint for all auth groups."""
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -205,13 +205,12 @@ class GetAuthToken(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        """Return an API token if the user is authenticated
+        """Return an API token if the user is authenticated.
 
         - If the user already has a matching token, delete it and create a new one
         - Existing tokens are *never* exposed again via the API
         - Once the token is provided, it can be used for auth until it expires
         """
-
         if request.user.is_authenticated:
             user = request.user
             name = request.query_params.get('name', '')

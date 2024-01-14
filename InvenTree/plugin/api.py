@@ -140,7 +140,7 @@ class PluginInstall(CreateAPI):
     serializer_class = PluginSerializers.PluginConfigInstallSerializer
 
     def create(self, request, *args, **kwargs):
-        """Install a plugin via the API"""
+        """Install a plugin via the API."""
         # Clean up input data
         data = self.clean_data(request.data)
 
@@ -152,7 +152,7 @@ class PluginInstall(CreateAPI):
         return Response(result, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
-        """Saving the serializer instance performs plugin installation"""
+        """Saving the serializer instance performs plugin installation."""
         return serializer.save()
 
 
@@ -189,7 +189,7 @@ class PluginReload(CreateAPI):
     permission_classes = [IsSuperuser]
 
     def perform_create(self, serializer):
-        """Saving the serializer instance performs plugin installation"""
+        """Saving the serializer instance performs plugin installation."""
         return serializer.save()
 
 
@@ -272,7 +272,6 @@ class PluginAllSettingList(APIView):
     )
     def get(self, request, pk):
         """Get all settings for a plugin config."""
-
         # look up the plugin
         plugin = check_plugin(None, pk)
 

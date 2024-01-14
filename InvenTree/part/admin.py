@@ -1,4 +1,4 @@
-"""Admin class definitions for the 'part' app"""
+"""Admin class definitions for the 'part' app."""
 
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
@@ -17,7 +17,7 @@ class PartResource(InvenTreeResource):
     """Class for managing Part data import/export."""
 
     class Meta:
-        """Metaclass definition"""
+        """Metaclass options."""
 
         model = models.Part
         skip_unchanged = True
@@ -159,14 +159,14 @@ class PartResource(InvenTreeResource):
     )
 
     def dehydrate_min_cost(self, part):
-        """Render minimum cost value for this Part"""
+        """Render minimum cost value for this Part."""
         min_cost = part.pricing.overall_min if part.pricing else None
 
         if min_cost is not None:
             return float(min_cost.amount)
 
     def dehydrate_max_cost(self, part):
-        """Render maximum cost value for this Part"""
+        """Render maximum cost value for this Part."""
         max_cost = part.pricing.overall_max if part.pricing else None
 
         if max_cost is not None:
@@ -186,7 +186,7 @@ class PartResource(InvenTreeResource):
         return query
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
-        """Rebuild MPTT tree structure after importing Part data"""
+        """Rebuild MPTT tree structure after importing Part data."""
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
         # Rebuild the Part tree(s)
@@ -197,7 +197,7 @@ class PartImportResource(InvenTreeResource):
     """Class for managing Part data import/export."""
 
     class Meta(PartResource.Meta):
-        """Metaclass definition"""
+        """Metaclass options."""
 
         skip_unchanged = True
         report_skipped = False
@@ -223,13 +223,13 @@ class PartImportResource(InvenTreeResource):
 
 
 class PartParameterInline(admin.TabularInline):
-    """Inline for part parameter data"""
+    """Inline for part parameter data."""
 
     model = models.PartParameter
 
 
 class PartAdmin(ImportExportModelAdmin):
-    """Admin class for the Part model"""
+    """Admin class for the Part model."""
 
     resource_class = PartResource
 
@@ -256,7 +256,7 @@ class PartAdmin(ImportExportModelAdmin):
 
 
 class PartPricingAdmin(admin.ModelAdmin):
-    """Admin class for PartPricing model"""
+    """Admin class for PartPricing model."""
 
     list_display = ('part', 'overall_min', 'overall_max')
 
@@ -264,13 +264,13 @@ class PartPricingAdmin(admin.ModelAdmin):
 
 
 class PartStocktakeAdmin(admin.ModelAdmin):
-    """Admin class for PartStocktake model"""
+    """Admin class for PartStocktake model."""
 
     list_display = ['part', 'date', 'quantity', 'user']
 
 
 class PartStocktakeReportAdmin(admin.ModelAdmin):
-    """Admin class for PartStocktakeReport model"""
+    """Admin class for PartStocktakeReport model."""
 
     list_display = ['date', 'user']
 
@@ -279,7 +279,7 @@ class PartCategoryResource(InvenTreeResource):
     """Class for managing PartCategory data import/export."""
 
     class Meta:
-        """Metaclass definition"""
+        """Metaclass options."""
 
         model = models.PartCategory
         skip_unchanged = True
@@ -326,7 +326,7 @@ class PartCategoryResource(InvenTreeResource):
     )
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
-        """Rebuild MPTT tree structure after importing PartCategory data"""
+        """Rebuild MPTT tree structure after importing PartCategory data."""
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
         # Rebuild the PartCategory tree(s)
@@ -334,7 +334,7 @@ class PartCategoryResource(InvenTreeResource):
 
 
 class PartCategoryAdmin(ImportExportModelAdmin):
-    """Admin class for the PartCategory model"""
+    """Admin class for the PartCategory model."""
 
     resource_class = PartCategoryResource
 
@@ -352,7 +352,7 @@ class PartRelatedAdmin(admin.ModelAdmin):
 
 
 class PartAttachmentAdmin(admin.ModelAdmin):
-    """Admin class for the PartAttachment model"""
+    """Admin class for the PartAttachment model."""
 
     list_display = ('part', 'attachment', 'comment')
 
@@ -360,7 +360,7 @@ class PartAttachmentAdmin(admin.ModelAdmin):
 
 
 class PartTestTemplateAdmin(admin.ModelAdmin):
-    """Admin class for the PartTestTemplate model"""
+    """Admin class for the PartTestTemplate model."""
 
     list_display = ('part', 'test_name', 'required')
 
@@ -371,7 +371,7 @@ class BomItemResource(InvenTreeResource):
     """Class for managing BomItem data import/export."""
 
     class Meta:
-        """Metaclass definition"""
+        """Metaclass options."""
 
         model = models.BomItem
         skip_unchanged = True
@@ -431,28 +431,28 @@ class BomItemResource(InvenTreeResource):
     )
 
     def dehydrate_min_cost(self, item):
-        """Render minimum cost value for the BOM line item"""
+        """Render minimum cost value for the BOM line item."""
         min_price = item.sub_part.pricing.overall_min if item.sub_part.pricing else None
 
         if min_price is not None:
             return float(min_price.amount) * float(item.quantity)
 
     def dehydrate_max_cost(self, item):
-        """Render maximum cost value for the BOM line item"""
+        """Render maximum cost value for the BOM line item."""
         max_price = item.sub_part.pricing.overall_max if item.sub_part.pricing else None
 
         if max_price is not None:
             return float(max_price.amount) * float(item.quantity)
 
     def dehydrate_quantity(self, item):
-        """Special consideration for the 'quantity' field on data export. We do not want a spreadsheet full of "1.0000" (we'd rather "1")
+        """Special consideration for the 'quantity' field on data export. We do not want a spreadsheet full of "1.0000" (we'd rather "1").
 
         Ref: https://django-import-export.readthedocs.io/en/latest/getting_started.html#advanced-data-manipulation-on-export
         """
         return float(item.quantity)
 
     def before_export(self, queryset, *args, **kwargs):
-        """Perform before exporting data"""
+        """Perform before exporting data."""
         self.is_importing = kwargs.get('importing', False)
         self.include_pricing = kwargs.pop('include_pricing', False)
 
@@ -496,7 +496,7 @@ class BomItemResource(InvenTreeResource):
 
 
 class BomItemAdmin(ImportExportModelAdmin):
-    """Admin class for the BomItem model"""
+    """Admin class for the BomItem model."""
 
     resource_class = BomItemResource
 
@@ -513,13 +513,13 @@ class BomItemAdmin(ImportExportModelAdmin):
 
 
 class ParameterTemplateResource(InvenTreeResource):
-    """Class for managing ParameterTemplate import/export"""
+    """Class for managing ParameterTemplate import/export."""
 
     # The following fields will be converted from None to ''
     CONVERT_NULL_FIELDS = ['choices', 'units']
 
     class Meta:
-        """Metaclass definition"""
+        """Metaclass options."""
 
         model = models.PartParameterTemplate
         skip_unchanged = True
@@ -530,7 +530,7 @@ class ParameterTemplateResource(InvenTreeResource):
 
 
 class ParameterTemplateAdmin(ImportExportModelAdmin):
-    """Admin class for the PartParameterTemplate model"""
+    """Admin class for the PartParameterTemplate model."""
 
     resource_class = ParameterTemplateResource
 
@@ -543,7 +543,7 @@ class ParameterResource(InvenTreeResource):
     """Class for managing PartParameter data import/export."""
 
     class Meta:
-        """Metaclass definition"""
+        """Metaclass options."""
 
         model = models.PartParameter
         skip_unchanged = True
@@ -563,7 +563,7 @@ class ParameterResource(InvenTreeResource):
 
 
 class ParameterAdmin(ImportExportModelAdmin):
-    """Admin class for the PartParameter model"""
+    """Admin class for the PartParameter model."""
 
     resource_class = ParameterResource
 
@@ -573,16 +573,16 @@ class ParameterAdmin(ImportExportModelAdmin):
 
 
 class PartCategoryParameterAdmin(admin.ModelAdmin):
-    """Admin class for the PartCategoryParameterTemplate model"""
+    """Admin class for the PartCategoryParameterTemplate model."""
 
     autocomplete_fields = ('category', 'parameter_template')
 
 
 class PartSellPriceBreakAdmin(admin.ModelAdmin):
-    """Admin class for the PartSellPriceBreak model"""
+    """Admin class for the PartSellPriceBreak model."""
 
     class Meta:
-        """Metaclass definition"""
+        """Metaclass options."""
 
         model = models.PartSellPriceBreak
 
@@ -590,10 +590,10 @@ class PartSellPriceBreakAdmin(admin.ModelAdmin):
 
 
 class PartInternalPriceBreakAdmin(admin.ModelAdmin):
-    """Admin class for the PartInternalPriceBreak model"""
+    """Admin class for the PartInternalPriceBreak model."""
 
     class Meta:
-        """Metaclass definition"""
+        """Metaclass options."""
 
         model = models.PartInternalPriceBreak
 

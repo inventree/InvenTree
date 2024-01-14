@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 160
+INVENTREE_API_VERSION = 161
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v160 -> 2023-012-11 : https://github.com/inventree/InvenTree/pull/6072
+v161 -> 2024-01-13 : https://github.com/inventree/InvenTree/pull/6222
+    - Adds API endpoint for system error information
+
+v160 -> 2023-12-11 : https://github.com/inventree/InvenTree/pull/6072
     - Adds API endpoint for allocating stock items against a sales order via barcode scan
 
 v159 -> 2023-12-08 : https://github.com/inventree/InvenTree/pull/6056

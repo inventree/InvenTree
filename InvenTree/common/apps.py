@@ -19,7 +19,6 @@ class CommonConfig(AppConfig):
 
     def ready(self):
         """Initialize restart flag clearance on startup."""
-
         if InvenTree.ready.isRunningMigrations():
             return
 

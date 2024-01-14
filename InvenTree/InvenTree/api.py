@@ -17,7 +17,7 @@ import users.models
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
-from part.templatetags.inventree_extras import plugins_info
+from InvenTree.templatetags.inventree_extras import plugins_info
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
@@ -52,7 +52,7 @@ class VersionView(APIView):
                 'code': InvenTree.version.inventreeGithubUrl(),
                 'credit': InvenTree.version.inventreeCreditsUrl(),
                 'app': InvenTree.version.inventreeAppUrl(),
-                'bug': f'{InvenTree.version.inventreeGithubUrl()}/issues',
+                'bug': f'{InvenTree.version.inventreeGithubUrl()}issues',
             },
         })
 
@@ -98,7 +98,7 @@ class InfoView(AjaxView):
     permission_classes = [permissions.AllowAny]
 
     def worker_pending_tasks(self):
-        """Return the current number of outstanding background tasks"""
+        """Return the current number of outstanding background tasks."""
         return OrmQ.objects.count()
 
     def get(self, request, *args, **kwargs):
@@ -158,7 +158,7 @@ class NotFoundView(AjaxView):
     permission_classes = [permissions.AllowAny]
 
     def not_found(self, request):
-        """Return a 404 error"""
+        """Return a 404 error."""
         return JsonResponse(
             {
                 'detail': _('API endpoint not found'),
@@ -168,27 +168,27 @@ class NotFoundView(AjaxView):
         )
 
     def options(self, request, *args, **kwargs):
-        """Return 404"""
+        """Return 404."""
         return self.not_found(request)
 
     def get(self, request, *args, **kwargs):
-        """Return 404"""
+        """Return 404."""
         return self.not_found(request)
 
     def post(self, request, *args, **kwargs):
-        """Return 404"""
+        """Return 404."""
         return self.not_found(request)
 
     def patch(self, request, *args, **kwargs):
-        """Return 404"""
+        """Return 404."""
         return self.not_found(request)
 
     def put(self, request, *args, **kwargs):
-        """Return 404"""
+        """Return 404."""
         return self.not_found(request)
 
     def delete(self, request, *args, **kwargs):
-        """Return 404"""
+        """Return 404."""
         return self.not_found(request)
 
 
@@ -204,7 +204,7 @@ class BulkDeleteMixin:
     """
 
     def filter_delete_queryset(self, queryset, request):
-        """Provide custom filtering for the queryset *before* it is deleted"""
+        """Provide custom filtering for the queryset *before* it is deleted."""
         return queryset
 
     def delete(self, request, *args, **kwargs):
@@ -270,7 +270,7 @@ class BulkDeleteMixin:
 
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
-    """Custom API endpoint which provides BulkDelete functionality in addition to List and Create"""
+    """Custom API endpoint which provides BulkDelete functionality in addition to List and Create."""
 
     ...
 
@@ -328,7 +328,7 @@ class AttachmentMixin:
 
 
 class APISearchView(APIView):
-    """A general-purpose 'search' API endpoint
+    """A general-purpose 'search' API endpoint.
 
     Returns hits against a number of different models simultaneously,
     to consolidate multiple API requests into a single query.
@@ -339,7 +339,7 @@ class APISearchView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_result_types(self):
-        """Construct a list of search types we can return"""
+        """Construct a list of search types we can return."""
         import build.api
         import company.api
         import order.api
@@ -361,7 +361,7 @@ class APISearchView(APIView):
         }
 
     def post(self, request, *args, **kwargs):
-        """Perform search query against available models"""
+        """Perform search query against available models."""
         data = request.data
 
         results = {}
@@ -424,12 +424,12 @@ class APISearchView(APIView):
 
 
 class MetadataView(RetrieveUpdateAPI):
-    """Generic API endpoint for reading and editing metadata for a model"""
+    """Generic API endpoint for reading and editing metadata for a model."""
 
     MODEL_REF = 'model'
 
     def get_model_type(self):
-        """Return the model type associated with this API instance"""
+        """Return the model type associated with this API instance."""
         model = self.kwargs.get(self.MODEL_REF, None)
 
         if model is None:
@@ -440,13 +440,13 @@ class MetadataView(RetrieveUpdateAPI):
         return model
 
     def get_permission_model(self):
-        """Return the 'permission' model associated with this view"""
+        """Return the 'permission' model associated with this view."""
         return self.get_model_type()
 
     def get_queryset(self):
-        """Return the queryset for this endpoint"""
+        """Return the queryset for this endpoint."""
         return self.get_model_type().objects.all()
 
     def get_serializer(self, *args, **kwargs):
-        """Return MetadataSerializer instance"""
+        """Return MetadataSerializer instance."""
         return MetadataSerializer(self.get_model_type(), *args, **kwargs)

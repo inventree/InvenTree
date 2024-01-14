@@ -1,4 +1,4 @@
-"""Mixin class for making calls to an external API"""
+"""Mixin class for making calls to an external API."""
 
 import json as json_pkg
 import logging

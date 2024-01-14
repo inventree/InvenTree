@@ -1,4 +1,4 @@
-"""Unit testing for the various report models"""
+"""Unit testing for the various report models."""
 
 import os
 import shutil
@@ -23,14 +23,14 @@ from stock.models import StockItem, StockItemAttachment
 
 
 class ReportTagTest(TestCase):
-    """Unit tests for the report template tags"""
+    """Unit tests for the report template tags."""
 
     def debug_mode(self, value: bool):
-        """Enable or disable debug mode for reports"""
+        """Enable or disable debug mode for reports."""
         InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', value, change_user=None)
 
     def test_getindex(self):
-        """Tests for the 'getindex' template tag"""
+        """Tests for the 'getindex' template tag."""
         fn = report_tags.getindex
         data = [1, 2, 3, 4, 5, 6]
 
@@ -43,14 +43,14 @@ class ReportTagTest(TestCase):
             self.assertEqual(fn(data, idx), data[idx])
 
     def test_getkey(self):
-        """Tests for the 'getkey' template tag"""
+        """Tests for the 'getkey' template tag."""
         data = {'hello': 'world', 'foo': 'bar', 'with spaces': 'withoutspaces', 1: 2}
 
         for k, v in data.items():
             self.assertEqual(report_tags.getkey(data, k), v)
 
     def test_asset(self):
-        """Tests for asset files"""
+        """Tests for asset files."""
         # Test that an error is raised if the file does not exist
         for b in [True, False]:
             self.debug_mode(b)
@@ -78,7 +78,7 @@ class ReportTagTest(TestCase):
         self.assertEqual(asset, f'file://{asset_dir}/test.txt')
 
     def test_uploaded_image(self):
-        """Tests for retrieving uploaded images"""
+        """Tests for retrieving uploaded images."""
         # Test for a missing image
         for b in [True, False]:
             self.debug_mode(b)
@@ -128,17 +128,17 @@ class ReportTagTest(TestCase):
         self.assertTrue(img.startswith('data:image/png;charset=utf-8;base64,'))
 
     def test_part_image(self):
-        """Unit tests for the 'part_image' tag"""
+        """Unit tests for the 'part_image' tag."""
         with self.assertRaises(TypeError):
             report_tags.part_image(None)
 
     def test_company_image(self):
-        """Unit tests for the 'company_image' tag"""
+        """Unit tests for the 'company_image' tag."""
         with self.assertRaises(TypeError):
             report_tags.company_image(None)
 
     def test_logo_image(self):
-        """Unit tests for the 'logo_image' tag"""
+        """Unit tests for the 'logo_image' tag."""
         # By default, should return the core InvenTree logo
         for b in [True, False]:
             self.debug_mode(b)
@@ -146,7 +146,7 @@ class ReportTagTest(TestCase):
             self.assertIn('inventree.png', logo)
 
     def test_maths_tags(self):
-        """Simple tests for mathematical operator tags"""
+        """Simple tests for mathematical operator tags."""
         self.assertEqual(report_tags.add(1, 2), 3)
         self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
         self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
@@ -154,10 +154,10 @@ class ReportTagTest(TestCase):
 
 
 class BarcodeTagTest(TestCase):
-    """Unit tests for the barcode template tags"""
+    """Unit tests for the barcode template tags."""
 
     def test_barcode(self):
-        """Test the barcode generation tag"""
+        """Test the barcode generation tag."""
         barcode = barcode_tags.barcode('12345')
 
         self.assertTrue(isinstance(barcode, str))
@@ -169,7 +169,7 @@ class BarcodeTagTest(TestCase):
         self.assertTrue(barcode.startswith('data:image/bmp;'))
 
     def test_qrcode(self):
-        """Test the qrcode generation tag"""
+        """Test the qrcode generation tag."""
         # Test with default settings
         qrcode = barcode_tags.qrcode('hello world')
         self.assertTrue(isinstance(qrcode, str))
@@ -186,7 +186,7 @@ class BarcodeTagTest(TestCase):
 
 
 class ReportTest(InvenTreeAPITestCase):
-    """Base class for unit testing reporting models"""
+    """Base class for unit testing reporting models."""
 
     fixtures = [
         'category',
@@ -206,7 +206,7 @@ class ReportTest(InvenTreeAPITestCase):
     print_url = None
 
     def setUp(self):
-        """Ensure cache is cleared as part of test setup"""
+        """Ensure cache is cleared as part of test setup."""
         cache.clear()
         return super().setUp()
 
@@ -294,7 +294,7 @@ class ReportTest(InvenTreeAPITestCase):
 
 
 class TestReportTest(ReportTest):
-    """Unit testing class for the stock item TestReport model"""
+    """Unit testing class for the stock item TestReport model."""
 
     model = report_models.TestReport
 
@@ -303,7 +303,7 @@ class TestReportTest(ReportTest):
     print_url = 'api-stockitem-testreport-print'
 
     def setUp(self):
-        """Setup function for the stock item TestReport"""
+        """Setup function for the stock item TestReport."""
         self.copyReportTemplate('inventree_test_report.html', 'stock item test report')
 
         return super().setUp()
@@ -348,7 +348,7 @@ class TestReportTest(ReportTest):
 
 
 class BuildReportTest(ReportTest):
-    """Unit test class for the BuildReport model"""
+    """Unit test class for the BuildReport model."""
 
     model = report_models.BuildReport
 
@@ -357,7 +357,7 @@ class BuildReportTest(ReportTest):
     print_url = 'api-build-report-print'
 
     def setUp(self):
-        """Setup unit testing functions"""
+        """Setup unit testing functions."""
         self.copyReportTemplate('inventree_build_order.html', 'build order template')
 
         return super().setUp()
@@ -405,7 +405,7 @@ class BuildReportTest(ReportTest):
 
 
 class BOMReportTest(ReportTest):
-    """Unit test class for the BillOfMaterialsReport model"""
+    """Unit test class for the BillOfMaterialsReport model."""
 
     model = report_models.BillOfMaterialsReport
 
@@ -414,7 +414,7 @@ class BOMReportTest(ReportTest):
     print_url = 'api-bom-report-print'
 
     def setUp(self):
-        """Setup function for the bill of materials Report"""
+        """Setup function for the bill of materials Report."""
         self.copyReportTemplate(
             'inventree_bill_of_materials_report.html', 'bill of materials report'
         )
@@ -423,7 +423,7 @@ class BOMReportTest(ReportTest):
 
 
 class PurchaseOrderReportTest(ReportTest):
-    """Unit test class for the PurchaseOrderReport model"""
+    """Unit test class for the PurchaseOrderReport model."""
 
     model = report_models.PurchaseOrderReport
 
@@ -432,14 +432,14 @@ class PurchaseOrderReportTest(ReportTest):
     print_url = 'api-po-report-print'
 
     def setUp(self):
-        """Setup function for the purchase order Report"""
+        """Setup function for the purchase order Report."""
         self.copyReportTemplate('inventree_po_report.html', 'purchase order report')
 
         return super().setUp()
 
 
 class SalesOrderReportTest(ReportTest):
-    """Unit test class for the SalesOrderReport model"""
+    """Unit test class for the SalesOrderReport model."""
 
     model = report_models.SalesOrderReport
 
@@ -448,14 +448,14 @@ class SalesOrderReportTest(ReportTest):
     print_url = 'api-so-report-print'
 
     def setUp(self):
-        """Setup function for the sales order Report"""
+        """Setup function for the sales order Report."""
         self.copyReportTemplate('inventree_so_report.html', 'sales order report')
 
         return super().setUp()
 
 
 class ReturnOrderReportTest(ReportTest):
-    """Unit tests for the ReturnOrderReport model"""
+    """Unit tests for the ReturnOrderReport model."""
 
     model = report_models.ReturnOrderReport
     list_url = 'api-return-order-report-list'
@@ -463,7 +463,7 @@ class ReturnOrderReportTest(ReportTest):
     print_url = 'api-return-order-report-print'
 
     def setUp(self):
-        """Setup function for the ReturnOrderReport tests"""
+        """Setup function for the ReturnOrderReport tests."""
         self.copyReportTemplate(
             'inventree_return_order_report.html', 'return order report'
         )
@@ -472,7 +472,7 @@ class ReturnOrderReportTest(ReportTest):
 
 
 class StockLocationReportTest(ReportTest):
-    """Unit tests for the StockLocationReport model"""
+    """Unit tests for the StockLocationReport model."""
 
     model = report_models.StockLocationReport
     list_url = 'api-stocklocation-report-list'
@@ -480,7 +480,7 @@ class StockLocationReportTest(ReportTest):
     print_url = 'api-stocklocation-report-print'
 
     def setUp(self):
-        """Setup function for the StockLocationReport tests"""
+        """Setup function for the StockLocationReport tests."""
         self.copyReportTemplate('inventree_slr_report.html', 'stock location report')
 
         return super().setUp()

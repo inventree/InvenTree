@@ -1,4 +1,4 @@
-"""Unit tests for the PartCategory model"""
+"""Unit tests for the PartCategory model."""
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -17,7 +17,7 @@ class CategoryTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        """Extract some interesting categories for time-saving"""
+        """Extract some interesting categories for time-saving."""
         super().setUpTestData()
 
         cls.electronics = PartCategory.objects.get(name='Electronics')
@@ -216,7 +216,7 @@ class CategoryTest(TestCase):
         self.assertIsNone(w.get_default_location())
 
     def test_category_tree(self):
-        """Unit tests for the part category tree structure (MPTT)
+        """Unit tests for the part category tree structure (MPTT).
 
         Ensure that the MPTT structure is rebuilt correctly,
         and the correct ancestor tree is observed.

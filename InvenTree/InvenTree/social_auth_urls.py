@@ -22,7 +22,7 @@ logger = logging.getLogger('inventree')
 
 
 class GenericOAuth2ApiLoginView(OAuth2LoginView):
-    """Api view to login a user with a social account"""
+    """Api view to login a user with a social account."""
 
     def dispatch(self, request, *args, **kwargs):
         """Dispatch the regular login view directly."""
@@ -30,7 +30,7 @@ class GenericOAuth2ApiLoginView(OAuth2LoginView):
 
 
 class GenericOAuth2ApiConnectView(GenericOAuth2ApiLoginView):
-    """Api view to connect a social account to the current user"""
+    """Api view to connect a social account to the current user."""
 
     def dispatch(self, request, *args, **kwargs):
         """Dispatch the connect request directly."""

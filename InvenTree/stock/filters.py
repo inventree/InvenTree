@@ -1,4 +1,4 @@
-"""Custom query filters for the Stock models"""
+"""Custom query filters for the Stock models."""
 
 from django.db.models import F, Func, IntegerField, OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce

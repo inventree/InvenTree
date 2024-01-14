@@ -1,4 +1,4 @@
-"""Helper functions for unit testing / CI"""
+"""Helper functions for unit testing / CI."""
 
 import csv
 import io
@@ -109,7 +109,7 @@ class UserMixin:
 
     @classmethod
     def setUpTestData(cls):
-        """Run setup for all tests in a given class"""
+        """Run setup for all tests in a given class."""
         super().setUpTestData()
 
         # Create a user to log in with
@@ -139,7 +139,7 @@ class UserMixin:
                 cls.assignRole(role=role, group=cls.group)
 
     def setUp(self):
-        """Run setup for individual test methods"""
+        """Run setup for individual test methods."""
         if self.auto_login:
             self.client.login(username=self.username, password=self.password)
 
@@ -198,10 +198,10 @@ class PluginMixin:
 
 
 class ExchangeRateMixin:
-    """Mixin class for generating exchange rate data"""
+    """Mixin class for generating exchange rate data."""
 
     def generate_exchange_rates(self):
-        """Helper function which generates some exchange rates to work with"""
+        """Helper function which generates some exchange rates to work with."""
         rates = {'AUD': 1.5, 'CAD': 1.7, 'GBP': 0.9, 'USD': 1.0}
 
         # Create a dummy backend
@@ -253,7 +253,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         self.assertLess(n, value, msg=msg)
 
     def checkResponse(self, url, method, expected_code, response):
-        """Debug output for an unexpected response"""
+        """Debug output for an unexpected response."""
         # No expected code, return
         if expected_code is None:
             return

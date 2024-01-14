@@ -218,7 +218,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     )
 
     def validate_part(self, part):
-        """Ensure the provided Part instance is valid"""
+        """Ensure the provided Part instance is valid."""
         if part.virtual:
             raise ValidationError(_('Stock item cannot be created for virtual parts'))
 
@@ -506,7 +506,6 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     def validate_quantity(self, quantity):
         """Validate the quantity value."""
-
         if quantity < 1:
             raise ValidationError(_('Quantity to install must be at least 1'))
 
@@ -528,8 +527,7 @@ class InstallStockItemSerializer(serializers.Serializer):
         return stock_item
 
     def validate(self, data):
-        """Ensure that the provided dataset is valid"""
-
+        """Ensure that the provided dataset is valid."""
         stock_item = data['stock_item']
 
         quantity = data.get('quantity', stock_item.quantity)
@@ -596,10 +594,10 @@ class UninstallStockItemSerializer(serializers.Serializer):
 
 
 class ConvertStockItemSerializer(serializers.Serializer):
-    """DRF serializer class for converting a StockItem to a valid variant part"""
+    """DRF serializer class for converting a StockItem to a valid variant part."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = ['part']
 
@@ -613,7 +611,7 @@ class ConvertStockItemSerializer(serializers.Serializer):
     )
 
     def validate_part(self, part):
-        """Ensure that the provided part is a valid option for the stock item"""
+        """Ensure that the provided part is a valid option for the stock item."""
         stock_item = self.context['item']
         valid_options = stock_item.part.get_conversion_options()
 
@@ -625,8 +623,9 @@ class ConvertStockItemSerializer(serializers.Serializer):
         return part
 
     def validate(self, data):
-        """Ensure that the stock item is valid for conversion:
+        """Ensure that the stock item is valid for conversion.
 
+        Rules:
         - If a SupplierPart is assigned, we cannot convert!
         """
         data = super().validate(data)
@@ -641,7 +640,7 @@ class ConvertStockItemSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Save the serializer to convert the StockItem to the selected Part"""
+        """Save the serializer to convert the StockItem to the selected Part."""
         data = self.validated_data
 
         part = data['part']
@@ -653,10 +652,10 @@ class ConvertStockItemSerializer(serializers.Serializer):
 
 
 class ReturnStockItemSerializer(serializers.Serializer):
-    """DRF serializer for returning a stock item from a customer"""
+    """DRF serializer for returning a stock item from a customer."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = ['location', 'note']
 
@@ -677,7 +676,7 @@ class ReturnStockItemSerializer(serializers.Serializer):
     )
 
     def save(self):
-        """Save the serialzier to return the item into stock"""
+        """Save the serialzier to return the item into stock."""
         item = self.context['item']
         request = self.context['request']
 
@@ -690,10 +689,10 @@ class ReturnStockItemSerializer(serializers.Serializer):
 
 
 class StockChangeStatusSerializer(serializers.Serializer):
-    """Serializer for changing status of multiple StockItem objects"""
+    """Serializer for changing status of multiple StockItem objects."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
 
         fields = ['items', 'status', 'note']
 
@@ -707,7 +706,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
     )
 
     def validate_items(self, items):
-        """Validate the selected stock items"""
+        """Validate the selected stock items."""
         if len(items) == 0:
             raise ValidationError(_('No stock items selected'))
 
@@ -728,7 +727,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
     @transaction.atomic
     def save(self):
-        """Save the serializer to change the status of the selected stock items"""
+        """Save the serializer to change the status of the selected stock items."""
         data = self.validated_data
 
         items = data['items']
@@ -837,7 +836,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         read_only_fields = ['barcode_hash', 'icon']
 
     def __init__(self, *args, **kwargs):
-        """Optionally add or remove extra fields"""
+        """Optionally add or remove extra fields."""
         path_detail = kwargs.pop('path_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -847,7 +846,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Annotate extra information to the queryset"""
+        """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
         queryset = queryset.annotate(items=stock.filters.annotate_location_items())
 

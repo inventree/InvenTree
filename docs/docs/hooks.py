@@ -1,4 +1,4 @@
-"""Custom mkdocs hooks, using the mkdocs-simple-hooks plugin"""
+"""Custom mkdocs hooks, using the mkdocs-simple-hooks plugin."""
 
 import json
 import os
@@ -10,13 +10,13 @@ import requests
 
 
 def fetch_rtd_versions():
-    """Get a list of RTD docs versions to build the version selector"""
+    """Get a list of RTD docs versions to build the version selector."""
     print('Fetching documentation versions from ReadTheDocs')
 
     versions = []
 
     def make_request(url, headers):
-        """Make a single request to the RTD API"""
+        """Make a single request to the RTD API."""
         response = requests.get(url, headers=headers)
 
         if response.status_code != 200:

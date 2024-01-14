@@ -1,4 +1,4 @@
-"""Admin class for the 'company' app"""
+"""Admin class for the 'company' app."""
 
 from django.contrib import admin
 
@@ -25,7 +25,7 @@ class CompanyResource(InvenTreeResource):
     """Class for managing Company data import/export."""
 
     class Meta:
-        """Metaclass defines extra options"""
+        """Metaclass defines extra options."""
 
         model = Company
         skip_unchanged = True
@@ -35,7 +35,7 @@ class CompanyResource(InvenTreeResource):
 
 @admin.register(Company)
 class CompanyAdmin(ImportExportModelAdmin):
-    """Admin class for the Company model"""
+    """Admin class for the Company model."""
 
     resource_class = CompanyResource
 
@@ -48,7 +48,7 @@ class SupplierPartResource(InvenTreeResource):
     """Class for managing SupplierPart data import/export."""
 
     class Meta:
-        """Metaclass defines extra admin options"""
+        """Metaclass defines extra admin options."""
 
         model = SupplierPart
         skip_unchanged = True
@@ -65,14 +65,14 @@ class SupplierPartResource(InvenTreeResource):
 
 
 class SupplierPriceBreakInline(admin.TabularInline):
-    """Inline for supplier-part pricing"""
+    """Inline for supplier-part pricing."""
 
     model = SupplierPriceBreak
 
 
 @admin.register(SupplierPart)
 class SupplierPartAdmin(ImportExportModelAdmin):
-    """Admin class for the SupplierPart model"""
+    """Admin class for the SupplierPart model."""
 
     resource_class = SupplierPartResource
 
@@ -89,7 +89,7 @@ class ManufacturerPartResource(InvenTreeResource):
     """Class for managing ManufacturerPart data import/export."""
 
     class Meta:
-        """Metaclass defines extra admin options"""
+        """Metaclass defines extra admin options."""
 
         model = ManufacturerPart
         skip_unchanged = True
@@ -133,7 +133,7 @@ class ManufacturerPartParameterResource(InvenTreeResource):
     """Class for managing ManufacturerPartParameter data import/export."""
 
     class Meta:
-        """Metaclass defines extra admin options"""
+        """Metaclass defines extra admin options."""
 
         model = ManufacturerPartParameter
         skip_unchanged = True
@@ -158,7 +158,7 @@ class SupplierPriceBreakResource(InvenTreeResource):
     """Class for managing SupplierPriceBreak data import/export."""
 
     class Meta:
-        """Metaclass defines extra admin options"""
+        """Metaclass defines extra admin options."""
 
         model = SupplierPriceBreak
         skip_unchanged = True
@@ -180,7 +180,7 @@ class SupplierPriceBreakResource(InvenTreeResource):
 
 @admin.register(SupplierPriceBreak)
 class SupplierPriceBreakAdmin(ImportExportModelAdmin):
-    """Admin class for the SupplierPriceBreak model"""
+    """Admin class for the SupplierPriceBreak model."""
 
     resource_class = SupplierPriceBreakResource
 
@@ -190,10 +190,10 @@ class SupplierPriceBreakAdmin(ImportExportModelAdmin):
 
 
 class AddressResource(InvenTreeResource):
-    """Class for managing Address data import/export"""
+    """Class for managing Address data import/export."""
 
     class Meta:
-        """Metaclass defining extra options"""
+        """Metaclass defining extra options."""
 
         model = Address
         skip_unchanged = True
@@ -205,7 +205,7 @@ class AddressResource(InvenTreeResource):
 
 @admin.register(Address)
 class AddressAdmin(ImportExportModelAdmin):
-    """Admin class for the Address model"""
+    """Admin class for the Address model."""
 
     resource_class = AddressResource
 
@@ -215,10 +215,10 @@ class AddressAdmin(ImportExportModelAdmin):
 
 
 class ContactResource(InvenTreeResource):
-    """Class for managing Contact data import/export"""
+    """Class for managing Contact data import/export."""
 
     class Meta:
-        """Metaclass defining extra options"""
+        """Metaclass defining extra options."""
 
         model = Contact
         skip_unchanged = True
@@ -230,7 +230,7 @@ class ContactResource(InvenTreeResource):
 
 @admin.register(Contact)
 class ContactAdmin(ImportExportModelAdmin):
-    """Admin class for the Contact model"""
+    """Admin class for the Contact model."""
 
     resource_class = ContactResource
 

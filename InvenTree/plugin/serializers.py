@@ -20,13 +20,14 @@ class MetadataSerializer(serializers.ModelSerializer):
         fields = ['metadata']
 
     def __init__(self, model_type, *args, **kwargs):
-        """Initialize the metadata serializer with information on the model type"""
+        """Initialize the metadata serializer with information on the model type."""
         self.Meta.model = model_type
         super().__init__(*args, **kwargs)
 
     def update(self, instance, data):
-        """Perform update on the metadata field:
+        """Perform update on the metadata field.
 
+        Rules:
         - If this is a partial (PATCH) update, try to 'merge' data in
         - Else, if it is a PUT update, overwrite any existing metadata
         """
@@ -130,7 +131,7 @@ class PluginConfigEmptySerializer(serializers.Serializer):
 
 
 class PluginReloadSerializer(serializers.Serializer):
-    """Serializer for remotely forcing plugin registry reload"""
+    """Serializer for remotely forcing plugin registry reload."""
 
     full_reload = serializers.BooleanField(
         required=False,
@@ -167,7 +168,7 @@ class PluginReloadSerializer(serializers.Serializer):
 
 
 class PluginActivateSerializer(serializers.Serializer):
-    """Serializer for activating or deactivating a plugin"""
+    """Serializer for activating or deactivating a plugin."""
 
     model = PluginConfig
 
@@ -179,7 +180,7 @@ class PluginActivateSerializer(serializers.Serializer):
     )
 
     def update(self, instance, validated_data):
-        """Apply the new 'active' value to the plugin instance"""
+        """Apply the new 'active' value to the plugin instance."""
         from InvenTree.tasks import check_for_migrations, offload_task
 
         instance.active = validated_data.get('active', True)

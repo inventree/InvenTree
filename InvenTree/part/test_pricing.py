@@ -1,4 +1,4 @@
-"""Unit tests for Part pricing calculations"""
+"""Unit tests for Part pricing calculations."""
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -16,10 +16,10 @@ from InvenTree.unit_test import InvenTreeTestCase
 
 
 class PartPricingTests(InvenTreeTestCase):
-    """Unit tests for part pricing calculations"""
+    """Unit tests for part pricing calculations."""
 
     def setUp(self):
-        """Setup routines"""
+        """Setup routines."""
         super().setUp()
 
         self.generate_exchange_rates()
@@ -35,7 +35,7 @@ class PartPricingTests(InvenTreeTestCase):
         )
 
     def create_price_breaks(self):
-        """Create some price breaks for the part, in various currencies"""
+        """Create some price breaks for the part, in various currencies."""
         # First supplier part (CAD)
         self.supplier_1 = company.models.Company.objects.create(
             name='Supplier 1', is_supplier=True
@@ -87,7 +87,7 @@ class PartPricingTests(InvenTreeTestCase):
         )
 
     def test_pricing_data(self):
-        """Test link between Part and PartPricing model"""
+        """Test link between Part and PartPricing model."""
         # Initially there is no associated Pricing data
         with self.assertRaises(ObjectDoesNotExist):
             pricing = self.part.pricing_data
@@ -108,11 +108,11 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.overall_max)
 
     def test_invalid_rate(self):
-        """Ensure that conversion behaves properly with missing rates"""
+        """Ensure that conversion behaves properly with missing rates."""
         ...
 
     def test_simple(self):
-        """Tests for hard-coded values"""
+        """Tests for hard-coded values."""
         pricing = self.part.pricing
 
         # Add internal pricing
@@ -143,7 +143,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertEqual(pricing.overall_max, Money('25', 'USD'))
 
     def test_supplier_part_pricing(self):
-        """Test for supplier part pricing"""
+        """Test for supplier part pricing."""
         pricing = self.part.pricing
 
         # Initially, no information (not yet calculated)
@@ -169,7 +169,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.supplier_price_max)
 
     def test_internal_pricing(self):
-        """Tests for internal price breaks"""
+        """Tests for internal price breaks."""
         # Ensure internal pricing is enabled
         common.models.InvenTreeSetting.set_setting('PART_INTERNAL_PRICE', True, None)
 
@@ -201,7 +201,7 @@ class PartPricingTests(InvenTreeTestCase):
             self.assertEqual(pricing.overall_max, Money(10, currency))
 
     def test_stock_item_pricing(self):
-        """Test for stock item pricing data"""
+        """Test for stock item pricing data."""
         # Create a part
         p = part.models.Part.objects.create(
             name='Test part for pricing',
@@ -247,7 +247,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertEqual(pricing.overall_max, Money(6.666667, 'USD'))
 
     def test_bom_pricing(self):
-        """Unit test for BOM pricing calculations"""
+        """Unit test for BOM pricing calculations."""
         pricing = self.part.pricing
 
         self.assertIsNone(pricing.bom_cost_min)
@@ -286,7 +286,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertEqual(pricing.overall_max, Money('550', 'USD'))
 
     def test_purchase_pricing(self):
-        """Unit tests for historical purchase pricing"""
+        """Unit tests for historical purchase pricing."""
         self.create_price_breaks()
 
         pricing = self.part.pricing
@@ -353,7 +353,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertAlmostEqual(float(pricing.purchase_cost_max.amount), 6.95, places=2)
 
     def test_delete_with_pricing(self):
-        """Test for deleting a part which has pricing information"""
+        """Test for deleting a part which has pricing information."""
         # Create some pricing data
         self.create_price_breaks()
 
@@ -377,7 +377,7 @@ class PartPricingTests(InvenTreeTestCase):
             pricing.refresh_from_db()
 
     def test_delete_without_pricing(self):
-        """Test that we can delete a part which does not have pricing information"""
+        """Test that we can delete a part which does not have pricing information."""
         pricing = self.part.pricing
 
         self.assertIsNone(pricing.pk)
@@ -392,7 +392,7 @@ class PartPricingTests(InvenTreeTestCase):
             self.part.refresh_from_db()
 
     def test_check_missing_pricing(self):
-        """Tests for check_missing_pricing background task
+        """Tests for check_missing_pricing background task.
 
         Calling the check_missing_pricing task should:
         - Create PartPricing objects where there are none

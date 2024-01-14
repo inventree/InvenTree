@@ -17,7 +17,6 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
 
     def filter(self, qs, value):
         """Override the filter method to handle timezones correctly."""
-
         if settings.USE_TZ:
             if value is not None:
                 tz = timezone.get_current_timezone()
@@ -28,7 +27,7 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
 
 
 class InvenTreeSearchFilter(filters.SearchFilter):
-    """Custom search filter which allows adjusting of search terms dynamically"""
+    """Custom search filter which allows adjusting of search terms dynamically."""
 
     def get_search_fields(self, view, request):
         """Return a set of search fields for the request, adjusted based on request params.

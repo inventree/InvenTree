@@ -15,7 +15,6 @@ def image_data(img, fmt='PNG'):
 
     Returns a string ``data:image/FMT;base64,xxxxxxxxx`` which can be rendered to an <img> tag
     """
-
     return report.helpers.encode_image_base64(img, fmt)
 
 

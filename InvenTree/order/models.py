@@ -67,7 +67,7 @@ logger = logging.getLogger('inventree')
 
 
 class TotalPriceMixin(models.Model):
-    """Mixin which provides 'total_price' field for an order"""
+    """Mixin which provides 'total_price' field for an order."""
 
     class Meta:
         """Meta for MetadataMixin."""
@@ -75,7 +75,9 @@ class TotalPriceMixin(models.Model):
         abstract = True
 
     def save(self, *args, **kwargs):
-        """Update the total_price field when saved"""
+        """Update the total_price field when saved."""
+        # Recalculate total_price for this order
+        self.update_total_price(commit=False)
 
         if hasattr(self, '_SAVING_TOTAL_PRICE') and self._SAVING_TOTAL_PRICE:
             # Avoid recursion on save
@@ -83,8 +85,6 @@ class TotalPriceMixin(models.Model):
         self._SAVING_TOTAL_PRICE = True
 
         # Save the object as we can not access foreign/m2m fields before saving
-        super().save(*args, **kwargs)
-        # Recalculate total_price for this order
         self.update_total_price(commit=True)
 
     total_price = InvenTreeModelMoneyField(
@@ -106,8 +106,9 @@ class TotalPriceMixin(models.Model):
 
     @property
     def currency(self):
-        """Return the currency associated with this order instance:
+        """Return the currency associated with this order instance.
 
+        Rules:
         - If the order_currency field is set, return that
         - Otherwise, return the currency associated with the company
         - Finally, return the default currency code
@@ -122,7 +123,7 @@ class TotalPriceMixin(models.Model):
         return currency_code_default()
 
     def update_total_price(self, commit=True):
-        """Recalculate and save the total_price for this order"""
+        """Recalculate and save the total_price for this order."""
         self.total_price = self.calculate_total_price(target_currency=self.currency)
 
         if commit:
@@ -212,7 +213,7 @@ class Order(
         abstract = True
 
     def save(self, *args, **kwargs):
-        """Custom save method for the order models:
+        """Custom save method for the order models.
 
         Ensures that the reference field is rebuilt whenever the instance is saved.
         """
@@ -224,7 +225,7 @@ class Order(
         super().save(*args, **kwargs)
 
     def clean(self):
-        """Custom clean method for the generic order class"""
+        """Custom clean method for the generic order class."""
         super().clean()
 
         # Check that the referenced 'contact' matches the correct 'company'
@@ -236,7 +237,7 @@ class Order(
 
     @classmethod
     def overdue_filter(cls):
-        """A generic implementation of an 'overdue' filter for the Model class
+        """A generic implementation of an 'overdue' filter for the Model class.
 
         It requires any subclasses to implement the get_status_class() class method
         """
@@ -333,7 +334,7 @@ class Order(
 
     @classmethod
     def get_status_class(cls):
-        """Return the enumeration class which represents the 'status' field for this model"""
+        """Return the enumeration class which represents the 'status' field for this model."""
         raise NotImplementedError(f'get_status_class() not implemented for {__class__}')
 
 
@@ -348,22 +349,22 @@ class PurchaseOrder(TotalPriceMixin, Order):
     """
 
     def get_absolute_url(self):
-        """Get the 'web' URL for this order"""
+        """Get the 'web' URL for this order."""
         return reverse('po-detail', kwargs={'pk': self.pk})
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the PurchaseOrder model"""
+        """Return the API URL associated with the PurchaseOrder model."""
         return reverse('api-po-list')
 
     @classmethod
     def get_status_class(cls):
-        """Return the PurchasOrderStatus class"""
+        """Return the PurchasOrderStatus class."""
         return PurchaseOrderStatusGroups
 
     @classmethod
     def api_defaults(cls, request):
-        """Return default values for this model when issuing an API OPTIONS request"""
+        """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': order.validators.generate_next_purchase_order_reference()
         }
@@ -418,7 +419,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return queryset
 
     def __str__(self):
-        """Render a string representation of this PurchaseOrder"""
+        """Render a string representation of this PurchaseOrder."""
         return f"{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
 
     reference = models.CharField(
@@ -439,7 +440,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     @property
     def status_text(self):
-        """Return the text representation of the status field"""
+        """Return the text representation of the status field."""
         return PurchaseOrderStatus.text(self.status)
 
     supplier = models.ForeignKey(
@@ -454,7 +455,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     @property
     def company(self):
-        """Accessor helper for Order base class"""
+        """Accessor helper for Order base class."""
         return self.supplier
 
     supplier_reference = models.CharField(
@@ -624,12 +625,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     @property
     def is_pending(self):
-        """Return True if the PurchaseOrder is 'pending'"""
+        """Return True if the PurchaseOrder is 'pending'."""
         return self.status == PurchaseOrderStatus.PENDING.value
 
     @property
     def is_open(self):
-        """Return True if the PurchaseOrder is 'open'"""
+        """Return True if the PurchaseOrder is 'open'."""
         return self.status in PurchaseOrderStatusGroups.OPEN
 
     @property
@@ -675,17 +676,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     @property
     def line_count(self):
-        """Return the total number of line items associated with this order"""
+        """Return the total number of line items associated with this order."""
         return self.lines.count()
 
     @property
     def completed_line_count(self):
-        """Return the number of complete line items associated with this order"""
+        """Return the number of complete line items associated with this order."""
         return self.completed_line_items().count()
 
     @property
     def pending_line_count(self):
-        """Return the number of pending line items associated with this order"""
+        """Return the number of pending line items associated with this order."""
         return self.pending_line_items().count()
 
     @property
@@ -801,22 +802,22 @@ class SalesOrder(TotalPriceMixin, Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer."""
 
     def get_absolute_url(self):
-        """Get the 'web' URL for this order"""
+        """Get the 'web' URL for this order."""
         return reverse('so-detail', kwargs={'pk': self.pk})
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the SalesOrder model"""
+        """Return the API URL associated with the SalesOrder model."""
         return reverse('api-so-list')
 
     @classmethod
     def get_status_class(cls):
-        """Return the SalesOrderStatus class"""
+        """Return the SalesOrderStatus class."""
         return SalesOrderStatusGroups
 
     @classmethod
     def api_defaults(cls, request):
-        """Return default values for this model when issuing an API OPTIONS request"""
+        """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
         return defaults
@@ -869,7 +870,7 @@ class SalesOrder(TotalPriceMixin, Order):
         return queryset
 
     def __str__(self):
-        """Render a string representation of this SalesOrder"""
+        """Render a string representation of this SalesOrder."""
         return f"{self.reference} - {self.customer.name if self.customer else _('deleted')}"
 
     reference = models.CharField(
@@ -894,7 +895,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     @property
     def company(self):
-        """Accessor helper for Order base"""
+        """Accessor helper for Order base."""
         return self.customer
 
     status = models.PositiveIntegerField(
@@ -906,7 +907,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     @property
     def status_text(self):
-        """Return the text representation of the status field"""
+        """Return the text representation of the status field."""
         return SalesOrderStatus.text(self.status)
 
     customer_reference = models.CharField(
@@ -931,12 +932,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
     @property
     def is_pending(self):
-        """Return True if this order is 'pending'"""
+        """Return True if this order is 'pending'."""
         return self.status == SalesOrderStatus.PENDING
 
     @property
     def is_open(self):
-        """Return True if this order is 'open' (either 'pending' or 'in_progress')"""
+        """Return True if this order is 'open' (either 'pending' or 'in_progress')."""
         return self.status in SalesOrderStatusGroups.OPEN
 
     @property
@@ -1004,11 +1005,11 @@ class SalesOrder(TotalPriceMixin, Order):
 
     # region state changes
     def place_order(self):
-        """Deprecated version of 'issue_order'"""
+        """Deprecated version of 'issue_order'."""
         self.issue_order()
 
     def _action_place(self, *args, **kwargs):
-        """Change this order from 'PENDING' to 'IN_PROGRESS'"""
+        """Change this order from 'PENDING' to 'IN_PROGRESS'."""
         if self.status == SalesOrderStatus.PENDING:
             self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = datetime.now().date()
@@ -1101,7 +1102,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     @property
     def line_count(self):
-        """Return the total number of lines associated with this order"""
+        """Return the total number of lines associated with this order."""
         return self.lines.count()
 
     def completed_line_items(self):
@@ -1114,12 +1115,12 @@ class SalesOrder(TotalPriceMixin, Order):
 
     @property
     def completed_line_count(self):
-        """Return the number of completed lines for this order"""
+        """Return the number of completed lines for this order."""
         return self.completed_line_items().count()
 
     @property
     def pending_line_count(self):
-        """Return the number of pending (incomplete) lines associated with this order"""
+        """Return the number of pending (incomplete) lines associated with this order."""
         return self.pending_line_items().count()
 
     def completed_shipments(self):
@@ -1132,17 +1133,17 @@ class SalesOrder(TotalPriceMixin, Order):
 
     @property
     def shipment_count(self):
-        """Return the total number of shipments associated with this order"""
+        """Return the total number of shipments associated with this order."""
         return self.shipments.count()
 
     @property
     def completed_shipment_count(self):
-        """Return the number of completed shipments associated with this order"""
+        """Return the number of completed shipments associated with this order."""
         return self.completed_shipments().count()
 
     @property
     def pending_shipment_count(self):
-        """Return the number of pending shipments associated with this order"""
+        """Return the number of pending shipments associated with this order."""
         return self.pending_shipments().count()
 
 
@@ -1176,11 +1177,11 @@ class PurchaseOrderAttachment(InvenTreeAttachment):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the PurchaseOrderAttachment model"""
+        """Return the API URL associated with the PurchaseOrderAttachment model."""
         return reverse('api-po-attachment-list')
 
     def getSubdir(self):
-        """Return the directory path where PurchaseOrderAttachment files are located"""
+        """Return the directory path where PurchaseOrderAttachment files are located."""
         return os.path.join('po_files', str(self.order.id))
 
     order = models.ForeignKey(
@@ -1193,11 +1194,11 @@ class SalesOrderAttachment(InvenTreeAttachment):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the SalesOrderAttachment class"""
+        """Return the API URL associated with the SalesOrderAttachment class."""
         return reverse('api-so-attachment-list')
 
     def getSubdir(self):
-        """Return the directory path where SalesOrderAttachment files are located"""
+        """Return the directory path where SalesOrderAttachment files are located."""
         return os.path.join('so_files', str(self.order.id))
 
     order = models.ForeignKey(
@@ -1221,7 +1222,7 @@ class OrderLineItem(MetadataMixin, models.Model):
         abstract = True
 
     def save(self, *args, **kwargs):
-        """Custom save method for the OrderLineItem model
+        """Custom save method for the OrderLineItem model.
 
         Calls save method on the linked order
         """
@@ -1229,7 +1230,7 @@ class OrderLineItem(MetadataMixin, models.Model):
         self.order.save()
 
     def delete(self, *args, **kwargs):
-        """Custom delete method for the OrderLineItem model
+        """Custom delete method for the OrderLineItem model.
 
         Calls save method on the linked order
         """
@@ -1247,7 +1248,7 @@ class OrderLineItem(MetadataMixin, models.Model):
 
     @property
     def total_line_price(self):
-        """Return the total price for this line item"""
+        """Return the total price for this line item."""
         if self.price:
             return self.quantity * self.price
 
@@ -1332,13 +1333,13 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the PurchaseOrderLineItem model"""
+        """Return the API URL associated with the PurchaseOrderLineItem model."""
         return reverse('api-po-line-list')
 
     def clean(self):
-        """Custom clean method for the PurchaseOrderLineItem model:
+        """Custom clean method for the PurchaseOrderLineItem model.
 
-        - Ensure the supplier part matches the supplier
+        Ensure the supplier part matches the supplier
         """
         super().clean()
 
@@ -1348,7 +1349,7 @@ class PurchaseOrderLineItem(OrderLineItem):
                 raise ValidationError({'part': _('Supplier part must match supplier')})
 
     def __str__(self):
-        """Render a string representation of a PurchaseOrderLineItem instance"""
+        """Render a string representation of a PurchaseOrderLineItem instance."""
         return '{n} x {part} from {supplier} (for {po})'.format(
             n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
@@ -1402,7 +1403,7 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     @property
     def price(self):
-        """Return the 'purchase_price' field as 'price'"""
+        """Return the 'purchase_price' field as 'price'."""
         return self.purchase_price
 
     destination = TreeForeignKey(
@@ -1449,7 +1450,7 @@ class PurchaseOrderExtraLine(OrderExtraLine):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the PurchaseOrderExtraLine model"""
+        """Return the API URL associated with the PurchaseOrderExtraLine model."""
         return reverse('api-po-extra-line-list')
 
     order = models.ForeignKey(
@@ -1480,11 +1481,11 @@ class SalesOrderLineItem(OrderLineItem):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the SalesOrderLineItem model"""
+        """Return the API URL associated with the SalesOrderLineItem model."""
         return reverse('api-so-line-list')
 
     def clean(self):
-        """Perform extra validation steps for this SalesOrderLineItem instance"""
+        """Perform extra validation steps for this SalesOrderLineItem instance."""
         super().clean()
 
         if self.part:
@@ -1527,7 +1528,7 @@ class SalesOrderLineItem(OrderLineItem):
 
     @property
     def price(self):
-        """Return the 'sale_price' field as 'price'"""
+        """Return the 'sale_price' field as 'price'."""
         return self.sale_price
 
     shipped = RoundingDecimalField(
@@ -1590,14 +1591,14 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
     """
 
     class Meta:
-        """Metaclass defines extra model options"""
+        """Metaclass defines extra model options."""
 
         # Shipment reference must be unique for a given sales order
         unique_together = ['order', 'reference']
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the SalesOrderShipment model"""
+        """Return the API URL associated with the SalesOrderShipment model."""
         return reverse('api-so-shipment-list')
 
     order = models.ForeignKey(
@@ -1663,15 +1664,15 @@ class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
     )
 
     def is_complete(self):
-        """Return True if this shipment has already been completed"""
+        """Return True if this shipment has already been completed."""
         return self.shipment_date is not None
 
     def is_delivered(self):
-        """Return True if this shipment has already been delivered"""
+        """Return True if this shipment has already been delivered."""
         return self.delivery_date is not None
 
     def check_can_complete(self, raise_error=True):
-        """Check if this shipment is able to be completed"""
+        """Check if this shipment is able to be completed."""
         try:
             if self.shipment_date:
                 # Shipment has already been sent!
@@ -1751,7 +1752,7 @@ class SalesOrderExtraLine(OrderExtraLine):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the SalesOrderExtraLine model"""
+        """Return the API URL associated with the SalesOrderExtraLine model."""
         return reverse('api-so-extra-line-list')
 
     order = models.ForeignKey(
@@ -1775,7 +1776,7 @@ class SalesOrderAllocation(models.Model):
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the SalesOrderAllocation model"""
+        """Return the API URL associated with the SalesOrderAllocation model."""
         return reverse('api-so-allocation-list')
 
     def clean(self):
@@ -1876,11 +1877,11 @@ class SalesOrderAllocation(models.Model):
     )
 
     def get_location(self):
-        """Return the <pk> value of the location associated with this allocation"""
+        """Return the <pk> value of the location associated with this allocation."""
         return self.item.location.id if self.item.location else None
 
     def get_po(self):
-        """Return the PurchaseOrder associated with this allocation"""
+        """Return the PurchaseOrder associated with this allocation."""
         return self.item.purchase_order
 
     def complete_allocation(self, user):
@@ -1907,7 +1908,7 @@ class SalesOrderAllocation(models.Model):
 
 
 class ReturnOrder(TotalPriceMixin, Order):
-    """A ReturnOrder represents goods returned from a customer, e.g. an RMA or warranty
+    """A ReturnOrder represents goods returned from a customer, e.g. an RMA or warranty.
 
     Attributes:
         customer: Reference to the customer
@@ -1916,22 +1917,22 @@ class ReturnOrder(TotalPriceMixin, Order):
     """
 
     def get_absolute_url(self):
-        """Get the 'web' URL for this order"""
+        """Get the 'web' URL for this order."""
         return reverse('return-order-detail', kwargs={'pk': self.pk})
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the ReturnOrder model"""
+        """Return the API URL associated with the ReturnOrder model."""
         return reverse('api-return-order-list')
 
     @classmethod
     def get_status_class(cls):
-        """Return the ReturnOrderStatus class"""
+        """Return the ReturnOrderStatus class."""
         return ReturnOrderStatusGroups
 
     @classmethod
     def api_defaults(cls, request):
-        """Return default values for this model when issuing an API OPTIONS request"""
+        """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': order.validators.generate_next_return_order_reference()
         }
@@ -1941,7 +1942,7 @@ class ReturnOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
 
     def __str__(self):
-        """Render a string representation of this ReturnOrder"""
+        """Render a string representation of this ReturnOrder."""
         return f"{self.reference} - {self.customer.name if self.customer else _('no customer')}"
 
     reference = models.CharField(
@@ -1966,7 +1967,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     @property
     def company(self):
-        """Accessor helper for Order base class"""
+        """Accessor helper for Order base class."""
         return self.customer
 
     status = models.PositiveIntegerField(
@@ -2000,21 +2001,21 @@ class ReturnOrder(TotalPriceMixin, Order):
     # region state changes
     @property
     def is_pending(self):
-        """Return True if this order is pending"""
+        """Return True if this order is pending."""
         return self.status == ReturnOrderStatus.PENDING
 
     @property
     def is_open(self):
-        """Return True if this order is outstanding"""
+        """Return True if this order is outstanding."""
         return self.status in ReturnOrderStatusGroups.OPEN
 
     @property
     def is_received(self):
-        """Return True if this order is fully received"""
+        """Return True if this order is fully received."""
         return not self.lines.filter(received_date=None).exists()
 
     def _action_cancel(self, *args, **kwargs):
-        """Cancel this ReturnOrder (if not already cancelled)"""
+        """Cancel this ReturnOrder (if not already cancelled)."""
         if self.status != ReturnOrderStatus.CANCELLED:
             self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
@@ -2030,7 +2031,7 @@ class ReturnOrder(TotalPriceMixin, Order):
             )
 
     def _action_complete(self, *args, **kwargs):
-        """Complete this ReturnOrder (if not already completed)"""
+        """Complete this ReturnOrder (if not already completed)."""
         if self.status == ReturnOrderStatus.IN_PROGRESS:
             self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = datetime.now().date()
@@ -2039,11 +2040,11 @@ class ReturnOrder(TotalPriceMixin, Order):
             trigger_event('returnorder.completed', id=self.pk)
 
     def place_order(self):
-        """Deprecated version of 'issue_order"""
+        """Deprecated version of 'issue_order."""
         self.issue_order()
 
     def _action_place(self, *args, **kwargs):
-        """Issue this ReturnOrder (if currently pending)"""
+        """Issue this ReturnOrder (if currently pending)."""
         if self.status == ReturnOrderStatus.PENDING:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = datetime.now().date()
@@ -2076,8 +2077,9 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     @transaction.atomic
     def receive_line_item(self, line, location, user, note=''):
-        """Receive a line item against this ReturnOrder:
+        """Receive a line item against this ReturnOrder.
 
+        Rules:
         - Transfers the StockItem to the specified location
         - Marks the StockItem as "quarantined"
         - Adds a tracking entry to the StockItem
@@ -2133,20 +2135,20 @@ class ReturnOrder(TotalPriceMixin, Order):
 
 
 class ReturnOrderLineItem(OrderLineItem):
-    """Model for a single LineItem in a ReturnOrder"""
+    """Model for a single LineItem in a ReturnOrder."""
 
     class Meta:
-        """Metaclass options for this model"""
+        """Metaclass options for this model."""
 
         unique_together = [('order', 'item')]
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with this model"""
+        """Return the API URL associated with this model."""
         return reverse('api-return-order-line-list')
 
     def clean(self):
-        """Perform extra validation steps for the ReturnOrderLineItem model"""
+        """Perform extra validation steps for the ReturnOrderLineItem model."""
         super().clean()
 
         if self.item and not self.item.serialized:
@@ -2179,7 +2181,7 @@ class ReturnOrderLineItem(OrderLineItem):
 
     @property
     def received(self):
-        """Return True if this item has been received"""
+        """Return True if this item has been received."""
         return self.received_date is not None
 
     outcome = models.PositiveIntegerField(
@@ -2198,11 +2200,11 @@ class ReturnOrderLineItem(OrderLineItem):
 
 
 class ReturnOrderExtraLine(OrderExtraLine):
-    """Model for a single ExtraLine in a ReturnOrder"""
+    """Model for a single ExtraLine in a ReturnOrder."""
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the ReturnOrderExtraLine model"""
+        """Return the API URL associated with the ReturnOrderExtraLine model."""
         return reverse('api-return-order-extra-line-list')
 
     order = models.ForeignKey(
@@ -2215,15 +2217,15 @@ class ReturnOrderExtraLine(OrderExtraLine):
 
 
 class ReturnOrderAttachment(InvenTreeAttachment):
-    """Model for storing file attachments against a ReturnOrder object"""
+    """Model for storing file attachments against a ReturnOrder object."""
 
     @staticmethod
     def get_api_url():
-        """Return the API URL associated with the ReturnOrderAttachment class"""
+        """Return the API URL associated with the ReturnOrderAttachment class."""
         return reverse('api-return-order-attachment-list')
 
     def getSubdir(self):
-        """Return the directory path where ReturnOrderAttachment files are located"""
+        """Return the directory path where ReturnOrderAttachment files are located."""
         return os.path.join('return_files', str(self.order.id))
 
     order = models.ForeignKey(

@@ -162,13 +162,13 @@ class StockItemUninstall(StockItemContextMixin, CreateAPI):
 
 
 class StockItemConvert(StockItemContextMixin, CreateAPI):
-    """API endpoint for converting a stock item to a variant part"""
+    """API endpoint for converting a stock item to a variant part."""
 
     serializer_class = StockSerializers.ConvertStockItemSerializer
 
 
 class StockItemReturn(StockItemContextMixin, CreateAPI):
-    """API endpoint for returning a stock item from a customer"""
+    """API endpoint for returning a stock item from a customer."""
 
     serializer_class = StockSerializers.ReturnStockItemSerializer
 
@@ -263,7 +263,7 @@ class StockLocationFilter(rest_filters.FilterSet):
     )
 
     def filter_has_location_type(self, queryset, name, value):
-        """Filter by whether or not the location has a location type"""
+        """Filter by whether or not the location has a location type."""
         if str2bool(value):
             return queryset.exclude(location_type=None)
         return queryset.filter(location_type=None)
@@ -281,7 +281,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
     filterset_class = StockLocationFilter
 
     def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file"""
+        """Download the filtered queryset as a data file."""
         dataset = LocationResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
         filename = f'InvenTree_Locations.{export_format}'
@@ -289,7 +289,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
         return DownloadFile(filedata, filename)
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for the StockLocationList endpoint"""
+        """Return annotated queryset for the StockLocationList endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
@@ -432,7 +432,7 @@ class StockFilter(rest_filters.FilterSet):
     """FilterSet for StockItem LIST API."""
 
     class Meta:
-        """Metaclass options for this filterset"""
+        """Metaclass options for this filterset."""
 
         model = StockItem
 
@@ -506,7 +506,7 @@ class StockFilter(rest_filters.FilterSet):
     status = rest_filters.NumberFilter(label='Status Code', method='filter_status')
 
     def filter_status(self, queryset, name, value):
-        """Filter by integer status code"""
+        """Filter by integer status code."""
         return queryset.filter(status=value)
 
     allocated = rest_filters.BooleanFilter(
@@ -514,7 +514,7 @@ class StockFilter(rest_filters.FilterSet):
     )
 
     def filter_allocated(self, queryset, name, value):
-        """Filter by whether or not the stock item is 'allocated'"""
+        """Filter by whether or not the stock item is 'allocated'."""
         if str2bool(value):
             # Filter StockItem with either build allocations or sales order allocations
             return queryset.filter(
@@ -528,7 +528,7 @@ class StockFilter(rest_filters.FilterSet):
     expired = rest_filters.BooleanFilter(label='Expired', method='filter_expired')
 
     def filter_expired(self, queryset, name, value):
-        """Filter by whether or not the stock item has expired"""
+        """Filter by whether or not the stock item has expired."""
         if not common.settings.stock_expiry_enabled():
             return queryset
 
@@ -541,7 +541,7 @@ class StockFilter(rest_filters.FilterSet):
     )
 
     def filter_external(self, queryset, name, value):
-        """Filter by whether or not the stock item is located in an external location"""
+        """Filter by whether or not the stock item is located in an external location."""
         if str2bool(value):
             return queryset.filter(location__external=True)
         return queryset.exclude(location__external=True)
@@ -688,7 +688,7 @@ class StockFilter(rest_filters.FilterSet):
     )
 
     def filter_ancestor(self, queryset, name, ancestor):
-        """Filter based on ancestor stock item"""
+        """Filter based on ancestor stock item."""
         return queryset.filter(parent__in=ancestor.get_descendants(include_self=True))
 
     category = rest_filters.ModelChoiceFilter(
@@ -698,8 +698,7 @@ class StockFilter(rest_filters.FilterSet):
     )
 
     def filter_category(self, queryset, name, category):
-        """Filter based on part category"""
-
+        """Filter based on part category."""
         child_categories = category.get_descendants(include_self=True)
 
         return queryset.filter(part__category__in=child_categories)
@@ -709,8 +708,7 @@ class StockFilter(rest_filters.FilterSet):
     )
 
     def filter_bom_item(self, queryset, name, bom_item):
-        """Filter based on BOM item"""
-
+        """Filter based on BOM item."""
         return queryset.filter(bom_item.get_stock_filter())
 
     part_tree = rest_filters.ModelChoiceFilter(
@@ -718,7 +716,7 @@ class StockFilter(rest_filters.FilterSet):
     )
 
     def filter_part_tree(self, queryset, name, part_tree):
-        """Filter based on part tree"""
+        """Filter based on part tree."""
         return queryset.filter(part__tree_id=part_tree.tree_id)
 
     company = rest_filters.ModelChoiceFilter(
@@ -726,7 +724,7 @@ class StockFilter(rest_filters.FilterSet):
     )
 
     def filter_company(self, queryset, name, company):
-        """Filter by company (either manufacturer or supplier)"""
+        """Filter by company (either manufacturer or supplier)."""
         return queryset.filter(
             Q(supplier_part__supplier=company)
             | Q(supplier_part__manufacturer_part__manufacturer=company)
@@ -753,7 +751,6 @@ class StockFilter(rest_filters.FilterSet):
 
     def filter_stale(self, queryset, name, value):
         """Filter by stale stock items."""
-
         stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
 
         if stale_days <= 0:
@@ -1453,7 +1450,7 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
     serializer_class = StockSerializers.LocationSerializer
 
     def get_serializer(self, *args, **kwargs):
-        """Add extra context to serializer based on provided query parameters"""
+        """Add extra context to serializer based on provided query parameters."""
         try:
             params = self.request.query_params
 
@@ -1466,14 +1463,13 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for the StockLocationList endpoint"""
+        """Return annotated queryset for the StockLocationList endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
 
     def destroy(self, request, *args, **kwargs):
-        """Delete a Stock location instance via the API"""
-
+        """Delete a Stock location instance via the API."""
         delete_stock_items = str(request.data.get('delete_stock_items', 0)) == '1'
         delete_sub_locations = str(request.data.get('delete_sub_locations', 0)) == '1'
 

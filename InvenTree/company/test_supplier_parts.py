@@ -1,4 +1,4 @@
-"""Unit tests specific to the SupplierPart model"""
+"""Unit tests specific to the SupplierPart model."""
 
 from decimal import Decimal
 
@@ -10,10 +10,10 @@ from part.models import Part
 
 
 class SupplierPartPackUnitsTests(InvenTreeTestCase):
-    """Unit tests for the SupplierPart pack_quantity field"""
+    """Unit tests for the SupplierPart pack_quantity field."""
 
     def test_pack_quantity_dimensionless(self):
-        """Test valid values for the 'pack_quantity' field"""
+        """Test valid values for the 'pack_quantity' field."""
         # Create a part without units (dimensionless)
         part = Part.objects.create(
             name='Test Part', description='Test part description', component=True
@@ -48,7 +48,7 @@ class SupplierPartPackUnitsTests(InvenTreeTestCase):
                 sp.full_clean()
 
     def test_pack_quantity(self):
-        """Test pack_quantity for a part with a specified dimension"""
+        """Test pack_quantity for a part with a specified dimension."""
         # Create a part with units 'm'
         part = Part.objects.create(
             name='Test Part',

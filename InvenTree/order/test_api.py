@@ -30,7 +30,7 @@ from stock.models import StockItem
 
 
 class OrderTest(InvenTreeAPITestCase):
-    """Base class for order API unit testing"""
+    """Base class for order API unit testing."""
 
     fixtures = [
         'category',
@@ -112,7 +112,7 @@ class PurchaseOrderTest(OrderTest):
         )
 
     def test_po_list(self):
-        """Test the PurchaseOrder list API endpoint"""
+        """Test the PurchaseOrder list API endpoint."""
         # List *ALL* PurchaseOrder items
         self.filter({}, 7)
 
@@ -150,7 +150,7 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'supplier_part': 4}, 0)
 
     def test_total_price(self):
-        """Unit tests for the 'total_price' field"""
+        """Unit tests for the 'total_price' field."""
         # Ensure we have exchange rate data
         self.generate_exchange_rates()
 
@@ -219,7 +219,7 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'overdue': False}, 6)
 
     def test_po_detail(self):
-        """Test the PurchaseOrder detail API endpoint"""
+        """Test the PurchaseOrder detail API endpoint."""
         url = '/api/order/po/1/'
 
         response = self.get(url)
@@ -255,7 +255,7 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(order.reference_int, 0x7FFFFFFF)
 
     def test_po_attachments(self):
-        """Test the list endpoint for the PurchaseOrderAttachment model"""
+        """Test the list endpoint for the PurchaseOrderAttachment model."""
         url = reverse('api-po-attachment-list')
 
         response = self.get(url)
@@ -358,7 +358,7 @@ class PurchaseOrderTest(OrderTest):
         )
 
     def test_po_duplicate(self):
-        """Test that we can duplicate a PurchaseOrder via the API"""
+        """Test that we can duplicate a PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
 
         po = models.PurchaseOrder.objects.get(pk=1)
@@ -488,7 +488,7 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
 
     def test_po_calendar(self):
-        """Test the calendar export endpoint"""
+        """Test the calendar export endpoint."""
         # Create required purchase orders
         self.assignRole('purchase_order.add')
 
@@ -578,7 +578,7 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(number_orders_incl_completed, n_events)
 
     def test_po_calendar_noauth(self):
-        """Test accessing calendar without authorization"""
+        """Test accessing calendar without authorization."""
         self.client.logout()
         response = self.client.get(
             reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
@@ -593,7 +593,7 @@ class PurchaseOrderTest(OrderTest):
         )
 
     def test_po_calendar_auth(self):
-        """Test accessing calendar with header authorization"""
+        """Test accessing calendar with header authorization."""
         self.client.logout()
         base64_token = base64.b64encode(
             f'{self.username}:{self.password}'.encode('ascii')
@@ -612,7 +612,7 @@ class PurchaseOrderLineItemTest(OrderTest):
     LIST_URL = reverse('api-po-line-list')
 
     def test_po_line_list(self):
-        """Test the PurchaseOrderLine list API endpoint"""
+        """Test the PurchaseOrderLine list API endpoint."""
         # List *ALL* PurchaseOrderLine items
         self.filter({}, 5)
 
@@ -688,7 +688,7 @@ class PurchaseOrderDownloadTest(OrderTest):
                 self.assertEqual(order.reference, row['reference'])
 
     def test_download_line_items(self):
-        """Test that the PurchaseOrderLineItems can be downloaded to a file"""
+        """Test that the PurchaseOrderLineItems can be downloaded to a file."""
         with self.download_file(
             reverse('api-po-line-list'),
             {'export': 'xlsx'},
@@ -703,7 +703,7 @@ class PurchaseOrderReceiveTest(OrderTest):
     """Unit tests for receiving items against a PurchaseOrder."""
 
     def setUp(self):
-        """Init routines for this unit test class"""
+        """Init routines for this unit test class."""
         super().setUp()
 
         self.assignRole('purchase_order.add')
@@ -805,7 +805,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         )
 
     def test_invalid_barcodes(self):
-        """Tests for checking in items with invalid barcodes:
+        """Tests for checking in items with invalid barcodes.
 
         - Cannot check in "duplicate" barcodes
         - Barcodes cannot match 'barcode_hash' field for existing StockItem
@@ -998,7 +998,7 @@ class SalesOrderTest(OrderTest):
     LIST_URL = reverse('api-so-list')
 
     def test_so_list(self):
-        """Test the SalesOrder list API endpoint"""
+        """Test the SalesOrder list API endpoint."""
         # All orders
         self.filter({}, 5)
 
@@ -1024,7 +1024,7 @@ class SalesOrderTest(OrderTest):
         self.filter({'assigned_to_me': 0}, 5)
 
     def test_total_price(self):
-        """Unit tests for the 'total_price' field"""
+        """Unit tests for the 'total_price' field."""
         # Ensure we have exchange rate data
         self.generate_exchange_rates()
 
@@ -1106,7 +1106,7 @@ class SalesOrderTest(OrderTest):
         self.filter({'overdue': False}, 3)
 
     def test_so_detail(self):
-        """Test the SalesOrder detail endpoint"""
+        """Test the SalesOrder detail endpoint."""
         url = '/api/order/so/1/'
 
         response = self.get(url)
@@ -1116,7 +1116,7 @@ class SalesOrderTest(OrderTest):
         self.assertEqual(data['pk'], 1)
 
     def test_so_attachments(self):
-        """Test the list endpoint for the SalesOrderAttachment model"""
+        """Test the list endpoint for the SalesOrderAttachment model."""
         url = reverse('api-so-attachment-list')
 
         self.get(url)
@@ -1241,7 +1241,7 @@ class SalesOrderTest(OrderTest):
         self.assertEqual(so.status, SalesOrderStatus.CANCELLED)
 
     def test_so_calendar(self):
-        """Test the calendar export endpoint"""
+        """Test the calendar export endpoint."""
         # Create required sales orders
         self.assignRole('sales_order.add')
 
@@ -1313,7 +1313,7 @@ class SalesOrderTest(OrderTest):
         self.assertEqual(number_orders_incl_complete, n_events)
 
     def test_export(self):
-        """Test we can export the SalesOrder list"""
+        """Test we can export the SalesOrder list."""
         n = models.SalesOrder.objects.count()
 
         # Check there are some sales orders
@@ -1341,7 +1341,7 @@ class SalesOrderLineItemTest(OrderTest):
 
     @classmethod
     def setUpTestData(cls):
-        """Init routine for this unit test class"""
+        """Init routine for this unit test class."""
         super().setUpTestData()
 
         # List of salable parts
@@ -1367,7 +1367,7 @@ class SalesOrderLineItemTest(OrderTest):
         cls.url = reverse('api-so-line-list')
 
     def test_so_line_list(self):
-        """Test list endpoint"""
+        """Test list endpoint."""
         response = self.get(self.url, {}, expected_code=200)
 
         n = models.SalesOrderLineItem.objects.count()
@@ -1416,7 +1416,7 @@ class SalesOrderDownloadTest(OrderTest):
             self.download_file(url, {}, expected_code=200)
 
     def test_download_xls(self):
-        """Test xls file download"""
+        """Test xls file download."""
         url = reverse('api-so-list')
 
         # Download .xls file
@@ -1430,7 +1430,7 @@ class SalesOrderDownloadTest(OrderTest):
             self.assertTrue(isinstance(file, io.BytesIO))
 
     def test_download_csv(self):
-        """Test that the list of sales orders can be downloaded as a .csv file"""
+        """Test that the list of sales orders can be downloaded as a .csv file."""
         url = reverse('api-so-list')
 
         required_cols = [
@@ -1490,7 +1490,7 @@ class SalesOrderAllocateTest(OrderTest):
     """Unit tests for allocating stock items against a SalesOrder."""
 
     def setUp(self):
-        """Init routines for this unit testing class"""
+        """Init routines for this unit testing class."""
         super().setUp()
 
         self.assignRole('sales_order.add')
@@ -1599,7 +1599,7 @@ class SalesOrderAllocateTest(OrderTest):
             self.assertEqual(line.allocations.count(), 1)
 
     def test_allocate_variant(self):
-        """Test that the allocation endpoint acts as expected, when provided with variant"""
+        """Test that the allocation endpoint acts as expected, when provided with variant."""
         # First, check that there are no line items allocated against this SalesOrder
         self.assertEqual(self.order.stock_allocations.count(), 0)
 
@@ -1706,7 +1706,7 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(self.shipment.delivery_date, datetime(2023, 5, 15).date())
 
     def test_sales_order_shipment_list(self):
-        """Test the SalesOrderShipment list API endpoint"""
+        """Test the SalesOrderShipment list API endpoint."""
         url = reverse('api-so-shipment-list')
 
         # Count before creation
@@ -1740,7 +1740,7 @@ class SalesOrderAllocateTest(OrderTest):
 
 
 class ReturnOrderTests(InvenTreeAPITestCase):
-    """Unit tests for ReturnOrder API endpoints"""
+    """Unit tests for ReturnOrder API endpoints."""
 
     fixtures = [
         'category',
@@ -1753,7 +1753,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
     ]
 
     def test_options(self):
-        """Test the OPTIONS endpoint"""
+        """Test the OPTIONS endpoint."""
         self.assignRole('return_order.add')
         data = self.options(reverse('api-return-order-list'), expected_code=200).data
 
@@ -1770,7 +1770,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(reference['type'], 'string')
 
     def test_list(self):
-        """Tests for the list endpoint"""
+        """Tests for the list endpoint."""
         url = reverse('api-return-order-list')
 
         response = self.get(url, expected_code=200)
@@ -1813,7 +1813,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
             self.assertEqual(result['status'], 20)
 
     def test_create(self):
-        """Test creation of ReturnOrder via the API"""
+        """Test creation of ReturnOrder via the API."""
         url = reverse('api-return-order-list')
 
         # Do not have required permissions yet
@@ -1838,7 +1838,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(data['customer_reference'], 'cr')
 
     def test_update(self):
-        """Test that we can update a ReturnOrder via the API"""
+        """Test that we can update a ReturnOrder via the API."""
         url = reverse('api-return-order-detail', kwargs={'pk': 1})
 
         # Test detail endpoint
@@ -1859,7 +1859,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(rma.customer_reference, 'customer ref')
 
     def test_ro_issue(self):
-        """Test the 'issue' order for a ReturnOrder"""
+        """Test the 'issue' order for a ReturnOrder."""
         order = models.ReturnOrder.objects.get(pk=1)
         self.assertEqual(order.status, ReturnOrderStatus.PENDING)
         self.assertIsNone(order.issue_date)
@@ -1877,7 +1877,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertIsNotNone(order.issue_date)
 
     def test_receive(self):
-        """Test that we can receive items against a ReturnOrder"""
+        """Test that we can receive items against a ReturnOrder."""
         customer = Company.objects.get(pk=4)
 
         # Create an order
@@ -1905,7 +1905,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(rma.lines.count(), 3)
 
         def receive(items, location=None, expected_code=400):
-            """Helper function to receive items against this ReturnOrder"""
+            """Helper function to receive items against this ReturnOrder."""
             url = reverse('api-return-order-receive', kwargs={'pk': rma.pk})
 
             response = self.post(
@@ -1970,7 +1970,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(deltas['returnorder'], rma.pk)
 
     def test_ro_calendar(self):
-        """Test the calendar export endpoint"""
+        """Test the calendar export endpoint."""
         # Full test is in test_po_calendar. Since these use the same backend, test only
         # that the endpoint is available
         url = reverse('api-po-so-calendar', kwargs={'ordertype': 'return-order'})
@@ -1999,7 +1999,7 @@ class OrderMetadataAPITest(InvenTreeAPITestCase):
     roles = ['purchase_order.change', 'sales_order.change', 'return_order.change']
 
     def metatester(self, apikey, model):
-        """Generic tester"""
+        """Generic tester."""
         modeldata = model.objects.first()
 
         # Useless test unless a model object is found
@@ -2025,7 +2025,7 @@ class OrderMetadataAPITest(InvenTreeAPITestCase):
         )
 
     def test_metadata(self):
-        """Test all endpoints"""
+        """Test all endpoints."""
         for apikey, model in {
             'api-po-metadata': models.PurchaseOrder,
             'api-po-line-metadata': models.PurchaseOrderLineItem,

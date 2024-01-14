@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from error_report.models import Error
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.permissions import IsAdminUser
@@ -110,12 +111,12 @@ class WebhookView(CsrfExemptMixin, APIView):
 
 
 class CurrencyExchangeView(APIView):
-    """API endpoint for displaying currency information"""
+    """API endpoint for displaying currency information."""
 
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        """Return information on available currency conversions"""
+        """Return information on available currency conversions."""
         # Extract a list of all available rates
         try:
             rates = Rate.objects.all()
@@ -157,7 +158,7 @@ class CurrencyRefreshView(APIView):
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
 
     def post(self, request, *args, **kwargs):
-        """Performing a POST request will update currency exchange rates"""
+        """Performing a POST request will update currency exchange rates."""
         from InvenTree.tasks import update_exchange_rates
 
         update_exchange_rates(force=True)
@@ -185,7 +186,7 @@ class GlobalSettingsList(SettingsList):
     serializer_class = common.serializers.GlobalSettingsSerializer
 
     def list(self, request, *args, **kwargs):
-        """Ensure all global settings are created"""
+        """Ensure all global settings are created."""
         common.models.InvenTreeSetting.build_default_values()
         return super().list(request, *args, **kwargs)
 
@@ -241,7 +242,7 @@ class UserSettingsList(SettingsList):
     serializer_class = common.serializers.UserSettingsSerializer
 
     def list(self, request, *args, **kwargs):
-        """Ensure all user settings are created"""
+        """Ensure all user settings are created."""
         common.models.InvenTreeUserSetting.build_default_values(user=request.user)
         return super().list(request, *args, **kwargs)
 
@@ -361,7 +362,7 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
         return queryset
 
     def filter_delete_queryset(self, queryset, request):
-        """Ensure that the user can only delete their *own* notifications"""
+        """Ensure that the user can only delete their *own* notifications."""
         queryset = queryset.filter(user=request.user)
         return queryset
 
@@ -440,7 +441,7 @@ class NotesImageList(ListCreateAPI):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        """Create (upload) a new notes image"""
+        """Create (upload) a new notes image."""
         image = serializer.save()
         image.user = self.request.user
         image.save()
@@ -460,7 +461,7 @@ class ProjectCodeList(ListCreateAPI):
 
 
 class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a particular project code"""
+    """Detail view for a particular project code."""
 
     queryset = common.models.ProjectCode.objects.all()
     serializer_class = common.serializers.ProjectCodeSerializer
@@ -468,7 +469,7 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
 
 
 class CustomUnitList(ListCreateAPI):
-    """List view for custom units"""
+    """List view for custom units."""
 
     queryset = common.models.CustomUnit.objects.all()
     serializer_class = common.serializers.CustomUnitSerializer
@@ -477,11 +478,35 @@ class CustomUnitList(ListCreateAPI):
 
 
 class CustomUnitDetail(RetrieveUpdateDestroyAPI):
-    """Detail view for a particular custom unit"""
+    """Detail view for a particular custom unit."""
 
     queryset = common.models.CustomUnit.objects.all()
     serializer_class = common.serializers.CustomUnitSerializer
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+
+class ErrorMessageList(BulkDeleteMixin, ListAPI):
+    """List view for server error messages."""
+
+    queryset = Error.objects.all()
+    serializer_class = common.serializers.ErrorMessageSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering = '-when'
+
+    ordering_fields = ['when', 'info']
+
+    search_fields = ['info', 'data']
+
+
+class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a single error message."""
+
+    queryset = Error.objects.all()
+    serializer_class = common.serializers.ErrorMessageSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
 
 class FlagList(ListAPI):
@@ -657,6 +682,14 @@ common_api_urls = [
                 ]),
             ),
             re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),
+        ]),
+    ),
+    # Error information
+    re_path(
+        r'^error-report/',
+        include([
+            path(r'<int:pk>/', ErrorMessageDetail.as_view(), name='api-error-detail'),
+            re_path(r'^.*$', ErrorMessageList.as_view(), name='api-error-list'),
         ]),
     ),
     # Flags

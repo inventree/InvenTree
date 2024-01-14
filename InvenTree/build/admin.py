@@ -86,7 +86,7 @@ class BuildAdmin(ImportExportModelAdmin):
 
 @admin.register(BuildItem)
 class BuildItemAdmin(admin.ModelAdmin):
-    """Class for managing the BuildItem model via the admin interface"""
+    """Class for managing the BuildItem model via the admin interface."""
 
     list_display = (
         'stock_item',

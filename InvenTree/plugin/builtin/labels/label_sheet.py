@@ -1,4 +1,4 @@
-"""Label printing plugin which supports printing multiple labels on a single page"""
+"""Label printing plugin which supports printing multiple labels on a single page."""
 
 import logging
 import math
@@ -20,7 +20,7 @@ logger = logging.getLogger('inventree')
 
 
 class LabelPrintingOptionsSerializer(serializers.Serializer):
-    """Custom printing options for the label sheet plugin"""
+    """Custom printing options for the label sheet plugin."""
 
     page_size = serializers.ChoiceField(
         choices=report.helpers.report_page_size_options(),
@@ -69,8 +69,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
     PrintingOptionsSerializer = LabelPrintingOptionsSerializer
 
     def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
-        """Handle printing of the provided labels"""
-
+        """Handle printing of the provided labels."""
         printing_options = kwargs['printing_options']
 
         # Extract page size for the label sheet
@@ -146,7 +145,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         })
 
     def print_page(self, label: LabelTemplate, items: list, request, **kwargs):
-        """Generate a single page of labels:
+        """Generate a single page of labels.
 
         For a single page, generate a simple table grid of labels.
         Styling of the table is handled by the higher level label template
@@ -160,7 +159,6 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
             n_cols: Number of columns
             n_rows: Number of rows
         """
-
         n_cols = kwargs['n_cols']
         n_rows = kwargs['n_rows']
 
@@ -205,8 +203,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         return html
 
     def wrap_pages(self, pages, **kwargs):
-        """Wrap the generated pages into a single document"""
-
+        """Wrap the generated pages into a single document."""
         border = kwargs['border']
 
         page_width = kwargs['page_width']
