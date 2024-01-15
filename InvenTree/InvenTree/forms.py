@@ -363,8 +363,16 @@ class CustomSocialAccountAdapter(
         self, request, provider_id, error=None, exception=None, extra_context=None
     ):
         """Callback method for authentication errors."""
+        if not error:
+            error = request.GET.get('error', None)
+
+        if not exception:
+            exception = request.GET.get('error_description', None)
+
+        path = request.path or 'sso'
+
         # Log the error to the database
-        log_error(request.path if request else 'sso')
+        log_error(path, error_name=error, error_data=exception)
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
 
 
