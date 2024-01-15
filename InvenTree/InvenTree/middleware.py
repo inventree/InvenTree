@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.urls import Resolver404, include, re_path, resolve, reverse_lazy
+from django.urls import Resolver404, include, path, resolve, reverse_lazy
 
 from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
@@ -124,7 +124,7 @@ class AuthRequiredMiddleware(object):
         return response
 
 
-url_matcher = re_path('', include(frontendpatterns))
+url_matcher = path('', include(frontendpatterns))
 
 
 class Check2FAMiddleware(BaseRequire2FAMiddleware):

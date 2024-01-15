@@ -354,76 +354,72 @@ class RegistryStatusView(APIView):
 
 
 plugin_api_urls = [
-    re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
-    re_path(r'^barcode/', include(barcode_api_urls)),
-    re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
-    re_path(
-        r'^plugins/',
+    path('action/', ActionPluginView.as_view(), name='api-action-plugin'),
+    path('barcode/', include(barcode_api_urls)),
+    path('locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
+    path(
+        'plugins/',
         include([
             # Plugin settings URLs
-            re_path(
-                r'^settings/',
+            path(
+                'settings/',
                 include([
                     re_path(
                         r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/',
                         PluginSettingDetail.as_view(),
                         name='api-plugin-setting-detail',
                     ),  # Used for admin interface
-                    re_path(
-                        r'^.*$',
-                        PluginSettingList.as_view(),
-                        name='api-plugin-setting-list',
+                    path(
+                        '', PluginSettingList.as_view(), name='api-plugin-setting-list'
                     ),
                 ]),
             ),
             # Detail views for a single PluginConfig item
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^settings/',
+                    path(
+                        'settings/',
                         include([
                             re_path(
                                 r'^(?P<key>\w+)/',
                                 PluginSettingDetail.as_view(),
                                 name='api-plugin-setting-detail-pk',
                             ),
-                            re_path(
-                                r'^.*$',
+                            path(
+                                '',
                                 PluginAllSettingList.as_view(),
                                 name='api-plugin-settings',
                             ),
                         ]),
                     ),
-                    re_path(
-                        r'^activate/',
+                    path(
+                        'activate/',
                         PluginActivate.as_view(),
                         name='api-plugin-detail-activate',
                     ),
-                    re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
+                    path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),
             ),
             # Metadata
-            re_path(
-                '^metadata/',
+            path(
+                'metadata/',
                 MetadataView.as_view(),
                 {'model': PluginConfig},
                 name='api-plugin-metadata',
             ),
             # Plugin management
-            re_path(r'^reload/', PluginReload.as_view(), name='api-plugin-reload'),
-            re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
-            re_path(
-                r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'
-            ),
+            path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
+            path('install/', PluginInstall.as_view(), name='api-plugin-install'),
+            path('activate/', PluginActivate.as_view(), name='api-plugin-activate'),
             # Registry status
-            re_path(
-                r'^status/',
+            path(
+                'status/',
                 RegistryStatusView.as_view(),
                 name='api-plugin-registry-status',
             ),
             # Anything else
-            re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
+            path('', PluginList.as_view(), name='api-plugin-list'),
         ]),
     ),
 ]

@@ -4,7 +4,7 @@ from django.core.exceptions import FieldError, ValidationError
 from django.core.files.base import ContentFile
 from django.http import HttpResponse
 from django.template.exceptions import TemplateDoesNotExist
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
@@ -513,20 +513,20 @@ class StockLocationReportPrint(StockLocationReportMixin, ReportPrintMixin, Retri
 
 report_api_urls = [
     # Purchase order reports
-    re_path(
-        r'po/',
+    path(
+        'po/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'print/',
+                    path(
+                        'print/',
                         PurchaseOrderReportPrint.as_view(),
                         name='api-po-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': PurchaseOrderReport},
                         name='api-po-report-metadata',
@@ -543,20 +543,20 @@ report_api_urls = [
         ]),
     ),
     # Sales order reports
-    re_path(
-        r'so/',
+    path(
+        'so/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'print/',
+                    path(
+                        'print/',
                         SalesOrderReportPrint.as_view(),
                         name='api-so-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': SalesOrderReport},
                         name='api-so-report-metadata',
@@ -572,19 +572,19 @@ report_api_urls = [
         ]),
     ),
     # Return order reports
-    re_path(
-        r'ro/',
+    path(
+        'ro/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     path(
                         r'print/',
                         ReturnOrderReportPrint.as_view(),
                         name='api-return-order-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': ReturnOrderReport},
                         name='api-so-report-metadata',
@@ -602,126 +602,120 @@ report_api_urls = [
         ]),
     ),
     # Build reports
-    re_path(
-        r'build/',
+    path(
+        'build/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'print/?',
+                    path(
+                        'print/',
                         BuildReportPrint.as_view(),
                         name='api-build-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': BuildReport},
                         name='api-build-report-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
-                        BuildReportDetail.as_view(),
-                        name='api-build-report-detail',
+                    path(
+                        '', BuildReportDetail.as_view(), name='api-build-report-detail'
                     ),
                 ]),
             ),
             # List view
-            re_path(r'^.*$', BuildReportList.as_view(), name='api-build-report-list'),
+            path('', BuildReportList.as_view(), name='api-build-report-list'),
         ]),
     ),
     # Bill of Material reports
-    re_path(
-        r'bom/',
+    path(
+        'bom/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'print/?',
-                        BOMReportPrint.as_view(),
-                        name='api-bom-report-print',
+                    path(
+                        'print/', BOMReportPrint.as_view(), name='api-bom-report-print'
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': BillOfMaterialsReport},
                         name='api-bom-report-metadata',
                     ),
-                    re_path(
-                        r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'
-                    ),
+                    path('', BOMReportDetail.as_view(), name='api-bom-report-detail'),
                 ]),
             ),
             # List view
-            re_path(r'^.*$', BOMReportList.as_view(), name='api-bom-report-list'),
+            path('', BOMReportList.as_view(), name='api-bom-report-list'),
         ]),
     ),
     # Stock item test reports
-    re_path(
-        r'test/',
+    path(
+        'test/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'print/?',
+                    path(
+                        'print/',
                         StockItemTestReportPrint.as_view(),
                         name='api-stockitem-testreport-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'report': TestReport},
                         name='api-stockitem-testreport-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         StockItemTestReportDetail.as_view(),
                         name='api-stockitem-testreport-detail',
                     ),
                 ]),
             ),
             # List view
-            re_path(
-                r'^.*$',
+            path(
+                '',
                 StockItemTestReportList.as_view(),
                 name='api-stockitem-testreport-list',
             ),
         ]),
     ),
     # Stock Location reports (Stock Location Reports -> sir)
-    re_path(
-        r'slr/',
+    path(
+        'slr/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'print/?',
+                    path(
+                        'print/',
                         StockLocationReportPrint.as_view(),
                         name='api-stocklocation-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'report': StockLocationReport},
                         name='api-stocklocation-report-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         StockLocationReportDetail.as_view(),
                         name='api-stocklocation-report-detail',
                     ),
                 ]),
             ),
             # List view
-            re_path(
-                r'^.*$',
+            path(
+                '',
                 StockLocationReportList.as_view(),
                 name='api-stocklocation-report-list',
             ),

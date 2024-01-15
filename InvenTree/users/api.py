@@ -249,23 +249,23 @@ class GetAuthToken(APIView):
 
 
 user_urls = [
-    re_path(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
-    re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
-    re_path(r'^me/', MeUserDetail.as_view(), name='api-user-me'),
-    re_path(
-        r'^owner/',
+    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+    path('token/', GetAuthToken.as_view(), name='api-token'),
+    path('me/', MeUserDetail.as_view(), name='api-user-me'),
+    path(
+        'owner/',
         include([
             path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
-            re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
+            path('', OwnerList.as_view(), name='api-owner-list'),
         ]),
     ),
-    re_path(
-        r'^group/',
+    path(
+        'group/',
         include([
             re_path(
                 r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'
             ),
-            re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
+            path('', GroupList.as_view(), name='api-group-list'),
         ]),
     ),
     re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),

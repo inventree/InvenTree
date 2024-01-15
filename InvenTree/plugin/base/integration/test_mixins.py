@@ -4,7 +4,7 @@ import os
 
 from django.conf import settings
 from django.test import TestCase
-from django.urls import include, re_path, reverse
+from django.urls import include, path, re_path, reverse
 
 from error_report.models import Error
 
@@ -96,7 +96,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
             def test():
                 return 'ccc'
 
-            URLS = [re_path('testpath', test, name='test')]
+            URLS = [path('testpath', test, name='test')]
 
         self.mixin = UrlsCls()
 

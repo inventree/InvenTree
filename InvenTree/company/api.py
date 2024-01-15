@@ -486,32 +486,32 @@ class SupplierPriceBreakDetail(RetrieveUpdateDestroyAPI):
 
 manufacturer_part_api_urls = [
     # Base URL for ManufacturerPartAttachment API endpoints
-    re_path(
-        r'^attachment/',
+    path(
+        'attachment/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 ManufacturerPartAttachmentDetail.as_view(),
                 name='api-manufacturer-part-attachment-detail',
             ),
-            re_path(
-                r'^$',
+            path(
+                '',
                 ManufacturerPartAttachmentList.as_view(),
                 name='api-manufacturer-part-attachment-list',
             ),
         ]),
     ),
-    re_path(
-        r'^parameter/',
+    path(
+        'parameter/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 ManufacturerPartParameterDetail.as_view(),
                 name='api-manufacturer-part-parameter-detail',
             ),
             # Catch anything else
-            re_path(
-                r'^.*$',
+            path(
+                '',
                 ManufacturerPartParameterList.as_view(),
                 name='api-manufacturer-part-parameter-list',
             ),
@@ -520,21 +520,21 @@ manufacturer_part_api_urls = [
     re_path(
         r'^(?P<pk>\d+)/?',
         include([
-            re_path(
-                '^metadata/',
+            path(
+                'metadata/',
                 MetadataView.as_view(),
                 {'model': ManufacturerPart},
                 name='api-manufacturer-part-metadata',
             ),
-            re_path(
-                '^.*$',
+            path(
+                '',
                 ManufacturerPartDetail.as_view(),
                 name='api-manufacturer-part-detail',
             ),
         ]),
     ),
     # Catch anything else
-    re_path(r'^.*$', ManufacturerPartList.as_view(), name='api-manufacturer-part-list'),
+    path('', ManufacturerPartList.as_view(), name='api-manufacturer-part-list'),
 ]
 
 
@@ -542,36 +542,34 @@ supplier_part_api_urls = [
     re_path(
         r'^(?P<pk>\d+)/?',
         include([
-            re_path(
-                '^metadata/',
+            path(
+                'metadata/',
                 MetadataView.as_view(),
                 {'model': SupplierPart},
                 name='api-supplier-part-metadata',
             ),
-            re_path(
-                '^.*$', SupplierPartDetail.as_view(), name='api-supplier-part-detail'
-            ),
+            path('', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
         ]),
     ),
     # Catch anything else
-    re_path(r'^.*$', SupplierPartList.as_view(), name='api-supplier-part-list'),
+    path('', SupplierPartList.as_view(), name='api-supplier-part-list'),
 ]
 
 
 company_api_urls = [
-    re_path(r'^part/manufacturer/', include(manufacturer_part_api_urls)),
-    re_path(r'^part/', include(supplier_part_api_urls)),
+    path('part/manufacturer/', include(manufacturer_part_api_urls)),
+    path('part/', include(supplier_part_api_urls)),
     # Supplier price breaks
-    re_path(
-        r'^price-break/',
+    path(
+        'price-break/',
         include([
             re_path(
                 r'^(?P<pk>\d+)/?',
                 SupplierPriceBreakDetail.as_view(),
                 name='api-part-supplier-price-detail',
             ),
-            re_path(
-                r'^.*$',
+            path(
+                '',
                 SupplierPriceBreakList.as_view(),
                 name='api-part-supplier-price-list',
             ),
@@ -580,54 +578,52 @@ company_api_urls = [
     re_path(
         r'^(?P<pk>\d+)/?',
         include([
-            re_path(
-                r'^metadata/',
+            path(
+                'metadata/',
                 MetadataView.as_view(),
                 {'model': Company},
                 name='api-company-metadata',
             ),
-            re_path(r'^.*$', CompanyDetail.as_view(), name='api-company-detail'),
+            path('', CompanyDetail.as_view(), name='api-company-detail'),
         ]),
     ),
-    re_path(
-        r'^attachment/',
+    path(
+        'attachment/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 CompanyAttachmentDetail.as_view(),
                 name='api-company-attachment-detail',
             ),
-            re_path(
-                r'^$',
-                CompanyAttachmentList.as_view(),
-                name='api-company-attachment-list',
+            path(
+                '', CompanyAttachmentList.as_view(), name='api-company-attachment-list'
             ),
         ]),
     ),
-    re_path(
-        r'^contact/',
+    path(
+        'contact/',
         include([
             re_path(
                 r'^(?P<pk>\d+)/?',
                 include([
-                    re_path(
-                        '^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': Contact},
                         name='api-contact-metadata',
                     ),
-                    re_path('^.*$', ContactDetail.as_view(), name='api-contact-detail'),
+                    path('', ContactDetail.as_view(), name='api-contact-detail'),
                 ]),
             ),
-            re_path(r'^.*$', ContactList.as_view(), name='api-contact-list'),
+            path('', ContactList.as_view(), name='api-contact-list'),
         ]),
     ),
-    re_path(
-        r'^address/',
+    path(
+        'address/',
         include([
             path('<int:pk>/', AddressDetail.as_view(), name='api-address-detail'),
-            re_path(r'^.*$', AddressList.as_view(), name='api-address-list'),
+            path('', AddressList.as_view(), name='api-address-list'),
         ]),
     ),
-    re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),
+    path('', CompanyList.as_view(), name='api-company-list'),
 ]
