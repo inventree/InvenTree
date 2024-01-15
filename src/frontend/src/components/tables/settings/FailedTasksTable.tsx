@@ -25,7 +25,7 @@ export default function FailedTasksTable() {
         sortable: true
       },
       {
-        accessor: 'id',
+        accessor: 'pk',
         title: t`Task ID`
       },
       {
@@ -63,6 +63,8 @@ export default function FailedTasksTable() {
         tableState={table}
         columns={columns}
         props={{
+          enableBulkDelete: true,
+          enableSelection: true,
           onRowClick: (row: any) => {
             setError(row.result);
             open();

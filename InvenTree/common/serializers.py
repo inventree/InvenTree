@@ -422,7 +422,7 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
 
         model = django_q.models.Failure
         fields = [
-            'id',
+            'pk',
             'name',
             'func',
             'args',
@@ -432,5 +432,7 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
             'attempt_count',
             'result',
         ]
+
+    pk = serializers.CharField(source='id', read_only=True)
 
     result = serializers.CharField()

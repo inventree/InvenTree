@@ -560,7 +560,7 @@ class ScheduledTaskList(ListAPI):
         return common.serializers.ScheduledTaskSerializer.annotate_queryset(queryset)
 
 
-class FailedTaskList(ListAPI):
+class FailedTaskList(BulkDeleteMixin, ListAPI):
     """Provides a read-only list of currently failed tasks."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]

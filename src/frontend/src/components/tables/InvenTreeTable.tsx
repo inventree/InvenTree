@@ -388,7 +388,9 @@ export function InvenTreeTable<T = any>({
       },
       onConfirm: () => {
         // Delete the selected records
-        let selection = tableState.selectedRecords.map((record) => record.pk);
+        let selection = tableState.selectedRecords.map(
+          (record) => record.pk ?? record.id
+        );
 
         api
           .delete(url, {
