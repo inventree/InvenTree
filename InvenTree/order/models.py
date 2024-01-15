@@ -779,8 +779,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         # Has this order been completed?
         if len(self.pending_line_items()) == 0:
-            self.received_by = user
-            self.complete_order()  # This will save the model
+            if common_models.InvenTreeSetting.get_setting(
+                'PURCHASEORDER_AUTO_COMPLETE', True
+            ):
+                self.received_by = user
+                self.complete_order()  # This will save the model
 
         # Issue a notification to interested parties, that this order has been "updated"
         notify_responsible(

@@ -1752,6 +1752,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'PURCHASEORDER_AUTO_COMPLETE': {
+            'name': _('Auto Complete Purchase Orders'),
+            'description': _(
+                'Automatically mark purchase orders as complete when all line items are received'
+            ),
+            'default': True,
+            'validator': bool,
+        },
         # login / SSO
         'LOGIN_ENABLE_PWD_FORGOT': {
             'name': _('Enable password forgot'),
