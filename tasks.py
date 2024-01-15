@@ -58,11 +58,12 @@ def apps():
     ]
 
 
-def content_excludes(allow_tokens: bool = False):
+def content_excludes(allow_tokens: bool = False, allow_plugins: bool = False):
     """Returns a list of content types to exclude from import/export.
 
     Arguments:
         allow_tokens (bool): Allow tokens to be exported/importe (default = False)
+        allow_plugins (bool): Allow plugin information to be exported/imported (default = False)
     """
     excludes = [
         'contenttypes',
@@ -81,6 +82,10 @@ def content_excludes(allow_tokens: bool = False):
 
     if not allow_tokens:
         excludes.append('users.apitoken')
+
+    if not allow_plugins:
+        excludes.append('plugin.pluginconfig')
+        excludes.append('plugin.pluginsetting')
 
     output = ''
 
@@ -405,8 +410,9 @@ def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = Fal
     help={
         'filename': "Output filename (default = 'data.json')",
         'overwrite': 'Overwrite existing files without asking first (default = False)',
-        'include_permissions': 'Include user and group permissions in the output file (filename) (default = False)',
-        'include_tokens': 'Include API tokens in the output file (filename) (default = False)',
+        'include_permissions': 'Include user and group permissions in the output file (default = False)',
+        'include_tokens': 'Include API tokens in the output file (default = False)',
+        'include_plugins': 'Include plugin data in the output file (default = False)',
         'delete_temp': 'Delete temporary files (containing permissions) at end of run. Note that this will delete temporary files from previous runs as well. (default = off/False)',
     }
 )
@@ -416,6 +422,7 @@ def export_records(
     overwrite=False,
     include_permissions=False,
     include_tokens=False,
+    include_plugins=False,
     delete_temp=False,
 ):
     """Export all database records to a file.
@@ -445,7 +452,9 @@ def export_records(
 
     tmpfile = f'{filename}.tmp'
 
-    excludes = content_excludes(allow_tokens=include_tokens)
+    excludes = content_excludes(
+        allow_tokens=include_tokens, allow_plugins=include_plugins
+    )
 
     cmd = f"dumpdata --indent 2 --output '{tmpfile}' {excludes}"
 
