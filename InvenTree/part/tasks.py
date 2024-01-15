@@ -76,7 +76,7 @@ def update_part_pricing(pricing: part.models.PartPricing, counter: int = 0):
     pricing.update_pricing(counter=counter)
 
 
-@scheduled_task(ScheduledTask.DAILY)
+@scheduled_task(InvenTree.tasks.ScheduledTask.DAILY)
 def check_missing_pricing(limit=250):
     """Check for parts with missing or outdated pricing information.
 
