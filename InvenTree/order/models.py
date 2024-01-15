@@ -143,6 +143,10 @@ class TotalPriceMixin(models.Model):
 
         total = Money(0, target_currency)
 
+        # Check if the order has been saved (otherwise we can't calculate the total price)
+        if self.pk is None:
+            return total
+
         # order items
         for line in self.lines.all():
             if not line.price:
