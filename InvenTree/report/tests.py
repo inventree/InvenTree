@@ -356,7 +356,8 @@ class ReportTest(InvenTreeAPITestCase):
 
         # Delete the last report
         response = self.delete(
-            reverse(self.detail_url, kwargs={'pk': reports[-1].pk}), expected_code=204
+            reverse(self.detail_url, kwargs={'pk': reports[n - 1].pk}),
+            expected_code=204,
         )
 
     def test_metadata(self):
