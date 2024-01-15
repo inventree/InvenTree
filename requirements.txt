@@ -15,7 +15,9 @@ attrs==23.1.0
 babel==2.13.1
     # via py-moneyed
 bleach[css]==6.1.0
-    # via django-markdownify
+    # via
+    #   bleach
+    #   django-markdownify
 brotli==1.1.0
     # via fonttools
 certifi==2023.7.22
@@ -45,7 +47,7 @@ defusedxml==0.7.1
     #   python3-openid
 diff-match-patch==20230430
     # via django-import-export
-dj-rest-auth==5.0.1
+dj-rest-auth==5.0.2
     # via -r requirements.in
 django==3.2.23
     # via
@@ -81,7 +83,7 @@ django==3.2.23
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth==0.54.0
+django-allauth==0.59.0
     # via
     #   -r requirements.in
     #   django-allauth-2fa
@@ -109,7 +111,7 @@ django-import-export==3.3.1
     # via -r requirements.in
 django-js-asset==2.1.0
     # via django-mptt
-django-maintenance-mode==0.19.0
+django-maintenance-mode==0.21.0
     # via -r requirements.in
 django-markdownify==0.9.3
     # via -r requirements.in
@@ -162,7 +164,9 @@ et-xmlfile==1.1.0
 feedparser==6.0.10
     # via -r requirements.in
 fonttools[woff]==4.44.0
-    # via weasyprint
+    # via
+    #   fonttools
+    #   weasyprint
 gunicorn==21.2.0
     # via -r requirements.in
 html5lib==1.1
@@ -179,7 +183,7 @@ inflection==0.5.1
     # via drf-spectacular
 itypes==1.2.0
     # via coreapi
-jinja2==3.1.2
+jinja2==3.1.3
     # via coreschema
 jsonschema==4.19.2
     # via drf-spectacular
@@ -221,6 +225,7 @@ pyjwt[crypto]==2.8.0
     # via
     #   django-allauth
     #   djangorestframework-simplejwt
+    #   pyjwt
 pyphen==0.14.0
     # via weasyprint
 pypng==0.20220715.0
@@ -233,7 +238,7 @@ python-dateutil==2.8.2
     #   icalendar
 python-dotenv==1.0.0
     # via -r requirements.in
-python-fsutil==0.11.0
+python-fsutil==0.12.0
     # via django-maintenance-mode
 python3-openid==3.2.0
     # via django-allauth

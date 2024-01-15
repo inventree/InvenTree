@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -13,9 +13,9 @@ import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
-import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
+import { PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -34,20 +34,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
         title: t`Part`,
 
         sortable: true,
-        render: function (record: any) {
-          let part = record?.part_detail ?? {};
-
-          return (
-            <Group spacing="xs" align="left" noWrap={true}>
-              <Thumbnail
-                src={part?.thumbnail || part?.image}
-                alt={part?.name}
-                size={24}
-              />
-              <Text>{part?.full_name}</Text>
-            </Group>
-          );
-        }
+        render: (record: any) => PartColumn(record?.part_detail)
       },
       {
         accessor: 'name',
@@ -110,6 +97,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
       actions.push(
         RowEditAction({
+          tooltip: t`Edit Part Parameter`,
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
@@ -132,6 +120,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
       actions.push(
         RowDeleteAction({
+          tooltip: t`Delete Part Parameter`,
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({

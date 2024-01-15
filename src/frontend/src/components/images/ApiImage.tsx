@@ -49,14 +49,12 @@ export function ApiImage(props: ImageProps) {
               // User is not authorized to view this image, or the image is not available
               setImage('');
               setAuthorized(false);
-              console.error(`Error fetching image ${props.src}:`, response);
               break;
           }
 
           return response;
         })
-        .catch((error) => {
-          console.error(`Error fetching image ${props.src}:`, error);
+        .catch((_error) => {
           return null;
         });
     },

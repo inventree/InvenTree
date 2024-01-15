@@ -16,6 +16,13 @@ import {
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
+import {
+  AssignedToMeFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
@@ -23,7 +30,19 @@ export function ReturnOrderTable({ params }: { params?: any }) {
 
   const navigate = useNavigate();
 
-  // TODO: Custom filters
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.returnorder)
+      },
+      OutstandingFilter(),
+      OverdueFilter(),
+      AssignedToMeFilter()
+    ];
+  }, []);
 
   // TODO: Row actions
 
@@ -81,6 +100,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
           ...params,
           customer_detail: true
         },
+        customFilters: tableFilters,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/sales/return-order/${row.pk}/`);

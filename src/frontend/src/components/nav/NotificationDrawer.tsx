@@ -44,7 +44,6 @@ export function NotificationDrawer({
         })
         .then((response) => response.data)
         .catch((error) => {
-          console.error('Error fetching notifications:', error);
           return error;
         }),
     refetchOnMount: false,
@@ -98,12 +97,18 @@ export function NotificationDrawer({
                   to={notification?.target?.link}
                   target="_blank"
                 >
-                  {notification.target?.name ?? 'target'}
+                  {notification.target?.name ??
+                    notification.name ??
+                    t`Notification`}
                 </Text>
               ) : (
-                <Text size="sm">{notification.target?.name ?? 'target'}</Text>
+                <Text size="sm">
+                  {notification.target?.name ??
+                    notification.name ??
+                    t`Notification`}
+                </Text>
               )}
-              <Text size="xs">{notification.age_human ?? 'name'}</Text>
+              <Text size="xs">{notification.age_human ?? ''}</Text>
             </Stack>
             <Space />
             <ActionIcon

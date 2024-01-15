@@ -8,8 +8,7 @@ from collections import OrderedDict
 from django.utils.translation import gettext as _
 
 from company.models import ManufacturerPart, SupplierPart
-from InvenTree.helpers import (DownloadFile, GetExportFormats, normalize,
-                               str2bool)
+from InvenTree.helpers import DownloadFile, GetExportFormats, normalize, str2bool
 
 from .admin import BomItemResource
 from .models import BomItem, BomItemSubstitute, Part
@@ -31,10 +30,7 @@ def MakeBomTemplate(fmt):
     # This will then export just the row headers!
     query = BomItem.objects.filter(pk=None)
 
-    dataset = BomItemResource().export(
-        queryset=query,
-        importing=True
-    )
+    dataset = BomItemResource().export(queryset=query, importing=True)
 
     data = dataset.export(fmt)
 
@@ -43,7 +39,9 @@ def MakeBomTemplate(fmt):
     return DownloadFile(data, filename)
 
 
-def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = None, **kwargs):
+def ExportBom(
+    part: Part, fmt='csv', cascade: bool = False, max_levels: int = None, **kwargs
+):
     """Export a BOM (Bill of Materials) for a given part.
 
     Args:
@@ -80,7 +78,6 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
     def add_items(items, level, cascade=True):
         # Add items at a given layer
         for item in items:
-
             item.level = str(int(level))
 
             # Avoid circular BOM references
@@ -98,9 +95,7 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
     add_items(top_level_items, 1, cascade)
 
     dataset = BomItemResource().export(
-        queryset=bom_items,
-        cascade=cascade,
-        include_pricing=pricing_data,
+        queryset=bom_items, cascade=cascade, include_pricing=pricing_data
     )
 
     def add_columns_to_dataset(columns, column_size):
@@ -122,7 +117,6 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
         for bom_item in bom_items:
             substitutes = BomItemSubstitute.objects.filter(bom_item=bom_item)
             for s_idx, substitute in enumerate(substitutes):
-
                 """Create substitute part name column"""
                 name = f'{_("Substitute Part")}{s_idx + 1}'
                 value = substitute.part.name
@@ -164,7 +158,9 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
                         parameter_cols[name] = {b_idx: value}
 
         # Add parameter columns to dataset
-        parameter_cols_ordered = OrderedDict(sorted(parameter_cols.items(), key=lambda x: x[0]))
+        parameter_cols_ordered = OrderedDict(
+            sorted(parameter_cols.items(), key=lambda x: x[0])
+        )
         add_columns_to_dataset(parameter_cols_ordered, len(bom_items))
 
     if stock_data:
@@ -180,7 +176,6 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
         stock_cols = {}
 
         for b_idx, bom_item in enumerate(bom_items):
-
             stock_data = []
 
             sub_part = bom_item.sub_part
@@ -197,19 +192,13 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
                 stock_data.append('')
 
             # Total "in stock" quantity for this part
-            stock_data.append(
-                str(normalize(sub_part.total_stock))
-            )
+            stock_data.append(str(normalize(sub_part.total_stock)))
 
             # Total "available stock" quantity for this part
-            stock_data.append(
-                str(normalize(sub_part.available_stock))
-            )
+            stock_data.append(str(normalize(sub_part.available_stock)))
 
             # Total "on order" quantity for this part
-            stock_data.append(
-                str(normalize(sub_part.on_order))
-            )
+            stock_data.append(str(normalize(sub_part.on_order)))
 
             for s_idx, header in enumerate(stock_headers):
                 try:
@@ -234,12 +223,12 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
 
             # Include manufacturer data for each BOM item
             if manufacturer_data:
-
                 # Filter manufacturer parts
-                manufacturer_parts = ManufacturerPart.objects.filter(part__pk=b_part.pk).prefetch_related('supplier_parts')
+                manufacturer_parts = ManufacturerPart.objects.filter(
+                    part__pk=b_part.pk
+                ).prefetch_related('supplier_parts')
 
                 for mp_idx, mp_part in enumerate(manufacturer_parts):
-
                     # Extract the "name" field of the Manufacturer (Company)
                     if mp_part and mp_part.manufacturer:
                         manufacturer_name = mp_part.manufacturer.name
@@ -265,9 +254,7 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
 
                     # We wish to include supplier data for this manufacturer part
                     if supplier_data:
-
                         for sp_idx, sp_part in enumerate(mp_part.supplier_parts.all()):
-
                             supplier_parts_used.add(sp_part)
 
                             if sp_part.supplier:
@@ -281,11 +268,21 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
                                 supplier_sku = ''
 
                             # Generate column names for this supplier
-                            k_sup = str(_("Supplier")) + "_" + str(mp_idx) + "_" + str(sp_idx)
-                            k_sku = str(_("SKU")) + "_" + str(mp_idx) + "_" + str(sp_idx)
+                            k_sup = (
+                                str(_('Supplier'))
+                                + '_'
+                                + str(mp_idx)
+                                + '_'
+                                + str(sp_idx)
+                            )
+                            k_sku = (
+                                str(_('SKU')) + '_' + str(mp_idx) + '_' + str(sp_idx)
+                            )
 
                             try:
-                                manufacturer_cols[k_sup].update({bom_idx: supplier_name})
+                                manufacturer_cols[k_sup].update({
+                                    bom_idx: supplier_name
+                                })
                                 manufacturer_cols[k_sku].update({bom_idx: supplier_sku})
                             except KeyError:
                                 manufacturer_cols[k_sup] = {bom_idx: supplier_name}
@@ -294,8 +291,9 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
             if supplier_data:
                 # Add in any extra supplier parts, which are not associated with a manufacturer part
 
-                for sp_idx, sp_part in enumerate(SupplierPart.objects.filter(part__pk=b_part.pk)):
-
+                for sp_idx, sp_part in enumerate(
+                    SupplierPart.objects.filter(part__pk=b_part.pk)
+                ):
                     if sp_part in supplier_parts_used:
                         continue
 
@@ -309,8 +307,8 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
                     supplier_sku = sp_part.SKU
 
                     # Generate column names for this supplier
-                    k_sup = str(_("Supplier")) + "_" + str(sp_idx)
-                    k_sku = str(_("SKU")) + "_" + str(sp_idx)
+                    k_sup = str(_('Supplier')) + '_' + str(sp_idx)
+                    k_sku = str(_('SKU')) + '_' + str(sp_idx)
 
                     try:
                         manufacturer_cols[k_sup].update({bom_idx: supplier_name})
@@ -324,6 +322,6 @@ def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = No
 
     data = dataset.export(fmt)
 
-    filename = f"{part.full_name}_BOM.{fmt}"
+    filename = f'{part.full_name}_BOM.{fmt}'
 
     return DownloadFile(data, filename)

@@ -22,7 +22,7 @@ class SettingsAdmin(ImportExportModelAdmin):
 class UserSettingsAdmin(ImportExportModelAdmin):
     """Admin settings for InvenTreeUserSetting."""
 
-    list_display = ('key', 'value', 'user', )
+    list_display = ('key', 'value', 'user')
 
     def get_readonly_fields(self, request, obj=None):  # pragma: no cover
         """Prevent the 'key' field being edited once the setting is created."""
@@ -40,23 +40,31 @@ class WebhookAdmin(ImportExportModelAdmin):
 class NotificationEntryAdmin(admin.ModelAdmin):
     """Admin settings for NotificationEntry."""
 
-    list_display = ('key', 'uid', 'updated', )
+    list_display = ('key', 'uid', 'updated')
 
 
 class NotificationMessageAdmin(admin.ModelAdmin):
     """Admin settings for NotificationMessage."""
 
-    list_display = ('age_human', 'user', 'category', 'name', 'read', 'target_object', 'source_object', )
+    list_display = (
+        'age_human',
+        'user',
+        'category',
+        'name',
+        'read',
+        'target_object',
+        'source_object',
+    )
 
-    list_filter = ('category', 'read', 'user', )
+    list_filter = ('category', 'read', 'user')
 
-    search_fields = ('name', 'category', 'message', )
+    search_fields = ('name', 'category', 'message')
 
 
 class NewsFeedEntryAdmin(admin.ModelAdmin):
     """Admin settings for NewsFeedEntry."""
 
-    list_display = ('title', 'author', 'published', 'summary', )
+    list_display = ('title', 'author', 'published', 'summary')
 
 
 admin.site.register(common.models.InvenTreeSetting, SettingsAdmin)

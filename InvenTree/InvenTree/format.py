@@ -1,4 +1,4 @@
-"""Custom string formatting functions and helpers"""
+"""Custom string formatting functions and helpers."""
 
 import re
 import string
@@ -36,16 +36,13 @@ def parse_format_string(fmt_string: str) -> dict:
         else:
             seen_groups.add(name)
 
-        info[group[1]] = {
-            'format': group[1],
-            'prefix': group[0],
-        }
+        info[group[1]] = {'format': group[1], 'prefix': group[0]}
 
     return info
 
 
 def construct_format_regex(fmt_string: str) -> str:
-    r"""Construct a regular expression based on a provided format string
+    r"""Construct a regular expression based on a provided format string.
 
     This function turns a python format string into a regular expression,
     which can be used for two purposes:
@@ -67,7 +64,7 @@ def construct_format_regex(fmt_string: str) -> str:
     Raises:
         ValueError: Format string is invalid
     """
-    pattern = "^"
+    pattern = '^'
 
     for group in string.Formatter().parse(fmt_string):
         prefix = group[0]  # Prefix (literal text appearing before this group)
@@ -75,9 +72,23 @@ def construct_format_regex(fmt_string: str) -> str:
         format = group[2]  # Format specifier e.g :04d
 
         rep = [
-            '+', '-', '.',
-            '{', '}', '(', ')',
-            '^', '$', '~', '!', '@', ':', ';', '|', '\'', '"',
+            '+',
+            '-',
+            '.',
+            '{',
+            '}',
+            '(',
+            ')',
+            '^',
+            '$',
+            '~',
+            '!',
+            '@',
+            ':',
+            ';',
+            '|',
+            "'",
+            '"',
         ]
 
         # Escape any special regex characters
@@ -94,7 +105,6 @@ def construct_format_regex(fmt_string: str) -> str:
 
         # Add a named capture group for the format entry
         if name:
-
             # Check if integer values are required
             if format.endswith('d'):
                 chr = '\d'
@@ -105,9 +115,9 @@ def construct_format_regex(fmt_string: str) -> str:
             # TODO: Introspect required width
             w = '+'
 
-            pattern += f"(?P<{name}>{chr}{w})"
+            pattern += f'(?P<{name}>{chr}{w})'
 
-    pattern += "$"
+    pattern += '$'
 
     return pattern
 
@@ -133,7 +143,7 @@ def validate_string(value: str, fmt_string: str) -> str:
 
 
 def extract_named_group(name: str, value: str, fmt_string: str) -> str:
-    """Extract a named value from the provided string, given the provided format string
+    """Extract a named value from the provided string, given the provided format string.
 
     Args:
         name: Name of group to extract e.g. 'ref'
@@ -161,7 +171,9 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
     result = re.match(pattern, value)
 
     if not result:
-        raise ValueError(_("Provided value does not match required pattern: ") + fmt_string)
+        raise ValueError(
+            _('Provided value does not match required pattern: ') + fmt_string
+        )
 
     # And return the value we are interested in
     # Note: This will raise an IndexError if the named group was not matched
@@ -169,11 +181,12 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
 
 
 def format_money(money: Money, decimal_places: int = None, format: str = None) -> str:
-    """Format money object according to the currently set local
+    """Format money object according to the currently set local.
 
     Args:
-        decimal_places: Number of decimal places to use
-        format: Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
+        money (Money): The money object to format
+        decimal_places (int): Number of decimal places to use
+        format (str): Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
 
     Returns:
         str: The formatted string
@@ -186,7 +199,7 @@ def format_money(money: Money, decimal_places: int = None, format: str = None) -
     if format:
         pattern = parse_pattern(format)
     else:
-        pattern = locale.currency_formats["standard"]
+        pattern = locale.currency_formats['standard']
         if decimal_places is not None:
             pattern.frac_prec = (decimal_places, decimal_places)
 

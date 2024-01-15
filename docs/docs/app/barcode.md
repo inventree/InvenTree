@@ -112,3 +112,15 @@ From the [Purchase Order detail page](./po.md#purchase-order-detail) page, the f
 #### Scan Received Parts
 
 Receive incoming purchase order items against the selected purchase order. Scanning a *new* barcode which is associated with an item in an incoming purchase order will receive the item into stock.
+
+### Sales Order Actions
+
+The following barcode actions are available for [Sales Orders](./so.md):
+
+#### Add Line Item
+
+Add a new line item to the selected order by scanning a *Part* barcode
+
+#### Assign Stock
+
+Allocate stock items to the selected sales order by scanning a *StockItem* barcode

@@ -11,8 +11,7 @@ import InvenTree.email
 import InvenTree.helpers
 import InvenTree.tasks
 from plugin import InvenTreePlugin, registry
-from plugin.mixins import (BulkNotificationMethod, SettingsContentMixin,
-                           SettingsMixin)
+from plugin.mixins import BulkNotificationMethod, SettingsContentMixin, SettingsMixin
 
 
 class PlgMixin:
@@ -26,14 +25,16 @@ class PlgMixin:
         return InvenTreeCoreNotificationsPlugin
 
 
-class InvenTreeCoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, InvenTreePlugin):
+class InvenTreeCoreNotificationsPlugin(
+    SettingsContentMixin, SettingsMixin, InvenTreePlugin
+):
     """Core notification methods for InvenTree."""
 
-    NAME = "InvenTreeCoreNotificationsPlugin"
-    TITLE = _("InvenTree Notifications")
+    NAME = 'InvenTreeCoreNotificationsPlugin'
+    TITLE = _('InvenTree Notifications')
     AUTHOR = _('InvenTree contributors')
     DESCRIPTION = _('Integrated outgoing notification methods')
-    VERSION = "1.0.0"
+    VERSION = '1.0.0'
 
     SETTINGS = {
         'ENABLE_NOTIFICATION_EMAILS': {
@@ -44,7 +45,9 @@ class InvenTreeCoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, Inve
         },
         'ENABLE_NOTIFICATION_SLACK': {
             'name': _('Enable slack notifications'),
-            'description': _('Allow sending of slack channel messages for event notifications'),
+            'description': _(
+                'Allow sending of slack channel messages for event notifications'
+            ),
             'default': False,
             'validator': bool,
         },
@@ -71,11 +74,7 @@ class InvenTreeCoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, Inve
 
         METHOD_NAME = 'mail'
         METHOD_ICON = 'fa-envelope'
-        CONTEXT_EXTRA = [
-            ('template', ),
-            ('template', 'html', ),
-            ('template', 'subject', ),
-        ]
+        CONTEXT_EXTRA = [('template',), ('template', 'html'), ('template', 'subject')]
         GLOBAL_SETTING = 'ENABLE_NOTIFICATION_EMAILS'
         USER_SETTING = {
             'name': _('Enable email notifications'),
@@ -89,7 +88,6 @@ class InvenTreeCoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, Inve
             allowed_users = []
 
             for user in self.targets:
-
                 if not user.is_active:
                     # Ignore any users who have been deactivated
                     continue
@@ -99,17 +97,19 @@ class InvenTreeCoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, Inve
                 if allows_emails:
                     allowed_users.append(user)
 
-            return EmailAddress.objects.filter(
-                user__in=allowed_users,
-            )
+            return EmailAddress.objects.filter(user__in=allowed_users)
 
         def send_bulk(self):
             """Send the notifications out via email."""
-            html_message = render_to_string(self.context['template']['html'], self.context)
+            html_message = render_to_string(
+                self.context['template']['html'], self.context
+            )
             targets = self.targets.values_list('email', flat=True)
 
             # Prefix the 'instance title' to the email subject
-            instance_title = common.models.InvenTreeSetting.get_setting('INVENTREE_INSTANCE')
+            instance_title = common.models.InvenTreeSetting.get_setting(
+                'INVENTREE_INSTANCE'
+            )
 
             subject = self.context['template'].get('subject', '')
 
@@ -139,32 +139,37 @@ class InvenTreeCoreNotificationsPlugin(SettingsContentMixin, SettingsMixin, Inve
             if not url:
                 return False
 
-            ret = requests.post(url, json={
-                'text': str(self.context['message']),
-                'blocks': [
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "plain_text",
-                            "text": str(self.context['name'])
-                        }
-                    },
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": str(self.context['message'])
-                        },
-                        "accessory": {
-                            "type": "button",
-                            "text": {
-                                "type": "plain_text",
-                                "text": str(_("Open link")), "emoji": True
+            ret = requests.post(
+                url,
+                json={
+                    'text': str(self.context['message']),
+                    'blocks': [
+                        {
+                            'type': 'section',
+                            'text': {
+                                'type': 'plain_text',
+                                'text': str(self.context['name']),
                             },
-                            "value": f'{self.category}_{self.obj.pk}',
-                            "url": self.context['link'],
-                            "action_id": "button-action"
-                        }
-                    }]
-            })
+                        },
+                        {
+                            'type': 'section',
+                            'text': {
+                                'type': 'mrkdwn',
+                                'text': str(self.context['message']),
+                            },
+                            'accessory': {
+                                'type': 'button',
+                                'text': {
+                                    'type': 'plain_text',
+                                    'text': str(_('Open link')),
+                                    'emoji': True,
+                                },
+                                'value': f'{self.category}_{self.obj.pk}',
+                                'url': self.context['link'],
+                                'action_id': 'button-action',
+                            },
+                        },
+                    ],
+                },
+            )
             return ret.ok

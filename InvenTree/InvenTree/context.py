@@ -31,9 +31,7 @@ def health_status(request):
     }
 
     # The following keys are required to denote system health
-    health_keys = [
-        'django_q_running',
-    ]
+    health_keys = ['django_q_running']
 
     all_healthy = True
 
@@ -72,11 +70,9 @@ def user_roles(request):
     """
     user = request.user
 
-    roles = {
-    }
+    roles = {}
 
     for role in RuleSet.RULESET_MODELS.keys():
-
         permissions = {}
 
         for perm in ['view', 'add', 'change', 'delete']:

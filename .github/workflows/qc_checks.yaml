@@ -47,27 +47,11 @@ jobs:
             frontend:
               - 'src/frontend/**'
 
-  pep_style:
-    name: Style [Python]
-    runs-on: ubuntu-20.04
-
-    needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true'
-
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          dev-install: true
-      - name: Run flake8
-        run: flake8 InvenTree --extend-ignore=D
-
   javascript:
     name: Style - Classic UI [JS]
     runs-on: ubuntu-20.04
 
-    needs: [ 'pep_style', 'pre-commit' ]
+    needs: [ 'pre-commit' ]
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -168,27 +152,11 @@ jobs:
           invoke check-server
           coverage run -m unittest discover -s test/
 
-  docstyle:
-    name: Style [Python Docstrings]
-    runs-on: ubuntu-20.04
-
-    needs: pre-commit
-    continue-on-error: true
-
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          install: true
-      - name: Run flake8
-        run: flake8 InvenTree --statistics
-
   coverage:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'pep_style', 'pre-commit' ]
+    needs: [ 'pre-commit' ]
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
@@ -221,7 +189,7 @@ jobs:
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'pep_style', 'pre-commit' ]
+    needs: [ 'pre-commit' ]
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -265,7 +233,7 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'pep_style', 'pre-commit' ]
+    needs: [ 'pre-commit' ]
 
     env:
       # Database backend configuration

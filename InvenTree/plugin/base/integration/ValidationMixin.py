@@ -1,12 +1,11 @@
-"""Validation mixin class definition"""
-
+"""Validation mixin class definition."""
 
 import part.models
 import stock.models
 
 
 class ValidationMixin:
-    """Mixin class that allows custom validation for various parts of InvenTree
+    """Mixin class that allows custom validation for various parts of InvenTree.
 
     Custom generation and validation functionality can be provided for:
 
@@ -32,16 +31,17 @@ class ValidationMixin:
     """
 
     class MixinMeta:
-        """Metaclass for this mixin"""
-        MIXIN_NAME = "Validation"
+        """Metaclass for this mixin."""
+
+        MIXIN_NAME = 'Validation'
 
     def __init__(self):
-        """Register the mixin"""
+        """Register the mixin."""
         super().__init__()
         self.add_mixin('validation', True, __class__)
 
     def validate_part_name(self, name: str, part: part.models.Part):
-        """Perform validation on a proposed Part name
+        """Perform validation on a proposed Part name.
 
         Arguments:
             name: The proposed part name
@@ -56,7 +56,7 @@ class ValidationMixin:
         return None
 
     def validate_part_ipn(self, ipn: str, part: part.models.Part):
-        """Perform validation on a proposed Part IPN (internal part number)
+        """Perform validation on a proposed Part IPN (internal part number).
 
         Arguments:
             ipn: The proposed part IPN
@@ -71,7 +71,7 @@ class ValidationMixin:
         return None
 
     def validate_batch_code(self, batch_code: str, item: stock.models.StockItem):
-        """Validate the supplied batch code
+        """Validate the supplied batch code.
 
         Arguments:
             batch_code: The proposed batch code (string)
@@ -86,7 +86,7 @@ class ValidationMixin:
         return None
 
     def generate_batch_code(self):
-        """Generate a new batch code
+        """Generate a new batch code.
 
         Returns:
             A new batch code (string) or None

@@ -80,7 +80,28 @@ export function UsedInTable({
   }, [partId]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [];
+    return [
+      {
+        name: 'inherited',
+        label: t`Gets Inherited`,
+        description: t`Show inherited items`
+      },
+      {
+        name: 'optional',
+        label: t`Optional`,
+        description: t`Show optional items`
+      },
+      {
+        name: 'part_active',
+        label: t`Active`,
+        description: t`Show active assemblies`
+      },
+      {
+        name: 'part_trackable',
+        label: t`Trackable`,
+        description: t`Show trackable assemblies`
+      }
+    ];
   }, [partId]);
 
   return (

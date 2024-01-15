@@ -1,4 +1,5 @@
 """Plugin mixin class for UrlsMixin."""
+
 import logging
 
 from django.conf import settings
@@ -24,7 +25,9 @@ class UrlsMixin:
         self.urls = self.setup_urls()
 
     @classmethod
-    def _activate_mixin(cls, registry, plugins, force_reload=False, full_reload: bool = False):
+    def _activate_mixin(
+        cls, registry, plugins, force_reload=False, full_reload: bool = False
+    ):
         """Activate UrlsMixin plugins - add custom urls .
 
         Args:
@@ -34,7 +37,10 @@ class UrlsMixin:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
         from common.models import InvenTreeSetting
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_URL'):
+
+        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting(
+            'ENABLE_PLUGINS_URL'
+        ):
             logger.info('Registering UrlsMixin Plugin')
             urls_changed = False
             # check whether an activated plugin extends UrlsMixin
@@ -64,7 +70,9 @@ class UrlsMixin:
     def urlpatterns(self):
         """Urlpatterns for this plugin."""
         if self.has_urls:
-            return re_path(f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug)
+            return re_path(
+                f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug
+            )
         return None
 
     @property

@@ -130,7 +130,7 @@ export const routes = (
       </Route>
       <Route path="build/">
         <Route index element={<BuildIndex />} />
-        <Route path=":id/" element={<BuildDetail />} />
+        <Route path=":id/*" element={<BuildDetail />} />
       </Route>
       <Route path="purchasing/">
         <Route index element={<Navigate to="index/" />} />
