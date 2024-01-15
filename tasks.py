@@ -58,24 +58,43 @@ def apps():
     ]
 
 
-def content_excludes():
-    """Returns a list of content types to exclude from import/export."""
+def content_excludes(
+    allow_tokens: bool = True, allow_plugins: bool = True, allow_sso: bool = True
+):
+    """Returns a list of content types to exclude from import/export.
+
+    Arguments:
+        allow_tokens (bool): Allow tokens to be exported/importe
+        allow_plugins (bool): Allow plugin information to be exported/imported
+        allow_sso (bool): Allow SSO tokens to be exported/imported
+    """
     excludes = [
         'contenttypes',
         'auth.permission',
-        'users.apitoken',
         'error_report.error',
         'admin.logentry',
         'django_q.schedule',
         'django_q.task',
         'django_q.ormq',
-        'users.owner',
         'exchange.rate',
         'exchange.exchangebackend',
         'common.notificationentry',
         'common.notificationmessage',
         'user_sessions.session',
     ]
+
+    # Optionally exclude user token information
+    if not allow_tokens:
+        excludes.append('users.apitoken')
+
+    # Optionally exclude plugin information
+    if not allow_plugins:
+        excludes.append('plugin.pluginconfig')
+        excludes.append('plugin.pluginsetting')
+
+    # Optionally exclude SSO application information
+    if not allow_sso:
+        excludes.append('socialaccount.socialapp')
 
     output = ''
 
@@ -399,8 +418,11 @@ def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = Fal
 @task(
     help={
         'filename': "Output filename (default = 'data.json')",
-        'overwrite': 'Overwrite existing files without asking first (default = off/False)',
-        'include_permissions': 'Include user and group permissions in the output file (filename) (default = off/False)',
+        'overwrite': 'Overwrite existing files without asking first (default = False)',
+        'include_permissions': 'Include user and group permissions in the output file (default = False)',
+        'include_tokens': 'Include API tokens in the output file (default = False)',
+        'include_plugins': 'Include plugin data in the output file (default = False)',
+        'include_sso': 'Include SSO token data in the output file (default = False)',
         'delete_temp': 'Delete temporary files (containing permissions) at end of run. Note that this will delete temporary files from previous runs as well. (default = off/False)',
     }
 )
@@ -409,6 +431,9 @@ def export_records(
     filename='data.json',
     overwrite=False,
     include_permissions=False,
+    include_tokens=False,
+    include_plugins=False,
+    include_sso=False,
     delete_temp=False,
 ):
     """Export all database records to a file.
@@ -438,7 +463,13 @@ def export_records(
 
     tmpfile = f'{filename}.tmp'
 
-    cmd = f"dumpdata --indent 2 --output '{tmpfile}' {content_excludes()}"
+    excludes = content_excludes(
+        allow_tokens=include_tokens,
+        allow_plugins=include_plugins,
+        allow_sso=include_sso,
+    )
+
+    cmd = f"dumpdata --indent 2 --output '{tmpfile}' {excludes}"
 
     # Dump data to temporary file
     manage(c, cmd, pty=True)
