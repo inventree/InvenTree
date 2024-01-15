@@ -22,7 +22,8 @@ export default function FailedTasksTable() {
       {
         accessor: 'func',
         title: t`Task`,
-        sortable: true
+        sortable: true,
+        switchable: false
       },
       {
         accessor: 'pk',
@@ -31,12 +32,14 @@ export default function FailedTasksTable() {
       {
         accessor: 'started',
         title: t`Started`,
-        sortable: true
+        sortable: true,
+        switchable: false
       },
       {
         accessor: 'stopped',
         title: t`Stopped`,
-        sortable: true
+        sortable: true,
+        switchable: false
       },
       {
         accessor: 'attempt_count',

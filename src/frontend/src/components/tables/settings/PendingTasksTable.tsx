@@ -14,7 +14,8 @@ export default function PendingTasksTable() {
     return [
       {
         accessor: 'func',
-        title: t`Task`
+        title: t`Task`,
+        switchable: false
       },
       {
         accessor: 'task_id',
@@ -22,23 +23,21 @@ export default function PendingTasksTable() {
       },
       {
         accessor: 'name',
-        title: t`Name`,
-        switchable: true
+        title: t`Name`
       },
       {
         accessor: 'lock',
         title: t`Created`,
-        sortable: true
+        sortable: true,
+        switchable: false
       },
       {
         accessor: 'args',
-        title: t`Arguments`,
-        switchable: true
+        title: t`Arguments`
       },
       {
         accessor: 'kwargs',
-        title: t`Keywords`,
-        switchable: true
+        title: t`Keywords`
       }
     ];
   }, []);

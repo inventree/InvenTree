@@ -17,12 +17,14 @@ export default function ScheduledTasksTable() {
       {
         accessor: 'func',
         title: t`Task`,
-        sortable: true
+        sortable: true,
+        switchable: false
       },
       {
         accessor: 'last_run',
         title: t`Last Run`,
         sortable: true,
+        switchable: false,
         render: (record: any) => {
           if (!record.last_run) {
             return '-';
@@ -43,7 +45,8 @@ export default function ScheduledTasksTable() {
       {
         accessor: 'next_run',
         title: t`Next Run`,
-        sortable: true
+        sortable: true,
+        switchable: false
       }
     ];
   }, []);
