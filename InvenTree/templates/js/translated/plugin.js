@@ -20,7 +20,8 @@
     activatePlugin,
     installPlugin,
     loadPluginTable,
-    locateItemOrLocation
+    locateItemOrLocation,
+    reloadPlugins,
 */
 
 
@@ -208,6 +209,37 @@ function activatePlugin(plugin_id, active=true) {
                     }
                 }
             )
+        }
+    });
+}
+
+
+/*
+ * Reload the plugin registry
+ */
+function reloadPlugins() {
+    let url = '{% url "api-plugin-reload" %}';
+
+    constructForm(url, {
+        title: '{% trans "Reload Plugins" %}',
+        method: 'POST',
+        confirm: true,
+        fields: {
+            force_reload: {
+                // hidden: true,
+                value: true,
+            },
+            full_reload: {
+                // hidden: true,
+                value: true,
+            },
+            collect_plugins: {
+                // hidden: true,
+                value: true,
+            },
+        },
+        onSuccess: function() {
+            location.reload();
         }
     });
 }

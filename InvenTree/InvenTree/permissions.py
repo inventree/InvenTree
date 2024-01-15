@@ -8,7 +8,7 @@ import users.models
 
 
 def get_model_for_view(view, raise_error=True):
-    """Attempt to introspect the 'model' type for an API view"""
+    """Attempt to introspect the 'model' type for an API view."""
     if hasattr(view, 'get_permission_model'):
         return view.get_permission_model()
 
@@ -18,7 +18,7 @@ def get_model_for_view(view, raise_error=True):
     if hasattr(view, 'get_serializer_class'):
         return view.get_serializr_class().Meta.model
 
-    raise AttributeError(f"Serializer class not specified for {view.__class__}")
+    raise AttributeError(f'Serializer class not specified for {view.__class__}')
 
 
 class RolePermission(permissions.BasePermission):
@@ -61,6 +61,10 @@ class RolePermission(permissions.BasePermission):
             'DELETE': 'delete',
         }
 
+        # let the view define a custom rolemap
+        if hasattr(view, 'rolemap'):
+            rolemap.update(view.rolemap)
+
         permission = rolemap[request.method]
 
         # The required role may be defined for the view class
@@ -74,7 +78,7 @@ class RolePermission(permissions.BasePermission):
             app_label = model._meta.app_label
             model_name = model._meta.model_name
 
-            table = f"{app_label}_{model_name}"
+            table = f'{app_label}_{model_name}'
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta,
             # then we don't need a permission
@@ -96,12 +100,18 @@ class IsStaffOrReadOnly(permissions.IsAdminUser):
 
     def has_permission(self, request, view):
         """Check if the user is a superuser."""
-        return bool(request.user and request.user.is_staff or request.method in permissions.SAFE_METHODS)
+        return bool(
+            request.user
+            and request.user.is_staff
+            or request.method in permissions.SAFE_METHODS
+        )
 
 
 def auth_exempt(view_func):
     """Mark a view function as being exempt from auth requirements."""
+
     def wrapped_view(*args, **kwargs):
         return view_func(*args, **kwargs)
+
     wrapped_view.auth_exempt = True
     return wraps(view_func)(wrapped_view)

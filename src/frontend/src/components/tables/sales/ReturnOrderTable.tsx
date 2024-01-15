@@ -1,16 +1,48 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import {
+  CreationDateColumn,
+  DescriptionColumn,
+  LineItemsProgressColumn,
+  ProjectCodeColumn,
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn
+} from '../ColumnRenderers';
+import {
+  AssignedToMeFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
-  const { tableKey } = useTableRefresh('return-orders');
+  const table = useTable('return-orders');
 
-  // TODO: Custom filters
+  const navigate = useNavigate();
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.returnorder)
+      },
+      OutstandingFilter(),
+      OverdueFilter(),
+      AssignedToMeFilter()
+    ];
+  }, []);
 
   // TODO: Row actions
 
@@ -22,11 +54,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'reference',
         title: t`Return Order`,
         sortable: true
-      },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        switchable: true
+        // TODO: Display extra information if order is overdue
       },
       {
         accessor: 'customer__name',
@@ -36,48 +64,47 @@ export function ReturnOrderTable({ params }: { params?: any }) {
           let customer = record.customer_detail ?? {};
 
           return (
-            <Group spacing="xs" noWrap={true}>
-              <Thumbnail src={customer?.image} alt={customer.name} />
-              <Text>{customer?.name}</Text>
-            </Group>
+            <Thumbnail
+              src={customer?.image}
+              alt={customer.name}
+              text={customer.name}
+            />
           );
         }
       },
       {
         accessor: 'customer_reference',
-        title: t`Customer Reference`,
-        switchable: true
+        title: t`Customer Reference`
       },
+      DescriptionColumn(),
+      LineItemsProgressColumn(),
+      StatusColumn(ModelType.returnorder),
+      ProjectCodeColumn(),
+      CreationDateColumn(),
+      TargetDateColumn(),
+      ResponsibleColumn(),
       {
-        accessor: 'project_code',
-        title: t`Project Code`,
-        switchable: true
-        // TODO: Custom formatter
-      },
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-        switchable: true
-        // TODO: Custom formatter
+        accessor: 'total_cost',
+        title: t`Total Cost`
       }
-      // TODO: Creation date
-      // TODO: Target date
-      // TODO: Line items
-      // TODO: Responsible
-      // TODO: Total cost
     ];
   }, []);
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.return_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {
           ...params,
           customer_detail: true
+        },
+        customFilters: tableFilters,
+        onRowClick: (row: any) => {
+          if (row.pk) {
+            navigate(`/sales/return-order/${row.pk}/`);
+          }
         }
       }}
     />

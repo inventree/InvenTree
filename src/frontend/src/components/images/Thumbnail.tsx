@@ -1,36 +1,44 @@
 import { t } from '@lingui/macro';
-import { Anchor, Image } from '@mantine/core';
+import { Anchor } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 import { ApiImage } from './ApiImage';
 
+/*
+ * Render an image, loaded via the API
+ */
 export function Thumbnail({
   src,
   alt = t`Thumbnail`,
-  size = 20
+  size = 20,
+  text
 }: {
   src?: string | undefined;
   alt?: string;
   size?: number;
+  text?: ReactNode;
 }) {
-  // TODO: Use HoverCard to display a larger version of the image
+  const backup_image = '/static/img/blank_image.png';
 
   return (
-    <ApiImage
-      src={src || '/static/img/blank_image.png'}
-      alt={alt}
-      width={size}
-      fit="contain"
-      radius="xs"
-      withPlaceholder
-      imageProps={{
-        style: {
-          maxHeight: size
-        }
-      }}
-    />
+    <Group align="left" spacing="xs" noWrap={true}>
+      <ApiImage
+        src={src || backup_image}
+        alt={alt}
+        width={size}
+        fit="contain"
+        radius="xs"
+        withPlaceholder
+        imageProps={{
+          style: {
+            maxHeight: size
+          }
+        }}
+      />
+      {text}
+    </Group>
   );
 }
 
@@ -39,7 +47,7 @@ export function ThumbnailHoverCard({
   text,
   link = '',
   alt = t`Thumbnail`,
-  size = 24
+  size = 20
 }: {
   src: string;
   text: string;
@@ -56,12 +64,13 @@ export function ThumbnailHoverCard({
     );
   }, [src, text, alt, size]);
 
-  if (link)
+  if (link) {
     return (
       <Anchor href={link} style={{ textDecoration: 'none' }}>
         {card}
       </Anchor>
     );
+  }
 
   return <div>{card}</div>;
 }

@@ -1,10 +1,9 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { LoadingOverlay, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
   IconDots,
-  IconEdit,
   IconInfoCircle,
   IconMap2,
   IconNotes,
@@ -12,7 +11,6 @@ import {
   IconPackages,
   IconPaperclip,
   IconShoppingCart,
-  IconTrash,
   IconTruckDelivery,
   IconTruckReturn,
   IconUsersGroup
@@ -20,21 +18,28 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Thumbnail } from '../../components/images/Thumbnail';
-import { ActionDropdown } from '../../components/items/ActionDropdown';
+import {
+  ActionDropdown,
+  DeleteItemAction,
+  EditItemAction
+} from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
 import { PanelType } from '../../components/nav/PanelGroup';
+import { AddressTable } from '../../components/tables/company/AddressTable';
+import { ContactTable } from '../../components/tables/company/ContactTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
 import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { editCompany } from '../../functions/forms/CompanyForms';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { UserRoles } from '../../enums/Roles';
+import { editCompany } from '../../forms/CompanyForms';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 
 export type CompanyDetailProps = {
@@ -125,12 +130,14 @@ export default function CompanyDetail(props: CompanyDetailProps) {
       {
         name: 'contacts',
         label: t`Contacts`,
-        icon: <IconUsersGroup />
+        icon: <IconUsersGroup />,
+        content: company?.pk && <ContactTable companyId={company.pk} />
       },
       {
         name: 'addresses',
         label: t`Addresses`,
-        icon: <IconMap2 />
+        icon: <IconMap2 />,
+        content: company?.pk && <AddressTable companyId={company.pk} />
       },
       {
         name: 'attachments',
@@ -159,39 +166,15 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     ];
   }, [id, company]);
 
-  const companyDetail = useMemo(() => {
-    return (
-      <Group spacing="xs" noWrap={true}>
-        <Thumbnail
-          src={String(company.image || '')}
-          size={128}
-          alt={company?.name}
-        />
-        <Stack spacing="xs">
-          <Text size="lg" weight={500}>
-            {company.name}
-          </Text>
-          <Text size="sm">{company.description}</Text>
-        </Stack>
-      </Group>
-    );
-  }, [id, company]);
-
   const companyActions = useMemo(() => {
-    // TODO: Finer fidelity on these permissions, perhaps?
-    let canEdit = user.checkUserRole('purchase_order', 'change');
-    let canDelete = user.checkUserRole('purchase_order', 'delete');
-
     return [
       <ActionDropdown
+        key="company"
         tooltip={t`Company Actions`}
         icon={<IconDots />}
         actions={[
-          {
-            icon: <IconEdit color="blue" />,
-            name: t`Edit`,
-            tooltip: t`Edit company`,
-            disabled: !canEdit,
+          EditItemAction({
+            disabled: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => {
               if (company?.pk) {
                 editCompany({
@@ -200,13 +183,10 @@ export default function CompanyDetail(props: CompanyDetailProps) {
                 });
               }
             }
-          },
-          {
-            icon: <IconTrash color="red" />,
-            name: t`Delete`,
-            tooltip: t`Delete company`,
-            disabled: !canDelete
-          }
+          }),
+          DeleteItemAction({
+            disabled: !user.hasDeleteRole(UserRoles.purchase_order)
+          })
         ]}
       />
     ];
@@ -216,8 +196,10 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isFetching} />
       <PageDetail
-        detail={companyDetail}
+        title={t`Company` + `: ${company.name}`}
+        subtitle={company.description}
         actions={companyActions}
+        imageUrl={company.image}
         breadcrumbs={props.breadcrumbs}
       />
       <PanelGroup pageKey="company" panels={companyPanels} />

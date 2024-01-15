@@ -1,83 +1,54 @@
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { api } from '../App';
+import { StatusCodeListInterface } from '../components/render/StatusRenderer';
+import { statusCodeList } from '../defaults/backendMappings';
 import { emptyServerAPI } from '../defaults/defaults';
-import { ServerAPIProps, UserProps } from './states';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
+import { ServerAPIProps } from './states';
+
+type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
+  status?: StatusLookup;
 }
 
-export const useServerApiState = create<ServerApiStateProps>((set, get) => ({
-  server: emptyServerAPI,
-  setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
-  fetchServerApiState: async () => {
-    // Fetch server data
-    await api.get(apiUrl(ApiPaths.api_server_info)).then((response) => {
-      set({ server: response.data });
-    });
-  }
-}));
-
-export enum ApiPaths {
-  api_server_info = 'api-server-info',
-
-  api_search = 'api-search',
-
-  // User information
-  user_me = 'api-user-me',
-  user_roles = 'api-user-roles',
-  user_token = 'api-user-token',
-  user_simple_login = 'api-user-simple-login',
-  user_reset = 'api-user-reset',
-  user_reset_set = 'api-user-reset-set',
-
-  settings_global_list = 'api-settings-global-list',
-  settings_user_list = 'api-settings-user-list',
-  notifications_list = 'api-notifications-list',
-
-  barcode = 'api-barcode',
-  news = 'news',
-
-  // Build order URLs
-  build_order_list = 'api-build-list',
-  build_order_attachment_list = 'api-build-attachment-list',
-
-  // Part URLs
-  part_list = 'api-part-list',
-  category_list = 'api-category-list',
-  related_part_list = 'api-related-part-list',
-  part_attachment_list = 'api-part-attachment-list',
-  part_parameter_list = 'api-part-parameter-list',
-  part_parameter_template_list = 'api-part-parameter-template-list',
-
-  // Company URLs
-  company_list = 'api-company-list',
-  company_attachment_list = 'api-company-attachment-list',
-  supplier_part_list = 'api-supplier-part-list',
-
-  // Stock Item URLs
-  stock_item_list = 'api-stock-item-list',
-  stock_location_list = 'api-stock-location-list',
-  stock_attachment_list = 'api-stock-attachment-list',
-
-  // Purchase Order URLs
-  purchase_order_list = 'api-purchase-order-list',
-
-  // Sales Order URLs
-  sales_order_list = 'api-sales-order-list',
-
-  // Return Order URLs
-  return_order_list = 'api-return-order-list',
-
-  // Plugin URLs
-  plugin_list = 'api-plugin-list',
-
-  project_code_list = 'api-project-code-list',
-  custom_unit_list = 'api-custom-unit-list'
-}
+export const useServerApiState = create<ServerApiStateProps>()(
+  persist(
+    (set) => ({
+      server: emptyServerAPI,
+      setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
+      fetchServerApiState: async () => {
+        // Fetch server data
+        await api
+          .get(apiUrl(ApiPaths.api_server_info))
+          .then((response) => {
+            set({ server: response.data });
+          })
+          .catch(() => {});
+        // Fetch status data for rendering labels
+        await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
+          const newStatusLookup: StatusLookup = {} as StatusLookup;
+          for (const key in response.data) {
+            newStatusLookup[statusCodeList[key] || key] =
+              response.data[key].values;
+          }
+          set({ status: newStatusLookup });
+        });
+      },
+      status: undefined
+    }),
+    {
+      name: 'server-api-state',
+      storage: createJSONStorage(() => sessionStorage)
+    }
+  )
+);
 
 /**
  * Function to return the API prefix.
@@ -94,6 +65,10 @@ export function apiEndpoint(path: ApiPaths): string {
   switch (path) {
     case ApiPaths.api_server_info:
       return '';
+    case ApiPaths.user_list:
+      return 'user/';
+    case ApiPaths.owner_list:
+      return 'user/owner/';
     case ApiPaths.user_me:
       return 'user/me/';
     case ApiPaths.user_roles:
@@ -104,10 +79,26 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'email/generate/';
     case ApiPaths.user_reset:
       // Note leading prefix here
-      return '/auth/password/reset/';
+      return 'auth/password/reset/';
     case ApiPaths.user_reset_set:
       // Note leading prefix here
-      return '/auth/password/reset/confirm/';
+      return 'auth/password/reset/confirm/';
+    case ApiPaths.user_sso:
+      return 'auth/social/';
+    case ApiPaths.user_sso_remove:
+      return 'auth/social/:id/disconnect/';
+    case ApiPaths.user_emails:
+      return 'auth/emails/';
+    case ApiPaths.user_email_remove:
+      return 'auth/emails/:id/remove/';
+    case ApiPaths.user_email_verify:
+      return 'auth/emails/:id/verify/';
+    case ApiPaths.user_email_primary:
+      return 'auth/emails/:id/primary/';
+    case ApiPaths.currency_list:
+      return 'currency/exchange/';
+    case ApiPaths.currency_refresh:
+      return 'currency/refresh/';
     case ApiPaths.api_search:
       return 'search/';
     case ApiPaths.settings_global_list:
@@ -120,10 +111,22 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'barcode/';
     case ApiPaths.news:
       return 'news/';
+    case ApiPaths.global_status:
+      return 'generic/status/';
+    case ApiPaths.version:
+      return 'version/';
+    case ApiPaths.sso_providers:
+      return 'auth/providers/';
+    case ApiPaths.group_list:
+      return 'user/group/';
+    case ApiPaths.owner_list:
+      return 'user/owner/';
     case ApiPaths.build_order_list:
       return 'build/';
     case ApiPaths.build_order_attachment_list:
       return 'build/attachment/';
+    case ApiPaths.bom_list:
+      return 'bom/';
     case ApiPaths.part_list:
       return 'part/';
     case ApiPaths.part_parameter_list:
@@ -132,30 +135,62 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'part/parameter/template/';
     case ApiPaths.category_list:
       return 'part/category/';
+    case ApiPaths.category_tree:
+      return 'part/category/tree/';
     case ApiPaths.related_part_list:
       return 'part/related/';
     case ApiPaths.part_attachment_list:
       return 'part/attachment/';
     case ApiPaths.company_list:
       return 'company/';
+    case ApiPaths.contact_list:
+      return 'company/contact/';
+    case ApiPaths.address_list:
+      return 'company/address/';
     case ApiPaths.company_attachment_list:
       return 'company/attachment/';
     case ApiPaths.supplier_part_list:
       return 'company/part/';
+    case ApiPaths.manufacturer_part_list:
+      return 'company/part/manufacturer/';
     case ApiPaths.stock_item_list:
       return 'stock/';
+    case ApiPaths.stock_tracking_list:
+      return 'stock/track/';
     case ApiPaths.stock_location_list:
       return 'stock/location/';
+    case ApiPaths.stock_location_tree:
+      return 'stock/location/tree/';
     case ApiPaths.stock_attachment_list:
       return 'stock/attachment/';
     case ApiPaths.purchase_order_list:
       return 'order/po/';
+    case ApiPaths.purchase_order_line_list:
+      return 'order/po-line/';
+    case ApiPaths.purchase_order_attachment_list:
+      return 'order/po/attachment/';
     case ApiPaths.sales_order_list:
       return 'order/so/';
+    case ApiPaths.sales_order_attachment_list:
+      return 'order/so/attachment/';
+    case ApiPaths.sales_order_shipment_list:
+      return 'order/so/shipment/';
     case ApiPaths.return_order_list:
       return 'order/ro/';
+    case ApiPaths.return_order_attachment_list:
+      return 'order/ro/attachment/';
     case ApiPaths.plugin_list:
       return 'plugins/';
+    case ApiPaths.plugin_setting_list:
+      return 'plugins/:plugin/settings/';
+    case ApiPaths.plugin_registry_status:
+      return 'plugins/status/';
+    case ApiPaths.plugin_install:
+      return 'plugins/install/';
+    case ApiPaths.plugin_reload:
+      return 'plugins/reload/';
+    case ApiPaths.error_report_list:
+      return 'error-report/';
     case ApiPaths.project_code_list:
       return 'project-code/';
     case ApiPaths.custom_unit_list:
@@ -165,11 +200,20 @@ export function apiEndpoint(path: ApiPaths): string {
   }
 }
 
+export type PathParams = Record<string, string | number>;
+
 /**
  * Construct an API URL with an endpoint and (optional) pk value
  */
-export function apiUrl(path: ApiPaths, pk?: any): string {
-  let _url = apiEndpoint(path);
+export function apiUrl(
+  path: ApiPaths | string,
+  pk?: any,
+  pathParams?: PathParams
+): string {
+  let _url = path;
+  if (Object.values(ApiPaths).includes(path as ApiPaths)) {
+    _url = apiEndpoint(path as ApiPaths);
+  }
 
   // If the URL does not start with a '/', add the API prefix
   if (!_url.startsWith('/')) {
@@ -178,6 +222,12 @@ export function apiUrl(path: ApiPaths, pk?: any): string {
 
   if (_url && pk) {
     _url += `${pk}/`;
+  }
+
+  if (_url && pathParams) {
+    for (const key in pathParams) {
+      _url = _url.replace(`:${key}`, `${pathParams[key]}`);
+    }
   }
 
   return _url;

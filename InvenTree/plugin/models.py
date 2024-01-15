@@ -25,14 +25,12 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
     class Meta:
         """Meta for PluginConfig."""
-        verbose_name = _("Plugin Configuration")
-        verbose_name_plural = _("Plugin Configurations")
+
+        verbose_name = _('Plugin Configuration')
+        verbose_name_plural = _('Plugin Configurations')
 
     key = models.CharField(
-        unique=True,
-        max_length=255,
-        verbose_name=_('Key'),
-        help_text=_('Key of plugin'),
+        unique=True, max_length=255, verbose_name=_('Key'), help_text=_('Key of plugin')
     )
 
     name = models.CharField(
@@ -44,9 +42,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
     )
 
     active = models.BooleanField(
-        default=False,
-        verbose_name=_('Active'),
-        help_text=_('Is the plugin active'),
+        default=False, verbose_name=_('Active'), help_text=_('Is the plugin active')
     )
 
     def __str__(self) -> str:
@@ -61,7 +57,9 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         """Returns all registered mixins."""
         try:
             if inspect.isclass(self.plugin):
-                return self.plugin.get_registered_mixins(self, with_base=True, with_cls=False)
+                return self.plugin.get_registered_mixins(
+                    self, with_base=True, with_cls=False
+                )
             return self.plugin.get_registered_mixins(with_base=True, with_cls=False)
         except (AttributeError, ValueError):  # pragma: no cover
             return {}
@@ -77,7 +75,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
-            """Return a meta-value associated with this plugin"""
+            """Return a meta-value associated with this plugin."""
             # Ignore if the plugin config is not defined
             if not plugin:
                 return None
@@ -94,9 +92,19 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             return result
 
         self.meta = {
-            key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',
-                                                  'pub_date', 'version', 'website', 'license',
-                                                  'package_path', 'settings_url', ]
+            key: get_plugin_meta(key)
+            for key in [
+                'slug',
+                'human_name',
+                'description',
+                'author',
+                'pub_date',
+                'version',
+                'website',
+                'license',
+                'package_path',
+                'settings_url',
+            ]
         }
 
         # Save plugin
@@ -105,7 +113,9 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
     def __getstate__(self):
         """Customize pickling behavior."""
         state = super().__getstate__()
-        state.pop("plugin", None)  # plugin cannot be pickled in some circumstances when used with drf views, remove it (#5408)
+        state.pop(
+            'plugin', None
+        )  # plugin cannot be pickled in some circumstances when used with drf views, remove it (#5408)
         return state
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
@@ -145,7 +155,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
 
     @admin.display(boolean=True, description=_('Builtin Plugin'))
     def is_builtin(self) -> bool:
-        """Return True if this is a 'builtin' plugin"""
+        """Return True if this is a 'builtin' plugin."""
         if not self.plugin:
             return False
 
@@ -160,9 +170,8 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
 
     class Meta:
         """Meta for PluginSetting."""
-        unique_together = [
-            ('plugin', 'key'),
-        ]
+
+        unique_together = [('plugin', 'key')]
 
     plugin = models.ForeignKey(
         PluginConfig,
@@ -185,11 +194,10 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         (if the plugin is specified!)
         """
         if 'settings' not in kwargs:
-
             plugin = kwargs.pop('plugin', None)
 
             if plugin:
-                mixin_settings = getattr(registry, 'mixins_settings')
+                mixin_settings = getattr(registry, 'mixins_settings', None)
                 if mixin_settings:
                     kwargs['settings'] = mixin_settings.get(plugin.key, {})
 
@@ -204,9 +212,8 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
 
     class Meta:
         """Meta for NotificationUserSetting."""
-        unique_together = [
-            ('method', 'user', 'key'),
-        ]
+
+        unique_together = [('method', 'user', 'key')]
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -217,15 +224,13 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
 
         return super().get_setting_definition(key, **kwargs)
 
-    method = models.CharField(
-        max_length=255,
-        verbose_name=_('Method'),
-    )
+    method = models.CharField(max_length=255, verbose_name=_('Method'))
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('User'),
         help_text=_('User'),
     )

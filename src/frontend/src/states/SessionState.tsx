@@ -1,11 +1,11 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { setApiDefaults } from '../App';
 
 interface SessionStateProps {
-  token: string | undefined;
-  setToken: (newToken: string | undefined) => void;
+  token?: string;
+  setToken: (newToken?: string) => void;
 }
 
 export const useSessionState = create<SessionStateProps>()(
@@ -19,7 +19,7 @@ export const useSessionState = create<SessionStateProps>()(
     }),
     {
       name: 'session-state',
-      getStorage: () => sessionStorage
+      storage: createJSONStorage(() => sessionStorage)
     }
   )
 );

@@ -1,18 +1,19 @@
 import { t } from '@lingui/macro';
 import { Badge } from '@mantine/core';
 
+import { isTrue } from '../../functions/conversion';
+
 export function YesNoButton({ value }: { value: any }) {
-  const bool =
-    String(value).toLowerCase().trim() in ['true', '1', 't', 'y', 'yes'];
+  const v = isTrue(value);
 
   return (
     <Badge
-      color={bool ? 'green' : 'red'}
+      color={v ? 'lime.5' : 'red.6'}
       variant="filled"
       radius="lg"
       size="sm"
     >
-      {bool ? t`Yes` : t`No`}
+      {v ? t`Yes` : t`No`}
     </Badge>
   );
 }

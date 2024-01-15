@@ -35,10 +35,16 @@
         <h4>{% trans "Plugins" %}</h4>
         {% include "spacer.html" %}
         <div class='btn-group' role='group'>
-            {% url 'admin:plugin_pluginconfig_changelist' as url %}
+            {% admin_url user "plugin.pluginconfig" None as url %}
             {% include "admin_button.html" with url=url %}
             {% if plug %}
-            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>
+            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}">
+                <span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}
+            </button>
+            <button class='btn btn-success' id='reload-plugins' title='{% trans "Reload Plugins" %}'>
+                <span class='fas fa-redo-alt'></span> {% trans "Reload Plugins" %}
+            </button>
+            </button>
             {% endif %}
         </div>
     </div>

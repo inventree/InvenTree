@@ -1,13 +1,24 @@
 import { t } from '@lingui/macro';
-import { Progress, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { renderDate } from '../../../defaults/formatters';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
+import { ProgressBar } from '../../items/ProgressBar';
+import { RenderUser } from '../../render/User';
 import { TableColumn } from '../Column';
-import { TableFilter } from '../Filter';
+import {
+  CreationDateColumn,
+  ProjectCodeColumn,
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn
+} from '../ColumnRenderers';
+import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -18,12 +29,13 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'reference',
       sortable: true,
+      switchable: false,
       title: t`Reference`
-      // TODO: Link to the build order detail page
     },
     {
       accessor: 'part',
       sortable: true,
+      switchable: false,
       title: t`Part`,
       render: (record: any) => {
         let part = record.part_detail;
@@ -42,92 +54,46 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'title',
       sortable: false,
-      title: t`Description`,
-      switchable: true
-    },
-    {
-      accessor: 'project_code',
-      title: t`Project Code`,
-      sortable: true,
-      switchable: false,
-      hidden: true
-      // TODO: Hide this if project code is not enabled
-      // TODO: Custom render function here
-    },
-    {
-      accessor: 'quantity',
-      sortable: true,
-      title: t`Quantity`,
-      switchable: true
+      title: t`Description`
     },
     {
       accessor: 'completed',
       sortable: true,
-      title: t`Completed`,
-      render: (record: any) => {
-        let progress =
-          record.quantity <= 0 ? 0 : (100 * record.completed) / record.quantity;
-        return (
-          <Progress
-            value={progress}
-            label={record.completed}
-            color={progress < 100 ? 'blue' : 'green'}
-            size="xl"
-            radius="xl"
-          />
-        );
-      }
+      switchable: false,
+      title: t`Progress`,
+      render: (record: any) => (
+        <ProgressBar
+          progressLabel={true}
+          value={record.completed}
+          maximum={record.quantity}
+        />
+      )
     },
-    {
-      accessor: 'status',
-      sortable: true,
-      title: t`Status`,
-      switchable: true
-      // TODO: Custom render function here (status label)
-    },
+    StatusColumn(ModelType.build),
+    ProjectCodeColumn(),
     {
       accessor: 'priority',
       title: t`Priority`,
-      sortable: true,
-      switchable: true
+      sortable: true
     },
-    {
-      accessor: 'creation_date',
-      sortable: true,
-      title: t`Created`,
-      switchable: true
-    },
-    {
-      accessor: 'target_date',
-      sortable: true,
-      title: t`Target Date`,
-      switchable: true
-    },
+    CreationDateColumn(),
+    TargetDateColumn(),
     {
       accessor: 'completion_date',
       sortable: true,
       title: t`Completed`,
-      switchable: true
+      render: (record: any) => renderDate(record.completion_date)
     },
     {
       accessor: 'issued_by',
       sortable: true,
       title: t`Issued By`,
-      switchable: true
-      // TODO: custom render function
+      render: (record: any) => (
+        <RenderUser instance={record?.issued_by_detail} />
+      )
     },
-    {
-      accessor: 'responsible',
-      sortable: true,
-      title: t`Responsible`,
-      switchable: true
-      // TODO: custom render function
-    }
+    ResponsibleColumn()
   ];
-}
-
-function buildOrderTableFilters(): TableFilter[] {
-  return [];
 }
 
 /*
@@ -135,16 +101,53 @@ function buildOrderTableFilters(): TableFilter[] {
  */
 export function BuildOrderTable({ params = {} }: { params?: any }) {
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
-  const tableFilters = useMemo(() => buildOrderTableFilters(), []);
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'active',
+        type: 'boolean',
+        label: t`Active`,
+        description: t`Show active orders`
+      },
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.build)
+      },
+      {
+        name: 'overdue',
+        type: 'boolean',
+        label: t`Overdue`,
+        description: t`Show overdue status`
+      },
+      {
+        name: 'assigned_to_me',
+        type: 'boolean',
+        label: t`Assigned to me`,
+        description: t`Show orders assigned to me`
+      }
+      // TODO: 'assigned to' filter
+      // TODO: 'issued by' filter
+      // {
+      //   name: 'has_project_code',
+      //   title: t`Has Project Code`,
+      //   description: t`Show orders with project code`,
+      // }
+      // TODO: 'has project code' filter (see table_filters.js)
+      // TODO: 'project code' filter (see table_filters.js)
+    ];
+  }, []);
 
   const navigate = useNavigate();
 
-  const { tableKey, refreshTable } = useTableRefresh('buildorder');
+  const table = useTable('buildorder');
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.build_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,

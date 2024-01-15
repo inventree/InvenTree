@@ -1,47 +1,40 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
-import { IconTextPlus } from '@tabler/icons-react';
+import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import {
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
-import { Thumbnail } from '../../images/Thumbnail';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
+import { PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Construct a table listing parameters for a given part
  */
 export function PartParameterTable({ partId }: { partId: any }) {
-  const { tableKey, refreshTable } = useTableRefresh('part-parameters');
+  const table = useTable('part-parameters');
+
+  const user = useUserState();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'part',
         title: t`Part`,
-        switchable: true,
-        sortable: true,
-        render: function (record: any) {
-          let part = record?.part_detail ?? {};
 
-          return (
-            <Group spacing="xs" align="left" noWrap={true}>
-              <Thumbnail
-                src={part?.thumbnail || part?.image}
-                alt={part?.name}
-                size={24}
-              />
-              <Text>{part?.full_name}</Text>
-            </Group>
-          );
-        }
+        sortable: true,
+        render: (record: any) => PartColumn(record?.part_detail)
       },
       {
         accessor: 'name',
@@ -58,7 +51,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
         accessor: 'description',
         title: t`Description`,
         sortable: false,
-        switchable: true,
+
         render: (record) => record.template_detail?.description
       },
       {
@@ -85,7 +78,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
       {
         accessor: 'units',
         title: t`Units`,
-        switchable: true,
+
         sortable: true,
         render: (record) => record.template_detail?.units
       }
@@ -93,7 +86,6 @@ export function PartParameterTable({ partId }: { partId: any }) {
   }, [partId]);
 
   // Callback for row actions
-  // TODO: Adjust based on user permissions
   const rowActions = useCallback(
     (record: any) => {
       // Actions not allowed for "variant" rows
@@ -103,48 +95,49 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
       let actions = [];
 
-      actions.push({
-        title: t`Edit`,
-        onClick: () => {
-          openEditApiForm({
-            name: 'edit-part-parameter',
-            url: ApiPaths.part_parameter_list,
-            pk: record.pk,
-            title: t`Edit Part Parameter`,
-            fields: {
-              part: {
-                hidden: true
+      actions.push(
+        RowEditAction({
+          tooltip: t`Edit Part Parameter`,
+          hidden: !user.hasChangeRole(UserRoles.part),
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.part_parameter_list,
+              pk: record.pk,
+              title: t`Edit Part Parameter`,
+              fields: {
+                part: {
+                  hidden: true
+                },
+                template: {},
+                data: {}
               },
-              template: {},
-              data: {}
-            },
-            successMessage: t`Part parameter updated`,
-            onFormSuccess: refreshTable
-          });
-        }
-      });
+              successMessage: t`Part parameter updated`,
+              onFormSuccess: table.refreshTable
+            });
+          }
+        })
+      );
 
-      actions.push({
-        title: t`Delete`,
-        color: 'red',
-        onClick: () => {
-          openDeleteApiForm({
-            name: 'delete-part-parameter',
-            url: ApiPaths.part_parameter_list,
-            pk: record.pk,
-            title: t`Delete Part Parameter`,
-            successMessage: t`Part parameter deleted`,
-            onFormSuccess: refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to remove this parameter?`}</Text>
-            )
-          });
-        }
-      });
+      actions.push(
+        RowDeleteAction({
+          tooltip: t`Delete Part Parameter`,
+          hidden: !user.hasDeleteRole(UserRoles.part),
+          onClick: () => {
+            openDeleteApiForm({
+              url: ApiPaths.part_parameter_list,
+              pk: record.pk,
+              title: t`Delete Part Parameter`,
+              successMessage: t`Part parameter deleted`,
+              onFormSuccess: table.refreshTable,
+              preFormWarning: t`Are you sure you want to remove this parameter?`
+            });
+          }
+        })
+      );
 
       return actions;
     },
-    [partId]
+    [partId, user]
   );
 
   const addParameter = useCallback(() => {
@@ -153,7 +146,6 @@ export function PartParameterTable({ partId }: { partId: any }) {
     }
 
     openCreateApiForm({
-      name: 'add-part-parameter',
       url: ApiPaths.part_parameter_list,
       title: t`Add Part Parameter`,
       fields: {
@@ -165,7 +157,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
         data: {}
       },
       successMessage: t`Part parameter added`,
-      onFormSuccess: refreshTable
+      onFormSuccess: table.refreshTable
     });
   }, [partId]);
 
@@ -175,11 +167,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
     // TODO: Hide if user does not have permission to edit parts
     actions.push(
-      <Tooltip label={t`Add parameter`}>
-        <ActionIcon radius="sm" onClick={addParameter}>
-          <IconTextPlus color="green" />
-        </ActionIcon>
-      </Tooltip>
+      <AddItemButton tooltip={t`Add parameter`} onClick={addParameter} />
     );
 
     return actions;
@@ -188,7 +176,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.part_parameter_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         rowActions: rowActions,

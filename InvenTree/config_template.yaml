@@ -58,6 +58,14 @@ database:
 # Use the environment variable INVENTREE_DEBUG
 debug: True
 
+# Set to False to disable the admin interface (default = True)
+# Or, use the environment variable INVENTREE_ADMIN_ENABLED
+#admin_enabled: True
+
+# Set the admin URL (default is 'admin')
+# Or, use the environment variable INVENTREE_ADMIN_URL
+#admin_url: 'admin'
+
 # Set enabled frontends
 # Use the environment variable INVENTREE_CLASSIC_FRONTEND
 # classic_frontend: True
@@ -88,10 +96,11 @@ timezone: UTC
 # Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD
 
-# Add new user on first startup
+# Add new user on first startup by either adding values here or from a file
 #admin_user: admin
 #admin_email: info@example.com
 #admin_password: inventree
+#admin_password_file: '/etc/inventree/admin_password.txt'
 
 # List of currencies supported by default. Add other currencies here to allow use in InvenTree
 currencies:
@@ -225,13 +234,13 @@ remote_login_header: HTTP_REMOTE_USER
 # social_backends:
 #  - 'allauth.socialaccount.providers.google'
 #  - 'allauth.socialaccount.providers.github'
-#  - 'allauth.socialaccount.providers.keycloak'
 
 # Add specific settings for social account providers (if required)
+# Refer to the djngo-allauth documentation for more details:
+# https://docs.allauth.org/en/latest/socialaccount/provider_configuration.html
 # social_providers:
-#   keycloak:
-#     KEYCLOAK_URL: 'https://keycloak.custom/auth'
-#     KEYCLOAK_REALM: 'master'
+#   github:
+#     VERIFIED_EMAIL: true
 
 # Add LDAP support
 # ldap:
@@ -270,6 +279,15 @@ remote_login_header: HTTP_REMOTE_USER
 #   # cache timeout to reduce traffic with LDAP server, default: 3600 (1h)
 #   # cache_timeout: 3600
 
+#   # LDAP group support
+#   # group_search: ou=groups,dc=example,dc=com
+#   # require_group: cn=inventree_allow,ou=groups,dc=example,dc=com
+#   # deny_group: cn=inventree_deny,ou=groups,dc=example,dc=com
+#   # Set staff/superuser flag based on LDAP group membership
+#   # user_flags_by_group:
+#   #   is_staff: cn=inventree_staff,ou=groups,dc=example,dc=com
+#   #   is_superuser: cn=inventree_superuser,ou=groups,dc=example,dc=com
+
 # Customization options
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
@@ -282,18 +300,17 @@ remote_login_header: HTTP_REMOTE_USER
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
 
-# Platform UI options
-# pui_settings:
+# Frontend UI settings
+# frontend_settings:
+#   base_url: 'frontend'
 #   server_list:
 #     my_server1:
-#       host: https://demo.inventree.org/api/
+#       host: https://demo.inventree.org/
 #       name: InvenTree Demo
 #   default_server: my_server1
 #   show_server_selector: false
 #   sentry_dsn: https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920
 #   environment: development
-# Base URL for serving Platform UI
-# pui_url_base: 'platform'
 
 # Custom flags
 # InvenTree uses django-flags; read more in their docs at https://cfpb.github.io/django-flags/conditions/

@@ -3,15 +3,17 @@ import { Alert, Space } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
+import { ModelType } from '../../enums/ModelType';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildOrder } from './Build';
 import {
   RenderAddress,
   RenderCompany,
   RenderContact,
+  RenderManufacturerPart,
   RenderSupplierPart
 } from './Company';
-import { ModelType } from './ModelType';
+import { RenderProjectCode } from './Generic';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -41,19 +43,22 @@ const RendererLookup: EnumDictionary<
   [ModelType.build]: RenderBuildOrder,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
+  [ModelType.manufacturerpart]: RenderManufacturerPart,
   [ModelType.owner]: RenderOwner,
   [ModelType.part]: RenderPart,
   [ModelType.partcategory]: RenderPartCategory,
   [ModelType.partparametertemplate]: RenderPartParameterTemplate,
+  [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
+  [ModelType.purchaseorderline]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
   [ModelType.stocklocation]: RenderStockLocation,
   [ModelType.stockitem]: RenderStockItem,
+  [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,
-  [ModelType.user]: RenderUser,
-  [ModelType.manufacturerpart]: RenderPart
+  [ModelType.user]: RenderUser
 };
 
 // import { ApiFormFieldType } from "../forms/fields/ApiFormField";
@@ -96,7 +101,7 @@ export function RenderInlineModel({
 }: {
   primary: string;
   secondary?: string;
-  suffix?: string;
+  suffix?: ReactNode;
   image?: string;
   labels?: string[];
   url?: string;
@@ -105,8 +110,8 @@ export function RenderInlineModel({
   // TODO: Handle URL
 
   return (
-    <Group spacing="xs" position="apart">
-      <Group spacing="xs" position="left">
+    <Group spacing="xs" position="apart" noWrap={true}>
+      <Group spacing="xs" position="left" noWrap={true}>
         {image && Thumbnail({ src: image, size: 18 })}
         <Text size="sm">{primary}</Text>
         {secondary && <Text size="xs">{secondary}</Text>}

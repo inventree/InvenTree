@@ -8,7 +8,15 @@ export const emptyServerAPI = {
   worker_running: null,
   worker_pending_tasks: null,
   plugins_enabled: null,
-  active_plugins: []
+  active_plugins: [],
+  email_configured: null,
+  debug_mode: null,
+  docker_mode: null,
+  database: null,
+  system_health: null,
+  platform: null,
+  installer: null,
+  target: null
 };
 
 export interface SiteMarkProps {

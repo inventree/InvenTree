@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 
-import { ApiPaths } from '../states/ApiState';
+import { ApiPaths } from '../enums/ApiEndpoints';
 
 interface DashboardItems {
   id: string;

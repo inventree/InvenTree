@@ -1,4 +1,4 @@
-"""Unit tests for the PartCategory model"""
+"""Unit tests for the PartCategory model."""
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
@@ -12,16 +12,12 @@ class CategoryTest(TestCase):
     Loads the following test fixtures:
     - category.yaml
     """
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'params',
-    ]
+
+    fixtures = ['category', 'part', 'location', 'params']
 
     @classmethod
     def setUpTestData(cls):
-        """Extract some interesting categories for time-saving"""
+        """Extract some interesting categories for time-saving."""
         super().setUpTestData()
 
         cls.electronics = PartCategory.objects.get(name='Electronics')
@@ -72,13 +68,15 @@ class CategoryTest(TestCase):
         self.transceivers.save()
 
         self.assertEqual(str(self.resistors), 'Electronics/Resistors - Resistors')
-        self.assertEqual(str(self.transceivers.pathstring), 'Electronics/IC/Transceivers')
+        self.assertEqual(
+            str(self.transceivers.pathstring), 'Electronics/IC/Transceivers'
+        )
 
         # Create a new subcategory
         subcat = PartCategory.objects.create(
             name='Subcategory',
             description='My little sub category',
-            parent=self.transceivers
+            parent=self.transceivers,
         )
 
         # Pathstring should have been updated correctly
@@ -99,9 +97,7 @@ class CategoryTest(TestCase):
 
         # Construct a very long pathstring and ensure it gets updated correctly
         cat = PartCategory.objects.create(
-            name='Cat',
-            description='A long running category',
-            parent=None
+            name='Cat', description='A long running category', parent=None
         )
 
         parent = cat
@@ -110,9 +106,7 @@ class CategoryTest(TestCase):
             letter = chr(ord('A') + idx)
 
             child = PartCategory.objects.create(
-                name=letter * 10,
-                description=f"Subcategory {letter}",
-                parent=parent
+                name=letter * 10, description=f'Subcategory {letter}', parent=parent
             )
 
             parent = child
@@ -120,7 +114,7 @@ class CategoryTest(TestCase):
         self.assertTrue(len(child.path), 26)
         self.assertEqual(
             child.pathstring,
-            "Cat/AAAAAAAAAA/BBBBBBBBBB/CCCCCCCCCC/DDDDDDDDDD/EEEEEEEEEE/FFFFFFFFFF/GGGGGGGGGG/HHHHHHHHHH/IIIIIIIIII/JJJJJJJJJJ/KKKKKKKKK...OO/PPPPPPPPPP/QQQQQQQQQQ/RRRRRRRRRR/SSSSSSSSSS/TTTTTTTTTT/UUUUUUUUUU/VVVVVVVVVV/WWWWWWWWWW/XXXXXXXXXX/YYYYYYYYYY/ZZZZZZZZZZ"
+            'Cat/AAAAAAAAAA/BBBBBBBBBB/CCCCCCCCCC/DDDDDDDDDD/EEEEEEEEEE/FFFFFFFFFF/GGGGGGGGGG/HHHHHHHHHH/IIIIIIIIII/JJJJJJJJJJ/KKKKKKKKK...OO/PPPPPPPPPP/QQQQQQQQQQ/RRRRRRRRRR/SSSSSSSSSS/TTTTTTTTTT/UUUUUUUUUU/VVVVVVVVVV/WWWWWWWWWW/XXXXXXXXXX/YYYYYYYYYY/ZZZZZZZZZZ',
         )
         self.assertTrue(len(child.pathstring) <= 250)
 
@@ -168,7 +162,9 @@ class CategoryTest(TestCase):
                     self.assertIsInstance(parameter.template, PartParameterTemplate)
 
             # Test number of unique parameters
-            self.assertEqual(len(self.fasteners.get_unique_parameters(prefetch=fasteners)), 1)
+            self.assertEqual(
+                len(self.fasteners.get_unique_parameters(prefetch=fasteners)), 1
+            )
             # Test number of parameters found for each part
             parts_parameters = self.fasteners.get_parts_parameters(prefetch=fasteners)
             part_infos = ['pk', 'name', 'description']
@@ -202,7 +198,9 @@ class CategoryTest(TestCase):
         """Test traversal for default locations."""
         self.assertIsNotNone(self.fasteners.default_location)
         self.fasteners.default_location.save()
-        self.assertEqual(str(self.fasteners.default_location), 'Office/Drawer_1 - In my desk')
+        self.assertEqual(
+            str(self.fasteners.default_location), 'Office/Drawer_1 - In my desk'
+        )
 
         # Any part under electronics should default to 'Home'
         r1 = Part.objects.get(name='R_2K2_0805')
@@ -218,7 +216,7 @@ class CategoryTest(TestCase):
         self.assertIsNone(w.get_default_location())
 
     def test_category_tree(self):
-        """Unit tests for the part category tree structure (MPTT)
+        """Unit tests for the part category tree structure (MPTT).
 
         Ensure that the MPTT structure is rebuilt correctly,
         and the correct ancestor tree is observed.
@@ -226,11 +224,10 @@ class CategoryTest(TestCase):
         # Clear out any existing parts
         Part.objects.all().delete()
 
+        PartCategory.objects.rebuild()
+
         # First, create a structured tree of part categories
-        A = PartCategory.objects.create(
-            name='A',
-            description='Top level category',
-        )
+        A = PartCategory.objects.create(name='A', description='Top level category')
 
         B1 = PartCategory.objects.create(name='B1', parent=A)
         B2 = PartCategory.objects.create(name='B2', parent=A)
@@ -247,6 +244,18 @@ class CategoryTest(TestCase):
         C31 = PartCategory.objects.create(name='C31', parent=B3)
         C32 = PartCategory.objects.create(name='C32', parent=B3)
         C33 = PartCategory.objects.create(name='C33', parent=B3)
+
+        D31 = PartCategory.objects.create(name='D31', parent=C31)
+        D32 = PartCategory.objects.create(name='D32', parent=C32)
+        D33 = PartCategory.objects.create(name='D33', parent=C33)
+
+        E33 = PartCategory.objects.create(name='E33', parent=D33)
+
+        # Check that pathstrings have been generated correctly
+        self.assertEqual(B3.pathstring, 'A/B3')
+        self.assertEqual(C11.pathstring, 'A/B1/C11')
+        self.assertEqual(C22.pathstring, 'A/B2/C22')
+        self.assertEqual(C33.pathstring, 'A/B3/C33')
 
         # Check that the tree_id value is correct
         for cat in [B1, B2, B3, C11, C22, C33]:
@@ -266,9 +275,7 @@ class CategoryTest(TestCase):
 
         for i in range(10):
             Part.objects.create(
-                name=f'Part {i}',
-                description='A test part',
-                category=B3,
+                name=f'Part {i}', description='A test part', category=B3
             )
 
         self.assertEqual(Part.objects.filter(category=B3).count(), 10)
@@ -289,6 +296,8 @@ class CategoryTest(TestCase):
             self.assertEqual(cat.get_ancestors().count(), 1)
             self.assertEqual(cat.get_ancestors()[0], A)
 
+            self.assertEqual(cat.pathstring, f'A/{cat.name}')
+
         # Now, delete category A
         A.delete()
 
@@ -301,6 +310,13 @@ class CategoryTest(TestCase):
 
             self.assertEqual(loc.level, 0)
             self.assertEqual(loc.parent, None)
+
+            # Pathstring should be the same as the name
+            self.assertEqual(loc.pathstring, loc.name)
+
+            # Test pathstring for direct children
+            for child in loc.get_children():
+                self.assertEqual(child.pathstring, f'{loc.name}/{child.name}')
 
         # Check descendants for B1
         descendants = B1.get_descendants()
@@ -321,6 +337,8 @@ class CategoryTest(TestCase):
             self.assertEqual(ancestors[0], B1)
             self.assertEqual(ancestors[1], loc)
 
+            self.assertEqual(loc.pathstring, f'B1/{loc.name}')
+
         # Check category C2x, should be B2 -> C2x
         for loc in [C21, C22, C23]:
             loc.refresh_from_db()
@@ -332,3 +350,63 @@ class CategoryTest(TestCase):
             self.assertEqual(ancestors.count(), 2)
             self.assertEqual(ancestors[0], B2)
             self.assertEqual(ancestors[1], loc)
+
+            self.assertEqual(loc.pathstring, f'B2/{loc.name}')
+
+        # Check category D3x, should be C3x -> D3x
+        D31.refresh_from_db()
+        self.assertEqual(D31.pathstring, 'C31/D31')
+        D32.refresh_from_db()
+        self.assertEqual(D32.pathstring, 'C32/D32')
+        D33.refresh_from_db()
+        self.assertEqual(D33.pathstring, 'C33/D33')
+
+        # Check category E33
+        E33.refresh_from_db()
+        self.assertEqual(E33.pathstring, 'C33/D33/E33')
+
+        # Change the name of an upper level
+        C33.name = '-C33-'
+        C33.save()
+
+        D33.refresh_from_db()
+        self.assertEqual(D33.pathstring, '-C33-/D33')
+
+        E33.refresh_from_db()
+        self.assertEqual(E33.pathstring, '-C33-/D33/E33')
+
+        # Test the "delete child categories" functionality
+        C33.delete(delete_child_categories=True)
+
+        # Any child underneath C33 should have been deleted
+        for cat in [D33, E33]:
+            with self.assertRaises(PartCategory.DoesNotExist):
+                cat.refresh_from_db()
+
+        Part.objects.all().delete()
+
+        # Create some sample parts under D32
+        for ii in range(10):
+            Part.objects.create(
+                name=f'Part D32 {ii}', description='A test part', category=D32
+            )
+
+        self.assertEqual(Part.objects.filter(category=D32).count(), 10)
+        self.assertEqual(Part.objects.filter(category=C32).count(), 0)
+
+        # Delete D32, should move the parts up to C32
+        D32.delete(delete_child_categories=False, delete_parts=False)
+
+        # All parts should have been deleted
+        self.assertEqual(Part.objects.filter(category=C32).count(), 10)
+
+        # Now, delete C32 and delete all parts underneath
+        C32.delete(delete_parts=True)
+
+        # 10 parts should have been deleted from the database
+        self.assertEqual(Part.objects.count(), 0)
+
+        # Finally, try deleting a category which has already been deleted
+        # should log an exception
+        with self.assertRaises(ValidationError):
+            B3.delete()

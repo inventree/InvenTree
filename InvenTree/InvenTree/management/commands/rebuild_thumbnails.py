@@ -37,20 +37,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         """Rebuild all thumbnail images."""
-        logger.info("Rebuilding Part thumbnails")
+        logger.info('Rebuilding Part thumbnails')
 
         for part in Part.objects.exclude(image=None):
             try:
                 self.rebuild_thumbnail(part)
             except (OperationalError, ProgrammingError):
-                logger.exception("ERROR: Database read error.")
+                logger.exception('ERROR: Database read error.')
                 break
 
-        logger.info("Rebuilding Company thumbnails")
+        logger.info('Rebuilding Company thumbnails')
 
         for company in Company.objects.exclude(image=None):
             try:
                 self.rebuild_thumbnail(company)
             except (OperationalError, ProgrammingError):
-                logger.exception("ERROR: abase read error.")
+                logger.exception('ERROR: abase read error.')
                 break

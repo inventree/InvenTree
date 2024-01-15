@@ -28,12 +28,13 @@ from build.validators import generate_next_build_reference, validate_build_order
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.helpers_model
+import InvenTree.mixins
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 
 import common.models
-from common.notifications import trigger_notification
+from common.notifications import trigger_notification, InvenTreeNotificationBodies
 from plugin.events import trigger_event
 
 import part.models
@@ -44,7 +45,7 @@ import users.models
 logger = logging.getLogger('inventree')
 
 
-class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
+class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -113,6 +114,17 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         except InvalidMove:
             raise ValidationError({
                 'parent': _('Invalid choice for parent build'),
+            })
+
+    def clean(self):
+        """Validate the BuildOrder model"""
+
+        super().clean()
+
+        # Prevent changing target part after creation
+        if self.has_field_changed('part'):
+            raise ValidationError({
+                'part': _('Build order part cannot be changed')
             })
 
     @staticmethod
@@ -598,6 +610,14 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
         self.status = BuildStatus.CANCELLED.value
         self.save()
 
+        # Notify users that the order has been canceled
+        InvenTree.helpers_model.notify_responsible(
+            self,
+            Build,
+            exclude=self.issued_by,
+            content=InvenTreeNotificationBodies.OrderCanceled
+        )
+
         trigger_event('build.cancelled', id=self.pk)
 
     @transaction.atomic
@@ -997,7 +1017,7 @@ class Build(MPTTModel, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.
             )
 
             # Filter out "serialized" stock items, these cannot be auto-allocated
-            available_stock = available_stock.filter(Q(serial=None) | Q(serial=''))
+            available_stock = available_stock.filter(Q(serial=None) | Q(serial='')).distinct()
 
             if location:
                 # Filter only stock items located "below" the specified location

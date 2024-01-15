@@ -63,6 +63,32 @@ If the `print_labels` method is not changed, this will run the `print_label` met
 !!! tip "Custom Code"
     If your plugin overrides the `print_labels` method, you will have to ensure that the label printing is correctly offloaded to the background worker. Look at the `offload_label` method of the plugin mixin class for how this can be achieved.
 
+### Printing options
+
+A printing plugin can define custom options as a serializer class called `PrintingOptionsSerializer` that get shown on the printing screen and get passed to the `print_labels`/`print_label` function as a kwarg called `printing_options`. This can be used to e.g. let the user dynamically select the orientation of the label, the color mode, ... for each print job.
+The following simple example shows how to implement an orientation select. For more information about how to define fields, refer to the django rest framework (DRF) [documentation](https://www.django-rest-framework.org/api-guide/fields/).
+
+```py
+from rest_framework import serializers
+
+class MyLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
+    ...
+
+    class PrintingOptionsSerializer(serializers.Serializer):
+        orientation = serializers.ChoiceField(choices=[
+            ("landscape", "Landscape"),
+            ("portrait", "Portrait"),
+        ])
+
+    def print_label(self, **kwargs):
+        print(kwargs["printing_options"]) # -> {"orientation": "landscape"}
+        ...
+```
+
+!!! tip "Dynamically return a serializer instance"
+    If your plugin wants to dynamically expose options based on the request, you can implement the `get_printing_options_serializer` function which by default returns an instance
+    of the `PrintingOptionsSerializer` class if defined.
+
 ### Helper Methods
 
 The plugin class provides a number of additional helper methods which may be useful for generating labels:
@@ -122,13 +148,15 @@ class MyLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
         Send the label to the printer
 
         kwargs:
-            pdf_data: An in-memory PDF file of the label
-            png_file: An in-memory PIL (pillow) Image file of the label
-            filename: The filename of the printed label (if applicable)
-            label_instance: The Label model instance
-            width: width of the label (in mm)
-            height: height of the label (in mm)
-            user: The user who printed this label
+            pdf_file: The PDF file object of the rendered label (WeasyTemplateResponse object)
+            pdf_data: Raw PDF data of the rendered label
+            filename: The filename of this PDF label
+            label_instance: The instance of the label model which triggered the print_label() method
+            item_instance: The instance of the database model against which the label is printed
+            user: The user who triggered this print job
+            width: The expected width of the label (in mm)
+            height: The expected height of the label (in mm)
+            printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
         """
 
         width = kwargs['width']

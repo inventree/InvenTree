@@ -3,25 +3,50 @@ import { Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
+  IconChecklist,
+  IconCircleCheck,
+  IconCircleMinus,
+  IconCirclePlus,
+  IconCopy,
+  IconDots,
   IconHistory,
   IconInfoCircle,
   IconNotes,
+  IconPackages,
   IconPaperclip,
-  IconSitemap
+  IconSitemap,
+  IconTransfer
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import {
+  ActionDropdown,
+  BarcodeActionDropdown,
+  DeleteItemAction,
+  EditItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
+} from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { useEditStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 
 export default function StockDetail() {
   const { id } = useParams();
+
+  const user = useUserState();
+
+  const [treeOpen, setTreeOpen] = useState(false);
 
   const {
     instance: stockitem,
@@ -55,13 +80,22 @@ export default function StockDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        content: <PlaceholderPanel />
+        content: <PlaceholderPanel />,
+        hidden:
+          !stockitem?.part_detail?.salable && !stockitem?.part_detail?.component
+      },
+      {
+        name: 'testdata',
+        label: t`Test Data`,
+        icon: <IconChecklist />,
+        hidden: !stockitem?.part_detail?.trackable
       },
       {
         name: 'installed_items',
         label: t`Installed Items`,
         icon: <IconBoxPadding />,
-        content: <PlaceholderPanel />
+        content: <PlaceholderPanel />,
+        hidden: !stockitem?.part_detail?.assembly
       },
       {
         name: 'child_items',
@@ -77,7 +111,7 @@ export default function StockDetail() {
           <AttachmentTable
             endpoint={ApiPaths.stock_attachment_list}
             model="stock_item"
-            pk={stockitem.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -87,7 +121,7 @@ export default function StockDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.stock_item_list, stockitem.pk)}
+            url={apiUrl(ApiPaths.stock_item_list, id)}
             data={stockitem.notes ?? ''}
             allowEdit={true}
           />
@@ -107,20 +141,98 @@ export default function StockDetail() {
     [stockitem]
   );
 
+  const editStockItem = useEditStockItem({
+    item_id: stockitem.pk,
+    callback: () => refreshInstance()
+  });
+
+  const stockActions = useMemo(
+    () => /* TODO: Disable actions based on user permissions*/ [
+      <BarcodeActionDropdown
+        actions={[
+          ViewBarcodeAction({}),
+          LinkBarcodeAction({
+            disabled: stockitem?.barcode_hash
+          }),
+          UnlinkBarcodeAction({
+            disabled: !stockitem?.barcode_hash
+          })
+        ]}
+      />,
+      <ActionDropdown
+        key="operations"
+        tooltip={t`Stock Operations`}
+        icon={<IconPackages />}
+        actions={[
+          {
+            name: t`Count`,
+            tooltip: t`Count stock`,
+            icon: <IconCircleCheck color="green" />
+          },
+          {
+            name: t`Add`,
+            tooltip: t`Add stock`,
+            icon: <IconCirclePlus color="green" />
+          },
+          {
+            name: t`Remove`,
+            tooltip: t`Remove stock`,
+            icon: <IconCircleMinus color="red" />
+          },
+          {
+            name: t`Transfer`,
+            tooltip: t`Transfer stock`,
+            icon: <IconTransfer color="blue" />
+          }
+        ]}
+      />,
+      <ActionDropdown
+        key="stock"
+        // tooltip={t`Stock Actions`}
+        icon={<IconDots />}
+        actions={[
+          {
+            name: t`Duplicate`,
+            tooltip: t`Duplicate stock item`,
+            icon: <IconCopy />
+          },
+          EditItemAction({
+            onClick: () => {
+              stockitem.pk && editStockItem.open();
+            }
+          }),
+          DeleteItemAction({})
+        ]}
+      />
+    ],
+    [id, stockitem, user]
+  );
+
   return (
     <Stack>
       <LoadingOverlay visible={instanceQuery.isFetching} />
+      <StockLocationTree
+        opened={treeOpen}
+        onClose={() => setTreeOpen(false)}
+        selectedLocation={stockitem?.location}
+      />
       <PageDetail
-        title={t`Stock Items`}
-        subtitle={stockitem.part_detail?.full_name ?? 'name goes here'}
+        title={t`Stock Item`}
+        subtitle={stockitem.part_detail?.full_name}
+        imageUrl={stockitem.part_detail?.thumbnail}
         detail={
           <Alert color="teal" title="Stock Item">
             <Text>Quantity: {stockitem.quantity ?? 'idk'}</Text>
           </Alert>
         }
         breadcrumbs={breadcrumbs}
+        breadcrumbAction={() => {
+          setTreeOpen(true);
+        }}
+        actions={stockActions}
       />
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
+      {editStockItem.modal}
     </Stack>
   );
 }

@@ -31,7 +31,10 @@ def trigger_event(event, *args, **kwargs):
         return
 
     # Make sure the database can be accessed and is not being tested rn
-    if not canAppAccessDatabase(allow_shell=True) and not settings.PLUGIN_TESTING_EVENTS:
+    if (
+        not canAppAccessDatabase(allow_shell=True)
+        and not settings.PLUGIN_TESTING_EVENTS
+    ):
         logger.debug("Ignoring triggered event '%s' - database not ready", event)
         return
 
@@ -41,12 +44,7 @@ def trigger_event(event, *args, **kwargs):
     if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
         kwargs['force_async'] = True
 
-    offload_task(
-        register_event,
-        event,
-        *args,
-        **kwargs
-    )
+    offload_task(register_event, event, *args, **kwargs)
 
 
 def register_event(event, *args, **kwargs):
@@ -61,9 +59,7 @@ def register_event(event, *args, **kwargs):
 
     # Determine if there are any plugins which are interested in responding
     if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS'):
-
         with transaction.atomic():
-
             for slug, plugin in registry.plugins.items():
                 if not plugin.mixin_enabled('events'):
                     continue
@@ -84,13 +80,7 @@ def register_event(event, *args, **kwargs):
                     kwargs['force_async'] = True
 
                 # Offload a separate task for each plugin
-                offload_task(
-                    process_event,
-                    slug,
-                    event,
-                    *args,
-                    **kwargs
-                )
+                offload_task(process_event, slug, event, *args, **kwargs)
 
 
 def process_event(plugin_slug, event, *args, **kwargs):
@@ -172,17 +162,9 @@ def after_save(sender, instance, created, **kwargs):
         return
 
     if created:
-        trigger_event(
-            f'{table}.created',
-            id=instance.id,
-            model=sender.__name__,
-        )
+        trigger_event(f'{table}.created', id=instance.id, model=sender.__name__)
     else:
-        trigger_event(
-            f'{table}.saved',
-            id=instance.id,
-            model=sender.__name__,
-        )
+        trigger_event(f'{table}.saved', id=instance.id, model=sender.__name__)
 
 
 @receiver(post_delete)
@@ -193,7 +175,4 @@ def after_delete(sender, instance, **kwargs):
     if not allow_table_event(table):
         return
 
-    trigger_event(
-        f'{table}.deleted',
-        model=sender.__name__,
-    )
+    trigger_event(f'{table}.deleted', model=sender.__name__)

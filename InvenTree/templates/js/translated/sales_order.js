@@ -130,6 +130,9 @@ function salesOrderFields(options={}) {
         },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         }
     };
 
@@ -1793,7 +1796,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             title: '{% trans "Part" %}',
             switchable: false,
             formatter: function(value, row, index, field) {
-                if (row.part) {
+                if (row.part_detail) {
                     return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${value}/`);
                 } else {
                     return '-';

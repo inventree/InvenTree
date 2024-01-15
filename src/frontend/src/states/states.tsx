@@ -9,6 +9,7 @@ export interface HostList {
 
 // Type interface fully defining the current user
 export interface UserProps {
+  pk: number;
   username: string;
   first_name: string;
   last_name: string;
@@ -28,6 +29,14 @@ export interface ServerAPIProps {
   worker_pending_tasks: null | number;
   plugins_enabled: null | boolean;
   active_plugins: PluginProps[];
+  email_configured: null | boolean;
+  debug_mode: null | boolean;
+  docker_mode: null | boolean;
+  database: null | string;
+  system_health: null | boolean;
+  platform: null | string;
+  installer: null | string;
+  target: null | string;
 }
 
 // Type interface defining a single 'setting' object
@@ -63,7 +72,8 @@ export enum SettingType {
   Boolean = 'boolean',
   Integer = 'integer',
   String = 'string',
-  Choice = 'choice'
+  Choice = 'choice',
+  Model = 'related field'
 }
 
 export interface PluginProps {
@@ -78,4 +88,7 @@ export type ErrorResponse = {
   status: number;
   statusText: string;
   message?: string;
+};
+export type SettingsLookup = {
+  [key: string]: string;
 };

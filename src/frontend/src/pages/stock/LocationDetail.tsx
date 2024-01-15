@@ -1,18 +1,21 @@
 import { t } from '@lingui/macro';
 import { LoadingOverlay, Stack, Text } from '@mantine/core';
 import { IconPackages, IconSitemap } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { StockLocationTable } from '../../components/tables/stock/StockLocationTable';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths } from '../../states/ApiState';
 
 export default function Stock() {
   const { id } = useParams();
+
+  const [treeOpen, setTreeOpen] = useState(false);
 
   const {
     instance: location,
@@ -35,7 +38,7 @@ export default function Stock() {
         content: (
           <StockItemTable
             params={{
-              location: location.pk ?? null
+              location: id
             }}
           />
         )
@@ -47,7 +50,7 @@ export default function Stock() {
         content: (
           <StockLocationTable
             params={{
-              parent: location.pk ?? null
+              parent: id
             }}
           />
         )
@@ -70,10 +73,18 @@ export default function Stock() {
     <>
       <Stack>
         <LoadingOverlay visible={instanceQuery.isFetching} />
+        <StockLocationTree
+          opened={treeOpen}
+          onClose={() => setTreeOpen(false)}
+          selectedLocation={location?.pk}
+        />
         <PageDetail
           title={t`Stock Items`}
           detail={<Text>{location.name ?? 'Top level'}</Text>}
           breadcrumbs={breadcrumbs}
+          breadcrumbAction={() => {
+            setTreeOpen(true);
+          }}
         />
         <PanelGroup pageKey="stocklocation" panels={locationPanels} />
       </Stack>

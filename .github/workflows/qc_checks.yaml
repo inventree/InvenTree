@@ -4,9 +4,9 @@ name: QC
 
 on:
   push:
-    branches-ignore: ['l10*']
+    branches-ignore: [ 'l10*' ]
   pull_request:
-    branches-ignore: ['l10*']
+    branches-ignore: [ 'l10*' ]
 
 env:
   python_version: 3.9
@@ -32,45 +32,29 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
 
     steps:
-    - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          server:
-            - 'InvenTree/**'
-            - 'requirements.txt'
-            - 'requirements-dev.txt'
-          migrations:
-            - '**/migrations/**'
-            - '.github/workflows**'
-          frontend:
-            - 'src/frontend/**'
-
-  pep_style:
-    name: Style [Python]
-    runs-on: ubuntu-20.04
-
-    needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true'
-
-    steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Environment Setup
-        uses: ./.github/actions/setup
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # pin@v2.11.1
+        id: filter
         with:
-          dev-install: true
-      - name: Run flake8
-        run: flake8 InvenTree --extend-ignore=D
+          filters: |
+            server:
+              - 'InvenTree/**'
+              - 'requirements.txt'
+              - 'requirements-dev.txt'
+            migrations:
+              - '**/migrations/**'
+              - '.github/workflows**'
+            frontend:
+              - 'src/frontend/**'
 
   javascript:
     name: Style - Classic UI [JS]
     runs-on: ubuntu-20.04
 
-    needs: ['pep_style', 'pre-commit']
+    needs: [ 'pre-commit' ]
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -92,9 +76,9 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
           python-version: ${{ env.python_version }}
           cache: 'pip'
@@ -113,9 +97,9 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -145,7 +129,7 @@ jobs:
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -154,8 +138,7 @@ jobs:
           update: true
           npm: true
       - name: Download Python Code For `${{ env.wrapper_name }}`
-        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }}
-          ./${{ env.wrapper_name }}
+        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start InvenTree Server
         run: |
           invoke delete-data -f
@@ -168,27 +151,11 @@ jobs:
           invoke check-server
           coverage run -m unittest discover -s test/
 
-  docstyle:
-    name: Style [Python Docstrings]
-    runs-on: ubuntu-20.04
-
-    needs: pre-commit
-    continue-on-error: true
-
-    steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Environment Setup
-        uses: ./.github/actions/setup
-        with:
-          install: true
-      - name: Run flake8
-        run: flake8 InvenTree --statistics
-
   coverage:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'pep_style', 'pre-commit' ]
+    needs: [ 'pre-commit' ]
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
@@ -198,7 +165,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -214,14 +181,14 @@ jobs:
       - name: Coverage Tests
         run: invoke test --coverage
       - name: Upload Coverage Report
-        uses: coverallsapp/github-action@v2
+        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'pep_style', 'pre-commit' ]
+    needs: [ 'pre-commit' ]
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -248,7 +215,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -265,8 +232,7 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'pep_style', 'pre-commit' ]
-    if: github.event_name == 'push'
+    needs: [ 'pre-commit' ]
 
     env:
       # Database backend configuration
@@ -287,13 +253,12 @@ jobs:
           MYSQL_USER: inventree
           MYSQL_PASSWORD: password
           MYSQL_ROOT_PASSWORD: password
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s
-          --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         ports:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -332,7 +297,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -356,47 +321,47 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-    - uses: actions/checkout@v3
-      name: Checkout Code
-    - name: Environment Setup
-      uses: ./.github/actions/setup
-      with:
-        install: true
-    - name: Fetch Database
-      run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+        name: Checkout Code
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          install: true
+      - name: Fetch Database
+        run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
 
-    - name: Latest Database
-      run: |
-        cp test-db/latest.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-        chmod +rw /home/runner/work/InvenTree/db.sqlite3
-        invoke migrate
+      - name: Latest Database
+        run: |
+          cp test-db/latest.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
 
-    - name: 0.10.0 Database
-      run: |
-        rm /home/runner/work/InvenTree/db.sqlite3
-        cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-        chmod +rw /home/runner/work/InvenTree/db.sqlite3
-        invoke migrate
+      - name: 0.10.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
 
-    - name: 0.11.0 Database
-      run: |
-        rm /home/runner/work/InvenTree/db.sqlite3
-        cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-        chmod +rw /home/runner/work/InvenTree/db.sqlite3
-        invoke migrate
+      - name: 0.11.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
 
-    - name: 0.12.0 Database
-      run: |
-        rm /home/runner/work/InvenTree/db.sqlite3
-        cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
-        chmod +rw /home/runner/work/InvenTree/db.sqlite3
-        invoke migrate
+      - name: 0.12.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
 
   platform_ui:
     name: Tests - Platform UI
     runs-on: ubuntu-20.04
     timeout-minutes: 60
-    needs: ['pre-commit', 'paths-filter']
+    needs: [ 'pre-commit', 'paths-filter' ]
     if: needs.paths-filter.outputs.frontend == 'true'
     env:
       INVENTREE_DB_ENGINE: sqlite3
@@ -405,7 +370,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -420,7 +385,7 @@ jobs:
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         run: cd src/frontend &&  npx playwright test
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # pin@v3.1.3
         if: always()
         with:
           name: playwright-report
@@ -433,7 +398,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -446,7 +411,7 @@ jobs:
         run: |
           cd InvenTree/web/static
           zip -r frontend-build.zip web/
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # pin@v3.1.3
         with:
           name: frontend-build
           path: InvenTree/web/static/web

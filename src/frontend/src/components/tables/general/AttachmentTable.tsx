@@ -7,17 +7,18 @@ import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../../App';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import {
   addAttachment,
   deleteAttachment,
   editAttachment
-} from '../../../functions/forms/AttachmentForms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+} from '../../../forms/AttachmentForms';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { AttachmentLink } from '../../items/AttachmentLink';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Define set of columns to display for the attachment table
@@ -45,7 +46,7 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'comment',
       title: t`Comment`,
       sortable: false,
-      switchable: true,
+
       render: function (record: any) {
         return record.comment;
       }
@@ -54,7 +55,7 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'uploaded',
       title: t`Uploaded`,
       sortable: false,
-      switchable: true,
+
       render: function (record: any) {
         return (
           <Group position="apart">
@@ -81,7 +82,7 @@ export function AttachmentTable({
   pk: number;
   model: string;
 }): ReactNode {
-  const { tableKey, refreshTable } = useTableRefresh(`${model}-attachments`);
+  const table = useTable(`${model}-attachments`);
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 
@@ -113,32 +114,33 @@ export function AttachmentTable({
     let actions: RowAction[] = [];
 
     if (allowEdit) {
-      actions.push({
-        title: t`Edit`,
-        onClick: () => {
-          editAttachment({
-            endpoint: endpoint,
-            model: model,
-            pk: record.pk,
-            attachmentType: record.attachment ? 'file' : 'link',
-            callback: refreshTable
-          });
-        }
-      });
+      actions.push(
+        RowEditAction({
+          onClick: () => {
+            editAttachment({
+              endpoint: endpoint,
+              model: model,
+              pk: record.pk,
+              attachmentType: record.attachment ? 'file' : 'link',
+              callback: table.refreshTable
+            });
+          }
+        })
+      );
     }
 
     if (allowDelete) {
-      actions.push({
-        title: t`Delete`,
-        color: 'red',
-        onClick: () => {
-          deleteAttachment({
-            endpoint: endpoint,
-            pk: record.pk,
-            callback: refreshTable
-          });
-        }
-      });
+      actions.push(
+        RowDeleteAction({
+          onClick: () => {
+            deleteAttachment({
+              endpoint: endpoint,
+              pk: record.pk,
+              callback: table.refreshTable
+            });
+          }
+        })
+      );
     }
 
     return actions;
@@ -160,7 +162,7 @@ export function AttachmentTable({
             color: 'green'
           });
 
-          refreshTable();
+          table.refreshTable();
 
           return response;
         })
@@ -181,7 +183,7 @@ export function AttachmentTable({
 
     if (allowEdit) {
       actions.push(
-        <Tooltip label={t`Add attachment`}>
+        <Tooltip label={t`Add attachment`} key="attachment-add">
           <ActionIcon
             radius="sm"
             onClick={() => {
@@ -190,7 +192,7 @@ export function AttachmentTable({
                 model: model,
                 pk: pk,
                 attachmentType: 'file',
-                callback: refreshTable
+                callback: table.refreshTable
               });
             }}
           >
@@ -200,7 +202,7 @@ export function AttachmentTable({
       );
 
       actions.push(
-        <Tooltip label={t`Add external link`}>
+        <Tooltip label={t`Add external link`} key="link-add">
           <ActionIcon
             radius="sm"
             onClick={() => {
@@ -209,7 +211,7 @@ export function AttachmentTable({
                 model: model,
                 pk: pk,
                 attachmentType: 'link',
-                callback: refreshTable
+                callback: table.refreshTable
               });
             }}
           >
@@ -226,8 +228,9 @@ export function AttachmentTable({
     <Stack spacing="xs">
       {pk && pk > 0 && (
         <InvenTreeTable
+          key="attachment-table"
           url={url}
-          tableKey={tableKey}
+          tableState={table}
           columns={tableColumns}
           props={{
             noRecordsText: t`No attachments found`,
@@ -241,7 +244,7 @@ export function AttachmentTable({
         />
       )}
       {allowEdit && validPk && (
-        <Dropzone onDrop={uploadFiles}>
+        <Dropzone onDrop={uploadFiles} key="attachment-dropzone">
           <Dropzone.Idle>
             <Group position="center">
               <IconFileUpload size={24} />

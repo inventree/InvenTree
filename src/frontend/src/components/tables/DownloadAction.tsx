@@ -1,10 +1,7 @@
-import { Trans, t } from '@lingui/macro';
-import { ActionIcon, Divider, Group, Menu, Select } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { ActionIcon, Menu } from '@mantine/core';
 import { Tooltip } from '@mantine/core';
-import { Button, Modal, Stack } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import { IconDownload } from '@tabler/icons-react';
-import { useState } from 'react';
 
 export function DownloadAction({
   downloadCallback

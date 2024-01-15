@@ -28,10 +28,11 @@
 {% block actions %}
 
 <!-- Admin view -->
-{% if location and user.is_staff and roles.stock_location.change %}
-{% url 'admin:stock_stocklocation_change' location.pk as url %}
+{% if location %}
+{% admin_url user "stock.stocklocation" location.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
+
 {% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
 {% if stocktake_enable and roles.stocktake.add %}
 <button type='button' class='btn btn-outline-secondary' id='location-stocktake' title='{% trans "Perform stocktake for this stock location" %}'>

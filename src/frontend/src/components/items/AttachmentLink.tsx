@@ -1,5 +1,5 @@
 import { Group, Text } from '@mantine/core';
-import { IconFileTypeJpg, IconPhoto } from '@tabler/icons-react';
+import { IconPhoto } from '@tabler/icons-react';
 import {
   IconFile,
   IconFileTypeCsv,

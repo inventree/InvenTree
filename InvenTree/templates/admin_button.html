@@ -3,7 +3,7 @@
 
 {% inventree_customize 'hide_admin_link' as hidden %}
 
-{% if not hidden and user.is_staff %}
+{% if url and not hidden and user.is_staff %}
 <a href='{{ url }}'>
     <button id='admin-button' href='{{ url }}' title='{% trans "View in administration panel" %}' type='button' class='btn btn-primary admin-button'>
         <span class='fas fa-user-shield'></span>

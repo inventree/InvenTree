@@ -471,6 +471,28 @@ class BuildTest(BuildTestBase):
         # Check that the "consumed_by" item count has increased
         self.assertEqual(StockItem.objects.filter(consumed_by=self.build).count(), n + 8)
 
+    def test_change_part(self):
+        """Try to change target part after creating a build"""
+
+        bo = Build.objects.create(
+            reference='BO-9999',
+            title='Some new build',
+            part=self.assembly,
+            quantity=5,
+            issued_by=get_user_model().objects.get(pk=1),
+        )
+
+        assembly_2 = Part.objects.create(
+            name="Another assembly",
+            description="A different assembly",
+            assembly=True,
+        )
+
+        # Should not be able to change the part after the Build is saved
+        with self.assertRaises(ValidationError):
+            bo.part = assembly_2
+            bo.clean()
+
     def test_cancel(self):
         """Test cancellation of the build"""
         # TODO

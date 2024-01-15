@@ -1,4 +1,5 @@
 """Plugin mixin class for ScheduleMixin."""
+
 import logging
 
 from django.conf import settings
@@ -64,26 +65,27 @@ class ScheduleMixin:
         # List of tasks we have activated
         task_keys = []
 
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SCHEDULE'):
-
+        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting(
+            'ENABLE_PLUGINS_SCHEDULE'
+        ):
             for _key, plugin in plugins:
-
                 if plugin.mixin_enabled('schedule'):
-
                     if plugin.is_active():
                         # Only active tasks for plugins which are enabled
                         plugin.register_tasks()
                         task_keys += plugin.get_task_names()
 
         if len(task_keys) > 0:
-            logger.info("Activated %s scheduled tasks", len(task_keys))
+            logger.info('Activated %s scheduled tasks', len(task_keys))
 
         # Remove any scheduled tasks which do not match
         # This stops 'old' plugin tasks from accumulating
         try:
             from django_q.models import Schedule
 
-            scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
+            scheduled_plugin_tasks = Schedule.objects.filter(
+                name__istartswith='plugin.'
+            )
 
             deleted_count = 0
 
@@ -93,10 +95,12 @@ class ScheduleMixin:
                     deleted_count += 1
 
             if deleted_count > 0:
-                logger.info("Removed %s old scheduled tasks", deleted_count)  # pragma: no cover
+                logger.info(
+                    'Removed %s old scheduled tasks', deleted_count
+                )  # pragma: no cover
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
-            logger.warning("activate_integration_schedule failed, database not ready")
+            logger.warning('activate_integration_schedule failed, database not ready')
 
     def get_scheduled_tasks(self):
         """Returns `SCHEDULED_TASKS` context.
@@ -113,30 +117,37 @@ class ScheduleMixin:
     def validate_scheduled_tasks(self):
         """Check that the provided scheduled tasks are valid."""
         if not self.has_scheduled_tasks:
-            raise MixinImplementationError("SCHEDULED_TASKS not defined")
+            raise MixinImplementationError('SCHEDULED_TASKS not defined')
 
         for key, task in self.scheduled_tasks.items():
-
             if 'func' not in task:
-                raise MixinImplementationError(f"Task '{key}' is missing 'func' parameter")
+                raise MixinImplementationError(
+                    f"Task '{key}' is missing 'func' parameter"
+                )
 
             if 'schedule' not in task:
-                raise MixinImplementationError(f"Task '{key}' is missing 'schedule' parameter")
+                raise MixinImplementationError(
+                    f"Task '{key}' is missing 'schedule' parameter"
+                )
 
             schedule = task['schedule'].upper().strip()
 
             if schedule not in self.ALLOWABLE_SCHEDULE_TYPES:
-                raise MixinImplementationError(f"Task '{key}': Schedule '{schedule}' is not a valid option")
+                raise MixinImplementationError(
+                    f"Task '{key}': Schedule '{schedule}' is not a valid option"
+                )
 
             # If 'minutes' is selected, it must be provided!
             if schedule == 'I' and 'minutes' not in task:
-                raise MixinImplementationError(f"Task '{key}' is missing 'minutes' parameter")
+                raise MixinImplementationError(
+                    f"Task '{key}' is missing 'minutes' parameter"
+                )
 
     def get_task_name(self, key):
         """Task name for key."""
         # Generate a 'unique' task name
         slug = self.plugin_slug()
-        return f"plugin.{slug}.{key}"
+        return f'plugin.{slug}.{key}'
 
     def get_task_names(self):
         """All defined task names."""
@@ -149,7 +160,6 @@ class ScheduleMixin:
             from django_q.models import Schedule
 
             for key, task in self.scheduled_tasks.items():
-
                 task_name = self.get_task_name(key)
 
                 obj = {
@@ -184,7 +194,7 @@ class ScheduleMixin:
 
         except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready
-            logger.warning("register_tasks failed, database not ready")
+            logger.warning('register_tasks failed, database not ready')
 
     def unregister_tasks(self):
         """Deregister the tasks with the database."""
@@ -192,7 +202,6 @@ class ScheduleMixin:
             from django_q.models import Schedule
 
             for key, _ in self.scheduled_tasks.items():
-
                 task_name = self.get_task_name(key)
 
                 try:
@@ -202,4 +211,4 @@ class ScheduleMixin:
                     pass
         except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready
-            logger.warning("unregister_tasks failed, database not ready")
+            logger.warning('unregister_tasks failed, database not ready')

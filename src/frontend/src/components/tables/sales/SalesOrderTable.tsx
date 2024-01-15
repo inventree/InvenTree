@@ -1,16 +1,51 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import {
+  CreationDateColumn,
+  DescriptionColumn,
+  LineItemsProgressColumn,
+  ProjectCodeColumn,
+  ShipmentDateColumn,
+  StatusColumn,
+  TargetDateColumn,
+  TotalPriceColumn
+} from '../ColumnRenderers';
+import {
+  AssignedToMeFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({ params }: { params?: any }) {
-  const { tableKey } = useTableRefresh('sales-order');
+  const table = useTable('sales-order');
 
-  // TODO: Custom filters
+  const navigate = useNavigate();
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.salesorder)
+      },
+      OutstandingFilter(),
+      OverdueFilter(),
+      AssignedToMeFilter()
+      // TODO: has_project_code
+      // TODO: project_code
+    ];
+  }, []);
 
   // TODO: Row actions
 
@@ -23,11 +58,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
         title: t`Sales Order`,
         sortable: true,
         switchable: false
-      },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        switchable: true
+        // TODO: Display extra information if order is overdue
       },
       {
         accessor: 'customer__name',
@@ -37,49 +68,44 @@ export function SalesOrderTable({ params }: { params?: any }) {
           let customer = record.customer_detail ?? {};
 
           return (
-            <Group spacing="xs" noWrap={true}>
-              <Thumbnail src={customer?.image} alt={customer.name} />
-              <Text>{customer?.name}</Text>
-            </Group>
+            <Thumbnail
+              src={customer?.image}
+              alt={customer.name}
+              text={customer.name}
+            />
           );
         }
       },
       {
         accessor: 'customer_reference',
-        title: t`Customer Reference`,
-        switchable: true
+        title: t`Customer Reference`
       },
-      {
-        accessor: 'project_code',
-        title: t`Project Code`,
-        switchable: true
-        // TODO: Custom formatter
-      },
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-        switchable: true
-        // TODO: Custom formatter
-      }
-
-      // TODO: Creation date
-      // TODO: Target date
-      // TODO: Shipment date
-      // TODO: Line items
-      // TODO: Total price
+      DescriptionColumn(),
+      LineItemsProgressColumn(),
+      StatusColumn(ModelType.salesorder),
+      ProjectCodeColumn(),
+      CreationDateColumn(),
+      TargetDateColumn(),
+      ShipmentDateColumn(),
+      TotalPriceColumn()
     ];
   }, []);
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.sales_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {
           ...params,
           customer_detail: true
+        },
+        customFilters: tableFilters,
+        onRowClick: (row: any) => {
+          if (row.pk) {
+            navigate(`/sales/sales-order/${row.pk}/`);
+          }
         }
       }}
     />

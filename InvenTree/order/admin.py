@@ -1,4 +1,4 @@
-"""Admin functionality for the 'order' app"""
+"""Admin functionality for the 'order' app."""
 
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
@@ -7,41 +7,42 @@ from import_export import widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
+import stock.models
 from InvenTree.admin import InvenTreeResource
 from order import models
 
 
 class ProjectCodeResourceMixin:
-    """Mixin for exporting project code data"""
+    """Mixin for exporting project code data."""
 
     project_code = Field(attribute='project_code', column_name=_('Project Code'))
 
     def dehydrate_project_code(self, order):
-        """Return the project code value, not the pk"""
+        """Return the project code value, not the pk."""
         if order.project_code:
             return order.project_code.code
         return ''
 
 
 class TotalPriceResourceMixin:
-    """Mixin for exporting total price data"""
+    """Mixin for exporting total price data."""
 
     total_price = Field(attribute='total_price', column_name=_('Total Price'))
 
     def dehydrate_total_price(self, order):
-        """Return the total price amount, not the object itself"""
+        """Return the total price amount, not the object itself."""
         if order.total_price:
             return order.total_price.amount
         return ''
 
 
 class PriceResourceMixin:
-    """Mixin for 'price' field"""
+    """Mixin for 'price' field."""
 
     price = Field(attribute='price', column_name=_('Price'))
 
     def dehydrate_price(self, line):
-        """Return the price amount, not the object itself"""
+        """Return the price amount, not the object itself."""
         if line.price:
             return line.price.amount
         return ''
@@ -49,112 +50,117 @@ class PriceResourceMixin:
 
 # region general classes
 class GeneralExtraLineAdmin:
-    """Admin class template for the 'ExtraLineItem' models"""
-    list_display = (
-        'order',
-        'quantity',
-        'reference'
-    )
+    """Admin class template for the 'ExtraLineItem' models."""
 
-    search_fields = [
-        'order__reference',
-        'order__customer__name',
-        'reference',
-    ]
+    list_display = ('order', 'quantity', 'reference')
 
-    autocomplete_fields = ('order', )
+    search_fields = ['order__reference', 'order__customer__name', 'reference']
+
+    autocomplete_fields = ('order',)
 
 
 class GeneralExtraLineMeta:
-    """Metaclass template for the 'ExtraLineItem' models"""
+    """Metaclass template for the 'ExtraLineItem' models."""
+
     skip_unchanged = True
     report_skipped = False
     clean_model_instances = True
+
+
 # endregion
 
 
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
-    """Inline admin class for the PurchaseOrderLineItem model"""
+    """Inline admin class for the PurchaseOrderLineItem model."""
+
     model = models.PurchaseOrderLineItem
     extra = 0
 
 
-class PurchaseOrderAdmin(ImportExportModelAdmin):
-    """Admin class for the PurchaseOrder model"""
+class PurchaseOrderResource(
+    ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource
+):
+    """Class for managing import / export of PurchaseOrder data."""
 
-    exclude = [
-        'reference_int',
-    ]
+    class Meta:
+        """Metaclass options."""
 
-    list_display = (
-        'reference',
-        'supplier',
-        'status',
-        'description',
-        'creation_date'
+        model = models.PurchaseOrder
+        skip_unchanged = True
+        clean_model_instances = True
+        exclude = ['metadata']
+
+    # Add number of line items
+    line_items = Field(
+        attribute='line_count', widget=widgets.IntegerWidget(), readonly=True
     )
 
-    search_fields = [
-        'reference',
-        'supplier__name',
-        'description',
-    ]
+    # Is this order overdue?
+    overdue = Field(
+        attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True
+    )
 
-    inlines = [
-        PurchaseOrderLineItemInlineAdmin
-    ]
+
+class PurchaseOrderAdmin(ImportExportModelAdmin):
+    """Admin class for the PurchaseOrder model."""
+
+    resource_class = PurchaseOrderResource
+
+    exclude = ['reference_int']
+
+    list_display = ('reference', 'supplier', 'status', 'description', 'creation_date')
+
+    search_fields = ['reference', 'supplier__name', 'description']
+
+    inlines = [PurchaseOrderLineItemInlineAdmin]
 
     autocomplete_fields = ('supplier',)
 
 
-class SalesOrderAdmin(ImportExportModelAdmin):
-    """Admin class for the SalesOrder model"""
-
-    exclude = [
-        'reference_int',
-    ]
-
-    list_display = (
-        'reference',
-        'customer',
-        'status',
-        'description',
-        'creation_date',
-    )
-
-    search_fields = [
-        'reference',
-        'customer__name',
-        'description',
-    ]
-
-    autocomplete_fields = ('customer',)
-
-
-class PurchaseOrderResource(ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource):
-    """Class for managing import / export of PurchaseOrder data."""
+class SalesOrderResource(
+    ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource
+):
+    """Class for managing import / export of SalesOrder data."""
 
     class Meta:
-        """Metaclass"""
-        model = models.PurchaseOrder
+        """Metaclass options."""
+
+        model = models.SalesOrder
         skip_unchanged = True
         clean_model_instances = True
-        exclude = [
-            'metadata',
-        ]
+        exclude = ['metadata']
 
     # Add number of line items
-    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+    line_items = Field(
+        attribute='line_count', widget=widgets.IntegerWidget(), readonly=True
+    )
 
     # Is this order overdue?
-    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+    overdue = Field(
+        attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True
+    )
+
+
+class SalesOrderAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrder model."""
+
+    resource_class = SalesOrderResource
+
+    exclude = ['reference_int']
+
+    list_display = ('reference', 'customer', 'status', 'description', 'creation_date')
+
+    search_fields = ['reference', 'customer__name', 'description']
+
+    autocomplete_fields = ('customer',)
 
 
 class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of PurchaseOrderLineItem data."""
 
     class Meta:
-        """Metaclass"""
+        """Metaclass."""
+
         model = models.PurchaseOrderLineItem
         skip_unchanged = True
         report_skipped = False
@@ -168,8 +174,13 @@ class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
 
     SKU = Field(attribute='part__SKU', readonly=True)
 
+    destination = Field(
+        attribute='destination',
+        widget=widgets.ForeignKeyWidget(stock.models.StockLocation),
+    )
+
     def dehydrate_purchase_price(self, line):
-        """Return a string value of the 'purchase_price' field, rather than the 'Money' object"""
+        """Return a string value of the 'purchase_price' field, rather than the 'Money' object."""
         if line.purchase_price:
             return line.purchase_price.amount
         return ''
@@ -184,30 +195,12 @@ class PurchaseOrderExtraLineResource(PriceResourceMixin, InvenTreeResource):
         model = models.PurchaseOrderExtraLine
 
 
-class SalesOrderResource(ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource):
-    """Class for managing import / export of SalesOrder data."""
-
-    class Meta:
-        """Metaclass options"""
-        model = models.SalesOrder
-        skip_unchanged = True
-        clean_model_instances = True
-        exclude = [
-            'metadata',
-        ]
-
-    # Add number of line items
-    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
-
-    # Is this order overdue?
-    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
-
-
 class SalesOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
     """Class for managing import / export of SalesOrderLineItem data."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
+
         model = models.SalesOrderLineItem
         skip_unchanged = True
         report_skipped = False
@@ -236,42 +229,34 @@ class SalesOrderExtraLineResource(PriceResourceMixin, InvenTreeResource):
 
     class Meta(GeneralExtraLineMeta):
         """Metaclass options."""
+
         model = models.SalesOrderExtraLine
 
 
 class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
-    """Admin class for the PurchaseOrderLine model"""
+    """Admin class for the PurchaseOrderLine model."""
 
     resource_class = PurchaseOrderLineItemResource
 
-    list_display = (
-        'order',
-        'part',
-        'quantity',
-        'reference'
-    )
+    list_display = ('order', 'part', 'quantity', 'reference')
 
     search_fields = ('reference',)
 
-    autocomplete_fields = ('order', 'part', 'destination',)
+    autocomplete_fields = ('order', 'part', 'destination')
 
 
 class PurchaseOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
-    """Admin class for the PurchaseOrderExtraLine model"""
+    """Admin class for the PurchaseOrderExtraLine model."""
+
     resource_class = PurchaseOrderExtraLineResource
 
 
 class SalesOrderLineItemAdmin(ImportExportModelAdmin):
-    """Admin class for the SalesOrderLine model"""
+    """Admin class for the SalesOrderLine model."""
 
     resource_class = SalesOrderLineItemResource
 
-    list_display = (
-        'order',
-        'part',
-        'quantity',
-        'reference'
-    )
+    list_display = ('order', 'part', 'quantity', 'reference')
 
     search_fields = [
         'part__name',
@@ -280,86 +265,67 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
         'reference',
     ]
 
-    autocomplete_fields = ('order', 'part',)
+    autocomplete_fields = ('order', 'part')
 
 
 class SalesOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
-    """Admin class for the SalesOrderExtraLine model"""
+    """Admin class for the SalesOrderExtraLine model."""
+
     resource_class = SalesOrderExtraLineResource
 
 
 class SalesOrderShipmentAdmin(ImportExportModelAdmin):
-    """Admin class for the SalesOrderShipment model"""
+    """Admin class for the SalesOrderShipment model."""
 
-    list_display = [
-        'order',
-        'shipment_date',
-        'reference',
-    ]
+    list_display = ['order', 'shipment_date', 'reference']
 
-    search_fields = [
-        'reference',
-        'order__reference',
-        'order__customer__name',
-    ]
+    search_fields = ['reference', 'order__reference', 'order__customer__name']
 
     autocomplete_fields = ('order',)
 
 
 class SalesOrderAllocationAdmin(ImportExportModelAdmin):
-    """Admin class for the SalesOrderAllocation model"""
+    """Admin class for the SalesOrderAllocation model."""
 
-    list_display = (
-        'line',
-        'item',
-        'quantity'
-    )
+    list_display = ('line', 'item', 'quantity')
 
-    autocomplete_fields = ('line', 'shipment', 'item',)
+    autocomplete_fields = ('line', 'shipment', 'item')
 
 
-class ReturnOrderResource(ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource):
-    """Class for managing import / export of ReturnOrder data"""
+class ReturnOrderResource(
+    ProjectCodeResourceMixin, TotalPriceResourceMixin, InvenTreeResource
+):
+    """Class for managing import / export of ReturnOrder data."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
+
         model = models.ReturnOrder
         skip_unchanged = True
         clean_model_instances = True
-        exclude = [
-            'metadata',
-        ]
+        exclude = ['metadata']
 
 
 class ReturnOrderAdmin(ImportExportModelAdmin):
-    """Admin class for the ReturnOrder model"""
+    """Admin class for the ReturnOrder model."""
 
-    exclude = [
-        'reference_int',
-    ]
+    resource_class = ReturnOrderResource
 
-    list_display = [
-        'reference',
-        'customer',
-        'status',
-    ]
+    exclude = ['reference_int']
 
-    search_fields = [
-        'reference',
-        'customer__name',
-        'description',
-    ]
+    list_display = ['reference', 'customer', 'status']
 
-    autocomplete_fields = [
-        'customer',
-    ]
+    search_fields = ['reference', 'customer__name', 'description']
+
+    autocomplete_fields = ['customer']
 
 
 class ReturnOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
-    """Class for managing import / export of ReturnOrderLineItem data"""
+    """Class for managing import / export of ReturnOrderLineItem data."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
+
         model = models.ReturnOrderLineItem
         skip_unchanged = True
         report_skipped = False
@@ -367,27 +333,25 @@ class ReturnOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
 
 
 class ReturnOrderLineItemAdmin(ImportExportModelAdmin):
-    """Admin class for ReturnOrderLine model"""
+    """Admin class for ReturnOrderLine model."""
 
     resource_class = ReturnOrderLineItemResource
 
-    list_display = [
-        'order',
-        'item',
-        'reference',
-    ]
+    list_display = ['order', 'item', 'reference']
 
 
 class ReturnOrderExtraLineClass(PriceResourceMixin, InvenTreeResource):
-    """Class for managing import/export of ReturnOrderExtraLine data"""
+    """Class for managing import/export of ReturnOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):
-        """Metaclass options"""
+        """Metaclass options."""
+
         model = models.ReturnOrderExtraLine
 
 
 class ReturnOrdeerExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
-    """Admin class for the ReturnOrderExtraLine model"""
+    """Admin class for the ReturnOrderExtraLine model."""
+
     resource_class = ReturnOrderExtraLineClass
 
 

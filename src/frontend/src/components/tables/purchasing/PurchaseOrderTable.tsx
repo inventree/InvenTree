@@ -1,16 +1,54 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
+import {
+  CreationDateColumn,
+  DescriptionColumn,
+  LineItemsProgressColumn,
+  ProjectCodeColumn,
+  ResponsibleColumn,
+  StatusColumn,
+  TargetDateColumn,
+  TotalPriceColumn
+} from '../ColumnRenderers';
+import {
+  AssignedToMeFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
+/**
+ * Display a table of purchase orders
+ */
 export function PurchaseOrderTable({ params }: { params?: any }) {
-  const { tableKey } = useTableRefresh('purchase-order');
+  const navigate = useNavigate();
 
-  // TODO: Custom filters
+  const table = useTable('purchase-order');
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
+      },
+      OutstandingFilter(),
+      OverdueFilter(),
+      AssignedToMeFilter()
+      // TODO: has_project_code
+      // TODO: project_code
+    ];
+  }, []);
 
   // TODO: Row actions
 
@@ -23,12 +61,9 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         title: t`Reference`,
         sortable: true,
         switchable: false
+        // TODO: Display extra information if order is overdue
       },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        switchable: true
-      },
+      DescriptionColumn(),
       {
         accessor: 'supplier__name',
         title: t`Supplier`,
@@ -37,63 +72,43 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           let supplier = record.supplier_detail ?? {};
 
           return (
-            <Group spacing="xs" noWrap={true}>
-              <Thumbnail src={supplier?.image} alt={supplier.name} />
-              <Text>{supplier?.name}</Text>
-            </Group>
+            <Thumbnail
+              src={supplier?.image}
+              alt={supplier.name}
+              text={supplier.name}
+            />
           );
         }
       },
       {
         accessor: 'supplier_reference',
-        title: t`Supplier Reference`,
-        switchable: true
+        title: t`Supplier Reference`
       },
-      {
-        accessor: 'project_code',
-        title: t`Project Code`,
-        switchable: true
-        // TODO: Custom formatter
-      },
-      {
-        accessor: 'status',
-        title: t`Status`,
-        sortable: true,
-        switchable: true
-        // TODO: Custom formatter
-      },
-      {
-        accessor: 'creation_date',
-        title: t`Created`,
-        switchable: true
-        // TODO: Custom formatter
-      },
-      {
-        accessor: 'target_date',
-        title: t`Target Date`,
-        switchable: true
-        // TODO: Custom formatter
-      },
-      {
-        accessor: 'line_items',
-        title: t`Line Items`,
-        sortable: true,
-        switchable: true
-      }
-      // TODO: total_price
-      // TODO: responsible
+      LineItemsProgressColumn(),
+      StatusColumn(ModelType.purchaseorder),
+      ProjectCodeColumn(),
+      CreationDateColumn(),
+      TargetDateColumn(),
+      TotalPriceColumn(),
+      ResponsibleColumn()
     ];
   }, []);
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.purchase_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {
           ...params,
           supplier_detail: true
+        },
+        customFilters: tableFilters,
+        onRowClick: (row: any) => {
+          if (row.pk) {
+            navigate(`/purchasing/purchase-order/${row.pk}`);
+          }
         }
       }}
     />

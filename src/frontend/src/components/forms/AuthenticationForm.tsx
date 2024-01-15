@@ -89,7 +89,7 @@ export function AuthenticationForm() {
             <TextInput
               required
               label={t`Username`}
-              placeholder="reader"
+              placeholder={t`Your username`}
               {...classicForm.getInputProps('username')}
             />
             <PasswordInput
@@ -116,7 +116,7 @@ export function AuthenticationForm() {
               required
               label={t`Email`}
               description={t`We will send you a link to login - if you are registered`}
-              placeholder="reader@example.org"
+              placeholder="email@example.org"
               {...simpleForm.getInputProps('email')}
             />
           </Stack>

@@ -2,9 +2,13 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
+import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -13,7 +17,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function PartCategoryTable({ params = {} }: { params?: any }) {
   const navigate = useNavigate();
 
-  const { tableKey, refreshTable } = useTableRefresh('partcategory');
+  const table = useTable('partcategory');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -23,23 +27,39 @@ export function PartCategoryTable({ params = {} }: { params?: any }) {
         sortable: true,
         switchable: false
       },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        sortable: false,
-        switchable: true
-      },
+      DescriptionColumn(),
       {
         accessor: 'pathstring',
         title: t`Path`,
-        sortable: false,
-        switchable: true
+        sortable: false
+      },
+      {
+        accessor: 'structural',
+        title: t`Structural`,
+        sortable: true,
+        render: (record: any) => {
+          return <YesNoButton value={record.structural} />;
+        }
       },
       {
         accessor: 'part_count',
         title: t`Parts`,
-        sortable: true,
-        switchable: true
+        sortable: true
+      }
+    ];
+  }, []);
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'cascade',
+        label: t`Include Subcategories`,
+        description: t`Include subcategories in results`
+      },
+      {
+        name: 'structural',
+        label: t`Structural`,
+        description: t`Show structural categories`
       }
     ];
   }, []);
@@ -47,7 +67,7 @@ export function PartCategoryTable({ params = {} }: { params?: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.category_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,
@@ -55,6 +75,7 @@ export function PartCategoryTable({ params = {} }: { params?: any }) {
         params: {
           ...params
         },
+        customFilters: tableFilters,
         onRowClick: (record, index, event) => {
           navigate(`/part/category/${record.pk}`);
         }

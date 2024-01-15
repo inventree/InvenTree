@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         """Cleanup old (undefined) settings in the database."""
-        logger.info("Collecting settings")
+        logger.info('Collecting settings')
         from common.models import InvenTreeSetting, InvenTreeUserSetting
 
         # general settings
@@ -35,4 +35,4 @@ class Command(BaseCommand):
                 setting.delete()
                 logger.info("deleted user setting '%s'", setting.key)
 
-        logger.info("checked all settings")
+        logger.info('checked all settings')

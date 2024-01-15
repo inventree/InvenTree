@@ -55,9 +55,22 @@ The following basic options are available:
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
-| ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
+| INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface](https://docs.djangoproject.com/en/4.2/ref/contrib/admin/) | True |
+| INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
 | INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
+| INVENTREE_AUTO_UPDATE | auto_update | Database migrations will be run automatically | False |
+
+### Admin Site
+
+Django provides a powerful [administrator interface](https://docs.djangoproject.com/en/4.2/ref/contrib/admin/) which can be used to manage the InvenTree database. This interface is enabled by default, but can be disabled by setting `INVENTREE_ADMIN_ENABLED` to `False`.
+
+#### Custom Admin URL
+
+By default, the admin interface is available at the `/admin/` URL. This can be changed by setting the `INVENTREE_ADMIN_URL` environment variable.
+
+!!! warning "Security"
+    Changing the admin URL is a simple way to improve security, but it is not a substitute for proper security practices.
 
 ### Base URL Configuration
 
@@ -75,7 +88,10 @@ An administrator account can be specified using the following environment variab
 | --- | --- | --- | --- |
 | INVENTREE_ADMIN_USER | admin_user | Admin account username | *Not specified* |
 | INVENTREE_ADMIN_PASSWORD | admin_password | Admin account password | *Not specified* |
+| INVENTREE_ADMIN_PASSWORD_FILE | admin_password_file | Admin account password file | *Not specified* |
 | INVENTREE_ADMIN_EMAIL | admin_email |Admin account email address | *Not specified* |
+
+You can either specify the password directly using `INVENTREE_ADMIN_PASSWORD`, or you can specify a file containing the password using `INVENTREE_ADMIN_PASSWORD_FILE` (this is useful for nix users).
 
 !!! info "Administrator Account"
     Providing `INVENTREE_ADMIN` credentials will result in the provided account being created with *superuser* permissions when InvenTree is started.

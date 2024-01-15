@@ -5,18 +5,17 @@ import {
   IconListDetails,
   IconSitemap
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { api } from '../../App';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
 import { PartListTable } from '../../components/tables/part/PartTable';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths } from '../../states/ApiState';
 
 /**
  * Detail view for a single PartCategory instance.
@@ -25,6 +24,8 @@ import { ApiPaths } from '../../states/ApiState';
  */
 export default function CategoryDetail({}: {}) {
   const { id } = useParams();
+
+  const [treeOpen, setTreeOpen] = useState(false);
 
   const {
     instance: category,
@@ -48,7 +49,7 @@ export default function CategoryDetail({}: {}) {
           <PartListTable
             props={{
               params: {
-                category: category.pk ?? null
+                category: id
               }
             }}
           />
@@ -61,7 +62,7 @@ export default function CategoryDetail({}: {}) {
         content: (
           <PartCategoryTable
             params={{
-              parent: category.pk ?? null
+              parent: id
             }}
           />
         )
@@ -90,10 +91,20 @@ export default function CategoryDetail({}: {}) {
   return (
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isFetching} />
+      <PartCategoryTree
+        opened={treeOpen}
+        onClose={() => {
+          setTreeOpen(false);
+        }}
+        selectedCategory={category?.pk}
+      />
       <PageDetail
         title={t`Part Category`}
         detail={<Text>{category.name ?? 'Top level'}</Text>}
         breadcrumbs={breadcrumbs}
+        breadcrumbAction={() => {
+          setTreeOpen(true);
+        }}
       />
       <PanelGroup pageKey="partcategory" panels={categoryPanels} />
     </Stack>

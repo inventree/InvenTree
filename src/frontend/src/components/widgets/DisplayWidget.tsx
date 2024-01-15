@@ -21,7 +21,7 @@ export default function DisplayWidget() {
           <Trans>Language</Trans>
         </div>
         <div>
-          <LanguageSelect />
+          <LanguageSelect width={140} />
         </div>
       </SimpleGrid>
     </span>

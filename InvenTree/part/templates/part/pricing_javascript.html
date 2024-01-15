@@ -19,6 +19,25 @@ $('#part-pricing-refresh').click(function() {
     );
 });
 
+$('#part-pricing-edit').click(function() {
+    constructForm('{% url "api-part-pricing" part.pk %}', {
+        title: '{% trans "Update Pricing" %}',
+        fields: {
+            override_min: {},
+            override_min_currency: {},
+            override_max: {},
+            override_max_currency: {},
+            update: {
+                hidden: true,
+                value: true,
+            }
+        },
+        onSuccess: function(response) {
+            location.reload();
+        }
+    });
+});
+
 // Internal Pricebreaks
 {% if show_internal_price and roles.sales_order.view %}
 initPriceBreakSet($('#internal-price-break-table'), {

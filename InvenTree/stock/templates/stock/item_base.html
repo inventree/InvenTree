@@ -25,10 +25,9 @@
 
 {% block actions %}
 
-{% if user.is_staff and roles.stock.change %}
-{% url 'admin:stock_stockitem_change' item.pk as url %}
+{% admin_url user "stock.stockitem" item.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
+
 {% mixin_available "locate" as locate_available %}
 {% if plugins_enabled and locate_available %}
 <button id='locate-item-button' title='{% trans "Locate stock item" %}' class='btn btn-outline-secondary' typy='button'>
