@@ -22,12 +22,23 @@ export default function PendingTasksTable() {
       },
       {
         accessor: 'name',
-        title: t`Name`
+        title: t`Name`,
+        switchable: true
       },
       {
         accessor: 'lock',
         title: t`Created`,
         sortable: true
+      },
+      {
+        accessor: 'args',
+        title: t`Arguments`,
+        switchable: true
+      },
+      {
+        accessor: 'kwargs',
+        title: t`Keywords`,
+        switchable: true
       }
     ];
   }, []);
@@ -37,7 +48,10 @@ export default function PendingTasksTable() {
       url={apiUrl(ApiPaths.task_pending_list)}
       tableState={table}
       columns={columns}
-      props={{}}
+      props={{
+        enableBulkDelete: true,
+        enableSelection: true
+      }}
     />
   );
 }

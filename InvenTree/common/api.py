@@ -531,7 +531,7 @@ class BackgroundTaskOverview(APIView):
         return Response(serializer.data)
 
 
-class PendingTaskList(ListAPI):
+class PendingTaskList(BulkDeleteMixin, ListAPI):
     """Provides a read-only list of currently pending tasks."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
