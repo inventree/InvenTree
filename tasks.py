@@ -58,24 +58,29 @@ def apps():
     ]
 
 
-def content_excludes():
-    """Returns a list of content types to exclude from import/export."""
+def content_excludes(allow_tokens: bool = False):
+    """Returns a list of content types to exclude from import/export.
+
+    Arguments:
+        allow_tokens (bool): Allow tokens to be exported/importe (default = False)
+    """
     excludes = [
         'contenttypes',
         'auth.permission',
-        'users.apitoken',
         'error_report.error',
         'admin.logentry',
         'django_q.schedule',
         'django_q.task',
         'django_q.ormq',
-        'users.owner',
         'exchange.rate',
         'exchange.exchangebackend',
         'common.notificationentry',
         'common.notificationmessage',
         'user_sessions.session',
     ]
+
+    if not allow_tokens:
+        excludes.append('users.apitoken')
 
     output = ''
 
@@ -399,8 +404,9 @@ def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = Fal
 @task(
     help={
         'filename': "Output filename (default = 'data.json')",
-        'overwrite': 'Overwrite existing files without asking first (default = off/False)',
-        'include_permissions': 'Include user and group permissions in the output file (filename) (default = off/False)',
+        'overwrite': 'Overwrite existing files without asking first (default = False)',
+        'include_permissions': 'Include user and group permissions in the output file (filename) (default = False)',
+        'include_tokens': 'Include API tokens in the output file (filename) (default = False)',
         'delete_temp': 'Delete temporary files (containing permissions) at end of run. Note that this will delete temporary files from previous runs as well. (default = off/False)',
     }
 )
@@ -409,6 +415,7 @@ def export_records(
     filename='data.json',
     overwrite=False,
     include_permissions=False,
+    include_tokens=False,
     delete_temp=False,
 ):
     """Export all database records to a file.
@@ -438,7 +445,9 @@ def export_records(
 
     tmpfile = f'{filename}.tmp'
 
-    cmd = f"dumpdata --indent 2 --output '{tmpfile}' {content_excludes()}"
+    excludes = content_excludes(allow_tokens=include_tokens)
+
+    cmd = f"dumpdata --indent 2 --output '{tmpfile}' {excludes}"
 
     # Dump data to temporary file
     manage(c, cmd, pty=True)
