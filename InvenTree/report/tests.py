@@ -283,24 +283,25 @@ class ReportTest(InvenTreeAPITestCase):
         url = reverse(self.list_url)
 
         # Create a new report
+        # Django REST API "APITestCase" does not work like requests - to send a file without it existing on disk,
+        # create it as a StringIO object, and upload it under parameter template
+        from io import StringIO
+
+        filestr = StringIO(
+            '{% extends "label/report_base.html" %}<pre>TEST REPORT</pre>{% endblock content %}'
+        )
+        filestr.name = 'ExampleTemplate.html'
+
         response = self.post(
             url,
             data={
                 'name': 'New report',
                 'description': 'A fancy new report created through API test',
+                'template': filestr,
             },
-            files={
-                'template': (
-                    'ExampleTemplate.html',
-                    '{% extends "label/report_base.html" %}<pre>TEST REPORT</pre>{% endblock content %}',
-                )
-            },
+            format=None,
+            expected_code=200,
         )
-
-        # Show response
-        print(f'{response = }')
-        print(f'{response.status_code = }')
-        print(f'{response.data = }')
 
         # Make sure the expected keys are in the response
         self.assertIn('pk', response.data)
@@ -312,7 +313,7 @@ class ReportTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['name'], 'New report')
         self.assertEqual(
-            response.data['name'], 'A fancy new report created through API test'
+            response.data['description'], 'A fancy new report created through API test'
         )
         self.assertTrue(response.data['template'].endswith('ExampleTemplate.html'))
 
