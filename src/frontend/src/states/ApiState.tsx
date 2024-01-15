@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { api } from '../App';
 import { StatusCodeListInterface } from '../components/render/StatusRenderer';
@@ -9,13 +9,13 @@ import { ApiPaths } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { ServerAPIProps } from './states';
 
-type StatusLookup = Record<ModelType, StatusCodeListInterface>;
+type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
 interface ServerApiStateProps {
   server: ServerAPIProps;
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
-  status: StatusLookup | undefined;
+  status?: StatusLookup;
 }
 
 export const useServerApiState = create<ServerApiStateProps>()(
@@ -35,7 +35,8 @@ export const useServerApiState = create<ServerApiStateProps>()(
         await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
           const newStatusLookup: StatusLookup = {} as StatusLookup;
           for (const key in response.data) {
-            newStatusLookup[statusCodeList[key]] = response.data[key].values;
+            newStatusLookup[statusCodeList[key] || key] =
+              response.data[key].values;
           }
           set({ status: newStatusLookup });
         });
@@ -44,7 +45,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
     }),
     {
       name: 'server-api-state',
-      getStorage: () => sessionStorage
+      storage: createJSONStorage(() => sessionStorage)
     }
   )
 );
@@ -85,15 +86,15 @@ export function apiEndpoint(path: ApiPaths): string {
     case ApiPaths.user_sso:
       return 'auth/social/';
     case ApiPaths.user_sso_remove:
-      return 'auth/social/$id/disconnect/';
+      return 'auth/social/:id/disconnect/';
     case ApiPaths.user_emails:
       return 'auth/emails/';
     case ApiPaths.user_email_remove:
-      return 'auth/emails/$id/remove/';
+      return 'auth/emails/:id/remove/';
     case ApiPaths.user_email_verify:
-      return 'auth/emails/$id/verify/';
+      return 'auth/emails/:id/verify/';
     case ApiPaths.user_email_primary:
-      return 'auth/emails/$id/primary/';
+      return 'auth/emails/:id/primary/';
     case ApiPaths.currency_list:
       return 'currency/exchange/';
     case ApiPaths.currency_refresh:
@@ -116,8 +117,6 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'version/';
     case ApiPaths.sso_providers:
       return 'auth/providers/';
-    case ApiPaths.user_list:
-      return 'user/';
     case ApiPaths.group_list:
       return 'user/group/';
     case ApiPaths.owner_list:
@@ -182,6 +181,16 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'order/ro/attachment/';
     case ApiPaths.plugin_list:
       return 'plugins/';
+    case ApiPaths.plugin_setting_list:
+      return 'plugins/:plugin/settings/';
+    case ApiPaths.plugin_registry_status:
+      return 'plugins/status/';
+    case ApiPaths.plugin_install:
+      return 'plugins/install/';
+    case ApiPaths.plugin_reload:
+      return 'plugins/reload/';
+    case ApiPaths.error_report_list:
+      return 'error-report/';
     case ApiPaths.project_code_list:
       return 'project-code/';
     case ApiPaths.custom_unit_list:
@@ -191,11 +200,20 @@ export function apiEndpoint(path: ApiPaths): string {
   }
 }
 
+export type PathParams = Record<string, string | number>;
+
 /**
  * Construct an API URL with an endpoint and (optional) pk value
  */
-export function apiUrl(path: ApiPaths, pk?: any): string {
-  let _url = apiEndpoint(path);
+export function apiUrl(
+  path: ApiPaths | string,
+  pk?: any,
+  pathParams?: PathParams
+): string {
+  let _url = path;
+  if (Object.values(ApiPaths).includes(path as ApiPaths)) {
+    _url = apiEndpoint(path as ApiPaths);
+  }
 
   // If the URL does not start with a '/', add the API prefix
   if (!_url.startsWith('/')) {
@@ -204,6 +222,12 @@ export function apiUrl(path: ApiPaths, pk?: any): string {
 
   if (_url && pk) {
     _url += `${pk}/`;
+  }
+
+  if (_url && pathParams) {
+    for (const key in pathParams) {
+      _url = _url.replace(`:${key}`, `${pathParams[key]}`);
+    }
   }
 
   return _url;

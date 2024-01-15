@@ -1,8 +1,10 @@
 import { Stack, Text } from '@mantine/core';
-import { useEffect } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { useStore } from 'zustand';
 
 import {
   SettingsStateProps,
+  createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
@@ -16,29 +18,39 @@ export function SettingList({
   keys
 }: {
   settingsState: SettingsStateProps;
-  keys: string[];
+  keys?: string[];
 }) {
   useEffect(() => {
     settingsState.fetchSettings();
   }, []);
 
+  const allKeys = useMemo(
+    () => settingsState?.settings?.map((s) => s.key),
+    [settingsState?.settings]
+  );
+
   return (
     <>
       <Stack spacing="xs">
-        {keys.map((key) => {
+        {(keys || allKeys).map((key, i) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key
           );
+
           return (
-            <div key={key}>
+            <React.Fragment key={key}>
               {setting ? (
-                <SettingItem settingsState={settingsState} setting={setting} />
+                <SettingItem
+                  settingsState={settingsState}
+                  setting={setting}
+                  shaded={i % 2 === 0}
+                />
               ) : (
                 <Text size="sm" italic color="red">
                   Setting {key} not found
                 </Text>
               )}
-            </div>
+            </React.Fragment>
           );
         })}
       </Stack>
@@ -56,4 +68,13 @@ export function GlobalSettingList({ keys }: { keys: string[] }) {
   const globalSettings = useGlobalSettingsState();
 
   return <SettingList settingsState={globalSettings} keys={keys} />;
+}
+
+export function PluginSettingList({ pluginPk }: { pluginPk: string }) {
+  const pluginSettingsStore = useRef(
+    createPluginSettingsState({ plugin: pluginPk })
+  ).current;
+  const pluginSettings = useStore(pluginSettingsStore);
+
+  return <SettingList settingsState={pluginSettings} />;
 }

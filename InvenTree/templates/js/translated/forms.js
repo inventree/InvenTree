@@ -486,7 +486,15 @@ function extractNestedField(field_name, fields) {
  */
 function constructFormBody(fields, options) {
 
-    var html = '';
+    let html = '';
+
+    // Client must provide set of fields to be displayed,
+    // otherwise *all* fields will be displayed
+    const displayed_fields = options.fields || fields || {};
+
+    if(!options.fields) {
+        options.fields = displayed_fields;
+    }
 
     // add additional content as a header on top (provided as html by the caller)
     if (options.header_html) {
@@ -495,7 +503,9 @@ function constructFormBody(fields, options) {
 
     // process every field by recursively walking down nested fields
     const processField = (name, field, optionsField) => {
-        if (field.type === "nested object") {
+        if (typeof optionsField !== "object") return;
+
+        if (field.type === "nested object" && optionsField.children) {
             for (const [k, v] of Object.entries(field.children)) {
                 processField(`${name}__${k}`, v, optionsField.children[k]);
             }
@@ -514,12 +524,10 @@ function constructFormBody(fields, options) {
     }
 
     for (const [k,v] of Object.entries(fields)) {
-        processField(k, v, options.fields[k]);
+        if (options.fields && k in options.fields) {
+            processField(k, v, options.fields[k]);
+        }
     }
-
-    // Client must provide set of fields to be displayed,
-    // otherwise *all* fields will be displayed
-    var displayed_fields = options.fields || fields;
 
     // Override default option values if a 'DELETE' form is specified
     if (options.method == 'DELETE') {

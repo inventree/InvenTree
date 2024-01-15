@@ -1,27 +1,24 @@
-import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { useCallback, useMemo, useState } from 'react';
+import { Trans, t } from '@lingui/macro';
+import { Alert, List, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
-import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
+import { useInstance } from '../../../hooks/UseInstance';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
+import { EditApiForm } from '../../forms/ApiForm';
+import { DetailDrawer } from '../../nav/DetailDrawer';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
-import { UserDrawer } from './UserDrawer';
-
-interface GroupDetailI {
-  pk: number;
-  name: string;
-}
+import { GroupDetailI } from './GroupTable';
 
 export interface UserDetailI {
   pk: number;
@@ -35,13 +32,122 @@ export interface UserDetailI {
   is_superuser: boolean;
 }
 
+export function UserDrawer({
+  id,
+  refreshTable
+}: {
+  id: string;
+  refreshTable: () => void;
+}) {
+  const {
+    instance: userDetail,
+    refreshInstance,
+    instanceQuery: { isFetching, error }
+  } = useInstance<UserDetailI>({
+    endpoint: ApiPaths.user_list,
+    pk: id,
+    throwError: true
+  });
+
+  const currentUserPk = useUserState((s) => s.user?.pk);
+  const isCurrentUser = useMemo(
+    () => currentUserPk === parseInt(id, 10),
+    [currentUserPk, id]
+  );
+
+  if (isFetching) {
+    return <LoadingOverlay visible={true} />;
+  }
+
+  if (error) {
+    return (
+      <Text>
+        {(error as any)?.response?.status === 404 ? (
+          <Trans>User with id {id} not found</Trans>
+        ) : (
+          <Trans>An error occurred while fetching user details</Trans>
+        )}
+      </Text>
+    );
+  }
+
+  return (
+    <Stack>
+      <EditApiForm
+        props={{
+          url: ApiPaths.user_list,
+          pk: id,
+          fields: {
+            username: {},
+            first_name: {},
+            last_name: {},
+            email: {},
+            is_active: {
+              label: t`Is Active`,
+              description: t`Designates whether this user should be treated as active. Unselect this instead of deleting accounts.`,
+              disabled: isCurrentUser
+            },
+            is_staff: {
+              label: t`Is Staff`,
+              description: t`Designates whether the user can log into the django admin site.`,
+              disabled: isCurrentUser
+            },
+            is_superuser: {
+              label: t`Is Superuser`,
+              description: t`Designates that this user has all permissions without explicitly assigning them.`,
+              disabled: isCurrentUser
+            }
+          },
+          postFormContent: isCurrentUser ? (
+            <Alert
+              title={<Trans>Info</Trans>}
+              color="blue"
+              icon={<IconInfoCircle />}
+            >
+              <Trans>
+                You cannot edit the rights for the currently logged-in user.
+              </Trans>
+            </Alert>
+          ) : undefined,
+          onFormSuccess: () => {
+            refreshTable();
+            refreshInstance();
+          }
+        }}
+        id={`user-detail-drawer-${id}`}
+      />
+
+      <Title order={5}>
+        <Trans>Groups</Trans>
+      </Title>
+      <Text ml={'md'}>
+        {userDetail?.groups && userDetail?.groups?.length > 0 ? (
+          <List>
+            {userDetail?.groups?.map((group) => (
+              <List.Item key={group.pk}>
+                <Link to={`../group-${group.pk}`}>{group.name}</Link>
+              </List.Item>
+            ))}
+          </List>
+        ) : (
+          <Trans>No groups</Trans>
+        )}
+      </Text>
+    </Stack>
+  );
+}
+
 /**
  * Table for displaying list of users
  */
 export function UserTable() {
-  const { tableKey, refreshTable } = useTableRefresh('users');
-  const [opened, { open, close }] = useDisclosure(false);
-  const [userDetail, setUserDetail] = useState<UserDetailI>();
+  const table = useTable('users');
+  const navigate = useNavigate();
+
+  const openDetailDrawer = useCallback(
+    (pk: number) => navigate(`user-${pk}/`),
+    []
+  );
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -93,20 +199,7 @@ export function UserTable() {
   const rowActions = useCallback((record: UserDetailI): RowAction[] => {
     return [
       RowEditAction({
-        onClick: () => {
-          openEditApiForm({
-            url: ApiPaths.user_list,
-            pk: record.pk,
-            title: t`Edit user`,
-            fields: {
-              email: {},
-              first_name: {},
-              last_name: {}
-            },
-            onFormSuccess: refreshTable,
-            successMessage: t`User updated`
-          });
-        }
+        onClick: () => openDetailDrawer(record.pk)
       }),
       RowDeleteAction({
         onClick: () => {
@@ -114,11 +207,9 @@ export function UserTable() {
             url: ApiPaths.user_list,
             pk: record.pk,
             title: t`Delete user`,
-            successMessage: t`user deleted`,
-            onFormSuccess: refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to delete this user?`}</Text>
-            )
+            successMessage: t`User deleted`,
+            onFormSuccess: table.refreshTable,
+            preFormWarning: t`Are you sure you want to delete this user?`
           });
         }
       })
@@ -135,7 +226,7 @@ export function UserTable() {
         first_name: {},
         last_name: {}
       },
-      onFormSuccess: refreshTable,
+      onFormSuccess: table.refreshTable,
       successMessage: t`Added user`
     });
   }, []);
@@ -152,23 +243,26 @@ export function UserTable() {
 
   return (
     <>
-      <UserDrawer
-        opened={opened}
-        close={close}
-        refreshTable={refreshTable}
-        userDetail={userDetail}
+      <DetailDrawer
+        title={t`Edit user`}
+        renderContent={(id) => {
+          if (!id || !id.startsWith('user-')) return false;
+          return (
+            <UserDrawer
+              id={id.replace('user-', '')}
+              refreshTable={table.refreshTable}
+            />
+          );
+        }}
       />
       <InvenTreeTable
         url={apiUrl(ApiPaths.user_list)}
-        tableKey={tableKey}
+        tableState={table}
         columns={columns}
         props={{
           rowActions: rowActions,
           customActionGroups: tableActions,
-          onRowClick: (record: any) => {
-            setUserDetail(record);
-            open();
-          }
+          onRowClick: (record) => openDetailDrawer(record.pk)
         }}
       />
     </>

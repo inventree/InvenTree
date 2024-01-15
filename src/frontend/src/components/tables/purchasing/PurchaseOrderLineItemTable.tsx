@@ -8,7 +8,7 @@ import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
 import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
@@ -39,9 +39,7 @@ export function PurchaseOrderLineItemTable({
   orderId: number;
   params?: any;
 }) {
-  const { tableKey, refreshTable } = useTableRefresh(
-    'purchase-order-line-item'
-  );
+  const table = useTable('purchase-order-line-item');
 
   const user = useUserState();
 
@@ -75,7 +73,7 @@ export function PurchaseOrderLineItemTable({
               pk: record.pk,
               title: t`Edit Line Item`,
               fields: fields,
-              onFormSuccess: refreshTable,
+              onFormSuccess: table.refreshTable,
               successMessage: t`Line item updated`
             });
           }
@@ -226,7 +224,7 @@ export function PurchaseOrderLineItemTable({
         create: true,
         orderId: orderId
       }),
-      onFormSuccess: refreshTable,
+      onFormSuccess: table.refreshTable,
       successMessage: t`Line item added`
     });
   }, [orderId]);
@@ -251,7 +249,7 @@ export function PurchaseOrderLineItemTable({
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.purchase_order_line_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableSelection: true,

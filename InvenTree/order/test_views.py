@@ -1,4 +1,4 @@
-"""Unit tests for Order views (see views.py)"""
+"""Unit tests for Order views (see views.py)."""
 
 from django.urls import reverse
 
@@ -6,7 +6,8 @@ from InvenTree.unit_test import InvenTreeTestCase
 
 
 class OrderViewTestCase(InvenTreeTestCase):
-    """Base unit test class for order views"""
+    """Base unit test class for order views."""
+
     fixtures = [
         'category',
         'part',
@@ -34,9 +35,10 @@ class OrderViewTestCase(InvenTreeTestCase):
 
 
 class PurchaseOrderListTest(OrderViewTestCase):
-    """Unit tests for the PurchaseOrder index page"""
+    """Unit tests for the PurchaseOrder index page."""
+
     def test_order_list(self):
-        """Tests for the PurchaseOrder index page"""
+        """Tests for the PurchaseOrder index page."""
         response = self.client.get(reverse('purchase-order-index'))
 
         self.assertEqual(response.status_code, 200)
@@ -54,35 +56,37 @@ class PurchaseOrderTests(OrderViewTestCase):
 
     def test_po_export(self):
         """Export PurchaseOrder."""
-        response = self.client.get(reverse('po-export', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(
+            reverse('po-export', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
 
         # Response should be streaming-content (file download)
         self.assertIn('streaming_content', dir(response))
 
 
 class SalesOrderViews(OrderViewTestCase):
-    """Unit tests for the SalesOrder pages"""
+    """Unit tests for the SalesOrder pages."""
 
     def test_index(self):
-        """Test the SalesOrder index page"""
+        """Test the SalesOrder index page."""
         response = self.client.get(reverse('sales-order-index'))
         self.assertEqual(response.status_code, 200)
 
     def test_detail(self):
-        """Test SalesOrder detail view"""
+        """Test SalesOrder detail view."""
         response = self.client.get(reverse('so-detail', args=(1,)))
         self.assertEqual(response.status_code, 200)
 
 
 class ReturnOrderVIews(OrderViewTestCase):
-    """Unit tests for the ReturnOrder pages"""
+    """Unit tests for the ReturnOrder pages."""
 
     def test_index(self):
-        """Test the ReturnOrder index page"""
+        """Test the ReturnOrder index page."""
         response = self.client.get(reverse('return-order-index'))
         self.assertEqual(response.status_code, 200)
 
     def test_detail(self):
-        """Test ReturnOrder detail view"""
+        """Test ReturnOrder detail view."""
         response = self.client.get(reverse('return-order-detail', args=(1,)))
         self.assertEqual(response.status_code, 200)

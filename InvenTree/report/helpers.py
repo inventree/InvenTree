@@ -1,5 +1,7 @@
 """Helper functions for report generation."""
 
+import base64
+import io
 import logging
 
 from django.utils.translation import gettext_lazy as _
@@ -28,7 +30,7 @@ def page_sizes():
 
 
 def page_size(page_code):
-    """Return the page size associated with a particular page code"""
+    """Return the page size associated with a particular page code."""
     if page_code in page_sizes():
         return page_sizes()[page_code]
 
@@ -44,7 +46,27 @@ def report_page_size_default():
     try:
         page_size = InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4')
     except Exception as exc:
-        logger.exception("Error getting default page size: %s", str(exc))
+        logger.exception('Error getting default page size: %s', str(exc))
         page_size = 'A4'
 
     return page_size
+
+
+def encode_image_base64(image, format: str = 'PNG'):
+    """Return a base-64 encoded image which can be rendered in an <img> tag.
+
+    Arguments:
+        image: {Image} -- Image to encode
+        format: {str} -- Image format (default = 'PNG')
+
+    Returns:
+        str -- Base64 encoded image data e.g. 'data:image/png;base64,xxxxxxxxx'
+    """
+    fmt = format.lower()
+
+    buffered = io.BytesIO()
+    image.save(buffered, fmt)
+
+    img_str = base64.b64encode(buffered.getvalue())
+
+    return f'data:image/{fmt};charset=utf-8;base64,' + img_str.decode()

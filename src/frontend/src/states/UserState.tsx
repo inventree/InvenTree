@@ -42,6 +42,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       })
       .then((response) => {
         const user: UserProps = {
+          pk: response.data.pk,
           first_name: response.data?.first_name ?? '',
           last_name: response.data?.last_name ?? '',
           email: response.data.email,
@@ -82,8 +83,9 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     if (user?.is_superuser) return true;
     if (user?.roles === undefined) return false;
     if (user?.roles[role] === undefined) return false;
+    if (user?.roles[role] === null) return false;
 
-    return user?.roles[role].includes(permission);
+    return user?.roles[role]?.includes(permission) ?? false;
   },
   hasDeleteRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.delete);

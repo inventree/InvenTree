@@ -78,6 +78,7 @@ nav:
       - Getting started: develop/starting.md
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
+      - Platform UI: develop/react-frontend.md
     - Credits: credits.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
@@ -173,6 +174,7 @@ nav:
     - Parts: app/part.md
     - Stock: app/stock.md
     - Purchase Orders: app/po.md
+    - Sales Orders: app/so.md
     - Settings: app/settings.md
     - Privacy: app/privacy.md
     - Translation: app/translation.md

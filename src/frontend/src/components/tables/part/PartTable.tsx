@@ -3,9 +3,10 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { formatPriceRange } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { shortenString } from '../../../functions/tables';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
@@ -136,7 +137,7 @@ function partTableColumns(): TableColumn[] {
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left">
+              <Group spacing="xs" position="left" noWrap>
                 <Text color={color}>{text}</Text>
                 {record.units && (
                   <Text size="xs" color={color}>
@@ -155,11 +156,8 @@ function partTableColumns(): TableColumn[] {
       accessor: 'price_range',
       title: t`Price Range`,
       sortable: false,
-
-      render: function (record: any) {
-        // TODO: Render price range
-        return '-- price --';
-      }
+      render: (record: any) =>
+        formatPriceRange(record.pricing_min, record.pricing_max)
     },
     LinkColumn()
   ];
@@ -265,14 +263,14 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
   const tableColumns = useMemo(() => partTableColumns(), []);
   const tableFilters = useMemo(() => partTableFilters(), []);
 
-  const { tableKey, refreshTable } = useTableRefresh('part');
+  const table = useTable('part-list');
 
   const navigate = useNavigate();
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.part_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         ...props,

@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { IconPackages } from '@tabler/icons-react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ApiPaths } from '../enums/ApiEndpoints';
@@ -35,7 +36,11 @@ export function partFields({
     },
     default_expiry: {},
     minimum_stock: {},
-    responsible: {},
+    responsible: {
+      filters: {
+        is_active: true
+      }
+    },
     component: {},
     assembly: {},
     is_template: {},
@@ -50,8 +55,36 @@ export function partFields({
     // TODO: Set the value of the category field
   }
 
+  // Additional fields for creation
   if (!editing) {
     // TODO: Hide 'active' field
+
+    fields.copy_category_parameters = {};
+
+    fields.initial_stock = {
+      icon: <IconPackages />,
+      children: {
+        quantity: {},
+        location: {}
+      }
+    };
+
+    fields.initial_supplier = {
+      children: {
+        supplier: {
+          filters: {
+            is_supplier: true
+          }
+        },
+        sku: {},
+        manufacturer: {
+          filters: {
+            is_manufacturer: true
+          }
+        },
+        mpn: {}
+      }
+    };
   }
 
   // TODO: pop 'expiry' field if expiry not enabled

@@ -1,4 +1,4 @@
-"""Custom template loader for InvenTree"""
+"""Custom template loader for InvenTree."""
 
 import os
 
@@ -8,7 +8,7 @@ from django.template.loaders.cached import Loader as CachedLoader
 
 
 class InvenTreeTemplateLoader(CachedLoader):
-    """Custom template loader which bypasses cache for PDF export"""
+    """Custom template loader which bypasses cache for PDF export."""
 
     def get_template(self, template_name, skip=None):
         """Return a template object for the given template name.

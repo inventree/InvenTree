@@ -13,9 +13,7 @@ from stock.models import StockItem, StockLocation
 class LocatePluginView(APIView):
     """Endpoint for using a custom plugin to identify or 'locate' a stock item or location."""
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         """Check inputs and offload the task to the plugin."""
@@ -29,7 +27,9 @@ class LocatePluginView(APIView):
         plugins = registry.with_mixin('locate')
 
         if plugin not in [p.slug for p in plugins]:
-            raise ParseError(f"Plugin '{plugin}' is not installed, or does not support the location mixin")
+            raise ParseError(
+                f"Plugin '{plugin}' is not installed, or does not support the location mixin"
+            )
 
         # StockItem to identify
         item_pk = request.data.get('item', None)
@@ -37,17 +37,16 @@ class LocatePluginView(APIView):
         # StockLocation to identify
         location_pk = request.data.get('location', None)
 
-        data = {
-            "success": "Identification plugin activated",
-            "plugin": plugin,
-        }
+        data = {'success': 'Identification plugin activated', 'plugin': plugin}
 
         # StockItem takes priority
         if item_pk:
             try:
                 StockItem.objects.get(pk=item_pk)
 
-                offload_task(registry.call_plugin_function, plugin, 'locate_stock_item', item_pk)
+                offload_task(
+                    registry.call_plugin_function, plugin, 'locate_stock_item', item_pk
+                )
 
                 data['item'] = item_pk
 
@@ -60,7 +59,12 @@ class LocatePluginView(APIView):
             try:
                 StockLocation.objects.get(pk=location_pk)
 
-                offload_task(registry.call_plugin_function, plugin, 'locate_stock_location', location_pk)
+                offload_task(
+                    registry.call_plugin_function,
+                    plugin,
+                    'locate_stock_location',
+                    location_pk,
+                )
 
                 data['location'] = location_pk
 

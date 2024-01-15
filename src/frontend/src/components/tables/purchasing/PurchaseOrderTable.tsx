@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import {
@@ -17,6 +17,13 @@ import {
   TargetDateColumn,
   TotalPriceColumn
 } from '../ColumnRenderers';
+import {
+  AssignedToMeFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -25,9 +32,23 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function PurchaseOrderTable({ params }: { params?: any }) {
   const navigate = useNavigate();
 
-  const { tableKey } = useTableRefresh('purchase-order');
+  const table = useTable('purchase-order');
 
-  // TODO: Custom filters
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
+      },
+      OutstandingFilter(),
+      OverdueFilter(),
+      AssignedToMeFilter()
+      // TODO: has_project_code
+      // TODO: project_code
+    ];
+  }, []);
 
   // TODO: Row actions
 
@@ -76,13 +97,14 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.purchase_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {
           ...params,
           supplier_detail: true
         },
+        customFilters: tableFilters,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/purchasing/purchase-order/${row.pk}`);

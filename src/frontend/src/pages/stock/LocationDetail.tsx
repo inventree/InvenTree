@@ -38,7 +38,7 @@ export default function Stock() {
         content: (
           <StockItemTable
             params={{
-              location: location.pk ?? null
+              location: id
             }}
           />
         )
@@ -50,7 +50,7 @@ export default function Stock() {
         content: (
           <StockLocationTable
             params={{
-              parent: location.pk ?? null
+              parent: id
             }}
           />
         )

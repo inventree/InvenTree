@@ -36,7 +36,7 @@ import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiPaths } from '../../enums/ApiEndpoints';
-import { editStockItem } from '../../forms/StockForms';
+import { useEditStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -111,7 +111,7 @@ export default function StockDetail() {
           <AttachmentTable
             endpoint={ApiPaths.stock_attachment_list}
             model="stock_item"
-            pk={stockitem.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -121,7 +121,7 @@ export default function StockDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.stock_item_list, stockitem.pk)}
+            url={apiUrl(ApiPaths.stock_item_list, id)}
             data={stockitem.notes ?? ''}
             allowEdit={true}
           />
@@ -140,6 +140,11 @@ export default function StockDetail() {
     ],
     [stockitem]
   );
+
+  const editStockItem = useEditStockItem({
+    item_id: stockitem.pk,
+    callback: () => refreshInstance()
+  });
 
   const stockActions = useMemo(
     () => /* TODO: Disable actions based on user permissions*/ [
@@ -193,11 +198,7 @@ export default function StockDetail() {
           },
           EditItemAction({
             onClick: () => {
-              stockitem.pk &&
-                editStockItem({
-                  item_id: stockitem.pk,
-                  callback: () => refreshInstance
-                });
+              stockitem.pk && editStockItem.open();
             }
           }),
           DeleteItemAction({})
@@ -231,6 +232,7 @@ export default function StockDetail() {
         actions={stockActions}
       />
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
+      {editStockItem.modal}
     </Stack>
   );
 }

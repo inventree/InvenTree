@@ -1,5 +1,13 @@
 import { Trans } from '@lingui/macro';
-import { Badge, Button, Stack, Table, Title } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Divider,
+  Group,
+  Stack,
+  Table,
+  Title
+} from '@mantine/core';
 import { ContextModalProps } from '@mantine/modals';
 
 import { useServerApiState } from '../../states/ApiState';
@@ -13,6 +21,7 @@ export function ServerInfoModal({
 
   return (
     <Stack>
+      <Divider />
       <Title order={5}>
         <Trans>Server</Trans>
       </Title>
@@ -35,7 +44,7 @@ export function ServerInfoModal({
           {server.debug_mode && (
             <tr>
               <td>
-                <Trans>Bebug Mode</Trans>
+                <Trans>Debug Mode</Trans>
               </td>
               <td>
                 <Trans>Server is running in debug mode</Trans>
@@ -127,15 +136,17 @@ export function ServerInfoModal({
           </tr>
         </tbody>
       </Table>
-      <Button
-        color="red"
-        variant="outline"
-        onClick={() => {
-          context.closeModal(id);
-        }}
-      >
-        <Trans>Close modal</Trans>
-      </Button>
+      <Divider />
+      <Group position="right">
+        <Button
+          color="red"
+          onClick={() => {
+            context.closeModal(id);
+          }}
+        >
+          <Trans>Dismiss</Trans>
+        </Button>
+      </Group>
     </Stack>
   );
 }

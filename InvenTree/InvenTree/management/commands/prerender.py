@@ -13,7 +13,6 @@ from django.utils.translation import override as lang_over
 def render_file(file_name, source, target, locales, ctx):
     """Renders a file into all provided locales."""
     for locale in locales:
-
         # Enforce lower-case for locale names
         locale = locale.lower()
         locale = locale.replace('_', '-')
@@ -50,15 +49,19 @@ class Command(BaseCommand):
         # render!
         request = HttpRequest()
         ctx = {}
-        processors = tuple(import_string(path) for path in settings.STATFILES_I18_PROCESSORS)
+        processors = tuple(
+            import_string(path) for path in settings.STATFILES_I18_PROCESSORS
+        )
         for processor in processors:
             ctx.update(processor(request))
 
-        for file in os.listdir(SOURCE_DIR, ):
+        for file in os.listdir(SOURCE_DIR):
             path = os.path.join(SOURCE_DIR, file)
             if os.path.exists(path) and os.path.isfile(path):
-                print(f"render {file}")
+                print(f'render {file}')
                 render_file(file, SOURCE_DIR, TARGET_DIR, locales, ctx)
             else:
-                raise NotImplementedError('Using multi-level directories is not implemented at this point')  # TODO multilevel dir if needed
-        print(f"rendered all files in {SOURCE_DIR}")
+                raise NotImplementedError(
+                    'Using multi-level directories is not implemented at this point'
+                )  # TODO multilevel dir if needed
+        print(f'rendered all files in {SOURCE_DIR}')

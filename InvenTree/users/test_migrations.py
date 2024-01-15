@@ -12,23 +12,15 @@ class TestForwardMigrations(MigratorTestCase):
     migrate_to = ('users', unit_test.getNewestMigrationFile('users'))
 
     def prepare(self):
-        """Setup the initial state of the database before migrations"""
+        """Setup the initial state of the database before migrations."""
         User = self.old_state.apps.get_model('auth', 'user')
 
-        User.objects.create(
-            username='fred',
-            email='fred@fred.com',
-            password='password'
-        )
+        User.objects.create(username='fred', email='fred@fred.com', password='password')
 
-        User.objects.create(
-            username='brad',
-            email='brad@fred.com',
-            password='password'
-        )
+        User.objects.create(username='brad', email='brad@fred.com', password='password')
 
     def test_users_exist(self):
-        """Test that users exist in the database"""
+        """Test that users exist in the database."""
         User = self.new_state.apps.get_model('auth', 'user')
 
         self.assertEqual(User.objects.count(), 2)

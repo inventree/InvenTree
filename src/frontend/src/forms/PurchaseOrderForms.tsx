@@ -7,10 +7,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 
-import {
-  ApiFormData,
-  ApiFormFieldSet
-} from '../components/forms/fields/ApiFormField';
+import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
@@ -38,7 +35,7 @@ export function purchaseOrderLineItemFields({
         supplier_detail: true,
         supplier: supplierId
       },
-      adjustFilters: (filters: any, _form: ApiFormData) => {
+      adjustFilters: (filters: any) => {
         // TODO: Filter by the supplier associated with the order
         return filters;
       }

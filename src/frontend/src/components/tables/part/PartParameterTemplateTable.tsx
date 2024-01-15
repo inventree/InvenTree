@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -10,20 +9,40 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
+import { DescriptionColumn } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
-export function PartParameterTemplateTable() {
-  const { tableKey, refreshTable } = useTableRefresh(
-    'part-parameter-templates'
-  );
+export default function PartParameterTemplateTable() {
+  const table = useTable('part-parameter-templates');
 
   const user = useUserState();
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'checkbox',
+        label: t`Checkbox`,
+        description: t`Show checkbox templates`
+      },
+      {
+        name: 'has_choices',
+        label: t`Has choices`,
+        description: t`Show templates with choices`
+      },
+      {
+        name: 'has_units',
+        label: t`Has Units`,
+        description: t`Show templates with units`
+      }
+    ];
+  }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -38,11 +57,7 @@ export function PartParameterTemplateTable() {
         title: t`Units`,
         sortable: true
       },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        sortbale: false
-      },
+      DescriptionColumn(),
       {
         accessor: 'checkbox',
         title: t`Checkbox`
@@ -67,7 +82,7 @@ export function PartParameterTemplateTable() {
               title: t`Edit Parameter Template`,
               fields: partParameterTemplateFields(),
               successMessage: t`Parameter template updated`,
-              onFormSuccess: refreshTable
+              onFormSuccess: table.refreshTable
             });
           }
         }),
@@ -79,8 +94,8 @@ export function PartParameterTemplateTable() {
               pk: record.pk,
               title: t`Delete Parameter Template`,
               successMessage: t`Parameter template deleted`,
-              onFormSuccess: refreshTable,
-              preFormContent: <Text>{t`Remove parameter template`}</Text>
+              onFormSuccess: table.refreshTable,
+              preFormWarning: t`Are you sure you want to remove this parameter template?`
             });
           }
         })
@@ -95,7 +110,7 @@ export function PartParameterTemplateTable() {
       title: t`Create Parameter Template`,
       fields: partParameterTemplateFields(),
       successMessage: t`Parameter template created`,
-      onFormSuccess: refreshTable
+      onFormSuccess: table.refreshTable
     });
   }, []);
 
@@ -112,10 +127,11 @@ export function PartParameterTemplateTable() {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.part_parameter_template_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         rowActions: rowActions,
+        customFilters: tableFilters,
         customActionGroups: tableActions
       }}
     />

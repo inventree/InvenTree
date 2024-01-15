@@ -1,14 +1,11 @@
 # Dev requirements for InvenTree
 -c requirements.txt
-coverage                                # Unit test coverage
+coverage[toml]                          # Unit test coverage
 coveralls==2.1.2                        # Coveralls linking (for tracking coverage)  # PINNED 2022-06-28 - Old version needed for correct upload
-django-debug-toolbar                    # Debug / profiling toolbar
 django-slowtests                        # Show which unit tests are running slowly
 django-test-migrations                  # Unit testing for database migrations
-flake8                                  # PEP checking
-flake8-docstrings                       # docstring format testing
 isort                                   # python import sorting
-pep8-naming                             # PEP naming convention extension
 pip-tools                               # Compile pip requirements
 pre-commit                              # Git pre-commit
 setuptools                              # Standard dependency
+pdfminer.six                            # PDF validation

@@ -24,7 +24,12 @@ You need to make sure that you have the following tools installed before continu
    ```
 2. open vscode, navigate to the extensions sidebar and search for `ms-vscode-remote.remote-containers`. Click on install.
 3. open the cloned folder from above by clicking on `file > open folder`
-4. vscode should now ask you if you'd like to reopen this folder in a devcontainer. Click `Reopen in Container`. If it shouldn't ask you open the command palette (<kbd>CMD</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>) and search for `Reopen in Container`. This can take a few minutes until the image is downloaded, build and setup with all dependencies.
+4. vscode should now ask you if you'd like to reopen this folder in a devcontainer. Click `Reopen in Container`. If it does not ask you, open the command palette (<kbd>CTRL/CMD</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>) and search for `Reopen in Container`. This can take a few minutes until the image is downloaded, build and setup with all dependencies.
+5. Open a new terminal from the top menu by clicking `Terminal > New Terminal`
+6. The last line in your terminal should now show the text `(venv)` at the start of the line
+7. From here' we need to setup the InvenTree specific development environment
+8. From the newly opened terminal, run: `invoke install`
+9. If you want test data on your server, run: `invoke setup-test --dev`. If not, run `invoke setup-dev`
 
 ### Setup in codespaces
 
@@ -57,6 +62,10 @@ You can either only run InvenTree or use the integrated debugger for debugging. 
     Sometimes you need to debug also some 3rd party packages. Just select `python: Django - 3rd party`
 
 You can now set breakpoints and vscode will automatically pause execution if that point is hit. You can see all variables available in that context and evaluate some code with the debugger console at the bottom. Use the play or step buttons to continue execution.
+
+!!! info "React Frontend development"
+
+The React frontend requires additional steps to run. Refer to [Platform UI / React](./react-frontend.md)
 
 ### Plugin development
 
@@ -92,3 +101,11 @@ Make sure you have `gnupg` and `pinentry-mac` installed and set up correctly. Re
 
 #### Where are the database, media files, ... stored?
 Backups, Commandhistory, media/static files, venv, plugin.txt, secret_key.txt, ... are stored in the `dev` folder. If you want to start with a clean setup, you can remove that folder, but be aware that this will delete everything you already setup in InvenTree.
+
+### Performance Improvements
+
+If you are running a devcontainer in Windows, you may experience some performance issues - particularly related to file system operations.
+
+For a significant improvement in performance, the source code should be installed into the **WSL 2** filesystem (not on your "Windows" filesystem). This will greatly improve file access performance, and also make the devcontainer much more responsive to file system changes.
+
+You can also refer to the [Improve disk performance guide](https://code.visualstudio.com/remote/advancedcontainers/improve-performance) for more information.

@@ -24,10 +24,15 @@ from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as order_forms
 from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
-from .models import (PurchaseOrder, PurchaseOrderLineItem, ReturnOrder,
-                     SalesOrder, SalesOrderLineItem)
+from .models import (
+    PurchaseOrder,
+    PurchaseOrderLineItem,
+    ReturnOrder,
+    SalesOrder,
+    SalesOrderLineItem,
+)
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
@@ -45,14 +50,15 @@ class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
 
 
 class SalesOrderIndex(InvenTreeRoleMixin, ListView):
-    """SalesOrder index (list) view class"""
+    """SalesOrder index (list) view class."""
+
     model = SalesOrder
     template_name = 'order/sales_orders.html'
     context_object_name = 'orders'
 
 
 class ReturnOrderIndex(InvenTreeRoleMixin, ListView):
-    """ReturnOrder index (list) view"""
+    """ReturnOrder index (list) view."""
 
     model = ReturnOrder
     template_name = 'order/return_orders.html'
@@ -71,12 +77,14 @@ class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView)
     """Detail view for a SalesOrder object."""
 
     context_object_name = 'order'
-    queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
+    queryset = SalesOrder.objects.all().prefetch_related(
+        'lines__allocations__item__purchase_order'
+    )
     template_name = 'order/sales_order_detail.html'
 
 
 class ReturnOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """Detail view for a ReturnOrder object"""
+    """Detail view for a ReturnOrder object."""
 
     context_object_name = 'order'
     queryset = ReturnOrder.objects.all()
@@ -84,24 +92,16 @@ class ReturnOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView
 
 
 class PurchaseOrderUpload(FileManagementFormView):
-    """PurchaseOrder: Upload file, match to fields and parts (using multi-Step form)"""
+    """PurchaseOrder: Upload file, match to fields and parts (using multi-Step form)."""
 
     class OrderFileManager(FileManager):
-        """Specify required fields"""
-        REQUIRED_HEADERS = [
-            'Quantity',
-        ]
+        """Specify required fields."""
 
-        ITEM_MATCH_HEADERS = [
-            'Manufacturer_MPN',
-            'Supplier_SKU',
-        ]
+        REQUIRED_HEADERS = ['Quantity']
 
-        OPTIONAL_HEADERS = [
-            'Purchase_Price',
-            'Reference',
-            'Notes',
-        ]
+        ITEM_MATCH_HEADERS = ['Manufacturer_MPN', 'Supplier_SKU']
+
+        OPTIONAL_HEADERS = ['Purchase_Price', 'Reference', 'Notes']
 
     name = 'order'
     form_list = [
@@ -115,9 +115,9 @@ class PurchaseOrderUpload(FileManagementFormView):
         'order/order_wizard/match_parts.html',
     ]
     form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match Supplier Parts"),
+        _('Upload File'),
+        _('Match Fields'),
+        _('Match Supplier Parts'),
     ]
     form_field_map = {
         'item_select': 'part',
@@ -150,7 +150,9 @@ class PurchaseOrderUpload(FileManagementFormView):
         """
         order = self.get_order()
 
-        self.allowed_items = SupplierPart.objects.filter(supplier=order.supplier).prefetch_related('manufacturer_part')
+        self.allowed_items = SupplierPart.objects.filter(
+            supplier=order.supplier
+        ).prefetch_related('manufacturer_part')
 
         # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
         q_idx = self.get_column_index('Quantity')
@@ -161,7 +163,6 @@ class PurchaseOrderUpload(FileManagementFormView):
         n_idx = self.get_column_index('Notes')
 
         for row in self.rows:
-
             # Initially use a quantity of zero
             quantity = Decimal(0)
 
@@ -191,7 +192,11 @@ class PurchaseOrderUpload(FileManagementFormView):
                 try:
                     # Attempt SupplierPart lookup based on SKU value
                     exact_match_part = self.allowed_items.get(SKU__contains=sku)
-                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                except (
+                    ValueError,
+                    SupplierPart.DoesNotExist,
+                    SupplierPart.MultipleObjectsReturned,
+                ):
                     exact_match_part = None
 
             # Check if there is a column corresponding to "Manufacturer MPN" and no exact match found yet
@@ -200,8 +205,14 @@ class PurchaseOrderUpload(FileManagementFormView):
 
                 try:
                     # Attempt SupplierPart lookup based on MPN value
-                    exact_match_part = self.allowed_items.get(manufacturer_part__MPN__contains=mpn)
-                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                    exact_match_part = self.allowed_items.get(
+                        manufacturer_part__MPN__contains=mpn
+                    )
+                except (
+                    ValueError,
+                    SupplierPart.DoesNotExist,
+                    SupplierPart.MultipleObjectsReturned,
+                ):
                     exact_match_part = None
 
             # Supply list of part options for each row, sorted by how closely they match the part name
@@ -239,7 +250,9 @@ class PurchaseOrderUpload(FileManagementFormView):
         # Create PurchaseOrderLineItem instances
         for purchase_order_item in items.values():
             try:
-                supplier_part = SupplierPart.objects.get(pk=int(purchase_order_item['part']))
+                supplier_part = SupplierPart.objects.get(
+                    pk=int(purchase_order_item['part'])
+                )
             except (ValueError, SupplierPart.DoesNotExist):
                 continue
 
@@ -259,7 +272,9 @@ class PurchaseOrderUpload(FileManagementFormView):
                     # PurchaseOrderLineItem already exists
                     pass
 
-        return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
+        return HttpResponseRedirect(
+            reverse('po-detail', kwargs={'pk': self.kwargs['pk']})
+        )
 
 
 class SalesOrderExport(AjaxView):
@@ -274,12 +289,12 @@ class SalesOrderExport(AjaxView):
     role_required = 'sales_order.view'
 
     def get(self, request, *args, **kwargs):
-        """Perform GET request to export SalesOrder dataset"""
+        """Perform GET request to export SalesOrder dataset."""
         order = get_object_or_404(SalesOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')
 
-        filename = f"{str(order)} - {order.customer.name}.{export_format}"
+        filename = f'{str(order)} - {order.customer.name}.{export_format}'
 
         dataset = SalesOrderLineItemResource().export(queryset=order.lines.all())
 
@@ -301,7 +316,7 @@ class PurchaseOrderExport(AjaxView):
     role_required = 'purchase_order.view'
 
     def get(self, request, *args, **kwargs):
-        """Perform GET request to export PurchaseOrder dataset"""
+        """Perform GET request to export PurchaseOrder dataset."""
         order = get_object_or_404(PurchaseOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')
@@ -319,14 +334,15 @@ class LineItemPricing(PartPricing):
     """View for inspecting part pricing information."""
 
     class EnhancedForm(PartPricing.form_class):
-        """Extra form options"""
+        """Extra form options."""
+
         pk = IntegerField(widget=HiddenInput())
         so_line = IntegerField(widget=HiddenInput())
 
     form_class = EnhancedForm
 
     def get_part(self, id=False):
-        """Return the Part instance associated with this view"""
+        """Return the Part instance associated with this view."""
         if 'line_item' in self.request.GET:
             try:
                 part_id = self.request.GET.get('line_item')
@@ -342,12 +358,13 @@ class LineItemPricing(PartPricing):
         else:
             return None
 
-        if id:
+        if part and id:
             return part.id
+
         return part
 
     def get_so(self, pk=False):
-        """Return the SalesOrderLineItem associated with this view"""
+        """Return the SalesOrderLineItem associated with this view."""
         so_line = self.request.GET.get('line_item', None)
         if not so_line:
             so_line = self.request.POST.get('so_line', None)
@@ -370,14 +387,14 @@ class LineItemPricing(PartPricing):
         return qty
 
     def get_initials(self):
-        """Return initial context values for this view"""
+        """Return initial context values for this view."""
         initials = super().get_initials()
         initials['pk'] = self.get_part(id=True)
         initials['so_line'] = self.get_so(pk=True)
         return initials
 
     def post(self, request, *args, **kwargs):
-        """Respond to a POST request to get particular pricing information"""
+        """Respond to a POST request to get particular pricing information."""
         REF = 'act-btn_'
         act_btn = [a.replace(REF, '') for a in self.request.POST if REF in a]
 
@@ -400,7 +417,9 @@ class LineItemPricing(PartPricing):
                     # check qunatity and update if different
                     if so_line.quantity != quantity:
                         so_line.quantity = quantity
-                        note = _('Updated {part} unit-price to {price} and quantity to {qty}')
+                        note = _(
+                            'Updated {part} unit-price to {price} and quantity to {qty}'
+                        )
 
                     # update sale_price
                     so_line.sale_price = price
@@ -409,7 +428,11 @@ class LineItemPricing(PartPricing):
                     # parse response
                     data = {
                         'form_valid': True,
-                        'success': note.format(part=str(so_line.part), price=str(so_line.sale_price), qty=quantity)
+                        'success': note.format(
+                            part=str(so_line.part),
+                            price=str(so_line.sale_price),
+                            qty=quantity,
+                        ),
                     }
                     return JsonResponse(data=data)
 

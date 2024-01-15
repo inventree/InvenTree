@@ -9,6 +9,7 @@ interface ModelInformationInterface {
   url_overview?: string;
   url_detail?: string;
   api_endpoint?: ApiPaths;
+  cui_detail?: string;
 }
 
 type ModelDictory = {
@@ -21,6 +22,7 @@ export const ModelInformationDict: ModelDictory = {
     label_multiple: t`Parts`,
     url_overview: '/part',
     url_detail: '/part/:pk/',
+    cui_detail: '/part/:pk/',
     api_endpoint: ApiPaths.part_list
   },
   partparametertemplate: {
@@ -35,6 +37,7 @@ export const ModelInformationDict: ModelDictory = {
     label_multiple: t`Supplier Parts`,
     url_overview: '/supplierpart',
     url_detail: '/supplierpart/:pk/',
+    cui_detail: '/supplier-part/:pk/',
     api_endpoint: ApiPaths.supplier_part_list
   },
   manufacturerpart: {
@@ -42,6 +45,7 @@ export const ModelInformationDict: ModelDictory = {
     label_multiple: t`Manufacturer Parts`,
     url_overview: '/manufacturerpart',
     url_detail: '/manufacturerpart/:pk/',
+    cui_detail: '/manufacturer-part/:pk/',
     api_endpoint: ApiPaths.manufacturer_part_list
   },
   partcategory: {
@@ -49,20 +53,23 @@ export const ModelInformationDict: ModelDictory = {
     label_multiple: t`Part Categories`,
     url_overview: '/partcategory',
     url_detail: '/partcategory/:pk/',
+    cui_detail: '/part/category/:pk/',
     api_endpoint: ApiPaths.category_list
   },
   stockitem: {
     label: t`Stock Item`,
     label_multiple: t`Stock Items`,
-    url_overview: '/stockitem',
-    url_detail: '/stockitem/:pk/',
+    url_overview: '/stock/item',
+    url_detail: '/stock/item/:pk/',
+    cui_detail: '/stock/item/:pk/',
     api_endpoint: ApiPaths.stock_item_list
   },
   stocklocation: {
     label: t`Stock Location`,
     label_multiple: t`Stock Locations`,
-    url_overview: '/stocklocation',
-    url_detail: '/stocklocation/:pk/',
+    url_overview: '/stock/location',
+    url_detail: '/stock/location/:pk/',
+    cui_detail: '/stock/location/:pk/',
     api_endpoint: ApiPaths.stock_location_list
   },
   stockhistory: {
@@ -75,6 +82,7 @@ export const ModelInformationDict: ModelDictory = {
     label_multiple: t`Builds`,
     url_overview: '/build',
     url_detail: '/build/:pk/',
+    cui_detail: '/build/:pk/',
     api_endpoint: ApiPaths.build_order_list
   },
   company: {
@@ -82,6 +90,7 @@ export const ModelInformationDict: ModelDictory = {
     label_multiple: t`Companies`,
     url_overview: '/company',
     url_detail: '/company/:pk/',
+    cui_detail: '/company/:pk/',
     api_endpoint: ApiPaths.company_list
   },
   projectcode: {
@@ -94,8 +103,9 @@ export const ModelInformationDict: ModelDictory = {
   purchaseorder: {
     label: t`Purchase Order`,
     label_multiple: t`Purchase Orders`,
-    url_overview: '/purchaseorder',
-    url_detail: '/purchaseorder/:pk/',
+    url_overview: '/purchasing/purchase-order',
+    url_detail: '/purchasing/purchase-order/:pk/',
+    cui_detail: '/order/purchase-order/:pk/',
     api_endpoint: ApiPaths.purchase_order_list
   },
   purchaseorderline: {
@@ -106,8 +116,9 @@ export const ModelInformationDict: ModelDictory = {
   salesorder: {
     label: t`Sales Order`,
     label_multiple: t`Sales Orders`,
-    url_overview: '/salesorder',
-    url_detail: '/salesorder/:pk/',
+    url_overview: '/sales/sales-order',
+    url_detail: '/sales/sales-order/:pk/',
+    cui_detail: '/order/sales-order/:pk/',
     api_endpoint: ApiPaths.sales_order_list
   },
   salesordershipment: {
@@ -120,8 +131,9 @@ export const ModelInformationDict: ModelDictory = {
   returnorder: {
     label: t`Return Order`,
     label_multiple: t`Return Orders`,
-    url_overview: '/returnorder',
-    url_detail: '/returnorder/:pk/',
+    url_overview: '/sales/return-order',
+    url_detail: '/sales/return-order/:pk/',
+    cui_detail: '/order/return-order/:pk/',
     api_endpoint: ApiPaths.return_order_list
   },
   address: {

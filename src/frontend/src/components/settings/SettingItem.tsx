@@ -1,14 +1,25 @@
 import { t } from '@lingui/macro';
-import { Button, Group, Space, Stack, Switch, Text } from '@mantine/core';
+import {
+  Button,
+  Group,
+  Paper,
+  Space,
+  Stack,
+  Switch,
+  Text,
+  useMantineTheme
+} from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconEdit } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { api } from '../../App';
+import { ModelType } from '../../enums/ModelType';
 import { openModalApiForm } from '../../functions/forms';
 import { apiUrl } from '../../states/ApiState';
 import { SettingsStateProps } from '../../states/SettingsState';
-import { Setting } from '../../states/states';
+import { Setting, SettingType } from '../../states/states';
+import { ApiFormFieldType } from '../forms/fields/ApiFormField';
 
 /**
  * Render a single setting value
@@ -23,7 +34,10 @@ function SettingValue({
   // Callback function when a boolean value is changed
   function onToggle(value: boolean) {
     api
-      .patch(apiUrl(settingsState.endpoint, setting.key), { value: value })
+      .patch(
+        apiUrl(settingsState.endpoint, setting.key, settingsState.pathParams),
+        { value: value }
+      )
       .then(() => {
         showNotification({
           title: t`Setting updated`,
@@ -44,26 +58,38 @@ function SettingValue({
 
   // Callback function to open the edit dialog (for non-boolean settings)
   function onEditButton() {
-    let field_type: string = setting?.type ?? 'string';
+    const fieldDefinition: ApiFormFieldType = {
+      value: setting?.value ?? '',
+      field_type: setting?.type ?? 'string',
+      label: setting?.name,
+      description: setting?.description
+    };
 
-    if (setting?.choices && setting?.choices?.length > 0) {
-      field_type = 'choice';
+    // Match related field
+    if (
+      fieldDefinition.field_type === SettingType.Model &&
+      setting.api_url &&
+      setting.model_name
+    ) {
+      fieldDefinition.api_url = setting.api_url;
+
+      // TODO: improve this model matching mechanism
+      fieldDefinition.model = setting.model_name.split('.')[1] as ModelType;
+    } else if (setting.choices?.length > 0) {
+      // Match choices
+      fieldDefinition.field_type = SettingType.Choice;
+      fieldDefinition.choices = setting?.choices || [];
     }
 
     openModalApiForm({
       url: settingsState.endpoint,
       pk: setting.key,
+      pathParams: settingsState.pathParams,
       method: 'PATCH',
       title: t`Edit Setting`,
       ignorePermissionCheck: true,
       fields: {
-        value: {
-          value: setting?.value ?? '',
-          field_type: field_type,
-          choices: setting?.choices || [],
-          label: setting?.name,
-          description: setting?.description
-        }
+        value: fieldDefinition
       },
       onFormSuccess() {
         showNotification({
@@ -127,13 +153,25 @@ function SettingValue({
  */
 export function SettingItem({
   settingsState,
-  setting
+  setting,
+  shaded
 }: {
   settingsState: SettingsStateProps;
   setting: Setting;
+  shaded: boolean;
 }) {
+  const theme = useMantineTheme();
+
+  const style: Record<string, string> = { paddingLeft: '8px' };
+  if (shaded) {
+    style['backgroundColor'] =
+      theme.colorScheme === 'light'
+        ? theme.colors.gray[1]
+        : theme.colors.gray[9];
+  }
+
   return (
-    <>
+    <Paper style={style}>
       <Group position="apart" p="10">
         <Stack spacing="2">
           <Text>{setting.name}</Text>
@@ -141,6 +179,6 @@ export function SettingItem({
         </Stack>
         <SettingValue settingsState={settingsState} setting={setting} />
       </Group>
-    </>
+    </Paper>
   );
 }

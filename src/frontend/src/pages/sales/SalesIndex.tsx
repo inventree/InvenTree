@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
-import { CompanyTable } from '../../components/tables/general/CompanyTable';
+import { CompanyTable } from '../../components/tables/company/CompanyTable';
 import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 

@@ -3,72 +3,71 @@
 This plugin can currently only match TME barcodes to supplier parts.
 """
 
-import logging
 import re
 
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
-from plugin.base.barcodes.mixins import SupplierBarcodeData
 from plugin.mixins import SettingsMixin, SupplierBarcodeMixin
-
-logger = logging.getLogger('inventree')
 
 
 class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     """Plugin to integrate the TME API into Inventree."""
 
-    NAME = "TMEPlugin"
-    TITLE = _("Supplier Integration - TME")
-    DESCRIPTION = _("Provides support for scanning TME barcodes")
-    VERSION = "1.0.0"
-    AUTHOR = _("InvenTree contributors")
+    NAME = 'TMEPlugin'
+    TITLE = _('Supplier Integration - TME')
+    DESCRIPTION = _('Provides support for scanning TME barcodes')
+    VERSION = '1.0.0'
+    AUTHOR = _('InvenTree contributors')
 
-    DEFAULT_SUPPLIER_NAME = "TME"
+    DEFAULT_SUPPLIER_NAME = 'TME'
     SETTINGS = {
-        "SUPPLIER_ID": {
-            "name": _("Supplier"),
-            "description": _("The Supplier which acts as 'TME'"),
-            "model": "company.company",
+        'SUPPLIER_ID': {
+            'name': _('Supplier'),
+            'description': _("The Supplier which acts as 'TME'"),
+            'model': 'company.company',
         }
     }
 
-    def parse_supplier_barcode_data(self, barcode_data):
+    TME_IS_QRCODE_REGEX = re.compile(r'([^\s:]+:[^\s:]+\s+)+(\S+(\s|$)+)+')
+    TME_IS_BARCODE2D_REGEX = re.compile(r'(([^\s]+)(\s+|$))+')
+
+    # Custom field mapping
+    TME_QRCODE_FIELDS = {
+        'PN': SupplierBarcodeMixin.SUPPLIER_PART_NUMBER,
+        'CPO': SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER,
+        'PO': SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER,
+        'MPN': SupplierBarcodeMixin.MANUFACTURER_PART_NUMBER,
+        'QTY': SupplierBarcodeMixin.QUANTITY,
+    }
+
+    def extract_barcode_fields(self, barcode_data: str) -> dict[str, str]:
         """Get supplier_part and barcode_fields from TME QR-Code or DataMatrix-Code."""
+        barcode_fields = {}
 
-        if not isinstance(barcode_data, str):
-            return None
+        if self.TME_IS_QRCODE_REGEX.fullmatch(barcode_data):
+            # Custom QR Code format e.g. "QTY: 1 PN:12345"
+            for item in barcode_data.split(' '):
+                if ':' in item:
+                    key, value = item.split(':')
+                    if key in self.TME_QRCODE_FIELDS:
+                        barcode_fields[self.TME_QRCODE_FIELDS[key]] = value
 
-        if TME_IS_QRCODE_REGEX.fullmatch(barcode_data):
-            barcode_fields = {
-                QRCODE_FIELD_NAME_MAP.get(field_name, field_name): value
-                for field_name, value in TME_PARSE_QRCODE_REGEX.findall(barcode_data)
-            }
-        elif TME_IS_BARCODE2D_REGEX.fullmatch(barcode_data):
-            barcode_fields = self.parse_ecia_barcode2d(
-                TME_PARSE_BARCODE2D_REGEX.findall(barcode_data)
-            )
+            return barcode_fields
+
+        elif self.TME_IS_BARCODE2D_REGEX.fullmatch(barcode_data):
+            # 2D Barcode format e.g. "PWBP-302 1PMPNWBP-302 Q1 K19361337/1"
+            for item in barcode_data.split(' '):
+                for k, v in self.ecia_field_map().items():
+                    if item.startswith(k):
+                        barcode_fields[v] = item[len(k) :]
         else:
-            return None
+            return {}
 
-        if order_number := barcode_fields.get("purchase_order_number"):
-            order_number = order_number.split("/")[0]
+        # Custom handling for order number
+        if SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER in barcode_fields:
+            order_number = barcode_fields[SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER]
+            order_number = order_number.split('/')[0]
+            barcode_fields[SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER] = order_number
 
-        return SupplierBarcodeData(
-            SKU=barcode_fields.get("supplier_part_number"),
-            MPN=barcode_fields.get("manufacturer_part_number"),
-            quantity=barcode_fields.get("quantity"),
-            order_number=order_number,
-        )
-
-
-TME_IS_QRCODE_REGEX = re.compile(r"([^\s:]+:[^\s:]+\s+)+(\S+(\s|$)+)+")
-TME_PARSE_QRCODE_REGEX = re.compile(r"([^\s:]+):([^\s:]+)(?:\s+|$)")
-TME_IS_BARCODE2D_REGEX = re.compile(r"(([^\s]+)(\s+|$))+")
-TME_PARSE_BARCODE2D_REGEX = re.compile(r"([^\s]+)(?:\s+|$)")
-QRCODE_FIELD_NAME_MAP = {
-    "PN": "supplier_part_number",
-    "PO": "purchase_order_number",
-    "MPN": "manufacturer_part_number",
-    "QTY": "quantity",
-}
+        return barcode_fields

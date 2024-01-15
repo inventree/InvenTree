@@ -67,3 +67,7 @@ Next you can start configuring the connection. Either use the config file or set
 | `ldap.user_attr_map` | `INVENTREE_LDAP_USER_ATTR_MAP` | LDAP <-> Inventree user attribute map, can be json if used as env, in yml directly specify the object. default: `{"first_name": "givenName", "last_name": "sn", "email": "mail"}` |
 | `ldap.always_update_user` | `INVENTREE_LDAP_ALWAYS_UPDATE_USER` | Always update the user on each login, default: `true` |
 | `ldap.cache_timeout` | `INVENTREE_LDAP_CACHE_TIMEOUT` | cache timeout to reduce traffic with LDAP server, default: `3600` (1h) |
+| `ldap.group_search` | `INVENTREE_LDAP_GROUP_SEARCH` | Base LDAP DN for group searching; required to enable group features |
+| `ldap.require_group` | `INVENTREE_LDAP_REQUIRE_GROUP` | If set, users _must_ be in this group to log in to InvenTree |
+| `ldap.deny_group` | `INVENTREE_LDAP_DENY_GROUP` | If set, users _must not_ be in this group to log in to InvenTree |
+| `ldap.user_flags_by_group` | `INVENTREE_LDAP_USER_FLAGS_BY_GROUP` | LDAP group to InvenTree user flag map, can be json if used as env, in yml directly specify the object. See config template for example, default: `{}` |

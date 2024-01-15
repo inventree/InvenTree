@@ -2,7 +2,7 @@
 Django>=3.2.14,<4                       # Django package
 coreapi                                 # API documentation for djangorestframework
 cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
-django-allauth<0.55.0                   # SSO for external providers via OpenID  # FIXED 2023-09-06 due to https://github.com/iMerica/dj-rest-auth/issues/534
+django-allauth                          # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
@@ -48,4 +48,4 @@ regex                                   # Advanced regular expressions
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
-weasyprint==54.3                        # PDF generation
+weasyprint                              # PDF generation

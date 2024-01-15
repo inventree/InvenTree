@@ -9,6 +9,7 @@ export interface HostList {
 
 // Type interface fully defining the current user
 export interface UserProps {
+  pk: number;
   username: string;
   first_name: string;
   last_name: string;
@@ -71,7 +72,8 @@ export enum SettingType {
   Boolean = 'boolean',
   Integer = 'integer',
   String = 'string',
-  Choice = 'choice'
+  Choice = 'choice',
+  Model = 'related field'
 }
 
 export interface PluginProps {

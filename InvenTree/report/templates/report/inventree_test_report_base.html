@@ -81,7 +81,7 @@ content: "{% trans 'Stock Item Test Report' %}";
         <p><em>Stock Item ID: {{ stock_item.pk }}</em></p>
     </div>
     <div class='img-right'>
-        <img class='part-img' alt='{% trans "Part image" %}' src="{% part_image part %}">
+        <img class='part-img' alt='{% trans "Part image" %}' src="{% part_image part height=480 %}">
         <hr>
         <h4>
             {% if stock_item.is_serialized %}
@@ -160,7 +160,7 @@ content: "{% trans 'Stock Item Test Report' %}";
     {% for sub_item in installed_items %}
         <tr>
             <td>
-                <img src='{% part_image sub_item.part %}' class='part-img' alt='{% trans "Part image" %}' style='max-width: 24px; max-height: 24px;'>
+                <img src='{% part_image sub_item.part height=240 %}' class='part-img' alt='{% trans "Part image" %}' style='max-width: 24px; max-height: 24px;'>
                 {{ sub_item.part.full_name }}
             </td>
             <td>

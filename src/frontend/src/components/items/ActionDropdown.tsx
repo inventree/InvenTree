@@ -50,10 +50,9 @@ export function ActionDropdown({
       <Menu.Dropdown>
         {actions.map((action) =>
           action.disabled ? null : (
-            <Tooltip label={action.tooltip} key={`tooltip-${action.name}`}>
+            <Tooltip label={action.tooltip} key={action.name}>
               <Menu.Item
                 icon={action.icon}
-                key={action.name}
                 onClick={() => {
                   if (action.onClick != undefined) {
                     action.onClick();

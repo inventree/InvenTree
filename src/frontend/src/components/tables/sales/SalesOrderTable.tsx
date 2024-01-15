@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 import {
@@ -17,14 +17,35 @@ import {
   TargetDateColumn,
   TotalPriceColumn
 } from '../ColumnRenderers';
+import {
+  AssignedToMeFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function SalesOrderTable({ params }: { params?: any }) {
-  const { tableKey } = useTableRefresh('sales-order');
+  const table = useTable('sales-order');
 
   const navigate = useNavigate();
 
-  // TODO: Custom filters
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.salesorder)
+      },
+      OutstandingFilter(),
+      OverdueFilter(),
+      AssignedToMeFilter()
+      // TODO: has_project_code
+      // TODO: project_code
+    ];
+  }, []);
 
   // TODO: Row actions
 
@@ -73,13 +94,14 @@ export function SalesOrderTable({ params }: { params?: any }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.sales_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {
           ...params,
           customer_detail: true
         },
+        customFilters: tableFilters,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/sales/sales-order/${row.pk}/`);

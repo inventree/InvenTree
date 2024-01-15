@@ -1,4 +1,4 @@
-"""Custom mkdocs hooks, using the mkdocs-simple-hooks plugin"""
+"""Custom mkdocs hooks, using the mkdocs-simple-hooks plugin."""
 
 import json
 import os
@@ -10,17 +10,17 @@ import requests
 
 
 def fetch_rtd_versions():
-    """Get a list of RTD docs versions to build the version selector"""
-    print("Fetching documentation versions from ReadTheDocs")
+    """Get a list of RTD docs versions to build the version selector."""
+    print('Fetching documentation versions from ReadTheDocs')
 
     versions = []
 
     def make_request(url, headers):
-        """Make a single request to the RTD API"""
+        """Make a single request to the RTD API."""
         response = requests.get(url, headers=headers)
 
         if response.status_code != 200:
-            print(f"Error fetching RTD versions: {response.status_code}")
+            print(f'Error fetching RTD versions: {response.status_code}')
             return
 
         data = json.loads(response.text)
@@ -39,11 +39,7 @@ def fetch_rtd_versions():
             if version == 'latest':
                 continue
 
-            versions.append({
-                'version': version,
-                'title': version,
-                'aliases': aliases,
-            })
+            versions.append({'version': version, 'title': version, 'aliases': aliases})
 
         if data['next']:
             make_request(data['next'], headers)
@@ -52,21 +48,24 @@ def fetch_rtd_versions():
     token = os.environ.get('RTD_TOKEN', None)
     if token:
         headers = {'Authorization': f'Token {token}'}
-        url = "https://readthedocs.org/api/v3/projects/inventree/versions/?active=true&limit=50"
+        url = 'https://readthedocs.org/api/v3/projects/inventree/versions/?active=true&limit=50'
         make_request(url, headers)
     else:
-        print("No RTD token found - skipping RTD version fetch")
+        print('No RTD token found - skipping RTD version fetch')
 
     # Sort versions by version number
     versions = sorted(versions, key=lambda x: StrictVersion(x['version']), reverse=True)
 
     # Add "latest" version first
     if not any((x['title'] == 'latest' for x in versions)):
-        versions.insert(0, {
-            'title': 'Development',
-            'version': 'latest',
-            'aliases': ['main', 'latest', 'development',],
-        })
+        versions.insert(
+            0,
+            {
+                'title': 'Development',
+                'version': 'latest',
+                'aliases': ['main', 'latest', 'development'],
+            },
+        )
 
     # Ensure we have the 'latest' version
     current_version = os.environ.get('READTHEDOCS_VERSION', None)
@@ -80,7 +79,7 @@ def fetch_rtd_versions():
 
     output_filename = os.path.join(os.path.dirname(__file__), 'versions.json')
 
-    print("Discovered the following versions:")
+    print('Discovered the following versions:')
     print(versions)
 
     with open(output_filename, 'w') as file:
@@ -105,14 +104,14 @@ def get_release_data():
             return json.loads(f.read())
 
     # Download release information via the GitHub API
-    print("Fetching InvenTree release information from api.github.com:")
+    print('Fetching InvenTree release information from api.github.com:')
     releases = []
 
     # Keep making API requests until we run out of results
     page = 1
 
     while 1:
-        url = f"https://api.github.com/repos/inventree/inventree/releases?page={page}&per_page=150"
+        url = f'https://api.github.com/repos/inventree/inventree/releases?page={page}&per_page=150'
 
         response = requests.get(url, timeout=30)
         assert response.status_code == 200
@@ -164,12 +163,12 @@ def on_config(config, *args, **kwargs):
         rtd_version = os.environ['READTHEDOCS_VERSION']
         rtd_language = os.environ['READTHEDOCS_LANGUAGE']
 
-        site_url = f"https://docs.inventree.org/{rtd_language}/{rtd_version}"
-        assets_dir = f"/{rtd_language}/{rtd_version}/assets"
+        site_url = f'https://docs.inventree.org/{rtd_language}/{rtd_version}'
+        assets_dir = f'/{rtd_language}/{rtd_version}/assets'
 
-        print("Building within READTHEDOCS environment!")
-        print(f" - Version: {rtd_version}")
-        print(f" - Language: {rtd_language}")
+        print('Building within READTHEDOCS environment!')
+        print(f' - Version: {rtd_version}')
+        print(f' - Language: {rtd_language}')
 
         # Add *all* readthedocs related keys
         readthedocs = {}
@@ -188,7 +187,7 @@ def on_config(config, *args, **kwargs):
 
     else:
         print("'READTHEDOCS' environment variable not found")
-        print("Building for localhost configuration!")
+        print('Building for localhost configuration!')
 
         assets_dir = '/assets'
         site_url = config['site_url']
@@ -206,7 +205,6 @@ def on_config(config, *args, **kwargs):
     releases = []
 
     for item in release_data:
-
         # Ignore draft releases
         if item['draft']:
             continue
@@ -217,15 +215,11 @@ def on_config(config, *args, **kwargs):
         re.match(r'^\d+\.\d+\.\d+$', tag)
 
         if not re.match:
-            print(f"Found badly formatted release: {tag}")
+            print(f'Found badly formatted release: {tag}')
             continue
 
         # Check if there is a local file with release information
-        local_path = os.path.join(
-            os.path.dirname(__file__),
-            'releases',
-            f'{tag}.md',
-        )
+        local_path = os.path.join(os.path.dirname(__file__), 'releases', f'{tag}.md')
 
         if os.path.exists(local_path):
             item['local_path'] = local_path
@@ -244,7 +238,7 @@ def on_config(config, *args, **kwargs):
 
         releases.append(item)
 
-    print(f"- found {len(releases)} releases.")
+    print(f'- found {len(releases)} releases.')
 
     # Sort releases by descending date
     config['releases'] = sorted(releases, key=lambda it: it['date'], reverse=True)

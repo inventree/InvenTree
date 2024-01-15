@@ -1,4 +1,4 @@
-"""Sample plugin which demonstrates custom validation functionality"""
+"""Sample plugin which demonstrates custom validation functionality."""
 
 from datetime import datetime
 
@@ -14,17 +14,17 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
     Simple of examples of custom validator code.
     """
 
-    NAME = "CustomValidator"
-    SLUG = "validator"
-    TITLE = "Custom Validator Plugin"
-    DESCRIPTION = "A sample plugin for demonstrating custom validation functionality"
-    VERSION = "0.3.0"
+    NAME = 'CustomValidator'
+    SLUG = 'validator'
+    TITLE = 'Custom Validator Plugin'
+    DESCRIPTION = 'A sample plugin for demonstrating custom validation functionality'
+    VERSION = '0.3.0'
 
     SETTINGS = {
         'ILLEGAL_PART_CHARS': {
             'name': 'Illegal Part Characters',
             'description': 'Characters which are not allowed to appear in Part names',
-            'default': '!@#$%^&*()~`'
+            'default': '!@#$%^&*()~`',
         },
         'IPN_MUST_CONTAIN_Q': {
             'name': 'IPN Q Requirement',
@@ -52,15 +52,16 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
     }
 
     def validate_part_name(self, name: str, part):
-        """Custom validation for Part name field:
+        """Custom validation for Part name field.
 
+        Rules:
         - Name must be shorter than the description field
         - Name cannot contain illegal characters
 
-        These examples are silly, but serve to demonstrate how the feature could be used
+        These examples are silly, but serve to demonstrate how the feature could be used.
         """
         if len(part.description) < len(name):
-            raise ValidationError("Part description cannot be shorter than the name")
+            raise ValidationError('Part description cannot be shorter than the name')
 
         illegal_chars = self.get_setting('ILLEGAL_PART_CHARS')
 
@@ -69,7 +70,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
                 raise ValidationError(f"Illegal character in part name: '{c}'")
 
     def validate_part_ipn(self, ipn: str, part):
-        """Validate part IPN
+        """Validate part IPN.
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
@@ -84,21 +85,23 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if parameter.template.name.lower() in ['length', 'width']:
             d = int(data)
             if d >= 100:
-                raise ValidationError("Value must be less than 100")
+                raise ValidationError('Value must be less than 100')
 
     def validate_serial_number(self, serial: str, part):
-        """Validate serial number for a given StockItem
+        """Validate serial number for a given StockItem.
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
         if self.get_setting('SERIAL_MUST_BE_PALINDROME'):
             if serial != serial[::-1]:
-                raise ValidationError("Serial must be a palindrome")
+                raise ValidationError('Serial must be a palindrome')
 
         if self.get_setting('SERIAL_MUST_MATCH_PART'):
             # Serial must start with the same letter as the linked part, for some reason
             if serial[0] != part.name[0]:
-                raise ValidationError("Serial number must start with same letter as part")
+                raise ValidationError(
+                    'Serial number must start with same letter as part'
+                )
 
     def validate_batch_code(self, batch_code: str, item):
         """Ensure that a particular batch code meets specification.
@@ -114,4 +117,4 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
     def generate_batch_code(self):
         """Generate a new batch code."""
         now = datetime.now()
-        return f"BATCH-{now.year}:{now.month}:{now.day}"
+        return f'BATCH-{now.year}:{now.month}:{now.day}'

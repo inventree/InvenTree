@@ -11,12 +11,7 @@ from plugin.mixins import LocateMixin
 class SampleLocatePlugintests(InvenTreeAPITestCase):
     """Tests for SampleLocatePlugin."""
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-        'stock'
-    ]
+    fixtures = ['location', 'category', 'part', 'stock']
 
     def test_run_locator(self):
         """Check if the event is issued."""
@@ -53,6 +48,7 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
         """Test that MixinNotImplementedError is raised."""
         # Test location locator
         with self.assertRaises(MixinNotImplementedError):
+
             class Wrong(LocateMixin, InvenTreePlugin):
                 pass
 
