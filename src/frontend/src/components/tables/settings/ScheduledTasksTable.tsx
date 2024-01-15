@@ -42,7 +42,7 @@ export default function ScheduledTasksTable() {
       },
       {
         accessor: 'next_run',
-        title: t`Scheduled`,
+        title: t`Next Run`,
         sortable: true
       }
     ];

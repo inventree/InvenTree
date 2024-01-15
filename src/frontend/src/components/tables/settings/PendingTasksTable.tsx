@@ -14,17 +14,20 @@ export default function PendingTasksTable() {
     return [
       {
         accessor: 'func',
-        title: t`Task`,
-        sortable: true
+        title: t`Task`
       },
       {
-        accessor: 'lock',
-        title: t`Task Created`,
-        sortable: true
+        accessor: 'task_id',
+        title: t`Task ID`
       },
       {
         accessor: 'name',
         title: t`Name`
+      },
+      {
+        accessor: 'lock',
+        title: t`Created`,
+        sortable: true
       }
     ];
   }, []);

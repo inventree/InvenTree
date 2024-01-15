@@ -409,6 +409,12 @@ export function InvenTreeTable<T = any>({
           })
           .catch((_error) => {
             console.warn(`Bulk delete operation failed at ${url}`);
+
+            showNotification({
+              title: t`Error`,
+              message: t`Failed to delete records`,
+              color: 'red'
+            });
           });
       }
     });

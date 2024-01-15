@@ -432,3 +432,5 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
             'attempt_count',
             'result',
         ]
+
+    result = serializers.CharField()
