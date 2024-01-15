@@ -33,6 +33,7 @@ from InvenTree.filters import (
 from InvenTree.helpers import (
     DownloadFile,
     increment_serial_number,
+    is_ajax,
     isNull,
     str2bool,
     str2int,
@@ -1132,7 +1133,7 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         """
         if page is not None:
             return self.get_paginated_response(data)
-        elif request.is_ajax():
+        elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
@@ -1783,7 +1784,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         """
         if page is not None:
             return self.get_paginated_response(data)
-        elif request.is_ajax():
+        elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 

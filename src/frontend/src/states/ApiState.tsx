@@ -191,6 +191,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'plugins/install/';
     case ApiPaths.plugin_reload:
       return 'plugins/reload/';
+    case ApiPaths.error_report_list:
+      return 'error-report/';
     case ApiPaths.project_code_list:
       return 'project-code/';
     case ApiPaths.custom_unit_list:

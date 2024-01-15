@@ -90,6 +90,7 @@ export enum ApiPaths {
   plugin_reload = 'api-plugin-reload',
   plugin_registry_status = 'api-plugin-registry-status',
 
+  error_report_list = 'api-error-report-list',
   project_code_list = 'api-project-code-list',
   custom_unit_list = 'api-custom-unit-list'
 }

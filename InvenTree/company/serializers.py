@@ -326,13 +326,18 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
             'tags',
         ]
 
-        read_only_fields = ['availability_updated', 'barcode_hash']
+        read_only_fields = [
+            'availability_updated',
+            'barcode_hash',
+            'pack_quantity_native',
+        ]
 
     tags = TagListSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required."""
         # Check if 'available' quantity was supplied
+
         self.has_available_quantity = 'available' in kwargs.get('data', {})
 
         brief = kwargs.pop('brief', False)
@@ -363,6 +368,8 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(read_only=True)
     available = serializers.FloatField(required=False)
+
+    pack_quantity_native = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
