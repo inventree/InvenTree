@@ -96,6 +96,12 @@ class MetaBase:
 
     def plugin_config(self):
         """Return the PluginConfig object associated with this plugin."""
+        import InvenTree.ready
+
+        # Database contains no information yet - return None
+        if InvenTree.ready.isImportingData():
+            return None
+
         try:
             import plugin.models
 
@@ -103,6 +109,8 @@ class MetaBase:
                 key=self.plugin_slug(), name=self.plugin_name()
             )
         except (OperationalError, ProgrammingError):
+            cfg = None
+        except plugin.models.DoesNotExist:
             cfg = None
 
         return cfg
