@@ -200,6 +200,8 @@ class ReportTest(InvenTreeAPITestCase):
         'build',
     ]
 
+    superuser = True
+
     model = None
     list_url = None
     detail_url = None
