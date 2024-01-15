@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Accordion, Divider, Stack } from '@mantine/core';
+import { Accordion } from '@mantine/core';
 import { lazy } from 'react';
 
 import { StylishText } from '../../../../components/items/StylishText';
