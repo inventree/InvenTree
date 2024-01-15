@@ -110,7 +110,7 @@ class MetaBase:
             )
         except (OperationalError, ProgrammingError):
             cfg = None
-        except plugin.models.DoesNotExist:
+        except plugin.models.PluginConfig.DoesNotExist:
             cfg = None
 
         return cfg
