@@ -300,7 +300,7 @@ class ReportTest(InvenTreeAPITestCase):
                 'template': filestr,
             },
             format=None,
-            expected_code=200,
+            expected_code=201,
         )
 
         # Make sure the expected keys are in the response
