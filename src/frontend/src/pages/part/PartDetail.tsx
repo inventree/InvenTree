@@ -36,7 +36,11 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { ItemDetails } from '../../components/nav/ItemDetails';
+import {
+  DetailField,
+  DetailFields,
+  ItemDetails
+} from '../../components/nav/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
@@ -81,6 +85,38 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
+  const detailFields = (part: any) => {
+    let left: DetailFields = {
+      image: true,
+      fields: []
+    };
+    let right: DetailField[] = [];
+
+    left.fields.push({
+      name: 'Description',
+      value: part.description
+    });
+
+    if (part.variant) {
+      left.fields.push({
+        name: 'Variant Of',
+        value: part.variant
+      });
+    }
+
+    right.push({
+      name: 'Available Stock',
+      value: part.unallocated_stock
+    });
+
+    let fields: PartDetailFields = {
+      left: left,
+      right: right
+    };
+
+    return fields;
+  };
+
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
     return [
@@ -93,6 +129,7 @@ export default function PartDetail() {
             params={part}
             apiPath={apiUrl(ApiPaths.part_list, part.pk)}
             refresh={refreshInstance}
+            fields={detailFields(part)}
           />
         )
       },
