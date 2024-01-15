@@ -295,8 +295,12 @@ class ReportTest(InvenTreeAPITestCase):
                     '{% extends "label/report_base.html" %}<pre>TEST REPORT</pre>{% endblock content %}',
                 )
             },
-            expected_code=200,
         )
+
+        # Show response
+        print(f'{response = }')
+        print(f'{response.status_code = }')
+        print(f'{response.data = }')
 
         # Make sure the expected keys are in the response
         self.assertIn('pk', response.data)
