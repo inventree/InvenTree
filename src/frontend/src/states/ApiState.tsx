@@ -99,6 +99,14 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'currency/exchange/';
     case ApiPaths.currency_refresh:
       return 'currency/refresh/';
+    case ApiPaths.task_overview:
+      return 'background-task/';
+    case ApiPaths.task_pending_list:
+      return 'background-task/pending/';
+    case ApiPaths.task_scheduled_list:
+      return 'background-task/scheduled/';
+    case ApiPaths.task_failed_list:
+      return 'background-task/failed/';
     case ApiPaths.api_search:
       return 'search/';
     case ApiPaths.settings_global_list:

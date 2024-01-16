@@ -26,6 +26,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.DS_Store
 
 # Django stuff:
 *.log
