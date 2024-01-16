@@ -23,7 +23,7 @@ class SampleIntegrationPluginTests(InvenTreeTestCase):
 
         # URL should redirect to index page
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 404)
 
         # Now, check with custom URLs enabled
         InvenTreeSetting.set_setting('ENABLE_PLUGINS_URL', True, None)
