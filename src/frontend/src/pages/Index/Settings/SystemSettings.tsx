@@ -238,7 +238,8 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
-              'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
+              'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
+              'PURCHASEORDER_AUTO_COMPLETE'
             ]}
           />
         )
