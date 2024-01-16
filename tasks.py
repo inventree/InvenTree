@@ -535,11 +535,22 @@ def import_records(
 
     print(f"Importing database records from '{filename}'")
 
+    # We need to load 'auth' data (users / groups) *first*
+    # This is due to the users.owner model, which has a ContentType foreign key
+    authfile = f'{filename}.auth.json'
+
     # Pre-process the data, to remove any "permissions" specified for a user or group
-    tmpfile = f'{filename}.tmp.json'
+    datafile = f'{filename}.tmp.json'
 
     with open(filename, 'r') as f_in:
-        data = json.loads(f_in.read())
+        try:
+            data = json.loads(f_in.read())
+        except json.JSONDecodeError as exc:
+            print(f'Error: Failed to decode JSON file: {exc}')
+            sys.exit(1)
+
+    auth_data = []
+    load_data = []
 
     for entry in data:
         if 'model' in entry:
@@ -551,13 +562,40 @@ def import_records(
             if entry['model'] == 'auth.user':
                 entry['fields']['user_permissions'] = []
 
-    # Write the processed data to the tmp file
-    with open(tmpfile, 'w') as f_out:
-        f_out.write(json.dumps(data, indent=2))
+            # Save auth data for later
+            if entry['model'].startswith('auth.'):
+                auth_data.append(entry)
+            else:
+                load_data.append(entry)
+        else:
+            print('Warning: Invalid entry in data file')
+            print(entry)
 
-    cmd = f"loaddata '{tmpfile}' -i {content_excludes()}"
+    # Write the auth file data
+    with open(authfile, 'w') as f_out:
+        f_out.write(json.dumps(auth_data, indent=2))
+
+    # Write the processed data to the tmp file
+    with open(datafile, 'w') as f_out:
+        f_out.write(json.dumps(load_data, indent=2))
+
+    excludes = content_excludes(allow_auth=False)
+
+    # Import auth models first
+    print('Importing user auth data...')
+    cmd = f"loaddata '{authfile}'"
+    manage(c, cmd, pty=True)
+
+    # Import everything else next
+    print('Importing database records...')
+    cmd = f"loaddata '{datafile}' -i {excludes}"
 
     manage(c, cmd, pty=True)
+
+    if not retain_temp:
+        print('Removing temporary files')
+        os.remove(datafile)
+        os.remove(authfile)
 
     print('Data import completed')
 
