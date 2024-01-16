@@ -28,7 +28,7 @@ from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
-from . import config
+from . import config, locales
 
 checkMinPythonVersion()
 
@@ -828,45 +828,7 @@ LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
 # Store language settings for 30 days
 LANGUAGE_COOKIE_AGE = 2592000
 
-# If a new language translation is supported, it must be added here
-# After adding a new language, run the following command:
-# python manage.py makemessages -l <language_code> -e html,js,py --no-wrap
-# where <language_code> is the code for the new language
-# Additionally, update the /src/frontend/.linguirc file
-LANGUAGES = [
-    ('bg', _('Bulgarian')),
-    ('cs', _('Czech')),
-    ('da', _('Danish')),
-    ('de', _('German')),
-    ('el', _('Greek')),
-    ('en', _('English')),
-    ('es', _('Spanish')),
-    ('es-mx', _('Spanish (Mexican)')),
-    ('fa', _('Farsi / Persian')),
-    ('fi', _('Finnish')),
-    ('fr', _('French')),
-    ('he', _('Hebrew')),
-    ('hi', _('Hindi')),
-    ('hu', _('Hungarian')),
-    ('it', _('Italian')),
-    ('ja', _('Japanese')),
-    ('ko', _('Korean')),
-    ('nl', _('Dutch')),
-    ('no', _('Norwegian')),
-    ('pl', _('Polish')),
-    ('pt', _('Portuguese')),
-    ('pt-br', _('Portuguese (Brazilian)')),
-    ('ru', _('Russian')),
-    ('sl', _('Slovenian')),
-    ('sr', _('Serbian')),
-    ('sv', _('Swedish')),
-    ('th', _('Thai')),
-    ('tr', _('Turkish')),
-    ('vi', _('Vietnamese')),
-    ('zh-hans', _('Chinese (Simplified)')),
-    ('zh-hant', _('Chinese (Traditional)')),
-]
-
+LANGUAGES = locales.LOCALES
 
 # Testing interface translations
 if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no cover
