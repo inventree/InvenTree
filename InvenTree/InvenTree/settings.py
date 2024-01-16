@@ -822,13 +822,23 @@ if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
     logger.warning('extra_url_schemes not correctly formatted')
     EXTRA_URL_SCHEMES = []
 
+LANGUAGES = locales.LOCALES
+
+LOCALE_CODES = [lang[0] for lang in LANGUAGES]
+
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
+
+if (
+    LANGUAGE_CODE not in LOCALE_CODES
+    and LANGUAGE_CODE.split('-')[0] not in LOCALE_CODES
+):  # pragma: no cover
+    logger.warning(f'Language code {LANGUAGE_CODE} not supported - defaulting to en-us')
+    LANGUAGE_CODE = 'en-us'
+
 # Store language settings for 30 days
 LANGUAGE_COOKIE_AGE = 2592000
-
-LANGUAGES = locales.LOCALES
 
 # Testing interface translations
 if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no cover
