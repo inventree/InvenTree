@@ -46,7 +46,6 @@ export const languages: Record<string, string> = {
 
 export function LanguageContext({ children }: { children: JSX.Element }) {
   const [language] = useLocalState((state) => [state.language]);
-  const [server] = useServerApiState((state) => [state.server]);
 
   const [loadedState, setLoadedState] = useState<
     'loading' | 'loaded' | 'error'
@@ -64,29 +63,6 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
         console.error('Failed loading translations', err);
         if (isMounted.current) setLoadedState('error');
       });
-
-    /*
-     * Configure the default Accept-Language header for all requests.
-     * - Locally selected locale
-     * - Server default locale
-     * - en-us (backup)
-     */
-    let locales: (string | undefined)[] = [];
-
-    if (language != 'pseudo-LOCALE') {
-      locales.push(language);
-    }
-
-    if (!!server.default_locale) {
-      locales.push(server.default_locale);
-    }
-
-    if (locales.indexOf('en-us') < 0) {
-      locales.push('en-us');
-    }
-
-    // Update default Accept-Language headers
-    api.defaults.headers.common['Accept-Language'] = locales.join(', ');
 
     return () => {
       isMounted.current = false;
@@ -112,10 +88,31 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
 }
 
 export async function activateLocale(locale: Locales) {
+  const [server] = useServerApiState((state) => [state.server]);
   const { messages } = await import(`../locales/${locale}/messages.ts`);
   i18n.load(locale, messages);
   i18n.activate(locale);
 
-  // Set api header
-  api.defaults.headers.common['Accept-Language'] = locale;
+  /*
+   * Configure the default Accept-Language header for all requests.
+   * - Locally selected locale
+   * - Server default locale
+   * - en-us (backup)
+   */
+  let locales: (string | undefined)[] = [];
+
+  if (locale != 'pseudo-LOCALE') {
+    locales.push(locale);
+  }
+
+  if (!!server.default_locale) {
+    locales.push(server.default_locale);
+  }
+
+  if (locales.indexOf('en-us') < 0) {
+    locales.push('en-us');
+  }
+
+  // Update default Accept-Language headers
+  api.defaults.headers.common['Accept-Language'] = locales.join(', ');
 }
