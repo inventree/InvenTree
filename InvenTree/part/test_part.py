@@ -18,6 +18,7 @@ from common.models import (
 )
 from common.notifications import UIMessageNotification, storage
 from InvenTree import version
+from InvenTree.templatetags import inventree_extras
 from InvenTree.unit_test import InvenTreeTestCase
 
 from .models import (
@@ -30,7 +31,6 @@ from .models import (
     PartTestTemplate,
     rename_part_image,
 )
-from .templatetags import inventree_extras
 
 
 class TemplateTagTest(InvenTreeTestCase):
