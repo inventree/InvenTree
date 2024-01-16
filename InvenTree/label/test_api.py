@@ -1,26 +1,33 @@
 """Unit tests for label API."""
 
+import json
 from io import StringIO
 
 from django.core.cache import cache
 from django.urls import reverse
 
 import label.models as label_models
+from build.models import BuildLine
 from InvenTree.unit_test import InvenTreeAPITestCase
+from part.models import Part
+from stock.models import StockItem, StockLocation
 
 
 class LabelTest(InvenTreeAPITestCase):
     """Base class for unit testing label model API endpoints."""
 
-    fixtures = ['category', 'part', 'location', 'stock']
+    fixtures = ['category', 'part', 'location', 'stock', 'bom', 'build']
 
     superuser = True
 
     model = None
     list_url = None
     detail_url = None
-    print_url = None
     metadata_url = None
+
+    print_url = None
+    print_itemname = None
+    print_itemmodel = None
 
     def setUp(self):
         """Ensure cache is cleared as part of test setup."""
@@ -80,7 +87,7 @@ class LabelTest(InvenTreeAPITestCase):
         # Django REST API "APITestCase" does not work like requests - to send a file without it existing on disk,
         # create it as a StringIO object, and upload it under parameter template
         filestr = StringIO(
-            '{% extends "label/label_base.html" %}<pre>TEST LABEL</pre>{% endblock content %}'
+            '{% extends "label/label_base.html" %}{% block content %}<pre>TEST LABEL</pre>{% endblock content %}'
         )
         filestr.name = 'ExampleTemplate.html'
 
@@ -138,7 +145,7 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIn('enabled', response.data)
 
         filestr = StringIO(
-            '{% extends "label/label_base.html" %}<pre>TEST LABEL</pre>{% endblock content %}'
+            '{% extends "label/label_base.html" %}{% block content %}<pre>TEST LABEL</pre>{% endblock content %}'
         )
         filestr.name = 'ExampleTemplate_Updated.html'
 
@@ -167,7 +174,7 @@ class LabelTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['label'].count('ExampleTemplate_Updated'), 1)
 
-    def test_zz_delete(self):
+    def test_delete(self):
         """Test deleting, after other test are done."""
         if not self.detail_url:
             return
@@ -184,6 +191,43 @@ class LabelTest(InvenTreeAPITestCase):
         response = self.delete(
             reverse(self.detail_url, kwargs={'pk': labels[n - 1].pk}), expected_code=204
         )
+
+    def test_print_label(self):
+        """Test printing a label."""
+        if not self.print_url:
+            return
+
+        # Create an item first
+        self.test_create_endpoint()
+
+        labels = self.model.objects.all()
+        n = len(labels)
+        # Make sure at least one label defined
+        self.assertGreaterEqual(n, 1)
+
+        url = reverse(self.print_url, kwargs={'pk': labels[0].pk})
+
+        # Try to print without providing a valid item
+        response = self.get(url, expected_code=400)
+
+        # Try to print with an invalid item
+        response = self.get(url, {self.print_itemname: 9999}, expected_code=400)
+
+        # Now print with a valid item
+        print(f'{self.print_itemmodel = }')
+        print(f'{self.print_itemmodel.objects.all() = }')
+
+        item = self.print_itemmodel.objects.first()
+        self.assertIsNotNone(item)
+
+        response = self.get(url, {self.print_itemname: item.pk}, expected_code=200)
+
+        response_json = json.loads(response.content.decode('utf-8'))
+
+        self.assertIn('file', response_json)
+        self.assertIn('success', response_json)
+        self.assertIn('message', response_json)
+        self.assertTrue(response_json['success'])
 
     def test_metadata_endpoint(self):
         """Unit tests for the metadata field."""
@@ -213,8 +257,11 @@ class TestStockItemLabel(LabelTest):
 
     list_url = 'api-stockitem-label-list'
     detail_url = 'api-stockitem-label-detail'
-    print_url = 'api-stockitem-label-print'
     metadata_url = 'api-stockitem-label-metadata'
+
+    print_url = 'api-stockitem-label-print'
+    print_itemname = 'item'
+    print_itemmodel = StockItem
 
 
 class TestStockLocationLabel(LabelTest):
@@ -224,8 +271,11 @@ class TestStockLocationLabel(LabelTest):
 
     list_url = 'api-stocklocation-label-list'
     detail_url = 'api-stocklocation-label-detail'
-    print_url = 'api-stocklocation-label-print'
     metadata_url = 'api-stocklocation-label-metadata'
+
+    print_url = 'api-stocklocation-label-print'
+    print_itemname = 'location'
+    print_itemmodel = StockLocation
 
 
 class TestPartLabel(LabelTest):
@@ -235,8 +285,11 @@ class TestPartLabel(LabelTest):
 
     list_url = 'api-part-label-list'
     detail_url = 'api-part-label-detail'
-    print_url = 'api-part-label-print'
     metadata_url = 'api-part-label-metadata'
+
+    print_url = 'api-part-label-print'
+    print_itemname = 'part'
+    print_itemmodel = Part
 
 
 class TestBuildLineLabel(LabelTest):
@@ -246,5 +299,8 @@ class TestBuildLineLabel(LabelTest):
 
     list_url = 'api-buildline-label-list'
     detail_url = 'api-buildline-label-detail'
-    print_url = 'api-buildline-label-print'
     metadata_url = 'api-buildline-label-metadata'
+
+    print_url = 'api-buildline-label-print'
+    print_itemname = 'line'
+    print_itemmodel = BuildLine
