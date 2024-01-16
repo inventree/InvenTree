@@ -19,7 +19,7 @@ django-markdownify                      # Markdown rendering
 django-mptt                             # Modified Preorder Tree Traversal
 django-markdownify                      # Markdown rendering
 django-money>=3.0.0,<3.3.0              # Django app for currency management # FIXED 2023-10-31 3.3.0 breaks due to https://github.com/django-money/django-money/issues/731
-git+https://github.com/matmair/django-mptt@django-4.x#egg=django-mptt                             # Modified Preorder Tree Traversal
+django-mptt                             # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
 django-q2                               # Background task scheduling
 django-q-sentry                         # sentry.io integration for django-q
