@@ -59,7 +59,10 @@ def apps():
 
 
 def content_excludes(
-    allow_tokens: bool = True, allow_plugins: bool = True, allow_sso: bool = True
+    allow_auth: bool = True,
+    allow_tokens: bool = True,
+    allow_plugins: bool = True,
+    allow_sso: bool = True,
 ):
     """Returns a list of content types to exclude from import/export.
 
@@ -82,6 +85,11 @@ def content_excludes(
         'common.notificationmessage',
         'user_sessions.session',
     ]
+
+    # Optionally exclude user auth data
+    if not allow_auth:
+        excludes.append('auth.group')
+        excludes.append('auth.user')
 
     # Optionally exclude user token information
     if not allow_tokens:
@@ -421,9 +429,9 @@ def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = Fal
         'overwrite': 'Overwrite existing files without asking first (default = False)',
         'include_permissions': 'Include user and group permissions in the output file (default = False)',
         'include_tokens': 'Include API tokens in the output file (default = False)',
-        'include_plugins': 'Include plugin data in the output file (default = False)',
+        'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
         'include_sso': 'Include SSO token data in the output file (default = False)',
-        'delete_temp': 'Delete temporary files (containing permissions) at end of run. Note that this will delete temporary files from previous runs as well. (default = off/False)',
+        'retain_temp': 'Retain temporary files (containing permissions) at end of process (default = False)',
     }
 )
 def export_records(
@@ -432,9 +440,9 @@ def export_records(
     overwrite=False,
     include_permissions=False,
     include_tokens=False,
-    include_plugins=False,
+    exclude_plugins=False,
     include_sso=False,
-    delete_temp=False,
+    retain_temp=False,
 ):
     """Export all database records to a file.
 
@@ -465,7 +473,7 @@ def export_records(
 
     excludes = content_excludes(
         allow_tokens=include_tokens,
-        allow_plugins=include_plugins,
+        allow_plugins=not exclude_plugins,
         allow_sso=include_sso,
     )
 
@@ -497,16 +505,22 @@ def export_records(
 
     print('Data export completed')
 
-    if delete_temp is True:
-        print('Removing temporary file')
+    if not retain_temp:
+        print('Removing temporary files')
         os.remove(tmpfile)
 
 
 @task(
-    help={'filename': 'Input filename', 'clear': 'Clear existing data before import'},
+    help={
+        'filename': 'Input filename',
+        'clear': 'Clear existing data before import',
+        'retain_temp': 'Retain temporary files at end of process (default = False)',
+    },
     post=[rebuild_models, rebuild_thumbnails],
 )
-def import_records(c, filename='data.json', clear=False):
+def import_records(
+    c, filename='data.json', clear: bool = False, retain_temp: bool = False
+):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
     if not os.path.isabs(filename):
