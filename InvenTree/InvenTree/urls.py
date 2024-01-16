@@ -159,7 +159,7 @@ apipatterns = [
     ),
     path('email/login/', LoginView.as_view(), name='sesame-login'),
     # Unknown endpoint
-    path('', NotFoundView.as_view(), name='api-404'),
+    re_path(r'^.*$', NotFoundView.as_view(), name='api-404'),
 ]
 
 settings_urls = [
@@ -451,5 +451,5 @@ urlpatterns.append(
 
 # Send any unknown URLs to the parts page
 urlpatterns += [
-    path('', RedirectView.as_view(url='/index/', permanent=False), name='index')
+    re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')
 ]
