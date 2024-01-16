@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-16 11:14+0000\n"
-"PO-Revision-Date: 2023-12-12 03:57\n"
+"POT-Creation-Date: 2024-01-15 13:52+0000\n"
+"PO-Revision-Date: 2024-01-16 13:32\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -473,13 +473,9 @@ msgstr "Chào mừng đến với {current_site.name}"
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Tài khoản của bạn đã được tạo.\n"
-"\n"
+msgstr "Tài khoản của bạn đã được tạo.\n\n"
 "Xin hãy sử dụng chức năng quên mật khẩu để truy cập (tại https://{domain})."
 
 #: InvenTree/serializers.py:520
@@ -2811,10 +2807,8 @@ msgid "Allow editing of purchase orders after they have been shipped or complete
 msgstr "Cho phép sửa đơn đặt mua sau khi đã vận chuyển hoặc hoàn thành"
 
 #: common/models.py:1756
-#, fuzzy
-#| msgid "Complete Purchase Order"
 msgid "Auto Complete Purchase Orders"
-msgstr "Hoàn thành đơn đặt mua"
+msgstr ""
 
 #: common/models.py:1758
 msgid "Automatically mark purchase orders as complete when all line items are received"
@@ -6532,7 +6526,7 @@ msgstr "Ảnh hiện có"
 
 #: part/serializers.py:807
 msgid "Filename of an existing part image"
-msgstr ""
+msgstr "Tên tệp của ảnh sản phẩm hiện hữu"
 
 #: part/serializers.py:824
 msgid "Image file does not exist"
@@ -6727,16 +6721,13 @@ msgid "The BOM this part has been changed, and must be validated"
 msgstr "BOM sản phẩm này đã được thay đổi và phải được xác minh"
 
 #: part/templates/part/bom.html:17
-#, fuzzy, python-format
-#| msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
+#, python-format
 msgid "This BOM was last checked by %(checker)s on %(check_date)s"
-msgstr "BOM cho <em>%(part)s</em> đã được kiểm tra lần cuối bởi %(checker)s vào %(check_date)s"
+msgstr ""
 
 #: part/templates/part/bom.html:21
-#, fuzzy
-#| msgid "This BOM item has been validated"
 msgid "This BOM has not been validated."
-msgstr "Mục BOM này là hợp lệ"
+msgstr ""
 
 #: part/templates/part/category.html:35
 msgid "Perform stocktake for this part category"
@@ -7458,28 +7449,20 @@ msgid "No match for supplier barcode"
 msgstr "Không phù hợp với mã vạch nhà cung cấp"
 
 #: plugin/base/barcodes/api.py:467
-#, fuzzy
-#| msgid "Multiple matching supplier parts found"
 msgid "Multiple matching line items found"
-msgstr "Tìm thấy nhiều sản phẩm nhà cung cấp phù hợp"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:470
-#, fuzzy
-#| msgid "No matching line items"
 msgid "No matching line item found"
-msgstr "Không thấy hàng hóa phù hợp"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:508 plugin/base/barcodes/api.py:515
-#, fuzzy
-#| msgid "Barcode does not match valid stock item"
 msgid "Barcode does not match an existing stock item"
-msgstr "Mã vạch không khớp với mặt hàng hợp lệ"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:526
-#, fuzzy
-#| msgid "Selected stock item does not match BOM line"
 msgid "Stock item does not match line item"
-msgstr "Hàng trong kho đã chọn không phù hợp với đường BOM"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:550 templates/js/translated/build.js:2579
 #: templates/js/translated/sales_order.js:1917
@@ -7487,16 +7470,12 @@ msgid "Insufficient stock available"
 msgstr "Kho không đủ hạn mức khả dụng"
 
 #: plugin/base/barcodes/api.py:559
-#, fuzzy
-#| msgid "Stock item assigned to sales order"
 msgid "Stock item allocated to sales order"
-msgstr "Mặt hàng đã được chỉ định vào đơn hàng bán"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:563
-#, fuzzy
-#| msgid "No user information"
 msgid "Not enough information"
-msgstr "Không có thông tin người dùng"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:147 plugin/base/barcodes/mixins.py:179
 msgid "Found multiple matching supplier parts for barcode"
@@ -7533,10 +7512,8 @@ msgid "Scanned barcode data"
 msgstr "Thông tin mã vạch đã quét"
 
 #: plugin/base/barcodes/serializers.py:81
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Purchase Order to allocate items against"
-msgstr "Đơn đặt mua để chỉ định hàng hóa"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:87
 msgid "Purchase order is not pending"
@@ -7559,40 +7536,28 @@ msgid "Cannot select a structural location"
 msgstr "Không thể chọn một địa điểm có cấu trúc"
 
 #: plugin/base/barcodes/serializers.py:139
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Sales Order to allocate items against"
-msgstr "Đơn đặt mua để chỉ định hàng hóa"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:145
-#, fuzzy
-#| msgid "Purchase order is not pending"
 msgid "Sales order is not pending"
-msgstr "Đơn đặt mua không chờ xử lý"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:153
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Sales order line item to allocate items against"
-msgstr "Đơn đặt mua để chỉ định hàng hóa"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:160
-#, fuzzy
-#| msgid "PurchaseOrder to allocate items against"
 msgid "Sales order shipment to allocate items against"
-msgstr "Đơn đặt mua để chỉ định hàng hóa"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:166
-#, fuzzy
-#| msgid "Shipment has already been shipped"
 msgid "Shipment has already been delivered"
-msgstr "Vận đơn đã được chuyển đi"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:171
-#, fuzzy
-#| msgid "Quantity to Install"
 msgid "Quantity to allocate"
-msgstr "Số lượng để cài đặt"
+msgstr ""
 
 #: plugin/base/label/label.py:39
 msgid "Label printing failed"
@@ -7688,7 +7653,7 @@ msgstr "Bỏ qua nhãn"
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Skip this number of labels when printing label sheets"
-msgstr ""
+msgstr "Bỏ qua số nhãn này khi in tờ nhãn"
 
 #: plugin/builtin/labels/label_sheet.py:41
 msgid "Border"
@@ -13500,8 +13465,7 @@ msgstr "Nhà cung cấp SSO đã chọn không hợp lệ hoặc đã không đ�
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "Bạn chuân bị sử dụng tài khoản %(provider_name)s của bạn để đăng nhập%(site_name)s<br>Vì là bước cuối cùng, xin hãy hoàn thiện biểu mẫu dưới đây:"
 
@@ -13677,6 +13641,3 @@ msgstr "Quyển để sửa mục"
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
 
-#, python-format
-#~ msgid "The BOM for <em>%(part)s</em> has not been validated."
-#~ msgstr "BOM cho <em>%(part)s</em> chưa được xác minh."
