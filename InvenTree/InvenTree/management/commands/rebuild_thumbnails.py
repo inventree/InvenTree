@@ -4,6 +4,7 @@
 """
 
 import logging
+import os
 
 from django.core.management.base import BaseCommand
 from django.db.utils import OperationalError, ProgrammingError
@@ -25,6 +26,23 @@ class Command(BaseCommand):
             return
 
         img = model.image
+
+        # Check for image paths
+        img_paths = []
+
+        if model.image and model.image.path:
+            img_paths.append(model.image.path)
+
+        if model.image.thumbnail and model.image.thumbnail.path:
+            img_paths.append(model.image.thumbnail.path)
+
+        if model.image.preview and model.image.preview.path:
+            img_paths.append(model.image.preview.path)
+
+        if len(img_paths) > 0:
+            if all((os.path.exists(path) for path in img_paths)):
+                # All images exist - skip further work
+                return
 
         logger.info("Generating thumbnail image for '%s'", img)
 
