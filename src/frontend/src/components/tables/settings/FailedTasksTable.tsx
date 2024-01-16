@@ -1,22 +1,17 @@
 import { t } from '@lingui/macro';
 import { Drawer, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
-import { openDeleteApiForm } from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { StylishText } from '../../items/StylishText';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction } from '../RowActions';
 
-/*
- * Table for display server error information
- */
-export default function ErrorReportTable() {
-  const table = useTable('error-report');
+export default function FailedTasksTable() {
+  const table = useTable('tasks-failed');
 
   const [error, setError] = useState<string>('');
 
@@ -25,36 +20,31 @@ export default function ErrorReportTable() {
   const columns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'when',
-        title: t`When`,
-        sortable: true
+        accessor: 'func',
+        title: t`Task`,
+        sortable: true,
+        switchable: false
       },
       {
-        accessor: 'path',
-        title: t`Path`,
-        sortable: true
+        accessor: 'pk',
+        title: t`Task ID`
       },
       {
-        accessor: 'info',
-        title: t`Error Information`
+        accessor: 'started',
+        title: t`Started`,
+        sortable: true,
+        switchable: false
+      },
+      {
+        accessor: 'stopped',
+        title: t`Stopped`,
+        sortable: true,
+        switchable: false
+      },
+      {
+        accessor: 'attempt_count',
+        title: t`Attempts`
       }
-    ];
-  }, []);
-
-  const rowActions = useCallback((record: any): RowAction[] => {
-    return [
-      RowDeleteAction({
-        onClick: () => {
-          openDeleteApiForm({
-            url: ApiPaths.error_report_list,
-            pk: record.pk,
-            title: t`Delete error report`,
-            onFormSuccess: table.refreshTable,
-            successMessage: t`Error report deleted`,
-            preFormWarning: t`Are you sure you want to delete this error report?`
-          });
-        }
-      })
     ];
   }, []);
 
@@ -72,15 +62,14 @@ export default function ErrorReportTable() {
         })}
       </Drawer>
       <InvenTreeTable
-        url={apiUrl(ApiPaths.error_report_list)}
+        url={apiUrl(ApiPaths.task_failed_list)}
         tableState={table}
         columns={columns}
         props={{
           enableBulkDelete: true,
           enableSelection: true,
-          rowActions: rowActions,
-          onRowClick: (row) => {
-            setError(row.data);
+          onRowClick: (row: any) => {
+            setError(row.result);
             open();
           }
         }}
