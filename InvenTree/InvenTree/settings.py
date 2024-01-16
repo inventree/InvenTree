@@ -160,8 +160,9 @@ STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
 
-# Append directory for compiled react files
-STATICFILES_DIRS.append(BASE_DIR.joinpath('web', 'static'))
+# Append directory for compiled react files if debug server is running
+if DEBUG and 'collectstatic' not in sys.argv:
+    STATICFILES_DIRS.append(BASE_DIR.joinpath('web', 'static'))
 
 STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
 
