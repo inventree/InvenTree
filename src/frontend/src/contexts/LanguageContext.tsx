@@ -65,9 +65,25 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
         if (isMounted.current) setLoadedState('error');
       });
 
-    const locales = [language, server.default_locale, 'en-us'].filter(
-      (locale) => !!locale
-    );
+    /*
+     * Configure the default Accept-Language header for all requests.
+     * - Locally selected locale
+     * - Server default locale
+     * - en-us (backup)
+     */
+    let locales: (string | undefined)[] = [];
+
+    if (language != 'pseudo-LOCALE') {
+      locales.push(language);
+    }
+
+    if (!!server.default_locale) {
+      locales.push(server.default_locale);
+    }
+
+    if (locales.indexOf('en-us') < 0) {
+      locales.push('en-us');
+    }
 
     // Update default Accept-Language headers
     api.defaults.headers.common['Accept-Language'] = locales.join(', ');
