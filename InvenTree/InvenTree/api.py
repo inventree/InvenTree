@@ -125,6 +125,7 @@ class InfoView(AjaxView):
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,
             'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
             'target': InvenTree.version.inventreeTarget() if is_staff else None,
+            'default_locale': settings.LANGUAGE_CODE,
         }
 
         return JsonResponse(data)
