@@ -361,6 +361,7 @@ class ReportTest(InvenTreeAPITestCase):
                 'description': 'New version of the template',
                 'template': filestr,
             },
+            format=None,
             expected_code=200,
         )
 
