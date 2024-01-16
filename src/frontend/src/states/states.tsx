@@ -37,6 +37,7 @@ export interface ServerAPIProps {
   platform: null | string;
   installer: null | string;
   target: null | string;
+  default_locale: null | string;
 }
 
 // Type interface defining a single 'setting' object

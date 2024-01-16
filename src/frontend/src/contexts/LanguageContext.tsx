@@ -5,6 +5,7 @@ import { LoadingOverlay, Text } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 
 import { api } from '../App';
+import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 
 // Definitions
@@ -45,6 +46,7 @@ export const languages: Record<string, string> = {
 
 export function LanguageContext({ children }: { children: JSX.Element }) {
   const [language] = useLocalState((state) => [state.language]);
+  const [server] = useServerApiState((state) => [state.server]);
 
   const [loadedState, setLoadedState] = useState<
     'loading' | 'loaded' | 'error'
@@ -62,6 +64,13 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
         console.error('Failed loading translations', err);
         if (isMounted.current) setLoadedState('error');
       });
+
+    const locales = [language, server.default_locale, 'en-us'].filter(
+      (l) => !!l
+    );
+
+    // Update default Accept-Language headers
+    api.defaults.headers.common['Accept-Language'] = locales.join(', ');
 
     return () => {
       isMounted.current = false;
