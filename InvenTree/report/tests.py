@@ -241,6 +241,13 @@ class ReportTest(InvenTreeAPITestCase):
             enabled=True,
         )
 
+    def test_api_url(self):
+        """Test returned API Url against URL tag defined in this file."""
+        if not self.list_url:
+            return
+
+        self.assertEqual(reverse(self.list_url), self.model.get_api_url())
+
     def test_list_endpoint(self):
         """Test that the LIST endpoint works for each report."""
         if not self.list_url:
