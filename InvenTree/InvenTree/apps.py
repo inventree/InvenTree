@@ -1,4 +1,4 @@
-"""AppConfig for inventree app."""
+"""AppConfig for InvenTree app."""
 
 import logging
 from importlib import import_module
