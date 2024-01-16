@@ -2,7 +2,7 @@
 
 from django.core.exceptions import FieldError, ValidationError
 from django.http import JsonResponse
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page, never_cache
 
@@ -379,8 +379,8 @@ label_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
+                    re_path(
+                        r'print/?',
                         StockItemLabelPrint.as_view(),
                         name='api-stockitem-label-print',
                     ),
@@ -409,8 +409,8 @@ label_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
+                    re_path(
+                        r'print/?',
                         StockLocationLabelPrint.as_view(),
                         name='api-stocklocation-label-print',
                     ),
@@ -443,8 +443,10 @@ label_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/', PartLabelPrint.as_view(), name='api-part-label-print'
+                    re_path(
+                        r'print/?',
+                        PartLabelPrint.as_view(),
+                        name='api-part-label-print',
                     ),
                     path(
                         'metadata/',
@@ -467,8 +469,8 @@ label_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
+                    re_path(
+                        r'print/?',
                         BuildLineLabelPrint.as_view(),
                         name='api-buildline-label-print',
                     ),

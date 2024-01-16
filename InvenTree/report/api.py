@@ -4,7 +4,7 @@ from django.core.exceptions import FieldError, ValidationError
 from django.core.files.base import ContentFile
 from django.http import HttpResponse
 from django.template.exceptions import TemplateDoesNotExist
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
@@ -520,8 +520,8 @@ report_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
+                    re_path(
+                        r'print/?',
                         PurchaseOrderReportPrint.as_view(),
                         name='api-po-report-print',
                     ),
@@ -550,8 +550,8 @@ report_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
+                    re_path(
+                        r'print/?',
                         SalesOrderReportPrint.as_view(),
                         name='api-so-report-print',
                     ),
@@ -609,8 +609,8 @@ report_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
+                    re_path(
+                        r'print/?',
                         BuildReportPrint.as_view(),
                         name='api-build-report-print',
                     ),
@@ -637,8 +637,10 @@ report_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/', BOMReportPrint.as_view(), name='api-bom-report-print'
+                    re_path(
+                        r'print/?',
+                        BOMReportPrint.as_view(),
+                        name='api-bom-report-print',
                     ),
                     path(
                         'metadata/',
@@ -661,8 +663,8 @@ report_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
+                    re_path(
+                        r'print/?',
                         StockItemTestReportPrint.as_view(),
                         name='api-stockitem-testreport-print',
                     ),
@@ -695,8 +697,8 @@ report_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
+                    re_path(
+                        r'print/?',
                         StockLocationReportPrint.as_view(),
                         name='api-stocklocation-report-print',
                     ),
