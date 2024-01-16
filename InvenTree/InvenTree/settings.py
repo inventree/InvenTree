@@ -838,7 +838,9 @@ if (
     LANGUAGE_CODE not in LOCALE_CODES
     and LANGUAGE_CODE.split('-')[0] not in LOCALE_CODES
 ):  # pragma: no cover
-    logger.warning(f'Language code {LANGUAGE_CODE} not supported - defaulting to en-us')
+    logger.warning(
+        'Language code %s not supported - defaulting to en-us', LANGUAGE_CODE
+    )
     LANGUAGE_CODE = 'en-us'
 
 # Store language settings for 30 days
