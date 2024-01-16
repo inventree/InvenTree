@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_MX\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-13 12:16\n"
+"PO-Revision-Date: 2024-01-16 13:32\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1806,7 +1806,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:83
 msgid "Minimum stock"
-msgstr ""
+msgstr "Stock mínimo"
 
 #: src/components/tables/part/PartTable.tsx:105
 msgid "Build Order Allocations"
@@ -3923,16 +3923,16 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:66
 msgid "Login"
-msgstr ""
+msgstr "Ingresar"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:88
 msgid "Barcodes"
-msgstr ""
+msgstr "Códigos de barras"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:107
 #: src/pages/part/PartDetail.tsx:152
 msgid "Pricing"
-msgstr ""
+msgstr "Precios"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:118
 #~ msgid "Physical Units"
@@ -3940,16 +3940,16 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:136
 msgid "Exchange Rates"
-msgstr ""
+msgstr "Tasas de cambio"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:144
 msgid "Labels"
-msgstr ""
+msgstr "Etiquetas"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:150
 #: src/pages/Index/Settings/UserSettings.tsx:99
 msgid "Reporting"
-msgstr ""
+msgstr "Informes"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:224
 #: src/pages/part/PartDetail.tsx:207
@@ -3962,23 +3962,23 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:131
 #: src/pages/sales/SalesOrderDetail.tsx:61
 msgid "Build Orders"
-msgstr ""
+msgstr "Ordenes de Producción"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:286
 msgid "Switch to User Setting"
-msgstr ""
+msgstr "Cambiar a Configuración de Usuario"
 
 #: src/pages/Index/Settings/UserSettings.tsx:29
 msgid "Account"
-msgstr ""
+msgstr "Cuenta"
 
 #: src/pages/Index/Settings/UserSettings.tsx:35
 msgid "Security"
-msgstr ""
+msgstr "Seguridad"
 
 #: src/pages/Index/Settings/UserSettings.tsx:46
 msgid "Display Options"
-msgstr ""
+msgstr "Opciones de visualización"
 
 #: src/pages/Index/Settings/UserSettings.tsx:115
 msgid "Account Settings"
@@ -3998,7 +3998,7 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr ""
+msgstr "No encontrado"
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
@@ -4092,7 +4092,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:223
 msgid "Report"
-msgstr ""
+msgstr "Informe"
 
 #: src/pages/build/BuildDetail.tsx:224
 msgid "Print build report"
@@ -4126,7 +4126,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:88
 #: src/pages/stock/StockDetail.tsx:69
 msgid "Details"
-msgstr ""
+msgstr "Detalles"
 
 #: src/pages/company/CompanyDetail.tsx:78
 msgid "Manufactured Parts"
@@ -4159,7 +4159,7 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:77
 #: src/pages/part/PartDetail.tsx:93
 msgid "Parameters"
-msgstr ""
+msgstr "Parámetros"
 
 #: src/pages/part/PartDetail.tsx:111
 msgid "Variants"
@@ -4186,7 +4186,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:170
 #: src/pages/purchasing/PurchasingIndex.tsx:27
 msgid "Suppliers"
-msgstr ""
+msgstr "Proveedores"
 
 #: src/pages/part/PartDetail.tsx:202
 msgid "Scheduling"
@@ -4300,31 +4300,31 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:169
 msgid "Count stock"
-msgstr ""
+msgstr "Contar stock"
 
 #: src/pages/stock/StockDetail.tsx:173
 msgid "Add"
-msgstr ""
+msgstr "Agregar"
 
 #: src/pages/stock/StockDetail.tsx:174
 msgid "Add stock"
-msgstr ""
+msgstr "Agregar stock"
 
 #: src/pages/stock/StockDetail.tsx:179
 msgid "Remove stock"
-msgstr ""
+msgstr "Remover stock"
 
 #: src/pages/stock/StockDetail.tsx:183
 msgid "Transfer"
-msgstr ""
+msgstr "Transferir"
 
 #: src/pages/stock/StockDetail.tsx:184
 msgid "Transfer stock"
-msgstr ""
+msgstr "Transferir stock"
 
 #: src/pages/stock/StockDetail.tsx:196
 msgid "Duplicate stock item"
-msgstr ""
+msgstr "Duplicar artículo de stock"
 
 #: src/pages/stock/StockDetail.tsx:205
 #~ msgid "Edit stock item"
@@ -4344,4 +4344,5 @@ msgstr ""
 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
-msgstr ""
+msgstr "Leer la documentación"
+
