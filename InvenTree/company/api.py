@@ -54,9 +54,7 @@ class CompanyList(ListCreateAPI):
     def get_queryset(self):
         """Return annotated queryset for the company list endpoint."""
         queryset = super().get_queryset()
-        queryset = CompanySerializer.annotate_queryset(queryset)
-
-        return queryset
+        return CompanySerializer.annotate_queryset(queryset)
 
     filter_backends = SEARCH_ORDER_FILTER
 
