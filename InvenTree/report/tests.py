@@ -2,6 +2,7 @@
 
 import os
 import shutil
+from io import StringIO
 from pathlib import Path
 
 from django.conf import settings
@@ -285,8 +286,6 @@ class ReportTest(InvenTreeAPITestCase):
         # Create a new report
         # Django REST API "APITestCase" does not work like requests - to send a file without it existing on disk,
         # create it as a StringIO object, and upload it under parameter template
-        from io import StringIO
-
         filestr = StringIO(
             '{% extends "label/report_base.html" %}<pre>TEST REPORT</pre>{% endblock content %}'
         )
@@ -342,10 +341,19 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertIn('filters', response.data)
         self.assertIn('enabled', response.data)
 
+        filestr = StringIO(
+            '{% extends "label/report_base.html" %}<pre>TEST REPORT VERSION 2</pre>{% endblock content %}'
+        )
+        filestr.name = 'ExampleTemplate_Updated.html'
+
         # Check PATCH method
         response = self.patch(
             reverse(self.detail_url, kwargs={'pk': reports[0].pk}),
-            {'name': 'Changed name during test'},
+            {
+                'name': 'Changed name during test',
+                'description': 'New version of the template',
+                'template': filestr,
+            },
             expected_code=200,
         )
 
@@ -358,6 +366,11 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertIn('enabled', response.data)
 
         self.assertEqual(response.data['name'], 'Changed name during test')
+        self.assertEqual(response.data['description'], 'New version of the template')
+
+        self.assertTrue(
+            response.data['template'].endswith('ExampleTemplate_Updated.html')
+        )
 
         # Delete the last report
         response = self.delete(
