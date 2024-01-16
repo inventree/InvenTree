@@ -298,7 +298,7 @@ def static(c, frontend=False):
     manage(c, 'prerender')
     if frontend and node_available():
         frontend_build(c)
-    manage(c, 'collectstatic --no-input')
+    manage(c, 'collectstatic --no-input --clear')
 
 
 @task
