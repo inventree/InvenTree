@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-16 11:14+0000\n"
-"PO-Revision-Date: 2023-12-29 08:49\n"
+"POT-Creation-Date: 2024-01-15 13:52+0000\n"
+"PO-Revision-Date: 2024-01-16 13:31\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -396,7 +396,7 @@ msgstr "名称"
 #: templates/js/translated/stock.js:1495 templates/js/translated/stock.js:2028
 #: templates/js/translated/stock.js:2719 templates/js/translated/stock.js:2802
 msgid "Description"
-msgstr "描述信息"
+msgstr "描述"
 
 #: InvenTree/models.py:830 stock/models.py:85
 msgid "Description (optional)"
@@ -473,13 +473,9 @@ msgstr "欢迎来到 {current_site.name}"
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"您的账户已创建\n"
-"\n"
+msgstr "您的账户已创建\n\n"
 "请使用密码重置功能获取访问权限 (从https://{domain})."
 
 #: InvenTree/serializers.py:520
@@ -2811,10 +2807,8 @@ msgid "Allow editing of purchase orders after they have been shipped or complete
 msgstr "允许在采购订单已配送或完成后编辑订单"
 
 #: common/models.py:1756
-#, fuzzy
-#| msgid "Complete Purchase Order"
 msgid "Auto Complete Purchase Orders"
-msgstr "完成采购订单"
+msgstr ""
 
 #: common/models.py:1758
 msgid "Automatically mark purchase orders as complete when all line items are received"
@@ -4839,7 +4833,7 @@ msgstr "配送日期"
 
 #: order/models.py:1620 templates/js/translated/sales_order.js:1036
 msgid "Delivery Date"
-msgstr "交货日期(订单)"
+msgstr "交货日期 (订单)"
 
 #: order/models.py:1621
 msgid "Date of delivery of shipment"
@@ -5173,7 +5167,7 @@ msgstr "复制订单"
 #: order/templates/order/sales_order_base.html:83
 #: order/templates/order/sales_order_base.html:84
 msgid "Issue Order"
-msgstr "问题订单"
+msgstr "发布订单"
 
 #: order/templates/order/order_base.html:83
 #: order/templates/order/return_order_base.html:86
@@ -5442,11 +5436,11 @@ msgstr "将条形码链接到退货订单"
 
 #: order/templates/order/return_order_sidebar.html:5
 msgid "Order Details"
-msgstr "订单细节"
+msgstr "订单详情"
 
 #: order/templates/order/sales_order_base.html:60
 msgid "Print sales order report"
-msgstr "打印采购订单报告"
+msgstr "打印销售订单报告"
 
 #: order/templates/order/sales_order_base.html:88
 #: order/templates/order/sales_order_base.html:89
@@ -5456,11 +5450,11 @@ msgstr "运送项目"
 #: order/templates/order/sales_order_base.html:92
 #: templates/js/translated/sales_order.js:484
 msgid "Complete Sales Order"
-msgstr "完成采购订单"
+msgstr "完成销售订单"
 
 #: order/templates/order/sales_order_base.html:131
 msgid "This Sales Order has not been fully allocated"
-msgstr "采购订单没有完全分配"
+msgstr "销售订单没有完全分配"
 
 #: order/templates/order/sales_order_base.html:169
 #: order/templates/order/sales_order_detail.html:99
@@ -5509,12 +5503,12 @@ msgstr "未发现价格"
 #: order/views.py:415
 #, python-brace-format
 msgid "Updated {part} unit-price to {price}"
-msgstr "更新{part} 单价到{price}"
+msgstr "更新 {part} 单价到 {price}"
 
 #: order/views.py:421
 #, python-brace-format
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
-msgstr "更新{part} 单价到 {price} 且更新数量到{qty}"
+msgstr "更新 {part} 单价到 {price} 且更新数量到 {qty}"
 
 #: part/admin.py:39 part/admin.py:403 part/models.py:3851 part/stocktake.py:218
 #: stock/admin.py:151
@@ -5566,7 +5560,7 @@ msgstr "默认仓储ID"
 
 #: part/admin.py:76
 msgid "Default Supplier ID"
-msgstr "默认供应商ID"
+msgstr "默认供应商 ID"
 
 #: part/admin.py:81 part/models.py:855 part/templates/part/part_base.html:177
 msgid "Variant Of"
@@ -5858,7 +5852,7 @@ msgstr "最低库存数量"
 
 #: part/models.py:993
 msgid "Units of measure for this part"
-msgstr "零件的计数单位"
+msgstr "此零件的计量单位"
 
 #: part/models.py:1000
 msgid "Can this part be built from other parts?"
@@ -6467,7 +6461,7 @@ msgstr "初始化指定此零件的库存地点"
 
 #: part/serializers.py:452
 msgid "Select supplier (or leave blank to skip)"
-msgstr "选择供应商（或为空）"
+msgstr "选择供应商（或为空以跳过）"
 
 #: part/serializers.py:468
 msgid "Select manufacturer (or leave blank to skip)"
@@ -6491,7 +6485,7 @@ msgstr "此制造商零件编号 (MPN) 的制造商零件已存在"
 
 #: part/serializers.py:512
 msgid "Supplier part matching this SKU already exists"
-msgstr "匹配此SKU的供应商零件已存在"
+msgstr "匹配此库存单位  (SKU) 的供应商零件已存在"
 
 #: part/serializers.py:777 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
@@ -6516,7 +6510,7 @@ msgstr "供应商信息"
 
 #: part/serializers.py:792
 msgid "Add initial supplier information for this part"
-msgstr "添加此部分的初始供应商信息"
+msgstr "添加此零件的初始供应商信息"
 
 #: part/serializers.py:800
 msgid "Copy Category Parameters"
@@ -6727,16 +6721,13 @@ msgid "The BOM this part has been changed, and must be validated"
 msgstr "此物料清单中零件已被更改，必须验证"
 
 #: part/templates/part/bom.html:17
-#, fuzzy, python-format
-#| msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
+#, python-format
 msgid "This BOM was last checked by %(checker)s on %(check_date)s"
-msgstr "The 物料清单 for <em>%(part)s</em> 的物料清单被%(checker)s 在 %(check_date)s 最后更改"
+msgstr "物料清单最近被%(checker)s于%(check_date)s 修改"
 
 #: part/templates/part/bom.html:21
-#, fuzzy
-#| msgid "This BOM item has been validated"
 msgid "This BOM has not been validated."
-msgstr "此物料清单项目已验证"
+msgstr "物料清单己失效"
 
 #: part/templates/part/category.html:35
 msgid "Perform stocktake for this part category"
@@ -7182,7 +7173,7 @@ msgstr "物料清单价格"
 
 #: part/templates/part/part_pricing.html:66
 msgid "Unit Purchase Price"
-msgstr "采购订单价"
+msgstr "单位采购价"
 
 #: part/templates/part/part_pricing.html:72
 msgid "Total Purchase Price"
@@ -7702,11 +7693,11 @@ msgstr "供应商集成 - DigiKey"
 
 #: plugin/builtin/suppliers/digikey.py:17
 msgid "Provides support for scanning DigiKey barcodes"
-msgstr "提供对 DigiKey 条形码进行扫描"
+msgstr "为扫描 DigiKey 条形码提供支持"
 
 #: plugin/builtin/suppliers/digikey.py:26
 msgid "The Supplier which acts as 'DigiKey'"
-msgstr "充当为“DigiKey”的供应商。"
+msgstr "作为“DigiKey”的供应商。"
 
 #: plugin/builtin/suppliers/lcsc.py:18
 msgid "Supplier Integration - LCSC"
@@ -7714,11 +7705,11 @@ msgstr "供应商集成 - LCSC"
 
 #: plugin/builtin/suppliers/lcsc.py:19
 msgid "Provides support for scanning LCSC barcodes"
-msgstr "提供支持扫描 LCSC条形码"
+msgstr "为扫描 LCSC 条形码提供支持"
 
 #: plugin/builtin/suppliers/lcsc.py:27
 msgid "The Supplier which acts as 'LCSC'"
-msgstr "充当为“LCSC”的供应商。"
+msgstr "作为“LCSC”的供应商。"
 
 #: plugin/builtin/suppliers/mouser.py:16
 msgid "Supplier Integration - Mouser"
@@ -7726,11 +7717,11 @@ msgstr "供应商集成 - Mouser"
 
 #: plugin/builtin/suppliers/mouser.py:17
 msgid "Provides support for scanning Mouser barcodes"
-msgstr "支持扫描 Mouser 条形码的供应商"
+msgstr "为扫描 Mouser条形码提供支持"
 
 #: plugin/builtin/suppliers/mouser.py:25
 msgid "The Supplier which acts as 'Mouser'"
-msgstr "充当为“Mouser”的供应商。"
+msgstr "作为“Mouser”的供应商。"
 
 #: plugin/builtin/suppliers/tme.py:18
 msgid "Supplier Integration - TME"
@@ -7738,11 +7729,11 @@ msgstr "供应商集成 - TME"
 
 #: plugin/builtin/suppliers/tme.py:19
 msgid "Provides support for scanning TME barcodes"
-msgstr "提供支持扫描 TME条形码"
+msgstr "为扫描 TME 条形码提供支持"
 
 #: plugin/builtin/suppliers/tme.py:27
 msgid "The Supplier which acts as 'TME'"
-msgstr "充当为“LCSC”的供应商。"
+msgstr "作为“LCSC”的供应商。"
 
 #: plugin/installer.py:140
 msgid "Permission denied: only staff users can install plugins"
@@ -8197,11 +8188,11 @@ msgstr "状态代码"
 
 #: stock/admin.py:178
 msgid "Supplier Part ID"
-msgstr "供应商商品ID"
+msgstr "供应商零件 ID"
 
 #: stock/admin.py:183
 msgid "Supplier ID"
-msgstr "供应商ID"
+msgstr "供应商 ID"
 
 #: stock/admin.py:189
 msgid "Supplier Name"
@@ -8222,7 +8213,7 @@ msgstr "生产 ID"
 
 #: stock/admin.py:214
 msgid "Sales Order ID"
-msgstr "销售订单ID"
+msgstr "销售订单 ID"
 
 #: stock/admin.py:219
 msgid "Purchase Order ID"
@@ -8277,9 +8268,7 @@ msgstr "给定的供应商零件不存在"
 
 #: stock/api.py:883
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
-msgstr ""
-"供应商零件有定义的包装大小，但 use_pack_size 标志\n"
-"未设置"
+msgstr "供应商零件有定义的包装大小，但 use_pack_size 标志未设置"
 
 #: stock/api.py:914
 msgid "Serial numbers cannot be supplied for a non-trackable part"
@@ -8355,7 +8344,7 @@ msgstr "无法为虚拟零件创建库存项"
 #: stock/models.py:664
 #, python-brace-format
 msgid "Part type ('{self.supplier_part.part}') must be {self.part}"
-msgstr "零件类型 ('{self.supplier_part.part}') 必须为{self.part}"
+msgstr "零件类型 ('{self.supplier_part.part}') 必须为 {self.part}"
 
 #: stock/models.py:674 stock/models.py:687
 msgid "Quantity must be 1 for item with a serial number"
@@ -8455,7 +8444,7 @@ msgstr "当库存耗尽时删除此库存项"
 
 #: stock/models.py:916
 msgid "Single unit purchase price at time of purchase"
-msgstr "购买时单个单位购买价格"
+msgstr "购买时的单价"
 
 #: stock/models.py:947
 msgid "Converted to part"
@@ -8520,7 +8509,7 @@ msgstr "库存项必须指相同零件"
 
 #: stock/models.py:1592
 msgid "Stock items must refer to the same supplier part"
-msgstr "库存项必须指相同零件"
+msgstr "库存项必须是同一供应商的零件"
 
 #: stock/models.py:1597
 msgid "Stock status codes must match"
@@ -8572,7 +8561,7 @@ msgstr "添加时使用包大小：数量定义为包数量"
 
 #: stock/serializers.py:324
 msgid "Purchase price of this stock item, per unit or pack"
-msgstr "购买此库存项的价格，件或包"
+msgstr "此库存项的购买价格，每单位或包装"
 
 #: stock/serializers.py:386
 msgid "Enter number of stock items to serialize"
@@ -8646,7 +8635,7 @@ msgstr "所选零件不是一个有效的转换选项"
 
 #: stock/serializers.py:637
 msgid "Cannot convert stock item with assigned SupplierPart"
-msgstr ""
+msgstr "无法转换已分配供应商零件的库存项"
 
 #: stock/serializers.py:668
 msgid "Destination location for returned item"
@@ -9531,7 +9520,7 @@ msgstr "项目编码设置"
 #: templates/InvenTree/settings/project_codes.html:21
 #: templates/InvenTree/settings/sidebar.html:33
 msgid "Project Codes"
-msgstr "项目编码:"
+msgstr "项目编码"
 
 #: templates/InvenTree/settings/project_codes.html:25
 #: templates/InvenTree/settings/settings_staff_js.html:216
@@ -9584,11 +9573,11 @@ msgstr "删除"
 
 #: templates/InvenTree/settings/settings_staff_js.html:95
 msgid "Edit Custom Unit"
-msgstr "编辑自定义单元"
+msgstr "编辑自定义单位"
 
 #: templates/InvenTree/settings/settings_staff_js.html:110
 msgid "Delete Custom Unit"
-msgstr "编辑自定义单元"
+msgstr "删除自定义单位"
 
 #: templates/InvenTree/settings/settings_staff_js.html:124
 msgid "New Custom Unit"
@@ -10944,7 +10933,7 @@ msgstr "所有选中的零件已全部分配"
 #: templates/js/translated/build.js:1719
 #: templates/js/translated/sales_order.js:1186
 msgid "Select source location (leave blank to take from all locations)"
-msgstr "选择源位置(留空以从所有位置取出)"
+msgstr "选择源位置 (留空以从所有位置取出)"
 
 #: templates/js/translated/build.js:1747
 msgid "Allocate Stock Items to Build Order"
@@ -12277,7 +12266,7 @@ msgstr "删除行项目"
 #: templates/js/translated/purchase_order.js:2221
 #: templates/js/translated/sales_order.js:2024
 msgid "Duplicate line item"
-msgstr "复制当前行"
+msgstr "复制当前行项目"
 
 #: templates/js/translated/purchase_order.js:2222
 #: templates/js/translated/return_order.js:801
@@ -12368,7 +12357,7 @@ msgstr "创建新的销售订单"
 
 #: templates/js/translated/sales_order.js:176
 msgid "Edit Sales Order"
-msgstr ""
+msgstr "编辑销售订单"
 
 #: templates/js/translated/sales_order.js:291
 msgid "No stock items have been allocated to this shipment"
@@ -12400,11 +12389,11 @@ msgstr "完成配送"
 
 #: templates/js/translated/sales_order.js:452
 msgid "Skip"
-msgstr "略过"
+msgstr "跳过"
 
 #: templates/js/translated/sales_order.js:513
 msgid "This order has line items which have not been completed."
-msgstr "此订单有列项目尚未完成。"
+msgstr "此订单有行项目尚未完成。"
 
 #: templates/js/translated/sales_order.js:535
 msgid "Issue this Sales Order?"
@@ -12412,7 +12401,7 @@ msgstr "发布此销售订单？"
 
 #: templates/js/translated/sales_order.js:540
 msgid "Issue Sales Order"
-msgstr "发布此销售订单？"
+msgstr "发布销售订单"
 
 #: templates/js/translated/sales_order.js:559
 msgid "Cancel Sales Order"
@@ -12529,7 +12518,7 @@ msgstr "由于项目已配送，无法删除"
 
 #: templates/js/translated/sales_order.js:2038
 msgid "Cannot be deleted as items have been allocated"
-msgstr "无法删除，因为项目已被分配"
+msgstr "由于项目已被分配，无法删除"
 
 #: templates/js/translated/sales_order.js:2109
 msgid "Allocate Serial Numbers"
@@ -13034,7 +13023,7 @@ msgstr "更改库存状态"
 
 #: templates/js/translated/table_filters.js:74
 msgid "Has project code"
-msgstr "有工程代码"
+msgstr "有项目编码"
 
 #: templates/js/translated/table_filters.js:89
 #: templates/js/translated/table_filters.js:601
@@ -13476,8 +13465,7 @@ msgstr "选定的 SSO 提供程序无效，或者配置不正确"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "您将使用您的%(provider_name)s 帐户登录到 %(site_name)s。最后一步, 请填写以下表格:"
 
@@ -13653,6 +13641,3 @@ msgstr "编辑项目权限"
 msgid "Permission to delete items"
 msgstr "删除项目权限"
 
-#, python-format
-#~ msgid "The BOM for <em>%(part)s</em> has not been validated."
-#~ msgstr "<em>%(part)s</em> 的物料清单己失效"
