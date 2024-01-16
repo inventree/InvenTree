@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-16 11:14+0000\n"
-"PO-Revision-Date: 2023-12-11 03:45\n"
+"POT-Creation-Date: 2024-01-15 13:52+0000\n"
+"PO-Revision-Date: 2024-01-16 13:32\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -473,9 +473,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -7471,16 +7469,12 @@ msgid "Insufficient stock available"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:559
-#, fuzzy
-#| msgid "Stock quantity to allocate to build"
 msgid "Stock item allocated to sales order"
-msgstr "Ποσότητα αποθέματος για διάθεση για κατασκευή"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:563
-#, fuzzy
-#| msgid "Edit User Information"
 msgid "Not enough information"
-msgstr "Τροποποίηση πληροφοριών χρήστη"
+msgstr ""
 
 #: plugin/base/barcodes/mixins.py:147 plugin/base/barcodes/mixins.py:179
 msgid "Found multiple matching supplier parts for barcode"
@@ -7557,16 +7551,12 @@ msgid "Sales order shipment to allocate items against"
 msgstr ""
 
 #: plugin/base/barcodes/serializers.py:166
-#, fuzzy
-#| msgid "This build output has already been completed"
 msgid "Shipment has already been delivered"
-msgstr "Η παραγγελία κατασκευής έχει ολοκληρωθεί"
+msgstr ""
 
 #: plugin/base/barcodes/serializers.py:171
-#, fuzzy
-#| msgid "Stock quantity to allocate to build"
 msgid "Quantity to allocate"
-msgstr "Ποσότητα αποθέματος για διάθεση για κατασκευή"
+msgstr ""
 
 #: plugin/base/label/label.py:39
 msgid "Label printing failed"
@@ -13474,8 +13464,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13650,3 +13639,4 @@ msgstr ""
 #: users/models.py:401
 msgid "Permission to delete items"
 msgstr ""
+
