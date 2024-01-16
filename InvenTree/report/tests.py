@@ -294,7 +294,7 @@ class ReportTest(InvenTreeAPITestCase):
         # Django REST API "APITestCase" does not work like requests - to send a file without it existing on disk,
         # create it as a StringIO object, and upload it under parameter template
         filestr = StringIO(
-            '{% extends "label/report_base.html" %}<pre>TEST REPORT</pre>{% endblock content %}'
+            '{% extends "label/report_base.html" %}{% block content %}<pre>TEST REPORT</pre>{% endblock content %}'
         )
         filestr.name = 'ExampleTemplate.html'
 
@@ -349,7 +349,7 @@ class ReportTest(InvenTreeAPITestCase):
         self.assertIn('enabled', response.data)
 
         filestr = StringIO(
-            '{% extends "label/report_base.html" %}<pre>TEST REPORT VERSION 2</pre>{% endblock content %}'
+            '{% extends "label/report_base.html" %}{% block content %}<pre>TEST REPORT VERSION 2</pre>{% endblock content %}'
         )
         filestr.name = 'ExampleTemplate_Updated.html'
 
