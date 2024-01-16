@@ -30,14 +30,9 @@ class Command(BaseCommand):
         # Check for image paths
         img_paths = []
 
-        if model.image and model.image.path:
-            img_paths.append(model.image.path)
-
-        if model.image.thumbnail and model.image.thumbnail.path:
-            img_paths.append(model.image.thumbnail.path)
-
-        if model.image.preview and model.image.preview.path:
-            img_paths.append(model.image.preview.path)
+        for x in [model.image, model.image.thumbnail, model.image.preview]:
+            if x and x.path:
+                img_paths.append(x.path)
 
         if len(img_paths) > 0:
             if all((os.path.exists(path) for path in img_paths)):
