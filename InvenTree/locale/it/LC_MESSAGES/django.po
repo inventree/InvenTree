@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-16 11:14+0000\n"
-"PO-Revision-Date: 2023-12-23 07:46\n"
+"POT-Creation-Date: 2024-01-15 13:52+0000\n"
+"PO-Revision-Date: 2024-01-16 13:32\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -473,9 +473,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -2808,10 +2806,8 @@ msgid "Allow editing of purchase orders after they have been shipped or complete
 msgstr "Consenti la modifica degli ordini di acquisto dopo che sono stati spediti o completati"
 
 #: common/models.py:1756
-#, fuzzy
-#| msgid "Complete Purchase Order"
 msgid "Auto Complete Purchase Orders"
-msgstr "Completa Ordine D'Acquisto"
+msgstr ""
 
 #: common/models.py:1758
 msgid "Automatically mark purchase orders as complete when all line items are received"
@@ -6724,16 +6720,13 @@ msgid "The BOM this part has been changed, and must be validated"
 msgstr ""
 
 #: part/templates/part/bom.html:17
-#, fuzzy, python-format
-#| msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
+#, python-format
 msgid "This BOM was last checked by %(checker)s on %(check_date)s"
-msgstr "La distinta base per <em>%(part)s</em> è stato controllato da %(checker)s il %(check_date)s"
+msgstr ""
 
 #: part/templates/part/bom.html:21
-#, fuzzy
-#| msgid "This line has been validated"
 msgid "This BOM has not been validated."
-msgstr "Questa linea è stata convalidata"
+msgstr ""
 
 #: part/templates/part/category.html:35
 msgid "Perform stocktake for this part category"
@@ -13471,11 +13464,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
+msgstr "Stai per utilizzare il tuo account %(provider_name)s per accedere a\n"
 "%(site_name)s.<br>Per concludere, compila il seguente modulo:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13650,6 +13641,3 @@ msgstr "Permessi per modificare gli elementi"
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
 
-#, python-format
-#~ msgid "The BOM for <em>%(part)s</em> has not been validated."
-#~ msgstr "La distinta base per <em>%(part)s</em> non è stata convalidata."
