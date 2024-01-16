@@ -469,7 +469,7 @@ def export_records(
         allow_sso=include_sso,
     )
 
-    cmd = f"dumpdata --indent 2 --output '{tmpfile}' {excludes}"
+    cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile}' {excludes}"
 
     # Dump data to temporary file
     manage(c, cmd, pty=True)
