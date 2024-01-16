@@ -119,7 +119,7 @@ export const routes = (
         <Route path="user/*" element={<UserSettings />} />
       </Route>
       <Route path="part/">
-        <Route index element={<Navigate to="category/" />} />
+        <Route index element={<Navigate to="category/index/" />} />
         <Route path="category/:id?/*" element={<CategoryDetail />} />
         <Route path=":id/*" element={<PartDetail />} />
       </Route>
