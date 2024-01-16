@@ -223,3 +223,14 @@ class TestPartLabel(LabelTest):
     detail_url = 'api-part-label-detail'
     print_url = 'api-part-label-print'
     metadata_url = 'api-part-label-metadata'
+
+
+class TestBuildLineLabel(LabelTest):
+    """Unit testing class for the BuildLine model."""
+
+    model = label_models.BuildLineLabel
+
+    list_url = 'api-buildline-label-list'
+    detail_url = 'api-buildline-label-detail'
+    print_url = 'api-buildline-label-print'
+    metadata_url = 'api-buildline-label-metadata'
