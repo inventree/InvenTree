@@ -540,7 +540,7 @@ def import_records(
     authfile = f'{filename}.auth.json'
 
     # Pre-process the data, to remove any "permissions" specified for a user or group
-    datafile = f'{filename}.tmp.json'
+    datafile = f'{filename}.data.json'
 
     with open(filename, 'r') as f_in:
         try:
