@@ -66,7 +66,7 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
       });
 
     const locales = [language, server.default_locale, 'en-us'].filter(
-      (l) => !!l
+      (locale) => !!locale
     );
 
     // Update default Accept-Language headers
