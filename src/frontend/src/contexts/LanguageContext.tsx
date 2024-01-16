@@ -88,6 +88,9 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
 
         // Update default Accept-Language headers
         api.defaults.headers.common['Accept-Language'] = locales.join(', ');
+
+        // Reload server state (refresh status codes)
+        useServerApiState.getState().fetchServerApiState();
       })
       .catch((err) => {
         console.error('Failed loading translations', err);
