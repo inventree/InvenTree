@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-16 11:14+0000\n"
-"PO-Revision-Date: 2024-01-11 11:22\n"
+"POT-Creation-Date: 2024-01-15 13:52+0000\n"
+"PO-Revision-Date: 2024-01-16 13:32\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -473,13 +473,9 @@ msgstr "Velkommen til {current_site.name}"
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Kontoen din har blitt opprettet.\n"
-"\n"
+msgstr "Kontoen din har blitt opprettet.\n\n"
 "Vennligst bruk funksjonen for tilbakestilling av passord for å få tilgang (på https://{domain})."
 
 #: InvenTree/serializers.py:520
@@ -2811,10 +2807,8 @@ msgid "Allow editing of purchase orders after they have been shipped or complete
 msgstr "Tillat redigering av innkjøpsordre etter at de har blitt sendt eller fullført"
 
 #: common/models.py:1756
-#, fuzzy
-#| msgid "Complete Purchase Order"
 msgid "Auto Complete Purchase Orders"
-msgstr "Fullfør Innkjøpsordre"
+msgstr ""
 
 #: common/models.py:1758
 msgid "Automatically mark purchase orders as complete when all line items are received"
@@ -13471,11 +13465,9 @@ msgstr "Valgt SSO-leverandør er ugyldig, eller den er ikke riktig konfigurert"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
+msgstr "Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
 "%(site_name)s.<br>Som et siste steg, vennligst fullfør skjemaet:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13649,3 +13641,4 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:401
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
+
