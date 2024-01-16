@@ -12,14 +12,15 @@ from InvenTree.unit_test import InvenTreeAPITestCase
 class LabelTest(InvenTreeAPITestCase):
     """Base class for unit testing label model API endpoints."""
 
-    fixtures = ['part', 'location', 'stock']
+    fixtures = ['category', 'part', 'location', 'stock']
 
-    # superuser = True
+    superuser = True
 
     model = None
     list_url = None
     detail_url = None
     print_url = None
+    metadata_url = None
 
     def setUp(self):
         """Ensure cache is cleared as part of test setup."""
@@ -43,9 +44,9 @@ class LabelTest(InvenTreeAPITestCase):
         response = self.get(url)
         self.assertEqual(response.status_code, 200)
 
-        reports = self.model.objects.all()
+        labels = self.model.objects.all()
+        n = len(labels)
 
-        n = len(reports)
         # API endpoint must return correct number of reports
         self.assertEqual(len(response.data), n)
 
@@ -57,9 +58,9 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 0)
 
         # Disable each report
-        for report in reports:
-            report.enabled = False
-            report.save()
+        for label in labels:
+            label.enabled = False
+            label.save()
 
         # Filter by "enabled" status
         response = self.get(url, {'enabled': True})
@@ -98,7 +99,7 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIn('pk', response.data)
         self.assertIn('name', response.data)
         self.assertIn('description', response.data)
-        self.assertIn('template', response.data)
+        self.assertIn('label', response.data)
         self.assertIn('filters', response.data)
         self.assertIn('enabled', response.data)
 
@@ -106,12 +107,15 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertEqual(
             response.data['description'], 'A fancy new label created through API test'
         )
-        self.assertTrue(response.data['template'].endswith('ExampleTemplate.html'))
+        self.assertEqual(response.data['label'].count('ExampleTemplate'), 1)
 
     def test_detail_endpoint(self):
-        """Test that the DETAIL endpoint works for each report."""
+        """Test that the DETAIL endpoint works for each label."""
         if not self.detail_url:
             return
+
+        # Create an item first
+        self.test_create_endpoint()
 
         labels = self.model.objects.all()
 
@@ -129,7 +133,7 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIn('pk', response.data)
         self.assertIn('name', response.data)
         self.assertIn('description', response.data)
-        self.assertIn('template', response.data)
+        self.assertIn('label', response.data)
         self.assertIn('filters', response.data)
         self.assertIn('enabled', response.data)
 
@@ -144,7 +148,7 @@ class LabelTest(InvenTreeAPITestCase):
             {
                 'name': 'Changed name during test',
                 'description': 'New version of the template',
-                'template': filestr,
+                'label': filestr,
             },
             format=None,
             expected_code=200,
@@ -154,16 +158,27 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertIn('pk', response.data)
         self.assertIn('name', response.data)
         self.assertIn('description', response.data)
-        self.assertIn('template', response.data)
+        self.assertIn('label', response.data)
         self.assertIn('filters', response.data)
         self.assertIn('enabled', response.data)
 
         self.assertEqual(response.data['name'], 'Changed name during test')
         self.assertEqual(response.data['description'], 'New version of the template')
 
-        self.assertTrue(
-            response.data['template'].endswith('ExampleTemplate_Updated.html')
-        )
+        self.assertEqual(response.data['label'].count('ExampleTemplate_Updated'), 1)
+
+    def test_zz_delete(self):
+        """Test deleting, after other test are done."""
+        if not self.detail_url:
+            return
+
+        # Create an item first
+        self.test_create_endpoint()
+
+        labels = self.model.objects.all()
+        n = len(labels)
+        # Make sure at least one label defined
+        self.assertGreaterEqual(n, 1)
 
         # Delete the last report
         response = self.delete(
@@ -175,21 +190,20 @@ class LabelTest(InvenTreeAPITestCase):
         if not self.metadata_url:
             return
 
-        p = self.model.objects.first()
+        # Create an item first
+        self.test_create_endpoint()
 
-        self.assertEqual(p.metadata, {})
+        labels = self.model.objects.all()
+        n = len(labels)
+        # Make sure at least one label defined
+        self.assertGreaterEqual(n, 1)
 
-        self.assertIsNone(p.get_metadata('test'))
-        self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+        # Test getting metadata
+        response = self.get(
+            reverse(self.metadata_url, kwargs={'pk': labels[0].pk}), expected_code=200
+        )
 
-        # Test update via the set_metadata() method
-        p.set_metadata('test', 3)
-        self.assertEqual(p.get_metadata('test'), 3)
-
-        for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
-            p.set_metadata(k, k)
-
-        self.assertEqual(len(p.metadata.keys()), 4)
+        self.assertEqual(response.data, {'metadata': {}})
 
 
 class TestStockItemLabel(LabelTest):
