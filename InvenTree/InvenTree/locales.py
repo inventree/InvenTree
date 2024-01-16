@@ -4,7 +4,10 @@ If a new language translation is supported, it must be added here
 After adding a new language, run the following command:
 python manage.py makemessages -l <language_code> -e html,js,py --no-wrap
 where <language_code> is the code for the new language
-Additionally, update the /src/frontend/.linguirc file
+Additionally, update the following files with the new locale code:
+
+- /src/frontend/.linguirc file
+- /src/frontend/src/context/LanguageContext.tsx
 """
 
 from django.utils.translation import gettext_lazy as _
