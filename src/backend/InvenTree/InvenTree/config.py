@@ -302,15 +302,17 @@ def get_plugin_file():
     Note: It will be created if it does not already exist!
     """
     # Check if the plugin.txt file (specifying required plugins) is specified
-    plugin_file = get_setting('INVENTREE_PLUGIN_FILE', 'plugin_file')
+    plugin_file_cfg = get_setting('INVENTREE_PLUGIN_FILE', 'plugin_file')
 
-    if not plugin_file:
-        # If not specified, look in the same directory as the configuration file
-        config_dir = get_config_file().parent
-        plugin_file = config_dir.joinpath('plugins.txt')
-    else:
+    if plugin_file_cfg and isinstance(plugin_file_cfg, str):
         # Make sure we are using a modern Path object
-        plugin_file = Path(plugin_file)
+        plugin_file = Path(plugin_file_cfg).resolve()
+    elif get_path('plugins.txt', old=True).exists():
+        # See if the old default exists
+        plugin_file = get_path('plugins.txt', old=True)
+    else:
+        # Use the default
+        plugin_file = get_config_file().joinpath('..', 'plugins.txt').resolve()
 
     if not plugin_file.exists():
         logger.warning(
