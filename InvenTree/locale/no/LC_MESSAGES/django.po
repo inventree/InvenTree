@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-15 13:52+0000\n"
+"POT-Creation-Date: 2024-01-17 06:54+0000\n"
 "PO-Revision-Date: 2024-01-16 13:32\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
@@ -17,11 +17,11 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#: InvenTree/api.py:164
+#: InvenTree/api.py:165
 msgid "API endpoint not found"
 msgstr "API-endepunkt ikke funnet"
 
-#: InvenTree/api.py:417
+#: InvenTree/api.py:418
 msgid "User does not have permission to view this model"
 msgstr "Brukeren har ikke rettigheter til å se denne modellen"
 
@@ -127,42 +127,42 @@ msgstr "Det oppgitte e-postdomenet er ikke godkjent."
 msgid "Registration is disabled."
 msgstr "Registrering er deaktivert."
 
-#: InvenTree/helpers.py:457 order/models.py:521 order/models.py:723
+#: InvenTree/helpers.py:459 order/models.py:521 order/models.py:723
 msgid "Invalid quantity provided"
 msgstr "Ugyldig mengde oppgitt"
 
-#: InvenTree/helpers.py:465
+#: InvenTree/helpers.py:467
 msgid "Empty serial number string"
 msgstr "Tom serienummerstreng"
 
-#: InvenTree/helpers.py:494
+#: InvenTree/helpers.py:496
 msgid "Duplicate serial"
 msgstr "Duplisert serienummer"
 
-#: InvenTree/helpers.py:526 InvenTree/helpers.py:569
+#: InvenTree/helpers.py:528 InvenTree/helpers.py:571
 #, python-brace-format
 msgid "Invalid group range: {group}"
 msgstr "Ugyldig gruppesekvens: {group}"
 
-#: InvenTree/helpers.py:557
+#: InvenTree/helpers.py:559
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "Gruppesekvens {group} overskrider tillatt antall ({expected_quantity})"
 
-#: InvenTree/helpers.py:587 InvenTree/helpers.py:594 InvenTree/helpers.py:613
+#: InvenTree/helpers.py:589 InvenTree/helpers.py:596 InvenTree/helpers.py:615
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
 msgstr "Ugyldig gruppesekvens: {group}"
 
-#: InvenTree/helpers.py:623
+#: InvenTree/helpers.py:625
 msgid "No serial numbers found"
 msgstr "Ingen serienummer funnet"
 
-#: InvenTree/helpers.py:628
+#: InvenTree/helpers.py:630
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
 msgstr "Antall unike serienumre ({len(serials)}) må samsvare med antallet ({expected_quantity})"
 
-#: InvenTree/helpers.py:746
+#: InvenTree/helpers.py:748
 msgid "Remove HTML tags from this value"
 msgstr "Fjern HTML-tagger fra denne verdien"
 
@@ -197,6 +197,130 @@ msgstr "Ekstern server returnerte tomt svar"
 #: InvenTree/helpers_model.py:184
 msgid "Supplied URL is not a valid image file"
 msgstr "Angitt URL er ikke en gyldig bildefil"
+
+#: InvenTree/locales.py:16
+msgid "Bulgarian"
+msgstr "Bulgarsk"
+
+#: InvenTree/locales.py:17
+msgid "Czech"
+msgstr "Tsjekkisk"
+
+#: InvenTree/locales.py:18
+msgid "Danish"
+msgstr "Dansk"
+
+#: InvenTree/locales.py:19
+msgid "German"
+msgstr "Tysk"
+
+#: InvenTree/locales.py:20
+msgid "Greek"
+msgstr "Gresk"
+
+#: InvenTree/locales.py:21
+msgid "English"
+msgstr "Engelsk"
+
+#: InvenTree/locales.py:22
+msgid "Spanish"
+msgstr "Spansk"
+
+#: InvenTree/locales.py:23
+msgid "Spanish (Mexican)"
+msgstr "Spansk (Meksikansk)"
+
+#: InvenTree/locales.py:24
+msgid "Farsi / Persian"
+msgstr "Farsi / Persisk"
+
+#: InvenTree/locales.py:25
+msgid "Finnish"
+msgstr "Finsk"
+
+#: InvenTree/locales.py:26
+msgid "French"
+msgstr "Fransk"
+
+#: InvenTree/locales.py:27
+msgid "Hebrew"
+msgstr "Hebraisk"
+
+#: InvenTree/locales.py:28
+msgid "Hindi"
+msgstr "Hindi"
+
+#: InvenTree/locales.py:29
+msgid "Hungarian"
+msgstr "Ungarsk"
+
+#: InvenTree/locales.py:30
+msgid "Italian"
+msgstr "Italiensk"
+
+#: InvenTree/locales.py:31
+msgid "Japanese"
+msgstr "Japansk"
+
+#: InvenTree/locales.py:32
+msgid "Korean"
+msgstr "Koreansk"
+
+#: InvenTree/locales.py:33
+msgid "Dutch"
+msgstr "Nederlandsk"
+
+#: InvenTree/locales.py:34
+msgid "Norwegian"
+msgstr "Norsk"
+
+#: InvenTree/locales.py:35
+msgid "Polish"
+msgstr "Polsk"
+
+#: InvenTree/locales.py:36
+msgid "Portuguese"
+msgstr "Portugisisk"
+
+#: InvenTree/locales.py:37
+msgid "Portuguese (Brazilian)"
+msgstr "Portugisisk (Brasil)"
+
+#: InvenTree/locales.py:38
+msgid "Russian"
+msgstr "Russisk"
+
+#: InvenTree/locales.py:39
+msgid "Slovenian"
+msgstr "Slovensk"
+
+#: InvenTree/locales.py:40
+msgid "Serbian"
+msgstr "Serbisk"
+
+#: InvenTree/locales.py:41
+msgid "Swedish"
+msgstr "Svensk"
+
+#: InvenTree/locales.py:42
+msgid "Thai"
+msgstr "Thailandsk"
+
+#: InvenTree/locales.py:43
+msgid "Turkish"
+msgstr "Tyrkisk"
+
+#: InvenTree/locales.py:44
+msgid "Vietnamese"
+msgstr "Vietnamesisk"
+
+#: InvenTree/locales.py:45
+msgid "Chinese (Simplified)"
+msgstr "Kinesisk (forenklet)"
+
+#: InvenTree/locales.py:46
+msgid "Chinese (Traditional)"
+msgstr "Kinesisk (tradisjonell)"
 
 #: InvenTree/magic_login.py:27
 #, python-brace-format
@@ -343,9 +467,10 @@ msgid "Invalid choice"
 msgstr "Ugyldig valg"
 
 #: InvenTree/models.py:823 common/models.py:2550 common/models.py:2943
-#: company/models.py:606 label/models.py:115 part/models.py:838
-#: part/models.py:3575 plugin/models.py:40 report/models.py:172
-#: stock/models.py:78 templates/InvenTree/settings/mixins/urls.html:13
+#: common/serializers.py:365 company/models.py:606 label/models.py:115
+#: part/models.py:838 part/models.py:3575 plugin/models.py:40
+#: report/models.py:172 stock/models.py:78
+#: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
 #: templates/InvenTree/settings/plugin.html:80
 #: templates/InvenTree/settings/plugin_settings.html:22
@@ -473,9 +598,13 @@ msgstr "Velkommen til {current_site.name}"
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid "Your account has been created.\n\n"
+msgid ""
+"Your account has been created.\n"
+"\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr "Kontoen din har blitt opprettet.\n\n"
+msgstr ""
+"Kontoen din har blitt opprettet.\n"
+"\n"
 "Vennligst bruk funksjonen for tilbakestilling av passord for å få tilgang (på https://{domain})."
 
 #: InvenTree/serializers.py:520
@@ -539,130 +668,6 @@ msgstr "URLtil ekstern bildefil"
 #: InvenTree/serializers.py:854
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Nedlasting av bilder fra ekstern URL er ikke aktivert"
-
-#: InvenTree/settings.py:837
-msgid "Bulgarian"
-msgstr "Bulgarsk"
-
-#: InvenTree/settings.py:838
-msgid "Czech"
-msgstr "Tsjekkisk"
-
-#: InvenTree/settings.py:839
-msgid "Danish"
-msgstr "Dansk"
-
-#: InvenTree/settings.py:840
-msgid "German"
-msgstr "Tysk"
-
-#: InvenTree/settings.py:841
-msgid "Greek"
-msgstr "Gresk"
-
-#: InvenTree/settings.py:842
-msgid "English"
-msgstr "Engelsk"
-
-#: InvenTree/settings.py:843
-msgid "Spanish"
-msgstr "Spansk"
-
-#: InvenTree/settings.py:844
-msgid "Spanish (Mexican)"
-msgstr "Spansk (Meksikansk)"
-
-#: InvenTree/settings.py:845
-msgid "Farsi / Persian"
-msgstr "Farsi / Persisk"
-
-#: InvenTree/settings.py:846
-msgid "Finnish"
-msgstr "Finsk"
-
-#: InvenTree/settings.py:847
-msgid "French"
-msgstr "Fransk"
-
-#: InvenTree/settings.py:848
-msgid "Hebrew"
-msgstr "Hebraisk"
-
-#: InvenTree/settings.py:849
-msgid "Hindi"
-msgstr "Hindi"
-
-#: InvenTree/settings.py:850
-msgid "Hungarian"
-msgstr "Ungarsk"
-
-#: InvenTree/settings.py:851
-msgid "Italian"
-msgstr "Italiensk"
-
-#: InvenTree/settings.py:852
-msgid "Japanese"
-msgstr "Japansk"
-
-#: InvenTree/settings.py:853
-msgid "Korean"
-msgstr "Koreansk"
-
-#: InvenTree/settings.py:854
-msgid "Dutch"
-msgstr "Nederlandsk"
-
-#: InvenTree/settings.py:855
-msgid "Norwegian"
-msgstr "Norsk"
-
-#: InvenTree/settings.py:856
-msgid "Polish"
-msgstr "Polsk"
-
-#: InvenTree/settings.py:857
-msgid "Portuguese"
-msgstr "Portugisisk"
-
-#: InvenTree/settings.py:858
-msgid "Portuguese (Brazilian)"
-msgstr "Portugisisk (Brasil)"
-
-#: InvenTree/settings.py:859
-msgid "Russian"
-msgstr "Russisk"
-
-#: InvenTree/settings.py:860
-msgid "Slovenian"
-msgstr "Slovensk"
-
-#: InvenTree/settings.py:861
-msgid "Serbian"
-msgstr "Serbisk"
-
-#: InvenTree/settings.py:862
-msgid "Swedish"
-msgstr "Svensk"
-
-#: InvenTree/settings.py:863
-msgid "Thai"
-msgstr "Thailandsk"
-
-#: InvenTree/settings.py:864
-msgid "Turkish"
-msgstr "Tyrkisk"
-
-#: InvenTree/settings.py:865
-msgid "Vietnamese"
-msgstr "Vietnamesisk"
-
-#: InvenTree/settings.py:866
-msgid "Chinese (Simplified)"
-msgstr "Kinesisk (forenklet)"
-
-#: InvenTree/settings.py:867
-msgid "Chinese (Traditional)"
-msgstr "Kinesisk (tradisjonell)"
 
 #: InvenTree/status.py:66 part/serializers.py:1082
 msgid "Background worker check failed"
@@ -875,10 +880,6 @@ msgstr "Avvis"
 #: InvenTree/templatetags/inventree_extras.py:177
 msgid "Unknown database"
 msgstr "Ukjent database"
-
-#: InvenTree/templatetags/inventree_extras.py:223
-msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr "{version.inventreeInstanceTitle()} v{version.inventreVersion()}"
 
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
@@ -3620,6 +3621,84 @@ msgstr "Artikler har blitt mottatt mot en returordre"
 #: common/notifications.py:457
 msgid "Error raised by plugin"
 msgstr "Feil oppstått i utvidelse"
+
+#: common/serializers.py:328
+msgid "Is Running"
+msgstr ""
+
+#: common/serializers.py:334
+#, fuzzy
+#| msgid "Pending"
+msgid "Pending Tasks"
+msgstr "Ventende"
+
+#: common/serializers.py:340
+#, fuzzy
+#| msgid "Scheduled Quantity"
+msgid "Scheduled Tasks"
+msgstr "Planlagt antall"
+
+#: common/serializers.py:346
+msgid "Failed Tasks"
+msgstr ""
+
+#: common/serializers.py:361
+msgid "Task ID"
+msgstr ""
+
+#: common/serializers.py:361
+#, fuzzy
+#| msgid "Unique part ID value"
+msgid "Unique task ID"
+msgstr "Unik del-ID-verdi"
+
+#: common/serializers.py:363
+msgid "Lock"
+msgstr ""
+
+#: common/serializers.py:363
+#, fuzzy
+#| msgid "Stock Stale Time"
+msgid "Lock time"
+msgstr "Foreldet lagerbeholdning tidsintervall"
+
+#: common/serializers.py:365
+#, fuzzy
+#| msgid "Test name"
+msgid "Task name"
+msgstr "Testnavn"
+
+#: common/serializers.py:367
+#, fuzzy
+#| msgid "Production"
+msgid "Function"
+msgstr "Produksjon"
+
+#: common/serializers.py:367
+#, fuzzy
+#| msgid "Location Name"
+msgid "Function name"
+msgstr "Plasseringsnavn"
+
+#: common/serializers.py:369
+#, fuzzy
+#| msgid "Attachments"
+msgid "Arguments"
+msgstr "Vedlegg"
+
+#: common/serializers.py:369
+msgid "Task arguments"
+msgstr ""
+
+#: common/serializers.py:372
+#, fuzzy
+#| msgid "Keywords"
+msgid "Keyword Arguments"
+msgstr "Nøkkelord"
+
+#: common/serializers.py:372
+msgid "Task keyword arguments"
+msgstr ""
 
 #: common/views.py:84 order/templates/order/order_wizard/po_upload.html:51
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:118
@@ -7798,7 +7877,7 @@ msgstr "Utvidelse"
 msgid "Method"
 msgstr "Metode"
 
-#: plugin/plugin.py:271
+#: plugin/plugin.py:279
 msgid "No author found"
 msgstr "Ingen forfatter funnet"
 
@@ -13465,9 +13544,11 @@ msgstr "Valgt SSO-leverandør er ugyldig, eller den er ikke riktig konfigurert"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr "Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
+msgstr ""
+"Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
 "%(site_name)s.<br>Som et siste steg, vennligst fullfør skjemaet:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13642,3 +13723,5 @@ msgstr "Tillatelse til å endre elementer"
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
 
+#~ msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
+#~ msgstr "{version.inventreeInstanceTitle()} v{version.inventreVersion()}"

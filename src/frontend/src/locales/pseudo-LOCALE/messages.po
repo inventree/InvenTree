@@ -217,6 +217,7 @@ msgstr ""
 #: src/components/tables/plugin/PluginListTable.tsx:157
 #: src/components/tables/settings/CustomUnitsTable.tsx:31
 #: src/components/tables/settings/GroupTable.tsx:100
+#: src/components/tables/settings/PendingTasksTable.tsx:26
 #: src/components/tables/stock/StockLocationTable.tsx:51
 msgid "Name"
 msgstr ""
@@ -261,6 +262,7 @@ msgstr ""
 #: src/components/forms/fields/ApiFormField.tsx:279
 #: src/components/nav/SearchDrawer.tsx:412
 #: src/components/tables/InvenTreeTable.tsx:343
+#: src/components/tables/InvenTreeTable.tsx:416
 #: src/components/tables/plugin/PluginListTable.tsx:364
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -643,7 +645,7 @@ msgstr ""
 
 #: src/components/nav/MainMenu.tsx:59
 #: src/defaults/menuItems.tsx:63
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:120
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:131
 msgid "Admin Center"
 msgstr ""
 
@@ -685,7 +687,7 @@ msgid "Pages"
 msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:67
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:87
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:98
 msgid "Plugins"
 msgstr ""
 
@@ -876,7 +878,7 @@ msgid "Project Code"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:98
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:63
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:74
 msgid "Project Codes"
 msgstr ""
 
@@ -968,7 +970,7 @@ msgid "User"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:162
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:51
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:56
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
 msgstr ""
@@ -1209,7 +1211,7 @@ msgid "Not found"
 msgstr ""
 
 #: src/components/tables/InvenTreeTable.tsx:373
-#: src/components/tables/InvenTreeTable.tsx:457
+#: src/components/tables/InvenTreeTable.tsx:465
 msgid "Delete selected records"
 msgstr ""
 
@@ -1221,29 +1223,33 @@ msgstr ""
 msgid "This action cannot be undone!"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:405
+#: src/components/tables/InvenTreeTable.tsx:407
 msgid "Deleted records"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:406
+#: src/components/tables/InvenTreeTable.tsx:408
 msgid "Records were deleted successfully"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:438
-#: src/components/tables/InvenTreeTable.tsx:439
+#: src/components/tables/InvenTreeTable.tsx:417
+msgid "Failed to delete records"
+msgstr ""
+
+#: src/components/tables/InvenTreeTable.tsx:446
+#: src/components/tables/InvenTreeTable.tsx:447
 msgid "Barcode actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:447
-#: src/components/tables/InvenTreeTable.tsx:448
+#: src/components/tables/InvenTreeTable.tsx:455
+#: src/components/tables/InvenTreeTable.tsx:456
 msgid "Print actions"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:473
+#: src/components/tables/InvenTreeTable.tsx:481
 msgid "Refresh data"
 msgstr ""
 
-#: src/components/tables/InvenTreeTable.tsx:492
+#: src/components/tables/InvenTreeTable.tsx:500
 msgid "Table filters"
 msgstr ""
 
@@ -1501,11 +1507,6 @@ msgstr ""
 #: src/components/tables/build/BuildOrderTable.tsx:90
 msgid "Issued By"
 msgstr ""
-
-#: src/components/tables/build/BuildOrderTable.tsx:99
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:79
-#~ msgid "Created"
-#~ msgstr ""
 
 #: src/components/tables/build/BuildOrderTable.tsx:111
 msgid "Show active orders"
@@ -2428,7 +2429,31 @@ msgid "Are you sure you want to delete this error report?"
 msgstr ""
 
 #: src/components/tables/settings/ErrorTable.tsx:67
+#: src/components/tables/settings/FailedTasksTable.tsx:57
 msgid "Error Details"
+msgstr ""
+
+#: src/components/tables/settings/FailedTasksTable.tsx:24
+#: src/components/tables/settings/PendingTasksTable.tsx:17
+#: src/components/tables/settings/ScheduledTasksTable.tsx:19
+msgid "Task"
+msgstr ""
+
+#: src/components/tables/settings/FailedTasksTable.tsx:30
+#: src/components/tables/settings/PendingTasksTable.tsx:22
+msgid "Task ID"
+msgstr ""
+
+#: src/components/tables/settings/FailedTasksTable.tsx:34
+msgid "Started"
+msgstr ""
+
+#: src/components/tables/settings/FailedTasksTable.tsx:40
+msgid "Stopped"
+msgstr ""
+
+#: src/components/tables/settings/FailedTasksTable.tsx:46
+msgid "Attempts"
 msgstr ""
 
 #: src/components/tables/settings/GroupTable.tsx:45
@@ -2472,6 +2497,18 @@ msgstr ""
 msgid "Edit group"
 msgstr ""
 
+#: src/components/tables/settings/PendingTasksTable.tsx:30
+msgid "Created"
+msgstr ""
+
+#: src/components/tables/settings/PendingTasksTable.tsx:36
+msgid "Arguments"
+msgstr ""
+
+#: src/components/tables/settings/PendingTasksTable.tsx:40
+msgid "Keywords"
+msgstr ""
+
 #: src/components/tables/settings/ProjectCodeTable.tsx:49
 msgid "Edit project code"
 msgstr ""
@@ -2499,6 +2536,14 @@ msgstr ""
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:88
 msgid "Added project code"
+msgstr ""
+
+#: src/components/tables/settings/ScheduledTasksTable.tsx:25
+msgid "Last Run"
+msgstr ""
+
+#: src/components/tables/settings/ScheduledTasksTable.tsx:47
+msgid "Next Run"
 msgstr ""
 
 #: src/components/tables/settings/UserDrawer.tsx:92
@@ -2898,123 +2943,123 @@ msgstr ""
 msgid "Show Boxes"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:14
+#: src/contexts/LanguageContext.tsx:17
 msgid "Bulgarian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:15
+#: src/contexts/LanguageContext.tsx:18
 msgid "Czech"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:16
+#: src/contexts/LanguageContext.tsx:19
 msgid "Danish"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:17
+#: src/contexts/LanguageContext.tsx:20
 msgid "German"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:18
+#: src/contexts/LanguageContext.tsx:21
 msgid "Greek"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:19
+#: src/contexts/LanguageContext.tsx:22
 msgid "English"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:20
+#: src/contexts/LanguageContext.tsx:23
 msgid "Spanish"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:21
+#: src/contexts/LanguageContext.tsx:24
 msgid "Spanish (Mexican)"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:22
+#: src/contexts/LanguageContext.tsx:25
 msgid "Farsi / Persian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:23
+#: src/contexts/LanguageContext.tsx:26
 msgid "Finnish"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:24
+#: src/contexts/LanguageContext.tsx:27
 msgid "French"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:25
+#: src/contexts/LanguageContext.tsx:28
 msgid "Hebrew"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:26
+#: src/contexts/LanguageContext.tsx:29
 msgid "Hindi"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:27
+#: src/contexts/LanguageContext.tsx:30
 msgid "Hungarian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:28
+#: src/contexts/LanguageContext.tsx:31
 msgid "Italian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:29
+#: src/contexts/LanguageContext.tsx:32
 msgid "Japanese"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:30
+#: src/contexts/LanguageContext.tsx:33
 msgid "Korean"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:31
+#: src/contexts/LanguageContext.tsx:34
 msgid "Dutch"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:32
+#: src/contexts/LanguageContext.tsx:35
 msgid "Norwegian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:33
+#: src/contexts/LanguageContext.tsx:36
 msgid "Polish"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:34
+#: src/contexts/LanguageContext.tsx:37
 msgid "Portuguese"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:35
+#: src/contexts/LanguageContext.tsx:38
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:36
+#: src/contexts/LanguageContext.tsx:39
 msgid "Russian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:37
+#: src/contexts/LanguageContext.tsx:40
 msgid "Slovenian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:38
+#: src/contexts/LanguageContext.tsx:41
 msgid "Swedish"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:39
+#: src/contexts/LanguageContext.tsx:42
 msgid "Thai"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:40
+#: src/contexts/LanguageContext.tsx:43
 msgid "Turkish"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:41
+#: src/contexts/LanguageContext.tsx:44
 msgid "Vietnamese"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:42
+#: src/contexts/LanguageContext.tsx:45
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:43
+#: src/contexts/LanguageContext.tsx:46
 msgid "Chinese (Traditional)"
 msgstr ""
 
@@ -3773,12 +3818,28 @@ msgstr ""
 msgid "Account Details"
 msgstr ""
 
-#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
-msgid "First name: {0}"
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
+msgid "First name"
 msgstr ""
 
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
+msgid "Last name"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
+msgid "First name:"
+msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
+#~ msgid "First name: {0}"
+#~ msgstr ""
+
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
-msgid "Last name: {0}"
+#~ msgid "Last name: {0}"
+#~ msgstr ""
+
+#: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
+msgid "Last name:"
 msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:39
@@ -3908,27 +3969,31 @@ msgstr ""
 #~ msgid "Advanced Amininistrative Options for InvenTree"
 #~ msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:57
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:62
+msgid "Background Tasks"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:68
 msgid "Error Reports"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:75
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:86
 msgid "Custom Units"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:81
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:92
 msgid "Part Parameters"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:97
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:108
 msgid "Quick Actions"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:102
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:113
 msgid "Add a new user"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:121
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:132
 msgid "Advanced Options"
 msgstr ""
 
@@ -3951,6 +4016,18 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:47
 #~ msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 #~ msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:27
+msgid "Pending Tasks"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:35
+msgid "Scheduled Tasks"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:43
+msgid "Failed Tasks"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:30
 msgid "Select settings relevant for user lifecycle. More available in"
@@ -3996,7 +4073,7 @@ msgid "Stocktake"
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:229
-#: src/pages/build/BuildDetail.tsx:260
+#: src/pages/build/BuildDetail.tsx:264
 #: src/pages/build/BuildIndex.tsx:36
 #: src/pages/part/PartDetail.tsx:131
 #: src/pages/sales/SalesOrderDetail.tsx:61
