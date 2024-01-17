@@ -16,7 +16,8 @@ export const emptyServerAPI = {
   system_health: null,
   platform: null,
   installer: null,
-  target: null
+  target: null,
+  default_locale: null
 };
 
 export interface SiteMarkProps {

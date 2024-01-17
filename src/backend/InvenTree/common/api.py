@@ -8,6 +8,7 @@ from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+import django_q.models
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from error_report.models import Error
@@ -509,6 +510,71 @@ class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
 
+class BackgroundTaskOverview(APIView):
+    """Provides an overview of the background task queue status."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def get(self, request, format=None):
+        """Return information about the current status of the background task queue."""
+        import django_q.models as q_models
+
+        import InvenTree.status
+
+        serializer = common.serializers.TaskOverviewSerializer({
+            'is_running': InvenTree.status.is_worker_running(),
+            'pending_tasks': q_models.OrmQ.objects.count(),
+            'scheduled_tasks': q_models.Schedule.objects.count(),
+            'failed_tasks': q_models.Failure.objects.count(),
+        })
+
+        return Response(serializer.data)
+
+
+class PendingTaskList(BulkDeleteMixin, ListAPI):
+    """Provides a read-only list of currently pending tasks."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    queryset = django_q.models.OrmQ.objects.all()
+    serializer_class = common.serializers.PendingTaskSerializer
+
+
+class ScheduledTaskList(ListAPI):
+    """Provides a read-only list of currently scheduled tasks."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    queryset = django_q.models.Schedule.objects.all()
+    serializer_class = common.serializers.ScheduledTaskSerializer
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['pk', 'func', 'last_run', 'next_run']
+
+    search_fields = ['func']
+
+    def get_queryset(self):
+        """Return annotated queryset."""
+        queryset = super().get_queryset()
+        return common.serializers.ScheduledTaskSerializer.annotate_queryset(queryset)
+
+
+class FailedTaskList(BulkDeleteMixin, ListAPI):
+    """Provides a read-only list of currently failed tasks."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    queryset = django_q.models.Failure.objects.all()
+    serializer_class = common.serializers.FailedTaskSerializer
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['pk', 'func', 'started', 'stopped']
+
+    search_fields = ['func']
+
+
 class FlagList(ListAPI):
     """List view for feature flags."""
 
@@ -589,6 +655,24 @@ common_api_urls = [
     # Uploaded images for notes
     re_path(
         r'^notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'
+    ),
+    # Background task information
+    re_path(
+        r'^background-task/',
+        include([
+            re_path(
+                r'^pending/', PendingTaskList.as_view(), name='api-pending-task-list'
+            ),
+            re_path(
+                r'^scheduled/',
+                ScheduledTaskList.as_view(),
+                name='api-scheduled-task-list',
+            ),
+            re_path(r'^failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
+            re_path(
+                r'^.*$', BackgroundTaskOverview.as_view(), name='api-task-overview'
+            ),
+        ]),
     ),
     # Project codes
     re_path(

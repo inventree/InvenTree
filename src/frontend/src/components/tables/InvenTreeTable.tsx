@@ -388,7 +388,9 @@ export function InvenTreeTable<T = any>({
       },
       onConfirm: () => {
         // Delete the selected records
-        let selection = tableState.selectedRecords.map((record) => record.pk);
+        let selection = tableState.selectedRecords.map(
+          (record) => record.pk ?? record.id
+        );
 
         api
           .delete(url, {
@@ -409,6 +411,12 @@ export function InvenTreeTable<T = any>({
           })
           .catch((_error) => {
             console.warn(`Bulk delete operation failed at ${url}`);
+
+            showNotification({
+              title: t`Error`,
+              message: t`Failed to delete records`,
+              color: 'red'
+            });
           });
       }
     });
