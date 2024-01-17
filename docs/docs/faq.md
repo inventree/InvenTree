@@ -24,9 +24,12 @@ pip3 install -U -r requirements.txt
 
 ### Invoke Version
 
-If the installed version of invoke is too old, users may see error messages during the installation procedure, such as *"'update' did not receive all required positional arguments!"* (or similar).
+If the installed version of invoke is too old, users may see error messages during the installation procedure, such as:
 
-As per the [invoke guide](./start/intro.md#invoke), the minimum required version of Invoke is `1.4.0`.
+- *'update' did not receive all required positional arguments!*
+- *Function has keyword-only arguments or annotations*
+
+As per the [invoke guide](./start/intro.md#invoke), the minimum required version of Invoke is `2.0.0`.
 
 To determine the version of invoke you have installed, run either:
 
@@ -37,7 +40,11 @@ invoke --version
 python -m invoke --version
 ```
 
-If you are running an older version of invoke, ensure it is updated to the latest version.
+If you are running an older version of invoke, ensure it is updated to the latest version:
+
+```
+pip install -U invoke
+```
 
 ### No module named 'django'
 
