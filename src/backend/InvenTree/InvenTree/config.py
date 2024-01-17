@@ -69,6 +69,21 @@ def get_base_dir() -> Path:
     return Path(__file__).parent.parent.resolve()
 
 
+def get_path(relative: str, old: bool = False) -> Path:
+    """Resolve the absolute path for a given relative path.
+
+    Arguments:
+        relative: Relative path to resolve
+        old: Use the old default path (if True)
+    """
+    base_dir = get_base_dir()
+
+    if old:
+        return base_dir.joinpath('..', '..', '..', 'InvenTree', relative).resolve()
+    else:
+        return base_dir.joinpath(relative).resolve()
+
+
 def ensure_dir(path: Path) -> None:
     """Ensure that a directory exists.
 
@@ -82,16 +97,22 @@ def get_config_file(create=True) -> Path:
     """Returns the path of the InvenTree configuration file.
 
     Note: It will be created it if does not already exist!
-    """
-    base_dir = get_base_dir()
 
+    Operation order:
+    - INVENTREE_CONFIG_FILE environment variable
+    - Old default location (if it exists)
+    - Default location (create if it does not exist)
+    """
     cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
 
     if cfg_filename:
         cfg_filename = Path(cfg_filename.strip()).resolve()
+    elif get_path('config.yaml', old=True).exists():
+        # Config file is *not* specified - see if the old default exists
+        cfg_filename = get_path('config.yaml', old=True)
     else:
         # Config file is *not* specified - use the default
-        cfg_filename = base_dir.joinpath('config.yaml').resolve()
+        cfg_filename = get_path('config.yaml')
 
     if not cfg_filename.exists() and create:
         print(
@@ -99,7 +120,7 @@ def get_config_file(create=True) -> Path:
         )
         ensure_dir(cfg_filename.parent)
 
-        cfg_template = base_dir.joinpath('config_template.yaml')
+        cfg_template = get_path('config_template.yaml')
         shutil.copyfile(cfg_template, cfg_filename)
         print(f'Created config file {cfg_filename}')
 
@@ -318,8 +339,9 @@ def get_secret_key():
 
     A) Check for environment variable INVENTREE_SECRET_KEY => Use raw key data
     B) Check for environment variable INVENTREE_SECRET_KEY_FILE => Load key data from file
-    C) Look for default key file "secret_key.txt"
-    D) Create "secret_key.txt" if it does not exist
+    C) Look for old default key file
+    D) Look for default key file "secret_key.txt"
+    E) Create "secret_key.txt" if it does not exist
     """
     # Look for environment variable
     if secret_key := get_setting('INVENTREE_SECRET_KEY', 'secret_key'):
@@ -329,9 +351,12 @@ def get_secret_key():
     # Look for secret key file
     if secret_key_file := get_setting('INVENTREE_SECRET_KEY_FILE', 'secret_key_file'):
         secret_key_file = Path(secret_key_file).resolve()
+    elif get_path('secret_key.txt', old=True).exists():
+        # Old default location for secret key file
+        secret_key_file = get_path('secret_key.txt', old=True)
     else:
         # Default location for secret key file
-        secret_key_file = get_base_dir().joinpath('secret_key.txt').resolve()
+        secret_key_file = get_path('secret_key.txt')
 
     if not secret_key_file.exists():
         logger.info("Generating random key file at '%s'", secret_key_file)
