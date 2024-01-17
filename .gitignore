@@ -26,6 +26,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.DS_Store
 
 # Django stuff:
 *.log
@@ -104,6 +105,7 @@ InvenTree/plugins/
 
 # Compiled translation files
 *.mo
+messages.ts
 
 # web frontend (static files)
 InvenTree/web/static

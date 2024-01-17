@@ -287,60 +287,60 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         return actions
 
-    def get(self, url, data=None, expected_code=200, format='json'):
+    def get(self, url, data=None, expected_code=200, format='json', **kwargs):
         """Issue a GET request."""
         # Set default - see B006
         if data is None:
             data = {}
 
-        response = self.client.get(url, data, format=format)
+        response = self.client.get(url, data, format=format, **kwargs)
 
         self.checkResponse(url, 'GET', expected_code, response)
 
         return response
 
-    def post(self, url, data=None, expected_code=None, format='json'):
+    def post(self, url, data=None, expected_code=None, format='json', **kwargs):
         """Issue a POST request."""
         # Set default value - see B006
         if data is None:
             data = {}
 
-        response = self.client.post(url, data=data, format=format)
+        response = self.client.post(url, data=data, format=format, **kwargs)
 
         self.checkResponse(url, 'POST', expected_code, response)
 
         return response
 
-    def delete(self, url, data=None, expected_code=None, format='json'):
+    def delete(self, url, data=None, expected_code=None, format='json', **kwargs):
         """Issue a DELETE request."""
         if data is None:
             data = {}
 
-        response = self.client.delete(url, data=data, format=format)
+        response = self.client.delete(url, data=data, format=format, **kwargs)
 
         self.checkResponse(url, 'DELETE', expected_code, response)
 
         return response
 
-    def patch(self, url, data, expected_code=None, format='json'):
+    def patch(self, url, data, expected_code=None, format='json', **kwargs):
         """Issue a PATCH request."""
-        response = self.client.patch(url, data=data, format=format)
+        response = self.client.patch(url, data=data, format=format, **kwargs)
 
         self.checkResponse(url, 'PATCH', expected_code, response)
 
         return response
 
-    def put(self, url, data, expected_code=None, format='json'):
+    def put(self, url, data, expected_code=None, format='json', **kwargs):
         """Issue a PUT request."""
-        response = self.client.put(url, data=data, format=format)
+        response = self.client.put(url, data=data, format=format, **kwargs)
 
         self.checkResponse(url, 'PUT', expected_code, response)
 
         return response
 
-    def options(self, url, expected_code=None):
+    def options(self, url, expected_code=None, **kwargs):
         """Issue an OPTIONS request."""
-        response = self.client.options(url, format='json')
+        response = self.client.options(url, format='json', **kwargs)
 
         self.checkResponse(url, 'OPTIONS', expected_code, response)
 

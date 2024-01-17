@@ -24,6 +24,11 @@ export enum ApiPaths {
   group_list = 'api-group-list',
   owner_list = 'api-owner-list',
 
+  task_overview = 'api-task-overview',
+  task_pending_list = 'api-task-pending-list',
+  task_scheduled_list = 'api-task-scheduled-list',
+  task_failed_list = 'api-task-failed-list',
+
   settings_global_list = 'api-settings-global-list',
   settings_user_list = 'api-settings-user-list',
   notifications_list = 'api-notifications-list',
@@ -89,6 +94,7 @@ export enum ApiPaths {
   plugin_reload = 'api-plugin-reload',
   plugin_registry_status = 'api-plugin-registry-status',
 
+  error_report_list = 'api-error-report-list',
   project_code_list = 'api-project-code-list',
   custom_unit_list = 'api-custom-unit-list'
 }

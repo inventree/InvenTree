@@ -11,6 +11,8 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
+import InvenTree.helpers
+
 logger = logging.getLogger('inventree')
 
 
@@ -83,7 +85,21 @@ class ReportConfig(AppConfig):
             src_file = src_dir.joinpath(report['file'])
             dst_file = settings.MEDIA_ROOT.joinpath(filename)
 
+            do_copy = False
+
             if not dst_file.exists():
+                logger.info("Report template '%s' is not present", filename)
+                do_copy = True
+            else:
+                # Check if the file contents are different
+                src_hash = InvenTree.helpers.hash_file(src_file)
+                dst_hash = InvenTree.helpers.hash_file(dst_file)
+
+                if src_hash != dst_hash:
+                    logger.info("Hash differs for '%s'", filename)
+                    do_copy = True
+
+            if do_copy:
                 logger.info("Copying test report template '%s'", dst_file)
                 shutil.copyfile(src_file, dst_file)
 

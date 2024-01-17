@@ -394,10 +394,12 @@ def DownloadFile(
         length = len(bytes(data, response.charset))
     response['Content-Length'] = length
 
-    disposition = 'inline' if inline else 'attachment'
+    if inline:
+        disposition = f'inline; filename={filename}'
+    else:
+        disposition = f'attachment; filename={filename}'
 
-    response['Content-Disposition'] = f'{disposition}; filename={filename}'
-
+    response['Content-Disposition'] = disposition
     return response
 
 
@@ -790,6 +792,11 @@ def hash_barcode(barcode_data):
     return str(hash.hexdigest())
 
 
+def hash_file(filename: str):
+    """Return the MD5 hash of a file."""
+    return hashlib.md5(open(filename, 'rb').read()).hexdigest()
+
+
 def get_objectreference(
     obj, type_ref: str = 'content_type', object_ref: str = 'object_id'
 ):
@@ -845,3 +852,8 @@ def inheritors(cls):
                 subcls.add(child)
                 work.append(child)
     return subcls
+
+
+def is_ajax(request):
+    """Check if the current request is an AJAX request."""
+    return request.headers.get('x-requested-with') == 'XMLHttpRequest'

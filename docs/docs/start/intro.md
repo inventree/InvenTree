@@ -66,7 +66,10 @@ InvenTree runs on [Python](https://python.org).
 InvenTree makes use of the [invoke](https://www.pyinvoke.org/) python toolkit for performing various administrative actions.
 
 !!! warning "Invoke Version"
-	InvenTree requires invoke version 1.4.0 or newer. Some platforms may be shipped with older versions of invoke!
+	InvenTree requires invoke version 2.0.0 or newer. Some platforms may be shipped with older versions of invoke!
+
+!!! tip "Updating Invoke"
+    To update your invoke version, run `pip install -U invoke`
 
 To display a list of the available InvenTree administration actions, run the following commands from the top level source directory:
 
