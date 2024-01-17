@@ -394,10 +394,12 @@ def DownloadFile(
         length = len(bytes(data, response.charset))
     response['Content-Length'] = length
 
-    disposition = 'inline' if inline else 'attachment'
+    if inline:
+        disposition = f'inline; filename={filename}'
+    else:
+        disposition = f'attachment; filename={filename}'
 
-    response['Content-Disposition'] = f'{disposition}; filename={filename}'
-
+    response['Content-Disposition'] = disposition
     return response
 
 
