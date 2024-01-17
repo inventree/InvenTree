@@ -70,7 +70,7 @@ skip-magic-trailing-comma = true
 line-ending = "auto"
 
 [tool.coverage.run]
-source = ["src/backend/InvenTree", ]
+source = ["src/backend/InvenTree", "InvenTree"]
 
 [tool.djlint]
 ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
