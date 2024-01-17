@@ -354,9 +354,6 @@ translated_javascript_urls = [
 ]
 
 backendpatterns = [
-    # "Dynamic" javascript files which are rendered using InvenTree templating.
-    re_path(r'^js/dynamic/', include(dynamic_javascript_urls)),
-    re_path(r'^js/i18n/', include(translated_javascript_urls)),
     re_path(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
     re_path(r'^auth/?', auth_request),
     re_path(r'^api/', include(apipatterns)),
@@ -366,6 +363,9 @@ backendpatterns = [
 ]
 
 classic_frontendpatterns = [
+    # "Dynamic" javascript files which are rendered using InvenTree templating.
+    re_path(r'^js/dynamic/', include(dynamic_javascript_urls)),
+    re_path(r'^js/i18n/', include(translated_javascript_urls)),
     # Apps
     re_path(r'^build/', include(build_urls)),
     re_path(r'^common/', include(common_urls)),
