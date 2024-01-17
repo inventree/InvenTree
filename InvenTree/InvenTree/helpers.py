@@ -790,6 +790,11 @@ def hash_barcode(barcode_data):
     return str(hash.hexdigest())
 
 
+def hash_file(filename: str):
+    """Return the MD5 hash of a file."""
+    return hashlib.md5(open(filename, 'rb').read()).hexdigest()
+
+
 def get_objectreference(
     obj, type_ref: str = 'content_type', object_ref: str = 'object_id'
 ):
