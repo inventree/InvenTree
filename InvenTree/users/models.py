@@ -24,7 +24,7 @@ from rest_framework.authtoken.models import Token as AuthToken
 import common.models as common_models
 import InvenTree.helpers
 import InvenTree.models
-from InvenTree.ready import canAppAccessDatabase
+from InvenTree.ready import canAppAccessDatabase, isImportingData
 
 logger = logging.getLogger("inventree")
 
@@ -892,7 +892,9 @@ class Owner(models.Model):
 @receiver(post_save, sender=get_user_model(), dispatch_uid='create_owner')
 def create_owner(sender, instance, **kwargs):
     """Callback function to create a new owner instance after either a new group or user instance is saved."""
-    Owner.create(obj=instance)
+    # Ignore during data import process to avoid data duplication
+    if not isImportingData():
+        Owner.create(obj=instance)
 
 
 @receiver(post_delete, sender=Group, dispatch_uid='delete_owner')
