@@ -8,7 +8,7 @@ msgstr ""
 "Language: da\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-13 12:15\n"
+"PO-Revision-Date: 2024-01-17 13:54\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2460,7 +2460,7 @@ msgstr ""
 
 #: src/components/tables/settings/PendingTasksTable.tsx:30
 msgid "Created"
-msgstr "Created"
+msgstr ""
 
 #: src/components/tables/settings/PendingTasksTable.tsx:36
 msgid "Arguments"
@@ -3793,11 +3793,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
-#~ msgstr ""
+#~ msgstr "First name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
-#~ msgstr ""
+#~ msgstr "Last name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
 msgid "Last name:"
@@ -4422,3 +4422,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
