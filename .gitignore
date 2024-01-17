@@ -105,6 +105,7 @@ InvenTree/plugins/
 
 # Compiled translation files
 *.mo
+messages.ts
 
 # web frontend (static files)
 InvenTree/web/static

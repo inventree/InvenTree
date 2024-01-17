@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Stack, Table } from '@mantine/core';
+import { Group, LoadingOverlay, Skeleton, Stack, Table } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
@@ -78,7 +78,7 @@ export default function BuildDetail() {
             <tr>
               <td>{t`Build Status`}</td>
               <td>
-                {build.status && (
+                {build?.status && (
                   <StatusRenderer
                     status={build.status}
                     type={ModelType.build}
@@ -241,10 +241,14 @@ export default function BuildDetail() {
   }, [id, build, user]);
 
   const buildDetail = useMemo(() => {
-    return StatusRenderer({
-      status: build.status,
-      type: ModelType.build
-    });
+    return build?.status ? (
+      StatusRenderer({
+        status: build.status,
+        type: ModelType.build
+      })
+    ) : (
+      <Skeleton />
+    );
   }, [build, id]);
 
   return (
