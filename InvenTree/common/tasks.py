@@ -10,6 +10,7 @@ from django.db.utils import IntegrityError, OperationalError
 from django.utils import timezone
 
 import feedparser
+import requests
 
 from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeNotesMixin
@@ -45,11 +46,16 @@ def update_news_feed():
         logger.info("Could not perform 'update_news_feed' - App registry not ready")
         return
 
+    # News feed isn't defined, no need to continue
+    if not settings.INVENTREE_NEWS_URL or type(settings.INVENTREE_NEWS_URL) is not str:
+        return
+
     # Fetch and parse feed
     try:
-        d = feedparser.parse(settings.INVENTREE_NEWS_URL)
-    except Exception as entry:  # pragma: no cover
-        logger.warning("update_news_feed: Error parsing the newsfeed", entry)
+        feed = requests.get(settings.INVENTREE_NEWS_URL)
+        d = feedparser.parse(feed.content)
+    except Exception:  # pragma: no cover
+        logger.warning('update_news_feed: Error parsing the newsfeed')
         return
 
     # Get a reference list
