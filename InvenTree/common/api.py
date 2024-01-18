@@ -402,6 +402,8 @@ class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
 
     filter_backends = ORDER_FILTER
 
+    ordering = '-published'
+
     ordering_fields = ['published', 'author', 'read']
 
     filterset_fields = ['read']
