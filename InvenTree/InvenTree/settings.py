@@ -26,6 +26,7 @@ from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
+from InvenTree.tracing import setup_instruments, setup_tracing
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
 from . import config, locales
@@ -711,6 +712,14 @@ REMOTE_LOGIN_HEADER = get_setting(
     'INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER'
 )
 
+# region Tracing / error tracking
+inventree_tags = {
+    'testing': TESTING,
+    'docker': DOCKER,
+    'debug': DEBUG,
+    'remote': REMOTE_LOGIN,
+}
+
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting(
     'INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False
@@ -723,14 +732,41 @@ SENTRY_SAMPLE_RATE = float(
 )
 
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
-    inventree_tags = {
-        'testing': TESTING,
-        'docker': DOCKER,
-        'debug': DEBUG,
-        'remote': REMOTE_LOGIN,
-    }
-
     init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
+
+# OpenTelemetry tracing
+TRACING_ENABLED = get_boolean_setting(
+    'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
+)
+if TRACING_ENABLED:  # pragma: no cover
+    _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
+    _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
+    if _t_endpoint and _t_headers:
+        _t_resources = get_setting(
+            'INVENTREE_TRACING_RESOURCES', 'tracing.resources', {}, dict
+        )
+        cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
+        tracing_resources = {**cstm_tags, **_t_resources}
+
+        setup_tracing(
+            _t_endpoint,
+            _t_headers,
+            tracing_resources,
+            get_boolean_setting('INVENTREE_TRACING_CONSOLE', 'tracing.console', False),
+            get_setting('INVENTREE_TRACING_AUTH', 'tracing.auth', {}),
+            get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', False),
+            get_boolean_setting(
+                'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
+            ),
+        )
+        # Run tracing/logging instrumentation
+        setup_instruments()
+    else:
+        logger.warning(
+            'OpenTelemetry tracing not enabled because endpoint or headers are not set'
+        )
+
+# endregion
 
 # Cache configuration
 cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
