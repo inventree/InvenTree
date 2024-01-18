@@ -1385,7 +1385,12 @@ class SalesOrderLineItem(OrderLineItem):
 
     def fulfilled_quantity(self):
         """Return the total stock quantity fulfilled against this line item."""
-        query = self.order.stock_items.filter(part=self.part).aggregate(fulfilled=Coalesce(Sum('quantity'), Decimal(0)))
+        if not self.pk:
+            return 0
+
+        query = self.order.stock_items.filter(part=self.part).aggregate(
+            fulfilled=Coalesce(Sum('quantity'), Decimal(0))
+        )
 
         return query['fulfilled']
 
@@ -1394,7 +1399,12 @@ class SalesOrderLineItem(OrderLineItem):
 
         This is a summation of the quantity of each attached StockItem
         """
-        query = self.allocations.aggregate(allocated=Coalesce(Sum('quantity'), Decimal(0)))
+        if not self.pk:
+            return 0
+
+        query = self.allocations.aggregate(
+            allocated=Coalesce(Sum('quantity'), Decimal(0))
+        )
 
         return query['allocated']
 
