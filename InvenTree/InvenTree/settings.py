@@ -741,7 +741,10 @@ TRACING_ENABLED = get_boolean_setting(
 if TRACING_ENABLED:  # pragma: no cover
     _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
     _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
+
     if _t_endpoint and _t_headers:
+        logger.info('OpenTelemetry tracing enabled - configuring...')
+
         _t_resources = get_setting(
             'INVENTREE_TRACING_RESOURCES', 'tracing.resources', {}, dict
         )
@@ -751,11 +754,13 @@ if TRACING_ENABLED:  # pragma: no cover
         setup_tracing(
             _t_endpoint,
             _t_headers,
-            tracing_resources,
-            get_boolean_setting('INVENTREE_TRACING_CONSOLE', 'tracing.console', False),
-            get_setting('INVENTREE_TRACING_AUTH', 'tracing.auth', {}),
-            get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', False),
-            get_boolean_setting(
+            resources_input=tracing_resources,
+            console=get_boolean_setting(
+                'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
+            ),
+            auth=get_setting('INVENTREE_TRACING_AUTH', 'tracing.auth', {}),
+            is_http=get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True),
+            append_http=get_boolean_setting(
                 'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
             ),
         )
