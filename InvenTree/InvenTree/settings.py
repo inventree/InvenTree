@@ -742,7 +742,10 @@ if TRACING_ENABLED:  # pragma: no cover
     _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
     _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
 
-    if _t_endpoint and _t_headers:
+    if _t_headers is None:
+        _t_headers = {}
+
+    if _t_endpoint:
         logger.info('OpenTelemetry tracing enabled - configuring...')
 
         _t_resources = get_setting(
@@ -767,9 +770,7 @@ if TRACING_ENABLED:  # pragma: no cover
         # Run tracing/logging instrumentation
         setup_instruments()
     else:
-        logger.warning(
-            'OpenTelemetry tracing not enabled because endpoint or headers are not set'
-        )
+        logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')
 
 # endregion
 
