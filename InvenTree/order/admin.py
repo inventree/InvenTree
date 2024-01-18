@@ -237,7 +237,7 @@ class SalesOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
         Ref: https://github.com/inventree/InvenTree/issues/2207
         """
         if item.sale_price:
-            return str(item.sale_price)
+            return item.sale_price.amount
         return ''
 
 
