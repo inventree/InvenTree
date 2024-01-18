@@ -746,7 +746,7 @@ if TRACING_ENABLED:  # pragma: no cover
         _t_headers = {}
 
     if _t_endpoint:
-        logger.info('OpenTelemetry tracing enabled - configuring...')
+        logger.info('OpenTelemetry tracing enabled')
 
         _t_resources = get_setting(
             'INVENTREE_TRACING_RESOURCES', 'tracing.resources', {}, dict
