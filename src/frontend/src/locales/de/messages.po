@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-13 12:15\n"
+"PO-Revision-Date: 2024-01-18 13:57\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1495,7 +1495,7 @@ msgstr "Postleitzahl"
 
 #: src/components/tables/company/AddressTable.tsx:74
 msgid "City"
-msgstr ""
+msgstr "Ort"
 
 #: src/components/tables/company/AddressTable.tsx:80
 msgid "State / Province"
@@ -2460,7 +2460,7 @@ msgstr "Gruppe bearbeiten"
 
 #: src/components/tables/settings/PendingTasksTable.tsx:30
 msgid "Created"
-msgstr "Created"
+msgstr ""
 
 #: src/components/tables/settings/PendingTasksTable.tsx:36
 msgid "Arguments"
@@ -3793,11 +3793,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
-#~ msgstr "Vorname: {0}"
+#~ msgstr "First name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
-#~ msgstr "Nachname: {0}"
+#~ msgstr "Last name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
 msgid "Last name:"
@@ -4422,3 +4422,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
