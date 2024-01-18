@@ -2,7 +2,7 @@
 
 from django.conf import settings
 from django.shortcuts import redirect
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.generic import TemplateView
 
@@ -31,7 +31,7 @@ urlpatterns = [
                 spa_view,
                 name='password_reset_confirm',
             ),
-            re_path('.*', spa_view),
+            path('', spa_view),
         ]),
     ),
     assets_path,
