@@ -371,9 +371,9 @@ function constructForm(url, options={}) {
                 constructCreateForm(OPTIONS.actions.POST, options);
             } else {
                 // User does not have permission to POST to the endpoint
-                showMessage('{% trans "Action Prohibited" %}', {
+                showMessage('{% jstrans "Action Prohibited" %}', {
                     style: 'danger',
-                    details: '{% trans "Create operation not allowed" %}',
+                    details: '{% jstrans "Create operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
 
@@ -386,9 +386,9 @@ function constructForm(url, options={}) {
                 constructChangeForm(OPTIONS.actions.PUT, options);
             } else {
                 // User does not have permission to PUT/PATCH to the endpoint
-                showMessage('{% trans "Action Prohibited" %}', {
+                showMessage('{% jstrans "Action Prohibited" %}', {
                     style: 'danger',
-                    details: '{% trans "Update operation not allowed" %}',
+                    details: '{% jstrans "Update operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
 
@@ -400,9 +400,9 @@ function constructForm(url, options={}) {
                 constructDeleteForm(OPTIONS.actions.DELETE, options);
             } else {
                 // User does not have permission to DELETE to the endpoint
-                showMessage('{% trans "Action Prohibited" %}', {
+                showMessage('{% jstrans "Action Prohibited" %}', {
                     style: 'danger',
-                    details: '{% trans "Delete operation not allowed" %}',
+                    details: '{% jstrans "Delete operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
 
@@ -414,9 +414,9 @@ function constructForm(url, options={}) {
                 // TODO?
             } else {
                 // User does not have permission to GET to the endpoint
-                showMessage('{% trans "Action Prohibited" %}', {
+                showMessage('{% jstrans "Action Prohibited" %}', {
                     style: 'danger',
-                    details: '{% trans "View operation not allowed" %}',
+                    details: '{% jstrans "View operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
 
@@ -540,7 +540,7 @@ function constructFormBody(fields, options) {
         }
 
         if (!('submitText' in options)) {
-            options.submitText = '{% trans "Delete" %}';
+            options.submitText = '{% jstrans "Delete" %}';
         }
     }
 
@@ -767,7 +767,7 @@ function updateForm(options) {
 // The "submit" button will be disabled unless "confirm" is checked
 function insertConfirmButton(options) {
 
-    var message = options.confirmMessage || '{% trans "Confirm" %}';
+    var message = options.confirmMessage || '{% jstrans "Confirm" %}';
 
     var html = `
     <div class="form-check form-switch">
@@ -793,7 +793,7 @@ function insertConfirmButton(options) {
 /* Add a checkbox to select if the modal will stay open after success */
 function insertPersistButton(options) {
 
-    var message = options.persistMessage || '{% trans "Keep this form open" %}';
+    var message = options.persistMessage || '{% jstrans "Keep this form open" %}';
 
     var html = `
     <div class="form-check form-switch">
@@ -896,7 +896,7 @@ function submitFormData(fields, options) {
                 if (!validateFormField(name, options)) {
                     data_valid = false;
 
-                    data_errors[name] = ['{% trans "Enter a valid number" %}'];
+                    data_errors[name] = ['{% jstrans "Enter a valid number" %}'];
                 }
                 break;
             default:
@@ -1466,7 +1466,7 @@ function handleFormErrors(errors, fields={}, options={}) {
     // TODO: Display the JSON error text when hovering over the "info" icon
     non_field_errors.append(
         `<div class='alert alert-block alert-danger'>
-            <b>{% trans "Form errors exist" %}</b>
+            <b>{% jstrans "Form errors exist" %}</b>
             <span id='form-errors-info' class='float-right fas fa-info-circle icon-red'>
             </span>
         </div>`
@@ -1964,7 +1964,7 @@ function initializeRelatedField(field, fields, options={}) {
                 if (field.noResults) {
                     return field.noResults(query);
                 } else {
-                    return '{% trans "No results found" %}';
+                    return '{% jstrans "No results found" %}';
                 }
             }
         },
@@ -2148,11 +2148,11 @@ function initializeRelatedField(field, fields, options={}) {
         button.on("click", () => {
             const tree_id = `${name}_tree`;
 
-            const title = '{% trans "Select" %}' + " " + options.actions[name].label;
+            const title = '{% jstrans "Select" %}' + " " + options.actions[name].label;
             const content = `
                 <div class="mb-1">
                     <div class="input-group mb-2">
-                        <input class="form-control" type="text" id="${name}_tree_search" placeholder="{% trans "Search" %} ${options.actions[name].label}..." />
+                        <input class="form-control" type="text" id="${name}_tree_search" placeholder="{% jstrans "Search" %} ${options.actions[name].label}..." />
                         <button class="input-group-text" id="${name}_tree_search_btn"><i class="fas fa-search"></i></button>
                     </div>
 
@@ -2164,7 +2164,7 @@ function initializeRelatedField(field, fields, options={}) {
                 </div>
             `;
             showQuestionDialog(title, content, {
-                accept_text: '{% trans "Select" %}',
+                accept_text: '{% jstrans "Select" %}',
                 accept: () => {
                     const selectedNode = $(`#${tree_id}`).treeview('getSelected');
                     if(selectedNode.length > 0) {
@@ -2268,7 +2268,7 @@ function initializeChoiceField(field, fields, options) {
 
 // Render a 'no results' element
 function searching() {
-    return `<span>{% trans "Searching" %}...</span>`;
+    return `<span>{% jstrans "Searching" %}...</span>`;
 }
 
 /*
@@ -2482,7 +2482,7 @@ function constructField(name, parameters, options={}) {
 
         if (!parameters.required && !options.hideClearButton) {
             html += `
-            <button class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
+            <button class='input-group-text form-clear' id='clear_${field_name}' title='{% jstrans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>
             </button>`;
         }
@@ -3068,7 +3068,7 @@ function selectImportFields(url, data={}, options={}) {
         rows += `<tr><td><em>${field_name}</em></td><td>${choice_input}</td></tr>`;
     }
 
-    var headers = `<tr><th>{% trans "File Column" %}</th><th>{% trans "Field Name" %}</th></tr>`;
+    var headers = `<tr><th>{% jstrans "File Column" %}</th><th>{% jstrans "Field Name" %}</th></tr>`;
 
     var html = '';
 
@@ -3080,7 +3080,7 @@ function selectImportFields(url, data={}, options={}) {
 
     constructForm(url, {
         method: 'POST',
-        title: '{% trans "Select Columns" %}',
+        title: '{% jstrans "Select Columns" %}',
         fields: {},
         preFormContent: html,
         onSubmit: function(fields, opts) {

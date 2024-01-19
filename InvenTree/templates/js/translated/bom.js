@@ -75,7 +75,7 @@ function addBomItem(part_id, options={}) {
     constructForm('{% url "api-bom-list" %}', {
         fields: fields,
         method: 'POST',
-        title: '{% trans "Create BOM Item" %}',
+        title: '{% jstrans "Create BOM Item" %}',
         focus: 'sub_part',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
@@ -129,8 +129,8 @@ function constructBomUploadTable(data, options={}) {
 
         let buttons = '';
 
-        buttons += makeInfoButton('button-row-data', idx, '{% trans "Display row data" %}');
-        buttons += makeRemoveButton('button-row-remove', idx, '{% trans "Remove row" %}');
+        buttons += makeInfoButton('button-row-data', idx, '{% jstrans "Display row data" %}');
+        buttons += makeRemoveButton('button-row-remove', idx, '{% jstrans "Remove row" %}');
 
         buttons = wrapButtons(buttons);
 
@@ -185,8 +185,8 @@ function constructBomUploadTable(data, options={}) {
         $(`#button-row-data-${idx}`).click(function() {
 
             var modal = createNewModal({
-                title: '{% trans "Row Data" %}',
-                closeText: '{% trans "Close" %}',
+                title: '{% jstrans "Row Data" %}',
+                closeText: '{% jstrans "Close" %}',
                 hideSubmitButton: true
             });
 
@@ -303,11 +303,11 @@ function downloadBomTemplate(options={}) {
     }
 
     constructFormBody({}, {
-        title: '{% trans "Download BOM Template" %}',
+        title: '{% jstrans "Download BOM Template" %}',
         fields: {
             format: {
-                label: '{% trans "Format" %}',
-                help_text: '{% trans "Select file format" %}',
+                label: '{% jstrans "Format" %}',
+                help_text: '{% jstrans "Select file format" %}',
                 required: true,
                 type: 'choice',
                 value: format,
@@ -337,63 +337,63 @@ function downloadBomTemplate(options={}) {
 function exportBom(part_id, options={}) {
 
     constructFormBody({}, {
-        title: '{% trans "Export BOM" %}',
+        title: '{% jstrans "Export BOM" %}',
         fields: {
             format: {
-                label: '{% trans "Format" %}',
-                help_text: '{% trans "Select file format" %}',
+                label: '{% jstrans "Format" %}',
+                help_text: '{% jstrans "Select file format" %}',
                 required: true,
                 type: 'choice',
                 value: inventreeLoad('bom-export-format', 'csv'),
                 choices: exportFormatOptions(),
             },
             cascade: {
-                label: '{% trans "Multi Level BOM" %}',
-                help_text: '{% trans "Include BOM data for subassemblies" %}',
+                label: '{% jstrans "Multi Level BOM" %}',
+                help_text: '{% jstrans "Include BOM data for subassemblies" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-cascading', true),
             },
             levels: {
-                label: '{% trans "Levels" %}',
-                help_text: '{% trans "Select maximum number of BOM levels to export (0 = all levels)" %}',
+                label: '{% jstrans "Levels" %}',
+                help_text: '{% jstrans "Select maximum number of BOM levels to export (0 = all levels)" %}',
                 type: 'integer',
                 value: 0,
                 required: true,
                 min_value: 0,
             },
             substitute_part_data: {
-                label: '{% trans "Include Alternative Parts" %}',
-                help_text: '{% trans "Include alternative parts in exported BOM" %}',
+                label: '{% jstrans "Include Alternative Parts" %}',
+                help_text: '{% jstrans "Include alternative parts in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-substitute_part_data', false),
             },
             parameter_data: {
-                label: '{% trans "Include Parameter Data" %}',
-                help_text: '{% trans "Include part parameter data in exported BOM" %}',
+                label: '{% jstrans "Include Parameter Data" %}',
+                help_text: '{% jstrans "Include part parameter data in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-parameter_data', false),
             },
             stock_data: {
-                label: '{% trans "Include Stock Data" %}',
-                help_text: '{% trans "Include part stock data in exported BOM" %}',
+                label: '{% jstrans "Include Stock Data" %}',
+                help_text: '{% jstrans "Include part stock data in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-stock_data', false),
             },
             manufacturer_data: {
-                label: '{% trans "Include Manufacturer Data" %}',
-                help_text: '{% trans "Include part manufacturer data in exported BOM" %}',
+                label: '{% jstrans "Include Manufacturer Data" %}',
+                help_text: '{% jstrans "Include part manufacturer data in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-manufacturer_data', false),
             },
             supplier_data: {
-                label: '{% trans "Include Supplier Data" %}',
-                help_text: '{% trans "Include part supplier data in exported BOM" %}',
+                label: '{% jstrans "Include Supplier Data" %}',
+                help_text: '{% jstrans "Include part supplier data in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-supplier_data', false),
             },
             pricing_data: {
-                label: '{% trans "Include Pricing Data" %}',
-                help_text: '{% trans "Include part pricing data in exported BOM" %}',
+                label: '{% jstrans "Include Pricing Data" %}',
+                help_text: '{% jstrans "Include part pricing data in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-pricing_data', false),
             }
@@ -441,7 +441,7 @@ function bomItemFields() {
         sub_part: {
             icon: 'fa-shapes',
             secondary: {
-                title: '{% trans "New Part" %}',
+                title: '{% jstrans "New Part" %}',
                 fields: function() {
                     var fields = partFields();
 
@@ -588,7 +588,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
         var buttons = '';
 
-        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove substitute part" %}');
+        buttons += makeRemoveButton('button-row-remove', pk, '{% jstrans "Remove substitute part" %}');
 
         // Render a single row
         var html = `
@@ -619,7 +619,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
     var html = `
     <div class='alert alert-block'>
-    <strong>{% trans "Base Part" %}</strong><hr>
+    <strong>{% jstrans "Base Part" %}</strong><hr>
     ${part_thumb} ${part_name} - <em>${part_desc}</em>
     </div>
     `;
@@ -629,8 +629,8 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
     <table class='table table-striped table-condensed' id='substitute-table'>
         <thead>
             <tr>
-                <th>{% trans "Part" %}</th>
-                <th>{% trans "Description" %}</th>
+                <th>{% jstrans "Part" %}</th>
+                <th>{% jstrans "Description" %}</th>
                 <th><!-- Actions --></th>
             </tr>
         </thead>
@@ -642,7 +642,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
     html += `
     <div class='alert alert-success alert-block'>
-        {% trans "Select and add a new substitute part using the input below" %}
+        {% jstrans "Select and add a new substitute part using the input below" %}
     </div>
     `;
 
@@ -653,13 +653,13 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
             var pre = `
             <div class='alert alert-block alert-warning'>
-            {% trans "Are you sure you wish to remove this substitute part link?" %}
+            {% jstrans "Are you sure you wish to remove this substitute part link?" %}
             </div>
             `;
 
             constructForm(`{% url "api-bom-substitute-list" %}${pk}/`, {
                 method: 'DELETE',
-                title: '{% trans "Remove Substitute Part" %}',
+                title: '{% jstrans "Remove Substitute Part" %}',
                 preFormContent: pre,
                 confirm: true,
                 onSuccess: function() {
@@ -697,9 +697,9 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             },
         },
         preFormContent: html,
-        closeText: '{% trans "Close" %}',
-        submitText: '{% trans "Add Substitute" %}',
-        title: '{% trans "Edit BOM Item Substitutes" %}',
+        closeText: '{% jstrans "Close" %}',
+        submitText: '{% jstrans "Add Substitute" %}',
+        title: '{% jstrans "Edit BOM Item Substitutes" %}',
         afterRender: function(fields, opts) {
             addRemoveCallback(opts.modal, '.button-row-remove');
         },
@@ -761,14 +761,14 @@ function deleteBomItems(items, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% trans "All selected BOM items will be deleted" %}
+    {% jstrans "All selected BOM items will be deleted" %}
     </div>
 
     <table class='table table-striped table-condensed'>
         <tr>
-            <th>{% trans "Part" %}</th>
-            <th>{% trans "Reference" %}</th>
-            <th>{% trans "Quantity" %}</th>
+            <th>{% jstrans "Part" %}</th>
+            <th>{% jstrans "Reference" %}</th>
+            <th>{% jstrans "Quantity" %}</th>
         </tr>
         ${rows}
     </table>
@@ -777,7 +777,7 @@ function deleteBomItems(items, options={}) {
     constructForm('{% url "api-bom-list"  %}', {
         method: 'DELETE',
         multi_delete: true,
-        title: '{% trans "Delete selected BOM items?" %}',
+        title: '{% jstrans "Delete selected BOM items?" %}',
         form_data: {
             items: ids,
         },
@@ -823,7 +823,7 @@ function loadBomTable(table, options={}) {
             label: 'actions',
             actions: [{
                 label: 'delete',
-                title: '{% trans "Delete items" %}',
+                title: '{% jstrans "Delete items" %}',
                 icon: 'fa-trash-alt icon-red',
                 permission: 'part.change',
                 callback: function(data) {
@@ -902,7 +902,7 @@ function loadBomTable(table, options={}) {
     cols.push(
         {
             field: 'sub_part',
-            title: '{% trans "Part" %}',
+            title: '{% jstrans "Part" %}',
             sortable: true,
             switchable: false,
             sorter: function(_valA, _valB, rowA, rowB) {
@@ -933,7 +933,7 @@ function loadBomTable(table, options={}) {
                     } else {
                         html += `
                             <a href='#' pk='${row.pk}' class='load-sub-assembly' id='load-sub-assembly-${row.pk}'>
-                                <span class='fas fa-sync-alt' title='{% trans "Load BOM for subassembly" %}'></span>
+                                <span class='fas fa-sync-alt' title='{% jstrans "Load BOM for subassembly" %}'></span>
                             </a> `;
                     }
                 }
@@ -943,11 +943,11 @@ function loadBomTable(table, options={}) {
                 html += makePartIcons(sub_part);
 
                 if (row.substitutes && row.substitutes.length > 0) {
-                    html += makeIconBadge('fa-exchange-alt', '{% trans "Substitutes Available" %}');
+                    html += makeIconBadge('fa-exchange-alt', '{% jstrans "Substitutes Available" %}');
                 }
 
                 if (row.allow_variants) {
-                    html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
+                    html += makeIconBadge('fa-sitemap', '{% jstrans "Variant stock allowed" %}');
                 }
 
                 return html;
@@ -960,7 +960,7 @@ function loadBomTable(table, options={}) {
     cols.push(
         {
             field: 'sub_part_detail.description',
-            title: '{% trans "Description" %}',
+            title: '{% jstrans "Description" %}',
             formatter: function(value) {
                 return withTitle(shortenString(value), value);
             }
@@ -970,7 +970,7 @@ function loadBomTable(table, options={}) {
     // Part reference
     cols.push({
         field: 'reference',
-        title: '{% trans "Reference" %}',
+        title: '{% jstrans "Reference" %}',
         searchable: true,
         sortable: true,
     });
@@ -978,7 +978,7 @@ function loadBomTable(table, options={}) {
     // Part quantity
     cols.push({
         field: 'quantity',
-        title: '{% trans "Quantity" %}',
+        title: '{% jstrans "Quantity" %}',
         searchable: false,
         sortable: true,
         switchable: false,
@@ -994,11 +994,11 @@ function loadBomTable(table, options={}) {
             }
 
             if (row.consumable) {
-                text += ` <small>({% trans "Consumable" %})</small>`;
+                text += ` <small>({% jstrans "Consumable" %})</small>`;
             }
 
             if (row.optional) {
-                text += ' <small>({% trans "Optional" %})</small>';
+                text += ' <small>({% jstrans "Optional" %})</small>';
             }
 
             if (row.overage) {
@@ -1011,7 +1011,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'substitutes',
-        title: '{% trans "Substitutes" %}',
+        title: '{% jstrans "Substitutes" %}',
         searchable: false,
         sortable: true,
         formatter: function(value, row) {
@@ -1025,7 +1025,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'optional',
-        title: '{% trans "Optional" %}',
+        title: '{% jstrans "Optional" %}',
         searchable: false,
         formatter: function(value) {
             return yesNoLabel(value);
@@ -1034,7 +1034,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'consumable',
-        title: '{% trans "Consumable" %}',
+        title: '{% jstrans "Consumable" %}',
         searchable: false,
         formatter: function(value) {
             return yesNoLabel(value);
@@ -1043,7 +1043,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'allow_variants',
-        title: '{% trans "Allow Variants" %}',
+        title: '{% jstrans "Allow Variants" %}',
         formatter: function(value) {
             return yesNoLabel(value);
         }
@@ -1051,7 +1051,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'inherited',
-        title: '{% trans "Gets inherited" %}',
+        title: '{% jstrans "Gets inherited" %}',
         searchable: false,
         formatter: function(value, row) {
             // This BOM item *is* inheritable, but is defined for this BOM
@@ -1068,7 +1068,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'pricing',
-        title: '{% trans "Price Range" %}',
+        title: '{% jstrans "Price Range" %}',
         sortable: true,
         sorter: function(valA, valB, rowA, rowB) {
             var a = rowA.pricing_min || rowA.pricing_max;
@@ -1136,19 +1136,19 @@ function loadBomTable(table, options={}) {
                 if (complete_pricing) {
                     html += makeIconBadge(
                         'fa-check-circle icon-green',
-                        '{% trans "BOM pricing is complete" %}',
+                        '{% jstrans "BOM pricing is complete" %}',
                     );
                 } else {
                     html += makeIconBadge(
                         'fa-exclamation-circle icon-yellow',
-                        '{% trans "BOM pricing is incomplete" %}',
+                        '{% jstrans "BOM pricing is incomplete" %}',
                     );
                 }
 
                 return html;
 
             } else {
-                let html = '<em>{% trans "No pricing available" %}</em>';
+                let html = '<em>{% jstrans "No pricing available" %}</em>';
                 html += makeIconBadge('fa-times-circle icon-red');
 
                 return html;
@@ -1159,7 +1159,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'available_stock',
-        title: '{% trans "Available" %}',
+        title: '{% jstrans "Available" %}',
         searchable: false,
         sortable: true,
         formatter: function(value, row) {
@@ -1179,16 +1179,16 @@ function loadBomTable(table, options={}) {
             }
 
             if (available_stock <= 0) {
-                text += makeIconBadge('fa-times-circle icon-red', '{% trans "No Stock Available" %}');
+                text += makeIconBadge('fa-times-circle icon-red', '{% jstrans "No Stock Available" %}');
             } else {
                 var extra = '';
 
                 if ((substitute_stock > 0) && (variant_stock > 0)) {
-                    extra = '{% trans "Includes variant and substitute stock" %}';
+                    extra = '{% jstrans "Includes variant and substitute stock" %}';
                 } else if (variant_stock > 0) {
-                    extra = '{% trans "Includes variant stock" %}';
+                    extra = '{% jstrans "Includes variant stock" %}';
                 } else if (substitute_stock > 0) {
-                    extra = '{% trans "Includes substitute stock" %}';
+                    extra = '{% jstrans "Includes substitute stock" %}';
                 }
 
                 if (extra) {
@@ -1199,7 +1199,7 @@ function loadBomTable(table, options={}) {
             if (row.on_order && row.on_order > 0) {
                 text += makeIconBadge(
                     'fa-shopping-cart',
-                    `{% trans "On Order" %}: ${row.on_order}`,
+                    `{% jstrans "On Order" %}: ${row.on_order}`,
                 );
             }
 
@@ -1210,13 +1210,13 @@ function loadBomTable(table, options={}) {
     cols.push(
         {
             field: 'can_build',
-            title: '{% trans "Can Build" %}',
+            title: '{% jstrans "Can Build" %}',
             sortable: true,
             formatter: function(value, row) {
 
                 // "Consumable" parts are not tracked in the build
                 if (row.consumable) {
-                    return `<em>{% trans "Consumable item" %}</em>`;
+                    return `<em>{% jstrans "Consumable item" %}</em>`;
                 }
 
                 var can_build = canBuildQuantity(row);
@@ -1256,7 +1256,7 @@ function loadBomTable(table, options={}) {
     cols.push(
         {
             field: 'note',
-            title: '{% trans "Notes" %}',
+            title: '{% jstrans "Notes" %}',
             searchable: true,
             sortable: true,
             formatter: function(value) {
@@ -1268,7 +1268,7 @@ function loadBomTable(table, options={}) {
     if (options.editable) {
 
         cols.push({
-            title: '{% trans "Actions" %}',
+            title: '{% jstrans "Actions" %}',
             switchable: false,
             field: 'pk',
             visible: true,
@@ -1276,15 +1276,15 @@ function loadBomTable(table, options={}) {
 
                 if (row.part == options.parent_id) {
 
-                    var bValidate = makeIconButton('fa-check-circle icon-green', 'bom-validate-button', row.pk, '{% trans "Validate BOM Item" %}');
+                    var bValidate = makeIconButton('fa-check-circle icon-green', 'bom-validate-button', row.pk, '{% jstrans "Validate BOM Item" %}');
 
-                    var bValid = makeIconButton('fa-check-double icon-green', 'bom-valid-button', row.pk, '{% trans "This line has been validated" %}', {disabled: true});
+                    var bValid = makeIconButton('fa-check-double icon-green', 'bom-valid-button', row.pk, '{% jstrans "This line has been validated" %}', {disabled: true});
 
-                    var bSubs = makeIconButton('fa-exchange-alt icon-blue', 'bom-substitutes-button', row.pk, '{% trans "Edit substitute parts" %}');
+                    var bSubs = makeIconButton('fa-exchange-alt icon-blue', 'bom-substitutes-button', row.pk, '{% jstrans "Edit substitute parts" %}');
 
-                    var bEdit = makeEditButton('bom-edit-button', row.pk, '{% trans "Edit BOM Item" %}');
+                    var bEdit = makeEditButton('bom-edit-button', row.pk, '{% jstrans "Edit BOM Item" %}');
 
-                    var bDelt = makeDeleteButton('bom-delete-button', row.pk, '{% trans "Delete BOM Item" %}');
+                    var bDelt = makeDeleteButton('bom-delete-button', row.pk, '{% jstrans "Delete BOM Item" %}');
 
                     let buttons = '';
 
@@ -1304,15 +1304,15 @@ function loadBomTable(table, options={}) {
                     // Return a link to the external BOM
 
                     return renderLink(
-                        '{% trans "View BOM" %}',
+                        '{% jstrans "View BOM" %}',
                         `/part/${row.part}/bom/`
                     );
                 }
             },
             footerFormatter: function(data) {
                 return `
-                <button class='btn btn-success float-right' type='button' title='{% trans "Add BOM Item" %}' id='bom-item-new-footer'>
-                    ${makeIcon('fa-plus-circle')} {% trans "Add BOM Item" %}
+                <button class='btn btn-success float-right' type='button' title='{% jstrans "Add BOM Item" %}' id='bom-item-new-footer'>
+                    ${makeIcon('fa-plus-circle')} {% jstrans "Add BOM Item" %}
                 </button>
                 `;
             }
@@ -1388,7 +1388,7 @@ function loadBomTable(table, options={}) {
 
         },
         formatNoMatches: function() {
-            return '{% trans "No BOM items found" %}';
+            return '{% jstrans "No BOM items found" %}';
         },
         queryParams: filters,
         original: params,
@@ -1477,7 +1477,7 @@ function loadBomTable(table, options={}) {
 
             constructForm(`{% url "api-bom-list" %}${pk}/`, {
                 fields: fields,
-                title: '{% trans "Edit BOM Item" %}',
+                title: '{% jstrans "Edit BOM Item" %}',
                 focus: 'sub_part',
                 onSuccess: function() {
                     reloadBomTable(table);
@@ -1630,7 +1630,7 @@ function loadUsedInTable(table, part_id, options={}) {
             },
             {
                 field: 'part',
-                title: '{% trans "Assembly" %}',
+                title: '{% jstrans "Assembly" %}',
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1648,7 +1648,7 @@ function loadUsedInTable(table, part_id, options={}) {
             },
             {
                 field: 'sub_part',
-                title: '{% trans "Required Part" %}',
+                title: '{% jstrans "Required Part" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var url = `/part/${value}/`;
@@ -1665,7 +1665,7 @@ function loadUsedInTable(table, part_id, options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% trans "Required Quantity" %}',
+                title: '{% jstrans "Required Quantity" %}',
                 formatter: function(value, row) {
                     var html = value;
 
@@ -1674,7 +1674,7 @@ function loadUsedInTable(table, part_id, options={}) {
                     }
 
                     if (row.parent && row.parent != 'top-level-item') {
-                        html += ` <em>({% trans "Inherited from parent BOM" %})</em>`;
+                        html += ` <em>({% jstrans "Inherited from parent BOM" %})</em>`;
                     }
 
                     return html;

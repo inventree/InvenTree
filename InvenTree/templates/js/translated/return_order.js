@@ -57,7 +57,7 @@ function returnOrderFields(options={}) {
         customer: {
             icon: 'fa-user-tie',
             secondary: {
-                title: '{% trans "Add Customer" %}',
+                title: '{% jstrans "Add Customer" %}',
                 fields: function() {
                     var fields = companyFormFields();
                     fields.is_customer.value = true;
@@ -131,7 +131,7 @@ function createReturnOrder(options={}) {
     constructForm('{% url "api-return-order-list" %}', {
         method: 'POST',
         fields: fields,
-        title: '{% trans "Create Return Order" %}',
+        title: '{% jstrans "Create Return Order" %}',
         onSuccess: function(data) {
             location.href = `/order/return-order/${data.pk}/`;
         },
@@ -146,7 +146,7 @@ function editReturnOrder(order_id, options={}) {
 
     constructForm(`{% url "api-return-order-list" %}${order_id}/`, {
         fields: returnOrderFields(options),
-        title: '{% trans "Edit Return Order" %}',
+        title: '{% jstrans "Edit Return Order" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -161,12 +161,12 @@ function issueReturnOrder(order_id, options={}) {
 
     let html = `
     <div class='alert alert-block alert-warning'>
-    {% trans 'After placing this order, line items will no longer be editable.' %}
+    {% jstrans 'After placing this order, line items will no longer be editable.' %}
     </div>`;
 
     constructForm(`{% url "api-return-order-list" %}${order_id}/issue/`, {
         method: 'POST',
-        title: '{% trans "Issue Return Order" %}',
+        title: '{% jstrans "Issue Return Order" %}',
         confirm: true,
         preFormContent: html,
         onSuccess: function(response) {
@@ -183,14 +183,14 @@ function cancelReturnOrder(order_id, options={}) {
 
     let html = `
     <div class='alert alert-danger alert-block'>
-    {% trans "Are you sure you wish to cancel this Return Order?" %}
+    {% jstrans "Are you sure you wish to cancel this Return Order?" %}
     </div>`;
 
     constructForm(
         `{% url "api-return-order-list" %}${order_id}/cancel/`,
         {
             method: 'POST',
-            title: '{% trans "Cancel Return Order" %}',
+            title: '{% jstrans "Cancel Return Order" %}',
             confirm: true,
             preFormContent: html,
             onSuccess: function(response) {
@@ -207,7 +207,7 @@ function cancelReturnOrder(order_id, options={}) {
 function completeReturnOrder(order_id, options={}) {
     let html = `
     <div class='alert alert-block alert-warning'>
-    {% trans "Mark this order as complete?" %}
+    {% jstrans "Mark this order as complete?" %}
     </div>
     `;
 
@@ -215,7 +215,7 @@ function completeReturnOrder(order_id, options={}) {
         `{% url "api-return-order-list" %}${order_id}/complete/`,
         {
             method: 'POST',
-            title: '{% trans "Complete Return Order" %}',
+            title: '{% jstrans "Complete Return Order" %}',
             confirm: true,
             preFormContent: html,
             onSuccess: function(response) {
@@ -263,7 +263,7 @@ function loadReturnOrderTable(table, options={}) {
         showCustomView: is_calendar,
         disablePagination: is_calendar,
         formatNoMatches: function() {
-            return '{% trans "No return orders found" %}';
+            return '{% jstrans "No return orders found" %}';
         },
         onLoadSuccess: function() {
             // TODO
@@ -278,12 +278,12 @@ function loadReturnOrderTable(table, options={}) {
             {
                 sortable: true,
                 field: 'reference',
-                title: '{% trans "Return Order" %}',
+                title: '{% jstrans "Return Order" %}',
                 formatter: function(value, row) {
                     let html = renderLink(value, `/order/return-order/${row.pk}/`);
 
                     if (row.overdue) {
-                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% jstrans "Order is overdue" %}');
                     }
 
                     return html;
@@ -293,11 +293,11 @@ function loadReturnOrderTable(table, options={}) {
                 sortable: true,
                 sortName: 'customer__name',
                 field: 'customer_detail',
-                title: '{% trans "Customer" %}',
+                title: '{% jstrans "Customer" %}',
                 formatter: function(value, row) {
 
                     if (!row.customer_detail) {
-                        return '{% trans "Invalid Customer" %}';
+                        return '{% jstrans "Invalid Customer" %}';
                     }
 
                     return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
@@ -306,16 +306,16 @@ function loadReturnOrderTable(table, options={}) {
             {
                 sortable: true,
                 field: 'customer_reference',
-                title: '{% trans "Customer Reference" %}',
+                title: '{% jstrans "Customer Reference" %}',
             },
             {
                 sortable: false,
                 field: 'description',
-                title: '{% trans "Description" %}',
+                title: '{% jstrans "Description" %}',
             },
             {
                 field: 'project_code',
-                title: '{% trans "Project Code" %}',
+                title: '{% jstrans "Project Code" %}',
                 switchable: global_settings.PROJECT_CODES_ENABLED,
                 visible: global_settings.PROJECT_CODES_ENABLED,
                 sortable: true,
@@ -328,7 +328,7 @@ function loadReturnOrderTable(table, options={}) {
             {
                 sortable: true,
                 field: 'status',
-                title: '{% trans "Status" %}',
+                title: '{% jstrans "Status" %}',
                 formatter: function(value, row) {
                     return returnOrderStatusDisplay(row.status);
                 }
@@ -336,7 +336,7 @@ function loadReturnOrderTable(table, options={}) {
             {
                 sortable: true,
                 field: 'creation_date',
-                title: '{% trans "Creation Date" %}',
+                title: '{% jstrans "Creation Date" %}',
                 formatter: function(value) {
                     return renderDate(value);
                 }
@@ -344,19 +344,19 @@ function loadReturnOrderTable(table, options={}) {
             {
                 sortable: true,
                 field: 'target_date',
-                title: '{% trans "Target Date" %}',
+                title: '{% jstrans "Target Date" %}',
                 formatter: function(value) {
                     return renderDate(value);
                 }
             },
             {
                 field: 'line_items',
-                title: '{% trans "Items" %}',
+                title: '{% jstrans "Items" %}',
                 sortable: true,
             },
             {
                 field: 'responsible',
-                title: '{% trans "Responsible" %}',
+                title: '{% jstrans "Responsible" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
@@ -378,7 +378,7 @@ function loadReturnOrderTable(table, options={}) {
             {
                 // TODO: Add in the 'total cost' field
                 field: 'total_price',
-                title: '{% trans "Total Cost" %}',
+                title: '{% jstrans "Total Cost" %}',
                 switchable: true,
                 sortable: true,
                 visible: false,
@@ -456,7 +456,7 @@ function createReturnOrderLineItem(options={}) {
     constructForm('{% url "api-return-order-line-list" %}', {
         fields: fields,
         method: 'POST',
-        title: '{% trans "Add Line Item" %}',
+        title: '{% jstrans "Add Line Item" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -473,7 +473,7 @@ function editReturnOrderLineItem(pk, options={}) {
 
     constructForm(`{% url "api-return-order-line-list" %}${pk}/`, {
         fields: fields,
-        title: '{% trans "Edit Line Item" %}',
+        title: '{% jstrans "Edit Line Item" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -488,8 +488,8 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
 
     if (line_items.length == 0) {
         showAlertDialog(
-            '{% trans "Select Line Items"% }',
-            '{% trans "At least one line item must be selected" %}'
+            '{% jstrans "Select Line Items"% }',
+            '{% jstrans "At least one line item must be selected" %}'
         );
         return;
     }
@@ -503,7 +503,7 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
         let buttons = '';
 
         if (line_items.length > 1) {
-            buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
+            buttons += makeRemoveButton('button-row-remove', pk, '{% jstrans "Remove row" %}');
         }
 
         buttons = wrapButtons(buttons);
@@ -536,8 +536,8 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
     <table class='table table-striped table-condensed' id='order-receive-table'>
         <thead>
             <tr>
-                <th>{% trans "Part" %}</th>
-                <th>{% trans "Serial Number" %}</th>
+                <th>{% jstrans "Part" %}</th>
+                <th>{% jstrans "Serial Number" %}</th>
             </tr>
         </thead>
         <tbody>${table_entries}</tbody>
@@ -558,8 +558,8 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
             }
         },
         confirm: true,
-        confirmMessage: '{% trans "Confirm receipt of items" %}',
-        title: '{% trans "Receive Return Order Items" %}',
+        confirmMessage: '{% jstrans "Confirm receipt of items" %}',
+        title: '{% jstrans "Receive Return Order Items" %}',
         afterRender: function(fields, opts) {
             // Add callback to remove rows
             $(opts.modal).find('.button-row-remove').click(function() {
@@ -666,7 +666,7 @@ function loadReturnOrderLineItemTable(options={}) {
 
                 constructForm(`{% url "api-return-order-line-list" %}${pk}/`, {
                     fields: returnOrderLineItemFields(),
-                    title: '{% trans "Edit Line Item" %}',
+                    title: '{% jstrans "Edit Line Item" %}',
                     refreshTable: table,
                 });
             });
@@ -679,7 +679,7 @@ function loadReturnOrderLineItemTable(options={}) {
 
                 constructForm(`{% url "api-return-order-line-list" %}${pk}/`, {
                     method: 'DELETE',
-                    title: '{% trans "Delete Line Item" %}',
+                    title: '{% jstrans "Delete Line Item" %}',
                     refreshTable: table,
                 });
             });
@@ -690,7 +690,7 @@ function loadReturnOrderLineItemTable(options={}) {
         url: '{% url "api-return-order-line-list" %}',
         name: 'returnorderlineitems',
         formatNoMatches: function() {
-            return '{% trans "No matching line items" %}';
+            return '{% jstrans "No matching line items" %}';
         },
         onPostBody: setupCallbacks,
         queryParams: filters,
@@ -707,7 +707,7 @@ function loadReturnOrderLineItemTable(options={}) {
                 field: 'part',
                 sortable: true,
                 switchable: false,
-                title: '{% trans "Part" %}',
+                title: '{% jstrans "Part" %}',
                 formatter: function(value, row) {
                     let part = row.part_detail;
                     let html = thumbnailImage(part.thumbnail) + ' ';
@@ -719,18 +719,18 @@ function loadReturnOrderLineItemTable(options={}) {
                 field: 'item',
                 sortable: true,
                 switchable: false,
-                title: '{% trans "Item" %}',
+                title: '{% jstrans "Item" %}',
                 formatter: function(value, row) {
-                    return renderLink(`{% trans "Serial Number" %}: ${row.item_detail.serial}`, `/stock/item/${row.item}/`);
+                    return renderLink(`{% jstrans "Serial Number" %}: ${row.item_detail.serial}`, `/stock/item/${row.item}/`);
                 }
             },
             {
                 field: 'reference',
-                title: '{% trans "Reference" %}',
+                title: '{% jstrans "Reference" %}',
             },
             {
                 field: 'outcome',
-                title: '{% trans "Outcome" %}',
+                title: '{% jstrans "Outcome" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     return returnOrderLineItemStatusDisplay(value);
@@ -738,7 +738,7 @@ function loadReturnOrderLineItemTable(options={}) {
             },
             {
                 field: 'price',
-                title: '{% trans "Price" %}',
+                title: '{% jstrans "Price" %}',
                 formatter: function(value, row) {
                     return formatCurrency(row.price, {
                         currency: row.price_currency,
@@ -748,12 +748,12 @@ function loadReturnOrderLineItemTable(options={}) {
             {
                 sortable: true,
                 field: 'target_date',
-                title: '{% trans "Target Date" %}',
+                title: '{% jstrans "Target Date" %}',
                 formatter: function(value, row) {
                     let html = renderDate(value);
 
                     if (row.overdue) {
-                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "This line item is overdue" %}');
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% jstrans "This line item is overdue" %}');
                     }
 
                     return html;
@@ -761,7 +761,7 @@ function loadReturnOrderLineItemTable(options={}) {
             },
             {
                 field: 'received_date',
-                title: '{% trans "Received" %}',
+                title: '{% jstrans "Received" %}',
                 sortable: true,
                 formatter: function(value) {
                     if (!value) {
@@ -773,11 +773,11 @@ function loadReturnOrderLineItemTable(options={}) {
             },
             {
                 field: 'notes',
-                title: '{% trans "Notes" %}',
+                title: '{% jstrans "Notes" %}',
             },
             {
                 field: 'link',
-                title: '{% trans "Link" %}',
+                title: '{% jstrans "Link" %}',
                 formatter: function(value, row) {
                     if (value) {
                         return renderLink(value, value);
@@ -795,14 +795,14 @@ function loadReturnOrderLineItemTable(options={}) {
                     if (options.allow_edit) {
 
                         if (options.allow_receive && !row.received_date) {
-                            buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Mark item as received" %}');
+                            buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% jstrans "Mark item as received" %}');
                         }
 
-                        buttons += makeEditButton('button-line-edit', pk, '{% trans "Edit line item" %}');
+                        buttons += makeEditButton('button-line-edit', pk, '{% jstrans "Edit line item" %}');
                     }
 
                     if (options.allow_delete) {
-                        buttons += makeDeleteButton('button-line-delete', pk, '{% trans "Delete line item" %}');
+                        buttons += makeDeleteButton('button-line-delete', pk, '{% jstrans "Delete line item" %}');
                     }
 
                     return wrapButtons(buttons);
