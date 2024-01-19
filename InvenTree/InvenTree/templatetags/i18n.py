@@ -27,6 +27,14 @@ def translation_stats(lang_code):
 class CustomTranslateNode(TranslateNode):
     """Custom translation node class, which sanitizes the translated strings for javascript use."""
 
+    def __init__(self, filter_expression, noop, asvar, message_context, escape=False):
+        """Custom constructor for TranslateNode class.
+
+        - Adds an 'escape' argument, which is passed to the render function
+        """
+        super().__init__(filter_expression, noop, asvar, message_context)
+        self.escape = escape
+
     def render(self, context):
         """Custom render function overrides / extends default behaviour."""
         result = super().render(context)
@@ -44,7 +52,7 @@ class CustomTranslateNode(TranslateNode):
         # Escape any quotes contained in the string, if the request is for a javascript file
         request = context.get('request', None)
 
-        if request and request.path.endswith('.js'):
+        if self.escape or (request and request.path.endswith('.js')):
             result = result.replace("'", r'\'')
             result = result.replace('"', r'\"')
 
@@ -54,7 +62,7 @@ class CustomTranslateNode(TranslateNode):
 
 @register.tag('translate')
 @register.tag('trans')
-def do_translate(parser, token):
+def do_translate(parser, token, escape=False):
     """Custom translation function.
 
     - Lifted from https://github.com/django/django/blob/main/django/templatetags/i18n.py.
@@ -110,7 +118,21 @@ def do_translate(parser, token):
             )
         seen.add(option)
 
-    return CustomTranslateNode(message_string, noop, asvar, message_context)
+    return CustomTranslateNode(
+        message_string, noop, asvar, message_context, escape=escape
+    )
+
+
+@register.tag('jstrans')
+def do_jstrans(parser, token):
+    """Custom translation function for javascript strings.
+
+    - Usage: {% jstrans "String to translate" %}
+    - Performs the same function as the 'trans' tag, but also escapes the translated string.
+    - Explicitly required for javascript code within a .html template
+    - Note: Any {% trans %} tag is automatically escaped in a .js file
+    """
+    return do_translate(parser, token, escape=True)
 
 
 # Re-register tags which we have not explicitly overridden
