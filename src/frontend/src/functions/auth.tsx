@@ -48,7 +48,9 @@ export const doClassicLogin = async (username: string, password: string) => {
  * Logout the user (invalidate auth token)
  */
 export const doClassicLogout = async () => {
-  // TODO @matmair - logout from the server session
+  // Logout from the server session
+  await api.post(apiUrl(ApiPaths.user_logout));
+
   // Set token in context
   const { setToken } = useSessionState.getState();
   setToken(undefined);
