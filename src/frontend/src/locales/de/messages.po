@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-18 13:57\n"
+"PO-Revision-Date: 2024-01-19 14:31\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -67,7 +67,7 @@ msgstr "Login fehlgeschlagen"
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
-#: src/functions/auth.tsx:111
+#: src/functions/auth.tsx:113
 msgid "Check your input and try again."
 msgstr "Überprüfen Sie Ihre Eingabe und versuchen Sie es erneut."
 
@@ -90,7 +90,7 @@ msgstr "Willkommen zurück!"
 #~ msgstr "Login successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:64
-#: src/functions/auth.tsx:102
+#: src/functions/auth.tsx:104
 msgid "Mail delivery successful"
 msgstr "Mail erfolgreich gesendet"
 
@@ -3390,28 +3390,28 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:57
+#: src/functions/auth.tsx:59
 msgid "Logout successful"
 msgstr "Abmeldung erfolgreich"
 
-#: src/functions/auth.tsx:58
+#: src/functions/auth.tsx:60
 msgid "See you soon."
 msgstr "Auf Wiedersehen."
 
-#: src/functions/auth.tsx:103
+#: src/functions/auth.tsx:105
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Prüfen Sie Ihren Posteingang für einen Link zum Zurücksetzen. Dies funktioniert nur, wenn Sie ein Konto haben. Prüfen Sie auch den Spam-Ordner."
 
-#: src/functions/auth.tsx:110
+#: src/functions/auth.tsx:112
 #: src/pages/Auth/Set-Password.tsx:39
 msgid "Reset failed"
 msgstr "Zurücksetzen fehlgeschlagen"
 
-#: src/functions/auth.tsx:134
+#: src/functions/auth.tsx:140
 msgid "Already logged in"
 msgstr "Bereits angemeldet"
 
-#: src/functions/auth.tsx:135
+#: src/functions/auth.tsx:141
 msgid "Found an existing login - using it to log you in."
 msgstr "Es existiert ein Login - mit dem Sie angemeldet werden."
 
@@ -3459,7 +3459,7 @@ msgstr ""
 msgid "Checking if you are already logged in"
 msgstr "Prüfe ob Sie bereits angemeldet sind"
 
-#: src/pages/Auth/Login.tsx:25
+#: src/pages/Auth/Login.tsx:27
 #: src/pages/Index/Scan.tsx:318
 msgid "No selection"
 msgstr "Keine Auswahl"
