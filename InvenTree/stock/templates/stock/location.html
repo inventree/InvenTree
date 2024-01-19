@@ -286,7 +286,7 @@
 
         printLabels({
             items: locs,
-            singular_name: '{% trans "stock location" %}',
+            singular_name: '{% jstrans "stock location" %}',
             key: 'location',
             url: '{% url "api-stocklocation-label-list" %}',
         });
@@ -314,7 +314,7 @@
             {
                 onSuccess: function() {
                     showMessage(
-                        '{% trans "Scanned stock container into this location" %}',
+                        '{% jstrans "Scanned stock container into this location" %}',
                         {
                             style: 'success',
                         }
@@ -387,7 +387,7 @@
     {% if barcodes %}
     $('#show-qr-code').click(function() {
         showQRDialog(
-            '{% trans "Stock Location QR Code" %}',
+            '{% jstrans "Stock Location QR Code" %}',
             '{"stocklocation": {{ location.pk }} }'
         );
     });
@@ -398,7 +398,7 @@
                 stocklocation: {{ location.pk }},
             },
             {
-                title: '{% trans "Link Barcode to Stock Location" %}',
+                title: '{% jstrans "Link Barcode to Stock Location" %}',
             }
         );
     });

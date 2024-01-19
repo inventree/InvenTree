@@ -55,12 +55,12 @@ function createNewModal(options={}) {
 
     // Add in a "close" button
     if (!options.hideCloseButton) {
-        buttons += `<button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>`;
+        buttons += `<button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% jstrans "Cancel" %}</button>`;
     }
 
     // Add in a "submit" button
     if (!options.hideSubmitButton) {
-        buttons += `<button type='button' class='btn btn-${submitClass}' id='modal-form-submit'>{% trans "Submit" %}</button>`;
+        buttons += `<button type='button' class='btn btn-${submitClass}' id='modal-form-submit'>{% jstrans "Submit" %}</button>`;
     }
 
     var html = `
@@ -71,7 +71,7 @@ function createNewModal(options={}) {
                     <h4 id='modal-title' class='modal-title'>
                         <!-- Form title to be injected here -->
                     </h4>
-                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='{% trans "Close" %}'></button>
+                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='{% jstrans "Close" %}'></button>
                 </div>
                 <div class='modal-body modal-form-content-wrapper'>
                     <div id='non-field-errors'>
@@ -153,9 +153,9 @@ function createNewModal(options={}) {
     });
 
     // Set labels based on supplied options
-    modalSetTitle(modal_name, options.title || '{% trans "Form Title" %}');
-    modalSetSubmitText(modal_name, options.submitText || '{% trans "Submit" %}');
-    modalSetCloseText(modal_name, options.closeText || '{% trans "Cancel" %}');
+    modalSetTitle(modal_name, options.title || '{% jstrans "Form Title" %}');
+    modalSetSubmitText(modal_name, options.submitText || '{% jstrans "Submit" %}');
+    modalSetCloseText(modal_name, options.closeText || '{% jstrans "Cancel" %}');
 
     // Return the "name" of the modal
     return modal_name;
@@ -442,7 +442,7 @@ function attachBootstrapCheckbox(modal) {
 function loadingMessageContent() {
 
     // TODO - This can be made a lot better
-    return `<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> {% trans 'Waiting for server...' %}`;
+    return `<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></span> {% jstrans 'Waiting for server...' %}`;
 }
 
 
@@ -593,7 +593,7 @@ function renderErrorMessage(xhr) {
         <div class='panel'>
             <div class='panel panel-heading'>
                 <div class='panel-title'>
-                    <a data-bs-toggle='collapse' href="#collapse-error-info">{% trans "Show Error Information" %}</a>
+                    <a data-bs-toggle='collapse' href="#collapse-error-info">{% jstrans "Show Error Information" %}</a>
                 </div>
             </div>
             <div class='panel-collapse collapse' id='collapse-error-info'>
@@ -625,7 +625,7 @@ function showAlertDialog(title, content, options={}) {
 
     var modal = createNewModal({
         title: title,
-        closeText: '{% trans "Close" %}',
+        closeText: '{% jstrans "Close" %}',
         hideSubmitButton: true,
     });
 
@@ -679,8 +679,8 @@ function showQuestionDialog(title, content, options={}) {
      */
 
     options.title = title;
-    options.submitText = options.accept_text || '{% trans "Accept" %}';
-    options.closeText = options.cancel_text || '{% trans "Cancel" %}';
+    options.submitText = options.accept_text || '{% jstrans "Accept" %}';
+    options.closeText = options.cancel_text || '{% jstrans "Cancel" %}';
 
     var modal = createNewModal(options);
 
@@ -737,7 +737,7 @@ function openModal(options) {
     if (options.title) {
         modalSetTitle(modal, options.title);
     } else {
-        modalSetTitle(modal, '{% trans "Loading Data" %}...');
+        modalSetTitle(modal, '{% jstrans "Loading Data" %}...');
     }
 
     // Unless the content is explicitly set, display loading message
@@ -748,8 +748,8 @@ function openModal(options) {
     }
 
     // Default labels for 'Submit' and 'Close' buttons in the form
-    var submit_text = options.submit_text || '{% trans "Submit" %}';
-    var close_text = options.close_text || '{% trans "Close" %}';
+    var submit_text = options.submit_text || '{% jstrans "Submit" %}';
+    var close_text = options.close_text || '{% jstrans "Close" %}';
 
     modalSetButtonText(modal, submit_text, close_text);
 
@@ -1008,7 +1008,7 @@ function handleModalForm(url, options) {
                             }
                         } else {
                             $(modal).modal('hide');
-                            showAlertDialog('{% trans "Invalid response from server" %}', '{% trans "Form data missing from server response" %}');
+                            showAlertDialog('{% jstrans "Invalid response from server" %}', '{% jstrans "Form data missing from server response" %}');
                         }
                     }
                 } else {
@@ -1020,7 +1020,7 @@ function handleModalForm(url, options) {
                 // There was an error submitting form data via POST
 
                 $(modal).modal('hide');
-                showAlertDialog('{% trans "Error posting form data" %}', renderErrorMessage(xhr));
+                showAlertDialog('{% jstrans "Error posting form data" %}', renderErrorMessage(xhr));
             },
             complete: function() {
                 // TODO
@@ -1056,8 +1056,8 @@ function launchModalForm(url, options = {}) {
     var modal = options.modal || '#modal-form';
 
     // Default labels for 'Submit' and 'Close' buttons in the form
-    var submit_text = options.submit_text || '{% trans "Submit" %}';
-    var close_text = options.close_text || '{% trans "Close" %}';
+    var submit_text = options.submit_text || '{% jstrans "Submit" %}';
+    var close_text = options.close_text || '{% jstrans "Close" %}';
 
     // Clean custom action buttons
     $(modal).find('#modal-footer-buttons').html('');
@@ -1117,7 +1117,7 @@ function launchModalForm(url, options = {}) {
 
             } else {
                 $(modal).modal('hide');
-                showAlertDialog('{% trans "Invalid server response" %}', '{% trans "JSON response missing form data" %}');
+                showAlertDialog('{% jstrans "Invalid server response" %}', '{% jstrans "JSON response missing form data" %}');
             }
         },
         error: function(xhr) {
@@ -1127,36 +1127,36 @@ function launchModalForm(url, options = {}) {
             if (xhr.status == 0) {
                 // No response from the server
                 showAlertDialog(
-                    '{% trans "No Response" %}',
-                    '{% trans "No response from the InvenTree server" %}',
+                    '{% jstrans "No Response" %}',
+                    '{% jstrans "No response from the InvenTree server" %}',
                 );
             } else if (xhr.status == 400) {
                 showAlertDialog(
-                    '{% trans "Error 400: Bad Request" %}',
-                    '{% trans "Server returned error code 400" %}',
+                    '{% jstrans "Error 400: Bad Request" %}',
+                    '{% jstrans "Server returned error code 400" %}',
                 );
             } else if (xhr.status == 401) {
                 showAlertDialog(
-                    '{% trans "Error 401: Not Authenticated" %}',
-                    '{% trans "Authentication credentials not supplied" %}',
+                    '{% jstrans "Error 401: Not Authenticated" %}',
+                    '{% jstrans "Authentication credentials not supplied" %}',
                 );
             } else if (xhr.status == 403) {
                 showAlertDialog(
-                    '{% trans "Error 403: Permission Denied" %}',
-                    '{% trans "You do not have the required permissions to access this function" %}',
+                    '{% jstrans "Error 403: Permission Denied" %}',
+                    '{% jstrans "You do not have the required permissions to access this function" %}',
                 );
             } else if (xhr.status == 404) {
                 showAlertDialog(
-                    '{% trans "Error 404: Resource Not Found" %}',
-                    '{% trans "The requested resource could not be located on the server" %}',
+                    '{% jstrans "Error 404: Resource Not Found" %}',
+                    '{% jstrans "The requested resource could not be located on the server" %}',
                 );
             } else if (xhr.status == 408) {
                 showAlertDialog(
-                    '{% trans "Error 408: Timeout" %}',
-                    '{% trans "Connection timeout while requesting data from server" %}',
+                    '{% jstrans "Error 408: Timeout" %}',
+                    '{% jstrans "Connection timeout while requesting data from server" %}',
                 );
             } else {
-                showAlertDialog('{% trans "Error requesting form data" %}', renderErrorMessage(xhr));
+                showAlertDialog('{% jstrans "Error requesting form data" %}', renderErrorMessage(xhr));
             }
 
             console.error('Modal form error: ' + xhr.status);
