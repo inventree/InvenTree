@@ -3,6 +3,7 @@
 import datetime
 import logging
 
+from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
@@ -241,6 +242,10 @@ class GetAuthToken(APIView):
             logger.info(
                 "Created new API token for user '%s' (name='%s')", user.username, name
             )
+
+            # Ensure that the users session is logged in (PUI -> CUI login)
+            if not get_user(request).is_authenticated:
+                login(request, user)
 
             return Response(data)
 

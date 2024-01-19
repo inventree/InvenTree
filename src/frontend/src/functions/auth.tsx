@@ -120,7 +120,11 @@ export function handleReset(navigate: any, values: { email: string }) {
 /**
  * Check login state, and redirect the user as required
  */
-export function checkLoginState(navigate: any, redirect?: string) {
+export function checkLoginState(
+  navigate: any,
+  redirect?: string,
+  no_redirect?: boolean
+) {
   api
     .get(apiUrl(ApiPaths.user_token), {
       timeout: 2000,
@@ -144,6 +148,6 @@ export function checkLoginState(navigate: any, redirect?: string) {
       }
     })
     .catch(() => {
-      navigate('/login');
+      if (!no_redirect) navigate('/login');
     });
 }
