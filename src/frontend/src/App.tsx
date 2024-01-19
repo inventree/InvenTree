@@ -13,5 +13,10 @@ export function setApiDefaults() {
 
   api.defaults.baseURL = host;
   api.defaults.headers.common['Authorization'] = `Token ${token}`;
+
+  // CSRF support (needed for POST, PUT, PATCH, DELETE)
+  api.defaults.withCredentials = true;
+  api.defaults.xsrfCookieName = 'csrftoken';
+  api.defaults.xsrfHeaderName = 'X-CSRFToken';
 }
 export const queryClient = new QueryClient();
