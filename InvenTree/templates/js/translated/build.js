@@ -139,7 +139,7 @@ function editBuildOrder(pk) {
     constructForm(`{% url "api-build-list" %}${pk}/`, {
         fields: fields,
         reload: true,
-        title: '{% trans "Edit Build Order" %}',
+        title: '{% jstrans "Edit Build Order" %}',
     });
 }
 
@@ -182,7 +182,7 @@ function newBuildOrder(options={}) {
         data: options.data,
         follow: true,
         method: 'POST',
-        title: '{% trans "Create Build Order" %}',
+        title: '{% jstrans "Create Build Order" %}',
         onSuccess: options.onSuccess,
     });
 }
@@ -214,7 +214,7 @@ function cancelBuildOrder(build_id, options={}) {
         `{% url "api-build-list" %}${build_id}/cancel/`,
         {
             method: 'POST',
-            title: '{% trans "Cancel Build Order" %}',
+            title: '{% jstrans "Cancel Build Order" %}',
             confirm: true,
             fields: {
                 remove_allocated_stock: {},
@@ -223,20 +223,20 @@ function cancelBuildOrder(build_id, options={}) {
             preFormContent: function(opts) {
                 var html = `
                 <div class='alert alert-block alert-info'>
-                    {% trans "Are you sure you wish to cancel this build?" %}
+                    {% jstrans "Are you sure you wish to cancel this build?" %}
                 </div>`;
 
                 if (opts.context.has_allocated_stock) {
                     html += `
                     <div class='alert alert-block alert-warning'>
-                        {% trans "Stock items have been allocated to this build order" %}
+                        {% jstrans "Stock items have been allocated to this build order" %}
                     </div>`;
                 }
 
                 if (opts.context.incomplete_outputs) {
                     html += `
                     <div class='alert alert-block alert-warning'>
-                        {% trans "There are incomplete outputs remaining for this build order" %}
+                        {% jstrans "There are incomplete outputs remaining for this build order" %}
                     </div>`;
                 }
 
@@ -288,30 +288,30 @@ function completeBuildOrder(build_id, options={}) {
             if (ctx.allocated && ctx.remaining == 0 && ctx.incomplete == 0) {
                 html += `
                 <div class='alert alert-block alert-success'>
-                {% trans "Build order is ready to be completed" %}'
+                {% jstrans "Build order is ready to be completed" %}'
                 </div>`;
             } else {
 
                 if (ctx.incomplete > 0) {
                     html += `
                     <div class='alert alert-block alert-danger'>
-                    <strong>{% trans "Build order has incomplete outputs" %}</strong><br>
-                    {% trans "This build order cannot be completed as there are incomplete outputs" %}
+                    <strong>{% jstrans "Build order has incomplete outputs" %}</strong><br>
+                    {% jstrans "This build order cannot be completed as there are incomplete outputs" %}
                     </div>`;
                 } else {
                     html += `
                     <div class='alert alert-block alert-danger'>
-                    <strong>{% trans "Build Order is incomplete" %}</strong>
+                    <strong>{% jstrans "Build Order is incomplete" %}</strong>
                     </div>
                     `;
                 }
 
                 if (!ctx.allocated) {
-                    html += `<div class='alert alert-block alert-warning'>{% trans "Required stock has not been fully allocated" %}</div>`;
+                    html += `<div class='alert alert-block alert-warning'>{% jstrans "Required stock has not been fully allocated" %}</div>`;
                 }
 
                 if (ctx.remaining > 0) {
-                    html += `<div class='alert alert-block alert-warning'>{% trans "Required build quantity has not been completed" %}</div>`;
+                    html += `<div class='alert alert-block alert-warning'>{% jstrans "Required build quantity has not been completed" %}</div>`;
                 }
             }
 
@@ -319,7 +319,7 @@ function completeBuildOrder(build_id, options={}) {
         },
         reload: true,
         confirm: true,
-        title: '{% trans "Complete Build Order" %}',
+        title: '{% jstrans "Complete Build Order" %}',
         method: 'POST',
     });
 }
@@ -360,9 +360,9 @@ function createBuildOutput(build_id, options) {
                 inventreeGet(`{% url "api-part-list" %}${build.part}/serial-numbers/`, {}, {
                     success: function(data) {
                         if (data.next) {
-                            fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
+                            fields.serial_numbers.placeholder = `{% jstrans "Next available serial number" %}: ${data.next}`;
                         } else if (data.latest) {
-                            fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
+                            fields.serial_numbers.placeholder = `{% jstrans "Latest serial number" %}: ${data.latest}`;
                         }
                     },
                     async: false,
@@ -371,8 +371,8 @@ function createBuildOutput(build_id, options) {
                 if (options.trackable_parts) {
                     html += `
                     <div class='alert alert-block alert-info'>
-                        {% trans "The Bill of Materials contains trackable parts" %}.<br>
-                        {% trans "Build outputs must be generated individually" %}.
+                        {% jstrans "The Bill of Materials contains trackable parts" %}.<br>
+                        {% jstrans "Build outputs must be generated individually" %}.
                     </div>
                     `;
                 }
@@ -380,15 +380,15 @@ function createBuildOutput(build_id, options) {
                 if (trackable) {
                     html += `
                     <div class='alert alert-block alert-info'>
-                        {% trans "Trackable parts can have serial numbers specified" %}<br>
-                        {% trans "Enter serial numbers to generate multiple single build outputs" %}
+                        {% jstrans "Trackable parts can have serial numbers specified" %}<br>
+                        {% jstrans "Enter serial numbers to generate multiple single build outputs" %}
                     </div>
                     `;
                 }
 
                 constructForm(`{% url "api-build-list" %}${build_id}/create-output/`, {
                     method: 'POST',
-                    title: '{% trans "Create Build Output" %}',
+                    title: '{% jstrans "Create Build Output" %}',
                     confirm: true,
                     fields: fields,
                     preFormContent: html,
@@ -419,7 +419,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
             'fa-sign-in-alt icon-blue',
             'button-output-allocate',
             output_id,
-            '{% trans "Allocate stock items to this build output" %}',
+            '{% jstrans "Allocate stock items to this build output" %}',
         );
 
         // Add a button to deallocate stock from this build output
@@ -427,7 +427,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
             'fa-minus-circle icon-red',
             'button-output-deallocate',
             output_id,
-            '{% trans "Deallocate stock from build output" %}',
+            '{% jstrans "Deallocate stock from build output" %}',
         );
     }
 
@@ -436,7 +436,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
         'fa-check-circle icon-green',
         'button-output-complete',
         output_id,
-        '{% trans "Complete build output" %}',
+        '{% jstrans "Complete build output" %}',
     );
 
     // Add a button to "scrap" the build output
@@ -444,14 +444,14 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
         'fa-times-circle icon-red',
         'button-output-scrap',
         output_id,
-        '{% trans "Scrap build output" %}',
+        '{% jstrans "Scrap build output" %}',
     );
 
     // Add a button to "remove" this build output
     html += makeDeleteButton(
         'button-output-remove',
         output_id,
-        '{% trans "Delete build output" %}',
+        '{% jstrans "Delete build output" %}',
     );
 
     return wrapButtons(html);
@@ -471,7 +471,7 @@ function deallocateStock(build_id, options={}) {
 
     var html = `
     <div class='alert alert-block alert-warning'>
-    {% trans "Are you sure you wish to deallocate the selected stock items from this build?" %}
+    {% jstrans "Are you sure you wish to deallocate the selected stock items from this build?" %}
     </dvi>
     `;
 
@@ -489,7 +489,7 @@ function deallocateStock(build_id, options={}) {
                 value: options.build_line,
             },
         },
-        title: '{% trans "Deallocate Stock Items" %}',
+        title: '{% jstrans "Deallocate Stock Items" %}',
         onSuccess: function(response, opts) {
             if (options.onSuccess) {
                 options.onSuccess(response, opts);
@@ -511,9 +511,9 @@ function renderBuildOutput(output, options={}) {
     let output_html = imageHoverIcon(output.part_detail.thumbnail);
 
     if (output.quantity == 1 && output.serial) {
-        output_html += `{% trans "Serial Number" %}: ${output.serial}`;
+        output_html += `{% jstrans "Serial Number" %}: ${output.serial}`;
     } else {
-        output_html += `{% trans "Quantity" %}: ${output.quantity}`;
+        output_html += `{% jstrans "Quantity" %}: ${output.quantity}`;
         if (output.part_detail && output.part_detail.units) {
             output_html += ` ${output.part_detail.units}  `;
         }
@@ -521,7 +521,7 @@ function renderBuildOutput(output, options={}) {
 
     let buttons = `<div class='btn-group float-right' role='group'>`;
 
-    buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
+    buttons += makeRemoveButton('button-row-remove', pk, '{% jstrans "Remove row" %}');
 
     buttons += '</div>';
 
@@ -575,8 +575,8 @@ function completeBuildOutputs(build_id, outputs, options={}) {
 
     if (outputs.length == 0) {
         showAlertDialog(
-            '{% trans "Select Build Outputs" %}',
-            '{% trans "At least one build output must be selected" %}',
+            '{% jstrans "Select Build Outputs" %}',
+            '{% jstrans "At least one build output must be selected" %}',
         );
         return;
     }
@@ -590,11 +590,11 @@ function completeBuildOutputs(build_id, outputs, options={}) {
 
     var html = `
     <div class='alert alert-block alert-success'>
-    {% trans "Selected build outputs will be marked as complete" %}
+    {% jstrans "Selected build outputs will be marked as complete" %}
     </div>
     <table class='table table-striped table-condensed' id='build-complete-table'>
         <thead>
-            <th colspan='2'>{% trans "Output" %}</th>
+            <th colspan='2'>{% jstrans "Output" %}</th>
             <th><!-- Actions --></th>
         </thead>
         <tbody>
@@ -622,7 +622,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
             accept_incomplete_allocation: {},
         },
         confirm: true,
-        title: '{% trans "Complete Build Outputs" %}',
+        title: '{% jstrans "Complete Build Outputs" %}',
         afterRender: function(fields, opts) {
             // Setup callbacks to remove outputs
             $(opts.modal).find('.button-row-remove').click(function() {
@@ -703,8 +703,8 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
 
     if (outputs.length == 0) {
         showAlertDialog(
-            '{% trans "Select Build Outputs" %}',
-            '{% trans "At least one build output must be selected" %}',
+            '{% jstrans "Select Build Outputs" %}',
+            '{% jstrans "At least one build output must be selected" %}',
         );
         return;
     }
@@ -719,17 +719,17 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% trans "Selected build outputs will be marked as scrapped" %}
+    {% jstrans "Selected build outputs will be marked as scrapped" %}
     <ul>
-        <li>{% trans "Scrapped output are marked as rejected" %}</li>
-        <li>{% trans "Allocated stock items will no longer be available" %}</li>
-        <li>{% trans "The completion status of the build order will not be adjusted" %}</li>
+        <li>{% jstrans "Scrapped output are marked as rejected" %}</li>
+        <li>{% jstrans "Allocated stock items will no longer be available" %}</li>
+        <li>{% jstrans "The completion status of the build order will not be adjusted" %}</li>
     </ul>
     </div>
     <table class='table table-striped table-condensed' id='build-scrap-table'>
         <thead>
-            <th colspan='2'>{% trans "Output" %}</th>
-            <th>{% trans "Quantity" %}</th>
+            <th colspan='2'>{% jstrans "Output" %}</th>
+            <th>{% jstrans "Quantity" %}</th>
             <th><!-- Actions --></th>
         </thead>
         <tbody>
@@ -754,7 +754,7 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
             discard_allocations: {},
         },
         confirm: true,
-        title: '{% trans "Scrap Build Outputs" %}',
+        title: '{% jstrans "Scrap Build Outputs" %}',
         afterRender: function(fields, opts) {
             // Setup callbacks to remove outputs
             $(opts.modal).find('.button-row-remove').click(function() {
@@ -829,8 +829,8 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
 
     if (outputs.length == 0) {
         showAlertDialog(
-            '{% trans "Select Build Outputs" %}',
-            '{% trans "At least one build output must be selected" %}',
+            '{% jstrans "Select Build Outputs" %}',
+            '{% jstrans "At least one build output must be selected" %}',
         );
         return;
     }
@@ -844,15 +844,15 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% trans "Selected build outputs will be deleted" %}
+    {% jstrans "Selected build outputs will be deleted" %}
     <ul>
-    <li>{% trans "Build output data will be permanently deleted" %}</li>
-    <li>{% trans "Allocated stock items will be returned to stock" %}</li>
+    <li>{% jstrans "Build output data will be permanently deleted" %}</li>
+    <li>{% jstrans "Allocated stock items will be returned to stock" %}</li>
     </ul>
     </div>
     <table class='table table-striped table-condensed' id='build-complete-table'>
         <thead>
-            <th colspan='2'>{% trans "Output" %}</th>
+            <th colspan='2'>{% jstrans "Output" %}</th>
             <th><!-- Actions --></th>
         </thead>
         <tbody>
@@ -865,7 +865,7 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
         preFormContent: html,
         fields: {},
         confirm: true,
-        title: '{% trans "Delete Build Outputs" %}',
+        title: '{% jstrans "Delete Build Outputs" %}',
         afterRender: function(fields, opts) {
             // Setup callbacks to remove outputs
             $(opts.modal).find('.button-row-remove').click(function() {
@@ -952,7 +952,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
         paginationVAlign: 'bottom',
         original: options.params,
         formatNoMatches: function() {
-            return '{% trans "No build order allocations found" %}';
+            return '{% jstrans "No build order allocations found" %}';
         },
         columns: [
             {
@@ -964,7 +964,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
                 field: 'build',
                 sortable: true,
                 switchable: false,
-                title: '{% trans "Build Order" %}',
+                title: '{% jstrans "Build Order" %}',
                 formatter: function(value, row) {
                     let ref = `${row.build_detail.reference}`;
                     let html = renderLink(ref, `/build/${row.build}/`);
@@ -981,7 +981,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
             {
                 field: 'quantity',
                 sortable: true,
-                title: '{% trans "Allocated Quantity" %}',
+                title: '{% jstrans "Allocated Quantity" %}',
                 formatter: function(value, row) {
                     let link = `/stock/item/${row.stock_item}/`;
                     let text = formatDecimal(value);
@@ -991,11 +991,11 @@ function loadBuildOrderAllocationTable(table, options={}) {
             },
             {
                 field: 'location_detail',
-                title: '{% trans "Location" %}',
+                title: '{% jstrans "Location" %}',
                 formatter: function(value, row) {
 
                     if (!value) {
-                        return '{% trans "Location not specified" %}';
+                        return '{% jstrans "Location not specified" %}';
                     }
 
                     let item = row.stock_item_detail;
@@ -1017,7 +1017,7 @@ function makeBuildOutputActions(build_info) {
     return [
         {
             label: 'complete',
-            title: '{% trans "Complete outputs" %}',
+            title: '{% jstrans "Complete outputs" %}',
             icon: 'fa-check-circle icon-green',
             permission: 'build.add',
             callback: function(data) {
@@ -1035,7 +1035,7 @@ function makeBuildOutputActions(build_info) {
         },
         {
             label: 'scrap',
-            title: '{% trans "Scrap outputs" %}',
+            title: '{% jstrans "Scrap outputs" %}',
             icon: 'fa-times-circle icon-red',
             permission: 'build.change',
             callback: function(data) {
@@ -1053,7 +1053,7 @@ function makeBuildOutputActions(build_info) {
         },
         {
             label: 'delete',
-            title: '{% trans "Delete outputs" %}',
+            title: '{% jstrans "Delete outputs" %}',
             icon: 'fa-trash-alt icon-red',
             permission: 'build.delete',
             callback: function(data) {
@@ -1107,12 +1107,12 @@ function loadBuildOutputTable(build_info, options={}) {
             url: '{% url "api-stockitem-label-list" %}',
             key: 'item',
         },
-        singular_name: '{% trans "build output" %}',
-        plural_name: '{% trans "build outputs" %}',
+        singular_name: '{% jstrans "build output" %}',
+        plural_name: '{% jstrans "build outputs" %}',
         custom_actions: [{
             label: 'buildoutput',
             icon: 'fa-tools',
-            title: '{% trans "Build output actions" %}',
+            title: '{% jstrans "Build output actions" %}',
             actions: makeBuildOutputActions(build_info),
         }]
     });
@@ -1281,7 +1281,7 @@ function loadBuildOutputTable(build_info, options={}) {
             return constructOutputSubTable(index, row, element);
         },
         formatNoMatches: function() {
-            return '{% trans "No active build outputs found" %}';
+            return '{% jstrans "No active build outputs found" %}';
         },
         onLoadSuccess: function() {
             reloadOutputAllocations();
@@ -1296,7 +1296,7 @@ function loadBuildOutputTable(build_info, options={}) {
             },
             {
                 field: 'part',
-                title: '{% trans "Part" %}',
+                title: '{% jstrans "Part" %}',
                 switchable: false,
                 formatter: function(value, row) {
                     return imageHoverIcon(row.part_detail.thumbnail) +
@@ -1306,7 +1306,7 @@ function loadBuildOutputTable(build_info, options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% trans "Build Output" %}',
+                title: '{% jstrans "Build Output" %}',
                 switchable: false,
                 sortable: true,
                 sorter: function(fieldA, fieldB, rowA, rowB) {
@@ -1351,9 +1351,9 @@ function loadBuildOutputTable(build_info, options={}) {
                     let text = '';
 
                     if (row.serial && row.quantity == 1) {
-                        text = `{% trans "Serial Number" %}: ${row.serial}`;
+                        text = `{% jstrans "Serial Number" %}: ${row.serial}`;
                     } else {
-                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                        text = `{% jstrans "Quantity" %}: ${row.quantity}`;
 
                     }
 
@@ -1364,7 +1364,7 @@ function loadBuildOutputTable(build_info, options={}) {
                     }
 
                     if (row.batch) {
-                        text += ` <small>({% trans "Batch" %}: ${row.batch})</small>`;
+                        text += ` <small>({% jstrans "Batch" %}: ${row.batch})</small>`;
                     }
 
                     text += stockStatusDisplay(row.status, {classes: 'float-right'});
@@ -1374,7 +1374,7 @@ function loadBuildOutputTable(build_info, options={}) {
             },
             {
                 field: 'fully_allocated',
-                title: '{% trans "Allocated Lines" %}',
+                title: '{% jstrans "Allocated Lines" %}',
                 visible: false,
                 sortable: true,
                 switchable: false,
@@ -1388,7 +1388,7 @@ function loadBuildOutputTable(build_info, options={}) {
             },
             {
                 field: 'tests',
-                title: '{% trans "Required Tests" %}',
+                title: '{% jstrans "Required Tests" %}',
                 visible: test_templates.length > 0,
                 switchable: true,
                 sortable: true,
@@ -1560,8 +1560,8 @@ function allocateStockToBuild(build_id, line_items, options={}) {
     if (line_items.length == 0) {
 
         showAlertDialog(
-            '{% trans "Select Parts" %}',
-            '{% trans "You must select at least one part to allocate" %}',
+            '{% jstrans "Select Parts" %}',
+            '{% jstrans "You must select at least one part to allocate" %}',
         );
 
         return;
@@ -1613,7 +1613,7 @@ function allocateStockToBuild(build_id, line_items, options={}) {
         delete_button += makeRemoveButton(
             'button-row-remove',
             pk,
-            '{% trans "Remove row" %}',
+            '{% jstrans "Remove row" %}',
         );
 
         delete_button += `</div>`;
@@ -1624,7 +1624,7 @@ function allocateStockToBuild(build_id, line_items, options={}) {
                 type: 'decimal',
                 min_value: 0,
                 value: quantity || 0,
-                title: '{% trans "Specify stock allocation quantity" %}',
+                title: '{% jstrans "Specify stock allocation quantity" %}',
                 required: true,
             },
             {
@@ -1701,8 +1701,8 @@ function allocateStockToBuild(build_id, line_items, options={}) {
     if (table_entries.length == 0) {
 
         showAlertDialog(
-            '{% trans "All Parts Allocated" %}',
-            '{% trans "All selected parts have been fully allocated" %}',
+            '{% jstrans "All Parts Allocated" %}',
+            '{% jstrans "All selected parts have been fully allocated" %}',
         );
 
         return;
@@ -1715,8 +1715,8 @@ function allocateStockToBuild(build_id, line_items, options={}) {
         'take_from',
         {
             type: 'related field',
-            label: '{% trans "Source Location" %}',
-            help_text: '{% trans "Select source location (leave blank to take from all locations)" %}',
+            label: '{% jstrans "Source Location" %}',
+            help_text: '{% jstrans "Select source location (leave blank to take from all locations)" %}',
             required: false,
         },
         {},
@@ -1727,10 +1727,10 @@ function allocateStockToBuild(build_id, line_items, options={}) {
     <table class='table table-striped table-condensed' id='stock-allocation-table'>
         <thead>
             <tr>
-                <th>{% trans "Part" %}</th>
-                <th>{% trans "Allocated" %}</th>
-                <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
-                <th>{% trans "Quantity" %}</th>
+                <th>{% jstrans "Part" %}</th>
+                <th>{% jstrans "Allocated" %}</th>
+                <th style='min-width: 250px;'>{% jstrans "Stock Item" %}</th>
+                <th>{% jstrans "Quantity" %}</th>
                 <th></th>
             </tr>
         </thead>
@@ -1744,7 +1744,7 @@ function allocateStockToBuild(build_id, line_items, options={}) {
         method: 'POST',
         fields: {},
         preFormContent: html,
-        title: '{% trans "Allocate Stock Items to Build Order" %}',
+        title: '{% jstrans "Allocate Stock Items to Build Order" %}',
         afterRender: function(fields, options) {
 
             var take_from_field = {
@@ -1755,7 +1755,7 @@ function allocateStockToBuild(build_id, line_items, options={}) {
                 type: 'related field',
                 value: source_location,
                 noResults: function(query) {
-                    return '{% trans "No matching stock locations" %}';
+                    return '{% jstrans "No matching stock locations" %}';
                 },
             };
 
@@ -1828,7 +1828,7 @@ function allocateStockToBuild(build_id, line_items, options={}) {
                             return filters;
                         },
                         noResults: function(query) {
-                            return '{% trans "No matching stock items" %}';
+                            return '{% jstrans "No matching stock items" %}';
                         }
                     },
                     null,
@@ -1925,12 +1925,12 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
 
     var html = `
     <div class='alert alert-block alert-info'>
-    <strong>{% trans "Automatic Stock Allocation" %}</strong><br>
-    {% trans "Stock items will be automatically allocated to this build order, according to the provided guidelines" %}:
+    <strong>{% jstrans "Automatic Stock Allocation" %}</strong><br>
+    {% jstrans "Stock items will be automatically allocated to this build order, according to the provided guidelines" %}:
     <ul>
-        <li>{% trans "If a location is specified, stock will only be allocated from that location" %}</li>
-        <li>{% trans "If stock is considered interchangeable, it will be allocated from the first location it is found" %}</li>
-        <li>{% trans "If substitute stock is allowed, it will be used where stock of the primary part cannot be found" %}</li>
+        <li>{% jstrans "If a location is specified, stock will only be allocated from that location" %}</li>
+        <li>{% jstrans "If stock is considered interchangeable, it will be allocated from the first location it is found" %}</li>
+        <li>{% jstrans "If substitute stock is allowed, it will be used where stock of the primary part cannot be found" %}</li>
     </ul>
     </div>
     `;
@@ -1961,7 +1961,7 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
     constructForm(`{% url "api-build-list" %}${build_id}/auto-allocate/`, {
         method: 'POST',
         fields: fields,
-        title: '{% trans "Allocate Stock Items" %}',
+        title: '{% jstrans "Allocate Stock Items" %}',
         confirm: true,
         preFormContent: html,
         onSuccess: function(response) {
@@ -2067,7 +2067,7 @@ function loadBuildTable(table, options) {
     $(table).inventreeTable({
         method: 'get',
         formatNoMatches: function() {
-            return '{% trans "No builds matching query" %}';
+            return '{% jstrans "No builds matching query" %}';
         },
         url: '{% url "api-build-list" %}',
         queryParams: filters,
@@ -2102,13 +2102,13 @@ function loadBuildTable(table, options) {
             },
             {
                 checkbox: true,
-                title: '{% trans "Select" %}',
+                title: '{% jstrans "Select" %}',
                 searchable: false,
                 switchable: false,
             },
             {
                 field: 'reference',
-                title: '{% trans "Build" %}',
+                title: '{% jstrans "Build" %}',
                 sortable: true,
                 switchable: true,
                 formatter: function(value, row) {
@@ -2116,7 +2116,7 @@ function loadBuildTable(table, options) {
                     var html = renderLink(value, '/build/' + row.pk + '/');
 
                     if (row.overdue) {
-                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Build order is overdue" %}');
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% jstrans "Build order is overdue" %}');
                     }
 
                     return html;
@@ -2124,12 +2124,12 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'title',
-                title: '{% trans "Description" %}',
+                title: '{% jstrans "Description" %}',
                 switchable: true,
             },
             {
                 field: 'project_code',
-                title: '{% trans "Project Code" %}',
+                title: '{% jstrans "Project Code" %}',
                 sortable: true,
                 switchable: global_settings.PROJECT_CODES_ENABLED,
                 visible: global_settings.PROJECT_CODES_ENABLED,
@@ -2141,13 +2141,13 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'priority',
-                title: '{% trans "Priority" %}',
+                title: '{% jstrans "Priority" %}',
                 switchable: true,
                 sortable: true,
             },
             {
                 field: 'part',
-                title: '{% trans "Part" %}',
+                title: '{% jstrans "Part" %}',
                 sortable: true,
                 sortName: 'part__name',
                 formatter: function(value, row) {
@@ -2162,7 +2162,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'completed',
-                title: '{% trans "Progress" %}',
+                title: '{% jstrans "Progress" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     return makeProgressBar(
@@ -2176,7 +2176,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'status',
-                title: '{% trans "Status" %}',
+                title: '{% jstrans "Status" %}',
                 sortable: true,
                 formatter: function(value) {
                     return buildStatusDisplay(value);
@@ -2184,7 +2184,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'creation_date',
-                title: '{% trans "Created" %}',
+                title: '{% jstrans "Created" %}',
                 sortable: true,
                 formatter: function(value) {
                     return renderDate(value);
@@ -2192,19 +2192,19 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'issued_by',
-                title: '{% trans "Issued by" %}',
+                title: '{% jstrans "Issued by" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     if (value) {
                         return row.issued_by_detail.username;
                     } else {
-                        return `<i>{% trans "No user information" %}</i>`;
+                        return `<i>{% jstrans "No user information" %}</i>`;
                     }
                 }
             },
             {
                 field: 'responsible',
-                title: '{% trans "Responsible" %}',
+                title: '{% jstrans "Responsible" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     if (!row.responsible_detail) {
@@ -2213,7 +2213,7 @@ function loadBuildTable(table, options) {
 
                     var html = row.responsible_detail.name;
 
-                    if (row.responsible_detail.label == '{% trans "group" %}') {
+                    if (row.responsible_detail.label == '{% jstrans "group" %}') {
                         html += `<span class='float-right fas fa-users'></span>`;
                     } else {
                         html += `<span class='float-right fas fa-user'></span>`;
@@ -2224,7 +2224,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'target_date',
-                title: '{% trans "Target Date" %}',
+                title: '{% jstrans "Target Date" %}',
                 sortable: true,
                 formatter: function(value) {
                     return renderDate(value);
@@ -2232,7 +2232,7 @@ function loadBuildTable(table, options) {
             },
             {
                 field: 'completion_date',
-                title: '{% trans "Completion Date" %}',
+                title: '{% jstrans "Completion Date" %}',
                 sortable: true,
                 formatter: function(value) {
                     return renderDate(value);
@@ -2320,7 +2320,7 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
         columns: [
             {
                 field: 'part',
-                title: '{% trans "Part" %}',
+                title: '{% jstrans "Part" %}',
                 formatter: function(_value, row) {
                     let html = imageHoverIcon(row.part_detail.thumbnail);
                     html += renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
@@ -2329,7 +2329,7 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% trans "Allocated Quantity" %}',
+                title: '{% jstrans "Allocated Quantity" %}',
                 formatter: function(_value, row) {
                     let text = '';
                     let url = '';
@@ -2340,9 +2340,9 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
                     }
 
                     if (serial && row.quantity == 1) {
-                        text = `{% trans "Serial Number" %}: ${serial}`;
+                        text = `{% jstrans "Serial Number" %}: ${serial}`;
                     } else {
-                        text = `{% trans "Quantity" %}: ${row.quantity}`;
+                        text = `{% jstrans "Quantity" %}: ${row.quantity}`;
                         if (row.part_detail && row.part_detail.units) {
                             text += ` <small>${row.part_detail.units}</small>`;
                         }
@@ -2357,7 +2357,7 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
             },
             {
                 field: 'location',
-                title: '{% trans "Location" %}',
+                title: '{% jstrans "Location" %}',
                 formatter: function(value, row) {
                     if (row.location_detail) {
                         let text = shortenString(row.location_detail.pathstring);
@@ -2365,7 +2365,7 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
 
                         return renderLink(text, url);
                     } else {
-                        return '<i>{% trans "No location set" %}</i>';
+                        return '<i>{% jstrans "No location set" %}</i>';
                     }
                 }
             },
@@ -2374,8 +2374,8 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
                 title: '',
                 formatter: function(value, row) {
                     let buttons = '';
-                    buttons += makeEditButton('button-allocation-edit', row.pk, '{% trans "Edit stock allocation" %}');
-                    buttons += makeDeleteButton('button-allocation-delete', row.pk, '{% trans "Delete stock allocation" %}');
+                    buttons += makeEditButton('button-allocation-edit', row.pk, '{% jstrans "Edit stock allocation" %}');
+                    buttons += makeDeleteButton('button-allocation-delete', row.pk, '{% jstrans "Delete stock allocation" %}');
                     return wrapButtons(buttons);
                 }
             }
@@ -2390,7 +2390,7 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
             fields: {
                 quantity: {},
             },
-            title: '{% trans "Edit Allocation" %}',
+            title: '{% jstrans "Edit Allocation" %}',
             onSuccess: function() {
                 $(options.parent_table).bootstrapTable('refresh');
             },
@@ -2402,7 +2402,7 @@ function renderBuildLineAllocationTable(element, build_line, options={}) {
 
         constructForm(`{% url "api-build-item-list" %}${pk}/`, {
             method: 'DELETE',
-            title: '{% trans "Remove Allocation" %}',
+            title: '{% jstrans "Remove Allocation" %}',
             onSuccess: function() {
                 $(options.parent_table).bootstrapTable('refresh');
             },
@@ -2443,8 +2443,8 @@ function loadBuildLineTable(table, build_id, options={}) {
                 url: '{% url "api-buildline-label-list" %}',
                 key: 'line',
             },
-            singular_name: '{% trans "build line" %}',
-            plural_name: '{% trans "build lines" %}',
+            singular_name: '{% jstrans "build line" %}',
+            plural_name: '{% jstrans "build lines" %}',
         });
     }
 
@@ -2462,18 +2462,18 @@ function loadBuildLineTable(table, build_id, options={}) {
             });
         },
         formatNoMatches: function() {
-            return '{% trans "No build lines found" %}';
+            return '{% jstrans "No build lines found" %}';
         },
         columns: [
             {
                 checkbox: true,
-                title: '{% trans "Select" %}',
+                title: '{% jstrans "Select" %}',
                 searchable: false,
                 switchable: false,
             },
             {
                 field: 'bom_item',
-                title: '{% trans "Required Part" %}',
+                title: '{% jstrans "Required Part" %}',
                 switchable: false,
                 sortable: true,
                 sortName: 'part',
@@ -2488,11 +2488,11 @@ function loadBuildLineTable(table, build_id, options={}) {
                     html += imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
 
                     if (row.bom_item_detail.allow_variants) {
-                        html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
+                        html += makeIconBadge('fa-sitemap', '{% jstrans "Variant stock allowed" %}');
                     }
 
                     if (row.part_detail.trackable) {
-                        html += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
+                        html += makeIconBadge('fa-directions', '{% jstrans "Trackable part" %}');
                     }
 
                     return html;
@@ -2500,7 +2500,7 @@ function loadBuildLineTable(table, build_id, options={}) {
             },
             {
                 field: 'reference',
-                title: '{% trans "Reference" %}',
+                title: '{% jstrans "Reference" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     return row.bom_item_detail.reference;
@@ -2508,7 +2508,7 @@ function loadBuildLineTable(table, build_id, options={}) {
             },
             {
                 field: 'consumable',
-                title: '{% trans "Consumable" %}',
+                title: '{% jstrans "Consumable" %}',
                 sortable: true,
                 switchable: true,
                 formatter: function(value, row) {
@@ -2517,7 +2517,7 @@ function loadBuildLineTable(table, build_id, options={}) {
             },
             {
                 field: 'optional',
-                title: '{% trans "Optional" %}',
+                title: '{% jstrans "Optional" %}',
                 sortable: true,
                 switchable: true,
                 formatter: function(value, row) {
@@ -2527,7 +2527,7 @@ function loadBuildLineTable(table, build_id, options={}) {
             {
                 field: 'unit_quantity',
                 sortable: true,
-                title: '{% trans "Unit Quantity" %}',
+                title: '{% jstrans "Unit Quantity" %}',
                 formatter: function(value, row) {
                     let text = row.bom_item_detail.quantity;
 
@@ -2544,12 +2544,12 @@ function loadBuildLineTable(table, build_id, options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% trans "Required Quantity" %}',
+                title: '{% jstrans "Required Quantity" %}',
                 sortable: true,
             },
             {
                 field: 'available_stock',
-                title: '{% trans "Available" %}',
+                title: '{% jstrans "Available" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var url = `/part/${row.part_detail.pk}/?display=part-stock`;
@@ -2573,24 +2573,24 @@ function loadBuildLineTable(table, build_id, options={}) {
                     let icons = '';
 
                     if (row.bom_item_detail.consumable) {
-                        icons += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Consumable item" %}'></span>`;
+                        icons += `<span class='fas fa-info-circle icon-blue float-right' title='{% jstrans "Consumable item" %}'></span>`;
                     } else {
                         if (available < (row.quantity - row.allocated)) {
-                            icons += makeIconBadge('fa-times-circle icon-red', '{% trans "Insufficient stock available" %}');
+                            icons += makeIconBadge('fa-times-circle icon-red', '{% jstrans "Insufficient stock available" %}');
                         } else {
-                            icons += makeIconBadge('fa-check-circle icon-green', '{% trans "Sufficient stock available" %}');
+                            icons += makeIconBadge('fa-check-circle icon-green', '{% jstrans "Sufficient stock available" %}');
                         }
 
                         if (available <= 0) {
-                            icons += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                            icons += `<span class='badge rounded-pill bg-danger'>{% jstrans "No Stock Available" %}</span>`;
                         } else {
                             let extra = '';
                             if ((row.available_substitute_stock > 0) && (row.available_variant_stock > 0)) {
-                                extra = '{% trans "Includes variant and substitute stock" %}';
+                                extra = '{% jstrans "Includes variant and substitute stock" %}';
                             } else if (row.available_variant_stock > 0) {
-                                extra = '{% trans "Includes variant stock" %}';
+                                extra = '{% jstrans "Includes variant stock" %}';
                             } else if (row.available_substitute_stock > 0) {
-                                extra = '{% trans "Includes substitute stock" %}';
+                                extra = '{% jstrans "Includes substitute stock" %}';
                             }
 
                             if (extra) {
@@ -2600,7 +2600,7 @@ function loadBuildLineTable(table, build_id, options={}) {
                     }
 
                     if (row.on_order && row.on_order > 0) {
-                        icons += makeIconBadge('fa-shopping-cart', `{% trans "On Order" %}: ${formatDecimal(row.on_order)}`);
+                        icons += makeIconBadge('fa-shopping-cart', `{% jstrans "On Order" %}: ${formatDecimal(row.on_order)}`);
                     }
 
                     return renderLink(text, url) + icons;
@@ -2608,7 +2608,7 @@ function loadBuildLineTable(table, build_id, options={}) {
             },
             {
                 field: 'allocated',
-                title: '{% trans "Allocated" %}',
+                title: '{% jstrans "Allocated" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     return makeProgressBar(row.allocated, row.quantity);
@@ -2625,32 +2625,32 @@ function loadBuildLineTable(table, build_id, options={}) {
 
                     // Consumable items do not need to be allocated
                     if (row.bom_item_detail.consumable) {
-                        return `<em>{% trans "Consumable Item" %}</em>`;
+                        return `<em>{% jstrans "Consumable Item" %}</em>`;
                     }
 
                     if (row.part_detail.trackable && !options.output) {
                         // Tracked parts must be allocated to a specific build output
-                        return `<em>{% trans "Tracked item" %}</em>`;
+                        return `<em>{% jstrans "Tracked item" %}</em>`;
                     }
 
                     if (row.allocated < row.quantity) {
 
                         // Add a button to "build" stock for this line
                         if (row.part_detail.assembly) {
-                            buttons += makeIconButton('fa-tools icon-blue', 'button-build', pk, '{% trans "Build stock" %}');
+                            buttons += makeIconButton('fa-tools icon-blue', 'button-build', pk, '{% jstrans "Build stock" %}');
                         }
 
                         // Add a button to "purchase" stock for this line
                         if (row.part_detail.purchaseable) {
-                            buttons += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', pk, '{% trans "Order stock" %}');
+                            buttons += makeIconButton('fa-shopping-cart icon-blue', 'button-buy', pk, '{% jstrans "Order stock" %}');
                         }
 
                         // Add a button to "allocate" stock for this line
-                        buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-allocate', pk, '{% trans "Allocate stock" %}');
+                        buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-allocate', pk, '{% jstrans "Allocate stock" %}');
                     }
 
                     if (row.allocated > 0) {
-                        buttons += makeRemoveButton('button-unallocate', pk, '{% trans "Remove stock allocation" %}');
+                        buttons += makeRemoveButton('button-unallocate', pk, '{% jstrans "Remove stock allocation" %}');
                     }
 
                     return wrapButtons(buttons);

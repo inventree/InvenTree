@@ -183,11 +183,11 @@ function getFilterOptionList(tableKey, filterKey) {
         return {
             '1': {
                 key: '1',
-                value: '{% trans "true" %}',
+                value: '{% jstrans "true" %}',
             },
             '0': {
                 key: '0',
-                value: '{% trans "false" %}',
+                value: '{% jstrans "false" %}',
             },
         };
     } else if (settings.type == 'date') {
@@ -211,7 +211,7 @@ function generateAvailableFilterList(tableKey) {
 
     var html = `<select class='form-control filter-input' id='${id}' name='tag'>`;
 
-    html += `<option value=''>{% trans 'Select filter' %}</option>`;
+    html += `<option value=''>{% jstrans 'Select filter' %}</option>`;
 
     for (var opt in remaining) {
         var title = getFilterTitle(tableKey, opt);
@@ -293,7 +293,7 @@ function makeCustomActionGroup(action_group, table) {
 
     let buttons = [];
     let label = action_group.label || 'actions';
-    let title = action_group.title || '{% trans "Actions" %}';
+    let title = action_group.title || '{% jstrans "Actions" %}';
     let icon = action_group.icon || 'fa-tools';
 
     // Construct the HTML for each button
@@ -332,7 +332,7 @@ function makeBarcodeActions(barcode_actions, table) {
 
     let html = `
     <div class='btn-group' role='group'>
-    <button id='barcode-actions' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+    <button id='barcode-actions' title='{% jstrans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
         <span class='fas fa-qrcode'></span>
     </button>
     <ul class='dropdown-menu' role='menu'>
@@ -428,17 +428,17 @@ function setupFilterList(tableKey, table, target, options={}) {
     if (report_button || labels_button) {
         let print_buttons = `
         <div class='btn-group' role='group'>
-        <button id='printing-options' title='{% trans "Printing actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <button id='printing-options' title='{% jstrans "Printing actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
             <span class='fas fa-print'></span> <span class='caret'></span>
         </button>
         <ul class='dropdown-menu' role='menu'>`;
 
         if (labels_button) {
-            print_buttons += `<li><a class='dropdown-item' href='#' id='print-labels-${tableKey}'><span class='fas fa-tag'></span> {% trans "Print Labels" %}</a></li>`;
+            print_buttons += `<li><a class='dropdown-item' href='#' id='print-labels-${tableKey}'><span class='fas fa-tag'></span> {% jstrans "Print Labels" %}</a></li>`;
         }
 
         if (report_button) {
-            print_buttons += `<li><a class='dropdown-item' href='#' id='print-report-${tableKey}'><span class='fas fa-file-pdf'></span> {% trans "Print Reports" %}</a></li>`;
+            print_buttons += `<li><a class='dropdown-item' href='#' id='print-report-${tableKey}'><span class='fas fa-file-pdf'></span> {% jstrans "Print Reports" %}</a></li>`;
         }
 
         print_buttons += `</ul></div>`;
@@ -450,14 +450,14 @@ function setupFilterList(tableKey, table, target, options={}) {
     if (options.download) {
         buttons += makeFilterButton({
             id: `download-${tableKey}`,
-            title: '{% trans "Download table data" %}',
+            title: '{% jstrans "Download table data" %}',
             icon: 'fa-download',
         });
     }
 
     buttons += makeFilterButton({
         id: `reload-${tableKey}`,
-        title: '{% trans "Reload table data" %}',
+        title: '{% jstrans "Reload table data" %}',
         icon: 'fa-redo-alt',
     });
 
@@ -466,7 +466,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
         buttons += makeFilterButton({
             id: add,
-            title: '{% trans "Add new filter" %}',
+            title: '{% jstrans "Add new filter" %}',
             icon: 'fa-filter',
         });
 
@@ -474,7 +474,7 @@ function setupFilterList(tableKey, table, target, options={}) {
         if (Object.keys(filters).length > 0) {
             buttons += makeFilterButton({
                 id: clear,
-                title: '{% trans "Clear all filters" %}',
+                title: '{% jstrans "Clear all filters" %}',
                 icon: 'fa-backspace icon-red',
             });
         }
@@ -579,7 +579,7 @@ function setupFilterList(tableKey, table, target, options={}) {
             html += generateAvailableFilterList(tableKey);
             html += generateFilterInput(tableKey);
 
-            html += `<button title='{% trans "Create filter" %}' class='btn btn-outline-secondary filter-button' id='${make}'><span class='fas fa-plus'></span></button>`;
+            html += `<button title='{% jstrans "Create filter" %}' class='btn btn-outline-secondary filter-button' id='${make}'><span class='fas fa-plus'></span></button>`;
             html += `</div>`;
 
             element.append(html);
@@ -669,8 +669,8 @@ function getFilterOptionValue(tableKey, filterKey, valueKey) {
 
     // Lookup for boolean options
     if (filter.type == 'bool') {
-        if (value == '1') return '{% trans "true" %}';
-        if (value == '0') return '{% trans "false" %}';
+        if (value == '1') return '{% jstrans "true" %}';
+        if (value == '0') return '{% jstrans "false" %}';
 
         return value;
     }

@@ -30,18 +30,18 @@ function loadNewsFeedTable(table, options={}, enableDelete=false) {
         },
         paginationVAlign: 'bottom',
         formatNoMatches: function() {
-            return '{% trans "No news found" %}';
+            return '{% jstrans "No news found" %}';
         },
         columns: [
             {
                 field: 'pk',
-                title: '{% trans "ID" %}',
+                title: '{% jstrans "ID" %}',
                 visible: false,
                 switchable: false,
             },
             {
                 field: 'title',
-                title: '{% trans "Title" %}',
+                title: '{% jstrans "Title" %}',
                 sortable: 'true',
                 formatter: function(value, row) {
                     return `<a href="` + row.link + `">` + value + `</a>`;
@@ -49,15 +49,15 @@ function loadNewsFeedTable(table, options={}, enableDelete=false) {
             },
             {
                 field: 'summary',
-                title: '{% trans "Summary" %}',
+                title: '{% jstrans "Summary" %}',
             },
             {
                 field: 'author',
-                title: '{% trans "Author" %}',
+                title: '{% jstrans "Author" %}',
             },
             {
                 field: 'published',
-                title: '{% trans "Published" %}',
+                title: '{% jstrans "Published" %}',
                 sortable: 'true',
                 formatter: function(value, row) {
                     var html = renderDate(value);

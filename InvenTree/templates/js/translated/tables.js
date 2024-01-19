@@ -89,7 +89,7 @@ function constructOrderTableButtons(options={}) {
     // Calendar view button
     if (!options.disableCalendarView) {
         buttons.push({
-            html: `<button type='button' name='${idx++}' class='btn ${class_calendar}' title='{% trans "Display calendar view" %}'><span class='fas fa-calendar-alt'></span></button>`,
+            html: `<button type='button' name='${idx++}' class='btn ${class_calendar}' title='{% jstrans "Display calendar view" %}'><span class='fas fa-calendar-alt'></span></button>`,
             event: function() {
                 buttonCallback('calendar');
             }
@@ -99,7 +99,7 @@ function constructOrderTableButtons(options={}) {
     // List view button
     if (!options.disableListView) {
         buttons.push({
-            html: `<button type='button' name='${idx++}' class='btn ${class_list}' title='{% trans "Display list view" %}'><span class='fas fa-th-list'></span></button>`,
+            html: `<button type='button' name='${idx++}' class='btn ${class_list}' title='{% jstrans "Display list view" %}'><span class='fas fa-th-list'></span></button>`,
             event: function() {
                 buttonCallback('list');
             }
@@ -109,7 +109,7 @@ function constructOrderTableButtons(options={}) {
     // Tree view button
     if (!options.disableTreeView) {
         buttons.push({
-            html: `<button type='button' name='${idx++}' class='btn ${class_tree}' title='{% trans "Display tree view" %}'><span class='fas fa-sitemap'></span></button>`,
+            html: `<button type='button' name='${idx++}' class='btn ${class_tree}' title='{% jstrans "Display tree view" %}'><span class='fas fa-sitemap'></span></button>`,
             event: function() {
                 buttonCallback('tree');
             }
@@ -127,13 +127,13 @@ function constructExpandCollapseButtons(table, idx=0) {
 
     return [
         {
-            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Expand all rows" %}'><span class='fas fa-expand'></span></button>`,
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% jstrans "Expand all rows" %}'><span class='fas fa-expand'></span></button>`,
             event: function() {
                 $(table).bootstrapTable('expandAllRows');
             }
         },
         {
-            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Collapse all rows" %}'><span class='fas fa-compress'></span></button>`,
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% jstrans "Collapse all rows" %}'><span class='fas fa-compress'></span></button>`,
             event: function() {
                 $(table).bootstrapTable('collapseAllRows');
             }
@@ -183,11 +183,11 @@ function downloadTableData(table, opts={}) {
     url += '?';
 
     constructFormBody({}, {
-        title: opts.title || '{% trans "Export Table Data" %}',
+        title: opts.title || '{% jstrans "Export Table Data" %}',
         fields: {
             format: {
-                label: '{% trans "Format" %}',
-                help_text: '{% trans "Select File Format" %}',
+                label: '{% jstrans "Format" %}',
+                help_text: '{% jstrans "Select File Format" %}',
                 required: true,
                 type: 'choice',
                 value: 'csv',
@@ -526,39 +526,39 @@ function customGroupSorter(sortName, sortOrder, sortData) {
 
     $.fn.bootstrapTable.locales['en-US-custom'] = {
         formatLoadingMessage: function() {
-            return '{% trans "Loading data" %}';
+            return '{% jstrans "Loading data" %}';
         },
         formatRecordsPerPage: function(pageNumber) {
-            return `${pageNumber} {% trans "rows per page" %}`;
+            return `${pageNumber} {% jstrans "rows per page" %}`;
         },
         formatShowingRows: function(pageFrom, pageTo, totalRows) {
 
             if (totalRows === undefined || isNaN(totalRows)) {
-                return '{% trans "Showing all rows" %}';
+                return '{% jstrans "Showing all rows" %}';
             } else {
-                return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;
+                return `{% jstrans "Showing" %} ${pageFrom} {% jstrans "to" %} ${pageTo} {% jstrans "of" %} ${totalRows} {% jstrans "rows" %}`;
             }
         },
         formatSearch: function() {
-            return '{% trans "Search" %}';
+            return '{% jstrans "Search" %}';
         },
         formatNoMatches: function() {
-            return '{% trans "No matching results" %}';
+            return '{% jstrans "No matching results" %}';
         },
         formatPaginationSwitch: function() {
-            return '{% trans "Hide/Show pagination" %}';
+            return '{% jstrans "Hide/Show pagination" %}';
         },
         formatRefresh: function() {
-            return '{% trans "Refresh" %}';
+            return '{% jstrans "Refresh" %}';
         },
         formatToggle: function() {
-            return '{% trans "Toggle" %}';
+            return '{% jstrans "Toggle" %}';
         },
         formatColumns: function() {
-            return '{% trans "Columns" %}';
+            return '{% jstrans "Columns" %}';
         },
         formatAllRows: function() {
-            return '{% trans "All" %}';
+            return '{% jstrans "All" %}';
         },
     };
 
