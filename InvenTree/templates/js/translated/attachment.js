@@ -45,7 +45,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
             fields: file_fields,
             method: 'POST',
             refreshTable: '#attachment-table',
-            title: '{% trans "Add Attachment" %}',
+            title: '{% jstrans "Add Attachment" %}',
         });
     });
 
@@ -67,7 +67,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
             fields: link_fields,
             method: 'POST',
             refreshTable: '#attachment-table',
-            title: '{% trans "Add Link" %}',
+            title: '{% jstrans "Add Link" %}',
         });
     });
 }
@@ -111,13 +111,13 @@ function deleteAttachments(attachments, url, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% trans "All selected attachments will be deleted" %}
+    {% jstrans "All selected attachments will be deleted" %}
     </div>
     <table class='table table-striped table-condensed'>
     <tr>
         <th></th>
-        <th>{% trans "Attachment" %}</th>
-        <th>{% trans "Comment" %}</th>
+        <th>{% jstrans "Attachment" %}</th>
+        <th>{% jstrans "Comment" %}</th>
     </tr>
     ${rows}
     </table>
@@ -126,7 +126,7 @@ function deleteAttachments(attachments, url, options={}) {
     constructForm(url, {
         method: 'DELETE',
         multi_delete: true,
-        title: '{% trans "Delete Attachments" %}',
+        title: '{% jstrans "Delete Attachments" %}',
         preFormContent: html,
         form_data: {
             items: ids,
@@ -202,7 +202,7 @@ function makeAttachmentActions(permissions, options) {
         actions.push({
             label: 'delete',
             icon: 'fa-trash-alt icon-red',
-            title: '{% trans "Delete attachments" %}',
+            title: '{% jstrans "Delete attachments" %}',
             callback: options.callback,
         });
     }
@@ -250,7 +250,7 @@ function loadAttachmentTable(url, options) {
             {
                 label: 'attachments',
                 icon: 'fa-tools',
-                title: '{% trans "Attachment actions" %}',
+                title: '{% jstrans "Attachment actions" %}',
                 actions: makeAttachmentActions(permissions, {
                     callback: function(attachments) {
                         deleteAttachments(attachments, url, options);
@@ -272,7 +272,7 @@ function loadAttachmentTable(url, options) {
         url: url,
         name: options.name || 'attachments',
         formatNoMatches: function() {
-            return '{% trans "No attachments found" %}';
+            return '{% jstrans "No attachments found" %}';
         },
         sortable: true,
         search: true,
@@ -312,7 +312,7 @@ function loadAttachmentTable(url, options) {
                             }
                         },
                         refreshTable: '#attachment-table',
-                        title: '{% trans "Edit Attachment" %}',
+                        title: '{% jstrans "Edit Attachment" %}',
                     });
                 });
             }
@@ -323,7 +323,7 @@ function loadAttachmentTable(url, options) {
             },
             {
                 field: 'attachment',
-                title: '{% trans "Attachment" %}',
+                title: '{% jstrans "Attachment" %}',
                 formatter: function(value, row) {
 
                     if (row.attachment) {
@@ -338,12 +338,12 @@ function loadAttachmentTable(url, options) {
             },
             {
                 field: 'comment',
-                title: '{% trans "Comment" %}',
+                title: '{% jstrans "Comment" %}',
             },
             {
                 field: 'upload_date',
                 sortable: true,
-                title: '{% trans "Upload Date" %}',
+                title: '{% jstrans "Upload Date" %}',
                 formatter: function(value, row) {
                     var html = renderDate(value);
 
@@ -363,7 +363,7 @@ function loadAttachmentTable(url, options) {
                         buttons += makeEditButton(
                             'button-attachment-edit',
                             row.pk,
-                            '{% trans "Edit attachment" %}',
+                            '{% jstrans "Edit attachment" %}',
                         );
                     }
 
@@ -371,7 +371,7 @@ function loadAttachmentTable(url, options) {
                         buttons += makeDeleteButton(
                             'button-attachment-delete',
                             row.pk,
-                            '{% trans "Delete attachment" %}',
+                            '{% jstrans "Delete attachment" %}',
                         );
                     }
 

@@ -216,21 +216,21 @@ function renderStockItem(data, parameters={}) {
     }
 
     if (data.quantity == 0) {
-        stock_detail = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock"% }</span>`;
+        stock_detail = `<span class='badge rounded-pill bg-danger'>{% jstrans "No Stock"% }</span>`;
     } else {
         if (data.serial && data.quantity == 1) {
-            stock_detail = `{% trans "Serial Number" %}: ${data.serial}`;
+            stock_detail = `{% jstrans "Serial Number" %}: ${data.serial}`;
         } else {
             if (render_available_quantity) {
                 var available = data.quantity - data.allocated;
-                stock_detail = `{% trans "Available" %}: ${available}`;
+                stock_detail = `{% jstrans "Available" %}: ${available}`;
             } else {
-                stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
+                stock_detail = `{% jstrans "Quantity" %}: ${data.quantity}`;
             }
         }
 
         if (data.batch) {
-            stock_detail += ` - <small>{% trans "Batch" %}: ${data.batch}</small>`;
+            stock_detail += ` - <small>{% jstrans "Batch" %}: ${data.batch}</small>`;
         }
     }
 
@@ -301,7 +301,7 @@ function renderPart(data, parameters={}) {
         labels = partStockLabel(data);
 
         if (!data.active) {
-            labels += `<span class='badge badge-right rounded-pill bg-danger'>{% trans "Inactive" %}</span>`;
+            labels += `<span class='badge badge-right rounded-pill bg-danger'>{% jstrans "Inactive" %}</span>`;
         }
     }
 
@@ -443,7 +443,7 @@ function renderSalesOrderShipment(data, parameters={}) {
     return renderModel(
         {
             text: data.order_detail.reference,
-            textSecondary: `{% trans "Shipment" %} ${data.reference}`,
+            textSecondary: `{% jstrans "Shipment" %} ${data.reference}`,
         },
         parameters
     );

@@ -41,12 +41,12 @@ onPanelLoad('pricing', function() {
             {
                 field: 'currency',
                 sortable: true,
-                title: '{% trans "Currency" %}',
+                title: '{% jstrans "Currency" %}',
             },
             {
                 field: 'rate',
                 sortable: true,
-                title: '{% trans "Rate" %}',
+                title: '{% jstrans "Rate" %}',
             }
         ]
     });
@@ -64,21 +64,21 @@ onPanelLoad('units', function() {
         columns: [
             {
                 field: 'name',
-                title: '{% trans "Name" %}',
+                title: '{% jstrans "Name" %}',
             },
             {
                 field: 'definition',
-                title: '{% trans "Definition" %}',
+                title: '{% jstrans "Definition" %}',
             },
             {
                 field: 'symbol',
-                title: '{% trans "Symbol" %}',
+                title: '{% jstrans "Symbol" %}',
                 formatter: function(value, row) {
                     let html = value;
                     let buttons = '';
 
-                    buttons += makeEditButton('button-units-edit', row.pk, '{% trans "Edit" %}');
-                    buttons += makeDeleteButton('button-units-delete', row.pk, '{% trans "Delete" %}');
+                    buttons += makeEditButton('button-units-edit', row.pk, '{% jstrans "Edit" %}');
+                    buttons += makeDeleteButton('button-units-delete', row.pk, '{% jstrans "Delete" %}');
 
                     html += wrapButtons(buttons);
                     return html;
@@ -92,7 +92,7 @@ onPanelLoad('units', function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-custom-unit-list" %}${pk}/`, {
-            title: '{% trans "Edit Custom Unit" %}',
+            title: '{% jstrans "Edit Custom Unit" %}',
             fields: {
                 name: {},
                 definition: {},
@@ -107,7 +107,7 @@ onPanelLoad('units', function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-custom-unit-list" %}${pk}/`, {
-            title: '{% trans "Delete Custom Unit" %}',
+            title: '{% jstrans "Delete Custom Unit" %}',
             method: 'DELETE',
             refreshTable: '#physical-units-table',
         });
@@ -121,7 +121,7 @@ onPanelLoad('units', function() {
                 definition: {},
                 symbol: {},
             },
-            title: '{% trans "New Custom Unit" %}',
+            title: '{% jstrans "New Custom Unit" %}',
             method: 'POST',
             refreshTable: '#physical-units-table',
         });
@@ -137,17 +137,17 @@ onPanelLoad('project-codes', function() {
         search: true,
         sortable: true,
         formatNoMatches: function() {
-            return '{% trans "No project codes found" %}';
+            return '{% jstrans "No project codes found" %}';
         },
         columns: [
             {
                 field: 'code',
                 sortable: true,
-                title: '{% trans "Project Code" %}',
+                title: '{% jstrans "Project Code" %}',
             },
             {
                 field: 'responsible',
-                title: '{% trans "Responsible" %}',
+                title: '{% jstrans "Responsible" %}',
                 formatter: function(value, row) {
                     if (!row.responsible_detail) {
                         return '-';
@@ -155,7 +155,7 @@ onPanelLoad('project-codes', function() {
 
                     var html = row.responsible_detail.name;
 
-                    if (row.responsible_detail.label == '{% trans "group" %}') {
+                    if (row.responsible_detail.label == '{% jstrans "group" %}') {
                         html += `<span class='float-right fas fa-users'></span>`;
                     } else {
                         html += `<span class='float-right fas fa-user'></span>`;
@@ -167,13 +167,13 @@ onPanelLoad('project-codes', function() {
             {
                 field: 'description',
                 sortable: false,
-                title: '{% trans "Description" %}',
+                title: '{% jstrans "Description" %}',
                 formatter: function(value, row) {
                     let html = value;
                     let buttons = '';
 
-                    buttons += makeEditButton('button-project-code-edit', row.pk, '{% trans "Edit Project Code" %}');
-                    buttons += makeDeleteButton('button-project-code-delete', row.pk, '{% trans "Delete Project Code" %}');
+                    buttons += makeEditButton('button-project-code-edit', row.pk, '{% jstrans "Edit Project Code" %}');
+                    buttons += makeDeleteButton('button-project-code-delete', row.pk, '{% jstrans "Delete Project Code" %}');
 
                     html += wrapButtons(buttons);
                     return html;
@@ -186,7 +186,7 @@ onPanelLoad('project-codes', function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-project-code-list" %}${pk}/`, {
-            title: '{% trans "Edit Project Code" %}',
+            title: '{% jstrans "Edit Project Code" %}',
             fields: {
                 code: {},
                 description: {},
@@ -200,7 +200,7 @@ onPanelLoad('project-codes', function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-project-code-list" %}${pk}/`, {
-            title: '{% trans "Delete Project Code" %}',
+            title: '{% jstrans "Delete Project Code" %}',
             method: 'DELETE',
             refreshTable: '#project-code-table',
         });
@@ -213,7 +213,7 @@ onPanelLoad('project-codes', function() {
                 code: {},
                 description: {},
             },
-            title: '{% trans "New Project Code" %}',
+            title: '{% jstrans "New Project Code" %}',
             method: 'POST',
             refreshTable: '#project-code-table',
         });
@@ -282,7 +282,7 @@ onPanelLoad('category', function() {
     });
 
     $('#cat-param-table').inventreeTable({
-        formatNoMatches: function() { return '{% trans "No category parameter templates found" %}'; },
+        formatNoMatches: function() { return '{% jstrans "No category parameter templates found" %}'; },
         columns: [
             {
                 field: 'pk',
@@ -292,21 +292,21 @@ onPanelLoad('category', function() {
             },
             {
                 field: 'parameter_template_detail.name',
-                title: '{% trans "Parameter Template" %}',
+                title: '{% jstrans "Parameter Template" %}',
                 sortable: 'true',
             },
             {
                 field: 'category_detail.pathstring',
-                title: '{% trans "Category" %}',
+                title: '{% jstrans "Category" %}',
             },
             {
                 field: 'default_value',
-                title: '{% trans "Default Value" %}',
+                title: '{% jstrans "Default Value" %}',
                 sortable: 'true',
                 formatter: function(value, row, index, field) {
                     let buttons = '';
-                    buttons += makeEditButton('template-edit', row.pk, '{% trans "Edit Template" %}');
-                    buttons += makeDeleteButton('template-delete', row.pk, '{% trans "Delete Template" %}');
+                    buttons += makeEditButton('template-edit', row.pk, '{% jstrans "Edit Template" %}');
+                    buttons += makeDeleteButton('template-delete', row.pk, '{% jstrans "Delete Template" %}');
 
                     let html = value
                     html += wrapButtons(buttons);
@@ -323,7 +323,7 @@ onPanelLoad('category', function() {
         var pk = $(this).attr('pk');
 
         constructForm(`/api/part/category/parameters/${pk}/`, {
-            title: '{% trans "Edit Category Parameter Template" %}',
+            title: '{% jstrans "Edit Category Parameter Template" %}',
             fields: {
                 parameter_template: {},
                 category: {
@@ -350,7 +350,7 @@ onPanelLoad('category', function() {
 
         constructForm(`/api/part/category/parameters/${pk}/`, {
             method: 'DELETE',
-            title: '{% trans "Delete Category Parameter Template" %}',
+            title: '{% jstrans "Delete Category Parameter Template" %}',
             onSuccess: function() {
                 loadTemplateTable(pk);
             }
@@ -385,7 +385,7 @@ onPanelLoad('category', function() {
         var pk = $('#category-select').val();
 
         constructForm('{% url "api-part-category-parameter-list" %}', {
-            title: '{% trans "Create Category Parameter Template" %}',
+            title: '{% jstrans "Create Category Parameter Template" %}',
             method: 'POST',
             fields: {
                 parameter_template: {},
@@ -415,7 +415,7 @@ onPanelLoad('part-parameters', function() {
         constructForm('{% url "api-part-parameter-template-list" %}', {
             fields: partParameterTemplateFields(),
             method: 'POST',
-            title: '{% trans "Create Part Parameter Template" %}',
+            title: '{% jstrans "Create Part Parameter Template" %}',
             refreshTable: '#param-table',
         });
     });
@@ -437,34 +437,34 @@ onPanelLoad("stock", function() {
         search: true,
         sortable: true,
         formatNoMatches: function() {
-            return '{% trans "No stock location types found" %}';
+            return '{% jstrans "No stock location types found" %}';
         },
         columns: [
             {
                 field: 'name',
                 sortable: true,
-                title: '{% trans "Name" %}',
+                title: '{% jstrans "Name" %}',
             },
             {
                 field: 'description',
                 sortable: false,
-                title: '{% trans "Description" %}',
+                title: '{% jstrans "Description" %}',
             },
             {
                 field: 'icon',
                 sortable: true,
-                title: '{% trans "Icon" %}',
+                title: '{% jstrans "Icon" %}',
             },
             {
                 field: 'location_count',
                 sortable: true,
-                title: '{% trans "Location count" %}',
+                title: '{% jstrans "Location count" %}',
                 formatter: function(value, row) {
                     let html = value;
                     let buttons = '';
 
-                    buttons += makeEditButton('button-location-type-edit', row.pk, '{% trans "Edit Location Type" %}');
-                    buttons += makeDeleteButton('button-location-type-delete', row.pk, '{% trans "Delete Location type" %}');
+                    buttons += makeEditButton('button-location-type-edit', row.pk, '{% jstrans "Edit Location Type" %}');
+                    buttons += makeDeleteButton('button-location-type-delete', row.pk, '{% jstrans "Delete Location type" %}');
 
                     html += wrapButtons(buttons);
                     return html;
@@ -477,7 +477,7 @@ onPanelLoad("stock", function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-location-type-list" %}${pk}/`, {
-            title: '{% trans "Edit Location Type" %}',
+            title: '{% jstrans "Edit Location Type" %}',
             fields: stockLocationTypeFields(),
             refreshTable: '#location-type-table',
         });
@@ -487,7 +487,7 @@ onPanelLoad("stock", function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-location-type-list" %}${pk}/`, {
-            title: '{% trans "Delete Location Type" %}',
+            title: '{% jstrans "Delete Location Type" %}',
             method: 'DELETE',
             refreshTable: '#location-type-table',
         });
@@ -497,7 +497,7 @@ onPanelLoad("stock", function() {
         // Construct a new location type
         constructForm('{% url "api-location-type-list" %}', {
             fields: stockLocationTypeFields(),
-            title: '{% trans "New Location Type" %}',
+            title: '{% jstrans "New Location Type" %}',
             method: 'POST',
             refreshTable: '#location-type-table',
         });
@@ -526,18 +526,18 @@ onPanelLoad('stocktake', function() {
         columns: [
             {
                 field: 'report',
-                title: '{% trans "Report" %}',
+                title: '{% jstrans "Report" %}',
                 formatter: function(value, row) {
                     return attachmentLink(value);
                 }
             },
             {
                 field: 'part_count',
-                title: '{% trans "Part Count" %}',
+                title: '{% jstrans "Part Count" %}',
             },
             {
                 field: 'date',
-                title: '{% trans "Date" %}',
+                title: '{% jstrans "Date" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     let html = renderDate(value);

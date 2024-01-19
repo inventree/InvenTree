@@ -127,7 +127,7 @@ function updateSearch() {
             filters.active = true;
         }
 
-        addSearchQuery('part', '{% trans "Parts" %}', filters);
+        addSearchQuery('part', '{% jstrans "Parts" %}', filters);
     }
 
     if (checkPermission('part') && checkPermission('purchase_order')) {
@@ -144,18 +144,18 @@ function updateSearch() {
         }
 
         if (user_settings.SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS) {
-            addSearchQuery('supplierpart', '{% trans "Supplier Parts" %}', filters);
+            addSearchQuery('supplierpart', '{% jstrans "Supplier Parts" %}', filters);
         }
 
         if (user_settings.SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS) {
-            addSearchQuery('manufacturerpart', '{% trans "Manufacturer Parts" %}', filters);
+            addSearchQuery('manufacturerpart', '{% jstrans "Manufacturer Parts" %}', filters);
         }
     }
 
     if (checkPermission('part_category') && user_settings.SEARCH_PREVIEW_SHOW_CATEGORIES) {
         let filters = {};
 
-        addSearchQuery('partcategory', '{% trans "Part Categories" %}', filters);
+        addSearchQuery('partcategory', '{% jstrans "Part Categories" %}', filters);
     }
 
     if (checkPermission('stock') && user_settings.SEARCH_PREVIEW_SHOW_STOCK) {
@@ -169,13 +169,13 @@ function updateSearch() {
             filters.in_stock = true;
         }
 
-        addSearchQuery('stockitem', '{% trans "Stock Items" %}', filters);
+        addSearchQuery('stockitem', '{% jstrans "Stock Items" %}', filters);
     }
 
     if (checkPermission('stock_location') && user_settings.SEARCH_PREVIEW_SHOW_LOCATIONS) {
         let filters = {};
 
-        addSearchQuery('stocklocation', '{% trans "Stock Locations" %}', filters);
+        addSearchQuery('stocklocation', '{% jstrans "Stock Locations" %}', filters);
     }
 
     if (checkPermission('build') && user_settings.SEARCH_PREVIEW_SHOW_BUILD_ORDERS) {
@@ -183,13 +183,13 @@ function updateSearch() {
             part_detail: true
         };
 
-        addSearchQuery('build', '{% trans "Build Orders" %}', filters);
+        addSearchQuery('build', '{% jstrans "Build Orders" %}', filters);
     }
 
     if ((checkPermission('sales_order') || checkPermission('purchase_order')) && user_settings.SEARCH_PREVIEW_SHOW_COMPANIES) {
         let filters = {};
 
-        addSearchQuery('company', '{% trans "Companies" %}', filters);
+        addSearchQuery('company', '{% jstrans "Companies" %}', filters);
     }
 
     if (checkPermission('purchase_order') && user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
@@ -202,7 +202,7 @@ function updateSearch() {
             filters.outstanding = true;
         }
 
-        addSearchQuery('purchaseorder', '{% trans "Purchase Orders" %}', filters);
+        addSearchQuery('purchaseorder', '{% jstrans "Purchase Orders" %}', filters);
     }
 
     if (checkPermission('sales_order') && user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
@@ -216,7 +216,7 @@ function updateSearch() {
             filters.outstanding = true;
         }
 
-        addSearchQuery('salesorder', '{% trans "Sales Orders" %}', filters);
+        addSearchQuery('salesorder', '{% jstrans "Sales Orders" %}', filters);
     }
 
     if (checkPermission('return_order') && user_settings.SEARCH_PREVIEW_SHOW_RETURN_ORDERS) {
@@ -229,14 +229,14 @@ function updateSearch() {
             filters.outstanding = true;
         }
 
-        addSearchQuery('returnorder', '{% trans "Return Orders" %}', filters);
+        addSearchQuery('returnorder', '{% jstrans "Return Orders" %}', filters);
     }
 
     let ctx = $('#offcanvas-search').find('#search-context');
 
     ctx.html(`
     <div class='alert alert-block alert-secondary'>
-        <span class='fas fa-spinner fa-spin'></span> <em>{% trans "Searching" %}</em>
+        <span class='fas fa-spinner fa-spin'></span> <em>{% jstrans "Searching" %}</em>
     </div>
     `);
 
@@ -267,7 +267,7 @@ function updateSearch() {
                 } else {
                     ctx.html(`
                     <div class='alert alert-block alert-warning'>
-                        <span class='fas fa-exclamation-circle'></span> <em>{% trans "No results" %}</em>
+                        <span class='fas fa-exclamation-circle'></span> <em>{% jstrans "No results" %}</em>
                     </div>
                     `);
                 }
@@ -289,7 +289,7 @@ function clearSearchResults() {
 
     panel.find('#search-context').html(`
     <div class='alert alert-block alert-info'>
-        <span class='fas fa-search'></span> <em>{% trans "Enter search query" %}</em>
+        <span class='fas fa-search'></span> <em>{% jstrans "Enter search query" %}</em>
     </div>
     `);
 
@@ -339,7 +339,7 @@ function addSearchResults(results, resultType, resultCount) {
     let renderer = resultType.renderer;
     let renderParams = resultType.renderParams;
 
-    let resultText = resultCount == 1 ? '{% trans "result" %}' : '{% trans "results" %}';
+    let resultText = resultCount == 1 ? '{% jstrans "result" %}' : '{% jstrans "results" %}';
 
     // Add the result group to the panel
     panel.find('#search-results').append(`
@@ -349,10 +349,10 @@ function addSearchResults(results, resultType, resultCount) {
                 <h5>${title}</h5><span class='float-right'><em><small>&nbsp;-&nbsp;${resultCount} ${resultText}</small></em></span>
                 <span class='flex' style='flex-grow: 1;'></span>
                 <div class='search-result-group-buttons btn-group float-right' role='group'>
-                    <button class='btn btn-outline-secondary' id='hide-results-${key}' title='{% trans "Minimize results" %}'>
+                    <button class='btn btn-outline-secondary' id='hide-results-${key}' title='{% jstrans "Minimize results" %}'>
                         <span class='fas fa-chevron-up'></span>
                     </button>
-                    <button class='btn btn-outline-secondary' id='remove-results-${key}' title='{% trans "Remove results" %}'>
+                    <button class='btn btn-outline-secondary' id='remove-results-${key}' title='{% jstrans "Remove results" %}'>
                         <span class='fas fa-times icon-red'></span>
                     </button>
                 </div>
