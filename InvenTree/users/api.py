@@ -3,7 +3,7 @@
 import datetime
 import logging
 
-from django.contrib.auth import login
+from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
@@ -229,9 +229,6 @@ class GetAuthToken(APIView):
                 # User is authenticated, and requesting a token against the provided name.
                 token = ApiToken.objects.create(user=request.user, name=name)
 
-                # Ensure that the user is really logged in
-                login(request, user)
-
             # Add some metadata about the request
             token.set_metadata('user_agent', request.META.get('HTTP_USER_AGENT', ''))
             token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
@@ -245,6 +242,11 @@ class GetAuthToken(APIView):
             logger.info(
                 "Created new API token for user '%s' (name='%s')", user.username, name
             )
+
+            # Ensure that the users session is logged in (PUI -> CUI login)
+            rq_usr = get_user(request)
+            if not rq_usr.is_authenticated:
+                login(request, user)
 
             return Response(data)
 
