@@ -656,7 +656,7 @@
                         value: {{ part.pk }},
                     },
                     part_2: {
-                        label: '{% trans "Related Part" %}',
+                        label: '{% jstrans "Related Part" %}',
                         filters: {
                             exclude_id: {{ part.pk }},
                             exclude_related: {{ part.pk }},
@@ -664,7 +664,7 @@
                     }
                 },
                 focus: 'part_2',
-                title: '{% trans "Add Related Part" %}',
+                title: '{% jstrans "Add Related Part" %}',
                 refreshTable: '#related-parts-table',
             });
         });
@@ -749,7 +749,7 @@
                 fields: partTestTemplateFields({
                     part: {{ part.pk }}
                 }),
-                title: '{% trans "Add Test Result Template" %}',
+                title: '{% jstrans "Add Test Result Template" %}',
                 refreshTable: '#test-template-table',
             });
         });
