@@ -244,8 +244,7 @@ class GetAuthToken(APIView):
             )
 
             # Ensure that the users session is logged in (PUI -> CUI login)
-            rq_usr = get_user(request)
-            if not rq_usr.is_authenticated:
+            if not get_user(request).is_authenticated:
                 login(request, user)
 
             return Response(data)
