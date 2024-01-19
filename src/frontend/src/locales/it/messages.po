@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-13 12:16\n"
+"PO-Revision-Date: 2024-01-19 14:32\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -67,7 +67,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:45
 #: src/components/forms/AuthenticationForm.tsx:73
-#: src/functions/auth.tsx:111
+#: src/functions/auth.tsx:113
 msgid "Check your input and try again."
 msgstr ""
 
@@ -90,7 +90,7 @@ msgstr ""
 #~ msgstr "Login successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:64
-#: src/functions/auth.tsx:102
+#: src/functions/auth.tsx:104
 msgid "Mail delivery successful"
 msgstr ""
 
@@ -2460,7 +2460,7 @@ msgstr ""
 
 #: src/components/tables/settings/PendingTasksTable.tsx:30
 msgid "Created"
-msgstr "Created"
+msgstr ""
 
 #: src/components/tables/settings/PendingTasksTable.tsx:36
 msgid "Arguments"
@@ -3390,28 +3390,28 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:57
+#: src/functions/auth.tsx:59
 msgid "Logout successful"
 msgstr ""
 
-#: src/functions/auth.tsx:58
+#: src/functions/auth.tsx:60
 msgid "See you soon."
 msgstr ""
 
-#: src/functions/auth.tsx:103
+#: src/functions/auth.tsx:105
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr ""
 
-#: src/functions/auth.tsx:110
+#: src/functions/auth.tsx:112
 #: src/pages/Auth/Set-Password.tsx:39
 msgid "Reset failed"
 msgstr ""
 
-#: src/functions/auth.tsx:134
+#: src/functions/auth.tsx:140
 msgid "Already logged in"
 msgstr ""
 
-#: src/functions/auth.tsx:135
+#: src/functions/auth.tsx:141
 msgid "Found an existing login - using it to log you in."
 msgstr ""
 
@@ -3459,7 +3459,7 @@ msgstr ""
 msgid "Checking if you are already logged in"
 msgstr ""
 
-#: src/pages/Auth/Login.tsx:25
+#: src/pages/Auth/Login.tsx:27
 #: src/pages/Index/Scan.tsx:318
 msgid "No selection"
 msgstr ""
@@ -3793,11 +3793,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
-#~ msgstr ""
+#~ msgstr "First name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
-#~ msgstr ""
+#~ msgstr "Last name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
 msgid "Last name:"
@@ -4422,3 +4422,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
