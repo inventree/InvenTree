@@ -48,7 +48,9 @@ export const doClassicLogin = async (username: string, password: string) => {
  * Logout the user (invalidate auth token)
  */
 export const doClassicLogout = async () => {
-  // TODO @matmair - logout from the server session
+  // Logout from the server session
+  await api.post(apiUrl(ApiPaths.user_logout));
+
   // Set token in context
   const { setToken } = useSessionState.getState();
   setToken(undefined);
@@ -118,7 +120,11 @@ export function handleReset(navigate: any, values: { email: string }) {
 /**
  * Check login state, and redirect the user as required
  */
-export function checkLoginState(navigate: any, redirect?: string) {
+export function checkLoginState(
+  navigate: any,
+  redirect?: string,
+  no_redirect?: boolean
+) {
   api
     .get(apiUrl(ApiPaths.user_token), {
       timeout: 2000,
@@ -142,6 +148,6 @@ export function checkLoginState(navigate: any, redirect?: string) {
       }
     })
     .catch(() => {
-      navigate('/login');
+      if (!no_redirect) navigate('/login');
     });
 }

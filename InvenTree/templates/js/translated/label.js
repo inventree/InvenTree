@@ -50,8 +50,8 @@ function printLabels(options) {
 
     if (!options.items || options.items.length == 0) {
         showAlertDialog(
-            '{% trans "Select Items" %}',
-            '{% trans "No items selected for printing" %}',
+            '{% jstrans "Select Items" %}',
+            '{% jstrans "No items selected for printing" %}',
         );
         return;
     }
@@ -69,8 +69,8 @@ function printLabels(options) {
         success: function (response) {
             if (response.length == 0) {
                 showAlertDialog(
-                    '{% trans "No Labels Found" %}',
-                    '{% trans "No label templates found which match the selected items" %}',
+                    '{% jstrans "No Labels Found" %}',
+                    '{% jstrans "No label templates found which match the selected items" %}',
                 );
                 return;
             }
@@ -94,7 +94,7 @@ function printLabels(options) {
     if (options.items.length > 1) {
         header_html += `
             <div class='alert alert-block alert-info'>
-            ${options.items.length} ${options.plural_name} {% trans "selected" %}
+            ${options.items.length} ${options.plural_name} {% jstrans "selected" %}
             </div>
         `;
     }
@@ -130,7 +130,7 @@ function printLabels(options) {
         if (Object.keys(printingOptions).length > 0) {
             formOptions.fields = {
                 ...formOptions.fields,
-                divider: { type: "candy", html: `<hr/><h5>{% trans "Printing Options" %}</h5>` },
+                divider: { type: "candy", html: `<hr/><h5>{% jstrans "Printing Options" %}</h5>` },
                 ...printingOptions,
             };
         }
@@ -145,14 +145,14 @@ function printLabels(options) {
     }
 
     const printingFormOptions = {
-        title: options.items.length === 1 ? `{% trans "Print label" %}` : `{% trans "Print labels" %}`,
-        submitText: `{% trans "Print" %}`,
+        title: options.items.length === 1 ? `{% jstrans "Print label" %}` : `{% jstrans "Print labels" %}`,
+        submitText: `{% jstrans "Print" %}`,
         method: "POST",
         disableSuccessMessage: true,
         header_html,
         fields: {
             _label_template: {
-                label: `{% trans "Select label template" %}`,
+                label: `{% jstrans "Select label template" %}`,
                 type: "choice",
                 localOnly: true,
                 value: defaultLabelTemplates[options.key],
@@ -165,7 +165,7 @@ function printLabels(options) {
                 }
             },
             _plugin: {
-                label: `{% trans "Select plugin" %}`,
+                label: `{% jstrans "Select plugin" %}`,
                 type: "choice",
                 localOnly: true,
                 value: user_settings.LABEL_DEFAULT_PRINTER || plugins[0].key,
@@ -184,7 +184,7 @@ function printLabels(options) {
                 // Download the generated file
                 window.open(response.file);
             } else {
-                showMessage('{% trans "Labels sent to printer" %}', {
+                showMessage('{% jstrans "Labels sent to printer" %}', {
                     style: 'success',
                 });
             }

@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 161
+INVENTREE_API_VERSION = 162
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v162 -> 2024-01-14 : https://github.com/inventree/InvenTree/pull/6230
+    - Adds API endpoints to provide information on background tasks
 
 v161 -> 2024-01-13 : https://github.com/inventree/InvenTree/pull/6222
     - Adds API endpoint for system error information

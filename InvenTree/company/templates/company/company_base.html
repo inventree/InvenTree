@@ -159,7 +159,7 @@
     $('#company-delete').click(function() {
         constructForm('{% url "api-company-detail" company.pk %}', {
             method: 'DELETE',
-            title: '{% trans "Delete Company" %}',
+            title: '{% jstrans "Delete Company" %}',
             redirect: '{% url "company-index" %}',
         });
     });
@@ -202,10 +202,10 @@
     $('#company-image-delete').click(function(event) {
         event.stopPropagation();
         showQuestionDialog(
-            '{% trans "Remove Image" %}',
-            '{% trans "Remove associated image from this company" %}',
+            '{% jstrans "Remove Image" %}',
+            '{% jstrans "Remove associated image from this company" %}',
             {
-                accept_text: '{% trans "Remove" %}',
+                accept_text: '{% jstrans "Remove" %}',
                 submitClass: 'danger',
                 accept: function() {
                     inventreePut(
@@ -234,7 +234,7 @@
                 fields: {
                     image: {},
                 },
-                title: '{% trans "Upload Image" %}',
+                title: '{% jstrans "Upload Image" %}',
                 onSuccess: function(data) {
                     reloadImage(data);
                 }
@@ -249,7 +249,7 @@
                 '{% url "api-company-detail" company.pk %}',
                 {
                     method: 'PATCH',
-                    title: '{% trans "Download Image" %}',
+                    title: '{% jstrans "Download Image" %}',
                     fields: {
                         remote_image: {},
                     },

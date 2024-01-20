@@ -19,10 +19,16 @@ export enum ApiPaths {
   user_email_verify = 'api-user-email-verify',
   user_email_primary = 'api-user-email-primary',
   user_email_remove = 'api-user-email-remove',
+  user_logout = 'api-user-logout',
 
   user_list = 'api-user-list',
   group_list = 'api-group-list',
   owner_list = 'api-owner-list',
+
+  task_overview = 'api-task-overview',
+  task_pending_list = 'api-task-pending-list',
+  task_scheduled_list = 'api-task-scheduled-list',
+  task_failed_list = 'api-task-failed-list',
 
   settings_global_list = 'api-settings-global-list',
   settings_user_list = 'api-settings-user-list',

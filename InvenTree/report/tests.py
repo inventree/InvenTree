@@ -2,6 +2,7 @@
 
 import os
 import shutil
+from io import StringIO
 from pathlib import Path
 
 from django.conf import settings
@@ -200,6 +201,8 @@ class ReportTest(InvenTreeAPITestCase):
         'build',
     ]
 
+    superuser = True
+
     model = None
     list_url = None
     detail_url = None
@@ -238,6 +241,13 @@ class ReportTest(InvenTreeAPITestCase):
             enabled=True,
         )
 
+    def test_api_url(self):
+        """Test returned API Url against URL tag defined in this file."""
+        if not self.list_url:
+            return
+
+        self.assertEqual(reverse(self.list_url), self.model.get_api_url())
+
     def test_list_endpoint(self):
         """Test that the LIST endpoint works for each report."""
         if not self.list_url:
@@ -272,6 +282,109 @@ class ReportTest(InvenTreeAPITestCase):
 
         response = self.get(url, {'enabled': False})
         self.assertEqual(len(response.data), n)
+
+    def test_create_endpoint(self):
+        """Test that creating a new report works for each report."""
+        if not self.list_url:
+            return
+
+        url = reverse(self.list_url)
+
+        # Create a new report
+        # Django REST API "APITestCase" does not work like requests - to send a file without it existing on disk,
+        # create it as a StringIO object, and upload it under parameter template
+        filestr = StringIO(
+            '{% extends "label/report_base.html" %}{% block content %}<pre>TEST REPORT</pre>{% endblock content %}'
+        )
+        filestr.name = 'ExampleTemplate.html'
+
+        response = self.post(
+            url,
+            data={
+                'name': 'New report',
+                'description': 'A fancy new report created through API test',
+                'template': filestr,
+            },
+            format=None,
+            expected_code=201,
+        )
+
+        # Make sure the expected keys are in the response
+        self.assertIn('pk', response.data)
+        self.assertIn('name', response.data)
+        self.assertIn('description', response.data)
+        self.assertIn('template', response.data)
+        self.assertIn('filters', response.data)
+        self.assertIn('enabled', response.data)
+
+        self.assertEqual(response.data['name'], 'New report')
+        self.assertEqual(
+            response.data['description'], 'A fancy new report created through API test'
+        )
+        self.assertTrue(response.data['template'].endswith('ExampleTemplate.html'))
+
+    def test_detail_endpoint(self):
+        """Test that the DETAIL endpoint works for each report."""
+        if not self.detail_url:
+            return
+
+        reports = self.model.objects.all()
+
+        n = len(reports)
+
+        # Make sure at least one report defined
+        self.assertGreaterEqual(n, 1)
+
+        # Check detail page for first report
+        response = self.get(
+            reverse(self.detail_url, kwargs={'pk': reports[0].pk}), expected_code=200
+        )
+
+        # Make sure the expected keys are in the response
+        self.assertIn('pk', response.data)
+        self.assertIn('name', response.data)
+        self.assertIn('description', response.data)
+        self.assertIn('template', response.data)
+        self.assertIn('filters', response.data)
+        self.assertIn('enabled', response.data)
+
+        filestr = StringIO(
+            '{% extends "label/report_base.html" %}{% block content %}<pre>TEST REPORT VERSION 2</pre>{% endblock content %}'
+        )
+        filestr.name = 'ExampleTemplate_Updated.html'
+
+        # Check PATCH method
+        response = self.patch(
+            reverse(self.detail_url, kwargs={'pk': reports[0].pk}),
+            {
+                'name': 'Changed name during test',
+                'description': 'New version of the template',
+                'template': filestr,
+            },
+            format=None,
+            expected_code=200,
+        )
+
+        # Make sure the expected keys are in the response
+        self.assertIn('pk', response.data)
+        self.assertIn('name', response.data)
+        self.assertIn('description', response.data)
+        self.assertIn('template', response.data)
+        self.assertIn('filters', response.data)
+        self.assertIn('enabled', response.data)
+
+        self.assertEqual(response.data['name'], 'Changed name during test')
+        self.assertEqual(response.data['description'], 'New version of the template')
+
+        self.assertTrue(
+            response.data['template'].endswith('ExampleTemplate_Updated.html')
+        )
+
+        # Delete the last report
+        response = self.delete(
+            reverse(self.detail_url, kwargs={'pk': reports[n - 1].pk}),
+            expected_code=204,
+        )
 
     def test_metadata(self):
         """Unit tests for the metadata field."""

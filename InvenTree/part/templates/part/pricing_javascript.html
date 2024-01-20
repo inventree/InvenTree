@@ -21,7 +21,7 @@ $('#part-pricing-refresh').click(function() {
 
 $('#part-pricing-edit').click(function() {
     constructForm('{% url "api-part-pricing" part.pk %}', {
-        title: '{% trans "Update Pricing" %}',
+        title: '{% jstrans "Update Pricing" %}',
         fields: {
             override_min: {},
             override_min_currency: {},

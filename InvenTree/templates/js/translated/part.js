@@ -87,24 +87,24 @@ function partGroups() {
 
     return {
         attributes: {
-            title: '{% trans "Part Attributes" %}',
+            title: '{% jstrans "Part Attributes" %}',
             collapsible: true,
         },
         create: {
-            title: '{% trans "Part Creation Options" %}',
+            title: '{% jstrans "Part Creation Options" %}',
             collapsible: true,
         },
         duplicate: {
-            title: '{% trans "Part Duplication Options" %}',
+            title: '{% jstrans "Part Duplication Options" %}',
             collapsible: true,
         },
         initial_stock: {
-            title: '{% trans "Initial Stock" %}',
+            title: '{% jstrans "Initial Stock" %}',
             collapsible: true,
             hidden: !global_settings.PART_CREATE_INITIAL,
         },
         initial_supplier: {
-            title: '{% trans "Initial Supplier Data" %}',
+            title: '{% jstrans "Initial Supplier Data" %}',
             collapsible: true,
             hidden: !global_settings.PART_CREATE_SUPPLIER,
         },
@@ -118,7 +118,7 @@ function partFields(options={}) {
     var fields = {
         category: {
             secondary: {
-                title: '{% trans "Add Part Category" %}',
+                title: '{% jstrans "Add Part Category" %}',
                 fields: function() {
                     var fields = categoryFields();
 
@@ -305,7 +305,7 @@ function partFields(options={}) {
 function categoryFields(options={}) {
     let fields = {
         parent: {
-            help_text: '{% trans "Parent part category" %}',
+            help_text: '{% jstrans "Parent part category" %}',
             required: false,
             tree_picker: {
                 url: '{% url "api-part-category-tree" %}',
@@ -329,7 +329,7 @@ function categoryFields(options={}) {
         },
         structural: {},
         icon: {
-            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
+            help_text: `{% jstrans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-tag',
         },
     };
@@ -349,11 +349,11 @@ function createPartCategory(options={}) {
     constructForm('{% url "api-part-category-list" %}', {
         fields: fields,
         method: 'POST',
-        title: '{% trans "Create Part Category" %}',
+        title: '{% jstrans "Create Part Category" %}',
         follow: true,
         persist: true,
-        persistMessage: '{% trans "Create new category after this one" %}',
-        successMessage: '{% trans "Part category created" %}'
+        persistMessage: '{% jstrans "Create new category after this one" %}',
+        successMessage: '{% jstrans "Part category created" %}'
     });
 }
 
@@ -367,7 +367,7 @@ function editCategory(pk) {
 
     constructForm(url, {
         fields: fields,
-        title: '{% trans "Edit Part Category" %}',
+        title: '{% jstrans "Edit Part Category" %}',
         reload: true,
     });
 }
@@ -380,30 +380,30 @@ function deletePartCategory(pk, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% trans "Are you sure you want to delete this part category?" %}
+    {% jstrans "Are you sure you want to delete this part category?" %}
     </div>`;
     var subChoices = [
         {
             value: 0,
-            display_name: '{% trans "Move to parent category" %}',
+            display_name: '{% jstrans "Move to parent category" %}',
         },
         {
             value: 1,
-            display_name: '{% trans "Delete" %}',
+            display_name: '{% jstrans "Delete" %}',
         }
     ];
 
     constructForm(url, {
-        title: '{% trans "Delete Part Category" %}',
+        title: '{% jstrans "Delete Part Category" %}',
         method: 'DELETE',
         fields: {
             'delete_parts': {
-                label: '{% trans "Action for parts in this category" %}',
+                label: '{% jstrans "Action for parts in this category" %}',
                 choices: subChoices,
                 type: 'choice'
             },
             'delete_child_categories': {
-                label: '{% trans "Action for child categories" %}',
+                label: '{% jstrans "Action for child categories" %}',
                 choices: subChoices,
                 type: 'choice'
             },
@@ -427,10 +427,10 @@ function createPart(options={}) {
         method: 'POST',
         fields: partFields(options),
         groups: partGroups(),
-        title: '{% trans "Create Part" %}',
+        title: '{% jstrans "Create Part" %}',
         persist: true,
-        persistMessage: '{% trans "Create another part after this one" %}',
-        successMessage: '{% trans "Part created successfully" %}',
+        persistMessage: '{% jstrans "Create another part after this one" %}',
+        successMessage: '{% jstrans "Part created successfully" %}',
         onSuccess: function(data) {
             // Follow the new part
             location.href = `/part/${data.pk}/`;
@@ -458,9 +458,9 @@ function editPart(pk) {
     constructForm(url, {
         fields: fields,
         groups: groups,
-        title: '{% trans "Edit Part" %}',
+        title: '{% jstrans "Edit Part" %}',
         reload: true,
-        successMessage: '{% trans "Part edited" %}',
+        successMessage: '{% jstrans "Part edited" %}',
     });
 }
 
@@ -468,10 +468,10 @@ function editPart(pk) {
 // Launch form to duplicate a part
 function duplicatePart(pk, options={}) {
 
-    var title = '{% trans "Duplicate Part" %}';
+    var title = '{% jstrans "Duplicate Part" %}';
 
     if (options.variant) {
-        title = '{% trans "Create Part Variant" %}';
+        title = '{% jstrans "Create Part Variant" %}';
     }
 
     // First we need all the part information
@@ -528,8 +528,8 @@ function deletePart(pk, options={}) {
         success: function(part) {
             if (part.active) {
                 showAlertDialog(
-                    '{% trans "Active Part" %}',
-                    '{% trans "Part cannot be deleted as it is currently active" %}',
+                    '{% jstrans "Active Part" %}',
+                    '{% jstrans "Part cannot be deleted as it is currently active" %}',
                     {
                         alert_style: 'danger',
                     }
@@ -543,18 +543,18 @@ function deletePart(pk, options={}) {
             <div class='alert alert-block alert-danger'>
             <p>${thumb} ${part.full_name} - <em>${part.description}</em></p>
 
-            {% trans "Deleting this part cannot be reversed" %}
+            {% jstrans "Deleting this part cannot be reversed" %}
             <ul>
-            <li>{% trans "Any stock items for this part will be deleted" %}</li>
-            <li>{% trans "This part will be removed from any Bills of Material" %}</li>
-            <li>{% trans "All manufacturer and supplier information for this part will be deleted" %}</li>
+            <li>{% jstrans "Any stock items for this part will be deleted" %}</li>
+            <li>{% jstrans "This part will be removed from any Bills of Material" %}</li>
+            <li>{% jstrans "All manufacturer and supplier information for this part will be deleted" %}</li>
             </div>`;
 
             constructForm(
                 `{% url "api-part-list" %}${pk}/`,
                 {
                     method: 'DELETE',
-                    title: '{% trans "Delete Part" %}',
+                    title: '{% jstrans "Delete Part" %}',
                     preFormContent: html,
                     onSuccess: function(response) {
                         handleFormSuccess(response, options);
@@ -590,16 +590,16 @@ function toggleStar(options) {
                     success: function(response) {
                         if (response.starred) {
                             $(options.button).removeClass('fa fa-bell-slash').addClass('fas fa-bell icon-green');
-                            $(options.button).attr('title', '{% trans "You are subscribed to notifications for this item" %}');
+                            $(options.button).attr('title', '{% jstrans "You are subscribed to notifications for this item" %}');
 
-                            showMessage('{% trans "You have subscribed to notifications for this item" %}', {
+                            showMessage('{% jstrans "You have subscribed to notifications for this item" %}', {
                                 style: 'success',
                             });
                         } else {
                             $(options.button).removeClass('fas fa-bell icon-green').addClass('fa fa-bell-slash');
-                            $(options.button).attr('title', '{% trans "Subscribe to notifications for this item" %}');
+                            $(options.button).attr('title', '{% jstrans "Subscribe to notifications for this item" %}');
 
-                            showMessage('{% trans "You have unsubscribed to notifications for this item" %}', {
+                            showMessage('{% jstrans "You have unsubscribed to notifications for this item" %}', {
                                 style: 'warning',
                             });
                         }
@@ -616,7 +616,7 @@ function validateBom(part_id, options={}) {
 
     var html = `
     <div class='alert alert-block alert-success'>
-    {% trans "Validating the BOM will mark each line item as valid" %}
+    {% jstrans "Validating the BOM will mark each line item as valid" %}
     </div>
     `;
 
@@ -626,10 +626,10 @@ function validateBom(part_id, options={}) {
             valid: {},
         },
         preFormContent: html,
-        title: '{% trans "Validate Bill of Materials" %}',
+        title: '{% jstrans "Validate Bill of Materials" %}',
         reload: options.reload,
         onSuccess: function(response) {
-            showMessage('{% trans "Validated Bill of Materials" %}');
+            showMessage('{% jstrans "Validated Bill of Materials" %}');
         }
     });
 }
@@ -654,7 +654,7 @@ function duplicateBom(part_id, options={}) {
             skip_invalid: {},
         },
         confirm: true,
-        title: '{% trans "Copy Bill of Materials" %}',
+        title: '{% jstrans "Copy Bill of Materials" %}',
         onSuccess: function(response) {
             if (options.success) {
                 options.success(response);
@@ -682,36 +682,36 @@ function partStockLabel(part, options={}) {
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
         if ((part.minimum_stock > 0) && (part.minimum_stock > part.total_in_stock)) {
-            elements.push(`{% trans "Low stock" %}: ${part.total_in_stock}`);
+            elements.push(`{% jstrans "Low stock" %}: ${part.total_in_stock}`);
         } else if (part.unallocated_stock <= 0) {
             // There is no available stock at all
-            elements.push(`{% trans "No stock available" %}`);
+            elements.push(`{% jstrans "No stock available" %}`);
         } else if (part.unallocated_stock < part.in_stock) {
             // Unallocated quantity is less than total quantity
             if (options.hideTotalStock) {
-                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}`);
+                elements.push(`{% jstrans "Available" %}: ${part.unallocated_stock}`);
             } else {
-                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}`);
+                elements.push(`{% jstrans "Available" %}: ${part.unallocated_stock}/${part.in_stock}`);
             }
         } else {
             // Stock is completely available
             if (!options.hideTotalStock) {
-                elements.push(`{% trans "Available" %}: ${part.unallocated_stock}`);
+                elements.push(`{% jstrans "Available" %}: ${part.unallocated_stock}`);
             }
         }
     } else {
         // There IS NO stock available for this part
-        elements.push(`{% trans "No Stock" %}`);
+        elements.push(`{% jstrans "No Stock" %}`);
     }
 
     // Check for items on order
     if (part.ordering) {
-        elements.push(`{% trans "On Order" %}: ${part.ordering}`);
+        elements.push(`{% jstrans "On Order" %}: ${part.ordering}`);
     }
 
     // Check for items being built
     if (part.building) {
-        elements.push(`{% trans "Building" %}: ${part.building}`);
+        elements.push(`{% jstrans "Building" %}: ${part.building}`);
     }
 
     // Determine badge color based on overall stock health
@@ -745,7 +745,7 @@ function partStockLabel(part, options={}) {
 
         var demand = (required_build_order_quantity - part.allocated_to_build_orders) + (required_sales_order_quantity - part.allocated_to_sales_orders);
         if (demand) {
-            elements.push(`{% trans "Demand" %}: ${demand}`);
+            elements.push(`{% jstrans "Demand" %}: ${demand}`);
         }
 
         stock_health -= (required_build_order_quantity + required_sales_order_quantity);
@@ -768,7 +768,7 @@ function partStockLabel(part, options={}) {
 
     // Display units next to stock badge
     if (units && !options.no_units) {
-        output += `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% trans "Unit" %}: ${units}</span> `;
+        output += `<span class='badge rounded-pill text-muted bg-muted ${classes}'>{% jstrans "Unit" %}: ${units}</span> `;
     }
 
     if (elements.length > 0) {
@@ -787,31 +787,31 @@ function makePartIcons(part) {
     var html = '';
 
     if (part.trackable) {
-        html += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
+        html += makeIconBadge('fa-directions', '{% jstrans "Trackable part" %}');
     }
 
     if (part.virtual) {
-        html += makeIconBadge('fa-ghost', '{% trans "Virtual part" %}');
+        html += makeIconBadge('fa-ghost', '{% jstrans "Virtual part" %}');
     }
 
     if (part.is_template) {
-        html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
+        html += makeIconBadge('fa-clone', '{% jstrans "Template part" %}');
     }
 
     if (part.assembly) {
-        html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
+        html += makeIconBadge('fa-tools', '{% jstrans "Assembled part" %}');
     }
 
     if (part.starred) {
-        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed part" %}');
+        html += makeIconBadge('fa-bell icon-green', '{% jstrans "Subscribed part" %}');
     }
 
     if (part.salable) {
-        html += makeIconBadge('fa-dollar-sign', '{% trans "Salable part" %}');
+        html += makeIconBadge('fa-dollar-sign', '{% jstrans "Salable part" %}');
     }
 
     if (!part.active) {
-        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `;
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% jstrans "Inactive" %}</span> `;
     }
 
     return html;
@@ -886,7 +886,7 @@ function generateStocktakeReport(options={}) {
 
     let content = `
     <div class='alert alert-block alert-info'>
-    {% trans "Schedule generation of a new stocktake report." %} {% trans "Once complete, the stocktake report will be available for download." %}
+    {% jstrans "Schedule generation of a new stocktake report." %} {% jstrans "Once complete, the stocktake report will be available for download." %}
     </div>
     `;
 
@@ -894,11 +894,11 @@ function generateStocktakeReport(options={}) {
         '{% url "api-part-stocktake-report-generate" %}',
         {
             method: 'POST',
-            title: '{% trans "Generate Stocktake Report" %}',
+            title: '{% jstrans "Generate Stocktake Report" %}',
             preFormContent: content,
             fields: fields,
             onSuccess: function(response) {
-                showMessage('{% trans "Stocktake report scheduled" %}', {
+                showMessage('{% jstrans "Stocktake report scheduled" %}', {
                     style: 'success',
                 });
             }
@@ -958,7 +958,7 @@ function loadStocktakeChart(data, options={}) {
     var chart_data = {
         datasets: [
             {
-                label: '{% trans "Quantity" %}',
+                label: '{% jstrans "Quantity" %}',
                 data: quantity_data,
                 backgroundColor: 'rgba(160, 80, 220, 0.75)',
                 borderWidth: 3,
@@ -966,7 +966,7 @@ function loadStocktakeChart(data, options={}) {
                 yAxisID: 'y',
             },
             {
-                label: '{% trans "Minimum Cost" %}',
+                label: '{% jstrans "Minimum Cost" %}',
                 data: cost_min_data,
                 backgroundColor: 'rgba(220, 160, 80, 0.25)',
                 borderWidth: 2,
@@ -976,7 +976,7 @@ function loadStocktakeChart(data, options={}) {
                 fill: '+1',
             },
             {
-                label: '{% trans "Maximum Cost" %}',
+                label: '{% jstrans "Maximum Cost" %}',
                 data: cost_max_data,
                 backgroundColor: 'rgba(220, 160, 80, 0.25)',
                 borderWidth: 2,
@@ -1047,7 +1047,7 @@ function loadPartStocktakeTable(partId, options={}) {
         showColumns: true,
         sortable: true,
         formatNoMatches: function() {
-            return '{% trans "No stocktake information available" %}';
+            return '{% jstrans "No stocktake information available" %}';
         },
         onLoadSuccess: function(response) {
             var data = response.results || response;
@@ -1057,19 +1057,19 @@ function loadPartStocktakeTable(partId, options={}) {
         columns: [
             {
                 field: 'item_count',
-                title: '{% trans "Stock Items" %}',
+                title: '{% jstrans "Stock Items" %}',
                 switchable: true,
                 sortable: true,
             },
             {
                 field: 'quantity',
-                title: '{% trans "Total Quantity" %}',
+                title: '{% jstrans "Total Quantity" %}',
                 switchable: false,
                 sortable: true,
             },
             {
                 field: 'cost',
-                title: '{% trans "Total Cost" %}',
+                title: '{% jstrans "Total Cost" %}',
                 switchable: false,
                 formatter: function(value, row) {
                     return formatPriceRange(row.cost_min, row.cost_max);
@@ -1077,12 +1077,12 @@ function loadPartStocktakeTable(partId, options={}) {
             },
             {
                 field: 'note',
-                title: '{% trans "Notes" %}',
+                title: '{% jstrans "Notes" %}',
                 switchable: true,
             },
             {
                 field: 'date',
-                title: '{% trans "Date" %}',
+                title: '{% jstrans "Date" %}',
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1105,11 +1105,11 @@ function loadPartStocktakeTable(partId, options={}) {
                     let html = '';
 
                     if (options.allow_edit) {
-                        html += makeEditButton('button-edit-stocktake', row.pk, '{% trans "Edit Stocktake Entry" %}');
+                        html += makeEditButton('button-edit-stocktake', row.pk, '{% jstrans "Edit Stocktake Entry" %}');
                     }
 
                     if (options.allow_delete) {
-                        html += makeDeleteButton('button-delete-stocktake', row.pk, '{% trans "Delete Stocktake Entry" %}');
+                        html += makeDeleteButton('button-delete-stocktake', row.pk, '{% jstrans "Delete Stocktake Entry" %}');
                     }
 
                     return wrapButtons(html);
@@ -1141,7 +1141,7 @@ function loadPartStocktakeTable(partId, options={}) {
                             icon: 'fa-sticky-note',
                         },
                     },
-                    title: '{% trans "Edit Stocktake Entry" %}',
+                    title: '{% jstrans "Edit Stocktake Entry" %}',
                     refreshTable: table,
                 });
             });
@@ -1151,7 +1151,7 @@ function loadPartStocktakeTable(partId, options={}) {
 
                 constructForm(`{% url "api-part-stocktake-list" %}${pk}/`, {
                     method: 'DELETE',
-                    title: '{% trans "Delete Stocktake Entry" %}',
+                    title: '{% jstrans "Delete Stocktake Entry" %}',
                     refreshTable: table,
                 });
             });
@@ -1183,7 +1183,7 @@ function loadPartVariantTable(table, partId, options={}) {
         },
         {
             field: 'name',
-            title: '{% trans "Name" %}',
+            title: '{% jstrans "Name" %}',
             switchable: false,
             sortable: true,
             formatter: function(value, row) {
@@ -1199,23 +1199,23 @@ function loadPartVariantTable(table, partId, options={}) {
                 html += renderLink(name, `/part/${row.pk}/`);
 
                 if (row.trackable) {
-                    html += makeIconBadge('fa-directions', '{% trans "Trackable part" %}');
+                    html += makeIconBadge('fa-directions', '{% jstrans "Trackable part" %}');
                 }
 
                 if (row.virtual) {
-                    html += makeIconBadge('fa-ghost', '{% trans "Virtual part" %}');
+                    html += makeIconBadge('fa-ghost', '{% jstrans "Virtual part" %}');
                 }
 
                 if (row.is_template) {
-                    html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
+                    html += makeIconBadge('fa-clone', '{% jstrans "Template part" %}');
                 }
 
                 if (row.assembly) {
-                    html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
+                    html += makeIconBadge('fa-tools', '{% jstrans "Assembled part" %}');
                 }
 
                 if (!row.active) {
-                    html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
+                    html += `<span class='badge badge-right rounded-pill bg-warning'>{% jstrans "Inactive" %}</span>`;
                 }
 
                 return html;
@@ -1223,23 +1223,23 @@ function loadPartVariantTable(table, partId, options={}) {
         },
         {
             field: 'IPN',
-            title: '{% trans "IPN" %}',
+            title: '{% jstrans "IPN" %}',
             sortable: true,
         },
         {
             field: 'revision',
-            title: '{% trans "Revision" %}',
+            title: '{% jstrans "Revision" %}',
             switchable: global_settings.PART_ENABLE_REVISION,
             visible: global_settings.PART_ENABLE_REVISION,
             sortable: true,
         },
         {
             field: 'description',
-            title: '{% trans "Description" %}',
+            title: '{% jstrans "Description" %}',
         },
         {
             field: 'total_in_stock',
-            title: '{% trans "Stock" %}',
+            title: '{% jstrans "Stock" %}',
             sortable: true,
             formatter: function(value, row) {
 
@@ -1253,7 +1253,7 @@ function loadPartVariantTable(table, partId, options={}) {
 
                 if (row.variant_stock > 0) {
                     text = `<em>${text}</em>`;
-                    text += `<span title='{% trans "Includes variant stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                    text += `<span title='{% jstrans "Includes variant stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
                 }
 
                 return text;
@@ -1261,7 +1261,7 @@ function loadPartVariantTable(table, partId, options={}) {
         },
         {
             field: 'price_range',
-            title: '{% trans "Price Range" %}',
+            title: '{% jstrans "Price Range" %}',
             formatter: function(value, row) {
                 return formatPriceRange(
                     row.pricing_min,
@@ -1278,7 +1278,7 @@ function loadPartVariantTable(table, partId, options={}) {
         original: params,
         queryParams: filters,
         formatNoMatches: function() {
-            return '{% trans "No variants found" %}';
+            return '{% jstrans "No variants found" %}';
         },
         columns: cols,
         treeEnable: true,
@@ -1419,7 +1419,7 @@ function createPartParameter(part_id, options={}) {
     }
 
     options.method = 'POST';
-    options.title = '{% trans "Add Parameter" %}';
+    options.title = '{% jstrans "Add Parameter" %}';
 
     constructForm('{% url "api-part-parameter-list" %}', options);
 }
@@ -1430,7 +1430,7 @@ function createPartParameter(part_id, options={}) {
  */
 function editPartParameter(param_id, options={}) {
     options.fields = partParameterFields();
-    options.title = '{% trans "Edit Parameter" %}';
+    options.title = '{% jstrans "Edit Parameter" %}';
     options.focus = 'data';
 
     options.processBeforeUpload = function(data) {
@@ -1461,7 +1461,7 @@ function loadPartParameterTable(table, options) {
         name: 'partparameters',
         groupBy: false,
         formatNoMatches: function() {
-            return '{% trans "No parameters found" %}';
+            return '{% jstrans "No parameters found" %}';
         },
         columns: [
             {
@@ -1471,7 +1471,7 @@ function loadPartParameterTable(table, options) {
             },
             {
                 field: 'name',
-                title: '{% trans "Name" %}',
+                title: '{% jstrans "Name" %}',
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1480,7 +1480,7 @@ function loadPartParameterTable(table, options) {
             },
             {
                 field: 'description',
-                title: '{% trans "Description" %}',
+                title: '{% jstrans "Description" %}',
                 switchable: true,
                 sortable: false,
                 formatter: function(value, row) {
@@ -1489,7 +1489,7 @@ function loadPartParameterTable(table, options) {
             },
             {
                 field: 'data',
-                title: '{% trans "Value" %}',
+                title: '{% jstrans "Value" %}',
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1508,7 +1508,7 @@ function loadPartParameterTable(table, options) {
             },
             {
                 field: 'units',
-                title: '{% trans "Units" %}',
+                title: '{% jstrans "Units" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1524,8 +1524,8 @@ function loadPartParameterTable(table, options) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeEditButton('button-parameter-edit', pk, '{% trans "Edit parameter" %}');
-                    html += makeDeleteButton('button-parameter-delete', pk, '{% trans "Delete parameter" %}');
+                    html += makeEditButton('button-parameter-edit', pk, '{% jstrans "Edit parameter" %}');
+                    html += makeDeleteButton('button-parameter-delete', pk, '{% jstrans "Delete parameter" %}');
 
                     return wrapButtons(html);
                 }
@@ -1546,7 +1546,7 @@ function loadPartParameterTable(table, options) {
 
                 constructForm(`{% url "api-part-parameter-list" %}${pk}/`, {
                     method: 'DELETE',
-                    title: '{% trans "Delete Parameter" %}',
+                    title: '{% jstrans "Delete Parameter" %}',
                     refreshTable: table,
                 });
             });
@@ -1596,35 +1596,35 @@ function loadPartParameterTemplateTable(table, options={}) {
         sidePagination: 'server',
         name: 'part-parameter-templates',
         formatNoMatches: function() {
-            return '{% trans "No part parameter templates found" %}';
+            return '{% jstrans "No part parameter templates found" %}';
         },
         columns: [
             {
                 field: 'pk',
-                title: '{% trans "ID" %}',
+                title: '{% jstrans "ID" %}',
                 visible: false,
                 switchable: false,
             },
             {
                 field: 'name',
-                title: '{% trans "Name" %}',
+                title: '{% jstrans "Name" %}',
                 sortable: true,
             },
             {
                 field: 'units',
-                title: '{% trans "Units" %}',
+                title: '{% jstrans "Units" %}',
                 sortable: true,
                 switchable: true,
             },
             {
                 field: 'description',
-                title: '{% trans "Description" %}',
+                title: '{% jstrans "Description" %}',
                 sortable: false,
                 switchable: true,
             },
             {
                 field: 'checkbox',
-                title: '{% trans "Checkbox" %}',
+                title: '{% jstrans "Checkbox" %}',
                 sortable: false,
                 switchable: true,
                 formatter: function(value) {
@@ -1633,7 +1633,7 @@ function loadPartParameterTemplateTable(table, options={}) {
             },
             {
                 field: 'choices',
-                title: '{% trans "Choices" %}',
+                title: '{% jstrans "Choices" %}',
                 sortable: false,
                 switchable: true,
             },
@@ -1642,8 +1642,8 @@ function loadPartParameterTemplateTable(table, options={}) {
 
                     let buttons = '';
 
-                    buttons += makeEditButton('template-edit', row.pk, '{% trans "Edit Template" %}');
-                    buttons += makeDeleteButton('template-delete', row.pk, '{% trans "Delete Template" %}');
+                    buttons += makeEditButton('template-edit', row.pk, '{% jstrans "Edit Template" %}');
+                    buttons += makeDeleteButton('template-delete', row.pk, '{% jstrans "Delete Template" %}');
 
                     return wrapButtons(buttons);
                 }
@@ -1659,7 +1659,7 @@ function loadPartParameterTemplateTable(table, options={}) {
             `/api/part/parameter/template/${pk}/`,
             {
                 fields: partParameterTemplateFields(),
-                title: '{% trans "Edit Part Parameter Template" %}',
+                title: '{% jstrans "Edit Part Parameter Template" %}',
                 refreshTable: table,
             }
         );
@@ -1671,7 +1671,7 @@ function loadPartParameterTemplateTable(table, options={}) {
 
         var html = `
         <div class='alert alert-block alert-danger'>
-            {% trans "Any parameters which reference this template will also be deleted" %}
+            {% jstrans "Any parameters which reference this template will also be deleted" %}
         </div>`;
 
         constructForm(
@@ -1679,7 +1679,7 @@ function loadPartParameterTemplateTable(table, options={}) {
             {
                 method: 'DELETE',
                 preFormContent: html,
-                title: '{% trans "Delete Part Parameter Template" %}',
+                title: '{% jstrans "Delete Part Parameter Template" %}',
                 refreshTable: table,
             }
         );
@@ -1713,7 +1713,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
         showColumns: true,
         uniqueId: 'pk',
         formatNoMatches: function() {
-            return '{% trans "No purchase orders found" %}';
+            return '{% jstrans "No purchase orders found" %}';
         },
         onPostBody: function() {
             $(table).find('.button-line-receive').click(function() {
@@ -1742,7 +1742,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
         columns: [
             {
                 field: 'order',
-                title: '{% trans "Purchase Order" %}',
+                title: '{% jstrans "Purchase Order" %}',
                 switchable: false,
                 formatter: function(value, row) {
                     var order = row.order_detail;
@@ -1765,7 +1765,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             },
             {
                 field: 'supplier',
-                title: '{% trans "Supplier" %}',
+                title: '{% jstrans "Supplier" %}',
                 switchable: true,
                 formatter: function(value, row) {
 
@@ -1783,7 +1783,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             },
             {
                 field: 'sku',
-                title: '{% trans "SKU" %}',
+                title: '{% jstrans "SKU" %}',
                 switchable: true,
                 formatter: function(value, row) {
                     if (row.supplier_part_detail) {
@@ -1797,7 +1797,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             },
             {
                 field: 'mpn',
-                title: '{% trans "MPN" %}',
+                title: '{% jstrans "MPN" %}',
                 switchable: true,
                 formatter: function(value, row) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part_detail) {
@@ -1808,7 +1808,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% trans "Quantity" %}',
+                title: '{% jstrans "Quantity" %}',
                 formatter: function(value, row) {
                     let data = value;
 
@@ -1818,7 +1818,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
 
                         data += makeIconBadge(
                             'fa-info-circle icon-blue',
-                            `{% trans "Pack Quantity" %}: ${pq} - {% trans "Total Quantity" %}: ${total}`
+                            `{% jstrans "Pack Quantity" %}: ${pq} - {% jstrans "Total Quantity" %}: ${total}`
                         );
                     }
 
@@ -1827,7 +1827,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             },
             {
                 field: 'target_date',
-                title: '{% trans "Target Date" %}',
+                title: '{% jstrans "Target Date" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1857,7 +1857,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     if (overdue) {
                         html += makeIconBadge(
                             'fa-calendar-alt icon-red',
-                            '{% trans "This line item is overdue" %}',
+                            '{% jstrans "This line item is overdue" %}',
                         );
                     }
 
@@ -1866,7 +1866,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             },
             {
                 field: 'received',
-                title: '{% trans "Received" %}',
+                title: '{% jstrans "Received" %}',
                 switchable: true,
                 formatter: function(value, row) {
                     var data = value;
@@ -1874,7 +1874,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     if (value > 0 && row.supplier_part_detail && row.supplier_part_detail.pack_quantity_native != 1.0) {
                         let pq = row.supplier_part_detail.pack_quantity_native;
                         let total = value * pq;
-                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pq} - {% trans "Total Quantity" %}: ${total}'></span>`;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% jstrans "Pack Quantity" %}: ${pq} - {% jstrans "Total Quantity" %}: ${total}'></span>`;
                     }
 
                     return data;
@@ -1882,7 +1882,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             },
             {
                 field: 'purchase_price',
-                title: '{% trans "Price" %}',
+                title: '{% jstrans "Price" %}',
                 switchable: true,
                 formatter: function(value, row) {
                     return formatCurrency(row.purchase_price, {
@@ -1898,12 +1898,12 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
 
                     if (row.received >= row.quantity) {
                         // Already received
-                        return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
+                        return `<span class='badge bg-success rounded-pill'>{% jstrans "Received" %}</span>`;
                     } else if (row.order_detail && row.order_detail.status == {{ PurchaseOrderStatus.PLACED }}) {
                         let html = '';
                         var pk = row.pk;
 
-                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% jstrans "Receive line item" %}');
 
                         return wrapButtons(html);
                     } else {
@@ -1940,7 +1940,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
     var columns = [
         {
             field: 'name',
-            title: '{% trans "Part" %}',
+            title: '{% jstrans "Part" %}',
             switchable: false,
             formatter: function(value, row) {
 
@@ -1955,7 +1955,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
         },
         {
             field: 'description',
-            title: '{% trans "Description" %}',
+            title: '{% jstrans "Description" %}',
             formatter: function(value, row) {
                 return getPart(row).description;
             }
@@ -1966,7 +1966,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
             switchable: false,
             formatter: function(value, row) {
                 let html = '';
-                html += makeDeleteButton('button-related-delete', row.pk, '{% trans "Delete part relationship" %}');
+                html += makeDeleteButton('button-related-delete', row.pk, '{% jstrans "Delete part relationship" %}');
 
                 return wrapButtons(html);
             }
@@ -1988,7 +1988,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
 
                 constructForm(`{% url "api-part-related-list" %}${pk}/`, {
                     method: 'DELETE',
-                    title: '{% trans "Delete Part Relationship" %}',
+                    title: '{% jstrans "Delete Part Relationship" %}',
                     refreshTable: table,
                 });
             });
@@ -2012,7 +2012,7 @@ function loadParametricPartTable(table, options={}) {
     var columns = [
         {
             field: 'name',
-            title: '{% trans "Part" %}',
+            title: '{% jstrans "Part" %}',
             switchable: false,
             sortable: true,
             formatter: function(value, row) {
@@ -2076,7 +2076,7 @@ function loadParametricPartTable(table, options={}) {
         groupBy: false,
         name: options.name || 'part-parameters',
         formatNoMatches: function() {
-            return '{% trans "No parts found" %}';
+            return '{% jstrans "No parts found" %}';
         },
         // TODO: Re-enable filter control for parameter values
         // Ref: https://github.com/inventree/InvenTree/issues/4851
@@ -2137,19 +2137,19 @@ function partGridTile(part) {
     var stock = `${part.in_stock} ${units}`;
 
     if (!part.in_stock) {
-        stock = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+        stock = `<span class='badge rounded-pill bg-danger'>{% jstrans "No Stock" %}</span>`;
     } else if (!part.unallocated_stock) {
-        stock = `<span class='badge rounded-pill bg-warning'>{% trans "No Stock" %}</span>`;
+        stock = `<span class='badge rounded-pill bg-warning'>{% jstrans "No Stock" %}</span>`;
     }
 
-    rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
+    rows += `<tr><td><b>{% jstrans "Stock" %}</b></td><td>${stock}</td></tr>`;
 
     if (part.ordering) {
-        rows += `<tr><td><b>{% trans "On Order" %}</b></td><td>${part.ordering} ${units}</td></tr>`;
+        rows += `<tr><td><b>{% jstrans "On Order" %}</b></td><td>${part.ordering} ${units}</td></tr>`;
     }
 
     if (part.building) {
-        rows += `<tr><td><b>{% trans "Building" %}</b></td><td>${part.building} ${units}</td></tr>`;
+        rows += `<tr><td><b>{% jstrans "Building" %}</b></td><td>${part.building} ${units}</td></tr>`;
     }
 
     var html = `
@@ -2197,12 +2197,12 @@ function setPartCategory(data, options={}) {
 
     var html = `
     <div class='alert alert-block alert-info'>
-        {% trans "Set the part category for the selected parts" %}
+        {% jstrans "Set the part category for the selected parts" %}
     </div>
     `;
 
     constructForm('{% url "api-part-change-category" %}',{
-        title: '{% trans "Set Part Category" %}',
+        title: '{% jstrans "Set Part Category" %}',
         method: 'POST',
         preFormContent: html,
         fields: {
@@ -2232,7 +2232,7 @@ function makePartActions(table) {
     return [
         {
             label: 'set-category',
-            title: '{% trans "Set category" %}',
+            title: '{% jstrans "Set category" %}',
             icon: 'fa-sitemap',
             permission: 'part.change',
             callback: function(data) {
@@ -2241,7 +2241,7 @@ function makePartActions(table) {
         },
         {
             label: 'order',
-            title: '{% trans "Order parts" %}',
+            title: '{% jstrans "Order parts" %}',
             icon: 'fa-shopping-cart',
             permission: 'purchase_order.add',
             callback: function(data) {
@@ -2284,13 +2284,13 @@ function loadPartTable(table, url, options={}) {
                 url: '{% url "api-part-label-list" %}',
                 key: 'part',
             },
-            singular_name: '{% trans "part" %}',
-            plural_name: '{% trans "parts" %}',
+            singular_name: '{% jstrans "part" %}',
+            plural_name: '{% jstrans "parts" %}',
             custom_actions: [
                 {
                     label: 'parts',
                     icon: 'fa-tools',
-                    title: '{% trans "Part actions" %}',
+                    title: '{% jstrans "Part actions" %}',
                     actions: makePartActions(table),
                 }
             ]
@@ -2313,7 +2313,7 @@ function loadPartTable(table, url, options={}) {
     if (options.checkbox) {
         columns.push({
             checkbox: true,
-            title: '{% trans "Select" %}',
+            title: '{% jstrans "Select" %}',
             searchable: false,
             switchable: false,
         });
@@ -2321,7 +2321,7 @@ function loadPartTable(table, url, options={}) {
 
     columns.push({
         field: 'name',
-        title: '{% trans "Part" %}',
+        title: '{% jstrans "Part" %}',
         switchable: false,
         sortable: !options.params.ordering,
         formatter: function(value, row) {
@@ -2338,13 +2338,13 @@ function loadPartTable(table, url, options={}) {
 
     columns.push({
         field: 'IPN',
-        title: '{% trans "IPN" %}',
+        title: '{% jstrans "IPN" %}',
         sortable: !options.params.ordering
     });
 
     columns.push({
         field: 'revision',
-        title: '{% trans "Revision" %}',
+        title: '{% jstrans "Revision" %}',
         switchable: global_settings.PART_ENABLE_REVISION,
         visible: global_settings.PART_ENABLE_REVISION,
         sortable: true,
@@ -2352,7 +2352,7 @@ function loadPartTable(table, url, options={}) {
 
     columns.push({
         field: 'description',
-        title: '{% trans "Description" %}',
+        title: '{% jstrans "Description" %}',
         formatter: function(value, row) {
 
             var text = shortenString(value);
@@ -2367,21 +2367,21 @@ function loadPartTable(table, url, options={}) {
 
     columns.push({
         field: 'units',
-        title: '{% trans "Units" %}',
+        title: '{% jstrans "Units" %}',
         sortable: true,
     });
 
     columns.push({
         sortName: 'category',
         field: 'category_detail',
-        title: '{% trans "Category" %}',
+        title: '{% jstrans "Category" %}',
         sortable: true,
         formatter: function(value, row) {
             if (row.category && row.category_detail) {
                 var text = shortenString(row.category_detail.pathstring);
                 return withTitle(renderLink(text, `/part/category/${row.category}/`), row.category_detail.pathstring);
             } else {
-                return '<em>{% trans "No category" %}</em>';
+                return '<em>{% jstrans "No category" %}</em>';
             }
         }
     });
@@ -2389,7 +2389,7 @@ function loadPartTable(table, url, options={}) {
 
     columns.push({
         field: 'total_in_stock',
-        title: '{% trans "Stock" %}',
+        title: '{% jstrans "Stock" %}',
         sortable: true,
         formatter: function(value, row) {
 
@@ -2441,7 +2441,7 @@ function loadPartTable(table, url, options={}) {
     columns.push({
         field: 'pricing_min',
         sortable: false,
-        title: '{% trans "Price Range" %}',
+        title: '{% jstrans "Price Range" %}',
         formatter: function(value, row) {
             return formatPriceRange(
                 row.pricing_min,
@@ -2453,7 +2453,7 @@ function loadPartTable(table, url, options={}) {
     // External link / URL
     columns.push({
         field: 'link',
-        title: '{% trans "Link" %}',
+        title: '{% jstrans "Link" %}',
         formatter: function(value) {
             return renderLink(
                 value,
@@ -2468,7 +2468,7 @@ function loadPartTable(table, url, options={}) {
 
     columns.push({
         field: 'last_stocktake',
-        title: '{% trans "Last Stocktake" %}',
+        title: '{% jstrans "Last Stocktake" %}',
         sortable: true,
         switchable: true,
         formatter: function(value) {
@@ -2503,7 +2503,7 @@ function loadPartTable(table, url, options={}) {
         sidePagination: 'server',
         pagination: 'true',
         formatNoMatches: function() {
-            return '{% trans "No parts found" %}';
+            return '{% jstrans "No parts found" %}';
         },
         columns: columns,
         showColumns: true,
@@ -2528,7 +2528,7 @@ function loadPartTable(table, url, options={}) {
             {
                 icon: 'fas fa-bars',
                 attributes: {
-                    title: '{% trans "Display as list" %}',
+                    title: '{% jstrans "Display as list" %}',
                     id: 'view-part-list',
                 },
                 event: () => {
@@ -2544,7 +2544,7 @@ function loadPartTable(table, url, options={}) {
             {
                 icon: 'fas fa-th',
                 attributes: {
-                    title: '{% trans "Display as grid" %}',
+                    title: '{% jstrans "Display as grid" %}',
                     id: 'view-part-grid',
                 },
                 event: () => {
@@ -2642,7 +2642,7 @@ function loadPartCategoryTable(table, options) {
         parentIdField: tree_view ? 'parent' : null,
         method: 'get',
         formatNoMatches: function() {
-            return '{% trans "No subcategories found" %}';
+            return '{% jstrans "No subcategories found" %}';
         },
         url: options.url || '{% url "api-part-category-list" %}',
         queryParams: filters,
@@ -2658,7 +2658,7 @@ function loadPartCategoryTable(table, options) {
             {
                 icon: 'fas fa-bars',
                 attributes: {
-                    title: '{% trans "Display as list" %}',
+                    title: '{% jstrans "Display as list" %}',
                     id: 'view-category-list',
                 },
                 event: () => {
@@ -2678,7 +2678,7 @@ function loadPartCategoryTable(table, options) {
             {
                 icon: 'fas fa-sitemap',
                 attributes: {
-                    title: '{% trans "Display as tree" %}',
+                    title: '{% jstrans "Display as tree" %}',
                     id: 'view-category-tree',
                 },
                 event: () => {
@@ -2739,14 +2739,14 @@ function loadPartCategoryTable(table, options) {
         columns: [
             {
                 checkbox: true,
-                title: '{% trans "Select" %}',
+                title: '{% jstrans "Select" %}',
                 searchable: false,
                 switchable: false,
                 visible: false,
             },
             {
                 field: 'name',
-                title: '{% trans "Name" %}',
+                title: '{% jstrans "Name" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
@@ -2758,7 +2758,7 @@ function loadPartCategoryTable(table, options) {
                         } else {
                             html += `
                                 <a href='#' pk='${row.pk}' class='load-sub-category'>
-                                    <span class='fas fa-sync-alt' title='{% trans "Load Subcategories" %}'></span>
+                                    <span class='fas fa-sync-alt' title='{% jstrans "Load Subcategories" %}'></span>
                                 </a> `;
                         }
                     }
@@ -2774,7 +2774,7 @@ function loadPartCategoryTable(table, options) {
                     );
 
                     if (row.starred) {
-                        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed category" %}');
+                        html += makeIconBadge('fa-bell icon-green', '{% jstrans "Subscribed category" %}');
                     }
 
                     return html;
@@ -2782,7 +2782,7 @@ function loadPartCategoryTable(table, options) {
             },
             {
                 field: 'description',
-                title: '{% trans "Description" %}',
+                title: '{% jstrans "Description" %}',
                 switchable: true,
                 sortable: false,
                 formatter: function(value) {
@@ -2791,7 +2791,7 @@ function loadPartCategoryTable(table, options) {
             },
             {
                 field: 'pathstring',
-                title: '{% trans "Path" %}',
+                title: '{% jstrans "Path" %}',
                 switchable: !tree_view,
                 visible: !tree_view,
                 sortable: true,
@@ -2801,7 +2801,7 @@ function loadPartCategoryTable(table, options) {
             },
             {
                 field: 'part_count',
-                title: '{% trans "Parts" %}',
+                title: '{% jstrans "Parts" %}',
                 switchable: true,
                 sortable: true,
             }
@@ -2851,7 +2851,7 @@ function loadPartTestTemplateTable(table, options) {
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
-            return '{% trans "No test templates matching query" %}';
+            return '{% jstrans "No test templates matching query" %}';
         },
         url: '{% url "api-part-test-template-list" %}',
         queryParams: filters,
@@ -2865,16 +2865,16 @@ function loadPartTestTemplateTable(table, options) {
             },
             {
                 field: 'test_name',
-                title: '{% trans "Test Name" %}',
+                title: '{% jstrans "Test Name" %}',
                 sortable: true,
             },
             {
                 field: 'description',
-                title: '{% trans "Description" %}',
+                title: '{% jstrans "Description" %}',
             },
             {
                 field: 'required',
-                title: '{% trans "Required" %}',
+                title: '{% jstrans "Required" %}',
                 sortable: true,
                 formatter: function(value) {
                     return yesNoLabel(value);
@@ -2882,14 +2882,14 @@ function loadPartTestTemplateTable(table, options) {
             },
             {
                 field: 'requires_value',
-                title: '{% trans "Requires Value" %}',
+                title: '{% jstrans "Requires Value" %}',
                 formatter: function(value) {
                     return yesNoLabel(value);
                 }
             },
             {
                 field: 'requires_attachment',
-                title: '{% trans "Requires Attachment" %}',
+                title: '{% jstrans "Requires Attachment" %}',
                 formatter: function(value) {
                     return yesNoLabel(value);
                 }
@@ -2902,12 +2902,12 @@ function loadPartTestTemplateTable(table, options) {
                     if (row.part == part) {
                         let html = '';
 
-                        html += makeEditButton('button-test-edit', pk, '{% trans "Edit test result" %}');
-                        html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test result" %}');
+                        html += makeEditButton('button-test-edit', pk, '{% jstrans "Edit test result" %}');
+                        html += makeDeleteButton('button-test-delete', pk, '{% jstrans "Delete test result" %}');
 
                         return wrapButtons(html);
                     } else {
-                        var text = '{% trans "This test is defined for a parent part" %}';
+                        var text = '{% jstrans "This test is defined for a parent part" %}';
 
                         return renderLink(text, `/part/${row.part}/tests/`);
                     }
@@ -2923,7 +2923,7 @@ function loadPartTestTemplateTable(table, options) {
 
                 constructForm(url, {
                     fields: partTestTemplateFields(),
-                    title: '{% trans "Edit Test Result Template" %}',
+                    title: '{% jstrans "Edit Test Result Template" %}',
                     onSuccess: function() {
                         table.bootstrapTable('refresh');
                     },
@@ -2937,7 +2937,7 @@ function loadPartTestTemplateTable(table, options) {
 
                 constructForm(url, {
                     method: 'DELETE',
-                    title: '{% trans "Delete Test Result Template" %}',
+                    title: '{% jstrans "Delete Test Result Template" %}',
                     refreshTable: table,
                 });
             });
@@ -3016,16 +3016,16 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     var date_string = entry.date;
 
                     if (date == null) {
-                        date_string = '<em>{% trans "No date specified" %}</em>';
-                        date_string += makeIconBadge('fa-exclamation-circle icon-red', '{% trans "No date specified" %}');
+                        date_string = '<em>{% jstrans "No date specified" %}</em>';
+                        date_string += makeIconBadge('fa-exclamation-circle icon-red', '{% jstrans "No date specified" %}');
                     } else if (date < today) {
-                        date_string += makeIconBadge('fa-exclamation-circle icon-yellow', '{% trans "Specified date is in the past" %}');
+                        date_string += makeIconBadge('fa-exclamation-circle icon-yellow', '{% jstrans "Specified date is in the past" %}');
                     }
 
                     var quantity_string = entry.quantity + entry.speculative_quantity;
 
                     if (entry.speculative_quantity != 0) {
-                        quantity_string += makeIconBadge('fa-question-circle icon-blue', '{% trans "Speculative" %}');
+                        quantity_string += makeIconBadge('fa-question-circle icon-blue', '{% jstrans "Speculative" %}');
                     }
 
                     // Add an entry to the scheduling table
@@ -3075,13 +3075,13 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
         var message = `
         <div class='alert alert-block alert-info'>
-            {% trans "No scheduling information available for this part" %}.
+            {% jstrans "No scheduling information available for this part" %}.
         </div>`;
 
         if (was_error) {
             message = `
                 <div class='alert alert-block alert-danger'>
-                    {% trans "Error fetching scheduling information for this part" %}.
+                    {% jstrans "Error fetching scheduling information for this part" %}.
                 </div>
             `;
         }
@@ -3177,14 +3177,14 @@ function loadPartSchedulingChart(canvas_id, part_id) {
     var data = {
         datasets: [
             {
-                label: '{% trans "Scheduled Stock Quantities" %}',
+                label: '{% jstrans "Scheduled Stock Quantities" %}',
                 data: quantity_scheduled,
                 backgroundColor: 'rgba(160, 80, 220, 0.75)',
                 borderWidth: 3,
                 borderColor: 'rgb(160, 80, 220)'
             },
             {
-                label: '{% trans "Minimum Quantity" %}',
+                label: '{% jstrans "Minimum Quantity" %}',
                 data: q_spec_min,
                 backgroundColor: 'rgba(220, 160, 80, 0.25)',
                 borderWidth: 2,
@@ -3193,7 +3193,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                 fill: '-1',
             },
             {
-                label: '{% trans "Maximum Quantity" %}',
+                label: '{% jstrans "Maximum Quantity" %}',
                 data: q_spec_max,
                 backgroundColor: 'rgba(220, 160, 80, 0.25)',
                 borderWidth: 2,
@@ -3238,7 +3238,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
         data.datasets.push({
             data: minimum_stock_curve,
-            label: '{% trans "Minimum Stock Level" %}',
+            label: '{% jstrans "Minimum Stock Level" %}',
             backgroundColor: 'rgba(250, 50, 50, 0.1)',
             borderColor: 'rgba(250, 50, 50, 0.5)',
             borderDash: [5, 5],
@@ -3307,7 +3307,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                                 delta = ` (${item.raw.delta > 0 ? '+' : ''}${item.raw.delta})`;
                             }
 
-                            return `{% trans "Quantity" %}: ${item.raw.y}${delta}`;
+                            return `{% jstrans "Quantity" %}: ${item.raw.y}${delta}`;
                         }
                     }
                 },

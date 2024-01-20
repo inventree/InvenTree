@@ -298,7 +298,7 @@ def static(c, frontend=False):
     manage(c, 'prerender')
     if frontend and node_available():
         frontend_build(c)
-    manage(c, 'collectstatic --no-input')
+    manage(c, 'collectstatic --no-input --clear')
 
 
 @task
@@ -376,14 +376,21 @@ def migrate(c):
 
 
 @task(
-    post=[static, clean_settings, translate_stats],
+    post=[clean_settings, translate_stats],
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
+        'skip_static': 'Skip static file collection step',
     },
 )
-def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = False):
+def update(
+    c,
+    skip_backup: bool = False,
+    frontend: bool = False,
+    no_frontend: bool = False,
+    skip_static: bool = False,
+):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -394,8 +401,8 @@ def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = Fal
     - install
     - backup (optional)
     - migrate
-    - frontend_compile or frontend_download
-    - static
+    - frontend_compile or frontend_download (optional)
+    - static (optional)
     - clean_settings
     - translate_stats
     """
@@ -420,6 +427,9 @@ def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = Fal
         frontend_compile(c)
     else:
         frontend_download(c)
+
+    if not skip_static:
+        static(c)
 
 
 # Data tasks
