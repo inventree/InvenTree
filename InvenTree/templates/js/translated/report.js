@@ -60,7 +60,7 @@ function selectReport(reports, items, options={}) {
 
         html += `
         <div class='alert alert-block alert-info'>
-        ${items.length} {% jstrans "items selected" %}
+        ${items.length} {% trans "items selected" %}
         </div>`;
     }
 
@@ -68,7 +68,7 @@ function selectReport(reports, items, options={}) {
     <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
         <div class='form-group'>
             <label class='control-label requiredField' for='id_report'>
-            {% jstrans "Select Report Template" %}
+            {% trans "Select Report Template" %}
             </label>
             <div class='controls'>
                 <select id='id_report' class='select form-control name='report'>
@@ -83,7 +83,7 @@ function selectReport(reports, items, options={}) {
     });
 
     modalEnable(modal, true);
-    modalSetTitle(modal, '{% jstrans "Select Test Report Template" %}');
+    modalSetTitle(modal, '{% trans "Select Test Report Template" %}');
     modalSetContent(modal, html);
 
     attachSelect(modal);
@@ -120,8 +120,8 @@ function printReports(options) {
 
     if (!options.items || options.items.length == 0) {
         showAlertDialog(
-            '{% jstrans "Select Items" %}',
-            '{% jstrans "No items selected for printing" }',
+            '{% trans "Select Items" %}',
+            '{% trans "No items selected for printing" }',
         );
         return;
     }
@@ -137,8 +137,8 @@ function printReports(options) {
         success: function(response) {
             if (response.length == 0) {
                 showAlertDialog(
-                    '{% jstrans "No Reports Found" %}',
-                    '{% jstrans "No report templates found which match the selected items" %}',
+                    '{% trans "No Reports Found" %}',
+                    '{% trans "No report templates found which match the selected items" %}',
                 );
                 return;
             }

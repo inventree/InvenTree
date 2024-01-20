@@ -86,7 +86,7 @@ function createExtraLineItem(options={}) {
     constructForm(options.url, {
         fields: fields,
         method: 'POST',
-        title: '{% jstrans "Add Extra Line Item" %}',
+        title: '{% trans "Add Extra Line Item" %}',
         onSuccess: function(response) {
             if (options.table) {
                 reloadBootstrapTable(options.table);
@@ -123,11 +123,11 @@ function exportOrder(redirect_url, options={}) {
     }
 
     constructFormBody({}, {
-        title: '{% jstrans "Export Order" %}',
+        title: '{% trans "Export Order" %}',
         fields: {
             format: {
-                label: '{% jstrans "Format" %}',
-                help_text: '{% jstrans "Select file format" %}',
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select file format" %}',
                 required: true,
                 type: 'choice',
                 value: format,
@@ -238,7 +238,7 @@ function loadExtraLineTable(options={}) {
                             method: 'POST',
                             fields: fields,
                             data: data,
-                            title: '{% jstrans "Duplicate Line" %}',
+                            title: '{% trans "Duplicate Line" %}',
                             onSuccess: reloadExtraLineTable,
                         });
                     }
@@ -252,7 +252,7 @@ function loadExtraLineTable(options={}) {
 
                 constructForm(`${options.url}${pk}/`, {
                     fields: extraLineFields(),
-                    title: '{% jstrans "Edit Line" %}',
+                    title: '{% trans "Edit Line" %}',
                     onSuccess: reloadExtraLineTable,
                 });
             });
@@ -265,7 +265,7 @@ function loadExtraLineTable(options={}) {
 
                 constructForm(`${options.url}${pk}/`, {
                     method: 'DELETE',
-                    title: '{% jstrans "Delete Line" %}',
+                    title: '{% trans "Delete Line" %}',
                     onSuccess: reloadExtraLineTable,
                 });
             });
@@ -278,7 +278,7 @@ function loadExtraLineTable(options={}) {
         sidePagination: 'server',
         onPostBody: setupCallbacks,
         formatNoMatches: function() {
-            return '{% jstrans "No line items found" %}';
+            return '{% trans "No line items found" %}';
         },
         queryParams: filters,
         original: options.params,
@@ -288,20 +288,20 @@ function loadExtraLineTable(options={}) {
             {
                 sortable: true,
                 field: 'reference',
-                title: '{% jstrans "Reference" %}',
+                title: '{% trans "Reference" %}',
                 switchable: false,
             },
             {
                 sortable: false,
                 switchable: true,
                 field: 'description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
             },
             {
                 sortable: true,
                 switchable: false,
                 field: 'quantity',
-                title: '{% jstrans "Quantity" %}',
+                title: '{% trans "Quantity" %}',
                 footerFormatter: function(data) {
                     return data.map(function(row) {
                         return +row['quantity'];
@@ -313,7 +313,7 @@ function loadExtraLineTable(options={}) {
             {
                 sortable: true,
                 field: 'price',
-                title: '{% jstrans "Unit Price" %}',
+                title: '{% trans "Unit Price" %}',
                 formatter: function(value, row) {
                     return formatCurrency(row.price, {
                         currency: row.price_currency,
@@ -324,7 +324,7 @@ function loadExtraLineTable(options={}) {
                 field: 'total_price',
                 sortable: true,
                 switchable: true,
-                title: '{% jstrans "Total Price" %}',
+                title: '{% trans "Total Price" %}',
                 formatter: function(value, row) {
                     return formatCurrency(row.price * row.quantity, {
                         currency: row.price_currency,
@@ -344,11 +344,11 @@ function loadExtraLineTable(options={}) {
             },
             {
                 field: 'notes',
-                title: '{% jstrans "Notes" %}',
+                title: '{% trans "Notes" %}',
             },
             {
                 field: 'link',
-                title: '{% jstrans "Link" %}',
+                title: '{% trans "Link" %}',
                 formatter: function(value) {
                     if (value) {
                         return renderLink(value, value);
@@ -366,12 +366,12 @@ function loadExtraLineTable(options={}) {
                         var pk = row.pk;
 
                         if (options.allow_edit) {
-                            html += makeCopyButton('button-duplicate', pk, '{% jstrans "Duplicate line" %}');
-                            html += makeEditButton('button-edit', pk, '{% jstrans "Edit line" %}');
+                            html += makeCopyButton('button-duplicate', pk, '{% trans "Duplicate line" %}');
+                            html += makeEditButton('button-edit', pk, '{% trans "Edit line" %}');
                         }
 
                         if (options.allow_delete) {
-                            html += makeDeleteButton('button-delete', pk, '{% jstrans "Delete line" %}', );
+                            html += makeDeleteButton('button-delete', pk, '{% trans "Delete line" %}', );
                         }
                     }
 

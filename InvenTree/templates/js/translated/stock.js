@@ -95,7 +95,7 @@ function serializeStockItem(pk, options={}) {
     var url = `/api/stock/${pk}/serialize/`;
 
     options.method = 'POST';
-    options.title = '{% jstrans "Serialize Stock Item" %}';
+    options.title = '{% trans "Serialize Stock Item" %}';
 
     options.fields = {
         quantity: {},
@@ -116,9 +116,9 @@ function serializeStockItem(pk, options={}) {
         inventreeGet(`{% url "api-part-list" %}${options.part}/serial-numbers/`, {}, {
             success: function(data) {
                 if (data.next) {
-                    options.fields.serial_numbers.placeholder = `{% jstrans "Next available serial number" %}: ${data.next}`;
+                    options.fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
                 } else if (data.latest) {
-                    options.fields.serial_numbers.placeholder = `{% jstrans "Latest serial number" %}: ${data.latest}`;
+                    options.fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
                 }
             },
             async: false,
@@ -126,7 +126,7 @@ function serializeStockItem(pk, options={}) {
     }
 
     options.confirm = true;
-    options.confirmMessage = '{% jstrans "Confirm Stock Serialization" %}';
+    options.confirmMessage = '{% trans "Confirm Stock Serialization" %}';
 
     constructForm(url, options);
 }
@@ -136,7 +136,7 @@ function stockLocationTypeFields() {
         name: {},
         description: {},
         icon: {
-            help_text: `{% jstrans "Default icon for all locations that have no icon set (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
+            help_text: `{% trans "Default icon for all locations that have no icon set (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
             icon: "fa-icons",
         },
@@ -149,7 +149,7 @@ function stockLocationTypeFields() {
 function stockLocationFields(options={}) {
     var fields = {
         parent: {
-            help_text: '{% jstrans "Parent stock location" %}',
+            help_text: '{% trans "Parent stock location" %}',
             required: false,
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
@@ -163,7 +163,7 @@ function stockLocationFields(options={}) {
         external: {},
         location_type: {
             secondary: {
-                title: '{% jstrans "Add Location type" %}',
+                title: '{% trans "Add Location type" %}',
                 fields: function() {
                     const fields = stockLocationTypeFields();
 
@@ -172,7 +172,7 @@ function stockLocationFields(options={}) {
             },
         },
         custom_icon: {
-            help_text: `{% jstrans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
+            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
             placeholder: 'fas fa-box',
             icon: "fa-icons",
         },
@@ -199,7 +199,7 @@ function editStockLocation(pk, options={}) {
 
     options.fields = stockLocationFields(options);
 
-    options.title = '{% jstrans "Edit Stock Location" %}';
+    options.title = '{% trans "Edit Stock Location" %}';
 
     constructForm(url, options);
 }
@@ -214,10 +214,10 @@ function createStockLocation(options={}) {
 
     options.method = 'POST';
     options.fields = stockLocationFields(options);
-    options.title = '{% jstrans "New Stock Location" %}';
+    options.title = '{% trans "New Stock Location" %}';
     options.persist = true;
-    options.persistMessage = '{% jstrans "Create another location after this one" %}';
-    options.successMessage = '{% jstrans "Stock location created" %}';
+    options.persistMessage = '{% trans "Create another location after this one" %}';
+    options.successMessage = '{% trans "Stock location created" %}';
 
     constructForm(url, options);
 }
@@ -231,32 +231,32 @@ function deleteStockLocation(pk, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% jstrans "Are you sure you want to delete this stock location?" %}
+    {% trans "Are you sure you want to delete this stock location?" %}
     </div>
     `;
 
     var subChoices = [
         {
             value: 0,
-            display_name: '{% jstrans "Move to parent stock location" %}',
+            display_name: '{% trans "Move to parent stock location" %}',
         },
         {
             value: 1,
-            display_name: '{% jstrans "Delete" %}',
+            display_name: '{% trans "Delete" %}',
         }
     ];
 
     constructForm(url, {
-        title: '{% jstrans "Delete Stock Location" %}',
+        title: '{% trans "Delete Stock Location" %}',
         method: 'DELETE',
         fields: {
             'delete_stock_items': {
-                label: '{% jstrans "Action for stock items in this stock location" %}',
+                label: '{% trans "Action for stock items in this stock location" %}',
                 choices: subChoices,
                 type: 'choice'
             },
             'delete_sub_locations': {
-                label: '{% jstrans "Action for sub-locations" %}',
+                label: '{% trans "Action for sub-locations" %}',
                 choices: subChoices,
                 type: 'choice'
             },
@@ -291,9 +291,9 @@ function stockItemFields(options={}) {
                             success: function(data) {
                                 var placeholder = '';
                                 if (data.next) {
-                                    placeholder = `{% jstrans "Next available serial number" %}: ${data.next}`;
+                                    placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
                                 } else if (data.latest) {
-                                    placeholder = `{% jstrans "Latest serial number" %}: ${data.latest}`;
+                                    placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
                                 }
 
                                 setFormInputPlaceholder('serial_numbers', placeholder, opts);
@@ -310,7 +310,7 @@ function stockItemFields(options={}) {
                         clearFormInput('serial_numbers', opts);
                         disableFormInput('serial_numbers', opts);
 
-                        setFormInputPlaceholder('serial_numbers', '{% jstrans "This part cannot be serialized" %}', opts);
+                        setFormInputPlaceholder('serial_numbers', '{% trans "This part cannot be serialized" %}', opts);
                     }
 
                     // Enable / disable fields based on purchaseable status
@@ -346,7 +346,7 @@ function stockItemFields(options={}) {
             }
         },
         use_pack_size: {
-            help_text: '{% jstrans "Add given quantity as packs instead of individual items" %}',
+            help_text: '{% trans "Add given quantity as packs instead of individual items" %}',
         },
         location: {
             icon: 'fa-sitemap',
@@ -359,13 +359,13 @@ function stockItemFields(options={}) {
             },
         },
         quantity: {
-            help_text: '{% jstrans "Enter initial quantity for this stock item" %}',
+            help_text: '{% trans "Enter initial quantity for this stock item" %}',
         },
         serial_numbers: {
             icon: 'fa-hashtag',
             type: 'string',
-            label: '{% jstrans "Serial Numbers" %}',
-            help_text: '{% jstrans "Enter serial numbers for new stock (or leave blank)" %}',
+            label: '{% trans "Serial Numbers" %}',
+            help_text: '{% trans "Enter serial numbers for new stock (or leave blank)" %}',
             required: false,
         },
         serial: {
@@ -436,7 +436,7 @@ function duplicateStockItem(pk, options) {
     if (!options.onSuccess) {
         options.onSuccess = function(response) {
 
-            showAlertOrCache('{% jstrans "Stock item duplicated" %}', true, {style: 'success'});
+            showAlertOrCache('{% trans "Stock item duplicated" %}', true, {style: 'success'});
 
             window.location.href = `/stock/item/${response.pk}/`;
         };
@@ -456,7 +456,7 @@ function duplicateStockItem(pk, options) {
             options.groups = stockItemGroups(options);
 
             options.method = 'POST';
-            options.title = '{% jstrans "Duplicate Stock Item" %}';
+            options.title = '{% trans "Duplicate Stock Item" %}';
 
             constructForm('{% url "api-stock-list" %}', options);
         }
@@ -472,12 +472,12 @@ function deleteStockItem(pk, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% jstrans "Are you sure you want to delete this stock item?" %}
+    {% trans "Are you sure you want to delete this stock item?" %}
     </div>`;
 
     constructForm(url, {
         method: 'DELETE',
-        title: '{% jstrans "Delete Stock Item" %}',
+        title: '{% trans "Delete Stock Item" %}',
         preFormContent: html,
         onSuccess: function(response) {
             handleFormSuccess(response, options);
@@ -498,7 +498,7 @@ function editStockItem(pk, options={}) {
     options.fields = stockItemFields(options);
     options.groups = stockItemGroups(options);
 
-    options.title = '{% jstrans "Edit Stock Item" %}';
+    options.title = '{% trans "Edit Stock Item" %}';
 
     // Query parameters for retrieving stock item data
     options.params = {
@@ -534,14 +534,14 @@ function createNewStockItem(options={}) {
 
     var url = '{% url "api-stock-list" %}';
 
-    options.title = '{% jstrans "New Stock Item" %}';
+    options.title = '{% trans "New Stock Item" %}';
     options.method = 'POST';
 
     options.create = true;
 
     options.persist = true;
-    options.persistMessage = '{% jstrans "Create another item after this one" %}';
-    options.successMessage = '{% jstrans "Stock item created" %}';
+    options.persistMessage = '{% trans "Create another item after this one" %}';
+    options.successMessage = '{% trans "Stock item created" %}';
 
     options.fields = stockItemFields(options);
     options.groups = stockItemGroups(options);
@@ -552,7 +552,7 @@ function createNewStockItem(options={}) {
             if (response.pk) {
                 var url = `/stock/item/${response.pk}/`;
 
-                addCachedAlert('{% jstrans "Created new stock item" %}', {
+                addCachedAlert('{% trans "Created new stock item" %}', {
                     icon: 'fas fa-boxes',
                 });
 
@@ -561,11 +561,11 @@ function createNewStockItem(options={}) {
 
                 // Multiple stock items have been created (i.e. serialized stock)
                 var details = `
-                <br>{% jstrans "Quantity" %}: ${response.quantity}
-                <br>{% jstrans "Serial Numbers" %}: ${response.serial_numbers}
+                <br>{% trans "Quantity" %}: ${response.quantity}
+                <br>{% trans "Serial Numbers" %}: ${response.serial_numbers}
                 `;
 
-                showMessage('{% jstrans "Created multiple stock items" %}', {
+                showMessage('{% trans "Created multiple stock items" %}', {
                     icon: 'fas fa-boxes',
                     details: details,
                 });
@@ -590,12 +590,12 @@ function createNewStockItem(options={}) {
 function findStockItemBySerialNumber(part_id) {
 
     constructFormBody({}, {
-        title: '{% jstrans "Find Serial Number" %}',
+        title: '{% trans "Find Serial Number" %}',
         fields: {
             serial: {
-                label: '{% jstrans "Serial Number" %}',
-                help_text: '{% jstrans "Enter serial number" %}',
-                placeholder: '{% jstrans "Enter serial number" %}',
+                label: '{% trans "Serial Number" %}',
+                help_text: '{% trans "Enter serial number" %}',
+                placeholder: '{% trans "Enter serial number" %}',
                 required: true,
                 type: 'string',
                 value: '',
@@ -611,7 +611,7 @@ function findStockItemBySerialNumber(part_id) {
                 handleFormErrors(
                     {
                         'serial': [
-                            '{% jstrans "Enter a serial number" %}',
+                            '{% trans "Enter a serial number" %}',
                         ]
                     }, fields, opts
                 );
@@ -631,7 +631,7 @@ function findStockItemBySerialNumber(part_id) {
                             handleFormErrors(
                                 {
                                     'serial': [
-                                        '{% jstrans "No matching serial number" %}',
+                                        '{% trans "No matching serial number" %}',
                                     ]
                                 }, fields, opts
                             );
@@ -640,7 +640,7 @@ function findStockItemBySerialNumber(part_id) {
                             handleFormErrors(
                                 {
                                     'serial': [
-                                        '{% jstrans "More than one matching result found" %}',
+                                        '{% trans "More than one matching result found" %}',
                                     ]
                                 }, fields, opts
                             );
@@ -673,9 +673,9 @@ function assignStockToCustomer(items, options={}) {
     <table class='table table-striped table-condensed' id='stock-assign-table'>
     <thead>
         <tr>
-            <th>{% jstrans "Part" %}</th>
-            <th>{% jstrans "Stock Item" %}</th>
-            <th>{% jstrans "Location" %}</th>
+            <th>{% trans "Part" %}</th>
+            <th>{% trans "Stock Item" %}</th>
+            <th>{% trans "Location" %}</th>
             <th></th>
         </tr>
     </thead>
@@ -697,9 +697,9 @@ function assignStockToCustomer(items, options={}) {
         var quantity = '';
 
         if (item.serial && item.quantity == 1) {
-            quantity = `{% jstrans "Serial" %}: ${item.serial}`;
+            quantity = `{% trans "Serial" %}: ${item.serial}`;
         } else {
-            quantity = `{% jstrans "Quantity" %}: ${item.quantity}`;
+            quantity = `{% trans "Quantity" %}: ${item.quantity}`;
         }
 
         quantity += status;
@@ -711,7 +711,7 @@ function assignStockToCustomer(items, options={}) {
         buttons += makeRemoveButton(
             'button-stock-item-remove',
             pk,
-            '{% jstrans "Remove row" %}',
+            '{% trans "Remove row" %}',
         );
 
         buttons += '</div>';
@@ -748,8 +748,8 @@ function assignStockToCustomer(items, options={}) {
             },
         },
         confirm: true,
-        confirmMessage: '{% jstrans "Confirm stock assignment" %}',
-        title: '{% jstrans "Assign Stock to Customer" %}',
+        confirmMessage: '{% trans "Confirm stock assignment" %}',
+        title: '{% trans "Assign Stock to Customer" %}',
         afterRender: function(fields, opts) {
             // Add button callbacks to remove rows
             $(opts.modal).find('.button-stock-item-remove').click(function() {
@@ -826,11 +826,11 @@ function mergeStockItems(items, options={}) {
     // Generate HTML content for the form
     var html = `
     <div class='alert alert-block alert-danger'>
-    <h5>{% jstrans "Warning: Merge operation cannot be reversed" %}</h5>
-    <strong>{% jstrans "Some information will be lost when merging stock items" %}:</strong>
+    <h5>{% trans "Warning: Merge operation cannot be reversed" %}</h5>
+    <strong>{% trans "Some information will be lost when merging stock items" %}:</strong>
     <ul>
-        <li>{% jstrans "Stock transaction history will be deleted for merged items" %}</li>
-        <li>{% jstrans "Supplier part information will be deleted for merged items" %}</li>
+        <li>{% trans "Stock transaction history will be deleted for merged items" %}</li>
+        <li>{% trans "Supplier part information will be deleted for merged items" %}</li>
     </ul>
     </div>
     `;
@@ -839,9 +839,9 @@ function mergeStockItems(items, options={}) {
     <table class='table table-striped table-condensed' id='stock-merge-table'>
     <thead>
         <tr>
-            <th>{% jstrans "Part" %}</th>
-            <th>{% jstrans "Stock Item" %}</th>
-            <th>{% jstrans "Location" %}</th>
+            <th>{% trans "Part" %}</th>
+            <th>{% trans "Stock Item" %}</th>
+            <th>{% trans "Location" %}</th>
             <th></th>
         </tr>
     </thead>
@@ -868,9 +868,9 @@ function mergeStockItems(items, options={}) {
         var quantity = '';
 
         if (item.serial && item.quantity == 1) {
-            quantity = `{% jstrans "Serial" %}: ${item.serial}`;
+            quantity = `{% trans "Serial" %}: ${item.serial}`;
         } else {
-            quantity = `{% jstrans "Quantity" %}: ${item.quantity}`;
+            quantity = `{% trans "Quantity" %}: ${item.quantity}`;
         }
 
         quantity += stockStatusDisplay(item.status, {classes: 'float-right'});
@@ -880,7 +880,7 @@ function mergeStockItems(items, options={}) {
                 'fa-times icon-red',
                 'button-stock-item-remove',
                 pk,
-                '{% jstrans "Remove row" %}',
+                '{% trans "Remove row" %}',
             )
         );
 
@@ -925,8 +925,8 @@ function mergeStockItems(items, options={}) {
             allow_mismatched_status: {},
         },
         confirm: true,
-        confirmMessage: '{% jstrans "Confirm stock item merge" %}',
-        title: '{% jstrans "Merge Stock Items" %}',
+        confirmMessage: '{% trans "Confirm stock item merge" %}',
+        title: '{% trans "Merge Stock Items" %}',
         afterRender: function(fields, opts) {
             // Add button callbacks to remove rows
             $(opts.modal).find('.button-stock-item-remove').click(function() {
@@ -1021,29 +1021,29 @@ function adjustStock(action, items, options={}) {
 
     switch (action) {
     case 'move':
-        formTitle = '{% jstrans "Transfer Stock" %}';
-        actionTitle = '{% jstrans "Move" %}';
+        formTitle = '{% trans "Transfer Stock" %}';
+        actionTitle = '{% trans "Move" %}';
         specifyLocation = true;
         allowSerializedStock = true;
         url = '{% url "api-stock-transfer" %}';
         break;
     case 'count':
-        formTitle = '{% jstrans "Count Stock" %}';
-        actionTitle = '{% jstrans "Count" %}';
+        formTitle = '{% trans "Count Stock" %}';
+        actionTitle = '{% trans "Count" %}';
         url = '{% url "api-stock-count" %}';
         break;
     case 'take':
-        formTitle = '{% jstrans "Remove Stock" %}';
-        actionTitle = '{% jstrans "Take" %}';
+        formTitle = '{% trans "Remove Stock" %}';
+        actionTitle = '{% trans "Take" %}';
         url = '{% url "api-stock-remove" %}';
         break;
     case 'add':
-        formTitle = '{% jstrans "Add Stock" %}';
-        actionTitle = '{% jstrans "Add" %}';
+        formTitle = '{% trans "Add Stock" %}';
+        actionTitle = '{% trans "Add" %}';
         url = '{% url "api-stock-add" %}';
         break;
     case 'delete':
-        formTitle = '{% jstrans "Delete Stock" %}';
+        formTitle = '{% trans "Delete Stock" %}';
         allowSerializedStock = true;
         break;
     default:
@@ -1055,9 +1055,9 @@ function adjustStock(action, items, options={}) {
     <table class='table table-striped table-condensed' id='stock-adjust-table'>
     <thead>
     <tr>
-        <th>{% jstrans "Part" %}</th>
-        <th>{% jstrans "Stock" %}</th>
-        <th>{% jstrans "Location" %}</th>
+        <th>{% trans "Part" %}</th>
+        <th>{% trans "Stock" %}</th>
+        <th>{% trans "Location" %}</th>
         <th>${actionTitle || ''}</th>
         <th></th>
     </tr>
@@ -1127,7 +1127,7 @@ function adjustStock(action, items, options={}) {
         }
 
         if (item.batch) {
-            quantity += ` - <small>{% jstrans "Batch" %}: ${item.batch}</small>`;
+            quantity += ` - <small>{% trans "Batch" %}: ${item.batch}</small>`;
         }
 
         var actionInput = '';
@@ -1140,7 +1140,7 @@ function adjustStock(action, items, options={}) {
                     min_value: minValue,
                     max_value: maxValue,
                     value: value,
-                    title: readonly ? '{% jstrans "Quantity cannot be adjusted for serialized stock" %}' : '{% jstrans "Specify stock quantity" %}',
+                    title: readonly ? '{% trans "Quantity cannot be adjusted for serialized stock" %}' : '{% trans "Specify stock quantity" %}',
                     required: true,
                 },
                 {
@@ -1152,7 +1152,7 @@ function adjustStock(action, items, options={}) {
         let buttons = wrapButtons(makeRemoveButton(
             'button-stock-item-remove',
             pk,
-            '{% jstrans "Remove stock item" %}',
+            '{% trans "Remove stock item" %}',
         ));
 
         html += `
@@ -1174,8 +1174,8 @@ function adjustStock(action, items, options={}) {
 
     if (itemCount == 0) {
         showAlertDialog(
-            '{% jstrans "Select Stock Items" %}',
-            '{% jstrans "Select at least one available stock item" %}',
+            '{% trans "Select Stock Items" %}',
+            '{% trans "Select at least one available stock item" %}',
         );
 
         return;
@@ -1221,7 +1221,7 @@ function adjustStock(action, items, options={}) {
         fields: extraFields,
         preFormContent: html,
         confirm: true,
-        confirmMessage: '{% jstrans "Confirm stock adjustment" %}',
+        confirmMessage: '{% trans "Confirm stock adjustment" %}',
         title: formTitle,
         afterRender: function(fields, opts) {
             // Add button callbacks to remove rows
@@ -1357,14 +1357,14 @@ function removeStockRow(e) {
 function passFailBadge(result) {
 
     if (result) {
-        return `<span class='badge badge-right rounded-pill bg-success'>{% jstrans "PASS" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-success'>{% trans "PASS" %}</span>`;
     } else {
-        return `<span class='badge badge-right rounded-pill bg-danger'>{% jstrans "FAIL" %}</span>`;
+        return `<span class='badge badge-right rounded-pill bg-danger'>{% trans "FAIL" %}</span>`;
     }
 }
 
 function noResultBadge() {
-    return `<span class='badge badge-right rounded-pill bg-info'>{% jstrans "NO RESULT" %}</span>`;
+    return `<span class='badge badge-right rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
 }
 
 function formatDate(row) {
@@ -1426,15 +1426,15 @@ function loadStockTestResultsTable(table, options) {
 
         if (row.requires_attachment == false && row.requires_value == false && !row.result) {
             // Enable a "quick tick" option for this test result
-            html += makeIconButton('fa-check-circle icon-green', 'button-test-tick', row.test_name, '{% jstrans "Pass test" %}');
+            html += makeIconButton('fa-check-circle icon-green', 'button-test-tick', row.test_name, '{% trans "Pass test" %}');
         }
 
-        html += makeIconButton('fa-plus icon-green', 'button-test-add', row.test_name, '{% jstrans "Add test result" %}');
+        html += makeIconButton('fa-plus icon-green', 'button-test-add', row.test_name, '{% trans "Add test result" %}');
 
         if (!grouped && row.result != null) {
             var pk = row.pk;
-            html += makeEditButton('button-test-edit', pk, '{% jstrans "Edit test result" %}');
-            html += makeDeleteButton('button-test-delete', pk, '{% jstrans "Delete test result" %}');
+            html += makeEditButton('button-test-edit', pk, '{% trans "Edit test result" %}');
+            html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test result" %}');
         }
 
         return wrapButtons(html);
@@ -1453,7 +1453,7 @@ function loadStockTestResultsTable(table, options) {
         uniqueId: 'pk',
         treeShowField: 'test_name',
         formatNoMatches: function() {
-            return '{% jstrans "No test results found" %}';
+            return '{% trans "No test results found" %}';
         },
         queryParams: filters,
         original: params,
@@ -1472,7 +1472,7 @@ function loadStockTestResultsTable(table, options) {
             },
             {
                 field: 'test_name',
-                title: '{% jstrans "Test" %}',
+                title: '{% trans "Test" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var html = value;
@@ -1492,14 +1492,14 @@ function loadStockTestResultsTable(table, options) {
             },
             {
                 field: 'description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
                 formatter: function(value, row) {
                     return row.description || row.test_description;
                 }
             },
             {
                 field: 'value',
-                title: '{% jstrans "Value" %}',
+                title: '{% trans "Value" %}',
                 formatter: function(value, row) {
                     var html = value;
 
@@ -1513,11 +1513,11 @@ function loadStockTestResultsTable(table, options) {
             },
             {
                 field: 'notes',
-                title: '{% jstrans "Notes" %}',
+                title: '{% trans "Notes" %}',
             },
             {
                 field: 'date',
-                title: '{% jstrans "Test Date" %}',
+                title: '{% trans "Test Date" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     return formatDate(row);
@@ -1664,7 +1664,7 @@ function loadStockTestResultsTable(table, options) {
                     hidden: true,
                 }
             },
-            title: '{% jstrans "Add Test Result" %}',
+            title: '{% trans "Add Test Result" %}',
             onSuccess: reloadTestTable,
         });
     });
@@ -1679,7 +1679,7 @@ function loadStockTestResultsTable(table, options) {
 
         constructForm(url, {
             fields: stockItemTestResultFields(),
-            title: '{% jstrans "Edit Test Result" %}',
+            title: '{% trans "Edit Test Result" %}',
             onSuccess: reloadTestTable,
         });
     });
@@ -1696,12 +1696,12 @@ function loadStockTestResultsTable(table, options) {
 
         var html = `
         <div class='alert alert-block alert-danger'>
-        <strong>{% jstrans "Delete test result" %}:</strong> ${row.test_name || row.test || row.key}
+        <strong>{% trans "Delete test result" %}:</strong> ${row.test_name || row.test || row.key}
         </div>`;
 
         constructForm(url, {
             method: 'DELETE',
-            title: '{% jstrans "Delete Test Result" %}',
+            title: '{% trans "Delete Test Result" %}',
             onSuccess: reloadTestTable,
             preFormContent: html,
         });
@@ -1729,29 +1729,29 @@ function locationDetail(row, showLink=true) {
     let url = '';
 
     if (row.consumed_by) {
-        text = '{% jstrans "Consumed by build order" %}';
+        text = '{% trans "Consumed by build order" %}';
         url = `/build/${row.consumed_by}/`;
     } else if (row.is_building && row.build) {
         // StockItem is currently being built!
-        text = '{% jstrans "In production" %}';
+        text = '{% trans "In production" %}';
         url = `/build/${row.build}/`;
     } else if (row.belongs_to) {
         // StockItem is installed inside a different StockItem
-        text = `{% jstrans "Installed in Stock Item" %} ${row.belongs_to}`;
+        text = `{% trans "Installed in Stock Item" %} ${row.belongs_to}`;
         url = `/stock/item/${row.belongs_to}/?display=installed-items`;
     } else if (row.customer) {
         // StockItem has been assigned to a customer
-        text = '{% jstrans "Shipped to customer" %}';
+        text = '{% trans "Shipped to customer" %}';
         url = `/company/${row.customer}/?display=assigned-stock`;
     } else if (row.sales_order) {
         // StockItem has been assigned to a sales order
-        text = '{% jstrans "Assigned to Sales Order" %}';
+        text = '{% trans "Assigned to Sales Order" %}';
         url = `/order/sales-order/${row.sales_order}/`;
     } else if (row.location && row.location_detail) {
         text = shortenString(row.location_detail.pathstring);
         url = `/stock/location/${row.location}/`;
     } else {
-        text = '<i>{% jstrans "No stock location set" %}</i>';
+        text = '<i>{% trans "No stock location set" %}</i>';
         url = '';
     }
 
@@ -1771,7 +1771,7 @@ function makeStockActions(table) {
         {
             label: 'add',
             icon: 'fa-plus-circle icon-green',
-            title: '{% jstrans "Add stock" %}',
+            title: '{% trans "Add stock" %}',
             permission: 'stock.change',
             callback: function(data) {
                 stockAdjustment('add', data, table);
@@ -1780,7 +1780,7 @@ function makeStockActions(table) {
         {
             label: 'remove',
             icon: 'fa-minus-circle icon-red',
-            title: '{% jstrans "Remove stock" %}',
+            title: '{% trans "Remove stock" %}',
             permission: 'stock.change',
             callback: function(data) {
                 stockAdjustment('take', data, table);
@@ -1789,7 +1789,7 @@ function makeStockActions(table) {
         {
             label: 'stocktake',
             icon: 'fa-check-circle icon-blue',
-            title: '{% jstrans "Count stock" %}',
+            title: '{% trans "Count stock" %}',
             permission: 'stock.change',
             callback: function(data) {
                 stockAdjustment('count', data, table);
@@ -1798,7 +1798,7 @@ function makeStockActions(table) {
         {
             label: 'move',
             icon: 'fa-exchange-alt icon-blue',
-            title: '{% jstrans "Transfer stock" %}',
+            title: '{% trans "Transfer stock" %}',
             permission: 'stock.change',
             callback: function(data) {
                 stockAdjustment('move', data, table);
@@ -1807,7 +1807,7 @@ function makeStockActions(table) {
         {
             label: 'status',
             icon: 'fa-info-circle icon-blue',
-            title: '{% jstrans "Change stock status" %}',
+            title: '{% trans "Change stock status" %}',
             permission: 'stock.change',
             callback: function(data) {
                 setStockStatus(data, {table: table});
@@ -1816,14 +1816,14 @@ function makeStockActions(table) {
         {
             label: 'merge',
             icon: 'fa-object-group',
-            title: '{% jstrans "Merge stock" %}',
+            title: '{% trans "Merge stock" %}',
             permission: 'stock.change',
             callback: function(data) {
                 mergeStockItems(data, {
                     success: function(response) {
                         $(table).bootstrapTable('refresh');
 
-                        showMessage('{% jstrans "Merged stock items" %}', {
+                        showMessage('{% trans "Merged stock items" %}', {
                             style: 'success',
                         });
                     }
@@ -1833,7 +1833,7 @@ function makeStockActions(table) {
         {
             label: 'order',
             icon: 'fa-shopping-cart',
-            title: '{% jstrans "Order stock" %}',
+            title: '{% trans "Order stock" %}',
             permission: 'stock.change',
             callback: function(data) {
                 let parts = [];
@@ -1852,7 +1852,7 @@ function makeStockActions(table) {
         {
             label: 'assign',
             icon: 'fa-user-tie',
-            title: '{% jstrans "Assign to customer" %}',
+            title: '{% trans "Assign to customer" %}',
             permission: 'stock.change',
             callback: function(data) {
                 assignStockToCustomer(data, {
@@ -1865,7 +1865,7 @@ function makeStockActions(table) {
         {
             label: 'delete',
             icon: 'fa-trash-alt icon-red',
-            title: '{% jstrans "Delete stock" %}',
+            title: '{% trans "Delete stock" %}',
             permission: 'stock.delete',
             callback: function(data) {
                 stockAdjustment('delete', data, table);
@@ -1919,13 +1919,13 @@ function loadStockTable(table, options) {
                 url: '{% url "api-stockitem-label-list" %}',
                 key: 'item',
             },
-            singular_name: '{% jstrans "stock item" %}',
-            plural_name: '{% jstrans "stock items" %}',
+            singular_name: '{% trans "stock item" %}',
+            plural_name: '{% trans "stock items" %}',
             barcode_actions: [
                 {
                     icon: 'fa-sitemap',
                     label: 'scantolocation',
-                    title: '{% jstrans "Scan to location" %}',
+                    title: '{% trans "Scan to location" %}',
                     permission: 'stock.change',
                     callback: function(items) {
                         scanItemsIntoLocation(items);
@@ -1936,7 +1936,7 @@ function loadStockTable(table, options) {
                 {
                     actions: makeStockActions(table),
                     icon: 'fa-boxes',
-                    title: '{% jstrans "Stock Actions" %}',
+                    title: '{% trans "Stock Actions" %}',
                     label: 'stock',
                 }
             ]
@@ -1950,7 +1950,7 @@ function loadStockTable(table, options) {
     var columns = [
         {
             checkbox: true,
-            title: '{% jstrans "Select" %}',
+            title: '{% trans "Select" %}',
             searchable: false,
             switchable: false,
         },
@@ -1964,7 +1964,7 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'part',
-        title: '{% jstrans "Part" %}',
+        title: '{% trans "Part" %}',
         sortName: 'part__name',
         visible: options.params['part_detail'],
         switchable: options.params['part_detail'],
@@ -1980,7 +1980,7 @@ function loadStockTable(table, options) {
                 } else {
                     html += `
                     <a href='#' pk='${row.pk}' class='load-sub-items' id='load-sub-items-${row.pk}'>
-                        <span class='fas fa-sync-alt' title='{% jstrans "Load installed items" %}'></span>
+                        <span class='fas fa-sync-alt' title='{% trans "Load installed items" %}'></span>
                     </a>`;
                 }
             }
@@ -2003,7 +2003,7 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'IPN',
-        title: '{% jstrans "IPN" %}',
+        title: '{% trans "IPN" %}',
         sortName: 'part__IPN',
         visible: options.params['part_detail'],
         switchable: options.params['part_detail'],
@@ -2025,7 +2025,7 @@ function loadStockTable(table, options) {
 
     columns.push({
         field: 'part_detail.description',
-        title: '{% jstrans "Description" %}',
+        title: '{% trans "Description" %}',
         visible: options.params['part_detail'],
         switchable: options.params['part_detail'],
         formatter: function(value, row) {
@@ -2037,7 +2037,7 @@ function loadStockTable(table, options) {
     col = {
         field: 'quantity',
         sortName: 'stock',
-        title: '{% jstrans "Stock" %}',
+        title: '{% trans "Stock" %}',
         sortable: true,
         formatter: function(value, row) {
 
@@ -2058,46 +2058,46 @@ function loadStockTable(table, options) {
             var html = renderLink(val, `/stock/item/${row.pk}/`);
 
             if (row.is_building) {
-                html += makeIconBadge('fa-tools', '{% jstrans "Stock item is in production" %}');
+                html += makeIconBadge('fa-tools', '{% trans "Stock item is in production" %}');
             }
 
             if (row.sales_order) {
                 // Stock item has been assigned to a sales order
-                html += makeIconBadge('fa-truck', '{% jstrans "Stock item assigned to sales order" %}');
+                html += makeIconBadge('fa-truck', '{% trans "Stock item assigned to sales order" %}');
             } else if (row.customer) {
                 // StockItem has been assigned to a customer
-                html += makeIconBadge('fa-user', '{% jstrans "Stock item assigned to customer" %}');
+                html += makeIconBadge('fa-user', '{% trans "Stock item assigned to customer" %}');
             } else if (row.allocated) {
                 if (row.serial != null && row.quantity == 1) {
-                    html += makeIconBadge('fa-bookmark icon-yellow', '{% jstrans "Serialized stock item has been allocated" %}');
+                    html += makeIconBadge('fa-bookmark icon-yellow', '{% trans "Serialized stock item has been allocated" %}');
                 } else if (row.allocated >= row.quantity) {
-                    html += makeIconBadge('fa-bookmark icon-yellow', '{% jstrans "Stock item has been fully allocated" %}');
+                    html += makeIconBadge('fa-bookmark icon-yellow', '{% trans "Stock item has been fully allocated" %}');
                 } else {
-                    html += makeIconBadge('fa-bookmark', '{% jstrans "Stock item has been partially allocated" %}');
+                    html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been partially allocated" %}');
                 }
             } else if (row.belongs_to) {
-                html += makeIconBadge('fa-box', '{% jstrans "Stock item has been installed in another item" %}');
+                html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
             } else if (row.consumed_by) {
-                html += makeIconBadge('fa-tools', '{% jstrans "Stock item has been consumed by a build order" %}');
+                html += makeIconBadge('fa-tools', '{% trans "Stock item has been consumed by a build order" %}');
             }
 
             if (row.expired) {
-                html += makeIconBadge('fa-calendar-times icon-red', '{% jstrans "Stock item has expired" %}');
+                html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
             } else if (row.stale) {
-                html += makeIconBadge('fa-stopwatch', '{% jstrans "Stock item will expire soon" %}');
+                html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
             }
 
             // Special stock status codes
             if (row.status == stockCodes.REJECTED.key) {
-                html += makeIconBadge('fa-times-circle icon-red', '{% jstrans "Stock item has been rejected" %}');
+                html += makeIconBadge('fa-times-circle icon-red', '{% trans "Stock item has been rejected" %}');
             } else if (row.status == stockCodes.LOST.key) {
-                html += makeIconBadge('fa-question-circle', '{% jstrans "Stock item is lost" %}');
+                html += makeIconBadge('fa-question-circle', '{% trans "Stock item is lost" %}');
             } else if (row.status == stockCodes.DESTROYED.key) {
-                html += makeIconBadge('fa-skull-crossbones', '{% jstrans "Stock item is destroyed" %}');
+                html += makeIconBadge('fa-skull-crossbones', '{% trans "Stock item is destroyed" %}');
             }
 
             if (row.quantity <= 0) {
-                html += `<span class='badge badge-right rounded-pill bg-danger'>{% jstrans "Depleted" %}</span>`;
+                html += `<span class='badge badge-right rounded-pill bg-danger'>{% trans "Depleted" %}</span>`;
             }
 
             return html;
@@ -2143,7 +2143,7 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'status',
-        title: '{% jstrans "Status" %}',
+        title: '{% trans "Status" %}',
         formatter: function(value) {
             return stockStatusDisplay(value);
         },
@@ -2157,7 +2157,7 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'batch',
-        title: '{% jstrans "Batch" %}',
+        title: '{% trans "Batch" %}',
     };
 
     if (!options.params.ordering) {
@@ -2168,7 +2168,7 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'location_detail.pathstring',
-        title: '{% jstrans "Location" %}',
+        title: '{% trans "Location" %}',
         sortName: 'location',
         formatter: function(value, row) {
             return locationDetail(row);
@@ -2183,7 +2183,7 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'stocktake_date',
-        title: '{% jstrans "Stocktake" %}',
+        title: '{% trans "Stocktake" %}',
         formatter: function(value) {
             return renderDate(value);
         }
@@ -2197,7 +2197,7 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'expiry_date',
-        title: '{% jstrans "Expiry Date" %}',
+        title: '{% trans "Expiry Date" %}',
         visible: global_settings.STOCK_ENABLE_EXPIRY,
         switchable: global_settings.STOCK_ENABLE_EXPIRY,
         formatter: function(value) {
@@ -2213,7 +2213,7 @@ function loadStockTable(table, options) {
 
     col = {
         field: 'updated',
-        title: '{% jstrans "Last Updated" %}',
+        title: '{% trans "Last Updated" %}',
         formatter: function(value) {
             return renderDate(value);
         }
@@ -2227,7 +2227,7 @@ function loadStockTable(table, options) {
 
     columns.push({
         field: 'purchase_order',
-        title: '{% jstrans "Purchase Order" %}',
+        title: '{% trans "Purchase Order" %}',
         formatter: function(value, row) {
             if (!value) {
                 return '-';
@@ -2247,7 +2247,7 @@ function loadStockTable(table, options) {
     col = {
 
         field: 'supplier_part',
-        title: '{% jstrans "Supplier Part" %}',
+        title: '{% trans "Supplier Part" %}',
         visible: options.params['supplier_part_detail'] || false,
         switchable: options.params['supplier_part_detail'] || false,
         formatter: function(value, row) {
@@ -2262,7 +2262,7 @@ function loadStockTable(table, options) {
             if (row.supplier_part_detail) {
                 text = `${row.supplier_part_detail.SKU}`;
             } else {
-                text = `<i>{% jstrans "Supplier part not specified" %}</i>`;
+                text = `<i>{% trans "Supplier part not specified" %}</i>`;
             }
 
             return renderClipboard(renderLink(text, link));
@@ -2278,7 +2278,7 @@ function loadStockTable(table, options) {
 
     columns.push({
         field: 'purchase_price',
-        title: '{% jstrans "Purchase Price" %}',
+        title: '{% trans "Purchase Price" %}',
         sortable: false,
         formatter: function(value, row) {
             let html = formatCurrency(value, {
@@ -2309,7 +2309,7 @@ function loadStockTable(table, options) {
     // This is not sortable, and may default to the 'price range' for the parent part
     columns.push({
         field: 'stock_value',
-        title: '{% jstrans "Stock Value" %}',
+        title: '{% trans "Stock Value" %}',
         sortable: false,
         switchable: true,
         formatter: function(value, row) {
@@ -2391,11 +2391,11 @@ function loadStockTable(table, options) {
 
     columns.push({
         field: 'packaging',
-        title: '{% jstrans "Packaging" %}',
+        title: '{% trans "Packaging" %}',
     },
     {
         field: 'notes',
-        title: '{% jstrans "Notes" %}',
+        title: '{% trans "Notes" %}',
     });
 
     // Function to request subset of items which are installed *within* a particular item
@@ -2437,7 +2437,7 @@ function loadStockTable(table, options) {
     table.inventreeTable({
         method: 'get',
         formatNoMatches: function() {
-            return '{% jstrans "No stock items matching query" %}';
+            return '{% trans "No stock items matching query" %}';
         },
         url: options.url || '{% url "api-stock-list" %}',
         queryParams: filters,
@@ -2540,8 +2540,8 @@ function loadStockLocationTable(table, options) {
             url: '{% url "api-stocklocation-label-list" %}',
             key: 'location'
         },
-        singular_name: '{% jstrans "stock location" %}',
-        plural_name: '{% jstrans "stock locations" %}',
+        singular_name: '{% trans "stock location" %}',
+        plural_name: '{% trans "stock locations" %}',
     });
 
     filters = Object.assign(filters, params);
@@ -2637,7 +2637,7 @@ function loadStockLocationTable(table, options) {
             {
                 icon: 'fas fa-bars',
                 attributes: {
-                    title: '{% jstrans "Display as list" %}',
+                    title: '{% trans "Display as list" %}',
                     id: 'view-location-list',
                 },
                 event: () => {
@@ -2657,7 +2657,7 @@ function loadStockLocationTable(table, options) {
             {
                 icon: 'fas fa-sitemap',
                 attributes: {
-                    title: '{% jstrans "Display as tree" %}',
+                    title: '{% trans "Display as tree" %}',
                     id: 'view-location-tree',
                 },
                 event: () => {
@@ -2678,13 +2678,13 @@ function loadStockLocationTable(table, options) {
         columns: [
             {
                 checkbox: true,
-                title: '{% jstrans "Select" %}',
+                title: '{% trans "Select" %}',
                 searchable: false,
                 switchable: false,
             },
             {
                 field: 'name',
-                title: '{% jstrans "Name" %}',
+                title: '{% trans "Name" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
@@ -2696,7 +2696,7 @@ function loadStockLocationTable(table, options) {
                         } else {
                             html += `
                                 <a href='#' pk='${row.pk}' class='load-sub-location'>
-                                    <span class='fas fa-sync-alt' title='{% jstrans "Load Sublocations" %}'></span>
+                                    <span class='fas fa-sync-alt' title='{% trans "Load Sublocations" %}'></span>
                                 </a> `;
                         }
                     }
@@ -2716,7 +2716,7 @@ function loadStockLocationTable(table, options) {
             },
             {
                 field: 'description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
                 switchable: true,
                 sortable: false,
                 formatter: function(value) {
@@ -2725,7 +2725,7 @@ function loadStockLocationTable(table, options) {
             },
             {
                 field: 'pathstring',
-                title: '{% jstrans "Path" %}',
+                title: '{% trans "Path" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value) {
@@ -2734,13 +2734,13 @@ function loadStockLocationTable(table, options) {
             },
             {
                 field: 'items',
-                title: '{% jstrans "Stock Items" %}',
+                title: '{% trans "Stock Items" %}',
                 switchable: true,
                 sortable: true,
             },
             {
                 field: 'structural',
-                title: '{% jstrans "Structural" %}',
+                title: '{% trans "Structural" %}',
                 switchable: true,
                 sortable: false,
                 formatter: function(value) {
@@ -2749,7 +2749,7 @@ function loadStockLocationTable(table, options) {
             },
             {
                 field: 'external',
-                title: '{% jstrans "External" %}',
+                title: '{% trans "External" %}',
                 switchable: true,
                 sortable: false,
                 formatter: function(value) {
@@ -2758,7 +2758,7 @@ function loadStockLocationTable(table, options) {
             },
             {
                 field: 'location_type',
-                title: '{% jstrans "Location type" %}',
+                title: '{% trans "Location type" %}',
                 switchable: true,
                 sortable: false,
                 formatter: function(value, row) {
@@ -2789,7 +2789,7 @@ function loadStockTrackingTable(table, options) {
     // Date
     cols.push({
         field: 'date',
-        title: '{% jstrans "Date" %}',
+        title: '{% trans "Date" %}',
         sortable: true,
         formatter: function(value) {
             return renderDate(value, {showTime: true});
@@ -2799,7 +2799,7 @@ function loadStockTrackingTable(table, options) {
     // Stock transaction description
     cols.push({
         field: 'label',
-        title: '{% jstrans "Description" %}',
+        title: '{% trans "Description" %}',
         formatter: function(value, row) {
             var html = '<b>' + value + '</b>';
 
@@ -2814,23 +2814,23 @@ function loadStockTrackingTable(table, options) {
     // Stock transaction details
     cols.push({
         field: 'deltas',
-        title: '{% jstrans "Details" %}',
+        title: '{% trans "Details" %}',
         formatter: function(details, row) {
 
             if (!details || !Object.keys(details).length) {
-                return `<small><em>{% jstrans "No changes" %}</em></small>`;
+                return `<small><em>{% trans "No changes" %}</em></small>`;
             }
 
             let html = `<table class='table table-condensed' id='tracking-table-${row.pk}'>`;
 
             // Part information
             if (details.part) {
-                html += `<tr><th>{% jstrans "Part" %}</th><td>`;
+                html += `<tr><th>{% trans "Part" %}</th><td>`;
 
                 if (details.part_detail) {
                     html += renderLink(details.part_detail.full_name, `/part/${details.part}/`);
                 } else {
-                    html += `{% jstrans "Part information unavailable" %}`;
+                    html += `{% trans "Part information unavailable" %}`;
                 }
 
                 html += `</td></tr>`;
@@ -2839,7 +2839,7 @@ function loadStockTrackingTable(table, options) {
             // Location information
             if (details.location) {
 
-                html += `<tr><th>{% jstrans "Location" %}</th>`;
+                html += `<tr><th>{% trans "Location" %}</th>`;
 
                 html += '<td>';
 
@@ -2852,7 +2852,7 @@ function loadStockTrackingTable(table, options) {
                     );
                 } else {
                     // An invalid location (may have been deleted?)
-                    html += `<i>{% jstrans "Location no longer exists" %}</i>`;
+                    html += `<i>{% trans "Location no longer exists" %}</i>`;
                 }
 
                 html += '</td></tr>';
@@ -2860,7 +2860,7 @@ function loadStockTrackingTable(table, options) {
 
             // BuildOrder Information
             if (details.buildorder) {
-                html += `<tr><th>{% jstrans "Build Order" %}</th>`;
+                html += `<tr><th>{% trans "Build Order" %}</th>`;
                 html += `<td>`;
 
                 if (details.buildorder_detail) {
@@ -2869,13 +2869,13 @@ function loadStockTrackingTable(table, options) {
                         `/build/${details.buildorder}/`
                     );
                 } else {
-                    html += `<i>{% jstrans "Build order no longer exists" %}</i>`;
+                    html += `<i>{% trans "Build order no longer exists" %}</i>`;
                 }
             }
 
             // PurchaseOrder Information
             if (details.purchaseorder) {
-                html += `<tr><th>{% jstrans "Purchase Order" %}</th>`;
+                html += `<tr><th>{% trans "Purchase Order" %}</th>`;
                 html += '<td>';
 
                 if (details.purchaseorder_detail) {
@@ -2884,7 +2884,7 @@ function loadStockTrackingTable(table, options) {
                         `/order/purchase-order/${details.purchaseorder}/`
                     );
                 } else {
-                    html += `<i>{% jstrans "Purchase order no longer exists" %}</i>`;
+                    html += `<i>{% trans "Purchase order no longer exists" %}</i>`;
                 }
 
                 html += '</td></tr>';
@@ -2892,7 +2892,7 @@ function loadStockTrackingTable(table, options) {
 
             // SalesOrder information
             if (details.salesorder) {
-                html += `<tr><th>{% jstrans "Sales Order" %}</th>`;
+                html += `<tr><th>{% trans "Sales Order" %}</th>`;
                 html += '<td>';
 
                 if (details.salesorder_detail) {
@@ -2901,7 +2901,7 @@ function loadStockTrackingTable(table, options) {
                         `/order/sales-order/${details.salesorder}/`
                     );
                 } else {
-                    html += `<em>{% jstrans "Sales Order no longer exists" %}</em>`;
+                    html += `<em>{% trans "Sales Order no longer exists" %}</em>`;
                 }
 
                 html += `</td></tr>`;
@@ -2909,7 +2909,7 @@ function loadStockTrackingTable(table, options) {
 
             // ReturnOrder information
             if (details.returnorder) {
-                html += `<tr><th>{% jstrans "Return Order" %}</th>`;
+                html += `<tr><th>{% trans "Return Order" %}</th>`;
                 html += '<td>';
 
                 if (details.returnorder_detail) {
@@ -2918,7 +2918,7 @@ function loadStockTrackingTable(table, options) {
                         `/order/return-order/${details.returnorder}/`
                     );
                 } else {
-                    html += `<em>{% jstrans "Return Order no longer exists" %}</em>`;
+                    html += `<em>{% trans "Return Order no longer exists" %}</em>`;
                 }
 
                 html += `</td></tr>`;
@@ -2927,7 +2927,7 @@ function loadStockTrackingTable(table, options) {
             // Customer information
             if (details.customer) {
 
-                html += `<tr><th>{% jstrans "Customer" %}</td>`;
+                html += `<tr><th>{% trans "Customer" %}</td>`;
 
                 html += '<td>';
 
@@ -2937,7 +2937,7 @@ function loadStockTrackingTable(table, options) {
                         details.customer_detail.url
                     );
                 } else {
-                    html += `<i>{% jstrans "Customer no longer exists" %}</i>`;
+                    html += `<i>{% trans "Customer no longer exists" %}</i>`;
                 }
 
                 html += '</td></tr>';
@@ -2945,7 +2945,7 @@ function loadStockTrackingTable(table, options) {
 
             // Stockitem information
             if (details.stockitem) {
-                html += '<tr><th>{% jstrans "Stock Item" %}</td>';
+                html += '<tr><th>{% trans "Stock Item" %}</td>';
 
                 html += '<td>';
 
@@ -2955,7 +2955,7 @@ function loadStockTrackingTable(table, options) {
                         `/stock/item/${details.stockitem}/`
                     );
                 } else {
-                    html += `<i>{% jstrans "Stock item no longer exists" %}</i>`;
+                    html += `<i>{% trans "Stock item no longer exists" %}</i>`;
                 }
 
                 html += '</td></tr>';
@@ -2963,7 +2963,7 @@ function loadStockTrackingTable(table, options) {
 
             // Status information
             if (details.status) {
-                html += `<tr><th>{% jstrans "Status" %}</td>`;
+                html += `<tr><th>{% trans "Status" %}</td>`;
 
                 html += '<td>';
                 html += stockStatusDisplay(details.status);
@@ -2973,7 +2973,7 @@ function loadStockTrackingTable(table, options) {
 
             // Quantity information
             if (details.added) {
-                html += '<tr><th>{% jstrans "Added" %}</th>';
+                html += '<tr><th>{% trans "Added" %}</th>';
 
                 html += `<td>${details.added}</td>`;
 
@@ -2981,7 +2981,7 @@ function loadStockTrackingTable(table, options) {
             }
 
             if (details.removed) {
-                html += '<tr><th>{% jstrans "Removed" %}</th>';
+                html += '<tr><th>{% trans "Removed" %}</th>';
 
                 html += `<td>${details.removed}</td>`;
 
@@ -2989,7 +2989,7 @@ function loadStockTrackingTable(table, options) {
             }
 
             if (details.quantity) {
-                html += '<tr><th>{% jstrans "Quantity" %}</th>';
+                html += '<tr><th>{% trans "Quantity" %}</th>';
 
                 html += `<td>${details.quantity}</td>`;
 
@@ -3004,13 +3004,13 @@ function loadStockTrackingTable(table, options) {
 
     cols.push({
         field: 'user',
-        title: '{% jstrans "User" %}',
+        title: '{% trans "User" %}',
         formatter: function(value, row) {
             if (value) {
                 // TODO - Format the user's first and last names
                 return row.user_detail.username;
             } else {
-                return `<i>{% jstrans "No user information" %}</i>`;
+                return `<i>{% trans "No user information" %}</i>`;
             }
         }
     });
@@ -3053,12 +3053,12 @@ function loadInstalledInTable(table, options) {
             part_detail: true,
         },
         formatNoMatches: function() {
-            return '{% jstrans "No installed items" %}';
+            return '{% trans "No installed items" %}';
         },
         columns: [
             {
                 field: 'part',
-                title: '{% jstrans "Part" %}',
+                title: '{% trans "Part" %}',
                 formatter: function(value, row) {
                     var html = '';
 
@@ -3072,13 +3072,13 @@ function loadInstalledInTable(table, options) {
             },
             {
                 field: 'quantity',
-                title: '{% jstrans "Quantity" %}',
+                title: '{% trans "Quantity" %}',
                 formatter: function(value, row) {
 
                     var html = '';
 
                     if (row.serial && row.quantity == 1) {
-                        html += `{% jstrans "Serial" %}: ${row.serial}`;
+                        html += `{% trans "Serial" %}: ${row.serial}`;
                     } else {
                         html += `${row.quantity}`;
                     }
@@ -3088,14 +3088,14 @@ function loadInstalledInTable(table, options) {
             },
             {
                 field: 'status',
-                title: '{% jstrans "Status" %}',
+                title: '{% trans "Status" %}',
                 formatter: function(value) {
                     return stockStatusDisplay(value);
                 }
             },
             {
                 field: 'batch',
-                title: '{% jstrans "Batch" %}',
+                title: '{% trans "Batch" %}',
             },
             {
                 field: 'buttons',
@@ -3105,7 +3105,7 @@ function loadInstalledInTable(table, options) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeIconButton('fa-unlink', 'button-uninstall', pk, '{% jstrans "Uninstall Stock Item" %}');
+                    html += makeIconButton('fa-unlink', 'button-uninstall', pk, '{% trans "Uninstall Stock Item" %}');
 
                     return wrapButtons(html);
                 }
@@ -3140,7 +3140,7 @@ function uninstallStockItem(installed_item_id, options={}) {
         {
             confirm: true,
             method: 'POST',
-            title: '{% jstrans "Uninstall Stock Item" %}',
+            title: '{% trans "Uninstall Stock Item" %}',
             fields: {
                 location: {
                     icon: 'fa-sitemap',
@@ -3162,7 +3162,7 @@ function uninstallStockItem(installed_item_id, options={}) {
                 if (installed_item_id == null) {
                     html += `
                     <div class='alert alert-block alert-info'>
-                    {% jstrans "Select stock item to uninstall" %}
+                    {% trans "Select stock item to uninstall" %}
                     </div>`;
                 }
 
@@ -3183,13 +3183,13 @@ function installStockItem(stock_item_id, part_id, options={}) {
 
     var html = `
     <div class='alert alert-block alert-info'>
-        <strong>{% jstrans "Install another stock item into this item" %}</strong><br>
-        {% jstrans "Stock items can only be installed if they meet the following criteria" %}:<br>
+        <strong>{% trans "Install another stock item into this item" %}</strong><br>
+        {% trans "Stock items can only be installed if they meet the following criteria" %}:<br>
         <ul>
-            <li>{% jstrans "The Stock Item links to a Part which is the BOM for this Stock Item" %}</li>
-            <li>{% jstrans "The Stock Item is currently available in stock" %}</li>
-            <li>{% jstrans "The Stock Item is not already installed in another item" %}</li>
-            <li>{% jstrans "The Stock Item is tracked by either a batch code or serial number" %}</li>
+            <li>{% trans "The Stock Item links to a Part which is the BOM for this Stock Item" %}</li>
+            <li>{% trans "The Stock Item is currently available in stock" %}</li>
+            <li>{% trans "The Stock Item is not already installed in another item" %}</li>
+            <li>{% trans "The Stock Item is tracked by either a batch code or serial number" %}</li>
         </ul>
     </div>`;
 
@@ -3201,8 +3201,8 @@ function installStockItem(stock_item_id, part_id, options={}) {
                 part: {
                     type: 'related field',
                     required: 'true',
-                    label: '{% jstrans "Part" %}',
-                    help_text: '{% jstrans "Select part to install" %}',
+                    label: '{% trans "Part" %}',
+                    help_text: '{% trans "Select part to install" %}',
                     model: 'part',
                     api_url: '{% url "api-part-list" %}',
                     auto_fill: true,
@@ -3236,7 +3236,7 @@ function installStockItem(stock_item_id, part_id, options={}) {
                 quantity: {},
             },
             confirm: true,
-            title: '{% jstrans "Install Stock Item" %}',
+            title: '{% trans "Install Stock Item" %}',
             preFormContent: html,
             onSuccess: function(response) {
                 if (options.onSuccess) {
@@ -3264,8 +3264,8 @@ function setStockStatus(items, options={}) {
 
     if (items.length == 0) {
         showAlertDialog(
-            '{% jstrans "Select Stock Items" %}',
-            '{% jstrans "Select one or more stock items" %}'
+            '{% trans "Select Stock Items" %}',
+            '{% trans "Select one or more stock items" %}'
         );
         return;
     }
@@ -3278,11 +3278,11 @@ function setStockStatus(items, options={}) {
 
     let html = `
     <div class='alert alert-info alert-block>
-    {% jstrans "Selected stock items" %}: ${items.length}
+    {% trans "Selected stock items" %}: ${items.length}
     </div>`;
 
     constructForm('{% url "api-stock-change-status" %}', {
-        title: '{% jstrans "Change Stock Status" %}',
+        title: '{% trans "Change Stock Status" %}',
         method: 'POST',
         preFormContent: html,
         fields: {

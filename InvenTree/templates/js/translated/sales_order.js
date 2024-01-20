@@ -83,7 +83,7 @@ function salesOrderFields(options={}) {
         customer: {
             icon: 'fa-user-tie',
             secondary: {
-                title: '{% jstrans "Add Customer" %}',
+                title: '{% trans "Add Customer" %}',
                 fields: function() {
                     var fields = companyFormFields();
                     fields.is_customer.value = true;
@@ -158,7 +158,7 @@ function createSalesOrder(options={}) {
     constructForm('{% url "api-so-list" %}', {
         method: 'POST',
         fields: fields,
-        title: '{% jstrans "Create Sales Order" %}',
+        title: '{% trans "Create Sales Order" %}',
         onSuccess: function(data) {
             location.href = `/order/sales-order/${data.pk}/`;
         },
@@ -173,7 +173,7 @@ function editSalesOrder(order_id, options={}) {
 
     constructForm(`{% url "api-so-list" %}${order_id}/`, {
         fields: salesOrderFields(options),
-        title: '{% jstrans "Edit Sales Order" %}',
+        title: '{% trans "Edit Sales Order" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -234,7 +234,7 @@ function createSalesOrderLineItem(options={}) {
     constructForm('{% url "api-so-line-list" %}', {
         fields: fields,
         method: 'POST',
-        title: '{% jstrans "Add Line Item" %}',
+        title: '{% trans "Add Line Item" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         },
@@ -288,17 +288,17 @@ function completeSalesOrderShipment(shipment_id, options={}) {
             if (!allocations || allocations.length == 0) {
                 html = `
                 <div class='alert alert-block alert-danger'>
-                {% jstrans "No stock items have been allocated to this shipment" %}
+                {% trans "No stock items have been allocated to this shipment" %}
                 </div>
                 `;
             } else {
                 html = `
-                {% jstrans "The following stock items will be shipped" %}
+                {% trans "The following stock items will be shipped" %}
                 <table class='table table-striped table-condensed'>
                     <thead>
                         <tr>
-                            <th>{% jstrans "Part" %}</th>
-                            <th>{% jstrans "Stock Item" %}</th>
+                            <th>{% trans "Part" %}</th>
+                            <th>{% trans "Stock Item" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -312,9 +312,9 @@ function completeSalesOrderShipment(shipment_id, options={}) {
                     var stock = '';
 
                     if (allocation.serial) {
-                        stock = `{% jstrans "Serial Number" %}: ${allocation.serial}`;
+                        stock = `{% trans "Serial Number" %}: ${allocation.serial}`;
                     } else {
-                        stock = `{% jstrans "Quantity" %}: ${allocation.quantity}`;
+                        stock = `{% trans "Quantity" %}: ${allocation.quantity}`;
                     }
 
                     html += `
@@ -333,7 +333,7 @@ function completeSalesOrderShipment(shipment_id, options={}) {
 
             constructForm(`{% url "api-so-shipment-list" %}${shipment_id}/ship/`, {
                 method: 'POST',
-                title: `{% jstrans "Complete Shipment" %} ${shipment.reference}`,
+                title: `{% trans "Complete Shipment" %} ${shipment.reference}`,
                 fields: {
                     shipment_date: {
                         value: moment().format('YYYY-MM-DD'),
@@ -357,7 +357,7 @@ function completeSalesOrderShipment(shipment_id, options={}) {
                 },
                 preFormContent: html,
                 confirm: true,
-                confirmMessage: '{% jstrans "Confirm Shipment" %}',
+                confirmMessage: '{% trans "Confirm Shipment" %}',
                 buttons: options.buttons,
                 onSuccess: function(data) {
                     // Reload tables
@@ -413,11 +413,11 @@ function completePendingShipments(order_id, options={}) {
 
         if (!pending_shipments.length) {
             html += `
-            {% jstrans "No pending shipments found" %}
+            {% trans "No pending shipments found" %}
             `;
         } else {
             html += `
-            {% jstrans "No stock items have been allocated to pending shipments" %}
+            {% trans "No stock items have been allocated to pending shipments" %}
             `;
         }
 
@@ -427,7 +427,7 @@ function completePendingShipments(order_id, options={}) {
 
         constructForm(`{% url "api-so-shipment-list" %}0/ship/`, {
             method: 'POST',
-            title: '{% jstrans "Complete Shipments" %}',
+            title: '{% trans "Complete Shipments" %}',
             preFormContent: html,
             onSubmit: function(fields, options) {
                 handleFormSuccess(fields, options);
@@ -449,7 +449,7 @@ function completePendingShipmentsHelper(shipments, shipment_idx, options={}) {
                 buttons: [
                     {
                         name: 'skip',
-                        title: `{% jstrans "Skip" %}`,
+                        title: `{% trans "Skip" %}`,
                         onClick: function(form_options) {
                             if (form_options.modal) {
                                 $(form_options.modal).modal('hide');
@@ -481,7 +481,7 @@ function completeSalesOrder(order_id, options={}) {
         `/api/order/so/${order_id}/complete/`,
         {
             method: 'POST',
-            title: '{% jstrans "Complete Sales Order" %}',
+            title: '{% trans "Complete Sales Order" %}',
             confirm: true,
             fieldsFunction: function(opts) {
                 var fields = {
@@ -497,21 +497,21 @@ function completeSalesOrder(order_id, options={}) {
             preFormContent: function(opts) {
                 var html = `
                 <div class='alert alert-block alert-info'>
-                    {% jstrans "Mark this order as complete?" %}
+                    {% trans "Mark this order as complete?" %}
                 </div>`;
 
                 if (opts.context.pending_shipments) {
                     html += `
                     <div class='alert alert-block alert-danger'>
-                    {% jstrans "Order cannot be completed as there are incomplete shipments" %}<br>
+                    {% trans "Order cannot be completed as there are incomplete shipments" %}<br>
                     </div>`;
                 }
 
                 if (!opts.context.is_complete) {
                     html += `
                     <div class='alert alert-block alert-warning'>
-                    {% jstrans "This order has line items which have not been completed." %}<br>
-                    {% jstrans "Completing this order means that the order and line items will no longer be editable." %}
+                    {% trans "This order has line items which have not been completed." %}<br>
+                    {% trans "Completing this order means that the order and line items will no longer be editable." %}
                     </div>`;
                 }
 
@@ -532,12 +532,12 @@ function issueSalesOrder(order_id, options={}) {
 
     let html = `
     <div class='alert alert-block alert-info'>
-    {% jstrans "Issue this Sales Order?" %}
+    {% trans "Issue this Sales Order?" %}
     </div>`;
 
     constructForm(`{% url "api-so-list" %}${order_id}/issue/`, {
         method: 'POST',
-        title: '{% jstrans "Issue Sales Order" %}',
+        title: '{% trans "Issue Sales Order" %}',
         confirm: true,
         preFormContent: html,
         onSuccess: function(response) {
@@ -556,12 +556,12 @@ function cancelSalesOrder(order_id, options={}) {
         `/api/order/so/${order_id}/cancel/`,
         {
             method: 'POST',
-            title: '{% jstrans "Cancel Sales Order" %}',
+            title: '{% trans "Cancel Sales Order" %}',
             confirm: true,
             preFormContent: function(opts) {
                 var html = `
                 <div class='alert alert-block alert-warning'>
-                {% jstrans "Cancelling this order means that the order will no longer be editable." %}
+                {% trans "Cancelling this order means that the order will no longer be editable." %}
                 </div>`;
 
                 return html;
@@ -615,7 +615,7 @@ function createSalesOrderShipment(options={}) {
                 constructForm('{% url "api-so-shipment-list" %}', {
                     method: 'POST',
                     fields: fields,
-                    title: '{% jstrans "Create New Shipment" %}',
+                    title: '{% trans "Create New Shipment" %}',
                     onSuccess: function(data) {
                         if (options.onSuccess) {
                             options.onSuccess(data);
@@ -725,7 +725,7 @@ function loadSalesOrderTable(table, options) {
         showCustomView: display_mode == 'calendar',
         disablePagination: display_mode == 'calendar',
         formatNoMatches: function() {
-            return '{% jstrans "No sales orders found" %}';
+            return '{% trans "No sales orders found" %}';
         },
         buttons: constructOrderTableButtons({
             prefix: 'salesorder',
@@ -766,12 +766,12 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'reference',
-                title: '{% jstrans "Sales Order" %}',
+                title: '{% trans "Sales Order" %}',
                 formatter: function(value, row) {
                     var html = renderLink(value, `/order/sales-order/${row.pk}/`);
 
                     if (row.overdue) {
-                        html += makeIconBadge('fa-calendar-times icon-red', '{% jstrans "Order is overdue" %}');
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
                     }
 
                     return html;
@@ -781,11 +781,11 @@ function loadSalesOrderTable(table, options) {
                 sortable: true,
                 sortName: 'customer__name',
                 field: 'customer_detail',
-                title: '{% jstrans "Customer" %}',
+                title: '{% trans "Customer" %}',
                 formatter: function(value, row) {
 
                     if (!row.customer_detail) {
-                        return '{% jstrans "Invalid Customer" %}';
+                        return '{% trans "Invalid Customer" %}';
                     }
 
                     return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
@@ -794,16 +794,16 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'customer_reference',
-                title: '{% jstrans "Customer Reference" %}',
+                title: '{% trans "Customer Reference" %}',
             },
             {
                 sortable: false,
                 field: 'description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
             },
             {
                 field: 'project_code',
-                title: '{% jstrans "Project Code" %}',
+                title: '{% trans "Project Code" %}',
                 switchable: global_settings.PROJECT_CODES_ENABLED,
                 visible: global_settings.PROJECT_CODES_ENABLED,
                 sortable: true,
@@ -816,7 +816,7 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'status',
-                title: '{% jstrans "Status" %}',
+                title: '{% trans "Status" %}',
                 formatter: function(value, row) {
                     return salesOrderStatusDisplay(row.status);
                 }
@@ -824,7 +824,7 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'creation_date',
-                title: '{% jstrans "Creation Date" %}',
+                title: '{% trans "Creation Date" %}',
                 formatter: function(value) {
                     return renderDate(value);
                 }
@@ -832,7 +832,7 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'target_date',
-                title: '{% jstrans "Target Date" %}',
+                title: '{% trans "Target Date" %}',
                 formatter: function(value) {
                     return renderDate(value);
                 }
@@ -840,7 +840,7 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'shipment_date',
-                title: '{% jstrans "Shipment Date" %}',
+                title: '{% trans "Shipment Date" %}',
                 formatter: function(value) {
                     return renderDate(value);
                 }
@@ -848,11 +848,11 @@ function loadSalesOrderTable(table, options) {
             {
                 sortable: true,
                 field: 'line_items',
-                title: '{% jstrans "Items" %}'
+                title: '{% trans "Items" %}'
             },
             {
                 field: 'total_price',
-                title: '{% jstrans "Total Cost" %}',
+                title: '{% trans "Total Cost" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
@@ -905,15 +905,15 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
         let html = '';
 
-        html += makeEditButton('button-shipment-edit', pk, '{% jstrans "Edit shipment" %}');
+        html += makeEditButton('button-shipment-edit', pk, '{% trans "Edit shipment" %}');
 
         if (!options.shipped) {
-            html += makeIconButton('fa-truck icon-green', 'button-shipment-ship', pk, '{% jstrans "Complete shipment" %}');
+            html += makeIconButton('fa-truck icon-green', 'button-shipment-ship', pk, '{% trans "Complete shipment" %}');
         }
 
         var enable_delete = row.allocations && row.allocations.length == 0;
 
-        html += makeDeleteButton('button-shipment-delete', pk, '{% jstrans "Delete shipment" %}', {disabled: !enable_delete});
+        html += makeDeleteButton('button-shipment-delete', pk, '{% trans "Delete shipment" %}', {disabled: !enable_delete});
 
         return wrapButtons(html);
     }
@@ -930,7 +930,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
             constructForm(`{% url "api-so-shipment-list" %}${pk}/`, {
                 fields: fields,
-                title: '{% jstrans "Edit Shipment" %}',
+                title: '{% trans "Edit Shipment" %}',
                 refreshTable: table,
             });
         });
@@ -945,7 +945,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             var pk = $(this).attr('pk');
 
             constructForm(`{% url "api-so-shipment-list" %}${pk}/`, {
-                title: '{% jstrans "Delete Shipment" %}',
+                title: '{% trans "Delete Shipment" %}',
                 method: 'DELETE',
                 refreshTable: table,
             });
@@ -978,7 +978,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             }
         },
         formatNoMatches: function() {
-            return '{% jstrans "No matching shipments found" %}';
+            return '{% trans "No matching shipments found" %}';
         },
         columns: [
             {
@@ -989,13 +989,13 @@ function loadSalesOrderShipmentTable(table, options={}) {
             {
                 visible: show_so_reference,
                 field: 'order_detail',
-                title: '{% jstrans "Sales Order" %}',
+                title: '{% trans "Sales Order" %}',
                 switchable: false,
                 formatter: function(value, row) {
                     var html = renderLink(row.order_detail.reference, `/order/sales-order/${row.order}/`);
 
                     if (row.overdue) {
-                        html += makeIconBadge('fa-calendar-times icon-red', '{% jstrans "Order is overdue" %}');
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
                     }
 
                     return html;
@@ -1003,12 +1003,12 @@ function loadSalesOrderShipmentTable(table, options={}) {
             },
             {
                 field: 'reference',
-                title: '{% jstrans "Shipment Reference" %}',
+                title: '{% trans "Shipment Reference" %}',
                 switchable: false,
             },
             {
                 field: 'allocations',
-                title: '{% jstrans "Items" %}',
+                title: '{% trans "Items" %}',
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1021,39 +1021,39 @@ function loadSalesOrderShipmentTable(table, options={}) {
             },
             {
                 field: 'shipment_date',
-                title: '{% jstrans "Shipment Date" %}',
+                title: '{% trans "Shipment Date" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     if (value) {
                         return renderDate(value);
                     } else {
-                        return '<em>{% jstrans "Not shipped" %}</em>';
+                        return '<em>{% trans "Not shipped" %}</em>';
                     }
                 }
             },
             {
                 field: 'delivery_date',
-                title: '{% jstrans "Delivery Date" %}',
+                title: '{% trans "Delivery Date" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     if (value) {
                         return renderDate(value);
                     } else {
-                        return '<em>{% jstrans "Unknown" %}</em>';
+                        return '<em>{% trans "Unknown" %}</em>';
                     }
                 }
             },
             {
                 field: 'tracking_number',
-                title: '{% jstrans "Tracking" %}',
+                title: '{% trans "Tracking" %}',
             },
             {
                 field: 'invoice_number',
-                title: '{% jstrans "Invoice" %}',
+                title: '{% trans "Invoice" %}',
             },
             {
                 field: 'link',
-                title: '{% jstrans "Link" %}',
+                title: '{% trans "Link" %}',
                 formatter: function(value) {
                     if (value) {
                         return renderLink(value, value);
@@ -1064,7 +1064,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             },
             {
                 field: 'notes',
-                title: '{% jstrans "Notes" %}',
+                title: '{% trans "Notes" %}',
                 visible: false,
                 switchable: false,
                 // TODO: Implement 'notes' field
@@ -1106,7 +1106,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
             makeRemoveButton(
                 'button-row-remove',
                 pk,
-                '{% jstrans "Remove row" %}',
+                '{% trans "Remove row" %}',
             )
         );
 
@@ -1118,7 +1118,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                 type: 'decimal',
                 min_value: 0,
                 value: quantity || 0,
-                title: '{% jstrans "Specify stock allocation quantity" %}',
+                title: '{% trans "Specify stock allocation quantity" %}',
                 required: true,
             },
             {
@@ -1168,8 +1168,8 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
 
     if (table_entries.length == 0) {
         showAlertDialog(
-            '{% jstrans "Select Parts" %}',
-            '{% jstrans "You must select at least one part to allocate" %}',
+            '{% trans "Select Parts" %}',
+            '{% trans "You must select at least one part to allocate" %}',
         );
 
         return;
@@ -1182,8 +1182,8 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
         'take_from',
         {
             type: 'related field',
-            label: '{% jstrans "Source Location" %}',
-            help_text: '{% jstrans "Select source location (leave blank to take from all locations)" %}',
+            label: '{% trans "Source Location" %}',
+            help_text: '{% trans "Select source location (leave blank to take from all locations)" %}',
             required: false,
         },
         {},
@@ -1194,9 +1194,9 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
     <table class='table table-striped table-condensed' id='stock-allocation-table'>
         <thead>
             <tr>
-                <th>{% jstrans "Part" %}</th>
-                <th style='min-width: 250px;'>{% jstrans "Stock Item" %}</th>
-                <th>{% jstrans "Quantity" %}</th>
+                <th>{% trans "Part" %}</th>
+                <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
+                <th>{% trans "Quantity" %}</th>
                 <th></th>
         </thead>
         <tbody>
@@ -1216,7 +1216,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                 auto_fill: true,
                 secondary: {
                     method: 'POST',
-                    title: '{% jstrans "Add Shipment" %}',
+                    title: '{% trans "Add Shipment" %}',
                     fields: function() {
                         var ref = null;
 
@@ -1267,8 +1267,8 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
         },
         preFormContent: html,
         confirm: true,
-        confirmMessage: '{% jstrans "Confirm stock allocation" %}',
-        title: '{% jstrans "Allocate Stock Items to Sales Order" %}',
+        confirmMessage: '{% trans "Confirm stock allocation" %}',
+        title: '{% trans "Allocate Stock Items to Sales Order" %}',
         afterRender: function(fields, opts) {
 
             // Initialize source location field
@@ -1280,7 +1280,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                 type: 'related field',
                 value: options.source_location || null,
                 noResults: function(query) {
-                    return '{% jstrans "No matching stock locations" %}';
+                    return '{% trans "No matching stock locations" %}';
                 },
             };
 
@@ -1359,7 +1359,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                             return filters;
                         },
                         noResults: function(query) {
-                            return '{% jstrans "No matching stock items" %}';
+                            return '{% trans "No matching stock items" %}';
                         }
                     },
                     null,
@@ -1474,7 +1474,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
         paginationVAlign: 'bottom',
         original: options.params,
         formatNoMatches: function() {
-            return '{% jstrans "No sales order allocations found" %}';
+            return '{% trans "No sales order allocations found" %}';
         },
         columns: [
             {
@@ -1485,7 +1485,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
             {
                 field: 'order',
                 switchable: false,
-                title: '{% jstrans "Order" %}',
+                title: '{% trans "Order" %}',
                 formatter: function(value, row) {
 
                     var ref = `${row.order_detail.reference}`;
@@ -1496,37 +1496,37 @@ function loadSalesOrderAllocationTable(table, options={}) {
             {
                 field: 'item',
                 switchable: false,
-                title: '{% jstrans "Stock Item" %}',
+                title: '{% trans "Stock Item" %}',
                 formatter: function(value, row) {
                     // Render a link to the particular stock item
 
                     var link = `/stock/item/${row.item}/`;
-                    var text = `{% jstrans "Stock Item" %} ${row.item}`;
+                    var text = `{% trans "Stock Item" %} ${row.item}`;
 
                     return renderLink(text, link);
                 }
             },
             {
                 field: 'location',
-                title: '{% jstrans "Location" %}',
+                title: '{% trans "Location" %}',
                 formatter: function(value, row) {
                     return locationDetail(row.item_detail, true);
                 }
             },
             {
                 field: 'quantity',
-                title: '{% jstrans "Quantity" %}',
+                title: '{% trans "Quantity" %}',
                 sortable: true,
             },
             {
                 field: 'shipment_date',
-                title: '{% jstrans "Shipped" %}',
+                title: '{% trans "Shipped" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     if (value) {
                         return renderDate(value);
                     } else {
-                        return `<em>{% jstrans "Not shipped" %}</em>`;
+                        return `<em>{% trans "Not shipped" %}</em>`;
                     }
                 }
             }
@@ -1566,7 +1566,7 @@ function showAllocationSubTable(index, row, element, options) {
                     fields: {
                         quantity: {},
                     },
-                    title: '{% jstrans "Edit Stock Allocation" %}',
+                    title: '{% trans "Edit Stock Allocation" %}',
                     refreshTable: options.table,
                 },
             );
@@ -1580,8 +1580,8 @@ function showAllocationSubTable(index, row, element, options) {
                 `/api/order/so-allocation/${pk}/`,
                 {
                     method: 'DELETE',
-                    confirmMessage: '{% jstrans "Confirm Delete Operation" %}',
-                    title: '{% jstrans "Delete Stock Allocation" %}',
+                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
+                    title: '{% trans "Delete Stock Allocation" %}',
                     refreshTable: options.table,
                 }
             );
@@ -1595,20 +1595,20 @@ function showAllocationSubTable(index, row, element, options) {
         columns: [
             {
                 field: 'part_detail',
-                title: '{% jstrans "Part" %}',
+                title: '{% trans "Part" %}',
                 formatter: function(part, row) {
                     return imageHoverIcon(part.thumbnail) + renderLink(part.full_name, `/part/${part.pk}/`);
                 }
             },
             {
                 field: 'allocated',
-                title: '{% jstrans "Stock Item" %}',
+                title: '{% trans "Stock Item" %}',
                 formatter: function(value, row, index, field) {
                     let item = row.item_detail;
-                    let text = `{% jstrans "Quantity" %}: ${row.quantity}`;
+                    let text = `{% trans "Quantity" %}: ${row.quantity}`;
 
                     if (item && item.serial != null && row.quantity == 1) {
-                        text = `{% jstrans "Serial Number" %}: ${item.serial}`;
+                        text = `{% trans "Serial Number" %}: ${item.serial}`;
                     }
 
                     return renderLink(text, `/stock/item/${row.item}/`);
@@ -1616,19 +1616,19 @@ function showAllocationSubTable(index, row, element, options) {
             },
             {
                 field: 'location',
-                title: '{% jstrans "Location" %}',
+                title: '{% trans "Location" %}',
                 formatter: function(value, row, index, field) {
 
                     if (row.shipment_date) {
-                        return `<em>{% jstrans "Shipped to customer" %} - ${row.shipment_date}</em>`;
+                        return `<em>{% trans "Shipped to customer" %} - ${row.shipment_date}</em>`;
                     } else if (row.location) {
                         // Location specified
                         return renderLink(
-                            row.location_detail.pathstring || '{% jstrans "Location" %}',
+                            row.location_detail.pathstring || '{% trans "Location" %}',
                             `/stock/location/${row.location}/`
                         );
                     } else {
-                        return `<em>{% jstrans "Stock location not specified" %}</em>`;
+                        return `<em>{% trans "Stock location not specified" %}</em>`;
                     }
                 },
             },
@@ -1641,10 +1641,10 @@ function showAllocationSubTable(index, row, element, options) {
                     let pk = row.pk;
 
                     if (row.shipment_date) {
-                        html += `<span class='badge bg-success badge-right'>{% jstrans "Shipped" %}</span>`;
+                        html += `<span class='badge bg-success badge-right'>{% trans "Shipped" %}</span>`;
                     } else {
-                        html += makeEditButton('button-allocation-edit', pk, '{% jstrans "Edit stock allocation" %}');
-                        html += makeDeleteButton('button-allocation-delete', pk, '{% jstrans "Delete stock allocation" %}');
+                        html += makeEditButton('button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
+                        html += makeDeleteButton('button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                     }
 
                     return wrapButtons(html);
@@ -1689,13 +1689,13 @@ function showFulfilledSubTable(index, row, element, options) {
             },
             {
                 field: 'stock',
-                title: '{% jstrans "Stock Item" %}',
+                title: '{% trans "Stock Item" %}',
                 formatter: function(value, row) {
                     var text = '';
                     if (row.serial && row.quantity == 1) {
-                        text = `{% jstrans "Serial Number" %}: ${row.serial}`;
+                        text = `{% trans "Serial Number" %}: ${row.serial}`;
                     } else {
-                        text = `{% jstrans "Quantity" %}: ${row.quantity}`;
+                        text = `{% trans "Quantity" %}: ${row.quantity}`;
                     }
 
                     return renderLink(text, `/stock/item/${row.pk}/`);
@@ -1703,11 +1703,11 @@ function showFulfilledSubTable(index, row, element, options) {
             },
             {
                 field: 'location',
-                title: '{% jstrans "Location" %}',
+                title: '{% trans "Location" %}',
                 formatter: function(value, row) {
                     if (row.customer) {
                         return renderLink(
-                            '{% jstrans "Shipped to customer" %}',
+                            '{% trans "Shipped to customer" %}',
                             `/company/${row.customer}/`
                         );
                     } else if (row.location && row.location_detail) {
@@ -1716,7 +1716,7 @@ function showFulfilledSubTable(index, row, element, options) {
                             `/stock/location/${row.location}`,
                         );
                     } else {
-                        return `<em>{% jstrans "Stock location not specified" %}</em>`;
+                        return `<em>{% trans "Stock location not specified" %}</em>`;
                     }
                 }
             }
@@ -1793,7 +1793,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             sortable: true,
             sortName: 'part_detail.name',
             field: 'part',
-            title: '{% jstrans "Part" %}',
+            title: '{% trans "Part" %}',
             switchable: false,
             formatter: function(value, row, index, field) {
                 if (row.part_detail) {
@@ -1803,25 +1803,25 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 }
             },
             footerFormatter: function() {
-                return '{% jstrans "Total" %}';
+                return '{% trans "Total" %}';
             },
         },
         {
             sortable: false,
             field: 'part_detail.description',
-            title: '{% jstrans "Description" %}',
+            title: '{% trans "Description" %}',
             switchable: true,
         },
         {
             sortable: true,
             field: 'reference',
-            title: '{% jstrans "Reference" %}',
+            title: '{% trans "Reference" %}',
             switchable: true,
         },
         {
             sortable: true,
             field: 'quantity',
-            title: '{% jstrans "Quantity" %}',
+            title: '{% trans "Quantity" %}',
             footerFormatter: function(data) {
                 return data.map(function(row) {
                     return +row['quantity'];
@@ -1834,7 +1834,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         {
             sortable: true,
             field: 'sale_price',
-            title: '{% jstrans "Unit Price" %}',
+            title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
                 return formatCurrency(row.sale_price, {
                     currency: row.sale_price_currency
@@ -1844,7 +1844,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         {
             field: 'total_price',
             sortable: true,
-            title: '{% jstrans "Total Price" %}',
+            title: '{% trans "Total Price" %}',
             formatter: function(value, row) {
                 return formatCurrency(row.sale_price * row.quantity, {
                     currency: row.sale_price_currency,
@@ -1864,7 +1864,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         },
         {
             field: 'target_date',
-            title: '{% jstrans "Target Date" %}',
+            title: '{% trans "Target Date" %}',
             sortable: true,
             switchable: true,
             formatter: function(value, row) {
@@ -1872,7 +1872,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     var html = renderDate(row.target_date);
 
                     if (row.overdue) {
-                        html += makeIconBadge('fa-calendar-times', '{% jstrans "This line item is overdue" %}');
+                        html += makeIconBadge('fa-calendar-times', '{% trans "This line item is overdue" %}');
                     }
 
                     return html;
@@ -1890,7 +1890,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         columns.push(
             {
                 field: 'stock',
-                title: '{% jstrans "Available Stock" %}',
+                title: '{% trans "Available Stock" %}',
                 formatter: function(value, row) {
 
                     let available = row.available_stock + row.available_variant_stock;
@@ -1904,17 +1904,17 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         html = renderLink(available, url);
 
                         if (row.available_variant_stock && row.available_variant_stock > 0) {
-                            html += makeIconBadge('fa-info-circle icon-blue', '{% jstrans "Includes variant stock" %}');
+                            html += makeIconBadge('fa-info-circle icon-blue', '{% trans "Includes variant stock" %}');
                         }
                     } else {
-                        html += `<span class='badge rounded-pill bg-danger'>{% jstrans "No Stock Available" %}</span>`;
+                        html += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                     }
 
                     if (required > 0) {
                         if (available >= required) {
-                            html += makeIconBadge('fa-check-circle icon-green', '{% jstrans "Sufficient stock available" %}');
+                            html += makeIconBadge('fa-check-circle icon-green', '{% trans "Sufficient stock available" %}');
                         } else {
-                            html += makeIconBadge('fa-times-circle icon-red', '{% jstrans "Insufficient stock available" %}');
+                            html += makeIconBadge('fa-times-circle icon-red', '{% trans "Insufficient stock available" %}');
                         }
                     }
 
@@ -1926,7 +1926,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         columns.push(
             {
                 field: 'allocated',
-                title: '{% jstrans "Allocated" %}',
+                title: '{% trans "Allocated" %}',
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row, index, field) {
@@ -1954,7 +1954,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     columns.push({
         field: 'shipped',
-        title: '{% jstrans "Shipped" %}',
+        title: '{% trans "Shipped" %}',
         switchable: false,
         sortable: true,
         formatter: function(value, row) {
@@ -1979,12 +1979,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     columns.push({
         field: 'notes',
-        title: '{% jstrans "Notes" %}',
+        title: '{% trans "Notes" %}',
     });
 
     columns.push({
         field: 'link',
-        title: '{% jstrans "Link" %}',
+        title: '{% trans "Link" %}',
         formatter: function(value) {
             if (value) {
                 return renderLink(value, value);
@@ -2005,37 +2005,37 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                 if (options.allow_edit && (row.shipped < row.quantity)) {
                     if (part.trackable) {
-                        buttons += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% jstrans "Allocate serial numbers" %}');
+                        buttons += makeIconButton('fa-hashtag icon-green', 'button-add-by-sn', pk, '{% trans "Allocate serial numbers" %}');
                     }
-                    buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% jstrans "Allocate stock" %}');
+                    buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-add', pk, '{% trans "Allocate stock" %}');
                     if (part.purchaseable) {
-                        buttons += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% jstrans "Purchase stock" %}');
+                        buttons += makeIconButton('fa-shopping-cart', 'button-buy', row.part, '{% trans "Purchase stock" %}');
                     }
 
                     if (part.assembly) {
-                        buttons += makeIconButton('fa-tools', 'button-build', row.part, '{% jstrans "Build stock" %}');
+                        buttons += makeIconButton('fa-tools', 'button-build', row.part, '{% trans "Build stock" %}');
                     }
                 }
             }
 
-            buttons += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% jstrans "Calculate price" %}');
+            buttons += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
 
             if (options.allow_edit) {
-                buttons += makeCopyButton('button-duplicate', pk, '{% jstrans "Duplicate line item" %}');
-                buttons += makeEditButton('button-edit', pk, '{% jstrans "Edit line item" %}');
+                buttons += makeCopyButton('button-duplicate', pk, '{% trans "Duplicate line item" %}');
+                buttons += makeEditButton('button-edit', pk, '{% trans "Edit line item" %}');
             }
 
             if (options.allow_delete) {
                 var delete_disabled = false;
 
-                var title = '{% jstrans "Delete line item" %}';
+                var title = '{% trans "Delete line item" %}';
 
                 if (row.shipped) {
                     delete_disabled = true;
-                    title = '{% jstrans "Cannot be deleted as items have been shipped" %}';
+                    title = '{% trans "Cannot be deleted as items have been shipped" %}';
                 } else if (row.allocated) {
                     delete_disabled = true;
-                    title = '{% jstrans "Cannot be deleted as items have been allocated" %}';
+                    title = '{% trans "Cannot be deleted as items have been allocated" %}';
                 }
 
                 // Prevent deletion of the line item if items have been allocated or shipped!
@@ -2067,7 +2067,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         method: 'POST',
                         fields: fields,
                         data: data,
-                        title: '{% jstrans "Duplicate Line Item" %}',
+                        title: '{% trans "Duplicate Line Item" %}',
                         refreshTable: table,
                     });
                 }
@@ -2080,7 +2080,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
             constructForm(`{% url "api-so-line-list" %}${pk}/`, {
                 fields: soLineItemFields(),
-                title: '{% jstrans "Edit Line Item" %}',
+                title: '{% trans "Edit Line Item" %}',
                 onSuccess: reloadTable,
             });
         });
@@ -2091,7 +2091,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
             constructForm(`{% url "api-so-line-list" %}${pk}/`, {
                 method: 'DELETE',
-                title: '{% jstrans "Delete Line Item" %}',
+                title: '{% trans "Delete Line Item" %}',
                 onSuccess: reloadTable,
             });
         });
@@ -2106,7 +2106,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
                         constructForm(`{% url "api-so-list" %}${options.order}/allocate-serials/`, {
                             method: 'POST',
-                            title: '{% jstrans "Allocate Serial Numbers" %}',
+                            title: '{% trans "Allocate Serial Numbers" %}',
                             fields: {
                                 line_item: {
                                     value: pk,
@@ -2205,7 +2205,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             launchModalForm(
                 '{% url "line-pricing" %}',
                 {
-                    submit_text: '{% jstrans "Calculate price" %}',
+                    submit_text: '{% trans "Calculate price" %}',
                     data: {
                         line_item: pk,
                         quantity: row.quantity,
@@ -2213,7 +2213,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     buttons: [
                         {
                             name: 'update_price',
-                            title: '{% jstrans "Update Unit Price" %}'
+                            title: '{% trans "Update Unit Price" %}'
                         },
                     ],
                     success: reloadTable,
@@ -2227,7 +2227,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         name: 'salesorderlineitems',
         sidePagination: 'client',
         formatNoMatches: function() {
-            return '{% jstrans "No matching line items" %}';
+            return '{% trans "No matching line items" %}';
         },
         queryParams: filters,
         original: options.params,

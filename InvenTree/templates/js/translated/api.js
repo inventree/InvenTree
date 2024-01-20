@@ -222,48 +222,48 @@ function showApiError(xhr, url) {
     switch (xhr.status || 0) {
     // No response
     case 0:
-        title = '{% jstrans "No Response" %}';
-        message = '{% jstrans "No response from the InvenTree server" %}';
+        title = '{% trans "No Response" %}';
+        message = '{% trans "No response from the InvenTree server" %}';
         break;
     // Bad request
     case 400:
         // Note: Normally error code 400 is handled separately,
         //       and should now be shown here!
-        title = '{% jstrans "Error 400: Bad request" %}';
-        message = '{% jstrans "API request returned error code 400" %}';
+        title = '{% trans "Error 400: Bad request" %}';
+        message = '{% trans "API request returned error code 400" %}';
         break;
     // Not authenticated
     case 401:
-        title = '{% jstrans "Error 401: Not Authenticated" %}';
-        message = '{% jstrans "Authentication credentials not supplied" %}';
+        title = '{% trans "Error 401: Not Authenticated" %}';
+        message = '{% trans "Authentication credentials not supplied" %}';
         break;
     // Permission denied
     case 403:
-        title = '{% jstrans "Error 403: Permission Denied" %}';
-        message = '{% jstrans "You do not have the required permissions to access this function" %}';
+        title = '{% trans "Error 403: Permission Denied" %}';
+        message = '{% trans "You do not have the required permissions to access this function" %}';
         break;
     // Resource not found
     case 404:
-        title = '{% jstrans "Error 404: Resource Not Found" %}';
-        message = '{% jstrans "The requested resource could not be located on the server" %}';
+        title = '{% trans "Error 404: Resource Not Found" %}';
+        message = '{% trans "The requested resource could not be located on the server" %}';
         break;
     // Method not allowed
     case 405:
-        title = '{% jstrans "Error 405: Method Not Allowed" %}';
-        message = '{% jstrans "HTTP method not allowed at URL" %}';
+        title = '{% trans "Error 405: Method Not Allowed" %}';
+        message = '{% trans "HTTP method not allowed at URL" %}';
         break;
     // Timeout
     case 408:
-        title = '{% jstrans "Error 408: Timeout" %}';
-        message = '{% jstrans "Connection timeout while requesting data from server" %}';
+        title = '{% trans "Error 408: Timeout" %}';
+        message = '{% trans "Connection timeout while requesting data from server" %}';
         break;
     case 503:
-        title = '{% jstrans "Error 503: Service Unavailable" %}';
-        message = '{% jstrans "The server is currently unavailable" %}';
+        title = '{% trans "Error 503: Service Unavailable" %}';
+        message = '{% trans "The server is currently unavailable" %}';
         break;
     default:
-        title = '{% jstrans "Unhandled Error Code" %}';
-        message = `{% jstrans "Error code" %}: ${xhr.status}`;
+        title = '{% trans "Unhandled Error Code" %}';
+        message = `{% trans "Error code" %}: ${xhr.status}`;
 
         var response = xhr.responseJSON;
 
