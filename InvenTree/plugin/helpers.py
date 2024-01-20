@@ -146,7 +146,7 @@ def get_git_log(path):
                 commit.message.decode().split('\n')[0],
             ]
         except KeyError as err:
-            logger.debug(f'No HEAD tag found in git repo at {path}')
+            logger.debug('No HEAD tag found in git repo at path %s', path)
         except NotGitRepository:
             pass
 
