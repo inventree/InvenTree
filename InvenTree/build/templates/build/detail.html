@@ -419,8 +419,8 @@ function allocateSelectedLines() {
 
     if (unallocated_lines.length == 0) {
         showAlertDialog(
-            '{% jstrans "Allocation Complete" %}',
-            '{% jstrans "All lines have been fully allocated" %}',
+            '{% trans "Allocation Complete" escape=True %}',
+            '{% trans "All lines have been fully allocated" escape=True %}',
         );
     } else {
 

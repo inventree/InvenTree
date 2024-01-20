@@ -273,7 +273,7 @@ src="{% static 'img/blank_image.png' %}"
 
 $("#show-qr-code").click(function() {
     showQRDialog(
-        '{% jstrans "Supplier Part QR Code" %}',
+        '{% trans "Supplier Part QR Code" escape=True %}',
         '{"supplierpart": {{ part.pk }} }'
     );
 });
@@ -284,7 +284,7 @@ $("#barcode-link").click(function() {
             supplierpart: {{ part.pk }},
         },
         {
-            title: '{% jstrans "Link Barcode to Supplier Part" %}',
+            title: '{% trans "Link Barcode to Supplier Part" escape=True %}',
         }
     );
 });
@@ -356,7 +356,7 @@ $('#update-part-availability').click(function() {
         fields: {
             available: {},
         },
-        title: '{% jstrans "Update Part Availability" %}',
+        title: '{% trans "Update Part Availability" escape=True %}',
         onSuccess: function() {
             location.reload();
         }

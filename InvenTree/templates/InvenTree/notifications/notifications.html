@@ -35,7 +35,7 @@ loadNotificationTable("#inbox-table", {
     params: {
         read: false,
     },
-    no_matches: function() { return '{% jstrans "No unread notifications found" %}'; },
+    no_matches: function() { return '{% trans "No unread notifications found" escape=True %}'; },
 });
 
 $("#mark-all").on('click', function() {
@@ -55,7 +55,7 @@ $("#mark-all").on('click', function() {
 loadNotificationTable("#history-table", {
     name: 'history',
     url: '{% url 'api-notifications-list' %}',
-    no_matches: function() { return '{% jstrans "No notification history found" %}'; },
+    no_matches: function() { return '{% trans "No notification history found" escape=True %}'; },
 }, true);
 
 $('#history-delete').click(function() {
@@ -72,7 +72,7 @@ $('#history-delete').click(function() {
             method: 'DELETE',
             multi_delete: true,
             preFormContent: html,
-            title: '{% jstrans "Delete Notifications" %}',
+            title: '{% trans "Delete Notifications" escape=True %}',
             refreshTable: '#history-table',
             form_data: {
                 filters: {
@@ -86,7 +86,7 @@ $('#history-delete').click(function() {
 $("#history-table").on('click', '.notification-delete', function() {
     constructForm(`{% url "api-notifications-list" %}${$(this).attr('pk')}/`, {
         method: 'DELETE',
-        title: '{% jstrans "Delete Notification" %}',
+        title: '{% trans "Delete Notification" escape=True %}',
         onSuccess: function(data) {
             updateNotificationTables();
         }

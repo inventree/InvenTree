@@ -79,9 +79,9 @@
     }
 
     {% if roles.part.view %}
-    addItemTitle('{% jstrans "Part" %}');
+    addItemTitle('{% trans "Part" escape=True %}');
 
-    addItem('part', '{% jstrans "Parts" %}', 'fa-shapes');
+    addItem('part', '{% trans "Parts" escape=True %}', 'fa-shapes');
 
     loadPartTable("#table-part",
         "{% url 'api-part-list' %}",
@@ -94,7 +94,7 @@
         }
     );
 
-    addItem('category', '{% jstrans "Part Categories" %}', 'fa-sitemap');
+    addItem('category', '{% trans "Part Categories" escape=True %}', 'fa-sitemap');
 
     loadPartCategoryTable($("#table-category"), {
         params: {
@@ -102,7 +102,7 @@
         }
     });
 
-    addItem('manufacturer-part', '{% jstrans "Manufacturer Parts" %}', 'fa-toolbox');
+    addItem('manufacturer-part', '{% trans "Manufacturer Parts" escape=True %}', 'fa-toolbox');
 
     loadManufacturerPartTable(
         "#table-manufacturer-part",
@@ -117,7 +117,7 @@
         }
     );
 
-    addItem('supplier-part', '{% jstrans "Supplier Parts" %}', 'fa-pallet');
+    addItem('supplier-part', '{% trans "Supplier Parts" escape=True %}', 'fa-pallet');
 
     loadSupplierPartTable(
         "#table-supplier-part",
@@ -136,9 +136,9 @@
 
     {% if roles.build.view %}
 
-    addItemTitle('{% jstrans "Build" %}');
+    addItemTitle('{% trans "Build" escape=True %}');
 
-    addItem('build-order', '{% jstrans "Build Orders" %}', 'fa-tools');
+    addItem('build-order', '{% trans "Build Orders" escape=True %}', 'fa-tools');
 
     loadBuildTable('#table-build-order', {
         locale: '{{ request.LANGUAGE_CODE }}',
@@ -150,9 +150,9 @@
     {% endif %}
 
     {% if roles.stock.view %}
-    addItemTitle('{% jstrans "Stock" %}');
+    addItemTitle('{% trans "Stock" escape=True %}');
 
-    addItem('stock', '{% jstrans "Stock Items" %}', 'fa-boxes');
+    addItem('stock', '{% trans "Stock Items" escape=True %}', 'fa-boxes');
 
     loadStockTable($('#table-stock'), {
         filterKey: 'stocksearch',
@@ -163,7 +163,7 @@
         }
     });
 
-    addItem('location', '{% jstrans "Stock Locations" %}', 'fa-map-marker-alt');
+    addItem('location', '{% trans "Stock Locations" escape=True %}', 'fa-map-marker-alt');
 
     loadStockLocationTable($("#table-location"), {
         filterKey: 'locationsearch',
@@ -175,9 +175,9 @@
     {% endif %}
 
     {% if roles.purchase_order.view or roles.sales_order.view %}
-    addItemTitle('{% jstrans "Company" %}');
+    addItemTitle('{% trans "Company" escape=True %}');
 
-    addItem('manufacturer', '{% jstrans "Manufacturers" %}', 'fa-industry');
+    addItem('manufacturer', '{% trans "Manufacturers" escape=True %}', 'fa-industry');
 
     loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
         params: {
@@ -187,7 +187,7 @@
     });
 
     {% if roles.purchase_order.view %}
-    addItem('supplier', '{% jstrans "Suppliers" %}', 'fa-building');
+    addItem('supplier', '{% trans "Suppliers" escape=True %}', 'fa-building');
 
     loadCompanyTable('#table-supplier', "{% url 'api-company-list' %}", {
         params: {
@@ -196,7 +196,7 @@
         }
     });
 
-    addItem('purchase-order', '{% jstrans "Purchase Orders" %}', 'fa-shopping-cart');
+    addItem('purchase-order', '{% trans "Purchase Orders" escape=True %}', 'fa-shopping-cart');
 
     loadPurchaseOrderTable('#table-purchase-order', {
         params: {
@@ -207,7 +207,7 @@
     {% endif %}
 
     {% if roles.sales_order.view %}
-    addItem('customer', '{% jstrans "Customers" %}', 'fa-user-tie');
+    addItem('customer', '{% trans "Customers" escape=True %}', 'fa-user-tie');
 
     loadCompanyTable('#table-customer', "{% url 'api-company-list' %}", {
         params: {
@@ -216,7 +216,7 @@
         }
     });
 
-    addItem('sales-orders', '{% jstrans "Sales Orders" %}', 'fa-truck');
+    addItem('sales-orders', '{% trans "Sales Orders" escape=True %}', 'fa-truck');
 
     loadSalesOrderTable('#table-sales-orders', {
         params: {
