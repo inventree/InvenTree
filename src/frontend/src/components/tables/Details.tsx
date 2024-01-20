@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Badge, Group, Table, Tooltip } from '@mantine/core';
+import { Badge, Group, Table, Text, Tooltip } from '@mantine/core';
 import {
   IconCopy,
   IconCornerUpRightDouble,
@@ -11,16 +11,7 @@ import {
 } from '@tabler/icons-react';
 import React from 'react';
 
-const left = [
-  {
-    field: 'Description',
-    value: 'Hello there'
-  },
-  {
-    field: 'Potato',
-    value: 'Tomato'
-  }
-];
+import { GetIcon } from '../../functions/icons';
 
 export type PartIconsType = {
   assembly: boolean;
@@ -92,31 +83,69 @@ function PartIcons({
   );
 }
 
-export function DetailsTable(part: any) {
-  console.log(part.part);
+function TableStringField({
+  field_data,
+  field_value,
+  unit = null
+}: {
+  field_data: any;
+  field_value: any;
+  unit?: null | string;
+}) {
+  console.log(field_data, field_value);
+  return (
+    <tr>
+      <td style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+        {GetIcon(field_data.name)}
+        <Text>{field_data.label}</Text>
+      </td>
+      <td>
+        {field_value} {unit && unit.length > 0 ? unit : 'meters'}
+      </td>
+    </tr>
+  );
+}
+
+export function DetailsTable({
+  part,
+  fields,
+  partIcons = false
+}: {
+  part: any;
+  fields: any;
+  partIcons?: boolean;
+}) {
+  console.log('DetailsTable', part, fields);
   return (
     <Group>
       <Table striped>
         <tbody>
-          <tr>
-            <PartIcons
-              assembly={part.part.assembly}
-              template={part.part.is_template}
-              component={part.part.component}
-              trackable={part.part.trackable}
-              purchaseable={part.part.purchaseable}
-              saleable={part.part.salable}
-              virtual={part.part.virtual}
-            />
-          </tr>
-          <tr>
-            <td>{left[0].field}</td>
-            <td>{left[0].value}</td>
-          </tr>
-          <tr>
-            <td>{left[1].field}</td>
-            <td>{left[1].value}</td>
-          </tr>
+          {partIcons && (
+            <tr>
+              <PartIcons
+                assembly={part.assembly}
+                template={part.is_template}
+                component={part.component}
+                trackable={part.trackable}
+                purchaseable={part.purchaseable}
+                saleable={part.salable}
+                virtual={part.virtual}
+              />
+            </tr>
+          )}
+          {fields.map((data: any, index: number) => {
+            console.log('Mapping', data);
+            if (data.type == 'string' || data.type == 'text') {
+              return (
+                <TableStringField
+                  field_data={data}
+                  field_value={part[data.name]}
+                  key={index}
+                  unit={data.unit ?? part['units']}
+                />
+              );
+            }
+          })}
         </tbody>
       </Table>
     </Group>
