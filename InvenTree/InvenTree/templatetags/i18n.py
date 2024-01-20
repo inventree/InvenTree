@@ -123,18 +123,6 @@ def do_translate(parser, token, escape=False):
     )
 
 
-@register.tag('jstrans')
-def do_jstrans(parser, token):
-    """Custom translation function for javascript strings.
-
-    - Usage: {% jstrans "String to translate" %}
-    - Performs the same function as the 'trans' tag, but also escapes the translated string.
-    - Explicitly required for javascript code within a .html template
-    - Note: Any {% trans %} tag is automatically escaped in a .js file
-    """
-    return do_translate(parser, token, escape=True)
-
-
 # Re-register tags which we have not explicitly overridden
 register.tag('blocktrans', django.templatetags.i18n.do_block_translate)
 register.tag('blocktranslate', django.templatetags.i18n.do_block_translate)
