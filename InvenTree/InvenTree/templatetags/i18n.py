@@ -110,6 +110,9 @@ def do_translate(parser, token, escape=False):
                     "No argument provided to the '%s' tag for the as option." % bits[0]
                 )
             asvar = value
+        elif option == 'escape':
+            # Allow extra argument for 'escape' option
+            pass
         else:
             raise TemplateSyntaxError(
                 "Unknown argument for '%s' tag: '%s'. The only options "
