@@ -109,6 +109,11 @@ COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
 RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
 
+COPY execute.sh ${INVENTREE_HOME}/execute.sh
+RUN chmod +x ${INVENTREE_HOME}/execute.sh
+
+COPY db_version ${INVENTREE_HOME}/db_version
+
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
@@ -163,7 +168,7 @@ WORKDIR ${INVENTREE_HOME}
 ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
 
 # Launch the development server
-CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
+CMD ${INVENTREE_HOME}/execute.sh
 
 # Image target for devcontainer
 FROM dev as devcontainer
