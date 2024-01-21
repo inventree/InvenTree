@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-13 12:16\n"
+"PO-Revision-Date: 2024-01-21 15:02\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -118,7 +118,7 @@ msgstr "Brukernavn"
 
 #: src/components/forms/AuthenticationForm.tsx:92
 msgid "Your username"
-msgstr ""
+msgstr "Your username"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:106
@@ -445,7 +445,7 @@ msgstr "Kopiér versjonsinformasjon"
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
-msgstr ""
+msgstr "Lukk"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
@@ -1174,27 +1174,27 @@ msgstr "Ikke funnet"
 #: src/components/tables/InvenTreeTable.tsx:373
 #: src/components/tables/InvenTreeTable.tsx:465
 msgid "Delete selected records"
-msgstr ""
+msgstr "Slett valgte oppføringer"
 
 #: src/components/tables/InvenTreeTable.tsx:377
 msgid "Are you sure you want to delete the selected records?"
-msgstr ""
+msgstr "Er du sikker på at du vil slette valgte oppføringer?"
 
 #: src/components/tables/InvenTreeTable.tsx:379
 msgid "This action cannot be undone!"
-msgstr ""
+msgstr "Denne handlingen kan ikke angres!"
 
 #: src/components/tables/InvenTreeTable.tsx:407
 msgid "Deleted records"
-msgstr ""
+msgstr "Slettede oppføringer"
 
 #: src/components/tables/InvenTreeTable.tsx:408
 msgid "Records were deleted successfully"
-msgstr ""
+msgstr "Oppføringer slettet"
 
 #: src/components/tables/InvenTreeTable.tsx:417
 msgid "Failed to delete records"
-msgstr ""
+msgstr "Kunne ikke slette oppføringer"
 
 #: src/components/tables/InvenTreeTable.tsx:446
 #: src/components/tables/InvenTreeTable.tsx:447
@@ -2371,51 +2371,51 @@ msgstr "Egendefinert enhet opprettet"
 
 #: src/components/tables/settings/ErrorTable.tsx:29
 msgid "When"
-msgstr ""
+msgstr "Når"
 
 #: src/components/tables/settings/ErrorTable.tsx:39
 msgid "Error Information"
-msgstr ""
+msgstr "Feilinformasjon"
 
 #: src/components/tables/settings/ErrorTable.tsx:51
 msgid "Delete error report"
-msgstr ""
+msgstr "Slett feilrapport"
 
 #: src/components/tables/settings/ErrorTable.tsx:53
 msgid "Error report deleted"
-msgstr ""
+msgstr "Feilrapport slettet"
 
 #: src/components/tables/settings/ErrorTable.tsx:54
 msgid "Are you sure you want to delete this error report?"
-msgstr ""
+msgstr "Er du sikker på at du vil slette denne feilrapporten?"
 
 #: src/components/tables/settings/ErrorTable.tsx:67
 #: src/components/tables/settings/FailedTasksTable.tsx:57
 msgid "Error Details"
-msgstr ""
+msgstr "Feildetaljer"
 
 #: src/components/tables/settings/FailedTasksTable.tsx:24
 #: src/components/tables/settings/PendingTasksTable.tsx:17
 #: src/components/tables/settings/ScheduledTasksTable.tsx:19
 msgid "Task"
-msgstr ""
+msgstr "Oppgave"
 
 #: src/components/tables/settings/FailedTasksTable.tsx:30
 #: src/components/tables/settings/PendingTasksTable.tsx:22
 msgid "Task ID"
-msgstr ""
+msgstr "Oppgave-ID"
 
 #: src/components/tables/settings/FailedTasksTable.tsx:34
 msgid "Started"
-msgstr ""
+msgstr "Startet"
 
 #: src/components/tables/settings/FailedTasksTable.tsx:40
 msgid "Stopped"
-msgstr ""
+msgstr "Stoppet"
 
 #: src/components/tables/settings/FailedTasksTable.tsx:46
 msgid "Attempts"
-msgstr ""
+msgstr "Forsøk"
 
 #: src/components/tables/settings/GroupTable.tsx:45
 #~ msgid "Group updated"
@@ -2460,15 +2460,15 @@ msgstr "Rediger gruppe"
 
 #: src/components/tables/settings/PendingTasksTable.tsx:30
 msgid "Created"
-msgstr "Created"
+msgstr "Opprettet"
 
 #: src/components/tables/settings/PendingTasksTable.tsx:36
 msgid "Arguments"
-msgstr ""
+msgstr "Argumenter"
 
 #: src/components/tables/settings/PendingTasksTable.tsx:40
 msgid "Keywords"
-msgstr ""
+msgstr "Nøkkelord"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:49
 msgid "Edit project code"
@@ -2501,11 +2501,11 @@ msgstr "Prosjektkode lagt til"
 
 #: src/components/tables/settings/ScheduledTasksTable.tsx:25
 msgid "Last Run"
-msgstr ""
+msgstr "Sist kjørt"
 
 #: src/components/tables/settings/ScheduledTasksTable.tsx:47
 msgid "Next Run"
-msgstr ""
+msgstr "Neste kjøring"
 
 #: src/components/tables/settings/UserDrawer.tsx:92
 #~ msgid "User permission changed successfully"
@@ -3781,11 +3781,11 @@ msgstr "Kontodetaljer"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
 msgid "First name"
-msgstr ""
+msgstr "Fornavn"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 msgid "Last name"
-msgstr ""
+msgstr "Etternavn"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 msgid "First name:"
@@ -3793,11 +3793,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
-#~ msgstr "Fornavn: {0}"
+#~ msgstr "First name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
-#~ msgstr "Etternavn: {0}"
+#~ msgstr "Last name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
 msgid "Last name:"
@@ -3932,11 +3932,11 @@ msgstr "Laster"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:62
 msgid "Background Tasks"
-msgstr ""
+msgstr "Bakgrunnsoppgaver"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:68
 msgid "Error Reports"
-msgstr ""
+msgstr "Feilrapporter"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:86
 msgid "Custom Units"
@@ -3980,15 +3980,15 @@ msgstr "Innstillinger for Utvidelser"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:27
 msgid "Pending Tasks"
-msgstr ""
+msgstr "Ventende oppgaver"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:35
 msgid "Scheduled Tasks"
-msgstr ""
+msgstr "Planlagte oppgaver"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:43
 msgid "Failed Tasks"
-msgstr ""
+msgstr "Mislykkede oppgaver"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:30
 msgid "Select settings relevant for user lifecycle. More available in"
@@ -4422,3 +4422,4 @@ msgstr "Plattformgrensesnittet er optimalisert for Nettbrett og Desktop, du kan 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Les dokumentasjonen"
+
