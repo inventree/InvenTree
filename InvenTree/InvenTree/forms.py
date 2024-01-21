@@ -292,9 +292,7 @@ class CustomUrlMixin:
         return Site.objects.get_current().domain + url
 
 
-class CustomAccountAdapter(
-    CustomUrlMixin, RegistratonMixin, OTPAdapter, DefaultAccountAdapter
-):
+class CustomAccountAdapter(CustomUrlMixin, RegistratonMixin, DefaultAccountAdapter):
     """Override of adapter to use dynamic settings."""
 
     def send_mail(self, template_prefix, email, context):
