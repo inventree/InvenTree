@@ -25,6 +25,7 @@ django-sql-utils                        # Advanced query annotation / aggregatio
 django-sslserver                        # Secure HTTP development server
 django-stdimage                         # Advanced ImageField management
 django-taggit                           # Tagging support
+django-otp==1.2.4                       # Two-factor authentication (legacy to ensure migrations) https://github.com/inventree/InvenTree/pull/6293
 django-user-sessions                    # user sessions in DB
 django-weasyprint                       # django weasyprint integration
 djangorestframework                     # DRF framework
