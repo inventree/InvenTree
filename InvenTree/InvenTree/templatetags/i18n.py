@@ -62,7 +62,7 @@ class CustomTranslateNode(TranslateNode):
 
 @register.tag('translate')
 @register.tag('trans')
-def do_translate(parser, token, escape=False):
+def do_translate(parser, token):
     """Custom translation function.
 
     - Lifted from https://github.com/django/django/blob/main/django/templatetags/i18n.py.
@@ -74,6 +74,7 @@ def do_translate(parser, token, escape=False):
     message_string = parser.compile_filter(bits[1])
     remaining = bits[2:]
 
+    escape = False
     noop = False
     asvar = None
     message_context = None
@@ -111,8 +112,7 @@ def do_translate(parser, token, escape=False):
                 )
             asvar = value
         elif option == 'escape':
-            # Allow extra argument for 'escape' option
-            pass
+            escape = True
         else:
             raise TemplateSyntaxError(
                 "Unknown argument for '%s' tag: '%s'. The only options "
