@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-15 13:52+0000\n"
+"POT-Creation-Date: 2024-01-21 12:33+0000\n"
 "PO-Revision-Date: 2024-01-16 13:32\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -17,11 +17,11 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#: InvenTree/api.py:164
+#: InvenTree/api.py:165
 msgid "API endpoint not found"
 msgstr "API endpoint không tồn tại"
 
-#: InvenTree/api.py:417
+#: InvenTree/api.py:418
 msgid "User does not have permission to view this model"
 msgstr "Người dùng không được phân quyền xem mẫu này"
 
@@ -43,7 +43,7 @@ msgstr "Số lượng cung cấp không hợp lệ"
 msgid "Invalid quantity supplied ({exc})"
 msgstr "Số lượng cung cấp không hợp lệ ({exc})"
 
-#: InvenTree/exceptions.py:89
+#: InvenTree/exceptions.py:106
 msgid "Error details can be found in the admin panel"
 msgstr "Chi tiết lỗi có thể được tìm thấy trong bảng quản trị"
 
@@ -123,46 +123,46 @@ msgstr "Địa chỉ email chính đã cung cấp không hợp lệ."
 msgid "The provided email domain is not approved."
 msgstr "Miền email được cung cấp không được phê duyệt."
 
-#: InvenTree/forms.py:386
+#: InvenTree/forms.py:394
 msgid "Registration is disabled."
 msgstr "Đăng ký bị vô hiệu hóa."
 
-#: InvenTree/helpers.py:457 order/models.py:521 order/models.py:723
+#: InvenTree/helpers.py:459 order/models.py:521 order/models.py:723
 msgid "Invalid quantity provided"
 msgstr "Số lượng cung cấp không hợp lệ"
 
-#: InvenTree/helpers.py:465
+#: InvenTree/helpers.py:467
 msgid "Empty serial number string"
 msgstr "Chuỗi số sê-ri trống"
 
-#: InvenTree/helpers.py:494
+#: InvenTree/helpers.py:496
 msgid "Duplicate serial"
 msgstr "Trùng lặp sê-ri"
 
-#: InvenTree/helpers.py:526 InvenTree/helpers.py:569
+#: InvenTree/helpers.py:528 InvenTree/helpers.py:571
 #, python-brace-format
 msgid "Invalid group range: {group}"
 msgstr "Phạm vi nhóm không hợp lệ: {group}"
 
-#: InvenTree/helpers.py:557
+#: InvenTree/helpers.py:559
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "Khoảng nhóm {group} vượt cho phép số lượng ({expected_quantity})"
 
-#: InvenTree/helpers.py:587 InvenTree/helpers.py:594 InvenTree/helpers.py:613
+#: InvenTree/helpers.py:589 InvenTree/helpers.py:596 InvenTree/helpers.py:615
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
 msgstr "Thứ tự nhóm không hợp lệ: {group}"
 
-#: InvenTree/helpers.py:623
+#: InvenTree/helpers.py:625
 msgid "No serial numbers found"
 msgstr "Không tìm thấy số sê-ri"
 
-#: InvenTree/helpers.py:628
+#: InvenTree/helpers.py:630
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
 msgstr "Số sê ri duy nhất ({len(serials)}) phải phù hợp số lượng ({expected_quantity})"
 
-#: InvenTree/helpers.py:746
+#: InvenTree/helpers.py:748
 msgid "Remove HTML tags from this value"
 msgstr "Xóa thẻ HTML từ giá trị này"
 
@@ -197,6 +197,130 @@ msgstr "Máy chủ trả về phản hồi trống"
 #: InvenTree/helpers_model.py:184
 msgid "Supplied URL is not a valid image file"
 msgstr "URL được cung cấp không phải là tệp hình ảnh hợp lệ"
+
+#: InvenTree/locales.py:16
+msgid "Bulgarian"
+msgstr "Tiếng Bulgaria"
+
+#: InvenTree/locales.py:17
+msgid "Czech"
+msgstr "Tiếng Séc"
+
+#: InvenTree/locales.py:18
+msgid "Danish"
+msgstr "Tiếng Đan Mạch"
+
+#: InvenTree/locales.py:19
+msgid "German"
+msgstr "Tiếng Đức"
+
+#: InvenTree/locales.py:20
+msgid "Greek"
+msgstr "Tiếng Hy Lạp"
+
+#: InvenTree/locales.py:21
+msgid "English"
+msgstr "Tiếng Anh"
+
+#: InvenTree/locales.py:22
+msgid "Spanish"
+msgstr "Tiếng Tây Ban Nha"
+
+#: InvenTree/locales.py:23
+msgid "Spanish (Mexican)"
+msgstr "Tiếng Tây Ban Nha (Mê-hi-cô)"
+
+#: InvenTree/locales.py:24
+msgid "Farsi / Persian"
+msgstr "Tiếng Ba Tư"
+
+#: InvenTree/locales.py:25
+msgid "Finnish"
+msgstr "Tiếng Phần Lan"
+
+#: InvenTree/locales.py:26
+msgid "French"
+msgstr "Tiếng Pháp"
+
+#: InvenTree/locales.py:27
+msgid "Hebrew"
+msgstr "Tiếng Do Thái"
+
+#: InvenTree/locales.py:28
+msgid "Hindi"
+msgstr "Tiếng Ấn Độ"
+
+#: InvenTree/locales.py:29
+msgid "Hungarian"
+msgstr "Tiếng Hung-ga-ri"
+
+#: InvenTree/locales.py:30
+msgid "Italian"
+msgstr "Tiếng Ý"
+
+#: InvenTree/locales.py:31
+msgid "Japanese"
+msgstr "Tiếng Nhật"
+
+#: InvenTree/locales.py:32
+msgid "Korean"
+msgstr "Tiếng Hàn"
+
+#: InvenTree/locales.py:33
+msgid "Dutch"
+msgstr "Tiếng Hà Lan"
+
+#: InvenTree/locales.py:34
+msgid "Norwegian"
+msgstr "Tiếng Na Uy"
+
+#: InvenTree/locales.py:35
+msgid "Polish"
+msgstr "Tiếng Ba Lan"
+
+#: InvenTree/locales.py:36
+msgid "Portuguese"
+msgstr "Tiếng Bồ Đào Nha"
+
+#: InvenTree/locales.py:37
+msgid "Portuguese (Brazilian)"
+msgstr "Tiếng Bồ Đào Nha (Brazil)"
+
+#: InvenTree/locales.py:38
+msgid "Russian"
+msgstr "Tiếng Nga"
+
+#: InvenTree/locales.py:39
+msgid "Slovenian"
+msgstr "Tiếng Slô-ven-ni-a"
+
+#: InvenTree/locales.py:40
+msgid "Serbian"
+msgstr ""
+
+#: InvenTree/locales.py:41
+msgid "Swedish"
+msgstr "Tiếng Thụy Điển"
+
+#: InvenTree/locales.py:42
+msgid "Thai"
+msgstr "Tiếng Thái"
+
+#: InvenTree/locales.py:43
+msgid "Turkish"
+msgstr "Tiếng Thổ Nhĩ Kỳ"
+
+#: InvenTree/locales.py:44
+msgid "Vietnamese"
+msgstr "Tiếng Việt"
+
+#: InvenTree/locales.py:45
+msgid "Chinese (Simplified)"
+msgstr "Tiếng Trung (Giản thể)"
+
+#: InvenTree/locales.py:46
+msgid "Chinese (Traditional)"
+msgstr "Tiếng Trung (Phồn thể)"
 
 #: InvenTree/magic_login.py:27
 #, python-brace-format
@@ -266,7 +390,7 @@ msgstr "Chọn file đính kèm"
 
 #: InvenTree/models.py:497 common/models.py:2857 company/models.py:147
 #: company/models.py:452 company/models.py:507 company/models.py:809
-#: order/models.py:273 order/models.py:1266 order/models.py:1659
+#: order/models.py:273 order/models.py:1266 order/models.py:1665
 #: part/admin.py:55 part/models.py:902
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
@@ -343,9 +467,10 @@ msgid "Invalid choice"
 msgstr "Lựa chọn sai"
 
 #: InvenTree/models.py:823 common/models.py:2550 common/models.py:2943
-#: company/models.py:606 label/models.py:115 part/models.py:838
-#: part/models.py:3575 plugin/models.py:40 report/models.py:172
-#: stock/models.py:78 templates/InvenTree/settings/mixins/urls.html:13
+#: common/serializers.py:365 company/models.py:606 label/models.py:115
+#: part/models.py:838 part/models.py:3575 plugin/models.py:40
+#: report/models.py:172 stock/models.py:78
+#: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
 #: templates/InvenTree/settings/plugin.html:80
 #: templates/InvenTree/settings/plugin_settings.html:22
@@ -473,9 +598,13 @@ msgstr "Chào mừng đến với {current_site.name}"
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid "Your account has been created.\n\n"
+msgid ""
+"Your account has been created.\n"
+"\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr "Tài khoản của bạn đã được tạo.\n\n"
+msgstr ""
+"Tài khoản của bạn đã được tạo.\n"
+"\n"
 "Xin hãy sử dụng chức năng quên mật khẩu để truy cập (tại https://{domain})."
 
 #: InvenTree/serializers.py:520
@@ -539,130 +668,6 @@ msgstr "URL của tệp hình ảnh bên ngoài"
 #: InvenTree/serializers.py:854
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Chức năng tải hình ảnh từ URL bên ngoài không được bật"
-
-#: InvenTree/settings.py:837
-msgid "Bulgarian"
-msgstr "Tiếng Bulgaria"
-
-#: InvenTree/settings.py:838
-msgid "Czech"
-msgstr "Tiếng Séc"
-
-#: InvenTree/settings.py:839
-msgid "Danish"
-msgstr "Tiếng Đan Mạch"
-
-#: InvenTree/settings.py:840
-msgid "German"
-msgstr "Tiếng Đức"
-
-#: InvenTree/settings.py:841
-msgid "Greek"
-msgstr "Tiếng Hy Lạp"
-
-#: InvenTree/settings.py:842
-msgid "English"
-msgstr "Tiếng Anh"
-
-#: InvenTree/settings.py:843
-msgid "Spanish"
-msgstr "Tiếng Tây Ban Nha"
-
-#: InvenTree/settings.py:844
-msgid "Spanish (Mexican)"
-msgstr "Tiếng Tây Ban Nha (Mê-hi-cô)"
-
-#: InvenTree/settings.py:845
-msgid "Farsi / Persian"
-msgstr "Tiếng Ba Tư"
-
-#: InvenTree/settings.py:846
-msgid "Finnish"
-msgstr "Tiếng Phần Lan"
-
-#: InvenTree/settings.py:847
-msgid "French"
-msgstr "Tiếng Pháp"
-
-#: InvenTree/settings.py:848
-msgid "Hebrew"
-msgstr "Tiếng Do Thái"
-
-#: InvenTree/settings.py:849
-msgid "Hindi"
-msgstr "Tiếng Ấn Độ"
-
-#: InvenTree/settings.py:850
-msgid "Hungarian"
-msgstr "Tiếng Hung-ga-ri"
-
-#: InvenTree/settings.py:851
-msgid "Italian"
-msgstr "Tiếng Ý"
-
-#: InvenTree/settings.py:852
-msgid "Japanese"
-msgstr "Tiếng Nhật"
-
-#: InvenTree/settings.py:853
-msgid "Korean"
-msgstr "Tiếng Hàn"
-
-#: InvenTree/settings.py:854
-msgid "Dutch"
-msgstr "Tiếng Hà Lan"
-
-#: InvenTree/settings.py:855
-msgid "Norwegian"
-msgstr "Tiếng Na Uy"
-
-#: InvenTree/settings.py:856
-msgid "Polish"
-msgstr "Tiếng Ba Lan"
-
-#: InvenTree/settings.py:857
-msgid "Portuguese"
-msgstr "Tiếng Bồ Đào Nha"
-
-#: InvenTree/settings.py:858
-msgid "Portuguese (Brazilian)"
-msgstr "Tiếng Bồ Đào Nha (Brazil)"
-
-#: InvenTree/settings.py:859
-msgid "Russian"
-msgstr "Tiếng Nga"
-
-#: InvenTree/settings.py:860
-msgid "Slovenian"
-msgstr "Tiếng Slô-ven-ni-a"
-
-#: InvenTree/settings.py:861
-msgid "Serbian"
-msgstr ""
-
-#: InvenTree/settings.py:862
-msgid "Swedish"
-msgstr "Tiếng Thụy Điển"
-
-#: InvenTree/settings.py:863
-msgid "Thai"
-msgstr "Tiếng Thái"
-
-#: InvenTree/settings.py:864
-msgid "Turkish"
-msgstr "Tiếng Thổ Nhĩ Kỳ"
-
-#: InvenTree/settings.py:865
-msgid "Vietnamese"
-msgstr "Tiếng Việt"
-
-#: InvenTree/settings.py:866
-msgid "Chinese (Simplified)"
-msgstr "Tiếng Trung (Giản thể)"
-
-#: InvenTree/settings.py:867
-msgid "Chinese (Traditional)"
-msgstr "Tiếng Trung (Phồn thể)"
 
 #: InvenTree/status.py:66 part/serializers.py:1082
 msgid "Background worker check failed"
@@ -876,10 +881,6 @@ msgstr "Từ chối"
 msgid "Unknown database"
 msgstr "Không rõ cơ sở dữ liệu"
 
-#: InvenTree/templatetags/inventree_extras.py:223
-msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
 msgstr "Đơn vị vật lý không hợp lệ"
@@ -1003,7 +1004,7 @@ msgid "Build Order Reference"
 msgstr "Tham chiếu đơn đặt bản dựng"
 
 #: build/models.py:172 order/models.py:422 order/models.py:876
-#: order/models.py:1254 order/models.py:1948 part/admin.py:416
+#: order/models.py:1254 order/models.py:1954 part/admin.py:416
 #: part/models.py:3992 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
@@ -1161,7 +1162,7 @@ msgstr "Ngày hoàn thành mục tiêu"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Ngày mục tiêu để hoàn thành bản dựng. Bản dựng sẽ bị quá hạn sau ngày này."
 
-#: build/models.py:277 order/models.py:480 order/models.py:1993
+#: build/models.py:277 order/models.py:480 order/models.py:1999
 #: templates/js/translated/build.js:2235
 msgid "Completion Date"
 msgstr "Ngày hoàn thành"
@@ -1271,7 +1272,7 @@ msgstr "Dựng đối tượng"
 #: build/models.py:1293 build/models.py:1551 build/serializers.py:205
 #: build/serializers.py:242 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2360
-#: order/models.py:1237 order/models.py:1871 order/serializers.py:1282
+#: order/models.py:1237 order/models.py:1877 order/serializers.py:1282
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:415
 #: part/forms.py:48 part/models.py:3135 part/models.py:3965
 #: part/templates/part/part_pricing.html:16
@@ -1328,11 +1329,11 @@ msgstr "Xây dựng mục phải xác định đầu ra, bởi vì sản phẩm 
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Số lượng được phân bổ ({q}) không thể vượt quá số lượng có trong kho ({a})"
 
-#: build/models.py:1393 order/models.py:1822
+#: build/models.py:1393 order/models.py:1828
 msgid "Stock item is over-allocated"
 msgstr "Kho hàng đã bị phân bổ quá đà"
 
-#: build/models.py:1399 order/models.py:1825
+#: build/models.py:1399 order/models.py:1831
 msgid "Allocation quantity must be greater than zero"
 msgstr "Số lượng phân bổ phải lớn hơn 0"
 
@@ -1478,7 +1479,7 @@ msgstr "Vị trí cho đầu ra bản dựng hoàn thiện"
 
 #: build/serializers.py:500 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:900
-#: order/models.py:1972 order/serializers.py:541 stock/admin.py:163
+#: order/models.py:1978 order/serializers.py:541 stock/admin.py:163
 #: stock/serializers.py:718 stock/serializers.py:1236
 #: stock/templates/stock/item_base.html:427
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2179
@@ -1808,7 +1809,7 @@ msgstr "Đầu ra hoàn thiện"
 
 #: build/templates/build/build_base.html:190
 #: build/templates/build/detail.html:101 order/api.py:1408 order/models.py:1503
-#: order/models.py:1607 order/models.py:1759
+#: order/models.py:1613 order/models.py:1765
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
 #: report/templates/report/inventree_build_order_base.html:135
@@ -3423,7 +3424,7 @@ msgid "Price break quantity"
 msgstr "Số lượng giá phá vỡ"
 
 #: common/models.py:2368 company/serializers.py:481 order/admin.py:42
-#: order/models.py:1311 order/models.py:2193
+#: order/models.py:1311 order/models.py:2199
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1885
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -3620,6 +3621,84 @@ msgstr "Hàng đã nhận theo đơn hàng trả lại"
 #: common/notifications.py:457
 msgid "Error raised by plugin"
 msgstr "Lỗi được thông báo bởi phần mở rộng"
+
+#: common/serializers.py:328
+msgid "Is Running"
+msgstr ""
+
+#: common/serializers.py:334
+#, fuzzy
+#| msgid "Pending"
+msgid "Pending Tasks"
+msgstr "Đợi duyệt"
+
+#: common/serializers.py:340
+#, fuzzy
+#| msgid "Scheduled Quantity"
+msgid "Scheduled Tasks"
+msgstr "Số lượng theo lịch"
+
+#: common/serializers.py:346
+msgid "Failed Tasks"
+msgstr ""
+
+#: common/serializers.py:361
+msgid "Task ID"
+msgstr ""
+
+#: common/serializers.py:361
+#, fuzzy
+#| msgid "Unique part ID value"
+msgid "Unique task ID"
+msgstr "Giá trị mã sản phẩm duy nhất"
+
+#: common/serializers.py:363
+msgid "Lock"
+msgstr ""
+
+#: common/serializers.py:363
+#, fuzzy
+#| msgid "Stock Stale Time"
+msgid "Lock time"
+msgstr "Thời gian hàng cũ trong kho"
+
+#: common/serializers.py:365
+#, fuzzy
+#| msgid "Test name"
+msgid "Task name"
+msgstr "Tên kiểm thử"
+
+#: common/serializers.py:367
+#, fuzzy
+#| msgid "Production"
+msgid "Function"
+msgstr "Sản xuất"
+
+#: common/serializers.py:367
+#, fuzzy
+#| msgid "Location Name"
+msgid "Function name"
+msgstr "Tên địa điểm"
+
+#: common/serializers.py:369
+#, fuzzy
+#| msgid "Attachments"
+msgid "Arguments"
+msgstr "Tập tin đính kèm"
+
+#: common/serializers.py:369
+msgid "Task arguments"
+msgstr ""
+
+#: common/serializers.py:372
+#, fuzzy
+#| msgid "Keywords"
+msgid "Keyword Arguments"
+msgstr "Từ khóa"
+
+#: common/serializers.py:372
+msgid "Task keyword arguments"
+msgstr ""
 
 #: common/views.py:84 order/templates/order/order_wizard/po_upload.html:51
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:118
@@ -4082,7 +4161,7 @@ msgid "Delete image"
 msgstr "Xóa ảnh"
 
 #: company/templates/company/company_base.html:86 order/models.py:888
-#: order/models.py:1960 order/templates/order/return_order_base.html:131
+#: order/models.py:1966 order/templates/order/return_order_base.html:131
 #: order/templates/order/sales_order_base.html:144 stock/models.py:796
 #: stock/models.py:797 stock/serializers.py:1004
 #: stock/templates/stock/item_base.html:405
@@ -4584,7 +4663,7 @@ msgstr "Không tìm thấy đơn đặt mua phù hợp"
 msgid "Purchase Order"
 msgstr "Đơn hàng"
 
-#: order/api.py:1410 order/models.py:2160 order/models.py:2211
+#: order/api.py:1410 order/models.py:2166 order/models.py:2217
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4621,7 +4700,7 @@ msgstr "Mô tả đơn đặt (tùy chọn)"
 msgid "Select project code for this order"
 msgstr "Mã dự án đã chọn cho đơn đặt hàng này"
 
-#: order/models.py:273 order/models.py:1266 order/models.py:1659
+#: order/models.py:273 order/models.py:1266 order/models.py:1665
 msgid "Link to external page"
 msgstr "Liên kết đến trang bên ngoài"
 
@@ -4670,15 +4749,15 @@ msgstr "Mã tham chiếu đơn đặt nhà cung cấp"
 msgid "received by"
 msgstr "nhận bởi"
 
-#: order/models.py:473 order/models.py:1986
+#: order/models.py:473 order/models.py:1992
 msgid "Issue Date"
 msgstr "Ngày phát hành"
 
-#: order/models.py:474 order/models.py:1987
+#: order/models.py:474 order/models.py:1993
 msgid "Date order was issued"
 msgstr "Ngày đặt hàng đã phát hành"
 
-#: order/models.py:481 order/models.py:1994
+#: order/models.py:481 order/models.py:2000
 msgid "Date order was completed"
 msgstr "Ngày đặt hàng đã được hoàn thiện"
 
@@ -4694,15 +4773,15 @@ msgstr "Số lượng phải là số dương"
 msgid "Company to which the items are being sold"
 msgstr "Doanh nghiệp từ những hàng hóa đang được bán"
 
-#: order/models.py:912 order/models.py:1979
+#: order/models.py:912 order/models.py:1985
 msgid "Customer Reference "
 msgstr "Tham chiếu khách hàng "
 
-#: order/models.py:913 order/models.py:1980
+#: order/models.py:913 order/models.py:1986
 msgid "Customer order reference code"
 msgstr "Mã tham chiếu đơn đặt của khách hàng"
 
-#: order/models.py:917 order/models.py:1613
+#: order/models.py:917 order/models.py:1619
 #: templates/js/translated/sales_order.js:843
 #: templates/js/translated/sales_order.js:1024
 msgid "Shipment Date"
@@ -4769,8 +4848,8 @@ msgid "deleted"
 msgstr "đã bị xóa"
 
 #: order/models.py:1360 order/models.py:1456 order/models.py:1502
-#: order/models.py:1606 order/models.py:1758 order/models.py:2159
-#: order/models.py:2210 templates/js/translated/sales_order.js:1488
+#: order/models.py:1612 order/models.py:1764 order/models.py:2165
+#: order/models.py:2216 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr "Đặt hàng"
 
@@ -4827,146 +4906,146 @@ msgstr "Giá bán đơn vị"
 msgid "Shipped quantity"
 msgstr "Số lượng đã vận chuyển"
 
-#: order/models.py:1614
+#: order/models.py:1620
 msgid "Date of shipment"
 msgstr "Ngày vận chuyển"
 
-#: order/models.py:1620 templates/js/translated/sales_order.js:1036
+#: order/models.py:1626 templates/js/translated/sales_order.js:1036
 msgid "Delivery Date"
 msgstr "Ngày giao hàng"
 
-#: order/models.py:1621
+#: order/models.py:1627
 msgid "Date of delivery of shipment"
 msgstr "Ngày giao hàng của vận chuyển"
 
-#: order/models.py:1629
+#: order/models.py:1635
 msgid "Checked By"
 msgstr "Kiểm tra bởi"
 
-#: order/models.py:1630
+#: order/models.py:1636
 msgid "User who checked this shipment"
 msgstr "Người dùng đã kiểm tra vận chuyển này"
 
-#: order/models.py:1637 order/models.py:1848 order/serializers.py:1297
+#: order/models.py:1643 order/models.py:1854 order/serializers.py:1297
 #: order/serializers.py:1407 templates/js/translated/model_renderers.js:446
 msgid "Shipment"
 msgstr "Vận chuyển"
 
-#: order/models.py:1638
+#: order/models.py:1644
 msgid "Shipment number"
 msgstr "Mã vận chuyển"
 
-#: order/models.py:1646
+#: order/models.py:1652
 msgid "Tracking Number"
 msgstr "Số theo dõi"
 
-#: order/models.py:1647
+#: order/models.py:1653
 msgid "Shipment tracking information"
 msgstr "Thông tin theo dõi vận chuyển"
 
-#: order/models.py:1654
+#: order/models.py:1660
 msgid "Invoice Number"
 msgstr "Mã hóa đơn"
 
-#: order/models.py:1655
+#: order/models.py:1661
 msgid "Reference number for associated invoice"
 msgstr "Số tham chiếu liên kết với hóa đơn"
 
-#: order/models.py:1675
+#: order/models.py:1681
 msgid "Shipment has already been sent"
 msgstr "Vận đơn đã được gửi đi"
 
-#: order/models.py:1678
+#: order/models.py:1684
 msgid "Shipment has no allocated stock items"
 msgstr "Vận đơn chưa có hàng hóa được phân bổ"
 
-#: order/models.py:1794 order/models.py:1796
+#: order/models.py:1800 order/models.py:1802
 msgid "Stock item has not been assigned"
 msgstr "Hàng trong kho chưa được giao"
 
-#: order/models.py:1803
+#: order/models.py:1809
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Không thể phân bổ hàng hóa vào cùng với dòng với sản phẩm khác"
 
-#: order/models.py:1806
+#: order/models.py:1812
 msgid "Cannot allocate stock to a line without a part"
 msgstr "Không thể phân bổ hàng hóa vào một dòng mà không có sản phẩm nào"
 
-#: order/models.py:1809
+#: order/models.py:1815
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "Số lượng phân bổ không thể vượt quá số lượng của kho"
 
-#: order/models.py:1828 order/serializers.py:1174
+#: order/models.py:1834 order/serializers.py:1174
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Số lượng phải là 1 cho hàng hóa sêri"
 
-#: order/models.py:1831
+#: order/models.py:1837
 msgid "Sales order does not match shipment"
 msgstr "Đơn bán hàng không phù hợp với vận đơn"
 
-#: order/models.py:1832 plugin/base/barcodes/api.py:481
+#: order/models.py:1838 plugin/base/barcodes/api.py:481
 msgid "Shipment does not match sales order"
 msgstr "Vận đơn không phù hợp với đơn bán hàng"
 
-#: order/models.py:1840
+#: order/models.py:1846
 msgid "Line"
 msgstr "Dòng"
 
-#: order/models.py:1849
+#: order/models.py:1855
 msgid "Sales order shipment reference"
 msgstr "Tham chiếu vận đơn của đơn hàng bán"
 
-#: order/models.py:1862 order/models.py:2167
+#: order/models.py:1868 order/models.py:2173
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr "Hàng hóa"
 
-#: order/models.py:1863
+#: order/models.py:1869
 msgid "Select stock item to allocate"
 msgstr "Chọn hàng trong kho để phân bổ"
 
-#: order/models.py:1872
+#: order/models.py:1878
 msgid "Enter stock allocation quantity"
 msgstr "Nhập số lượng phân kho"
 
-#: order/models.py:1949
+#: order/models.py:1955
 msgid "Return Order reference"
 msgstr "Tham chiếu đơn hàng trả lại"
 
-#: order/models.py:1961
+#: order/models.py:1967
 msgid "Company from which items are being returned"
 msgstr "Công ty có hàng hóa sẽ được trả lại"
 
-#: order/models.py:1973
+#: order/models.py:1979
 msgid "Return order status"
 msgstr "Trạng thái đơn hàng trả lại"
 
-#: order/models.py:2152
+#: order/models.py:2158
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr "Chỉ hàng hóa thêo sêri mới có thể được gán vào đơn hàng trả lại"
 
-#: order/models.py:2168
+#: order/models.py:2174
 msgid "Select item to return from customer"
 msgstr "Chọn hàng hóa để trả lại từ khách hàng"
 
-#: order/models.py:2174
+#: order/models.py:2180
 msgid "Received Date"
 msgstr "Ngày nhận được"
 
-#: order/models.py:2175
+#: order/models.py:2181
 msgid "The date this this return item was received"
 msgstr "Ngày mà hàng hóa trả lại đã được nhận"
 
-#: order/models.py:2186 templates/js/translated/return_order.js:733
+#: order/models.py:2192 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr "Kết quả"
 
-#: order/models.py:2187
+#: order/models.py:2193
 msgid "Outcome for this line item"
 msgstr "Kết quả cho hàng hóa dòng này"
 
-#: order/models.py:2194
+#: order/models.py:2200
 msgid "Cost associated with return or repair for this line item"
 msgstr "Chi phí gắn với hàng trả lại hoặc sửa chữa cho dòng hàng hóa này"
 
@@ -7130,10 +7209,6 @@ msgstr "Mã QR sản phẩm"
 msgid "Link Barcode to Part"
 msgstr "Liên kết mã vạch đến sản phẩm"
 
-#: part/templates/part/part_base.html:472 templates/js/translated/part.js:2287
-msgid "part"
-msgstr "sản phẩm"
-
 #: part/templates/part/part_base.html:512
 msgid "Calculate"
 msgstr "Tính toán"
@@ -7798,7 +7873,7 @@ msgstr "Phần bổ sung"
 msgid "Method"
 msgstr "Phương thức"
 
-#: plugin/plugin.py:271
+#: plugin/plugin.py:279
 msgid "No author found"
 msgstr "Không tìm thấy tác giả"
 
@@ -11871,6 +11946,10 @@ msgstr "Đặt nhóm sản phẩm"
 msgid "Set category"
 msgstr "Phân nhóm"
 
+#: templates/js/translated/part.js:2287
+msgid "part"
+msgstr "sản phẩm"
+
 #: templates/js/translated/part.js:2288
 msgid "parts"
 msgstr "sản phẩm"
@@ -13465,7 +13544,8 @@ msgstr "Nhà cung cấp SSO đã chọn không hợp lệ hoặc đã không đ�
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "Bạn chuân bị sử dụng tài khoản %(provider_name)s của bạn để đăng nhập%(site_name)s<br>Vì là bước cuối cùng, xin hãy hoàn thiện biểu mẫu dưới đây:"
 
@@ -13641,3 +13721,5 @@ msgstr "Quyển để sửa mục"
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
 
+#~ msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
+#~ msgstr "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
