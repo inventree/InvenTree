@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-13 12:16\n"
+"PO-Revision-Date: 2024-01-21 15:02\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -47,7 +47,7 @@ msgstr "Gửi"
 
 #: src/components/forms/ApiForm.tsx:461
 msgid "Update"
-msgstr ""
+msgstr "Cập nhật"
 
 #: src/components/forms/ApiForm.tsx:481
 #: src/components/items/ActionDropdown.tsx:173
@@ -118,7 +118,7 @@ msgstr "Tên người dùng"
 
 #: src/components/forms/AuthenticationForm.tsx:92
 msgid "Your username"
-msgstr ""
+msgstr "Tên người dùng của bạn"
 
 #: src/components/forms/AuthenticationForm.tsx:97
 #: src/pages/Auth/Set-Password.tsx:106
@@ -328,7 +328,7 @@ msgstr "Đọc tiếp"
 
 #: src/components/items/InfoItem.tsx:25
 msgid "None"
-msgstr ""
+msgstr "Không"
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
@@ -445,7 +445,7 @@ msgstr "Sao chép thông tin phiên bản"
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
-msgstr ""
+msgstr "Bỏ qua"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
@@ -519,7 +519,7 @@ msgstr "Cơ sở dữ liệu"
 
 #: src/components/modals/ServerInfoModal.tsx:47
 msgid "Debug Mode"
-msgstr ""
+msgstr "Chế độ gỡ lỗi"
 
 #: src/components/modals/ServerInfoModal.tsx:50
 msgid "Server is running in debug mode"
@@ -608,7 +608,7 @@ msgstr "Thiết lập hệ thống"
 #: src/defaults/menuItems.tsx:63
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:131
 msgid "Admin Center"
-msgstr ""
+msgstr "Trung tâm quản trị"
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
@@ -2460,7 +2460,7 @@ msgstr ""
 
 #: src/components/tables/settings/PendingTasksTable.tsx:30
 msgid "Created"
-msgstr "Created"
+msgstr ""
 
 #: src/components/tables/settings/PendingTasksTable.tsx:36
 msgid "Arguments"
@@ -3793,11 +3793,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
-#~ msgstr "Tên - {0}"
+#~ msgstr "First name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:61
 #~ msgid "Last name: {0}"
-#~ msgstr "Họ - {0}"
+#~ msgstr "Last name: {0}"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
 msgid "Last name:"
@@ -4422,3 +4422,4 @@ msgstr "Giao diện nền tảng được tối ưu cho máy tính bảng và m�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Đọc tài liệu"
+
