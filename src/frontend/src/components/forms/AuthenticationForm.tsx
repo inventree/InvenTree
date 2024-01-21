@@ -149,3 +149,102 @@ export function AuthenticationForm() {
     </form>
   );
 }
+
+export function RegistrationForm() {
+  const registrationForm = useForm({
+    initialValues: { username: '', email: '', password: '' }
+  });
+  const navigate = useNavigate();
+  const [isRegistering, setIsRegistering] = useState<boolean>(false);
+
+  function handleRegistration() {
+    setIsRegistering(true);
+
+    // Register
+    // TODO
+
+    // Show notification
+    setIsRegistering(false);
+    notifications.show({
+      title: t`Login successful`,
+      message: t`Welcome back!`,
+      color: 'green',
+      icon: <IconCheck size="1rem" />
+    });
+    navigate('/home');
+  }
+
+  return (
+    <form onSubmit={registrationForm.onSubmit(() => {})}>
+      <Stack spacing={0}>
+        <TextInput
+          required
+          label={t`Username`}
+          placeholder={t`Your username`}
+          {...registrationForm.getInputProps('username')}
+        />
+        <TextInput
+          required
+          label={t`Email`}
+          description={t`This will be used for a confirmation`}
+          placeholder="email@example.org"
+          {...registrationForm.getInputProps('email')}
+        />
+        <PasswordInput
+          required
+          label={t`Password`}
+          placeholder={t`Your password`}
+          {...registrationForm.getInputProps('password')}
+        />
+      </Stack>
+
+      <Group position="apart" mt="xl">
+        <Button
+          type="submit"
+          disabled={isRegistering}
+          onClick={handleRegistration}
+          fullWidth
+        >
+          <Trans>Register</Trans>
+        </Button>
+      </Group>
+    </form>
+  );
+}
+
+export function ModeSelector({
+  loginMode,
+  setMode
+}: {
+  loginMode: boolean;
+  setMode: any;
+}) {
+  return (
+    <Text ta="center" size={'xs'} mt={'md'}>
+      {loginMode ? (
+        <>
+          <Trans>Don&apos;t have an account?</Trans>{' '}
+          <Anchor
+            component="button"
+            type="button"
+            color="dimmed"
+            size="xs"
+            onClick={() => setMode.toggle()}
+          >
+            <Trans>Register</Trans>
+          </Anchor>
+        </>
+      ) : (
+        <Anchor
+          component="button"
+          type="button"
+          color="dimmed"
+          size="xs"
+          onClick={() => setMode.toggle()}
+        >
+          <Trans>Go back to login</Trans>
+        </Anchor>
+      )}
+    </Text>
+  );
+}
