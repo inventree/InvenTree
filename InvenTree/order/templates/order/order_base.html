@@ -315,7 +315,7 @@ $("#export-order").click(function() {
 <!-- Barcode functionality callbacks -->
 $('#show-qr-code').click(function() {
     showQRDialog(
-        '{% trans "Purchase Order QR Code" escape=True %}',
+        '{% trans "Purchase Order QR Code" escape %}',
         '{"purchaseorder": {{ order.pk }} }'
     );
 });
@@ -327,7 +327,7 @@ $("#barcode-link").click(function() {
             purchaseorder: {{ order.pk }},
         },
         {
-            title: '{% trans "Link Barcode to Purchase Order" escape=True %}',
+            title: '{% trans "Link Barcode to Purchase Order" escape %}',
         }
     );
 });

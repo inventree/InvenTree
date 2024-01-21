@@ -55,14 +55,14 @@ $('table').find('.btn-edit-setting').click(function() {
     var title = '';
 
     if (plugin != null) {
-        title = '{% trans "Edit Plugin Setting" escape=True %}';
+        title = '{% trans "Edit Plugin Setting" escape %}';
     } else if (notification) {
-        title = '{% trans "Edit Notification Setting" escape=True %}';
+        title = '{% trans "Edit Notification Setting" escape %}';
         setting = $(this).attr('pk');
     } else if (is_global) {
-        title = '{% trans "Edit Global Setting" escape=True %}';
+        title = '{% trans "Edit Global Setting" escape %}';
     } else {
-        title = '{% trans "Edit User Setting" escape=True %}';
+        title = '{% trans "Edit User Setting" escape %}';
     }
 
     editSetting(setting, {

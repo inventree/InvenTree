@@ -260,7 +260,7 @@ $('#print-order-report').click(function() {
 <!-- Barcode functionality callbacks -->
 $('#show-qr-code').click(function() {
     showQRDialog(
-        '{% trans "Return Order QR Code" escape=True %}',
+        '{% trans "Return Order QR Code" escape %}',
         '{"returnorder": {{ order.pk }} }'
     );
 });
@@ -272,7 +272,7 @@ $("#barcode-link").click(function() {
             returnorder: {{ order.pk }},
         },
         {
-            title: '{% trans "Link Barcode to Return Order" escape=True %}',
+            title: '{% trans "Link Barcode to Return Order" escape %}',
         }
     );
 });
