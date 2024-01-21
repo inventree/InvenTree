@@ -85,7 +85,7 @@ export function AuthenticationForm() {
       </Text>
       <form onSubmit={classicForm.onSubmit(() => {})}>
         {classicLoginMode ? (
-          <Stack>
+          <Stack spacing={0}>
             <TextInput
               required
               label={t`Username`}
@@ -133,7 +133,7 @@ export function AuthenticationForm() {
             {classicLoginMode ? (
               <Trans>Send me an email</Trans>
             ) : (
-              <Trans>I will use username and password</Trans>
+              <Trans>Use username and password</Trans>
             )}
           </Anchor>
           <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
