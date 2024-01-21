@@ -145,6 +145,8 @@ def get_git_log(path):
                 datetime.datetime.fromtimestamp(commit.author_time).isoformat(),
                 commit.message.decode().split('\n')[0],
             ]
+        except KeyError as err:
+            logger.debug('No HEAD tag found in git repo at path %s', path)
         except NotGitRepository:
             pass
 
