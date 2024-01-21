@@ -38,6 +38,10 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
     """
     kind, info, data = sys.exc_info()
 
+    # Check if the error is on the ignore list
+    if kind in settings.IGNORED_ERRORS:
+        return
+
     if error_name:
         kind = error_name
     else:
@@ -50,10 +54,6 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
         data = error_data
     else:
         data = '\n'.join(traceback.format_exception(kind, info, data))
-
-    # Check if the error is on the ignore list
-    if kind in settings.IGNORED_ERRORS:
-        return
 
     # Log error to stderr
     logger.error(info)
