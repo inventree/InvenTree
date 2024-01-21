@@ -246,9 +246,6 @@ INSTALLED_APPS = [
     'allauth',  # Base app for SSO
     'allauth.account',  # Extend user with accounts
     'allauth.socialaccount',  # Use 'social' providers
-    'django_otp',  # OTP is needed for MFA - base package
-    'django_otp.plugins.otp_totp',  # Time based OTP
-    'django_otp.plugins.otp_static',  # Backup codes
     'allauth.mfa',  # MFA for for allauth
     'dj_rest_auth',  # Authentication APIs - dj-rest-auth
     'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
@@ -268,7 +265,6 @@ MIDDLEWARE = CONFIG.get(
         'corsheaders.middleware.CorsMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
-        'django_otp.middleware.OTPMiddleware',  # MFA support
         'allauth.account.middleware.AccountMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -1006,8 +1002,6 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
 )
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
-# 2FA
-REMOVE_SUCCESS_URL = 'settings'
 
 # override forms / adapters
 ACCOUNT_FORMS = {
