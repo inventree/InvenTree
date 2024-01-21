@@ -1,5 +1,5 @@
-import { t } from '@lingui/macro';
-import { Center, Container } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import { Center, Container, Paper, Text } from '@mantine/core';
 import { useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +63,12 @@ export default function Login() {
           />
         ) : (
           <>
-            <AuthenticationForm />
+            <Paper radius="md" p="xl" withBorder>
+              <Text size="lg" weight={500}>
+                <Trans>Welcome, log in below</Trans>
+              </Text>
+              <AuthenticationForm />
+            </Paper>
             <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
           </>
         )}

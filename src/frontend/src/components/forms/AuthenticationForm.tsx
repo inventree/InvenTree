@@ -79,78 +79,73 @@ export function AuthenticationForm() {
   }
 
   return (
-    <Paper radius="md" p="xl" withBorder>
-      <Text size="lg" weight={500}>
-        <Trans>Welcome, log in below</Trans>
-      </Text>
-      <form onSubmit={classicForm.onSubmit(() => {})}>
-        {classicLoginMode ? (
-          <Stack spacing={0}>
-            <TextInput
-              required
-              label={t`Username`}
-              placeholder={t`Your username`}
-              {...classicForm.getInputProps('username')}
-            />
-            <PasswordInput
-              required
-              label={t`Password`}
-              placeholder={t`Your password`}
-              {...classicForm.getInputProps('password')}
-            />
-            <Group position="apart" mt="0">
-              <Anchor
-                component="button"
-                type="button"
-                color="dimmed"
-                size="xs"
-                onClick={() => navigate('/reset-password')}
-              >
-                <Trans>Reset password</Trans>
-              </Anchor>
-            </Group>
-          </Stack>
-        ) : (
-          <Stack>
-            <TextInput
-              required
-              label={t`Email`}
-              description={t`We will send you a link to login - if you are registered`}
-              placeholder="email@example.org"
-              {...simpleForm.getInputProps('email')}
-            />
-          </Stack>
-        )}
+    <form onSubmit={classicForm.onSubmit(() => {})}>
+      {classicLoginMode ? (
+        <Stack spacing={0}>
+          <TextInput
+            required
+            label={t`Username`}
+            placeholder={t`Your username`}
+            {...classicForm.getInputProps('username')}
+          />
+          <PasswordInput
+            required
+            label={t`Password`}
+            placeholder={t`Your password`}
+            {...classicForm.getInputProps('password')}
+          />
+          <Group position="apart" mt="0">
+            <Anchor
+              component="button"
+              type="button"
+              color="dimmed"
+              size="xs"
+              onClick={() => navigate('/reset-password')}
+            >
+              <Trans>Reset password</Trans>
+            </Anchor>
+          </Group>
+        </Stack>
+      ) : (
+        <Stack>
+          <TextInput
+            required
+            label={t`Email`}
+            description={t`We will send you a link to login - if you are registered`}
+            placeholder="email@example.org"
+            {...simpleForm.getInputProps('email')}
+          />
+        </Stack>
+      )}
 
-        <Group position="apart" mt="xl">
-          <Anchor
-            component="button"
-            type="button"
-            color="dimmed"
-            size="xs"
-            onClick={() => setMode.toggle()}
-          >
-            {classicLoginMode ? (
-              <Trans>Send me an email</Trans>
-            ) : (
-              <Trans>Use username and password</Trans>
-            )}
-          </Anchor>
-          <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
-            {isLoggingIn ? (
-              <Loader size="sm" />
-            ) : (
-              <>
-                {classicLoginMode ? (
-                  <Trans>Log In</Trans>
-                ) : (
-                  <Trans>Send Email</Trans>
-                )}
-              </>
-            )}
-          </Button>
-        </Group>
-      </form>
-    </Paper>
+      <Group position="apart" mt="xl">
+        <Anchor
+          component="button"
+          type="button"
+          color="dimmed"
+          size="xs"
+          onClick={() => setMode.toggle()}
+        >
+          {classicLoginMode ? (
+            <Trans>Send me an email</Trans>
+          ) : (
+            <Trans>Use username and password</Trans>
+          )}
+        </Anchor>
+        <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
+          {isLoggingIn ? (
+            <Loader size="sm" />
+          ) : (
+            <>
+              {classicLoginMode ? (
+                <Trans>Log In</Trans>
+              ) : (
+                <Trans>Send Email</Trans>
+              )}
+            </>
+          )}
+        </Button>
+      </Group>
+    </form>
   );
 }
