@@ -37,7 +37,7 @@ export function ItemDetails({
   fields: any;
 }) {
   return (
-    <Paper style={{ display: 'flex' }}>
+    <Paper style={{ display: 'flex', gap: '20px' }}>
       <Paper
         withBorder={true}
         style={{ flexBasis: '50%', display: 'flex', gap: '10px' }}
@@ -52,10 +52,12 @@ export function ItemDetails({
           />
         </div>
         <div style={{ flexGrow: '1' }}>
-          <DetailsTable part={params} />
+          <DetailsTable part={params} fields={fields.left.fields} partIcons />
         </div>
       </Paper>
-      <Paper style={{ flexBasis: '50%' }}></Paper>
+      <Paper style={{ flexBasis: '50%' }} withBorder>
+        <DetailsTable part={params} fields={fields.right} />
+      </Paper>
     </Paper>
   );
 }

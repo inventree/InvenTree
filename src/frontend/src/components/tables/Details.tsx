@@ -1,5 +1,13 @@
 import { Trans, t } from '@lingui/macro';
-import { Badge, Group, Table, Tooltip } from '@mantine/core';
+import {
+  Anchor,
+  Badge,
+  Group,
+  Skeleton,
+  Table,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import {
   IconCopy,
   IconCornerUpRightDouble,
@@ -9,18 +17,14 @@ import {
   IconTool,
   IconWorldCode
 } from '@tabler/icons-react';
-import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { privateEncrypt } from 'crypto';
+import React, { Suspense, useEffect, useState } from 'react';
 
-const left = [
-  {
-    field: 'Description',
-    value: 'Hello there'
-  },
-  {
-    field: 'Potato',
-    value: 'Tomato'
-  }
-];
+import { api } from '../../App';
+import { GetIcon, InvenTreeIcon } from '../../functions/icons';
+import { useInstance } from '../../hooks/UseInstance';
+import { apiUrl } from '../../states/ApiState';
 
 export type PartIconsType = {
   assembly: boolean;
@@ -30,7 +34,16 @@ export type PartIconsType = {
   purchaseable: boolean;
   saleable: boolean;
   virtual: boolean;
+  active: boolean;
 };
+
+function PartIcon(icon: string) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+      <InvenTreeIcon icon={icon} />
+    </div>
+  );
+}
 
 function PartIcons({
   assembly,
@@ -39,42 +52,59 @@ function PartIcons({
   trackable,
   purchaseable,
   saleable,
-  virtual
+  virtual,
+  active
 }: PartIconsType) {
   return (
     <td colSpan={2}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {!active && (
+          <Tooltip label="Part is not active">
+            <Badge color="red" variant="filled">
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
+              >
+                <InvenTreeIcon icon="inactive" iconProps={{ size: 19 }} />{' '}
+                <Trans>Inactive</Trans>
+              </div>
+            </Badge>
+          </Tooltip>
+        )}
         {template && (
           <Tooltip
             label={t`Part is a template part (variants can be made from this part)`}
-          >
-            <IconCopy />
-          </Tooltip>
+            children={PartIcon('template')}
+          />
         )}
         {assembly && (
-          <Tooltip label={t`Part can be assembled from other parts`}>
-            <IconTool />
-          </Tooltip>
+          <Tooltip
+            label={t`Part can be assembled from other parts`}
+            children={PartIcon('assembly')}
+          />
         )}
         {component && (
-          <Tooltip label={t`Part can be used in assemblies`}>
-            <IconGridDots />
-          </Tooltip>
+          <Tooltip
+            label={t`Part can be used in assemblies`}
+            children={PartIcon('component')}
+          />
         )}
         {trackable && (
-          <Tooltip label={t`Part stock is tracked by serial number`}>
-            <IconCornerUpRightDouble />
-          </Tooltip>
+          <Tooltip
+            label={t`Part stock is tracked by serial number`}
+            children={PartIcon('trackable')}
+          />
         )}
         {purchaseable && (
-          <Tooltip label={t`Part can be purchased from external suppliers`}>
-            <IconShoppingCartFilled />
-          </Tooltip>
+          <Tooltip
+            label={t`Part can be purchased from external suppliers`}
+            children={PartIcon('purchaseable')}
+          />
         )}
         {saleable && (
-          <Tooltip label={t`Part can be sold to customers`}>
-            <IconCurrencyDollar />
-          </Tooltip>
+          <Tooltip
+            label={t`Part can be sold to customers`}
+            children={PartIcon('saleable')}
+          />
         )}
         {virtual && (
           <Tooltip label={t`Part is virtual (not a physical part)`}>
@@ -82,7 +112,8 @@ function PartIcons({
               <div
                 style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
               >
-                <IconWorldCode size={17} /> <Trans>Virtual</Trans>
+                <InvenTreeIcon icon="virtual" iconProps={{ size: 18 }} />{' '}
+                <Trans>Virtual</Trans>
               </div>
             </Badge>
           </Tooltip>
@@ -92,31 +123,118 @@ function PartIcons({
   );
 }
 
-export function DetailsTable(part: any) {
-  console.log(part.part);
+function TableStringField({
+  field_data,
+  field_value,
+  unit = null
+}: {
+  field_data: any;
+  field_value: any;
+  unit?: null | string;
+}) {
+  console.log('FF', field_data, field_value);
+
+  return (
+    <tr>
+      <td style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+        <InvenTreeIcon icon={field_data.name} />
+        <Text>{field_data.label}</Text>
+      </td>
+      <td>
+        {field_value ? field_value : field_data.unit && '0'}{' '}
+        {field_data.unit == true && unit}
+      </td>
+    </tr>
+  );
+}
+
+function TableLinkField({
+  field_data,
+  field_value,
+  pk
+}: {
+  field_data: any;
+  field_value: any;
+  pk: string;
+}) {
+  const {
+    instance: variant,
+    refreshInstance,
+    instanceQuery
+  } = useInstance({
+    endpoint: field_data.path,
+    pk: field_value
+  });
+
+  const link = (
+    <Anchor
+      href={'/platform' + field_data.dest + field_value}
+      target={field_data.external ? '_blank' : undefined}
+      rel={field_data.external ? 'noreferrer noopener' : undefined}
+    >
+      <Suspense fallback={<Skeleton width={60} />}>
+        {!instanceQuery.isFetching ? (
+          <Text>{variant.full_name}</Text>
+        ) : (
+          <Skeleton width={200} height={20} radius="xl" />
+        )}
+      </Suspense>
+    </Anchor>
+  );
+
+  return <TableStringField field_data={field_data} field_value={link} />;
+}
+
+export function DetailsTable({
+  part,
+  fields,
+  partIcons = false
+}: {
+  part: any;
+  fields: any;
+  partIcons?: boolean;
+}) {
+  console.log(part);
   return (
     <Group>
       <Table striped>
         <tbody>
-          <tr>
-            <PartIcons
-              assembly={part.part.assembly}
-              template={part.part.is_template}
-              component={part.part.component}
-              trackable={part.part.trackable}
-              purchaseable={part.part.purchaseable}
-              saleable={part.part.salable}
-              virtual={part.part.virtual}
-            />
-          </tr>
-          <tr>
-            <td>{left[0].field}</td>
-            <td>{left[0].value}</td>
-          </tr>
-          <tr>
-            <td>{left[1].field}</td>
-            <td>{left[1].value}</td>
-          </tr>
+          {partIcons && (
+            <tr>
+              <PartIcons
+                assembly={part.assembly}
+                template={part.is_template}
+                component={part.component}
+                trackable={part.trackable}
+                purchaseable={part.purchaseable}
+                saleable={part.salable}
+                virtual={part.virtual}
+                active={part.active}
+              />
+            </tr>
+          )}
+          {fields.map((data: any, index: number) => {
+            console.log('Mapping', data);
+            if (data.type == 'string' || data.type == 'text') {
+              return (
+                <TableStringField
+                  field_data={data}
+                  field_value={part[data.name]}
+                  key={index}
+                  unit={part.units}
+                />
+              );
+            } else if (data.type == 'link') {
+              return (
+                <TableLinkField
+                  field_data={data}
+                  field_value={part[data.name]}
+                  key={index}
+                  pk={part.pk}
+                />
+              );
+            }
+          })}
         </tbody>
       </Table>
     </Group>

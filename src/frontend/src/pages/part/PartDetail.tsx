@@ -86,34 +86,117 @@ export default function PartDetail() {
   });
 
   const detailFields = (part: any) => {
-    let left: DetailFields = {
+    let left: any = {
       image: true,
       fields: []
     };
-    let right: DetailField[] = [];
+
+    let right = [];
+
+    let image = {
+      type: 'image',
+      name: 'image',
+      imageActions: {
+        selectExisting: true,
+        uploadFile: true,
+        deleteFile: true
+      }
+    };
 
     left.fields.push({
-      name: 'Description',
-      value: part.description
+      type: 'text',
+      name: 'description',
+      label: t`Description`
     });
 
-    if (part.variant) {
+    if (part.variant_of) {
       left.fields.push({
-        name: 'Variant Of',
-        value: part.variant
+        type: 'link',
+        name: 'variant_of',
+        label: t`Variant of`,
+        path: ApiPaths.part_list,
+        dest: '/part/'
       });
     }
 
     right.push({
-      name: 'Available Stock',
-      value: part.unallocated_stock
+      type: 'string',
+      name: 'unallocated_stock',
+      unit: true,
+      label: t`Available Stock`
     });
 
-    let fields: PartDetailFields = {
+    right.push({
+      type: 'string',
+      name: 'total_in_stock',
+      unit: true,
+      label: t`In Stock`
+    });
+
+    if (part.minimum_stock) {
+      right.push({
+        type: 'string',
+        name: 'minimum_stock',
+        unit: true,
+        label: t`Minimum Stock`
+      });
+    }
+
+    if (part.ordering <= 0) {
+      right.push({
+        type: 'string',
+        name: 'ordering',
+        label: t`On order`,
+        unit: true
+      });
+    }
+
+    if (
+      part.assembly &&
+      (part.allocated_to_build_orders > 0 || part.required_for_build_orders > 0)
+    ) {
+      right.push({
+        type: 'progressbar',
+        name: 'allocated_to_build_orders',
+        total: 'required_for_build_orders',
+        progress: 'allocated_to_build_orders',
+        label: t`Allocated to Build Orders`
+      });
+    }
+
+    if (part.salable && part.allocated_to_sales_orders > 0) {
+      right.push({
+        type: 'progressbar',
+        name: 'allocated_to_sales_orders',
+        total: 'allocated_to_sales_orders',
+        progress: 'allocated_to_sales_orders',
+        label: t`Allocated to Sales Orders`
+      });
+    }
+
+    if (part.assembly) {
+      right.push({
+        type: 'string',
+        name: 'can_build',
+        unit: true,
+        label: t`Can Build`
+      });
+    }
+
+    if (part.assembly) {
+      right.push({
+        type: 'string',
+        name: 'building',
+        unit: true,
+        label: t`Building`
+      });
+    }
+
+    let fields: any = {
       left: left,
       right: right
     };
-
+    console.log(fields);
     return fields;
   };
 
@@ -365,7 +448,7 @@ export default function PartDetail() {
       />
     ];
   }, [id, part, user]);
-
+  console.log(part);
   return (
     <>
       <Stack spacing="xs">
