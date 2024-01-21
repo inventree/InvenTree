@@ -21,7 +21,7 @@
 // Construct a dynamic API filter for the "issued by" field
 function constructIssuedByFilter() {
     return {
-        title: '{% jstrans "Issued By" %}',
+        title: '{% trans "Issued By" %}',
         options: function() {
             let users = {};
 
@@ -45,7 +45,7 @@ function constructIssuedByFilter() {
 // Construct a dynamic API filter for the "project" field
 function constructProjectCodeFilter() {
     return {
-        title: '{% jstrans "Project Code" %}',
+        title: '{% trans "Project Code" %}',
         options: function() {
             let project_codes = {};
 
@@ -71,7 +71,7 @@ function constructProjectCodeFilter() {
 function constructHasProjectCodeFilter() {
     return {
         type: 'bool',
-        title: '{% jstrans "Has project code" %}',
+        title: '{% trans "Has project code" %}',
     };
 }
 
@@ -86,20 +86,20 @@ function getAttachmentFilters() {
 function getReturnOrderFilters() {
     var filters = {
         status: {
-            title: '{% jstrans "Order status" %}',
+            title: '{% trans "Order status" %}',
             options: returnOrderCodes
         },
         outstanding: {
             type: 'bool',
-            title: '{% jstrans "Outstanding" %}',
+            title: '{% trans "Outstanding" %}',
         },
         overdue: {
             type: 'bool',
-            title: '{% jstrans "Overdue" %}',
+            title: '{% trans "Overdue" %}',
         },
         assigned_to_me: {
             type: 'bool',
-            title: '{% jstrans "Assigned to me" %}',
+            title: '{% trans "Assigned to me" %}',
         },
     };
 
@@ -117,10 +117,10 @@ function getReturnOrderLineItemFilters() {
     return {
         received: {
             type: 'bool',
-            title: '{% jstrans "Received" %}',
+            title: '{% trans "Received" %}',
         },
         outcome: {
-            title: '{% jstrans "Outcome" %}',
+            title: '{% trans "Outcome" %}',
             options: returnOrderLineItemCodes,
         }
     };
@@ -132,19 +132,19 @@ function getVariantsTableFilters() {
     return {
         active: {
             type: 'bool',
-            title: '{% jstrans "Active" %}',
+            title: '{% trans "Active" %}',
         },
         template: {
             type: 'bool',
-            title: '{% jstrans "Template" %}',
+            title: '{% trans "Template" %}',
         },
         virtual: {
             type: 'bool',
-            title: '{% jstrans "Virtual" %}',
+            title: '{% trans "Virtual" %}',
         },
         trackable: {
             type: 'bool',
-            title: '{% jstrans "Trackable" %}',
+            title: '{% trans "Trackable" %}',
         },
     };
 }
@@ -155,43 +155,43 @@ function getBOMTableFilters() {
     return {
         sub_part_trackable: {
             type: 'bool',
-            title: '{% jstrans "Trackable Part" %}',
+            title: '{% trans "Trackable Part" %}',
         },
         sub_part_assembly: {
             type: 'bool',
-            title: '{% jstrans "Assembled Part" %}',
+            title: '{% trans "Assembled Part" %}',
         },
         available_stock: {
             type: 'bool',
-            title: '{% jstrans "Has Available Stock" %}',
+            title: '{% trans "Has Available Stock" %}',
         },
         on_order: {
             type: 'bool',
-            title: '{% jstrans "On Order" %}',
+            title: '{% trans "On Order" %}',
         },
         validated: {
             type: 'bool',
-            title: '{% jstrans "Validated" %}',
+            title: '{% trans "Validated" %}',
         },
         inherited: {
             type: 'bool',
-            title: '{% jstrans "Gets inherited" %}',
+            title: '{% trans "Gets inherited" %}',
         },
         allow_variants: {
             type: 'bool',
-            title: '{% jstrans "Allow Variant Stock" %}',
+            title: '{% trans "Allow Variant Stock" %}',
         },
         optional: {
             type: 'bool',
-            title: '{% jstrans "Optional" %}',
+            title: '{% trans "Optional" %}',
         },
         consumable: {
             type: 'bool',
-            title: '{% jstrans "Consumable" %}',
+            title: '{% trans "Consumable" %}',
         },
         has_pricing: {
             type: 'bool',
-            title: '{% jstrans "Has Pricing" %}',
+            title: '{% trans "Has Pricing" %}',
         },
     };
 }
@@ -208,19 +208,19 @@ function getUsedInTableFilters() {
     return {
         'inherited': {
             type: 'bool',
-            title: '{% jstrans "Gets inherited" %}',
+            title: '{% trans "Gets inherited" %}',
         },
         'optional': {
             type: 'bool',
-            title: '{% jstrans "Optional" %}',
+            title: '{% trans "Optional" %}',
         },
         'part_active': {
             type: 'bool',
-            title: '{% jstrans "Active" %}',
+            title: '{% trans "Active" %}',
         },
         'part_trackable': {
             type: 'bool',
-            title: '{% jstrans "Trackable" %}',
+            title: '{% trans "Trackable" %}',
         },
     };
 }
@@ -231,19 +231,19 @@ function getStockLocationFilters() {
     return {
         cascade: {
             type: 'bool',
-            title: '{% jstrans "Include sublocations" %}',
-            description: '{% jstrans "Include locations" %}',
+            title: '{% trans "Include sublocations" %}',
+            description: '{% trans "Include locations" %}',
         },
         structural: {
             type: 'bool',
-            title: '{% jstrans "Structural" %}',
+            title: '{% trans "Structural" %}',
         },
         external: {
             type: 'bool',
-            title: '{% jstrans "External" %}',
+            title: '{% trans "External" %}',
         },
         location_type: {
-            title: '{% jstrans "Location type" %}',
+            title: '{% trans "Location type" %}',
             options: function() {
                 const locationTypes = {};
 
@@ -264,7 +264,7 @@ function getStockLocationFilters() {
         },
         has_location_type: {
             type: 'bool',
-            title: '{% jstrans "Has location type" %}'
+            title: '{% trans "Has location type" %}'
         },
     };
 }
@@ -275,16 +275,16 @@ function getPartCategoryFilters() {
     return {
         cascade: {
             type: 'bool',
-            title: '{% jstrans "Include subcategories" %}',
-            description: '{% jstrans "Include subcategories" %}',
+            title: '{% trans "Include subcategories" %}',
+            description: '{% trans "Include subcategories" %}',
         },
         structural: {
             type: 'bool',
-            title: '{% jstrans "Structural" %}',
+            title: '{% trans "Structural" %}',
         },
         starred: {
             type: 'bool',
-            title: '{% jstrans "Subscribed" %}',
+            title: '{% trans "Subscribed" %}',
         },
     };
 }
@@ -295,23 +295,23 @@ function getCustomerStockFilters() {
     return {
         serialized: {
             type: 'bool',
-            title: '{% jstrans "Is Serialized" %}',
+            title: '{% trans "Is Serialized" %}',
         },
         serial_gte: {
-            title: '{% jstrans "Serial number GTE" %}',
-            description: '{% jstrans "Serial number greater than or equal to" %}',
+            title: '{% trans "Serial number GTE" %}',
+            description: '{% trans "Serial number greater than or equal to" %}',
         },
         serial_lte: {
-            title: '{% jstrans "Serial number LTE" %}',
-            description: '{% jstrans "Serial number less than or equal to" %}',
+            title: '{% trans "Serial number LTE" %}',
+            description: '{% trans "Serial number less than or equal to" %}',
         },
         serial: {
-            title: '{% jstrans "Serial number" %}',
-            description: '{% jstrans "Serial number" %}',
+            title: '{% trans "Serial number" %}',
+            description: '{% trans "Serial number" %}',
         },
         batch: {
-            title: '{% jstrans "Batch" %}',
-            description: '{% jstrans "Batch code" %}',
+            title: '{% trans "Batch" %}',
+            description: '{% trans "Batch code" %}',
         },
     };
 }
@@ -322,109 +322,109 @@ function getStockTableFilters() {
     var filters = {
         active: {
             type: 'bool',
-            title: '{% jstrans "Active parts" %}',
-            description: '{% jstrans "Show stock for active parts" %}',
+            title: '{% trans "Active parts" %}',
+            description: '{% trans "Show stock for active parts" %}',
         },
         assembly: {
             type: 'bool',
-            title: '{% jstrans "Assembly" %}',
-            description: '{% jstrans "Part is an assembly" %}',
+            title: '{% trans "Assembly" %}',
+            description: '{% trans "Part is an assembly" %}',
         },
         allocated: {
             type: 'bool',
-            title: '{% jstrans "Is allocated" %}',
-            description: '{% jstrans "Item has been allocated" %}',
+            title: '{% trans "Is allocated" %}',
+            description: '{% trans "Item has been allocated" %}',
         },
         available: {
             type: 'bool',
-            title: '{% jstrans "Available" %}',
-            description: '{% jstrans "Stock is available for use" %}',
+            title: '{% trans "Available" %}',
+            description: '{% trans "Stock is available for use" %}',
         },
         cascade: {
             type: 'bool',
-            title: '{% jstrans "Include sublocations" %}',
-            description: '{% jstrans "Include stock in sublocations" %}',
+            title: '{% trans "Include sublocations" %}',
+            description: '{% trans "Include stock in sublocations" %}',
         },
         depleted: {
             type: 'bool',
-            title: '{% jstrans "Depleted" %}',
-            description: '{% jstrans "Show stock items which are depleted" %}',
+            title: '{% trans "Depleted" %}',
+            description: '{% trans "Show stock items which are depleted" %}',
         },
         in_stock: {
             type: 'bool',
-            title: '{% jstrans "In Stock" %}',
-            description: '{% jstrans "Show items which are in stock" %}',
+            title: '{% trans "In Stock" %}',
+            description: '{% trans "Show items which are in stock" %}',
         },
         is_building: {
             type: 'bool',
-            title: '{% jstrans "In Production" %}',
-            description: '{% jstrans "Show items which are in production" %}',
+            title: '{% trans "In Production" %}',
+            description: '{% trans "Show items which are in production" %}',
         },
         include_variants: {
             type: 'bool',
-            title: '{% jstrans "Include Variants" %}',
-            description: '{% jstrans "Include stock items for variant parts" %}',
+            title: '{% trans "Include Variants" %}',
+            description: '{% trans "Include stock items for variant parts" %}',
         },
         installed: {
             type: 'bool',
-            title: '{% jstrans "Installed" %}',
-            description: '{% jstrans "Show stock items which are installed in another item" %}',
+            title: '{% trans "Installed" %}',
+            description: '{% trans "Show stock items which are installed in another item" %}',
         },
         sent_to_customer: {
             type: 'bool',
-            title: '{% jstrans "Sent to customer" %}',
-            description: '{% jstrans "Show items which have been assigned to a customer" %}',
+            title: '{% trans "Sent to customer" %}',
+            description: '{% trans "Show items which have been assigned to a customer" %}',
         },
         serialized: {
             type: 'bool',
-            title: '{% jstrans "Is Serialized" %}',
+            title: '{% trans "Is Serialized" %}',
         },
         serial: {
-            title: '{% jstrans "Serial number" %}',
-            description: '{% jstrans "Serial number" %}',
+            title: '{% trans "Serial number" %}',
+            description: '{% trans "Serial number" %}',
         },
         serial_gte: {
-            title: '{% jstrans "Serial number GTE" %}',
-            description: '{% jstrans "Serial number greater than or equal to" %}',
+            title: '{% trans "Serial number GTE" %}',
+            description: '{% trans "Serial number greater than or equal to" %}',
         },
         serial_lte: {
-            title: '{% jstrans "Serial number LTE" %}',
-            description: '{% jstrans "Serial number less than or equal to" %}',
+            title: '{% trans "Serial number LTE" %}',
+            description: '{% trans "Serial number less than or equal to" %}',
         },
         status: {
             options: stockCodes,
-            title: '{% jstrans "Stock status" %}',
-            description: '{% jstrans "Stock status" %}',
+            title: '{% trans "Stock status" %}',
+            description: '{% trans "Stock status" %}',
         },
         has_batch: {
-            title: '{% jstrans "Has batch code" %}',
+            title: '{% trans "Has batch code" %}',
             type: 'bool',
         },
         batch: {
-            title: '{% jstrans "Batch" %}',
-            description: '{% jstrans "Batch code" %}',
+            title: '{% trans "Batch" %}',
+            description: '{% trans "Batch code" %}',
         },
         tracked: {
-            title: '{% jstrans "Tracked" %}',
-            description: '{% jstrans "Stock item is tracked by either batch code or serial number" %}',
+            title: '{% trans "Tracked" %}',
+            description: '{% trans "Stock item is tracked by either batch code or serial number" %}',
             type: 'bool',
         },
         has_purchase_price: {
             type: 'bool',
-            title: '{% jstrans "Has purchase price" %}',
-            description: '{% jstrans "Show stock items which have a purchase price set" %}',
+            title: '{% trans "Has purchase price" %}',
+            description: '{% trans "Show stock items which have a purchase price set" %}',
         },
         expiry_date_lte: {
             type: 'date',
-            title: '{% jstrans "Expiry Date before" %}',
+            title: '{% trans "Expiry Date before" %}',
         },
         expiry_date_gte: {
             type: 'date',
-            title: '{% jstrans "Expiry Date after" %}',
+            title: '{% trans "Expiry Date after" %}',
         },
         external: {
             type: 'bool',
-            title: '{% jstrans "External Location" %}',
+            title: '{% trans "External Location" %}',
         }
     };
 
@@ -432,14 +432,14 @@ function getStockTableFilters() {
     if (global_settings.STOCK_ENABLE_EXPIRY) {
         filters.expired = {
             type: 'bool',
-            title: '{% jstrans "Expired" %}',
-            description: '{% jstrans "Show stock items which have expired" %}',
+            title: '{% trans "Expired" %}',
+            description: '{% trans "Show stock items which have expired" %}',
         };
 
         filters.stale = {
             type: 'bool',
-            title: '{% jstrans "Stale" %}',
-            description: '{% jstrans "Show stock which is close to expiring" %}',
+            title: '{% trans "Stale" %}',
+            description: '{% trans "Show stock which is close to expiring" %}',
         };
     }
 
@@ -453,11 +453,11 @@ function getStockTestTableFilters() {
     return {
         result: {
             type: 'bool',
-            title: '{% jstrans "Test Passed" %}',
+            title: '{% trans "Test Passed" %}',
         },
         include_installed: {
             type: 'bool',
-            title: '{% jstrans "Include Installed Items" %}',
+            title: '{% trans "Include Installed Items" %}',
         }
     };
 }
@@ -474,7 +474,7 @@ function getPartTestTemplateFilters() {
     return {
         required: {
             type: 'bool',
-            title: '{% jstrans "Required" %}',
+            title: '{% trans "Required" %}',
         },
     };
 }
@@ -485,19 +485,19 @@ function getPluginTableFilters() {
     return {
         active: {
             type: 'bool',
-            title: '{% jstrans "Active" %}',
+            title: '{% trans "Active" %}',
         },
         builtin: {
             type: 'bool',
-            title: '{% jstrans "Builtin" %}',
+            title: '{% trans "Builtin" %}',
         },
         sample: {
             type: 'bool',
-            title: '{% jstrans "Sample" %}',
+            title: '{% trans "Sample" %}',
         },
         installed: {
             type: 'bool',
-            title: '{% jstrans "Installed" %}'
+            title: '{% trans "Installed" %}'
         },
     };
 }
@@ -508,23 +508,23 @@ function getBuildTableFilters() {
 
     let filters = {
         status: {
-            title: '{% jstrans "Build status" %}',
+            title: '{% trans "Build status" %}',
             options: buildCodes,
         },
         active: {
             type: 'bool',
-            title: '{% jstrans "Active" %}',
+            title: '{% trans "Active" %}',
         },
         overdue: {
             type: 'bool',
-            title: '{% jstrans "Overdue" %}',
+            title: '{% trans "Overdue" %}',
         },
         assigned_to_me: {
             type: 'bool',
-            title: '{% jstrans "Assigned to me" %}',
+            title: '{% trans "Assigned to me" %}',
         },
         assigned_to: {
-            title: '{% jstrans "Responsible" %}',
+            title: '{% trans "Responsible" %}',
             options: function() {
                 var ownersList = {};
                 inventreeGet('{% url "api-owner-list" %}', {}, {
@@ -564,23 +564,23 @@ function getBuildLineTableFilters() {
     return {
         allocated: {
             type: 'bool',
-            title: '{% jstrans "Allocated" %}',
+            title: '{% trans "Allocated" %}',
         },
         available: {
             type: 'bool',
-            title: '{% jstrans "Available" %}',
+            title: '{% trans "Available" %}',
         },
         tracked: {
             type: 'bool',
-            title: '{% jstrans "Tracked" %}',
+            title: '{% trans "Tracked" %}',
         },
         consumable: {
             type: 'bool',
-            title: '{% jstrans "Consumable" %}',
+            title: '{% trans "Consumable" %}',
         },
         optional: {
             type: 'bool',
-            title: '{% jstrans "Optional" %}',
+            title: '{% trans "Optional" %}',
         },
     };
 }
@@ -591,14 +591,14 @@ function getPurchaseOrderLineItemFilters() {
     return {
         pending: {
             type: 'bool',
-            title: '{% jstrans "Pending" %}',
+            title: '{% trans "Pending" %}',
         },
         received: {
             type: 'bool',
-            title: '{% jstrans "Received" %}',
+            title: '{% trans "Received" %}',
         },
         order_status: {
-            title: '{% jstrans "Order status" %}',
+            title: '{% trans "Order status" %}',
             options: purchaseOrderCodes,
         },
     };
@@ -610,20 +610,20 @@ function getPurchaseOrderFilters() {
 
     var filters = {
         status: {
-            title: '{% jstrans "Order status" %}',
+            title: '{% trans "Order status" %}',
             options: purchaseOrderCodes,
         },
         outstanding: {
             type: 'bool',
-            title: '{% jstrans "Outstanding" %}',
+            title: '{% trans "Outstanding" %}',
         },
         overdue: {
             type: 'bool',
-            title: '{% jstrans "Overdue" %}',
+            title: '{% trans "Overdue" %}',
         },
         assigned_to_me: {
             type: 'bool',
-            title: '{% jstrans "Assigned to me" %}',
+            title: '{% trans "Assigned to me" %}',
         },
     };
 
@@ -641,7 +641,7 @@ function getSalesOrderAllocationFilters() {
     return {
         outstanding: {
             type: 'bool',
-            title: '{% jstrans "Outstanding" %}',
+            title: '{% trans "Outstanding" %}',
         }
     };
 }
@@ -651,20 +651,20 @@ function getSalesOrderAllocationFilters() {
 function getSalesOrderFilters() {
     var filters = {
         status: {
-            title: '{% jstrans "Order status" %}',
+            title: '{% trans "Order status" %}',
             options: salesOrderCodes,
         },
         outstanding: {
             type: 'bool',
-            title: '{% jstrans "Outstanding" %}',
+            title: '{% trans "Outstanding" %}',
         },
         overdue: {
             type: 'bool',
-            title: '{% jstrans "Overdue" %}',
+            title: '{% trans "Overdue" %}',
         },
         assigned_to_me: {
             type: 'bool',
-            title: '{% jstrans "Assigned to me" %}',
+            title: '{% trans "Assigned to me" %}',
         },
     };
 
@@ -682,7 +682,7 @@ function getSalesOrderLineItemFilters() {
     return {
         completed: {
             type: 'bool',
-            title: '{% jstrans "Completed" %}',
+            title: '{% trans "Completed" %}',
         },
     };
 }
@@ -693,7 +693,7 @@ function getSupplierPartFilters() {
     return {
         active: {
             type: 'bool',
-            title: '{% jstrans "Active parts" %}',
+            title: '{% trans "Active parts" %}',
         },
     };
 }
@@ -704,75 +704,75 @@ function getPartTableFilters() {
     return {
         cascade: {
             type: 'bool',
-            title: '{% jstrans "Include subcategories" %}',
-            description: '{% jstrans "Include parts in subcategories" %}',
+            title: '{% trans "Include subcategories" %}',
+            description: '{% trans "Include parts in subcategories" %}',
         },
         active: {
             type: 'bool',
-            title: '{% jstrans "Active" %}',
-            description: '{% jstrans "Show active parts" %}',
+            title: '{% trans "Active" %}',
+            description: '{% trans "Show active parts" %}',
         },
         assembly: {
             type: 'bool',
-            title: '{% jstrans "Assembly" %}',
+            title: '{% trans "Assembly" %}',
         },
         unallocated_stock: {
             type: 'bool',
-            title: '{% jstrans "Available stock" %}',
+            title: '{% trans "Available stock" %}',
         },
         component: {
             type: 'bool',
-            title: '{% jstrans "Component" %}',
+            title: '{% trans "Component" %}',
         },
         has_units: {
             type: 'bool',
-            title: '{% jstrans "Has Units" %}',
-            description: '{% jstrans "Part has defined units" %}',
+            title: '{% trans "Has Units" %}',
+            description: '{% trans "Part has defined units" %}',
         },
         has_ipn: {
             type: 'bool',
-            title: '{% jstrans "Has IPN" %}',
-            description: '{% jstrans "Part has internal part number" %}',
+            title: '{% trans "Has IPN" %}',
+            description: '{% trans "Part has internal part number" %}',
         },
         has_stock: {
             type: 'bool',
-            title: '{% jstrans "In stock" %}',
+            title: '{% trans "In stock" %}',
         },
         low_stock: {
             type: 'bool',
-            title: '{% jstrans "Low stock" %}',
+            title: '{% trans "Low stock" %}',
         },
         purchaseable: {
             type: 'bool',
-            title: '{% jstrans "Purchasable" %}',
+            title: '{% trans "Purchasable" %}',
         },
         salable: {
             type: 'bool',
-            title: '{% jstrans "Salable" %}',
+            title: '{% trans "Salable" %}',
         },
         starred: {
             type: 'bool',
-            title: '{% jstrans "Subscribed" %}',
+            title: '{% trans "Subscribed" %}',
         },
         stocktake: {
             type: 'bool',
-            title: '{% jstrans "Has stocktake entries" %}',
+            title: '{% trans "Has stocktake entries" %}',
         },
         is_template: {
             type: 'bool',
-            title: '{% jstrans "Template" %}',
+            title: '{% trans "Template" %}',
         },
         trackable: {
             type: 'bool',
-            title: '{% jstrans "Trackable" %}',
+            title: '{% trans "Trackable" %}',
         },
         virtual: {
             type: 'bool',
-            title: '{% jstrans "Virtual" %}',
+            title: '{% trans "Virtual" %}',
         },
         has_pricing: {
             type: 'bool',
-            title: '{% jstrans "Has Pricing" %}',
+            title: '{% trans "Has Pricing" %}',
         },
     };
 }
@@ -789,15 +789,15 @@ function getCompanyFilters() {
     return {
         is_manufacturer: {
             type: 'bool',
-            title: '{% jstrans "Manufacturer" %}',
+            title: '{% trans "Manufacturer" %}',
         },
         is_supplier: {
             type: 'bool',
-            title: '{% jstrans "Supplier" %}',
+            title: '{% trans "Supplier" %}',
         },
         is_customer: {
             type: 'bool',
-            title: '{% jstrans "Customer" %}',
+            title: '{% trans "Customer" %}',
         },
     };
 }
@@ -814,15 +814,15 @@ function getPartParameterTemplateFilters() {
     return {
         checkbox: {
             type: 'bool',
-            title: '{% jstrans "Checkbox" %}',
+            title: '{% trans "Checkbox" %}',
         },
         has_choices: {
             type: 'bool',
-            title: '{% jstrans "Has Choices" %}',
+            title: '{% trans "Has Choices" %}',
         },
         has_units: {
             type: 'bool',
-            title: '{% jstrans "Has Units" %}',
+            title: '{% trans "Has Units" %}',
         }
     };
 }

@@ -74,10 +74,10 @@ function yesNoLabel(value, options={}) {
     let color = '';
 
     if (toBool(value)) {
-        text = options.pass || '{% jstrans "YES" %}';
+        text = options.pass || '{% trans "YES" %}';
         color = 'bg-success';
     } else {
-        text = options.fail || '{% jstrans "NO" %}';
+        text = options.fail || '{% trans "NO" %}';
         color = 'bg-warning';
     }
 
@@ -90,19 +90,19 @@ function yesNoLabel(value, options={}) {
 
 
 function trueFalseLabel(value, options={}) {
-    options.pass = '{% jstrans "True" %}';
-    options.fail = '{% jstrans "False" %}';
+    options.pass = '{% trans "True" %}';
+    options.fail = '{% trans "False" %}';
 
     return yesNoLabel(value, options);
 }
 
 
-function editButton(url, text='{% jstrans "Edit" %}') {
+function editButton(url, text='{% trans "Edit" %}') {
     return `<button class='btn btn-success edit-button btn-sm' type='button' url='${url}'>${text}</button>`;
 }
 
 
-function deleteButton(url, text='{% jstrans "Delete" %}') {
+function deleteButton(url, text='{% trans "Delete" %}') {
     return `<button class='btn btn-danger delete-button btn-sm' type='button' url='${url}'>${text}</button>`;
 }
 
@@ -582,7 +582,7 @@ function renderClipboard(s, prepend=false) {
         return s;
     }
 
-    let clipString = `<span class="d-none d-xl-inline"><button class="btn clip-btn" type="button" data-bs-toggle='tooltip' title='{% jstrans "copy to clipboard" %}'><em class="fas fa-copy"></em></button></span>`;
+    let clipString = `<span class="d-none d-xl-inline"><button class="btn clip-btn" type="button" data-bs-toggle='tooltip' title='{% trans "copy to clipboard" %}'><em class="fas fa-copy"></em></button></span>`;
 
     if (prepend === true) {
         return `<div class="flex-cell">${clipString+s}</div>`;

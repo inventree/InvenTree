@@ -156,7 +156,7 @@ function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
 
     if (!rates) {
         console.error('Could not retrieve currency conversion information from the server');
-        return `<span class='icon-red fas fa-exclamation-circle' title='{% jstrans "Error fetching currency data" %}'></span>`;
+        return `<span class='icon-red fas fa-exclamation-circle' title='{% trans "Error fetching currency data" %}'></span>`;
     }
 
     if (!currency) {
@@ -318,7 +318,7 @@ function loadBomPricingChart(options={}) {
         search: false,
         showColumns: false,
         formatNoMatches: function() {
-            return '{% jstrans "No BOM data available" %}';
+            return '{% trans "No BOM data available" %}';
         },
         onLoadSuccess: function(data) {
             // Construct BOM pricing chart
@@ -350,12 +350,12 @@ function loadBomPricingChart(options={}) {
                 labels: graphLabels,
                 datasets: [
                     {
-                        label: '{% jstrans "Maximum Price" %}',
+                        label: '{% trans "Maximum Price" %}',
                         data: maxValues,
                         backgroundColor: colors,
                     },
                     {
-                        label: '{% jstrans "Minimum Price" %}',
+                        label: '{% trans "Minimum Price" %}',
                         data: minValues,
                         backgroundColor: colors,
                     },
@@ -366,7 +366,7 @@ function loadBomPricingChart(options={}) {
         columns: [
             {
                 field: 'sub_part',
-                title: '{% jstrans "Part" %}',
+                title: '{% trans "Part" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var url = `/part/${row.sub_part}/`;
@@ -378,17 +378,17 @@ function loadBomPricingChart(options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% jstrans "Quantity" %}',
+                title: '{% trans "Quantity" %}',
                 sortable: true,
             },
             {
                 field: 'reference',
-                title: '{% jstrans "Reference" %}',
+                title: '{% trans "Reference" %}',
                 sortable: true,
             },
             {
                 field: 'pricing',
-                title: '{% jstrans "Price Range" %}',
+                title: '{% trans "Price Range" %}',
                 sortable: false,
                 formatter: function(value, row) {
                     var min_price = row.pricing_min;
@@ -460,7 +460,7 @@ function loadPartSupplierPricingTable(options={}) {
         search: false,
         showColumns: false,
         formatNoMatches: function() {
-            return '{% jstrans "No supplier pricing data available" %}';
+            return '{% trans "No supplier pricing data available" %}';
         },
         onLoadSuccess: function(data) {
             // Update supplier pricing chart
@@ -471,7 +471,7 @@ function loadPartSupplierPricingTable(options={}) {
             // Sort in increasing order of quantity
             data = data.sort((a, b) => (a.quantity - b.quantity));
 
-            var graphLabels = Array.from(data, (x) => (`${x.part_detail.SKU} - {% jstrans "Quantity" %} ${x.quantity}`));
+            var graphLabels = Array.from(data, (x) => (`${x.part_detail.SKU} - {% trans "Quantity" %} ${x.quantity}`));
             var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_quantity_native));
 
             if (chart) {
@@ -482,7 +482,7 @@ function loadPartSupplierPricingTable(options={}) {
                 labels: graphLabels,
                 datasets: [
                     {
-                        label: '{% jstrans "Supplier Pricing" %}',
+                        label: '{% trans "Supplier Pricing" %}',
                         data: graphValues,
                         backgroundColor: 'rgba(255, 206, 86, 0.2)',
                         borderColor: 'rgb(255, 206, 86)',
@@ -495,7 +495,7 @@ function loadPartSupplierPricingTable(options={}) {
         columns: [
             {
                 field: 'supplier',
-                title: '{% jstrans "Supplier" %}',
+                title: '{% trans "Supplier" %}',
                 formatter: function(value, row) {
                     var html = '';
 
@@ -507,7 +507,7 @@ function loadPartSupplierPricingTable(options={}) {
             },
             {
                 field: 'sku',
-                title: '{% jstrans "SKU" %}',
+                title: '{% trans "SKU" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     return renderLink(
@@ -519,12 +519,12 @@ function loadPartSupplierPricingTable(options={}) {
             {
                 sortable: true,
                 field: 'quantity',
-                title: '{% jstrans "Quantity" %}',
+                title: '{% trans "Quantity" %}',
             },
             {
                 sortable: true,
                 field: 'price',
-                title: '{% jstrans "Unit Price" %}',
+                title: '{% trans "Unit Price" %}',
                 formatter: function(value, row) {
 
                     if (row.price == null) {
@@ -569,7 +569,7 @@ function loadPriceBreakTable(table, options={}) {
         pageSize: 10,
         method: 'get',
         formatNoMatches: function() {
-            return `{% jstrans "No price break data available" %}`;
+            return `{% trans "No price break data available" %}`;
         },
         queryParams: {
             part: options.part
@@ -593,7 +593,7 @@ function loadPriceBreakTable(table, options={}) {
                     labels: graphLabels,
                     datasets: [
                         {
-                            label: '{% jstrans "Unit Price" %}',
+                            label: '{% trans "Unit Price" %}',
                             data: graphData,
                             backgroundColor: 'rgba(255, 206, 86, 0.2)',
                             borderColor: 'rgb(255, 206, 86)',
@@ -613,20 +613,20 @@ function loadPriceBreakTable(table, options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% jstrans "Quantity" %}',
+                title: '{% trans "Quantity" %}',
                 sortable: true,
             },
             {
                 field: 'price',
-                title: '{% jstrans "Price" %}',
+                title: '{% trans "Price" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     let html = formatCurrency(value, {currency: row.price_currency});
 
                     let buttons = '';
 
-                    buttons += makeEditButton(`button-${name}-edit`, row.pk, `{% jstrans "Edit" %} ${human_name}`);
-                    buttons += makeDeleteButton(`button-${name}-delete`, row.pk, `{% jstrans "Delete" %} ${human_name}"`);
+                    buttons += makeEditButton(`button-${name}-edit`, row.pk, `{% trans "Edit" %} ${human_name}`);
+                    buttons += makeDeleteButton(`button-${name}-delete`, row.pk, `{% trans "Delete" %} ${human_name}"`);
 
                     html += wrapButtons(buttons);
 
@@ -681,7 +681,7 @@ function initPriceBreakSet(table, options) {
                 },
             },
             method: 'POST',
-            title: '{% jstrans "Add Price Break" %}',
+            title: '{% trans "Add Price Break" %}',
             onSuccess: reloadPriceBreakTable,
         });
     });
@@ -691,7 +691,7 @@ function initPriceBreakSet(table, options) {
 
         constructForm(`${pb_url}${pk}/`, {
             method: 'DELETE',
-            title: '{% jstrans "Delete Price Break" %}',
+            title: '{% trans "Delete Price Break" %}',
             onSuccess: reloadPriceBreakTable,
         });
     });
@@ -709,7 +709,7 @@ function initPriceBreakSet(table, options) {
                     icon: 'fa-coins',
                 },
             },
-            title: '{% jstrans "Edit Price Break" %}',
+            title: '{% trans "Edit Price Break" %}',
             onSuccess: reloadPriceBreakTable,
         });
     });
@@ -752,7 +752,7 @@ function loadPurchasePriceHistoryTable(options={}) {
         search: false,
         showColumns: false,
         formatNoMatches: function() {
-            return '{% jstrans "No purchase history data available" %}';
+            return '{% trans "No purchase history data available" %}';
         },
         onLoadSuccess: function(data) {
             // Update purchase price history chart
@@ -788,7 +788,7 @@ function loadPurchasePriceHistoryTable(options={}) {
                 labels: graphLabels,
                 datasets: [
                     {
-                        label: '{% jstrans "Purchase Price History" %}',
+                        label: '{% trans "Purchase Price History" %}',
                         data: graphValues,
                         backgroundColor: 'rgba(255, 206, 86, 0.2)',
                         borderColor: 'rgb(255, 206, 86)',
@@ -801,7 +801,7 @@ function loadPurchasePriceHistoryTable(options={}) {
         columns: [
             {
                 field: 'order',
-                title: '{% jstrans "Purchase Order" %}',
+                title: '{% trans "Purchase Order" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var order = row.order_detail;
@@ -823,7 +823,7 @@ function loadPurchasePriceHistoryTable(options={}) {
             },
             {
                 field: 'order_detail.complete_date',
-                title: '{% jstrans "Date" %}',
+                title: '{% trans "Date" %}',
                 sortable: true,
                 formatter: function(value) {
                     return renderDate(value);
@@ -831,7 +831,7 @@ function loadPurchasePriceHistoryTable(options={}) {
             },
             {
                 field: 'purchase_price',
-                title: '{% jstrans "Unit Price" %}',
+                title: '{% trans "Unit Price" %}',
                 sortable: true,
                 formatter: function(value, row) {
 
@@ -891,7 +891,7 @@ function loadSalesPriceHistoryTable(options={}) {
         search: false,
         showColumns: false,
         formatNoMatches: function() {
-            return '{% jstrans "No sales history data available" %}';
+            return '{% trans "No sales history data available" %}';
         },
         onLoadSuccess: function(data) {
             // Update sales price history chart
@@ -913,7 +913,7 @@ function loadSalesPriceHistoryTable(options={}) {
                 labels: graphLabels,
                 datasets: [
                     {
-                        label: '{% jstrans "Sale Price History" %}',
+                        label: '{% trans "Sale Price History" %}',
                         data: graphValues,
                         backgroundColor: 'rgba(255, 206, 86, 0.2)',
                         borderColor: 'rgb(255, 206, 86)',
@@ -926,7 +926,7 @@ function loadSalesPriceHistoryTable(options={}) {
         columns: [
             {
                 field: 'order',
-                title: '{% jstrans "Sales Order" %}',
+                title: '{% trans "Sales Order" %}',
                 formatter: function(value, row) {
                     var order = row.order_detail;
                     var customer = row.customer_detail;
@@ -947,14 +947,14 @@ function loadSalesPriceHistoryTable(options={}) {
             },
             {
                 field: 'shipment_date',
-                title: '{% jstrans "Date" %}',
+                title: '{% trans "Date" %}',
                 formatter: function(value, row) {
                     return renderDate(row.order_detail.shipment_date);
                 }
             },
             {
                 field: 'sale_price',
-                title: '{% jstrans "Sale Price" %}',
+                title: '{% trans "Sale Price" %}',
                 formatter: function(value, row) {
                     return formatCurrency(value, {
                         currency: row.sale_price_currency
@@ -1002,7 +1002,7 @@ function loadVariantPricingChart(options={}) {
         search: false,
         showColumns: false,
         formatNoMatches: function() {
-            return '{% jstrans "No variant data available" %}';
+            return '{% trans "No variant data available" %}';
         },
         onLoadSuccess: function(data) {
             // Construct variant pricing chart
@@ -1021,7 +1021,7 @@ function loadVariantPricingChart(options={}) {
                 labels: graphLabels,
                 datasets: [
                     {
-                        label: '{% jstrans "Minimum Price" %}',
+                        label: '{% trans "Minimum Price" %}',
                         data: minValues,
                         backgroundColor: 'rgba(200, 250, 200, 0.75)',
                         borderColor: 'rgba(200, 250, 200)',
@@ -1029,7 +1029,7 @@ function loadVariantPricingChart(options={}) {
                         fill: true,
                     },
                     {
-                        label: '{% jstrans "Maximum Price" %}',
+                        label: '{% trans "Maximum Price" %}',
                         data: maxValues,
                         backgroundColor: 'rgba(250, 220, 220, 0.75)',
                         borderColor: 'rgba(250, 220, 220)',
@@ -1042,7 +1042,7 @@ function loadVariantPricingChart(options={}) {
         columns: [
             {
                 field: 'part',
-                title: '{% jstrans "Variant Part" %}',
+                title: '{% trans "Variant Part" %}',
                 formatter: function(value, row) {
                     var name = shortenString(row.full_name);
                     var display = imageHoverIcon(row.thumbnail) + renderLink(name, `/part/${row.pk}/`);
@@ -1051,7 +1051,7 @@ function loadVariantPricingChart(options={}) {
             },
             {
                 field: 'pricing',
-                title: '{% jstrans "Price Range" %}',
+                title: '{% trans "Price Range" %}',
                 formatter: function(value, row) {
                     var min_price = row.pricing_min;
                     var max_price = row.pricing_max;

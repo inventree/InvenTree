@@ -95,7 +95,7 @@ function createManufacturerPart(options={}) {
     }
 
     fields.manufacturer.secondary = {
-        title: '{% jstrans "Add Manufacturer" %}',
+        title: '{% trans "Add Manufacturer" %}',
         fields: function() {
             var company_fields = companyFormFields();
 
@@ -108,7 +108,7 @@ function createManufacturerPart(options={}) {
     constructForm('{% url "api-manufacturer-part-list" %}', {
         fields: fields,
         method: 'POST',
-        title: '{% jstrans "Add Manufacturer Part" %}',
+        title: '{% trans "Add Manufacturer Part" %}',
         onSuccess: options.onSuccess
     });
 }
@@ -129,7 +129,7 @@ function editManufacturerPart(part, options={}) {
 
     constructForm(url, {
         fields: fields,
-        title: '{% jstrans "Edit Manufacturer Part" %}',
+        title: '{% trans "Edit Manufacturer Part" %}',
         onSuccess: options.onSuccess
     });
 }
@@ -198,7 +198,7 @@ function createSupplierPart(options={}) {
 
     // Add a secondary modal for the supplier
     fields.supplier.secondary = {
-        title: '{% jstrans "Add Supplier" %}',
+        title: '{% trans "Add Supplier" %}',
         fields: function() {
             var company_fields = companyFormFields();
 
@@ -210,7 +210,7 @@ function createSupplierPart(options={}) {
 
     // Add a secondary modal for the manufacturer part
     fields.manufacturer_part.secondary = {
-        title: '{% jstrans "Add Manufacturer Part" %}',
+        title: '{% trans "Add Manufacturer Part" %}',
         fields: function(data) {
             var mp_fields = manufacturerPartFields();
 
@@ -240,7 +240,7 @@ function createSupplierPart(options={}) {
     constructForm('{% url "api-supplier-part-list" %}', {
         fields: fields,
         method: 'POST',
-        title: '{% jstrans "Add Supplier Part" %}',
+        title: '{% trans "Add Supplier Part" %}',
         onSuccess: options.onSuccess,
         header_html: header,
     });
@@ -266,7 +266,7 @@ function duplicateSupplierPart(part, options={}) {
             constructForm('{% url "api-supplier-part-list" %}', {
                 method: 'POST',
                 fields: fields,
-                title: '{% jstrans "Duplicate Supplier Part" %}',
+                title: '{% trans "Duplicate Supplier Part" %}',
                 data: data,
                 onSuccess: function(response) {
                     handleFormSuccess(response, options);
@@ -291,7 +291,7 @@ function editSupplierPart(part, options={}) {
 
     constructForm(`{% url "api-supplier-part-list" %}${part}/`, {
         fields: fields,
-        title: options.title || '{% jstrans "Edit Supplier Part" %}',
+        title: options.title || '{% trans "Edit Supplier Part" %}',
         onSuccess: options.onSuccess
     });
 }
@@ -341,14 +341,14 @@ function deleteSupplierParts(parts, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% jstrans "All selected supplier parts will be deleted" %}
+    {% trans "All selected supplier parts will be deleted" %}
     </div>
     <table class='table table-striped table-condensed'>
     <tr>
-        <th>{% jstrans "Part" %}</th>
-        <th>{% jstrans "SKU" %}</th>
-        <th>{% jstrans "Supplier" %}</th>
-        <th>{% jstrans "MPN" %}</th>
+        <th>{% trans "Part" %}</th>
+        <th>{% trans "SKU" %}</th>
+        <th>{% trans "Supplier" %}</th>
+        <th>{% trans "MPN" %}</th>
     </tr>
     ${rows}
     </table>
@@ -357,7 +357,7 @@ function deleteSupplierParts(parts, options={}) {
     constructForm('{% url "api-supplier-part-list" %}', {
         method: 'DELETE',
         multi_delete: true,
-        title: '{% jstrans "Delete Supplier Parts" %}',
+        title: '{% trans "Delete Supplier Parts" %}',
         preFormContent: html,
         form_data: {
             items: ids,
@@ -395,7 +395,7 @@ function createSupplierPartPriceBreak(part_id, options={}) {
     constructForm('{% url "api-part-supplier-price-list" %}', {
         fields: fields,
         method: 'POST',
-        title: '{% jstrans "Add Price Break" %}',
+        title: '{% trans "Add Price Break" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -441,7 +441,7 @@ function editCompany(pk, options={}) {
             method: 'PATCH',
             fields: fields,
             reload: true,
-            title: '{% jstrans "Edit Company" %}',
+            title: '{% trans "Edit Company" %}',
         }
     );
 }
@@ -462,7 +462,7 @@ function createCompany(options={}) {
             method: 'POST',
             fields: fields,
             follow: true,
-            title: '{% jstrans "Add new Company" %}',
+            title: '{% trans "Add new Company" %}',
         }
     );
 }
@@ -492,22 +492,22 @@ function loadCompanyTable(table, url, options={}) {
         },
         {
             field: 'name',
-            title: '{% jstrans "Company" %}',
+            title: '{% trans "Company" %}',
             sortable: true,
             switchable: false,
             formatter: function(value, row) {
                 var html = imageHoverIcon(row.image) + renderLink(value, row.url);
 
                 if (row.is_customer) {
-                    html += `<span title='{% jstrans "Customer" %}' class='fas fa-user-tie float-right'></span>`;
+                    html += `<span title='{% trans "Customer" %}' class='fas fa-user-tie float-right'></span>`;
                 }
 
                 if (row.is_manufacturer) {
-                    html += `<span title='{% jstrans "Manufacturer" %}' class='fas fa-industry float-right'></span>`;
+                    html += `<span title='{% trans "Manufacturer" %}' class='fas fa-industry float-right'></span>`;
                 }
 
                 if (row.is_supplier) {
-                    html += `<span title='{% jstrans "Supplier" %}' class='fas fa-building float-right'></span>`;
+                    html += `<span title='{% trans "Supplier" %}' class='fas fa-building float-right'></span>`;
                 }
 
                 return html;
@@ -515,11 +515,11 @@ function loadCompanyTable(table, url, options={}) {
         },
         {
             field: 'description',
-            title: '{% jstrans "Description" %}',
+            title: '{% trans "Description" %}',
         },
         {
             field: 'website',
-            title: '{% jstrans "Website" %}',
+            title: '{% trans "Website" %}',
             formatter: function(value) {
                 if (value) {
                     return renderLink(value, value);
@@ -533,7 +533,7 @@ function loadCompanyTable(table, url, options={}) {
         columns.push({
             sortable: true,
             field: 'parts_supplied',
-            title: '{% jstrans "Parts Supplied" %}',
+            title: '{% trans "Parts Supplied" %}',
             formatter: function(value, row) {
                 return renderLink(value, `/company/${row.pk}/?display=supplier-parts`);
             }
@@ -542,7 +542,7 @@ function loadCompanyTable(table, url, options={}) {
         columns.push({
             sortable: true,
             field: 'parts_manufactured',
-            title: '{% jstrans "Parts Manufactured" %}',
+            title: '{% trans "Parts Manufactured" %}',
             formatter: function(value, row) {
                 return renderLink(value, `/company/${row.pk}/?display=manufacturer-parts`);
             }
@@ -557,7 +557,7 @@ function loadCompanyTable(table, url, options={}) {
         groupBy: false,
         sidePagination: 'server',
         formatNoMatches: function() {
-            return '{% jstrans "No company information found" %}';
+            return '{% trans "No company information found" %}';
         },
         showColumns: true,
         name: options.pagetype || 'company',
@@ -606,7 +606,7 @@ function createContact(options={}) {
     constructForm('{% url "api-contact-list" %}', {
         method: 'POST',
         fields: fields,
-        title: '{% jstrans "Create New Contact" %}',
+        title: '{% trans "Create New Contact" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -622,7 +622,7 @@ function editContact(pk, options={}) {
 
     constructForm(`{% url "api-contact-list" %}${pk}/`, {
         fields: fields,
-        title: '{% jstrans "Edit Contact" %}',
+        title: '{% trans "Edit Contact" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -659,13 +659,13 @@ function deleteContacts(contacts, options={}) {
     // eslint-disable-next-line no-useless-escape
     let html = `
     <div class='alert alert-block alert-danger'>
-    {% jstrans "All selected contacts will be deleted" %}
+    {% trans "All selected contacts will be deleted" %}
     </div>
     <table class='table table-striped table-condensed'>
     <tr>
-        <th>{% jstrans "Name" %}</th>
-        <th>{% jstrans "Email" %}</th>
-        <th>{% jstrans "Role" %}</th>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Email" %}</th>
+        <th>{% trans "Role" %}</th>
     </tr>
     ${rows}
     </table>`;
@@ -673,7 +673,7 @@ function deleteContacts(contacts, options={}) {
     constructForm('{% url "api-contact-list" %}', {
         method: 'DELETE',
         multi_delete: true,
-        title: '{% jstrans "Delete Contacts" %}',
+        title: '{% trans "Delete Contacts" %}',
         preFormContent: html,
         form_data: {
             items: ids,
@@ -704,32 +704,32 @@ function loadContactTable(table, options={}) {
         uniqueId: 'pk',
         sidePagination: 'server',
         formatNoMatches: function() {
-            return '{% jstrans "No contacts found" %}';
+            return '{% trans "No contacts found" %}';
         },
         showColumns: true,
         name: 'contacts',
         columns: [
             {
                 field: 'name',
-                title: '{% jstrans "Name" %}',
+                title: '{% trans "Name" %}',
                 sortable: true,
                 switchable: false,
             },
             {
                 field: 'phone',
-                title: '{% jstrans "Phone Number" %}',
+                title: '{% trans "Phone Number" %}',
                 sortable: false,
                 switchable: true,
             },
             {
                 field: 'email',
-                title: '{% jstrans "Email Address" %}',
+                title: '{% trans "Email Address" %}',
                 sortable: false,
                 switchable: true,
             },
             {
                 field: 'role',
-                title: '{% jstrans "Role" %}',
+                title: '{% trans "Role" %}',
                 sortable: false,
                 switchable: false,
             },
@@ -745,11 +745,11 @@ function loadContactTable(table, options={}) {
                     let html = '';
 
                     if (options.allow_edit) {
-                        html += makeEditButton('btn-contact-edit', pk, '{% jstrans "Edit Contact" %}');
+                        html += makeEditButton('btn-contact-edit', pk, '{% trans "Edit Contact" %}');
                     }
 
                     if (options.allow_delete) {
-                        html += makeDeleteButton('btn-contact-delete', pk, '{% jstrans "Delete Contact" %}');
+                        html += makeDeleteButton('btn-contact-delete', pk, '{% trans "Delete Contact" %}');
                     }
 
                     return wrapButtons(html);
@@ -846,7 +846,7 @@ function createAddress(options={}) {
     constructForm('{% url "api-address-list" %}', {
         method: 'POST',
         fields: fields,
-        title: '{% jstrans "Create New Address" %}',
+        title: '{% trans "Create New Address" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -861,7 +861,7 @@ function editAddress(pk, options={}) {
 
     constructForm(`{% url "api-address-list" %}${pk}/`, {
         fields: fields,
-        title: '{% jstrans "Edit Address" %}',
+        title: '{% trans "Edit Address" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -896,13 +896,13 @@ function deleteAddress(addresses, options={}) {
 
     let html = `
     <div class='alert alert-block alert-danger'>
-    {% jstrans "All selected addresses will be deleted" %}
+    {% trans "All selected addresses will be deleted" %}
     </div>
     <table class='table table-striped table-condensed'>
     <tr>
-        <th>{% jstrans "Name" %}</th>
-        <th>{% jstrans "Line 1" %}</th>
-        <th>{% jstrans "Line 2" %}</th>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Line 1" %}</th>
+        <th>{% trans "Line 2" %}</th>
     </tr>
     ${rows}
     </table>`;
@@ -910,7 +910,7 @@ function deleteAddress(addresses, options={}) {
     constructForm('{% url "api-address-list" %}', {
         method: 'DELETE',
         multi_delete: true,
-        title: '{% jstrans "Delete Addresses" %}',
+        title: '{% trans "Delete Addresses" %}',
         preFormContent: html,
         form_data: {
             items: ids,
@@ -937,14 +937,14 @@ function loadAddressTable(table, options={}) {
         sidePagination: 'server',
         sortable: true,
         formatNoMatches: function() {
-            return '{% jstrans "No addresses found" %}';
+            return '{% trans "No addresses found" %}';
         },
         showColumns: true,
         name: 'addresses',
         columns: [
             {
                 field: 'primary',
-                title: '{% jstrans "Primary" %}',
+                title: '{% trans "Primary" %}',
                 switchable: false,
                 formatter: function(value) {
                     return yesNoLabel(value);
@@ -952,61 +952,61 @@ function loadAddressTable(table, options={}) {
             },
             {
                 field: 'title',
-                title: '{% jstrans "Title" %}',
+                title: '{% trans "Title" %}',
                 sortable: true,
                 switchable: false,
             },
             {
                 field: 'line1',
-                title: '{% jstrans "Line 1" %}',
+                title: '{% trans "Line 1" %}',
                 sortable: false,
                 switchable: false,
             },
             {
                 field: 'line2',
-                title: '{% jstrans "Line 2" %}',
+                title: '{% trans "Line 2" %}',
                 sortable: false,
                 switchable: false,
             },
             {
                 field: 'postal_code',
-                title: '{% jstrans "Postal code" %}',
+                title: '{% trans "Postal code" %}',
                 sortable: false,
                 switchable: false,
             },
             {
                 field: 'postal_city',
-                title: '{% jstrans "Postal city" %}',
+                title: '{% trans "Postal city" %}',
                 sortable: false,
                 switchable: false,
             },
             {
                 field: 'province',
-                title: '{% jstrans "State/province" %}',
+                title: '{% trans "State/province" %}',
                 sortable: false,
                 switchable: false,
             },
             {
                 field: 'country',
-                title: '{% jstrans "Country" %}',
+                title: '{% trans "Country" %}',
                 sortable: false,
                 switchable: false,
             },
             {
                 field: 'shipping_notes',
-                title: '{% jstrans "Courier notes" %}',
+                title: '{% trans "Courier notes" %}',
                 sortable: false,
                 switchable: true,
             },
             {
                 field: 'internal_shipping_notes',
-                title: '{% jstrans "Internal notes" %}',
+                title: '{% trans "Internal notes" %}',
                 sortable: false,
                 switchable: true,
             },
             {
                 field: 'link',
-                title: '{% jstrans "External Link" %}',
+                title: '{% trans "External Link" %}',
                 sortable: false,
                 switchable: true,
             },
@@ -1022,11 +1022,11 @@ function loadAddressTable(table, options={}) {
                     let html = '';
 
                     if (options.allow_edit) {
-                        html += makeEditButton('btn-address-edit', pk, '{% jstrans "Edit Address" %}');
+                        html += makeEditButton('btn-address-edit', pk, '{% trans "Edit Address" %}');
                     }
 
                     if (options.allow_delete) {
-                        html += makeDeleteButton('btn-address-delete', pk, '{% jstrans "Delete Address" %}');
+                        html += makeDeleteButton('btn-address-delete', pk, '{% trans "Delete Address" %}');
                     }
 
                     return wrapButtons(html);
@@ -1099,13 +1099,13 @@ function deleteManufacturerParts(selections, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% jstrans "All selected manufacturer parts will be deleted" %}
+    {% trans "All selected manufacturer parts will be deleted" %}
     </div>
     <table class='table table-striped table-condensed'>
     <tr>
-        <th>{% jstrans "Part" %}</th>
-        <th>{% jstrans "MPN" %}</th>
-        <th>{% jstrans "Manufacturer" %}</th>
+        <th>{% trans "Part" %}</th>
+        <th>{% trans "MPN" %}</th>
+        <th>{% trans "Manufacturer" %}</th>
     </tr>
     ${rows}
     </table>
@@ -1114,7 +1114,7 @@ function deleteManufacturerParts(selections, options={}) {
     constructForm('{% url "api-manufacturer-part-list" %}', {
         method: 'DELETE',
         multi_delete: true,
-        title: '{% jstrans "Delete Manufacturer Parts" %}',
+        title: '{% trans "Delete Manufacturer Parts" %}',
         preFormContent: html,
         form_data: {
             items: ids,
@@ -1148,12 +1148,12 @@ function deleteManufacturerPartParameters(selections, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% jstrans "All selected parameters will be deleted" %}
+    {% trans "All selected parameters will be deleted" %}
     </div>
     <table class='table table-striped table-condensed'>
     <tr>
-        <th>{% jstrans "Name" %}</th>
-        <th>{% jstrans "Value" %}</th>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Value" %}</th>
     </tr>
     ${rows}
     </table>
@@ -1162,7 +1162,7 @@ function deleteManufacturerPartParameters(selections, options={}) {
     constructForm('{% url "api-manufacturer-part-parameter-list" %}', {
         method: 'DELETE',
         multi_delete: true,
-        title: '{% jstrans "Delete Parameters" %}',
+        title: '{% trans "Delete Parameters" %}',
         preFormContent: html,
         form_data: {
             items: ids,
@@ -1178,7 +1178,7 @@ function makeManufacturerPartActions(options={}) {
     return [
         {
             label: 'order',
-            title: '{% jstrans "Order parts" %}',
+            title: '{% trans "Order parts" %}',
             icon: 'fa-shopping-cart',
             permission: 'purchase_order.add',
             callback: function(data) {
@@ -1195,7 +1195,7 @@ function makeManufacturerPartActions(options={}) {
         },
         {
             label: 'delete',
-            title: '{% jstrans "Delete manufacturer parts" %}',
+            title: '{% trans "Delete manufacturer parts" %}',
             icon: 'fa-trash-alt icon-red',
             permission: 'purchase_order.delete',
             callback: function(data) {
@@ -1227,7 +1227,7 @@ function loadManufacturerPartTable(table, url, options) {
         custom_actions: [
             {
                 label: 'manufacturer-part',
-                title: '{% jstrans "Manufacturer part actions" %}',
+                title: '{% trans "Manufacturer part actions" %}',
                 icon: 'fa-tools',
                 actions: makeManufacturerPartActions({
                     manufacturer_id: options.params.manufacturer,
@@ -1246,7 +1246,7 @@ function loadManufacturerPartTable(table, url, options) {
         name: 'manufacturerparts',
         groupBy: false,
         formatNoMatches: function() {
-            return '{% jstrans "No manufacturer parts found" %}';
+            return '{% trans "No manufacturer parts found" %}';
         },
         columns: [
             {
@@ -1258,7 +1258,7 @@ function loadManufacturerPartTable(table, url, options) {
                 switchable: params['part_detail'],
                 sortable: true,
                 field: 'part_detail.full_name',
-                title: '{% jstrans "Part" %}',
+                title: '{% trans "Part" %}',
                 formatter: function(value, row) {
 
                     var url = `/part/${row.part}/`;
@@ -1266,15 +1266,15 @@ function loadManufacturerPartTable(table, url, options) {
                     var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
 
                     if (row.part_detail.is_template) {
-                        html += makeIconBadge('fa-clone', '{% jstrans "Template part" %}');
+                        html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                     }
 
                     if (row.part_detail.assembly) {
-                        html += makeIconBadge('fa-tools', '{% jstrans "Assembled part" %}');
+                        html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
                     }
 
                     if (!row.part_detail.active) {
-                        html += `<span class='badge badge-right rounded-pill bg-warning'>{% jstrans "Inactive" %}</span>`;
+                        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
                     }
 
                     return html;
@@ -1283,7 +1283,7 @@ function loadManufacturerPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'manufacturer',
-                title: '{% jstrans "Manufacturer" %}',
+                title: '{% trans "Manufacturer" %}',
                 formatter: function(value, row) {
                     if (value && row.manufacturer_detail) {
                         var name = row.manufacturer_detail.name;
@@ -1299,14 +1299,14 @@ function loadManufacturerPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'MPN',
-                title: '{% jstrans "MPN" %}',
+                title: '{% trans "MPN" %}',
                 formatter: function(value, row) {
                     return renderClipboard(renderLink(value, `/manufacturer-part/${row.pk}/`));
                 }
             },
             {
                 field: 'link',
-                title: '{% jstrans "Link" %}',
+                title: '{% trans "Link" %}',
                 formatter: function(value) {
                     if (value) {
                         return renderLink(value, value, {external: true});
@@ -1317,7 +1317,7 @@ function loadManufacturerPartTable(table, url, options) {
             },
             {
                 field: 'description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
                 sortable: false,
                 switchable: true,
             },
@@ -1330,8 +1330,8 @@ function loadManufacturerPartTable(table, url, options) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeEditButton('button-manufacturer-part-edit', pk, '{% jstrans "Edit manufacturer part" %}');
-                    html += makeDeleteButton('button-manufacturer-part-delete', pk, '{% jstrans "Delete manufacturer part" %}');
+                    html += makeEditButton('button-manufacturer-part-edit', pk, '{% trans "Edit manufacturer part" %}');
+                    html += makeDeleteButton('button-manufacturer-part-delete', pk, '{% trans "Delete manufacturer part" %}');
 
                     return wrapButtons(html);
                 }
@@ -1390,7 +1390,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
         name: 'manufacturerpartparameters',
         groupBy: false,
         formatNoMatches: function() {
-            return '{% jstrans "No parameters found" %}';
+            return '{% trans "No parameters found" %}';
         },
         columns: [
             {
@@ -1400,19 +1400,19 @@ function loadManufacturerPartParameterTable(table, url, options) {
             },
             {
                 field: 'name',
-                title: '{% jstrans "Name" %}',
+                title: '{% trans "Name" %}',
                 switchable: false,
                 sortable: true,
             },
             {
                 field: 'value',
-                title: '{% jstrans "Value" %}',
+                title: '{% trans "Value" %}',
                 switchable: false,
                 sortable: true,
             },
             {
                 field: 'units',
-                title: '{% jstrans "Units" %}',
+                title: '{% trans "Units" %}',
                 switchable: true,
                 sortable: true,
             },
@@ -1425,8 +1425,8 @@ function loadManufacturerPartParameterTable(table, url, options) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeEditButton('button-parameter-edit', pk, '{% jstrans "Edit parameter" %}');
-                    html += makeDeleteButton('button-parameter-delete', pk, '{% jstrans "Delete parameter" %}');
+                    html += makeEditButton('button-parameter-edit', pk, '{% trans "Edit parameter" %}');
+                    html += makeDeleteButton('button-parameter-delete', pk, '{% trans "Delete parameter" %}');
 
                     return wrapButtons(html);
                 }
@@ -1443,7 +1443,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
                         value: {},
                         units: {},
                     },
-                    title: '{% jstrans "Edit Parameter" %}',
+                    title: '{% trans "Edit Parameter" %}',
                     refreshTable: table,
                 });
             });
@@ -1452,7 +1452,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
 
                 constructForm(`{% url "api-manufacturer-part-parameter-list" %}${pk}/`, {
                     method: 'DELETE',
-                    title: '{% jstrans "Delete Parameter" %}',
+                    title: '{% trans "Delete Parameter" %}',
                     refreshTable: table,
                 });
             });
@@ -1466,7 +1466,7 @@ function makeSupplierPartActions(options={}) {
     return [
         {
             label: 'order',
-            title: '{% jstrans "Order parts" %}',
+            title: '{% trans "Order parts" %}',
             icon: 'fa-shopping-cart',
             permission: 'purchase_order.add',
             callback: function(data) {
@@ -1483,7 +1483,7 @@ function makeSupplierPartActions(options={}) {
         },
         {
             label: 'delete',
-            title: '{% jstrans "Delete supplier parts" %}',
+            title: '{% trans "Delete supplier parts" %}',
             icon: 'fa-trash-alt icon-red',
             permission: 'purchase_order.delete',
             callback: function(data) {
@@ -1513,7 +1513,7 @@ function loadSupplierPartTable(table, url, options) {
         custom_actions: [
             {
                 label: 'supplier-part',
-                title: '{% jstrans "Supplier part actions" %}',
+                title: '{% trans "Supplier part actions" %}',
                 icon: 'fa-tools',
                 actions: makeSupplierPartActions({
                     supplier_id: options.params.supplier,
@@ -1533,7 +1533,7 @@ function loadSupplierPartTable(table, url, options) {
         groupBy: false,
         sortable: true,
         formatNoMatches: function() {
-            return '{% jstrans "No supplier parts found" %}';
+            return '{% trans "No supplier parts found" %}';
         },
         columns: [
             {
@@ -1546,7 +1546,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 field: 'part_detail.full_name',
                 sortName: 'part',
-                title: '{% jstrans "Part" %}',
+                title: '{% trans "Part" %}',
                 formatter: function(value, row) {
 
                     var url = `/part/${row.part}/`;
@@ -1554,15 +1554,15 @@ function loadSupplierPartTable(table, url, options) {
                     var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
 
                     if (row.part_detail.is_template) {
-                        html += makeIconBadge('fa-clone', '{% jstrans "Template part" %}');
+                        html += makeIconBadge('fa-clone', '{% trans "Template part" %}');
                     }
 
                     if (row.part_detail.assembly) {
-                        html += makeIconBadge('fa-tools', '{% jstrans "Assembled part" %}');
+                        html += makeIconBadge('fa-tools', '{% trans "Assembled part" %}');
                     }
 
                     if (!row.part_detail.active) {
-                        html += `<span class='badge badge-right rounded-pill bg-warning'>{% jstrans "Inactive" %}</span>`;
+                        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
                     }
 
                     return html;
@@ -1571,7 +1571,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'supplier',
-                title: '{% jstrans "Supplier" %}',
+                title: '{% trans "Supplier" %}',
                 formatter: function(value, row) {
                     if (value) {
                         var name = row.supplier_detail.name;
@@ -1587,7 +1587,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 sortable: true,
                 field: 'SKU',
-                title: '{% jstrans "Supplier Part" %}',
+                title: '{% trans "Supplier Part" %}',
                 formatter: function(value, row) {
                     return renderClipboard(renderLink(value, `/supplier-part/${row.pk}/`));
                 }
@@ -1598,7 +1598,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 sortName: 'manufacturer',
                 field: 'manufacturer_detail.name',
-                title: '{% jstrans "Manufacturer" %}',
+                title: '{% trans "Manufacturer" %}',
                 formatter: function(value, row) {
                     if (value && row.manufacturer_detail) {
                         var name = value;
@@ -1617,7 +1617,7 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: true,
                 sortName: 'MPN',
                 field: 'manufacturer_part_detail.MPN',
-                title: '{% jstrans "MPN" %}',
+                title: '{% trans "MPN" %}',
                 formatter: function(value, row) {
                     if (value && row.manufacturer_part) {
                         return renderClipboard(renderLink(value, `/manufacturer-part/${row.manufacturer_part}/`));
@@ -1628,17 +1628,17 @@ function loadSupplierPartTable(table, url, options) {
             },
             {
                 field: 'description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
                 sortable: false,
             },
             {
                 field: 'packaging',
-                title: '{% jstrans "Packaging" %}',
+                title: '{% trans "Packaging" %}',
                 sortable: true,
             },
             {
                 field: 'pack_quantity',
-                title: '{% jstrans "Pack Quantity" %}',
+                title: '{% trans "Pack Quantity" %}',
                 sortable: true,
                 formatter: function(value, row) {
 
@@ -1651,7 +1651,7 @@ function loadSupplierPartTable(table, url, options) {
                     }
 
                     if (row.part_detail && row.part_detail.units) {
-                        html += `<span class='fas fa-info-circle float-right' title='{% jstrans "Base Units" %}: ${row.part_detail.units}'></span>`;
+                        html += `<span class='fas fa-info-circle float-right' title='{% trans "Base Units" %}: ${row.part_detail.units}'></span>`;
                     }
 
                     return html;
@@ -1660,7 +1660,7 @@ function loadSupplierPartTable(table, url, options) {
             {
                 field: 'link',
                 sortable: false,
-                title: '{% jstrans "Link" %}',
+                title: '{% trans "Link" %}',
                 formatter: function(value) {
                     if (value) {
                         return renderLink(value, value, {external: true});
@@ -1671,17 +1671,17 @@ function loadSupplierPartTable(table, url, options) {
             },
             {
                 field: 'note',
-                title: '{% jstrans "Notes" %}',
+                title: '{% trans "Notes" %}',
                 sortable: false,
             },
             {
                 field: 'in_stock',
-                title: '{% jstrans "In Stock" %}',
+                title: '{% trans "In Stock" %}',
                 sortable: true,
             },
             {
                 field: 'available',
-                title: '{% jstrans "Availability" %}',
+                title: '{% trans "Availability" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     if (row.availability_updated) {
@@ -1690,7 +1690,7 @@ function loadSupplierPartTable(table, url, options) {
 
                         html += makeIconBadge(
                             'fa-info-circle',
-                            `{% jstrans "Last Updated" %}: ${date}`
+                            `{% trans "Last Updated" %}: ${date}`
                         );
                         return html;
                     } else {
@@ -1700,7 +1700,7 @@ function loadSupplierPartTable(table, url, options) {
             },
             {
                 field: 'updated',
-                title: '{% jstrans "Last Updated" %}',
+                title: '{% trans "Last Updated" %}',
                 sortable: true,
             },
             {
@@ -1712,8 +1712,8 @@ function loadSupplierPartTable(table, url, options) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeEditButton('button-supplier-part-edit', pk, '{% jstrans "Edit supplier part" %}');
-                    html += makeDeleteButton('button-supplier-part-delete', pk, '{% jstrans "Delete supplier part" %}');
+                    html += makeEditButton('button-supplier-part-edit', pk, '{% trans "Edit supplier part" %}');
+                    html += makeDeleteButton('button-supplier-part-delete', pk, '{% trans "Delete supplier part" %}');
 
                     return wrapButtons(html);
                 }
@@ -1766,7 +1766,7 @@ function loadSupplierPriceBreakTable(options={}) {
 
             constructForm(`{% url "api-part-supplier-price-list" %}${pk}/`, {
                 method: 'DELETE',
-                title: '{% jstrans "Delete Price Break" %}',
+                title: '{% trans "Delete Price Break" %}',
                 refreshTable: table,
             });
         });
@@ -1776,7 +1776,7 @@ function loadSupplierPriceBreakTable(options={}) {
 
             constructForm(`{% url "api-part-supplier-price-list" %}${pk}/`, {
                 fields: supplierPartPriceBreakFields(),
-                title: '{% jstrans "Edit Price Break" %}',
+                title: '{% trans "Edit Price Break" %}',
                 refreshTable: table,
             });
         });
@@ -1791,7 +1791,7 @@ function loadSupplierPriceBreakTable(options={}) {
             part: options.part,
         },
         formatNoMatches: function() {
-            return '{% jstrans "No price break information found" %}';
+            return '{% trans "No price break information found" %}';
         },
         onPostBody: function() {
             setupCallbacks();
@@ -1805,12 +1805,12 @@ function loadSupplierPriceBreakTable(options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% jstrans "Quantity" %}',
+                title: '{% trans "Quantity" %}',
                 sortable: true,
             },
             {
                 field: 'price',
-                title: '{% jstrans "Price" %}',
+                title: '{% trans "Price" %}',
                 sortable: true,
                 formatter: function(value, row, index) {
                     return formatCurrency(value, {
@@ -1820,15 +1820,15 @@ function loadSupplierPriceBreakTable(options={}) {
             },
             {
                 field: 'updated',
-                title: '{% jstrans "Last updated" %}',
+                title: '{% trans "Last updated" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     var html = renderDate(value);
 
                     let buttons = '';
 
-                    buttons += makeEditButton('button-price-break-edit', row.pk, '{% jstrans "Edit price break" %}');
-                    buttons += makeDeleteButton('button-price-break-delete', row.pk, '{% jstrans "Delete price break" %}');
+                    buttons += makeEditButton('button-price-break-edit', row.pk, '{% trans "Edit price break" %}');
+                    buttons += makeDeleteButton('button-price-break-delete', row.pk, '{% trans "Delete price break" %}');
 
                     html += wrapButtons(buttons);
 

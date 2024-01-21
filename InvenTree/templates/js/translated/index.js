@@ -101,12 +101,12 @@ function loadRequiredForBuildsPartsTable(table, options={}) {
         search: false,
         sortable: false,
         formatNoMatches: function() {
-            return '{% jstrans "No parts required for builds" %}';
+            return '{% trans "No parts required for builds" %}';
         },
         columns: [
             {
                 field: 'name',
-                title: '{% jstrans "Part" %}',
+                title: '{% trans "Part" %}',
                 formatter: function(value, row) {
                     let name = shortenString(row.full_name);
                     let display= imageHoverIcon(row.thumbnail) + renderLink(name, `/part/${row.pk}/`);
@@ -116,18 +116,18 @@ function loadRequiredForBuildsPartsTable(table, options={}) {
             },
             {
                 field: 'description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
             },
             {
                 field: 'total_in_stock',
-                title: '{% jstrans "Available" %}',
+                title: '{% trans "Available" %}',
                 formatter: function(value, row) {
                     return value;
                 }
             },
             {
                 field: 'allocated_to_build_orders',
-                title: '{% jstrans "Allocated Stock" %}',
+                title: '{% trans "Allocated Stock" %}',
                 formatter: function(_value, row) {
                     return makeProgressBar(
                         row.allocated_to_build_orders,

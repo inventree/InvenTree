@@ -62,7 +62,7 @@ class CustomTranslateNode(TranslateNode):
 
 @register.tag('translate')
 @register.tag('trans')
-def do_translate(parser, token, escape=False):
+def do_translate(parser, token):
     """Custom translation function.
 
     - Lifted from https://github.com/django/django/blob/main/django/templatetags/i18n.py.
@@ -74,6 +74,7 @@ def do_translate(parser, token, escape=False):
     message_string = parser.compile_filter(bits[1])
     remaining = bits[2:]
 
+    escape = False
     noop = False
     asvar = None
     message_context = None
@@ -110,6 +111,8 @@ def do_translate(parser, token, escape=False):
                     "No argument provided to the '%s' tag for the as option." % bits[0]
                 )
             asvar = value
+        elif option == 'escape':
+            escape = True
         else:
             raise TemplateSyntaxError(
                 "Unknown argument for '%s' tag: '%s'. The only options "
@@ -121,18 +124,6 @@ def do_translate(parser, token, escape=False):
     return CustomTranslateNode(
         message_string, noop, asvar, message_context, escape=escape
     )
-
-
-@register.tag('jstrans')
-def do_jstrans(parser, token):
-    """Custom translation function for javascript strings.
-
-    - Usage: {% jstrans "String to translate" %}
-    - Performs the same function as the 'trans' tag, but also escapes the translated string.
-    - Explicitly required for javascript code within a .html template
-    - Note: Any {% trans %} tag is automatically escaped in a .js file
-    """
-    return do_translate(parser, token, escape=True)
 
 
 # Re-register tags which we have not explicitly overridden

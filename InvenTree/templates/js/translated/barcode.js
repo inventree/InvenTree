@@ -40,23 +40,23 @@ var barcodeInputTimer = null;
  */
 function makeBarcodeInput(placeholderText='', hintText='') {
 
-    placeholderText = placeholderText || '{% jstrans "Scan barcode data here using barcode scanner" %}';
+    placeholderText = placeholderText || '{% trans "Scan barcode data here using barcode scanner" %}';
 
-    hintText = hintText || '{% jstrans "Enter barcode data" %}';
+    hintText = hintText || '{% trans "Enter barcode data" %}';
 
     var html = `
     <div id='barcode_scan_video_container' class="mx-auto" style='width: 100%; max-width: 240px; display: none;'>
         <div id="barcode_scan_video"></div>
     </div>
     <div class='form-group'>
-        <label class='control-label' for='barcode'>{% jstrans "Barcode" %}</label>
+        <label class='control-label' for='barcode'>{% trans "Barcode" %}</label>
         <div class='controls'>
             <div class='input-group'>
                 <span class='input-group-text'>
                     ${makeIcon('fa-qrcode')}
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
-                <button title='{% jstrans "Scan barcode using connected webcam" %}' id='barcode_scan_btn' type='button' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'>
+                <button title='{% trans "Scan barcode using connected webcam" %}' id='barcode_scan_btn' type='button' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'>
                     ${makeIcon('fa-camera')}
                 </button>
             </div>
@@ -135,12 +135,12 @@ function onBarcodeScanCompleted(result, options) {
  */
 function makeNotesField(options={}) {
 
-    var tooltip = options.tooltip || '{% jstrans "Enter optional notes for stock transfer" %}';
-    var placeholder = options.placeholder || '{% jstrans "Enter notes" %}';
+    var tooltip = options.tooltip || '{% trans "Enter optional notes for stock transfer" %}';
+    var placeholder = options.placeholder || '{% trans "Enter notes" %}';
 
     return `
     <div class='form-group'>
-        <label class='control-label' for='notes'>{% jstrans "Notes" %}</label>
+        <label class='control-label' for='notes'>{% trans "Notes" %}</label>
         <div class='controls'>
             <div class='input-group'>
                 <span class='input-group-text'>
@@ -185,7 +185,7 @@ function postBarcodeData(barcode_data, options={}) {
                     } else {
                         console.error(xhr);
                         data = xhr.responseJSON || {};
-                        showBarcodeMessage(modal, data.error || '{% jstrans "Server error" %}');
+                        showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
                     }
                     break;
                 default:
@@ -214,7 +214,7 @@ function postBarcodeData(barcode_data, options={}) {
                     } else {
                         showBarcodeMessage(
                             modal,
-                            '{% jstrans "Unknown response from server" %}',
+                            '{% trans "Unknown response from server" %}',
                             'warning'
                         );
                     }
@@ -249,7 +249,7 @@ function showBarcodeMessage(modal, message, style='danger') {
 function showInvalidResponseError(modal, response, status) {
     showBarcodeMessage(
         modal,
-        `{% jstrans "Invalid server response" %}<br>{% jstrans "Status" %}: '${status}'`
+        `{% trans "Invalid server response" %}<br>{% trans "Status" %}: '${status}'`
     );
 }
 
@@ -369,7 +369,7 @@ function barcodeDialog(title, options={}) {
         modalShowSubmitButton(modal, false);
     }
 
-    var details = options.details || '{% jstrans "Scan barcode data" %}';
+    var details = options.details || '{% trans "Scan barcode data" %}';
 
     var content = '';
 
@@ -417,7 +417,7 @@ function barcodeDialog(title, options={}) {
 function barcodeScanDialog(options={}) {
 
     let modal = options.modal || createNewModal();
-    let title = options.title || '{% jstrans "Scan Barcode" %}';
+    let title = options.title || '{% trans "Scan Barcode" %}';
 
     const matching_models = [
         'build',
@@ -455,7 +455,7 @@ function barcodeScanDialog(options={}) {
                     // No match
                     showBarcodeMessage(
                         modal,
-                        '{% jstrans "No URL in response" %}',
+                        '{% trans "No URL in response" %}',
                         'warning'
                     );
                 }
@@ -493,15 +493,15 @@ function linkBarcodeDialog(data, options={}) {
  */
 function unlinkBarcode(data, options={}) {
 
-    var html = `<b>{% jstrans "Unlink Barcode" %}</b><br>`;
+    var html = `<b>{% trans "Unlink Barcode" %}</b><br>`;
 
-    html += '{% jstrans "This will remove the link to the associated barcode" %}';
+    html += '{% trans "This will remove the link to the associated barcode" %}';
 
     showQuestionDialog(
-        '{% jstrans "Unlink Barcode" %}',
+        '{% trans "Unlink Barcode" %}',
         html,
         {
-            accept_text: '{% jstrans "Unlink" %}',
+            accept_text: '{% trans "Unlink" %}',
             accept: function() {
                 inventreePut(
                     '{% url "api-barcode-unlink" %}',
@@ -543,9 +543,9 @@ function barcodeCheckInStockItems(location_id, options={}) {
         <table class='table table-condensed table-striped' id='items-table'>
             <thead>
                 <tr>
-                    <th>{% jstrans "Part" %}</th>
-                    <th>{% jstrans "Location" %}</th>
-                    <th>{% jstrans "Quantity" %}</th>
+                    <th>{% trans "Part" %}</th>
+                    <th>{% trans "Location" %}</th>
+                    <th>{% trans "Quantity" %}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -564,7 +564,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
                 <td>${imageHoverIcon(item.part_detail.thumbnail)} ${item.part_detail.name}</td>
                 <td>${location_info}</td>
                 <td>${item.quantity}</td>
-                <td>${makeRemoveButton('button-item-remove', item.pk, '{% jstrans "Remove stock item" %}')}</td>
+                <td>${makeRemoveButton('button-item-remove', item.pk, '{% trans "Remove stock item" %}')}</td>
             </tr>`;
         });
 
@@ -607,12 +607,12 @@ function barcodeCheckInStockItems(location_id, options={}) {
     var extra = makeNotesField();
 
     barcodeDialog(
-        '{% jstrans "Scan Stock Items Into Location" %}',
+        '{% trans "Scan Stock Items Into Location" %}',
         {
-            details: '{% jstrans "Scan stock item barcode to check in to this location" %}',
+            details: '{% trans "Scan stock item barcode to check in to this location" %}',
             headerContent: table,
             preShow: function() {
-                modalSetSubmitText(modal, '{% jstrans "Check In" %}');
+                modalSetSubmitText(modal, '{% trans "Check In" %}');
                 modalEnable(modal, false);
                 reloadTable();
             },
@@ -644,7 +644,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
 
                 // Prevent submission without any entries
                 if (entries.length == 0) {
-                    showBarcodeMessage(modal, '{% jstrans "No barcode provided" %}', 'warning');
+                    showBarcodeMessage(modal, '{% trans "No barcode provided" %}', 'warning');
                     return;
                 }
 
@@ -684,18 +684,18 @@ function barcodeCheckInStockItems(location_id, options={}) {
                                 });
 
                                 if (duplicate) {
-                                    showBarcodeMessage(modal, '{% jstrans "Stock Item already scanned" %}', 'warning');
+                                    showBarcodeMessage(modal, '{% trans "Stock Item already scanned" %}', 'warning');
                                 } else {
 
                                     if (stockitem.location == location_id) {
-                                        showBarcodeMessage(modal, '{% jstrans "Stock Item already in this location" %}');
+                                        showBarcodeMessage(modal, '{% trans "Stock Item already in this location" %}');
                                         return;
                                     }
 
                                     // Add this stock item to the list
                                     items.push(stockitem);
 
-                                    showBarcodeMessage(modal, '{% jstrans "Added stock item" %}', 'success');
+                                    showBarcodeMessage(modal, '{% trans "Added stock item" %}', 'success');
 
                                     reloadTable();
                                 }
@@ -704,7 +704,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
                     );
                 } else {
                     // Barcode does not match a stock item
-                    showBarcodeMessage(modal, '{% jstrans "Barcode does not match valid stock item" %}', 'warning');
+                    showBarcodeMessage(modal, '{% trans "Barcode does not match valid stock item" %}', 'warning');
                 }
             },
         }
@@ -723,9 +723,9 @@ function barcodeCheckInStockLocations(location_id, options={}) {
     var header = '';
 
     barcodeDialog(
-        '{% jstrans "Scan Stock Container Into Location" %}',
+        '{% trans "Scan Stock Container Into Location" %}',
         {
-            details: '{% jstrans "Scan stock container barcode to check in to this location" %}',
+            details: '{% trans "Scan stock container barcode to check in to this location" %}',
             headerContent: header,
             preShow: function() {
                 modalEnable(modal, false);
@@ -759,7 +759,7 @@ function barcodeCheckInStockLocations(location_id, options={}) {
                     );
                 } else {
                     // Barcode does not match a valid stock location
-                    showBarcodeMessage(modal, '{% jstrans "Barcode does not match valid stock location" %}', 'warning');
+                    showBarcodeMessage(modal, '{% trans "Barcode does not match valid stock location" %}', 'warning');
                 }
             }
         }
@@ -792,7 +792,7 @@ function scanItemsIntoLocation(item_list, options={}) {
         if (location && location.pk) {
             div.html(`
             <div class='alert alert-block alert-info'>
-            <b>{% jstrans "Location" %}</b></br>
+            <b>{% trans "Location" %}</b></br>
             ${location.name}<br>
             <i>${location.description}</i>
             </div>
@@ -803,13 +803,13 @@ function scanItemsIntoLocation(item_list, options={}) {
     }
 
     barcodeDialog(
-        '{% jstrans "Check Into Location" %}',
+        '{% trans "Check Into Location" %}',
         {
             headerContent: header,
             extraFields: extra,
             modal: modal,
             preShow: function() {
-                modalSetSubmitText(modal, '{% jstrans "Check In" %}');
+                modalSetSubmitText(modal, '{% trans "Check In" %}');
                 modalEnable(modal, false);
             },
             onShow: function() {
@@ -872,7 +872,7 @@ function scanItemsIntoLocation(item_list, options={}) {
                             // Barcode does *NOT* correspond to a StockLocation
                             showBarcodeMessage(
                                 modal,
-                                '{% jstrans "Barcode does not match a valid location" %}',
+                                '{% trans "Barcode does not match a valid location" %}',
                                 'warning',
                             );
                         }
@@ -881,7 +881,7 @@ function scanItemsIntoLocation(item_list, options={}) {
                     // Barcode does *NOT* correspond to a StockLocation
                     showBarcodeMessage(
                         modal,
-                        '{% jstrans "Barcode does not match a valid location" %}',
+                        '{% trans "Barcode does not match a valid location" %}',
                         'warning',
                     );
                 }

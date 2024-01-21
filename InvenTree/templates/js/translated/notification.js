@@ -43,13 +43,13 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
         columns: [
             {
                 field: 'pk',
-                title: '{% jstrans "ID" %}',
+                title: '{% trans "ID" %}',
                 visible: false,
                 switchable: false,
             },
             {
                 field: 'age',
-                title: '{% jstrans "Age" %}',
+                title: '{% trans "Age" %}',
                 sortable: 'true',
                 formatter: function(value, row) {
                     return row.age_human;
@@ -57,12 +57,12 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
             },
             {
                 field: 'category',
-                title: '{% jstrans "Category" %}',
+                title: '{% trans "Category" %}',
                 sortable: 'true',
             },
             {
                 field: 'name',
-                title: '{% jstrans "Notification" %}',
+                title: '{% trans "Notification" %}',
                 formatter: function(value, row) {
                     if (row.target && row.target.link) {
                         return renderLink(value, row.target.link);
@@ -73,7 +73,7 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
             },
             {
                 field: 'message',
-                title: '{% jstrans "Message" %}',
+                title: '{% trans "Message" %}',
             },
             {
                 formatter: function(value, row, index, field) {
@@ -82,7 +82,7 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
                     let bDel = '';
 
                     if (enableDelete) {
-                        bDel = `<button title='{% jstrans "Delete Notification" %}' class='notification-delete btn btn-outline-secondary' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
+                        bDel = `<button title='{% trans "Delete Notification" %}' class='notification-delete btn btn-outline-secondary' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
                     }
 
                     var html = `<div class='btn-group float-right' role='group'>${bRead}${bDel}</div>`;
@@ -221,11 +221,11 @@ function getReadEditButton(pk, state, small=false) {
     let bReadTarget = '';
 
     if (state) {
-        bReadText = '{% jstrans "Mark as unread" %}';
+        bReadText = '{% trans "Mark as unread" %}';
         bReadIcon = 'fas fa-bookmark icon-red';
         bReadTarget = 'unread';
     } else {
-        bReadText = '{% jstrans "Mark as read" %}';
+        bReadText = '{% trans "Mark as read" %}';
         bReadIcon = 'far fa-bookmark icon-green';
         bReadTarget = 'read';
     }
@@ -251,7 +251,7 @@ function openNotificationPanel() {
         {
             success: function(response) {
                 if (response.length == 0) {
-                    html = `<p class='text-muted'><em>{% jstrans "No unread notifications" %}</em><span class='fas fa-check-circle icon-green float-right'></span></p>`;
+                    html = `<p class='text-muted'><em>{% trans "No unread notifications" %}</em><span class='fas fa-check-circle icon-green float-right'></span></p>`;
                 } else {
                     // build up items
                     response.forEach(function(item, index) {
@@ -293,7 +293,7 @@ function openNotificationPanel() {
  * clears the notification panel when closed
  **/
 function closeNotificationPanel() {
-    $('#notification-center').html(`<p class='text-muted'>{% jstrans "Notifications will load here" %}</p>`);
+    $('#notification-center').html(`<p class='text-muted'>{% trans "Notifications will load here" %}</p>`);
 }
 
 /**

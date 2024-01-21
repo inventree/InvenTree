@@ -43,33 +43,33 @@ function loadPluginTable(table, options={}) {
         queryParams: filters,
         sortable: true,
         formatNoMatches: function() {
-            return '{% jstrans "No plugins found" %}';
+            return '{% trans "No plugins found" %}';
         },
         columns: [
             {
                 field: 'name',
-                title: '{% jstrans "Plugin" %}',
+                title: '{% trans "Plugin" %}',
                 sortable: true,
                 switchable: false,
                 formatter: function(value, row) {
                     let html = '';
 
                     if (!row.is_installed) {
-                        html += `<span class='fa fa-question-circle' title='{% jstrans "This plugin is no longer installed" %}'></span>`;
+                        html += `<span class='fa fa-question-circle' title='{% trans "This plugin is no longer installed" %}'></span>`;
                     } else if (row.active) {
-                        html += `<span class='fa fa-check-circle icon-green' title='{% jstrans "This plugin is active" %}'></span>`;
+                        html += `<span class='fa fa-check-circle icon-green' title='{% trans "This plugin is active" %}'></span>`;
                     } else {
-                        html += `<span class='fa fa-times-circle icon-red' title ='{% jstrans "This plugin is installed but not active" %}'></span>`;
+                        html += `<span class='fa fa-times-circle icon-red' title ='{% trans "This plugin is installed but not active" %}'></span>`;
                     }
 
                     html += `&nbsp;<span>${value}</span>`;
 
                     if (row.is_builtin) {
-                        html += `<span class='badge bg-success rounded-pill badge-right'>{% jstrans "Builtin" %}</span>`;
+                        html += `<span class='badge bg-success rounded-pill badge-right'>{% trans "Builtin" %}</span>`;
                     }
 
                     if (row.is_sample) {
-                        html += `<span class='badge bg-info rounded-pill badge-right'>{% jstrans "Sample" %}</span>`;
+                        html += `<span class='badge bg-info rounded-pill badge-right'>{% trans "Sample" %}</span>`;
                     }
 
                     return html;
@@ -77,13 +77,13 @@ function loadPluginTable(table, options={}) {
             },
             {
                 field: 'meta.description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
                 sortable: false,
                 switchable: true,
             },
             {
                 field: 'meta.version',
-                title: '{% jstrans "Version" %}',
+                title: '{% trans "Version" %}',
                 formatter: function(value, row) {
                     if (value) {
                         let html = value;
@@ -100,7 +100,7 @@ function loadPluginTable(table, options={}) {
             },
             {
                 field: 'meta.author',
-                title: '{% jstrans "Author" %}',
+                title: '{% trans "Author" %}',
                 sortable: false,
             },
             {
@@ -114,9 +114,9 @@ function loadPluginTable(table, options={}) {
                     // Check if custom plugins are enabled for this instance
                     if (options.custom && !row.is_builtin && row.is_installed) {
                         if (row.active) {
-                            buttons += makeIconButton('fa-stop-circle icon-red', 'btn-plugin-disable', row.pk, '{% jstrans "Disable Plugin" %}');
+                            buttons += makeIconButton('fa-stop-circle icon-red', 'btn-plugin-disable', row.pk, '{% trans "Disable Plugin" %}');
                         } else {
-                            buttons += makeIconButton('fa-play-circle icon-green', 'btn-plugin-enable', row.pk, '{% jstrans "Enable Plugin" %}');
+                            buttons += makeIconButton('fa-play-circle icon-green', 'btn-plugin-enable', row.pk, '{% trans "Enable Plugin" %}');
                         }
                     }
 
@@ -148,14 +148,14 @@ function loadPluginTable(table, options={}) {
 function installPlugin() {
     constructForm(`/api/plugins/install/`, {
         method: 'POST',
-        title: '{% jstrans "Install Plugin" %}',
+        title: '{% trans "Install Plugin" %}',
         fields: {
             packagename: {},
             url: {},
             confirm: {},
         },
         onSuccess: function(data) {
-            let msg = '{% jstrans "The Plugin was installed" %}';
+            let msg = '{% trans "The Plugin was installed" %}';
             showMessage(msg, {style: 'success', details: data.result, timeout: 30000});
 
             // Reload the plugin table
@@ -174,19 +174,19 @@ function activatePlugin(plugin_id, active=true) {
 
     let html = active ? `
     <span class='alert alert-block alert-info'>
-    {% jstrans "Are you sure you want to enable this plugin?" %}
+    {% trans "Are you sure you want to enable this plugin?" %}
     </span>
     ` : `
     <span class='alert alert-block alert-danger'>
-    {% jstrans "Are you sure you want to disable this plugin?" %}
+    {% trans "Are you sure you want to disable this plugin?" %}
     </span>
     `;
 
     constructForm(null, {
-        title: active ? '{% jstrans "Enable Plugin" %}' : '{% jstrans "Disable Plugin" %}',
+        title: active ? '{% trans "Enable Plugin" %}' : '{% trans "Disable Plugin" %}',
         preFormContent: html,
         confirm: true,
-        submitText: active ? '{% jstrans "Enable" %}' : '{% jstrans "Disable" %}',
+        submitText: active ? '{% trans "Enable" %}' : '{% trans "Disable" %}',
         submitClass: active ? 'success' : 'danger',
         onSubmit: function(_fields, opts) {
             showModalSpinner(opts.modal);
@@ -200,7 +200,7 @@ function activatePlugin(plugin_id, active=true) {
                     method: 'PATCH',
                     success: function() {
                         $(opts.modal).modal('hide');
-                        addCachedAlert('{% jstrans "Plugin updated" %}', {style: 'success'});
+                        addCachedAlert('{% trans "Plugin updated" %}', {style: 'success'});
                         location.reload();
                     },
                     error: function(xhr) {
@@ -221,7 +221,7 @@ function reloadPlugins() {
     let url = '{% url "api-plugin-reload" %}';
 
     constructForm(url, {
-        title: '{% jstrans "Reload Plugins" %}',
+        title: '{% trans "Reload Plugins" %}',
         method: 'POST',
         confirm: true,
         fields: {
