@@ -405,7 +405,6 @@ classic_frontendpatterns = [
     ),
     # Override login page
     path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
-    path('accounts/', include('allauth_2fa.urls')),  # MFA support
     path('accounts/', include('allauth.urls')),  # included urlpatterns
 ]
 

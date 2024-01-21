@@ -7,9 +7,8 @@ from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.urls import Resolver404, include, path, resolve, reverse_lazy
+from django.urls import include, path, resolve, reverse_lazy
 
-from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
 
 from InvenTree.urls import frontendpatterns
@@ -125,33 +124,6 @@ class AuthRequiredMiddleware(object):
 
 
 url_matcher = path('', include(frontendpatterns))
-
-
-class Check2FAMiddleware(BaseRequire2FAMiddleware):
-    """Check if user is required to have MFA enabled."""
-
-    def require_2fa(self, request):
-        """Use setting to check if MFA should be enforced for frontend page."""
-        from common.models import InvenTreeSetting
-
-        try:
-            if url_matcher.resolve(request.path[1:]):
-                return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')
-        except Resolver404:
-            pass
-        return False
-
-
-class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
-    """This function ensures only frontend code triggers the MFA auth cycle."""
-
-    def process_request(self, request):
-        """Check if requested url is forntend and enforce MFA check."""
-        try:
-            if not url_matcher.resolve(request.path[1:]):
-                super().process_request(request)
-        except Resolver404:
-            pass
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):

@@ -1,7 +1,6 @@
 """Helper forms which subclass Django forms to provide additional functionality."""
 
 import logging
-from urllib.parse import urlencode
 
 from django import forms
 from django.conf import settings
@@ -13,10 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
-from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-from allauth_2fa.adapter import OTPAdapter
-from allauth_2fa.utils import user_has_valid_totp_device
 from crispy_forms.bootstrap import AppendedText, PrependedAppendedText, PrependedText
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
@@ -335,29 +331,6 @@ class CustomSocialAccountAdapter(
         if InvenTreeSetting.get_setting('LOGIN_SIGNUP_SSO_AUTO', True):
             return super().is_auto_signup_allowed(request, sociallogin)
         return False
-
-    # from OTPAdapter
-    def has_2fa_enabled(self, user):
-        """Returns True if the user has 2FA configured."""
-        return user_has_valid_totp_device(user)
-
-    def login(self, request, user):
-        """Ensure user is send to 2FA before login if enabled."""
-        # Require two-factor authentication if it has been configured.
-        if self.has_2fa_enabled(user):
-            # Cast to string for the case when this is not a JSON serializable
-            # object, e.g. a UUID.
-            request.session['allauth_2fa_user_id'] = str(user.id)
-
-            redirect_url = reverse('two-factor-authenticate')
-            # Add GET parameters to the URL if they exist.
-            if request.GET:
-                redirect_url += '?' + urlencode(request.GET)
-
-            raise ImmediateHttpResponse(response=HttpResponseRedirect(redirect_url))
-
-        # Otherwise defer to the original allauth adapter.
-        return super().login(request, user)
 
     def authentication_error(
         self, request, provider_id, error=None, exception=None, extra_context=None
