@@ -76,6 +76,7 @@ django==3.2.23
     #   django-markdownify
     #   django-money
     #   django-mptt
+    #   django-otp
     #   django-picklefield
     #   django-q2
     #   django-recurrence
