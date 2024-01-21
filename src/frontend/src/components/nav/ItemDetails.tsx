@@ -9,7 +9,7 @@ export type DetailField = {
 };
 
 export type DetailLeftFields = {
-  image: boolean;
+  image?: boolean;
   types: boolean[];
   fields: DetailField[];
 };
