@@ -33,10 +33,10 @@
 {% to_list setting_part_starred setting_part_latest setting_bom_validation as settings_list_part %}
 
 {% if roles.part.view and True in settings_list_part %}
-addHeaderTitle('{% jstrans "Parts" %}');
+addHeaderTitle('{% trans "Parts" escape %}');
 
 {% if setting_part_starred %}
-addHeaderAction('starred-parts', '{% jstrans "Subscribed Parts" %}', 'fa-bell');
+addHeaderAction('starred-parts', '{% trans "Subscribed Parts" escape %}', 'fa-bell');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
     name: 'starred-parts',
     params: {
@@ -49,7 +49,7 @@ loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
 {% endif %}
 
 {% if setting_category_starred %}
-addHeaderAction('starred-categories', '{% jstrans "Subscribed Categories" %}', 'fa-bell');
+addHeaderAction('starred-categories', '{% trans "Subscribed Categories" escape %}', 'fa-bell');
 loadPartCategoryTable($('#table-starred-categories'), {
     params: {
         starred: true,
@@ -59,7 +59,7 @@ loadPartCategoryTable($('#table-starred-categories'), {
 {% endif %}
 
 {% if setting_part_latest %}
-addHeaderAction('latest-parts', '{% jstrans "Latest Parts" %}', 'fa-newspaper');
+addHeaderAction('latest-parts', '{% trans "Latest Parts" escape %}', 'fa-newspaper');
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
     name: 'latest-parts',
     params: {
@@ -74,7 +74,7 @@ loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
 {% endif %}
 
 {% if setting_bom_validation %}
-addHeaderAction('bom-validation', '{% jstrans "BOM Waiting Validation" %}', 'fa-times-circle');
+addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" escape %}', 'fa-times-circle');
 loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
     name: 'parts-invalid-bom',
     params: {
@@ -103,7 +103,7 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 
 {% if roles.stock.view %}
 {% if setting_stock_recent %}
-addHeaderAction('recently-updated-stock', '{% jstrans "Recently Updated" %}', 'fa-clock');
+addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" escape %}', 'fa-clock');
 loadStockTable($('#table-recently-updated-stock'), {
     disableFilters: true,
     params: {
@@ -117,7 +117,7 @@ loadStockTable($('#table-recently-updated-stock'), {
 {% endif %}
 
 {% if setting_stock_low %}
-addHeaderAction('low-stock', '{% jstrans "Low Stock" %}', 'fa-flag');
+addHeaderAction('low-stock', '{% trans "Low Stock" escape %}', 'fa-flag');
 loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
     name: 'parts-low-stock',
     params: {
@@ -131,7 +131,7 @@ loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
 {% endif %}
 
 {% if setting_stock_depleted %}
-addHeaderAction('depleted-stock', '{% jstrans "Depleted Stock" %}', 'fa-times');
+addHeaderAction('depleted-stock', '{% trans "Depleted Stock" escape %}', 'fa-times');
 loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
     name: 'parts-depleted-stock',
     params: {
@@ -145,7 +145,7 @@ loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
 {% endif %}
 
 {% if setting_stock_needed %}
-addHeaderAction('stock-to-build', '{% jstrans "Required for Build Orders" %}', 'fa-bullhorn');
+addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" escape %}', 'fa-bullhorn');
 
 loadRequiredForBuildsPartsTable("#table-stock-to-build", {});
 {% endif %}
@@ -153,7 +153,7 @@ loadRequiredForBuildsPartsTable("#table-stock-to-build", {});
 {% if expiry %}
 
 {% if setting_stock_expired %}
-addHeaderAction('expired-stock', '{% jstrans "Expired Stock" %}', 'fa-calendar-times');
+addHeaderAction('expired-stock', '{% trans "Expired Stock" escape %}', 'fa-calendar-times');
 loadStockTable($("#table-expired-stock"), {
     disableFilters: true,
     params: {
@@ -169,7 +169,7 @@ loadStockTable($("#table-expired-stock"), {
 {% endif %}
 
 {% if setting_stock_stale %}
-addHeaderAction('stale-stock', '{% jstrans "Stale Stock" %}', 'fa-stopwatch');
+addHeaderAction('stale-stock', '{% trans "Stale Stock" escape %}', 'fa-stopwatch');
 loadStockTable($("#table-stale-stock"), {
     disableFilters: true,
     params: {
@@ -193,10 +193,10 @@ loadStockTable($("#table-stale-stock"), {
 {% to_list setting_build_pending setting_build_overdue as settings_list_build %}
 
 {% if roles.build.view and True in settings_list_build %}
-addHeaderTitle('{% jstrans "Build Orders" %}');
+addHeaderTitle('{% trans "Build Orders" escape %}');
 
 {% if setting_build_pending %}
-addHeaderAction('build-pending', '{% jstrans "Build Orders In Progress" %}', 'fa-cogs');
+addHeaderAction('build-pending', '{% trans "Build Orders In Progress" escape %}', 'fa-cogs');
 loadBuildTable("#table-build-pending", {
     locale: '{{ request.LANGUAGE_CODE }}',
     params: {
@@ -207,7 +207,7 @@ loadBuildTable("#table-build-pending", {
 {% endif %}
 
 {% if setting_build_overdue %}
-addHeaderAction('build-overdue', '{% jstrans "Overdue Build Orders" %}', 'fa-calendar-times');
+addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" escape %}', 'fa-calendar-times');
 loadBuildTable("#table-build-overdue", {
     locale: '{{ request.LANGUAGE_CODE }}',
     params: {
@@ -224,10 +224,10 @@ loadBuildTable("#table-build-overdue", {
 {% to_list setting_po_outstanding setting_po_overdue as settings_list_po %}
 
 {% if roles.purchase_order.view and True in settings_list_po %}
-addHeaderTitle('{% jstrans "Purchase Orders" %}');
+addHeaderTitle('{% trans "Purchase Orders" escape %}');
 
 {% if setting_po_outstanding %}
-addHeaderAction('po-outstanding', '{% jstrans "Outstanding Purchase Orders" %}', 'fa-sign-in-alt');
+addHeaderAction('po-outstanding', '{% trans "Outstanding Purchase Orders" escape %}', 'fa-sign-in-alt');
 loadPurchaseOrderTable("#table-po-outstanding", {
     url: "{% url 'api-po-list' %}",
     params: {
@@ -238,7 +238,7 @@ loadPurchaseOrderTable("#table-po-outstanding", {
 {% endif %}
 
 {% if setting_po_overdue %}
-addHeaderAction('po-overdue', '{% jstrans "Overdue Purchase Orders" %}', 'fa-calendar-times');
+addHeaderAction('po-overdue', '{% trans "Overdue Purchase Orders" escape %}', 'fa-calendar-times');
 loadPurchaseOrderTable("#table-po-overdue", {
     url: "{% url 'api-po-list' %}",
     params: {
@@ -256,10 +256,10 @@ loadPurchaseOrderTable("#table-po-overdue", {
 {% to_list setting_so_outstanding setting_so_overdue setting_so_shipments_pending as settings_list_so %}
 
 {% if roles.sales_order.view and True in settings_list_so %}
-addHeaderTitle('{% jstrans "Sales Orders" %}');
+addHeaderTitle('{% trans "Sales Orders" escape %}');
 
 {% if setting_so_outstanding %}
-addHeaderAction('so-outstanding', '{% jstrans "Outstanding Sales Orders" %}', 'fa-sign-out-alt');
+addHeaderAction('so-outstanding', '{% trans "Outstanding Sales Orders" escape %}', 'fa-sign-out-alt');
 loadSalesOrderTable("#table-so-outstanding", {
     url: "{% url 'api-so-list' %}",
     params: {
@@ -270,7 +270,7 @@ loadSalesOrderTable("#table-so-outstanding", {
 {% endif %}
 
 {% if setting_so_overdue %}
-addHeaderAction('so-overdue', '{% jstrans "Overdue Sales Orders" %}', 'fa-calendar-times');
+addHeaderAction('so-overdue', '{% trans "Overdue Sales Orders" escape %}', 'fa-calendar-times');
 loadSalesOrderTable("#table-so-overdue", {
     url: "{% url 'api-so-list' %}",
     params: {
@@ -281,7 +281,7 @@ loadSalesOrderTable("#table-so-overdue", {
 {% endif %}
 
 {% if setting_so_shipments_pending %}
-addHeaderAction('so-shipments', '{% jstrans "Pending Shipments" %}', 'fa-truck-loading');
+addHeaderAction('so-shipments', '{% trans "Pending Shipments" escape %}', 'fa-truck-loading');
 loadSalesOrderShipmentTable("#table-so-shipments", {
     url: "{% url 'api-so-shipment-list' %}",
     params: {
@@ -296,9 +296,9 @@ loadSalesOrderShipmentTable("#table-so-shipments", {
 {% settings_value 'HOMEPAGE_NEWS' user=request.user as setting_news %}
 {% if setting_news and user.is_staff %}
 
-addHeaderTitle('{% jstrans "InvenTree News" %}');
+addHeaderTitle('{% trans "InvenTree News" escape %}');
 
-addHeaderAction('news', '{% jstrans "Current News" %}', 'fa-newspaper');
+addHeaderAction('news', '{% trans "Current News" escape %}', 'fa-newspaper');
 loadNewsFeedTable("#table-news", {
     url: "{% url 'api-news-list' %}",
 });

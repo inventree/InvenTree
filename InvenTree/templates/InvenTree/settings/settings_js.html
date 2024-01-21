@@ -55,14 +55,14 @@ $('table').find('.btn-edit-setting').click(function() {
     var title = '';
 
     if (plugin != null) {
-        title = '{% jstrans "Edit Plugin Setting" %}';
+        title = '{% trans "Edit Plugin Setting" escape %}';
     } else if (notification) {
-        title = '{% jstrans "Edit Notification Setting" %}';
+        title = '{% trans "Edit Notification Setting" escape %}';
         setting = $(this).attr('pk');
     } else if (is_global) {
-        title = '{% jstrans "Edit Global Setting" %}';
+        title = '{% trans "Edit Global Setting" escape %}';
     } else {
-        title = '{% jstrans "Edit User Setting" %}';
+        title = '{% trans "Edit User Setting" escape %}';
     }
 
     editSetting(setting, {

@@ -50,7 +50,6 @@ def check_prohibited_tags(data):
         'for',
         'endfor',
         'trans',
-        'jstrans',
         'load',
         'include',
         'url',
@@ -85,7 +84,7 @@ for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
     with open(filename, 'r') as js_file:
         data = js_file.readlines()
 
-    invalid_tags = ['trans', 'jstrans']
+    invalid_tags = ['blocktrans', 'blocktranslate', 'trans', 'translate']
 
     err_count = 0
 

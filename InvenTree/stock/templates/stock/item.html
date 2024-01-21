@@ -276,7 +276,7 @@
                         },
                         multi_delete: true,
                         method: 'DELETE',
-                        title: '{% jstrans "Delete Test Data" %}',
+                        title: '{% trans "Delete Test Data" escape %}',
                         preFormContent: html,
                         refreshTable: '#test-result-table',
                     });
@@ -293,7 +293,7 @@
             fields: stockItemTestResultFields({
                 stock_item: {{ item.pk }},
             }),
-            title: '{% jstrans "Add Test Result" %}',
+            title: '{% trans "Add Test Result" escape %}',
             refreshTable: '#test-result-table',
         });
     });

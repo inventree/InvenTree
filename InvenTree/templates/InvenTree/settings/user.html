@@ -215,7 +215,7 @@
 
 {% block js_ready %}
 (function() {
-var message = "{% jstrans 'Do you really want to remove the selected email address?' %}";
+var message = '{% trans "Do you really want to remove the selected email address?" escape %}';
 var actions = document.getElementsByName('action_remove');
 if (actions.length) {
 actions[0].addEventListener("click", function(e) {

@@ -90,7 +90,7 @@ function purchaseOrderFields(options={}) {
         supplier: {
             icon: 'fa-building',
             secondary: {
-                title: '{% jstrans "Add Supplier" %}',
+                title: '{% trans "Add Supplier" %}',
                 fields: function() {
                     var fields = companyFormFields();
 
@@ -165,24 +165,24 @@ function purchaseOrderFields(options={}) {
                 supplier_detail: true,
             },
             api_url: '{% url "api-po-list" %}',
-            label: '{% jstrans "Purchase Order" %}',
-            help_text: '{% jstrans "Select purchase order to duplicate" %}',
+            label: '{% trans "Purchase Order" %}',
+            help_text: '{% trans "Select purchase order to duplicate" %}',
         };
 
         fields.duplicate_line_items = {
             value: true,
             group: 'duplicate',
             type: 'boolean',
-            label: '{% jstrans "Duplicate Line Items" %}',
-            help_text: '{% jstrans "Duplicate all line items from the selected order" %}',
+            label: '{% trans "Duplicate Line Items" %}',
+            help_text: '{% trans "Duplicate all line items from the selected order" %}',
         };
 
         fields.duplicate_extra_lines = {
             value: true,
             group: 'duplicate',
             type: 'boolean',
-            label: '{% jstrans "Duplicate Extra Lines" %}',
-            help_text: '{% jstrans "Duplicate extra line items from the selected order" %}',
+            label: '{% trans "Duplicate Extra Lines" %}',
+            help_text: '{% trans "Duplicate extra line items from the selected order" %}',
         };
     }
 
@@ -203,7 +203,7 @@ function editPurchaseOrder(pk, options={}) {
 
     constructForm(`{% url "api-po-list" %}${pk}/`, {
         fields: fields,
-        title: '{% jstrans "Edit Purchase Order" %}',
+        title: '{% trans "Edit Purchase Order" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -220,7 +220,7 @@ function createPurchaseOrder(options={}) {
 
     if (options.duplicate_order) {
         groups.duplicate = {
-            title: '{% jstrans "Duplication Options" %}',
+            title: '{% trans "Duplication Options" %}',
             collapsible: false,
         };
     }
@@ -239,7 +239,7 @@ function createPurchaseOrder(options={}) {
                 location.href = `/order/purchase-order/${data.pk}/`;
             }
         },
-        title: options.title || '{% jstrans "Create Purchase Order" %}',
+        title: options.title || '{% trans "Create Purchase Order" %}',
     });
 }
 
@@ -311,7 +311,7 @@ function poLineItemFields(options={}) {
                 ).then(function() {
                     // Update pack size information
                     if (pack_quantity != 1) {
-                        var txt = `<span class='fas fa-info-circle icon-blue'></span> {% jstrans "Pack Quantity" %}: ${formatDecimal(pack_quantity)} ${units}`;
+                        var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${formatDecimal(pack_quantity)} ${units}`;
                         $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
                     }
                 }).then(function() {
@@ -349,7 +349,7 @@ function poLineItemFields(options={}) {
             },
             secondary: {
                 method: 'POST',
-                title: '{% jstrans "Add Supplier Part" %}',
+                title: '{% trans "Add Supplier Part" %}',
                 fields: function(data) {
                     var fields = supplierPartFields({
                         part: data.part,
@@ -430,7 +430,7 @@ function createPurchaseOrderLineItem(order, options={}) {
     constructForm('{% url "api-po-line-list" %}', {
         fields: fields,
         method: 'POST',
-        title: '{% jstrans "Add Line Item" %}',
+        title: '{% trans "Add Line Item" %}',
         onSuccess: function(response) {
             handleFormSuccess(response, options);
         }
@@ -447,7 +447,7 @@ function completePurchaseOrder(order_id, options={}) {
         `/api/order/po/${order_id}/complete/`,
         {
             method: 'POST',
-            title: '{% jstrans "Complete Purchase Order" %}',
+            title: '{% trans "Complete Purchase Order" %}',
             confirm: true,
             fieldsFunction: function(opts) {
                 var fields = {
@@ -464,19 +464,19 @@ function completePurchaseOrder(order_id, options={}) {
 
                 var html = `
                 <div class='alert alert-block alert-info'>
-                    {% jstrans "Mark this order as complete?" %}
+                    {% trans "Mark this order as complete?" %}
                 </div>`;
 
                 if (opts.context.is_complete) {
                     html += `
                     <div class='alert alert-block alert-success'>
-                        {% jstrans "All line items have been received" %}
+                        {% trans "All line items have been received" %}
                     </div>`;
                 } else {
                     html += `
                     <div class='alert alert-block alert-warning'>
-                        {% jstrans 'This order has line items which have not been marked as received.' %}</br>
-                        {% jstrans 'Completing this order means that the order and line items will no longer be editable.' %}
+                        {% trans 'This order has line items which have not been marked as received.' %}</br>
+                        {% trans 'Completing this order means that the order and line items will no longer be editable.' %}
                     </div>`;
                 }
 
@@ -499,18 +499,18 @@ function cancelPurchaseOrder(order_id, options={}) {
         `/api/order/po/${order_id}/cancel/`,
         {
             method: 'POST',
-            title: '{% jstrans "Cancel Purchase Order" %}',
+            title: '{% trans "Cancel Purchase Order" %}',
             confirm: true,
             preFormContent: function(opts) {
                 var html = `
                 <div class='alert alert-info alert-block'>
-                    {% jstrans "Are you sure you wish to cancel this purchase order?" %}
+                    {% trans "Are you sure you wish to cancel this purchase order?" %}
                 </div>`;
 
                 if (!opts.context.can_cancel) {
                     html += `
                     <div class='alert alert-danger alert-block'>
-                        {% jstrans "This purchase order can not be cancelled" %}
+                        {% trans "This purchase order can not be cancelled" %}
                     </div>`;
                 }
 
@@ -531,12 +531,12 @@ function issuePurchaseOrder(order_id, options={}) {
 
     let html = `
     <div class='alert alert-block alert-warning'>
-    {% jstrans 'After placing this order, line items will no longer be editable.' %}
+    {% trans 'After placing this order, line items will no longer be editable.' %}
     </div>`;
 
     constructForm(`{% url "api-po-list" %}${order_id}/issue/`, {
         method: 'POST',
-        title: '{% jstrans "Issue Purchase Order" %}',
+        title: '{% trans "Issue Purchase Order" %}',
         confirm: true,
         preFormContent: html,
         onSuccess: function(response) {
@@ -627,8 +627,8 @@ function orderParts(parts_list, options={}) {
 
     if (parts.length == 0) {
         showAlertDialog(
-            '{% jstrans "Select Parts" %}',
-            '{% jstrans "At least one purchaseable part must be selected" %}',
+            '{% trans "Select Parts" %}',
+            '{% trans "At least one purchaseable part must be selected" %}',
         );
         return;
     }
@@ -653,7 +653,7 @@ function orderParts(parts_list, options={}) {
                 type: 'decimal',
                 min_value: 0,
                 value: quantity,
-                title: '{% jstrans "Quantity to order" %}',
+                title: '{% trans "Quantity to order" %}',
                 required: true,
             },
             {
@@ -662,7 +662,7 @@ function orderParts(parts_list, options={}) {
         );
 
         var supplier_part_prefix = `
-            <button type='button' class='input-group-text button-row-new-sp' pk='${pk}' title='{% jstrans "New supplier part" %}'>
+            <button type='button' class='input-group-text button-row-new-sp' pk='${pk}' title='{% trans "New supplier part" %}'>
                 <span class='fas fa-plus-circle icon-green'></span>
             </button>
         `;
@@ -680,7 +680,7 @@ function orderParts(parts_list, options={}) {
         );
 
         var purchase_order_prefix = `
-            <button type='button' class='input-group-text button-row-new-po' pk='${pk}' title='{% jstrans "New purchase order" %}'>
+            <button type='button' class='input-group-text button-row-new-po' pk='${pk}' title='{% trans "New purchase order" %}'>
                 <span class='fas fa-plus-circle icon-green'></span>
             </button>
         `;
@@ -703,7 +703,7 @@ function orderParts(parts_list, options={}) {
             buttons += makeRemoveButton(
                 'button-row-remove',
                 pk,
-                '{% jstrans "Remove row" %}',
+                '{% trans "Remove row" %}',
             );
         }
 
@@ -712,7 +712,7 @@ function orderParts(parts_list, options={}) {
             'fa-shopping-cart icon-blue',
             'button-row-add',
             pk,
-            '{% jstrans "Add to purchase order" %}',
+            '{% trans "Add to purchase order" %}',
         );
 
         buttons = wrapButtons(buttons);
@@ -757,10 +757,10 @@ function orderParts(parts_list, options={}) {
     <table class='table table-striped table-condensed' id='order-parts-table'>
         <thead>
             <tr>
-                <th>{% jstrans "Part" %}</th>
-                <th style='min-width: 300px;'>{% jstrans "Supplier Part" %}</th>
-                <th style='min-width: 300px;'>{% jstrans "Purchase Order" %}</th>
-                <th style='min-width: 50px;'>{% jstrans "Quantity" %}</th>
+                <th>{% trans "Part" %}</th>
+                <th style='min-width: 300px;'>{% trans "Supplier Part" %}</th>
+                <th style='min-width: 300px;'>{% trans "Purchase Order" %}</th>
+                <th style='min-width: 50px;'>{% trans "Quantity" %}</th>
                 <th><!-- Actions --></th>
             </tr>
         </thead>
@@ -800,9 +800,9 @@ function orderParts(parts_list, options={}) {
 
     constructFormBody({}, {
         preFormContent: html,
-        title: '{% jstrans "Order Parts" %}',
+        title: '{% trans "Order Parts" %}',
         hideSubmitButton: true,
-        closeText: '{% jstrans "Close" %}',
+        closeText: '{% trans "Close" %}',
         afterRender: function(fields, opts) {
             parts.forEach(function(part) {
 
@@ -842,7 +842,7 @@ function orderParts(parts_list, options={}) {
                             }
                         ).then(function() {
                             if (pack_quantity != 1) {
-                                var txt = `<span class='fas fa-info-circle icon-blue'></span> {% jstrans "Pack Quantity" %}: ${pack_quantity} ${units}`;
+                                var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${pack_quantity} ${units}`;
                                 $(opts.modal).find(`#id_quantity_${pk}`).after(`<div class='form-info-message' id='info-pack-size-${pk}'>${txt}</div>`);
                             }
                         });
@@ -860,7 +860,7 @@ function orderParts(parts_list, options={}) {
                     filters: supplier_part_filters,
                     onEdit: onSupplierPartChanged,
                     noResults: function(query) {
-                        return '{% jstrans "No matching supplier parts" %}';
+                        return '{% trans "No matching supplier parts" %}';
                     }
                 };
 
@@ -879,7 +879,7 @@ function orderParts(parts_list, options={}) {
                     value: options.order,
                     filters: order_filters,
                     noResults: function(query) {
-                        return '{% jstrans "No matching purchase orders" %}';
+                        return '{% trans "No matching purchase orders" %}';
                     }
                 }, null, opts);
 
@@ -1066,8 +1066,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
     if (line_items.length == 0) {
 
         showAlertDialog(
-            '{% jstrans "Select Line Items" %}',
-            '{% jstrans "At least one line item must be selected" %}',
+            '{% trans "Select Line Items" %}',
+            '{% trans "At least one line item must be selected" %}',
         );
         return;
     }
@@ -1096,8 +1096,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         if (native_pack_quantity != 1) {
             pack_size_div = `
             <div class='alert alert-small alert-block alert-info'>
-                {% jstrans "Pack Quantity" %}: ${pack_quantity}<br>
-                {% jstrans "Received Quantity" %}: <span class='pack_received_quantity' id='items_received_quantity_${pk}'>${received}</span> ${units}
+                {% trans "Pack Quantity" %}: ${pack_quantity}<br>
+                {% trans "Received Quantity" %}: <span class='pack_received_quantity' id='items_received_quantity_${pk}'>${received}</span> ${units}
             </div>`;
         }
 
@@ -1108,7 +1108,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 type: 'decimal',
                 min_value: 0,
                 value: quantity,
-                title: '{% jstrans "Quantity to receive" %}',
+                title: '{% trans "Quantity to receive" %}',
                 required: true,
             },
             {
@@ -1122,8 +1122,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             {
                 type: 'string',
                 required: false,
-                label: '{% jstrans "Batch Code" %}',
-                help_text: '{% jstrans "Enter batch code for incoming stock items" %}',
+                label: '{% trans "Batch Code" %}',
+                help_text: '{% trans "Enter batch code for incoming stock items" %}',
                 icon: 'fa-layer-group',
             },
             {
@@ -1146,8 +1146,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             {
                 type: 'string',
                 required: false,
-                label: '{% jstrans "Serial Numbers" %}',
-                help_text: '{% jstrans "Enter serial numbers for incoming stock items" %}',
+                label: '{% trans "Serial Numbers" %}',
+                help_text: '{% trans "Enter serial numbers for incoming stock items" %}',
                 icon: 'fa-hashtag',
             },
             {
@@ -1171,7 +1171,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             `items_location_${pk}`,
             {
                 type: 'related field',
-                label: '{% jstrans "Location" %}',
+                label: '{% trans "Location" %}',
                 required: false,
                 icon: 'fa-sitemap',
             },
@@ -1184,7 +1184,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             `items_status_${pk}`,
             {
                 type: 'choice',
-                label: '{% jstrans "Stock Status" %}',
+                label: '{% trans "Stock Status" %}',
                 required: true,
                 choices: choices,
                 value: 10, // OK
@@ -1198,11 +1198,11 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         let buttons = '';
 
         if (global_settings.BARCODE_ENABLE) {
-            buttons += makeIconButton('fa-qrcode', 'button-row-add-barcode', pk, '{% jstrans "Add barcode" %}');
-            buttons += makeIconButton('fa-unlink icon-red', 'button-row-remove-barcode', pk, '{% jstrans "Remove barcode" %}', {hidden: true});
+            buttons += makeIconButton('fa-qrcode', 'button-row-add-barcode', pk, '{% trans "Add barcode" %}');
+            buttons += makeIconButton('fa-unlink icon-red', 'button-row-remove-barcode', pk, '{% trans "Remove barcode" %}', {hidden: true});
         }
 
-        buttons += makeIconButton('fa-sitemap', 'button-row-add-location', pk, '{% jstrans "Specify location" %}', {
+        buttons += makeIconButton('fa-sitemap', 'button-row-add-location', pk, '{% trans "Specify location" %}', {
             collapseTarget: `row-destination-${pk}`
         });
 
@@ -1210,7 +1210,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             'fa-layer-group',
             'button-row-add-batch',
             pk,
-            '{% jstrans "Add batch code" %}',
+            '{% trans "Add batch code" %}',
             {
                 collapseTarget: `row-batch-${pk}`
             }
@@ -1221,7 +1221,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 'fa-hashtag',
                 'button-row-add-serials',
                 pk,
-                '{% jstrans "Add serial numbers" %}',
+                '{% trans "Add serial numbers" %}',
                 {
                     collapseTarget: `row-serials-${pk}`,
                 }
@@ -1229,7 +1229,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         }
 
         if (line_items.length > 1) {
-            buttons += makeRemoveButton('button-row-remove', pk, '{% jstrans "Remove row" %}');
+            buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
         }
 
         buttons = wrapButtons(buttons);
@@ -1261,19 +1261,19 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         <!-- Hidden rows for extra data entry -->
         <tr id='row-destination-${pk}' class='collapse'>
             <td colspan='2'></td>
-            <th>{% jstrans "Location" %}</th>
+            <th>{% trans "Location" %}</th>
             <td colspan='2'>${destination_input}</td>
             <td></td>
         </tr>
         <tr id='row-batch-${pk}' class='collapse'>
             <td colspan='2'></td>
-            <th>{% jstrans "Batch" %}</th>
+            <th>{% trans "Batch" %}</th>
             <td colspan='2'>${batch_input}</td>
             <td></td>
         </tr>
         <tr id='row-serials-${pk}' class='collapse'>
             <td colspan='2'></td>
-            <th>{% jstrans "Serials" %}</th>
+            <th>{% trans "Serials" %}</th>
             <td colspan=2'>${sn_input}</td>
             <td></td>
         </tr>
@@ -1297,11 +1297,11 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
     <table class='table table-condensed' id='order-receive-table'>
         <thead>
             <tr>
-                <th>{% jstrans "Part" %}</th>
-                <th>{% jstrans "Order Code" %}</th>
-                <th>{% jstrans "Received" %}</th>
-                <th style='min-width: 50px;'>{% jstrans "Quantity to Receive" %}</th>
-                <th style='min-width: 150px;'>{% jstrans "Status" %}</th>
+                <th>{% trans "Part" %}</th>
+                <th>{% trans "Order Code" %}</th>
+                <th>{% trans "Received" %}</th>
+                <th style='min-width: 50px;'>{% trans "Quantity to Receive" %}</th>
+                <th style='min-width: 150px;'>{% trans "Status" %}</th>
                 <th></th>
             </tr>
         </thead>
@@ -1326,8 +1326,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         },
         preFormContent: html,
         confirm: true,
-        confirmMessage: '{% jstrans "Confirm receipt of items" %}',
-        title: '{% jstrans "Receive Purchase Order Items" %}',
+        confirmMessage: '{% trans "Confirm receipt of items" %}',
+        title: '{% trans "Receive Purchase Order Items" %}',
         afterRender: function(fields, opts) {
 
             // Run initialization routines for each line in the form
@@ -1395,11 +1395,11 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                     let pk = btn.attr('pk');
 
                     // Scan to see if the barcode matches an existing StockItem
-                    barcodeDialog('{% jstrans "Scan Item Barcode" %}', {
-                        details: '{% jstrans "Scan barcode on incoming item (must not match any existing stock items)" %}',
+                    barcodeDialog('{% trans "Scan Item Barcode" %}', {
+                        details: '{% trans "Scan barcode on incoming item (must not match any existing stock items)" %}',
                         onScan: function(response, barcode_options) {
                             // A 'success' result means that the barcode matches something existing in the database
-                            showBarcodeMessage(barcode_options.modal, '{% jstrans "Barcode matches existing item" %}');
+                            showBarcodeMessage(barcode_options.modal, '{% trans "Barcode matches existing item" %}');
                         },
                         onError400: function(response, barcode_options) {
                             if (response.barcode_data && response.barcode_hash) {
@@ -1410,7 +1410,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                                 $(opts.modal).find(`#button-row-remove-barcode-${pk}`).show();
                                 updateFieldValue(`items_barcode_${pk}`, response.barcode_data, {}, opts);
                             } else {
-                                showBarcodeMessage(barcode_options.modal, '{% jstrans "Invalid barcode data" %}');
+                                showBarcodeMessage(barcode_options.modal, '{% trans "Invalid barcode data" %}');
                             }
                         }
                     });
@@ -1648,7 +1648,7 @@ function loadPurchaseOrderTable(table, options) {
         showCustomView: display_mode == 'calendar',
         search: display_mode != 'calendar',
         formatNoMatches: function() {
-            return '{% jstrans "No purchase orders found" %}';
+            return '{% trans "No purchase orders found" %}';
         },
         buttons: constructOrderTableButtons({
             prefix: 'purchaseorder',
@@ -1667,7 +1667,7 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 field: 'reference',
-                title: '{% jstrans "Purchase Order" %}',
+                title: '{% trans "Purchase Order" %}',
                 sortable: true,
                 switchable: false,
                 formatter: function(value, row) {
@@ -1675,7 +1675,7 @@ function loadPurchaseOrderTable(table, options) {
                     var html = renderLink(value, `/order/purchase-order/${row.pk}/`);
 
                     if (row.overdue) {
-                        html += makeIconBadge('fa-calendar-times icon-red', '{% jstrans "Order is overdue" %}');
+                        html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
                     }
 
                     return html;
@@ -1683,7 +1683,7 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 field: 'supplier_detail',
-                title: '{% jstrans "Supplier" %}',
+                title: '{% trans "Supplier" %}',
                 sortable: true,
                 sortName: 'supplier__name',
                 formatter: function(value, row) {
@@ -1696,15 +1696,15 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 field: 'supplier_reference',
-                title: '{% jstrans "Supplier Reference" %}',
+                title: '{% trans "Supplier Reference" %}',
             },
             {
                 field: 'description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
             },
             {
                 field: 'project_code',
-                title: '{% jstrans "Project Code" %}',
+                title: '{% trans "Project Code" %}',
                 switchable: global_settings.PROJECT_CODES_ENABLED,
                 visible: global_settings.PROJECT_CODES_ENABLED,
                 sortable: true,
@@ -1716,7 +1716,7 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 field: 'status',
-                title: '{% jstrans "Status" %}',
+                title: '{% trans "Status" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1725,7 +1725,7 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 field: 'creation_date',
-                title: '{% jstrans "Date" %}',
+                title: '{% trans "Date" %}',
                 sortable: true,
                 formatter: function(value) {
                     return renderDate(value);
@@ -1733,7 +1733,7 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 field: 'target_date',
-                title: '{% jstrans "Target Date" %}',
+                title: '{% trans "Target Date" %}',
                 sortable: true,
                 formatter: function(value) {
                     return renderDate(value);
@@ -1741,12 +1741,12 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 field: 'line_items',
-                title: '{% jstrans "Items" %}',
+                title: '{% trans "Items" %}',
                 sortable: true,
             },
             {
                 field: 'total_price',
-                title: '{% jstrans "Total Cost" %}',
+                title: '{% trans "Total Cost" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1757,7 +1757,7 @@ function loadPurchaseOrderTable(table, options) {
             },
             {
                 field: 'responsible',
-                title: '{% jstrans "Responsible" %}',
+                title: '{% trans "Responsible" %}',
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
@@ -1837,16 +1837,16 @@ function deletePurchaseOrderLineItems(items, options={}) {
 
     var html = `
     <div class='alert alert-block alert-danger'>
-    {% jstrans "All selected Line items will be deleted" %}
+    {% trans "All selected Line items will be deleted" %}
     </div>
 
     <table class='table table-striped table-condensed'>
         <tr>
-            <th>{% jstrans "Part" %}</th>
-            <th>{% jstrans "Description" %}</th>
-            <th>{% jstrans "SKU" %}</th>
-            <th>{% jstrans "MPN" %}</th>
-            <th>{% jstrans "Quantity" %}</th>
+            <th>{% trans "Part" %}</th>
+            <th>{% trans "Description" %}</th>
+            <th>{% trans "SKU" %}</th>
+            <th>{% trans "MPN" %}</th>
+            <th>{% trans "Quantity" %}</th>
         </tr>
         ${rows}
     </table>
@@ -1855,7 +1855,7 @@ function deletePurchaseOrderLineItems(items, options={}) {
     constructForm('{% url "api-po-line-list" %}', {
         method: 'DELETE',
         multi_delete: true,
-        title: '{% jstrans "Delete selected Line items?" %}',
+        title: '{% trans "Delete selected Line items?" %}',
         form_data: {
             items: ids,
         },
@@ -1910,7 +1910,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                             method: 'POST',
                             fields: fields,
                             data: data,
-                            title: '{% jstrans "Duplicate Line Item" %}',
+                            title: '{% trans "Duplicate Line Item" %}',
                             refreshTable: table,
                         });
                     }
@@ -1925,7 +1925,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
                 constructForm(`{% url "api-po-line-list" %}${pk}/`, {
                     fields: fields,
-                    title: '{% jstrans "Edit Line Item" %}',
+                    title: '{% trans "Edit Line Item" %}',
                     refreshTable: table,
                 });
             });
@@ -1936,7 +1936,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
                 constructForm(`{% url "api-po-line-list" %}${pk}/`, {
                     method: 'DELETE',
-                    title: '{% jstrans "Delete Line Item" %}',
+                    title: '{% trans "Delete Line Item" %}',
                     refreshTable: table,
                 });
             });
@@ -1984,7 +1984,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
         name: 'purchaseorderlines',
         sidePagination: 'server',
         formatNoMatches: function() {
-            return '{% jstrans "No line items found" %}';
+            return '{% trans "No line items found" %}';
         },
         queryParams: filters,
         original: options.params,
@@ -2001,7 +2001,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'part',
                 sortable: true,
                 sortName: 'part_name',
-                title: '{% jstrans "Part" %}',
+                title: '{% trans "Part" %}',
                 switchable: false,
                 formatter: function(value, row, index, field) {
                     if (row.part_detail) {
@@ -2011,18 +2011,18 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     }
                 },
                 footerFormatter: function() {
-                    return '{% jstrans "Total" %}';
+                    return '{% trans "Total" %}';
                 }
             },
             {
                 field: 'part_detail.description',
-                title: '{% jstrans "Description" %}',
+                title: '{% trans "Description" %}',
             },
             {
                 sortable: true,
                 sortName: 'SKU',
                 field: 'supplier_part_detail.SKU',
-                title: '{% jstrans "SKU" %}',
+                title: '{% trans "SKU" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         return renderClipboard(renderLink(value, `/supplier-part/${row.part}/`));
@@ -2034,7 +2034,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             {
                 sortable: false,
                 field: 'supplier_part_detail.link',
-                title: '{% jstrans "Link" %}',
+                title: '{% trans "Link" %}',
                 formatter: function(value, row, index, field) {
                     if (value) {
                         return renderLink(value, value, {external: true});
@@ -2047,7 +2047,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 sortable: true,
                 sortName: 'MPN',
                 field: 'supplier_part_detail.manufacturer_part_detail.MPN',
-                title: '{% jstrans "MPN" %}',
+                title: '{% trans "MPN" %}',
                 formatter: function(value, row, index, field) {
                     if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part) {
                         return renderClipboard(renderLink(value, `/manufacturer-part/${row.supplier_part_detail.manufacturer_part}/`));
@@ -2059,13 +2059,13 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             {
                 sortable: true,
                 field: 'reference',
-                title: '{% jstrans "Reference" %}',
+                title: '{% trans "Reference" %}',
             },
             {
                 sortable: true,
                 switchable: false,
                 field: 'quantity',
-                title: '{% jstrans "Quantity" %}',
+                title: '{% trans "Quantity" %}',
                 formatter: function(value, row) {
                     let units = '';
 
@@ -2078,7 +2078,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     if (row.supplier_part_detail && row.supplier_part_detail.pack_quantity_native != 1.0) {
                         let pack_quantity = row.supplier_part_detail.pack_quantity;
                         let total = value * row.supplier_part_detail.pack_quantity_native;
-                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% jstrans "Pack Quantity" %}: ${pack_quantity} - {% jstrans "Total Quantity" %}: ${total}${units}'></span>`;
+                        data += `<span class='fas fa-info-circle icon-blue float-right' title='{% trans "Pack Quantity" %}: ${pack_quantity} - {% trans "Total Quantity" %}: ${total}${units}'></span>`;
                     }
 
                     return data;
@@ -2095,7 +2095,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 sortable: false,
                 switchable: true,
                 field: 'supplier_part_detail.pack_quantity',
-                title: '{% jstrans "Pack Quantity" %}',
+                title: '{% trans "Pack Quantity" %}',
                 formatter: function(value, row) {
                     var units = row.part_detail.units;
 
@@ -2109,7 +2109,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             {
                 sortable: true,
                 field: 'purchase_price',
-                title: '{% jstrans "Unit Price" %}',
+                title: '{% trans "Unit Price" %}',
                 formatter: function(value, row) {
                     return formatCurrency(row.purchase_price, {
                         currency: row.purchase_price_currency,
@@ -2119,7 +2119,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             {
                 field: 'total_price',
                 sortable: true,
-                title: '{% jstrans "Total Price" %}',
+                title: '{% trans "Total Price" %}',
                 formatter: function(value, row) {
                     return formatCurrency(row.purchase_price * row.quantity, {
                         currency: row.purchase_price_currency
@@ -2141,13 +2141,13 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 sortable: true,
                 field: 'target_date',
                 switchable: true,
-                title: '{% jstrans "Target Date" %}',
+                title: '{% trans "Target Date" %}',
                 formatter: function(value, row) {
                     if (row.target_date) {
                         var html = renderDate(row.target_date);
 
                         if (row.overdue) {
-                            html += makeIconBadge('fa-calendar-times icon-red', '{% jstrans "This line item is overdue" %}');
+                            html += makeIconBadge('fa-calendar-times icon-red', '{% trans "This line item is overdue" %}');
                         }
 
                         return html;
@@ -2163,7 +2163,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 sortable: false,
                 field: 'received',
                 switchable: false,
-                title: '{% jstrans "Received" %}',
+                title: '{% trans "Received" %}',
                 formatter: function(value, row, index, field) {
                     return makeProgressBar(row.received, row.quantity, {
                         id: `order-line-progress-${row.pk}`,
@@ -2183,7 +2183,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             },
             {
                 field: 'destination',
-                title: '{% jstrans "Destination" %}',
+                title: '{% trans "Destination" %}',
                 formatter: function(value, row) {
                     if (value) {
                         return renderLink(row.destination_detail.pathstring, `/stock/location/${value}/`);
@@ -2194,11 +2194,11 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             },
             {
                 field: 'notes',
-                title: '{% jstrans "Notes" %}',
+                title: '{% trans "Notes" %}',
             },
             {
                 field: 'link',
-                title: '{% jstrans "Link" %}',
+                title: '{% trans "Link" %}',
                 formatter: function(value) {
                     if (value) {
                         return renderLink(value, value);
@@ -2214,13 +2214,13 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     let pk = row.pk;
 
                     if (options.allow_receive && row.received < row.quantity) {
-                        buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% jstrans "Receive line item" %}');
+                        buttons += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Receive line item" %}');
                     }
 
                     if (options.allow_edit) {
-                        buttons += makeCopyButton('button-line-duplicate', pk, '{% jstrans "Duplicate line item" %}');
-                        buttons += makeEditButton('button-line-edit', pk, '{% jstrans "Edit line item" %}');
-                        buttons += makeDeleteButton('button-line-delete', pk, '{% jstrans "Delete line item" %}');
+                        buttons += makeCopyButton('button-line-duplicate', pk, '{% trans "Duplicate line item" %}');
+                        buttons += makeEditButton('button-line-edit', pk, '{% trans "Edit line item" %}');
+                        buttons += makeDeleteButton('button-line-delete', pk, '{% trans "Delete line item" %}');
                     }
 
                     return wrapButtons(buttons);
