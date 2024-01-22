@@ -1,16 +1,20 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function PartTestTemplateTable({ params }: { params: any }) {
   const table = useTable('part-test-template');
+  const user = useUserState();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -58,6 +62,29 @@ export default function PartTestTemplateTable({ params }: { params: any }) {
     ];
   }, []);
 
+  const rowActions = useCallback(
+    (record: any) => {
+      let can_edit = user.hasChangeRole(UserRoles.part);
+      let can_delete = user.hasDeleteRole(UserRoles.part);
+
+      return [
+        RowEditAction({
+          hidden: !can_edit,
+          onClick: () => {
+            // TODO
+          }
+        }),
+        RowDeleteAction({
+          hidden: !can_delete,
+          onClick: () => {
+            // TODO
+          }
+        })
+      ];
+    },
+    [user]
+  );
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.part_test_template_list)}
@@ -67,7 +94,8 @@ export default function PartTestTemplateTable({ params }: { params: any }) {
         params: {
           ...params
         },
-        customFilters: tableFilters
+        customFilters: tableFilters,
+        rowActions: rowActions
       }}
     />
   );
