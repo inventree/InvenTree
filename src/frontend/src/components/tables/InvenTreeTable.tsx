@@ -46,7 +46,7 @@ const defaultPageSize: number = 25;
  * @param enableRefresh : boolean - Enable refresh actions
  * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
- * @param customFilters : TableFilter[] - List of custom filters
+ * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
  * @param printingActions : any[] - List of printing actions
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
@@ -66,7 +66,7 @@ export type InvenTreeTableProps<T = any> = {
   enableRefresh?: boolean;
   pageSize?: number;
   barcodeActions?: any[];
-  customFilters?: TableFilter[];
+  tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   printingActions?: any[];
   idAccessor?: string;
@@ -91,7 +91,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   defaultSortColumn: '',
   printingActions: [],
   barcodeActions: [],
-  customFilters: [],
+  tableFilters: [],
   tableActions: [],
   idAccessor: 'pk',
   onRowClick: (record: any, index: number, event: any) => {}
@@ -425,9 +425,9 @@ export function InvenTreeTable<T = any>({
   return (
     <>
       {tableProps.enableFilters &&
-        (tableProps.customFilters?.length ?? 0) > 0 && (
+        (tableProps.tableFilters?.length ?? 0) > 0 && (
           <FilterSelectDrawer
-            availableFilters={tableProps.customFilters ?? []}
+            availableFilters={tableProps.tableFilters ?? []}
             tableState={tableState}
             opened={filtersVisible}
             onClose={() => setFiltersVisible(false)}
@@ -490,7 +490,7 @@ export function InvenTreeTable<T = any>({
               />
             )}
             {tableProps.enableFilters &&
-              (tableProps.customFilters?.length ?? 0 > 0) && (
+              (tableProps.tableFilters?.length ?? 0 > 0) && (
                 <Indicator
                   size="xs"
                   label={tableState.activeFilters.length}

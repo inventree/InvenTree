@@ -181,7 +181,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
       props={{
         rowActions: rowActions,
         tableActions: tableActions,
-        customFilters: [
+        tableFilters: [
           {
             name: 'include_variants',
             label: t`Include Variants`,

@@ -101,7 +101,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
           ...params,
           customer_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/sales/sales-order/${row.pk}/`);

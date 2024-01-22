@@ -363,7 +363,7 @@ export function BomTable({
           part_detail: true,
           sub_part_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         onRowClick: (row) => navigate(`/part/${row.sub_part}`),
         rowActions: rowActions
       }}

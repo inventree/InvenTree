@@ -113,7 +113,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         params: {
           parent: parentId ?? 'null'
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         tableActions: tableActions,
         onRowClick: (record, index, event) => {
           navigate(`/part/category/${record.pk}`);

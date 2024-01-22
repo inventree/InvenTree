@@ -140,7 +140,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         params: {
           part: partId
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         tableActions: tableActions,
         rowActions: rowActions
       }}

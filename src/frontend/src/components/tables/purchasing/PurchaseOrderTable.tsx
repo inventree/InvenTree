@@ -104,7 +104,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           ...params,
           supplier_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/purchasing/purchase-order/${row.pk}`);
