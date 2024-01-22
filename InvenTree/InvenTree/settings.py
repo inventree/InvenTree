@@ -26,7 +26,6 @@ from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.tracing import setup_instruments, setup_tracing
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
 from . import config, locales
@@ -740,7 +739,10 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
 TRACING_ENABLED = get_boolean_setting(
     'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
 )
+
 if TRACING_ENABLED:  # pragma: no cover
+    from InvenTree.tracing import setup_instruments, setup_tracing
+
     _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
     _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
 
