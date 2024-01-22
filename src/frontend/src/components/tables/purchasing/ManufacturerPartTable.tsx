@@ -52,7 +52,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
         title: t`Manufacturer Part Number`,
         sortable: true
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       LinkColumn()
     ];
   }, [params]);

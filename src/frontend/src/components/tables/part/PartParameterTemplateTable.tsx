@@ -57,7 +57,7 @@ export default function PartParameterTemplateTable() {
         title: t`Units`,
         sortable: true
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'checkbox',
         title: t`Checkbox`

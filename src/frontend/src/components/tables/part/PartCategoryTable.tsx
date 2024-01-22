@@ -27,7 +27,7 @@ export function PartCategoryTable({ params = {} }: { params?: any }) {
         sortable: true,
         switchable: false
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'pathstring',
         title: t`Path`,

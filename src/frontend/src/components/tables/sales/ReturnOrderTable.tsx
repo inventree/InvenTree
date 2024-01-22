@@ -76,7 +76,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'customer_reference',
         title: t`Customer Reference`
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       LineItemsProgressColumn(),
       StatusColumn(ModelType.returnorder),
       ProjectCodeColumn(),
