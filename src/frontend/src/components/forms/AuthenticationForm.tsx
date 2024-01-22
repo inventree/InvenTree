@@ -28,6 +28,7 @@ export function AuthenticationForm() {
   });
   const simpleForm = useForm({ initialValues: { email: '' } });
   const [classicLoginMode, setMode] = useDisclosure(true);
+  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
   const navigate = useNavigate();
 
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
@@ -97,17 +98,19 @@ export function AuthenticationForm() {
             placeholder={t`Your password`}
             {...classicForm.getInputProps('password')}
           />
-          <Group position="apart" mt="0">
-            <Anchor
-              component="button"
-              type="button"
-              color="dimmed"
-              size="xs"
-              onClick={() => navigate('/reset-password')}
-            >
-              <Trans>Reset password</Trans>
-            </Anchor>
-          </Group>
+          {auth_settings?.password_forgotten_enabled === true && (
+            <Group position="apart" mt="0">
+              <Anchor
+                component="button"
+                type="button"
+                color="dimmed"
+                size="xs"
+                onClick={() => navigate('/reset-password')}
+              >
+                <Trans>Reset password</Trans>
+              </Anchor>
+            </Group>
+          )}
         </Stack>
       ) : (
         <Stack>
