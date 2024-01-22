@@ -17,7 +17,10 @@ import { IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { api } from '../../App';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
+import { apiUrl } from '../../states/ApiState';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
@@ -152,26 +155,47 @@ export function AuthenticationForm() {
 
 export function RegistrationForm() {
   const registrationForm = useForm({
-    initialValues: { username: '', email: '', password: '' }
+    initialValues: { username: '', email: '', password1: '', password2: '' }
   });
   const navigate = useNavigate();
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
   function handleRegistration() {
     setIsRegistering(true);
-
-    // Register
-    // TODO
-
-    // Show notification
-    setIsRegistering(false);
-    notifications.show({
-      title: t`Login successful`,
-      message: t`Welcome back!`,
-      color: 'green',
-      icon: <IconCheck size="1rem" />
-    });
-    navigate('/home');
+    api
+      .post(apiUrl(ApiPaths.user_register), registrationForm.values, {
+        headers: { Authorization: '' }
+      })
+      .then((ret) => {
+        if (ret?.status === 204) {
+          setIsRegistering(false);
+          notifications.show({
+            title: t`Registration successful`,
+            message: t`Please confirm your email address to complete the registration`,
+            color: 'green',
+            icon: <IconCheck size="1rem" />
+          });
+          navigate('/home');
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 400) {
+          setIsRegistering(false);
+          for (const [key, value] of Object.entries(err.response.data)) {
+            registrationForm.setFieldError(key, value);
+          }
+          let err_msg = '';
+          if (err.response?.data?.non_field_errors) {
+            err_msg = err.response.data.non_field_errors;
+          }
+          notifications.show({
+            title: t`Input error`,
+            message: t`Check your input and try again. ` + err_msg,
+            color: 'red',
+            autoClose: 30000
+          });
+        }
+      });
   }
 
   return (
@@ -194,7 +218,13 @@ export function RegistrationForm() {
           required
           label={t`Password`}
           placeholder={t`Your password`}
-          {...registrationForm.getInputProps('password')}
+          {...registrationForm.getInputProps('password1')}
+        />
+        <PasswordInput
+          required
+          label={t`Password repeat`}
+          placeholder={t`Repeat password`}
+          {...registrationForm.getInputProps('password2')}
         />
       </Stack>
 

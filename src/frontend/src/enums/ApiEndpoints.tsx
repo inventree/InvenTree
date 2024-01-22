@@ -20,6 +20,7 @@ export enum ApiPaths {
   user_email_primary = 'api-user-email-primary',
   user_email_remove = 'api-user-email-remove',
   user_logout = 'api-user-logout',
+  user_register = 'api-user-register',
 
   user_list = 'api-user-list',
   group_list = 'api-group-list',

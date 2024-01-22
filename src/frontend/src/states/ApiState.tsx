@@ -97,6 +97,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'auth/emails/:id/primary/';
     case ApiPaths.user_logout:
       return 'auth/logout/';
+    case ApiPaths.user_register:
+      return 'auth/registration/';
     case ApiPaths.currency_list:
       return 'currency/exchange/';
     case ApiPaths.currency_refresh:
