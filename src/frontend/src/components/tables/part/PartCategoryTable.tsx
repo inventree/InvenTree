@@ -1,3 +1,4 @@
+import { faRecordVinyl } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -5,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { partCategoryFields } from '../../../forms/PartForms';
-import { openCreateApiForm } from '../../../functions/forms';
+import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -15,6 +16,7 @@ import { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowEditAction } from '../RowActions';
 
 /**
  * PartCategoryTable - Displays a table of part categories
@@ -103,6 +105,29 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     ];
   }, [user]);
 
+  const rowActions = useCallback(
+    (record: any) => {
+      let can_edit = user.hasChangeRole(UserRoles.part_category);
+
+      return [
+        RowEditAction({
+          hidden: !can_edit,
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.category_list,
+              pk: record.pk,
+              title: t`Edit Part Category`,
+              fields: partCategoryFields({}),
+              successMessage: t`Part category updated`,
+              onFormSuccess: table.refreshTable
+            });
+          }
+        })
+      ];
+    },
+    [user]
+  );
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.category_list)}
@@ -115,6 +140,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         },
         tableFilters: tableFilters,
         tableActions: tableActions,
+        rowActions: rowActions,
         onRowClick: (record, index, event) => {
           navigate(`/part/category/${record.pk}`);
         }
