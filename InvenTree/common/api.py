@@ -668,6 +668,13 @@ common_api_urls = [
             path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
         ]),
     ),
+    path(
+        'error-report/',
+        include([
+            path('<int:pk>/', ErrorMessageDetail.as_view(), name='api-error-detail'),
+            path('', ErrorMessageList.as_view(), name='api-error-list'),
+        ]),
+    ),
     # Project codes
     path(
         'project-code/',
