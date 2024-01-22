@@ -53,7 +53,10 @@ def log_error(path, error_name=None, error_info=None, error_data=None):
     if error_data:
         data = error_data
     else:
-        data = '\n'.join(traceback.format_exception(kind, info, data))
+        try:
+            data = '\n'.join(traceback.format_exception(kind, info, data))
+        except AttributeError:
+            data = 'No traceback information available'
 
     # Log error to stderr
     logger.error(info)
