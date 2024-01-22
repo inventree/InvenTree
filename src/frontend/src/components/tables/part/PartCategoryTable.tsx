@@ -112,7 +112,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         enableDownload: true,
         enableSelection: true,
         params: {
-          parent: parentId
+          parent: parentId ?? 'null'
         },
         customFilters: tableFilters,
         customActionGroups: tableActions,

@@ -1,10 +1,15 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
+import { stockLocationFields } from '../../../forms/StockForms';
+import { openCreateApiForm } from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
@@ -14,8 +19,9 @@ import { InvenTreeTable } from '../InvenTreeTable';
 /**
  * Stock location table
  */
-export function StockLocationTable({ params = {} }: { params?: any }) {
+export function StockLocationTable({ parentId }: { parentId?: any }) {
   const table = useTable('stocklocation');
+  const user = useUserState();
 
   const navigate = useNavigate();
 
@@ -85,7 +91,40 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
         render: (record: any) => record.location_type_detail?.name
       }
     ];
-  }, [params]);
+  }, []);
+
+  const addLocation = useCallback(() => {
+    let fields = stockLocationFields({});
+
+    if (parentId) {
+      fields['parent'].value = parentId;
+    }
+
+    openCreateApiForm({
+      url: apiUrl(ApiPaths.stock_location_list),
+      title: t`Add Stock Location`,
+      fields: fields,
+      onFormSuccess(data: any) {
+        if (data.pk) {
+          navigate(`/stock/location/${data.pk}`);
+        } else {
+          table.refreshTable();
+        }
+      }
+    });
+  }, [parentId]);
+
+  const tableActions = useMemo(() => {
+    let can_add = user.hasAddRole(UserRoles.stock_location);
+
+    return [
+      <AddItemButton
+        tooltip={t`Add Stock Location`}
+        onClick={addLocation}
+        disabled={!can_add}
+      />
+    ];
+  }, [user]);
 
   return (
     <InvenTreeTable
@@ -94,8 +133,11 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
       columns={tableColumns}
       props={{
         enableDownload: true,
-        params: params,
+        params: {
+          parent: parentId ?? 'null'
+        },
         customFilters: tableFilters,
+        customActionGroups: tableActions,
         onRowClick: (record) => {
           navigate(`/stock/location/${record.pk}`);
         }
