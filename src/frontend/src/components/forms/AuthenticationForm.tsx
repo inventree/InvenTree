@@ -182,7 +182,7 @@ export function RegistrationForm() {
         if (err.response.status === 400) {
           setIsRegistering(false);
           for (const [key, value] of Object.entries(err.response.data)) {
-            registrationForm.setFieldError(key, value);
+            registrationForm.setFieldError(key, value as string);
           }
           let err_msg = '';
           if (err.response?.data?.non_field_errors) {
