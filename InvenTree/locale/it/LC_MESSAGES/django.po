@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-21 12:33+0000\n"
-"PO-Revision-Date: 2024-01-21 15:01\n"
+"POT-Creation-Date: 2024-01-22 12:08+0000\n"
+"PO-Revision-Date: 2024-01-22 15:28\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -43,7 +43,7 @@ msgstr "Quantità fornita non valida"
 msgid "Invalid quantity supplied ({exc})"
 msgstr "Quantità fornita non valida ({exc})"
 
-#: InvenTree/exceptions.py:106
+#: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
 msgstr "I dettagli dell'errore possono essere trovati nel pannello di amministrazione"
 
@@ -1514,7 +1514,7 @@ msgstr "Elimina gli output di produzione che non sono stati completati"
 
 #: build/serializers.py:611
 msgid "Not permitted"
-msgstr ""
+msgstr "Non permesso"
 
 #: build/serializers.py:612
 msgid "Accept as consumed by this build order"
@@ -1566,7 +1566,7 @@ msgstr "L'ordine di produzione ha output incompleti"
 
 #: build/serializers.py:718
 msgid "Build Line"
-msgstr ""
+msgstr "Linea di produzione"
 
 #: build/serializers.py:728
 msgid "Build output"
@@ -1578,7 +1578,7 @@ msgstr "L'output di produzione deve puntare alla stessa produzione"
 
 #: build/serializers.py:772
 msgid "Build Line Item"
-msgstr ""
+msgstr "Articolo linea di produzione"
 
 #: build/serializers.py:786
 msgid "bom_item.part must point to the same part as the build order"
@@ -1656,7 +1656,7 @@ msgstr "L'ordine di produzione {bo} è in ritardo"
 
 #: build/templates/build/build_base.html:18
 msgid "Part thumbnail"
-msgstr ""
+msgstr "Anteprima parte"
 
 #: build/templates/build/build_base.html:38
 #: company/templates/company/supplier_part.html:35
@@ -1833,15 +1833,15 @@ msgstr "Priorità"
 
 #: build/templates/build/build_base.html:273
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Elimina ordine di produzione"
 
 #: build/templates/build/build_base.html:283
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "Genera Codice QR Ordine di produzione"
 
 #: build/templates/build/build_base.html:295
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Collega il codice a barre all'ordine di produzione"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
