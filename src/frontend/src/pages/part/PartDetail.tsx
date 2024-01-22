@@ -215,12 +215,8 @@ export default function PartDetail() {
         label: t`Test Templates`,
         icon: <IconTestPipe />,
         hidden: !part.trackable,
-        content: part.pk ? (
-          <PartTestTemplateTable
-            params={{
-              part: part.pk ?? -1
-            }}
-          />
+        content: part?.pk ? (
+          <PartTestTemplateTable partId={part?.pk} />
         ) : (
           <Skeleton />
         )
