@@ -1,12 +1,16 @@
-import { t } from '@lingui/macro';
-import { Center, Container } from '@mantine/core';
-import { useToggle } from '@mantine/hooks';
+import { Trans, t } from '@lingui/macro';
+import { Center, Container, Paper, Text } from '@mantine/core';
+import { useDisclosure, useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
-import { AuthenticationForm } from '../../components/forms/AuthenticationForm';
+import {
+  AuthenticationForm,
+  ModeSelector,
+  RegistrationForm
+} from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import { defaultHostKey } from '../../defaults/defaultHostList';
 import { checkLoginState } from '../../functions/auth';
@@ -26,6 +30,7 @@ export default function Login() {
   const hostname =
     hostList[hostKey] === undefined ? t`No selection` : hostList[hostKey]?.name;
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
+  const [loginMode, setMode] = useDisclosure(true);
   const navigate = useNavigate();
 
   // Data manipulation functions
@@ -63,7 +68,13 @@ export default function Login() {
           />
         ) : (
           <>
-            <AuthenticationForm />
+            <Paper radius="md" p="xl" withBorder>
+              <Text size="lg" weight={500}>
+                <Trans>Welcome, log in below</Trans>
+              </Text>
+              {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
+              <ModeSelector loginMode={loginMode} setMode={setMode} />
+            </Paper>
             <AuthFormOptions hostname={hostname} toggleHostEdit={setHostEdit} />
           </>
         )}
