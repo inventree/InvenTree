@@ -279,7 +279,7 @@ packaging==23.2
     # via gunicorn
 pdf2image==1.16.3
     # via -r requirements.in
-pillow==10.1.0
+pillow==10.2.0
     # via
     #   -r requirements.in
     #   django-stdimage
