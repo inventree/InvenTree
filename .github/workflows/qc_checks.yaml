@@ -111,6 +111,31 @@ jobs:
           pip install linkcheckmd requests
           python -m linkcheckmd docs --recurse
 
+  apidoc:
+    name: Tests - API Documentation
+    runs-on: ubuntu-20.04
+    env:
+      INVENTREE_DB_ENGINE: django.db.backends.sqlite3
+      INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
+      INVENTREE_ADMIN_USER: testuser
+      INVENTREE_ADMIN_PASSWORD: testpassword
+      INVENTREE_ADMIN_EMAIL: test@test.com
+      INVENTREE_PYTHON_TEST_SERVER: http://localhost:12345
+      INVENTREE_PYTHON_TEST_USERNAME: testuser
+      INVENTREE_PYTHON_TEST_PASSWORD: testpassword
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils
+          dev-install: true
+          update: true
+      - name: Export API Documentation
+        run: |
+          invoke apidoc
+
   python:
     name: Tests - inventree-python
     runs-on: ubuntu-20.04
