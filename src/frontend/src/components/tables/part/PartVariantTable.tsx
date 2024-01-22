@@ -37,7 +37,7 @@ export function PartVariantTable({ partId }: { partId: string }) {
     <PartListTable
       props={{
         enableDownload: false,
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         params: {
           ancestor: partId
         }

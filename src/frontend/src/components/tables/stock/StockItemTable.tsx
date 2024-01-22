@@ -344,7 +344,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
       props={{
         enableDownload: true,
         enableSelection: true,
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         onRowClick: (record) => navigate(`/stock/item/${record.pk}`),
         params: {
           ...params,
