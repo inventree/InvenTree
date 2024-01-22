@@ -3,16 +3,23 @@ import { useCallback, useMemo } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
+import { partTestTemplateFields } from '../../../forms/PartForms';
+import {
+  openCreateApiForm,
+  openDeleteApiForm,
+  openEditApiForm
+} from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
-export default function PartTestTemplateTable({ params }: { params: any }) {
+export default function PartTestTemplateTable({ partId }: { partId: number }) {
   const table = useTable('part-test-template');
   const user = useUserState();
 
@@ -40,7 +47,7 @@ export default function PartTestTemplateTable({ params }: { params: any }) {
         title: t`Requires Attachment`
       })
     ];
-  }, [params]);
+  }, []);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -71,19 +78,58 @@ export default function PartTestTemplateTable({ params }: { params: any }) {
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            // TODO
+            openEditApiForm({
+              url: ApiPaths.part_test_template_list,
+              pk: record.pk,
+              title: t`Edit Test Template`,
+              fields: partTestTemplateFields(),
+              successMessage: t`Template updated`,
+              onFormSuccess: table.refreshTable
+            });
           }
         }),
         RowDeleteAction({
           hidden: !can_delete,
           onClick: () => {
-            // TODO
+            openDeleteApiForm({
+              url: ApiPaths.part_test_template_list,
+              pk: record.pk,
+              title: t`Delete Test Template`,
+              successMessage: t`Test Template deleted`,
+              onFormSuccess: table.refreshTable
+            });
           }
         })
       ];
     },
     [user]
   );
+
+  const addTestTemplate = useCallback(() => {
+    let fields = partTestTemplateFields();
+
+    fields['part'].value = partId;
+
+    openCreateApiForm({
+      url: ApiPaths.part_test_template_list,
+      title: t`Create Test Template`,
+      fields: fields,
+      successMessage: t`Template created`,
+      onFormSuccess: table.refreshTable
+    });
+  }, [partId]);
+
+  const tableActions = useMemo(() => {
+    let can_add = user.hasAddRole(UserRoles.part);
+
+    return [
+      <AddItemButton
+        tooltip={t`Add Test Template`}
+        onClick={addTestTemplate}
+        disabled={!can_add}
+      />
+    ];
+  }, [user]);
 
   return (
     <InvenTreeTable
@@ -92,9 +138,10 @@ export default function PartTestTemplateTable({ params }: { params: any }) {
       columns={tableColumns}
       props={{
         params: {
-          ...params
+          part: partId
         },
         customFilters: tableFilters,
+        customActionGroups: tableActions,
         rowActions: rowActions
       }}
     />
