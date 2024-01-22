@@ -4,7 +4,6 @@ import {
   Button,
   Group,
   Loader,
-  Paper,
   PasswordInput,
   Stack,
   Text,
