@@ -8,7 +8,6 @@ import { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { InvenTreeTableProps } from '../InvenTreeTable';
 
 export default function PartTestTemplateTable({ params }: { params: any }) {
   const table = useTable('part-test-template');
@@ -21,7 +20,9 @@ export default function PartTestTemplateTable({ params }: { params: any }) {
         switchable: false,
         sortable: true
       },
-      DescriptionColumn(),
+      DescriptionColumn({
+        switchable: false
+      }),
       BooleanColumn({
         accessor: 'required',
         title: t`Required`
