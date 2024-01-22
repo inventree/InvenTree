@@ -7,6 +7,7 @@ from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
+from dj_rest_auth.views import LogoutView
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -198,6 +199,29 @@ class GroupList(ListCreateAPI):
     search_fields = ['name']
 
     ordering_fields = ['name']
+
+
+class Logout(LogoutView):
+    """API view for logging out via API."""
+
+    def logout(self, request):
+        """Logout the current user.
+
+        Deletes user token associated with request.
+        """
+        from InvenTree.middleware import get_token_from_request
+
+        if request.user:
+            token_key = get_token_from_request(request)
+
+            if token_key:
+                try:
+                    token = ApiToken.objects.get(key=token_key, user=request.user)
+                    token.delete()
+                except ApiToken.DoesNotExist:
+                    pass
+
+        return super().logout(request)
 
 
 class GetAuthToken(APIView):

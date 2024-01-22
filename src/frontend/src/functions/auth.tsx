@@ -48,16 +48,17 @@ export const doClassicLogin = async (username: string, password: string) => {
  * Logout the user (invalidate auth token)
  */
 export const doClassicLogout = async () => {
+  // Set token in context
+  const { setToken } = useSessionState.getState();
+
+  setToken(undefined);
+
   // Logout from the server session
   await api.post(apiUrl(ApiPaths.user_logout));
 
-  // Set token in context
-  const { setToken } = useSessionState.getState();
-  setToken(undefined);
-
   notifications.show({
     title: t`Logout successful`,
-    message: t`See you soon.`,
+    message: t`You have been logged out`,
     color: 'green',
     icon: <IconCheck size="1rem" />
   });
