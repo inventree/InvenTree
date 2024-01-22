@@ -112,7 +112,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
           manufacturer_detail: true
         },
         rowActions: rowActions,
-        customActionGroups: tableActions
+        tableActions: tableActions
       }}
     />
   );

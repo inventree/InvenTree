@@ -47,7 +47,7 @@ const defaultPageSize: number = 25;
  * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
  * @param customFilters : TableFilter[] - List of custom filters
- * @param customActionGroups : any[] - List of custom action groups
+ * @param tableActions : any[] - List of custom action groups
  * @param printingActions : any[] - List of printing actions
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
@@ -67,7 +67,7 @@ export type InvenTreeTableProps<T = any> = {
   pageSize?: number;
   barcodeActions?: any[];
   customFilters?: TableFilter[];
-  customActionGroups?: React.ReactNode[];
+  tableActions?: React.ReactNode[];
   printingActions?: any[];
   idAccessor?: string;
   dataFormatter?: (data: T) => any;
@@ -92,7 +92,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   printingActions: [],
   barcodeActions: [],
   customFilters: [],
-  customActionGroups: [],
+  tableActions: [],
   idAccessor: 'pk',
   onRowClick: (record: any, index: number, event: any) => {}
 };
@@ -436,7 +436,7 @@ export function InvenTreeTable<T = any>({
       <Stack spacing="sm">
         <Group position="apart">
           <Group position="left" key="custom-actions" spacing={5}>
-            {tableProps.customActionGroups?.map((group, idx) => (
+            {tableProps.tableActions?.map((group, idx) => (
               <Fragment key={idx}>{group}</Fragment>
             ))}
             {(tableProps.barcodeActions?.length ?? 0 > 0) && (

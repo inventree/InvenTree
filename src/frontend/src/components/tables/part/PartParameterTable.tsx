@@ -180,7 +180,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
       columns={tableColumns}
       props={{
         rowActions: rowActions,
-        customActionGroups: tableActions,
+        tableActions: tableActions,
         customFilters: [
           {
             name: 'include_variants',

@@ -260,7 +260,7 @@ export function PurchaseOrderLineItemTable({
           part_detail: true
         },
         rowActions: rowActions,
-        customActionGroups: tableActions
+        tableActions: tableActions
       }}
     />
   );

@@ -132,7 +132,7 @@ export default function PartParameterTemplateTable() {
       props={{
         rowActions: rowActions,
         customFilters: tableFilters,
-        customActionGroups: tableActions
+        tableActions: tableActions
       }}
     />
   );

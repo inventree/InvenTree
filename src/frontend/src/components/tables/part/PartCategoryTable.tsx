@@ -110,12 +110,11 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
       columns={tableColumns}
       props={{
         enableDownload: true,
-        enableSelection: true,
         params: {
           parent: parentId ?? 'null'
         },
         customFilters: tableFilters,
-        customActionGroups: tableActions,
+        tableActions: tableActions,
         onRowClick: (record, index, event) => {
           navigate(`/part/category/${record.pk}`);
         }

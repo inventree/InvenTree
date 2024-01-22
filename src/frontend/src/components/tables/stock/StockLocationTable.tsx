@@ -137,7 +137,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
           parent: parentId ?? 'null'
         },
         customFilters: tableFilters,
-        customActionGroups: tableActions,
+        tableActions: tableActions,
         onRowClick: (record) => {
           navigate(`/stock/location/${record.pk}`);
         }

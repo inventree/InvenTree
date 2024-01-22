@@ -493,7 +493,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           },
           rowActions: rowActions,
           onRowClick: (plugin) => navigate(`${plugin.pk}/`),
-          customActionGroups: tableActions,
+          tableActions: tableActions,
           customFilters: [
             {
               name: 'active',
