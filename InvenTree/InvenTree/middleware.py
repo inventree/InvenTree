@@ -72,9 +72,6 @@ class AuthRequiredMiddleware(object):
 
         # API requests are handled by the DRF library
         if request.path_info.startswith('/api/'):
-            if False and self.check_token(request):
-                self.user_is_authenticated = True
-
             return self.get_response(request)
 
         # Is the function exempt from auth requirements?
