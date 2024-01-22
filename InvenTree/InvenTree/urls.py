@@ -148,6 +148,7 @@ apipatterns = [
                 SocialAccountDisconnectView.as_view(),
                 name='social_account_disconnect',
             ),
+            path('logout/', users.api.Logout.as_view(), name='api-logout'),
             path('', include('dj_rest_auth.urls')),
         ]),
     ),

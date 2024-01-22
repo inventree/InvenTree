@@ -18,6 +18,23 @@ from users.models import ApiToken
 logger = logging.getLogger('inventree')
 
 
+def get_token_from_request(request):
+    """Extract token information from a request object."""
+    auth_keys = ['Authorization', 'authorization']
+
+    token = None
+
+    for k in auth_keys:
+        if auth_header := request.headers.get(k, None):
+            auth_header = auth_header.strip().lower().split()
+
+            if len(auth_header) > 1 and auth_header[0].startswith('token'):
+                token = auth_header[1]
+                break
+
+    return token
+
+
 class AuthRequiredMiddleware(object):
     """Check for user to be authenticated."""
 
@@ -25,28 +42,9 @@ class AuthRequiredMiddleware(object):
         """Save response object."""
         self.get_response = get_response
 
-    def get_auth_headers(self, request):
-        """Extract authorization headers from request."""
-        keys = ['Authorization', 'authorization']
-
-        for k in keys:
-            if k in request.headers.keys():
-                return request.headers[k]
-
-        return None
-
     def check_token(self, request) -> bool:
         """Check if the user is authenticated via token."""
-        auth = self.get_auth_headers(request)
-
-        if not auth:
-            return False
-
-        auth = auth.strip().lower().split()
-
-        if len(auth) > 1 and auth[0].startswith('token'):
-            token = auth[1]
-
+        if token := get_token_from_request(request):
             # Does the provided token match a valid user?
             try:
                 token = ApiToken.objects.get(key=token)
