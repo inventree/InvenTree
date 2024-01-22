@@ -33,14 +33,17 @@ export const useServerApiState = create<ServerApiStateProps>()(
           })
           .catch(() => {});
         // Fetch status data for rendering labels
-        await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
-          const newStatusLookup: StatusLookup = {} as StatusLookup;
-          for (const key in response.data) {
-            newStatusLookup[statusCodeList[key] || key] =
-              response.data[key].values;
-          }
-          set({ status: newStatusLookup });
-        });
+        await api
+          .get(apiUrl(ApiPaths.global_status))
+          .then((response) => {
+            const newStatusLookup: StatusLookup = {} as StatusLookup;
+            for (const key in response.data) {
+              newStatusLookup[statusCodeList[key] || key] =
+                response.data[key].values;
+            }
+            set({ status: newStatusLookup });
+          })
+          .catch(() => {});
 
         // Fetch login/SSO behaviour
         await api

@@ -262,7 +262,7 @@ export function ModeSelector({
             type="button"
             color="dimmed"
             size="xs"
-            onClick={() => setMode.toggle()}
+            onClick={() => setMode.close()}
           >
             <Trans>Register</Trans>
           </Anchor>
@@ -273,7 +273,7 @@ export function ModeSelector({
           type="button"
           color="dimmed"
           size="xs"
-          onClick={() => setMode.toggle()}
+          onClick={() => setMode.open()}
         >
           <Trans>Go back to login</Trans>
         </Anchor>
