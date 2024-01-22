@@ -8,8 +8,10 @@ from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+import django_q.models
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from error_report.models import Error
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
 from rest_framework.permissions import IsAdminUser
@@ -400,6 +402,8 @@ class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
 
     filter_backends = ORDER_FILTER
 
+    ordering = '-published'
+
     ordering_fields = ['published', 'author', 'read']
 
     filterset_fields = ['read']
@@ -484,6 +488,95 @@ class CustomUnitDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
+class ErrorMessageList(BulkDeleteMixin, ListAPI):
+    """List view for server error messages."""
+
+    queryset = Error.objects.all()
+    serializer_class = common.serializers.ErrorMessageSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering = '-when'
+
+    ordering_fields = ['when', 'info']
+
+    search_fields = ['info', 'data']
+
+
+class ErrorMessageDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a single error message."""
+
+    queryset = Error.objects.all()
+    serializer_class = common.serializers.ErrorMessageSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+
+class BackgroundTaskOverview(APIView):
+    """Provides an overview of the background task queue status."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def get(self, request, format=None):
+        """Return information about the current status of the background task queue."""
+        import django_q.models as q_models
+
+        import InvenTree.status
+
+        serializer = common.serializers.TaskOverviewSerializer({
+            'is_running': InvenTree.status.is_worker_running(),
+            'pending_tasks': q_models.OrmQ.objects.count(),
+            'scheduled_tasks': q_models.Schedule.objects.count(),
+            'failed_tasks': q_models.Failure.objects.count(),
+        })
+
+        return Response(serializer.data)
+
+
+class PendingTaskList(BulkDeleteMixin, ListAPI):
+    """Provides a read-only list of currently pending tasks."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    queryset = django_q.models.OrmQ.objects.all()
+    serializer_class = common.serializers.PendingTaskSerializer
+
+
+class ScheduledTaskList(ListAPI):
+    """Provides a read-only list of currently scheduled tasks."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    queryset = django_q.models.Schedule.objects.all()
+    serializer_class = common.serializers.ScheduledTaskSerializer
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['pk', 'func', 'last_run', 'next_run']
+
+    search_fields = ['func']
+
+    def get_queryset(self):
+        """Return annotated queryset."""
+        queryset = super().get_queryset()
+        return common.serializers.ScheduledTaskSerializer.annotate_queryset(queryset)
+
+
+class FailedTaskList(BulkDeleteMixin, ListAPI):
+    """Provides a read-only list of currently failed tasks."""
+
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    queryset = django_q.models.Failure.objects.all()
+    serializer_class = common.serializers.FailedTaskSerializer
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['pk', 'func', 'started', 'stopped']
+
+    search_fields = ['func']
+
+
 class FlagList(ListAPI):
     """List view for feature flags."""
 
@@ -509,8 +602,8 @@ class FlagDetail(RetrieveAPI):
 
 settings_api_urls = [
     # User settings
-    re_path(
-        r'^user/',
+    path(
+        'user/',
         include([
             # User Settings Detail
             re_path(
@@ -519,30 +612,30 @@ settings_api_urls = [
                 name='api-user-setting-detail',
             ),
             # User Settings List
-            re_path(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
+            path('', UserSettingsList.as_view(), name='api-user-setting-list'),
         ]),
     ),
     # Notification settings
-    re_path(
-        r'^notification/',
+    path(
+        'notification/',
         include([
             # Notification Settings Detail
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 NotificationUserSettingsDetail.as_view(),
                 name='api-notification-setting-detail',
             ),
             # Notification Settings List
-            re_path(
-                r'^.*$',
+            path(
+                '',
                 NotificationUserSettingsList.as_view(),
                 name='api-notification-setting-list',
             ),
         ]),
     ),
     # Global settings
-    re_path(
-        r'^global/',
+    path(
+        'global/',
         include([
             # Global Settings Detail
             re_path(
@@ -551,9 +644,7 @@ settings_api_urls = [
                 name='api-global-setting-detail',
             ),
             # Global Settings List
-            re_path(
-                r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'
-            ),
+            path('', GlobalSettingsList.as_view(), name='api-global-setting-list'),
         ]),
     ),
 ]
@@ -562,101 +653,112 @@ common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
     # Uploaded images for notes
-    re_path(
-        r'^notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'
+    path('notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'),
+    # Background task information
+    path(
+        'background-task/',
+        include([
+            path('pending/', PendingTaskList.as_view(), name='api-pending-task-list'),
+            path(
+                'scheduled/',
+                ScheduledTaskList.as_view(),
+                name='api-scheduled-task-list',
+            ),
+            path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
+            path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
+        ]),
+    ),
+    path(
+        'error-report/',
+        include([
+            path('<int:pk>/', ErrorMessageDetail.as_view(), name='api-error-detail'),
+            path('', ErrorMessageList.as_view(), name='api-error-list'),
+        ]),
     ),
     # Project codes
-    re_path(
-        r'^project-code/',
+    path(
+        'project-code/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': common.models.ProjectCode},
                         name='api-project-code-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
-                        ProjectCodeDetail.as_view(),
-                        name='api-project-code-detail',
+                    path(
+                        '', ProjectCodeDetail.as_view(), name='api-project-code-detail'
                     ),
                 ]),
             ),
-            re_path(r'^.*$', ProjectCodeList.as_view(), name='api-project-code-list'),
+            path('', ProjectCodeList.as_view(), name='api-project-code-list'),
         ]),
     ),
     # Custom physical units
-    re_path(
-        r'^units/',
+    path(
+        'units/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^.*$',
-                        CustomUnitDetail.as_view(),
-                        name='api-custom-unit-detail',
-                    )
+                    path('', CustomUnitDetail.as_view(), name='api-custom-unit-detail')
                 ]),
             ),
-            re_path(r'^.*$', CustomUnitList.as_view(), name='api-custom-unit-list'),
+            path('', CustomUnitList.as_view(), name='api-custom-unit-list'),
         ]),
     ),
     # Currencies
-    re_path(
-        r'^currency/',
+    path(
+        'currency/',
         include([
-            re_path(
-                r'^exchange/',
+            path(
+                'exchange/',
                 CurrencyExchangeView.as_view(),
                 name='api-currency-exchange',
             ),
-            re_path(
-                r'^refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'
+            path(
+                'refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'
             ),
         ]),
     ),
     # Notifications
-    re_path(
-        r'^notifications/',
+    path(
+        'notifications/',
         include([
             # Individual purchase order detail URLs
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'.*$',
+                    path(
+                        '',
                         NotificationDetail.as_view(),
                         name='api-notifications-detail',
                     )
                 ]),
             ),
             # Read all
-            re_path(
-                r'^readall/',
+            path(
+                'readall/',
                 NotificationReadAll.as_view(),
                 name='api-notifications-readall',
             ),
             # Notification messages list
-            re_path(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
+            path('', NotificationList.as_view(), name='api-notifications-list'),
         ]),
     ),
     # News
-    re_path(
-        r'^news/',
+    path(
+        'news/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'
-                    )
+                    path('', NewsFeedEntryDetail.as_view(), name='api-news-detail')
                 ]),
             ),
-            re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),
+            path('', NewsFeedEntryList.as_view(), name='api-news-list'),
         ]),
     ),
     # Flags
@@ -664,7 +766,7 @@ common_api_urls = [
         'flags/',
         include([
             path('<str:key>/', FlagDetail.as_view(), name='api-flag-detail'),
-            re_path(r'^.*$', FlagList.as_view(), name='api-flag-list'),
+            path('', FlagList.as_view(), name='api-flag-list'),
         ]),
     ),
     # Status

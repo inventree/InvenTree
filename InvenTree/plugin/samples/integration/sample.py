@@ -4,7 +4,7 @@ import json
 
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
-from django.urls import include, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
@@ -38,13 +38,13 @@ class SampleIntegrationPlugin(
     def setup_urls(self):
         """Urls that are exposed by this plugin."""
         he_urls = [
-            re_path(r'^he/', self.view_test, name='he'),
-            re_path(r'^ha/', self.view_test, name='ha'),
+            path('he/', self.view_test, name='he'),
+            path('ha/', self.view_test, name='ha'),
         ]
 
         return [
-            re_path(r'^hi/', self.view_test, name='hi'),
-            re_path(r'^ho/', include(he_urls), name='ho'),
+            path('hi/', self.view_test, name='hi'),
+            path('ho/', include(he_urls), name='ho'),
         ]
 
     SETTINGS = {

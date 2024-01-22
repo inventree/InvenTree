@@ -27,6 +27,14 @@ def translation_stats(lang_code):
 class CustomTranslateNode(TranslateNode):
     """Custom translation node class, which sanitizes the translated strings for javascript use."""
 
+    def __init__(self, filter_expression, noop, asvar, message_context, escape=False):
+        """Custom constructor for TranslateNode class.
+
+        - Adds an 'escape' argument, which is passed to the render function
+        """
+        super().__init__(filter_expression, noop, asvar, message_context)
+        self.escape = escape
+
     def render(self, context):
         """Custom render function overrides / extends default behaviour."""
         result = super().render(context)
@@ -41,9 +49,12 @@ class CustomTranslateNode(TranslateNode):
         for c in ['\\', '`', ';', '|', '&']:
             result = result.replace(c, '')
 
-        # Escape any quotes contained in the string
-        result = result.replace("'", r'\'')
-        result = result.replace('"', r'\"')
+        # Escape any quotes contained in the string, if the request is for a javascript file
+        request = context.get('request', None)
+
+        if self.escape or (request and request.path.endswith('.js')):
+            result = result.replace("'", r'\'')
+            result = result.replace('"', r'\"')
 
         # Return the 'clean' resulting string
         return result
@@ -52,9 +63,10 @@ class CustomTranslateNode(TranslateNode):
 @register.tag('translate')
 @register.tag('trans')
 def do_translate(parser, token):
-    """Custom translation function, lifted from https://github.com/django/django/blob/main/django/templatetags/i18n.py.
+    """Custom translation function.
 
-    The only difference is that we pass this to our custom rendering node class
+    - Lifted from https://github.com/django/django/blob/main/django/templatetags/i18n.py.
+    - The only difference is that we pass this to our custom rendering node class
     """
     bits = token.split_contents()
     if len(bits) < 2:
@@ -62,6 +74,7 @@ def do_translate(parser, token):
     message_string = parser.compile_filter(bits[1])
     remaining = bits[2:]
 
+    escape = False
     noop = False
     asvar = None
     message_context = None
@@ -98,6 +111,8 @@ def do_translate(parser, token):
                     "No argument provided to the '%s' tag for the as option." % bits[0]
                 )
             asvar = value
+        elif option == 'escape':
+            escape = True
         else:
             raise TemplateSyntaxError(
                 "Unknown argument for '%s' tag: '%s'. The only options "
@@ -106,7 +121,9 @@ def do_translate(parser, token):
             )
         seen.add(option)
 
-    return CustomTranslateNode(message_string, noop, asvar, message_context)
+    return CustomTranslateNode(
+        message_string, noop, asvar, message_context, escape=escape
+    )
 
 
 # Re-register tags which we have not explicitly overridden

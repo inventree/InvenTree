@@ -19,10 +19,17 @@ export enum ApiPaths {
   user_email_verify = 'api-user-email-verify',
   user_email_primary = 'api-user-email-primary',
   user_email_remove = 'api-user-email-remove',
+  user_logout = 'api-user-logout',
+  user_register = 'api-user-register',
 
   user_list = 'api-user-list',
   group_list = 'api-group-list',
   owner_list = 'api-owner-list',
+
+  task_overview = 'api-task-overview',
+  task_pending_list = 'api-task-pending-list',
+  task_scheduled_list = 'api-task-scheduled-list',
+  task_failed_list = 'api-task-failed-list',
 
   settings_global_list = 'api-settings-global-list',
   settings_user_list = 'api-settings-user-list',
@@ -52,6 +59,7 @@ export enum ApiPaths {
   part_attachment_list = 'api-part-attachment-list',
   part_parameter_list = 'api-part-parameter-list',
   part_parameter_template_list = 'api-part-parameter-template-list',
+  part_test_template_list = 'api-part-test-template-list',
 
   // Company URLs
   company_list = 'api-company-list',
@@ -89,6 +97,7 @@ export enum ApiPaths {
   plugin_reload = 'api-plugin-reload',
   plugin_registry_status = 'api-plugin-registry-status',
 
+  error_report_list = 'api-error-report-list',
   project_code_list = 'api-project-code-list',
   custom_unit_list = 'api-custom-unit-list'
 }

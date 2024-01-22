@@ -1,7 +1,16 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Indicator, Space, Stack, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Indicator,
+  Space,
+  Stack,
+  Tooltip
+} from '@mantine/core';
 import { Group } from '@mantine/core';
-import { IconFilter, IconRefresh } from '@tabler/icons-react';
+import { modals } from '@mantine/modals';
+import { showNotification } from '@mantine/notifications';
+import { IconFilter, IconRefresh, IconTrash } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
@@ -9,6 +18,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { TableState } from '../../hooks/UseTable';
+import { ActionButton } from '../buttons/ActionButton';
 import { ButtonMenu } from '../buttons/ButtonMenu';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
@@ -27,6 +37,7 @@ const defaultPageSize: number = 25;
  * @param tableState : TableState - State manager for the table
  * @param defaultSortColumn : string - Default column to sort by
  * @param noRecordsText : string - Text to display when no records are found
+ * @param enableBulkDelete : boolean - Enable bulk deletion of records
  * @param enableDownload : boolean - Enable download actions
  * @param enableFilters : boolean - Enable filter actions
  * @param enableSelection : boolean - Enable row selection
@@ -46,6 +57,7 @@ export type InvenTreeTableProps<T = any> = {
   params?: any;
   defaultSortColumn?: string;
   noRecordsText?: string;
+  enableBulkDelete?: boolean;
   enableDownload?: boolean;
   enableFilters?: boolean;
   enableSelection?: boolean;
@@ -350,6 +362,66 @@ export function InvenTreeTable<T = any>({
 
   const [recordCount, setRecordCount] = useState<number>(0);
 
+  // Callback function to delete the selected records in the table
+  const deleteSelectedRecords = useCallback(() => {
+    if (tableState.selectedRecords.length == 0) {
+      // Ignore if no records are selected
+      return;
+    }
+
+    modals.openConfirmModal({
+      title: t`Delete selected records`,
+      children: (
+        <Alert
+          color="red"
+          title={t`Are you sure you want to delete the selected records?`}
+        >
+          {t`This action cannot be undone!`}
+        </Alert>
+      ),
+      labels: {
+        confirm: t`Delete`,
+        cancel: t`Cancel`
+      },
+      confirmProps: {
+        color: 'red'
+      },
+      onConfirm: () => {
+        // Delete the selected records
+        let selection = tableState.selectedRecords.map(
+          (record) => record.pk ?? record.id
+        );
+
+        api
+          .delete(url, {
+            data: {
+              items: selection
+            }
+          })
+          .then((_response) => {
+            // Refresh the table
+            refetch();
+
+            // Show notification
+            showNotification({
+              title: t`Deleted records`,
+              message: t`Records were deleted successfully`,
+              color: 'green'
+            });
+          })
+          .catch((_error) => {
+            console.warn(`Bulk delete operation failed at ${url}`);
+
+            showNotification({
+              title: t`Error`,
+              message: t`Failed to delete records`,
+              color: 'red'
+            });
+          });
+      }
+    });
+  }, [tableState.selectedRecords]);
+
   return (
     <>
       {tableProps.enableFilters &&
@@ -383,6 +455,15 @@ export function InvenTreeTable<T = any>({
                 label={t`Print actions`}
                 tooltip={t`Print actions`}
                 actions={tableProps.printingActions ?? []}
+              />
+            )}
+            {(tableProps.enableBulkDelete ?? false) && (
+              <ActionButton
+                disabled={tableState.selectedRecords.length == 0}
+                icon={<IconTrash />}
+                color="red"
+                tooltip={t`Delete selected records`}
+                onClick={deleteSelectedRecords}
               />
             )}
           </Group>

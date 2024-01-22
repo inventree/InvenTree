@@ -25,7 +25,7 @@ function loadNewsFeedTable(table, options={}, enableDelete=false) {
         name: 'news',
         groupBy: false,
         queryParams: {
-            ordering: 'published',
+            ordering: '-published',
             read: false,
         },
         paginationVAlign: 'bottom',

@@ -1,6 +1,8 @@
 import { Trans, t } from '@lingui/macro';
 import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
+  IconCpu,
+  IconExclamationCircle,
   IconList,
   IconListDetails,
   IconPlugConnected,
@@ -19,8 +21,16 @@ const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
 );
 
+const TaskManagementPanel = Loadable(
+  lazy(() => import('./TaskManagementPanel'))
+);
+
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
+);
+
+const ErrorReportTable = Loadable(
+  lazy(() => import('../../../../components/tables/settings/ErrorTable'))
 );
 
 const ProjectCodeTable = Loadable(
@@ -46,6 +56,18 @@ export default function AdminCenter() {
         label: t`Users`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />
+      },
+      {
+        name: 'background',
+        label: t`Background Tasks`,
+        icon: <IconCpu />,
+        content: <TaskManagementPanel />
+      },
+      {
+        name: 'errors',
+        label: t`Error Reports`,
+        icon: <IconExclamationCircle />,
+        content: <ErrorReportTable />
       },
       {
         name: 'projectcodes',
@@ -115,7 +137,7 @@ export default function AdminCenter() {
       <PanelGroup
         pageKey="admin-center"
         panels={adminCenterPanels}
-        collapsible={false}
+        collapsible={true}
       />
     </Stack>
   );

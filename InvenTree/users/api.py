@@ -3,13 +3,14 @@
 import datetime
 import logging
 
+from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
+from dj_rest_auth.views import LogoutView
 from rest_framework import exceptions, permissions
-from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.serializers import Serializer
+from rest_framework.views import APIView
 
 import InvenTree.helpers
 from InvenTree.filters import SEARCH_ORDER_FILTER
@@ -21,8 +22,8 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
-from users.models import ApiToken, Owner
-from users.serializers import GroupSerializer, OwnerSerializer, RoleSerializer
+from users.models import ApiToken, Owner, RuleSet, check_user_role
+from users.serializers import GroupSerializer, OwnerSerializer
 
 logger = logging.getLogger('inventree')
 
@@ -100,18 +101,43 @@ class OwnerDetail(RetrieveAPI):
     serializer_class = OwnerSerializer
 
 
-class RoleDetails(RetrieveAPI):
+class RoleDetails(APIView):
     """API endpoint which lists the available role permissions for the current user.
 
     (Requires authentication)
     """
 
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = RoleSerializer
 
-    def get_object(self):
-        """Return the current user."""
-        return self.request.user
+    def get(self, request, *args, **kwargs):
+        """Return the list of roles / permissions available to the current user."""
+        user = request.user
+
+        roles = {}
+
+        for ruleset in RuleSet.RULESET_CHOICES:
+            role, _text = ruleset
+
+            permissions = []
+
+            for permission in RuleSet.RULESET_PERMISSIONS:
+                if check_user_role(user, role, permission):
+                    permissions.append(permission)
+
+            if len(permissions) > 0:
+                roles[role] = permissions
+            else:
+                roles[role] = None  # pragma: no cover
+
+        data = {
+            'user': user.pk,
+            'username': user.username,
+            'roles': roles,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
+        }
+
+        return Response(data)
 
 
 class UserDetail(RetrieveUpdateDestroyAPI):
@@ -175,12 +201,33 @@ class GroupList(ListCreateAPI):
     ordering_fields = ['name']
 
 
-class GetAuthToken(GenericAPIView):
+class Logout(LogoutView):
+    """API view for logging out via API."""
+
+    def logout(self, request):
+        """Logout the current user.
+
+        Deletes user token associated with request.
+        """
+        from InvenTree.middleware import get_token_from_request
+
+        if request.user:
+            token_key = get_token_from_request(request)
+
+            if token_key:
+                try:
+                    token = ApiToken.objects.get(key=token_key, user=request.user)
+                    token.delete()
+                except ApiToken.DoesNotExist:
+                    pass
+
+        return super().logout(request)
+
+
+class GetAuthToken(APIView):
     """Return authentication token for an authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
-
-    serializer_class = Serializer
 
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated.
@@ -220,6 +267,10 @@ class GetAuthToken(GenericAPIView):
                 "Created new API token for user '%s' (name='%s')", user.username, name
             )
 
+            # Ensure that the users session is logged in (PUI -> CUI login)
+            if not get_user(request).is_authenticated:
+                login(request, user)
+
             return Response(data)
 
         else:
@@ -227,23 +278,23 @@ class GetAuthToken(GenericAPIView):
 
 
 user_urls = [
-    re_path(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
-    re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
-    re_path(r'^me/', MeUserDetail.as_view(), name='api-user-me'),
-    re_path(
-        r'^owner/',
+    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+    path('token/', GetAuthToken.as_view(), name='api-token'),
+    path('me/', MeUserDetail.as_view(), name='api-user-me'),
+    path(
+        'owner/',
         include([
             path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
-            re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
+            path('', OwnerList.as_view(), name='api-owner-list'),
         ]),
     ),
-    re_path(
-        r'^group/',
+    path(
+        'group/',
         include([
             re_path(
                 r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'
             ),
-            re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
+            path('', GroupList.as_view(), name='api-group-list'),
         ]),
     ),
     re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),

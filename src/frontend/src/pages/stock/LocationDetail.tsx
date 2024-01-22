@@ -13,7 +13,12 @@ import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 
 export default function Stock() {
-  const { id } = useParams();
+  const { id: _id } = useParams();
+
+  const id = useMemo(
+    () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
+    [_id]
+  );
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -23,6 +28,7 @@ export default function Stock() {
     instanceQuery
   } = useInstance({
     endpoint: ApiPaths.stock_location_list,
+    hasPrimaryKey: true,
     pk: id,
     params: {
       path_detail: true

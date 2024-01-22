@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import F, Q
 from django.http import JsonResponse
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
@@ -38,6 +38,7 @@ from InvenTree.filters import (
 from InvenTree.helpers import (
     DownloadFile,
     extract_serial_numbers,
+    is_ajax,
     isNull,
     str2bool,
     str2int,
@@ -1025,7 +1026,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         if page is not None:
             return self.get_paginated_response(data)
-        elif request.is_ajax():
+        elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
@@ -1396,7 +1397,7 @@ class StockTrackingList(ListAPI):
 
         if page is not None:
             return self.get_paginated_response(data)
-        if request.is_ajax():
+        if is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
@@ -1484,69 +1485,63 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
 
 
 stock_api_urls = [
-    re_path(
-        r'^location/',
+    path(
+        'location/',
         include([
-            re_path(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
+            path('tree/', StockLocationTree.as_view(), name='api-location-tree'),
             # Stock location detail endpoints
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': StockLocation},
                         name='api-location-metadata',
                     ),
-                    re_path(
-                        r'^.*$', LocationDetail.as_view(), name='api-location-detail'
-                    ),
+                    path('', LocationDetail.as_view(), name='api-location-detail'),
                 ]),
             ),
-            re_path(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
+            path('', StockLocationList.as_view(), name='api-location-list'),
         ]),
     ),
     # Stock location type endpoints
-    re_path(
-        r'^location-type/',
+    path(
+        'location-type/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': StockLocationType},
                         name='api-location-type-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         StockLocationTypeDetail.as_view(),
                         name='api-location-type-detail',
                     ),
                 ]),
             ),
-            re_path(
-                r'^.*$', StockLocationTypeList.as_view(), name='api-location-type-list'
-            ),
+            path('', StockLocationTypeList.as_view(), name='api-location-type-list'),
         ]),
     ),
     # Endpoints for bulk stock adjustment actions
-    re_path(r'^count/', StockCount.as_view(), name='api-stock-count'),
-    re_path(r'^add/', StockAdd.as_view(), name='api-stock-add'),
-    re_path(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
-    re_path(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
-    re_path(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
-    re_path(r'^merge/', StockMerge.as_view(), name='api-stock-merge'),
-    re_path(
-        r'^change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'
-    ),
+    path('count/', StockCount.as_view(), name='api-stock-count'),
+    path('add/', StockAdd.as_view(), name='api-stock-add'),
+    path('remove/', StockRemove.as_view(), name='api-stock-remove'),
+    path('transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
+    path('assign/', StockAssign.as_view(), name='api-stock-assign'),
+    path('merge/', StockMerge.as_view(), name='api-stock-merge'),
+    path('change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
     # StockItemAttachment API endpoints
-    re_path(
-        r'^attachment/',
+    path(
+        'attachment/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 StockAttachmentDetail.as_view(),
                 name='api-stock-attachment-detail',
             ),
@@ -1554,92 +1549,82 @@ stock_api_urls = [
         ]),
     ),
     # StockItemTestResult API endpoints
-    re_path(
-        r'^test/',
+    path(
+        'test/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': StockItemTestResult},
                         name='api-stock-test-result-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         StockItemTestResultDetail.as_view(),
                         name='api-stock-test-result-detail',
                     ),
                 ]),
             ),
-            re_path(
-                r'^.*$',
-                StockItemTestResultList.as_view(),
-                name='api-stock-test-result-list',
+            path(
+                '', StockItemTestResultList.as_view(), name='api-stock-test-result-list'
             ),
         ]),
     ),
     # StockItemTracking API endpoints
-    re_path(
-        r'^track/',
+    path(
+        'track/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 StockTrackingDetail.as_view(),
                 name='api-stock-tracking-detail',
             ),
             # Stock tracking status code information
-            re_path(
-                r'status/',
+            path(
+                'status/',
                 StatusView.as_view(),
                 {StatusView.MODEL_REF: StockHistoryCode},
                 name='api-stock-tracking-status-codes',
             ),
-            re_path(
-                r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'
-            ),
+            path('', StockTrackingList.as_view(), name='api-stock-tracking-list'),
         ]),
     ),
     # Detail views for a single stock item
     path(
-        r'<int:pk>/',
+        '<int:pk>/',
         include([
-            re_path(
-                r'^convert/', StockItemConvert.as_view(), name='api-stock-item-convert'
-            ),
-            re_path(
-                r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'
-            ),
-            re_path(
-                r'^metadata/',
+            path('convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
+            path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
+            path(
+                'metadata/',
                 MetadataView.as_view(),
                 {'model': StockItem},
                 name='api-stock-item-metadata',
             ),
-            re_path(
-                r'^return/', StockItemReturn.as_view(), name='api-stock-item-return'
-            ),
-            re_path(
-                r'^serialize/',
+            path('return/', StockItemReturn.as_view(), name='api-stock-item-return'),
+            path(
+                'serialize/',
                 StockItemSerialize.as_view(),
                 name='api-stock-item-serialize',
             ),
-            re_path(
-                r'^uninstall/',
+            path(
+                'uninstall/',
                 StockItemUninstall.as_view(),
                 name='api-stock-item-uninstall',
             ),
-            re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
+            path('', StockDetail.as_view(), name='api-stock-detail'),
         ]),
     ),
     # Stock item status code information
-    re_path(
-        r'status/',
+    path(
+        'status/',
         StatusView.as_view(),
         {StatusView.MODEL_REF: StockStatus},
         name='api-stock-status-codes',
     ),
     # Anything else
-    re_path(r'^.*$', StockList.as_view(), name='api-stock-list'),
+    path('', StockList.as_view(), name='api-stock-list'),
 ]

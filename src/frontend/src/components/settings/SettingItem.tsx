@@ -172,8 +172,8 @@ export function SettingItem({
 
   return (
     <Paper style={style}>
-      <Group position="apart" p="10">
-        <Stack spacing="2">
+      <Group position="apart" p="3">
+        <Stack spacing="2" p="4px">
           <Text>{setting.name}</Text>
           <Text size="xs">{setting.description}</Text>
         </Stack>

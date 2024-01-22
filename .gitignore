@@ -26,6 +26,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.DS_Store
 
 # Django stuff:
 *.log
@@ -105,6 +106,7 @@ InvenTree/plugins/
 
 # Compiled translation files
 *.mo
+messages.ts
 
 # Generated API schema file
 api.yaml

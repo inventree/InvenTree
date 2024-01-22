@@ -58,10 +58,9 @@ class Command(BaseCommand):
         for file in os.listdir(SOURCE_DIR):
             path = os.path.join(SOURCE_DIR, file)
             if os.path.exists(path) and os.path.isfile(path):
-                print(f'render {file}')
                 render_file(file, SOURCE_DIR, TARGET_DIR, locales, ctx)
             else:
                 raise NotImplementedError(
                     'Using multi-level directories is not implemented at this point'
                 )  # TODO multilevel dir if needed
-        print(f'rendered all files in {SOURCE_DIR}')
+        print(f'Rendered all files in {SOURCE_DIR}')
