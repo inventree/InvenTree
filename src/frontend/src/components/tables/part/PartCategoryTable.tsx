@@ -1,4 +1,3 @@
-import { faRecordVinyl } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
