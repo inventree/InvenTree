@@ -51,7 +51,7 @@ export function StockLocationTable({ params = {} }: { params?: any }) {
         title: t`Name`,
         switchable: false
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'pathstring',
         title: t`Path`,

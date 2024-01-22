@@ -44,7 +44,7 @@ export function CompanyTable({
           );
         }
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'website',
         title: t`Website`,

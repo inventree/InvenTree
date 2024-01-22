@@ -63,7 +63,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         switchable: false
         // TODO: Display extra information if order is overdue
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'supplier__name',
         title: t`Supplier`,
