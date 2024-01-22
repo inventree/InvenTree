@@ -64,13 +64,7 @@ export default function CategoryDetail({}: {}) {
         name: 'subcategories',
         label: t`Part Categories`,
         icon: <IconSitemap />,
-        content: (
-          <PartCategoryTable
-            params={{
-              parent: id
-            }}
-          />
-        )
+        content: <PartCategoryTable parentId={id} />
       },
       {
         name: 'parameters',
