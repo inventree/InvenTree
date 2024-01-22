@@ -57,7 +57,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         title: t`Supplier Part`,
         sortable: true
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'manufacturer',
 

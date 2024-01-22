@@ -32,7 +32,7 @@ export default function ProjectCodeTable() {
         sortable: true,
         title: t`Project Code`
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       ResponsibleColumn()
     ];
   }, []);

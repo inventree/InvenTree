@@ -26,7 +26,6 @@ from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.tracing import setup_instruments, setup_tracing
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
 from . import config, locales
@@ -131,15 +130,17 @@ ALLOWED_HOSTS = get_setting(
 
 # Cross Origin Resource Sharing (CORS) options
 
+# Extract CORS options from configuration file
+CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
+    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
+)
+
+CORS_ALLOW_CREDENTIALS = True
+
 # Only allow CORS access to API and media endpoints
 CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
 
-# Extract CORS options from configuration file
-CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
-    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=False
-)
-
-CORS_ORIGIN_WHITELIST = get_setting(
+CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
     config_key='cors.whitelist',
     default_value=[],
@@ -263,9 +264,9 @@ MIDDLEWARE = CONFIG.get(
         'x_forwarded_for.middleware.XForwardedForMiddleware',
         'user_sessions.middleware.SessionMiddleware',  # db user sessions
         'django.middleware.locale.LocaleMiddleware',
-        'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
+        'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
         'django_otp.middleware.OTPMiddleware',  # MFA support
@@ -738,7 +739,10 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
 TRACING_ENABLED = get_boolean_setting(
     'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
 )
+
 if TRACING_ENABLED:  # pragma: no cover
+    from InvenTree.tracing import setup_instruments, setup_tracing
+
     _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
     _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
 
