@@ -1,11 +1,15 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
+import { UserRoles } from '../../../enums/Roles';
+import { notYetImplemented } from '../../../functions/notifications';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import {
   CreationDateColumn,
@@ -27,6 +31,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
   const table = useTable('return-orders');
+  const user = useUserState();
 
   const navigate = useNavigate();
 
@@ -90,6 +95,20 @@ export function ReturnOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
+  const addReturnOrder = useCallback(() => {
+    notYetImplemented();
+  }, []);
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add Return Order`}
+        onClick={addReturnOrder}
+        hidden={!user.hasAddRole(UserRoles.sales_order)}
+      />
+    ];
+  }, [user]);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.return_order_list)}
@@ -101,6 +120,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
           customer_detail: true
         },
         tableFilters: tableFilters,
+        tableActions: tableActions,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/sales/return-order/${row.pk}/`);
