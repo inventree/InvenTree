@@ -15,7 +15,7 @@ import { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowActions, RowEditAction } from '../RowActions';
+import { RowEditAction } from '../RowActions';
 
 /**
  * Stock location table
