@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { stockLocationFields } from '../../../forms/StockForms';
-import { openCreateApiForm } from '../../../functions/forms';
+import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -15,6 +15,7 @@ import { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowActions, RowEditAction } from '../RowActions';
 
 /**
  * Stock location table
@@ -126,6 +127,29 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     ];
   }, [user]);
 
+  const rowActions = useCallback(
+    (record: any) => {
+      let can_edit = user.hasChangeRole(UserRoles.stock_location);
+
+      return [
+        RowEditAction({
+          hidden: !can_edit,
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.stock_location_list,
+              pk: record.pk,
+              title: t`Edit Stock Location`,
+              fields: stockLocationFields({}),
+              successMessage: t`Stock location updated`,
+              onFormSuccess: table.refreshTable
+            });
+          }
+        })
+      ];
+    },
+    [user]
+  );
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.stock_location_list)}
@@ -138,6 +162,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         },
         tableFilters: tableFilters,
         tableActions: tableActions,
+        rowActions: rowActions,
         onRowClick: (record) => {
           navigate(`/stock/location/${record.pk}`);
         }
