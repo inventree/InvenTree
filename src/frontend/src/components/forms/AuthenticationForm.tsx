@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
-import { apiUrl } from '../../states/ApiState';
+import { apiUrl, useServerApiState } from '../../states/ApiState';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
@@ -249,6 +249,9 @@ export function ModeSelector({
   loginMode: boolean;
   setMode: any;
 }) {
+  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+
+  if (auth_settings?.registration_enabled === false) return null;
   return (
     <Text ta="center" size={'xs'} mt={'md'}>
       {loginMode ? (
