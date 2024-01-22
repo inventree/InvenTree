@@ -25,6 +25,41 @@ class AuthRequiredMiddleware(object):
         """Save response object."""
         self.get_response = get_response
 
+    def get_auth_headers(self, request):
+        """Extract authorization headers from request."""
+        keys = ['Authorization', 'authorization']
+
+        for k in keys:
+            if k in request.headers.keys():
+                return request.headers[k]
+
+        return None
+
+    def check_token(self, request) -> bool:
+        """Check if the user is authenticated via token."""
+        auth = self.get_auth_headers(request)
+
+        if not auth:
+            return False
+
+        auth = auth.strip().lower().split()
+
+        if len(auth) > 1 and auth[0].startswith('token'):
+            token = auth[1]
+
+            # Does the provided token match a valid user?
+            try:
+                token = ApiToken.objects.get(key=token)
+
+                if token.active and token.user:
+                    # Provide the user information to the request
+                    request.user = token.user
+                    return True
+            except ApiToken.DoesNotExist:
+                logger.warning('Access denied for unknown token %s', token)
+
+        return False
+
     def __call__(self, request):
         """Check if user needs to be authenticated and is.
 
@@ -70,28 +105,8 @@ class AuthRequiredMiddleware(object):
             ):
                 authorized = True
 
-            elif (
-                'Authorization' in request.headers.keys()
-                or 'authorization' in request.headers.keys()
-            ):
-                auth = request.headers.get(
-                    'Authorization', request.headers.get('authorization')
-                ).strip()
-
-                if auth.lower().startswith('token') and len(auth.split()) == 2:
-                    token_key = auth.split()[1]
-
-                    # Does the provided token match a valid user?
-                    try:
-                        token = ApiToken.objects.get(key=token_key)
-
-                        if token.active and token.user:
-                            # Provide the user information to the request
-                            request.user = token.user
-                            authorized = True
-
-                    except ApiToken.DoesNotExist:
-                        logger.warning('Access denied for unknown token %s', token_key)
+            elif self.check_token(request):
+                authorized = True
 
             # No authorization was found for the request
             if not authorized:
