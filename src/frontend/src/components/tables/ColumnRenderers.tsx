@@ -20,25 +20,38 @@ export function PartColumn(part: any) {
 
 export function BooleanColumn({
   accessor,
-  title
+  title,
+  sortable,
+  switchable
 }: {
   accessor: string;
   title: string;
+  sortable?: boolean;
+  switchable?: boolean;
 }): TableColumn {
   return {
     accessor: accessor,
     title: title,
-    sortable: true,
+    sortable: sortable ?? true,
+    switchable: switchable ?? true,
     render: (record: any) => <YesNoButton value={record[accessor]} />
   };
 }
 
-export function DescriptionColumn(): TableColumn {
+export function DescriptionColumn({
+  accessor,
+  sortable,
+  switchable
+}: {
+  accessor?: string;
+  sortable?: boolean;
+  switchable?: boolean;
+}): TableColumn {
   return {
-    accessor: 'description',
+    accessor: accessor ?? 'description',
     title: t`Description`,
-    sortable: false,
-    switchable: true
+    sortable: sortable ?? false,
+    switchable: switchable ?? true
   };
 }
 

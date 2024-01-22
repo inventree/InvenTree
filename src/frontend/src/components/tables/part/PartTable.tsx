@@ -45,7 +45,7 @@ function partTableColumns(): TableColumn[] {
       sortable: true,
       title: t`Units`
     },
-    DescriptionColumn(),
+    DescriptionColumn({}),
     {
       accessor: 'category',
       title: t`Category`,

@@ -367,6 +367,31 @@ class PartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartAttachmentSerializer
 
 
+class PartTestTemplateFilter(rest_filters.FilterSet):
+    """Custom filterset class for the PartTestTemplateList endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartTestTemplate
+        fields = ['required', 'requires_value', 'requires_attachment']
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.filter(trackable=True),
+        label='Part',
+        field_name='part',
+        method='filter_part',
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter by the 'part' field.
+
+        Note that for the 'part' field, we also include any parts "above" the specified part.
+        """
+        variants = part.get_ancestors(include_self=True)
+        return queryset.filter(part__in=variants)
+
+
 class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for PartTestTemplate model."""
 
@@ -375,44 +400,19 @@ class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
 
 
 class PartTestTemplateList(ListCreateAPI):
-    """API endpoint for listing (and creating) a PartTestTemplate.
-
-    TODO: Add filterset class for this view
-    """
+    """API endpoint for listing (and creating) a PartTestTemplate."""
 
     queryset = PartTestTemplate.objects.all()
     serializer_class = part_serializers.PartTestTemplateSerializer
-
-    def filter_queryset(self, queryset):
-        """Filter the test list queryset.
-
-        If filtering by 'part', we include results for any parts "above" the specified part.
-        """
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        part = params.get('part', None)
-
-        # Filter by part
-        if part:
-            try:
-                part = Part.objects.get(pk=part)
-                queryset = queryset.filter(
-                    part__in=part.get_ancestors(include_self=True)
-                )
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Filter by 'required' status
-        required = params.get('required', None)
-
-        if required is not None:
-            queryset = queryset.filter(required=str2bool(required))
-
-        return queryset
+    filterset_class = PartTestTemplateFilter
 
     filter_backends = SEARCH_ORDER_FILTER
+
+    search_fields = ['test_name', 'description']
+
+    ordering_fields = ['test_name', 'required', 'requires_value', 'requires_attachment']
+
+    ordering = 'test_name'
 
 
 class PartThumbs(ListAPI):

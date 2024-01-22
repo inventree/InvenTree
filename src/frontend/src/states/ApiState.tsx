@@ -151,6 +151,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'part/related/';
     case ApiPaths.part_attachment_list:
       return 'part/attachment/';
+    case ApiPaths.part_test_template_list:
+      return 'part/test-template/';
     case ApiPaths.company_list:
       return 'company/';
     case ApiPaths.contact_list:
