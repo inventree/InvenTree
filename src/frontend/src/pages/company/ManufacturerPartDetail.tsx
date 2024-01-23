@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
@@ -11,6 +11,8 @@ import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
+import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
@@ -48,15 +50,31 @@ export default function ManufacturerPartDetail() {
       {
         name: 'suppliers',
         label: t`Suppliers`,
-        icon: <IconBuildingWarehouse />
+        icon: <IconBuildingWarehouse />,
+        content: manufacturerPart?.pk ? (
+          <SupplierPartTable
+            params={{
+              manufacturer_part: manufacturerPart.pk
+            }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'attachments',
         label: t`Attachments`,
-        icon: <IconPaperclip />
+        icon: <IconPaperclip />,
+        content: (
+          <AttachmentTable
+            endpoint={ApiPaths.manufacturer_part_attachment_list}
+            model="manufacturer_part"
+            pk={manufacturerPart?.pk}
+          />
+        )
       }
     ];
-  }, []);
+  }, [manufacturerPart]);
 
   const breadcrumbs = useMemo(() => {
     return [
