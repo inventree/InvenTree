@@ -220,48 +220,55 @@ export function RegistrationForm() {
       });
   }
 
+  const both_reg_enabled =
+    auth_settings?.registration_enabled && auth_settings?.sso_registration;
   return (
     <>
-      <form onSubmit={registrationForm.onSubmit(() => {})}>
-        <Stack spacing={0}>
-          <TextInput
-            required
-            label={t`Username`}
-            placeholder={t`Your username`}
-            {...registrationForm.getInputProps('username')}
-          />
-          <TextInput
-            required
-            label={t`Email`}
-            description={t`This will be used for a confirmation`}
-            placeholder="email@example.org"
-            {...registrationForm.getInputProps('email')}
-          />
-          <PasswordInput
-            required
-            label={t`Password`}
-            placeholder={t`Your password`}
-            {...registrationForm.getInputProps('password1')}
-          />
-          <PasswordInput
-            required
-            label={t`Password repeat`}
-            placeholder={t`Repeat password`}
-            {...registrationForm.getInputProps('password2')}
-          />
-        </Stack>
+      {auth_settings?.registration_enabled && (
+        <form onSubmit={registrationForm.onSubmit(() => {})}>
+          <Stack spacing={0}>
+            <TextInput
+              required
+              label={t`Username`}
+              placeholder={t`Your username`}
+              {...registrationForm.getInputProps('username')}
+            />
+            <TextInput
+              required
+              label={t`Email`}
+              description={t`This will be used for a confirmation`}
+              placeholder="email@example.org"
+              {...registrationForm.getInputProps('email')}
+            />
+            <PasswordInput
+              required
+              label={t`Password`}
+              placeholder={t`Your password`}
+              {...registrationForm.getInputProps('password1')}
+            />
+            <PasswordInput
+              required
+              label={t`Password repeat`}
+              placeholder={t`Repeat password`}
+              {...registrationForm.getInputProps('password2')}
+            />
+          </Stack>
 
-        <Group position="apart" mt="xl">
-          <Button
-            type="submit"
-            disabled={isRegistering}
-            onClick={handleRegistration}
-            fullWidth
-          >
-            <Trans>Register</Trans>
-          </Button>
-        </Group>
-      </form>
+          <Group position="apart" mt="xl">
+            <Button
+              type="submit"
+              disabled={isRegistering}
+              onClick={handleRegistration}
+              fullWidth
+            >
+              <Trans>Register</Trans>
+            </Button>
+          </Group>
+        </form>
+      )}
+      {both_reg_enabled && (
+        <Divider label={t`Or use SSO`} labelPosition="center" my="lg" />
+      )}
       {auth_settings?.sso_registration === true && (
         <Group grow mb="md" mt="md">
           {auth_settings.providers.map((provider) => (
