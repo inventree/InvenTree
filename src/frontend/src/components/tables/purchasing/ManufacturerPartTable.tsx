@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { ReactNode, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
@@ -23,6 +24,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   const table = useTable('manufacturerparts');
 
   const user = useUserState();
+  const navigate = useNavigate();
 
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -127,7 +129,12 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
           manufacturer_detail: true
         },
         rowActions: rowActions,
-        tableActions: tableActions
+        tableActions: tableActions,
+        onRowClick: (record: any) => {
+          if (record?.pk) {
+            navigate(`/purchasing/manufacturer-part/${record.pk}/`);
+          }
+        }
       }}
     />
   );
