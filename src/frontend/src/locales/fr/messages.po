@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-22 15:28\n"
+"PO-Revision-Date: 2024-01-23 16:14\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -28,16 +28,16 @@ msgstr "Titre"
 #: src/functions/forms.tsx:58
 #: src/functions/forms.tsx:266
 msgid "Form Error"
-msgstr ""
+msgstr "Erreur de formulaire"
 
 #: src/components/forms/ApiForm.tsx:301
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "Succès"
 
 #: src/components/forms/ApiForm.tsx:372
 msgid "Form Errors Exist"
-msgstr ""
+msgstr "Erreur le formulaire existe"
 
 #: src/components/forms/ApiForm.tsx:425
 #: src/contexts/ThemeContext.tsx:64
@@ -47,7 +47,7 @@ msgstr "Envoyer"
 
 #: src/components/forms/ApiForm.tsx:461
 msgid "Update"
-msgstr ""
+msgstr "Mise à jour"
 
 #: src/components/forms/ApiForm.tsx:481
 #: src/components/items/ActionDropdown.tsx:173
@@ -60,14 +60,14 @@ msgstr ""
 msgid "Delete"
 msgstr "Supprimer"
 
-#: src/components/forms/AuthenticationForm.tsx:46
+#: src/components/forms/AuthenticationForm.tsx:47
 #: src/functions/auth.tsx:33
 msgid "Login failed"
 msgstr "Login invalide"
 
-#: src/components/forms/AuthenticationForm.tsx:47
-#: src/components/forms/AuthenticationForm.tsx:75
-#: src/components/forms/AuthenticationForm.tsx:192
+#: src/components/forms/AuthenticationForm.tsx:48
+#: src/components/forms/AuthenticationForm.tsx:76
+#: src/components/forms/AuthenticationForm.tsx:195
 #: src/functions/auth.tsx:114
 msgid "Check your input and try again."
 msgstr "Vérifiez votre saisie et réessayez."
@@ -78,66 +78,66 @@ msgstr "Vérifiez votre saisie et réessayez."
 #~ msgid "Check your your input and try again."
 #~ msgstr "Check your your input and try again."
 
-#: src/components/forms/AuthenticationForm.tsx:52
+#: src/components/forms/AuthenticationForm.tsx:53
 msgid "Login successful"
 msgstr "Connexion réussie"
 
 #: src/components/forms/AuthenticationForm.tsx:53
-msgid "Welcome back!"
-msgstr "Bon retour parmi nous !"
-
-#: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
 #~ msgstr "Login successfull"
+
+#: src/components/forms/AuthenticationForm.tsx:54
+msgid "Welcome back!"
+msgstr "Bon retour parmi nous !"
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
 #~ msgid "Mail delivery successfull"
 #~ msgstr "Mail delivery successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:66
+#: src/components/forms/AuthenticationForm.tsx:67
 #: src/functions/auth.tsx:105
 msgid "Mail delivery successful"
 msgstr "Envoi du mail réussi"
 
-#: src/components/forms/AuthenticationForm.tsx:67
+#: src/components/forms/AuthenticationForm.tsx:68
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
 msgstr "Vérifiez votre boîte de réception pour le lien de connexion. Si vous avez un compte, vous recevrez un lien de connexion. Vérifiez également dans le courrier indésirable."
 
-#: src/components/forms/AuthenticationForm.tsx:74
-#: src/components/forms/AuthenticationForm.tsx:191
+#: src/components/forms/AuthenticationForm.tsx:75
+#: src/components/forms/AuthenticationForm.tsx:194
 msgid "Input error"
 msgstr "Erreur d'entrée"
 
-#: src/components/forms/AuthenticationForm.tsx:89
-#: src/components/forms/AuthenticationForm.tsx:205
+#: src/components/forms/AuthenticationForm.tsx:90
+#: src/components/forms/AuthenticationForm.tsx:208
 #: src/components/tables/settings/UserTable.tsx:163
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: src/components/forms/AuthenticationForm.tsx:90
-#: src/components/forms/AuthenticationForm.tsx:206
+#: src/components/forms/AuthenticationForm.tsx:91
+#: src/components/forms/AuthenticationForm.tsx:209
 msgid "Your username"
-msgstr ""
+msgstr "Votre nom d'utilisateur"
 
-#: src/components/forms/AuthenticationForm.tsx:95
-#: src/components/forms/AuthenticationForm.tsx:218
+#: src/components/forms/AuthenticationForm.tsx:96
+#: src/components/forms/AuthenticationForm.tsx:221
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
 msgstr "Mot de passe"
 
-#: src/components/forms/AuthenticationForm.tsx:96
-#: src/components/forms/AuthenticationForm.tsx:219
+#: src/components/forms/AuthenticationForm.tsx:97
+#: src/components/forms/AuthenticationForm.tsx:222
 msgid "Your password"
 msgstr "Mot de passe"
 
-#: src/components/forms/AuthenticationForm.tsx:107
+#: src/components/forms/AuthenticationForm.tsx:109
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
 msgstr "Réinitialiser le mot de passe"
 
-#: src/components/forms/AuthenticationForm.tsx:115
-#: src/components/forms/AuthenticationForm.tsx:211
+#: src/components/forms/AuthenticationForm.tsx:118
+#: src/components/forms/AuthenticationForm.tsx:214
 #: src/components/tables/company/ContactTable.tsx:47
 #: src/components/tables/settings/UserTable.tsx:157
 #: src/pages/Auth/Reset.tsx:31
@@ -145,7 +145,7 @@ msgstr "Réinitialiser le mot de passe"
 msgid "Email"
 msgstr "Email"
 
-#: src/components/forms/AuthenticationForm.tsx:116
+#: src/components/forms/AuthenticationForm.tsx:119
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
@@ -155,58 +155,58 @@ msgstr "Nous vous enverrons un lien pour vous connecter - si vous êtes déjà i
 #~ msgid "Log in"
 #~ msgstr "Log in"
 
-#: src/components/forms/AuthenticationForm.tsx:132
+#: src/components/forms/AuthenticationForm.tsx:135
 msgid "Send me an email"
 msgstr "Envoyez-moi un e-mail"
-
-#: src/components/forms/AuthenticationForm.tsx:134
-msgid "Use username and password"
-msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:136
 #~ msgid "I will use username and password"
 #~ msgstr "I will use username and password"
 
-#: src/components/forms/AuthenticationForm.tsx:143
+#: src/components/forms/AuthenticationForm.tsx:137
+msgid "Use username and password"
+msgstr "Utilisez votre nom d'utilisateur et votre mot de passe"
+
+#: src/components/forms/AuthenticationForm.tsx:146
 msgid "Log In"
 msgstr "Se connecter"
 
-#: src/components/forms/AuthenticationForm.tsx:145
+#: src/components/forms/AuthenticationForm.tsx:148
 msgid "Send Email"
 msgstr "Envoyer l'e-mail"
 
-#: src/components/forms/AuthenticationForm.tsx:172
+#: src/components/forms/AuthenticationForm.tsx:175
 msgid "Registration successful"
-msgstr ""
+msgstr "Inscription réussie"
 
-#: src/components/forms/AuthenticationForm.tsx:173
+#: src/components/forms/AuthenticationForm.tsx:176
 msgid "Please confirm your email address to complete the registration"
-msgstr ""
+msgstr "Veuillez confirmer votre adresse e-mail pour finaliser l'inscription"
 
-#: src/components/forms/AuthenticationForm.tsx:212
+#: src/components/forms/AuthenticationForm.tsx:215
 msgid "This will be used for a confirmation"
-msgstr ""
+msgstr "Ceci sera utilisé pour une confirmation"
 
-#: src/components/forms/AuthenticationForm.tsx:224
+#: src/components/forms/AuthenticationForm.tsx:227
 msgid "Password repeat"
-msgstr ""
+msgstr "Répétition du mot de passe"
 
-#: src/components/forms/AuthenticationForm.tsx:225
+#: src/components/forms/AuthenticationForm.tsx:228
 msgid "Repeat password"
-msgstr ""
+msgstr "Répéter le mot de passe"
 
-#: src/components/forms/AuthenticationForm.tsx:237
-#: src/components/forms/AuthenticationForm.tsx:263
+#: src/components/forms/AuthenticationForm.tsx:240
+#: src/components/forms/AuthenticationForm.tsx:269
 msgid "Register"
-msgstr ""
+msgstr "S'enregistrer"
 
-#: src/components/forms/AuthenticationForm.tsx:255
+#: src/components/forms/AuthenticationForm.tsx:261
 msgid "Don't have an account?"
-msgstr ""
+msgstr "Pas encore de compte ?"
 
-#: src/components/forms/AuthenticationForm.tsx:274
+#: src/components/forms/AuthenticationForm.tsx:280
 msgid "Go back to login"
-msgstr ""
+msgstr "Retourner au login"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
@@ -246,7 +246,7 @@ msgstr "Sélectionnez l'instance de destination"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr ""
+msgstr "Modifier les options d'hôte possibles"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
@@ -300,7 +300,7 @@ msgstr "Miniature"
 #: src/components/items/ActionDropdown.tsx:84
 #: src/pages/build/BuildDetail.tsx:204
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Actions de code-barres"
 
 #: src/components/items/ActionDropdown.tsx:101
 msgid "View"
@@ -368,7 +368,7 @@ msgstr "En savoir plus"
 
 #: src/components/items/InfoItem.tsx:25
 msgid "None"
-msgstr ""
+msgstr "Aucun"
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
@@ -377,7 +377,7 @@ msgstr "Logo InvenTree"
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:44
 msgid "This information is only available for staff users"
-msgstr ""
+msgstr "Ces informations sont uniquement disponibles pour les membres du personnel"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -385,7 +385,7 @@ msgstr "Cette fonctionnalité/bouton/site est un espace réservé pour une fonct
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr ""
+msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
