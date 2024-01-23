@@ -1000,6 +1000,10 @@ SOCIALACCOUNT_PROVIDERS = get_setting(
 
 SOCIALACCOUNT_STORE_TOKENS = True
 
+# Explicitly set empty URL prefix for OIDC
+# Ref: https://docs.allauth.org/en/latest/release-notes/recent.html#backwards-incompatible-changes
+SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
+
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
     'INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int
