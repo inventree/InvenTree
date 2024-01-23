@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-21 12:33+0000\n"
-"PO-Revision-Date: 2024-01-21 15:01\n"
+"POT-Creation-Date: 2024-01-22 12:08+0000\n"
+"PO-Revision-Date: 2024-01-23 16:14\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -43,7 +43,7 @@ msgstr "Vyplněno neplatné množství"
 msgid "Invalid quantity supplied ({exc})"
 msgstr ""
 
-#: InvenTree/exceptions.py:106
+#: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
 msgstr "Podrobnosti o chybě lze nalézt v panelu administrace"
 
@@ -1410,7 +1410,7 @@ msgstr ""
 #: stock/serializers.py:405 templates/js/translated/purchase_order.js:1149
 #: templates/js/translated/stock.js:367 templates/js/translated/stock.js:565
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Sériová čísla"
 
 #: build/serializers.py:283
 msgid "Enter serial numbers for build outputs"
@@ -1418,7 +1418,7 @@ msgstr ""
 
 #: build/serializers.py:296
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Automaticky zvolit sériová čísla"
 
 #: build/serializers.py:297
 msgid "Automatically allocate required items with matching serial numbers"
@@ -1450,7 +1450,7 @@ msgstr ""
 #: templates/js/translated/stock.js:1060 templates/js/translated/stock.js:2171
 #: templates/js/translated/stock.js:2842
 msgid "Location"
-msgstr ""
+msgstr "Lokace"
 
 #: build/serializers.py:422
 msgid "Stock location for scrapped outputs"
@@ -1485,7 +1485,7 @@ msgstr ""
 #: templates/js/translated/stock.js:2146 templates/js/translated/stock.js:2966
 #: templates/js/translated/stock.js:3091
 msgid "Status"
-msgstr ""
+msgstr "Stav"
 
 #: build/serializers.py:506
 msgid "Accept Incomplete Allocation"
@@ -1610,7 +1610,7 @@ msgstr ""
 
 #: build/serializers.py:951
 msgid "Exclude Location"
-msgstr ""
+msgstr "Vynechat lokace"
 
 #: build/serializers.py:952
 msgid "Exclude stock items from this selected location"
@@ -1634,7 +1634,7 @@ msgstr ""
 
 #: build/serializers.py:969
 msgid "Optional Items"
-msgstr ""
+msgstr "Volitelné položky"
 
 #: build/serializers.py:970
 msgid "Allocate optional BOM items to build order"
@@ -1678,7 +1678,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:44
 #: stock/templates/stock/location.html:57 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr ""
+msgstr "Zobrazit QR kód"
 
 #: build/templates/build/build_base.html:45
 #: company/templates/company/supplier_part.html:41
@@ -1691,7 +1691,7 @@ msgstr ""
 #: templates/js/translated/barcode.js:496
 #: templates/js/translated/barcode.js:501
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Odstranit čárový kód"
 
 #: build/templates/build/build_base.html:47
 #: company/templates/company/supplier_part.html:43
@@ -1702,7 +1702,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:49
 #: stock/templates/stock/location.html:61
 msgid "Link Barcode"
-msgstr ""
+msgstr "Přiřadit čárový kód"
 
 #: build/templates/build/build_base.html:56
 #: order/templates/order/order_base.html:46
@@ -1778,7 +1778,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:835
 #: templates/js/translated/sales_order.js:1867
 msgid "Target Date"
-msgstr ""
+msgstr "Cílené datum"
 
 #: build/templates/build/build_base.html:165
 #, python-format
@@ -1828,7 +1828,7 @@ msgstr ""
 #: build/templates/build/build_base.html:211
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2144
 msgid "Priority"
-msgstr ""
+msgstr "Priorita"
 
 #: build/templates/build/build_base.html:273
 msgid "Delete Build Order"
@@ -1885,17 +1885,17 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:186
 #: templates/js/translated/build.js:2187
 msgid "Created"
-msgstr ""
+msgstr "Vytvořeno"
 
 #: build/templates/build/detail.html:144
 msgid "No target date set"
-msgstr ""
+msgstr "Nenastaveno cílené datum"
 
 #: build/templates/build/detail.html:149
 #: order/templates/order/sales_order_base.html:202
 #: templates/js/translated/table_filters.js:685
 msgid "Completed"
-msgstr ""
+msgstr "Dokončeno"
 
 #: build/templates/build/detail.html:153
 msgid "Build not complete"
@@ -2025,7 +2025,7 @@ msgstr ""
 
 #: common/forms.py:12
 msgid "File"
-msgstr ""
+msgstr "Soubor"
 
 #: common/forms.py:12
 msgid "Select file to upload"
