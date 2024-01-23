@@ -36,7 +36,7 @@ export function SooButton({ provider }: { provider: Provider }) {
       leftIcon={getBrandIcon(provider)}
       radius="xl"
       component="a"
-      href={provider.connect}
+      href={provider.login}
     >
       {provider.display_name}{' '}
     </Button>
