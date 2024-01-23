@@ -2,6 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import {
   Anchor,
   Button,
+  Divider,
   Group,
   Loader,
   PasswordInput,
@@ -20,6 +21,7 @@ import { api } from '../../App';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { SooButton } from '../buttons/SooButton';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
@@ -82,76 +84,93 @@ export function AuthenticationForm() {
   }
 
   return (
-    <form onSubmit={classicForm.onSubmit(() => {})}>
-      {classicLoginMode ? (
-        <Stack spacing={0}>
-          <TextInput
-            required
-            label={t`Username`}
-            placeholder={t`Your username`}
-            {...classicForm.getInputProps('username')}
-          />
-          <PasswordInput
-            required
-            label={t`Password`}
-            placeholder={t`Your password`}
-            {...classicForm.getInputProps('password')}
-          />
-          {auth_settings?.password_forgotten_enabled === true && (
-            <Group position="apart" mt="0">
-              <Anchor
-                component="button"
-                type="button"
-                color="dimmed"
-                size="xs"
-                onClick={() => navigate('/reset-password')}
-              >
-                <Trans>Reset password</Trans>
-              </Anchor>
-            </Group>
-          )}
-        </Stack>
-      ) : (
-        <Stack>
-          <TextInput
-            required
-            label={t`Email`}
-            description={t`We will send you a link to login - if you are registered`}
-            placeholder="email@example.org"
-            {...simpleForm.getInputProps('email')}
-          />
-        </Stack>
-      )}
+    <>
+      {auth_settings?.sso_enabled === true ? (
+        <>
+          <Group grow mb="md" mt="md">
+            {auth_settings.providers.map((provider) => (
+              <SooButton provider={provider} />
+            ))}
+          </Group>
 
-      <Group position="apart" mt="xl">
-        <Anchor
-          component="button"
-          type="button"
-          color="dimmed"
-          size="xs"
-          onClick={() => setMode.toggle()}
-        >
-          {classicLoginMode ? (
-            <Trans>Send me an email</Trans>
-          ) : (
-            <Trans>Use username and password</Trans>
-          )}
-        </Anchor>
-        <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
-          {isLoggingIn ? (
-            <Loader size="sm" />
-          ) : (
-            <>
-              {classicLoginMode ? (
-                <Trans>Log In</Trans>
-              ) : (
-                <Trans>Send Email</Trans>
-              )}
-            </>
-          )}
-        </Button>
-      </Group>
-    </form>
+          <Divider
+            label={t`Or continue with other methods`}
+            labelPosition="center"
+            my="lg"
+          />
+        </>
+      ) : null}
+      <form onSubmit={classicForm.onSubmit(() => {})}>
+        {classicLoginMode ? (
+          <Stack spacing={0}>
+            <TextInput
+              required
+              label={t`Username`}
+              placeholder={t`Your username`}
+              {...classicForm.getInputProps('username')}
+            />
+            <PasswordInput
+              required
+              label={t`Password`}
+              placeholder={t`Your password`}
+              {...classicForm.getInputProps('password')}
+            />
+            {auth_settings?.password_forgotten_enabled === true && (
+              <Group position="apart" mt="0">
+                <Anchor
+                  component="button"
+                  type="button"
+                  color="dimmed"
+                  size="xs"
+                  onClick={() => navigate('/reset-password')}
+                >
+                  <Trans>Reset password</Trans>
+                </Anchor>
+              </Group>
+            )}
+          </Stack>
+        ) : (
+          <Stack>
+            <TextInput
+              required
+              label={t`Email`}
+              description={t`We will send you a link to login - if you are registered`}
+              placeholder="email@example.org"
+              {...simpleForm.getInputProps('email')}
+            />
+          </Stack>
+        )}
+
+        <Group position="apart" mt="xl">
+          <Anchor
+            component="button"
+            type="button"
+            color="dimmed"
+            size="xs"
+            onClick={() => setMode.toggle()}
+          >
+            {classicLoginMode ? (
+              <Trans>Send me an email</Trans>
+            ) : (
+              <Trans>Use username and password</Trans>
+            )}
+          </Anchor>
+          <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
+            {isLoggingIn ? (
+              <Loader size="sm" />
+            ) : (
+              <>
+                {classicLoginMode ? (
+                  <Trans>Log In</Trans>
+                ) : (
+                  <Trans>Send Email</Trans>
+                )}
+              </>
+            )}
+          </Button>
+        </Group>
+      </form>
+    </>
   );
 }
 
