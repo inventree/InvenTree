@@ -896,6 +896,11 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         self.save()
 
     @property
+    def name(self):
+        """Return string representation of own name."""
+        return str(self)
+
+    @property
     def manufacturer_string(self):
         """Format a MPN string for this SupplierPart.
 

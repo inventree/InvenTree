@@ -23,9 +23,11 @@ import {
   IconTruckDelivery,
   IconVersions
 } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Suspense, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { api } from '../../App';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -36,11 +38,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import {
-  DetailField,
-  DetailFields,
-  ItemDetails
-} from '../../components/nav/ItemDetails';
+import { ItemDetails } from '../../components/nav/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
@@ -56,6 +54,7 @@ import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPa
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { formatPriceRange } from '../../defaults/formatters';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { editPart } from '../../forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
@@ -92,6 +91,9 @@ export default function PartDetail() {
     };
 
     let right = [];
+
+    let bottom_right = [];
+    let bottom_left = [];
 
     let image = {
       type: 'image',
@@ -192,9 +194,178 @@ export default function PartDetail() {
       });
     }
 
+    if (part.category) {
+      bottom_left.push({
+        type: 'link',
+        name: 'category',
+        label: t`Category`,
+        path: ApiPaths.category_list,
+        dest: '/part/category/'
+      });
+    }
+
+    if (part.IPN) {
+      bottom_left.push({
+        type: 'string',
+        name: 'IPN',
+        label: t`IPN`
+      });
+    }
+
+    if (part.revision) {
+      bottom_left.push({
+        type: 'string',
+        name: 'revision',
+        label: t`Revision`
+      });
+    }
+
+    if (part.units) {
+      bottom_left.push({
+        type: 'string',
+        name: 'units',
+        label: t`Units`
+      });
+    }
+
+    if (part.keywords) {
+      bottom_left.push({
+        type: 'string',
+        name: 'keywords',
+        label: t`Keywords`
+      });
+    }
+
+    bottom_right.push([
+      {
+        type: 'string',
+        name: 'creation_date',
+        label: t`Creation Date`
+      },
+      {
+        type: 'string',
+        name: 'creation_user',
+        owner: true,
+        user: true
+      }
+    ]);
+
+    id &&
+      bottom_right.push({
+        type: 'string',
+        name: 'pricing',
+        label: t`Price Range`,
+        value_formatter: () => {
+          const { data } = useSuspenseQuery({
+            queryKey: ['pricing', id],
+            queryFn: async () => {
+              const url = apiUrl(ApiPaths.part_pricing_get, null, { id: id });
+
+              return api
+                .get(url)
+                .then((response) => {
+                  switch (response.status) {
+                    case 200:
+                      return response.data;
+                    default:
+                      return null;
+                  }
+                })
+                .catch((error) => {
+                  console.error(`Error fetching instance ${url}:`, error);
+                  return null;
+                });
+            }
+          });
+
+          return formatPriceRange(data.overall_min, data.overall_max);
+        }
+      });
+
+    id &&
+      bottom_right.push([
+        {
+          type: 'string',
+          name: 'stocktake',
+          label: t`Last Stocktake`,
+          unit: true,
+          value_formatter: () => {
+            const { data } = useSuspenseQuery({
+              queryKey: ['stocktake', id],
+              queryFn: async () => {
+                const url = apiUrl(ApiPaths.part_stocktake_list);
+
+                return api
+                  .get(url, { params: { part: id, ordering: 'date' } })
+                  .then((response) => {
+                    switch (response.status) {
+                      case 200:
+                        return response.data[response.data.length - 1];
+                      default:
+                        return null;
+                    }
+                  })
+                  .catch((error) => {
+                    console.error(`Error fetching instance ${url}:`, error);
+                    return null;
+                  });
+              }
+            });
+            console.log('stocktake', data);
+            return data.quantity;
+          }
+        },
+        {
+          type: 'string',
+          name: 'creation_user',
+          owner: true,
+          user: true
+        }
+      ]);
+
+    if (part.default_location) {
+      bottom_right.push({
+        type: 'link',
+        name: 'default_location',
+        label: t`Default Location`,
+        path: ApiPaths.stock_location_list,
+        dest: '/stock/location/'
+      });
+    }
+
+    if (part.default_supplier) {
+      bottom_right.push({
+        type: 'link',
+        name: 'default_supplier',
+        label: t`Default Supplier`,
+        path: ApiPaths.supplier_part_list,
+        dest: '/part/'
+      });
+    }
+
+    if (part.link) {
+      bottom_right.push({
+        type: 'link',
+        name: 'link',
+        label: t`Link`,
+        external: true
+      });
+    }
+
+    if (part.responsible) {
+      bottom_right.push({
+        type: 'string',
+        name: 'responsible',
+        label: t`responsible`,
+        owner: true
+      });
+    }
+
     let fields: any = {
       left: left,
-      right: right
+      right: right,
+      bottom_left: bottom_left,
+      bottom_right: bottom_right
     };
     console.log(fields);
     return fields;

@@ -17,11 +17,12 @@ import {
   IconTool,
   IconWorldCode
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { privateEncrypt } from 'crypto';
 import React, { Suspense, useEffect, useState } from 'react';
 
 import { api } from '../../App';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { GetIcon, InvenTreeIcon } from '../../functions/icons';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -123,7 +124,85 @@ function PartIcons({
   );
 }
 
-function TableStringField({
+const testFunc = (path: any, pk: any) => {
+  const [instance, setInstance] = useState({});
+
+  const query = useSuspenseQuery({
+    queryKey: ['instance', path, pk],
+    queryFn: async () => {
+      const url = apiUrl(path, pk);
+
+      return api
+        .get(url)
+        .then((response) => {
+          switch (response.status) {
+            case 200:
+              setInstance(response.data);
+              return response.data;
+            default:
+              setInstance({});
+              return null;
+          }
+        })
+        .catch((error) => {
+          setInstance({});
+          console.error(`Error fetching instance ${url}:`, error);
+          return null;
+        });
+    },
+    refetchOnMount: true
+  });
+
+  return { instance, query };
+};
+
+function OwnerBadge({ pk, type }: { pk: any; type: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ['owner', type, pk],
+    queryFn: async () => {
+      let path: string = '';
+
+      switch (type) {
+        case 'owner':
+          path = ApiPaths.owner_list;
+          break;
+        case 'user':
+          path = ApiPaths.user_list;
+          break;
+        case 'group':
+          path = ApiPaths.group_list;
+          break;
+      }
+
+      const url = apiUrl(path, pk);
+
+      return api
+        .get(url)
+        .then((response) => {
+          switch (response.status) {
+            case 200:
+              return response.data;
+            default:
+              return null;
+          }
+        })
+        .catch((error) => {
+          console.error(`Error fetching instance ${url}:`, error);
+          return null;
+        });
+    }
+  });
+  console.log('ownerdata', data, apiUrl(ApiPaths.owner_list, pk));
+  return (
+    <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
+      <Badge color="dark" variant="filled">
+        {data.name}
+      </Badge>
+    </Suspense>
+  );
+}
+
+function TableStringValue({
   field_data,
   field_value,
   unit = null
@@ -132,57 +211,151 @@ function TableStringField({
   field_value: any;
   unit?: null | string;
 }) {
-  console.log('FF', field_data, field_value);
+  if (field_data.owner) {
+    return <OwnerBadge pk={field_value} type="owner" />;
+  }
+
+  if (field_data.value_formatter) {
+    const data = field_data.value_formatter();
+    if (true) {
+      return (
+        <Suspense fallback={<Skeleton width={250} height={20} />}>
+          <Text>
+            {data} {field_data.unit == true && unit}
+          </Text>
+        </Suspense>
+      );
+    }
+    return <></>;
+  }
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <span>
+        {field_value ? field_value : field_data.unit && '0'}{' '}
+        {field_data.unit == true && unit}
+      </span>
+      {field_data.user && <OwnerBadge pk={field_data.user} type="user" />}
+    </div>
+  );
+}
+
+function TableAnchorValue({
+  field_data,
+  field_value,
+  unit = null
+}: {
+  field_data: any;
+  field_value: any;
+  unit?: null | string;
+}) {
+  if (field_data.external) {
+    return (
+      <Anchor href={field_value} target={'_blank'} rel={'noreferrer noopener'}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+          <Text>{field_value}</Text>
+          <InvenTreeIcon icon="external" iconProps={{ size: 15 }} />
+        </span>
+      </Anchor>
+    );
+  }
+
+  const { data } = useSuspenseQuery({
+    queryKey: [field_data.path],
+    queryFn: async () => {
+      const url = apiUrl(field_data.path, field_value);
+
+      return api
+        .get(url)
+        .then((response) => {
+          switch (response.status) {
+            case 200:
+              return response.data;
+            default:
+              return null;
+          }
+        })
+        .catch((error) => {
+          console.error(`Error fetching instance ${url}:`, error);
+          return null;
+        });
+    }
+  });
+
+  console.log('Data', data);
+  return (
+    <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
+      <Anchor
+        href={'/platform' + data.url ?? field_data.dest + field_value}
+        target={data.external ? '_blank' : undefined}
+        rel={data.external ? 'noreferrer noopener' : undefined}
+      >
+        <Text>{data.name ?? 'No name defined'}</Text>
+      </Anchor>
+    </Suspense>
+  );
+}
+
+function TableField({
+  field_data,
+  field_value,
+  unit = false
+}: {
+  field_data: any;
+  field_value: any;
+  unit: boolean;
+}) {
+  function getFieldType(type: string) {
+    switch (type) {
+      case 'text':
+      case 'string':
+        return TableStringValue;
+      case 'link':
+        return TableAnchorValue;
+    }
+  }
+  let FieldType: any = null;
+  if (!Array.isArray(field_data)) {
+    FieldType = getFieldType(field_data.type);
+  }
 
   return (
     <tr>
       <td style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-        <InvenTreeIcon icon={field_data.name} />
-        <Text>{field_data.label}</Text>
+        <InvenTreeIcon
+          icon={
+            Array.isArray(field_data) ? field_data[0].name : field_data.name
+          }
+        />
+        <Text>
+          {Array.isArray(field_data) ? field_data[0].label : field_data.label}
+        </Text>
       </td>
       <td>
-        {field_value ? field_value : field_data.unit && '0'}{' '}
-        {field_data.unit == true && unit}
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          {Array.isArray(field_data) ? (
+            field_data.map((data: any, index: number) => {
+              FieldType = getFieldType(data.type);
+              return (
+                <FieldType
+                  field_value={field_value[index]}
+                  field_data={data}
+                  unit={unit}
+                  key={index}
+                />
+              );
+            })
+          ) : (
+            <FieldType
+              field_value={field_value}
+              field_data={field_data}
+              unit={unit}
+            />
+          )}
+        </div>
       </td>
     </tr>
   );
-}
-
-function TableLinkField({
-  field_data,
-  field_value,
-  pk
-}: {
-  field_data: any;
-  field_value: any;
-  pk: string;
-}) {
-  const {
-    instance: variant,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
-    endpoint: field_data.path,
-    pk: field_value
-  });
-
-  const link = (
-    <Anchor
-      href={'/platform' + field_data.dest + field_value}
-      target={field_data.external ? '_blank' : undefined}
-      rel={field_data.external ? 'noreferrer noopener' : undefined}
-    >
-      <Suspense fallback={<Skeleton width={60} />}>
-        {!instanceQuery.isFetching ? (
-          <Text>{variant.full_name}</Text>
-        ) : (
-          <Skeleton width={200} height={20} radius="xl" />
-        )}
-      </Suspense>
-    </Anchor>
-  );
-
-  return <TableStringField field_data={field_data} field_value={link} />;
 }
 
 export function DetailsTable({
@@ -214,26 +387,23 @@ export function DetailsTable({
             </tr>
           )}
           {fields.map((data: any, index: number) => {
-            console.log('Mapping', data);
-            if (data.type == 'string' || data.type == 'text') {
-              return (
-                <TableStringField
-                  field_data={data}
-                  field_value={part[data.name]}
-                  key={index}
-                  unit={part.units}
-                />
-              );
-            } else if (data.type == 'link') {
-              return (
-                <TableLinkField
-                  field_data={data}
-                  field_value={part[data.name]}
-                  key={index}
-                  pk={part.pk}
-                />
-              );
+            let value;
+            if (Array.isArray(data)) {
+              value = [];
+              for (const val of data) {
+                value.push(part[val.name]);
+              }
+            } else {
+              value = part[data.name];
             }
+            return (
+              <TableField
+                field_data={data}
+                field_value={value}
+                key={index}
+                unit={part.units}
+              />
+            );
           })}
         </tbody>
       </Table>

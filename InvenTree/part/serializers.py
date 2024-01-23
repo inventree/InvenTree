@@ -538,6 +538,7 @@ class PartSerializer(
             'category_path',
             'component',
             'creation_date',
+            'creation_user',
             'default_expiry',
             'default_location',
             'default_supplier',
@@ -736,6 +737,10 @@ class PartSerializer(
         required=False,
         allow_null=True,
         source='responsible_owner',
+    )
+
+    creation_user = serializers.PrimaryKeyRelatedField(
+        queryset=users.models.User.objects.all(), required=True, allow_null=False
     )
 
     # Annotated fields

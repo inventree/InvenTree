@@ -143,6 +143,10 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'part/attachment/';
     case ApiPaths.part_thumbs_list:
       return 'part/thumbs/';
+    case ApiPaths.part_pricing_get:
+      return 'part/:id/pricing/';
+    case ApiPaths.part_stocktake_list:
+      return 'part/stocktake/';
     case ApiPaths.company_list:
       return 'company/';
     case ApiPaths.contact_list:
