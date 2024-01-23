@@ -17,13 +17,8 @@ import { useUserState } from '../../states/UserState';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();
-  const user = useUserState();
 
-  const {
-    instance: supplierPart,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
+  const { instance: supplierPart, instanceQuery } = useInstance({
     endpoint: ApiPaths.supplier_part_list,
     pk: id,
     hasPrimaryKey: true,

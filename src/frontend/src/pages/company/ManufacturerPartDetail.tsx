@@ -19,13 +19,8 @@ import { useUserState } from '../../states/UserState';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
-  const user = useUserState();
 
-  const {
-    instance: manufacturerPart,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
+  const { instance: manufacturerPart, instanceQuery } = useInstance({
     endpoint: ApiPaths.manufacturer_part_list,
     pk: id,
     hasPrimaryKey: true,
