@@ -1001,6 +1001,7 @@ SOCIALACCOUNT_PROVIDERS = get_setting(
 SOCIALACCOUNT_STORE_TOKENS = True
 
 # Explicitly set empty URL prefix for OIDC
+# The SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX setting was introduced in v0.60.0
 # Ref: https://docs.allauth.org/en/latest/release-notes/recent.html#backwards-incompatible-changes
 SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 
