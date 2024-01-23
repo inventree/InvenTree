@@ -1,10 +1,10 @@
 import { t } from '@lingui/macro';
 import { LoadingOverlay, Stack } from '@mantine/core';
 import {
-  IconCurrencyDollar,
+  IconBuildingWarehouse,
   IconInfoCircle,
-  IconPackages,
-  IconShoppingCart
+  IconList,
+  IconPaperclip
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -15,21 +15,21 @@ import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 
-export default function SupplierPartDetail() {
+export default function ManufacturerPartDetail() {
   const { id } = useParams();
   const user = useUserState();
 
   const {
-    instance: supplierPart,
+    instance: manufacturerPart,
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.supplier_part_list,
+    endpoint: ApiPaths.manufacturer_part_list,
     pk: id,
     hasPrimaryKey: true,
     params: {
       part_detail: true,
-      supplier_detail: true
+      manufacturer_detail: true
     }
   });
 
@@ -41,19 +41,19 @@ export default function SupplierPartDetail() {
         icon: <IconInfoCircle />
       },
       {
-        name: 'stock',
-        label: t`Received Stock`,
-        icon: <IconPackages />
+        name: 'parameters',
+        label: t`Parameters`,
+        icon: <IconList />
       },
       {
-        name: 'purchaseorders',
-        label: t`Purchase Orders`,
-        icon: <IconShoppingCart />
+        name: 'suppliers',
+        label: t`Suppliers`,
+        icon: <IconBuildingWarehouse />
       },
       {
-        name: 'pricing',
-        label: t`Pricing`,
-        icon: <IconCurrencyDollar />
+        name: 'attachments',
+        label: t`Attachments`,
+        icon: <IconPaperclip />
       }
     ];
   }, []);
@@ -65,22 +65,22 @@ export default function SupplierPartDetail() {
         url: '/purchasing/'
       },
       {
-        name: supplierPart?.supplier_detail?.name ?? t`Supplier`,
-        url: `/company/supplier/${supplierPart?.supplier_detail?.pk ?? ''}`
+        name: manufacturerPart?.manufacturer_detail?.name ?? t`Manufacturer`,
+        url: `/company/manufacturer/${manufacturerPart?.manufacturer_detail?.id}/`
       }
     ];
-  }, [supplierPart]);
+  }, [manufacturerPart]);
 
   return (
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isFetching} />
       <PageDetail
-        title={t`Supplier Part`}
-        subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
+        title={t`ManufacturerPart`}
+        subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
         breadcrumbs={breadcrumbs}
-        imageUrl={supplierPart?.part_detail?.thumbnail}
+        imageUrl={manufacturerPart?.part_detail?.thumbnail}
       />
-      <PanelGroup pageKey="supplierpart" panels={panels} />
+      <PanelGroup pageKey="manufacturerpart" panels={panels} />
     </Stack>
   );
 }
