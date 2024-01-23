@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
+import { usePurchaseOrderFields } from '../../../forms/PurchaseOrderForms';
+import { openCreateApiForm } from '../../../functions/forms';
 import { notYetImplemented } from '../../../functions/notifications';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -55,10 +57,6 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
-  // TODO: Row actions
-
-  // TODO: Table actions (e.g. create new purchase order)
-
   const tableColumns = useMemo(() => {
     return [
       {
@@ -99,8 +97,21 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
+  const purchaseOrderFields = usePurchaseOrderFields({});
+
   const addPurchaseOrder = useCallback(() => {
-    notYetImplemented();
+    openCreateApiForm({
+      url: apiUrl(ApiPaths.purchase_order_list),
+      title: t`Add Purchase Order`,
+      fields: purchaseOrderFields,
+      onFormSuccess(data: any) {
+        if (data.pk) {
+          navigate(`/purchasing/purchase-order/${data.pk}`);
+        } else {
+          table.refreshTable();
+        }
+      }
+    });
   }, []);
 
   const tableActions = useMemo(() => {

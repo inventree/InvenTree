@@ -163,7 +163,7 @@ export function ApiFormField({
   }, [value]);
 
   // Construct the individual field
-  function buildField() {
+  const fieldComponent = useMemo(() => {
     switch (definition.field_type) {
       case 'related field':
         return (
@@ -282,7 +282,7 @@ export function ApiFormField({
           </Alert>
         );
     }
-  }
+  }, [definition, fieldName]);
 
   if (definition.hidden) {
     return null;
@@ -291,7 +291,7 @@ export function ApiFormField({
   return (
     <Stack>
       {definition.preFieldContent}
-      {buildField()}
+      {fieldComponent}
       {definition.postFieldContent}
     </Stack>
   );

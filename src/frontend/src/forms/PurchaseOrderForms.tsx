@@ -1,11 +1,15 @@
 import {
+  IconAddressBook,
   IconCalendar,
   IconCoins,
   IconCurrencyDollar,
+  IconHash,
   IconLink,
   IconNotes,
-  IconSitemap
+  IconSitemap,
+  IconUser
 } from '@tabler/icons-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 
@@ -63,6 +67,65 @@ export function purchaseOrderLineItemFields({
       icon: <IconLink />
     }
   };
+
+  return fields;
+}
+
+/*
+ * Field set for a PurchaseOrder instance
+ */
+export function usePurchaseOrderFields({
+  supplierId
+}: {
+  supplierId?: number;
+}) {
+  const [supplier, setSupplier] = useState<number | undefined>(supplierId);
+
+  // Set initial value for Supplier ID
+  useEffect(() => {
+    setSupplier(supplierId);
+  }, [supplierId]);
+
+  const fields = useMemo(() => {
+    const fieldsset: ApiFormFieldSet = {
+      reference: {
+        icon: <IconHash />
+      },
+      description: {},
+      supplier: {
+        value: supplier,
+        onValueChange: setSupplier,
+        filters: {
+          is_supplier: true
+        }
+      },
+      supplier_reference: {},
+      project_code: {},
+      order_currency: {},
+      target_date: {
+        icon: <IconCalendar />
+      },
+      link: {
+        icon: <IconLink />
+      },
+      contact: {
+        adjustFilters: (filters: any) => {
+          if (supplier !== undefined) {
+            filters.company = supplier;
+          }
+
+          return filters;
+        },
+        icon: <IconUser />
+      },
+      address: {
+        icon: <IconAddressBook />
+      },
+      responsible: {}
+    };
+
+    return fieldsset;
+  }, [supplier]);
 
   return fields;
 }
