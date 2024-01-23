@@ -179,6 +179,7 @@ export function RegistrationForm() {
     initialValues: { username: '', email: '', password1: '', password2: '' }
   });
   const navigate = useNavigate();
+  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
   function handleRegistration() {
@@ -220,46 +221,55 @@ export function RegistrationForm() {
   }
 
   return (
-    <form onSubmit={registrationForm.onSubmit(() => {})}>
-      <Stack spacing={0}>
-        <TextInput
-          required
-          label={t`Username`}
-          placeholder={t`Your username`}
-          {...registrationForm.getInputProps('username')}
-        />
-        <TextInput
-          required
-          label={t`Email`}
-          description={t`This will be used for a confirmation`}
-          placeholder="email@example.org"
-          {...registrationForm.getInputProps('email')}
-        />
-        <PasswordInput
-          required
-          label={t`Password`}
-          placeholder={t`Your password`}
-          {...registrationForm.getInputProps('password1')}
-        />
-        <PasswordInput
-          required
-          label={t`Password repeat`}
-          placeholder={t`Repeat password`}
-          {...registrationForm.getInputProps('password2')}
-        />
-      </Stack>
+    <>
+      <form onSubmit={registrationForm.onSubmit(() => {})}>
+        <Stack spacing={0}>
+          <TextInput
+            required
+            label={t`Username`}
+            placeholder={t`Your username`}
+            {...registrationForm.getInputProps('username')}
+          />
+          <TextInput
+            required
+            label={t`Email`}
+            description={t`This will be used for a confirmation`}
+            placeholder="email@example.org"
+            {...registrationForm.getInputProps('email')}
+          />
+          <PasswordInput
+            required
+            label={t`Password`}
+            placeholder={t`Your password`}
+            {...registrationForm.getInputProps('password1')}
+          />
+          <PasswordInput
+            required
+            label={t`Password repeat`}
+            placeholder={t`Repeat password`}
+            {...registrationForm.getInputProps('password2')}
+          />
+        </Stack>
 
-      <Group position="apart" mt="xl">
-        <Button
-          type="submit"
-          disabled={isRegistering}
-          onClick={handleRegistration}
-          fullWidth
-        >
-          <Trans>Register</Trans>
-        </Button>
-      </Group>
-    </form>
+        <Group position="apart" mt="xl">
+          <Button
+            type="submit"
+            disabled={isRegistering}
+            onClick={handleRegistration}
+            fullWidth
+          >
+            <Trans>Register</Trans>
+          </Button>
+        </Group>
+      </form>
+      {auth_settings?.sso_registration === true && (
+        <Group grow mb="md" mt="md">
+          {auth_settings.providers.map((provider) => (
+            <SooButton provider={provider} />
+          ))}
+        </Group>
+      )}
+    </>
   );
 }
 
