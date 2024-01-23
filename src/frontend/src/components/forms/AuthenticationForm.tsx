@@ -271,8 +271,12 @@ export function ModeSelector({
   setMode: any;
 }) {
   const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+  const registration_enabled =
+    auth_settings?.registration_enabled ||
+    auth_settings?.sso_registration ||
+    false;
 
-  if (auth_settings?.registration_enabled === false) return null;
+  if (registration_enabled === false) return null;
   return (
     <Text ta="center" size={'xs'} mt={'md'}>
       {loginMode ? (
