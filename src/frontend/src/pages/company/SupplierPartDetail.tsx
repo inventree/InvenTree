@@ -13,7 +13,6 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { useUserState } from '../../states/UserState';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();

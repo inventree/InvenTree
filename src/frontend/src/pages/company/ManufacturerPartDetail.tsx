@@ -15,7 +15,6 @@ import { AttachmentTable } from '../../components/tables/general/AttachmentTable
 import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { useUserState } from '../../states/UserState';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
