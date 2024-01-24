@@ -116,7 +116,7 @@ export function UsedInTable({
           part_detail: true,
           sub_part_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         onRowClick: (row) => navigate(`/part/${row.part}`)
       }}
     />

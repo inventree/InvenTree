@@ -130,15 +130,17 @@ ALLOWED_HOSTS = get_setting(
 
 # Cross Origin Resource Sharing (CORS) options
 
+# Extract CORS options from configuration file
+CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
+    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
+)
+
+CORS_ALLOW_CREDENTIALS = True
+
 # Only allow CORS access to API and media endpoints
 CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
 
-# Extract CORS options from configuration file
-CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
-    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=False
-)
-
-CORS_ORIGIN_WHITELIST = get_setting(
+CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
     config_key='cors.whitelist',
     default_value=[],
@@ -162,7 +164,9 @@ STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
 
 # Append directory for compiled react files if debug server is running
 if DEBUG and 'collectstatic' not in sys.argv:
-    STATICFILES_DIRS.append(BASE_DIR.joinpath('web', 'static'))
+    web_dir = BASE_DIR.joinpath('..', 'web', 'static').absolute()
+    if web_dir.exists():
+        STATICFILES_DIRS.append(web_dir)
 
 STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
 
@@ -260,9 +264,9 @@ MIDDLEWARE = CONFIG.get(
         'x_forwarded_for.middleware.XForwardedForMiddleware',
         'user_sessions.middleware.SessionMiddleware',  # db user sessions
         'django.middleware.locale.LocaleMiddleware',
-        'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
+        'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
         'django_otp.middleware.OTPMiddleware',  # MFA support
@@ -709,6 +713,14 @@ REMOTE_LOGIN_HEADER = get_setting(
     'INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER'
 )
 
+# region Tracing / error tracking
+inventree_tags = {
+    'testing': TESTING,
+    'docker': DOCKER,
+    'debug': DEBUG,
+    'remote': REMOTE_LOGIN,
+}
+
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting(
     'INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False
@@ -721,14 +733,50 @@ SENTRY_SAMPLE_RATE = float(
 )
 
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
-    inventree_tags = {
-        'testing': TESTING,
-        'docker': DOCKER,
-        'debug': DEBUG,
-        'remote': REMOTE_LOGIN,
-    }
-
     init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
+
+# OpenTelemetry tracing
+TRACING_ENABLED = get_boolean_setting(
+    'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
+)
+
+if TRACING_ENABLED:  # pragma: no cover
+    from InvenTree.tracing import setup_instruments, setup_tracing
+
+    _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
+    _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
+
+    if _t_headers is None:
+        _t_headers = {}
+
+    if _t_endpoint:
+        logger.info('OpenTelemetry tracing enabled')
+
+        _t_resources = get_setting(
+            'INVENTREE_TRACING_RESOURCES', 'tracing.resources', {}, dict
+        )
+        cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
+        tracing_resources = {**cstm_tags, **_t_resources}
+
+        setup_tracing(
+            _t_endpoint,
+            _t_headers,
+            resources_input=tracing_resources,
+            console=get_boolean_setting(
+                'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
+            ),
+            auth=get_setting('INVENTREE_TRACING_AUTH', 'tracing.auth', {}),
+            is_http=get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True),
+            append_http=get_boolean_setting(
+                'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
+            ),
+        )
+        # Run tracing/logging instrumentation
+        setup_instruments()
+    else:
+        logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')
+
+# endregion
 
 # Cache configuration
 cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
@@ -951,6 +999,11 @@ SOCIALACCOUNT_PROVIDERS = get_setting(
 )
 
 SOCIALACCOUNT_STORE_TOKENS = True
+
+# Explicitly set empty URL prefix for OIDC
+# The SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX setting was introduced in v0.60.0
+# Ref: https://github.com/pennersr/django-allauth/blob/0.60.0/ChangeLog.rst#backwards-incompatible-changes
+SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(

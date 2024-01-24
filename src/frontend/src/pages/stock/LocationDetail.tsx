@@ -53,13 +53,7 @@ export default function Stock() {
         name: 'sublocations',
         label: t`Stock Locations`,
         icon: <IconSitemap />,
-        content: (
-          <StockLocationTable
-            params={{
-              parent: id
-            }}
-          />
-        )
+        content: <StockLocationTable parentId={id} />
       }
     ];
   }, [location, id]);

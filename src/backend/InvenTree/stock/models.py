@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
@@ -48,6 +49,8 @@ from InvenTree.status_codes import (
 from part import models as PartModels
 from plugin.events import trigger_event
 from users.models import Owner
+
+logger = logging.getLogger('inventree')
 
 
 class StockLocationType(MetadataMixin, models.Model):
@@ -1706,8 +1709,11 @@ class StockItem(
         # Nullify the PK so a new record is created
         new_stock = StockItem.objects.get(pk=self.pk)
         new_stock.pk = None
-        new_stock.parent = self
         new_stock.quantity = quantity
+
+        # Update the new stock item to ensure the tree structure is observed
+        new_stock.parent = self
+        new_stock.level = self.level + 1
 
         # Move to the new location if specified, otherwise use current location
         if location:
@@ -1747,6 +1753,19 @@ class StockItem(
             location=location,
             stockitem=new_stock,
         )
+
+        # Rebuild the tree for this parent item
+        try:
+            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
+        except Exception:
+            logger.warning('Rebuilding entire StockItem tree')
+            StockItem.objects.rebuild()
+
+        # Attempt to reload the new item from the database
+        try:
+            new_stock.refresh_from_db()
+        except Exception:
+            pass
 
         # Return a copy of the "new" stock item
         return new_stock

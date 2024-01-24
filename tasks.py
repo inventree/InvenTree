@@ -978,6 +978,7 @@ def frontend_dev(c):
         c: Context variable
     """
     print('Starting frontend development server')
+    yarn(c, 'yarn run compile')
     yarn(c, 'yarn run dev')
 
 

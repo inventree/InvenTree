@@ -185,7 +185,7 @@ export function AddressTable({
       columns={columns}
       props={{
         rowActions: rowActions,
-        customActionGroups: tableActions,
+        tableActions: tableActions,
         params: {
           ...params,
           company: companyId

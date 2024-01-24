@@ -19,6 +19,8 @@ export enum ApiPaths {
   user_email_verify = 'api-user-email-verify',
   user_email_primary = 'api-user-email-primary',
   user_email_remove = 'api-user-email-remove',
+  user_logout = 'api-user-logout',
+  user_register = 'api-user-register',
 
   user_list = 'api-user-list',
   group_list = 'api-group-list',
@@ -57,12 +59,14 @@ export enum ApiPaths {
   part_attachment_list = 'api-part-attachment-list',
   part_parameter_list = 'api-part-parameter-list',
   part_parameter_template_list = 'api-part-parameter-template-list',
+  part_test_template_list = 'api-part-test-template-list',
 
   // Company URLs
   company_list = 'api-company-list',
   company_attachment_list = 'api-company-attachment-list',
   supplier_part_list = 'api-supplier-part-list',
   manufacturer_part_list = 'api-manufacturer-part-list',
+  manufacturer_part_attachment_list = 'api-manufacturer-part-attachment-list',
   address_list = 'api-address-list',
   contact_list = 'api-contact-list',
 

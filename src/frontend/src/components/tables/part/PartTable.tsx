@@ -45,7 +45,7 @@ function partTableColumns(): TableColumn[] {
       sortable: true,
       title: t`Units`
     },
-    DescriptionColumn(),
+    DescriptionColumn({}),
     {
       accessor: 'category',
       title: t`Category`,
@@ -275,7 +275,7 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
       props={{
         ...props,
         enableDownload: true,
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         params: {
           ...props.params,
           category_detail: true
