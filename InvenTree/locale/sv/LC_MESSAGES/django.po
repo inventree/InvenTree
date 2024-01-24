@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-01-24 12:35+0000\n"
-"PO-Revision-Date: 2024-01-21 15:02\n"
+"PO-Revision-Date: 2024-01-24 16:14\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -296,7 +296,7 @@ msgstr "Slovenska"
 
 #: InvenTree/locales.py:40
 msgid "Serbian"
-msgstr ""
+msgstr "Serbiska"
 
 #: InvenTree/locales.py:41
 msgid "Swedish"
@@ -598,9 +598,7 @@ msgstr "Välkommen till {current_site.name}"
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -2180,7 +2178,7 @@ msgstr ""
 #: common/models.py:1530 common/models.py:1552 common/models.py:1661
 #: common/models.py:1918
 msgid "days"
-msgstr ""
+msgstr "dagar"
 
 #: common/models.py:1237
 msgid "Currency Update Plugin"
@@ -2378,7 +2376,7 @@ msgstr ""
 #: report/models.py:178 templates/js/translated/table_filters.js:139
 #: templates/js/translated/table_filters.js:763
 msgid "Template"
-msgstr ""
+msgstr "Mall"
 
 #: common/models.py:1398
 msgid "Parts are templates by default"
@@ -3729,7 +3727,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:54
 #: templates/js/translated/company.js:522
 msgid "Website"
-msgstr ""
+msgstr "Webbplats"
 
 #: company/models.py:121
 msgid "Company website URL"
@@ -3799,7 +3797,7 @@ msgstr "Företag"
 
 #: company/models.py:378
 msgid "Select company"
-msgstr ""
+msgstr "Välj företag"
 
 #: company/models.py:383
 msgid "Address title"
@@ -4101,16 +4099,16 @@ msgstr ""
 #: company/templates/company/company_base.html:33
 #: templates/js/translated/company.js:444
 msgid "Edit Company"
-msgstr ""
+msgstr "Redigera företag"
 
 #: company/templates/company/company_base.html:37
 msgid "Delete company"
-msgstr ""
+msgstr "Radera företag"
 
 #: company/templates/company/company_base.html:38
 #: company/templates/company/company_base.html:162
 msgid "Delete Company"
-msgstr ""
+msgstr "Radera företag"
 
 #: company/templates/company/company_base.html:47
 #: company/templates/company/manufacturer_part.html:51
@@ -4137,7 +4135,7 @@ msgstr ""
 #: company/templates/company/company_base.html:60
 #: part/templates/part/part_thumb.html:16
 msgid "Delete image"
-msgstr ""
+msgstr "Radera bild"
 
 #: company/templates/company/company_base.html:86 order/models.py:888
 #: order/models.py:1966 order/templates/order/return_order_base.html:131
@@ -5086,7 +5084,7 @@ msgstr ""
 
 #: order/serializers.py:545 templates/js/translated/barcode.js:52
 msgid "Barcode"
-msgstr ""
+msgstr "Streckkod"
 
 #: order/serializers.py:546
 msgid "Scanned barcode"
@@ -5369,7 +5367,7 @@ msgstr ""
 #: part/templates/part/import_wizard/ajax_match_references.html:21
 #: part/templates/part/import_wizard/match_references.html:28
 msgid "Row"
-msgstr ""
+msgstr "Rad"
 
 #: order/templates/order/order_wizard/match_parts.html:29
 msgid "Select Supplier Part"
@@ -7047,7 +7045,7 @@ msgstr ""
 #: templates/js/translated/bom.js:310 templates/js/translated/bom.js:344
 #: templates/js/translated/order.js:130
 msgid "Select file format"
-msgstr ""
+msgstr "Välj filformat"
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
@@ -9649,12 +9647,12 @@ msgstr ""
 #: templates/InvenTree/settings/settings_staff_js.html:175
 #: templates/InvenTree/settings/settings_staff_js.html:189
 msgid "Edit Project Code"
-msgstr ""
+msgstr "Redigera projektkod"
 
 #: templates/InvenTree/settings/settings_staff_js.html:176
 #: templates/InvenTree/settings/settings_staff_js.html:203
 msgid "Delete Project Code"
-msgstr ""
+msgstr "Radera projektkod"
 
 #: templates/InvenTree/settings/settings_staff_js.html:285
 msgid "No category parameter templates found"
@@ -9663,12 +9661,12 @@ msgstr ""
 #: templates/InvenTree/settings/settings_staff_js.html:308
 #: templates/js/translated/part.js:1645
 msgid "Edit Template"
-msgstr ""
+msgstr "Redigera mall"
 
 #: templates/InvenTree/settings/settings_staff_js.html:309
 #: templates/js/translated/part.js:1646
 msgid "Delete Template"
-msgstr ""
+msgstr "Radera mall"
 
 #: templates/InvenTree/settings/settings_staff_js.html:326
 msgid "Edit Category Parameter Template"
@@ -9715,7 +9713,7 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "Användarinställningar"
 
 #: templates/InvenTree/settings/sidebar.html:9
 msgid "Account"
@@ -9734,7 +9732,7 @@ msgstr ""
 #: templates/navbar.html:107 templates/search.html:8
 #: templates/search_form.html:6 templates/search_form.html:7
 msgid "Search"
-msgstr ""
+msgstr "Sök"
 
 #: templates/InvenTree/settings/sidebar.html:19
 #: templates/InvenTree/settings/sidebar.html:43
@@ -9771,7 +9769,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:13
 msgid "Account Settings"
-msgstr ""
+msgstr "Kontoinställningar"
 
 #: templates/InvenTree/settings/user.html:19
 #: templates/account/password_reset_from_key.html:4
@@ -9932,7 +9930,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:67
 msgid "Select language"
-msgstr ""
+msgstr "Välj språk"
 
 #: templates/InvenTree/settings/user_display.html:83
 #, python-format
@@ -10104,7 +10102,7 @@ msgstr "Registrera dig"
 
 #: templates/account/login.html:45
 msgid "Forgot Password?"
-msgstr ""
+msgstr "Glömt lösenord?"
 
 #: templates/account/login.html:53
 msgid "or log in with"
@@ -10403,11 +10401,11 @@ msgstr ""
 
 #: templates/js/translated/attachment.js:129
 msgid "Delete Attachments"
-msgstr ""
+msgstr "Radera bilagor"
 
 #: templates/js/translated/attachment.js:205
 msgid "Delete attachments"
-msgstr ""
+msgstr "Radera bilagor"
 
 #: templates/js/translated/attachment.js:253
 msgid "Attachment actions"
@@ -10419,7 +10417,7 @@ msgstr ""
 
 #: templates/js/translated/attachment.js:315
 msgid "Edit Attachment"
-msgstr ""
+msgstr "Redigera bilaga"
 
 #: templates/js/translated/attachment.js:346
 msgid "Upload Date"
@@ -10427,11 +10425,11 @@ msgstr ""
 
 #: templates/js/translated/attachment.js:366
 msgid "Edit attachment"
-msgstr ""
+msgstr "Redigera bilaga"
 
 #: templates/js/translated/attachment.js:374
 msgid "Delete attachment"
-msgstr ""
+msgstr "Radera bilaga"
 
 #: templates/js/translated/barcode.js:43
 msgid "Scan barcode data here using barcode scanner"
@@ -11199,7 +11197,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:726
 msgid "Email Address"
-msgstr ""
+msgstr "E-postadress"
 
 #: templates/js/translated/company.js:752
 msgid "Delete Contact"
@@ -11220,7 +11218,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:913
 msgid "Delete Addresses"
-msgstr ""
+msgstr "Radera adresser"
 
 #: templates/js/translated/company.js:940
 msgid "No addresses found"
@@ -11244,7 +11242,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:1029
 msgid "Delete Address"
-msgstr ""
+msgstr "Radera adress"
 
 #: templates/js/translated/company.js:1102
 msgid "All selected manufacturer parts will be deleted"
@@ -12796,7 +12794,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1042 users/models.py:389
 msgid "Add"
-msgstr ""
+msgstr "Lägg till"
 
 #: templates/js/translated/stock.js:1046
 msgid "Delete Stock"
@@ -13523,8 +13521,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13699,3 +13696,4 @@ msgstr ""
 #: users/models.py:401
 msgid "Permission to delete items"
 msgstr ""
+
