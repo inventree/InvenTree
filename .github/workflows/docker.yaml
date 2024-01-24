@@ -111,12 +111,6 @@ jobs:
       - name: Set up cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19 # pin@v3.1.2
-      - name: Login to Dockerhub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # pin@v3.0.0
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Log into registry ghcr.io
         if: github.event_name != 'pull_request'
@@ -132,8 +126,7 @@ jobs:
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # pin@v5.0.0
         with:
           images: |
-            inventree/inventree
-            ghcr.io/inventree/inventree
+            ghcr.io/matmair/inventree
 
       - name: Build and Push
         id: build-and-push
@@ -152,7 +145,7 @@ jobs:
             commit_date=${{ env.git_commit_date }}
 
       - name: Sign the published image
-        if: ${{ false }} # github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}
