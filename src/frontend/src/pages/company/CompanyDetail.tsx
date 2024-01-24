@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -133,7 +133,12 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         name: 'assigned-stock',
         label: t`Assigned Stock`,
         icon: <IconPackageExport />,
-        hidden: !company?.is_customer
+        hidden: !company?.is_customer,
+        content: company?.pk ? (
+          <StockItemTable params={{ customer: company.pk }} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'contacts',
