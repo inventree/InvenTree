@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-22 15:28\n"
+"PO-Revision-Date: 2024-01-24 16:14\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3542,13 +3542,13 @@ msgstr "Lỗi gọi chữ ký số từ máy chủ."
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:58
-#~ msgid "See you soon."
-#~ msgstr "See you soon."
-
 #: src/functions/auth.tsx:60
 msgid "Logout successful"
 msgstr "Đăng xuất thành công"
+
+#: src/functions/auth.tsx:60
+#~ msgid "See you soon."
+#~ msgstr "See you soon."
 
 #: src/functions/auth.tsx:61
 msgid "You have been logged out"
@@ -4593,3 +4593,4 @@ msgstr "Giao diện nền tảng được tối ưu cho máy tính bảng và m�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Đọc tài liệu"
+
