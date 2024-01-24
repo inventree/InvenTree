@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-22 15:28\n"
+"PO-Revision-Date: 2024-01-24 16:14\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3542,13 +3542,13 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:58
-#~ msgid "See you soon."
-#~ msgstr "See you soon."
-
 #: src/functions/auth.tsx:60
 msgid "Logout successful"
 msgstr ""
+
+#: src/functions/auth.tsx:60
+#~ msgid "See you soon."
+#~ msgstr "See you soon."
 
 #: src/functions/auth.tsx:61
 msgid "You have been logged out"
@@ -4593,3 +4593,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
