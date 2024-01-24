@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-23 16:14\n"
+"PO-Revision-Date: 2024-01-24 16:14\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -435,16 +435,16 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:136
 msgid "Commit Date"
-msgstr ""
+msgstr "Date de commit"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:141
 msgid "Commit Branch"
-msgstr ""
+msgstr "Banche de commit"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:146
 #: src/components/modals/ServerInfoModal.tsx:133
 msgid "API Version"
-msgstr ""
+msgstr "Version de l'API"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Python Version"
@@ -452,40 +452,40 @@ msgstr "Version Python "
 
 #: src/components/modals/AboutInvenTreeModal.tsx:152
 msgid "Django Version"
-msgstr ""
+msgstr "Version de Django"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:162
 msgid "Links"
-msgstr ""
+msgstr "Liens"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "Documention d'Inventree"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "Documentation  d'Inventree"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:170
 msgid "Credits"
-msgstr ""
+msgstr "Crédits"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Mobile App"
-msgstr ""
+msgstr "Application Mobile"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:172
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "Soumettre un rapport de Bug"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:183
 msgid "Copy version information"
-msgstr ""
+msgstr "Copier les informations de version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
-msgstr ""
+msgstr "Abandonner"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
@@ -547,11 +547,11 @@ msgstr "Serveur"
 
 #: src/components/modals/ServerInfoModal.tsx:32
 msgid "Instance Name"
-msgstr ""
+msgstr "Nom de l'instance"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 msgid "Database"
-msgstr ""
+msgstr "Base de données"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 #~ msgid "Bebug Mode"
@@ -559,59 +559,59 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:47
 msgid "Debug Mode"
-msgstr ""
+msgstr "Mode Debug"
 
 #: src/components/modals/ServerInfoModal.tsx:50
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Le serveur s'execute en mode debug"
 
 #: src/components/modals/ServerInfoModal.tsx:57
 msgid "Docker Mode"
-msgstr ""
+msgstr "Mode Docker"
 
 #: src/components/modals/ServerInfoModal.tsx:60
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Le serveur est déployé avec docker"
 
 #: src/components/modals/ServerInfoModal.tsx:66
 msgid "Plugin Support"
-msgstr ""
+msgstr "Support du Plugin"
 
 #: src/components/modals/ServerInfoModal.tsx:71
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Prise en charge des plugins activée"
 
 #: src/components/modals/ServerInfoModal.tsx:73
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Prise en charge des plugins désactivée"
 
 #: src/components/modals/ServerInfoModal.tsx:80
 msgid "Server status"
-msgstr ""
+msgstr "Status du serveur"
 
 #: src/components/modals/ServerInfoModal.tsx:86
 msgid "Healthy"
-msgstr ""
+msgstr "En bonne santé"
 
 #: src/components/modals/ServerInfoModal.tsx:88
 msgid "Issues detected"
-msgstr ""
+msgstr "Problème détecté"
 
 #: src/components/modals/ServerInfoModal.tsx:97
 msgid "Background Worker"
-msgstr ""
+msgstr "Travail en arrière-plan"
 
 #: src/components/modals/ServerInfoModal.tsx:101
 msgid "Background worker not running"
-msgstr ""
+msgstr "Travail en arrière-plan à l'arrêt"
 
 #: src/components/modals/ServerInfoModal.tsx:109
 msgid "Email Settings"
-msgstr ""
+msgstr "Configuration email"
 
 #: src/components/modals/ServerInfoModal.tsx:113
 msgid "Email settings not configured"
-msgstr ""
+msgstr "Configuration mail non effectuée"
 
 #: src/components/modals/ServerInfoModal.tsx:121
 #: src/components/tables/plugin/PluginListTable.tsx:175
@@ -1054,32 +1054,32 @@ msgstr ""
 #: src/components/tables/sales/SalesOrderTable.tsx:43
 #: src/components/tables/stock/StockItemTable.tsx:238
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: src/components/tables/ColumnRenderers.tsx:105
 msgid "Responsible"
-msgstr ""
+msgstr "Responsable"
 
 #: src/components/tables/ColumnRenderers.tsx:115
 msgid "Target Date"
-msgstr ""
+msgstr "Date cible"
 
 #: src/components/tables/ColumnRenderers.tsx:125
 msgid "Creation Date"
-msgstr ""
+msgstr "Date de création"
 
 #: src/components/tables/ColumnRenderers.tsx:134
 msgid "Shipment Date"
-msgstr ""
+msgstr "Date d'envoi"
 
 #: src/components/tables/ColumnRenderers.tsx:155
 #: src/components/tables/settings/CurrencyTable.tsx:23
 msgid "Currency"
-msgstr ""
+msgstr "Devise"
 
 #: src/components/tables/ColumnRenderers.tsx:169
 msgid "Total Price"
-msgstr ""
+msgstr "Prix total"
 
 #: src/components/tables/ColumnSelect.tsx:17
 #: src/components/tables/ColumnSelect.tsx:24
@@ -1092,7 +1092,7 @@ msgstr "CSV"
 
 #: src/components/tables/DownloadAction.tsx:13
 msgid "TSV"
-msgstr ""
+msgstr "TSV"
 
 #: src/components/tables/DownloadAction.tsx:14
 msgid "Excel"
@@ -1105,29 +1105,29 @@ msgstr "Télécharger la sélection"
 #: src/components/tables/Filter.tsx:88
 #: src/components/tables/build/BuildOrderTable.tsx:128
 msgid "Assigned to me"
-msgstr ""
+msgstr "Assigné à moi"
 
 #: src/components/tables/Filter.tsx:89
 #: src/components/tables/build/BuildOrderTable.tsx:129
 msgid "Show orders assigned to me"
-msgstr ""
+msgstr "Monter mes commandes"
 
 #: src/components/tables/Filter.tsx:96
 msgid "Outstanding"
-msgstr ""
+msgstr "Remarquable"
 
 #: src/components/tables/Filter.tsx:97
 msgid "Show outstanding orders"
-msgstr ""
+msgstr "Afficher les commandes en cours"
 
 #: src/components/tables/Filter.tsx:104
 #: src/components/tables/build/BuildOrderTable.tsx:122
 msgid "Overdue"
-msgstr ""
+msgstr "En retard"
 
 #: src/components/tables/Filter.tsx:105
 msgid "Show overdue orders"
-msgstr ""
+msgstr "Afficher les commandes en retard"
 
 #: src/components/tables/FilterGroup.tsx:29
 #~ msgid "Add table filter"
@@ -1147,7 +1147,7 @@ msgstr "Supprimer le filtre"
 
 #: src/components/tables/FilterSelectDrawer.tsx:145
 msgid "Select filter"
-msgstr ""
+msgstr "Sélection du filtre"
 
 #: src/components/tables/FilterSelectDrawer.tsx:146
 msgid "Filter"
@@ -1156,15 +1156,15 @@ msgstr "Filtrer"
 #: src/components/tables/FilterSelectDrawer.tsx:153
 #: src/components/tables/part/PartParameterTable.tsx:59
 msgid "Value"
-msgstr ""
+msgstr "Valeur"
 
 #: src/components/tables/FilterSelectDrawer.tsx:154
 msgid "Select filter value"
-msgstr ""
+msgstr "Sélection de la valeur du filtre"
 
 #: src/components/tables/FilterSelectDrawer.tsx:188
 msgid "Table Filters"
-msgstr ""
+msgstr "Filtres des tables"
 
 #: src/components/tables/FilterSelectDrawer.tsx:209
 #: src/components/tables/InvenTreeTable.tsx:384
@@ -1177,11 +1177,11 @@ msgstr "Annuler"
 
 #: src/components/tables/FilterSelectDrawer.tsx:219
 msgid "Add Filter"
-msgstr ""
+msgstr "Ajouter un filtre"
 
 #: src/components/tables/FilterSelectDrawer.tsx:228
 msgid "Clear Filters"
-msgstr ""
+msgstr "Effacer filtres"
 
 #: src/components/tables/FilterSelectModal.tsx:56
 #~ msgid "True"
@@ -1203,11 +1203,11 @@ msgstr ""
 #: src/components/tables/InvenTreeTable.tsx:279
 #: src/components/tables/InvenTreeTable.tsx:300
 msgid "No records found"
-msgstr ""
+msgstr "Pas d'enregistrement trouvé"
 
 #: src/components/tables/InvenTreeTable.tsx:314
 msgid "Server returned incorrect data type"
-msgstr ""
+msgstr "Le serveur à retourner un type de donnée incorrect"
 
 #: src/components/tables/InvenTreeTable.tsx:322
 msgid "Bad request"
@@ -1228,27 +1228,27 @@ msgstr "Elément non trouvé"
 #: src/components/tables/InvenTreeTable.tsx:373
 #: src/components/tables/InvenTreeTable.tsx:465
 msgid "Delete selected records"
-msgstr ""
+msgstr "Supprimer les enregistrements sélectionnés"
 
 #: src/components/tables/InvenTreeTable.tsx:377
 msgid "Are you sure you want to delete the selected records?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir supprimer les enregistrements sélectionnés ?"
 
 #: src/components/tables/InvenTreeTable.tsx:379
 msgid "This action cannot be undone!"
-msgstr ""
+msgstr "Cette action ne peut pas être annulée !"
 
 #: src/components/tables/InvenTreeTable.tsx:407
 msgid "Deleted records"
-msgstr ""
+msgstr "Enregistrement supprimé"
 
 #: src/components/tables/InvenTreeTable.tsx:408
 msgid "Records were deleted successfully"
-msgstr ""
+msgstr "Les enregistrements ont été supprimés avec succès"
 
 #: src/components/tables/InvenTreeTable.tsx:417
 msgid "Failed to delete records"
-msgstr ""
+msgstr "Échec de la suppression des enregistrements"
 
 #: src/components/tables/InvenTreeTable.tsx:446
 #: src/components/tables/InvenTreeTable.tsx:447
@@ -1258,27 +1258,27 @@ msgstr "Actions de code-barres"
 #: src/components/tables/InvenTreeTable.tsx:455
 #: src/components/tables/InvenTreeTable.tsx:456
 msgid "Print actions"
-msgstr ""
+msgstr "Actions d'impression"
 
 #: src/components/tables/InvenTreeTable.tsx:481
 msgid "Refresh data"
-msgstr ""
+msgstr "Actualiser les données"
 
 #: src/components/tables/InvenTreeTable.tsx:500
 msgid "Table filters"
-msgstr ""
+msgstr "Filtres de tableau"
 
 #: src/components/tables/RowActions.tsx:149
 msgid "Actions"
-msgstr ""
+msgstr "Actions"
 
 #: src/components/tables/bom/BomTable.tsx:71
 msgid "This BOM item is defined for a different parent"
-msgstr ""
+msgstr "Cet article de nomenclature est défini pour un autre parent"
 
 #: src/components/tables/bom/BomTable.tsx:86
 msgid "Part Information"
-msgstr ""
+msgstr "Information de pièce"
 
 #: src/components/tables/bom/BomTable.tsx:99
 #: src/components/tables/bom/UsedInTable.tsx:76
@@ -1286,49 +1286,49 @@ msgstr ""
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:117
 #: src/components/tables/purchasing/PurchaseOrderTable.tsx:66
 msgid "Reference"
-msgstr ""
+msgstr "Référence"
 
 #: src/components/tables/bom/BomTable.tsx:111
 msgid "Substitutes"
-msgstr ""
+msgstr "Substituts"
 
 #: src/components/tables/bom/BomTable.tsx:125
 #: src/components/tables/bom/BomTable.tsx:268
 #: src/components/tables/bom/UsedInTable.tsx:91
 msgid "Optional"
-msgstr ""
+msgstr "Optionnel"
 
 #: src/components/tables/bom/BomTable.tsx:129
 #: src/components/tables/bom/BomTable.tsx:273
 msgid "Consumable"
-msgstr ""
+msgstr "Consommable"
 
 #: src/components/tables/bom/BomTable.tsx:133
 msgid "Allow Variants"
-msgstr ""
+msgstr "Autoriser les variantes"
 
 #: src/components/tables/bom/BomTable.tsx:137
 #: src/components/tables/bom/BomTable.tsx:263
 #: src/components/tables/bom/UsedInTable.tsx:86
 msgid "Gets Inherited"
-msgstr ""
+msgstr "Est hérité"
 
 #: src/components/tables/bom/BomTable.tsx:143
 #: src/components/tables/part/PartTable.tsx:157
 msgid "Price Range"
-msgstr ""
+msgstr "Échelle des prix"
 
 #: src/components/tables/bom/BomTable.tsx:151
 #: src/components/tables/part/PartTable.tsx:122
 #: src/components/tables/stock/StockItemTable.tsx:133
 #: src/components/tables/stock/StockItemTable.tsx:254
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 #: src/components/tables/bom/BomTable.tsx:162
 #: src/components/tables/part/PartTable.tsx:130
 msgid "No stock"
-msgstr ""
+msgstr "Aucun stock"
 
 #: src/components/tables/bom/BomTable.tsx:167
 #~ msgid "Available Stock"
@@ -1336,20 +1336,20 @@ msgstr ""
 
 #: src/components/tables/bom/BomTable.tsx:170
 msgid "Includes substitute stock"
-msgstr ""
+msgstr "Comprend un stock de remplacement"
 
 #: src/components/tables/bom/BomTable.tsx:179
 msgid "Includes variant stock"
-msgstr ""
+msgstr "Inclut le stock de variantes"
 
 #: src/components/tables/bom/BomTable.tsx:187
 msgid "On order"
-msgstr ""
+msgstr "Sur commande"
 
 #: src/components/tables/bom/BomTable.tsx:195
 #: src/components/tables/part/PartTable.tsx:98
 msgid "Building"
-msgstr ""
+msgstr "Construire"
 
 #: src/components/tables/bom/BomTable.tsx:200
 #~ msgid "Validate"
@@ -1359,15 +1359,15 @@ msgstr ""
 #: src/components/tables/part/PartTable.tsx:149
 #: src/components/tables/stock/StockItemTable.tsx:169
 msgid "Stock Information"
-msgstr ""
+msgstr "Information de stock"
 
 #: src/components/tables/bom/BomTable.tsx:211
 msgid "Can Build"
-msgstr ""
+msgstr "Peut être construit"
 
 #: src/components/tables/bom/BomTable.tsx:215
 msgid "Consumable item"
-msgstr ""
+msgstr "Article consommable"
 
 #: src/components/tables/bom/BomTable.tsx:228
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:213
@@ -3542,13 +3542,13 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:58
-#~ msgid "See you soon."
-#~ msgstr "See you soon."
-
 #: src/functions/auth.tsx:60
 msgid "Logout successful"
 msgstr "Déconnexion résussie"
+
+#: src/functions/auth.tsx:60
+#~ msgid "See you soon."
+#~ msgstr "See you soon."
 
 #: src/functions/auth.tsx:61
 msgid "You have been logged out"
@@ -4593,3 +4593,4 @@ msgstr "L'interface utilisateur de la plateforme est optimisée pour les tablett
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Lire la documentation"
+
