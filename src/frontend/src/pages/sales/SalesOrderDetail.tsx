@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconInfoCircle,
   IconList,
@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiPaths } from '../../enums/ApiEndpoints';
@@ -59,7 +60,16 @@ export default function SalesOrderDetail() {
       {
         name: 'build-orders',
         label: t`Build Orders`,
-        icon: <IconTools />
+        icon: <IconTools />,
+        content: order?.pk ? (
+          <BuildOrderTable
+            params={{
+              sales_order: order.pk
+            }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'attachments',
