@@ -992,6 +992,8 @@ class StockTreeTest(StockTestBase):
 
     def test_stock_split(self):
         """Test that stock splitting works correctly."""
+        StockItem.objects.rebuild()
+
         part = Part.objects.create(name='My part', description='My part description')
         location = StockLocation.objects.create(name='Test Location')
 
