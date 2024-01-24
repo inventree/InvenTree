@@ -101,6 +101,7 @@ export default function StockDetail() {
         name: 'child_items',
         label: t`Child Items`,
         icon: <IconSitemap />,
+        hidden: (stockitem?.child_items ?? 0) == 0,
         content: stockitem?.pk ? (
           <StockItemTable params={{ ancestor: stockitem.pk }} />
         ) : (
