@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-22 15:28\n"
+"PO-Revision-Date: 2024-01-24 16:14\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -118,7 +118,7 @@ msgstr "Användarnamn"
 #: src/components/forms/AuthenticationForm.tsx:91
 #: src/components/forms/AuthenticationForm.tsx:209
 msgid "Your username"
-msgstr ""
+msgstr "Ditt användarnamn"
 
 #: src/components/forms/AuthenticationForm.tsx:96
 #: src/components/forms/AuthenticationForm.tsx:221
@@ -165,7 +165,7 @@ msgstr "Skicka ett e-postmeddelande"
 
 #: src/components/forms/AuthenticationForm.tsx:137
 msgid "Use username and password"
-msgstr ""
+msgstr "Använd användarnamn och lösenord"
 
 #: src/components/forms/AuthenticationForm.tsx:146
 msgid "Log In"
@@ -193,7 +193,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:228
 msgid "Repeat password"
-msgstr ""
+msgstr "Upprepa lösenord"
 
 #: src/components/forms/AuthenticationForm.tsx:240
 #: src/components/forms/AuthenticationForm.tsx:269
@@ -882,7 +882,7 @@ msgstr "Projektkod"
 #: src/components/render/ModelType.tsx:98
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:74
 msgid "Project Codes"
-msgstr ""
+msgstr "Projektkoder"
 
 #: src/components/render/ModelType.tsx:104
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:131
@@ -1075,7 +1075,7 @@ msgstr ""
 #: src/components/tables/ColumnRenderers.tsx:155
 #: src/components/tables/settings/CurrencyTable.tsx:23
 msgid "Currency"
-msgstr ""
+msgstr "Valuta"
 
 #: src/components/tables/ColumnRenderers.tsx:169
 msgid "Total Price"
@@ -1084,7 +1084,7 @@ msgstr ""
 #: src/components/tables/ColumnSelect.tsx:17
 #: src/components/tables/ColumnSelect.tsx:24
 msgid "Select Columns"
-msgstr "Välj Kolumner"
+msgstr "Välj kolumner"
 
 #: src/components/tables/DownloadAction.tsx:12
 msgid "CSV"
@@ -1577,7 +1577,7 @@ msgstr ""
 
 #: src/components/tables/company/AddressTable.tsx:141
 msgid "Delete Address"
-msgstr ""
+msgstr "Radera adress"
 
 #: src/components/tables/company/AddressTable.tsx:142
 msgid "Address deleted"
@@ -1585,7 +1585,7 @@ msgstr ""
 
 #: src/components/tables/company/AddressTable.tsx:144
 msgid "Are you sure you want to delete this address?"
-msgstr ""
+msgstr "Är du säker på att du vill radera denna adress?"
 
 #: src/components/tables/company/AddressTable.tsx:160
 #: src/components/tables/company/AddressTable.tsx:174
@@ -1598,12 +1598,12 @@ msgstr ""
 
 #: src/components/tables/company/CompanyTable.tsx:32
 msgid "Company Name"
-msgstr ""
+msgstr "Företagsnamn"
 
 #: src/components/tables/company/CompanyTable.tsx:50
 #: src/defaults/links.tsx:11
 msgid "Website"
-msgstr "Hemsida"
+msgstr "Webbplats"
 
 #: src/components/tables/company/ContactTable.tsx:41
 msgid "Phone"
@@ -1623,7 +1623,7 @@ msgstr ""
 
 #: src/components/tables/company/ContactTable.tsx:89
 msgid "Delete Contact"
-msgstr ""
+msgstr "Radera kontakt"
 
 #: src/components/tables/company/ContactTable.tsx:90
 msgid "Contact deleted"
@@ -1631,7 +1631,7 @@ msgstr ""
 
 #: src/components/tables/company/ContactTable.tsx:92
 msgid "Are you sure you want to delete this contact?"
-msgstr ""
+msgstr "Är du säker på att du vill radera denna kontakt?"
 
 #: src/components/tables/company/ContactTable.tsx:108
 msgid "Create Contact"
@@ -2568,7 +2568,7 @@ msgstr ""
 
 #: src/components/tables/settings/GroupTable.tsx:115
 msgid "Delete group"
-msgstr ""
+msgstr "Radera grupp"
 
 #: src/components/tables/settings/GroupTable.tsx:116
 msgid "Group deleted"
@@ -2576,12 +2576,12 @@ msgstr ""
 
 #: src/components/tables/settings/GroupTable.tsx:118
 msgid "Are you sure you want to delete this group?"
-msgstr ""
+msgstr "Är du säker på att du vill radera denna grupp?"
 
 #: src/components/tables/settings/GroupTable.tsx:128
 #: src/components/tables/settings/GroupTable.tsx:142
 msgid "Add group"
-msgstr ""
+msgstr "Lägg till grupp"
 
 #: src/components/tables/settings/GroupTable.tsx:131
 msgid "Added group"
@@ -2589,7 +2589,7 @@ msgstr ""
 
 #: src/components/tables/settings/GroupTable.tsx:152
 msgid "Edit group"
-msgstr ""
+msgstr "Redigera grupp"
 
 #: src/components/tables/settings/PendingTasksTable.tsx:30
 msgid "Created"
@@ -2605,7 +2605,7 @@ msgstr ""
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:49
 msgid "Edit project code"
-msgstr ""
+msgstr "Redigera projektkod"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:56
 msgid "Project code updated"
@@ -2613,7 +2613,7 @@ msgstr ""
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:66
 msgid "Delete project code"
-msgstr ""
+msgstr "Radera projektkod"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:67
 msgid "Project code deleted"
@@ -2626,7 +2626,7 @@ msgstr ""
 #: src/components/tables/settings/ProjectCodeTable.tsx:81
 #: src/components/tables/settings/ProjectCodeTable.tsx:96
 msgid "Add project code"
-msgstr ""
+msgstr "Lägg till projektkod"
 
 #: src/components/tables/settings/ProjectCodeTable.tsx:88
 msgid "Added project code"
@@ -2717,19 +2717,19 @@ msgstr ""
 #: src/components/tables/settings/UserTable.tsx:179
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:18
 msgid "Groups"
-msgstr ""
+msgstr "Grupper"
 
 #: src/components/tables/settings/UserTable.tsx:133
 msgid "No groups"
-msgstr ""
+msgstr "Inga grupper"
 
 #: src/components/tables/settings/UserTable.tsx:168
 msgid "First Name"
-msgstr ""
+msgstr "Förnamn"
 
 #: src/components/tables/settings/UserTable.tsx:173
 msgid "Last Name"
-msgstr ""
+msgstr "Efternamn"
 
 #: src/components/tables/settings/UserTable.tsx:186
 msgid "Staff"
@@ -2741,7 +2741,7 @@ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:209
 msgid "Delete user"
-msgstr ""
+msgstr "Radera användare"
 
 #: src/components/tables/settings/UserTable.tsx:210
 msgid "User deleted"
@@ -2749,12 +2749,12 @@ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:212
 msgid "Are you sure you want to delete this user?"
-msgstr ""
+msgstr "Är du säker på att du vill radera denna användare?"
 
 #: src/components/tables/settings/UserTable.tsx:222
 #: src/components/tables/settings/UserTable.tsx:238
 msgid "Add user"
-msgstr ""
+msgstr "Lägg till användare"
 
 #: src/components/tables/settings/UserTable.tsx:230
 msgid "Added user"
@@ -2762,7 +2762,7 @@ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:247
 msgid "Edit user"
-msgstr ""
+msgstr "Redigera användare"
 
 #: src/components/tables/stock/StockItemTable.tsx:57
 msgid "This stock item is in production"
@@ -3472,11 +3472,11 @@ msgstr ""
 
 #: src/forms/AttachmentForms.tsx:128
 msgid "Are you sure you want to delete this attachment?"
-msgstr ""
+msgstr "Är du säker på att du vill radera denna bilaga?"
 
 #: src/forms/CompanyForms.tsx:134
 msgid "Edit Company"
-msgstr ""
+msgstr "Redigera företag"
 
 #: src/forms/CompanyForms.tsx:138
 msgid "Company updated"
@@ -3542,13 +3542,13 @@ msgstr ""
 #~ msgid "Logout successfull"
 #~ msgstr "Logout successfull"
 
-#: src/functions/auth.tsx:58
-#~ msgid "See you soon."
-#~ msgstr "See you soon."
-
 #: src/functions/auth.tsx:60
 msgid "Logout successful"
 msgstr "Utloggningen lyckad"
+
+#: src/functions/auth.tsx:60
+#~ msgid "See you soon."
+#~ msgstr "See you soon."
 
 #: src/functions/auth.tsx:61
 msgid "You have been logged out"
@@ -3941,15 +3941,15 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
 msgid "First name"
-msgstr ""
+msgstr "Förnamn"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 msgid "Last name"
-msgstr ""
+msgstr "Efternamn"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 msgid "First name:"
-msgstr ""
+msgstr "Förnamn:"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
@@ -3961,7 +3961,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
 msgid "Last name:"
-msgstr ""
+msgstr "Efternamn:"
 
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:39
 msgid "Use pseudo language"
@@ -4002,7 +4002,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:165
 msgid "Add Email Address"
-msgstr ""
+msgstr "Lägg till e-postadress"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:168
 msgid "E-Mail"
@@ -4010,7 +4010,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:169
 msgid "E-Mail address"
-msgstr ""
+msgstr "E-postadress"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:179
 msgid "Make Primary"
@@ -4060,7 +4060,7 @@ msgstr "punkt"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:81
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:87
 msgid "Primary color"
@@ -4112,7 +4112,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:113
 msgid "Add a new user"
-msgstr ""
+msgstr "Lägg till en ny användare"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:132
 msgid "Advanced Options"
@@ -4164,7 +4164,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:88
 msgid "Barcodes"
-msgstr ""
+msgstr "Streckkoder"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:107
 #: src/pages/company/SupplierPartDetail.tsx:49
@@ -4182,7 +4182,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:144
 msgid "Labels"
-msgstr ""
+msgstr "Etiketter"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:150
 #: src/pages/Index/Settings/UserSettings.tsx:99
@@ -4208,7 +4208,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:29
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: src/pages/Index/Settings/UserSettings.tsx:35
 msgid "Security"
@@ -4220,7 +4220,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:115
 msgid "Account Settings"
-msgstr ""
+msgstr "Kontoinställningar"
 
 #: src/pages/Index/Settings/UserSettings.tsx:119
 msgid "Switch to System Setting"
@@ -4593,3 +4593,4 @@ msgstr "Plattform UI är optimerad för surfplattor och stationära datorer, kan
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Läs dokumenten"
+
