@@ -655,6 +655,16 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.filter(installed_items__gt=0)
         return queryset.filter(installed_items=0)
 
+    has_child_items = rest_filters.BooleanFilter(
+        label='Has child items', method='filter_has_child_items'
+    )
+
+    def filter_has_child_items(self, queryset, name, value):
+        """Filter stock items by "belongs_to" field being empty."""
+        if str2bool(value):
+            return queryset.filter(child_items__gt=0)
+        return queryset.filter(child_items=0)
+
     sent_to_customer = rest_filters.BooleanFilter(
         label='Sent to customer', method='filter_sent_to_customer'
     )

@@ -170,6 +170,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'allocated',
             'expired',
             'installed_items',
+            'child_items',
             'stale',
             'tracking_items',
             'tags',
@@ -288,6 +289,9 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         # Annotate with the total number of "installed items"
         queryset = queryset.annotate(installed_items=SubqueryCount('installed_parts'))
 
+        # Annotate with the total number of "child items" (split stock items)
+        queryset = queryset.annotate(child_items=stock.filters.annotate_child_items())
+
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -315,6 +319,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     allocated = serializers.FloatField(required=False)
     expired = serializers.BooleanField(required=False, read_only=True)
     installed_items = serializers.IntegerField(read_only=True, required=False)
+    child_items = serializers.IntegerField(read_only=True, required=False)
     stale = serializers.BooleanField(required=False, read_only=True)
     tracking_items = serializers.IntegerField(read_only=True, required=False)
 
