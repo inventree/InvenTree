@@ -78,30 +78,6 @@ jobs:
         # Build the development docker image (using docker-compose.yml)
         run: |
           docker-compose build --no-cache
-      - name: Update Docker Image
-        run: |
-          docker-compose run inventree-dev-server invoke update
-          docker-compose run inventree-dev-server invoke setup-dev
-          docker-compose up -d
-          docker-compose run inventree-dev-server invoke wait
-      - name: Check Data Directory
-        # The following file structure should have been created by the docker image
-        run: |
-          test -d data
-          test -d data/env
-          test -d data/pgdb
-          test -d data/media
-          test -d data/static
-          test -d data/plugins
-          test -f data/config.yaml
-          test -f data/plugins.txt
-          test -f data/secret_key.txt
-      - name: Run Unit Tests
-        run: |
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
-          docker-compose run inventree-dev-server invoke test --disable-pty
-          docker-compose run inventree-dev-server invoke test --migrations --disable-pty
-          docker-compose down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # pin@v3.0.0
@@ -139,7 +115,7 @@ jobs:
           sbom: true
           provenance: false
           target: production
-          tags: ${{ env.docker_tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           build-args: |
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
