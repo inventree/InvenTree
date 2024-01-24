@@ -1,36 +1,52 @@
 import {
   Icon123,
+  IconBinaryTree2,
+  IconBookmarks,
+  IconBuilding,
+  IconBuildingFactory2,
+  IconCalendarStats,
+  IconClipboardList,
+  IconCopy,
+  IconCornerUpRightDouble,
+  IconCurrencyDollar,
   IconExternalLink,
+  IconFileUpload,
   IconGitBranch,
+  IconGridDots,
+  IconLayersLinked,
   IconLink,
+  IconList,
+  IconListTree,
   IconMapPinHeart,
+  IconNotes,
   IconPackage,
+  IconPackages,
+  IconPaperclip,
+  IconPhoto,
+  IconQuestionMark,
   IconRulerMeasure,
   IconShoppingCart,
   IconShoppingCartHeart,
-  IconStack3,
+  IconStack2,
   IconStatusChange,
   IconTag,
+  IconTestPipe,
+  IconTool,
   IconTools,
+  IconTrash,
+  IconTruck,
+  IconTruckDelivery,
+  IconUser,
   IconUserStar,
+  IconUsersGroup,
+  IconVersions,
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
 import { IconFlag } from '@tabler/icons-react';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { IconCalendarTime } from '@tabler/icons-react';
-import {
-  IconBinaryTree2,
-  IconCopy,
-  IconCornerUpRightDouble,
-  IconCurrencyDollar,
-  IconGridDots,
-  IconPackages,
-  IconQuestionMark,
-  IconTool,
-  IconTruck,
-  TablerIconsProps
-} from '@tabler/icons-react';
+import { TablerIconsProps } from '@tabler/icons-react';
 import React from 'react';
 
 const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
@@ -50,6 +66,28 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     revision: IconGitBranch,
     units: IconRulerMeasure,
     keywords: IconTag,
+    details: IconInfoCircle,
+    parameters: IconList,
+    stock: IconPackages,
+    variants: IconVersions,
+    allocations: IconBookmarks,
+    bom: IconListTree,
+    builds: IconTools,
+    used_in: IconStack2,
+    manufacturers: IconBuildingFactory2,
+    suppliers: IconBuilding,
+    purchase_orders: IconShoppingCart,
+    sales_orders: IconTruckDelivery,
+    scheduling: IconCalendarStats,
+    test_templates: IconTestPipe,
+    related_parts: IconLayersLinked,
+    attachments: IconPaperclip,
+    notes: IconNotes,
+    photo: IconPhoto,
+    upload: IconFileUpload,
+    reject: IconX,
+    select_image: IconGridDots,
+    delete: IconTrash,
 
     // Part Icons
     template: IconCopy,
@@ -68,7 +106,9 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     link: IconLink,
     responsible: IconUserStar,
     pricing: IconCurrencyDollar,
-    stocktake: IconStack3
+    stocktake: IconClipboardList,
+    user: IconUser,
+    group: IconUsersGroup
   };
 
 /**

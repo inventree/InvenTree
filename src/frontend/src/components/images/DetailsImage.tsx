@@ -12,17 +12,10 @@ import {
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import {
-  IconFileUpload,
-  IconGridDots,
-  IconPhoto,
-  IconTrash,
-  IconUpload,
-  IconX
-} from '@tabler/icons-react';
 import React, { useState } from 'react';
 
 import { api } from '../../App';
+import { InvenTreeIcon } from '../../functions/icons';
 import { ActionButton } from '../buttons/ActionButton';
 import { PartThumbTable } from '../tables/part/PartThumbTable';
 import { ApiImage } from './ApiImage';
@@ -93,7 +86,7 @@ function UploadModal({
   // Components to show in the Dropzone when no file is selected
   const noFileIdle = (
     <Group>
-      <IconPhoto size="3.2rem" stroke={1.5} />
+      <InvenTreeIcon icon="photo" iconProps={{ size: '3.2rem', stroke: 1.5 }} />
       <div>
         <Text size="xl" inline>
           <Trans>Drag and drop to upload</Trans>
@@ -161,6 +154,10 @@ function UploadModal({
     }
   };
 
+  const primaryColor =
+    theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6];
+  const redColor = theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6];
+
   return (
     <Paper sx={{ height: '220px' }}>
       <Dropzone
@@ -175,21 +172,23 @@ function UploadModal({
           style={{ minHeight: rem(140), pointerEvents: 'none' }}
         >
           <Dropzone.Accept>
-            <IconUpload
-              size="3.2rem"
-              stroke={1.5}
-              color={
-                theme.colors[theme.primaryColor][
-                  theme.colorScheme === 'dark' ? 4 : 6
-                ]
-              }
+            <InvenTreeIcon
+              icon="upload"
+              iconProps={{
+                size: '3.2rem',
+                stroke: 1.5,
+                color: primaryColor
+              }}
             />
           </Dropzone.Accept>
           <Dropzone.Reject>
-            <IconX
-              size="3.2rem"
-              stroke={1.5}
-              color={theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6]}
+            <InvenTreeIcon
+              icon="reject"
+              iconProps={{
+                size: '3.2rem',
+                stroke: 1.5,
+                color: redColor
+              }}
             />
           </Dropzone.Reject>
           <Dropzone.Idle>{file1 ? fileInfo(file1) : noFileIdle}</Dropzone.Idle>
@@ -257,7 +256,7 @@ function ImageActionButtons({
         >
           {actions.selectExisting && (
             <ActionButton
-              icon={<IconGridDots />}
+              icon={<InvenTreeIcon icon="select_image" />}
               tooltip={t`Select from existing images`}
               variant="outline"
               size="lg"
@@ -267,7 +266,7 @@ function ImageActionButtons({
           )}
           {actions.uploadFile && (
             <ActionButton
-              icon={<IconFileUpload />}
+              icon={<InvenTreeIcon icon="upload" />}
               tooltip={t`Upload new image`}
               variant="outline"
               size="lg"
@@ -284,7 +283,9 @@ function ImageActionButtons({
           )}
           {actions.deleteFile && hasImage && (
             <ActionButton
-              icon={<IconTrash color="red" />}
+              icon={
+                <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />
+              }
               tooltip={t`Delete image`}
               variant="outline"
               size="lg"

@@ -8,24 +8,14 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import {
-  IconCopy,
-  IconCornerUpRightDouble,
-  IconCurrencyDollar,
-  IconGridDots,
-  IconShoppingCartFilled,
-  IconTool,
-  IconWorldCode
-} from '@tabler/icons-react';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { privateEncrypt } from 'crypto';
-import React, { Suspense, useEffect, useState } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Suspense } from 'react';
 
 import { api } from '../../App';
 import { ApiPaths } from '../../enums/ApiEndpoints';
-import { GetIcon, InvenTreeIcon } from '../../functions/icons';
-import { useInstance } from '../../hooks/UseInstance';
+import { InvenTreeIcon } from '../../functions/icons';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 
 export type PartIconsType = {
   assembly: boolean;
@@ -38,6 +28,45 @@ export type PartIconsType = {
   active: boolean;
 };
 
+export type DetailsField =
+  | ({
+      name: string;
+      label?: string;
+      owner?: boolean;
+      user?: boolean;
+      value_formatter?: () => (string | number)[] | string | null;
+    } & (StringDetailField | LinkDetailField | ProgressBarfield))
+  | DetailsField[];
+
+type StringDetailField = {
+  type: 'string' | 'text';
+  unit?: boolean;
+};
+
+type LinkDetailField = {
+  type: 'link';
+} & (InternalLinkField | ExternalLinkField);
+
+type InternalLinkField = {
+  path: ApiPaths;
+  dest: string;
+};
+
+type ExternalLinkField = {
+  external: true;
+};
+
+type ProgressBarfield = {
+  type: 'progressbar';
+  progress: string;
+  total: string;
+};
+
+/**
+ * Fetches and wraps an InvenTreeIcon in a flex div
+ * @param icon name of icon
+ *
+ */
 function PartIcon(icon: string) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -46,6 +75,10 @@ function PartIcon(icon: string) {
   );
 }
 
+/**
+ * Generates a table cell with Part icons.
+ * Only used for Part Model Details
+ */
 function PartIcons({
   assembly,
   template,
@@ -60,7 +93,7 @@ function PartIcons({
     <td colSpan={2}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         {!active && (
-          <Tooltip label="Part is not active">
+          <Tooltip label={t`Part is not active`}>
             <Badge color="red" variant="filled">
               <div
                 style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
@@ -124,39 +157,18 @@ function PartIcons({
   );
 }
 
-const testFunc = (path: any, pk: any) => {
-  const [instance, setInstance] = useState({});
-
-  const query = useSuspenseQuery({
-    queryKey: ['instance', path, pk],
-    queryFn: async () => {
-      const url = apiUrl(path, pk);
-
-      return api
-        .get(url)
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              setInstance(response.data);
-              return response.data;
-            default:
-              setInstance({});
-              return null;
-          }
-        })
-        .catch((error) => {
-          setInstance({});
-          console.error(`Error fetching instance ${url}:`, error);
-          return null;
-        });
-    },
-    refetchOnMount: true
-  });
-
-  return { instance, query };
-};
-
-function OwnerBadge({ pk, type }: { pk: any; type: string }) {
+/**
+ * Fetches user or group info from backend and formats into a badge.
+ * Badge shows username, full name, or group name depending on server settings.
+ * Badge appends icon to describe type of Owner
+ */
+function OwnerBadge({
+  pk,
+  type
+}: {
+  pk: string | number;
+  type: 'user' | 'group' | 'owner';
+}) {
   const { data } = useSuspenseQuery({
     queryKey: ['owner', type, pk],
     queryFn: async () => {
@@ -187,32 +199,60 @@ function OwnerBadge({ pk, type }: { pk: any; type: string }) {
           }
         })
         .catch((error) => {
-          console.error(`Error fetching instance ${url}:`, error);
           return null;
         });
     }
   });
-  console.log('ownerdata', data, apiUrl(ApiPaths.owner_list, pk));
+
+  const settings = useGlobalSettingsState();
+
+  // Rendering a user's rame for the badge
+  function _render_name() {
+    if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
+      if (data.first_name || data.last_name) {
+        return `${data.first_name} ${data.last_name}`;
+      }
+    } else if (type === 'user') {
+      return data.username;
+    } else {
+      return data.name;
+    }
+  }
+
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-      <Badge color="dark" variant="filled">
-        {data.name}
-      </Badge>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Badge
+          color="dark"
+          variant="filled"
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          {data.name ?? _render_name()}
+        </Badge>
+        <InvenTreeIcon icon={type === 'user' ? type : data.label} />
+      </div>
     </Suspense>
   );
 }
 
+/**
+ * Renders the value of a 'string' or 'text' field.
+ * If owner is defined, only renders a badge
+ * If user is defined, a badge is rendered in addition to main value
+ */
 function TableStringValue({
   field_data,
   field_value,
   unit = null
 }: {
   field_data: any;
-  field_value: any;
+  field_value: string | number;
   unit?: null | string;
 }) {
   if (field_data.owner) {
-    return <OwnerBadge pk={field_value} type="owner" />;
+    return (
+      <OwnerBadge pk={field_value} type={field_data.user ? 'user' : 'owner'} />
+    );
   }
 
   if (field_data.value_formatter) {
@@ -226,7 +266,6 @@ function TableStringValue({
         </Suspense>
       );
     }
-    return <></>;
   }
 
   return (
@@ -321,7 +360,7 @@ function TableField({
 
   return (
     <tr>
-      <td style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+      <td style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         <InvenTreeIcon
           icon={
             Array.isArray(field_data) ? field_data[0].name : field_data.name
@@ -359,15 +398,14 @@ function TableField({
 }
 
 export function DetailsTable({
-  part,
+  item,
   fields,
   partIcons = false
 }: {
-  part: any;
+  item: any;
   fields: any;
   partIcons?: boolean;
 }) {
-  console.log(part);
   return (
     <Group>
       <Table striped>
@@ -375,14 +413,14 @@ export function DetailsTable({
           {partIcons && (
             <tr>
               <PartIcons
-                assembly={part.assembly}
-                template={part.is_template}
-                component={part.component}
-                trackable={part.trackable}
-                purchaseable={part.purchaseable}
-                saleable={part.salable}
-                virtual={part.virtual}
-                active={part.active}
+                assembly={item.assembly}
+                template={item.is_template}
+                component={item.component}
+                trackable={item.trackable}
+                purchaseable={item.purchaseable}
+                saleable={item.salable}
+                virtual={item.virtual}
+                active={item.active}
               />
             </tr>
           )}
@@ -390,18 +428,24 @@ export function DetailsTable({
             let value;
             if (Array.isArray(data)) {
               value = [];
-              for (const val of data) {
-                value.push(part[val.name]);
+              if (data[0].value_formatter) {
+                value = data[0].value_formatter();
+                data[0].value_formatter = null;
+                console.log('VAL', value);
+              } else {
+                for (const val of data) {
+                  value.push(item[val.name]);
+                }
               }
             } else {
-              value = part[data.name];
+              value = item[data.name];
             }
             return (
               <TableField
                 field_data={data}
                 field_value={value}
                 key={index}
-                unit={part.units}
+                unit={item.units}
               />
             );
           })}

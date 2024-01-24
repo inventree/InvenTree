@@ -24,7 +24,7 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -38,10 +38,15 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { ItemDetails } from '../../components/nav/ItemDetails';
+import {
+  DetailsImageType,
+  ItemDetailFields,
+  ItemDetails
+} from '../../components/nav/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
+import { DetailsField } from '../../components/tables/Details';
 import { BomTable } from '../../components/tables/bom/BomTable';
 import { UsedInTable } from '../../components/tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
@@ -84,19 +89,13 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
-  const detailFields = (part: any) => {
-    let left: any = {
-      image: true,
-      fields: []
-    };
+  const detailFields = (part: any): ItemDetailFields => {
+    let left: DetailsField[] = [];
+    let right: DetailsField[] = [];
+    let bottom_right: DetailsField[] = [];
+    let bottom_left: DetailsField[] = [];
 
-    let right = [];
-
-    let bottom_right = [];
-    let bottom_left = [];
-
-    let image = {
-      type: 'image',
+    let image: DetailsImageType = {
       name: 'image',
       imageActions: {
         selectExisting: true,
@@ -105,14 +104,14 @@ export default function PartDetail() {
       }
     };
 
-    left.fields.push({
+    left.push({
       type: 'text',
       name: 'description',
       label: t`Description`
     });
 
     if (part.variant_of) {
-      left.fields.push({
+      left.push({
         type: 'link',
         name: 'variant_of',
         label: t`Variant of`,
@@ -272,7 +271,6 @@ export default function PartDetail() {
                   }
                 })
                 .catch((error) => {
-                  console.error(`Error fetching instance ${url}:`, error);
                   return null;
                 });
             }
@@ -311,8 +309,7 @@ export default function PartDetail() {
                   });
               }
             });
-            console.log('stocktake', data);
-            return data.quantity;
+            return [data.quantity, data.user];
           }
         },
         {
@@ -361,13 +358,14 @@ export default function PartDetail() {
       });
     }
 
-    let fields: any = {
+    let fields: ItemDetailFields = {
       left: left,
       right: right,
       bottom_left: bottom_left,
-      bottom_right: bottom_right
+      bottom_right: bottom_right,
+      image: image
     };
-    console.log(fields);
+
     return fields;
   };
 
@@ -384,6 +382,7 @@ export default function PartDetail() {
             apiPath={apiUrl(ApiPaths.part_list, part.pk)}
             refresh={refreshInstance}
             fields={detailFields(part)}
+            partModel
           />
         )
       },
@@ -619,7 +618,7 @@ export default function PartDetail() {
       />
     ];
   }, [id, part, user]);
-  console.log(part);
+
   return (
     <>
       <Stack spacing="xs">
