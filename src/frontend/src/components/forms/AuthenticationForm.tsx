@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
-import { apiUrl } from '../../states/ApiState';
+import { apiUrl, useServerApiState } from '../../states/ApiState';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
@@ -27,6 +27,7 @@ export function AuthenticationForm() {
   });
   const simpleForm = useForm({ initialValues: { email: '' } });
   const [classicLoginMode, setMode] = useDisclosure(true);
+  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
   const navigate = useNavigate();
 
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
@@ -96,17 +97,19 @@ export function AuthenticationForm() {
             placeholder={t`Your password`}
             {...classicForm.getInputProps('password')}
           />
-          <Group position="apart" mt="0">
-            <Anchor
-              component="button"
-              type="button"
-              color="dimmed"
-              size="xs"
-              onClick={() => navigate('/reset-password')}
-            >
-              <Trans>Reset password</Trans>
-            </Anchor>
-          </Group>
+          {auth_settings?.password_forgotten_enabled === true && (
+            <Group position="apart" mt="0">
+              <Anchor
+                component="button"
+                type="button"
+                color="dimmed"
+                size="xs"
+                onClick={() => navigate('/reset-password')}
+              >
+                <Trans>Reset password</Trans>
+              </Anchor>
+            </Group>
+          )}
         </Stack>
       ) : (
         <Stack>
@@ -248,6 +251,9 @@ export function ModeSelector({
   loginMode: boolean;
   setMode: any;
 }) {
+  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+
+  if (auth_settings?.registration_enabled === false) return null;
   return (
     <Text ta="center" size={'xs'} mt={'md'}>
       {loginMode ? (
@@ -258,7 +264,7 @@ export function ModeSelector({
             type="button"
             color="dimmed"
             size="xs"
-            onClick={() => setMode.toggle()}
+            onClick={() => setMode.close()}
           >
             <Trans>Register</Trans>
           </Anchor>
@@ -269,7 +275,7 @@ export function ModeSelector({
           type="button"
           color="dimmed"
           size="xs"
-          onClick={() => setMode.toggle()}
+          onClick={() => setMode.open()}
         >
           <Trans>Go back to login</Trans>
         </Anchor>

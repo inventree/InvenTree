@@ -133,7 +133,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
           category_detail: true
         },
         rowActions: rowActions,
-        customActionGroups: customActions
+        tableActions: customActions
       }}
     />
   );

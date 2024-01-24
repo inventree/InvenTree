@@ -261,7 +261,7 @@ export function UserTable() {
         columns={columns}
         props={{
           rowActions: rowActions,
-          customActionGroups: tableActions,
+          tableActions: tableActions,
           onRowClick: (record) => openDetailDrawer(record.pk)
         }}
       />

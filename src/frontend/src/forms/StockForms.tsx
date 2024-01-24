@@ -133,3 +133,19 @@ export function useEditStockItem({
     onFormSuccess: callback
   });
 }
+
+export function stockLocationFields({}: {}): ApiFormFieldSet {
+  let fields: ApiFormFieldSet = {
+    parent: {
+      description: t`Parent stock location`,
+      required: false
+    },
+    name: {},
+    description: {},
+    structural: {},
+    external: {},
+    location_type: {}
+  };
+
+  return fields;
+}

@@ -275,7 +275,7 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
       props={{
         ...props,
         enableDownload: true,
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         params: {
           ...props.params,
           category_detail: true

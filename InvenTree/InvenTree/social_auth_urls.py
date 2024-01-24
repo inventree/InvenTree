@@ -153,6 +153,10 @@ class SocialProviderListView(ListAPI):
             'sso_registration': InvenTree.sso.registration_enabled(),
             'mfa_required': InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA'),
             'providers': provider_list,
+            'registration_enabled': InvenTreeSetting.get_setting('LOGIN_ENABLE_REG'),
+            'password_forgotten_enabled': InvenTreeSetting.get_setting(
+                'LOGIN_ENABLE_PWD_FORGOT'
+            ),
         }
         return Response(data)
 

@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
 import { ReactNode, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { useManufacturerPartFields } from '../../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
+import { notYetImplemented } from '../../../functions/notifications';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
@@ -21,6 +24,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   const table = useTable('manufacturerparts');
 
   const user = useUserState();
+  const navigate = useNavigate();
 
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -57,9 +61,22 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     ];
   }, [params]);
 
+  const addManufacturerPart = useCallback(() => {
+    notYetImplemented();
+  }, []);
+
   const tableActions = useMemo(() => {
-    // TODO: Custom actions
-    return [];
+    let can_add =
+      user.hasAddRole(UserRoles.purchase_order) &&
+      user.hasAddRole(UserRoles.part);
+
+    return [
+      <AddItemButton
+        tooltip={t`Add Manufacturer Part`}
+        onClick={addManufacturerPart}
+        hidden={!can_add}
+      />
+    ];
   }, [user]);
 
   const editManufacturerPartFields = useManufacturerPartFields();
@@ -112,7 +129,12 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
           manufacturer_detail: true
         },
         rowActions: rowActions,
-        customActionGroups: tableActions
+        tableActions: tableActions,
+        onRowClick: (record: any) => {
+          if (record?.pk) {
+            navigate(`/purchasing/manufacturer-part/${record.pk}/`);
+          }
+        }
       }}
     />
   );

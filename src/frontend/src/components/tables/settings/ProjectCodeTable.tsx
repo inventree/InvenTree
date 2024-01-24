@@ -106,7 +106,7 @@ export default function ProjectCodeTable() {
       columns={columns}
       props={{
         rowActions: rowActions,
-        customActionGroups: tableActions
+        tableActions: tableActions
       }}
     />
   );

@@ -117,7 +117,7 @@ export default function CustomUnitsTable() {
       columns={columns}
       props={{
         rowActions: rowActions,
-        customActionGroups: tableActions
+        tableActions: tableActions
       }}
     />
   );

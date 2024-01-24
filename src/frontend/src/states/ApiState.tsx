@@ -7,7 +7,7 @@ import { statusCodeList } from '../defaults/backendMappings';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ApiPaths } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
-import { ServerAPIProps } from './states';
+import { AuthProps, ServerAPIProps } from './states';
 
 type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
@@ -16,6 +16,7 @@ interface ServerApiStateProps {
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
   status?: StatusLookup;
+  auth_settings?: AuthProps;
 }
 
 export const useServerApiState = create<ServerApiStateProps>()(
@@ -32,14 +33,27 @@ export const useServerApiState = create<ServerApiStateProps>()(
           })
           .catch(() => {});
         // Fetch status data for rendering labels
-        await api.get(apiUrl(ApiPaths.global_status)).then((response) => {
-          const newStatusLookup: StatusLookup = {} as StatusLookup;
-          for (const key in response.data) {
-            newStatusLookup[statusCodeList[key] || key] =
-              response.data[key].values;
-          }
-          set({ status: newStatusLookup });
-        });
+        await api
+          .get(apiUrl(ApiPaths.global_status))
+          .then((response) => {
+            const newStatusLookup: StatusLookup = {} as StatusLookup;
+            for (const key in response.data) {
+              newStatusLookup[statusCodeList[key] || key] =
+                response.data[key].values;
+            }
+            set({ status: newStatusLookup });
+          })
+          .catch(() => {});
+
+        // Fetch login/SSO behaviour
+        await api
+          .get(apiUrl(ApiPaths.sso_providers), {
+            headers: { Authorization: '' }
+          })
+          .then((response) => {
+            set({ auth_settings: response.data });
+          })
+          .catch(() => {});
       },
       status: undefined
     }),
@@ -167,6 +181,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'company/part/';
     case ApiPaths.manufacturer_part_list:
       return 'company/part/manufacturer/';
+    case ApiPaths.manufacturer_part_attachment_list:
+      return 'company/part/manufacturer/attachment/';
     case ApiPaths.stock_item_list:
       return 'stock/';
     case ApiPaths.stock_tracking_list:
