@@ -23,7 +23,11 @@ import { useInstance } from '../../hooks/UseInstance';
  * Note: If no category ID is supplied, this acts as the top-level part category page
  */
 export default function CategoryDetail({}: {}) {
-  const { id } = useParams();
+  const { id: _id } = useParams();
+  const id = useMemo(
+    () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
+    [_id]
+  );
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -33,6 +37,7 @@ export default function CategoryDetail({}: {}) {
     instanceQuery
   } = useInstance({
     endpoint: ApiPaths.category_list,
+    hasPrimaryKey: true,
     pk: id,
     params: {
       path_detail: true
@@ -59,13 +64,7 @@ export default function CategoryDetail({}: {}) {
         name: 'subcategories',
         label: t`Part Categories`,
         icon: <IconSitemap />,
-        content: (
-          <PartCategoryTable
-            params={{
-              parent: id
-            }}
-          />
-        )
+        content: <PartCategoryTable parentId={id} />
       },
       {
         name: 'parameters',

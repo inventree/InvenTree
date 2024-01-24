@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
@@ -26,6 +27,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
   const table = useTable('supplierparts');
 
   const user = useUserState();
+  const navigate = useNavigate();
 
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -57,7 +59,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         title: t`Supplier Part`,
         sortable: true
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'manufacturer',
 
@@ -229,7 +231,12 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
             manufacturer_detail: true
           },
           rowActions: rowActions,
-          customActionGroups: tableActions
+          tableActions: tableActions,
+          onRowClick: (record: any) => {
+            if (record?.pk) {
+              navigate(`/purchasing/supplier-part/${record.pk}/`);
+            }
+          }
         }}
       />
     </>

@@ -394,10 +394,12 @@ def DownloadFile(
         length = len(bytes(data, response.charset))
     response['Content-Length'] = length
 
-    disposition = 'inline' if inline else 'attachment'
+    if inline:
+        disposition = f'inline; filename={filename}'
+    else:
+        disposition = f'attachment; filename={filename}'
 
-    response['Content-Disposition'] = f'{disposition}; filename={filename}'
-
+    response['Content-Disposition'] = disposition
     return response
 
 
@@ -788,6 +790,11 @@ def hash_barcode(barcode_data):
     hash = hashlib.md5(str(barcode_data).encode())
 
     return str(hash.hexdigest())
+
+
+def hash_file(filename: str):
+    """Return the MD5 hash of a file."""
+    return hashlib.md5(open(filename, 'rb').read()).hexdigest()
 
 
 def get_objectreference(

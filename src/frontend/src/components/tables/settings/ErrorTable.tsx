@@ -80,7 +80,6 @@ export default function ErrorReportTable() {
           enableSelection: true,
           rowActions: rowActions,
           onRowClick: (row) => {
-            console.log(row);
             setError(row.data);
             open();
           }

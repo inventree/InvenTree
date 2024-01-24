@@ -1,4 +1,4 @@
-"""AppConfig for inventree app."""
+"""AppConfig for InvenTree app."""
 
 import logging
 from importlib import import_module
@@ -138,11 +138,21 @@ class InvenTreeConfig(AppConfig):
             Schedule.objects.bulk_update(tasks_to_update, ['schedule_type', 'minutes'])
             logger.info('Updated %s existing scheduled tasks', len(tasks_to_update))
 
-        # Put at least one task onto the background worker stack,
-        # which will be processed as soon as the worker comes online
-        InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat, force_async=True)
+        self.add_heartbeat()
 
         logger.info('Started %s scheduled background tasks...', len(tasks))
+
+    def add_heartbeat(self):
+        """Ensure there is at least one background task in the queue."""
+        import django_q.models
+
+        try:
+            if django_q.models.OrmQ.objects.count() == 0:
+                InvenTree.tasks.offload_task(
+                    InvenTree.tasks.heartbeat, force_async=True
+                )
+        except Exception:
+            pass
 
     def collect_tasks(self):
         """Collect all background tasks."""

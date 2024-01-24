@@ -84,17 +84,18 @@ for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
     with open(filename, 'r') as js_file:
         data = js_file.readlines()
 
-    pattern = r'{% trans '
+    invalid_tags = ['blocktrans', 'blocktranslate', 'trans', 'translate']
 
     err_count = 0
 
     for idx, line in enumerate(data):
-        results = re.findall(pattern, line)
+        for tag in invalid_tags:
+            tag = '{% ' + tag
+            if tag in line:
+                err_count += 1
 
-        if len(results) > 0:
-            errors += 1
+                print(f" > Error on line {idx+1}: Prohibited tag '{tag}' found")
 
-            print(f' > prohibited {{% trans %}} tag found at line {idx + 1}')
 
 if errors > 0:
     print(f'Found {errors} incorrect template tags')

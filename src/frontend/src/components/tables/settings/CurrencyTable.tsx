@@ -66,7 +66,7 @@ export function CurrencyTable() {
       tableState={table}
       columns={columns}
       props={{
-        customActionGroups: tableActions,
+        tableActions: tableActions,
         dataFormatter: (data) => {
           let rates = data?.exchange_rates ?? {};
 

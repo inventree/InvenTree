@@ -22,8 +22,10 @@ export type ActionButtonProps = {
  * Construct a simple action button with consistent styling
  */
 export function ActionButton(props: ActionButtonProps) {
+  const hidden = props.hidden ?? false;
+
   return (
-    !props.hidden && (
+    !hidden && (
       <Tooltip
         key={`tooltip-${props.key}`}
         disabled={!props.tooltip && !props.text}

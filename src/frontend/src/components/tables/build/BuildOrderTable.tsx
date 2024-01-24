@@ -155,7 +155,7 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
           ...params,
           part_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         onRowClick: (row) => navigate(`/build/${row.pk}`)
       }}
     />

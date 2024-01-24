@@ -234,7 +234,6 @@ export function SearchDrawer({
 
   // Re-fetch data whenever the search term is updated
   useEffect(() => {
-    // TODO: Implement search functionality
     searchQuery.refetch();
   }, [searchText]);
 

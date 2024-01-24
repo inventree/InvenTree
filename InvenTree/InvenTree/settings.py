@@ -28,7 +28,7 @@ from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
-from . import config
+from . import config, locales
 
 checkMinPythonVersion()
 
@@ -130,15 +130,17 @@ ALLOWED_HOSTS = get_setting(
 
 # Cross Origin Resource Sharing (CORS) options
 
+# Extract CORS options from configuration file
+CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
+    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
+)
+
+CORS_ALLOW_CREDENTIALS = True
+
 # Only allow CORS access to API and media endpoints
 CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
 
-# Extract CORS options from configuration file
-CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
-    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=False
-)
-
-CORS_ORIGIN_WHITELIST = get_setting(
+CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
     config_key='cors.whitelist',
     default_value=[],
@@ -159,6 +161,12 @@ STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
 STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
+
+# Append directory for compiled react files if debug server is running
+if DEBUG and 'collectstatic' not in sys.argv:
+    web_dir = BASE_DIR.joinpath('..', 'web', 'static').absolute()
+    if web_dir.exists():
+        STATICFILES_DIRS.append(web_dir)
 
 STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
 
@@ -256,9 +264,9 @@ MIDDLEWARE = CONFIG.get(
         'x_forwarded_for.middleware.XForwardedForMiddleware',
         'user_sessions.middleware.SessionMiddleware',  # db user sessions
         'django.middleware.locale.LocaleMiddleware',
-        'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
+        'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
         'django_otp.middleware.OTPMiddleware',  # MFA support
@@ -705,6 +713,14 @@ REMOTE_LOGIN_HEADER = get_setting(
     'INVENTREE_REMOTE_LOGIN_HEADER', 'remote_login_header', 'REMOTE_USER'
 )
 
+# region Tracing / error tracking
+inventree_tags = {
+    'testing': TESTING,
+    'docker': DOCKER,
+    'debug': DEBUG,
+    'remote': REMOTE_LOGIN,
+}
+
 # sentry.io integration for error reporting
 SENTRY_ENABLED = get_boolean_setting(
     'INVENTREE_SENTRY_ENABLED', 'sentry_enabled', False
@@ -717,14 +733,50 @@ SENTRY_SAMPLE_RATE = float(
 )
 
 if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
-    inventree_tags = {
-        'testing': TESTING,
-        'docker': DOCKER,
-        'debug': DEBUG,
-        'remote': REMOTE_LOGIN,
-    }
-
     init_sentry(SENTRY_DSN, SENTRY_SAMPLE_RATE, inventree_tags)
+
+# OpenTelemetry tracing
+TRACING_ENABLED = get_boolean_setting(
+    'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
+)
+
+if TRACING_ENABLED:  # pragma: no cover
+    from InvenTree.tracing import setup_instruments, setup_tracing
+
+    _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
+    _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
+
+    if _t_headers is None:
+        _t_headers = {}
+
+    if _t_endpoint:
+        logger.info('OpenTelemetry tracing enabled')
+
+        _t_resources = get_setting(
+            'INVENTREE_TRACING_RESOURCES', 'tracing.resources', {}, dict
+        )
+        cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
+        tracing_resources = {**cstm_tags, **_t_resources}
+
+        setup_tracing(
+            _t_endpoint,
+            _t_headers,
+            resources_input=tracing_resources,
+            console=get_boolean_setting(
+                'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
+            ),
+            auth=get_setting('INVENTREE_TRACING_AUTH', 'tracing.auth', {}),
+            is_http=get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True),
+            append_http=get_boolean_setting(
+                'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
+            ),
+        )
+        # Run tracing/logging instrumentation
+        setup_instruments()
+    else:
+        logger.warning('OpenTelemetry tracing not enabled because endpoint is not set')
+
+# endregion
 
 # Cache configuration
 cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
@@ -822,51 +874,25 @@ if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
     logger.warning('extra_url_schemes not correctly formatted')
     EXTRA_URL_SCHEMES = []
 
+LANGUAGES = locales.LOCALES
+
+LOCALE_CODES = [lang[0] for lang in LANGUAGES]
+
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 LANGUAGE_CODE = get_setting('INVENTREE_LANGUAGE', 'language', 'en-us')
+
+if (
+    LANGUAGE_CODE not in LOCALE_CODES
+    and LANGUAGE_CODE.split('-')[0] not in LOCALE_CODES
+):  # pragma: no cover
+    logger.warning(
+        'Language code %s not supported - defaulting to en-us', LANGUAGE_CODE
+    )
+    LANGUAGE_CODE = 'en-us'
+
 # Store language settings for 30 days
 LANGUAGE_COOKIE_AGE = 2592000
-
-# If a new language translation is supported, it must be added here
-# After adding a new language, run the following command:
-# python manage.py makemessages -l <language_code> -e html,js,py --no-wrap
-# where <language_code> is the code for the new language
-# Additionally, update the /src/frontend/.linguirc file
-LANGUAGES = [
-    ('bg', _('Bulgarian')),
-    ('cs', _('Czech')),
-    ('da', _('Danish')),
-    ('de', _('German')),
-    ('el', _('Greek')),
-    ('en', _('English')),
-    ('es', _('Spanish')),
-    ('es-mx', _('Spanish (Mexican)')),
-    ('fa', _('Farsi / Persian')),
-    ('fi', _('Finnish')),
-    ('fr', _('French')),
-    ('he', _('Hebrew')),
-    ('hi', _('Hindi')),
-    ('hu', _('Hungarian')),
-    ('it', _('Italian')),
-    ('ja', _('Japanese')),
-    ('ko', _('Korean')),
-    ('nl', _('Dutch')),
-    ('no', _('Norwegian')),
-    ('pl', _('Polish')),
-    ('pt', _('Portuguese')),
-    ('pt-br', _('Portuguese (Brazilian)')),
-    ('ru', _('Russian')),
-    ('sl', _('Slovenian')),
-    ('sr', _('Serbian')),
-    ('sv', _('Swedish')),
-    ('th', _('Thai')),
-    ('tr', _('Turkish')),
-    ('vi', _('Vietnamese')),
-    ('zh-hans', _('Chinese (Simplified)')),
-    ('zh-hant', _('Chinese (Traditional)')),
-]
-
 
 # Testing interface translations
 if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no cover
@@ -973,6 +999,11 @@ SOCIALACCOUNT_PROVIDERS = get_setting(
 )
 
 SOCIALACCOUNT_STORE_TOKENS = True
+
+# Explicitly set empty URL prefix for OIDC
+# The SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX setting was introduced in v0.60.0
+# Ref: https://github.com/pennersr/django-allauth/blob/0.60.0/ChangeLog.rst#backwards-incompatible-changes
+SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(

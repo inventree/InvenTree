@@ -1,6 +1,7 @@
 """Admin classes."""
 
 from django.contrib import admin
+from django.db.models.fields import CharField
 from django.http.request import HttpRequest
 
 from djmoney.contrib.exchange.admin import RateAdmin
@@ -84,7 +85,17 @@ class InvenTreeResource(ModelResource):
         return [f for f in fields if f.column_name not in fields_to_exclude]
 
     def before_import_row(self, row, row_number=None, **kwargs):
-        """Run custom code before importing each row."""
+        """Run custom code before importing each row.
+
+        - Convert any null fields to empty strings, for fields which do not support null values
+        """
+        # We can automatically determine which fields might need such a conversion
+        for field in self.Meta.model._meta.fields:
+            if isinstance(field, CharField):
+                if field.blank and not field.null:
+                    if field.name not in self.CONVERT_NULL_FIELDS:
+                        self.CONVERT_NULL_FIELDS.append(field.name)
+
         for field in self.CONVERT_NULL_FIELDS:
             if field in row and row[field] is None:
                 row[field] = ''
