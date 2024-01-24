@@ -1752,7 +1752,10 @@ class StockItem(
         )
 
         # Rebuild the tree for this parent item
-        StockItem.objects.partial_rebuild(tree_id=self.tree_id)
+        if self.tree_id == 0:
+            StockItem.objects.rebuild()
+        else:
+            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
 
         # Attempt to reload the new item from the database
         try:
