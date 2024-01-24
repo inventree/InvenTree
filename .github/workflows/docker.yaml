@@ -58,7 +58,7 @@ jobs:
       id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      python_version: '3.10'
+      python_version: 3.9
     strategy:
       matrix:
         plattform: ["linux/amd64","linux/arm64"]
@@ -73,9 +73,15 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Set Up Python ${{ env.python_version }}
+        if: ${{ matrix.plattform == 'linux/amd64'}}
         uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
           python-version: ${{ env.python_version }}
+      - name: Getho Set Up Python ${{ env.python_version }}
+        if: ${{ matrix.plattform != 'linux/amd64'}}
+        run: |
+          sudo add-apt-repository ppa:deadsnakes/ppa
+          sudo apt install python${{ env.python_version }} -y
       - name: Version Check
         run: |
           pip install requests
