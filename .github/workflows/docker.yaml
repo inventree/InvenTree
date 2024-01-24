@@ -58,7 +58,7 @@ jobs:
       id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      python_version: 3.10
+      python_version: '3.10'
     strategy:
       matrix:
         plattform: ["linux/amd64","linux/arm64"]
