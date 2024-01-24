@@ -987,6 +987,61 @@ class VariantTest(StockTestBase):
         item.save()
 
 
+class StockTreeTest(StockTestBase):
+    """Unit test for StockItem tree structure."""
+
+    def test_stock_split(self):
+        """Test that stock splitting works correctly."""
+        part = Part.objects.create(name='My part', description='My part description')
+        location = StockLocation.objects.create(name='Test Location')
+
+        # Create an initial stock item
+        item = StockItem.objects.create(part=part, quantity=1000, location=location)
+
+        # Test that the initial MPTT values are correct
+        self.assertEqual(item.level, 0)
+        self.assertEqual(item.lft, 1)
+        self.assertEqual(item.rght, 2)
+
+        children = []
+
+        self.assertEqual(item.get_descendants(include_self=False).count(), 0)
+        self.assertEqual(item.get_descendants(include_self=True).count(), 1)
+
+        # Create child items by splitting stock
+        for idx in range(10):
+            child = item.splitStock(50, None, None)
+            children.append(child)
+
+            # Check that the child item has been correctly created
+            self.assertEqual(child.parent.pk, item.pk)
+            self.assertEqual(child.tree_id, item.tree_id)
+            self.assertEqual(child.level, 1)
+
+            item.refresh_from_db()
+            self.assertEqual(item.get_children().count(), idx + 1)
+            self.assertEqual(item.get_descendants(include_self=True).count(), idx + 2)
+
+        item.refresh_from_db()
+        n = item.get_descendants(include_self=True).count()
+
+        for child in children:
+            # Create multiple sub-childs
+            for _idx in range(3):
+                sub_child = child.splitStock(10, None, None)
+                self.assertEqual(sub_child.parent.pk, child.pk)
+                self.assertEqual(sub_child.tree_id, child.tree_id)
+                self.assertEqual(sub_child.level, 2)
+
+                self.assertEqual(sub_child.get_ancestors(include_self=True).count(), 3)
+
+            child.refresh_from_db()
+            self.assertEqual(child.get_descendants(include_self=True).count(), 4)
+
+        item.refresh_from_db()
+        self.assertEqual(item.get_descendants(include_self=True).count(), n + 30)
+
+
 class TestResultTest(StockTestBase):
     """Tests for the StockItemTestResult model."""
 
