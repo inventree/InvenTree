@@ -502,9 +502,18 @@ class StockTest(StockTestBase):
         ait = it.allocateToCustomer(
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
         )
+
+        self.assertEqual(ait.quantity, an)
+        self.assertTrue(ait.parent, it)
+
+        # There should be only quantity 10x remaining
+        it.refresh_from_db()
+        self.assertEqual(it.quantity, 10)
+
         ait.return_from_customer(it.location, None, notes='Stock removed from customer')
 
         # When returned stock is returned to its original (parent) location, check that the parent has correct quantity
+        it.refresh_from_db()
         self.assertEqual(it.quantity, n)
 
         ait = it.allocateToCustomer(
@@ -1107,6 +1116,9 @@ class TestResultTest(StockTestBase):
     def test_duplicate_item_tests(self):
         """Test duplicate item behaviour."""
         # Create an example stock item by copying one from the database (because we are lazy)
+
+        StockItem.objects.rebuild()
+
         item = StockItem.objects.get(pk=522)
 
         item.pk = None
