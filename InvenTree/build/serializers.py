@@ -1,5 +1,7 @@
 """JSON serializers for Build API."""
 
+from decimal import Decimal
+
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
@@ -7,18 +9,20 @@ from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.db.models import ExpressionWrapper, F, FloatField
 from django.db.models import Case, Sum, When, Value
-from django.db.models import BooleanField
+from django.db.models import BooleanField, Q
 from django.db.models.functions import Coalesce
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
+
+from sql_util.utils import SubquerySum
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
 from InvenTree.serializers import UserSerializer
 
 import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
-from InvenTree.status_codes import StockStatus
+from InvenTree.status_codes import BuildStatusGroups, StockStatus
 
 from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
@@ -1055,6 +1059,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
 
             # Annotated fields
             'allocated',
+            'building',
             'on_order',
             'available_stock',
             'available_substitute_stock',
@@ -1078,6 +1083,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
     # Annotated (calculated) fields
     allocated = serializers.FloatField(read_only=True)
     on_order = serializers.FloatField(read_only=True)
+    building = serializers.FloatField(read_only=True)
     available_stock = serializers.FloatField(read_only=True)
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
@@ -1090,6 +1096,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         - allocated: Total stock quantity allocated against this build line
         - available: Total stock available for allocation against this build line
         - on_order: Total stock on order for this build line
+        - building: Total stock currently in production for this build line
         """
         queryset = queryset.select_related(
             'build', 'bom_item',
@@ -1125,6 +1132,18 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         )
 
         ref = 'bom_item__sub_part__'
+
+        # Limit to active builds
+        build_filter = Q(status__in=BuildStatusGroups.ACTIVE_CODES)
+
+        # Annotate the "building" quantity
+        queryset = queryset.annotate(
+            building=Coalesce(
+                SubquerySum('bom_item__sub_part__builds__quantity', filter=build_filter),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+        )
 
         # Annotate the "on_order" quantity
         # Difficulty: Medium
