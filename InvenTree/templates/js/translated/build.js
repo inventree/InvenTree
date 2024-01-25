@@ -173,6 +173,11 @@ function newBuildOrder(options={}) {
         fields.sales_order.value = options.sales_order;
     }
 
+    // Specify a project code
+    if (options.project_code) {
+        fields.project_code.value = options.project_code;
+    }
+
     if (options.data) {
         delete options.data.pk;
     }
@@ -2695,6 +2700,7 @@ function loadBuildLineTable(table, build_id, options={}) {
             part: row.part_detail.pk,
             parent: build_id,
             quantity: Math.max(row.quantity - row.allocated, 0),
+            ...options,
         });
     });
 
