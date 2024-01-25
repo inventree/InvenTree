@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
@@ -14,6 +15,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export default function BuildLineTable({ params = {} }: { params?: any }) {
   const table = useTable('buildline');
   const user = useUserState();
+  const navigate = useNavigate();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [];
@@ -77,7 +79,12 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
           ...params,
           part_detail: true
         },
-        tableFilters: tableFilters
+        tableFilters: tableFilters,
+        onRowClick: (row: any) => {
+          if (row?.part_detail?.pk) {
+            navigate(`/part/${row.part_detail.pk}`);
+          }
+        }
       }}
     />
   );
