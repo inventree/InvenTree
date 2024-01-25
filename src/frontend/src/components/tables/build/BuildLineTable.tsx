@@ -5,6 +5,7 @@ import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
+import { PartHoverCard } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
@@ -24,31 +25,40 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         accessor: 'bom_item',
         title: t`Part`,
         sortable: true,
-        switchable: false
+        switchable: false,
+        render: (record: any) => <PartHoverCard part={record.part_detail} />
       },
       {
         accessor: 'reference',
-        title: t`Reference`
+        title: t`Reference`,
+        render: (record: any) => record.bom_item_detail.reference
       },
       BooleanColumn({
-        accessor: 'consumable',
+        accessor: 'bom_item_detail.consumable',
         title: t`Consumable`
       }),
       BooleanColumn({
-        accessor: 'optional',
+        accessor: 'bom_item_detail.optional',
         title: t`Optional`
       }),
       {
         accessor: 'unit_quantity',
-        title: t`Unit Quantity`
+        title: t`Unit Quantity`,
+        sortable: true,
+        render: (record: any) => record.bom_item_detail.quantity
+        // TODO: More information displayed here
       },
       {
         accessor: 'quantity',
-        title: t`Required Quantity`
+        title: t`Required Quantity`,
+        sortable: true
+        // TODO: More information displayed here
       },
       {
         accessor: 'available_stock',
-        title: t`Available`
+        title: t`Available`,
+        sortable: true
+        // TODO: More information displayed here
       },
       {
         accessor: 'allocated',

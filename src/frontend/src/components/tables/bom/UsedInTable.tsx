@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { ThumbnailHoverCard } from '../../images/Thumbnail';
+import { PartHoverCard } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -31,37 +31,13 @@ export function UsedInTable({
         title: t`Assembled Part`,
         switchable: false,
         sortable: true,
-        render: (record: any) => {
-          let part = record.part_detail;
-          return (
-            part && (
-              <ThumbnailHoverCard
-                src={part.thumbnail || part.image}
-                text={part.full_name}
-                alt={part.description}
-                link=""
-              />
-            )
-          );
-        }
+        render: (record: any) => <PartHoverCard part={record.part_detail} />
       },
       {
         accessor: 'sub_part',
         title: t`Required Part`,
         sortable: true,
-        render: (record: any) => {
-          let part = record.sub_part_detail;
-          return (
-            part && (
-              <ThumbnailHoverCard
-                src={part.thumbnail || part.image}
-                text={part.full_name}
-                alt={part.description}
-                link=""
-              />
-            )
-          );
-        }
+        render: (record: any) => <PartHoverCard part={record.sub_part_detail} />
       },
       {
         accessor: 'quantity',

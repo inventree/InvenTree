@@ -7,7 +7,7 @@ import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { ThumbnailHoverCard } from '../../images/Thumbnail';
+import { PartHoverCard } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { RenderUser } from '../../render/User';
 import { TableColumn } from '../Column';
@@ -37,19 +37,7 @@ function buildOrderTableColumns(): TableColumn[] {
       sortable: true,
       switchable: false,
       title: t`Part`,
-      render: (record: any) => {
-        let part = record.part_detail;
-        return (
-          part && (
-            <ThumbnailHoverCard
-              src={part.thumbnail || part.image}
-              text={part.full_name}
-              alt={part.description}
-              link=""
-            />
-          )
-        );
-      }
+      render: (record: any) => <PartHoverCard part={record.part_detail} />
     },
     {
       accessor: 'title',
