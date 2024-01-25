@@ -2558,6 +2558,7 @@ function loadBuildLineTable(table, build_id, options={}) {
                 sortable: true,
                 formatter: function(value, row) {
                     var url = `/part/${row.part_detail.pk}/?display=part-stock`;
+
                     // Calculate the "available" quantity
                     let available = row.available_stock + row.available_substitute_stock;
 
@@ -2606,6 +2607,10 @@ function loadBuildLineTable(table, build_id, options={}) {
 
                     if (row.on_order && row.on_order > 0) {
                         icons += makeIconBadge('fa-shopping-cart', `{% trans "On Order" %}: ${formatDecimal(row.on_order)}`);
+                    }
+
+                    if (row.building && row.building > 0) {
+                        icons += makeIconBadge('fa-tools icon-blue', `{% trans "Building" %}: ${formatDecimal(row.building)}`);
                     }
 
                     return renderLink(text, url) + icons;
