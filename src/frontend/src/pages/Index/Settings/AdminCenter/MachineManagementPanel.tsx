@@ -1,6 +1,6 @@
 import { Stack } from '@mantine/core';
 
-import { MachineListTable } from "../../../../components/tables/machine/MachineListTable";
+import { MachineListTable } from '../../../../components/tables/machine/MachineListTable';
 
 export default function MachineManagementPanel() {
   return (

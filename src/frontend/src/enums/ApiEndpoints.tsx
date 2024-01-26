@@ -108,5 +108,5 @@ export enum ApiPaths {
   machine_registry_status = 'api-machine-registry-status',
   machine_list = 'api-machine-list',
   machine_setting_list = 'api-machine-settings',
-  machine_setting_detail = 'api-machine-settings-detail',
+  machine_setting_detail = 'api-machine-settings-detail'
 }

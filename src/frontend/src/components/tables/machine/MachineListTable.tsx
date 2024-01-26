@@ -3,12 +3,8 @@ import {
   ActionIcon,
   Badge,
   Box,
-  Button,
   Card,
-  CheckIcon,
   Code,
-  Container,
-  Divider,
   Flex,
   Group,
   Indicator,
@@ -20,28 +16,21 @@ import {
   Title,
   Tooltip
 } from '@mantine/core';
-import {
-  IconAlertCircle,
-  IconChevronLeft,
-  IconDots,
-  IconPlus,
-  IconRefresh
-} from '@tabler/icons-react';
+import { IconChevronLeft, IconDots, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../../App';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import {
   OpenApiFormProps,
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { notYetImplemented } from '../../../functions/notifications';
+import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { AddItemButton } from '../../buttons/AddItemButton';
-import { ButtonMenu } from '../../buttons/ButtonMenu';
-import { ApiFormProps } from '../../forms/ApiForm';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -57,8 +46,6 @@ import { MachineSettingList } from '../../settings/SettingList';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
-import { ApiPaths } from "../../../enums/ApiEndpoints";
-import { useTable } from "../../../hooks/UseTable";
 
 interface MachineI {
   pk: string;
@@ -423,9 +410,9 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
           field_type: 'choice',
           choices: machineTypes
             ? machineTypes.map((t) => ({
-              value: t.slug,
-              display_name: `${t.name} (${t.description})`
-            }))
+                value: t.slug,
+                display_name: `${t.name} (${t.description})`
+              }))
             : [],
           onValueChange: ({ value }) => setCreateFormMachineType(value)
         },

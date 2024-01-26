@@ -2,13 +2,13 @@ import { Trans, t } from '@lingui/macro';
 import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
   IconCpu,
+  IconDevicesPc,
   IconExclamationCircle,
   IconList,
   IconListDetails,
   IconPlugConnected,
   IconScale,
-  IconUsersGroup,
-  IconDevicesPc,
+  IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
@@ -31,7 +31,7 @@ const PluginManagementPanel = Loadable(
 );
 
 const MachineManagementPanel = Loadable(
-  lazy(() => import("./MachineManagementPanel"))
+  lazy(() => import('./MachineManagementPanel'))
 );
 
 const ErrorReportTable = Loadable(
