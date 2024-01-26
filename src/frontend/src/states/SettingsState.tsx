@@ -160,6 +160,13 @@ export const createMachineSettingsState = ({
             error
           );
         });
+    },
+    getSetting: (key: string, default_value?: string) => {
+      return get().lookup[key] ?? default_value ?? '';
+    },
+    isSet: (key: string, default_value?: boolean) => {
+      let value = get().lookup[key] ?? default_value ?? 'false';
+      return isTrue(value);
     }
   }));
 };

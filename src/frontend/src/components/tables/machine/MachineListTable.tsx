@@ -32,13 +32,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../../App';
 import {
+  OpenApiFormProps,
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
 import { notYetImplemented } from '../../../functions/notifications';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { apiUrl } from '../../../states/ApiState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { ButtonMenu } from '../../buttons/ButtonMenu';
 import { ApiFormProps } from '../../forms/ApiForm';
@@ -52,12 +52,13 @@ import { YesNoButton } from '../../items/YesNoButton';
 import {
   StatusRenderer,
   TableStatusRenderer
-} from '../../renderers/StatusRenderer';
+} from '../../render/StatusRenderer';
 import { MachineSettingList } from '../../settings/SettingList';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { ApiPaths } from "../../../enums/ApiEndpoints";
+import { useTable } from "../../../hooks/UseTable";
 
 interface MachineI {
   pk: string;
@@ -327,7 +328,7 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
     staleTime: 10 * 1000
   });
 
-  const { tableKey, refreshTable } = useTableRefresh('machine');
+  const table = useTable('machine');
 
   const machineTableColumns = useMemo<TableColumn<MachineI>[]>(
     () => [
@@ -412,7 +413,7 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
       }));
   }, [machineDrivers, createFormMachineType]);
 
-  const createMachineForm = useMemo<ApiFormProps>(() => {
+  const createMachineForm = useMemo<OpenApiFormProps>(() => {
     return {
       title: t`Create machine`,
       url: ApiPaths.machine_list,
@@ -422,9 +423,9 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
           field_type: 'choice',
           choices: machineTypes
             ? machineTypes.map((t) => ({
-                value: t.slug,
-                display_name: `${t.name} (${t.description})`
-              }))
+              value: t.slug,
+              display_name: `${t.name} (${t.description})`
+            }))
             : [],
           onValueChange: ({ value }) => setCreateFormMachineType(value)
         },
@@ -451,13 +452,13 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.machine_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={machineTableColumns}
       props={{
         ...props,
         enableDownload: false,
         onRowClick: (record) => setCurrentMachinePk(record.pk),
-        customActionGroups: [
+        tableActions: [
           <AddItemButton
             variant="outline"
             onClick={() => {
@@ -469,7 +470,7 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
         params: {
           ...props.params
         },
-        customFilters: [
+        tableFilters: [
           {
             name: 'active',
             label: t`Active`,

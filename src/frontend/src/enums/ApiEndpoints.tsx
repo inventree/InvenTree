@@ -100,5 +100,13 @@ export enum ApiPaths {
 
   error_report_list = 'api-error-report-list',
   project_code_list = 'api-project-code-list',
-  custom_unit_list = 'api-custom-unit-list'
+  custom_unit_list = 'api-custom-unit-list',
+
+  // Machine URLs
+  machine_types_list = 'api-machine-types',
+  machine_driver_list = 'api-machine-drivers',
+  machine_registry_status = 'api-machine-registry-status',
+  machine_list = 'api-machine-list',
+  machine_setting_list = 'api-machine-settings',
+  machine_setting_detail = 'api-machine-settings-detail',
 }

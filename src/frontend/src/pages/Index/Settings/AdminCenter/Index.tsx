@@ -7,7 +7,8 @@ import {
   IconListDetails,
   IconPlugConnected,
   IconScale,
-  IconUsersGroup
+  IconUsersGroup,
+  IconDevicesPc,
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
@@ -27,6 +28,10 @@ const TaskManagementPanel = Loadable(
 
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
+);
+
+const MachineManagementPanel = Loadable(
+  lazy(() => import("./MachineManagementPanel"))
 );
 
 const ErrorReportTable = Loadable(
@@ -98,6 +103,12 @@ export default function AdminCenter() {
         label: t`Plugins`,
         icon: <IconPlugConnected />,
         content: <PluginManagementPanel />
+      },
+      {
+        name: 'machine',
+        label: t`Machines`,
+        icon: <IconDevicesPc />,
+        content: <MachineManagementPanel />
       }
     ];
   }, []);

@@ -841,7 +841,7 @@ def get_objectreference(
     return {'name': str(item), 'model': str(model_cls._meta.verbose_name), **ret}
 
 
-Inheritors_T = TypeVar("Inheritors_T")
+Inheritors_T = TypeVar('Inheritors_T')
 
 
 def inheritors(cls: Type[Inheritors_T]) -> Set[Type[Inheritors_T]]:

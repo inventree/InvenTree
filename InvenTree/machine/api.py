@@ -193,24 +193,24 @@ class RegistryStatusView(APIView):
 
 machine_api_urls = [
     # machine types
-    re_path(r"^types/", MachineTypesList.as_view(), name="api-machine-types"),
+    path("types/", MachineTypesList.as_view(), name="api-machine-types"),
 
     # machine drivers
-    re_path(r"^drivers/", MachineDriverList.as_view(), name="api-machine-drivers"),
+    path("drivers/", MachineDriverList.as_view(), name="api-machine-drivers"),
 
     # registry status
-    re_path(r"^status/", RegistryStatusView.as_view(), name="api-machine-registry-status"),
+    path("status/", RegistryStatusView.as_view(), name="api-machine-registry-status"),
 
     # detail views for a single Machine
-    path(r"<uuid:pk>/", include([
-        re_path(r"^settings/", include([
+    path("<uuid:pk>/", include([
+        path("settings/", include([
             re_path(r"^(?P<config_type>M|D)/(?P<key>\w+)/", MachineSettingDetail.as_view(), name="api-machine-settings-detail"),
-            re_path(r"^.*$", MachineSettingList.as_view(), name="api-machine-settings"),
+            path("", MachineSettingList.as_view(), name="api-machine-settings"),
         ])),
 
-        re_path(r"^.*$", MachineDetail.as_view(), name="api-machine-detail"),
+        path("", MachineDetail.as_view(), name="api-machine-detail"),
     ])),
 
     # machine list and create
-    re_path(r"^.*$", MachineList.as_view(), name="api-machine-list"),
+    path("", MachineList.as_view(), name="api-machine-list"),
 ]
