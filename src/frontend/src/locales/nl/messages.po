@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-24 16:14\n"
+"PO-Revision-Date: 2024-01-26 16:38\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -173,7 +173,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:148
 msgid "Send Email"
-msgstr ""
+msgstr "E-mail versturen"
 
 #: src/components/forms/AuthenticationForm.tsx:175
 msgid "Registration successful"
@@ -910,7 +910,7 @@ msgstr ""
 #: src/components/tables/sales/SalesOrderTable.tsx:63
 #: src/pages/sales/SalesOrderDetail.tsx:106
 msgid "Sales Order"
-msgstr ""
+msgstr "Verkooporder"
 
 #: src/components/render/ModelType.tsx:118
 #: src/pages/Index/Settings/SystemSettings.tsx:249
@@ -918,28 +918,28 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:190
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
-msgstr ""
+msgstr "Verkooporders"
 
 #: src/components/render/ModelType.tsx:125
 msgid "Sales Order Shipment"
-msgstr ""
+msgstr "Verzending verkooporder"
 
 #: src/components/render/ModelType.tsx:126
 msgid "Sales Order Shipments"
-msgstr ""
+msgstr "Verzendingen verkooporders"
 
 #: src/components/render/ModelType.tsx:132
 #: src/components/tables/sales/ReturnOrderTable.tsx:60
 #: src/pages/sales/ReturnOrderDetail.tsx:68
 msgid "Return Order"
-msgstr ""
+msgstr "Retourorder"
 
 #: src/components/render/ModelType.tsx:133
 #: src/pages/Index/Settings/SystemSettings.tsx:263
 #: src/pages/company/CompanyDetail.tsx:125
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
-msgstr ""
+msgstr "Retourorders"
 
 #: src/components/render/ModelType.tsx:140
 #: src/components/tables/company/AddressTable.tsx:49
@@ -1045,7 +1045,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:60
 #: src/pages/sales/SalesOrderDetail.tsx:47
 msgid "Line Items"
-msgstr ""
+msgstr "Regelitems"
 
 #: src/components/tables/ColumnRenderers.tsx:97
 #: src/components/tables/build/BuildOrderTable.tsx:115
@@ -1054,7 +1054,7 @@ msgstr ""
 #: src/components/tables/sales/SalesOrderTable.tsx:43
 #: src/components/tables/stock/StockItemTable.tsx:238
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: src/components/tables/ColumnRenderers.tsx:105
 msgid "Responsible"
@@ -1380,7 +1380,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:88
 #: src/pages/stock/StockDetail.tsx:125
 msgid "Notes"
-msgstr ""
+msgstr "Opmerkingen"
 
 #: src/components/tables/bom/BomTable.tsx:238
 msgid "Trackable Part"
@@ -1532,7 +1532,7 @@ msgstr ""
 #: src/components/tables/sales/ReturnOrderTable.tsx:43
 #: src/components/tables/sales/SalesOrderTable.tsx:44
 msgid "Filter by order status"
-msgstr ""
+msgstr "Filteren op bestellingstatus"
 
 #: src/components/tables/build/BuildOrderTable.tsx:123
 msgid "Show overdue status"
@@ -1871,7 +1871,7 @@ msgstr ""
 
 #: src/components/tables/part/PartTable.tsx:114
 msgid "Sales Order Allocations"
-msgstr ""
+msgstr "Verkoopordertoewijzingen"
 
 #: src/components/tables/part/PartTable.tsx:174
 msgid "Filter by part active status"
@@ -2430,24 +2430,24 @@ msgstr ""
 #: src/components/tables/sales/SalesOrderTable.tsx:70
 #: src/pages/company/CustomerDetail.tsx:8
 msgid "Customer"
-msgstr ""
+msgstr "Klant"
 
 #: src/components/tables/sales/ReturnOrderTable.tsx:82
 #: src/components/tables/sales/SalesOrderTable.tsx:86
 msgid "Customer Reference"
-msgstr ""
+msgstr "Klantreferentie"
 
 #: src/components/tables/sales/ReturnOrderTable.tsx:93
 msgid "Total Cost"
-msgstr ""
+msgstr "Totale kosten"
 
 #: src/components/tables/sales/ReturnOrderTable.tsx:105
 msgid "Add Return Order"
-msgstr ""
+msgstr "Retourorder toevoegen"
 
 #: src/components/tables/sales/SalesOrderTable.tsx:106
 msgid "Add Sales Order"
-msgstr ""
+msgstr "Voeg Verkooporder toe"
 
 #: src/components/tables/settings/CurrencyTable.tsx:28
 msgid "Rate"
@@ -2770,7 +2770,7 @@ msgstr ""
 
 #: src/components/tables/stock/StockItemTable.tsx:66
 msgid "This stock item has been assigned to a sales order"
-msgstr ""
+msgstr "Voorraadartikel is toegewezen aan een verkooporder"
 
 #: src/components/tables/stock/StockItemTable.tsx:75
 msgid "This stock item has been assigned to a customer"
@@ -3224,11 +3224,11 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:113
 msgid "Outstanding Sales Orders"
-msgstr ""
+msgstr "Openstaande Verkooporders"
 
 #: src/defaults/dashboardItems.tsx:120
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Achterstallige Verkooporders"
 
 #: src/defaults/dashboardItems.tsx:127
 msgid "Current News"
@@ -3280,7 +3280,7 @@ msgstr ""
 #: src/pages/sales/SalesIndex.tsx:45
 #: src/pages/sales/SalesOrderDetail.tsx:109
 msgid "Sales"
-msgstr ""
+msgstr "Verkoop"
 
 #: src/defaults/links.tsx:35
 #: src/defaults/menuItems.tsx:71
@@ -4200,7 +4200,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:132
 #: src/pages/sales/SalesOrderDetail.tsx:62
 msgid "Build Orders"
-msgstr ""
+msgstr "Productieorders"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:286
 msgid "Switch to User Setting"
@@ -4291,7 +4291,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:76
 #: src/pages/stock/StockDetail.tsx:113
 msgid "Attachments"
-msgstr ""
+msgstr "Bijlagen"
 
 #: src/pages/build/BuildDetail.tsx:185
 #: src/pages/part/PartDetail.tsx:269
@@ -4496,7 +4496,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:33
 #: src/pages/sales/SalesOrderDetail.tsx:42
 msgid "Order Details"
-msgstr ""
+msgstr "Order Details"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:119
 msgid "Order Actions"
@@ -4504,15 +4504,15 @@ msgstr ""
 
 #: src/pages/sales/SalesIndex.tsx:33
 msgid "Customers"
-msgstr ""
+msgstr "Klanten"
 
 #: src/pages/sales/SalesOrderDetail.tsx:52
 msgid "Pending Shipments"
-msgstr ""
+msgstr "In afwachting van verzending"
 
 #: src/pages/sales/SalesOrderDetail.tsx:57
 msgid "Completed Shipments"
-msgstr ""
+msgstr "Voltooide Verzendingen"
 
 #: src/pages/stock/LocationDetail.tsx:38
 #~ msgid "Sublocations"
