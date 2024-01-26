@@ -19,6 +19,7 @@ import { IconDots, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { api } from '../../../App';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -235,17 +236,25 @@ function MachineDrawer({
             <LoadingOverlay visible={isFetching} overlayOpacity={0} />
             <InfoItem name={t`Machine Type`}>
               <Group spacing="xs">
-                <Text>
-                  {machineType ? machineType.name : machine?.machine_type}
-                </Text>
+                {machineType ? (
+                  <Link to={`../type-${machine?.machine_type}`}>
+                    <Text>{machineType.name}</Text>
+                  </Link>
+                ) : (
+                  <Text>{machine?.machine_type}</Text>
+                )}
                 {machine && !machineType && <UnavailableIndicator />}
               </Group>
             </InfoItem>
             <InfoItem name={t`Machine Driver`}>
               <Group spacing="xs">
-                <Text>
-                  {machineDriver ? machineDriver.name : machine?.driver}
-                </Text>
+                {machineDriver ? (
+                  <Link to={`../driver-${machine?.driver}`}>
+                    <Text>{machineDriver.name}</Text>
+                  </Link>
+                ) : (
+                  <Text>{machine?.driver}</Text>
+                )}
                 {!machine?.is_driver_available && <UnavailableIndicator />}
               </Group>
             </InfoItem>
