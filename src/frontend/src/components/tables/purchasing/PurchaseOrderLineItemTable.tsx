@@ -4,10 +4,12 @@ import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { ProgressBar } from '../../../components/items/ProgressBar';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
 import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -37,26 +39,23 @@ export function PurchaseOrderLineItemTable({
   orderId: number;
   params?: any;
 }) {
-  const { tableKey, refreshTable } = useTableRefresh(
-    'purchase-order-line-item'
-  );
+  const table = useTable('purchase-order-line-item');
 
   const user = useUserState();
 
   const rowActions = useCallback(
     (record: any) => {
-      // TODO: Hide certain actions if user does not have required permissions
-
       let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
       return [
         {
           hidden: received,
-          title: t`Receive`,
-          tooltip: t`Receive line item`,
+          title: t`Receive line item`,
+          icon: <IconSquareArrowRight />,
           color: 'green'
         },
         RowEditAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
           onClick: () => {
             let supplier = record?.supplier_part_detail?.supplier;
 
@@ -65,7 +64,8 @@ export function PurchaseOrderLineItemTable({
             }
 
             let fields = purchaseOrderLineItemFields({
-              supplierId: supplier
+              supplierId: supplier,
+              create: false
             });
 
             openEditApiForm({
@@ -73,13 +73,17 @@ export function PurchaseOrderLineItemTable({
               pk: record.pk,
               title: t`Edit Line Item`,
               fields: fields,
-              onFormSuccess: refreshTable,
+              onFormSuccess: table.refreshTable,
               successMessage: t`Line item updated`
             });
           }
         }),
-        RowDuplicateAction({}),
-        RowDeleteAction({})
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.purchase_order)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+        })
       ];
     },
     [orderId, user]
@@ -216,28 +220,36 @@ export function PurchaseOrderLineItemTable({
     openCreateApiForm({
       url: ApiPaths.purchase_order_line_list,
       title: t`Add Line Item`,
-      fields: purchaseOrderLineItemFields({}),
-      onFormSuccess: refreshTable,
+      fields: purchaseOrderLineItemFields({
+        create: true,
+        orderId: orderId
+      }),
+      onFormSuccess: table.refreshTable,
       successMessage: t`Line item added`
     });
-  }, []);
+  }, [orderId]);
 
   // Custom table actions
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-line-item"
         tooltip={t`Add line item`}
         onClick={addLine}
-        hidden={!user?.checkUserRole('purchaseorder', 'add')}
+        hidden={!user?.hasAddRole(UserRoles.purchase_order)}
       />,
-      <ActionButton text={t`Receive items`} icon={<IconSquareArrowRight />} />
+      <ActionButton
+        key="receive-items"
+        text={t`Receive items`}
+        icon={<IconSquareArrowRight />}
+      />
     ];
   }, [orderId, user]);
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.purchase_order_line_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableSelection: true,
@@ -248,7 +260,7 @@ export function PurchaseOrderLineItemTable({
           part_detail: true
         },
         rowActions: rowActions,
-        customActionGroups: tableActions
+        tableActions: tableActions
       }}
     />
   );

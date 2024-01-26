@@ -12,6 +12,7 @@ Most pages in the web interface support multiple panels, which are selected via 
 {% include 'img.html' %}
 {% endwith %}
 
+
 Each plugin which implements this mixin can return zero or more custom panels for a particular page. The plugin can decide (at runtime) which panels it wishes to render. This determination can be made based on the page routing, the item being viewed, the particular user, or other considerations.
 
 ### Panel Content
@@ -186,14 +187,16 @@ class ExamplePanel(PanelMixin, InvenTreePlugin, UrlsMixin):
     AUTHOR = "Michael"
     DESCRIPTION = "This plugin passes user input from the panel to the plugin"
 
-# Create the panel that will display on every view
+# Create the panel that will display on build detail view
     def get_custom_panels(self, view, request):
         panels = []
-        panels.append({
-            'title': 'Example Info',
-            'icon': 'fa-industry',
-            'content_template': 'example_panel/example.html',
-        })
+        if isinstance(view, BuildDetail):
+	    self.build=view.get_object()
+	    panels.append({
+		'title': 'Example Info',
+		'icon': 'fa-industry',
+		'content_template': 'example_panel/example.html',
+	    })
         return panels
 
     def setup_urls(self):
@@ -220,10 +223,10 @@ Now the html template:
 {% raw %}
 <script>
 async function example_select(){
-    const layernumber = parseInt(document.getElementById("layer_number").value)
+    const layer_number = parseInt(document.getElementById("layer_number").value)
     const size = document.getElementById("string").value
     response = inventreeFormDataUpload(url="{% url 'plugin:examplepanel:transfer' '9999' 'Size' %}"
-                                          .replace("9999", layernumber)
+                                          .replace("9999", layer_number)
                                           .replace("Size", size)
                                       );
 }
@@ -271,7 +274,7 @@ the javascript:
 {% raw %}
 <script>
 async function example_select(){
-    const layernumber = parseInt(document.getElementById("layer_number").value)
+    const layer_number = parseInt(document.getElementById("layer_number").value)
     const size = document.getElementById("string").value
     const cmd_url="{% url 'plugin:examplepanel:transfer' %}";
     data = {
@@ -312,3 +315,58 @@ The URL and the called function have no parameter names any longer. All data is 
 request message and can be extracted from this using json.loads. If more data is needed
 just add it to the json container. No further changes are needed. It's really simple :-)
 
+#### Populate a drop down field
+
+Now we add a dropdown menu and fill it with values from the InvenTree database.
+
+{% with id="panel_with_dropwdown", url="plugin/panel_with_dropdown.png", description="Panel with dropdown menu" %}
+{% include "img.html" %}
+{% endwith %}
+
+
+```python
+from company.models import Company
+
+...
+
+    def get_custom_panels(self, view, request):
+        panels = []
+        if isinstance(view, BuildDetail):
+	    self.build=view.get_object()
+            self.companies=Company.objects.filter(is_supplier=True)
+            panels.append({
+            ...
+```
+Here we create self.companies and fill it with all companies that have the is_supplier flag
+set to true. This is available in the context of the template. A drop down menu can be created
+by looping.
+
+
+```html
+{% raw %}
+<select id="ems">
+    {% for company in plugin.companies %}
+	<option value="{{ company.id }}"> {{ company.name }} </option>
+    {% endfor %}
+</select>
+{% endraw %}
+```
+
+The value of the select is the pk of the company. It can simply be added to the
+json container and transferred to the plugin.
+
+#### Store the Data
+I case you plugin needs to store data permanently, InvenTree has a nice feature called
+[metadata](metadata.md). You can easily store your values by adding a few lines
+to the do_something function.
+code:
+
+```python
+    def do_something(self, request):
+
+        data=json.loads(request.body)
+        print('Data received:', data)
+	for key in data:
+	    self.build.metadata[key]=data[key]
+	self.build.save()
+```

@@ -1,4 +1,4 @@
-"""API functionality for the 'label' app"""
+"""API functionality for the 'label' app."""
 
 from django.core.exceptions import FieldError, ValidationError
 from django.http import JsonResponse
@@ -18,7 +18,7 @@ import label.models
 import label.serializers
 from InvenTree.api import MetadataView
 from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from part.models import Part
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
@@ -42,7 +42,7 @@ class LabelFilterMixin:
     ITEM_KEY = 'item'
 
     def get_items(self):
-        """Return a list of database objects from query parameter"""
+        """Return a list of database objects from query parameter."""
         ids = []
 
         # Construct a list of possible query parameter value options
@@ -58,14 +58,14 @@ class LabelFilterMixin:
         for id in ids:
             try:
                 valid_ids.append(int(id))
-            except (ValueError):
+            except ValueError:
                 pass
 
         # Filter queryset by matching ID values
         return self.ITEM_MODEL.objects.filter(pk__in=valid_ids)
 
 
-class LabelListView(LabelFilterMixin, ListAPI):
+class LabelListView(LabelFilterMixin, ListCreateAPI):
     """Generic API class for label templates."""
 
     def filter_queryset(self, queryset):
@@ -119,39 +119,28 @@ class LabelListView(LabelFilterMixin, ListAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter
-    ]
+    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
 
-    filterset_fields = [
-        'enabled',
-    ]
+    filterset_fields = ['enabled']
 
-    search_fields = [
-        'name',
-        'description',
-    ]
+    search_fields = ['name', 'description']
 
 
 @method_decorator(cache_page(5), name='dispatch')
 class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
 
-    rolemap = {
-        "GET": "view",
-        "POST": "view",
-    }
+    rolemap = {'GET': 'view', 'POST': 'view'}
 
     def check_permissions(self, request):
         """Override request method to GET so that also non superusers can print using a post request."""
-        if request.method == "POST":
-            request = clone_request(request, "GET")
+        if request.method == 'POST':
+            request = clone_request(request, 'GET')
         return super().check_permissions(request)
 
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
-        """Prevent caching when printing report templates"""
+        """Prevent caching when printing report templates."""
         return super().dispatch(*args, **kwargs)
 
     def get_serializer(self, *args, **kwargs):
@@ -159,7 +148,10 @@ class LabelPrintMixin(LabelFilterMixin):
         # Check the request to determine if the user has selected a label printing plugin
         plugin = self.get_plugin(self.request)
 
-        serializer = plugin.get_printing_options_serializer(self.request)
+        kwargs.setdefault('context', self.get_serializer_context())
+        serializer = plugin.get_printing_options_serializer(
+            self.request, *args, **kwargs
+        )
 
         # if no serializer is defined, return an empty serializer
         if not serializer:
@@ -168,13 +160,17 @@ class LabelPrintMixin(LabelFilterMixin):
         return serializer
 
     def get(self, request, *args, **kwargs):
-        """Perform a GET request against this endpoint to print labels"""
-        common.models.InvenTreeUserSetting.set_setting('DEFAULT_' + self.ITEM_KEY.upper() + '_LABEL_TEMPLATE',
-                                                       self.get_object().pk, None, user=request.user)
+        """Perform a GET request against this endpoint to print labels."""
+        common.models.InvenTreeUserSetting.set_setting(
+            'DEFAULT_' + self.ITEM_KEY.upper() + '_LABEL_TEMPLATE',
+            self.get_object().pk,
+            None,
+            user=request.user,
+        )
         return self.print(request, self.get_items())
 
     def post(self, request, *args, **kwargs):
-        """Perform a GET request against this endpoint to print labels"""
+        """Perform a GET request against this endpoint to print labels."""
         return self.get(request, *args, **kwargs)
 
     def get_plugin(self, request):
@@ -203,8 +199,10 @@ class LabelPrintMixin(LabelFilterMixin):
         if not plugin.is_active():
             raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
 
-        if not plugin.mixin_enabled("labels"):
-            raise ValidationError(f"Plugin '{plugin_key}' is not a label printing plugin")
+        if not plugin.mixin_enabled('labels'):
+            raise ValidationError(
+                f"Plugin '{plugin_key}' is not a label printing plugin"
+            )
 
         # Only return the plugin if it is enabled and has the label printing mixin
         return plugin
@@ -221,23 +219,33 @@ class LabelPrintMixin(LabelFilterMixin):
         # Label template
         label = self.get_object()
 
+        # Check the label dimensions
+        if label.width <= 0 or label.height <= 0:
+            raise ValidationError('Label has invalid dimensions')
+
         # if the plugin returns a serializer, validate the data
-        if serializer := plugin.get_printing_options_serializer(request, data=request.data):
+        if serializer := plugin.get_printing_options_serializer(
+            request, data=request.data, context=self.get_serializer_context()
+        ):
             serializer.is_valid(raise_exception=True)
 
         # At this point, we offload the label(s) to the selected plugin.
         # The plugin is responsible for handling the request and returning a response.
 
-        result = plugin.print_labels(label, items_to_print, request, printing_options=request.data)
+        result = plugin.print_labels(
+            label, items_to_print, request, printing_options=request.data
+        )
 
         if isinstance(result, JsonResponse):
             result['plugin'] = plugin.plugin_slug()
             return result
-        raise ValidationError(f"Plugin '{plugin.plugin_slug()}' returned invalid response type '{type(result)}'")
+        raise ValidationError(
+            f"Plugin '{plugin.plugin_slug()}' returned invalid response type '{type(result)}'"
+        )
 
 
 class StockItemLabelMixin:
-    """Mixin for StockItemLabel endpoints"""
+    """Mixin for StockItemLabel endpoints."""
 
     queryset = label.models.StockItemLabel.objects.all()
     serializer_class = label.serializers.StockItemLabelSerializer
@@ -255,21 +263,24 @@ class StockItemLabelList(StockItemLabelMixin, LabelListView):
     - item: Filter by single stock item
     - items: Filter by list of stock items
     """
+
     pass
 
 
 class StockItemLabelDetail(StockItemLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single StockItemLabel object."""
+
     pass
 
 
 class StockItemLabelPrint(StockItemLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockItemLabel object."""
+
     pass
 
 
 class StockLocationLabelMixin:
-    """Mixin for StockLocationLabel endpoints"""
+    """Mixin for StockLocationLabel endpoints."""
 
     queryset = label.models.StockLocationLabel.objects.all()
     serializer_class = label.serializers.StockLocationLabelSerializer
@@ -287,21 +298,25 @@ class StockLocationLabelList(StockLocationLabelMixin, LabelListView):
     - location: Filter by a single stock location
     - locations: Filter by list of stock locations
     """
+
     pass
 
 
 class StockLocationLabelDetail(StockLocationLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single StockLocationLabel object."""
+
     pass
 
 
 class StockLocationLabelPrint(StockLocationLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockLocationLabel object."""
+
     pass
 
 
 class PartLabelMixin:
-    """Mixin for PartLabel endpoints"""
+    """Mixin for PartLabel endpoints."""
+
     queryset = label.models.PartLabel.objects.all()
     serializer_class = label.serializers.PartLabelSerializer
 
@@ -311,21 +326,24 @@ class PartLabelMixin:
 
 class PartLabelList(PartLabelMixin, LabelListView):
     """API endpoint for viewing list of PartLabel objects."""
+
     pass
 
 
 class PartLabelDetail(PartLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single PartLabel object."""
+
     pass
 
 
 class PartLabelPrint(PartLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a PartLabel object."""
+
     pass
 
 
 class BuildLineLabelMixin:
-    """Mixin class for BuildLineLabel endpoints"""
+    """Mixin class for BuildLineLabel endpoints."""
 
     queryset = label.models.BuildLineLabel.objects.all()
     serializer_class = label.serializers.BuildLineLabelSerializer
@@ -335,71 +353,142 @@ class BuildLineLabelMixin:
 
 
 class BuildLineLabelList(BuildLineLabelMixin, LabelListView):
-    """API endpoint for viewing a list of BuildLineLabel objects"""
+    """API endpoint for viewing a list of BuildLineLabel objects."""
+
     pass
 
 
 class BuildLineLabelDetail(BuildLineLabelMixin, RetrieveUpdateDestroyAPI):
-    """API endpoint for a single BuildLineLabel object"""
+    """API endpoint for a single BuildLineLabel object."""
+
     pass
 
 
 class BuildLineLabelPrint(BuildLineLabelMixin, LabelPrintMixin, RetrieveAPI):
-    """API endpoint for printing a BuildLineLabel object"""
+    """API endpoint for printing a BuildLineLabel object."""
+
     pass
 
 
 label_api_urls = [
-
     # Stock item labels
-    re_path(r'stock/', include([
-        # Detail views
-        path(r'<int:pk>/', include([
-            re_path(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
-            re_path(r'metadata/', MetadataView.as_view(), {'model': label.models.StockItemLabel}, name='api-stockitem-label-metadata'),
-            re_path(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
-        ])),
-
-        # List view
-        re_path(r'^.*$', StockItemLabelList.as_view(), name='api-stockitem-label-list'),
-    ])),
-
+    path(
+        'stock/',
+        include([
+            # Detail views
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'print/?',
+                        StockItemLabelPrint.as_view(),
+                        name='api-stockitem-label-print',
+                    ),
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': label.models.StockItemLabel},
+                        name='api-stockitem-label-metadata',
+                    ),
+                    path(
+                        '',
+                        StockItemLabelDetail.as_view(),
+                        name='api-stockitem-label-detail',
+                    ),
+                ]),
+            ),
+            # List view
+            path('', StockItemLabelList.as_view(), name='api-stockitem-label-list'),
+        ]),
+    ),
     # Stock location labels
-    re_path(r'location/', include([
-        # Detail views
-        path(r'<int:pk>/', include([
-            re_path(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
-            re_path(r'metadata/', MetadataView.as_view(), {'model': label.models.StockLocationLabel}, name='api-stocklocation-label-metadata'),
-            re_path(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
-        ])),
-
-        # List view
-        re_path(r'^.*$', StockLocationLabelList.as_view(), name='api-stocklocation-label-list'),
-    ])),
-
+    path(
+        'location/',
+        include([
+            # Detail views
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'print/?',
+                        StockLocationLabelPrint.as_view(),
+                        name='api-stocklocation-label-print',
+                    ),
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': label.models.StockLocationLabel},
+                        name='api-stocklocation-label-metadata',
+                    ),
+                    path(
+                        '',
+                        StockLocationLabelDetail.as_view(),
+                        name='api-stocklocation-label-detail',
+                    ),
+                ]),
+            ),
+            # List view
+            path(
+                '',
+                StockLocationLabelList.as_view(),
+                name='api-stocklocation-label-list',
+            ),
+        ]),
+    ),
     # Part labels
-    re_path(r'^part/', include([
-        # Detail views
-        path(r'<int:pk>/', include([
-            re_path(r'^print/', PartLabelPrint.as_view(), name='api-part-label-print'),
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': label.models.PartLabel}, name='api-part-label-metadata'),
-            re_path(r'^.*$', PartLabelDetail.as_view(), name='api-part-label-detail'),
-        ])),
-
-        # List view
-        re_path(r'^.*$', PartLabelList.as_view(), name='api-part-label-list'),
-    ])),
-
+    path(
+        'part/',
+        include([
+            # Detail views
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'print/?',
+                        PartLabelPrint.as_view(),
+                        name='api-part-label-print',
+                    ),
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': label.models.PartLabel},
+                        name='api-part-label-metadata',
+                    ),
+                    path('', PartLabelDetail.as_view(), name='api-part-label-detail'),
+                ]),
+            ),
+            # List view
+            path('', PartLabelList.as_view(), name='api-part-label-list'),
+        ]),
+    ),
     # BuildLine labels
-    re_path(r'^buildline/', include([
-        # Detail views
-        path(r'<int:pk>/', include([
-            re_path(r'^print/', BuildLineLabelPrint.as_view(), name='api-buildline-label-print'),
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': label.models.BuildLineLabel}, name='api-buildline-label-metadata'),
-            re_path(r'^.*$', BuildLineLabelDetail.as_view(), name='api-buildline-label-detail'),
-        ])),
-
-        # List view
-        re_path(r'^.*$', BuildLineLabelList.as_view(), name='api-buildline-label-list'),
-    ])),
+    path(
+        'buildline/',
+        include([
+            # Detail views
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'print/?',
+                        BuildLineLabelPrint.as_view(),
+                        name='api-buildline-label-print',
+                    ),
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': label.models.BuildLineLabel},
+                        name='api-buildline-label-metadata',
+                    ),
+                    path(
+                        '',
+                        BuildLineLabelDetail.as_view(),
+                        name='api-buildline-label-detail',
+                    ),
+                ]),
+            ),
+            # List view
+            path('', BuildLineLabelList.as_view(), name='api-buildline-label-list'),
+        ]),
+    ),
 ]

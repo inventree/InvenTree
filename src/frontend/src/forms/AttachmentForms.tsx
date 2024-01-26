@@ -1,13 +1,12 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { ApiPaths } from '../enums/ApiEndpoints';
 import {
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../functions/forms';
-import { ApiPaths } from '../states/ApiState';
 
 export function attachmentFields(editing: boolean): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {
@@ -126,8 +125,6 @@ export function deleteAttachment({
     successMessage: t`Attachment deleted`,
     onFormSuccess: callback,
     fields: {},
-    preFormContent: (
-      <Text>{t`Are you sure you want to delete this attachment?`}</Text>
-    )
+    preFormWarning: t`Are you sure you want to delete this attachment?`
   });
 }

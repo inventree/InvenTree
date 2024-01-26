@@ -123,7 +123,7 @@ table td.expand {
             </td>
             <td>
                 <div class='part-logo'>
-                    <img src='{% part_image part %}' alt='{% trans "Image" %}' class='part-logo'>
+                    <img src='{% part_image part height=480 %}' alt='{% trans "Image" %}' class='part-logo'>
                 </div>
             </td>
         </tr>
@@ -145,7 +145,7 @@ table td.expand {
         <tr>
             <td>
                 <div class='thumb-container'>
-                    <img src='{% part_image line.sub_part %}' alt='{% trans "Image" %}' class='part-thumb'>
+                    <img src='{% part_image line.sub_part height=240 %}' alt='{% trans "Image" %}' class='part-thumb'>
                 </div>
                 <div class='part-text'>
                     {{ line.sub_part.full_name }}

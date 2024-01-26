@@ -1,11 +1,9 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Stack, Table } from '@mantine/core';
+import { Group, LoadingOverlay, Skeleton, Stack, Table } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
-  IconCopy,
   IconDots,
-  IconEdit,
   IconFileTypePdf,
   IconInfoCircle,
   IconList,
@@ -14,8 +12,7 @@ import {
   IconPaperclip,
   IconPrinter,
   IconQrcode,
-  IconSitemap,
-  IconTrash
+  IconSitemap
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -31,16 +28,17 @@ import {
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { ModelType } from '../../components/render/ModelType';
-import { StatusRenderer } from '../../components/renderers/StatusRenderer';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { buildOrderFields } from '../../forms/BuildForms';
 import { openEditApiForm } from '../../functions/forms';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 
 /**
@@ -80,7 +78,7 @@ export default function BuildDetail() {
             <tr>
               <td>{t`Build Status`}</td>
               <td>
-                {build.status && (
+                {build?.status && (
                   <StatusRenderer
                     status={build.status}
                     type={ModelType.build}
@@ -122,7 +120,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             params={{
-              build: build.pk ?? -1,
+              build: id,
               is_building: false
             }}
           />
@@ -135,7 +133,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             params={{
-              consumed_by: build.pk ?? -1
+              consumed_by: id
             }}
           />
         )
@@ -147,7 +145,7 @@ export default function BuildDetail() {
         content: (
           <BuildOrderTable
             params={{
-              parent: build.pk ?? -1
+              parent: id
             }}
           />
         )
@@ -160,7 +158,7 @@ export default function BuildDetail() {
           <AttachmentTable
             endpoint={ApiPaths.build_order_attachment_list}
             model="build"
-            pk={build.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -177,7 +175,7 @@ export default function BuildDetail() {
         )
       }
     ];
-  }, [build]);
+  }, [build, id]);
 
   const editBuildOrder = useCallback(() => {
     let fields = buildOrderFields();
@@ -243,10 +241,14 @@ export default function BuildDetail() {
   }, [id, build, user]);
 
   const buildDetail = useMemo(() => {
-    return StatusRenderer({
-      status: build.status,
-      type: ModelType.build
-    });
+    return build?.status ? (
+      StatusRenderer({
+        status: build.status,
+        type: ModelType.build
+      })
+    ) : (
+      <Skeleton />
+    );
   }, [build, id]);
 
   return (

@@ -7,17 +7,15 @@ import {
   IconCurrencyDollar,
   IconFileAnalytics,
   IconFingerprint,
-  IconList,
-  IconListDetails,
   IconPackages,
   IconQrcode,
-  IconScale,
   IconServerCog,
   IconShoppingCart,
   IconSitemap,
   IconTag,
   IconTools,
-  IconTruckDelivery
+  IconTruckDelivery,
+  IconTruckReturn
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
@@ -26,8 +24,6 @@ import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { CurrencyTable } from '../../../components/tables/settings/CurrencyTable';
-import { CustomUnitsTable } from '../../../components/tables/settings/CustomUnitsTable';
-import { ProjectCodeTable } from '../../../components/tables/settings/ProjectCodeTable';
 import { useServerApiState } from '../../../states/ApiState';
 
 /**
@@ -48,11 +44,13 @@ export default function SystemSettings() {
               'INVENTREE_INSTANCE',
               'INVENTREE_INSTANCE_TITLE',
               'INVENTREE_RESTRICT_ABOUT',
+              'DISPLAY_FULL_NAMES',
               'INVENTREE_UPDATE_CHECK_INTERVAL',
               'INVENTREE_DOWNLOAD_FROM_URL',
               'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE',
               'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT',
               'INVENTREE_REQUIRE_CONFIRM',
+              'INVENTREE_STRICT_URLS',
               'INVENTREE_TREE_DEPTH',
               'INVENTREE_BACKUP_ENABLE',
               'INVENTREE_BACKUP_DAYS',
@@ -98,24 +96,6 @@ export default function SystemSettings() {
             ]}
           />
         )
-      },
-      {
-        name: 'projectcodes',
-        label: t`Project Codes`,
-        icon: <IconListDetails />,
-        content: (
-          <Stack spacing="xs">
-            <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
-            <Divider />
-            <ProjectCodeTable />
-          </Stack>
-        )
-      },
-      {
-        name: 'physicalunits',
-        label: t`Physical Units`,
-        icon: <IconScale />,
-        content: <CustomUnitsTable />
       },
       {
         name: 'notifications',
@@ -218,11 +198,6 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'parameters',
-        label: t`Part Parameters`,
-        icon: <IconList />
-      },
-      {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
@@ -263,7 +238,8 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
-              'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
+              'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
+              'PURCHASEORDER_AUTO_COMPLETE'
             ]}
           />
         )
@@ -281,6 +257,20 @@ export default function SystemSettings() {
             ]}
           />
         )
+      },
+      {
+        name: 'returnorders',
+        label: t`Return Orders`,
+        icon: <IconTruckReturn />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'RETURNORDER_ENABLED',
+              'RETURNORDER_REFERENCE_PATTERN',
+              'RETURNORDER_EDIT_COMPLETED_ORDERS'
+            ]}
+          />
+        )
       }
     ];
   }, []);
@@ -290,8 +280,8 @@ export default function SystemSettings() {
     <>
       <Stack spacing="xs">
         <SettingsHeader
-          title={server.instance || ''}
-          subtitle={<Trans>System Settings</Trans>}
+          title={t`System Settings`}
+          subtitle={server.instance || ''}
           switch_link="/settings/user"
           switch_text={<Trans>Switch to User Setting</Trans>}
         />

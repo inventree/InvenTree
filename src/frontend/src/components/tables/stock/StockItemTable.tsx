@@ -4,14 +4,13 @@ import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
-import { Thumbnail } from '../../images/Thumbnail';
-import { ModelType } from '../../render/ModelType';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
-import { StatusColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
-import { RowAction } from '../RowActions';
+import { PartColumn, StatusColumn } from '../ColumnRenderers';
+import { StatusFilterOptions, TableFilter } from '../Filter';
 import { TableHoverCard } from '../TableHoverCard';
 import { InvenTreeTable } from './../InvenTreeTable';
 
@@ -24,24 +23,11 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'part',
       sortable: true,
       title: t`Part`,
-      render: function (record: any) {
-        let part = record.part_detail ?? {};
-        return (
-          <Group spacing="xs" noWrap={true}>
-            <Thumbnail
-              src={part?.thumbnail || part?.image}
-              alt={part?.name}
-              size={24}
-            />
-            <Text>{part?.full_name}</Text>
-          </Group>
-        );
-      }
+      render: (record: any) => PartColumn(record?.part_detail)
     },
     {
       accessor: 'part_detail.description',
       sortable: false,
-
       title: t`Description`
     },
     {
@@ -65,49 +51,77 @@ function stockItemTableColumns(): TableColumn[] {
         if (record.is_building) {
           color = 'blue';
           extra.push(
-            <Text size="sm">{t`This stock item is in production`}</Text>
+            <Text
+              key="production"
+              size="sm"
+            >{t`This stock item is in production`}</Text>
           );
         }
 
         if (record.sales_order) {
           extra.push(
-            <Text size="sm">{t`This stock item has been assigned to a sales order`}</Text>
+            <Text
+              key="sales-order"
+              size="sm"
+            >{t`This stock item has been assigned to a sales order`}</Text>
           );
         }
 
         if (record.customer) {
           extra.push(
-            <Text size="sm">{t`This stock item has been assigned to a customer`}</Text>
+            <Text
+              key="customer"
+              size="sm"
+            >{t`This stock item has been assigned to a customer`}</Text>
           );
         }
 
         if (record.belongs_to) {
           extra.push(
-            <Text size="sm">{t`This stock item is installed in another stock item`}</Text>
+            <Text
+              key="belongs-to"
+              size="sm"
+            >{t`This stock item is installed in another stock item`}</Text>
           );
         }
 
         if (record.consumed_by) {
           extra.push(
-            <Text size="sm">{t`This stock item has been consumed by a build order`}</Text>
+            <Text
+              key="consumed-by"
+              size="sm"
+            >{t`This stock item has been consumed by a build order`}</Text>
           );
         }
 
         if (record.expired) {
-          extra.push(<Text size="sm">{t`This stock item has expired`}</Text>);
+          extra.push(
+            <Text
+              key="expired"
+              size="sm"
+            >{t`This stock item has expired`}</Text>
+          );
         } else if (record.stale) {
-          extra.push(<Text size="sm">{t`This stock item is stale`}</Text>);
+          extra.push(
+            <Text key="stale" size="sm">{t`This stock item is stale`}</Text>
+          );
         }
 
         if (allocated > 0) {
           if (allocated >= quantity) {
             color = 'orange';
             extra.push(
-              <Text size="sm">{t`This stock item is fully allocated`}</Text>
+              <Text
+                key="fully-allocated"
+                size="sm"
+              >{t`This stock item is fully allocated`}</Text>
             );
           } else {
             extra.push(
-              <Text size="sm">{t`This stock item is partially allocated`}</Text>
+              <Text
+                key="partially-allocated"
+                size="sm"
+              >{t`This stock item is partially allocated`}</Text>
             );
           }
         }
@@ -115,13 +129,17 @@ function stockItemTableColumns(): TableColumn[] {
         if (available != quantity) {
           if (available > 0) {
             extra.push(
-              <Text size="sm" color="orange">
+              <Text key="available" size="sm" color="orange">
                 {t`Available` + `: ${available}`}
               </Text>
             );
           } else {
             extra.push(
-              <Text size="sm" color="red">{t`No stock available`}</Text>
+              <Text
+                key="no-stock"
+                size="sm"
+                color="red"
+              >{t`No stock available`}</Text>
             );
           }
         }
@@ -129,14 +147,17 @@ function stockItemTableColumns(): TableColumn[] {
         if (quantity <= 0) {
           color = 'red';
           extra.push(
-            <Text size="sm">{t`This stock item has been depleted`}</Text>
+            <Text
+              key="depleted"
+              size="sm"
+            >{t`This stock item has been depleted`}</Text>
           );
         }
 
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left">
+              <Group spacing="xs" position="left" noWrap={true}>
                 <Text color={color}>{text}</Text>
                 {part.units && (
                   <Text size="xs" color={color}>
@@ -208,15 +229,98 @@ function stockItemTableColumns(): TableColumn[] {
 function stockItemTableFilters(): TableFilter[] {
   return [
     {
-      name: 'test_filter',
-      label: t`Test Filter`,
-      description: t`This is a test filter`,
-      type: 'choice',
-      choiceFunction: () => [
-        { value: '1', label: 'One' },
-        { value: '2', label: 'Two' },
-        { value: '3', label: 'Three' }
-      ]
+      name: 'active',
+      label: t`Active`,
+      description: t`Show stock for active parts`
+    },
+    {
+      name: 'status',
+      label: t`Status`,
+      description: t`Filter by stock status`,
+      choiceFunction: StatusFilterOptions(ModelType.stockitem)
+    },
+    {
+      name: 'assembly',
+      label: t`Assembly`,
+      description: t`Show stock for assmebled parts`
+    },
+    {
+      name: 'allocated',
+      label: t`Allocated`,
+      description: t`Show items which have been allocated`
+    },
+    {
+      name: 'available',
+      label: t`Available`,
+      description: t`Show items which are available`
+    },
+    {
+      name: 'cascade',
+      label: t`Include Sublocations`,
+      description: t`Include stock in sublocations`
+    },
+    {
+      name: 'depleted',
+      label: t`Depleted`,
+      description: t`Show depleted stock items`
+    },
+    {
+      name: 'in_stock',
+      label: t`In Stock`,
+      description: t`Show items which are in stock`
+    },
+    {
+      name: 'is_building',
+      label: t`In Production`,
+      description: t`Show items which are in production`
+    },
+    {
+      name: 'include_variants',
+      label: t`Include Variants`,
+      description: t`Include stock items for variant parts`
+    },
+    {
+      name: 'installed',
+      label: t`Installed`,
+      description: t`Show stock items which are installed in other items`
+    },
+    {
+      name: 'sent_to_customer',
+      label: t`Sent to Customer`,
+      description: t`Show items which have been sent to a customer`
+    },
+    {
+      name: 'serialized',
+      label: t`Is Serialized`,
+      description: t`Show items which have a serial number`
+    },
+    // TODO: serial
+    // TODO: serial_gte
+    // TODO: serial_lte
+    {
+      name: 'has_batch',
+      label: t`Has Batch Code`,
+      description: t`Show items which have a batch code`
+    },
+    // TODO: batch
+    {
+      name: 'tracked',
+      label: t`Tracked`,
+      description: t`Show tracked items`
+    },
+    {
+      name: 'has_purchase_price',
+      label: t`Has Purchase Price`,
+      description: t`Show items which have a purchase price`
+    },
+    // TODO: Expired
+    // TODO: stale
+    // TODO: expiry_date_lte
+    // TODO: expiry_date_gte
+    {
+      name: 'external',
+      label: t`External Location`,
+      description: t`Show items in an external location`
     }
   ];
 }
@@ -228,27 +332,19 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
-  const { tableKey, refreshTable } = useTableRefresh('stockitem');
-
-  function stockItemRowActions(record: any): RowAction[] {
-    let actions: RowAction[] = [];
-
-    // TODO: Custom row actions for stock table
-    return actions;
-  }
+  const table = useTable('stockitems');
 
   const navigate = useNavigate();
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.stock_item_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,
         enableSelection: true,
-        customFilters: tableFilters,
-        rowActions: stockItemRowActions,
+        tableFilters: tableFilters,
         onRowClick: (record) => navigate(`/stock/item/${record.pk}`),
         params: {
           ...params,

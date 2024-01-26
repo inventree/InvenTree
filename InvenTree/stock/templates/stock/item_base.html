@@ -504,7 +504,7 @@ $("#stock-test-report").click(function() {
 $("#print-label").click(function() {
     printLabels({
         items: [{{ item.pk }}],
-        singular_name: '{% trans "stock item" %}',
+        singular_name: '{% trans "stock item" escape %}',
         url: '{% url "api-stockitem-label-list" %}',
         key: 'item',
     });
@@ -529,7 +529,7 @@ $('#stock-edit-status').click(function () {
             status: {},
         },
         reload: true,
-        title: '{% trans "Edit Stock Status" %}',
+        title: '{% trans "Edit Stock Status" escape %}',
     });
 });
 
@@ -538,7 +538,7 @@ $('#stock-edit-status').click(function () {
 {% if barcodes %}
 $("#show-qr-code").click(function() {
     showQRDialog(
-        '{% trans "Stock Item QR Code" %}',
+        '{% trans "Stock Item QR Code" escape %}',
         '{"stockitem": {{ item.pk }} }',
     );
 });
@@ -549,7 +549,7 @@ $("#barcode-link").click(function() {
             stockitem: {{ item.pk }},
         },
         {
-            title: '{% trans "Link Barcode to Stock Item" %}',
+            title: '{% trans "Link Barcode to Stock Item" escape %}',
         }
     );
 });
@@ -625,7 +625,7 @@ $("#stock-convert").click(function() {
         '{% url "api-stock-item-convert" item.pk %}',
         {
             method: 'POST',
-            title: '{% trans "Convert Stock Item" %}',
+            title: '{% trans "Convert Stock Item" escape %}',
             preFormContent: html,
             reload: true,
             fields: {
@@ -659,7 +659,7 @@ $("#stock-return-from-customer").click(function() {
             },
         },
         method: 'POST',
-        title: '{% trans "Return to Stock" %}',
+        title: '{% trans "Return to Stock" escape %}',
         reload: true,
     });
 

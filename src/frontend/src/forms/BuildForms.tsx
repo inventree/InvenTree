@@ -54,7 +54,10 @@ export function buildOrderFields(): ApiFormFieldSet {
       icon: <IconUser />
     },
     responsible: {
-      icon: <IconUsersGroup />
+      icon: <IconUsersGroup />,
+      filters: {
+        is_active: true
+      }
     }
   };
 }

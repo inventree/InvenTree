@@ -41,12 +41,12 @@ onPanelLoad('pricing', function() {
             {
                 field: 'currency',
                 sortable: true,
-                title: '{% trans "Currency" %}',
+                title: '{% trans "Currency" escape %}',
             },
             {
                 field: 'rate',
                 sortable: true,
-                title: '{% trans "Rate" %}',
+                title: '{% trans "Rate" escape %}',
             }
         ]
     });
@@ -64,21 +64,21 @@ onPanelLoad('units', function() {
         columns: [
             {
                 field: 'name',
-                title: '{% trans "Name" %}',
+                title: '{% trans "Name" escape %}',
             },
             {
                 field: 'definition',
-                title: '{% trans "Definition" %}',
+                title: '{% trans "Definition" escape %}',
             },
             {
                 field: 'symbol',
-                title: '{% trans "Symbol" %}',
+                title: '{% trans "Symbol" escape %}',
                 formatter: function(value, row) {
                     let html = value;
                     let buttons = '';
 
-                    buttons += makeEditButton('button-units-edit', row.pk, '{% trans "Edit" %}');
-                    buttons += makeDeleteButton('button-units-delete', row.pk, '{% trans "Delete" %}');
+                    buttons += makeEditButton('button-units-edit', row.pk, '{% trans "Edit" escape %}');
+                    buttons += makeDeleteButton('button-units-delete', row.pk, '{% trans "Delete" escape %}');
 
                     html += wrapButtons(buttons);
                     return html;
@@ -92,7 +92,7 @@ onPanelLoad('units', function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-custom-unit-list" %}${pk}/`, {
-            title: '{% trans "Edit Custom Unit" %}',
+            title: '{% trans "Edit Custom Unit" escape %}',
             fields: {
                 name: {},
                 definition: {},
@@ -107,7 +107,7 @@ onPanelLoad('units', function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-custom-unit-list" %}${pk}/`, {
-            title: '{% trans "Delete Custom Unit" %}',
+            title: '{% trans "Delete Custom Unit" escape %}',
             method: 'DELETE',
             refreshTable: '#physical-units-table',
         });
@@ -121,7 +121,7 @@ onPanelLoad('units', function() {
                 definition: {},
                 symbol: {},
             },
-            title: '{% trans "New Custom Unit" %}',
+            title: '{% trans "New Custom Unit" escape %}',
             method: 'POST',
             refreshTable: '#physical-units-table',
         });
@@ -137,24 +137,43 @@ onPanelLoad('project-codes', function() {
         search: true,
         sortable: true,
         formatNoMatches: function() {
-            return '{% trans "No project codes found" %}';
+            return '{% trans "No project codes found" escape %}';
         },
         columns: [
             {
                 field: 'code',
                 sortable: true,
-                title: '{% trans "Project Code" %}',
+                title: '{% trans "Project Code" escape %}',
+            },
+            {
+                field: 'responsible',
+                title: '{% trans "Responsible" escape %}',
+                formatter: function(value, row) {
+                    if (!row.responsible_detail) {
+                        return '-';
+                    }
+
+                    var html = row.responsible_detail.name;
+
+                    if (row.responsible_detail.label == '{% trans "group" escape %}') {
+                        html += `<span class='float-right fas fa-users'></span>`;
+                    } else {
+                        html += `<span class='float-right fas fa-user'></span>`;
+                    }
+
+                    return html;
+                }
             },
             {
                 field: 'description',
                 sortable: false,
-                title: '{% trans "Description" %}',
+                title: '{% trans "Description" escape %}',
                 formatter: function(value, row) {
                     let html = value;
                     let buttons = '';
 
-                    buttons += makeEditButton('button-project-code-edit', row.pk, '{% trans "Edit Project Code" %}');
-                    buttons += makeDeleteButton('button-project-code-delete', row.pk, '{% trans "Delete Project Code" %}');
+                    buttons += makeEditButton('button-project-code-edit', row.pk, '{% trans "Edit Project Code" escape %}');
+                    buttons += makeDeleteButton('button-project-code-delete', row.pk, '{% trans "Delete Project Code" escape %}');
 
                     html += wrapButtons(buttons);
                     return html;
@@ -167,10 +186,11 @@ onPanelLoad('project-codes', function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-project-code-list" %}${pk}/`, {
-            title: '{% trans "Edit Project Code" %}',
+            title: '{% trans "Edit Project Code" escape %}',
             fields: {
                 code: {},
                 description: {},
+                responsible: {},
             },
             refreshTable: '#project-code-table',
         });
@@ -180,7 +200,7 @@ onPanelLoad('project-codes', function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-project-code-list" %}${pk}/`, {
-            title: '{% trans "Delete Project Code" %}',
+            title: '{% trans "Delete Project Code" escape %}',
             method: 'DELETE',
             refreshTable: '#project-code-table',
         });
@@ -193,7 +213,7 @@ onPanelLoad('project-codes', function() {
                 code: {},
                 description: {},
             },
-            title: '{% trans "New Project Code" %}',
+            title: '{% trans "New Project Code" escape %}',
             method: 'POST',
             refreshTable: '#project-code-table',
         });
@@ -262,7 +282,7 @@ onPanelLoad('category', function() {
     });
 
     $('#cat-param-table').inventreeTable({
-        formatNoMatches: function() { return '{% trans "No category parameter templates found" %}'; },
+        formatNoMatches: function() { return '{% trans "No category parameter templates found" escape %}'; },
         columns: [
             {
                 field: 'pk',
@@ -272,21 +292,21 @@ onPanelLoad('category', function() {
             },
             {
                 field: 'parameter_template_detail.name',
-                title: '{% trans "Parameter Template" %}',
+                title: '{% trans "Parameter Template" escape %}',
                 sortable: 'true',
             },
             {
                 field: 'category_detail.pathstring',
-                title: '{% trans "Category" %}',
+                title: '{% trans "Category" escape %}',
             },
             {
                 field: 'default_value',
-                title: '{% trans "Default Value" %}',
+                title: '{% trans "Default Value" escape %}',
                 sortable: 'true',
                 formatter: function(value, row, index, field) {
                     let buttons = '';
-                    buttons += makeEditButton('template-edit', row.pk, '{% trans "Edit Template" %}');
-                    buttons += makeDeleteButton('template-delete', row.pk, '{% trans "Delete Template" %}');
+                    buttons += makeEditButton('template-edit', row.pk, '{% trans "Edit Template" escape %}');
+                    buttons += makeDeleteButton('template-delete', row.pk, '{% trans "Delete Template" escape %}');
 
                     let html = value
                     html += wrapButtons(buttons);
@@ -303,7 +323,7 @@ onPanelLoad('category', function() {
         var pk = $(this).attr('pk');
 
         constructForm(`/api/part/category/parameters/${pk}/`, {
-            title: '{% trans "Edit Category Parameter Template" %}',
+            title: '{% trans "Edit Category Parameter Template" escape %}',
             fields: {
                 parameter_template: {},
                 category: {
@@ -330,7 +350,7 @@ onPanelLoad('category', function() {
 
         constructForm(`/api/part/category/parameters/${pk}/`, {
             method: 'DELETE',
-            title: '{% trans "Delete Category Parameter Template" %}',
+            title: '{% trans "Delete Category Parameter Template" escape %}',
             onSuccess: function() {
                 loadTemplateTable(pk);
             }
@@ -365,7 +385,7 @@ onPanelLoad('category', function() {
         var pk = $('#category-select').val();
 
         constructForm('{% url "api-part-category-parameter-list" %}', {
-            title: '{% trans "Create Category Parameter Template" %}',
+            title: '{% trans "Create Category Parameter Template" escape %}',
             method: 'POST',
             fields: {
                 parameter_template: {},
@@ -395,7 +415,7 @@ onPanelLoad('part-parameters', function() {
         constructForm('{% url "api-part-parameter-template-list" %}', {
             fields: partParameterTemplateFields(),
             method: 'POST',
-            title: '{% trans "Create Part Parameter Template" %}',
+            title: '{% trans "Create Part Parameter Template" escape %}',
             refreshTable: '#param-table',
         });
     });
@@ -417,34 +437,34 @@ onPanelLoad("stock", function() {
         search: true,
         sortable: true,
         formatNoMatches: function() {
-            return '{% trans "No stock location types found" %}';
+            return '{% trans "No stock location types found" escape %}';
         },
         columns: [
             {
                 field: 'name',
                 sortable: true,
-                title: '{% trans "Name" %}',
+                title: '{% trans "Name" escape %}',
             },
             {
                 field: 'description',
                 sortable: false,
-                title: '{% trans "Description" %}',
+                title: '{% trans "Description" escape %}',
             },
             {
                 field: 'icon',
                 sortable: true,
-                title: '{% trans "Icon" %}',
+                title: '{% trans "Icon" escape %}',
             },
             {
                 field: 'location_count',
                 sortable: true,
-                title: '{% trans "Location count" %}',
+                title: '{% trans "Location count" escape %}',
                 formatter: function(value, row) {
                     let html = value;
                     let buttons = '';
 
-                    buttons += makeEditButton('button-location-type-edit', row.pk, '{% trans "Edit Location Type" %}');
-                    buttons += makeDeleteButton('button-location-type-delete', row.pk, '{% trans "Delete Location type" %}');
+                    buttons += makeEditButton('button-location-type-edit', row.pk, '{% trans "Edit Location Type" escape %}');
+                    buttons += makeDeleteButton('button-location-type-delete', row.pk, '{% trans "Delete Location type" escape %}');
 
                     html += wrapButtons(buttons);
                     return html;
@@ -457,7 +477,7 @@ onPanelLoad("stock", function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-location-type-list" %}${pk}/`, {
-            title: '{% trans "Edit Location Type" %}',
+            title: '{% trans "Edit Location Type" escape %}',
             fields: stockLocationTypeFields(),
             refreshTable: '#location-type-table',
         });
@@ -467,7 +487,7 @@ onPanelLoad("stock", function() {
         let pk = $(this).attr('pk');
 
         constructForm(`{% url "api-location-type-list" %}${pk}/`, {
-            title: '{% trans "Delete Location Type" %}',
+            title: '{% trans "Delete Location Type" escape %}',
             method: 'DELETE',
             refreshTable: '#location-type-table',
         });
@@ -477,7 +497,7 @@ onPanelLoad("stock", function() {
         // Construct a new location type
         constructForm('{% url "api-location-type-list" %}', {
             fields: stockLocationTypeFields(),
-            title: '{% trans "New Location Type" %}',
+            title: '{% trans "New Location Type" escape %}',
             method: 'POST',
             refreshTable: '#location-type-table',
         });
@@ -506,18 +526,18 @@ onPanelLoad('stocktake', function() {
         columns: [
             {
                 field: 'report',
-                title: '{% trans "Report" %}',
+                title: '{% trans "Report" escape %}',
                 formatter: function(value, row) {
                     return attachmentLink(value);
                 }
             },
             {
                 field: 'part_count',
-                title: '{% trans "Part Count" %}',
+                title: '{% trans "Part Count" escape %}',
             },
             {
                 field: 'date',
-                title: '{% trans "Date" %}',
+                title: '{% trans "Date" escape %}',
                 sortable: true,
                 formatter: function(value, row) {
                     let html = renderDate(value);
@@ -569,6 +589,11 @@ onPanelLoad('plugin', function() {
     // Callback to install new plugin
     $("#install-plugin").click(function() {
         installPlugin();
+    });
+
+    // Callback to reload plugins
+    $('#reload-plugins').click(function() {
+        reloadPlugins();
     });
 
 {% endif %}

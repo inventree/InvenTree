@@ -4,35 +4,54 @@
 import { t } from '@lingui/macro';
 
 import { formatCurrency, renderDate } from '../../defaults/formatters';
+import { ModelType } from '../../enums/ModelType';
+import { Thumbnail } from '../images/Thumbnail';
 import { ProgressBar } from '../items/ProgressBar';
 import { YesNoButton } from '../items/YesNoButton';
-import { ModelType } from '../render/ModelType';
+import { TableStatusRenderer } from '../render/StatusRenderer';
 import { RenderOwner } from '../render/User';
-import { TableStatusRenderer } from '../renderers/StatusRenderer';
 import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
+// Render a Part instance within a table
+export function PartColumn(part: any) {
+  return <Thumbnail src={part?.thumbnail ?? part.image} text={part.name} />;
+}
+
 export function BooleanColumn({
   accessor,
-  title
+  title,
+  sortable,
+  switchable
 }: {
   accessor: string;
   title: string;
+  sortable?: boolean;
+  switchable?: boolean;
 }): TableColumn {
   return {
     accessor: accessor,
     title: title,
-    sortable: true,
+    sortable: sortable ?? true,
+    switchable: switchable ?? true,
     render: (record: any) => <YesNoButton value={record[accessor]} />
   };
 }
 
-export function DescriptionColumn(): TableColumn {
+export function DescriptionColumn({
+  accessor,
+  sortable,
+  switchable
+}: {
+  accessor?: string;
+  sortable?: boolean;
+  switchable?: boolean;
+}): TableColumn {
   return {
-    accessor: 'description',
+    accessor: accessor ?? 'description',
     title: t`Description`,
-    sortable: false,
-    switchable: true
+    sortable: sortable ?? false,
+    switchable: switchable ?? true
   };
 }
 

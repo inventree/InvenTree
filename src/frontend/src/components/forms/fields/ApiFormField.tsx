@@ -11,27 +11,18 @@ import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import { ReactNode, useCallback, useEffect } from 'react';
 import { useMemo } from 'react';
+import { Control, FieldValues, useController } from 'react-hook-form';
 
-import { ModelType } from '../../render/ModelType';
-import { ApiFormProps } from '../ApiForm';
+import { ModelType } from '../../../enums/ModelType';
 import { ChoiceField } from './ChoiceField';
+import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
 
-/**
- * Callback function type when a form field value changes
- */
-export type ApiFormChangeCallback = {
-  name: string;
-  value: any;
-  field: ApiFormFieldType;
-  form: ApiFormData;
-};
-
-/* Definition of the ApiForm field component.
+/** Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
  * - All other attributes are optional, and may be provided by the API
  * - However, they can be overridden by the user
@@ -60,10 +51,25 @@ export type ApiFormFieldType = {
   value?: any;
   default?: any;
   icon?: ReactNode;
-  field_type?: string;
+  field_type?:
+    | 'related field'
+    | 'email'
+    | 'url'
+    | 'string'
+    | 'boolean'
+    | 'date'
+    | 'integer'
+    | 'decimal'
+    | 'float'
+    | 'number'
+    | 'choice'
+    | 'file upload'
+    | 'nested object';
   api_url?: string;
   model?: ModelType;
+  modelRenderer?: (instance: any) => ReactNode;
   filters?: any;
+  children?: { [key: string]: ApiFormFieldType };
   required?: boolean;
   choices?: any[];
   hidden?: boolean;
@@ -71,127 +77,66 @@ export type ApiFormFieldType = {
   read_only?: boolean;
   placeholder?: string;
   description?: string;
-  preFieldContent?: JSX.Element | (() => JSX.Element);
-  postFieldContent?: JSX.Element | (() => JSX.Element);
-  onValueChange?: (change: ApiFormChangeCallback) => void;
-  adjustFilters?: (filters: any, form: ApiFormData) => any;
+  preFieldContent?: JSX.Element;
+  postFieldContent?: JSX.Element;
+  onValueChange?: (value: any) => void;
+  adjustFilters?: (filters: any) => any;
 };
-
-/*
- * Build a complete field definition based on the provided data
- */
-export function constructField({
-  form,
-  fieldName,
-  field,
-  definitions
-}: {
-  form: UseFormReturnType<Record<string, unknown>>;
-  fieldName: string;
-  field: ApiFormFieldType;
-  definitions: Record<string, ApiFormFieldType>;
-}) {
-  let def = definitions[fieldName] || field;
-
-  def = {
-    ...def,
-    ...field
-  };
-
-  // Retrieve the latest value from the form
-  let value = form.values[fieldName];
-
-  if (value != undefined) {
-    def.value = value;
-  }
-
-  // Change value to a date object if required
-  switch (def.field_type) {
-    case 'date':
-      if (def.value) {
-        def.value = new Date(def.value);
-      }
-      break;
-    default:
-      break;
-  }
-
-  // Clear out the 'read_only' attribute
-  def.disabled = def.disabled ?? def.read_only ?? false;
-  delete def['read_only'];
-
-  return def;
-}
 
 /**
  * Render an individual form field
  */
 export function ApiFormField({
-  formProps,
-  form,
   fieldName,
-  field,
-  error,
-  definitions
+  definition,
+  control
 }: {
-  formProps: ApiFormProps;
-  form: UseFormReturnType<Record<string, unknown>>;
   fieldName: string;
-  field: ApiFormFieldType;
-  error: ReactNode;
-  definitions: Record<string, ApiFormFieldType>;
+  definition: ApiFormFieldType;
+  control: Control<FieldValues, any>;
 }) {
-  const fieldId = useId(fieldName);
+  const fieldId = useId();
+  const controller = useController({
+    name: fieldName,
+    control
+  });
+  const {
+    field,
+    fieldState: { error }
+  } = controller;
+  const { value, ref } = field;
 
-  // Extract field definition from provided data
-  // Where user has provided specific data, override the API definition
-  const definition: ApiFormFieldType = useMemo(
-    () =>
-      constructField({
-        form: form,
-        fieldName: fieldName,
-        field: field,
-        definitions: definitions
-      }),
-    [fieldName, field, definitions]
-  );
+  useEffect(() => {
+    if (definition.field_type === 'nested object') return;
 
-  const preFieldElement: JSX.Element | null = useMemo(() => {
-    if (field.preFieldContent === undefined) {
-      return null;
-    } else if (field.preFieldContent instanceof Function) {
-      return field.preFieldContent();
-    } else {
-      return field.preFieldContent;
+    // hook up the value state to the input field
+    if (definition.value !== undefined) {
+      field.onChange(definition.value);
     }
-  }, [field]);
+  }, [definition.value]);
 
-  const postFieldElement: JSX.Element | null = useMemo(() => {
-    if (field.postFieldContent === undefined) {
-      return null;
-    } else if (field.postFieldContent instanceof Function) {
-      return field.postFieldContent();
-    } else {
-      return field.postFieldContent;
-    }
-  }, [field]);
+  // pull out onValueChange as this can cause strange errors when passing the
+  // definition to the input components via spread syntax
+  const reducedDefinition = useMemo(() => {
+    return {
+      ...definition,
+      onValueChange: undefined,
+      adjustFilters: undefined,
+      read_only: undefined,
+      children: undefined
+    };
+  }, [definition]);
 
   // Callback helper when form value changes
-  function onChange(value: any) {
-    form.setValues({ [fieldName]: value });
+  const onChange = useCallback(
+    (value: any) => {
+      field.onChange(value);
 
-    // Run custom callback for this field
-    if (definition.onValueChange) {
-      definition.onValueChange({
-        name: fieldName,
-        value: value,
-        field: definition,
-        form: form
-      });
-    }
-  }
-
-  const value: any = useMemo(() => form.values[fieldName], [form.values]);
+      // Run custom callback for this field
+      definition.onValueChange?.(value);
+    },
+    [fieldName, definition]
+  );
 
   // Coerce the value to a numerical value
   const numericalValue: number | undefined = useMemo(() => {
@@ -223,12 +168,9 @@ export function ApiFormField({
       case 'related field':
         return (
           <RelatedModelField
-            error={error}
-            formProps={formProps}
-            form={form}
-            field={definition}
+            controller={controller}
+            definition={definition}
             fieldName={fieldName}
-            definitions={definitions}
           />
         );
       case 'email':
@@ -236,11 +178,12 @@ export function ApiFormField({
       case 'string':
         return (
           <TextInput
-            {...definition}
+            {...reducedDefinition}
+            ref={ref}
             id={fieldId}
             type={definition.field_type}
             value={value || ''}
-            error={error}
+            error={error?.message}
             radius="sm"
             onChange={(event) => onChange(event.currentTarget.value)}
             rightSection={
@@ -253,23 +196,25 @@ export function ApiFormField({
       case 'boolean':
         return (
           <Switch
-            {...definition}
+            {...reducedDefinition}
+            ref={ref}
             id={fieldId}
             radius="lg"
             size="sm"
             checked={value ?? false}
-            error={error}
+            error={error?.message}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
         );
       case 'date':
         return (
           <DateInput
-            {...definition}
+            {...reducedDefinition}
+            ref={ref}
             id={fieldId}
             radius="sm"
             type={undefined}
-            error={error}
+            error={error?.message}
             value={value}
             clearable={!definition.required}
             onChange={(value) => onChange(value)}
@@ -282,11 +227,12 @@ export function ApiFormField({
       case 'number':
         return (
           <NumberInput
-            {...definition}
+            {...reducedDefinition}
             radius="sm"
+            ref={ref}
             id={fieldId}
             value={numericalValue}
-            error={error}
+            error={error?.message}
             formatter={(value) => {
               let v: any = parseFloat(value);
 
@@ -303,22 +249,29 @@ export function ApiFormField({
       case 'choice':
         return (
           <ChoiceField
-            error={error}
-            form={form}
+            controller={controller}
             fieldName={fieldName}
-            field={definition}
-            definitions={definitions}
+            definition={definition}
           />
         );
       case 'file upload':
         return (
           <FileInput
-            {...definition}
+            {...reducedDefinition}
             id={fieldId}
+            ref={ref}
             radius="sm"
             value={value}
-            error={error}
+            error={error?.message}
             onChange={(payload: File | null) => onChange(payload)}
+          />
+        );
+      case 'nested object':
+        return (
+          <NestedObjectField
+            definition={definition}
+            fieldName={fieldName}
+            control={control}
           />
         );
       default:
@@ -331,11 +284,15 @@ export function ApiFormField({
     }
   }
 
+  if (definition.hidden) {
+    return null;
+  }
+
   return (
     <Stack>
-      {preFieldElement}
+      {definition.preFieldContent}
       {buildField()}
-      {postFieldElement}
+      {definition.postFieldContent}
     </Stack>
   );
 }

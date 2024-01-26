@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.db.models import F, Q
 from django.http import JsonResponse
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
@@ -23,25 +23,52 @@ from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
 from generic.states.api import StatusView
-from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
-                           ListCreateDestroyAPIView, MetadataView)
-from InvenTree.filters import (ORDER_FILTER, SEARCH_ORDER_FILTER,
-                               SEARCH_ORDER_FILTER_ALIAS)
-from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
-                               str2bool, str2int)
-from InvenTree.mixins import (CreateAPI, CustomRetrieveUpdateDestroyAPI,
-                              ListAPI, ListCreateAPI, RetrieveAPI,
-                              RetrieveUpdateDestroyAPI)
+from InvenTree.api import (
+    APIDownloadMixin,
+    AttachmentMixin,
+    ListCreateDestroyAPIView,
+    MetadataView,
+)
+from InvenTree.filters import (
+    ORDER_FILTER,
+    SEARCH_ORDER_FILTER,
+    SEARCH_ORDER_FILTER_ALIAS,
+    InvenTreeDateFilter,
+)
+from InvenTree.helpers import (
+    DownloadFile,
+    extract_serial_numbers,
+    is_ajax,
+    isNull,
+    str2bool,
+    str2int,
+)
+from InvenTree.mixins import (
+    CreateAPI,
+    CustomRetrieveUpdateDestroyAPI,
+    ListAPI,
+    ListCreateAPI,
+    RetrieveAPI,
+    RetrieveUpdateDestroyAPI,
+)
 from InvenTree.status_codes import StockHistoryCode, StockStatus
-from order.models import (PurchaseOrder, ReturnOrder, SalesOrder,
-                          SalesOrderAllocation)
-from order.serializers import (PurchaseOrderSerializer, ReturnOrderSerializer,
-                               SalesOrderSerializer)
+from order.models import PurchaseOrder, ReturnOrder, SalesOrder, SalesOrderAllocation
+from order.serializers import (
+    PurchaseOrderSerializer,
+    ReturnOrderSerializer,
+    SalesOrderSerializer,
+)
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from stock.admin import LocationResource, StockItemResource
-from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
-                          StockItemTracking, StockLocation, StockLocationType)
+from stock.models import (
+    StockItem,
+    StockItemAttachment,
+    StockItemTestResult,
+    StockItemTracking,
+    StockLocation,
+    StockLocationType,
+)
 
 
 class StockDetail(RetrieveUpdateDestroyAPI):
@@ -83,7 +110,9 @@ class StockDetail(RetrieveUpdateDestroyAPI):
 
             kwargs['part_detail'] = str2bool(params.get('part_detail', True))
             kwargs['location_detail'] = str2bool(params.get('location_detail', True))
-            kwargs['supplier_part_detail'] = str2bool(params.get('supplier_part_detail', True))
+            kwargs['supplier_part_detail'] = str2bool(
+                params.get('supplier_part_detail', True)
+            )
             kwargs['path_detail'] = str2bool(params.get('path_detail', False))
         except AttributeError:
             pass
@@ -133,13 +162,13 @@ class StockItemUninstall(StockItemContextMixin, CreateAPI):
 
 
 class StockItemConvert(StockItemContextMixin, CreateAPI):
-    """API endpoint for converting a stock item to a variant part"""
+    """API endpoint for converting a stock item to a variant part."""
 
     serializer_class = StockSerializers.ConvertStockItemSerializer
 
 
 class StockItemReturn(StockItemContextMixin, CreateAPI):
-    """API endpoint for returning a stock item from a customer"""
+    """API endpoint for returning a stock item from a customer."""
 
     serializer_class = StockSerializers.ReturnStockItemSerializer
 
@@ -226,14 +255,15 @@ class StockLocationFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the StockLocation endpoint."""
 
     location_type = rest_filters.ModelChoiceFilter(
-        queryset=StockLocationType.objects.all(),
-        field_name='location_type'
+        queryset=StockLocationType.objects.all(), field_name='location_type'
     )
 
-    has_location_type = rest_filters.BooleanFilter(label='has_location_type', method='filter_has_location_type')
+    has_location_type = rest_filters.BooleanFilter(
+        label='has_location_type', method='filter_has_location_type'
+    )
 
     def filter_has_location_type(self, queryset, name, value):
-        """Filter by whether or not the location has a location type"""
+        """Filter by whether or not the location has a location type."""
         if str2bool(value):
             return queryset.exclude(location_type=None)
         return queryset.filter(location_type=None)
@@ -246,22 +276,20 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
     - POST: Create a new StockLocation
     """
 
-    queryset = StockLocation.objects.all().prefetch_related(
-        'tags',
-    )
+    queryset = StockLocation.objects.all().prefetch_related('tags')
     serializer_class = StockSerializers.LocationSerializer
     filterset_class = StockLocationFilter
 
     def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file"""
+        """Download the filtered queryset as a data file."""
         dataset = LocationResource().export(queryset=queryset)
         filedata = dataset.export(export_format)
-        filename = f"InvenTree_Locations.{export_format}"
+        filename = f'InvenTree_Locations.{export_format}'
 
         return DownloadFile(filedata, filename)
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for the StockLocationList endpoint"""
+        """Return annotated queryset for the StockLocationList endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
@@ -283,7 +311,6 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
             pass
         # Look for top-level locations
         elif isNull(loc_id):
-
             # If we allow "cascade" at the top-level, this essentially means *all* locations
             if not cascade:
                 queryset = queryset.filter(parent=None)
@@ -292,7 +319,6 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
                 queryset = queryset.filter(level__lte=depth)
 
         else:
-
             try:
                 location = StockLocation.objects.get(pk=loc_id)
 
@@ -319,7 +345,9 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
                 loc = StockLocation.objects.get(pk=exclude_tree)
 
                 queryset = queryset.exclude(
-                    pk__in=[subloc.pk for subloc in loc.get_descendants(include_self=True)]
+                    pk__in=[
+                        subloc.pk for subloc in loc.get_descendants(include_self=True)
+                    ]
                 )
 
             except (ValueError, StockLocation.DoesNotExist):
@@ -329,35 +357,13 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = [
-        'name',
-        'structural',
-        'external',
-        'tags__name',
-        'tags__slug',
-    ]
+    filterset_fields = ['name', 'structural', 'external', 'tags__name', 'tags__slug']
 
-    search_fields = [
-        'name',
-        'description',
-        'tags__name',
-        'tags__slug',
-    ]
+    search_fields = ['name', 'description', 'tags__name', 'tags__slug']
 
-    ordering_fields = [
-        'name',
-        'pathstring',
-        'items',
-        'level',
-        'tree_id',
-        'lft',
-    ]
+    ordering_fields = ['name', 'pathstring', 'items', 'level', 'tree_id', 'lft']
 
-    ordering = [
-        'tree_id',
-        'lft',
-        'name',
-    ]
+    ordering = ['tree_id', 'lft', 'name']
 
 
 class StockLocationTree(ListAPI):
@@ -384,24 +390,18 @@ class StockLocationTypeList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    ordering_fields = [
-        "name",
-        "location_count",
-        "icon",
-    ]
+    ordering_fields = ['name', 'location_count', 'icon']
 
-    ordering = [
-        "-location_count",
-    ]
+    ordering = ['-location_count']
 
-    search_fields = [
-        "name",
-    ]
+    search_fields = ['name']
 
     def get_queryset(self):
         """Override the queryset method to include location count."""
         queryset = super().get_queryset()
-        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(queryset)
+        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(
+            queryset
+        )
 
         return queryset
 
@@ -421,7 +421,9 @@ class StockLocationTypeDetail(RetrieveUpdateDestroyAPI):
     def get_queryset(self):
         """Override the queryset method to include location count."""
         queryset = super().get_queryset()
-        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(queryset)
+        queryset = StockSerializers.StockLocationTypeSerializer.annotate_queryset(
+            queryset
+        )
 
         return queryset
 
@@ -430,7 +432,7 @@ class StockFilter(rest_filters.FilterSet):
     """FilterSet for StockItem LIST API."""
 
     class Meta:
-        """Metaclass options for this filterset"""
+        """Metaclass options for this filterset."""
 
         model = StockItem
 
@@ -448,47 +450,85 @@ class StockFilter(rest_filters.FilterSet):
         ]
 
     # Relationship filters
-    manufacturer = rest_filters.ModelChoiceFilter(label='Manufacturer', queryset=Company.objects.filter(is_manufacturer=True), field_name='manufacturer_part__manufacturer')
-    supplier = rest_filters.ModelChoiceFilter(label='Supplier', queryset=Company.objects.filter(is_supplier=True), field_name='supplier_part__supplier')
+    manufacturer = rest_filters.ModelChoiceFilter(
+        label='Manufacturer',
+        queryset=Company.objects.filter(is_manufacturer=True),
+        field_name='manufacturer_part__manufacturer',
+    )
+    supplier = rest_filters.ModelChoiceFilter(
+        label='Supplier',
+        queryset=Company.objects.filter(is_supplier=True),
+        field_name='supplier_part__supplier',
+    )
 
     # Part name filters
-    name = rest_filters.CharFilter(label='Part name (case insensitive)', field_name='part__name', lookup_expr='iexact')
-    name_contains = rest_filters.CharFilter(label='Part name contains (case insensitive)', field_name='part__name', lookup_expr='icontains')
-    name_regex = rest_filters.CharFilter(label='Part name (regex)', field_name='part__name', lookup_expr='iregex')
+    name = rest_filters.CharFilter(
+        label='Part name (case insensitive)',
+        field_name='part__name',
+        lookup_expr='iexact',
+    )
+    name_contains = rest_filters.CharFilter(
+        label='Part name contains (case insensitive)',
+        field_name='part__name',
+        lookup_expr='icontains',
+    )
+    name_regex = rest_filters.CharFilter(
+        label='Part name (regex)', field_name='part__name', lookup_expr='iregex'
+    )
 
     # Part IPN filters
-    IPN = rest_filters.CharFilter(label='Part IPN (case insensitive)', field_name='part__IPN', lookup_expr='iexact')
-    IPN_contains = rest_filters.CharFilter(label='Part IPN contains (case insensitive)', field_name='part__IPN', lookup_expr='icontains')
-    IPN_regex = rest_filters.CharFilter(label='Part IPN (regex)', field_name='part__IPN', lookup_expr='iregex')
+    IPN = rest_filters.CharFilter(
+        label='Part IPN (case insensitive)',
+        field_name='part__IPN',
+        lookup_expr='iexact',
+    )
+    IPN_contains = rest_filters.CharFilter(
+        label='Part IPN contains (case insensitive)',
+        field_name='part__IPN',
+        lookup_expr='icontains',
+    )
+    IPN_regex = rest_filters.CharFilter(
+        label='Part IPN (regex)', field_name='part__IPN', lookup_expr='iregex'
+    )
 
     # Part attribute filters
-    assembly = rest_filters.BooleanFilter(label="Assembly", field_name='part__assembly')
-    active = rest_filters.BooleanFilter(label="Active", field_name='part__active')
-    salable = rest_filters.BooleanFilter(label="Salable", field_name='part__salable')
+    assembly = rest_filters.BooleanFilter(label='Assembly', field_name='part__assembly')
+    active = rest_filters.BooleanFilter(label='Active', field_name='part__active')
+    salable = rest_filters.BooleanFilter(label='Salable', field_name='part__salable')
 
-    min_stock = rest_filters.NumberFilter(label='Minimum stock', field_name='quantity', lookup_expr='gte')
-    max_stock = rest_filters.NumberFilter(label='Maximum stock', field_name='quantity', lookup_expr='lte')
+    min_stock = rest_filters.NumberFilter(
+        label='Minimum stock', field_name='quantity', lookup_expr='gte'
+    )
+    max_stock = rest_filters.NumberFilter(
+        label='Maximum stock', field_name='quantity', lookup_expr='lte'
+    )
 
     status = rest_filters.NumberFilter(label='Status Code', method='filter_status')
 
     def filter_status(self, queryset, name, value):
-        """Filter by integer status code"""
+        """Filter by integer status code."""
         return queryset.filter(status=value)
 
-    allocated = rest_filters.BooleanFilter(label='Is Allocated', method='filter_allocated')
+    allocated = rest_filters.BooleanFilter(
+        label='Is Allocated', method='filter_allocated'
+    )
 
     def filter_allocated(self, queryset, name, value):
-        """Filter by whether or not the stock item is 'allocated'"""
+        """Filter by whether or not the stock item is 'allocated'."""
         if str2bool(value):
             # Filter StockItem with either build allocations or sales order allocations
-            return queryset.filter(Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False))
+            return queryset.filter(
+                Q(sales_order_allocations__isnull=False) | Q(allocations__isnull=False)
+            ).distinct()
         # Filter StockItem without build allocations or sales order allocations
-        return queryset.filter(Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True))
+        return queryset.filter(
+            Q(sales_order_allocations__isnull=True) & Q(allocations__isnull=True)
+        )
 
     expired = rest_filters.BooleanFilter(label='Expired', method='filter_expired')
 
     def filter_expired(self, queryset, name, value):
-        """Filter by whether or not the stock item has expired"""
+        """Filter by whether or not the stock item has expired."""
         if not common.settings.stock_expiry_enabled():
             return queryset
 
@@ -496,10 +536,12 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.filter(StockItem.EXPIRED_FILTER)
         return queryset.exclude(StockItem.EXPIRED_FILTER)
 
-    external = rest_filters.BooleanFilter(label=_('External Location'), method='filter_external')
+    external = rest_filters.BooleanFilter(
+        label=_('External Location'), method='filter_external'
+    )
 
     def filter_external(self, queryset, name, value):
-        """Filter by whether or not the stock item is located in an external location"""
+        """Filter by whether or not the stock item is located in an external location."""
         if str2bool(value):
             return queryset.filter(location__external=True)
         return queryset.exclude(location__external=True)
@@ -522,23 +564,37 @@ class StockFilter(rest_filters.FilterSet):
         if str2bool(value):
             # The 'quantity' field is greater than the calculated 'allocated' field
             # Note that the item must also be "in stock"
-            return queryset.filter(StockItem.IN_STOCK_FILTER).filter(Q(quantity__gt=F('allocated')))
+            return queryset.filter(StockItem.IN_STOCK_FILTER).filter(
+                Q(quantity__gt=F('allocated'))
+            )
         # The 'quantity' field is less than (or equal to) the calculated 'allocated' field
         return queryset.filter(Q(quantity__lte=F('allocated')))
 
-    batch = rest_filters.CharFilter(label="Batch code filter (case insensitive)", lookup_expr='iexact')
+    batch = rest_filters.CharFilter(
+        label='Batch code filter (case insensitive)', lookup_expr='iexact'
+    )
 
-    batch_regex = rest_filters.CharFilter(label="Batch code filter (regex)", field_name='batch', lookup_expr='iregex')
+    batch_regex = rest_filters.CharFilter(
+        label='Batch code filter (regex)', field_name='batch', lookup_expr='iregex'
+    )
 
-    is_building = rest_filters.BooleanFilter(label="In production")
+    is_building = rest_filters.BooleanFilter(label='In production')
 
     # Serial number filtering
-    serial_gte = rest_filters.NumberFilter(label='Serial number GTE', field_name='serial_int', lookup_expr='gte')
-    serial_lte = rest_filters.NumberFilter(label='Serial number LTE', field_name='serial_int', lookup_expr='lte')
+    serial_gte = rest_filters.NumberFilter(
+        label='Serial number GTE', field_name='serial_int', lookup_expr='gte'
+    )
+    serial_lte = rest_filters.NumberFilter(
+        label='Serial number LTE', field_name='serial_int', lookup_expr='lte'
+    )
 
-    serial = rest_filters.CharFilter(label='Serial number', field_name='serial', lookup_expr='exact')
+    serial = rest_filters.CharFilter(
+        label='Serial number', field_name='serial', lookup_expr='exact'
+    )
 
-    serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
+    serialized = rest_filters.BooleanFilter(
+        label='Has serial number', method='filter_serialized'
+    )
 
     def filter_serialized(self, queryset, name, value):
         """Filter by whether the StockItem has a serial number (or not)."""
@@ -546,9 +602,12 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q)
-        return queryset.filter(q)
 
-    has_batch = rest_filters.BooleanFilter(label='Has batch code', method='filter_has_batch')
+        return queryset.filter(q).distinct()
+
+    has_batch = rest_filters.BooleanFilter(
+        label='Has batch code', method='filter_has_batch'
+    )
 
     def filter_has_batch(self, queryset, name, value):
         """Filter by whether the StockItem has a batch code (or not)."""
@@ -556,7 +615,8 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q)
-        return queryset.filter(q)
+
+        return queryset.filter(q).distinct()
 
     tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
 
@@ -572,9 +632,12 @@ class StockFilter(rest_filters.FilterSet):
 
         if str2bool(value):
             return queryset.exclude(q_batch & q_serial)
-        return queryset.filter(q_batch & q_serial)
 
-    installed = rest_filters.BooleanFilter(label='Installed in other stock item', method='filter_installed')
+        return queryset.filter(q_batch).filter(q_serial).distinct()
+
+    installed = rest_filters.BooleanFilter(
+        label='Installed in other stock item', method='filter_installed'
+    )
 
     def filter_installed(self, queryset, name, value):
         """Filter stock items by "belongs_to" field being empty."""
@@ -582,7 +645,9 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.exclude(belongs_to=None)
         return queryset.filter(belongs_to=None)
 
-    has_installed_items = rest_filters.BooleanFilter(label='Has installed items', method='filter_has_installed')
+    has_installed_items = rest_filters.BooleanFilter(
+        label='Has installed items', method='filter_has_installed'
+    )
 
     def filter_has_installed(self, queryset, name, value):
         """Filter stock items by "belongs_to" field being empty."""
@@ -590,7 +655,19 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.filter(installed_items__gt=0)
         return queryset.filter(installed_items=0)
 
-    sent_to_customer = rest_filters.BooleanFilter(label='Sent to customer', method='filter_sent_to_customer')
+    has_child_items = rest_filters.BooleanFilter(
+        label='Has child items', method='filter_has_child_items'
+    )
+
+    def filter_has_child_items(self, queryset, name, value):
+        """Filter stock items by "belongs_to" field being empty."""
+        if str2bool(value):
+            return queryset.filter(child_items__gt=0)
+        return queryset.filter(child_items=0)
+
+    sent_to_customer = rest_filters.BooleanFilter(
+        label='Sent to customer', method='filter_sent_to_customer'
+    )
 
     def filter_sent_to_customer(self, queryset, name, value):
         """Filter by sent to customer."""
@@ -606,7 +683,9 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.filter(quantity__lte=0)
         return queryset.exclude(quantity__lte=0)
 
-    has_purchase_price = rest_filters.BooleanFilter(label='Has purchase price', method='filter_has_purchase_price')
+    has_purchase_price = rest_filters.BooleanFilter(
+        label='Has purchase price', method='filter_has_purchase_price'
+    )
 
     def filter_has_purchase_price(self, queryset, name, value):
         """Filter by having a purchase price."""
@@ -615,20 +694,90 @@ class StockFilter(rest_filters.FilterSet):
         return queryset.filter(purchase_price=None)
 
     ancestor = rest_filters.ModelChoiceFilter(
-        label='Ancestor',
-        queryset=StockItem.objects.all(),
-        method='filter_ancestor'
+        label='Ancestor', queryset=StockItem.objects.all(), method='filter_ancestor'
     )
 
     def filter_ancestor(self, queryset, name, ancestor):
-        """Filter based on ancestor stock item"""
+        """Filter based on ancestor stock item."""
+        return queryset.filter(parent__in=ancestor.get_descendants(include_self=True))
+
+    category = rest_filters.ModelChoiceFilter(
+        label=_('Category'),
+        queryset=PartCategory.objects.all(),
+        method='filter_category',
+    )
+
+    def filter_category(self, queryset, name, category):
+        """Filter based on part category."""
+        child_categories = category.get_descendants(include_self=True)
+
+        return queryset.filter(part__category__in=child_categories)
+
+    bom_item = rest_filters.ModelChoiceFilter(
+        label=_('BOM Item'), queryset=BomItem.objects.all(), method='filter_bom_item'
+    )
+
+    def filter_bom_item(self, queryset, name, bom_item):
+        """Filter based on BOM item."""
+        return queryset.filter(bom_item.get_stock_filter())
+
+    part_tree = rest_filters.ModelChoiceFilter(
+        label=_('Part Tree'), queryset=Part.objects.all(), method='filter_part_tree'
+    )
+
+    def filter_part_tree(self, queryset, name, part_tree):
+        """Filter based on part tree."""
+        return queryset.filter(part__tree_id=part_tree.tree_id)
+
+    company = rest_filters.ModelChoiceFilter(
+        label=_('Company'), queryset=Company.objects.all(), method='filter_company'
+    )
+
+    def filter_company(self, queryset, name, company):
+        """Filter by company (either manufacturer or supplier)."""
         return queryset.filter(
-            parent__in=ancestor.get_descendants(include_self=True)
-        )
+            Q(supplier_part__supplier=company)
+            | Q(supplier_part__manufacturer_part__manufacturer=company)
+        ).distinct()
 
     # Update date filters
-    updated_before = rest_filters.DateFilter(label='Updated before', field_name='updated', lookup_expr='lte')
-    updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
+    updated_before = InvenTreeDateFilter(
+        label='Updated before', field_name='updated', lookup_expr='lte'
+    )
+    updated_after = InvenTreeDateFilter(
+        label='Updated after', field_name='updated', lookup_expr='gte'
+    )
+
+    # Stock "expiry" filters
+    expiry_date_lte = InvenTreeDateFilter(
+        label=_('Expiry date before'), field_name='expiry_date', lookup_expr='lte'
+    )
+
+    expiry_date_gte = InvenTreeDateFilter(
+        label=_('Expiry date after'), field_name='expiry_date', lookup_expr='gte'
+    )
+
+    stale = rest_filters.BooleanFilter(label=_('Stale'), method='filter_stale')
+
+    def filter_stale(self, queryset, name, value):
+        """Filter by stale stock items."""
+        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+
+        if stale_days <= 0:
+            # No filtering, does not make sense
+            return queryset
+
+        stale_date = datetime.now().date() + timedelta(days=stale_days)
+        stale_filter = (
+            StockItem.IN_STOCK_FILTER
+            & ~Q(expiry_date=None)
+            & Q(expiry_date__lt=stale_date)
+        )
+
+        if str2bool(value):
+            return queryset.filter(stale_filter)
+        else:
+            return queryset.exclude(stale_filter)
 
 
 class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
@@ -655,7 +804,12 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         try:
             params = self.request.query_params
 
-            for key in ['part_detail', 'location_detail', 'supplier_part_detail', 'tests']:
+            for key in [
+                'part_detail',
+                'location_detail',
+                'supplier_part_detail',
+                'tests',
+            ]:
                 kwargs[key] = str2bool(params.get(key, False))
         except AttributeError:
             pass
@@ -689,16 +843,13 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         quantity = data.get('quantity', None)
 
         if quantity is None:
-            raise ValidationError({
-                'quantity': _('Quantity is required'),
-            })
+            raise ValidationError({'quantity': _('Quantity is required')})
 
         try:
+            Part.objects.prefetch_related(None)
             part = Part.objects.get(pk=data.get('part', None))
         except (ValueError, Part.DoesNotExist):
-            raise ValidationError({
-                'part': _('Valid part must be supplied'),
-            })
+            raise ValidationError({'part': _('Valid part must be supplied')})
 
         # Set default location (if not provided)
         if 'location' not in data:
@@ -711,7 +862,9 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         # An expiry date was *not* specified - try to infer it!
         if expiry_date is None and part.default_expiry > 0:
-            data['expiry_date'] = datetime.now().date() + timedelta(days=part.default_expiry)
+            data['expiry_date'] = datetime.now().date() + timedelta(
+                days=part.default_expiry
+            )
 
         # Attempt to extract serial numbers from submitted data
         serials = None
@@ -722,10 +875,12 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         # Check if the supplier_part has a package size defined, which is not 1
         if 'supplier_part' in data and data['supplier_part'] is not None:
             try:
-                supplier_part = SupplierPart.objects.get(pk=data.get('supplier_part', None))
+                supplier_part = SupplierPart.objects.get(
+                    pk=data.get('supplier_part', None)
+                )
             except (ValueError, SupplierPart.DoesNotExist):
                 raise ValidationError({
-                    'supplier_part': _('The given supplier part does not exist'),
+                    'supplier_part': _('The given supplier part does not exist')
                 })
 
             if supplier_part.base_quantity() != 1:
@@ -734,16 +889,25 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                 # use_pack_size = False -> Use quantity as is
                 if 'use_pack_size' not in data:
                     raise ValidationError({
-                        'use_pack_size': _('The supplier part has a pack size defined, but flag use_pack_size not set'),
+                        'use_pack_size': _(
+                            'The supplier part has a pack size defined, but flag use_pack_size not set'
+                        )
                     })
                 else:
                     if bool(data.get('use_pack_size')):
-                        quantity = data['quantity'] = supplier_part.base_quantity(quantity)
+                        quantity = data['quantity'] = supplier_part.base_quantity(
+                            quantity
+                        )
 
                         # Divide purchase price by pack size, to save correct price per stock item
-                        if data['purchase_price'] and supplier_part.pack_quantity_native:
+                        if (
+                            data['purchase_price']
+                            and supplier_part.pack_quantity_native
+                        ):
                             try:
-                                data['purchase_price'] = float(data['purchase_price']) / float(supplier_part.pack_quantity_native)
+                                data['purchase_price'] = float(
+                                    data['purchase_price']
+                                ) / float(supplier_part.pack_quantity_native)
                             except ValueError:
                                 pass
 
@@ -754,18 +918,17 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         # Assign serial numbers for a trackable part
         if serial_numbers:
-
             if not part.trackable:
                 raise ValidationError({
-                    'serial_numbers': [_("Serial numbers cannot be supplied for a non-trackable part")]
+                    'serial_numbers': [
+                        _('Serial numbers cannot be supplied for a non-trackable part')
+                    ]
                 })
 
             # If serial numbers are specified, check that they match!
             try:
                 serials = extract_serial_numbers(
-                    serial_numbers,
-                    quantity,
-                    part.get_latest_serial_number()
+                    serial_numbers, quantity, part.get_latest_serial_number()
                 )
 
                 # Determine if any of the specified serial numbers are invalid
@@ -784,14 +947,11 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                             errors.append(exc.message)
 
                 if len(errors) > 0:
+                    msg = _('The following serial numbers already exist or are invalid')
+                    msg += ' : '
+                    msg += ','.join([str(e) for e in invalid])
 
-                    msg = _("The following serial numbers already exist or are invalid")
-                    msg += " : "
-                    msg += ",".join([str(e) for e in invalid])
-
-                    raise ValidationError({
-                        'serial_numbers': errors + [msg]
-                    })
+                    raise ValidationError({'serial_numbers': errors + [msg]})
 
             except DjangoValidationError as e:
                 raise ValidationError({
@@ -808,7 +968,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         serializer.is_valid(raise_exception=True)
 
         with transaction.atomic():
-
             # Create an initial StockItem object
             item = serializer.save()
 
@@ -821,22 +980,22 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
             if serials:
                 for serial in serials[1:]:
-
                     # Create a duplicate stock item with the next serial number
                     item.pk = None
                     item.serial = serial
 
                     item.save(user=user)
 
-                response_data = {
-                    'quantity': quantity,
-                    'serial_numbers': serials,
-                }
+                response_data = {'quantity': quantity, 'serial_numbers': serials}
 
             else:
                 response_data = serializer.data
 
-            return Response(response_data, status=status.HTTP_201_CREATED, headers=self.get_success_headers(serializer.data))
+            return Response(
+                response_data,
+                status=status.HTTP_201_CREATED,
+                headers=self.get_success_headers(serializer.data),
+            )
 
     def download_queryset(self, queryset, export_format):
         """Download this queryset as a file.
@@ -877,7 +1036,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         if page is not None:
             return self.get_paginated_response(data)
-        elif request.is_ajax():
+        elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
@@ -895,44 +1054,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         queryset = super().filter_queryset(queryset)
 
-        if common.settings.stock_expiry_enabled():
-
-            # Filter by 'expiry date'
-            expired_date_lte = params.get('expiry_date_lte', None)
-            if expired_date_lte is not None:
-                try:
-                    date_lte = datetime.fromisoformat(expired_date_lte)
-                    queryset = queryset.filter(expiry_date__lte=date_lte)
-                except (ValueError, TypeError):
-                    pass
-
-            expiry_date_gte = params.get('expiry_date_gte', None)
-            if expiry_date_gte is not None:
-                try:
-                    date_gte = datetime.fromisoformat(expiry_date_gte)
-                    queryset = queryset.filter(expiry_date__gte=date_gte)
-                except (ValueError, TypeError):
-                    pass
-
-            # Filter by 'stale' status
-            stale = params.get('stale', None)
-
-            if stale is not None:
-                stale = str2bool(stale)
-
-                # How many days to account for "staleness"?
-                stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
-
-                if stale_days > 0:
-                    stale_date = datetime.now().date() + timedelta(days=stale_days)
-
-                    stale_filter = StockItem.IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=stale_date)
-
-                    if stale:
-                        queryset = queryset.filter(stale_filter)
-                    else:
-                        queryset = queryset.exclude(stale_filter)
-
         # Exclude stock item tree
         exclude_tree = params.get('exclude_tree', None)
 
@@ -947,39 +1068,20 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-        # Filter by "part tree" - only allow parts within a given variant tree
-        part_tree = params.get('part_tree', None)
-
-        if part_tree is not None:
-            try:
-                part = Part.objects.get(pk=part_tree)
-
-                if part.tree_id is not None:
-                    queryset = queryset.filter(part__tree_id=part.tree_id)
-            except Exception:
-                pass
-
         # Exclude StockItems which are already allocated to a particular SalesOrder
         exclude_so_allocation = params.get('exclude_so_allocation', None)
 
         if exclude_so_allocation is not None:
-
             try:
                 order = SalesOrder.objects.get(pk=exclude_so_allocation)
 
                 # Grab all the active SalesOrderAllocations for this order
                 allocations = SalesOrderAllocation.objects.filter(
-                    line__pk__in=[
-                        line.pk for line in order.lines.all()
-                    ]
+                    line__pk__in=[line.pk for line in order.lines.all()]
                 )
 
                 # Exclude any stock item which is already allocated to the sales order
-                queryset = queryset.exclude(
-                    pk__in=[
-                        a.item.pk for a in allocations
-                    ]
-                )
+                queryset = queryset.exclude(pk__in=[a.item.pk for a in allocations])
 
             except (ValueError, SalesOrder.DoesNotExist):
                 pass
@@ -1004,7 +1106,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     queryset = queryset.filter(part=part)
 
             except (ValueError, Part.DoesNotExist):
-                raise ValidationError({"part": "Invalid Part ID specified"})
+                raise ValidationError({'part': 'Invalid Part ID specified'})
 
         # Does the client wish to filter by stock location?
         loc_id = params.get('location', None)
@@ -1012,7 +1114,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         cascade = str2bool(params.get('cascade', True))
 
         if loc_id is not None:
-
             # Filter by 'null' location (i.e. top-level items)
             if isNull(loc_id):
                 if not cascade:
@@ -1022,41 +1123,14 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
                     # If '?cascade=true' then include items which exist in sub-locations
                     if cascade:
                         location = StockLocation.objects.get(pk=loc_id)
-                        queryset = queryset.filter(location__in=location.getUniqueChildren())
+                        queryset = queryset.filter(
+                            location__in=location.getUniqueChildren()
+                        )
                     else:
                         queryset = queryset.filter(location=loc_id)
 
                 except (ValueError, StockLocation.DoesNotExist):
                     pass
-
-        # Does the client wish to filter by part category?
-        cat_id = params.get('category', None)
-
-        if cat_id:
-            try:
-                category = PartCategory.objects.get(pk=cat_id)
-                queryset = queryset.filter(part__category__in=category.getUniqueChildren())
-
-            except (ValueError, PartCategory.DoesNotExist):
-                raise ValidationError({"category": "Invalid category id specified"})
-
-        # Does the client wish to filter by BomItem
-        bom_item_id = params.get('bom_item', None)
-
-        if bom_item_id is not None:
-            try:
-                bom_item = BomItem.objects.get(pk=bom_item_id)
-
-                queryset = queryset.filter(bom_item.get_stock_filter())
-
-            except (ValueError, BomItem.DoesNotExist):
-                pass
-
-        # Filter by company (either manufacturer or supplier)
-        company = params.get('company', None)
-
-        if company is not None:
-            queryset = queryset.filter(Q(supplier_part__supplier=company) | Q(supplier_part__manufacturer_part__manufacturer=company))
 
         return queryset
 
@@ -1082,11 +1156,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         'SKU',
     ]
 
-    ordering = [
-        'part__name',
-        'quantity',
-        'location',
-    ]
+    ordering = ['part__name', 'quantity', 'location']
 
     search_fields = [
         'serial',
@@ -1106,9 +1176,7 @@ class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
-    filterset_fields = [
-        'stock_item',
-    ]
+    filterset_fields = ['stock_item']
 
 
 class StockAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
@@ -1133,12 +1201,7 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = [
-        'test',
-        'user',
-        'result',
-        'value',
-    ]
+    filterset_fields = ['test', 'user', 'result', 'value']
 
     ordering = 'date'
 
@@ -1152,7 +1215,6 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
         build = params.get('build', None)
 
         if build is not None:
-
             try:
                 build = Build.objects.get(pk=build)
 
@@ -1190,7 +1252,9 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
         try:
-            kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
+            kwargs['user_detail'] = str2bool(
+                self.request.query_params.get('user_detail', False)
+            )
         except Exception:
             pass
 
@@ -1232,12 +1296,16 @@ class StockTrackingList(ListAPI):
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
         try:
-            kwargs['item_detail'] = str2bool(self.request.query_params.get('item_detail', False))
+            kwargs['item_detail'] = str2bool(
+                self.request.query_params.get('item_detail', False)
+            )
         except Exception:
             pass
 
         try:
-            kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
+            kwargs['user_detail'] = str2bool(
+                self.request.query_params.get('user_detail', False)
+            )
         except Exception:
             pass
 
@@ -1339,7 +1407,7 @@ class StockTrackingList(ListAPI):
 
         if page is not None:
             return self.get_paginated_response(data)
-        if request.is_ajax():
+        if is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
 
@@ -1365,25 +1433,19 @@ class StockTrackingList(ListAPI):
         item.save()
 
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = [
-        'item',
-        'user',
-    ]
+    filterset_fields = ['item', 'user']
 
     ordering = '-date'
 
-    ordering_fields = [
-        'date',
-    ]
+    ordering_fields = ['date']
 
-    search_fields = [
-        'title',
-        'notes',
-    ]
+    search_fields = ['title', 'notes']
 
 
 class LocationDetail(CustomRetrieveUpdateDestroyAPI):
@@ -1398,7 +1460,7 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
     serializer_class = StockSerializers.LocationSerializer
 
     def get_serializer(self, *args, **kwargs):
-        """Add extra context to serializer based on provided query parameters"""
+        """Add extra context to serializer based on provided query parameters."""
         try:
             params = self.request.query_params
 
@@ -1411,14 +1473,13 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        """Return annotated queryset for the StockLocationList endpoint"""
+        """Return annotated queryset for the StockLocationList endpoint."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
 
     def destroy(self, request, *args, **kwargs):
-        """Delete a Stock location instance via the API"""
-
+        """Delete a Stock location instance via the API."""
         delete_stock_items = str(request.data.get('delete_stock_items', 0)) == '1'
         delete_sub_locations = str(request.data.get('delete_sub_locations', 0)) == '1'
 
@@ -1428,84 +1489,152 @@ class LocationDetail(CustomRetrieveUpdateDestroyAPI):
             **dict(
                 kwargs,
                 delete_sub_locations=delete_sub_locations,
-                delete_stock_items=delete_stock_items
-            )
+                delete_stock_items=delete_stock_items,
+            ),
         )
 
 
 stock_api_urls = [
-    re_path(r'^location/', include([
-
-        re_path(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
-
-        # Stock location detail endpoints
-        path(r'<int:pk>/', include([
-
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockLocation}, name='api-location-metadata'),
-
-            re_path(r'^.*$', LocationDetail.as_view(), name='api-location-detail'),
-        ])),
-
-        re_path(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
-    ])),
-
+    path(
+        'location/',
+        include([
+            path('tree/', StockLocationTree.as_view(), name='api-location-tree'),
+            # Stock location detail endpoints
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': StockLocation},
+                        name='api-location-metadata',
+                    ),
+                    path('', LocationDetail.as_view(), name='api-location-detail'),
+                ]),
+            ),
+            path('', StockLocationList.as_view(), name='api-location-list'),
+        ]),
+    ),
     # Stock location type endpoints
-    re_path(r'^location-type/', include([
-        path(r'<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockLocationType}, name='api-location-type-metadata'),
-            re_path(r'^.*$', StockLocationTypeDetail.as_view(), name='api-location-type-detail'),
-        ])),
-        re_path(r'^.*$', StockLocationTypeList.as_view(), name="api-location-type-list"),
-    ])),
-
+    path(
+        'location-type/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': StockLocationType},
+                        name='api-location-type-metadata',
+                    ),
+                    path(
+                        '',
+                        StockLocationTypeDetail.as_view(),
+                        name='api-location-type-detail',
+                    ),
+                ]),
+            ),
+            path('', StockLocationTypeList.as_view(), name='api-location-type-list'),
+        ]),
+    ),
     # Endpoints for bulk stock adjustment actions
-    re_path(r'^count/', StockCount.as_view(), name='api-stock-count'),
-    re_path(r'^add/', StockAdd.as_view(), name='api-stock-add'),
-    re_path(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
-    re_path(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
-    re_path(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
-    re_path(r'^merge/', StockMerge.as_view(), name='api-stock-merge'),
-    re_path(r'^change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
-
+    path('count/', StockCount.as_view(), name='api-stock-count'),
+    path('add/', StockAdd.as_view(), name='api-stock-add'),
+    path('remove/', StockRemove.as_view(), name='api-stock-remove'),
+    path('transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
+    path('assign/', StockAssign.as_view(), name='api-stock-assign'),
+    path('merge/', StockMerge.as_view(), name='api-stock-merge'),
+    path('change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
     # StockItemAttachment API endpoints
-    re_path(r'^attachment/', include([
-        path(r'<int:pk>/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
-        path('', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
-    ])),
-
+    path(
+        'attachment/',
+        include([
+            path(
+                '<int:pk>/',
+                StockAttachmentDetail.as_view(),
+                name='api-stock-attachment-detail',
+            ),
+            path('', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
+        ]),
+    ),
     # StockItemTestResult API endpoints
-    re_path(r'^test/', include([
-        path(r'<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': StockItemTestResult}, name='api-stock-test-result-metadata'),
-            re_path(r'^.*$', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
-        ])),
-        re_path(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
-    ])),
-
+    path(
+        'test/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': StockItemTestResult},
+                        name='api-stock-test-result-metadata',
+                    ),
+                    path(
+                        '',
+                        StockItemTestResultDetail.as_view(),
+                        name='api-stock-test-result-detail',
+                    ),
+                ]),
+            ),
+            path(
+                '', StockItemTestResultList.as_view(), name='api-stock-test-result-list'
+            ),
+        ]),
+    ),
     # StockItemTracking API endpoints
-    re_path(r'^track/', include([
-        path(r'<int:pk>/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
-
-        # Stock tracking status code information
-        re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: StockHistoryCode}, name='api-stock-tracking-status-codes'),
-
-        re_path(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
-    ])),
-
+    path(
+        'track/',
+        include([
+            path(
+                '<int:pk>/',
+                StockTrackingDetail.as_view(),
+                name='api-stock-tracking-detail',
+            ),
+            # Stock tracking status code information
+            path(
+                'status/',
+                StatusView.as_view(),
+                {StatusView.MODEL_REF: StockHistoryCode},
+                name='api-stock-tracking-status-codes',
+            ),
+            path('', StockTrackingList.as_view(), name='api-stock-tracking-list'),
+        ]),
+    ),
     # Detail views for a single stock item
-    path(r'<int:pk>/', include([
-        re_path(r'^convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
-        re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
-        re_path(r'^metadata/', MetadataView.as_view(), {'model': StockItem}, name='api-stock-item-metadata'),
-        re_path(r'^return/', StockItemReturn.as_view(), name='api-stock-item-return'),
-        re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
-        re_path(r'^uninstall/', StockItemUninstall.as_view(), name='api-stock-item-uninstall'),
-        re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
-    ])),
-
+    path(
+        '<int:pk>/',
+        include([
+            path('convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
+            path('install/', StockItemInstall.as_view(), name='api-stock-item-install'),
+            path(
+                'metadata/',
+                MetadataView.as_view(),
+                {'model': StockItem},
+                name='api-stock-item-metadata',
+            ),
+            path('return/', StockItemReturn.as_view(), name='api-stock-item-return'),
+            path(
+                'serialize/',
+                StockItemSerialize.as_view(),
+                name='api-stock-item-serialize',
+            ),
+            path(
+                'uninstall/',
+                StockItemUninstall.as_view(),
+                name='api-stock-item-uninstall',
+            ),
+            path('', StockDetail.as_view(), name='api-stock-detail'),
+        ]),
+    ),
     # Stock item status code information
-    re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: StockStatus}, name='api-stock-status-codes'),
-
+    path(
+        'status/',
+        StatusView.as_view(),
+        {StatusView.MODEL_REF: StockStatus},
+        name='api-stock-status-codes',
+    ),
     # Anything else
-    re_path(r'^.*$', StockList.as_view(), name='api-stock-list'),
+    path('', StockList.as_view(), name='api-stock-list'),
 ]

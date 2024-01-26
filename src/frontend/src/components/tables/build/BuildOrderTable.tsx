@@ -3,11 +3,12 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { renderDate } from '../../../defaults/formatters';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
-import { ModelType } from '../../render/ModelType';
 import { RenderUser } from '../../render/User';
 import { TableColumn } from '../Column';
 import {
@@ -17,6 +18,7 @@ import {
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
+import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -100,26 +102,39 @@ function buildOrderTableColumns(): TableColumn[] {
 export function BuildOrderTable({ params = {} }: { params?: any }) {
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
 
-  const tableFilters = useMemo(() => {
+  const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
-        // TODO: Filter by status code
         name: 'active',
         type: 'boolean',
-        label: t`Active`
+        label: t`Active`,
+        description: t`Show active orders`
+      },
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.build)
       },
       {
         name: 'overdue',
         type: 'boolean',
-        label: t`Overdue`
+        label: t`Overdue`,
+        description: t`Show overdue status`
       },
       {
         name: 'assigned_to_me',
         type: 'boolean',
-        label: t`Assigned to me`
+        label: t`Assigned to me`,
+        description: t`Show orders assigned to me`
       }
       // TODO: 'assigned to' filter
       // TODO: 'issued by' filter
+      // {
+      //   name: 'has_project_code',
+      //   title: t`Has Project Code`,
+      //   description: t`Show orders with project code`,
+      // }
       // TODO: 'has project code' filter (see table_filters.js)
       // TODO: 'project code' filter (see table_filters.js)
     ];
@@ -127,12 +142,12 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
 
   const navigate = useNavigate();
 
-  const { tableKey, refreshTable } = useTableRefresh('buildorder');
+  const table = useTable('buildorder');
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.build_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,
@@ -140,7 +155,7 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
           ...params,
           part_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         onRowClick: (row) => navigate(`/build/${row.pk}`)
       }}
     />

@@ -4,7 +4,7 @@ import json
 
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
-from django.urls import include, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from plugin import InvenTreePlugin
@@ -19,14 +19,16 @@ def validate_json(value):
         raise ValidationError(str(e))
 
 
-class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin):
+class SampleIntegrationPlugin(
+    AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin
+):
     """A full plugin example."""
 
-    NAME = "SampleIntegrationPlugin"
-    SLUG = "sample"
-    TITLE = "Sample Plugin"
+    NAME = 'SampleIntegrationPlugin'
+    SLUG = 'sample'
+    TITLE = 'Sample Plugin'
 
-    NAVIGATION_TAB_NAME = "Sample Nav"
+    NAVIGATION_TAB_NAME = 'Sample Nav'
     NAVIGATION_TAB_ICON = 'fas fa-plus'
 
     def view_test(self, request):
@@ -36,13 +38,13 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
     def setup_urls(self):
         """Urls that are exposed by this plugin."""
         he_urls = [
-            re_path(r'^he/', self.view_test, name='he'),
-            re_path(r'^ha/', self.view_test, name='ha'),
+            path('he/', self.view_test, name='he'),
+            path('ha/', self.view_test, name='ha'),
         ]
 
         return [
-            re_path(r'^hi/', self.view_test, name='hi'),
-            re_path(r'^ho/', include(he_urls), name='ho'),
+            path('hi/', self.view_test, name='hi'),
+            path('ho/', include(he_urls), name='ho'),
         ]
 
     SETTINGS = {
@@ -64,14 +66,9 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             'default': 123,
         },
         'CHOICE_SETTING': {
-            'name': _("Choice Setting"),
+            'name': _('Choice Setting'),
             'description': _('A setting with multiple choices'),
-            'choices': [
-                ('A', 'Anaconda'),
-                ('B', 'Bat'),
-                ('C', 'Cat'),
-                ('D', 'Dog'),
-            ],
+            'choices': [('A', 'Anaconda'), ('B', 'Bat'), ('C', 'Cat'), ('D', 'Dog')],
             'default': 'A',
         },
         'SELECT_COMPANY': {
@@ -94,9 +91,7 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             'name': 'JSON validator Setting',
             'description': 'A setting using a JSON validator',
             'validator': validate_json,
-        }
+        },
     }
 
-    NAVIGATION = [
-        {'name': 'SampleIntegration', 'link': 'plugin:sample:hi'},
-    ]
+    NAVIGATION = [{'name': 'SampleIntegration', 'link': 'plugin:sample:hi'}]

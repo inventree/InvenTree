@@ -441,7 +441,7 @@
     {% if barcodes %}
     $("#show-qr-code").click(function() {
         showQRDialog(
-            '{% trans "Part QR Code" %}',
+            '{% trans "Part QR Code" escape %}',
             '{"part": {{ part.pk }} }',
         );
     });
@@ -458,7 +458,7 @@
                 part: {{ part.pk }},
             },
             {
-                title: '{% trans "Link Barcode to Part" %}',
+                title: '{% trans "Link Barcode to Part" escape %}',
             }
         );
     });
@@ -469,7 +469,7 @@
         printLabels({
             items: [{{ part.pk }}],
             key: 'part',
-            singular_name: '{% trans "part" %}',
+            singular_name: 'part',
             url: '{% url "api-part-label-list" %}',
         });
     });
@@ -509,7 +509,7 @@
         launchModalForm(
             "{% url 'part-pricing' part.id %}",
             {
-                submit_text: '{% trans "Calculate" %}',
+                submit_text: '{% trans "Calculate" escape %}',
                 hideErrorMessage: true,
             }
         );
@@ -525,10 +525,10 @@
     $('#part-image-delete').click(function(event) {
         event.stopPropagation();
         showQuestionDialog(
-            '{% trans "Remove Image" %}',
-            '{% trans "Remove associated image from this part" %}',
+            '{% trans "Remove Image" escape %}',
+            '{% trans "Remove associated image from this part" escape %}',
             {
-                accept_text: '{% trans "Remove" %}',
+                accept_text: '{% trans "Remove" escape %}',
                 submitClass: 'danger',
                 accept: function() {
                     inventreePut(
@@ -557,7 +557,7 @@
                 fields: {
                     image: {},
                 },
-                title: '{% trans "Upload Image" %}',
+                title: '{% trans "Upload Image" escape %}',
                 onSuccess: function(data) {
                     reloadImage(data);
                 }
@@ -577,7 +577,7 @@
             sidePagination: 'server',
             singleSelect: true,
             formatNoMatches: function() {
-                return '{% trans "No matching images found" %}';
+                return '{% trans "No matching images found" escape %}';
             },
             columns: [
                 {
@@ -611,7 +611,7 @@
                 '{% url "api-part-detail" part.pk %}',
                 {
                     method: 'PATCH',
-                    title: '{% trans "Download Image" %}',
+                    title: '{% trans "Download Image" escape %}',
                     fields: {
                         remote_image: {},
                     },
@@ -673,13 +673,13 @@
 
     // Callback function when the "part details" panel is shown
     $('#collapse-part-details').on('show.bs.collapse', function() {
-        $('#toggle-details-button').html('{% trans "Hide Part Details" %}');
+        $('#toggle-details-button').html('{% trans "Hide Part Details" escape %}');
         inventreeSave('show-part-details', true);
     });
 
     // Callback function when the "part details" panel is hidden
     $('#collapse-part-details').on('hide.bs.collapse', function() {
-        $('#toggle-details-button').html('{% trans "Show Part Details" %}');
+        $('#toggle-details-button').html('{% trans "Show Part Details" escape %}');
         inventreeSave('show-part-details', false);
     });
 

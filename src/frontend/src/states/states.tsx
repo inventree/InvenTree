@@ -9,6 +9,7 @@ export interface HostList {
 
 // Type interface fully defining the current user
 export interface UserProps {
+  pk: number;
   username: string;
   first_name: string;
   last_name: string;
@@ -36,6 +37,25 @@ export interface ServerAPIProps {
   platform: null | string;
   installer: null | string;
   target: null | string;
+  default_locale: null | string;
+}
+
+export interface AuthProps {
+  sso_enabled: boolean;
+  sso_registration: boolean;
+  mfa_required: boolean;
+  providers: Provider[];
+  registration_enabled: boolean;
+  password_forgotten_enabled: boolean;
+}
+
+export interface Provider {
+  id: string;
+  name: string;
+  configured: boolean;
+  login: string;
+  connect: string;
+  display_name: string;
 }
 
 // Type interface defining a single 'setting' object
@@ -71,7 +91,8 @@ export enum SettingType {
   Boolean = 'boolean',
   Integer = 'integer',
   String = 'string',
-  Choice = 'choice'
+  Choice = 'choice',
+  Model = 'related field'
 }
 
 export interface PluginProps {

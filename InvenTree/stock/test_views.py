@@ -13,14 +13,7 @@ from users.models import Owner
 class StockViewTestCase(InvenTreeTestCase):
     """Mixin for Stockview tests."""
 
-    fixtures = [
-        'category',
-        'part',
-        'company',
-        'location',
-        'supplier_part',
-        'stock',
-    ]
+    fixtures = ['category', 'part', 'company', 'location', 'supplier_part', 'stock']
 
     roles = 'all'
 
@@ -35,10 +28,10 @@ class StockListTest(StockViewTestCase):
 
 
 class StockDetailTest(StockViewTestCase):
-    """Unit test for the 'stock detail' page"""
+    """Unit test for the 'stock detail' page."""
 
     def test_basic_info(self):
-        """Test that basic stock item info is rendered"""
+        """Test that basic stock item info is rendered."""
         url = reverse('stock-item-detail', kwargs={'pk': 1})
 
         response = self.client.get(url)
@@ -59,13 +52,13 @@ class StockDetailTest(StockViewTestCase):
 
         # Actions to check
         actions = [
-            "id=\\\'stock-count\\\' title=\\\'Count stock\\\'",
-            "id=\\\'stock-add\\\' title=\\\'Add stock\\\'",
-            "id=\\\'stock-remove\\\' title=\\\'Remove stock\\\'",
-            "id=\\\'stock-move\\\' title=\\\'Transfer stock\\\'",
-            "id=\\\'stock-duplicate\\\'",
-            "id=\\\'stock-edit\\\'",
-            "id=\\\'stock-delete\\\'",
+            "id=\\'stock-count\\' title=\\'Count stock\\'",
+            "id=\\'stock-add\\' title=\\'Add stock\\'",
+            "id=\\'stock-remove\\' title=\\'Remove stock\\'",
+            "id=\\'stock-move\\' title=\\'Transfer stock\\'",
+            "id=\\'stock-duplicate\\'",
+            "id=\\'stock-edit\\'",
+            "id=\\'stock-delete\\'",
         ]
 
         # Initially we should not have any of the required permissions
@@ -86,6 +79,7 @@ class StockDetailTest(StockViewTestCase):
 
 class StockOwnershipTest(StockViewTestCase):
     """Tests for stock ownership views."""
+
     test_item_id = 11
     test_location_id = 1
 
@@ -135,9 +129,13 @@ class StockOwnershipTest(StockViewTestCase):
         location = StockLocation.objects.get(pk=self.test_location_id)
 
         # Check that user is not allowed to change item
-        self.assertTrue(item.check_ownership(self.user))        # No owner -> True
-        self.assertTrue(location.check_ownership(self.user))    # No owner -> True
-        self.assertContains(self.assert_api_change(), 'You do not have permission to perform this action.', status_code=403)
+        self.assertTrue(item.check_ownership(self.user))  # No owner -> True
+        self.assertTrue(location.check_ownership(self.user))  # No owner -> True
+        self.assertContains(
+            self.assert_api_change(),
+            'You do not have permission to perform this action.',
+            status_code=403,
+        )
 
         # Adjust group rules
         group = Group.objects.get(name='my_test_group')
@@ -153,9 +151,13 @@ class StockOwnershipTest(StockViewTestCase):
         location.save()
 
         # Check that user is allowed to change item
-        self.assertTrue(item.check_ownership(self.user))        # Owner is group -> True
-        self.assertTrue(location.check_ownership(self.user))    # Owner is group -> True
-        self.assertContains(self.assert_api_change(), f'"status":{StockStatus.DAMAGED.value}', status_code=200)
+        self.assertTrue(item.check_ownership(self.user))  # Owner is group -> True
+        self.assertTrue(location.check_ownership(self.user))  # Owner is group -> True
+        self.assertContains(
+            self.assert_api_change(),
+            f'"status":{StockStatus.DAMAGED.value}',
+            status_code=200,
+        )
 
         # Change group
         new_group = Group.objects.create(name='new_group')
@@ -166,5 +168,9 @@ class StockOwnershipTest(StockViewTestCase):
         location.save()
 
         # Check that user is not allowed to change item
-        self.assertFalse(item.check_ownership(self.user))       # Owner is not in group -> False
-        self.assertFalse(location.check_ownership(self.user))    # Owner is not in group -> False
+        self.assertFalse(
+            item.check_ownership(self.user)
+        )  # Owner is not in group -> False
+        self.assertFalse(
+            location.check_ownership(self.user)
+        )  # Owner is not in group -> False

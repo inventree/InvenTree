@@ -29,6 +29,7 @@ def reload_unit_registry():
     This function is called at startup, and whenever the database is updated.
     """
     import time
+
     t_start = time.time()
 
     global _unit_registry
@@ -52,7 +53,9 @@ def reload_unit_registry():
             try:
                 reg.define(cu.fmt_string())
             except Exception as e:
-                logger.exception('Failed to load custom unit: %s - %s', cu.fmt_string(), e)
+                logger.exception(
+                    'Failed to load custom unit: %s - %s', cu.fmt_string(), e
+                )
 
         # Once custom units are loaded, save registry
         _unit_registry = reg
@@ -62,7 +65,7 @@ def reload_unit_registry():
         pass
 
     dt = time.time() - t_start
-    logger.debug('Loaded unit registry in %s.3f s', dt)
+    logger.debug('Loaded unit registry in %.3f s', dt)
 
     return reg
 
@@ -124,7 +127,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
         if unit:
             raise ValidationError(_(f'Could not convert {original} to {unit}'))
         else:
-            raise ValidationError(_("Invalid quantity supplied"))
+            raise ValidationError(_('Invalid quantity supplied'))
 
     # Calculate the "magnitude" of the value, as a float
     # If the value is specified strangely (e.g. as a fraction or a dozen), this can cause issues
@@ -148,7 +151,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
 
 
 def is_dimensionless(value):
-    """Determine if the provided value is 'dimensionless'
+    """Determine if the provided value is 'dimensionless'.
 
     A dimensionless value might look like:
 

@@ -26,8 +26,9 @@ import { AttachmentTable } from '../../components/tables/general/AttachmentTable
 import { PurchaseOrderLineItemTable } from '../../components/tables/purchasing/PurchaseOrderLineItemTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 
 /**
@@ -58,7 +59,7 @@ export default function PurchaseOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: order?.pk && <PurchaseOrderLineItemTable orderId={order.pk} />
+        content: <PurchaseOrderLineItemTable orderId={Number(id)} />
       },
       {
         name: 'received-stock',
@@ -80,7 +81,7 @@ export default function PurchaseOrderDetail() {
           <AttachmentTable
             endpoint={ApiPaths.purchase_order_attachment_list}
             model="order"
-            pk={order.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -90,7 +91,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.purchase_order_list, order.pk)}
+            url={apiUrl(ApiPaths.purchase_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />
@@ -114,7 +115,7 @@ export default function PurchaseOrderDetail() {
         ]}
       />,
       <ActionDropdown
-        key="order"
+        key="order-actions"
         tooltip={t`Order Actions`}
         icon={<IconDots />}
         actions={[EditItemAction({}), DeleteItemAction({})]}

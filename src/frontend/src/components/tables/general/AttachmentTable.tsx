@@ -7,13 +7,14 @@ import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../../App';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
 import {
   addAttachment,
   deleteAttachment,
   editAttachment
 } from '../../../forms/AttachmentForms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { AttachmentLink } from '../../items/AttachmentLink';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -81,7 +82,7 @@ export function AttachmentTable({
   pk: number;
   model: string;
 }): ReactNode {
-  const { tableKey, refreshTable } = useTableRefresh(`${model}-attachments`);
+  const table = useTable(`${model}-attachments`);
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 
@@ -121,7 +122,7 @@ export function AttachmentTable({
               model: model,
               pk: record.pk,
               attachmentType: record.attachment ? 'file' : 'link',
-              callback: refreshTable
+              callback: table.refreshTable
             });
           }
         })
@@ -135,7 +136,7 @@ export function AttachmentTable({
             deleteAttachment({
               endpoint: endpoint,
               pk: record.pk,
-              callback: refreshTable
+              callback: table.refreshTable
             });
           }
         })
@@ -161,7 +162,7 @@ export function AttachmentTable({
             color: 'green'
           });
 
-          refreshTable();
+          table.refreshTable();
 
           return response;
         })
@@ -177,7 +178,7 @@ export function AttachmentTable({
     });
   }
 
-  const customActionGroups: ReactNode[] = useMemo(() => {
+  const tableActions: ReactNode[] = useMemo(() => {
     let actions = [];
 
     if (allowEdit) {
@@ -191,7 +192,7 @@ export function AttachmentTable({
                 model: model,
                 pk: pk,
                 attachmentType: 'file',
-                callback: refreshTable
+                callback: table.refreshTable
               });
             }}
           >
@@ -210,7 +211,7 @@ export function AttachmentTable({
                 model: model,
                 pk: pk,
                 attachmentType: 'link',
-                callback: refreshTable
+                callback: table.refreshTable
               });
             }}
           >
@@ -229,12 +230,12 @@ export function AttachmentTable({
         <InvenTreeTable
           key="attachment-table"
           url={url}
-          tableKey={tableKey}
+          tableState={table}
           columns={tableColumns}
           props={{
             noRecordsText: t`No attachments found`,
             enableSelection: true,
-            customActionGroups: customActionGroups,
+            tableActions: tableActions,
             rowActions: allowEdit && allowDelete ? rowActions : undefined,
             params: {
               [model]: pk

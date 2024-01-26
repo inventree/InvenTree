@@ -6,7 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 
 export function PartCategoryTree({

@@ -1,12 +1,20 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import {
+  IconArrowRight,
+  IconCircleCheck,
+  IconSwitch3
+} from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { formatPriceRange } from '../../../defaults/formatters';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import { bomItemFields } from '../../../forms/BomForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { Thumbnail } from '../../images/Thumbnail';
 import { YesNoButton } from '../../items/YesNoButton';
@@ -44,7 +52,7 @@ export function BomTable({
 
   const user = useUserState();
 
-  const { tableKey, refreshTable } = useTableRefresh('bom');
+  const table = useTable('bom');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -59,7 +67,9 @@ export function BomTable({
           let extra = [];
 
           if (record.part != partId) {
-            extra.push(t`This BOM item is defined for a different parent`);
+            extra.push(
+              <Text key="different-parent">{t`This BOM item is defined for a different parent`}</Text>
+            );
           }
 
           return (
@@ -133,14 +143,8 @@ export function BomTable({
         title: t`Price Range`,
 
         sortable: false,
-        render: (row) => {
-          let min_price = row.pricing_min || row.pricing_max;
-          let max_price = row.pricing_max || row.pricing_min;
-
-          // TODO: Custom price range rendering component
-          // TODO: Footer component for price range
-          return `${min_price} - ${max_price}`;
-        }
+        render: (record: any) =>
+          formatPriceRange(record.pricing_min, record.pricing_max)
       },
       {
         accessor: 'available_stock',
@@ -230,11 +234,50 @@ export function BomTable({
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
+        name: 'sub_part_trackable',
+        label: t`Trackable Part`,
+        description: t`Show trackable items`
+      },
+      {
+        name: 'sub_part_assembly',
+        label: t`Assembled Part`,
+        description: t`Show asssmbled items`
+      },
+      {
+        name: 'available_stock',
+        label: t`Has Available Stock`,
+        description: t`Show items with available stock`
+      },
+      {
+        name: 'on_order',
+        label: t`On Order`,
+        description: t`Show items on order`
+      },
+      {
+        name: 'validated',
+        label: t`Validated`,
+        description: t`Show validated items`
+      },
+      {
+        name: 'inherited',
+        label: t`Gets Inherited`,
+        description: t`Show inherited items`
+      },
+      {
+        name: 'optional',
+        label: t`Optional`,
+        description: t`Show optional items`
+      },
+      {
         name: 'consumable',
         label: t`Consumable`,
-        type: 'boolean'
+        description: t`Show consumable items`
+      },
+      {
+        name: 'has_pricing',
+        label: t`Has Pricing`,
+        description: t`Show items with pricing`
       }
-      // TODO: More BOM table filters here
     ];
   }, [partId, params]);
 
@@ -245,33 +288,34 @@ export function BomTable({
         return [
           {
             title: t`View BOM`,
-            onClick: () => navigate(`/part/${record.part}/`)
+            onClick: () => navigate(`/part/${record.part}/`),
+            icon: <IconArrowRight />
           }
         ];
       }
-
-      // TODO: Check user permissions here,
-      // TODO: to determine which actions are allowed
 
       let actions: RowAction[] = [];
 
       // TODO: Enable BomItem validation
       actions.push({
-        title: t`Validate`,
-        hidden: record.validated || !user.checkUserRole('part', 'change')
+        title: t`Validate BOM line`,
+        color: 'green',
+        hidden: record.validated || !user.hasChangeRole(UserRoles.part),
+        icon: <IconCircleCheck />
       });
 
       // TODO: Enable editing of substitutes
       actions.push({
-        title: t`Substitutes`,
+        title: t`Edit Substitutes`,
         color: 'blue',
-        hidden: !user.checkUserRole('part', 'change')
+        hidden: !user.hasChangeRole(UserRoles.part),
+        icon: <IconSwitch3 />
       });
 
       // Action on edit
       actions.push(
         RowEditAction({
-          hidden: !user.checkUserRole('part', 'change'),
+          hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
               url: ApiPaths.bom_list,
@@ -279,7 +323,7 @@ export function BomTable({
               title: t`Edit Bom Item`,
               fields: bomItemFields(),
               successMessage: t`Bom item updated`,
-              onFormSuccess: refreshTable
+              onFormSuccess: table.refreshTable
             });
           }
         })
@@ -288,17 +332,15 @@ export function BomTable({
       // Action on delete
       actions.push(
         RowDeleteAction({
-          hidden: !user.checkUserRole('part', 'delete'),
+          hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({
               url: ApiPaths.bom_list,
               pk: record.pk,
               title: t`Delete Bom Item`,
               successMessage: t`Bom item deleted`,
-              onFormSuccess: refreshTable,
-              preFormContent: (
-                <Text>{t`Are you sure you want to remove this BOM item?`}</Text>
-              )
+              onFormSuccess: table.refreshTable,
+              preFormWarning: t`Are you sure you want to remove this BOM item?`
             });
           }
         })
@@ -312,7 +354,7 @@ export function BomTable({
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.bom_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {
@@ -321,7 +363,7 @@ export function BomTable({
           part_detail: true,
           sub_part_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         onRowClick: (row) => navigate(`/part/${row.sub_part}`),
         rowActions: rowActions
       }}

@@ -20,6 +20,7 @@ export function CopyButton({
           compact
         >
           <IconCopy size={10} />
+          {label && <div>&nbsp;</div>}
           {label && label}
         </Button>
       )}

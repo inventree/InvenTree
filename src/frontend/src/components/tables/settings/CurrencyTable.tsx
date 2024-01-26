@@ -4,8 +4,9 @@ import { IconReload } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { api } from '../../../App';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { ActionButton } from '../../buttons/ActionButton';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -13,7 +14,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
  * Table for displaying available currencies
  */
 export function CurrencyTable() {
-  const { tableKey, refreshTable } = useTableRefresh('currency');
+  const table = useTable('currency');
 
   const columns = useMemo(() => {
     return [
@@ -34,7 +35,7 @@ export function CurrencyTable() {
     api
       .post(apiUrl(ApiPaths.currency_refresh), {})
       .then(() => {
-        refreshTable();
+        table.refreshTable();
         showNotification({
           message: t`Exchange rates updated`,
           color: 'green'
@@ -62,10 +63,10 @@ export function CurrencyTable() {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.currency_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
-        customActionGroups: tableActions,
+        tableActions: tableActions,
         dataFormatter: (data) => {
           let rates = data?.exchange_rates ?? {};
 

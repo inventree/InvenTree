@@ -1,10 +1,22 @@
 import { Trans } from '@lingui/macro';
-import { Anchor, Badge, Group, Stack, Table, Text, Title } from '@mantine/core';
+import {
+  Anchor,
+  Badge,
+  Button,
+  Divider,
+  Group,
+  Space,
+  Stack,
+  Table,
+  Text,
+  Title
+} from '@mantine/core';
 import { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
-import { ApiPaths, apiUrl, useServerApiState } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../items/CopyButton';
@@ -16,7 +28,10 @@ type AboutLookupRef = {
   copy?: boolean;
 };
 
-export function AboutInvenTreeModal({}: ContextModalProps<{
+export function AboutInvenTreeModal({
+  context,
+  id
+}: ContextModalProps<{
   modalBody: string;
 }>) {
   const [user] = useUserState((state) => [state.user]);
@@ -79,6 +94,10 @@ export function AboutInvenTreeModal({}: ContextModalProps<{
   }Active plugins: ${JSON.stringify(server.active_plugins)}`;
   return (
     <Stack>
+      <Divider />
+      <Title order={5}>
+        <Trans>Version Information</Trans>
+      </Title>
       <Group>
         <Text>
           <Trans>Your InvenTree version status is</Trans>
@@ -97,9 +116,6 @@ export function AboutInvenTreeModal({}: ContextModalProps<{
           </Badge>
         )}
       </Group>
-      <Title order={5}>
-        <Trans>Version Information</Trans>
-      </Title>
       <Table>
         <tbody>
           {fillTable(
@@ -160,11 +176,21 @@ export function AboutInvenTreeModal({}: ContextModalProps<{
           )}
         </tbody>
       </Table>
-      <Group>
+      <Divider />
+      <Group position="apart">
         <CopyButton
           value={copyval}
           label={<Trans>Copy version information</Trans>}
         />
+        <Space />
+        <Button
+          color="red"
+          onClick={() => {
+            context.closeModal(id);
+          }}
+        >
+          <Trans>Dismiss</Trans>
+        </Button>
       </Group>
     </Stack>
   );

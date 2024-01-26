@@ -2,8 +2,9 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
 import { ThumbnailHoverCard } from '../../images/Thumbnail';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
@@ -21,7 +22,7 @@ export function UsedInTable({
 }) {
   const navigate = useNavigate();
 
-  const { tableKey } = useTableRefresh('usedin');
+  const table = useTable('usedin');
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -79,13 +80,34 @@ export function UsedInTable({
   }, [partId]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [];
+    return [
+      {
+        name: 'inherited',
+        label: t`Gets Inherited`,
+        description: t`Show inherited items`
+      },
+      {
+        name: 'optional',
+        label: t`Optional`,
+        description: t`Show optional items`
+      },
+      {
+        name: 'part_active',
+        label: t`Active`,
+        description: t`Show active assemblies`
+      },
+      {
+        name: 'part_trackable',
+        label: t`Trackable`,
+        description: t`Show trackable assemblies`
+      }
+    ];
   }, [partId]);
 
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.bom_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {
@@ -94,7 +116,7 @@ export function UsedInTable({
           part_detail: true,
           sub_part_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
         onRowClick: (row) => navigate(`/part/${row.part}`)
       }}
     />

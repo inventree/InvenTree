@@ -1,14 +1,16 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { UserRoles } from '../../../enums/Roles';
 import {
   openCreateApiForm,
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -17,8 +19,10 @@ import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 /**
  * Table for displaying list of custom physical units
  */
-export function CustomUnitsTable() {
-  const { tableKey, refreshTable } = useTableRefresh('custom-units');
+export default function CustomUnitsTable() {
+  const table = useTable('custom-units');
+
+  const user = useUserState();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -43,40 +47,43 @@ export function CustomUnitsTable() {
     ];
   }, []);
 
-  const rowActions = useCallback((record: any): RowAction[] => {
-    return [
-      RowEditAction({
-        onClick: () => {
-          openEditApiForm({
-            url: ApiPaths.custom_unit_list,
-            pk: record.pk,
-            title: t`Edit custom unit`,
-            fields: {
-              name: {},
-              definition: {},
-              symbol: {}
-            },
-            onFormSuccess: refreshTable,
-            successMessage: t`Custom unit updated`
-          });
-        }
-      }),
-      RowDeleteAction({
-        onClick: () => {
-          openDeleteApiForm({
-            url: ApiPaths.custom_unit_list,
-            pk: record.pk,
-            title: t`Delete custom unit`,
-            successMessage: t`Custom unit deleted`,
-            onFormSuccess: refreshTable,
-            preFormContent: (
-              <Text>{t`Are you sure you want to remove this custom unit?`}</Text>
-            )
-          });
-        }
-      })
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: any): RowAction[] => {
+      return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.admin),
+          onClick: () => {
+            openEditApiForm({
+              url: ApiPaths.custom_unit_list,
+              pk: record.pk,
+              title: t`Edit custom unit`,
+              fields: {
+                name: {},
+                definition: {},
+                symbol: {}
+              },
+              onFormSuccess: table.refreshTable,
+              successMessage: t`Custom unit updated`
+            });
+          }
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.admin),
+          onClick: () => {
+            openDeleteApiForm({
+              url: ApiPaths.custom_unit_list,
+              pk: record.pk,
+              title: t`Delete custom unit`,
+              successMessage: t`Custom unit deleted`,
+              onFormSuccess: table.refreshTable,
+              preFormWarning: t`Are you sure you want to remove this custom unit?`
+            });
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   const addCustomUnit = useCallback(() => {
     openCreateApiForm({
@@ -88,7 +95,7 @@ export function CustomUnitsTable() {
         symbol: {}
       },
       successMessage: t`Custom unit created`,
-      onFormSuccess: refreshTable
+      onFormSuccess: table.refreshTable
     });
   }, []);
 
@@ -106,11 +113,11 @@ export function CustomUnitsTable() {
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.custom_unit_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={columns}
       props={{
         rowActions: rowActions,
-        customActionGroups: tableActions
+        tableActions: tableActions
       }}
     />
   );

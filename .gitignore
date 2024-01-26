@@ -26,6 +26,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.DS_Store
 
 # Django stuff:
 *.log
@@ -42,6 +43,7 @@ dummy_image.*
 _tmp.csv
 InvenTree/label.pdf
 InvenTree/label.png
+InvenTree/part_image_123abc.png
 label.pdf
 label.png
 InvenTree/my_special*
@@ -103,6 +105,7 @@ InvenTree/plugins/
 
 # Compiled translation files
 *.mo
+messages.ts
 
 # web frontend (static files)
 InvenTree/web/static

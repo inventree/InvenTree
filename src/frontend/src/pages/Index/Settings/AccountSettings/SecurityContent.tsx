@@ -19,7 +19,9 @@ import { useEffect, useState } from 'react';
 
 import { api, queryClient } from '../../../../App';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
-import { ApiPaths, apiUrl } from '../../../../states/ApiState';
+import { ApiPaths } from '../../../../enums/ApiEndpoints';
+import { apiUrl } from '../../../../states/ApiState';
+import { useUserState } from '../../../../states/UserState';
 
 export function SecurityContent() {
   const [isSsoEnabled, setIsSsoEnabled] = useState<boolean>(false);
@@ -90,6 +92,7 @@ export function SecurityContent() {
 function EmailContent({}: {}) {
   const [value, setValue] = useState<string>('');
   const [newEmailValue, setNewEmailValue] = useState('');
+  const [user] = useUserState((state) => [state.user]);
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['emails'],
     queryFn: () => api.get(apiUrl(ApiPaths.user_emails)).then((res) => res.data)
@@ -107,7 +110,8 @@ function EmailContent({}: {}) {
   function addEmail() {
     api
       .post(apiUrl(ApiPaths.user_emails), {
-        email: newEmailValue
+        email: newEmailValue,
+        user: user?.pk
       })
       .then(() => {
         refetch();

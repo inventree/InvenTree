@@ -12,9 +12,11 @@ import { Group, Stack, Text } from '@mantine/core';
 import { IconBellCheck, IconBellPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -42,7 +44,6 @@ export function NotificationDrawer({
         })
         .then((response) => response.data)
         .catch((error) => {
-          console.error('Error fetching notifications:', error);
           return error;
         }),
     refetchOnMount: false,
@@ -70,7 +71,7 @@ export function NotificationDrawer({
           <ActionIcon
             onClick={() => {
               onClose();
-              navigate('/notifications/');
+              navigate('/notifications/unread');
             }}
           >
             <IconBellPlus />
@@ -87,10 +88,27 @@ export function NotificationDrawer({
           </Alert>
         )}
         {notificationQuery.data?.results?.map((notification: any) => (
-          <Group position="apart">
+          <Group position="apart" key={notification.pk}>
             <Stack spacing="3">
-              <Text size="sm">{notification.target?.name ?? 'target'}</Text>
-              <Text size="xs">{notification.age_human ?? 'name'}</Text>
+              {notification?.target?.link ? (
+                <Text
+                  size="sm"
+                  component={Link}
+                  to={notification?.target?.link}
+                  target="_blank"
+                >
+                  {notification.target?.name ??
+                    notification.name ??
+                    t`Notification`}
+                </Text>
+              ) : (
+                <Text size="sm">
+                  {notification.target?.name ??
+                    notification.name ??
+                    t`Notification`}
+                </Text>
+              )}
+              <Text size="xs">{notification.age_human ?? ''}</Text>
             </Stack>
             <Space />
             <ActionIcon

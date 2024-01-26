@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Tooltip } from '@mantine/core';
-import { Menu, Text } from '@mantine/core';
-import { IconDots } from '@tabler/icons-react';
+import { Menu } from '@mantine/core';
+import { IconCopy, IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
@@ -9,24 +9,29 @@ import { notYetImplemented } from '../../functions/notifications';
 // Type definition for a table row action
 export type RowAction = {
   title: string;
-  color?: string;
-  onClick?: () => void;
   tooltip?: string;
+  color?: string;
+  icon: ReactNode;
+  onClick?: () => void;
   hidden?: boolean;
 };
 
 // Component for duplicating a row in a table
 export function RowDuplicateAction({
   onClick,
+  tooltip,
   hidden
 }: {
   onClick?: () => void;
+  tooltip?: string;
   hidden?: boolean;
 }): RowAction {
   return {
     title: t`Duplicate`,
     color: 'green',
+    tooltip: tooltip,
     onClick: onClick,
+    icon: <IconCopy />,
     hidden: hidden
   };
 }
@@ -34,15 +39,19 @@ export function RowDuplicateAction({
 // Component for editing a row in a table
 export function RowEditAction({
   onClick,
+  tooltip,
   hidden
 }: {
   onClick?: () => void;
+  tooltip?: string;
   hidden?: boolean;
 }): RowAction {
   return {
     title: t`Edit`,
     color: 'blue',
+    tooltip: tooltip,
     onClick: onClick,
+    icon: <IconEdit />,
     hidden: hidden
   };
 }
@@ -50,15 +59,19 @@ export function RowEditAction({
 // Component for deleting a row in a table
 export function RowDeleteAction({
   onClick,
+  tooltip,
   hidden
 }: {
   onClick?: () => void;
+  tooltip?: string;
   hidden?: boolean;
 }): RowAction {
   return {
     title: t`Delete`,
     color: 'red',
+    tooltip: tooltip,
     onClick: onClick,
+    icon: <IconTrash />,
     hidden: hidden
   };
 }
@@ -82,7 +95,7 @@ export function RowActions({
     event?.preventDefault();
     event?.stopPropagation();
     event?.nativeEvent?.stopImmediatePropagation();
-    setOpened(true);
+    setOpened(!opened);
   }
 
   const [opened, setOpened] = useState(false);
@@ -91,11 +104,44 @@ export function RowActions({
     return actions.filter((action) => !action.hidden);
   }, [actions]);
 
+  // Render a single action icon
+  function RowActionIcon(action: RowAction) {
+    return (
+      <Tooltip
+        withinPortal={true}
+        label={action.tooltip ?? action.title}
+        key={action.title}
+      >
+        <Menu.Item
+          color={action.color}
+          icon={action.icon}
+          onClick={(event) => {
+            // Prevent clicking on the action from selecting the row itself
+            event?.preventDefault();
+            event?.stopPropagation();
+            event?.nativeEvent?.stopImmediatePropagation();
+
+            if (action.onClick) {
+              action.onClick();
+            } else {
+              notYetImplemented();
+            }
+
+            setOpened(false);
+          }}
+        >
+          {action.title}
+        </Menu.Item>
+      </Tooltip>
+    );
+  }
+
   return (
     visibleActions.length > 0 && (
       <Menu
         withinPortal={true}
         disabled={disabled}
+        position="bottom-end"
         opened={opened}
         onChange={setOpened}
       >
@@ -112,27 +158,8 @@ export function RowActions({
           </Tooltip>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Label>{title || t`Actions`}</Menu.Label>
-          {visibleActions.map((action, idx) => (
-            <Menu.Item
-              key={idx}
-              onClick={(event) => {
-                // Prevent clicking on the action from selecting the row itself
-                event?.preventDefault();
-                event?.stopPropagation();
-                event?.nativeEvent?.stopImmediatePropagation();
-                if (action.onClick) {
-                  action.onClick();
-                } else {
-                  notYetImplemented();
-                }
-              }}
-              title={action.tooltip || action.title}
-            >
-              <Text size="xs" color={action.color}>
-                {action.title}
-              </Text>
-            </Menu.Item>
+          {visibleActions.map((action) => (
+            <RowActionIcon key={action.title} {...action} />
           ))}
         </Menu.Dropdown>
       </Menu>

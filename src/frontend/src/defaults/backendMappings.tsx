@@ -1,4 +1,4 @@
-import { ModelType } from '../components/render/ModelType';
+import { ModelType } from '../enums/ModelType';
 
 /* Lookup tables for mapping backend responses to internal types */
 

@@ -4,7 +4,8 @@ import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
 import { api } from '../App';
-import { ApiPaths, apiUrl, useServerApiState } from '../states/ApiState';
+import { ApiPaths } from '../enums/ApiEndpoints';
+import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
 import {
@@ -47,14 +48,17 @@ export const doClassicLogin = async (username: string, password: string) => {
  * Logout the user (invalidate auth token)
  */
 export const doClassicLogout = async () => {
-  // TODO @matmair - logout from the server session
   // Set token in context
   const { setToken } = useSessionState.getState();
+
   setToken(undefined);
+
+  // Logout from the server session
+  await api.post(apiUrl(ApiPaths.user_logout));
 
   notifications.show({
     title: t`Logout successful`,
-    message: t`See you soon.`,
+    message: t`You have been logged out`,
     color: 'green',
     icon: <IconCheck size="1rem" />
   });
@@ -117,7 +121,11 @@ export function handleReset(navigate: any, values: { email: string }) {
 /**
  * Check login state, and redirect the user as required
  */
-export function checkLoginState(navigate: any, redirect?: string) {
+export function checkLoginState(
+  navigate: any,
+  redirect?: string,
+  no_redirect?: boolean
+) {
   api
     .get(apiUrl(ApiPaths.user_token), {
       timeout: 2000,
@@ -141,6 +149,6 @@ export function checkLoginState(navigate: any, redirect?: string) {
       }
     })
     .catch(() => {
-      navigate('/login');
+      if (!no_redirect) navigate('/login');
     });
 }

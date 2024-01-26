@@ -9,11 +9,16 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { StockLocationTable } from '../../components/tables/stock/StockLocationTable';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths } from '../../states/ApiState';
 
 export default function Stock() {
-  const { id } = useParams();
+  const { id: _id } = useParams();
+
+  const id = useMemo(
+    () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
+    [_id]
+  );
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -23,6 +28,7 @@ export default function Stock() {
     instanceQuery
   } = useInstance({
     endpoint: ApiPaths.stock_location_list,
+    hasPrimaryKey: true,
     pk: id,
     params: {
       path_detail: true
@@ -38,7 +44,7 @@ export default function Stock() {
         content: (
           <StockItemTable
             params={{
-              location: location.pk ?? null
+              location: id
             }}
           />
         )
@@ -47,13 +53,7 @@ export default function Stock() {
         name: 'sublocations',
         label: t`Stock Locations`,
         icon: <IconSitemap />,
-        content: (
-          <StockLocationTable
-            params={{
-              parent: location.pk ?? null
-            }}
-          />
-        )
+        content: <StockLocationTable parentId={id} />
       }
     ];
   }, [location, id]);

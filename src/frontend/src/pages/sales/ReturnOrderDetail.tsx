@@ -8,8 +8,9 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 
 /**
  * Detail page for a single ReturnOrder
@@ -40,7 +41,7 @@ export default function ReturnOrderDetail() {
           <AttachmentTable
             endpoint={ApiPaths.return_order_attachment_list}
             model="order"
-            pk={order.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -50,7 +51,7 @@ export default function ReturnOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.return_order_list, order.pk)}
+            url={apiUrl(ApiPaths.return_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />

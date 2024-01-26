@@ -104,6 +104,9 @@ function returnOrderFields(options={}) {
         },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         }
     };
 

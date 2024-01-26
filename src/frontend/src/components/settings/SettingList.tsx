@@ -1,15 +1,11 @@
-import {
-  Stack,
-  Text,
-  useMantineColorScheme,
-  useMantineTheme
-} from '@mantine/core';
-import { useEffect, useMemo, useRef } from 'react';
+import { Stack, Text } from '@mantine/core';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from 'zustand';
 
 import {
   SettingsStateProps,
   createMachineSettingsState,
+  createPluginSettingsState,
   useGlobalSettingsState,
   useUserSettingsState
 } from '../../states/SettingsState';
@@ -34,8 +30,6 @@ export function SettingList({
     [settingsState?.settings]
   );
 
-  const theme = useMantineTheme();
-
   return (
     <>
       <Stack spacing="xs">
@@ -44,23 +38,20 @@ export function SettingList({
             (s: any) => s.key === key
           );
 
-          const style: Record<string, string> = { paddingLeft: '8px' };
-          if (i % 2 === 0)
-            style['backgroundColor'] =
-              theme.colorScheme === 'light'
-                ? theme.colors.gray[1]
-                : theme.colors.gray[9];
-
           return (
-            <div key={key} style={style}>
+            <React.Fragment key={key}>
               {setting ? (
-                <SettingItem settingsState={settingsState} setting={setting} />
+                <SettingItem
+                  settingsState={settingsState}
+                  setting={setting}
+                  shaded={i % 2 === 0}
+                />
               ) : (
                 <Text size="sm" italic color="red">
                   Setting {key} not found
                 </Text>
               )}
-            </div>
+            </React.Fragment>
           );
         })}
       </Stack>
@@ -78,6 +69,15 @@ export function GlobalSettingList({ keys }: { keys: string[] }) {
   const globalSettings = useGlobalSettingsState();
 
   return <SettingList settingsState={globalSettings} keys={keys} />;
+}
+
+export function PluginSettingList({ pluginPk }: { pluginPk: string }) {
+  const pluginSettingsStore = useRef(
+    createPluginSettingsState({ plugin: pluginPk })
+  ).current;
+  const pluginSettings = useStore(pluginSettingsStore);
+
+  return <SettingList settingsState={pluginSettings} />;
 }
 
 export function MachineSettingList({

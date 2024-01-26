@@ -14,7 +14,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { LanguageContext } from '../../contexts/LanguageContext';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { apiUrl } from '../../states/ApiState';
 
 export default function Set_Password() {
   const simpleForm = useForm({ initialValues: { password: '' } });

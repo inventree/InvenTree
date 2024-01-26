@@ -7,8 +7,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { InvenTreeStyle } from '../../globalStyle';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 import { ScanButton } from '../items/ScanButton';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
@@ -48,7 +49,6 @@ export function Header() {
           return response.data;
         })
         .catch((error) => {
-          console.error('Error fetching notifications:', error);
           return error;
         });
     },

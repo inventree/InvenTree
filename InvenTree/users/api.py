@@ -1,19 +1,27 @@
-"""DRF API definition for the 'users' app"""
+"""DRF API definition for the 'users' app."""
 
 import datetime
 import logging
 
+from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
-from django_filters.rest_framework import DjangoFilterBackend
+from dj_rest_auth.views import LogoutView
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateAPI
-from InvenTree.serializers import UserSerializer
+import InvenTree.helpers
+from InvenTree.filters import SEARCH_ORDER_FILTER
+from InvenTree.mixins import (
+    ListAPI,
+    ListCreateAPI,
+    RetrieveAPI,
+    RetrieveUpdateAPI,
+    RetrieveUpdateDestroyAPI,
+)
+from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
@@ -42,19 +50,43 @@ class OwnerList(ListAPI):
         but until we determine a better way, this is what we have...
         """
         search_term = str(self.request.query_params.get('search', '')).lower()
+        is_active = self.request.query_params.get('is_active', None)
 
         queryset = super().filter_queryset(queryset)
 
-        if not search_term:
-            return queryset
-
         results = []
 
-        # Extract search term f
+        # Get a list of all matching users, depending on the *is_active* flag
+        if is_active is not None:
+            is_active = InvenTree.helpers.str2bool(is_active)
+            matching_user_ids = User.objects.filter(is_active=is_active).values_list(
+                'pk', flat=True
+            )
 
         for result in queryset.all():
-            if search_term in result.name().lower():
-                results.append(result)
+            name = str(result.name()).lower().strip()
+            search_match = True
+
+            # Extract search term f
+            if search_term:
+                for entry in search_term.strip().split(' '):
+                    if entry not in name:
+                        search_match = False
+                        break
+
+            if not search_match:
+                continue
+
+            if is_active is not None:
+                # Skip any users which do not match the required *is_active* value
+                if (
+                    result.owner_type.name == 'user'
+                    and result.owner_id not in matching_user_ids
+                ):
+                    continue
+
+            # If we get here, there is no reason *not* to include this result
+            results.append(result)
 
         return results
 
@@ -75,25 +107,21 @@ class RoleDetails(APIView):
     (Requires authentication)
     """
 
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        """Return the list of roles / permissions available to the current user"""
+        """Return the list of roles / permissions available to the current user."""
         user = request.user
 
         roles = {}
 
         for ruleset in RuleSet.RULESET_CHOICES:
-
             role, _text = ruleset
 
             permissions = []
 
             for permission in RuleSet.RULESET_PERMISSIONS:
                 if check_user_role(user, role, permission):
-
                     permissions.append(permission)
 
             if len(permissions) > 0:
@@ -112,91 +140,103 @@ class RoleDetails(APIView):
         return Response(data)
 
 
-class UserDetail(RetrieveAPI):
+class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [
-        permissions.IsAuthenticated
-    ]
+    serializer_class = ExendedUserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
     """Detail endpoint for current user."""
 
     def get_object(self):
-        """Always return the current user object"""
+        """Always return the current user object."""
         return self.request.user
 
 
-class UserList(ListAPI):
+class UserList(ListCreateAPI):
     """List endpoint for detail on all users."""
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    serializer_class = UserCreateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = SEARCH_ORDER_FILTER
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-    ]
+    search_fields = ['first_name', 'last_name', 'username']
 
-    search_fields = [
+    ordering_fields = [
+        'email',
+        'username',
         'first_name',
         'last_name',
-        'username',
+        'is_staff',
+        'is_superuser',
+        'is_active',
     ]
 
+    filterset_fields = ['is_staff', 'is_active', 'is_superuser']
 
-class GroupDetail(RetrieveAPI):
-    """Detail endpoint for a particular auth group"""
+
+class GroupDetail(RetrieveUpdateDestroyAPI):
+    """Detail endpoint for a particular auth group."""
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
 
-class GroupList(ListAPI):
-    """List endpoint for all auth groups"""
+class GroupList(ListCreateAPI):
+    """List endpoint for all auth groups."""
 
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
-    filter_backends = [
-        DjangoFilterBackend,
-        InvenTreeSearchFilter,
-    ]
+    filter_backends = SEARCH_ORDER_FILTER
 
-    search_fields = [
-        'name',
-    ]
+    search_fields = ['name']
+
+    ordering_fields = ['name']
+
+
+class Logout(LogoutView):
+    """API view for logging out via API."""
+
+    def logout(self, request):
+        """Logout the current user.
+
+        Deletes user token associated with request.
+        """
+        from InvenTree.middleware import get_token_from_request
+
+        if request.user:
+            token_key = get_token_from_request(request)
+
+            if token_key:
+                try:
+                    token = ApiToken.objects.get(key=token_key, user=request.user)
+                    token.delete()
+                except ApiToken.DoesNotExist:
+                    pass
+
+        return super().logout(request)
 
 
 class GetAuthToken(APIView):
     """Return authentication token for an authenticated user."""
 
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        """Return an API token if the user is authenticated
+        """Return an API token if the user is authenticated.
 
         - If the user already has a matching token, delete it and create a new one
         - Existing tokens are *never* exposed again via the API
         - Once the token is provided, it can be used for auth until it expires
         """
-
         if request.user.is_authenticated:
-
             user = request.user
             name = request.query_params.get('name', '')
 
@@ -205,7 +245,9 @@ class GetAuthToken(APIView):
             today = datetime.date.today()
 
             # Find existing token, which has not expired
-            token = ApiToken.objects.filter(user=user, name=name, revoked=False, expiry__gte=today).first()
+            token = ApiToken.objects.filter(
+                user=user, name=name, revoked=False, expiry__gte=today
+            ).first()
 
             if not token:
                 # User is authenticated, and requesting a token against the provided name.
@@ -219,13 +261,15 @@ class GetAuthToken(APIView):
             token.set_metadata('server_name', request.META.get('SERVER_NAME', ''))
             token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
-            data = {
-                'token': token.key,
-                'name': token.name,
-                'expiry': token.expiry,
-            }
+            data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
 
-            logger.info("Created new API token for user '%s' (name='%s')", user.username, name)
+            logger.info(
+                "Created new API token for user '%s' (name='%s')", user.username, name
+            )
+
+            # Ensure that the users session is logged in (PUI -> CUI login)
+            if not get_user(request).is_authenticated:
+                login(request, user)
 
             return Response(data)
 
@@ -234,22 +278,25 @@ class GetAuthToken(APIView):
 
 
 user_urls = [
-
-    re_path(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
-    re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
-    re_path(r'^me/', MeUserDetail.as_view(), name='api-user-me'),
-
-    re_path(r'^owner/', include([
-        path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
-        re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
-    ])),
-
-    re_path(r'^group/', include([
-        re_path(r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'),
-        re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
-    ])),
-
+    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+    path('token/', GetAuthToken.as_view(), name='api-token'),
+    path('me/', MeUserDetail.as_view(), name='api-user-me'),
+    path(
+        'owner/',
+        include([
+            path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
+            path('', OwnerList.as_view(), name='api-owner-list'),
+        ]),
+    ),
+    path(
+        'group/',
+        include([
+            re_path(
+                r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'
+            ),
+            path('', GroupList.as_view(), name='api-group-list'),
+        ]),
+    ),
     re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),
-
     path('', UserList.as_view(), name='api-user-list'),
 ]

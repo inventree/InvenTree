@@ -18,4 +18,4 @@ class SampleApiCallerPluginTests(TestCase):
         # do an api call
         result = plg.get_external_url()
         self.assertTrue(result)
-        self.assertIn('data', result,)
+        self.assertIn('data', result)

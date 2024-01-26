@@ -1,11 +1,16 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTableRefresh } from '../../../hooks/TableRefresh';
-import { ApiPaths, apiUrl } from '../../../states/ApiState';
+import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { UserRoles } from '../../../enums/Roles';
+import { notYetImplemented } from '../../../functions/notifications';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
-import { ModelType } from '../../render/ModelType';
 import {
   CreationDateColumn,
   DescriptionColumn,
@@ -15,14 +20,34 @@ import {
   StatusColumn,
   TargetDateColumn
 } from '../ColumnRenderers';
+import {
+  AssignedToMeFilter,
+  OutstandingFilter,
+  OverdueFilter,
+  StatusFilterOptions,
+  TableFilter
+} from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
-  const { tableKey } = useTableRefresh('return-orders');
+  const table = useTable('return-orders');
+  const user = useUserState();
 
   const navigate = useNavigate();
 
-  // TODO: Custom filters
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'status',
+        label: t`Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.returnorder)
+      },
+      OutstandingFilter(),
+      OverdueFilter(),
+      AssignedToMeFilter()
+    ];
+  }, []);
 
   // TODO: Row actions
 
@@ -56,7 +81,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'customer_reference',
         title: t`Customer Reference`
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       LineItemsProgressColumn(),
       StatusColumn(ModelType.returnorder),
       ProjectCodeColumn(),
@@ -70,16 +95,32 @@ export function ReturnOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
+  const addReturnOrder = useCallback(() => {
+    notYetImplemented();
+  }, []);
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add Return Order`}
+        onClick={addReturnOrder}
+        hidden={!user.hasAddRole(UserRoles.sales_order)}
+      />
+    ];
+  }, [user]);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.return_order_list)}
-      tableKey={tableKey}
+      tableState={table}
       columns={tableColumns}
       props={{
         params: {
           ...params,
           customer_detail: true
         },
+        tableFilters: tableFilters,
+        tableActions: tableActions,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/sales/return-order/${row.pk}/`);

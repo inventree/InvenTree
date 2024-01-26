@@ -130,6 +130,9 @@ function salesOrderFields(options={}) {
         },
         responsible: {
             icon: 'fa-user',
+            filters: {
+                is_active: true,
+            }
         }
     };
 

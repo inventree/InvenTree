@@ -26,138 +26,26 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { apiUrl } from '../../states/ApiState';
+import { useUserSettingsState } from '../../states/SettingsState';
+import { useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
-import { ModelInformationDict, ModelType } from '../render/ModelType';
+import { ModelInformationDict } from '../render/ModelType';
 
 // Define type for handling individual search queries
 type SearchQuery = {
-  name: ModelType;
+  model: ModelType;
   enabled: boolean;
   parameters: any;
   results?: any;
 };
-
-// Placeholder function for permissions checks (will be replaced with a proper implementation)
-function permissionCheck(permission: string) {
-  return true;
-}
-
-// Placeholder function for settings checks (will be replaced with a proper implementation)
-function settingsCheck(setting: string) {
-  return true;
-}
-
-/*
- * Build a list of search queries based on user permissions
- */
-function buildSearchQueries(): SearchQuery[] {
-  return [
-    {
-      name: ModelType.part,
-      parameters: {},
-      enabled:
-        permissionCheck('part.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_PARTS')
-    },
-    {
-      name: ModelType.supplierpart,
-      parameters: {
-        part_detail: true,
-        supplier_detail: true,
-        manufacturer_detail: true
-      },
-      enabled:
-        permissionCheck('part.view') &&
-        permissionCheck('purchase_order.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS')
-    },
-    {
-      name: ModelType.manufacturerpart,
-      parameters: {
-        part_detail: true,
-        supplier_detail: true,
-        manufacturer_detail: true
-      },
-      enabled:
-        permissionCheck('part.view') &&
-        permissionCheck('purchase_order.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS')
-    },
-    {
-      name: ModelType.partcategory,
-      parameters: {},
-      enabled:
-        permissionCheck('part_category.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_CATEGORIES')
-    },
-    {
-      name: ModelType.stockitem,
-      parameters: {
-        part_detail: true,
-        location_detail: true
-      },
-      enabled:
-        permissionCheck('stock.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_STOCK')
-    },
-    {
-      name: ModelType.stocklocation,
-      parameters: {},
-      enabled:
-        permissionCheck('stock_location.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_LOCATIONS')
-    },
-    {
-      name: ModelType.build,
-      parameters: {
-        part_detail: true
-      },
-      enabled:
-        permissionCheck('build.view') &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
-    },
-    {
-      name: ModelType.company,
-      parameters: {},
-      enabled:
-        (permissionCheck('sales_order.view') ||
-          permissionCheck('purchase_order.view')) &&
-        settingsCheck('SEARCH_PREVIEW_SHOW_COMPANIES')
-    },
-    {
-      name: ModelType.purchaseorder,
-      parameters: {
-        supplier_detail: true
-      },
-      enabled:
-        permissionCheck('purchase_order.view') &&
-        settingsCheck(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
-    },
-    {
-      name: ModelType.salesorder,
-      parameters: {
-        customer_detail: true
-      },
-      enabled:
-        permissionCheck('sales_order.view') &&
-        settingsCheck(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
-    },
-    {
-      name: ModelType.returnorder,
-      parameters: {
-        customer_detail: true
-      },
-      enabled:
-        permissionCheck('return_order.view') &&
-        settingsCheck(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
-    }
-  ];
-}
 
 /*
  * Render the results for a single search query
@@ -175,10 +63,11 @@ function QueryResultGroup({
     return null;
   }
 
-  const model = ModelInformationDict[query.name];
+  const model = ModelInformationDict[query.model];
+
   return (
-    <Paper shadow="sm" radius="xs" p="md">
-      <Stack key={query.name}>
+    <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
+      <Stack key={`stack-${query.model}`}>
         <Group position="apart" noWrap={true}>
           <Group position="left" spacing={5} noWrap={true}>
             <Text size="lg">{model.label_multiple}</Text>
@@ -193,7 +82,7 @@ function QueryResultGroup({
             color="red"
             variant="transparent"
             radius="xs"
-            onClick={() => onRemove(query.name)}
+            onClick={() => onRemove(query.model)}
           >
             <IconX />
           </ActionIcon>
@@ -201,12 +90,11 @@ function QueryResultGroup({
         <Divider />
         <Stack>
           {query.results.results.map((result: any) => (
-            <Anchor onClick={() => onResultClick(query.name, result.pk)}>
-              <RenderInstance
-                key={`${query.name}-${result.pk}`}
-                instance={result}
-                model={query.name}
-              />
+            <Anchor
+              onClick={() => onResultClick(query.model, result.pk)}
+              key={result.pk}
+            >
+              <RenderInstance instance={result} model={query.model} />
             </Anchor>
           ))}
         </Stack>
@@ -233,14 +121,119 @@ export function SearchDrawer({
   const [searchRegex, setSearchRegex] = useState<boolean>(false);
   const [searchWhole, setSearchWhole] = useState<boolean>(false);
 
+  const user = useUserState();
+  const userSettings = useUserSettingsState();
+
+  // Build out search queries based on user permissions and preferences
+  const searchQueryList: SearchQuery[] = useMemo(() => {
+    return [
+      {
+        model: ModelType.part,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.part) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_PARTS')
+      },
+      {
+        model: ModelType.supplierpart,
+        parameters: {
+          part_detail: true,
+          supplier_detail: true,
+          manufacturer_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.part) &&
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS')
+      },
+      {
+        model: ModelType.manufacturerpart,
+        parameters: {
+          part_detail: true,
+          supplier_detail: true,
+          manufacturer_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.part) &&
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS')
+      },
+      {
+        model: ModelType.partcategory,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.part_category) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_CATEGORIES')
+      },
+      {
+        model: ModelType.stockitem,
+        parameters: {
+          part_detail: true,
+          location_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.stock) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_STOCK')
+      },
+      {
+        model: ModelType.stocklocation,
+        parameters: {},
+        enabled:
+          user.hasViewRole(UserRoles.stock_location) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_LOCATIONS')
+      },
+      {
+        model: ModelType.build,
+        parameters: {
+          part_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.build) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_BUILD_ORDERS')
+      },
+      {
+        model: ModelType.company,
+        parameters: {},
+        enabled:
+          (user.hasViewRole(UserRoles.sales_order) ||
+            user.hasViewRole(UserRoles.purchase_order)) &&
+          userSettings.isSet('SEARCH_PREVIEW_SHOW_COMPANIES')
+      },
+      {
+        model: ModelType.purchaseorder,
+        parameters: {
+          supplier_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.purchase_order) &&
+          userSettings.isSet(`SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS`)
+      },
+      {
+        model: ModelType.salesorder,
+        parameters: {
+          customer_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.sales_order) &&
+          userSettings.isSet(`SEARCH_PREVIEW_SHOW_SALES_ORDERS`)
+      },
+      {
+        model: ModelType.returnorder,
+        parameters: {
+          customer_detail: true
+        },
+        enabled:
+          user.hasViewRole(UserRoles.return_order) &&
+          userSettings.isSet(`SEARCH_PREVIEW_SHOW_RETURN_ORDERS`)
+      }
+    ];
+  }, [user, userSettings]);
+
   // Construct a list of search queries based on user permissions
-  const searchQueries: SearchQuery[] = buildSearchQueries().filter(
-    (q) => q.enabled
-  );
+  const searchQueries: SearchQuery[] = searchQueryList.filter((q) => q.enabled);
 
   // Re-fetch data whenever the search term is updated
   useEffect(() => {
-    // TODO: Implement search functionality
     searchQuery.refetch();
   }, [searchText]);
 
@@ -261,7 +254,7 @@ export function SearchDrawer({
 
     // Add in custom query parameters
     searchQueries.forEach((query) => {
-      params[query.name] = query.parameters;
+      params[query.model] = query.parameters;
     });
 
     return api
@@ -289,11 +282,11 @@ export function SearchDrawer({
   useEffect(() => {
     if (searchQuery.data) {
       let queries = searchQueries.filter(
-        (query) => query.name in searchQuery.data
+        (query) => query.model in searchQuery.data
       );
 
       for (let key in searchQuery.data) {
-        let query = queries.find((q) => q.name == key);
+        let query = queries.find((q) => q.model == key);
         if (query) {
           query.results = searchQuery.data[key];
         }
@@ -310,7 +303,7 @@ export function SearchDrawer({
 
   // Callback to remove a set of results from the list
   function removeResults(query: ModelType) {
-    setQueryResults(queryResults.filter((q) => q.name != query));
+    setQueryResults(queryResults.filter((q) => q.model != query));
   }
 
   // Callback when the drawer is closed
@@ -332,7 +325,7 @@ export function SearchDrawer({
   return (
     <Drawer
       opened={opened}
-      size="md"
+      size="xl"
       onClose={closeDrawer}
       position="right"
       withCloseButton={false}
@@ -400,8 +393,9 @@ export function SearchDrawer({
       )}
       {!searchQuery.isFetching && !searchQuery.isError && (
         <Stack spacing="md">
-          {queryResults.map((query) => (
+          {queryResults.map((query, idx) => (
             <QueryResultGroup
+              key={idx}
               query={query}
               onRemove={(query) => removeResults(query)}
               onResultClick={(query, pk) => onResultClick(query, pk)}

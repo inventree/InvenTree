@@ -23,13 +23,18 @@ import InvenTree.sentry
 logger = logging.getLogger('inventree')
 
 
-def log_error(path):
+def log_error(path, error_name=None, error_info=None, error_data=None):
     """Log an error to the database.
 
     - Uses python exception handling to extract error details
 
     Arguments:
         path: The 'path' (most likely a URL) associated with this error (optional)
+
+    kwargs:
+        error_name: The name of the error (optional, overrides 'kind')
+        error_info: The error information (optional, overrides 'info')
+        error_data: The error data (optional, overrides 'data')
     """
     kind, info, data = sys.exc_info()
 
@@ -37,19 +42,34 @@ def log_error(path):
     if kind in settings.IGNORED_ERRORS:
         return
 
+    if error_name:
+        kind = error_name
+    else:
+        kind = getattr(kind, '__name__', 'Unknown Error')
+
+    if error_info:
+        info = error_info
+
+    if error_data:
+        data = error_data
+    else:
+        try:
+            data = '\n'.join(traceback.format_exception(kind, info, data))
+        except AttributeError:
+            data = 'No traceback information available'
+
     # Log error to stderr
     logger.error(info)
 
+    # Ensure the error information does not exceed field size limits
+    path = path[:200]
+    kind = kind[:128]
+
     try:
-        Error.objects.create(
-            kind=kind.__name__,
-            info=info,
-            data='\n'.join(traceback.format_exception(kind, info, data)),
-            path=path,
-        )
-    except (OperationalError, IntegrityError):
+        Error.objects.create(kind=kind, info=info or '', data=data or '', path=path)
+    except Exception:
         # Not much we can do if logging the error throws a db exception
-        pass
+        logger.exception('Failed to log exception to database')
 
 
 def exception_handler(exc, context):
@@ -86,7 +106,7 @@ def exception_handler(exc, context):
             # If in DEBUG mode, provide error information in the response
             error_detail = str(exc)
         else:
-            error_detail = _("Error details can be found in the admin panel")
+            error_detail = _('Error details can be found in the admin panel')
 
         response_data = {
             'error': type(exc).__name__,

@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { notYetImplemented } from '../../functions/notifications';
 
 export type ActionButtonProps = {
+  key?: string;
   icon?: ReactNode;
   text?: string;
   color?: string;
@@ -19,15 +20,18 @@ export type ActionButtonProps = {
  * Construct a simple action button with consistent styling
  */
 export function ActionButton(props: ActionButtonProps) {
+  const hidden = props.hidden ?? false;
+
   return (
-    !props.hidden && (
+    !hidden && (
       <Tooltip
-        key={props.text ?? props.tooltip}
+        key={`tooltip-${props.key}`}
         disabled={!props.tooltip && !props.text}
         label={props.tooltip ?? props.text}
         position="left"
       >
         <ActionIcon
+          key={`action-icon-${props.key}`}
           disabled={props.disabled}
           radius="xs"
           color={props.color}

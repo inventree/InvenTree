@@ -1,8 +1,9 @@
-"""Config for the 'order' app"""
+"""Config for the 'order' app."""
 
 from django.apps import AppConfig
 
 
 class OrderConfig(AppConfig):
-    """Configuration class for the 'order' app"""
+    """Configuration class for the 'order' app."""
+
     name = 'order'

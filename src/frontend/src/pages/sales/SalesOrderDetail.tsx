@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconInfoCircle,
   IconList,
@@ -14,10 +14,12 @@ import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths, apiUrl } from '../../states/ApiState';
+import { apiUrl } from '../../states/ApiState';
 
 /**
  * Detail page for a single SalesOrder
@@ -58,7 +60,16 @@ export default function SalesOrderDetail() {
       {
         name: 'build-orders',
         label: t`Build Orders`,
-        icon: <IconTools />
+        icon: <IconTools />,
+        content: order?.pk ? (
+          <BuildOrderTable
+            params={{
+              sales_order: order.pk
+            }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'attachments',
@@ -68,7 +79,7 @@ export default function SalesOrderDetail() {
           <AttachmentTable
             endpoint={ApiPaths.sales_order_attachment_list}
             model="order"
-            pk={order.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -78,7 +89,7 @@ export default function SalesOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.sales_order_list, order.pk)}
+            url={apiUrl(ApiPaths.sales_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />

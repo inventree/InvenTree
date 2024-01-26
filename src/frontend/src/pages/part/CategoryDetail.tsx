@@ -14,8 +14,8 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
 import { PartListTable } from '../../components/tables/part/PartTable';
+import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
-import { ApiPaths } from '../../states/ApiState';
 
 /**
  * Detail view for a single PartCategory instance.
@@ -23,7 +23,11 @@ import { ApiPaths } from '../../states/ApiState';
  * Note: If no category ID is supplied, this acts as the top-level part category page
  */
 export default function CategoryDetail({}: {}) {
-  const { id } = useParams();
+  const { id: _id } = useParams();
+  const id = useMemo(
+    () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
+    [_id]
+  );
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -33,6 +37,7 @@ export default function CategoryDetail({}: {}) {
     instanceQuery
   } = useInstance({
     endpoint: ApiPaths.category_list,
+    hasPrimaryKey: true,
     pk: id,
     params: {
       path_detail: true
@@ -49,7 +54,7 @@ export default function CategoryDetail({}: {}) {
           <PartListTable
             props={{
               params: {
-                category: category.pk ?? null
+                category: id
               }
             }}
           />
@@ -59,13 +64,7 @@ export default function CategoryDetail({}: {}) {
         name: 'subcategories',
         label: t`Part Categories`,
         icon: <IconSitemap />,
-        content: (
-          <PartCategoryTable
-            params={{
-              parent: category.pk ?? null
-            }}
-          />
-        )
+        content: <PartCategoryTable parentId={id} />
       },
       {
         name: 'parameters',

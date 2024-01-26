@@ -96,10 +96,11 @@ timezone: UTC
 # Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD
 
-# Add new user on first startup
+# Add new user on first startup by either adding values here or from a file
 #admin_user: admin
 #admin_email: info@example.com
 #admin_password: inventree
+#admin_password_file: '/etc/inventree/admin_password.txt'
 
 # List of currencies supported by default. Add other currencies here to allow use in InvenTree
 currencies:
@@ -134,6 +135,25 @@ email:
 sentry_enabled: False
 #sentry_sample_rate: 0.1
 #sentry_dsn: https://custom@custom.ingest.sentry.io/custom
+
+# OpenTelemetry tracing/metrics - disabled by default
+# This can be used to send tracing data, logs and metrics to OpenTelemtry compatible backends
+# See https://opentelemetry.io/ecosystem/vendors/ for a list of supported backends
+# Alternatively, use environment variables eg. INVENTREE_TRACING_ENABLED, INVENTREE_TRACING_HEADERS, INVENTREE_TRACING_AUTH
+#tracing:
+#  enabled: true
+#  endpoint: https://otlp-gateway-prod-eu-west-0.grafana.net/otlp
+#  headers:
+#    api-key: 'sample'
+#  auth:
+#    basic:
+#      username: '******'
+#      password: 'glc_****'
+#  is_http: true
+#  append_http: true
+#  console: false
+#  resources:
+#    CUSTOM_KEY: 'CUSTOM_VALUE'
 
 # Set this variable to True to enable InvenTree Plugins
 # Alternatively, use the environment variable INVENTREE_PLUGINS_ENABLED
@@ -233,13 +253,13 @@ remote_login_header: HTTP_REMOTE_USER
 # social_backends:
 #  - 'allauth.socialaccount.providers.google'
 #  - 'allauth.socialaccount.providers.github'
-#  - 'allauth.socialaccount.providers.keycloak'
 
 # Add specific settings for social account providers (if required)
+# Refer to the djngo-allauth documentation for more details:
+# https://docs.allauth.org/en/latest/socialaccount/provider_configuration.html
 # social_providers:
-#   keycloak:
-#     KEYCLOAK_URL: 'https://keycloak.custom/auth'
-#     KEYCLOAK_REALM: 'master'
+#   github:
+#     VERIFIED_EMAIL: true
 
 # Add LDAP support
 # ldap:
@@ -277,6 +297,15 @@ remote_login_header: HTTP_REMOTE_USER
 
 #   # cache timeout to reduce traffic with LDAP server, default: 3600 (1h)
 #   # cache_timeout: 3600
+
+#   # LDAP group support
+#   # group_search: ou=groups,dc=example,dc=com
+#   # require_group: cn=inventree_allow,ou=groups,dc=example,dc=com
+#   # deny_group: cn=inventree_deny,ou=groups,dc=example,dc=com
+#   # Set staff/superuser flag based on LDAP group membership
+#   # user_flags_by_group:
+#   #   is_staff: cn=inventree_staff,ou=groups,dc=example,dc=com
+#   #   is_superuser: cn=inventree_superuser,ou=groups,dc=example,dc=com
 
 # Customization options
 # Add custom messages to the login page or main interface navbar or exchange the logo

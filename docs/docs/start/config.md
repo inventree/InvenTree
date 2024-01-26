@@ -59,6 +59,7 @@ The following basic options are available:
 | INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
 | INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
+| INVENTREE_AUTO_UPDATE | auto_update | Database migrations will be run automatically | False |
 
 ### Admin Site
 
@@ -87,7 +88,10 @@ An administrator account can be specified using the following environment variab
 | --- | --- | --- | --- |
 | INVENTREE_ADMIN_USER | admin_user | Admin account username | *Not specified* |
 | INVENTREE_ADMIN_PASSWORD | admin_password | Admin account password | *Not specified* |
+| INVENTREE_ADMIN_PASSWORD_FILE | admin_password_file | Admin account password file | *Not specified* |
 | INVENTREE_ADMIN_EMAIL | admin_email |Admin account email address | *Not specified* |
+
+You can either specify the password directly using `INVENTREE_ADMIN_PASSWORD`, or you can specify a file containing the password using `INVENTREE_ADMIN_PASSWORD_FILE` (this is useful for nix users).
 
 !!! info "Administrator Account"
     Providing `INVENTREE_ADMIN` credentials will result in the provided account being created with *superuser* permissions when InvenTree is started.
@@ -254,12 +258,9 @@ InvenTree provides allowance for additional sign-in options. The following optio
 
 ### Single Sign On
 
-SSO backends for all required authentication providers need to be added to the config file as a list under the key `social_backends`. The correct backend-name can be found in django-allauths [configuration documentation](https://django-allauth.readthedocs.io/en/latest/installation/quickstart.html).
+Single Sign On (SSO) allows users to sign in to InvenTree using a third-party authentication provider. This functionality is provided by the [django-allauth](https://docs.allauth.org/en/latest/) package.
 
-If the selected providers need additional settings they must be added as dicts under the key `social_providers`. The correct settings can be found in the django-allauths [provider documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html).
-
-!!! warning "You are not done"
-    SSO still needs credentials for all providers and has to be enabled in the [global settings](../settings/global.md)!
+There are multiple configuration parameters which must be specified (either in your configuration file, or via environment variables) to enable SSO functionality. Refer to the [SSO documentation](../settings/SSO.md) for a guide on SSO configuration.
 
 !!! tip "More Info"
     Refer to the [SSO documentation](../settings/SSO.md) for more information.
@@ -270,8 +271,9 @@ The login-experience can be altered with the following settings:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
-| INVENTREE_LOGIN_CONFIRM_DAYS | login.confirm_days | Duration for which confirmation links are valid | 3 |
-| INVENTREE_LOGIN_ATTEMPTS | login.attempts | Count of allowed login attempts before blocking user | 5 |
+| INVENTREE_LOGIN_CONFIRM_DAYS | login_confirm_days | Duration for which confirmation links are valid | 3 |
+| INVENTREE_LOGIN_ATTEMPTS | login_attempts | Count of allowed login attempts before blocking user | 5 |
+| INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL | login_default_protocol | Default protocol to use for login callbacks (e.g. using [SSO](#single-sign-on)) | http |
 
 ### Authentication Backends
 

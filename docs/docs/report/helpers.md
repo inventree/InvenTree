@@ -138,7 +138,7 @@ You can access an uploaded image file if you know the *path* of the image, relat
 {% raw %}
 <!-- Load the report helper functions -->
 {% load report %}
-<img src='{% uploaded_image "subdir/my_image.png" %}'/>
+<img src='{% uploaded_image "subdir/my_image.png" width=480 rotate=45 %}'/>
 {% endraw %}
 ```
 
@@ -147,6 +147,16 @@ You can access an uploaded image file if you know the *path* of the image, relat
 
 !!! warning "Invalid Image"
     If the supplied file is not a valid image, it will be replaced with a placeholder image file
+
+#### Image Manipulation
+
+The `{% raw %}{% uploaded_image %}{% endraw %}` tag supports some optional parameters for image manipulation. These can be used to adjust or resize the image - to reduce the size of the generated report file, for example.
+
+```html
+{% raw %}
+{% load report %}
+<img src='{% uploaded_image "image_file.png" width=500 rotate=45 %}'>
+{% endraw %}```
 
 
 ### SVG Images
@@ -173,6 +183,26 @@ A shortcut function is provided for rendering an image associated with a Part in
 {% endraw %}
 ```
 
+#### Image Arguments
+
+Any optional arguments which can be used in the [uploaded_image tag](#uploaded-images) can be used here too.
+
+#### Image Variations
+
+The *Part* model supports *preview* (256 x 256) and *thumbnail* (128 x 128) versions of the uploaded image. These variations can be used in the generated reports (e.g. to reduce generated file size):
+
+```html
+{% raw %}
+{% load report %}
+<!-- Render the "preview" image variation -->
+<img src='{% part_image part preview=True %}'>
+
+<!-- Render the "thumbnail" image variation -->
+<img src='{% part_image part thumbnail=True %}'>
+{% endraw %}
+```
+
+
 ### Company Images
 
 A shortcut function is provided for rendering an image associated with a Company instance. You can render the image of the company using the `{% raw %}{% company_image ... %}{% endraw %}` template tag:
@@ -184,6 +214,10 @@ A shortcut function is provided for rendering an image associated with a Company
 <img src='{% company_image company %}'/>
 {% endraw %}
 ```
+
+#### Image Variations
+
+*Preview* and *thumbnail* image variations can be rendered for the `company_image` tag, in a similar manner to [part image variations](#image-variations)
 
 ## InvenTree Logo
 
