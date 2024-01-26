@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/macro';
 import { Stack, Text } from '@mantine/core';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useStore } from 'zustand';
@@ -54,6 +55,11 @@ export function SettingList({
             </React.Fragment>
           );
         })}
+        {(keys || allKeys).length === 0 && (
+          <Text italic>
+            <Trans>No settings specified</Trans>
+          </Text>
+        )}
       </Stack>
     </>
   );

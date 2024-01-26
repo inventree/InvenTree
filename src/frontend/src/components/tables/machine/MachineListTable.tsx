@@ -13,21 +13,17 @@ import {
   Space,
   Stack,
   Text,
-  Title,
-  Tooltip
+  Title
 } from '@mantine/core';
-import { IconChevronLeft, IconDots, IconRefresh } from '@tabler/icons-react';
+import { IconDots, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../../App';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
-import {
-  OpenApiFormProps,
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../../functions/forms';
+import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
+import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { AddItemButton } from '../../buttons/AddItemButton';
@@ -36,8 +32,10 @@ import {
   DeleteItemAction,
   EditItemAction
 } from '../../items/ActionDropdown';
+import { InfoItem } from '../../items/InfoItem';
 import { UnavailableIndicator } from '../../items/UnavailableIndicator';
 import { YesNoButton } from '../../items/YesNoButton';
+import { DetailDrawer } from '../../nav/DetailDrawer';
 import {
   StatusRenderer,
   TableStatusRenderer
@@ -46,6 +44,7 @@ import { MachineSettingList } from '../../settings/SettingList';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { MachineDriverI, MachineTypeI } from './MachineTypeTable';
 
 interface MachineI {
   pk: string;
@@ -59,25 +58,6 @@ interface MachineI {
   status_text: string;
   machine_errors: string[];
   is_driver_available: boolean;
-}
-
-interface MachineTypeI {
-  slug: string;
-  name: string;
-  description: string;
-  provider_file: string;
-  provider_plugin: string;
-  is_builtin: boolean;
-}
-
-interface MachineDriverI {
-  slug: string;
-  name: string;
-  description: string;
-  provider_file: string;
-  provider_plugin: string;
-  is_builtin: boolean;
-  machine_type: string;
 }
 
 function MachineStatusIndicator({ machine }: { machine: MachineI }) {
@@ -111,13 +91,54 @@ function MachineStatusIndicator({ machine }: { machine: MachineI }) {
   );
 }
 
-function MachineDetail({
+export function useMachineTypeDriver({
+  includeTypes = true,
+  includeDrivers = true
+}: { includeTypes?: boolean; includeDrivers?: boolean } = {}) {
+  const {
+    data: machineTypes,
+    isFetching: isMachineTypesFetching,
+    refetch: refreshMachineTypes
+  } = useQuery<MachineTypeI[]>({
+    enabled: includeTypes,
+    queryKey: ['machine-types'],
+    queryFn: () =>
+      api.get(apiUrl(ApiPaths.machine_types_list)).then((res) => res.data),
+    staleTime: 10 * 1000
+  });
+  const {
+    data: machineDrivers,
+    isFetching: isMachineDriversFetching,
+    refetch: refreshDrivers
+  } = useQuery<MachineDriverI[]>({
+    enabled: includeDrivers,
+    queryKey: ['machine-drivers'],
+    queryFn: () =>
+      api.get(apiUrl(ApiPaths.machine_driver_list)).then((res) => res.data),
+    staleTime: 10 * 1000
+  });
+
+  const refresh = useCallback(() => {
+    refreshMachineTypes();
+    refreshDrivers();
+  }, [refreshDrivers, refreshMachineTypes]);
+
+  return {
+    machineTypes,
+    machineDrivers,
+    isFetching: isMachineTypesFetching || isMachineDriversFetching,
+    refresh
+  };
+}
+
+function MachineDrawer({
   machinePk,
-  goBack
+  refreshTable
 }: {
   machinePk: string;
-  goBack: () => void;
+  refreshTable: () => void;
 }) {
+  const navigate = useNavigate();
   const {
     data: machine,
     refetch,
@@ -128,42 +149,34 @@ function MachineDetail({
     queryFn: () =>
       api.get(apiUrl(ApiPaths.machine_list, machinePk)).then((res) => res.data)
   });
-  const { data: machineTypes, isFetching: isMachineTypesFetching } = useQuery<
-    MachineTypeI[]
-  >({
-    queryKey: ['machine-types'],
-    queryFn: () =>
-      api.get(apiUrl(ApiPaths.machine_types_list)).then((res) => res.data),
-    staleTime: 10 * 1000
-  });
+  const {
+    machineTypes,
+    machineDrivers,
+    isFetching: isMachineTypeDriverFetching
+  } = useMachineTypeDriver();
 
-  const isFetching = isMachineFetching || isMachineTypesFetching;
+  const isFetching = isMachineFetching || isMachineTypeDriverFetching;
 
-  function InfoItem({
-    name,
-    children
-  }: {
-    name: string;
-    children: React.ReactNode;
-  }) {
-    return (
-      <Group position="apart">
-        <Text fz="sm" fw={700}>
-          {name}:
-        </Text>
-        <Flex>{children}</Flex>
-      </Group>
-    );
-  }
+  const machineType = useMemo(
+    () =>
+      machineTypes && machine
+        ? machineTypes.find((t) => t.slug === machine.machine_type)
+        : undefined,
+    [machine?.machine_type, machineTypes]
+  );
+
+  const machineDriver = useMemo(
+    () =>
+      machineDrivers && machine
+        ? machineDrivers.find((d) => d.slug === machine.driver)
+        : undefined,
+    [machine?.driver, machineDrivers]
+  );
 
   return (
     <Stack spacing="xs">
       <Group position="apart">
-        <Tooltip label={t`Back`}>
-          <ActionIcon onClick={goBack} variant="outline">
-            <IconChevronLeft />
-          </ActionIcon>
-        </Tooltip>
+        <Box></Box>
 
         <Group>
           {machine && <MachineStatusIndicator machine={machine} />}
@@ -200,7 +213,7 @@ function MachineDetail({
                   preFormContent: (
                     <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
                   ),
-                  onFormSuccess: () => goBack()
+                  onFormSuccess: () => navigate(-1)
                 });
               }
             })
@@ -208,11 +221,11 @@ function MachineDetail({
         />
       </Group>
 
-      <Card maw={350}>
+      <Card withBorder>
         <Stack spacing="md">
           <Group position="apart">
             <Title order={4}>
-              <Trans>Info</Trans>
+              <Trans>Machine information</Trans>
             </Title>
             <ActionIcon variant="outline" onClick={() => refetch()}>
               <IconRefresh />
@@ -222,17 +235,17 @@ function MachineDetail({
             <LoadingOverlay visible={isFetching} overlayOpacity={0} />
             <InfoItem name={t`Machine Type`}>
               <Group spacing="xs">
-                <Text>{machine?.machine_type}</Text>
-                {machine &&
-                  machineTypes &&
-                  machineTypes.findIndex(
-                    (m) => m.slug === machine.machine_type
-                  ) === -1 && <UnavailableIndicator />}
+                <Text>
+                  {machineType ? machineType.name : machine?.machine_type}
+                </Text>
+                {machine && !machineType && <UnavailableIndicator />}
               </Group>
             </InfoItem>
             <InfoItem name={t`Machine Driver`}>
               <Group spacing="xs">
-                <Text>{machine?.driver}</Text>
+                <Text>
+                  {machineDriver ? machineDriver.name : machine?.driver}
+                </Text>
                 {!machine?.is_driver_available && <UnavailableIndicator />}
               </Group>
             </InfoItem>
@@ -269,8 +282,8 @@ function MachineDetail({
                 </Text>
               )}
               <List w="100%">
-                {machine?.machine_errors.map((error) => (
-                  <List.Item key={error}>
+                {machine?.machine_errors.map((error, i) => (
+                  <List.Item key={i}>
                     <Code>{error}</Code>
                   </List.Item>
                 ))}
@@ -283,15 +296,19 @@ function MachineDetail({
 
       {machine?.is_driver_available && (
         <>
-          <Title order={5}>
-            <Trans>Machine Settings</Trans>
-          </Title>
-          <MachineSettingList machinePk={machinePk} configType="M" />
+          <Card withBorder>
+            <Title order={5} pb={4}>
+              <Trans>Machine Settings</Trans>
+            </Title>
+            <MachineSettingList machinePk={machinePk} configType="M" />
+          </Card>
 
-          <Title order={5}>
-            <Trans>Driver Settings</Trans>
-          </Title>
-          <MachineSettingList machinePk={machinePk} configType="D" />
+          <Card withBorder>
+            <Title order={5} pb={4}>
+              <Trans>Driver Settings</Trans>
+            </Title>
+            <MachineSettingList machinePk={machinePk} configType="D" />
+          </Card>
         </>
       )}
     </Stack>
@@ -302,20 +319,10 @@ function MachineDetail({
  * Table displaying list of available plugins
  */
 export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
-  const { data: machineTypes } = useQuery<MachineTypeI[]>({
-    queryKey: ['machine-types'],
-    queryFn: () =>
-      api.get(apiUrl(ApiPaths.machine_types_list)).then((res) => res.data),
-    staleTime: 10 * 1000
-  });
-  const { data: machineDrivers } = useQuery<MachineDriverI[]>({
-    queryKey: ['machine-drivers'],
-    queryFn: () =>
-      api.get(apiUrl(ApiPaths.machine_driver_list)).then((res) => res.data),
-    staleTime: 10 * 1000
-  });
+  const { machineTypes, machineDrivers } = useMachineTypeDriver();
 
   const table = useTable('machine');
+  const navigate = useNavigate();
 
   const machineTableColumns = useMemo<TableColumn<MachineI>[]>(
     () => [
@@ -337,13 +344,15 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
         title: t`Machine Type`,
         sortable: true,
         render: (record) => {
+          const machineType = machineTypes?.find(
+            (m) => m.slug === record.machine_type
+          );
           return (
             <Group spacing="xs">
-              <Text>{record.machine_type}</Text>
-              {machineTypes &&
-                machineTypes.findIndex(
-                  (m: any) => m.slug === record.machine_type
-                ) === -1 && <UnavailableIndicator />}
+              <Text>
+                {machineType ? machineType.name : record.machine_type}
+              </Text>
+              {machineTypes && !machineType && <UnavailableIndicator />}
             </Group>
           );
         }
@@ -353,9 +362,10 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
         title: t`Machine Driver`,
         sortable: true,
         render: (record) => {
+          const driver = machineDrivers?.find((d) => d.slug === record.driver);
           return (
             <Group spacing="xs">
-              <Text>{record.driver}</Text>
+              <Text>{driver ? driver.name : record.driver}</Text>
               {!record.is_driver_available && <UnavailableIndicator />}
             </Group>
           );
@@ -400,89 +410,107 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
       }));
   }, [machineDrivers, createFormMachineType]);
 
-  const createMachineForm = useMemo<OpenApiFormProps>(() => {
-    return {
-      title: t`Create machine`,
-      url: ApiPaths.machine_list,
-      fields: {
-        name: {},
-        machine_type: {
-          field_type: 'choice',
-          choices: machineTypes
-            ? machineTypes.map((t) => ({
-                value: t.slug,
-                display_name: `${t.name} (${t.description})`
-              }))
-            : [],
-          onValueChange: ({ value }) => setCreateFormMachineType(value)
-        },
-        driver: {
-          field_type: 'choice',
-          disabled: !createFormMachineType,
-          choices: createFormDriverOptions
-        },
-        active: {}
+  const createMachineForm = useCreateApiFormModal({
+    title: t`Create machine`,
+    url: ApiPaths.machine_list,
+    fields: {
+      name: {},
+      machine_type: {
+        field_type: 'choice',
+        choices: machineTypes
+          ? machineTypes.map((t) => ({
+              value: t.slug,
+              display_name: `${t.name} (${t.description})`
+            }))
+          : [],
+        onValueChange: (value) => setCreateFormMachineType(value)
       },
-      onClose: () => {
-        setCreateFormMachineType(null);
-      }
-    };
-  }, [createFormMachineType, createFormDriverOptions, machineTypes]);
+      driver: {
+        field_type: 'choice',
+        disabled: !createFormMachineType,
+        choices: createFormDriverOptions
+      },
+      active: {}
+    },
+    onFormSuccess: (data) => {
+      table.refreshTable();
+      navigate(`machine-${data.pk}/`);
+    },
+    onClose: () => {
+      setCreateFormMachineType(null);
+    }
+  });
 
-  const [currentMachinePk, setCurrentMachinePk] = useState<null | string>(null);
-  const goBack = useCallback(() => setCurrentMachinePk(null), []);
-
-  if (currentMachinePk) {
-    return <MachineDetail machinePk={currentMachinePk} goBack={goBack} />;
-  }
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        variant="outline"
+        onClick={() => {
+          setCreateFormMachineType(null);
+          createMachineForm.open();
+        }}
+      />
+    ];
+  }, [createMachineForm.open]);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiPaths.machine_list)}
-      tableState={table}
-      columns={machineTableColumns}
-      props={{
-        ...props,
-        enableDownload: false,
-        onRowClick: (record) => setCurrentMachinePk(record.pk),
-        tableActions: [
-          <AddItemButton
-            variant="outline"
-            onClick={() => {
-              setCreateFormMachineType(null);
-              openCreateApiForm(createMachineForm);
-            }}
-          />
-        ],
-        params: {
-          ...props.params
-        },
-        tableFilters: [
-          {
-            name: 'active',
-            label: t`Active`,
-            type: 'boolean'
+    <>
+      {createMachineForm.modal}
+      <DetailDrawer
+        title={t`Machine detail`}
+        size={'lg'}
+        renderContent={(id) => {
+          if (!id || !id.startsWith('machine-')) return false;
+          return (
+            <MachineDrawer
+              machinePk={id.replace('machine-', '')}
+              refreshTable={table.refreshTable}
+            />
+          );
+        }}
+      />
+      <InvenTreeTable
+        url={apiUrl(ApiPaths.machine_list)}
+        tableState={table}
+        columns={machineTableColumns}
+        props={{
+          ...props,
+          enableDownload: false,
+          onRowClick: (machine) => navigate(`machine-${machine.pk}/`),
+          tableActions,
+          params: {
+            ...props.params
           },
-          {
-            name: 'machine_type',
-            label: t`Machine Type`,
-            type: 'choice',
-            choiceFunction: () =>
-              machineTypes
-                ? machineTypes.map((t) => ({ value: t.slug, label: t.name }))
-                : []
-          },
-          {
-            name: 'driver',
-            label: t`Machine Driver`,
-            type: 'choice',
-            choiceFunction: () =>
-              machineDrivers
-                ? machineDrivers.map((d) => ({ value: d.slug, label: d.name }))
-                : []
-          }
-        ]
-      }}
-    />
+          tableFilters: [
+            {
+              name: 'active',
+              label: t`Active`,
+              type: 'boolean'
+            },
+            {
+              name: 'machine_type',
+              label: t`Machine Type`,
+              type: 'choice',
+              choiceFunction: () =>
+                machineTypes
+                  ? machineTypes.map((t) => ({ value: t.slug, label: t.name }))
+                  : []
+            },
+            {
+              name: 'driver',
+              label: t`Machine Driver`,
+              type: 'choice',
+              choiceFunction: () =>
+                machineDrivers
+                  ? machineDrivers.map((d) => ({
+                      value: d.slug,
+                      label: d.name
+                    }))
+                  : []
+            }
+          ]
+        }}
+      />
+    </>
   );
 }

@@ -117,10 +117,10 @@ class BaseMachineClassSerializer(serializers.Serializer):
     def get_provider_file(self, obj: ClassProviderMixin) -> str:
         return obj.get_provider_file()
 
-    def get_provider_plugin(self, obj: ClassProviderMixin) -> Union[str, None]:
+    def get_provider_plugin(self, obj: ClassProviderMixin) -> Union[dict, None]:
         plugin = obj.get_provider_plugin()
         if plugin:
-            return plugin.slug
+            return {"slug": plugin.slug, "name": plugin.human_name, "pk": getattr(plugin.plugin_config(), "pk", None)}
         return None
 
     def get_is_builtin(self, obj: ClassProviderMixin) -> bool:
@@ -150,6 +150,17 @@ class MachineDriverSerializer(BaseMachineClassSerializer):
     machine_type = serializers.SlugField(read_only=True)
 
 
+class MachineRegistryErrorSerializer(serializers.Serializer):
+    """Serializer for a machine registry error."""
+
+    class Meta:
+        fields = [
+            "message"
+        ]
+
+    message = serializers.CharField()
+
+
 class MachineRegistryStatusSerializer(serializers.Serializer):
     """Serializer for machine registry status."""
 
@@ -158,4 +169,4 @@ class MachineRegistryStatusSerializer(serializers.Serializer):
             "registry_errors",
         ]
 
-    registry_errors = serializers.ListField(child=serializers.CharField())
+    registry_errors = serializers.ListField(child=MachineRegistryErrorSerializer())

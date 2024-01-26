@@ -190,7 +190,9 @@ class RegistryStatusView(APIView):
     )
     def get(self, request):
         result = MachineSerializers.MachineRegistryStatusSerializer({
-            'registry_errors': list(map(str, registry.errors))
+            'registry_errors': list(
+                {'message': str(error)} for error in registry.errors
+            )
         }).data
 
         return Response(result)

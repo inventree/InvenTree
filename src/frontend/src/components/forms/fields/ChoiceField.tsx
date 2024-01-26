@@ -1,4 +1,4 @@
-import { Select } from '@mantine/core';
+import { Input, Select } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useCallback } from 'react';
 import { useMemo } from 'react';
@@ -49,16 +49,30 @@ export function ChoiceField({
     [field.onChange, definition]
   );
 
+  /* Construct a "cut-down" version of the definition,
+   * which does not include any attributes that the lower components do not recognize
+   */
+  const fieldDefinition = useMemo(() => {
+    return {
+      ...definition,
+      onValueChange: undefined,
+      adjustFilters: undefined,
+      read_only: undefined
+    };
+  }, [definition]);
+
   return (
-    <Select
-      id={fieldId}
-      error={error?.message}
-      radius="sm"
-      {...field}
-      onChange={onChange}
-      data={choices}
-      value={field.value}
-      withinPortal={true}
-    />
+    <Input.Wrapper {...fieldDefinition} error={error?.message}>
+      <Select
+        id={fieldId}
+        error={error?.message}
+        radius="sm"
+        {...field}
+        onChange={onChange}
+        data={choices}
+        value={field.value}
+        withinPortal={true}
+      />
+    </Input.Wrapper>
   );
 }

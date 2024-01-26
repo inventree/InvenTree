@@ -31,7 +31,7 @@ function DetailDrawerComponent({
   return (
     <Drawer
       opened={opened}
-      onClose={() => navigate('../')}
+      onClose={() => navigate(-1)}
       position={position}
       size={size}
       title={
