@@ -12,38 +12,36 @@ class MachineConfigSerializer(serializers.ModelSerializer):
 
     class Meta:
         """Meta for serializer."""
+
         model = MachineConfig
         fields = [
-            "pk",
-            "name",
-            "machine_type",
-            "driver",
-            "initialized",
-            "active",
-            "status",
-            "status_model",
-            "status_text",
-            "machine_errors",
-            "is_driver_available",
+            'pk',
+            'name',
+            'machine_type',
+            'driver',
+            'initialized',
+            'active',
+            'status',
+            'status_model',
+            'status_text',
+            'machine_errors',
+            'is_driver_available',
         ]
 
-        read_only_fields = [
-            "machine_type",
-            "driver",
-        ]
+        read_only_fields = ['machine_type', 'driver']
 
-    initialized = serializers.SerializerMethodField("get_initialized")
-    status = serializers.SerializerMethodField("get_status")
-    status_model = serializers.SerializerMethodField("get_status_model")
-    status_text = serializers.SerializerMethodField("get_status_text")
-    machine_errors = serializers.SerializerMethodField("get_errors")
-    is_driver_available = serializers.SerializerMethodField("get_is_driver_available")
+    initialized = serializers.SerializerMethodField('get_initialized')
+    status = serializers.SerializerMethodField('get_status')
+    status_model = serializers.SerializerMethodField('get_status_model')
+    status_text = serializers.SerializerMethodField('get_status_text')
+    machine_errors = serializers.SerializerMethodField('get_errors')
+    is_driver_available = serializers.SerializerMethodField('get_is_driver_available')
 
     def get_initialized(self, obj: MachineConfig) -> bool:
-        return getattr(obj.machine, "initialized", False)
+        return getattr(obj.machine, 'initialized', False)
 
     def get_status(self, obj: MachineConfig) -> int:
-        status = getattr(obj.machine, "status", None)
+        status = getattr(obj.machine, 'status', None)
         if status is not None:
             return status.value
         return -1
@@ -54,7 +52,7 @@ class MachineConfigSerializer(serializers.ModelSerializer):
         return None
 
     def get_status_text(self, obj: MachineConfig) -> str:
-        return getattr(obj.machine, "status_text", "")
+        return getattr(obj.machine, 'status_text', '')
 
     def get_errors(self, obj: MachineConfig) -> List[str]:
         return [str(err) for err in obj.errors]
@@ -68,27 +66,29 @@ class MachineConfigCreateSerializer(MachineConfigSerializer):
 
     class Meta(MachineConfigSerializer.Meta):
         """Meta for serializer."""
-        read_only_fields = list(set(MachineConfigSerializer.Meta.read_only_fields) - set(["machine_type", "driver"]))
+
+        read_only_fields = list(
+            set(MachineConfigSerializer.Meta.read_only_fields)
+            - set(['machine_type', 'driver'])
+        )
 
 
 class MachineSettingSerializer(GenericReferencedSettingSerializer):
     """Serializer for the MachineSetting model."""
 
     MODEL = MachineSetting
-    EXTRA_FIELDS = [
-        "config_type",
-    ]
+    EXTRA_FIELDS = ['config_type']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # remove unwanted fields
-        unwanted_fields = ["pk", "model_name", "api_url", "typ"]
+        unwanted_fields = ['pk', 'model_name', 'api_url', 'typ']
         for f in unwanted_fields:
             if f in self.Meta.fields:
                 self.Meta.fields.remove(f)
 
-        setattr(self.Meta, "read_only_fields", ["config_type"])
+        self.Meta.read_only_fields = ['config_type']
 
 
 class BaseMachineClassSerializer(serializers.Serializer):
@@ -96,23 +96,24 @@ class BaseMachineClassSerializer(serializers.Serializer):
 
     class Meta:
         """Meta for a serializer."""
+
         fields = [
-            "slug",
-            "name",
-            "description",
-            "provider_file",
-            "provider_plugin",
-            "is_builtin",
+            'slug',
+            'name',
+            'description',
+            'provider_file',
+            'provider_plugin',
+            'is_builtin',
         ]
 
         read_only_fields = fields
 
-    slug = serializers.SlugField(source="SLUG")
-    name = serializers.CharField(source="NAME")
-    description = serializers.CharField(source="DESCRIPTION")
-    provider_file = serializers.SerializerMethodField("get_provider_file")
-    provider_plugin = serializers.SerializerMethodField("get_provider_plugin")
-    is_builtin = serializers.SerializerMethodField("get_is_builtin")
+    slug = serializers.SlugField(source='SLUG')
+    name = serializers.CharField(source='NAME')
+    description = serializers.CharField(source='DESCRIPTION')
+    provider_file = serializers.SerializerMethodField('get_provider_file')
+    provider_plugin = serializers.SerializerMethodField('get_provider_plugin')
+    is_builtin = serializers.SerializerMethodField('get_is_builtin')
 
     def get_provider_file(self, obj: ClassProviderMixin) -> str:
         return obj.get_provider_file()
@@ -120,7 +121,11 @@ class BaseMachineClassSerializer(serializers.Serializer):
     def get_provider_plugin(self, obj: ClassProviderMixin) -> Union[dict, None]:
         plugin = obj.get_provider_plugin()
         if plugin:
-            return {"slug": plugin.slug, "name": plugin.human_name, "pk": getattr(plugin.plugin_config(), "pk", None)}
+            return {
+                'slug': plugin.slug,
+                'name': plugin.human_name,
+                'pk': getattr(plugin.plugin_config(), 'pk', None),
+            }
         return None
 
     def get_is_builtin(self, obj: ClassProviderMixin) -> bool:
@@ -132,9 +137,8 @@ class MachineTypeSerializer(BaseMachineClassSerializer):
 
     class Meta(BaseMachineClassSerializer.Meta):
         """Meta for a serializer."""
-        fields = [
-            *BaseMachineClassSerializer.Meta.fields
-        ]
+
+        fields = [*BaseMachineClassSerializer.Meta.fields]
 
 
 class MachineDriverSerializer(BaseMachineClassSerializer):
@@ -142,10 +146,8 @@ class MachineDriverSerializer(BaseMachineClassSerializer):
 
     class Meta(BaseMachineClassSerializer.Meta):
         """Meta for a serializer."""
-        fields = [
-            *BaseMachineClassSerializer.Meta.fields,
-            "machine_type",
-        ]
+
+        fields = [*BaseMachineClassSerializer.Meta.fields, 'machine_type']
 
     machine_type = serializers.SlugField(read_only=True)
 
@@ -154,9 +156,7 @@ class MachineRegistryErrorSerializer(serializers.Serializer):
     """Serializer for a machine registry error."""
 
     class Meta:
-        fields = [
-            "message"
-        ]
+        fields = ['message']
 
     message = serializers.CharField()
 
@@ -165,8 +165,6 @@ class MachineRegistryStatusSerializer(serializers.Serializer):
     """Serializer for machine registry status."""
 
     class Meta:
-        fields = [
-            "registry_errors",
-        ]
+        fields = ['registry_errors']
 
     registry_errors = serializers.ListField(child=MachineRegistryErrorSerializer())
