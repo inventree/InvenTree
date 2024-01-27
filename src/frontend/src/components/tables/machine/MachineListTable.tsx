@@ -176,6 +176,11 @@ function MachineDrawer({
     [machine?.driver, machineDrivers]
   );
 
+  const refreshAll = useCallback(() => {
+    refetch();
+    refreshTable();
+  }, [refetch, refreshTable]);
+
   const restartMachine = useCallback(
     (machinePk: string) => {
       api
@@ -183,7 +188,7 @@ function MachineDrawer({
           apiUrl(ApiPaths.machine_restart, undefined, { machine: machinePk })
         )
         .then(() => {
-          refetch();
+          refreshAll();
           notifications.show({
             message: t`Machine restarted`,
             color: 'green',
@@ -191,7 +196,7 @@ function MachineDrawer({
           });
         });
     },
-    [refetch]
+    [refreshAll]
   );
 
   return (
@@ -204,55 +209,62 @@ function MachineDrawer({
           <Title order={4}>{machine?.name}</Title>
         </Group>
 
-        <ActionDropdown
-          tooltip={t`Machine Actions`}
-          icon={<IconDots />}
-          actions={[
-            EditItemAction({
-              tooltip: t`Edit machine`,
-              onClick: () => {
-                openEditApiForm({
-                  title: t`Edit machine`,
-                  url: ApiPaths.machine_list,
-                  pk: machinePk,
-                  fields: {
-                    name: {},
-                    active: {}
-                  },
-                  onClose: () => refetch()
-                });
+        <Group>
+          {machine?.restart_required && (
+            <Badge color="red">
+              <Trans>Restart required</Trans>
+            </Badge>
+          )}
+          <ActionDropdown
+            tooltip={t`Machine Actions`}
+            icon={<IconDots />}
+            actions={[
+              EditItemAction({
+                tooltip: t`Edit machine`,
+                onClick: () => {
+                  openEditApiForm({
+                    title: t`Edit machine`,
+                    url: ApiPaths.machine_list,
+                    pk: machinePk,
+                    fields: {
+                      name: {},
+                      active: {}
+                    },
+                    onClose: () => refreshAll()
+                  });
+                }
+              }),
+              DeleteItemAction({
+                tooltip: t`Delete machine`,
+                onClick: () => {
+                  openDeleteApiForm({
+                    title: t`Delete machine`,
+                    successMessage: t`Machine successfully deleted.`,
+                    url: ApiPaths.machine_list,
+                    pk: machinePk,
+                    preFormContent: (
+                      <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
+                    ),
+                    onFormSuccess: () => navigate(-1)
+                  });
+                }
+              }),
+              {
+                icon: <IconRefresh />,
+                name: t`Restart`,
+                tooltip:
+                  t`Restart machine` +
+                  (machine?.restart_required
+                    ? ' (' + t`manual restart required` + ')'
+                    : ''),
+                indicator: machine?.restart_required
+                  ? { color: 'red' }
+                  : undefined,
+                onClick: () => machine && restartMachine(machine?.pk)
               }
-            }),
-            DeleteItemAction({
-              tooltip: t`Delete machine`,
-              onClick: () => {
-                openDeleteApiForm({
-                  title: t`Delete machine`,
-                  successMessage: t`Machine successfully deleted.`,
-                  url: ApiPaths.machine_list,
-                  pk: machinePk,
-                  preFormContent: (
-                    <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
-                  ),
-                  onFormSuccess: () => navigate(-1)
-                });
-              }
-            }),
-            {
-              icon: <IconRefresh />,
-              name: t`Restart`,
-              tooltip:
-                t`Restart machine` +
-                (machine?.restart_required
-                  ? ' (' + t`manual restart required` + ')'
-                  : ''),
-              indicator: machine?.restart_required
-                ? { color: 'red' }
-                : undefined,
-              onClick: () => machine && restartMachine(machine?.pk)
-            }
-          ]}
-        />
+            ]}
+          />
+        </Group>
       </Group>
 
       <Card withBorder>
@@ -345,7 +357,7 @@ function MachineDrawer({
             <MachineSettingList
               machinePk={machinePk}
               configType="M"
-              onChange={refetch}
+              onChange={refreshAll}
             />
           </Card>
 
@@ -356,7 +368,7 @@ function MachineDrawer({
             <MachineSettingList
               machinePk={machinePk}
               configType="D"
-              onChange={refetch}
+              onChange={refreshAll}
             />
           </Card>
         </>
@@ -385,6 +397,11 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
             <Group position="left">
               <MachineStatusIndicator machine={record} />
               <Text>{record.name}</Text>
+              {record.restart_required && (
+                <Badge color="red">
+                  <Trans>Restart required</Trans>
+                </Badge>
+              )}
             </Group>
           );
         }
