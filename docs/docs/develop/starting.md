@@ -31,6 +31,7 @@ Before contributing to the project, please read the [contributing guidelines](co
 #### Deployments
 
 Bare Metal
+
 ```mermaid
 graph LR
   A[Start] --> B{Error?};
