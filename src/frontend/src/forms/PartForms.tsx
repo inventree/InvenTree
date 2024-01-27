@@ -164,3 +164,16 @@ export function partParameterTemplateFields(): ApiFormFieldSet {
     checkbox: {}
   };
 }
+
+export function partTestTemplateFields(): ApiFormFieldSet {
+  return {
+    part: {
+      hidden: true
+    },
+    test_name: {},
+    description: {},
+    required: {},
+    requires_value: {},
+    requires_attachment: {}
+  };
+}

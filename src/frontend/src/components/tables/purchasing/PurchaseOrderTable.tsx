@@ -1,11 +1,15 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
+import { UserRoles } from '../../../enums/Roles';
+import { notYetImplemented } from '../../../functions/notifications';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import {
   CreationDateColumn,
@@ -33,6 +37,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
   const navigate = useNavigate();
 
   const table = useTable('purchase-order');
+  const user = useUserState();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -63,7 +68,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         switchable: false
         // TODO: Display extra information if order is overdue
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'supplier__name',
         title: t`Supplier`,
@@ -94,6 +99,20 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
+  const addPurchaseOrder = useCallback(() => {
+    notYetImplemented();
+  }, []);
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add Purchase Order`}
+        onClick={addPurchaseOrder}
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+      />
+    ];
+  }, [user]);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiPaths.purchase_order_list)}
@@ -104,7 +123,8 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
           ...params,
           supplier_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
+        tableActions: tableActions,
         onRowClick: (row: any) => {
           if (row.pk) {
             navigate(`/purchasing/purchase-order/${row.pk}`);

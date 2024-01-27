@@ -36,7 +36,7 @@ export const ModelInformationDict: ModelDictory = {
     label: t`Supplier Part`,
     label_multiple: t`Supplier Parts`,
     url_overview: '/supplierpart',
-    url_detail: '/supplierpart/:pk/',
+    url_detail: '/purchasing/supplier-part/:pk/',
     cui_detail: '/supplier-part/:pk/',
     api_endpoint: ApiPaths.supplier_part_list
   },
@@ -44,7 +44,7 @@ export const ModelInformationDict: ModelDictory = {
     label: t`Manufacturer Part`,
     label_multiple: t`Manufacturer Parts`,
     url_overview: '/manufacturerpart',
-    url_detail: '/manufacturerpart/:pk/',
+    url_detail: '/purchasing/manufacturer-part/:pk/',
     cui_detail: '/manufacturer-part/:pk/',
     api_endpoint: ApiPaths.manufacturer_part_list
   },

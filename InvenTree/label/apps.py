@@ -12,20 +12,10 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
+import InvenTree.helpers
 import InvenTree.ready
 
 logger = logging.getLogger('inventree')
-
-
-def hashFile(filename):
-    """Calculate the MD5 hash of a file."""
-    md5 = hashlib.md5()
-
-    with open(filename, 'rb') as f:
-        data = f.read()
-        md5.update(data)
-
-    return md5.hexdigest()
 
 
 class LabelConfig(AppConfig):
@@ -167,7 +157,9 @@ class LabelConfig(AppConfig):
         if dst_file.exists():
             # File already exists - let's see if it is the "same"
 
-            if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
+            if InvenTree.helpers.hash_file(dst_file) != InvenTree.helpers.hash_file(
+                src_file
+            ):  # pragma: no cover
                 logger.info("Hash differs for '%s'", filename)
                 to_copy = True
 

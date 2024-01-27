@@ -57,7 +57,7 @@ export default function PartParameterTemplateTable() {
         title: t`Units`,
         sortable: true
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'checkbox',
         title: t`Checkbox`
@@ -131,8 +131,8 @@ export default function PartParameterTemplateTable() {
       columns={tableColumns}
       props={{
         rowActions: rowActions,
-        customFilters: tableFilters,
-        customActionGroups: tableActions
+        tableFilters: tableFilters,
+        tableActions: tableActions
       }}
     />
   );

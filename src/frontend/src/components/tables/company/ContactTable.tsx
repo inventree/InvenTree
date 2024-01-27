@@ -133,7 +133,7 @@ export function ContactTable({
       columns={columns}
       props={{
         rowActions: rowActions,
-        customActionGroups: tableActions,
+        tableActions: tableActions,
         params: {
           ...params,
           company: companyId

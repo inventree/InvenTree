@@ -3,7 +3,7 @@
 import logging
 
 from django.db.models import F
-from django.urls import path, re_path
+from django.urls import path
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import permissions
@@ -578,5 +578,5 @@ barcode_api_urls = [
     # Allocate stock to a sales order by scanning barcode
     path('so-allocate/', BarcodeSOAllocate.as_view(), name='api-barcode-so-allocate'),
     # Catch-all performs barcode 'scan'
-    re_path(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),
+    path('', BarcodeScan.as_view(), name='api-barcode-scan'),
 ]

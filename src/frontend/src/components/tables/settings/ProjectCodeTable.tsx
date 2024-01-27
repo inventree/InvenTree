@@ -32,7 +32,7 @@ export default function ProjectCodeTable() {
         sortable: true,
         title: t`Project Code`
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       ResponsibleColumn()
     ];
   }, []);
@@ -106,7 +106,7 @@ export default function ProjectCodeTable() {
       columns={columns}
       props={{
         rowActions: rowActions,
-        customActionGroups: tableActions
+        tableActions: tableActions
       }}
     />
   );

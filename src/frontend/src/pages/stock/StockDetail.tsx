@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { Alert, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
@@ -34,6 +34,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
+import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useEditStockItem } from '../../forms/StockForms';
@@ -94,14 +95,18 @@ export default function StockDetail() {
         name: 'installed_items',
         label: t`Installed Items`,
         icon: <IconBoxPadding />,
-        content: <PlaceholderPanel />,
         hidden: !stockitem?.part_detail?.assembly
       },
       {
         name: 'child_items',
         label: t`Child Items`,
         icon: <IconSitemap />,
-        content: <PlaceholderPanel />
+        hidden: (stockitem?.child_items ?? 0) == 0,
+        content: stockitem?.pk ? (
+          <StockItemTable params={{ ancestor: stockitem.pk }} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'attachments',

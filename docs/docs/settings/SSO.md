@@ -16,23 +16,23 @@ InvenTree provides the possibility to use 3rd party services to authenticate use
 
 The basic requirements for configuring SSO are outlined below:
 
-1. Enable the required providers in the [config file](../start/config.md#single-sign-on).
+1. Enable backend for each required SSO provider(s) in the [config file or environment variables](../start/config.md#single-sign-on).
 1. Create an external *app* with your provider of choice
 1. Add the required client configurations in the `SocialApp` app in the [admin interface](../settings/admin.md).
 1. Configure the *callback* URL for the external app.
 1. Enable SSO for the users in the [global settings](../settings/global.md).
 1. Configure [e-mail](../settings/email.md).
 
-### Configuration File
+### Enable Provider Backends
 
 The first step is to ensure that the required provider modules are installed, via your installation [configuration file](../start/config.md#single-sign-on).
 
 There are two variables in the configuration file which define the operation of SSO:
 
-| Key | Description | More Info |
-| --- | --- | --- |
-| `social_backends` | A *list* of provider backends enabled for the InvenTree instance | [django-allauth docs](https://django-allauth.readthedocs.io/en/latest/installation/quickstart.html) |
-| `social_providers` | A *dict* of settings specific to the installed providers | [provider documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) |
+| Environment Variable |Configuration File | Description | More Info |
+| --- | --- | --- | --- |
+| INVENTREE_SOCIAL_BACKENDS | `social_backends` | A *list* of provider backends enabled for the InvenTree instance | [django-allauth docs](https://django-allauth.readthedocs.io/en/latest/installation/quickstart.html) |
+| INVENTREE_SOCIAL_PROVIDERS | `social_providers` | A *dict* of settings specific to the installed providers | [provider documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) |
 
 In the example below, SSO provider modules are activated for *google*, *github* and *microsoft*. Specific configuration options are specified for the *microsoft* provider module:
 
@@ -43,12 +43,18 @@ In the example below, SSO provider modules are activated for *google*, *github* 
 !!! info "Provider Module Format"
     Note that the provider modules specified in `social_backends` must be prefixed with `allauth.socialaccounts.providers`
 
+!!! warning "Provider Documentation"
+    We do not provide any specific documentation for each provider module. Please refer to the [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) for more information.
+
 !!! tip "Restart Server"
     As the [configuration file](../start/config.md) is only read when the server is launched, ensure you restart the server after editing the file.
 
 ### Create Provider App
 
-The next step is to create an external authentication app with your provider of choice. This step is wholly separate to your InvenTree installation, and must be performed before continuing further.
+The next step is to create an external authentication app with your provider of choice. The documentation for correctly creating and configuring the provider app is not covered here.
+
+!!! warning "External Application"
+    The provider application will be created as part of your SSO provider setup. This is *not* the same as the *SocialApp* entry in the InvenTree admin interface.
 
 !!! info "Read the Documentation"
     The [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) is a good starting point here. There are also a number of good tutorials online (at least for the major supported SSO providers).
@@ -101,6 +107,9 @@ In any case, the URL is is specific to your installation and the SSO provider. T
 
 !!! warning "Proxy Support"
     If your InvenTree server is running behind a proxy, you will need to ensure that the "public facing" host address matches the internal host address of the server, and that this host address also matches the configured callback URL
+
+!!! warning "HTTP vs HTTPS"
+    If your InvenTree server is running with HTTPS, the callback URL must also be HTTPS. Ensure that you have correctly configured [`LOGIN_DEFAULT_HTTP_PROTOCOL`](../start/config.md#login-options) to match your server configuration..
 
 ### Enable SSO Settings
 
