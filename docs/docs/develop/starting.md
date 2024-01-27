@@ -41,7 +41,6 @@ graph LR
   B ---->|No| E[Yay!];
 ```
 
-
 Docker
 
 #### Plugins
