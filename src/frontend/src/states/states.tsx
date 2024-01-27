@@ -73,6 +73,7 @@ export interface Setting {
   typ: SettingTyp;
   plugin?: string;
   method?: string;
+  required?: boolean;
 }
 
 export interface SettingChoice {

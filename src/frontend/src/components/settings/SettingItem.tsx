@@ -174,7 +174,10 @@ export function SettingItem({
     <Paper style={style}>
       <Group position="apart" p="3">
         <Stack spacing="2" p="4px">
-          <Text>{setting.name}</Text>
+          <Text>
+            {setting.name}
+            {setting.required ? ' *' : ''}
+          </Text>
           <Text size="xs">{setting.description}</Text>
         </Stack>
         <SettingValue settingsState={settingsState} setting={setting} />
