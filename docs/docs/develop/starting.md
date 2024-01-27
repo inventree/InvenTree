@@ -32,7 +32,7 @@ Before contributing to the project, please read the [contributing guidelines](co
 
 Bare Metal
 
-```mermaid
+``` mermaid
 graph LR
   A[Start] --> B{Error?};
   B -->|Yes| C[Hmm...];
