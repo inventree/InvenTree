@@ -60,6 +60,14 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
 
     required_attributes = ['SLUG', 'NAME', 'DESCRIPTION', 'machine_type']
 
+    def init_driver(self):
+        """This method gets called after all machines are created and can be used to initialize the driver.
+
+        After the driver is initialized, the self.init_machine function is
+        called for each machine associated with that driver.
+        """
+        pass
+
     def init_machine(self, machine: 'BaseMachineType'):
         """This method gets called for each active machine using that driver while initialization.
 

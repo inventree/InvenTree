@@ -109,6 +109,10 @@ class MachineRegistry:
         for machine_config in MachineConfig.objects.all():
             self.add_machine(machine_config, initialize=False)
 
+        # initialize drivers
+        for driver in self.driver_instances.values():
+            driver.init_driver()
+
         # initialize machines after all machine instances were created
         for machine in self.machines.values():
             if machine.active:
