@@ -19,37 +19,37 @@ class MachineConfig(models.Model):
     name = models.CharField(
         unique=True,
         max_length=255,
-        verbose_name=_("Name"),
-        help_text=_("Name of machine")
+        verbose_name=_('Name'),
+        help_text=_('Name of machine'),
     )
 
     machine_type = models.CharField(
-        max_length=255,
-        verbose_name=_("Machine Type"),
-        help_text=_("Type of machine"),
+        max_length=255, verbose_name=_('Machine Type'), help_text=_('Type of machine')
     )
 
     driver = models.CharField(
         max_length=255,
-        verbose_name=_("Driver"),
-        help_text=_("Driver used for the machine")
+        verbose_name=_('Driver'),
+        help_text=_('Driver used for the machine'),
     )
 
     active = models.BooleanField(
-        default=True,
-        verbose_name=_("Active"),
-        help_text=_("Machines can be disabled")
+        default=True, verbose_name=_('Active'), help_text=_('Machines can be disabled')
     )
 
     def __str__(self) -> str:
         """String representation of a machine."""
-        return f"{self.name}"
+        return f'{self.name}'
 
     def save(self, *args, **kwargs) -> None:
         created = self._state.adding
 
         old_machine = None
-        if not created and self.pk and (old_machine := MachineConfig.objects.get(pk=self.pk)):
+        if (
+            not created
+            and self.pk
+            and (old_machine := MachineConfig.objects.get(pk=self.pk))
+        ):
             old_machine = old_machine.to_dict()
 
         super().save(*args, **kwargs)
@@ -72,7 +72,10 @@ class MachineConfig(models.Model):
 
     def to_dict(self):
         machine = {f.name: f.value_to_string(self) for f in self._meta.fields}
-        machine['settings'] = {setting.key: (setting.value, setting.config_type) for setting in MachineSetting.objects.filter(machine_config=self)}
+        machine['settings'] = {
+            (setting.config_type, setting.key): setting.value
+            for setting in MachineSetting.objects.filter(machine_config=self)
+        }
         return machine
 
     @property
@@ -81,28 +84,30 @@ class MachineConfig(models.Model):
 
     @property
     def errors(self):
-        return getattr(self.machine, "errors", [])
+        return getattr(self.machine, 'errors', [])
 
-    @admin.display(boolean=True, description=_("Driver available"))
+    @admin.display(boolean=True, description=_('Driver available'))
     def is_driver_available(self) -> bool:
         """Status if driver for machine is available"""
         return self.machine is not None and self.machine.driver is not None
 
-    @admin.display(boolean=True, description=_("No errors"))
+    @admin.display(boolean=True, description=_('No errors'))
     def no_errors(self) -> bool:
         """Status if machine has errors"""
         return len(self.errors) == 0
 
-    @admin.display(boolean=True, description=_("Initialized"))
+    @admin.display(boolean=True, description=_('Initialized'))
     def initialized(self) -> bool:
         """Status if machine is initialized"""
-        return getattr(self.machine, "initialized", False)
+        return getattr(self.machine, 'initialized', False)
 
-    @admin.display(description=_("Errors"))
+    @admin.display(description=_('Errors'))
     def get_admin_errors(self):
-        return format_html_join(mark_safe("<br>"), "{}", ((str(error),) for error in self.errors)) or mark_safe(f"<i>{_('No errors')}</i>")
+        return format_html_join(
+            mark_safe('<br>'), '{}', ((str(error),) for error in self.errors)
+        ) or mark_safe(f"<i>{_('No errors')}</i>")
 
-    @admin.display(description=_("Machine status"))
+    @admin.display(description=_('Machine status'))
     def get_machine_status(self):
         if self.machine is None:
             return None
@@ -110,7 +115,7 @@ class MachineConfig(models.Model):
         out = mark_safe(self.machine.status.render(self.machine.status))
 
         if self.machine.status_text:
-            out += escape(f" ({self.machine.status_text})")
+            out += escape(f' ({self.machine.status_text})')
 
         return out
 
@@ -118,37 +123,41 @@ class MachineConfig(models.Model):
 class MachineSetting(common.models.BaseInvenTreeSetting):
     """This models represents settings for individual machines."""
 
-    typ = "machine_config"
-    extra_unique_fields = ["machine_config", "config_type"]
+    typ = 'machine_config'
+    extra_unique_fields = ['machine_config', 'config_type']
 
     class Meta:
         """Meta for MachineSetting."""
-        unique_together = [
-            ("machine_config", "config_type", "key")
-        ]
+
+        unique_together = [('machine_config', 'config_type', 'key')]
 
     class ConfigType(models.TextChoices):
-        MACHINE = "M", _("Machine")
-        DRIVER = "D", _("Driver")
+        MACHINE = 'M', _('Machine')
+        DRIVER = 'D', _('Driver')
 
     machine_config = models.ForeignKey(
         MachineConfig,
-        related_name="settings",
-        verbose_name=_("Machine Config"),
-        on_delete=models.CASCADE
+        related_name='settings',
+        verbose_name=_('Machine Config'),
+        on_delete=models.CASCADE,
     )
 
     config_type = models.CharField(
-        verbose_name=_("Config type"),
-        max_length=1,
-        choices=ConfigType.choices,
+        verbose_name=_('Config type'), max_length=1, choices=ConfigType.choices
     )
 
+    def save(self, *args, **kwargs) -> None:
+        old_machine = self.machine_config.to_dict()
+
+        super().save(*args, **kwargs)
+
+        registry.update_machine(old_machine, self.machine_config)
+
     @classmethod
-    def get_config_type(cls, config_type_str: Literal["M", "D"]):
-        if config_type_str == "M":
+    def get_config_type(cls, config_type_str: Literal['M', 'D']):
+        if config_type_str == 'M':
             return cls.ConfigType.MACHINE
-        elif config_type_str == "D":
+        elif config_type_str == 'D':
             return cls.ConfigType.DRIVER
 
     @classmethod
@@ -166,7 +175,7 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         if 'settings' not in kwargs:
             machine_config: MachineConfig = kwargs.pop('machine_config', None)
             if machine_config and machine_config.machine:
-                config_type = kwargs.get("config_type", None)
+                config_type = kwargs.get('config_type', None)
                 if config_type == cls.ConfigType.DRIVER:
                     kwargs['settings'] = machine_config.machine.driver_settings
                 elif config_type == cls.ConfigType.MACHINE:

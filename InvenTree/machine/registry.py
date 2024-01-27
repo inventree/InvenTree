@@ -7,13 +7,12 @@ from machine.machine_type import BaseDriver, BaseMachineType
 logger = logging.getLogger('inventree')
 
 
-class MachinesRegistry:
+class MachineRegistry:
     def __init__(self) -> None:
         """Initialize machine registry
 
         Set up all needed references for internal and external states.
         """
-
         self.machine_types: Dict[str, Type[BaseMachineType]] = {}
         self.drivers: Dict[str, Type[BaseDriver]] = {}
         self.driver_instances: Dict[str, BaseDriver] = {}
@@ -23,7 +22,7 @@ class MachinesRegistry:
         self.errors = []
 
     def initialize(self):
-        print("INITIALIZE")  # TODO: remove debug statement
+        print('INITIALIZE')  # TODO: remove debug statement
         self.discover_machine_types()
         self.discover_drivers()
         self.load_machines()
@@ -31,12 +30,14 @@ class MachinesRegistry:
     def discover_machine_types(self):
         import InvenTree.helpers
 
-        logger.debug("Collecting machine types")
+        logger.debug('Collecting machine types')
 
         machine_types: Dict[str, Type[BaseMachineType]] = {}
         base_drivers: List[Type[BaseDriver]] = []
 
-        discovered_machine_types: Set[Type[BaseMachineType]] = InvenTree.helpers.inheritors(BaseMachineType)
+        discovered_machine_types: Set[Type[BaseMachineType]] = (
+            InvenTree.helpers.inheritors(BaseMachineType)
+        )
         for machine_type in discovered_machine_types:
             try:
                 machine_type.validate()
@@ -45,7 +46,9 @@ class MachinesRegistry:
                 continue
 
             if machine_type.SLUG in machine_types:
-                self.errors.append(ValueError(f"Cannot re-register machine type '{machine_type.SLUG}'"))
+                self.errors.append(
+                    ValueError(f"Cannot re-register machine type '{machine_type.SLUG}'")
+                )
                 continue
 
             machine_types[machine_type.SLUG] = machine_type
@@ -54,16 +57,18 @@ class MachinesRegistry:
         self.machine_types = machine_types
         self.base_drivers = base_drivers
 
-        logger.debug(f"Found {len(self.machine_types.keys())} machine types")
+        logger.debug(f'Found {len(self.machine_types.keys())} machine types')
 
     def discover_drivers(self):
         import InvenTree.helpers
 
-        logger.debug("Collecting machine drivers")
+        logger.debug('Collecting machine drivers')
 
         drivers: Dict[str, Type[BaseDriver]] = {}
 
-        discovered_drivers: Set[Type[BaseDriver]] = InvenTree.helpers.inheritors(BaseDriver)
+        discovered_drivers: Set[Type[BaseDriver]] = InvenTree.helpers.inheritors(
+            BaseDriver
+        )
         for driver in discovered_drivers:
             # skip discovered drivers that define a base driver for a machine type
             if driver in self.base_drivers:
@@ -76,14 +81,16 @@ class MachinesRegistry:
                 continue
 
             if driver.SLUG in drivers:
-                self.errors.append(ValueError(f"Cannot re-register driver '{driver.SLUG}'"))
+                self.errors.append(
+                    ValueError(f"Cannot re-register driver '{driver.SLUG}'")
+                )
                 continue
 
             drivers[driver.SLUG] = driver
 
         self.drivers = drivers
 
-        logger.debug(f"Found {len(self.drivers.keys())} machine drivers")
+        logger.debug(f'Found {len(self.drivers.keys())} machine drivers')
 
     def get_driver_instance(self, slug: str):
         if slug not in self.driver_instances:
@@ -110,7 +117,9 @@ class MachinesRegistry:
     def add_machine(self, machine_config, initialize=True):
         machine_type = self.machine_types.get(machine_config.machine_type, None)
         if machine_type is None:
-            self.errors.append(f"Machine type '{machine_config.machine_type}' not found")
+            self.errors.append(
+                f"Machine type '{machine_config.machine_type}' not found"
+            )
             return
 
         machine: BaseMachineType = machine_type(machine_config)
@@ -120,8 +129,11 @@ class MachinesRegistry:
             machine.initialize()
 
     def update_machine(self, old_machine_state, machine_config):
-        if (machine := machine_config.machine) and machine.driver:
-            machine.driver.update_machine(old_machine_state, machine)
+        if machine := machine_config.machine:
+            machine.update(old_machine_state)
+
+    def restart_machine(self, machine):
+        machine.restart()
 
     def remove_machine(self, machine: BaseMachineType):
         self.machines.pop(str(machine.pk), None)
@@ -137,7 +149,14 @@ class MachinesRegistry:
             active: (bool)
             base_driver: base driver (class)
         """
-        allowed_fields = ["name", "machine_type", "driver", "initialized", "active", "base_driver"]
+        allowed_fields = [
+            'name',
+            'machine_type',
+            'driver',
+            'initialized',
+            'active',
+            'base_driver',
+        ]
 
         kwargs = {'initialized': True, **kwargs}
 
@@ -147,12 +166,14 @@ class MachinesRegistry:
                     continue
 
                 # check if current driver is subclass from base_driver
-                if key == "base_driver":
-                    if machine.driver and not issubclass(machine.driver.__class__, value):
+                if key == 'base_driver':
+                    if machine.driver and not issubclass(
+                        machine.driver.__class__, value
+                    ):
                         return False
 
                 # check if current machine is subclass from machine_type
-                elif key == "machine_type":
+                elif key == 'machine_type':
                     if issubclass(machine.__class__, value):
                         return False
 
@@ -169,4 +190,4 @@ class MachinesRegistry:
         return self.machines.get(str(pk), None)
 
 
-registry: MachinesRegistry = MachinesRegistry()
+registry: MachineRegistry = MachineRegistry()

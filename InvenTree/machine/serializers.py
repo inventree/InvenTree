@@ -26,6 +26,7 @@ class MachineConfigSerializer(serializers.ModelSerializer):
             'status_text',
             'machine_errors',
             'is_driver_available',
+            'restart_required',
         ]
 
         read_only_fields = ['machine_type', 'driver']
@@ -36,6 +37,7 @@ class MachineConfigSerializer(serializers.ModelSerializer):
     status_text = serializers.SerializerMethodField('get_status_text')
     machine_errors = serializers.SerializerMethodField('get_errors')
     is_driver_available = serializers.SerializerMethodField('get_is_driver_available')
+    restart_required = serializers.SerializerMethodField('get_restart_required')
 
     def get_initialized(self, obj: MachineConfig) -> bool:
         return getattr(obj.machine, 'initialized', False)
@@ -59,6 +61,9 @@ class MachineConfigSerializer(serializers.ModelSerializer):
 
     def get_is_driver_available(self, obj: MachineConfig) -> bool:
         return obj.is_driver_available()
+
+    def get_restart_required(self, obj: MachineConfig) -> bool:
+        return getattr(obj.machine, 'restart_required', False)
 
 
 class MachineConfigCreateSerializer(MachineConfigSerializer):
@@ -168,3 +173,12 @@ class MachineRegistryStatusSerializer(serializers.Serializer):
         fields = ['registry_errors']
 
     registry_errors = serializers.ListField(child=MachineRegistryErrorSerializer())
+
+
+class MachineRestartSerializer(serializers.Serializer):
+    """Serializer for the machine restart response."""
+
+    class Meta:
+        fields = ['ok']
+
+    ok = serializers.BooleanField()

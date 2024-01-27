@@ -136,6 +136,23 @@ class MachineSettingDetail(RetrieveUpdateAPI):
         )
 
 
+class MachineRestart(APIView):
+    """Endpoint for performing a machine restart.
+
+    - POST: restart machine
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(responses={200: MachineSerializers.MachineRestartSerializer()})
+    def post(self, request, pk):
+        machine = get_machine(pk)
+        registry.restart_machine(machine)
+
+        result = MachineSerializers.MachineRestartSerializer({'ok': True}).data
+        return Response(result)
+
+
 class MachineTypesList(APIView):
     """List API Endpoint for all discovered machine types.
 
@@ -209,6 +226,7 @@ machine_api_urls = [
     path(
         '<uuid:pk>/',
         include([
+            # settings
             path(
                 'settings/',
                 include([
@@ -220,6 +238,9 @@ machine_api_urls = [
                     path('', MachineSettingList.as_view(), name='api-machine-settings'),
                 ]),
             ),
+            # restart
+            path('restart/', MachineRestart.as_view(), name='api-machine-restart'),
+            # detail
             path('', MachineDetail.as_view(), name='api-machine-detail'),
         ]),
     ),

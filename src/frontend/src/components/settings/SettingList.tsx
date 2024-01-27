@@ -17,10 +17,12 @@ import { SettingItem } from './SettingItem';
  */
 export function SettingList({
   settingsState,
-  keys
+  keys,
+  onChange
 }: {
   settingsState: SettingsStateProps;
   keys?: string[];
+  onChange?: () => void;
 }) {
   useEffect(() => {
     settingsState.fetchSettings();
@@ -46,6 +48,7 @@ export function SettingList({
                   settingsState={settingsState}
                   setting={setting}
                   shaded={i % 2 === 0}
+                  onChange={onChange}
                 />
               ) : (
                 <Text size="sm" italic color="red">
@@ -88,10 +91,12 @@ export function PluginSettingList({ pluginPk }: { pluginPk: string }) {
 
 export function MachineSettingList({
   machinePk,
-  configType
+  configType,
+  onChange
 }: {
   machinePk: string;
   configType: 'M' | 'D';
+  onChange?: () => void;
 }) {
   const machineSettingsStore = useRef(
     createMachineSettingsState({
@@ -101,5 +106,5 @@ export function MachineSettingList({
   ).current;
   const machineSettings = useStore(machineSettingsStore);
 
-  return <SettingList settingsState={machineSettings} />;
+  return <SettingList settingsState={machineSettings} onChange={onChange} />;
 }

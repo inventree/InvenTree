@@ -15,7 +15,8 @@ import {
   Text,
   Title
 } from '@mantine/core';
-import { IconDots, IconRefresh } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconDots, IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -59,6 +60,7 @@ interface MachineI {
   status_text: string;
   machine_errors: string[];
   is_driver_available: boolean;
+  restart_required: boolean;
 }
 
 function MachineStatusIndicator({ machine }: { machine: MachineI }) {
@@ -174,6 +176,24 @@ function MachineDrawer({
     [machine?.driver, machineDrivers]
   );
 
+  const restartMachine = useCallback(
+    (machinePk: string) => {
+      api
+        .post(
+          apiUrl(ApiPaths.machine_restart, undefined, { machine: machinePk })
+        )
+        .then(() => {
+          refetch();
+          notifications.show({
+            message: t`Machine restarted`,
+            color: 'green',
+            icon: <IconCheck size="1rem" />
+          });
+        });
+    },
+    [refetch]
+  );
+
   return (
     <Stack spacing="xs">
       <Group position="apart">
@@ -217,7 +237,20 @@ function MachineDrawer({
                   onFormSuccess: () => navigate(-1)
                 });
               }
-            })
+            }),
+            {
+              icon: <IconRefresh />,
+              name: t`Restart`,
+              tooltip:
+                t`Restart machine` +
+                (machine?.restart_required
+                  ? ' (' + t`manual restart required` + ')'
+                  : ''),
+              indicator: machine?.restart_required
+                ? { color: 'red' }
+                : undefined,
+              onClick: () => machine && restartMachine(machine?.pk)
+            }
           ]}
         />
       </Group>
@@ -309,14 +342,22 @@ function MachineDrawer({
             <Title order={5} pb={4}>
               <Trans>Machine Settings</Trans>
             </Title>
-            <MachineSettingList machinePk={machinePk} configType="M" />
+            <MachineSettingList
+              machinePk={machinePk}
+              configType="M"
+              onChange={refetch}
+            />
           </Card>
 
           <Card withBorder>
             <Title order={5} pb={4}>
               <Trans>Driver Settings</Trans>
             </Title>
-            <MachineSettingList machinePk={machinePk} configType="D" />
+            <MachineSettingList
+              machinePk={machinePk}
+              configType="D"
+              onChange={refetch}
+            />
           </Card>
         </>
       )}

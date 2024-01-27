@@ -107,6 +107,7 @@ export enum ApiPaths {
   machine_driver_list = 'api-machine-drivers',
   machine_registry_status = 'api-machine-registry-status',
   machine_list = 'api-machine-list',
+  machine_restart = 'api-machine-restart',
   machine_setting_list = 'api-machine-settings',
   machine_setting_detail = 'api-machine-settings-detail'
 }

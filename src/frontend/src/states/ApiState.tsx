@@ -229,6 +229,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'machine/status/';
     case ApiPaths.machine_list:
       return 'machine/';
+    case ApiPaths.machine_restart:
+      return 'machine/:machine/restart/';
     case ApiPaths.machine_setting_list:
       return 'machine/:machine/settings/';
     case ApiPaths.machine_setting_detail:

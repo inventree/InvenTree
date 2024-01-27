@@ -28,8 +28,9 @@ class LabelPrintingMachineType(BaseMachineType):
 
     class LabelPrinterStatus(MachineStatus):
         CONNECTED = 100, _('Connected'), 'success'
-        PRINTING = 101, _('Printing'), 'primary'
-        PAPER_MISSING = 301, _('Paper missing'), 'warning'
+        STANDBY = 101, _('Standby'), 'success'
+        PRINTING = 110, _('Printing'), 'primary'
+        LABEL_SPOOL_EMPTY = 301, _('Label spool empty'), 'warning'
         DISCONNECTED = 400, _('Disconnected'), 'danger'
 
     MACHINE_STATUS = LabelPrinterStatus

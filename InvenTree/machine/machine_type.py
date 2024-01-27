@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from common.models import SettingsKeyType
     from machine.models import MachineConfig
 else:  # pragma: no cover
+
     class MachineConfig:
         pass
 
@@ -34,6 +35,7 @@ class MachineStatus(StatusCode):
         4XX - Something wrong with the driver (e.g. cannot connect to the machine)
         5XX - Unknown issues
     """
+
     pass
 
 
@@ -56,9 +58,9 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
 
     machine_type: str
 
-    required_attributes = ["SLUG", "NAME", "DESCRIPTION", "machine_type"]
+    required_attributes = ['SLUG', 'NAME', 'DESCRIPTION', 'machine_type']
 
-    def init_machine(self, machine: "BaseMachineType"):
+    def init_machine(self, machine: 'BaseMachineType'):
         """This method gets called for each active machine using that driver while initialization.
 
         If this function raises an Exception, it gets added to the machine.errors
@@ -69,15 +71,28 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         """
         pass
 
-    def update_machine(self, old_machine_state: Dict[str, Any], machine: "BaseMachineType"):
+    def update_machine(
+        self, old_machine_state: Dict[str, Any], machine: 'BaseMachineType'
+    ):
         """This method gets called for each update of a machine
 
-        TODO: this function gets called even the settings are not stored yet when edited through the admin dashboard
-        TODO: test also if API is done, that this function gets called for settings changes
+        Note:
+            machine.restart_required can be set to True here if the machine needs a manual restart to apply the changes
 
         Arguments:
             old_machine_state: Dict holding the old machine state before update
             machine: Machine instance with the new state
+        """
+        pass
+
+    def restart_machine(self, machine: 'BaseMachineType'):
+        """This method gets called on manual machine restart e.g. by using the restart machine action in the Admin Center.
+
+        Note:
+            machine.restart_required gets set to False again
+
+        Arguments:
+            machine: Machine instance
         """
         pass
 
@@ -116,7 +131,14 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
     default_machine_status: MachineStatus
 
     # used by the ClassValidationMixin
-    required_attributes = ["SLUG", "NAME", "DESCRIPTION", "base_driver", "MACHINE_STATUS", "default_machine_status"]
+    required_attributes = [
+        'SLUG',
+        'NAME',
+        'DESCRIPTION',
+        'base_driver',
+        'MACHINE_STATUS',
+        'default_machine_status',
+    ]
 
     def __init__(self, machine_config: MachineConfig) -> None:
         from machine import registry
@@ -126,7 +148,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         self.initialized = False
 
         self.status = self.default_machine_status
-        self.status_text = ""
+        self.status_text = ''
 
         self.pk = machine_config.pk
         self.driver = registry.get_driver_instance(machine_config.driver)
@@ -134,15 +156,25 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         if not self.driver:
             self.errors.append(f"Driver '{machine_config.driver}' not found")
         if self.driver and not isinstance(self.driver, self.base_driver):
-            self.errors.append(f"'{self.driver.NAME}' is incompatible with machine type '{self.NAME}'")
+            self.errors.append(
+                f"'{self.driver.NAME}' is incompatible with machine type '{self.NAME}'"
+            )
 
-        self.machine_settings: Dict[str, SettingsKeyType] = getattr(self, "MACHINE_SETTINGS", {})
-        self.driver_settings: Dict[str, SettingsKeyType] = getattr(self.driver, "MACHINE_SETTINGS", {})
+        self.machine_settings: Dict[str, SettingsKeyType] = getattr(
+            self, 'MACHINE_SETTINGS', {}
+        )
+        self.driver_settings: Dict[str, SettingsKeyType] = getattr(
+            self.driver, 'MACHINE_SETTINGS', {}
+        )
 
-        self.setting_types: List[Tuple[Dict[str, SettingsKeyType], MachineSetting.ConfigType]] = [
+        self.setting_types: List[
+            Tuple[Dict[str, SettingsKeyType], MachineSetting.ConfigType]
+        ] = [
             (self.machine_settings, MachineSetting.ConfigType.MACHINE),
             (self.driver_settings, MachineSetting.ConfigType.DRIVER),
         ]
+
+        self.restart_required = False
 
         if len(self.errors) > 0:
             return
@@ -150,13 +182,14 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         # TODO: add further init stuff here
 
     def __str__(self):
-        return f"{self.name}"
+        return f'{self.name}'
 
     # --- properties
     @property
     def machine_config(self):
         # always fetch the machine_config if needed to ensure we get the newest reference
         from .models import MachineConfig
+
         return MachineConfig.objects.get(pk=self.pk)
 
     @property
@@ -179,7 +212,9 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
             error_parts = []
             for config_type, missing in missing_settings.items():
                 if len(missing) > 0:
-                    error_parts.append(f"{config_type.name} settings: " + ", ".join(missing))
+                    error_parts.append(
+                        f'{config_type.name} settings: ' + ', '.join(missing)
+                    )
             self.errors.append(f"Missing {' and '.join(error_parts)}")
             return
 
@@ -189,8 +224,29 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         except Exception as e:
             self.errors.append(e)
 
+    def update(self, old_state: dict[str, Any]):
+        """Machine update function, gets called if the machine itself changes or their settings."""
+        if self.driver is None:
+            return
+
+        try:
+            self.driver.update_machine(old_state, self)
+        except Exception as e:
+            self.errors.append(e)
+
+    def restart(self):
+        """Machine restart function, can be used to manually restart the machine from the admin ui."""
+        if self.driver is None:
+            return
+
+        try:
+            self.restart_required = False
+            self.driver.restart_machine(self)
+        except Exception as e:
+            self.errors.append(e)
+
     # --- helper functions
-    def get_setting(self, key, config_type_str: Literal["M", "D"], cache=False):
+    def get_setting(self, key, config_type_str: Literal['M', 'D'], cache=False):
         """Return the 'value' of the setting associated with this machine.
 
         Arguments:
@@ -201,9 +257,14 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         from machine.models import MachineSetting
 
         config_type = MachineSetting.get_config_type(config_type_str)
-        return MachineSetting.get_setting(key, machine_config=self.machine_config, config_type=config_type, cache=cache)
+        return MachineSetting.get_setting(
+            key,
+            machine_config=self.machine_config,
+            config_type=config_type,
+            cache=cache,
+        )
 
-    def set_setting(self, key, config_type_str: Literal["M", "D"], value):
+    def set_setting(self, key, config_type_str: Literal['M', 'D'], value):
         """Set plugin setting value by key.
 
         Arguments:
@@ -214,7 +275,13 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         from machine.models import MachineSetting
 
         config_type = MachineSetting.get_config_type(config_type_str)
-        MachineSetting.set_setting(key, value, None, machine_config=self.machine_config, config_type=config_type)
+        MachineSetting.set_setting(
+            key,
+            value,
+            None,
+            machine_config=self.machine_config,
+            config_type=config_type,
+        )
 
     def check_settings(self):
         """Check if all required settings for this machine are defined.
@@ -227,10 +294,16 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
         missing_settings: Dict[MachineSetting.ConfigType, List[str]] = {}
         for settings, config_type in self.setting_types:
-            is_valid, missing = MachineSetting.check_all_settings(settings_definition=settings, machine_config=self.machine_config, config_type=config_type)
+            is_valid, missing = MachineSetting.check_all_settings(
+                settings_definition=settings,
+                machine_config=self.machine_config,
+                config_type=config_type,
+            )
             missing_settings[config_type] = missing
 
-        return all(len(missing) == 0 for missing in missing_settings.values()), missing_settings
+        return all(
+            len(missing) == 0 for missing in missing_settings.values()
+        ), missing_settings
 
     def set_status(self, status: MachineStatus):
         """Set the machine status code. There are predefined ones for each MachineType.
