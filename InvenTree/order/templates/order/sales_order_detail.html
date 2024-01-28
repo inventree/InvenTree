@@ -243,6 +243,9 @@
                 order: {{ order.pk }},
                 reference: '{{ order.reference }}',
                 status: {{ order.status }},
+                {% if order.project_code %}
+                project_code: {{ order.project_code.pk }},
+                {% endif %}
                 open: {% js_bool order.is_open %},
                 {% if roles.sales_order.change %}
                 {% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}

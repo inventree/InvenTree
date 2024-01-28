@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Anchor } from '@mantine/core';
+import { Anchor, Skeleton } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
@@ -73,4 +73,17 @@ export function ThumbnailHoverCard({
   }
 
   return <div>{card}</div>;
+}
+
+export function PartHoverCard({ part }: { part: any }) {
+  return part ? (
+    <ThumbnailHoverCard
+      src={part.thumbnail || part.image}
+      text={part.full_name}
+      alt={part.description}
+      link=""
+    />
+  ) : (
+    <Skeleton />
+  );
 }
