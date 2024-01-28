@@ -69,6 +69,12 @@ type ProgressBarfield = {
 
 type FieldValueType = string | number | undefined;
 
+type FieldProps = {
+  field_data: any;
+  field_value: string | number;
+  unit?: string | null;
+};
+
 /**
  * Fetches and wraps an InvenTreeIcon in a flex div
  * @param icon name of icon
@@ -199,7 +205,7 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
               return null;
           }
         })
-        .catch((error) => {
+        .catch(() => {
           return null;
         });
     }
@@ -243,56 +249,42 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
  * If owner is defined, only renders a badge
  * If user is defined, a badge is rendered in addition to main value
  */
-function TableStringValue({
-  field_data,
-  field_value,
-  unit = null
-}: {
-  field_data: any;
-  field_value: string | number;
-  unit?: null | string;
-}) {
-  let value = field_value;
+function TableStringValue(props: FieldProps) {
+  let value = props.field_value;
 
-  if (field_data.value_formatter) {
-    value = field_data.value_formatter();
+  if (props.field_data.value_formatter) {
+    value = props.field_data.value_formatter();
   }
 
-  if (field_data.badge) {
-    return <NameBadge pk={value} type={field_data.badge} />;
+  if (props.field_data.badge) {
+    return <NameBadge pk={value} type={props.field_data.badge} />;
   }
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
         <span>
-          {value ? value : field_data.unit && '0'}{' '}
-          {field_data.unit == true && unit}
+          {value ? value : props.field_data.unit && '0'}{' '}
+          {props.field_data.unit == true && props.unit}
         </span>
       </Suspense>
-      {field_data.user && <NameBadge pk={field_data.user} type="user" />}
+      {props.field_data.user && (
+        <NameBadge pk={props.field_data.user} type="user" />
+      )}
     </div>
   );
 }
 
-function TableAnchorValue({
-  field_data,
-  field_value,
-  unit
-}: {
-  field_data: any;
-  field_value: string | number;
-  unit?: null | string;
-}) {
-  if (field_data.external) {
+function TableAnchorValue(props: FieldProps) {
+  if (props.field_data.external) {
     return (
       <Anchor
-        href={`${field_value}`}
+        href={`${props.field_value}`}
         target={'_blank'}
         rel={'noreferrer noopener'}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-          <Text>{field_value}</Text>
+          <Text>{props.field_value}</Text>
           <InvenTreeIcon icon="external" iconProps={{ size: 15 }} />
         </span>
       </Anchor>
@@ -300,9 +292,9 @@ function TableAnchorValue({
   }
 
   const { data } = useSuspenseQuery({
-    queryKey: ['detail', field_data.path],
+    queryKey: ['detail', props.field_data.path],
     queryFn: async () => {
-      const url = apiUrl(field_data.path, field_value);
+      const url = apiUrl(props.field_data.path, props.field_value);
 
       return api
         .get(url)
@@ -323,7 +315,9 @@ function TableAnchorValue({
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
       <Anchor
-        href={'/platform' + data.url ?? field_data.dest + field_value}
+        href={
+          '/platform' + data.url ?? props.field_data.dest + props.field_value
+        }
         target={data.external ? '_blank' : undefined}
         rel={data.external ? 'noreferrer noopener' : undefined}
       >
@@ -333,19 +327,11 @@ function TableAnchorValue({
   );
 }
 
-function ProgressBarValue({
-  field_data,
-  field_value,
-  unit
-}: {
-  field_data: any;
-  field_value: string | number;
-  unit?: null | string;
-}) {
+function ProgressBarValue(props: FieldProps) {
   return (
     <ProgressBar
-      value={field_data.progress}
-      maximum={field_data.total}
+      value={props.field_data.progress}
+      maximum={props.field_data.total}
       progressLabel
     />
   );

@@ -12,7 +12,6 @@ import {
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { ModalSettings } from '@mantine/modals/lib/context';
 import { useState } from 'react';
 
 import { api } from '../../App';
