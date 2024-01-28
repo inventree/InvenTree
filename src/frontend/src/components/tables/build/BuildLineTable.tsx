@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconShoppingCart,
@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
+import ReturnOrderDetail from '../../../pages/sales/ReturnOrderDetail';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { PartHoverCard } from '../../images/Thumbnail';
@@ -28,10 +29,6 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [];
-  }, []);
-
-  const renderQuantityColumn = useCallback((record: any) => {
-    return <Text>{record.quantity}</Text>;
   }, []);
 
   const renderAvailableColumn = useCallback((record: any) => {
@@ -118,14 +115,31 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         accessor: 'unit_quantity',
         title: t`Unit Quantity`,
         sortable: true,
-        render: (record: any) => record.bom_item_detail.quantity
-        // TODO: More information displayed here
+        render: (record: any) => {
+          return (
+            <Group position="apart">
+              <Text>{record.bom_item_detail?.quantity}</Text>
+              {record?.part_detail?.units && (
+                <Text size="xs">[{record.part_detail.units}]</Text>
+              )}
+            </Group>
+          );
+        }
       },
       {
         accessor: 'quantity',
         title: t`Required Quantity`,
         sortable: true,
-        render: renderQuantityColumn
+        render: (record: any) => {
+          return (
+            <Group position="apart">
+              <Text>{record.quantity}</Text>
+              {record?.part_detail?.units && (
+                <Text size="xs">[{record.part_detail.units}]</Text>
+              )}
+            </Group>
+          );
+        }
       },
       {
         accessor: 'available_stock',
@@ -139,7 +153,9 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         title: t`Allocated`,
         switchable: false,
         render: (record: any) => {
-          return (
+          return record?.bom_item_detail?.consumable ? (
+            <Text italic>{t`Consumable item`}</Text>
+          ) : (
             <ProgressBar
               progressLabel={true}
               value={record.allocated}
