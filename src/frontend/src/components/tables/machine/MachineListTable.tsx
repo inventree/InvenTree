@@ -380,7 +380,15 @@ function MachineDrawer({
 /**
  * Table displaying list of available plugins
  */
-export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
+export function MachineListTable({
+  props,
+  renderMachineDrawer = true,
+  createProps
+}: {
+  props: InvenTreeTableProps;
+  renderMachineDrawer?: boolean;
+  createProps?: { machine_type?: string; driver?: string };
+}) {
   const { machineTypes, machineDrivers } = useMachineTypeDriver();
 
   const table = useTable('machine');
@@ -483,6 +491,10 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
     fields: {
       name: {},
       machine_type: {
+        hidden: !!createProps?.machine_type,
+        ...(createProps?.machine_type
+          ? { value: createProps.machine_type }
+          : {}),
         field_type: 'choice',
         choices: machineTypes
           ? machineTypes.map((t) => ({
@@ -493,6 +505,8 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
         onValueChange: (value) => setCreateFormMachineType(value)
       },
       driver: {
+        hidden: !!createProps?.driver,
+        ...(createProps?.driver ? { value: createProps.driver } : {}),
         field_type: 'choice',
         disabled: !createFormMachineType,
         choices: createFormDriverOptions
@@ -501,7 +515,9 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
     },
     onFormSuccess: (data) => {
       table.refreshTable();
-      navigate(`machine-${data.pk}/`);
+      navigate(
+        renderMachineDrawer ? `machine-${data.pk}/` : `../machine-${data.pk}/`
+      );
     },
     onClose: () => {
       setCreateFormMachineType(null);
@@ -523,19 +539,21 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
   return (
     <>
       {createMachineForm.modal}
-      <DetailDrawer
-        title={t`Machine detail`}
-        size={'lg'}
-        renderContent={(id) => {
-          if (!id || !id.startsWith('machine-')) return false;
-          return (
-            <MachineDrawer
-              machinePk={id.replace('machine-', '')}
-              refreshTable={table.refreshTable}
-            />
-          );
-        }}
-      />
+      {renderMachineDrawer && (
+        <DetailDrawer
+          title={t`Machine detail`}
+          size={'lg'}
+          renderContent={(id) => {
+            if (!id || !id.startsWith('machine-')) return false;
+            return (
+              <MachineDrawer
+                machinePk={id.replace('machine-', '')}
+                refreshTable={table.refreshTable}
+              />
+            );
+          }}
+        />
+      )}
       <InvenTreeTable
         url={apiUrl(ApiPaths.machine_list)}
         tableState={table}
@@ -543,7 +561,12 @@ export function MachineListTable({ props }: { props: InvenTreeTableProps }) {
         props={{
           ...props,
           enableDownload: false,
-          onRowClick: (machine) => navigate(`machine-${machine.pk}/`),
+          onRowClick: (machine) =>
+            navigate(
+              renderMachineDrawer
+                ? `machine-${machine.pk}/`
+                : `../machine-${machine.pk}/`
+            ),
           tableActions,
           params: {
             ...props.params

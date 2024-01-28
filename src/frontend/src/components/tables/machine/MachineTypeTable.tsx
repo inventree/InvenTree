@@ -23,7 +23,7 @@ import { DetailDrawer } from '../../nav/DetailDrawer';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
-import { useMachineTypeDriver } from './MachineListTable';
+import { MachineListTable, useMachineTypeDriver } from './MachineListTable';
 
 export interface MachineTypeI {
   slug: string;
@@ -264,6 +264,23 @@ function MachineDriverDrawer({
               </List>
             </Group>
           </Stack>
+        </Stack>
+      </Card>
+
+      <Card withBorder>
+        <Stack spacing="md">
+          <Title order={4}>
+            <Trans>Machines</Trans>
+          </Title>
+
+          <MachineListTable
+            props={{ params: { driver: machineDriverSlug } }}
+            renderMachineDrawer={false}
+            createProps={{
+              machine_type: machineDriver?.machine_type,
+              driver: machineDriverSlug
+            }}
+          />
         </Stack>
       </Card>
     </Stack>
