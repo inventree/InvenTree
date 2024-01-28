@@ -12,10 +12,13 @@ import {
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import React, { useState } from 'react';
+import { ModalSettings } from '@mantine/modals/lib/context';
+import { useState } from 'react';
 
 import { api } from '../../App';
+import { UserRoles } from '../../enums/Roles';
 import { InvenTreeIcon } from '../../functions/icons';
+import { useUserState } from '../../states/UserState';
 import { ActionButton } from '../buttons/ActionButton';
 import { PartThumbTable } from '../tables/part/PartThumbTable';
 import { ApiImage } from './ApiImage';
@@ -24,6 +27,7 @@ import { ApiImage } from './ApiImage';
  * Props for detail image
  */
 export type DetailImageProps = {
+  appRole: UserRoles;
   src: string;
   apiPath: string;
   refresh: () => void;
@@ -313,6 +317,8 @@ export function DetailsImage(props: DetailImageProps) {
     props.refresh();
   };
 
+  const permissions = useUserState();
+
   return (
     <>
       <Paper
@@ -330,15 +336,23 @@ export function DetailsImage(props: DetailImageProps) {
           style={{ zIndex: 1 }}
           height={IMAGE_DIMENSION}
           width={IMAGE_DIMENSION}
+          onClick={() => {
+            modals.open({
+              children: <ApiImage src={img} />,
+              withCloseButton: false
+            });
+          }}
         />
-        <ImageActionButtons
-          visible={hovered}
-          actions={props.imageActions}
-          apiPath={props.apiPath}
-          hasImage={props.src ? true : false}
-          pk={props.pk}
-          setImage={setAndRefresh}
-        />
+        {permissions.hasChangeRole(props.appRole) && (
+          <ImageActionButtons
+            visible={hovered}
+            actions={props.imageActions}
+            apiPath={props.apiPath}
+            hasImage={props.src ? true : false}
+            pk={props.pk}
+            setImage={setAndRefresh}
+          />
+        )}
       </Paper>
     </>
   );

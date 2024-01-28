@@ -1,16 +1,17 @@
 import { Paper } from '@mantine/core';
 
+import { UserRoles } from '../../enums/Roles';
 import { DetailImageButtonProps, DetailsImage } from '../images/DetailsImage';
-import { DetailsField, DetailsTable } from '../tables/Details';
+import { DetailsField, DetailsTable } from './Details';
 
 /**
  * Type for defining field arrays
  */
 export type ItemDetailFields = {
-  left: DetailsField[];
-  right?: DetailsField[];
-  bottom_left?: DetailsField[];
-  bottom_right?: DetailsField[];
+  left: DetailsField[][];
+  right?: DetailsField[][];
+  bottom_left?: DetailsField[][];
+  bottom_right?: DetailsField[][];
   image?: DetailsImageType;
 };
 
@@ -31,12 +32,14 @@ export type DetailsImageType = {
  * @param partModel set to true only if source model is Part
  */
 export function ItemDetails({
+  appRole,
   params = {},
   apiPath,
   refresh,
   fields,
   partModel = false
 }: {
+  appRole: UserRoles;
   params?: any;
   apiPath: string;
   refresh: () => void;
@@ -52,6 +55,7 @@ export function ItemDetails({
         {fields.image && (
           <div style={{ flexGrow: '0' }}>
             <DetailsImage
+              appRole={appRole}
               imageActions={fields.image.imageActions}
               src={params.image}
               apiPath={apiPath}

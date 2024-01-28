@@ -150,6 +150,26 @@ def annotate_build_order_allocations(reference: str = ''):
     )
 
 
+def annotate_sales_order_requirements(reference: str = ''):
+    """Annotate the total quantity of each part required for sales orders.
+
+    - Only interested in 'active' sales orders
+    - We are looking for any BuildLine items which required this part (bom_item.sub_part)
+    - We are interested in the 'quantity' of each BuildLine item
+
+    """
+    # Order filter only returns incomplete shipments for open orders
+    order_filter = Q(order__status__in=SalesOrderStatusGroups.OPEN)
+    return Coalesce(
+        SubquerySum(f'{reference}sales_order_line_items__quantity', filter=order_filter)
+        - SubquerySum(
+            f'{reference}sales_order_line_items__shipped', filter=order_filter
+        ),
+        Decimal(0),
+        output_field=models.DecimalField(),
+    )
+
+
 def annotate_sales_order_allocations(reference: str = ''):
     """Annotate the total quantity of each part allocated to sales orders.
 

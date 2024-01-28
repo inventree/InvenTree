@@ -1,12 +1,16 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  ActionIcon,
   Anchor,
   Badge,
+  CopyButton,
   Group,
+  Progress,
   Skeleton,
   Table,
   Text,
-  Tooltip
+  Tooltip,
+  useMantineTheme
 } from '@mantine/core';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
@@ -16,6 +20,7 @@ import { ApiPaths } from '../../enums/ApiEndpoints';
 import { InvenTreeIcon } from '../../functions/icons';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
+import { ProgressBar } from '../items/ProgressBar';
 
 export type PartIconsType = {
   assembly: boolean;
@@ -29,14 +34,16 @@ export type PartIconsType = {
 };
 
 export type DetailsField =
-  | ({
+  | {
       name: string;
       label?: string;
-      owner?: boolean;
-      user?: boolean;
-      value_formatter?: () => (string | number)[] | string | null;
-    } & (StringDetailField | LinkDetailField | ProgressBarfield))
-  | DetailsField[];
+      badge?: BadgeType;
+      copy?: boolean;
+      value_formatter?: () => ValueFormatterReturn;
+    } & (StringDetailField | LinkDetailField | ProgressBarfield);
+
+type BadgeType = 'owner' | 'user' | 'group';
+type ValueFormatterReturn = string | number | null;
 
 type StringDetailField = {
   type: 'string' | 'text';
@@ -58,9 +65,11 @@ type ExternalLinkField = {
 
 type ProgressBarfield = {
   type: 'progressbar';
-  progress: string;
-  total: string;
+  progress: number;
+  total: number;
 };
+
+type FieldValueType = string | number | undefined;
 
 /**
  * Fetches and wraps an InvenTreeIcon in a flex div
@@ -162,15 +171,9 @@ function PartIcons({
  * Badge shows username, full name, or group name depending on server settings.
  * Badge appends icon to describe type of Owner
  */
-function OwnerBadge({
-  pk,
-  type
-}: {
-  pk: string | number;
-  type: 'user' | 'group' | 'owner';
-}) {
+function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
   const { data } = useSuspenseQuery({
-    queryKey: ['owner', type, pk],
+    queryKey: ['badge', type, pk],
     queryFn: async () => {
       let path: string = '';
 
@@ -211,6 +214,8 @@ function OwnerBadge({
     if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
       if (data.first_name || data.last_name) {
         return `${data.first_name} ${data.last_name}`;
+      } else {
+        return data.username;
       }
     } else if (type === 'user') {
       return data.username;
@@ -249,32 +254,25 @@ function TableStringValue({
   field_value: string | number;
   unit?: null | string;
 }) {
-  if (field_data.owner) {
-    return (
-      <OwnerBadge pk={field_value} type={field_data.user ? 'user' : 'owner'} />
-    );
-  }
+  let value = field_value;
 
   if (field_data.value_formatter) {
-    const data = field_data.value_formatter();
-    if (true) {
-      return (
-        <Suspense fallback={<Skeleton width={250} height={20} />}>
-          <Text>
-            {data} {field_data.unit == true && unit}
-          </Text>
-        </Suspense>
-      );
-    }
+    value = field_data.value_formatter();
+  }
+
+  if (field_data.badge) {
+    return <NameBadge pk={value} type={field_data.badge} />;
   }
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <span>
-        {field_value ? field_value : field_data.unit && '0'}{' '}
-        {field_data.unit == true && unit}
-      </span>
-      {field_data.user && <OwnerBadge pk={field_data.user} type="user" />}
+      <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
+        <span>
+          {value ? value : field_data.unit && '0'}{' '}
+          {field_data.unit == true && unit}
+        </span>
+      </Suspense>
+      {field_data.user && <NameBadge pk={field_data.user} type="user" />}
     </div>
   );
 }
@@ -285,12 +283,16 @@ function TableAnchorValue({
   unit = null
 }: {
   field_data: any;
-  field_value: any;
+  field_value: string | number;
   unit?: null | string;
 }) {
   if (field_data.external) {
     return (
-      <Anchor href={field_value} target={'_blank'} rel={'noreferrer noopener'}>
+      <Anchor
+        href={`${field_value}`}
+        target={'_blank'}
+        rel={'noreferrer noopener'}
+      >
         <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
           <Text>{field_value}</Text>
           <InvenTreeIcon icon="external" iconProps={{ size: 15 }} />
@@ -300,7 +302,7 @@ function TableAnchorValue({
   }
 
   const { data } = useSuspenseQuery({
-    queryKey: [field_data.path],
+    queryKey: ['detail', field_data.path],
     queryFn: async () => {
       const url = apiUrl(field_data.path, field_value);
 
@@ -315,13 +317,11 @@ function TableAnchorValue({
           }
         })
         .catch((error) => {
-          console.error(`Error fetching instance ${url}:`, error);
           return null;
         });
     }
   });
 
-  console.log('Data', data);
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
       <Anchor
@@ -335,14 +335,57 @@ function TableAnchorValue({
   );
 }
 
+function ProgressBarValue({
+  field_data,
+  field_value,
+  unit = null
+}: {
+  field_data: any;
+  field_value: string | number;
+  unit?: null | string;
+}) {
+  let value: FieldValueType | ValueFormatterReturn = field_value;
+  if (field_data.value_formatter) {
+    value = field_data.value_formatter();
+  }
+
+  const theme = useMantineTheme();
+
+  return (
+    <ProgressBar
+      value={field_data.progress}
+      maximum={field_data.total}
+      progressLabel
+    />
+  );
+}
+
+function CopyField({ value }: { value: string }) {
+  return (
+    <CopyButton value={value}>
+      {({ copied, copy }) => (
+        <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
+          <ActionIcon color={copied ? 'teal' : 'gray'} onClick={copy}>
+            {copied ? (
+              <InvenTreeIcon icon="check" />
+            ) : (
+              <InvenTreeIcon icon="copy" />
+            )}
+          </ActionIcon>
+        </Tooltip>
+      )}
+    </CopyButton>
+  );
+}
+
 function TableField({
   field_data,
   field_value,
-  unit = false
+  unit = null
 }: {
-  field_data: any;
-  field_value: any;
-  unit: boolean;
+  field_data: DetailsField[];
+  field_value: FieldValueType[];
+  unit?: string | null;
 }) {
   function getFieldType(type: string) {
     switch (type) {
@@ -351,46 +394,46 @@ function TableField({
         return TableStringValue;
       case 'link':
         return TableAnchorValue;
+      case 'progressbar':
+        return ProgressBarValue;
     }
-  }
-  let FieldType: any = null;
-  if (!Array.isArray(field_data)) {
-    FieldType = getFieldType(field_data.type);
   }
 
   return (
     <tr>
-      <td style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        <InvenTreeIcon
-          icon={
-            Array.isArray(field_data) ? field_data[0].name : field_data.name
-          }
-        />
-        <Text>
-          {Array.isArray(field_data) ? field_data[0].label : field_data.label}
-        </Text>
+      <td
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '20px',
+          justifyContent: 'flex-start'
+        }}
+      >
+        <InvenTreeIcon icon={field_data[0].name} />
+        <Text>{field_data[0].label}</Text>
       </td>
-      <td>
+      <td style={{ minWidth: '40%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {Array.isArray(field_data) ? (
-            field_data.map((data: any, index: number) => {
-              FieldType = getFieldType(data.type);
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexGrow: '1'
+            }}
+          >
+            {field_data.map((data: DetailsField, index: number) => {
+              let FieldType: any = getFieldType(data.type);
               return (
                 <FieldType
-                  field_value={field_value[index]}
                   field_data={data}
+                  field_value={field_value[index]}
                   unit={unit}
                   key={index}
                 />
               );
-            })
-          ) : (
-            <FieldType
-              field_value={field_value}
-              field_data={field_data}
-              unit={unit}
-            />
-          )}
+            })}
+          </div>
+          {field_data[0].copy && <CopyField value={`${field_value[0]}`} />}
         </div>
       </td>
     </tr>
@@ -403,7 +446,7 @@ export function DetailsTable({
   partIcons = false
 }: {
   item: any;
-  fields: any;
+  fields: DetailsField[][];
   partIcons?: boolean;
 }) {
   return (
@@ -424,22 +467,16 @@ export function DetailsTable({
               />
             </tr>
           )}
-          {fields.map((data: any, index: number) => {
-            let value;
-            if (Array.isArray(data)) {
-              value = [];
-              if (data[0].value_formatter) {
-                value = data[0].value_formatter();
-                data[0].value_formatter = null;
-                console.log('VAL', value);
+          {fields.map((data: DetailsField[], index: number) => {
+            let value: FieldValueType[] = [];
+            for (const val of data) {
+              if (val.value_formatter) {
+                value.push(undefined);
               } else {
-                for (const val of data) {
-                  value.push(item[val.name]);
-                }
+                value.push(item[val.name]);
               }
-            } else {
-              value = item[data.name];
             }
+
             return (
               <TableField
                 field_data={data}

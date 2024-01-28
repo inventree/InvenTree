@@ -38,15 +38,15 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import {
-  DetailsImageType,
-  ItemDetailFields,
-  ItemDetails
-} from '../../components/nav/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { DetailsField } from '../../components/tables/Details';
+import {
+  DetailsImageType,
+  ItemDetailFields,
+  ItemDetails
+} from '../../components/tables/ItemDetails';
 import { BomTable } from '../../components/tables/bom/BomTable';
 import { UsedInTable } from '../../components/tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
@@ -62,6 +62,7 @@ import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiPaths } from '../../enums/ApiEndpoints';
+import { UserRoles } from '../../enums/Roles';
 import { editPart } from '../../forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -91,10 +92,10 @@ export default function PartDetail() {
   });
 
   const detailFields = (part: any): ItemDetailFields => {
-    let left: DetailsField[] = [];
-    let right: DetailsField[] = [];
-    let bottom_right: DetailsField[] = [];
-    let bottom_left: DetailsField[] = [];
+    let left: DetailsField[][] = [];
+    let right: DetailsField[][] = [];
+    let bottom_right: DetailsField[][] = [];
+    let bottom_left: DetailsField[][] = [];
 
     let image: DetailsImageType = {
       name: 'image',
@@ -105,135 +106,172 @@ export default function PartDetail() {
       }
     };
 
-    left.push({
-      type: 'text',
-      name: 'description',
-      label: t`Description`
-    });
+    left.push([
+      {
+        type: 'text',
+        name: 'description',
+        label: t`Description`,
+        copy: true
+      }
+    ]);
 
     if (part.variant_of) {
-      left.push({
-        type: 'link',
-        name: 'variant_of',
-        label: t`Variant of`,
-        path: ApiPaths.part_list,
-        dest: '/part/'
-      });
+      left.push([
+        {
+          type: 'link',
+          name: 'variant_of',
+          label: t`Variant of`,
+          path: ApiPaths.part_list,
+          dest: '/part/'
+        }
+      ]);
     }
 
-    right.push({
-      type: 'string',
-      name: 'unallocated_stock',
-      unit: true,
-      label: t`Available Stock`
-    });
+    right.push([
+      {
+        type: 'string',
+        name: 'unallocated_stock',
+        unit: true,
+        label: t`Available Stock`
+      }
+    ]);
 
-    right.push({
-      type: 'string',
-      name: 'total_in_stock',
-      unit: true,
-      label: t`In Stock`
-    });
+    right.push([
+      {
+        type: 'string',
+        name: 'total_in_stock',
+        unit: true,
+        label: t`In Stock`
+      }
+    ]);
 
     if (part.minimum_stock) {
-      right.push({
-        type: 'string',
-        name: 'minimum_stock',
-        unit: true,
-        label: t`Minimum Stock`
-      });
+      right.push([
+        {
+          type: 'string',
+          name: 'minimum_stock',
+          unit: true,
+          label: t`Minimum Stock`
+        }
+      ]);
     }
 
     if (part.ordering <= 0) {
-      right.push({
-        type: 'string',
-        name: 'ordering',
-        label: t`On order`,
-        unit: true
-      });
+      right.push([
+        {
+          type: 'string',
+          name: 'ordering',
+          label: t`On order`,
+          unit: true
+        }
+      ]);
     }
 
     if (
       part.assembly &&
       (part.allocated_to_build_orders > 0 || part.required_for_build_orders > 0)
     ) {
-      right.push({
-        type: 'progressbar',
-        name: 'allocated_to_build_orders',
-        total: 'required_for_build_orders',
-        progress: 'allocated_to_build_orders',
-        label: t`Allocated to Build Orders`
-      });
+      right.push([
+        {
+          type: 'progressbar',
+          name: 'allocated_to_build_orders',
+          total: part.required_for_build_orders,
+          progress: part.allocated_to_build_orders,
+          label: t`Allocated to Build Orders`
+        }
+      ]);
     }
 
-    if (part.salable && part.allocated_to_sales_orders > 0) {
-      right.push({
-        type: 'progressbar',
-        name: 'allocated_to_sales_orders',
-        total: 'allocated_to_sales_orders',
-        progress: 'allocated_to_sales_orders',
-        label: t`Allocated to Sales Orders`
-      });
+    if (
+      part.salable &&
+      (part.allocated_to_sales_orders > 0 || part.required_for_sales_orders > 0)
+    ) {
+      right.push([
+        {
+          type: 'progressbar',
+          name: 'allocated_to_sales_orders',
+          total: part.required_for_sales_orders,
+          progress: part.allocated_to_sales_orders,
+          label: t`Allocated to Sales Orders`
+        }
+      ]);
     }
 
     if (part.assembly) {
-      right.push({
-        type: 'string',
-        name: 'can_build',
-        unit: true,
-        label: t`Can Build`
-      });
+      right.push([
+        {
+          type: 'string',
+          name: 'can_build',
+          unit: true,
+          label: t`Can Build`
+        }
+      ]);
     }
 
     if (part.assembly) {
-      right.push({
-        type: 'string',
-        name: 'building',
-        unit: true,
-        label: t`Building`
-      });
+      right.push([
+        {
+          type: 'string',
+          name: 'building',
+          unit: true,
+          label: t`Building`
+        }
+      ]);
     }
 
     if (part.category) {
-      bottom_left.push({
-        type: 'link',
-        name: 'category',
-        label: t`Category`,
-        path: ApiPaths.category_list,
-        dest: '/part/category/'
-      });
+      bottom_left.push([
+        {
+          type: 'link',
+          name: 'category',
+          label: t`Category`,
+          path: ApiPaths.category_list,
+          dest: '/part/category/'
+        }
+      ]);
     }
 
     if (part.IPN) {
-      bottom_left.push({
-        type: 'string',
-        name: 'IPN',
-        label: t`IPN`
-      });
+      bottom_left.push([
+        {
+          type: 'string',
+          name: 'IPN',
+          label: t`IPN`,
+          copy: true
+        }
+      ]);
     }
 
     if (part.revision) {
-      bottom_left.push({
-        type: 'string',
-        name: 'revision',
-        label: t`Revision`
-      });
+      bottom_left.push([
+        {
+          type: 'string',
+          name: 'revision',
+          label: t`Revision`,
+          copy: true
+        }
+      ]);
     }
 
     if (part.units) {
-      bottom_left.push({
-        type: 'string',
-        name: 'units',
-        label: t`Units`
-      });
+      bottom_left.push([
+        {
+          type: 'string',
+          name: 'units',
+          label: t`Units`
+        }
+      ]);
     }
 
     if (part.keywords) {
-      bottom_left.push({
-        type: 'string',
-        name: 'keywords',
-        label: t`Keywords`
-      });
+      bottom_left.push([
+        {
+          type: 'string',
+          name: 'keywords',
+          label: t`Keywords`,
+          copy: true
+        }
+      ]);
     }
 
     bottom_right.push([
@@ -245,43 +283,46 @@ export default function PartDetail() {
       {
         type: 'string',
         name: 'creation_user',
-        owner: true,
-        user: true
+        badge: 'user'
       }
     ]);
 
     id &&
-      bottom_right.push({
-        type: 'string',
-        name: 'pricing',
-        label: t`Price Range`,
-        value_formatter: () => {
-          const { data } = useSuspenseQuery({
-            queryKey: ['pricing', id],
-            queryFn: async () => {
-              const url = apiUrl(ApiPaths.part_pricing_get, null, { id: id });
+      bottom_right.push([
+        {
+          type: 'string',
+          name: 'pricing',
+          label: t`Price Range`,
+          value_formatter: () => {
+            const { data } = useSuspenseQuery({
+              queryKey: ['pricing', id],
+              queryFn: async () => {
+                const url = apiUrl(ApiPaths.part_pricing_get, null, { id: id });
 
-              return api
-                .get(url)
-                .then((response) => {
-                  switch (response.status) {
-                    case 200:
-                      return response.data;
-                    default:
-                      return null;
-                  }
-                })
-                .catch((error) => {
-                  return null;
-                });
-            }
-          });
-
-          return formatPriceRange(data.overall_min, data.overall_max);
+                return api
+                  .get(url)
+                  .then((response) => {
+                    switch (response.status) {
+                      case 200:
+                        return response.data;
+                      default:
+                        return null;
+                    }
+                  })
+                  .catch((error) => {
+                    return null;
+                  });
+              }
+            });
+            return `${formatPriceRange(data.overall_min, data.overall_max)}${
+              part.units && ' / ' + part.units
+            }`;
+          }
         }
-      });
+      ]);
 
     id &&
+      part.last_stocktake &&
       bottom_right.push([
         {
           type: 'string',
@@ -305,58 +346,88 @@ export default function PartDetail() {
                     }
                   })
                   .catch((error) => {
-                    console.error(`Error fetching instance ${url}:`, error);
                     return null;
                   });
               }
             });
-            return [data.quantity, data.user];
+            return data.quantity;
           }
         },
         {
           type: 'string',
-          name: 'creation_user',
-          owner: true,
-          user: true
+          name: 'stocktake_user',
+          badge: 'user',
+          value_formatter: () => {
+            const { data } = useSuspenseQuery({
+              queryKey: ['stocktake', id],
+              queryFn: async () => {
+                const url = apiUrl(ApiPaths.part_stocktake_list);
+
+                return api
+                  .get(url, { params: { part: id, ordering: 'date' } })
+                  .then((response) => {
+                    switch (response.status) {
+                      case 200:
+                        return response.data[response.data.length - 1];
+                      default:
+                        return null;
+                    }
+                  })
+                  .catch((error) => {
+                    return null;
+                  });
+              }
+            });
+            return data.user;
+          }
         }
       ]);
 
     if (part.default_location) {
-      bottom_right.push({
-        type: 'link',
-        name: 'default_location',
-        label: t`Default Location`,
-        path: ApiPaths.stock_location_list,
-        dest: '/stock/location/'
-      });
+      bottom_right.push([
+        {
+          type: 'link',
+          name: 'default_location',
+          label: t`Default Location`,
+          path: ApiPaths.stock_location_list,
+          dest: '/stock/location/'
+        }
+      ]);
     }
 
     if (part.default_supplier) {
-      bottom_right.push({
-        type: 'link',
-        name: 'default_supplier',
-        label: t`Default Supplier`,
-        path: ApiPaths.supplier_part_list,
-        dest: '/part/'
-      });
+      bottom_right.push([
+        {
+          type: 'link',
+          name: 'default_supplier',
+          label: t`Default Supplier`,
+          path: ApiPaths.supplier_part_list,
+          dest: '/part/'
+        }
+      ]);
     }
 
     if (part.link) {
-      bottom_right.push({
-        type: 'link',
-        name: 'link',
-        label: t`Link`,
-        external: true
-      });
+      bottom_right.push([
+        {
+          type: 'link',
+          name: 'link',
+          label: t`Link`,
+          external: true,
+          copy: true
+        }
+      ]);
     }
 
     if (part.responsible) {
-      bottom_right.push({
-        type: 'string',
-        name: 'responsible',
-        label: t`responsible`,
-        owner: true
-      });
+      bottom_right.push([
+        {
+          type: 'string',
+          name: 'responsible',
+          label: t`Responsible`,
+          badge: 'owner'
+        }
+      ]);
     }
 
     let fields: ItemDetailFields = {
@@ -379,6 +450,7 @@ export default function PartDetail() {
         icon: <IconInfoCircle />,
         content: !instanceQuery.isFetching && (
           <ItemDetails
+            appRole={UserRoles.part}
             params={part}
             apiPath={apiUrl(ApiPaths.part_list, part.pk)}
             refresh={refreshInstance}

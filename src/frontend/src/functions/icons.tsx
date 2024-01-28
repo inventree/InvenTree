@@ -5,6 +5,7 @@ import {
   IconBuilding,
   IconBuildingFactory2,
   IconCalendarStats,
+  IconCheck,
   IconClipboardList,
   IconCopy,
   IconCornerUpRightDouble,
@@ -108,7 +109,9 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     pricing: IconCurrencyDollar,
     stocktake: IconClipboardList,
     user: IconUser,
-    group: IconUsersGroup
+    group: IconUsersGroup,
+    check: IconCheck,
+    copy: IconCopy
   };
 
 /**
