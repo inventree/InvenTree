@@ -25,12 +25,3 @@ invoke setup-dev
 #### Following standards
 
 Before contributing to the project, please read the [contributing guidelines](contributing.md). Pull requests that do not follow the guidelines, do not pass QC checks or lower the test coverage will not be accepted.
-
-``` mermaid
-graph LR
-  A[Start] --> B{Error?};
-  B -->|Yes| C[Hmm...];
-  C --> D[Debug];
-  D --> B;
-  B ---->|No| E[Yay!];
-```
