@@ -5,8 +5,10 @@ import os
 from pathlib import Path
 from unittest import mock
 
+from django.urls import reverse
+
 from InvenTree.config import get_frontend_settings
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 
 from .templatetags import spa_helper
 
@@ -73,3 +75,24 @@ class TemplateTagTest(InvenTreeTestCase):
             rsp = get_frontend_settings(False)
             self.assertFalse('show_server_selector' in rsp)
             self.assertEqual(rsp['server_list'], ['aa', 'bb'])
+
+
+class TestWebHelpers(InvenTreeAPITestCase):
+    """Tests for the web helpers."""
+
+    def test_ui_preference(self):
+        """Test the UI preference API."""
+        url = reverse('api-ui-preference')
+
+        # Test default
+        resp = self.get(url)
+        self.assertTrue(resp['cui'])
+        self.assertFalse(resp['pui'])
+        self.assertEqual(resp['preferred_method'], 'cui')
+
+        # Set to PUI
+        resp = self.put(url, {'preferred_method': 'pui'})
+        self.assertEqual(resp.status_code, 200)
+        self.assertFalse(resp['cui'])
+        self.assertTrue(resp['pui'])
+        self.assertEqual(resp['preferred_method'], 'pui')
