@@ -1,3 +1,5 @@
+"""Serializers for the machine app."""
+
 from typing import List, Union
 
 from rest_framework import serializers
@@ -41,29 +43,36 @@ class MachineConfigSerializer(serializers.ModelSerializer):
     restart_required = serializers.SerializerMethodField('get_restart_required')
 
     def get_initialized(self, obj: MachineConfig) -> bool:
+        """Serializer method for the initialized field."""
         return getattr(obj.machine, 'initialized', False)
 
     def get_status(self, obj: MachineConfig) -> int:
+        """Serializer method for the status field."""
         status = getattr(obj.machine, 'status', None)
         if status is not None:
             return status.value
         return -1
 
     def get_status_model(self, obj: MachineConfig) -> Union[str, None]:
+        """Serializer method for the status model field."""
         if obj.machine and obj.machine.MACHINE_STATUS:
             return obj.machine.MACHINE_STATUS.__name__
         return None
 
     def get_status_text(self, obj: MachineConfig) -> str:
+        """Serializer method for the status text field."""
         return getattr(obj.machine, 'status_text', '')
 
     def get_errors(self, obj: MachineConfig) -> List[str]:
+        """Serializer method for the errors field."""
         return [str(err) for err in obj.errors]
 
     def get_is_driver_available(self, obj: MachineConfig) -> bool:
+        """Serializer method for the is_driver_available field."""
         return obj.is_driver_available()
 
     def get_restart_required(self, obj: MachineConfig) -> bool:
+        """Serializer method for the restart_required field."""
         return getattr(obj.machine, 'restart_required', False)
 
 
@@ -75,7 +84,7 @@ class MachineConfigCreateSerializer(MachineConfigSerializer):
 
         read_only_fields = list(
             set(MachineConfigSerializer.Meta.read_only_fields)
-            - set(['machine_type', 'driver'])
+            - {'machine_type', 'driver'}
         )
 
 
@@ -86,6 +95,7 @@ class MachineSettingSerializer(GenericReferencedSettingSerializer):
     EXTRA_FIELDS = ['config_type']
 
     def __init__(self, *args, **kwargs):
+        """Custom init method to remove unwanted fields."""
         super().__init__(*args, **kwargs)
 
         # remove unwanted fields
@@ -122,9 +132,11 @@ class BaseMachineClassSerializer(serializers.Serializer):
     is_builtin = serializers.SerializerMethodField('get_is_builtin')
 
     def get_provider_file(self, obj: ClassProviderMixin) -> str:
+        """Serializer method for the provider_file field."""
         return obj.get_provider_file()
 
     def get_provider_plugin(self, obj: ClassProviderMixin) -> Union[dict, None]:
+        """Serializer method for the provider_plugin field."""
         plugin = obj.get_provider_plugin()
         if plugin:
             return {
@@ -135,6 +147,7 @@ class BaseMachineClassSerializer(serializers.Serializer):
         return None
 
     def get_is_builtin(self, obj: ClassProviderMixin) -> bool:
+        """Serializer method for the is_builtin field."""
         return obj.get_is_builtin()
 
 
@@ -160,6 +173,7 @@ class MachineDriverSerializer(BaseMachineClassSerializer):
     driver_errors = serializers.SerializerMethodField('get_errors')
 
     def get_errors(self, obj) -> List[str]:
+        """Serializer method for the errors field."""
         driver_instance = registry.driver_instances.get(obj.SLUG, None)
         if driver_instance is None:
             return []
@@ -170,6 +184,8 @@ class MachineRegistryErrorSerializer(serializers.Serializer):
     """Serializer for a machine registry error."""
 
     class Meta:
+        """Meta for a serializer."""
+
         fields = ['message']
 
     message = serializers.CharField()
@@ -179,6 +195,8 @@ class MachineRegistryStatusSerializer(serializers.Serializer):
     """Serializer for machine registry status."""
 
     class Meta:
+        """Meta for a serializer."""
+
         fields = ['registry_errors']
 
     registry_errors = serializers.ListField(child=MachineRegistryErrorSerializer())
@@ -188,6 +206,8 @@ class MachineRestartSerializer(serializers.Serializer):
     """Serializer for the machine restart response."""
 
     class Meta:
+        """Meta for a serializer."""
+
         fields = ['ok']
 
     ok = serializers.BooleanField()

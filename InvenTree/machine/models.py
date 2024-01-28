@@ -1,3 +1,5 @@
+"""Models for the machine app."""
+
 import uuid
 from typing import Literal
 
@@ -42,6 +44,7 @@ class MachineConfig(models.Model):
         return f'{self.name}'
 
     def save(self, *args, **kwargs) -> None:
+        """Custom save function to capture creates/updates to notify the registry."""
         created = self._state.adding
 
         old_machine = None
@@ -64,13 +67,14 @@ class MachineConfig(models.Model):
             registry.update_machine(old_machine, self)
 
     def delete(self, *args, **kwargs):
-        # remove machine from registry first
+        """Remove machine from registry first."""
         if self.machine:
             registry.remove_machine(self.machine)
 
         return super().delete(*args, **kwargs)
 
     def to_dict(self):
+        """Serialize a machine config to a dict including setting."""
         machine = {f.name: f.value_to_string(self) for f in self._meta.fields}
         machine['settings'] = {
             (setting.config_type, setting.key): setting.value
@@ -80,35 +84,39 @@ class MachineConfig(models.Model):
 
     @property
     def machine(self):
+        """Machine instance getter."""
         return registry.get_machine(self.pk)
 
     @property
     def errors(self):
+        """Machine errors getter."""
         return getattr(self.machine, 'errors', [])
 
     @admin.display(boolean=True, description=_('Driver available'))
     def is_driver_available(self) -> bool:
-        """Status if driver for machine is available"""
+        """Status if driver for machine is available."""
         return self.machine is not None and self.machine.driver is not None
 
     @admin.display(boolean=True, description=_('No errors'))
     def no_errors(self) -> bool:
-        """Status if machine has errors"""
+        """Status if machine has errors."""
         return len(self.errors) == 0
 
     @admin.display(boolean=True, description=_('Initialized'))
     def initialized(self) -> bool:
-        """Status if machine is initialized"""
+        """Status if machine is initialized."""
         return getattr(self.machine, 'initialized', False)
 
     @admin.display(description=_('Errors'))
     def get_admin_errors(self):
+        """Get machine errors for django admin interface."""
         return format_html_join(
             mark_safe('<br>'), '{}', ((str(error),) for error in self.errors)
         ) or mark_safe(f"<i>{_('No errors')}</i>")
 
     @admin.display(description=_('Machine status'))
     def get_machine_status(self):
+        """Get machine status for django admin interface."""
         if self.machine is None:
             return None
 
@@ -132,6 +140,8 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
         unique_together = [('machine_config', 'config_type', 'key')]
 
     class ConfigType(models.TextChoices):
+        """Machine setting config type enum."""
+
         MACHINE = 'M', _('Machine')
         DRIVER = 'D', _('Driver')
 
@@ -147,6 +157,7 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
     )
 
     def save(self, *args, **kwargs) -> None:
+        """Custom save method to notify the registry on changes."""
         old_machine = self.machine_config.to_dict()
 
         super().save(*args, **kwargs)
@@ -155,6 +166,7 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
 
     @classmethod
     def get_config_type(cls, config_type_str: Literal['M', 'D']):
+        """Helper method to get the correct enum value for easier usage with literal strings."""
         if config_type_str == 'M':
             return cls.ConfigType.MACHINE
         elif config_type_str == 'D':
@@ -162,8 +174,9 @@ class MachineSetting(common.models.BaseInvenTreeSetting):
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
-        """In the BaseInvenTreeSetting class, we have a class attribute named 'SETTINGS', which
-        is a dict object that fully defines all the setting parameters.
+        """In the BaseInvenTreeSetting class, we have a class attribute named 'SETTINGS'.
+
+        which is a dict object that fully defines all the setting parameters.
 
         Here, unlike the BaseInvenTreeSetting, we do not know the definitions of all settings
         'ahead of time' (as they are defined externally in the machine driver).

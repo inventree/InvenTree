@@ -1,3 +1,5 @@
+"""JSON API for the machine app."""
+
 from django.urls import include, path, re_path
 
 from drf_spectacular.utils import extend_schema
@@ -24,7 +26,7 @@ class MachineList(ListCreateAPI):
     serializer_class = MachineSerializers.MachineConfigSerializer
 
     def get_serializer_class(self):
-        # allow driver, machine_type fields on creation
+        """Allow driver, machine_type fields on creation."""
         if self.request.method == 'POST':
             return MachineSerializers.MachineConfigCreateSerializer
         return super().get_serializer_class()
@@ -51,9 +53,6 @@ class MachineDetail(RetrieveUpdateDestroyAPI):
 
     queryset = MachineConfig.objects.all()
     serializer_class = MachineSerializers.MachineConfigSerializer
-
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
 
 
 def get_machine(machine_pk):
@@ -85,6 +84,7 @@ class MachineSettingList(APIView):
         responses={200: MachineSerializers.MachineSettingSerializer(many=True)}
     )
     def get(self, request, pk):
+        """Return all settings for a machine config."""
         machine = get_machine(pk)
 
         all_settings = []
@@ -125,7 +125,7 @@ class MachineSettingDetail(RetrieveUpdateAPI):
 
         machine = get_machine(pk)
 
-        setting_map = dict((d, s) for s, d in machine.setting_types)
+        setting_map = {d: s for s, d in machine.setting_types}
         if key.upper() not in setting_map[config_type]:
             raise NotFound(
                 detail=f"Machine '{machine.name}' has no {config_type.name} setting matching '{key.upper()}'"
@@ -139,13 +139,14 @@ class MachineSettingDetail(RetrieveUpdateAPI):
 class MachineRestart(APIView):
     """Endpoint for performing a machine restart.
 
-    - POST: restart machine
+    - POST: restart machine by pk
     """
 
     permission_classes = [permissions.IsAuthenticated]
 
     @extend_schema(responses={200: MachineSerializers.MachineRestartSerializer()})
     def post(self, request, pk):
+        """Restart machine by pk."""
         machine = get_machine(pk)
         registry.restart_machine(machine)
 
@@ -163,6 +164,7 @@ class MachineTypesList(APIView):
 
     @extend_schema(responses={200: MachineSerializers.MachineTypeSerializer(many=True)})
     def get(self, request):
+        """List all machine types."""
         machine_types = list(registry.machine_types.values())
         results = MachineSerializers.MachineTypeSerializer(
             machine_types, many=True
@@ -182,6 +184,7 @@ class MachineDriverList(APIView):
         responses={200: MachineSerializers.MachineDriverSerializer(many=True)}
     )
     def get(self, request):
+        """List all machine drivers."""
         drivers = registry.drivers.values()
         if machine_type := request.query_params.get('machine_type', None):
             drivers = filter(lambda d: d.machine_type == machine_type, drivers)
@@ -206,10 +209,9 @@ class RegistryStatusView(APIView):
         responses={200: MachineSerializers.MachineRegistryStatusSerializer()}
     )
     def get(self, request):
+        """Provide status data for the machine registry."""
         result = MachineSerializers.MachineRegistryStatusSerializer({
-            'registry_errors': list(
-                {'message': str(error)} for error in registry.errors
-            )
+            'registry_errors': [{'message': str(error)} for error in registry.errors]
         }).data
 
         return Response(result)

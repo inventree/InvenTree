@@ -14,6 +14,23 @@ class ClassValidationMixin:
     Class attributes:
         required_attributes: List of class attributes that need to be defined
         required_overrides: List of functions that need override
+
+    Example:
+    ```py
+    class Parent(ClassValidationMixin):
+        NAME: str
+        def test(self):
+            pass
+
+        required_attributes = ["NAME"]
+        required_overrides = [test]
+
+    class MyClass(Parent):
+        pass
+
+    myClass = MyClass()
+    myClass.validate() # raises NotImplementedError
+    ```
     """
 
     required_attributes = []
@@ -21,10 +38,14 @@ class ClassValidationMixin:
 
     @classmethod
     def validate(cls):
+        """Validate the class against the required attributes/overrides."""
+
         def attribute_missing(key):
+            """Check if attribute is missing."""
             return not hasattr(cls, key) or getattr(cls, key) == ''
 
         def override_missing(base_implementation):
+            """Check if override is missing."""
             return base_implementation == getattr(
                 cls, base_implementation.__name__, None
             )
@@ -40,7 +61,7 @@ class ClassValidationMixin:
             )
         if len(missing_overrides) > 0:
             errors.append(
-                f"did not override the required attributes: {', '.join(map(lambda attr: attr.__name__, missing_overrides))}"
+                f"did not override the required attributes: {', '.join(attr.__name__ for attr in missing_overrides)}"
             )
 
         if len(errors) > 0:

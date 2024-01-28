@@ -1,3 +1,5 @@
+"""Django admin interface for the machine app."""
+
 from django.contrib import admin
 from django.http.request import HttpRequest
 
@@ -39,7 +41,7 @@ class MachineConfigAdmin(admin.ModelAdmin):
     inlines = [MachineSettingInline]
 
     def get_readonly_fields(self, request, obj):
-        # if update, don't allow changes on machine_type and driver
+        """If update, don't allow changes on machine_type and driver."""
         if obj is not None:
             return ['machine_type', 'driver', *self.readonly_fields]
 

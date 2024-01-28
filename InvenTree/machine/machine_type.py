@@ -1,3 +1,5 @@
+"""Base machine type/base driver."""
+
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Tuple, Type, Union
 
 from generic.states import StatusCode
@@ -10,9 +12,13 @@ if TYPE_CHECKING:
 else:  # pragma: no cover
 
     class MachineConfig:
+        """Only used if not typechecking currently."""
+
         pass
 
     class SettingsKeyType:
+        """Only used if not typechecking currently."""
+
         pass
 
 
@@ -40,7 +46,7 @@ class MachineStatus(StatusCode):
 
 
 class BaseDriver(ClassValidationMixin, ClassProviderMixin):
-    """Base class for machine drivers
+    """Base class for machine drivers.
 
     Attributes:
         SLUG: Slug string for identifying a machine
@@ -61,6 +67,7 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
     required_attributes = ['SLUG', 'NAME', 'DESCRIPTION', 'machine_type']
 
     def __init__(self) -> None:
+        """Base driver __init__ method."""
         super().__init__()
 
         self.errors: list[Union[str, Exception]] = []
@@ -87,7 +94,7 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
     def update_machine(
         self, old_machine_state: Dict[str, Any], machine: 'BaseMachineType'
     ):
-        """This method gets called for each update of a machine
+        """This method gets called for each update of a machine.
 
         Note:
             machine.restart_required can be set to True here if the machine needs a manual restart to apply the changes
@@ -110,17 +117,27 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         pass
 
     def get_machines(self, **kwargs):
-        """Return all machines using this driver. (By default only initialized machines)"""
+        """Return all machines using this driver (By default only initialized machines).
+
+        Kwargs:
+            name: Machine name
+            machine_type: Machine type definition (class)
+            driver: Machine driver (class)
+            initialized: (bool, default: True)
+            active: (bool)
+            base_driver: base driver (class)
+        """
         from machine import registry
 
         return registry.get_machines(driver=self, **kwargs)
 
     def handle_error(self, error: Union[Exception, str]):
+        """Handle driver error."""
         self.errors.append(error)
 
 
 class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
-    """Base class for machine types
+    """Base class for machine types.
 
     Attributes:
         SLUG: Slug string for identifying a machine type
@@ -157,6 +174,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
     ]
 
     def __init__(self, machine_config: MachineConfig) -> None:
+        """Base machine type __init__ function."""
         from machine import registry
         from machine.models import MachineSetting
 
@@ -193,11 +211,13 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         self.restart_required = False
 
     def __str__(self):
+        """String representation of a machine."""
         return f'{self.name}'
 
     # --- properties
     @property
     def machine_config(self):
+        """Machine_config property."""
         # always fetch the machine_config if needed to ensure we get the newest reference
         from .models import MachineConfig
 
@@ -205,15 +225,17 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
     @property
     def name(self):
+        """Name property."""
         return self.machine_config.name
 
     @property
     def active(self):
+        """Active property."""
         return self.machine_config.active
 
     # --- hook functions
     def initialize(self):
-        """Machine initialization function, gets called after all machines are loaded"""
+        """Machine initialization function, gets called after all machines are loaded."""
         if self.driver is None:
             return
 

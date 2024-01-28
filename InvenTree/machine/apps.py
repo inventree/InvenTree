@@ -1,3 +1,5 @@
+"""Django machine app config."""
+
 import logging
 
 from django.apps import AppConfig
@@ -8,10 +10,12 @@ logger = logging.getLogger('inventree')
 
 
 class MachineConfig(AppConfig):
+    """AppConfig class for the machine app."""
+
     name = 'machine'
 
     def ready(self) -> None:
-        """Initialization method for the Machine app."""
+        """Initialization method for the machine app."""
         if (
             not canAppAccessDatabase(allow_test=True)
             or not isPluginRegistryLoaded()

@@ -1,3 +1,5 @@
+"""Label printing machine type."""
+
 from django.utils.translation import gettext_lazy as _
 
 from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
@@ -20,6 +22,8 @@ class BaseLabelPrintingDriver(BaseDriver):
 
 
 class LabelPrintingMachineType(BaseMachineType):
+    """Label printer machine type, is a direct integration to print labels for various items."""
+
     SLUG = 'label_printer'
     NAME = _('Label Printer')
     DESCRIPTION = _('Directly print labels for various items.')
@@ -27,6 +31,8 @@ class LabelPrintingMachineType(BaseMachineType):
     base_driver = BaseLabelPrintingDriver
 
     class LabelPrinterStatus(MachineStatus):
+        """Label printer status codes."""
+
         CONNECTED = 100, _('Connected'), 'success'
         STANDBY = 101, _('Standby'), 'success'
         PRINTING = 110, _('Printing'), 'primary'

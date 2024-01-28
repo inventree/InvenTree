@@ -1,3 +1,5 @@
+"""Machine registry."""
+
 import logging
 from typing import Dict, List, Set, Type, Union
 from uuid import UUID
@@ -8,8 +10,10 @@ logger = logging.getLogger('inventree')
 
 
 class MachineRegistry:
+    """Machine registry class."""
+
     def __init__(self) -> None:
-        """Initialize machine registry
+        """Initialize machine registry.
 
         Set up all needed references for internal and external states.
         """
@@ -26,11 +30,13 @@ class MachineRegistry:
         self.errors.append(error)
 
     def initialize(self):
+        """Initialize the machine registry."""
         self.discover_machine_types()
         self.discover_drivers()
         self.load_machines()
 
     def discover_machine_types(self):
+        """Discovers all machine types by inferring all classes that inherit the BaseMachineType class."""
         import InvenTree.helpers
 
         logger.debug('Collecting machine types')
@@ -63,6 +69,7 @@ class MachineRegistry:
         logger.debug(f'Found {len(self.machine_types.keys())} machine types')
 
     def discover_drivers(self):
+        """Discovers all machine drivers by inferring all classes that inherit the BaseDriver class."""
         import InvenTree.helpers
 
         logger.debug('Collecting machine drivers')
@@ -96,6 +103,7 @@ class MachineRegistry:
         logger.debug(f'Found {len(self.drivers.keys())} machine drivers')
 
     def get_driver_instance(self, slug: str):
+        """Return or create a driver instance if needed."""
         if slug not in self.driver_instances:
             driver = self.drivers.get(slug, None)
             if driver is None:
@@ -106,6 +114,7 @@ class MachineRegistry:
         return self.driver_instances.get(slug, None)
 
     def load_machines(self):
+        """Load all machines defined in the database into the machine registry."""
         # Imports need to be in this level to prevent early db model imports
         from machine.models import MachineConfig
 
@@ -122,6 +131,7 @@ class MachineRegistry:
                 machine.initialize()
 
     def add_machine(self, machine_config, initialize=True):
+        """Add a machine to the machine registry."""
         machine_type = self.machine_types.get(machine_config.machine_type, None)
         if machine_type is None:
             self.handle_error(f"Machine type '{machine_config.machine_type}' not found")
@@ -134,17 +144,20 @@ class MachineRegistry:
             machine.initialize()
 
     def update_machine(self, old_machine_state, machine_config):
+        """Notify the machine about an update."""
         if machine := machine_config.machine:
             machine.update(old_machine_state)
 
     def restart_machine(self, machine):
+        """Restart a machine."""
         machine.restart()
 
     def remove_machine(self, machine: BaseMachineType):
+        """Remove a machine from the registry."""
         self.machines.pop(str(machine.pk), None)
 
     def get_machines(self, **kwargs):
-        """Get loaded machines from registry. (By default only initialized machines)
+        """Get loaded machines from registry (By default only initialized machines).
 
         Kwargs:
             name: Machine name
