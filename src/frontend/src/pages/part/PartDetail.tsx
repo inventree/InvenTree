@@ -309,7 +309,7 @@ export default function PartDetail() {
                         return null;
                     }
                   })
-                  .catch((error) => {
+                  .catch(() => {
                     return null;
                   });
               }
@@ -345,7 +345,7 @@ export default function PartDetail() {
                         return null;
                     }
                   })
-                  .catch((error) => {
+                  .catch(() => {
                     return null;
                   });
               }
@@ -373,7 +373,7 @@ export default function PartDetail() {
                         return null;
                     }
                   })
-                  .catch((error) => {
+                  .catch(() => {
                     return null;
                   });
               }

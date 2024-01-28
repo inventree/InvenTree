@@ -5,12 +5,10 @@ import {
   Badge,
   CopyButton,
   Group,
-  Progress,
   Skeleton,
   Table,
   Text,
-  Tooltip,
-  useMantineTheme
+  Tooltip
 } from '@mantine/core';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
@@ -280,7 +278,7 @@ function TableStringValue({
 function TableAnchorValue({
   field_data,
   field_value,
-  unit = null
+  unit
 }: {
   field_data: any;
   field_value: string | number;
@@ -316,7 +314,7 @@ function TableAnchorValue({
               return null;
           }
         })
-        .catch((error) => {
+        .catch(() => {
           return null;
         });
     }
@@ -338,19 +336,12 @@ function TableAnchorValue({
 function ProgressBarValue({
   field_data,
   field_value,
-  unit = null
+  unit
 }: {
   field_data: any;
   field_value: string | number;
   unit?: null | string;
 }) {
-  let value: FieldValueType | ValueFormatterReturn = field_value;
-  if (field_data.value_formatter) {
-    value = field_data.value_formatter();
-  }
-
-  const theme = useMantineTheme();
-
   return (
     <ProgressBar
       value={field_data.progress}
