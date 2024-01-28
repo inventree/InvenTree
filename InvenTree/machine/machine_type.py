@@ -60,6 +60,11 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
 
     required_attributes = ['SLUG', 'NAME', 'DESCRIPTION', 'machine_type']
 
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.errors: list[Union[str, Exception]] = []
+
     def init_driver(self):
         """This method gets called after all machines are created and can be used to initialize the driver.
 
@@ -110,6 +115,9 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
 
         return registry.get_machines(driver=self, **kwargs)
 
+    def handle_error(self, error: Union[Exception, str]):
+        self.errors.append(error)
+
 
 class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
     """Base class for machine types
@@ -152,11 +160,11 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         from machine import registry
         from machine.models import MachineSetting
 
-        self.errors = []
+        self.errors: list[Union[str, Exception]] = []
         self.initialized = False
 
         self.status = self.default_machine_status
-        self.status_text = ''
+        self.status_text: str = ''
 
         self.pk = machine_config.pk
         self.driver = registry.get_driver_instance(machine_config.driver)

@@ -19,7 +19,7 @@ class MachineRegistry:
         self.machines: Dict[str, BaseMachineType] = {}
 
         self.base_drivers: List[Type[BaseDriver]] = []
-        self.errors = []
+        self.errors: list[Union[str, Exception]] = []
 
     def handle_error(self, error: Union[Exception, str]):
         """Helper function for capturing errors with the machine registry."""

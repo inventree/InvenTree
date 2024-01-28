@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from common.serializers import GenericReferencedSettingSerializer
 from InvenTree.helpers_mixin import ClassProviderMixin
+from machine import registry
 from machine.models import MachineConfig, MachineSetting
 
 
@@ -152,9 +153,17 @@ class MachineDriverSerializer(BaseMachineClassSerializer):
     class Meta(BaseMachineClassSerializer.Meta):
         """Meta for a serializer."""
 
-        fields = [*BaseMachineClassSerializer.Meta.fields, 'machine_type']
+        fields = [*BaseMachineClassSerializer.Meta.fields, 'machine_type', 'errors']
 
     machine_type = serializers.SlugField(read_only=True)
+
+    driver_errors = serializers.SerializerMethodField('get_errors')
+
+    def get_errors(self, obj) -> List[str]:
+        driver_instance = registry.driver_instances.get(obj.SLUG, None)
+        if driver_instance is None:
+            return []
+        return [str(err) for err in driver_instance.errors]
 
 
 class MachineRegistryErrorSerializer(serializers.Serializer):

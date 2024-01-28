@@ -1,8 +1,11 @@
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
+  Badge,
   Card,
+  Code,
   Group,
+  List,
   LoadingOverlay,
   Stack,
   Text,
@@ -39,6 +42,7 @@ export interface MachineDriverI {
   provider_plugin: { slug: string; name: string; pk: number | null } | null;
   is_builtin: boolean;
   machine_type: string;
+  driver_errors: string[];
 }
 
 function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
@@ -238,6 +242,27 @@ function MachineDriverDrawer({
               value={machineDriver?.is_builtin}
               type="boolean"
             />
+            <Group position="apart" spacing="xs">
+              <Text fz="sm" fw={700}>
+                <Trans>Errors</Trans>:
+              </Text>
+              {machineDriver && machineDriver?.driver_errors.length > 0 ? (
+                <Badge color="red" sx={{ marginLeft: '10px' }}>
+                  {machineDriver.driver_errors.length}
+                </Badge>
+              ) : (
+                <Text fz="xs">
+                  <Trans>No errors reported</Trans>
+                </Text>
+              )}
+              <List w="100%">
+                {machineDriver?.driver_errors.map((error, i) => (
+                  <List.Item key={i}>
+                    <Code>{error}</Code>
+                  </List.Item>
+                ))}
+              </List>
+            </Group>
           </Stack>
         </Stack>
       </Card>
