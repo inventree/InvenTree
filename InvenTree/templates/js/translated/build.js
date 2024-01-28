@@ -2609,8 +2609,8 @@ function loadBuildLineTable(table, build_id, options={}) {
                         icons += makeIconBadge('fa-shopping-cart', `{% trans "On Order" %}: ${formatDecimal(row.on_order)}`);
                     }
 
-                    if (row.building && row.building > 0) {
-                        icons += makeIconBadge('fa-tools icon-blue', `{% trans "Building" %}: ${formatDecimal(row.building)}`);
+                    if (row.in_production && row.in_production > 0) {
+                        icons += makeIconBadge('fa-tools icon-blue', `{% trans "In Production" %}: ${formatDecimal(row.in_production)}`);
                     }
 
                     return renderLink(text, url) + icons;

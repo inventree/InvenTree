@@ -57,10 +57,10 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
     }
 
     // Account for in-production stock
-    if (record.building > 0) {
+    if (record.in_production > 0) {
       extra.push(
         <Text key="production" size="sm">
-          {t`In production`}: {record.building}
+          {t`In production`}: {record.in_production}
         </Text>
       );
     }
