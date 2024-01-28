@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Tuple, Type
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Tuple, Type, Union
 
 from generic.states import StatusCode
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
@@ -162,9 +162,9 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         self.driver = registry.get_driver_instance(machine_config.driver)
 
         if not self.driver:
-            self.errors.append(f"Driver '{machine_config.driver}' not found")
+            self.handle_error(f"Driver '{machine_config.driver}' not found")
         if self.driver and not isinstance(self.driver, self.base_driver):
-            self.errors.append(
+            self.handle_error(
                 f"'{self.driver.NAME}' is incompatible with machine type '{self.NAME}'"
             )
 
@@ -183,11 +183,6 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         ]
 
         self.restart_required = False
-
-        if len(self.errors) > 0:
-            return
-
-        # TODO: add further init stuff here
 
     def __str__(self):
         return f'{self.name}'
@@ -223,14 +218,14 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
                     error_parts.append(
                         f'{config_type.name} settings: ' + ', '.join(missing)
                     )
-            self.errors.append(f"Missing {' and '.join(error_parts)}")
+            self.handle_error(f"Missing {' and '.join(error_parts)}")
             return
 
         try:
             self.driver.init_machine(self)
             self.initialized = True
         except Exception as e:
-            self.errors.append(e)
+            self.handle_error(e)
 
     def update(self, old_state: dict[str, Any]):
         """Machine update function, gets called if the machine itself changes or their settings."""
@@ -240,7 +235,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         try:
             self.driver.update_machine(old_state, self)
         except Exception as e:
-            self.errors.append(e)
+            self.handle_error(e)
 
     def restart(self):
         """Machine restart function, can be used to manually restart the machine from the admin ui."""
@@ -251,10 +246,14 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
             self.restart_required = False
             self.driver.restart_machine(self)
         except Exception as e:
-            self.errors.append(e)
+            self.handle_error(e)
 
     # --- helper functions
-    def get_setting(self, key, config_type_str: Literal['M', 'D'], cache=False):
+    def handle_error(self, error: Union[Exception, str]):
+        """Helper function for capturing errors with the machine."""
+        self.errors.append(error)
+
+    def get_setting(self, key: str, config_type_str: Literal['M', 'D'], cache=False):
         """Return the 'value' of the setting associated with this machine.
 
         Arguments:
@@ -272,7 +271,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
             cache=cache,
         )
 
-    def set_setting(self, key, config_type_str: Literal['M', 'D'], value):
+    def set_setting(self, key: str, config_type_str: Literal['M', 'D'], value):
         """Set plugin setting value by key.
 
         Arguments:

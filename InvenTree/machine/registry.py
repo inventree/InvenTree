@@ -21,8 +21,11 @@ class MachineRegistry:
         self.base_drivers: List[Type[BaseDriver]] = []
         self.errors = []
 
+    def handle_error(self, error: Union[Exception, str]):
+        """Helper function for capturing errors with the machine registry."""
+        self.errors.append(error)
+
     def initialize(self):
-        print('INITIALIZE')  # TODO: remove debug statement
         self.discover_machine_types()
         self.discover_drivers()
         self.load_machines()
@@ -42,11 +45,11 @@ class MachineRegistry:
             try:
                 machine_type.validate()
             except NotImplementedError as error:
-                self.errors.append(error)
+                self.handle_error(error)
                 continue
 
             if machine_type.SLUG in machine_types:
-                self.errors.append(
+                self.handle_error(
                     ValueError(f"Cannot re-register machine type '{machine_type.SLUG}'")
                 )
                 continue
@@ -77,11 +80,11 @@ class MachineRegistry:
             try:
                 driver.validate()
             except NotImplementedError as error:
-                self.errors.append(error)
+                self.handle_error(error)
                 continue
 
             if driver.SLUG in drivers:
-                self.errors.append(
+                self.handle_error(
                     ValueError(f"Cannot re-register driver '{driver.SLUG}'")
                 )
                 continue
@@ -121,9 +124,7 @@ class MachineRegistry:
     def add_machine(self, machine_config, initialize=True):
         machine_type = self.machine_types.get(machine_config.machine_type, None)
         if machine_type is None:
-            self.errors.append(
-                f"Machine type '{machine_config.machine_type}' not found"
-            )
+            self.handle_error(f"Machine type '{machine_config.machine_type}' not found")
             return
 
         machine: BaseMachineType = machine_type(machine_config)
