@@ -53,7 +53,6 @@ function DetailDrawerComponent({
           </Text>
         </Group>
       }
-      overlayProps={{ opacity: 0.5, blur: 4 }}
     >
       <Stack spacing={'xs'}>
         <Divider />

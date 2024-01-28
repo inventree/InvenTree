@@ -65,10 +65,6 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
         title: t`Name`
       },
       {
-        accessor: 'slug',
-        title: t`Slug`
-      },
-      {
         accessor: 'description',
         title: t`Description`
       },
@@ -114,16 +110,18 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
               value={machineType?.description}
               type="text"
             />
-            <InfoItem
-              name={t`Provider plugin`}
-              value={machineType?.provider_plugin?.name}
-              type="text"
-              link={
-                machineType?.provider_plugin?.pk !== null
-                  ? `../../plugin/${machineType?.provider_plugin?.pk}/`
-                  : undefined
-              }
-            />
+            {!machineType?.is_builtin && (
+              <InfoItem
+                name={t`Provider plugin`}
+                value={machineType?.provider_plugin?.name}
+                type="text"
+                link={
+                  machineType?.provider_plugin?.pk !== null
+                    ? `../../plugin/${machineType?.provider_plugin?.pk}/`
+                    : undefined
+                }
+              />
+            )}
             <InfoItem
               name={t`Provider file`}
               value={machineType?.provider_file}
@@ -221,17 +219,24 @@ function MachineDriverDrawer({
                 machineType ? machineType.name : machineDriver?.machine_type
               }
               type="text"
-            />
-            <InfoItem
-              name={t`Provider plugin`}
-              value={machineDriver?.provider_plugin?.name}
-              type="text"
               link={
-                machineDriver?.provider_plugin?.pk !== null
-                  ? `../../plugin/${machineDriver?.provider_plugin?.pk}/`
+                machineType
+                  ? `../type-${machineDriver?.machine_type}`
                   : undefined
               }
             />
+            {!machineDriver?.is_builtin && (
+              <InfoItem
+                name={t`Provider plugin`}
+                value={machineDriver?.provider_plugin?.name}
+                type="text"
+                link={
+                  machineDriver?.provider_plugin?.pk !== null
+                    ? `../../plugin/${machineDriver?.provider_plugin?.pk}/`
+                    : undefined
+                }
+              />
+            )}
             <InfoItem
               name={t`Provider file`}
               value={machineDriver?.provider_file}
@@ -303,10 +308,6 @@ export function MachineTypeListTable({
       {
         accessor: 'name',
         title: t`Name`
-      },
-      {
-        accessor: 'slug',
-        title: t`Slug`
       },
       {
         accessor: 'description',
