@@ -66,7 +66,7 @@ class MachineRegistry:
         self.machine_types = machine_types
         self.base_drivers = base_drivers
 
-        logger.debug(f'Found {len(self.machine_types.keys())} machine types')
+        logger.debug('Found %s machine types', len(self.machine_types.keys()))
 
     def discover_drivers(self):
         """Discovers all machine drivers by inferring all classes that inherit the BaseDriver class."""
@@ -100,7 +100,7 @@ class MachineRegistry:
 
         self.drivers = drivers
 
-        logger.debug(f'Found {len(self.drivers.keys())} machine drivers')
+        logger.debug('Found %s machine drivers', len(self.drivers.keys()))
 
     def get_driver_instance(self, slug: str):
         """Return or create a driver instance if needed."""
@@ -129,6 +129,8 @@ class MachineRegistry:
         for machine in self.machines.values():
             if machine.active:
                 machine.initialize()
+
+        logger.info('Initialized %s machines', len(self.machines.keys()))
 
     def add_machine(self, machine_config, initialize=True):
         """Add a machine to the machine registry."""
