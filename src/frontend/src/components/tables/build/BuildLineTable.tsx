@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconShoppingCart,
@@ -18,6 +19,7 @@ import { BooleanColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
+import { TableHoverCard } from '../TableHoverCard';
 
 export default function BuildLineTable({ params = {} }: { params?: any }) {
   const table = useTable('buildline');
@@ -26,6 +28,68 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [];
+  }, []);
+
+  const renderQuantityColumn = useCallback((record: any) => {
+    return <Text>{record.quantity}</Text>;
+  }, []);
+
+  const renderAvailableColumn = useCallback((record: any) => {
+    let bom_item = record?.bom_item_detail ?? {};
+    let extra: any[] = [];
+    let available = record?.available_stock;
+
+    // Account for substitute stock
+    if (record.available_substitute_stock > 0) {
+      available += record.available_substitute_stock;
+      extra.push(
+        <Text key="substitite" size="sm">
+          {t`Includes substitute stock`}
+        </Text>
+      );
+    }
+
+    // Account for variant stock
+    if (bom_item.allow_variants && record.available_variant_stock > 0) {
+      available += record.available_variant_stock;
+      extra.push(
+        <Text key="variant" size="sm">
+          {t`Includes variant stock`}
+        </Text>
+      );
+    }
+
+    // Account for in-production stock
+    if (record.building > 0) {
+      extra.push(
+        <Text key="production" size="sm">
+          {t`In production`}: {record.building}
+        </Text>
+      );
+    }
+
+    // Account for stock on order
+    if (record.on_order > 0) {
+      extra.push(
+        <Text key="on-order" size="sm">
+          {t`On order`}: {record.on_order}
+        </Text>
+      );
+    }
+
+    return (
+      <TableHoverCard
+        value={
+          available > 0 ? (
+            available
+          ) : (
+            <Text color="red" italic>{t`No stock available`}</Text>
+          )
+        }
+        title={t`Available Stock`}
+        extra={extra}
+      />
+    );
   }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -60,15 +124,15 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
       {
         accessor: 'quantity',
         title: t`Required Quantity`,
-        sortable: true
-        // TODO: More information displayed here
+        sortable: true,
+        render: renderQuantityColumn
       },
       {
         accessor: 'available_stock',
         title: t`Available`,
         sortable: true,
-        switchable: false
-        // TODO: More information displayed here
+        switchable: false,
+        render: renderAvailableColumn
       },
       {
         accessor: 'allocated',
@@ -87,7 +151,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
     ];
   }, []);
 
-  const rowActions: RowAction[] = useCallback(
+  const rowActions = useCallback(
     (record: any) => {
       let part = record.part_detail;
 
