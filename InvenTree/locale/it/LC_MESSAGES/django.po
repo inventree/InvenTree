@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-15 13:52+0000\n"
-"PO-Revision-Date: 2024-01-16 13:32\n"
+"POT-Creation-Date: 2024-01-22 12:08+0000\n"
+"PO-Revision-Date: 2024-01-22 15:28\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -17,11 +17,11 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
-#: InvenTree/api.py:164
+#: InvenTree/api.py:165
 msgid "API endpoint not found"
 msgstr "Endpoint API non trovato"
 
-#: InvenTree/api.py:417
+#: InvenTree/api.py:418
 msgid "User does not have permission to view this model"
 msgstr "L'utente non ha i permessi per vedere questo modello"
 
@@ -43,7 +43,7 @@ msgstr "Quantità fornita non valida"
 msgid "Invalid quantity supplied ({exc})"
 msgstr "Quantità fornita non valida ({exc})"
 
-#: InvenTree/exceptions.py:89
+#: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
 msgstr "I dettagli dell'errore possono essere trovati nel pannello di amministrazione"
 
@@ -123,46 +123,46 @@ msgstr "L'indirizzo email principale fornito non è valido."
 msgid "The provided email domain is not approved."
 msgstr "L'indirizzo di posta elettronica fornito non è approvato."
 
-#: InvenTree/forms.py:386
+#: InvenTree/forms.py:394
 msgid "Registration is disabled."
 msgstr "La registrazione è disabilitata."
 
-#: InvenTree/helpers.py:457 order/models.py:521 order/models.py:723
+#: InvenTree/helpers.py:459 order/models.py:521 order/models.py:723
 msgid "Invalid quantity provided"
 msgstr "Quantità inserita non valida"
 
-#: InvenTree/helpers.py:465
+#: InvenTree/helpers.py:467
 msgid "Empty serial number string"
 msgstr "Numero seriale vuoto"
 
-#: InvenTree/helpers.py:494
+#: InvenTree/helpers.py:496
 msgid "Duplicate serial"
 msgstr "Seriale Duplicato"
 
-#: InvenTree/helpers.py:526 InvenTree/helpers.py:569
+#: InvenTree/helpers.py:528 InvenTree/helpers.py:571
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr ""
+msgstr "Intervallo di gruppo non valido: {group}"
 
-#: InvenTree/helpers.py:557
+#: InvenTree/helpers.py:559
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr ""
+msgstr "L'intervallo di gruppo {group} supera la quantità consentita ({expected_quantity})"
 
-#: InvenTree/helpers.py:587 InvenTree/helpers.py:594 InvenTree/helpers.py:613
+#: InvenTree/helpers.py:589 InvenTree/helpers.py:596 InvenTree/helpers.py:615
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr ""
+msgstr "Sequenza di gruppo non valida: {group}"
 
-#: InvenTree/helpers.py:623
+#: InvenTree/helpers.py:625
 msgid "No serial numbers found"
 msgstr "Nessun numero di serie trovato"
 
-#: InvenTree/helpers.py:628
+#: InvenTree/helpers.py:630
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr ""
+msgstr "Il numero di numeri di serie univoci ({len(serials)}) deve corrispondere alla quantità ({expected_quantity})"
 
-#: InvenTree/helpers.py:746
+#: InvenTree/helpers.py:748
 msgid "Remove HTML tags from this value"
 msgstr "Rimuovi i tag HTML da questo valore"
 
@@ -198,10 +198,134 @@ msgstr "Il server remoto ha restituito una risposta vuota"
 msgid "Supplied URL is not a valid image file"
 msgstr "L'URL fornito non è un file immagine valido"
 
+#: InvenTree/locales.py:16
+msgid "Bulgarian"
+msgstr "Bulgaro"
+
+#: InvenTree/locales.py:17
+msgid "Czech"
+msgstr "Ceco"
+
+#: InvenTree/locales.py:18
+msgid "Danish"
+msgstr "Danese"
+
+#: InvenTree/locales.py:19
+msgid "German"
+msgstr "Tedesco"
+
+#: InvenTree/locales.py:20
+msgid "Greek"
+msgstr "Greco"
+
+#: InvenTree/locales.py:21
+msgid "English"
+msgstr "Inglese"
+
+#: InvenTree/locales.py:22
+msgid "Spanish"
+msgstr "Spagnolo"
+
+#: InvenTree/locales.py:23
+msgid "Spanish (Mexican)"
+msgstr "Spagnolo (Messicano)"
+
+#: InvenTree/locales.py:24
+msgid "Farsi / Persian"
+msgstr "Farsi / Persiano"
+
+#: InvenTree/locales.py:25
+msgid "Finnish"
+msgstr "Finlandese"
+
+#: InvenTree/locales.py:26
+msgid "French"
+msgstr "Francese"
+
+#: InvenTree/locales.py:27
+msgid "Hebrew"
+msgstr "Ebraico"
+
+#: InvenTree/locales.py:28
+msgid "Hindi"
+msgstr "Hindi"
+
+#: InvenTree/locales.py:29
+msgid "Hungarian"
+msgstr "Ungherese"
+
+#: InvenTree/locales.py:30
+msgid "Italian"
+msgstr "Italiano"
+
+#: InvenTree/locales.py:31
+msgid "Japanese"
+msgstr "Giapponese"
+
+#: InvenTree/locales.py:32
+msgid "Korean"
+msgstr "Coreano"
+
+#: InvenTree/locales.py:33
+msgid "Dutch"
+msgstr "Olandese"
+
+#: InvenTree/locales.py:34
+msgid "Norwegian"
+msgstr "Norvegese"
+
+#: InvenTree/locales.py:35
+msgid "Polish"
+msgstr "Polacco"
+
+#: InvenTree/locales.py:36
+msgid "Portuguese"
+msgstr "Portoghese"
+
+#: InvenTree/locales.py:37
+msgid "Portuguese (Brazilian)"
+msgstr "Portoghese (Brasile)"
+
+#: InvenTree/locales.py:38
+msgid "Russian"
+msgstr "Russo"
+
+#: InvenTree/locales.py:39
+msgid "Slovenian"
+msgstr "Sloveno"
+
+#: InvenTree/locales.py:40
+msgid "Serbian"
+msgstr "Serbo"
+
+#: InvenTree/locales.py:41
+msgid "Swedish"
+msgstr "Svedese"
+
+#: InvenTree/locales.py:42
+msgid "Thai"
+msgstr "Thailandese"
+
+#: InvenTree/locales.py:43
+msgid "Turkish"
+msgstr "Turco"
+
+#: InvenTree/locales.py:44
+msgid "Vietnamese"
+msgstr "Vietnamita"
+
+#: InvenTree/locales.py:45
+msgid "Chinese (Simplified)"
+msgstr "Cinese (Semplificato)"
+
+#: InvenTree/locales.py:46
+msgid "Chinese (Traditional)"
+msgstr "Cinese (Tradizionale)"
+
 #: InvenTree/magic_login.py:27
 #, python-brace-format
 msgid "[{site.name}] Log in to the app"
-msgstr ""
+msgstr "[{site.name}] Accedi all'app"
 
 #: InvenTree/magic_login.py:37 company/models.py:134
 #: company/templates/company/company_base.html:132
@@ -212,7 +336,7 @@ msgstr "Email"
 
 #: InvenTree/models.py:83
 msgid "Metadata must be a python dict object"
-msgstr ""
+msgstr "I metadati devono essere un oggetto python dict"
 
 #: InvenTree/models.py:89
 msgid "Plugin Metadata"
@@ -266,7 +390,7 @@ msgstr "Seleziona file da allegare"
 
 #: InvenTree/models.py:497 common/models.py:2857 company/models.py:147
 #: company/models.py:452 company/models.py:507 company/models.py:809
-#: order/models.py:273 order/models.py:1266 order/models.py:1659
+#: order/models.py:273 order/models.py:1266 order/models.py:1665
 #: part/admin.py:55 part/models.py:902
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
@@ -343,9 +467,10 @@ msgid "Invalid choice"
 msgstr "Scelta non valida"
 
 #: InvenTree/models.py:823 common/models.py:2550 common/models.py:2943
-#: company/models.py:606 label/models.py:115 part/models.py:838
-#: part/models.py:3575 plugin/models.py:40 report/models.py:172
-#: stock/models.py:78 templates/InvenTree/settings/mixins/urls.html:13
+#: common/serializers.py:365 company/models.py:606 label/models.py:115
+#: part/models.py:838 part/models.py:3575 plugin/models.py:40
+#: report/models.py:172 stock/models.py:78
+#: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
 #: templates/InvenTree/settings/plugin.html:80
 #: templates/InvenTree/settings/plugin_settings.html:22
@@ -460,22 +585,23 @@ msgstr "Selezionare la valuta dalle opzioni disponibili"
 
 #: InvenTree/serializers.py:427
 msgid "You do not have permission to change this user role."
-msgstr ""
+msgstr "Non hai i permessi per cambiare il ruolo dell'utente."
 
 #: InvenTree/serializers.py:439
 msgid "Only superusers can create new users"
-msgstr ""
+msgstr "Solo i superutenti possono creare nuovi utenti"
 
 #: InvenTree/serializers.py:456
 #, python-brace-format
 msgid "Welcome to {current_site.name}"
-msgstr ""
+msgstr "Benvenuto su {current_site.name}"
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
 msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
+msgstr "Il tuo account è stato creato.\n\n"
+"Si prega di utilizzare la funzione di reimpostazione della password per ottenere l'accesso (su https://{domain})."
 
 #: InvenTree/serializers.py:520
 msgid "Filename"
@@ -529,7 +655,7 @@ msgstr "Colonna duplicata: '{col}'"
 
 #: InvenTree/serializers.py:837
 msgid "Remote Image"
-msgstr ""
+msgstr "Immagine Remota"
 
 #: InvenTree/serializers.py:838
 msgid "URL of remote image file"
@@ -538,130 +664,6 @@ msgstr "URL del file immagine remota"
 #: InvenTree/serializers.py:854
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Il download delle immagini da URL remoto non è abilitato"
-
-#: InvenTree/settings.py:837
-msgid "Bulgarian"
-msgstr ""
-
-#: InvenTree/settings.py:838
-msgid "Czech"
-msgstr "Ceco"
-
-#: InvenTree/settings.py:839
-msgid "Danish"
-msgstr "Danese"
-
-#: InvenTree/settings.py:840
-msgid "German"
-msgstr "Tedesco"
-
-#: InvenTree/settings.py:841
-msgid "Greek"
-msgstr "Greco"
-
-#: InvenTree/settings.py:842
-msgid "English"
-msgstr "Inglese"
-
-#: InvenTree/settings.py:843
-msgid "Spanish"
-msgstr "Spagnolo"
-
-#: InvenTree/settings.py:844
-msgid "Spanish (Mexican)"
-msgstr "Spagnolo (Messicano)"
-
-#: InvenTree/settings.py:845
-msgid "Farsi / Persian"
-msgstr "Farsi / Persiano"
-
-#: InvenTree/settings.py:846
-msgid "Finnish"
-msgstr ""
-
-#: InvenTree/settings.py:847
-msgid "French"
-msgstr "Francese"
-
-#: InvenTree/settings.py:848
-msgid "Hebrew"
-msgstr "Ebraico"
-
-#: InvenTree/settings.py:849
-msgid "Hindi"
-msgstr ""
-
-#: InvenTree/settings.py:850
-msgid "Hungarian"
-msgstr "Ungherese"
-
-#: InvenTree/settings.py:851
-msgid "Italian"
-msgstr "Italiano"
-
-#: InvenTree/settings.py:852
-msgid "Japanese"
-msgstr "Giapponese"
-
-#: InvenTree/settings.py:853
-msgid "Korean"
-msgstr "Coreano"
-
-#: InvenTree/settings.py:854
-msgid "Dutch"
-msgstr "Olandese"
-
-#: InvenTree/settings.py:855
-msgid "Norwegian"
-msgstr "Norvegese"
-
-#: InvenTree/settings.py:856
-msgid "Polish"
-msgstr "Polacco"
-
-#: InvenTree/settings.py:857
-msgid "Portuguese"
-msgstr "Portoghese"
-
-#: InvenTree/settings.py:858
-msgid "Portuguese (Brazilian)"
-msgstr "Portoghese (Brasile)"
-
-#: InvenTree/settings.py:859
-msgid "Russian"
-msgstr "Russo"
-
-#: InvenTree/settings.py:860
-msgid "Slovenian"
-msgstr "Sloveno"
-
-#: InvenTree/settings.py:861
-msgid "Serbian"
-msgstr ""
-
-#: InvenTree/settings.py:862
-msgid "Swedish"
-msgstr "Svedese"
-
-#: InvenTree/settings.py:863
-msgid "Thai"
-msgstr "Thailandese"
-
-#: InvenTree/settings.py:864
-msgid "Turkish"
-msgstr "Turco"
-
-#: InvenTree/settings.py:865
-msgid "Vietnamese"
-msgstr "Vietnamita"
-
-#: InvenTree/settings.py:866
-msgid "Chinese (Simplified)"
-msgstr ""
-
-#: InvenTree/settings.py:867
-msgid "Chinese (Traditional)"
-msgstr ""
 
 #: InvenTree/status.py:66 part/serializers.py:1082
 msgid "Background worker check failed"
@@ -777,7 +779,7 @@ msgstr "Posizione cambiata"
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr ""
+msgstr "Stock aggiornato"
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
@@ -821,7 +823,7 @@ msgstr "Build order output completato"
 
 #: InvenTree/status_codes.py:128
 msgid "Build order output rejected"
-msgstr ""
+msgstr "Ordine di costruzione rifiutato"
 
 #: InvenTree/status_codes.py:129 templates/js/translated/stock.js:1732
 msgid "Consumed by build order"
@@ -875,13 +877,9 @@ msgstr "Rifiuta"
 msgid "Unknown database"
 msgstr "Database sconosciuto"
 
-#: InvenTree/templatetags/inventree_extras.py:223
-msgid "{version.inventreeInstanceTitle()} v{version.inventreeVersion()}"
-msgstr ""
-
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
-msgstr ""
+msgstr "Unità fisica non valida"
 
 #: InvenTree/validators.py:39
 msgid "Not a valid currency code"
@@ -995,14 +993,14 @@ msgstr "Scelta non valida per la produzione genitore"
 
 #: build/models.py:127
 msgid "Build order part cannot be changed"
-msgstr ""
+msgstr "L'ordine di costruzione della parte non può essere cambiata"
 
 #: build/models.py:171
 msgid "Build Order Reference"
 msgstr "Riferimento Ordine Di Produzione"
 
 #: build/models.py:172 order/models.py:422 order/models.py:876
-#: order/models.py:1254 order/models.py:1948 part/admin.py:416
+#: order/models.py:1254 order/models.py:1954 part/admin.py:416
 #: part/models.py:3992 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
@@ -1160,7 +1158,7 @@ msgstr "Data completamento obiettivo"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Data di completamento della produzione. Dopo tale data la produzione sarà in ritardo."
 
-#: build/models.py:277 order/models.py:480 order/models.py:1993
+#: build/models.py:277 order/models.py:480 order/models.py:1999
 #: templates/js/translated/build.js:2235
 msgid "Completion Date"
 msgstr "Data di completamento"
@@ -1229,7 +1227,7 @@ msgstr "Codice del progetto"
 
 #: build/models.py:322
 msgid "Project code for this build order"
-msgstr ""
+msgstr "Codice del progetto per questo ordine di produzione"
 
 #: build/models.py:557
 #, python-brace-format
@@ -1261,16 +1259,16 @@ msgstr "La quantità deve essere maggiore di zero"
 
 #: build/models.py:865 build/serializers.py:223
 msgid "Quantity cannot be greater than the output quantity"
-msgstr ""
+msgstr "La quantità non può essere maggiore della quantità in uscita"
 
 #: build/models.py:1279
 msgid "Build object"
-msgstr ""
+msgstr "Crea oggetto"
 
 #: build/models.py:1293 build/models.py:1551 build/serializers.py:205
 #: build/serializers.py:242 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2360
-#: order/models.py:1237 order/models.py:1871 order/serializers.py:1282
+#: order/models.py:1237 order/models.py:1877 order/serializers.py:1282
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:415
 #: part/forms.py:48 part/models.py:3135 part/models.py:3965
 #: part/templates/part/part_pricing.html:16
@@ -1316,7 +1314,7 @@ msgstr "Quantità"
 
 #: build/models.py:1294
 msgid "Required quantity for build order"
-msgstr ""
+msgstr "Quantità richiesta per l'ordine di costruzione"
 
 #: build/models.py:1374
 msgid "Build item must specify a build output, as master part is marked as trackable"
@@ -1327,11 +1325,11 @@ msgstr "L'elemento di compilazione deve specificare un output poiché la parte p
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "La quantità assegnata ({q}) non deve essere maggiore della quantità disponibile ({a})"
 
-#: build/models.py:1393 order/models.py:1822
+#: build/models.py:1393 order/models.py:1828
 msgid "Stock item is over-allocated"
 msgstr "L'articolo in giacenza è sovrallocato"
 
-#: build/models.py:1399 order/models.py:1825
+#: build/models.py:1399 order/models.py:1831
 msgid "Allocation quantity must be greater than zero"
 msgstr "La quantità di assegnazione deve essere maggiore di zero"
 
@@ -1341,7 +1339,7 @@ msgstr "La quantità deve essere 1 per lo stock serializzato"
 
 #: build/models.py:1466
 msgid "Selected stock item does not match BOM line"
-msgstr ""
+msgstr "L'articolo in stock selezionato non corrisponde alla voce nella BOM"
 
 #: build/models.py:1538 build/serializers.py:795 order/serializers.py:1126
 #: order/serializers.py:1147 stock/serializers.py:488 stock/serializers.py:956
@@ -1477,7 +1475,7 @@ msgstr "Posizione per gli output di build completati"
 
 #: build/serializers.py:500 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:900
-#: order/models.py:1972 order/serializers.py:541 stock/admin.py:163
+#: order/models.py:1978 order/serializers.py:541 stock/admin.py:163
 #: stock/serializers.py:718 stock/serializers.py:1236
 #: stock/templates/stock/item_base.html:427
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2179
@@ -1516,7 +1514,7 @@ msgstr "Elimina gli output di produzione che non sono stati completati"
 
 #: build/serializers.py:611
 msgid "Not permitted"
-msgstr ""
+msgstr "Non permesso"
 
 #: build/serializers.py:612
 msgid "Accept as consumed by this build order"
@@ -1568,7 +1566,7 @@ msgstr "L'ordine di produzione ha output incompleti"
 
 #: build/serializers.py:718
 msgid "Build Line"
-msgstr ""
+msgstr "Linea di produzione"
 
 #: build/serializers.py:728
 msgid "Build output"
@@ -1580,7 +1578,7 @@ msgstr "L'output di produzione deve puntare alla stessa produzione"
 
 #: build/serializers.py:772
 msgid "Build Line Item"
-msgstr ""
+msgstr "Articolo linea di produzione"
 
 #: build/serializers.py:786
 msgid "bom_item.part must point to the same part as the build order"
@@ -1658,7 +1656,7 @@ msgstr "L'ordine di produzione {bo} è in ritardo"
 
 #: build/templates/build/build_base.html:18
 msgid "Part thumbnail"
-msgstr ""
+msgstr "Anteprima parte"
 
 #: build/templates/build/build_base.html:38
 #: company/templates/company/supplier_part.html:35
@@ -1807,7 +1805,7 @@ msgstr "Outputs Completati"
 
 #: build/templates/build/build_base.html:190
 #: build/templates/build/detail.html:101 order/api.py:1408 order/models.py:1503
-#: order/models.py:1607 order/models.py:1759
+#: order/models.py:1613 order/models.py:1765
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
 #: report/templates/report/inventree_build_order_base.html:135
@@ -1835,15 +1833,15 @@ msgstr "Priorità"
 
 #: build/templates/build/build_base.html:273
 msgid "Delete Build Order"
-msgstr "Elimina Ordine Build"
+msgstr "Elimina ordine di produzione"
 
 #: build/templates/build/build_base.html:283
 msgid "Build Order QR Code"
-msgstr "Genera Codice QR Ordine"
+msgstr "Genera Codice QR Ordine di produzione"
 
 #: build/templates/build/build_base.html:295
 msgid "Link Barcode to Build Order"
-msgstr "Collega il codice a barre all'ordine di build"
+msgstr "Collega il codice a barre all'ordine di produzione"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1987,7 +1985,7 @@ msgstr "Genera Note"
 
 #: build/templates/build/detail.html:422
 msgid "Allocation Complete"
-msgstr "Assegnazione Completa"
+msgstr ""
 
 #: build/templates/build/detail.html:423
 msgid "All lines have been fully allocated"
@@ -3422,7 +3420,7 @@ msgid "Price break quantity"
 msgstr "Quantità prezzo limite"
 
 #: common/models.py:2368 company/serializers.py:481 order/admin.py:42
-#: order/models.py:1311 order/models.py:2193
+#: order/models.py:1311 order/models.py:2199
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1885
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -3619,6 +3617,66 @@ msgstr ""
 #: common/notifications.py:457
 msgid "Error raised by plugin"
 msgstr "Errore generato dal plugin"
+
+#: common/serializers.py:328
+msgid "Is Running"
+msgstr ""
+
+#: common/serializers.py:334
+msgid "Pending Tasks"
+msgstr ""
+
+#: common/serializers.py:340
+msgid "Scheduled Tasks"
+msgstr ""
+
+#: common/serializers.py:346
+msgid "Failed Tasks"
+msgstr ""
+
+#: common/serializers.py:361
+msgid "Task ID"
+msgstr ""
+
+#: common/serializers.py:361
+msgid "Unique task ID"
+msgstr ""
+
+#: common/serializers.py:363
+msgid "Lock"
+msgstr ""
+
+#: common/serializers.py:363
+msgid "Lock time"
+msgstr ""
+
+#: common/serializers.py:365
+msgid "Task name"
+msgstr ""
+
+#: common/serializers.py:367
+msgid "Function"
+msgstr ""
+
+#: common/serializers.py:367
+msgid "Function name"
+msgstr ""
+
+#: common/serializers.py:369
+msgid "Arguments"
+msgstr ""
+
+#: common/serializers.py:369
+msgid "Task arguments"
+msgstr ""
+
+#: common/serializers.py:372
+msgid "Keyword Arguments"
+msgstr ""
+
+#: common/serializers.py:372
+msgid "Task keyword arguments"
+msgstr ""
 
 #: common/views.py:84 order/templates/order/order_wizard/po_upload.html:51
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:118
@@ -4081,7 +4139,7 @@ msgid "Delete image"
 msgstr "Elimina immagine"
 
 #: company/templates/company/company_base.html:86 order/models.py:888
-#: order/models.py:1960 order/templates/order/return_order_base.html:131
+#: order/models.py:1966 order/templates/order/return_order_base.html:131
 #: order/templates/order/sales_order_base.html:144 stock/models.py:796
 #: stock/models.py:797 stock/serializers.py:1004
 #: stock/templates/stock/item_base.html:405
@@ -4112,11 +4170,11 @@ msgstr "Telefono"
 #: company/templates/company/company_base.html:205
 #: part/templates/part/part_base.html:528
 msgid "Remove Image"
-msgstr "Rimuovi immagine"
+msgstr ""
 
 #: company/templates/company/company_base.html:206
 msgid "Remove associated image from this company"
-msgstr "Rimuovi l'immagine associata a questa azienda"
+msgstr ""
 
 #: company/templates/company/company_base.html:208
 #: part/templates/part/part_base.html:531
@@ -4128,12 +4186,12 @@ msgstr "Rimuovi"
 #: company/templates/company/company_base.html:237
 #: part/templates/part/part_base.html:560
 msgid "Upload Image"
-msgstr "Carica immagine"
+msgstr ""
 
 #: company/templates/company/company_base.html:252
 #: part/templates/part/part_base.html:614
 msgid "Download Image"
-msgstr "Download Immagine"
+msgstr ""
 
 #: company/templates/company/detail.html:15
 #: company/templates/company/manufacturer_part_sidebar.html:7
@@ -4316,7 +4374,7 @@ msgstr "Nuovo Parametro"
 #: company/templates/company/manufacturer_part.html:206
 #: templates/js/translated/part.js:1422
 msgid "Add Parameter"
-msgstr "Aggiungi parametro"
+msgstr ""
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
@@ -4432,15 +4490,15 @@ msgstr "Aggiungi riduzione prezzo"
 
 #: company/templates/company/supplier_part.html:276
 msgid "Supplier Part QR Code"
-msgstr "Codice Articolo Fornitore QR"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:287
 msgid "Link Barcode to Supplier Part"
-msgstr "Collega Codice a Barre con l'Articolo Fornitore"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:359
 msgid "Update Part Availability"
-msgstr "Aggiorna Disponibilità Articolo"
+msgstr ""
 
 #: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:223
 #: part/templates/part/category.html:183
@@ -4583,7 +4641,7 @@ msgstr "Nessun ordine di acquisto corrispondente trovato"
 msgid "Purchase Order"
 msgstr "Ordine D'Acquisto"
 
-#: order/api.py:1410 order/models.py:2160 order/models.py:2211
+#: order/api.py:1410 order/models.py:2166 order/models.py:2217
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4620,7 +4678,7 @@ msgstr "Descrizione dell'ordine (opzionale)"
 msgid "Select project code for this order"
 msgstr "Seleziona il codice del progetto per questo ordine"
 
-#: order/models.py:273 order/models.py:1266 order/models.py:1659
+#: order/models.py:273 order/models.py:1266 order/models.py:1665
 msgid "Link to external page"
 msgstr "Collegamento a un sito web esterno"
 
@@ -4669,15 +4727,15 @@ msgstr "Codice di riferimento ordine fornitore"
 msgid "received by"
 msgstr "ricevuto da"
 
-#: order/models.py:473 order/models.py:1986
+#: order/models.py:473 order/models.py:1992
 msgid "Issue Date"
 msgstr "Data di emissione"
 
-#: order/models.py:474 order/models.py:1987
+#: order/models.py:474 order/models.py:1993
 msgid "Date order was issued"
 msgstr "Data di emissione ordine"
 
-#: order/models.py:481 order/models.py:1994
+#: order/models.py:481 order/models.py:2000
 msgid "Date order was completed"
 msgstr "Data ordine completato"
 
@@ -4693,15 +4751,15 @@ msgstr "La quantità deve essere un numero positivo"
 msgid "Company to which the items are being sold"
 msgstr "Azienda da cui sono stati ordinati gli elementi"
 
-#: order/models.py:912 order/models.py:1979
+#: order/models.py:912 order/models.py:1985
 msgid "Customer Reference "
 msgstr "Riferimento Cliente "
 
-#: order/models.py:913 order/models.py:1980
+#: order/models.py:913 order/models.py:1986
 msgid "Customer order reference code"
 msgstr "Codice di riferimento Ordine del Cliente"
 
-#: order/models.py:917 order/models.py:1613
+#: order/models.py:917 order/models.py:1619
 #: templates/js/translated/sales_order.js:843
 #: templates/js/translated/sales_order.js:1024
 msgid "Shipment Date"
@@ -4768,8 +4826,8 @@ msgid "deleted"
 msgstr "eliminato"
 
 #: order/models.py:1360 order/models.py:1456 order/models.py:1502
-#: order/models.py:1606 order/models.py:1758 order/models.py:2159
-#: order/models.py:2210 templates/js/translated/sales_order.js:1488
+#: order/models.py:1612 order/models.py:1764 order/models.py:2165
+#: order/models.py:2216 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr "Ordine"
 
@@ -4826,146 +4884,146 @@ msgstr "Prezzo unitario di vendita"
 msgid "Shipped quantity"
 msgstr "Quantità spedita"
 
-#: order/models.py:1614
+#: order/models.py:1620
 msgid "Date of shipment"
 msgstr "Data di spedizione"
 
-#: order/models.py:1620 templates/js/translated/sales_order.js:1036
+#: order/models.py:1626 templates/js/translated/sales_order.js:1036
 msgid "Delivery Date"
 msgstr ""
 
-#: order/models.py:1621
+#: order/models.py:1627
 msgid "Date of delivery of shipment"
 msgstr ""
 
-#: order/models.py:1629
+#: order/models.py:1635
 msgid "Checked By"
 msgstr "Verificato Da"
 
-#: order/models.py:1630
+#: order/models.py:1636
 msgid "User who checked this shipment"
 msgstr "Utente che ha controllato questa spedizione"
 
-#: order/models.py:1637 order/models.py:1848 order/serializers.py:1297
+#: order/models.py:1643 order/models.py:1854 order/serializers.py:1297
 #: order/serializers.py:1407 templates/js/translated/model_renderers.js:446
 msgid "Shipment"
 msgstr "Spedizione"
 
-#: order/models.py:1638
+#: order/models.py:1644
 msgid "Shipment number"
 msgstr "Numero di spedizione"
 
-#: order/models.py:1646
+#: order/models.py:1652
 msgid "Tracking Number"
 msgstr "Numero di monitoraggio"
 
-#: order/models.py:1647
+#: order/models.py:1653
 msgid "Shipment tracking information"
 msgstr "Informazioni di monitoraggio della spedizione"
 
-#: order/models.py:1654
+#: order/models.py:1660
 msgid "Invoice Number"
 msgstr "Numero Fattura"
 
-#: order/models.py:1655
+#: order/models.py:1661
 msgid "Reference number for associated invoice"
 msgstr "Numero di riferimento per la fattura associata"
 
-#: order/models.py:1675
+#: order/models.py:1681
 msgid "Shipment has already been sent"
 msgstr "La spedizione è già stata spedita"
 
-#: order/models.py:1678
+#: order/models.py:1684
 msgid "Shipment has no allocated stock items"
 msgstr "La spedizione non ha articoli di stock assegnati"
 
-#: order/models.py:1794 order/models.py:1796
+#: order/models.py:1800 order/models.py:1802
 msgid "Stock item has not been assigned"
 msgstr "L'elemento di magazzino non è stato assegnato"
 
-#: order/models.py:1803
+#: order/models.py:1809
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Impossibile allocare l'elemento stock a una linea con un articolo diverso"
 
-#: order/models.py:1806
+#: order/models.py:1812
 msgid "Cannot allocate stock to a line without a part"
 msgstr "Impossibile allocare stock a una riga senza un articolo"
 
-#: order/models.py:1809
+#: order/models.py:1815
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr "La quantità di ripartizione non puo' superare la disponibilità della giacenza"
 
-#: order/models.py:1828 order/serializers.py:1174
+#: order/models.py:1834 order/serializers.py:1174
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "La quantità deve essere 1 per l'elemento serializzato"
 
-#: order/models.py:1831
+#: order/models.py:1837
 msgid "Sales order does not match shipment"
 msgstr "L'ordine di vendita non corrisponde alla spedizione"
 
-#: order/models.py:1832 plugin/base/barcodes/api.py:481
+#: order/models.py:1838 plugin/base/barcodes/api.py:481
 msgid "Shipment does not match sales order"
 msgstr "La spedizione non corrisponde all'ordine di vendita"
 
-#: order/models.py:1840
+#: order/models.py:1846
 msgid "Line"
 msgstr "Linea"
 
-#: order/models.py:1849
+#: order/models.py:1855
 msgid "Sales order shipment reference"
 msgstr "Riferimento della spedizione ordine di vendita"
 
-#: order/models.py:1862 order/models.py:2167
+#: order/models.py:1868 order/models.py:2173
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr "Elemento"
 
-#: order/models.py:1863
+#: order/models.py:1869
 msgid "Select stock item to allocate"
 msgstr "Seleziona elemento stock da allocare"
 
-#: order/models.py:1872
+#: order/models.py:1878
 msgid "Enter stock allocation quantity"
 msgstr "Inserisci la quantità assegnata alla giacenza"
 
-#: order/models.py:1949
+#: order/models.py:1955
 msgid "Return Order reference"
 msgstr ""
 
-#: order/models.py:1961
+#: order/models.py:1967
 msgid "Company from which items are being returned"
 msgstr ""
 
-#: order/models.py:1973
+#: order/models.py:1979
 msgid "Return order status"
 msgstr ""
 
-#: order/models.py:2152
+#: order/models.py:2158
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr ""
 
-#: order/models.py:2168
+#: order/models.py:2174
 msgid "Select item to return from customer"
 msgstr "Seleziona l'elemento da restituire dal cliente"
 
-#: order/models.py:2174
+#: order/models.py:2180
 msgid "Received Date"
 msgstr "Data di ricezione"
 
-#: order/models.py:2175
+#: order/models.py:2181
 msgid "The date this this return item was received"
 msgstr ""
 
-#: order/models.py:2186 templates/js/translated/return_order.js:733
+#: order/models.py:2192 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr "Risultati"
 
-#: order/models.py:2187
+#: order/models.py:2193
 msgid "Outcome for this line item"
 msgstr ""
 
-#: order/models.py:2194
+#: order/models.py:2200
 msgid "Cost associated with return or repair for this line item"
 msgstr ""
 
@@ -5238,7 +5296,7 @@ msgstr ""
 
 #: order/templates/order/order_base.html:330
 msgid "Link Barcode to Purchase Order"
-msgstr "Collega il codice a barre all'ordine d'acquisto"
+msgstr ""
 
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
@@ -6939,15 +6997,15 @@ msgstr "Componenti Produttori"
 
 #: part/templates/part/detail.html:659
 msgid "Related Part"
-msgstr "Articoli correlati"
+msgstr ""
 
 #: part/templates/part/detail.html:667
 msgid "Add Related Part"
-msgstr "Aggiungi articolo correlato"
+msgstr ""
 
 #: part/templates/part/detail.html:752
 msgid "Add Test Result Template"
-msgstr "Aggiungi risultato modello test"
+msgstr ""
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
@@ -7123,31 +7181,27 @@ msgstr "Ricerca per numero seriale"
 
 #: part/templates/part/part_base.html:444
 msgid "Part QR Code"
-msgstr "QR Code Articolo"
+msgstr ""
 
 #: part/templates/part/part_base.html:461
 msgid "Link Barcode to Part"
-msgstr "Collega il codice a barre all'Articolo"
-
-#: part/templates/part/part_base.html:472 templates/js/translated/part.js:2287
-msgid "part"
 msgstr ""
 
 #: part/templates/part/part_base.html:512
 msgid "Calculate"
-msgstr "Calcola"
+msgstr ""
 
 #: part/templates/part/part_base.html:529
 msgid "Remove associated image from this part"
-msgstr "Rimuovi l'immagine associata all'articolo"
+msgstr ""
 
 #: part/templates/part/part_base.html:580
 msgid "No matching images found"
-msgstr "Nessuna immagine corrispondente trovata"
+msgstr ""
 
 #: part/templates/part/part_base.html:676
 msgid "Hide Part Details"
-msgstr "Nascondi Dettagli dell'Articolo"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:76
 #: part/templates/part/prices.html:227 templates/js/translated/pricing.js:485
@@ -7797,7 +7851,7 @@ msgstr "Plugin"
 msgid "Method"
 msgstr "Metodo"
 
-#: plugin/plugin.py:271
+#: plugin/plugin.py:279
 msgid "No author found"
 msgstr "Nessun autore trovato"
 
@@ -8759,7 +8813,7 @@ msgstr "Elimina tutti i risultati del test per questo elemento di magazzino"
 
 #: stock/templates/stock/item.html:296 templates/js/translated/stock.js:1667
 msgid "Add Test Result"
-msgstr "Aggiungi Risultato Test"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:33
 msgid "Locate stock item"
@@ -8949,15 +9003,15 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
-msgstr "Modifica Stato Magazzino"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:541
 msgid "Stock Item QR Code"
-msgstr "Stock Item QR Code"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:552
 msgid "Link Barcode to Stock Item"
-msgstr "Collega il codice a barre all'Elemento Stock"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:616
 msgid "Select one of the part variants listed below."
@@ -8973,11 +9027,11 @@ msgstr "Questa azione non può essere facilmente annullata"
 
 #: stock/templates/stock/item_base.html:628
 msgid "Convert Stock Item"
-msgstr "Converti Elemento Stock"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:662
 msgid "Return to Stock"
-msgstr "Torna al Magazzino"
+msgstr ""
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
@@ -9060,15 +9114,15 @@ msgstr ""
 
 #: stock/templates/stock/location.html:317
 msgid "Scanned stock container into this location"
-msgstr "Container magazzino scansionato in questa posizione"
+msgstr ""
 
 #: stock/templates/stock/location.html:390
 msgid "Stock Location QR Code"
-msgstr "Codice QR Ubicazione Magazzino"
+msgstr ""
 
 #: stock/templates/stock/location.html:401
 msgid "Link Barcode to Stock Location"
-msgstr "Collega il Codice a Barre alla Posizione Magazzino"
+msgstr ""
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
@@ -9142,71 +9196,71 @@ msgstr "Indice"
 
 #: templates/InvenTree/index.html:39
 msgid "Subscribed Parts"
-msgstr "Articoli Sottoscritti"
+msgstr ""
 
 #: templates/InvenTree/index.html:52
 msgid "Subscribed Categories"
-msgstr "Categoria sottoscritta"
+msgstr ""
 
 #: templates/InvenTree/index.html:62
 msgid "Latest Parts"
-msgstr "Articoli Recenti"
+msgstr ""
 
 #: templates/InvenTree/index.html:77
 msgid "BOM Waiting Validation"
-msgstr "Distinta base In Attesa Di Convalida"
+msgstr ""
 
 #: templates/InvenTree/index.html:106
 msgid "Recently Updated"
-msgstr "Aggiornamento Recente"
+msgstr ""
 
 #: templates/InvenTree/index.html:134
 msgid "Depleted Stock"
-msgstr "Stock esaurito"
+msgstr ""
 
 #: templates/InvenTree/index.html:148
 msgid "Required for Build Orders"
-msgstr "Richiesto per gli Ordini di Produzione"
+msgstr ""
 
 #: templates/InvenTree/index.html:156
 msgid "Expired Stock"
-msgstr "Stock Scaduto"
+msgstr ""
 
 #: templates/InvenTree/index.html:172
 msgid "Stale Stock"
-msgstr "Stock obsoleto"
+msgstr ""
 
 #: templates/InvenTree/index.html:199
 msgid "Build Orders In Progress"
-msgstr "Ordini di Produzione Attivi"
+msgstr ""
 
 #: templates/InvenTree/index.html:210
 msgid "Overdue Build Orders"
-msgstr "Ordini Di Produzione Scaduti"
+msgstr ""
 
 #: templates/InvenTree/index.html:230
 msgid "Outstanding Purchase Orders"
-msgstr "Ordini Di Acquisto In Corso"
+msgstr ""
 
 #: templates/InvenTree/index.html:241
 msgid "Overdue Purchase Orders"
-msgstr "Ordini Di Acquisto In Ritardo"
+msgstr ""
 
 #: templates/InvenTree/index.html:262
 msgid "Outstanding Sales Orders"
-msgstr "Ordini Di Vendita In Corso"
+msgstr ""
 
 #: templates/InvenTree/index.html:273
 msgid "Overdue Sales Orders"
-msgstr "Ordini Di Vendita in ritardo"
+msgstr ""
 
 #: templates/InvenTree/index.html:299
 msgid "InvenTree News"
-msgstr "Novità InvenTree"
+msgstr ""
 
 #: templates/InvenTree/index.html:301
 msgid "Current News"
-msgstr "Notizie Attuali"
+msgstr ""
 
 #: templates/InvenTree/notifications/history.html:9
 msgid "Notification History"
@@ -9236,11 +9290,11 @@ msgstr "Notifiche"
 
 #: templates/InvenTree/notifications/notifications.html:38
 msgid "No unread notifications found"
-msgstr "Nessuna notifica non letta"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:58
 msgid "No notification history found"
-msgstr "Nessuna cronologia notifiche trovata"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:65
 msgid "Delete all read notifications"
@@ -9249,7 +9303,7 @@ msgstr "Elimina tutte le notifiche lette"
 #: templates/InvenTree/notifications/notifications.html:89
 #: templates/js/translated/notification.js:85
 msgid "Delete Notification"
-msgstr "Elimina notifica"
+msgstr ""
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
@@ -9545,23 +9599,23 @@ msgstr "Modifica impostazioni"
 
 #: templates/InvenTree/settings/settings_js.html:58
 msgid "Edit Plugin Setting"
-msgstr "Modifica Impostazioni Plugin"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_js.html:60
 msgid "Edit Notification Setting"
-msgstr "Modifica Impostazioni Notifica"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_js.html:63
 msgid "Edit Global Setting"
-msgstr "Modifica Impostazioni Globali"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_js.html:65
 msgid "Edit User Setting"
-msgstr "Modifica Impostazioni Utente"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:49
 msgid "Rate"
-msgstr "Voto"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:81
 #: templates/js/translated/forms.js:543 templates/js/translated/helpers.js:105
@@ -9584,36 +9638,36 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:140
 msgid "No project codes found"
-msgstr "Nessun codice progetto trovato"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:158
 #: templates/js/translated/build.js:2216
 msgid "group"
-msgstr "gruppo"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:175
 #: templates/InvenTree/settings/settings_staff_js.html:189
 msgid "Edit Project Code"
-msgstr "Modifica Codice Progetto"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:176
 #: templates/InvenTree/settings/settings_staff_js.html:203
 msgid "Delete Project Code"
-msgstr "Elimina Codice Progetto"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:285
 msgid "No category parameter templates found"
-msgstr "Nessun parametro di categoria trovato"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:308
 #: templates/js/translated/part.js:1645
 msgid "Edit Template"
-msgstr "Modifica Template"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:309
 #: templates/js/translated/part.js:1646
 msgid "Delete Template"
-msgstr "Elimina Template"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:326
 msgid "Edit Category Parameter Template"
@@ -9621,15 +9675,15 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:353
 msgid "Delete Category Parameter Template"
-msgstr "Elimina Modello Parametro Categoria"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:388
 msgid "Create Category Parameter Template"
-msgstr "Crea Template Parametro Categoria"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:418
 msgid "Create Part Parameter Template"
-msgstr "Crea Parametro Articolo Template"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:440
 msgid "No stock location types found"
@@ -9853,7 +9907,7 @@ msgstr "%(time)s fa"
 
 #: templates/InvenTree/settings/user.html:218
 msgid "Do you really want to remove the selected email address?"
-msgstr "Vuoi davvero rimuovere gli indirizzi email selezionati?"
+msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:9
 msgid "Display Settings"
@@ -10272,59 +10326,59 @@ msgstr "Quantità minima"
 
 #: templates/js/translated/api.js:225 templates/js/translated/modals.js:1130
 msgid "No Response"
-msgstr "Nessuna Risposta"
+msgstr ""
 
 #: templates/js/translated/api.js:226 templates/js/translated/modals.js:1131
 msgid "No response from the InvenTree server"
-msgstr "Nessuna risposta dal server InvenTree"
+msgstr ""
 
 #: templates/js/translated/api.js:232
 msgid "Error 400: Bad request"
-msgstr "Errore 400: Richiesta Errata"
+msgstr ""
 
 #: templates/js/translated/api.js:233
 msgid "API request returned error code 400"
-msgstr "Richiesta API restituito codice di errore 400"
+msgstr ""
 
 #: templates/js/translated/api.js:237 templates/js/translated/modals.js:1140
 msgid "Error 401: Not Authenticated"
-msgstr "Errore 401: Non Autenticato"
+msgstr ""
 
 #: templates/js/translated/api.js:238 templates/js/translated/modals.js:1141
 msgid "Authentication credentials not supplied"
-msgstr "Credenziali di autenticazione non fornite"
+msgstr ""
 
 #: templates/js/translated/api.js:242 templates/js/translated/modals.js:1145
 msgid "Error 403: Permission Denied"
-msgstr "Errore 403 - Permesso negato"
+msgstr ""
 
 #: templates/js/translated/api.js:243 templates/js/translated/modals.js:1146
 msgid "You do not have the required permissions to access this function"
-msgstr "Non hai i permessi necessari per accedere a questa funzione"
+msgstr ""
 
 #: templates/js/translated/api.js:247 templates/js/translated/modals.js:1150
 msgid "Error 404: Resource Not Found"
-msgstr "Errore 404: Risorsa Non Trovata"
+msgstr ""
 
 #: templates/js/translated/api.js:248 templates/js/translated/modals.js:1151
 msgid "The requested resource could not be located on the server"
-msgstr "La risorsa richiesta non può essere localizzata sul server"
+msgstr ""
 
 #: templates/js/translated/api.js:252
 msgid "Error 405: Method Not Allowed"
-msgstr "Errore 405: Metodo Non Consentito"
+msgstr ""
 
 #: templates/js/translated/api.js:253
 msgid "HTTP method not allowed at URL"
-msgstr "Metodo HTTP non consentito all'URL"
+msgstr ""
 
 #: templates/js/translated/api.js:257 templates/js/translated/modals.js:1155
 msgid "Error 408: Timeout"
-msgstr "Errore 408: Timeout"
+msgstr ""
 
 #: templates/js/translated/api.js:258 templates/js/translated/modals.js:1156
 msgid "Connection timeout while requesting data from server"
-msgstr "Timeout connessione durante la richiesta di dati dal server"
+msgstr ""
 
 #: templates/js/translated/api.js:261
 msgid "Error 503: Service Unavailable"
@@ -10336,19 +10390,19 @@ msgstr ""
 
 #: templates/js/translated/api.js:265
 msgid "Unhandled Error Code"
-msgstr "Codice Di Errore Non Gestito"
+msgstr ""
 
 #: templates/js/translated/api.js:266
 msgid "Error code"
-msgstr "Codice errore"
+msgstr ""
 
 #: templates/js/translated/attachment.js:114
 msgid "All selected attachments will be deleted"
-msgstr "Tutti gli allegati selezionati saranno eliminati"
+msgstr ""
 
 #: templates/js/translated/attachment.js:129
 msgid "Delete Attachments"
-msgstr "Elimina Allegati"
+msgstr ""
 
 #: templates/js/translated/attachment.js:205
 msgid "Delete attachments"
@@ -10360,60 +10414,60 @@ msgstr ""
 
 #: templates/js/translated/attachment.js:275
 msgid "No attachments found"
-msgstr "Allegati non trovati"
+msgstr ""
 
 #: templates/js/translated/attachment.js:315
 msgid "Edit Attachment"
-msgstr "Modifica allegato"
+msgstr ""
 
 #: templates/js/translated/attachment.js:346
 msgid "Upload Date"
-msgstr "Data di Upload"
+msgstr ""
 
 #: templates/js/translated/attachment.js:366
 msgid "Edit attachment"
-msgstr "Modifica allegato"
+msgstr ""
 
 #: templates/js/translated/attachment.js:374
 msgid "Delete attachment"
-msgstr "Cancella allegato"
+msgstr ""
 
 #: templates/js/translated/barcode.js:43
 msgid "Scan barcode data here using barcode scanner"
-msgstr "Scansiona il codice a barre usando uno scanner"
+msgstr ""
 
 #: templates/js/translated/barcode.js:45
 msgid "Enter barcode data"
-msgstr "Inserire il codice a barre"
+msgstr ""
 
 #: templates/js/translated/barcode.js:59
 msgid "Scan barcode using connected webcam"
-msgstr "Scansiona il codice a barre usando la webcam"
+msgstr ""
 
 #: templates/js/translated/barcode.js:138
 msgid "Enter optional notes for stock transfer"
-msgstr "Inserire le note facoltative per il trasferimento delle scorte"
+msgstr ""
 
 #: templates/js/translated/barcode.js:139
 msgid "Enter notes"
-msgstr "Inserire le note"
+msgstr ""
 
 #: templates/js/translated/barcode.js:188
 msgid "Server error"
-msgstr "Problemi con il server"
+msgstr ""
 
 #: templates/js/translated/barcode.js:217
 msgid "Unknown response from server"
-msgstr "Risposta sconosciuta dal server"
+msgstr ""
 
 #: templates/js/translated/barcode.js:252
 #: templates/js/translated/modals.js:1120
 msgid "Invalid server response"
-msgstr "Risposta del server non valida"
+msgstr ""
 
 #: templates/js/translated/barcode.js:372
 msgid "Scan barcode data"
-msgstr "Scansione del codice a barre"
+msgstr ""
 
 #: templates/js/translated/barcode.js:420 templates/navbar.html:114
 msgid "Scan Barcode"
@@ -10421,85 +10475,85 @@ msgstr "Scansiona codice a barre"
 
 #: templates/js/translated/barcode.js:458
 msgid "No URL in response"
-msgstr "Nessuna risposta dall'URL"
+msgstr ""
 
 #: templates/js/translated/barcode.js:498
 msgid "This will remove the link to the associated barcode"
-msgstr "Questo rimuoverà il collegamento al codice a barre associato"
+msgstr ""
 
 #: templates/js/translated/barcode.js:504
 msgid "Unlink"
-msgstr "Scollega"
+msgstr ""
 
 #: templates/js/translated/barcode.js:567 templates/js/translated/stock.js:1155
 msgid "Remove stock item"
-msgstr "Rimuovere l'articolo in magazzino"
+msgstr ""
 
 #: templates/js/translated/barcode.js:610
 msgid "Scan Stock Items Into Location"
-msgstr "Scansione articoli di magazzino in sede"
+msgstr ""
 
 #: templates/js/translated/barcode.js:612
 msgid "Scan stock item barcode to check in to this location"
-msgstr "Scansione del codice a barre dell'articolo di magazzino per effettuare il check-in in questa sede"
+msgstr ""
 
 #: templates/js/translated/barcode.js:615
 #: templates/js/translated/barcode.js:812
 msgid "Check In"
-msgstr "Check In"
+msgstr ""
 
 #: templates/js/translated/barcode.js:647
 msgid "No barcode provided"
-msgstr "Non c'è un codice a barre"
+msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Articolo di magazzino già scansionato"
+msgstr ""
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
-msgstr "Elemento in giacenza già in questa posizione"
+msgstr ""
 
 #: templates/js/translated/barcode.js:698
 msgid "Added stock item"
-msgstr "Aggiunta di un articolo di magazzino"
+msgstr ""
 
 #: templates/js/translated/barcode.js:707
 msgid "Barcode does not match valid stock item"
-msgstr "Il codice a barre non corrisponde a un articolo di magazzino valido"
+msgstr ""
 
 #: templates/js/translated/barcode.js:726
 msgid "Scan Stock Container Into Location"
-msgstr "Scansione delle scorte contenute in sede"
+msgstr ""
 
 #: templates/js/translated/barcode.js:728
 msgid "Scan stock container barcode to check in to this location"
-msgstr "Scansionare il codice a barre di scorta contenuta per effettuare il check-in in questa sede"
+msgstr ""
 
 #: templates/js/translated/barcode.js:762
 msgid "Barcode does not match valid stock location"
-msgstr "Il codice a barre non corrisponde a una posizione di magazzino valida"
+msgstr ""
 
 #: templates/js/translated/barcode.js:806
 msgid "Check Into Location"
-msgstr "Controlla Nella Posizione"
+msgstr ""
 
 #: templates/js/translated/barcode.js:875
 #: templates/js/translated/barcode.js:884
 msgid "Barcode does not match a valid location"
-msgstr "Il codice a barre non corrisponde a una posizione valida"
+msgstr ""
 
 #: templates/js/translated/bom.js:78
 msgid "Create BOM Item"
-msgstr "Creare un elemento della distinta base"
+msgstr ""
 
 #: templates/js/translated/bom.js:132
 msgid "Display row data"
-msgstr "Visualizzare i dati"
+msgstr ""
 
 #: templates/js/translated/bom.js:188
 msgid "Row Data"
-msgstr "Dati"
+msgstr ""
 
 #: templates/js/translated/bom.js:189 templates/js/translated/bom.js:700
 #: templates/js/translated/modals.js:74 templates/js/translated/modals.js:628
@@ -10511,103 +10565,103 @@ msgstr "Chiudi"
 
 #: templates/js/translated/bom.js:306
 msgid "Download BOM Template"
-msgstr "Scarica il modello di distinta base"
+msgstr ""
 
 #: templates/js/translated/bom.js:351
 msgid "Multi Level BOM"
-msgstr "Distinta base multilivello"
+msgstr ""
 
 #: templates/js/translated/bom.js:352
 msgid "Include BOM data for subassemblies"
-msgstr "Includere i dati della distinta base per i sottoassiemi"
+msgstr ""
 
 #: templates/js/translated/bom.js:357
 msgid "Levels"
-msgstr "Livelli"
+msgstr ""
 
 #: templates/js/translated/bom.js:358
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
-msgstr "Selezionare il numero massimo di livelli di distinta base da esportare (0 = tutti i livelli)"
+msgstr ""
 
 #: templates/js/translated/bom.js:365
 msgid "Include Alternative Parts"
-msgstr "Includere Articoli Alternativi"
+msgstr ""
 
 #: templates/js/translated/bom.js:366
 msgid "Include alternative parts in exported BOM"
-msgstr "Includere articoli alternativi nella distinta base esportata"
+msgstr ""
 
 #: templates/js/translated/bom.js:371
 msgid "Include Parameter Data"
-msgstr "Includere i dati dei parametri"
+msgstr ""
 
 #: templates/js/translated/bom.js:372
 msgid "Include part parameter data in exported BOM"
-msgstr "Includere i dati dei parametri degli articoli nella distinta base esportata"
+msgstr ""
 
 #: templates/js/translated/bom.js:377
 msgid "Include Stock Data"
-msgstr "Includere i dati delle scorte"
+msgstr ""
 
 #: templates/js/translated/bom.js:378
 msgid "Include part stock data in exported BOM"
-msgstr "Includere i dati delle scorte dei pezzi nella distinta base esportata"
+msgstr ""
 
 #: templates/js/translated/bom.js:383
 msgid "Include Manufacturer Data"
-msgstr "Includere i dati del produttore"
+msgstr ""
 
 #: templates/js/translated/bom.js:384
 msgid "Include part manufacturer data in exported BOM"
-msgstr "Includere i dati del produttore delle parti nella distinta base esportata"
+msgstr ""
 
 #: templates/js/translated/bom.js:389
 msgid "Include Supplier Data"
-msgstr "Includere i dati dei fornitori"
+msgstr ""
 
 #: templates/js/translated/bom.js:390
 msgid "Include part supplier data in exported BOM"
-msgstr "Includere i dati del fornitore di parti nella distinta base esportata"
+msgstr ""
 
 #: templates/js/translated/bom.js:395
 msgid "Include Pricing Data"
-msgstr "Includere i prezzi"
+msgstr ""
 
 #: templates/js/translated/bom.js:396
 msgid "Include part pricing data in exported BOM"
-msgstr "Includere i prezzi delle parti nella distinta base esportata"
+msgstr ""
 
 #: templates/js/translated/bom.js:591
 msgid "Remove substitute part"
-msgstr "Rimuovi articolo sostitutivo"
+msgstr ""
 
 #: templates/js/translated/bom.js:645
 msgid "Select and add a new substitute part using the input below"
-msgstr "Seleziona e aggiungi un nuovo articolo sostitutivo utilizzando l'input qui sotto"
+msgstr ""
 
 #: templates/js/translated/bom.js:656
 msgid "Are you sure you wish to remove this substitute part link?"
-msgstr "Sei sicuro di voler rimuovere questo collegamento all' articolo sostitutivo?"
+msgstr ""
 
 #: templates/js/translated/bom.js:662
 msgid "Remove Substitute Part"
-msgstr "Rimuovi Articolo Sostitutivo"
+msgstr ""
 
 #: templates/js/translated/bom.js:701
 msgid "Add Substitute"
-msgstr "Aggiungi Sostitutivo"
+msgstr ""
 
 #: templates/js/translated/bom.js:702
 msgid "Edit BOM Item Substitutes"
-msgstr "Modifica Elementi Sostitutivi Distinta Base"
+msgstr ""
 
 #: templates/js/translated/bom.js:764
 msgid "All selected BOM items will be deleted"
-msgstr "Tutti gli elementi selezionati della Distinta Base saranno eliminati"
+msgstr ""
 
 #: templates/js/translated/bom.js:780
 msgid "Delete selected BOM items?"
-msgstr "Elimina gli Elementi selezionati della Distinta Base?"
+msgstr ""
 
 #: templates/js/translated/bom.js:826
 msgid "Delete items"
@@ -10615,164 +10669,164 @@ msgstr ""
 
 #: templates/js/translated/bom.js:936
 msgid "Load BOM for subassembly"
-msgstr "Carica la Distinta Base per il sotto assemblaggio"
+msgstr ""
 
 #: templates/js/translated/bom.js:946
 msgid "Substitutes Available"
-msgstr "Sostituti Disponibili"
+msgstr ""
 
 #: templates/js/translated/bom.js:950 templates/js/translated/build.js:2491
 msgid "Variant stock allowed"
-msgstr "Variante stock consentita"
+msgstr ""
 
 #: templates/js/translated/bom.js:1014
 msgid "Substitutes"
-msgstr "Sostituti"
+msgstr ""
 
 #: templates/js/translated/bom.js:1139
 msgid "BOM pricing is complete"
-msgstr "I prezzi Distinta Base sono completi"
+msgstr ""
 
 #: templates/js/translated/bom.js:1144
 msgid "BOM pricing is incomplete"
-msgstr "I prezzi Distinta Base sono incompleti"
+msgstr ""
 
 #: templates/js/translated/bom.js:1151
 msgid "No pricing available"
-msgstr "Nessun prezzo disponibile"
+msgstr ""
 
 #: templates/js/translated/bom.js:1182 templates/js/translated/build.js:2585
 #: templates/js/translated/sales_order.js:1910
 msgid "No Stock Available"
-msgstr "Nessuna Scorta Disponibile"
+msgstr ""
 
 #: templates/js/translated/bom.js:1187 templates/js/translated/build.js:2589
 msgid "Includes variant and substitute stock"
-msgstr "Include variante e scorte sostitutive"
+msgstr ""
 
 #: templates/js/translated/bom.js:1189 templates/js/translated/build.js:2591
 #: templates/js/translated/part.js:1256
 #: templates/js/translated/sales_order.js:1907
 msgid "Includes variant stock"
-msgstr "Comprende varianti magazzino"
+msgstr ""
 
 #: templates/js/translated/bom.js:1191 templates/js/translated/build.js:2593
 msgid "Includes substitute stock"
-msgstr "Comprende le scorte sostitutive"
+msgstr ""
 
 #: templates/js/translated/bom.js:1219 templates/js/translated/build.js:2576
 msgid "Consumable item"
-msgstr "Elementi consumabili"
+msgstr ""
 
 #: templates/js/translated/bom.js:1279
 msgid "Validate BOM Item"
-msgstr "Convalida elemento Distinta Base"
+msgstr ""
 
 #: templates/js/translated/bom.js:1281
 msgid "This line has been validated"
-msgstr "Questa linea è stata convalidata"
+msgstr ""
 
 #: templates/js/translated/bom.js:1283
 msgid "Edit substitute parts"
-msgstr "Modifica articoli sostitutivi"
+msgstr ""
 
 #: templates/js/translated/bom.js:1285 templates/js/translated/bom.js:1480
 msgid "Edit BOM Item"
-msgstr "Modifica elemento Distinta Base"
+msgstr ""
 
 #: templates/js/translated/bom.js:1287
 msgid "Delete BOM Item"
-msgstr "Cancella elemento Distinta Base"
+msgstr ""
 
 #: templates/js/translated/bom.js:1307
 msgid "View BOM"
-msgstr "Visualizza Distinta Base"
+msgstr ""
 
 #: templates/js/translated/bom.js:1391
 msgid "No BOM items found"
-msgstr "Nessun elemento trovato in Distinta Base"
+msgstr ""
 
 #: templates/js/translated/bom.js:1651 templates/js/translated/build.js:2476
 msgid "Required Part"
-msgstr "Articolo richiesto"
+msgstr ""
 
 #: templates/js/translated/bom.js:1677
 msgid "Inherited from parent BOM"
-msgstr "Ereditato dalla Distinta Base principale"
+msgstr ""
 
 #: templates/js/translated/build.js:142
 msgid "Edit Build Order"
-msgstr "Modifica Ordine di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:185
 msgid "Create Build Order"
-msgstr "Crea Ordine di Produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:217
 msgid "Cancel Build Order"
-msgstr "Annulla Ordine Di Produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:226
 msgid "Are you sure you wish to cancel this build?"
-msgstr "Sei sicuro di voler annullare questa produzione?"
+msgstr ""
 
 #: templates/js/translated/build.js:232
 msgid "Stock items have been allocated to this build order"
-msgstr "Gli elementi di magazzino è stata assegnata a questo ordine di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:239
 msgid "There are incomplete outputs remaining for this build order"
-msgstr "Ci sono output incompleti rimanenti per questo ordine di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:291
 msgid "Build order is ready to be completed"
-msgstr "L'ordine di produzione è pronto per essere completato"
+msgstr ""
 
 #: templates/js/translated/build.js:299
 msgid "This build order cannot be completed as there are incomplete outputs"
-msgstr "Questo ordine di produzione non può essere completato in quanto ci sono output incompleti"
+msgstr ""
 
 #: templates/js/translated/build.js:304
 msgid "Build Order is incomplete"
-msgstr "L'Ordine di Produzione è incompleto"
+msgstr ""
 
 #: templates/js/translated/build.js:322
 msgid "Complete Build Order"
-msgstr "Completa l'Ordine di Produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:363 templates/js/translated/stock.js:119
 #: templates/js/translated/stock.js:294
 msgid "Next available serial number"
-msgstr "Il prossimo numero di serie disponibile è"
+msgstr ""
 
 #: templates/js/translated/build.js:365 templates/js/translated/stock.js:121
 #: templates/js/translated/stock.js:296
 msgid "Latest serial number"
-msgstr "Ultimo Numero Di Serie"
+msgstr ""
 
 #: templates/js/translated/build.js:374
 msgid "The Bill of Materials contains trackable parts"
-msgstr "La distinta base contiene articoli tracciabili"
+msgstr ""
 
 #: templates/js/translated/build.js:375
 msgid "Build outputs must be generated individually"
-msgstr "Gli outputs della produzione devono essere generati singolarmente"
+msgstr ""
 
 #: templates/js/translated/build.js:383
 msgid "Trackable parts can have serial numbers specified"
-msgstr "Gli articoli tracciabili possono avere numeri di serie specificati"
+msgstr ""
 
 #: templates/js/translated/build.js:384
 msgid "Enter serial numbers to generate multiple single build outputs"
-msgstr "Inserisci i numeri seriali per generare più output di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:391
 msgid "Create Build Output"
-msgstr "Crea Output di Produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:422
 msgid "Allocate stock items to this build output"
-msgstr "Assegna gli elementi di magazzino a questo output di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:430
 msgid "Deallocate stock from build output"
@@ -10780,7 +10834,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:439
 msgid "Complete build output"
-msgstr "Completa output di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:447
 msgid "Scrap build output"
@@ -10788,7 +10842,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:454
 msgid "Delete build output"
-msgstr "Cancella output di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:474
 msgid "Are you sure you wish to deallocate the selected stock items from this build?"
@@ -10801,12 +10855,12 @@ msgstr ""
 #: templates/js/translated/build.js:578 templates/js/translated/build.js:706
 #: templates/js/translated/build.js:832
 msgid "Select Build Outputs"
-msgstr "Seleziona Output di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:579 templates/js/translated/build.js:707
 #: templates/js/translated/build.js:833
 msgid "At least one build output must be selected"
-msgstr "Almeno un output di produzione deve essere selezionato"
+msgstr ""
 
 #: templates/js/translated/build.js:593
 msgid "Selected build outputs will be marked as complete"
@@ -10815,11 +10869,11 @@ msgstr ""
 #: templates/js/translated/build.js:597 templates/js/translated/build.js:731
 #: templates/js/translated/build.js:855
 msgid "Output"
-msgstr "Output"
+msgstr ""
 
 #: templates/js/translated/build.js:625
 msgid "Complete Build Outputs"
-msgstr "Completa l'output di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:722
 msgid "Selected build outputs will be marked as scrapped"
@@ -10855,11 +10909,11 @@ msgstr ""
 
 #: templates/js/translated/build.js:868
 msgid "Delete Build Outputs"
-msgstr "Cancella l'output di produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:955
 msgid "No build order allocations found"
-msgstr "Nessuna allocazione per l'ordine di produzione trovato"
+msgstr ""
 
 #: templates/js/translated/build.js:984 templates/js/translated/build.js:2332
 msgid "Allocated Quantity"
@@ -10867,11 +10921,11 @@ msgstr ""
 
 #: templates/js/translated/build.js:998
 msgid "Location not specified"
-msgstr "Posizione non specificata"
+msgstr ""
 
 #: templates/js/translated/build.js:1020
 msgid "Complete outputs"
-msgstr "Completa gli outputs"
+msgstr ""
 
 #: templates/js/translated/build.js:1038
 msgid "Scrap outputs"
@@ -10879,7 +10933,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:1056
 msgid "Delete outputs"
-msgstr "Cancella l'output"
+msgstr ""
 
 #: templates/js/translated/build.js:1110
 msgid "build output"
@@ -10895,7 +10949,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:1284
 msgid "No active build outputs found"
-msgstr "Nessun output di produzione attivo trovato"
+msgstr ""
 
 #: templates/js/translated/build.js:1377
 msgid "Allocated Lines"
@@ -10909,109 +10963,109 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:630
 #: templates/js/translated/sales_order.js:1171
 msgid "Select Parts"
-msgstr "Seleziona Articoli"
+msgstr ""
 
 #: templates/js/translated/build.js:1564
 #: templates/js/translated/sales_order.js:1172
 msgid "You must select at least one part to allocate"
-msgstr "È necessario selezionare almeno un articolo da assegnare"
+msgstr ""
 
 #: templates/js/translated/build.js:1627
 #: templates/js/translated/sales_order.js:1121
 msgid "Specify stock allocation quantity"
-msgstr "Specificare il quantitativo assegnato allo stock"
+msgstr ""
 
 #: templates/js/translated/build.js:1704
 msgid "All Parts Allocated"
-msgstr "Tutti gli articoli assegnati"
+msgstr ""
 
 #: templates/js/translated/build.js:1705
 msgid "All selected parts have been fully allocated"
-msgstr "Tutti gli articoli selezionati sono stati completamente assegnati"
+msgstr ""
 
 #: templates/js/translated/build.js:1719
 #: templates/js/translated/sales_order.js:1186
 msgid "Select source location (leave blank to take from all locations)"
-msgstr "Seleziona la posizione di origine (lascia vuoto per prendere da tutte le posizioni)"
+msgstr ""
 
 #: templates/js/translated/build.js:1747
 msgid "Allocate Stock Items to Build Order"
-msgstr "Assegna gli Elementi Stock all'Ordine di Produzione"
+msgstr ""
 
 #: templates/js/translated/build.js:1758
 #: templates/js/translated/sales_order.js:1283
 msgid "No matching stock locations"
-msgstr "Nessuna posizione di magazzino corrispondente"
+msgstr ""
 
 #: templates/js/translated/build.js:1831
 #: templates/js/translated/sales_order.js:1362
 msgid "No matching stock items"
-msgstr "Nessun elemento corrispondente trovato"
+msgstr ""
 
 #: templates/js/translated/build.js:1928
 msgid "Automatic Stock Allocation"
-msgstr "Assegna Automaticamente Scorte"
+msgstr ""
 
 #: templates/js/translated/build.js:1929
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
-msgstr "Gli elementi in magazzino saranno automaticamente assegnati a questo ordine di produzione, secondo le linee guida fornite"
+msgstr ""
 
 #: templates/js/translated/build.js:1931
 msgid "If a location is specified, stock will only be allocated from that location"
-msgstr "Se viene specificata una posizione, le scorte saranno assegnate solo da quella ubicazione"
+msgstr ""
 
 #: templates/js/translated/build.js:1932
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
-msgstr "Se lo stock è considerato intercambiabile, sarà assegnato dal primo luogo in cui viene trovato"
+msgstr ""
 
 #: templates/js/translated/build.js:1933
 msgid "If substitute stock is allowed, it will be used where stock of the primary part cannot be found"
-msgstr "Se lo stock sostitutivo è ammesso, sarà utilizzato nel caso in cui lo stock dell'articolo primario non possa essere trovato"
+msgstr ""
 
 #: templates/js/translated/build.js:1964
 msgid "Allocate Stock Items"
-msgstr "Assegna Elementi di Magazzino"
+msgstr ""
 
 #: templates/js/translated/build.js:2070
 msgid "No builds matching query"
-msgstr "Nessuna produzione corrispondente alla ricerca"
+msgstr ""
 
 #: templates/js/translated/build.js:2105 templates/js/translated/build.js:2470
 #: templates/js/translated/forms.js:2151 templates/js/translated/forms.js:2167
 #: templates/js/translated/part.js:2316 templates/js/translated/part.js:2742
 #: templates/js/translated/stock.js:1953 templates/js/translated/stock.js:2681
 msgid "Select"
-msgstr "Seleziona"
+msgstr ""
 
 #: templates/js/translated/build.js:2119
 msgid "Build order is overdue"
-msgstr "L'ordine di produzione è in ritardo"
+msgstr ""
 
 #: templates/js/translated/build.js:2165
 msgid "Progress"
-msgstr "Avanzamento"
+msgstr ""
 
 #: templates/js/translated/build.js:2201 templates/js/translated/stock.js:3013
 msgid "No user information"
-msgstr "Nessuna informazione utente"
+msgstr ""
 
 #: templates/js/translated/build.js:2377
 #: templates/js/translated/sales_order.js:1646
 msgid "Edit stock allocation"
-msgstr "Modifica allocazione magazzino"
+msgstr ""
 
 #: templates/js/translated/build.js:2378
 #: templates/js/translated/sales_order.js:1647
 msgid "Delete stock allocation"
-msgstr "Elimina posizione giacenza"
+msgstr ""
 
 #: templates/js/translated/build.js:2393
 msgid "Edit Allocation"
-msgstr "Modifica Posizione"
+msgstr ""
 
 #: templates/js/translated/build.js:2405
 msgid "Remove Allocation"
-msgstr "Rimuovi Posizione"
+msgstr ""
 
 #: templates/js/translated/build.js:2446
 msgid "build line"
@@ -11028,7 +11082,7 @@ msgstr ""
 #: templates/js/translated/build.js:2495 templates/js/translated/part.js:790
 #: templates/js/translated/part.js:1202
 msgid "Trackable part"
-msgstr "Parte tracciabile"
+msgstr ""
 
 #: templates/js/translated/build.js:2530
 msgid "Unit Quantity"
@@ -11037,7 +11091,7 @@ msgstr ""
 #: templates/js/translated/build.js:2581
 #: templates/js/translated/sales_order.js:1915
 msgid "Sufficient stock available"
-msgstr "Scorte sufficienti disponibili"
+msgstr ""
 
 #: templates/js/translated/build.js:2628
 msgid "Consumable Item"
@@ -11050,16 +11104,16 @@ msgstr ""
 #: templates/js/translated/build.js:2640
 #: templates/js/translated/sales_order.js:2016
 msgid "Build stock"
-msgstr "Produci scorta"
+msgstr ""
 
 #: templates/js/translated/build.js:2645 templates/js/translated/stock.js:1836
 msgid "Order stock"
-msgstr "Ordina scorta"
+msgstr ""
 
 #: templates/js/translated/build.js:2649
 #: templates/js/translated/sales_order.js:2010
 msgid "Allocate stock"
-msgstr "Assegna scorta"
+msgstr ""
 
 #: templates/js/translated/build.js:2653
 msgid "Remove stock allocation"
@@ -11067,59 +11121,59 @@ msgstr ""
 
 #: templates/js/translated/company.js:98
 msgid "Add Manufacturer"
-msgstr "Aggiungi Produttore"
+msgstr ""
 
 #: templates/js/translated/company.js:111
 #: templates/js/translated/company.js:213
 msgid "Add Manufacturer Part"
-msgstr "Aggiungi Articolo Produttore"
+msgstr ""
 
 #: templates/js/translated/company.js:132
 msgid "Edit Manufacturer Part"
-msgstr "Modifica Articolo Produttore"
+msgstr ""
 
 #: templates/js/translated/company.js:201
 #: templates/js/translated/purchase_order.js:93
 msgid "Add Supplier"
-msgstr "Aggiungi fornitore"
+msgstr ""
 
 #: templates/js/translated/company.js:243
 #: templates/js/translated/purchase_order.js:352
 msgid "Add Supplier Part"
-msgstr "Aggiungi fornitore articolo"
+msgstr ""
 
 #: templates/js/translated/company.js:344
 msgid "All selected supplier parts will be deleted"
-msgstr "Tutte gli articoli del fornitore selezionati saranno eliminati"
+msgstr ""
 
 #: templates/js/translated/company.js:360
 msgid "Delete Supplier Parts"
-msgstr "Cancella Articoli Fornitore"
+msgstr ""
 
 #: templates/js/translated/company.js:465
 msgid "Add new Company"
-msgstr "Aggiungi nuova Azienda"
+msgstr ""
 
 #: templates/js/translated/company.js:536
 msgid "Parts Supplied"
-msgstr "Fornitori articoli"
+msgstr ""
 
 #: templates/js/translated/company.js:545
 msgid "Parts Manufactured"
-msgstr "Articoli prodotti"
+msgstr ""
 
 #: templates/js/translated/company.js:560
 msgid "No company information found"
-msgstr "Nessuna informazione azienda trovata"
+msgstr ""
 
 #: templates/js/translated/company.js:609
 msgid "Create New Contact"
-msgstr "Crea nuovo contatto"
+msgstr ""
 
 #: templates/js/translated/company.js:625
 #: templates/js/translated/company.js:748
 msgid "Edit Contact"
-msgstr "Modifica contatto"
+msgstr ""
 
 #: templates/js/translated/company.js:662
 msgid "All selected contacts will be deleted"
@@ -11128,7 +11182,7 @@ msgstr ""
 #: templates/js/translated/company.js:668
 #: templates/js/translated/company.js:732
 msgid "Role"
-msgstr "Ruolo"
+msgstr ""
 
 #: templates/js/translated/company.js:676
 msgid "Delete Contacts"
@@ -11136,19 +11190,19 @@ msgstr ""
 
 #: templates/js/translated/company.js:707
 msgid "No contacts found"
-msgstr "Nessun contatto trovato"
+msgstr ""
 
 #: templates/js/translated/company.js:720
 msgid "Phone Number"
-msgstr "Numero di telefono"
+msgstr ""
 
 #: templates/js/translated/company.js:726
 msgid "Email Address"
-msgstr "Indirizzo email"
+msgstr ""
 
 #: templates/js/translated/company.js:752
 msgid "Delete Contact"
-msgstr "Elimina contatto"
+msgstr ""
 
 #: templates/js/translated/company.js:849
 msgid "Create New Address"
@@ -11193,28 +11247,28 @@ msgstr ""
 
 #: templates/js/translated/company.js:1102
 msgid "All selected manufacturer parts will be deleted"
-msgstr "Tutti gli articoli del produttore selezionati saranno eliminati"
+msgstr ""
 
 #: templates/js/translated/company.js:1117
 msgid "Delete Manufacturer Parts"
-msgstr "Elimina Articoli Produttore"
+msgstr ""
 
 #: templates/js/translated/company.js:1151
 msgid "All selected parameters will be deleted"
-msgstr "Tutti i parametri selezionati saranno cancellati"
+msgstr ""
 
 #: templates/js/translated/company.js:1165
 msgid "Delete Parameters"
-msgstr "Elimina Parametri"
+msgstr ""
 
 #: templates/js/translated/company.js:1181
 #: templates/js/translated/company.js:1469 templates/js/translated/part.js:2244
 msgid "Order parts"
-msgstr "Articoli ordinati"
+msgstr ""
 
 #: templates/js/translated/company.js:1198
 msgid "Delete manufacturer parts"
-msgstr "Elimina articoli produttore"
+msgstr ""
 
 #: templates/js/translated/company.js:1230
 msgid "Manufacturer part actions"
@@ -11222,47 +11276,47 @@ msgstr ""
 
 #: templates/js/translated/company.js:1249
 msgid "No manufacturer parts found"
-msgstr "Nessun articolo produttore trovato"
+msgstr ""
 
 #: templates/js/translated/company.js:1269
 #: templates/js/translated/company.js:1557 templates/js/translated/part.js:798
 #: templates/js/translated/part.js:1210
 msgid "Template part"
-msgstr "Modello Articolo"
+msgstr ""
 
 #: templates/js/translated/company.js:1273
 #: templates/js/translated/company.js:1561 templates/js/translated/part.js:802
 #: templates/js/translated/part.js:1214
 msgid "Assembled part"
-msgstr "Articolo assemblato"
+msgstr ""
 
 #: templates/js/translated/company.js:1393 templates/js/translated/part.js:1464
 msgid "No parameters found"
-msgstr "Nessun parametro trovato"
+msgstr ""
 
 #: templates/js/translated/company.js:1428 templates/js/translated/part.js:1527
 msgid "Edit parameter"
-msgstr "Modifica parametro"
+msgstr ""
 
 #: templates/js/translated/company.js:1429 templates/js/translated/part.js:1528
 msgid "Delete parameter"
-msgstr "Elimina il parametro"
+msgstr ""
 
 #: templates/js/translated/company.js:1446 templates/js/translated/part.js:1433
 msgid "Edit Parameter"
-msgstr "Modifica parametro"
+msgstr ""
 
 #: templates/js/translated/company.js:1455 templates/js/translated/part.js:1549
 msgid "Delete Parameter"
-msgstr "Elimina Parametri"
+msgstr ""
 
 #: templates/js/translated/company.js:1486
 msgid "Delete supplier parts"
-msgstr "Elimina articolo fornitore"
+msgstr ""
 
 #: templates/js/translated/company.js:1536
 msgid "No supplier parts found"
-msgstr "Nessun fornitore trovato"
+msgstr ""
 
 #: templates/js/translated/company.js:1654
 msgid "Base Units"
@@ -11270,63 +11324,63 @@ msgstr ""
 
 #: templates/js/translated/company.js:1684
 msgid "Availability"
-msgstr "Disponibilità"
+msgstr ""
 
 #: templates/js/translated/company.js:1715
 msgid "Edit supplier part"
-msgstr "Modifica articolo fornitore"
+msgstr ""
 
 #: templates/js/translated/company.js:1716
 msgid "Delete supplier part"
-msgstr "Elimina articolo fornitore"
+msgstr ""
 
 #: templates/js/translated/company.js:1769
 #: templates/js/translated/pricing.js:694
 msgid "Delete Price Break"
-msgstr "Elimina riduzione di prezzo"
+msgstr ""
 
 #: templates/js/translated/company.js:1779
 #: templates/js/translated/pricing.js:712
 msgid "Edit Price Break"
-msgstr "Modifica Prezzo Limite"
+msgstr ""
 
 #: templates/js/translated/company.js:1794
 msgid "No price break information found"
-msgstr "Nessuna informazione di riduzione di prezzo trovata"
+msgstr ""
 
 #: templates/js/translated/company.js:1823
 msgid "Last updated"
-msgstr "Ultimo aggiornamento"
+msgstr ""
 
 #: templates/js/translated/company.js:1830
 msgid "Edit price break"
-msgstr "Modifica riduzione di prezzo"
+msgstr ""
 
 #: templates/js/translated/company.js:1831
 msgid "Delete price break"
-msgstr "Cancella riduzione di prezzo"
+msgstr ""
 
 #: templates/js/translated/filters.js:186
 #: templates/js/translated/filters.js:672
 msgid "true"
-msgstr "vero"
+msgstr ""
 
 #: templates/js/translated/filters.js:190
 #: templates/js/translated/filters.js:673
 msgid "false"
-msgstr "falso"
+msgstr ""
 
 #: templates/js/translated/filters.js:214
 msgid "Select filter"
-msgstr "Seleziona filtro"
+msgstr ""
 
 #: templates/js/translated/filters.js:437
 msgid "Print Labels"
-msgstr "Stampa Etichette"
+msgstr ""
 
 #: templates/js/translated/filters.js:441
 msgid "Print Reports"
-msgstr "Stampa report"
+msgstr ""
 
 #: templates/js/translated/filters.js:453
 msgid "Download table data"
@@ -11338,44 +11392,44 @@ msgstr ""
 
 #: templates/js/translated/filters.js:469
 msgid "Add new filter"
-msgstr "Aggiungi nuovo filtro"
+msgstr ""
 
 #: templates/js/translated/filters.js:477
 msgid "Clear all filters"
-msgstr "Cancella tutti i filtri"
+msgstr ""
 
 #: templates/js/translated/filters.js:582
 msgid "Create filter"
-msgstr "Crea filtro"
+msgstr ""
 
 #: templates/js/translated/forms.js:374 templates/js/translated/forms.js:389
 #: templates/js/translated/forms.js:403 templates/js/translated/forms.js:417
 msgid "Action Prohibited"
-msgstr "Azione Vietata"
+msgstr ""
 
 #: templates/js/translated/forms.js:376
 msgid "Create operation not allowed"
-msgstr "Crea operazione non consentita"
+msgstr ""
 
 #: templates/js/translated/forms.js:391
 msgid "Update operation not allowed"
-msgstr "Operazione di aggiornamento non consentita"
+msgstr ""
 
 #: templates/js/translated/forms.js:405
 msgid "Delete operation not allowed"
-msgstr "Operazione di eliminazione non consentita"
+msgstr ""
 
 #: templates/js/translated/forms.js:419
 msgid "View operation not allowed"
-msgstr "Mostra operazione non consentita"
+msgstr ""
 
 #: templates/js/translated/forms.js:796
 msgid "Keep this form open"
-msgstr "Mantieni aperto questo modulo"
+msgstr ""
 
 #: templates/js/translated/forms.js:899
 msgid "Enter a valid number"
-msgstr "Inserisci un numero valido"
+msgstr ""
 
 #: templates/js/translated/forms.js:1469 templates/modals.html:19
 #: templates/modals.html:43
@@ -11384,35 +11438,35 @@ msgstr "Esistono errori nel modulo"
 
 #: templates/js/translated/forms.js:1967
 msgid "No results found"
-msgstr "Nessun risultato trovato"
+msgstr ""
 
 #: templates/js/translated/forms.js:2271 templates/js/translated/search.js:239
 msgid "Searching"
-msgstr "Ricerca"
+msgstr ""
 
 #: templates/js/translated/forms.js:2485
 msgid "Clear input"
-msgstr "Cancella input"
+msgstr ""
 
 #: templates/js/translated/forms.js:3071
 msgid "File Column"
-msgstr "Colonna File"
+msgstr ""
 
 #: templates/js/translated/forms.js:3071
 msgid "Field Name"
-msgstr "Nome del campo"
+msgstr ""
 
 #: templates/js/translated/forms.js:3083
 msgid "Select Columns"
-msgstr "Seleziona Colonne"
+msgstr ""
 
 #: templates/js/translated/helpers.js:77
 msgid "YES"
-msgstr "SÌ"
+msgstr ""
 
 #: templates/js/translated/helpers.js:80
 msgid "NO"
-msgstr "NO"
+msgstr ""
 
 #: templates/js/translated/helpers.js:93
 msgid "True"
@@ -11440,7 +11494,7 @@ msgstr ""
 
 #: templates/js/translated/label.js:72
 msgid "No Labels Found"
-msgstr "Nessuna etichetta trovata"
+msgstr ""
 
 #: templates/js/translated/label.js:73
 msgid "No label templates found which match the selected items"
@@ -11476,12 +11530,12 @@ msgstr ""
 
 #: templates/js/translated/label.js:187
 msgid "Labels sent to printer"
-msgstr "Etichette inviate alla stampante"
+msgstr ""
 
 #: templates/js/translated/modals.js:58 templates/js/translated/modals.js:158
 #: templates/js/translated/modals.js:683
 msgid "Cancel"
-msgstr "Annulla"
+msgstr ""
 
 #: templates/js/translated/modals.js:63 templates/js/translated/modals.js:157
 #: templates/js/translated/modals.js:751 templates/js/translated/modals.js:1059
@@ -11491,81 +11545,81 @@ msgstr "Invia"
 
 #: templates/js/translated/modals.js:156
 msgid "Form Title"
-msgstr "Titolo modulo"
+msgstr ""
 
 #: templates/js/translated/modals.js:445
 msgid "Waiting for server..."
-msgstr "In attesa del server..."
+msgstr ""
 
 #: templates/js/translated/modals.js:596
 msgid "Show Error Information"
-msgstr "Informazioni sull'errore"
+msgstr ""
 
 #: templates/js/translated/modals.js:682
 msgid "Accept"
-msgstr "Accetta"
+msgstr ""
 
 #: templates/js/translated/modals.js:740
 msgid "Loading Data"
-msgstr "Caricamento Dati"
+msgstr ""
 
 #: templates/js/translated/modals.js:1011
 msgid "Invalid response from server"
-msgstr "Risposta dal server non valida"
+msgstr ""
 
 #: templates/js/translated/modals.js:1011
 msgid "Form data missing from server response"
-msgstr "Dati del modulo mancanti dalla risposta server"
+msgstr ""
 
 #: templates/js/translated/modals.js:1023
 msgid "Error posting form data"
-msgstr "Errore nel pubblicare i dati del modulo"
+msgstr ""
 
 #: templates/js/translated/modals.js:1120
 msgid "JSON response missing form data"
-msgstr "Dati del modulo mancanti di risposta JSON"
+msgstr ""
 
 #: templates/js/translated/modals.js:1135
 msgid "Error 400: Bad Request"
-msgstr "Errore 400: Richiesta Non Valida"
+msgstr ""
 
 #: templates/js/translated/modals.js:1136
 msgid "Server returned error code 400"
-msgstr "Il server ha restituito codice di errore 400"
+msgstr ""
 
 #: templates/js/translated/modals.js:1159
 msgid "Error requesting form data"
-msgstr "Errore nella richiesta di dati modulo"
+msgstr ""
 
 #: templates/js/translated/news.js:33
 msgid "No news found"
-msgstr "Nessuna notizia trovata"
+msgstr ""
 
 #: templates/js/translated/news.js:38
 #: templates/js/translated/notification.js:46
 #: templates/js/translated/part.js:1604
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #: templates/js/translated/notification.js:52
 msgid "Age"
-msgstr "Età"
+msgstr ""
 
 #: templates/js/translated/notification.js:65
 msgid "Notification"
-msgstr "Notifiche"
+msgstr ""
 
 #: templates/js/translated/notification.js:224
 msgid "Mark as unread"
-msgstr "Segna come non letto"
+msgstr ""
 
 #: templates/js/translated/notification.js:228
 msgid "Mark as read"
-msgstr "Segna come letto"
+msgstr ""
 
 #: templates/js/translated/notification.js:254
 msgid "No unread notifications"
-msgstr "Nessuna notifica non letta"
+msgstr ""
 
 #: templates/js/translated/notification.js:296 templates/notifications.html:12
 msgid "Notifications will load here"
@@ -11573,72 +11627,72 @@ msgstr "Le notifiche verranno caricate qui"
 
 #: templates/js/translated/order.js:89
 msgid "Add Extra Line Item"
-msgstr "Aggiungi Linea Extra"
+msgstr ""
 
 #: templates/js/translated/order.js:126
 msgid "Export Order"
-msgstr "Esporta Ordine"
+msgstr ""
 
 #: templates/js/translated/order.js:241
 msgid "Duplicate Line"
-msgstr "Duplica Linea"
+msgstr ""
 
 #: templates/js/translated/order.js:255
 msgid "Edit Line"
-msgstr "Modifica Linea"
+msgstr ""
 
 #: templates/js/translated/order.js:268
 msgid "Delete Line"
-msgstr "Cancella Linea"
+msgstr ""
 
 #: templates/js/translated/order.js:281
 #: templates/js/translated/purchase_order.js:1987
 msgid "No line items found"
-msgstr "Nessuna linea elementi trovata"
+msgstr ""
 
 #: templates/js/translated/order.js:369
 msgid "Duplicate line"
-msgstr "Duplica linea"
+msgstr ""
 
 #: templates/js/translated/order.js:370
 msgid "Edit line"
-msgstr "Modifica linea"
+msgstr ""
 
 #: templates/js/translated/order.js:374
 msgid "Delete line"
-msgstr "Cancella linea"
+msgstr ""
 
 #: templates/js/translated/part.js:90
 msgid "Part Attributes"
-msgstr "Attributi Articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:94
 msgid "Part Creation Options"
-msgstr "Opzioni Creazione Articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:98
 msgid "Part Duplication Options"
-msgstr "Opzioni Duplicazione Articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:121
 msgid "Add Part Category"
-msgstr "Aggiungi Categoria Articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:308
 msgid "Parent part category"
-msgstr "Categoria articolo principale"
+msgstr ""
 
 #: templates/js/translated/part.js:332 templates/js/translated/stock.js:175
 msgid "Icon (optional) - Explore all available icons on"
-msgstr "Icona (opzionale) - Esplora tutte le icone disponibili su"
+msgstr ""
 
 #: templates/js/translated/part.js:352
 msgid "Create Part Category"
-msgstr "Crea Categoria Articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:355
 msgid "Create new category after this one"
-msgstr "Crea una nuvoa categoria dopo questa"
+msgstr ""
 
 #: templates/js/translated/part.js:356
 msgid "Part category created"
@@ -11646,229 +11700,233 @@ msgstr ""
 
 #: templates/js/translated/part.js:370
 msgid "Edit Part Category"
-msgstr "Modifica Categoria Articoli"
+msgstr ""
 
 #: templates/js/translated/part.js:383
 msgid "Are you sure you want to delete this part category?"
-msgstr "Sei sicuro di voler eliminare questa categoria articolo?"
+msgstr ""
 
 #: templates/js/translated/part.js:388
 msgid "Move to parent category"
-msgstr "Sposta nella categoria superiore"
+msgstr ""
 
 #: templates/js/translated/part.js:397
 msgid "Delete Part Category"
-msgstr "Elimina categoria"
+msgstr ""
 
 #: templates/js/translated/part.js:401
 msgid "Action for parts in this category"
-msgstr "Azione articoli in questa categoria"
+msgstr ""
 
 #: templates/js/translated/part.js:406
 msgid "Action for child categories"
-msgstr "Azione per categorie secondarie"
+msgstr ""
 
 #: templates/js/translated/part.js:430
 msgid "Create Part"
-msgstr "Crea Articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:432
 msgid "Create another part after this one"
-msgstr "Crea un altro articolo dopo questo"
+msgstr ""
 
 #: templates/js/translated/part.js:433
 msgid "Part created successfully"
-msgstr "Articolo creato con successo"
+msgstr ""
 
 #: templates/js/translated/part.js:461
 msgid "Edit Part"
-msgstr "Modifica l'articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:463
 msgid "Part edited"
-msgstr "Articolo modificato"
+msgstr ""
 
 #: templates/js/translated/part.js:474
 msgid "Create Part Variant"
-msgstr "Crea Varianti Articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:531
 msgid "Active Part"
-msgstr "Articolo Attivo"
+msgstr ""
 
 #: templates/js/translated/part.js:532
 msgid "Part cannot be deleted as it is currently active"
-msgstr "L'articolo non può essere eliminato poiché è attualmente attivo"
+msgstr ""
 
 #: templates/js/translated/part.js:546
 msgid "Deleting this part cannot be reversed"
-msgstr "L'eliminazione di questo articolo non è reversibile"
+msgstr ""
 
 #: templates/js/translated/part.js:548
 msgid "Any stock items for this part will be deleted"
-msgstr "Tutte le giacenze per questo articolo verranno eliminate"
+msgstr ""
 
 #: templates/js/translated/part.js:549
 msgid "This part will be removed from any Bills of Material"
-msgstr "Questo articolo verrà eliminato da qualsiasi Fattura dei Materiali"
+msgstr ""
 
 #: templates/js/translated/part.js:550
 msgid "All manufacturer and supplier information for this part will be deleted"
-msgstr "Tutte le informazioni del produttore e del fornitore per questo articolo verranno eliminate"
+msgstr ""
 
 #: templates/js/translated/part.js:557
 msgid "Delete Part"
-msgstr "Cancella Articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:593
 msgid "You are subscribed to notifications for this item"
-msgstr "Sei iscritto alle notifiche per questo elemento"
+msgstr ""
 
 #: templates/js/translated/part.js:595
 msgid "You have subscribed to notifications for this item"
-msgstr "Hai sottoscritto le notifiche per questo elemento"
+msgstr ""
 
 #: templates/js/translated/part.js:600
 msgid "Subscribe to notifications for this item"
-msgstr "Sottoscrivi le notifiche per questo elemento"
+msgstr ""
 
 #: templates/js/translated/part.js:602
 msgid "You have unsubscribed to notifications for this item"
-msgstr "Hai annullato l'iscrizione alle notifiche per questo elemento"
+msgstr ""
 
 #: templates/js/translated/part.js:619
 msgid "Validating the BOM will mark each line item as valid"
-msgstr "La convalida della Distinta Base segnerà ogni voce di riga come valida"
+msgstr ""
 
 #: templates/js/translated/part.js:629
 msgid "Validate Bill of Materials"
-msgstr "Convalida la distinta dei materiali"
+msgstr ""
 
 #: templates/js/translated/part.js:632
 msgid "Validated Bill of Materials"
-msgstr "Valida Fattura dei Materiali"
+msgstr ""
 
 #: templates/js/translated/part.js:657
 msgid "Copy Bill of Materials"
-msgstr "Copia Fattura dei Materiali"
+msgstr ""
 
 #: templates/js/translated/part.js:685
 #: templates/js/translated/table_filters.js:743
 msgid "Low stock"
-msgstr "In esaurimento"
+msgstr ""
 
 #: templates/js/translated/part.js:688
 msgid "No stock available"
-msgstr "Nessuno stock disponibile"
+msgstr ""
 
 #: templates/js/translated/part.js:748
 msgid "Demand"
-msgstr "Richieste"
+msgstr ""
 
 #: templates/js/translated/part.js:771
 msgid "Unit"
-msgstr "Unità"
+msgstr ""
 
 #: templates/js/translated/part.js:794 templates/js/translated/part.js:1206
 msgid "Virtual part"
-msgstr "Parte virtuale"
+msgstr ""
 
 #: templates/js/translated/part.js:806
 msgid "Subscribed part"
-msgstr "Parte sottoscritta"
+msgstr ""
 
 #: templates/js/translated/part.js:810
 msgid "Salable part"
-msgstr "Parte vendibile"
+msgstr ""
 
 #: templates/js/translated/part.js:889
 msgid "Schedule generation of a new stocktake report."
-msgstr "Programmare la generazione di un nuovo report inventario."
+msgstr ""
 
 #: templates/js/translated/part.js:889
 msgid "Once complete, the stocktake report will be available for download."
-msgstr "Una volta completato, il report inventario sarà disponibile per il download."
+msgstr ""
 
 #: templates/js/translated/part.js:897
 msgid "Generate Stocktake Report"
-msgstr "Genera Report Inventario"
+msgstr ""
 
 #: templates/js/translated/part.js:901
 msgid "Stocktake report scheduled"
-msgstr "Programma report inventario"
+msgstr ""
 
 #: templates/js/translated/part.js:1050
 msgid "No stocktake information available"
-msgstr "Nessuna informazione sull'inventario disponibile"
+msgstr ""
 
 #: templates/js/translated/part.js:1108 templates/js/translated/part.js:1144
 msgid "Edit Stocktake Entry"
-msgstr "Modifica Voce Inventario"
+msgstr ""
 
 #: templates/js/translated/part.js:1112 templates/js/translated/part.js:1154
 msgid "Delete Stocktake Entry"
-msgstr "Elimina Voce Inventario"
+msgstr ""
 
 #: templates/js/translated/part.js:1281
 msgid "No variants found"
-msgstr "Nessuna variante trovata"
+msgstr ""
 
 #: templates/js/translated/part.js:1599
 msgid "No part parameter templates found"
-msgstr "Nessun parametro dell'articolo templates trovato"
+msgstr ""
 
 #: templates/js/translated/part.js:1662
 msgid "Edit Part Parameter Template"
-msgstr "Modifica Parametro Articolo Template"
+msgstr ""
 
 #: templates/js/translated/part.js:1674
 msgid "Any parameters which reference this template will also be deleted"
-msgstr "Ogni parametro che fa riferimento a questo modello verrà eliminato"
+msgstr ""
 
 #: templates/js/translated/part.js:1682
 msgid "Delete Part Parameter Template"
-msgstr "Elimina Parametro Articolo Template"
+msgstr ""
 
 #: templates/js/translated/part.js:1716
 #: templates/js/translated/purchase_order.js:1651
 msgid "No purchase orders found"
-msgstr "Nessun ordine d'acquisto trovato"
+msgstr ""
 
 #: templates/js/translated/part.js:1860
 #: templates/js/translated/purchase_order.js:2150
 #: templates/js/translated/return_order.js:756
 #: templates/js/translated/sales_order.js:1875
 msgid "This line item is overdue"
-msgstr "Questo elemento è in ritardo"
+msgstr ""
 
 #: templates/js/translated/part.js:1906
 #: templates/js/translated/purchase_order.js:2217
 msgid "Receive line item"
-msgstr "Ricevi linea elemento"
+msgstr ""
 
 #: templates/js/translated/part.js:1969
 msgid "Delete part relationship"
-msgstr "Elimina relazione tra i componenti"
+msgstr ""
 
 #: templates/js/translated/part.js:1991
 msgid "Delete Part Relationship"
-msgstr "Elimina Relazione Articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:2079 templates/js/translated/part.js:2506
 msgid "No parts found"
-msgstr "Nessun articolo trovato"
+msgstr ""
 
 #: templates/js/translated/part.js:2200
 msgid "Set the part category for the selected parts"
-msgstr "Imposta la categoria prodotto per i prodotti selezionati"
+msgstr ""
 
 #: templates/js/translated/part.js:2205
 msgid "Set Part Category"
-msgstr "Imposta categoria articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:2235
 msgid "Set category"
-msgstr "Imposta categoria"
+msgstr ""
+
+#: templates/js/translated/part.js:2287
+msgid "part"
+msgstr ""
 
 #: templates/js/translated/part.js:2288
 msgid "parts"
@@ -11876,16 +11934,16 @@ msgstr ""
 
 #: templates/js/translated/part.js:2384
 msgid "No category"
-msgstr "Nessuna categoria"
+msgstr ""
 
 #: templates/js/translated/part.js:2531 templates/js/translated/part.js:2661
 #: templates/js/translated/stock.js:2640
 msgid "Display as list"
-msgstr "Visualizza come elenco"
+msgstr ""
 
 #: templates/js/translated/part.js:2547
 msgid "Display as grid"
-msgstr "Visualizza come griglia"
+msgstr ""
 
 #: templates/js/translated/part.js:2645
 msgid "No subcategories found"
@@ -11893,72 +11951,72 @@ msgstr ""
 
 #: templates/js/translated/part.js:2681 templates/js/translated/stock.js:2660
 msgid "Display as tree"
-msgstr "Visualizza come struttura ad albero"
+msgstr ""
 
 #: templates/js/translated/part.js:2761
 msgid "Load Subcategories"
-msgstr "Carica Sotto Categorie"
+msgstr ""
 
 #: templates/js/translated/part.js:2777
 msgid "Subscribed category"
-msgstr "Categoria sottoscritta"
+msgstr ""
 
 #: templates/js/translated/part.js:2854
 msgid "No test templates matching query"
-msgstr "Nessun modello di test corrispondente"
+msgstr ""
 
 #: templates/js/translated/part.js:2905 templates/js/translated/stock.js:1436
 msgid "Edit test result"
-msgstr "Modificare il risultato del test"
+msgstr ""
 
 #: templates/js/translated/part.js:2906 templates/js/translated/stock.js:1437
 #: templates/js/translated/stock.js:1699
 msgid "Delete test result"
-msgstr "Cancellare il risultato del test"
+msgstr ""
 
 #: templates/js/translated/part.js:2910
 msgid "This test is defined for a parent part"
-msgstr "Questo test è definito per un articolo principale"
+msgstr ""
 
 #: templates/js/translated/part.js:2926
 msgid "Edit Test Result Template"
-msgstr "Modifica Modello Risultato Test"
+msgstr ""
 
 #: templates/js/translated/part.js:2940
 msgid "Delete Test Result Template"
-msgstr "Elimina Modello Risultato Test"
+msgstr ""
 
 #: templates/js/translated/part.js:3019 templates/js/translated/part.js:3020
 msgid "No date specified"
-msgstr "Nessuna data specificata"
+msgstr ""
 
 #: templates/js/translated/part.js:3022
 msgid "Specified date is in the past"
-msgstr "La data specificata è nel passato"
+msgstr ""
 
 #: templates/js/translated/part.js:3028
 msgid "Speculative"
-msgstr "Speculativo"
+msgstr ""
 
 #: templates/js/translated/part.js:3078
 msgid "No scheduling information available for this part"
-msgstr "Nessuna informazione di pianificazione disponibile per questo prodotto"
+msgstr ""
 
 #: templates/js/translated/part.js:3084
 msgid "Error fetching scheduling information for this part"
-msgstr "Errore nel recupero delle informazioni di programmazione per questo articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:3180
 msgid "Scheduled Stock Quantities"
-msgstr "Quantità Di Scorte Programmate"
+msgstr ""
 
 #: templates/js/translated/part.js:3196
 msgid "Maximum Quantity"
-msgstr "Quantità Massima"
+msgstr ""
 
 #: templates/js/translated/part.js:3241
 msgid "Minimum Stock Level"
-msgstr "Livello Minimo Stock"
+msgstr ""
 
 #: templates/js/translated/plugin.js:46
 msgid "No plugins found"
@@ -11986,7 +12044,7 @@ msgstr ""
 
 #: templates/js/translated/plugin.js:158
 msgid "The Plugin was installed"
-msgstr "Il Plugin è stato installato"
+msgstr ""
 
 #: templates/js/translated/plugin.js:177
 msgid "Are you sure you want to enable this plugin?"
@@ -12010,231 +12068,231 @@ msgstr ""
 
 #: templates/js/translated/pricing.js:159
 msgid "Error fetching currency data"
-msgstr "Errore durante il recupero dati"
+msgstr ""
 
 #: templates/js/translated/pricing.js:321
 msgid "No BOM data available"
-msgstr "Nessun dato Distinta Base disponibile"
+msgstr ""
 
 #: templates/js/translated/pricing.js:463
 msgid "No supplier pricing data available"
-msgstr "Nessun dato di prezzo disponibile per il fornitore"
+msgstr ""
 
 #: templates/js/translated/pricing.js:572
 msgid "No price break data available"
-msgstr "Nessun dato disponibile prezzo limite"
+msgstr ""
 
 #: templates/js/translated/pricing.js:755
 msgid "No purchase history data available"
-msgstr "Nessun dato della cronologia di acquisto disponibile"
+msgstr ""
 
 #: templates/js/translated/pricing.js:791
 msgid "Purchase Price History"
-msgstr "Cronologia Prezzi Acquisto"
+msgstr ""
 
 #: templates/js/translated/pricing.js:894
 msgid "No sales history data available"
-msgstr "Nessun dato della cronologia di vendita disponibile"
+msgstr ""
 
 #: templates/js/translated/pricing.js:916
 msgid "Sale Price History"
-msgstr "Cronologia Prezzo Vendita"
+msgstr ""
 
 #: templates/js/translated/pricing.js:1005
 msgid "No variant data available"
-msgstr "Non sono disponibili dati varianti"
+msgstr ""
 
 #: templates/js/translated/pricing.js:1045
 msgid "Variant Part"
-msgstr "Variante Articolo"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:169
 msgid "Select purchase order to duplicate"
-msgstr "Selezione l'ordine di acquisto da duplicare"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:176
 msgid "Duplicate Line Items"
-msgstr "Duplica linee degli elementi"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:177
 msgid "Duplicate all line items from the selected order"
-msgstr "Duplica tutte le linee elementi dall'ordine selezionato"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:184
 msgid "Duplicate Extra Lines"
-msgstr "Duplica Linee Extra"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:185
 msgid "Duplicate extra line items from the selected order"
-msgstr "Duplica elementi linee extra dall'ordine selezionato"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:206
 msgid "Edit Purchase Order"
-msgstr "Modifica ordine d'acquisto"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:223
 msgid "Duplication Options"
-msgstr "Opzioni Duplicazione"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:450
 msgid "Complete Purchase Order"
-msgstr "Completa Ordine D'Acquisto"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:467
 #: templates/js/translated/return_order.js:210
 #: templates/js/translated/sales_order.js:500
 msgid "Mark this order as complete?"
-msgstr "Contrassegnare questo ordine come completato?"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:473
 msgid "All line items have been received"
-msgstr "Tutti gli elementi della riga sono stati ricevuti"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:478
 msgid "This order has line items which have not been marked as received."
-msgstr "Questo ordine ha elementi di riga che non sono stati contrassegnati come ricevuti."
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:479
 #: templates/js/translated/sales_order.js:514
 msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr "Completare questo ordine significa che l'ordine e gli elementi della riga non saranno più modificabili."
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:502
 msgid "Cancel Purchase Order"
-msgstr "Annulla Ordine di Acquisto"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:507
 msgid "Are you sure you wish to cancel this purchase order?"
-msgstr "Sei sicuro di voler annullare questo ordine di acquisto?"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:513
 msgid "This purchase order can not be cancelled"
-msgstr "Questo ordine d'acquisto non può essere cancellato"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:534
 #: templates/js/translated/return_order.js:164
 msgid "After placing this order, line items will no longer be editable."
-msgstr "Dopo aver effettuato questo ordine, gli elementi della riga non saranno più modificabili."
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:539
 msgid "Issue Purchase Order"
-msgstr "Problema Ordine di Acquisto"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:631
 msgid "At least one purchaseable part must be selected"
-msgstr "Deve essere selezionata almeno un articolo acquistabile"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:656
 msgid "Quantity to order"
-msgstr "Quantità da ordinare"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:665
 msgid "New supplier part"
-msgstr "Nuovo articolo fornitore"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:683
 msgid "New purchase order"
-msgstr "Nuovo ordine d'acquisto"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:715
 msgid "Add to purchase order"
-msgstr "Aggiungi ordine d'acquisto"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:863
 msgid "No matching supplier parts"
-msgstr "Nessun fornitore articolo corrispondente"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:882
 msgid "No matching purchase orders"
-msgstr "Nessun ordine di acquisto corrispondente trovato"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1069
 msgid "Select Line Items"
-msgstr "Seleziona Linee Elementi"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1070
 #: templates/js/translated/return_order.js:492
 msgid "At least one line item must be selected"
-msgstr "È necessario selezionare almeno una linea elemento"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1100
 msgid "Received Quantity"
-msgstr "Quantità Ricevuta"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1111
 msgid "Quantity to receive"
-msgstr "Quantità da ricevere"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1187
 msgid "Stock Status"
-msgstr "Stato giacenza"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1201
 msgid "Add barcode"
-msgstr "Aggiungi codice a barre"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1202
 msgid "Remove barcode"
-msgstr "Rimuovi il codice a barre"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1205
 msgid "Specify location"
-msgstr "Specifica la posizione"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1213
 msgid "Add batch code"
-msgstr "Aggiungi codice lotto"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1224
 msgid "Add serial numbers"
-msgstr "Aggiungi numeri seriali"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1276
 msgid "Serials"
-msgstr "Seriale"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1301
 msgid "Order Code"
-msgstr "Codice ordine"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1303
 msgid "Quantity to Receive"
-msgstr "Quantità da Ricevere"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1329
 #: templates/js/translated/return_order.js:561
 msgid "Confirm receipt of items"
-msgstr "Conferma la ricezione degli elementi"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1330
 msgid "Receive Purchase Order Items"
-msgstr "Ricevi Elementi Ordine D'Acquisto"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1398
 msgid "Scan Item Barcode"
-msgstr "Scansiona codice a barre"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1399
 msgid "Scan barcode on incoming item (must not match any existing stock items)"
-msgstr "Scansiona il codice a barre sull'elemento in arrivo (non deve corrispondere a nessun articolo disponibile esistente)"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1413
 msgid "Invalid barcode data"
-msgstr "Dati codice a barre non validi"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1678
 #: templates/js/translated/return_order.js:286
 #: templates/js/translated/sales_order.js:774
 #: templates/js/translated/sales_order.js:998
 msgid "Order is overdue"
-msgstr "L'Ordine è in ritardo"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1744
 #: templates/js/translated/return_order.js:354
 #: templates/js/translated/sales_order.js:851
 #: templates/js/translated/sales_order.js:1011
 msgid "Items"
-msgstr "Elementi"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1840
 msgid "All selected Line items will be deleted"
@@ -12247,53 +12305,53 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:1913
 #: templates/js/translated/sales_order.js:2070
 msgid "Duplicate Line Item"
-msgstr "Duplica Linee Elementi"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1928
 #: templates/js/translated/return_order.js:476
 #: templates/js/translated/return_order.js:669
 #: templates/js/translated/sales_order.js:2083
 msgid "Edit Line Item"
-msgstr "Modifica Linee Elementi"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1939
 #: templates/js/translated/return_order.js:682
 #: templates/js/translated/sales_order.js:2094
 msgid "Delete Line Item"
-msgstr "Cancella Linea Elemento"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:2221
 #: templates/js/translated/sales_order.js:2024
 msgid "Duplicate line item"
-msgstr "Duplica linea elemento"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:2222
 #: templates/js/translated/return_order.js:801
 #: templates/js/translated/sales_order.js:2025
 msgid "Edit line item"
-msgstr "Modifica linea elemento"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:2223
 #: templates/js/translated/return_order.js:805
 #: templates/js/translated/sales_order.js:2031
 msgid "Delete line item"
-msgstr "Cancella linea elemento"
+msgstr ""
 
 #: templates/js/translated/report.js:63
 msgid "items selected"
-msgstr "elementi selezionati"
+msgstr ""
 
 #: templates/js/translated/report.js:71
 msgid "Select Report Template"
-msgstr "Seleziona Modello Report"
+msgstr ""
 
 #: templates/js/translated/report.js:86
 msgid "Select Test Report Template"
-msgstr "Seleziona Modello Test Report"
+msgstr ""
 
 #: templates/js/translated/report.js:140
 msgid "No Reports Found"
-msgstr "Nessun Report Trovato"
+msgstr ""
 
 #: templates/js/translated/report.js:141
 msgid "No report templates found which match the selected items"
@@ -12302,15 +12360,15 @@ msgstr ""
 #: templates/js/translated/return_order.js:60
 #: templates/js/translated/sales_order.js:86
 msgid "Add Customer"
-msgstr "Aggiungi cliente"
+msgstr ""
 
 #: templates/js/translated/return_order.js:134
 msgid "Create Return Order"
-msgstr "Crea Ordine Di Reso"
+msgstr ""
 
 #: templates/js/translated/return_order.js:149
 msgid "Edit Return Order"
-msgstr "Modifica Ordine Di Reso"
+msgstr ""
 
 #: templates/js/translated/return_order.js:169
 msgid "Issue Return Order"
@@ -12335,7 +12393,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:300
 #: templates/js/translated/sales_order.js:788
 msgid "Invalid Customer"
-msgstr "Cliente non valido"
+msgstr ""
 
 #: templates/js/translated/return_order.js:562
 msgid "Receive Return Order Items"
@@ -12344,7 +12402,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:693
 #: templates/js/translated/sales_order.js:2230
 msgid "No matching line items"
-msgstr "Nessun elemento di riga corrispondente"
+msgstr ""
 
 #: templates/js/translated/return_order.js:798
 msgid "Mark item as received"
@@ -12352,47 +12410,47 @@ msgstr ""
 
 #: templates/js/translated/sales_order.js:161
 msgid "Create Sales Order"
-msgstr "Crea Ordine di Vendita"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:176
 msgid "Edit Sales Order"
-msgstr "Modifica Ordine di Vendita"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:291
 msgid "No stock items have been allocated to this shipment"
-msgstr "Nessun elemento di magazzino disponibile è stato assegnato a questa spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:296
 msgid "The following stock items will be shipped"
-msgstr "I seguenti elementi in magazzino saranno spediti"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:336
 msgid "Complete Shipment"
-msgstr "Completa Spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:360
 msgid "Confirm Shipment"
-msgstr "Conferma Spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:416
 msgid "No pending shipments found"
-msgstr "Nessuna spedizione in sospeso trovata"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:420
 msgid "No stock items have been allocated to pending shipments"
-msgstr "Nessun elemento di magazzino disponibile è stato assegnato a questa spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:430
 msgid "Complete Shipments"
-msgstr "Spedizioni Completate"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:452
 msgid "Skip"
-msgstr "Salta"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:513
 msgid "This order has line items which have not been completed."
-msgstr "Questo ordine ha elementi di riga che non sono stati completati."
+msgstr ""
 
 #: templates/js/translated/sales_order.js:535
 msgid "Issue this Sales Order?"
@@ -12404,132 +12462,132 @@ msgstr ""
 
 #: templates/js/translated/sales_order.js:559
 msgid "Cancel Sales Order"
-msgstr "Annulla Ordine di Vendita"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:564
 msgid "Cancelling this order means that the order will no longer be editable."
-msgstr "Cancellando questo ordine, l'ordine non sarà più modificabile."
+msgstr ""
 
 #: templates/js/translated/sales_order.js:618
 msgid "Create New Shipment"
-msgstr "Crea Nuova Spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:728
 msgid "No sales orders found"
-msgstr "Non sono state trovati ordini di vendita"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:908
 msgid "Edit shipment"
-msgstr "Modifica spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:911
 msgid "Complete shipment"
-msgstr "Completa spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:916
 msgid "Delete shipment"
-msgstr "Elimina spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:933
 msgid "Edit Shipment"
-msgstr "Modifica spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:948
 msgid "Delete Shipment"
-msgstr "Elimina Spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:981
 msgid "No matching shipments found"
-msgstr "Nessuna spedizione corrispondente trovata"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1006
 msgid "Shipment Reference"
-msgstr "Riferimento della spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1030
 #: templates/js/translated/sales_order.js:1529
 msgid "Not shipped"
-msgstr "Non spedito"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1048
 msgid "Tracking"
-msgstr "Tracciamento"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1052
 msgid "Invoice"
-msgstr "Fattura"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1219
 msgid "Add Shipment"
-msgstr "Aggiungi Spedizione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1270
 msgid "Confirm stock allocation"
-msgstr "Conferma l'assegnazione della giacenza"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1271
 msgid "Allocate Stock Items to Sales Order"
-msgstr "Assegna Elementi di Magazzino all'Ordine di Vendita"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1477
 msgid "No sales order allocations found"
-msgstr "Nessun ordine di vendita trovato"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1569
 msgid "Edit Stock Allocation"
-msgstr "Modifica posizione giacenza"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1583
 msgid "Confirm Delete Operation"
-msgstr "Conferma Operazione Eliminazione"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1584
 msgid "Delete Stock Allocation"
-msgstr "Elimina posizione giacenza"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1623
 #: templates/js/translated/sales_order.js:1710
 #: templates/js/translated/stock.js:1744
 msgid "Shipped to customer"
-msgstr "Spedito al cliente"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:1631
 #: templates/js/translated/sales_order.js:1719
 msgid "Stock location not specified"
-msgstr "Nessun posizione specificata"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:2008
 msgid "Allocate serial numbers"
-msgstr "Assegna Numeri di Serie"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:2012
 msgid "Purchase stock"
-msgstr "Prezzo d'acquisto"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:2021
 #: templates/js/translated/sales_order.js:2208
 msgid "Calculate price"
-msgstr "Calcola il prezzo"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:2035
 msgid "Cannot be deleted as items have been shipped"
-msgstr "Non può essere eliminato perché gli elementi sono stati spediti"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:2038
 msgid "Cannot be deleted as items have been allocated"
-msgstr "Non può essere eliminato perché gli elementi sono stati assegnati"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:2109
 msgid "Allocate Serial Numbers"
-msgstr "Assegna Numeri di Serie"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:2216
 msgid "Update Unit Price"
-msgstr "Aggiorna Prezzo Unitario"
+msgstr ""
 
 #: templates/js/translated/search.js:270
 msgid "No results"
-msgstr "Nessun risultato"
+msgstr ""
 
 #: templates/js/translated/search.js:292 templates/search.html:25
 msgid "Enter search query"
@@ -12537,27 +12595,27 @@ msgstr ""
 
 #: templates/js/translated/search.js:342
 msgid "result"
-msgstr "risultato"
+msgstr ""
 
 #: templates/js/translated/search.js:342
 msgid "results"
-msgstr "risultati"
+msgstr ""
 
 #: templates/js/translated/search.js:352
 msgid "Minimize results"
-msgstr "Minimizza risultati"
+msgstr ""
 
 #: templates/js/translated/search.js:355
 msgid "Remove results"
-msgstr "Rimuovi risultati"
+msgstr ""
 
 #: templates/js/translated/stock.js:98
 msgid "Serialize Stock Item"
-msgstr "Serializza Elementi di Magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:129
 msgid "Confirm Stock Serialization"
-msgstr "Conferma Serializzazione Magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:139
 msgid "Default icon for all locations that have no icon set (optional) - Explore all available icons on"
@@ -12565,7 +12623,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:152
 msgid "Parent stock location"
-msgstr "Posizione giacenza principale"
+msgstr ""
 
 #: templates/js/translated/stock.js:166
 msgid "Add Location type"
@@ -12573,43 +12631,43 @@ msgstr ""
 
 #: templates/js/translated/stock.js:202
 msgid "Edit Stock Location"
-msgstr "Modifica Posizione Giacenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:217
 msgid "New Stock Location"
-msgstr "Nuova posizione giacenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:219
 msgid "Create another location after this one"
-msgstr "Crea un'altra posizione dopo questa"
+msgstr ""
 
 #: templates/js/translated/stock.js:220
 msgid "Stock location created"
-msgstr "Posizione magazzino creata"
+msgstr ""
 
 #: templates/js/translated/stock.js:234
 msgid "Are you sure you want to delete this stock location?"
-msgstr "Sei sicuro di voler eliminare questa posizione?"
+msgstr ""
 
 #: templates/js/translated/stock.js:241
 msgid "Move to parent stock location"
-msgstr "Sposta nella posizione principale magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:250
 msgid "Delete Stock Location"
-msgstr "Elimina Posizione di Giacenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:254
 msgid "Action for stock items in this stock location"
-msgstr "Azione per gli elementi stock in questa posizione magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:259
 msgid "Action for sub-locations"
-msgstr "Azione per sotto-ubicazioni"
+msgstr ""
 
 #: templates/js/translated/stock.js:313
 msgid "This part cannot be serialized"
-msgstr "Questo articolo non può essere serializzato"
+msgstr ""
 
 #: templates/js/translated/stock.js:349
 msgid "Add given quantity as packs instead of individual items"
@@ -12617,123 +12675,123 @@ msgstr ""
 
 #: templates/js/translated/stock.js:362
 msgid "Enter initial quantity for this stock item"
-msgstr "Inserisci quantità iniziale per questo articolo in giacenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:368
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr "Inserire i numeri di serie per la nuova giacenza (o lasciare vuoto)"
+msgstr ""
 
 #: templates/js/translated/stock.js:439
 msgid "Stock item duplicated"
-msgstr "Elemento di magazzino duplicato"
+msgstr ""
 
 #: templates/js/translated/stock.js:459
 msgid "Duplicate Stock Item"
-msgstr "Duplica elemento di magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:475
 msgid "Are you sure you want to delete this stock item?"
-msgstr "Sei sicuro di voler rimuovere questo elemento di magazzino?"
+msgstr ""
 
 #: templates/js/translated/stock.js:480
 msgid "Delete Stock Item"
-msgstr "Cancella Elemento di Magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:501
 msgid "Edit Stock Item"
-msgstr "Modifica elemento magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:543
 msgid "Create another item after this one"
-msgstr "Crea un altro oggetto dopo questo"
+msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Crea nuova allocazione magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Creato più elementi stock"
+msgstr ""
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
-msgstr "Trova Numero Di Serie"
+msgstr ""
 
 #: templates/js/translated/stock.js:597 templates/js/translated/stock.js:598
 msgid "Enter serial number"
-msgstr "Inserisci numero di serie"
+msgstr ""
 
 #: templates/js/translated/stock.js:614
 msgid "Enter a serial number"
-msgstr "Inserisci un numero di serie"
+msgstr ""
 
 #: templates/js/translated/stock.js:634
 msgid "No matching serial number"
-msgstr "Nessun numero di serie corrispondente"
+msgstr ""
 
 #: templates/js/translated/stock.js:643
 msgid "More than one matching result found"
-msgstr "Trovati più di un risultato corrispondente"
+msgstr ""
 
 #: templates/js/translated/stock.js:751
 msgid "Confirm stock assignment"
-msgstr "Conferma l'assegnazione delle scorte"
+msgstr ""
 
 #: templates/js/translated/stock.js:752
 msgid "Assign Stock to Customer"
-msgstr "Assegnare la scorta al cliente"
+msgstr ""
 
 #: templates/js/translated/stock.js:829
 msgid "Warning: Merge operation cannot be reversed"
-msgstr "Attenzione: L'operazione di unione non può essere annullata"
+msgstr ""
 
 #: templates/js/translated/stock.js:830
 msgid "Some information will be lost when merging stock items"
-msgstr "Alcune informazioni andranno perse durante la fusione degli articoli di magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:832
 msgid "Stock transaction history will be deleted for merged items"
-msgstr "La cronologia delle transazioni di magazzino verrà eliminata per gli articoli uniti"
+msgstr ""
 
 #: templates/js/translated/stock.js:833
 msgid "Supplier part information will be deleted for merged items"
-msgstr "Le informazioni sulle parti del fornitore verranno eliminate per gli articoli uniti"
+msgstr ""
 
 #: templates/js/translated/stock.js:928
 msgid "Confirm stock item merge"
-msgstr "Confermare l'unione degli articoli di magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:929
 msgid "Merge Stock Items"
-msgstr "Unire gli articoli di magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:1024
 msgid "Transfer Stock"
-msgstr "Trasferisci giacenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:1025
 msgid "Move"
-msgstr "Sposta"
+msgstr ""
 
 #: templates/js/translated/stock.js:1031
 msgid "Count Stock"
-msgstr "Conta giacenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:1032
 msgid "Count"
-msgstr "Conta"
+msgstr ""
 
 #: templates/js/translated/stock.js:1036
 msgid "Remove Stock"
-msgstr "Rimuovi giacenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:1037
 msgid "Take"
-msgstr "Prendi"
+msgstr ""
 
 #: templates/js/translated/stock.js:1041
 msgid "Add Stock"
-msgstr "Aggiungi giacenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:1042 users/models.py:389
 msgid "Add"
@@ -12741,19 +12799,19 @@ msgstr "Aggiungi"
 
 #: templates/js/translated/stock.js:1046
 msgid "Delete Stock"
-msgstr "Elimina Stock"
+msgstr ""
 
 #: templates/js/translated/stock.js:1143
 msgid "Quantity cannot be adjusted for serialized stock"
-msgstr "La quantità non può essere regolata per le scorte serializzate"
+msgstr ""
 
 #: templates/js/translated/stock.js:1143
 msgid "Specify stock quantity"
-msgstr "Specificare la quantità di magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:1177 templates/js/translated/stock.js:3267
 msgid "Select Stock Items"
-msgstr "Seleziona Elementi Magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:1178
 msgid "Select at least one available stock item"
@@ -12761,59 +12819,59 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1224
 msgid "Confirm stock adjustment"
-msgstr "Confermare l'adeguamento delle scorte"
+msgstr ""
 
 #: templates/js/translated/stock.js:1360
 msgid "PASS"
-msgstr "OK"
+msgstr ""
 
 #: templates/js/translated/stock.js:1362
 msgid "FAIL"
-msgstr "FALLITO"
+msgstr ""
 
 #: templates/js/translated/stock.js:1367
 msgid "NO RESULT"
-msgstr "NESSUN RISULTATO"
+msgstr ""
 
 #: templates/js/translated/stock.js:1429
 msgid "Pass test"
-msgstr "Test OK"
+msgstr ""
 
 #: templates/js/translated/stock.js:1432
 msgid "Add test result"
-msgstr "Aggiungi risultato test"
+msgstr ""
 
 #: templates/js/translated/stock.js:1456
 msgid "No test results found"
-msgstr "Nessun risultato di prova trovato"
+msgstr ""
 
 #: templates/js/translated/stock.js:1520
 msgid "Test Date"
-msgstr "Data del test"
+msgstr ""
 
 #: templates/js/translated/stock.js:1682
 msgid "Edit Test Result"
-msgstr "Modifica del risultato del test"
+msgstr ""
 
 #: templates/js/translated/stock.js:1704
 msgid "Delete Test Result"
-msgstr "Cancellare il risultato del test"
+msgstr ""
 
 #: templates/js/translated/stock.js:1736
 msgid "In production"
-msgstr "In produzione"
+msgstr ""
 
 #: templates/js/translated/stock.js:1740
 msgid "Installed in Stock Item"
-msgstr "Installato nell'elemento stock"
+msgstr ""
 
 #: templates/js/translated/stock.js:1748
 msgid "Assigned to Sales Order"
-msgstr "Assegnato all'ordine di vendita"
+msgstr ""
 
 #: templates/js/translated/stock.js:1754
 msgid "No stock location set"
-msgstr "Nessuna giacenza impostata"
+msgstr ""
 
 #: templates/js/translated/stock.js:1810
 msgid "Change stock status"
@@ -12821,11 +12879,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1819
 msgid "Merge stock"
-msgstr "Unisce la giacenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:1868
 msgid "Delete stock"
-msgstr "Elimina Stock"
+msgstr ""
 
 #: templates/js/translated/stock.js:1923
 msgid "stock items"
@@ -12845,31 +12903,31 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2061
 msgid "Stock item is in production"
-msgstr "L'articolo di magazzino è in produzione"
+msgstr ""
 
 #: templates/js/translated/stock.js:2066
 msgid "Stock item assigned to sales order"
-msgstr "Articolo di magazzino assegnato all'ordine di vendita"
+msgstr ""
 
 #: templates/js/translated/stock.js:2069
 msgid "Stock item assigned to customer"
-msgstr "Articolo stock assegnato al cliente"
+msgstr ""
 
 #: templates/js/translated/stock.js:2072
 msgid "Serialized stock item has been allocated"
-msgstr "L'articolo di magazzino serializzato è stato assegnato"
+msgstr ""
 
 #: templates/js/translated/stock.js:2074
 msgid "Stock item has been fully allocated"
-msgstr "La voce di magazzino è stata completamente assegnata"
+msgstr ""
 
 #: templates/js/translated/stock.js:2076
 msgid "Stock item has been partially allocated"
-msgstr "La voce di magazzino è stata parzialmente allocata"
+msgstr ""
 
 #: templates/js/translated/stock.js:2079
 msgid "Stock item has been installed in another item"
-msgstr "L'elemento stock è stato installato in un altro articolo"
+msgstr ""
 
 #: templates/js/translated/stock.js:2081
 msgid "Stock item has been consumed by a build order"
@@ -12877,40 +12935,40 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2085
 msgid "Stock item has expired"
-msgstr "L'articolo stock è scaduto"
+msgstr ""
 
 #: templates/js/translated/stock.js:2087
 msgid "Stock item will expire soon"
-msgstr "Articolo in giacenza prossimo alla scadenza"
+msgstr ""
 
 #: templates/js/translated/stock.js:2092
 msgid "Stock item has been rejected"
-msgstr "L'articolo stock è stato rifiutato"
+msgstr ""
 
 #: templates/js/translated/stock.js:2094
 msgid "Stock item is lost"
-msgstr "L'articolo di magazzino è andato perso"
+msgstr ""
 
 #: templates/js/translated/stock.js:2096
 msgid "Stock item is destroyed"
-msgstr "Articolo di magazzino distrutto"
+msgstr ""
 
 #: templates/js/translated/stock.js:2100
 #: templates/js/translated/table_filters.js:350
 msgid "Depleted"
-msgstr "Esaurito"
+msgstr ""
 
 #: templates/js/translated/stock.js:2265
 msgid "Supplier part not specified"
-msgstr "Fornitore dell'articolo non specificato"
+msgstr ""
 
 #: templates/js/translated/stock.js:2312
 msgid "Stock Value"
-msgstr "Valore Scorte"
+msgstr ""
 
 #: templates/js/translated/stock.js:2440
 msgid "No stock items matching query"
-msgstr "Nessun articolo in magazzino corrispondente alla richiesta"
+msgstr ""
 
 #: templates/js/translated/stock.js:2544
 msgid "stock locations"
@@ -12922,7 +12980,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2817
 msgid "Details"
-msgstr "Dettagli"
+msgstr ""
 
 #: templates/js/translated/stock.js:2821
 msgid "No changes"
@@ -12930,11 +12988,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2833
 msgid "Part information unavailable"
-msgstr "Informazioni sull'articolo non disponibili"
+msgstr ""
 
 #: templates/js/translated/stock.js:2855
 msgid "Location no longer exists"
-msgstr "La posizione non esiste più"
+msgstr ""
 
 #: templates/js/translated/stock.js:2872
 msgid "Build order no longer exists"
@@ -12942,71 +13000,71 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2887
 msgid "Purchase order no longer exists"
-msgstr "L'ordine di acquisto non esiste più"
+msgstr ""
 
 #: templates/js/translated/stock.js:2904
 msgid "Sales Order no longer exists"
-msgstr "L'ordine di vendita non esiste più"
+msgstr ""
 
 #: templates/js/translated/stock.js:2921
 msgid "Return Order no longer exists"
-msgstr "L'ordine di ritorno non esiste più"
+msgstr ""
 
 #: templates/js/translated/stock.js:2940
 msgid "Customer no longer exists"
-msgstr "Il cliente non esiste più"
+msgstr ""
 
 #: templates/js/translated/stock.js:2958
 msgid "Stock item no longer exists"
-msgstr "L'articolo in magazzino non esiste più"
+msgstr ""
 
 #: templates/js/translated/stock.js:2976
 msgid "Added"
-msgstr "Aggiunto"
+msgstr ""
 
 #: templates/js/translated/stock.js:2984
 msgid "Removed"
-msgstr "Rimosso"
+msgstr ""
 
 #: templates/js/translated/stock.js:3056
 msgid "No installed items"
-msgstr "Nessun elemento installato"
+msgstr ""
 
 #: templates/js/translated/stock.js:3108 templates/js/translated/stock.js:3143
 msgid "Uninstall Stock Item"
-msgstr "Disinstallare l'articolo di magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:3165
 msgid "Select stock item to uninstall"
-msgstr "Selezionare l'articolo di magazzino da disinstallare"
+msgstr ""
 
 #: templates/js/translated/stock.js:3186
 msgid "Install another stock item into this item"
-msgstr "Installare un altro articolo di magazzino in questo articolo"
+msgstr ""
 
 #: templates/js/translated/stock.js:3187
 msgid "Stock items can only be installed if they meet the following criteria"
-msgstr "Gli articoli in magazzino possono essere installati solo se soddisfano i seguenti criteri"
+msgstr ""
 
 #: templates/js/translated/stock.js:3189
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
-msgstr "L'articolo di magazzino si collega a un'articolo che è la distinta base di questo articolo di magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:3190
 msgid "The Stock Item is currently available in stock"
-msgstr "L'articolo in stock è attualmente disponibile in magazzino"
+msgstr ""
 
 #: templates/js/translated/stock.js:3191
 msgid "The Stock Item is not already installed in another item"
-msgstr "L'articolo di magazzino non è già installato in un altro articolo"
+msgstr ""
 
 #: templates/js/translated/stock.js:3192
 msgid "The Stock Item is tracked by either a batch code or serial number"
-msgstr "L'articolo di magazzino è tracciato da un codice di lotto o da un numero di serie"
+msgstr ""
 
 #: templates/js/translated/stock.js:3205
 msgid "Select part to install"
-msgstr "Selezionare la parte da installare"
+msgstr ""
 
 #: templates/js/translated/stock.js:3268
 msgid "Select one or more stock items"
@@ -13022,58 +13080,58 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:74
 msgid "Has project code"
-msgstr "Ha il codice del progetto"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:89
 #: templates/js/translated/table_filters.js:601
 #: templates/js/translated/table_filters.js:613
 #: templates/js/translated/table_filters.js:654
 msgid "Order status"
-msgstr "Stato dell'ordine"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:94
 #: templates/js/translated/table_filters.js:618
 #: templates/js/translated/table_filters.js:644
 #: templates/js/translated/table_filters.js:659
 msgid "Outstanding"
-msgstr "In Sospeso"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:102
 #: templates/js/translated/table_filters.js:524
 #: templates/js/translated/table_filters.js:626
 #: templates/js/translated/table_filters.js:667
 msgid "Assigned to me"
-msgstr "Assegnato a me"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:158
 msgid "Trackable Part"
-msgstr "Articolo tracciabile"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:162
 msgid "Assembled Part"
-msgstr "Articolo assemblato"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:166
 msgid "Has Available Stock"
-msgstr "Ha scorte disponibili"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:182
 msgid "Allow Variant Stock"
-msgstr "Varianti consentite"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:194
 #: templates/js/translated/table_filters.js:775
 msgid "Has Pricing"
-msgstr "Prezzo"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:234
 #: templates/js/translated/table_filters.js:345
 msgid "Include sublocations"
-msgstr "Includi sottoallocazioni/posizioni"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:235
 msgid "Include locations"
-msgstr "Includi posizioni"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:267
 msgid "Has location type"
@@ -13083,171 +13141,171 @@ msgstr ""
 #: templates/js/translated/table_filters.js:279
 #: templates/js/translated/table_filters.js:707
 msgid "Include subcategories"
-msgstr "Includi sottocategorie"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:287
 #: templates/js/translated/table_filters.js:755
 msgid "Subscribed"
-msgstr "Sottoscritto"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:298
 #: templates/js/translated/table_filters.js:380
 msgid "Is Serialized"
-msgstr "E' Serializzato"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:301
 #: templates/js/translated/table_filters.js:387
 msgid "Serial number GTE"
-msgstr "Numero di serie GTE"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:302
 #: templates/js/translated/table_filters.js:388
 msgid "Serial number greater than or equal to"
-msgstr "Numero di serie maggiore di o uguale a"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:305
 #: templates/js/translated/table_filters.js:391
 msgid "Serial number LTE"
-msgstr "Numero di serie LTE"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:306
 #: templates/js/translated/table_filters.js:392
 msgid "Serial number less than or equal to"
-msgstr "Numero di serie inferiore di o uguale a"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:309
 #: templates/js/translated/table_filters.js:310
 #: templates/js/translated/table_filters.js:383
 #: templates/js/translated/table_filters.js:384
 msgid "Serial number"
-msgstr "Numero di serie"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:314
 #: templates/js/translated/table_filters.js:405
 msgid "Batch code"
-msgstr "Codice Lotto"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:325
 #: templates/js/translated/table_filters.js:696
 msgid "Active parts"
-msgstr "Elementi attivi"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:326
 msgid "Show stock for active parts"
-msgstr "Mostra stock per gli articoli attivi"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:331
 msgid "Part is an assembly"
-msgstr "L'articolo è un assemblato"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:335
 msgid "Is allocated"
-msgstr "È assegnato"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:336
 msgid "Item has been allocated"
-msgstr "L'elemento è stato posizionato"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:341
 msgid "Stock is available for use"
-msgstr "Stock disponibile per l'utilizzo"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:346
 msgid "Include stock in sublocations"
-msgstr "Includi elementi in giacenza nelle sottoallocazioni"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:351
 msgid "Show stock items which are depleted"
-msgstr "Mostra gli elementi di magazzino che sono esauriti"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:356
 msgid "Show items which are in stock"
-msgstr "Mostra gli elementi che sono in giacenza"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr "In Produzione"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:361
 msgid "Show items which are in production"
-msgstr "Mostra gli elementi in produzione"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:365
 msgid "Include Variants"
-msgstr "Includi Varianti"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:366
 msgid "Include stock items for variant parts"
-msgstr "Includi gli articoli stock per le varianti degli articoli"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:371
 msgid "Show stock items which are installed in another item"
-msgstr "Mostra gli elementi stock che sono installati in un altro elemento"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:376
 msgid "Show items which have been assigned to a customer"
-msgstr "Mostra elementi che sono stati assegnati a un cliente"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:396
 #: templates/js/translated/table_filters.js:397
 msgid "Stock status"
-msgstr "Stato magazzino"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:400
 msgid "Has batch code"
-msgstr "Ha codice lotto"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:409
 msgid "Stock item is tracked by either batch code or serial number"
-msgstr "L'articolo stock è monitorato dal codice lotto o dal numero di serie"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:414
 msgid "Has purchase price"
-msgstr "Ha il prezzo d'acquisto"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:415
 msgid "Show stock items which have a purchase price set"
-msgstr "Mostra gli articoli di magazzino che hanno un prezzo di acquisto impostato"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:419
 msgid "Expiry Date before"
-msgstr "Data di scadenza precedente"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:423
 msgid "Expiry Date after"
-msgstr "Data di scadenza successiva"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:436
 msgid "Show stock items which have expired"
-msgstr "Mostra gli elementi in giacenza scaduti"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:442
 msgid "Show stock which is close to expiring"
-msgstr "Mostra giacenza prossima alla scadenza"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:456
 msgid "Test Passed"
-msgstr "Test superato"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:460
 msgid "Include Installed Items"
-msgstr "Includi Elementi Installati"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:511
 msgid "Build status"
-msgstr "Stato Build"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:708
 msgid "Include parts in subcategories"
-msgstr "Includi articoli nelle sottocategorie"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:713
 msgid "Show active parts"
-msgstr "Visualizza articoli attivi"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:721
 msgid "Available stock"
-msgstr "Stock disponibile"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:729
 #: templates/js/translated/table_filters.js:825
@@ -13260,23 +13318,23 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:734
 msgid "Has IPN"
-msgstr "Ha IPN"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:735
 msgid "Part has internal part number"
-msgstr "L'articolo possiede un part number interno"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:739
 msgid "In stock"
-msgstr "In giacenza"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:747
 msgid "Purchasable"
-msgstr "Acquistabile"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:759
 msgid "Has stocktake entries"
-msgstr "Ha voci d'inventario"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:821
 msgid "Has Choices"
@@ -13284,79 +13342,79 @@ msgstr ""
 
 #: templates/js/translated/tables.js:92
 msgid "Display calendar view"
-msgstr "Visualizzazione calendario"
+msgstr ""
 
 #: templates/js/translated/tables.js:102
 msgid "Display list view"
-msgstr "Visualizzazione elenco"
+msgstr ""
 
 #: templates/js/translated/tables.js:112
 msgid "Display tree view"
-msgstr "Visualizza vista albero"
+msgstr ""
 
 #: templates/js/translated/tables.js:130
 msgid "Expand all rows"
-msgstr "Espandi tutte le righe"
+msgstr ""
 
 #: templates/js/translated/tables.js:136
 msgid "Collapse all rows"
-msgstr "Comprimi tutte le righe"
+msgstr ""
 
 #: templates/js/translated/tables.js:186
 msgid "Export Table Data"
-msgstr "Esporta Dati Tabella"
+msgstr ""
 
 #: templates/js/translated/tables.js:190
 msgid "Select File Format"
-msgstr "Seleziona Formato File"
+msgstr ""
 
 #: templates/js/translated/tables.js:529
 msgid "Loading data"
-msgstr "Caricamento dati"
+msgstr ""
 
 #: templates/js/translated/tables.js:532
 msgid "rows per page"
-msgstr "righe per pagina"
+msgstr ""
 
 #: templates/js/translated/tables.js:537
 msgid "Showing all rows"
-msgstr "Mostra tutte le righe"
+msgstr ""
 
 #: templates/js/translated/tables.js:539
 msgid "Showing"
-msgstr "Visualizzo"
+msgstr ""
 
 #: templates/js/translated/tables.js:539
 msgid "to"
-msgstr "a"
+msgstr ""
 
 #: templates/js/translated/tables.js:539
 msgid "of"
-msgstr "di"
+msgstr ""
 
 #: templates/js/translated/tables.js:539
 msgid "rows"
-msgstr "righe"
+msgstr ""
 
 #: templates/js/translated/tables.js:546
 msgid "No matching results"
-msgstr "Nessun risultato corrispondente"
+msgstr ""
 
 #: templates/js/translated/tables.js:549
 msgid "Hide/Show pagination"
-msgstr "Mostra/nascondi la paginazione"
+msgstr ""
 
 #: templates/js/translated/tables.js:555
 msgid "Toggle"
-msgstr "Attiva/disattiva"
+msgstr ""
 
 #: templates/js/translated/tables.js:558
 msgid "Columns"
-msgstr "Colonne"
+msgstr ""
 
 #: templates/js/translated/tables.js:561
 msgid "All"
-msgstr "Tutti"
+msgstr ""
 
 #: templates/navbar.html:45
 msgid "Buy"

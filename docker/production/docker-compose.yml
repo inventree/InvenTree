@@ -48,7 +48,7 @@ services:
             - POSTGRES_DB=${INVENTREE_DB_NAME:?You must provide the 'INVENTREE_DB_NAME' variable in the .env file}
         volumes:
             # Map 'data' volume such that postgres database is stored externally
-            - inventree_data:/var/lib/postgresql/data/
+            - inventree_data:/var/lib/postgresql/data/:z
         restart: unless-stopped
 
     # redis acts as database cache manager
@@ -82,7 +82,7 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - inventree_data:/home/inventree/data
+            - inventree_data:/home/inventree/data:z
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -96,7 +96,7 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - inventree_data:/home/inventree/data
+            - inventree_data:/home/inventree/data:z
         restart: unless-stopped
 
     # nginx acts as a reverse proxy
@@ -116,9 +116,9 @@ services:
         volumes:
             # Provide nginx configuration file to the container
             # Refer to the provided example file as a starting point
-            - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro,z
             # nginx proxy needs access to static and media files
-            - inventree_data:/var/www
+            - inventree_data:/var/www:z
         restart: unless-stopped
 
 volumes:

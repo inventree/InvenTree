@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -30,7 +30,9 @@ import { PanelType } from '../../components/nav/PanelGroup';
 import { AddressTable } from '../../components/tables/company/AddressTable';
 import { ContactTable } from '../../components/tables/company/ContactTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
+import { ManufacturerPartTable } from '../../components/tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
+import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
@@ -77,13 +79,19 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         name: 'manufactured-parts',
         label: t`Manufactured Parts`,
         icon: <IconBuildingFactory2 />,
-        hidden: !company?.is_manufacturer
+        hidden: !company?.is_manufacturer,
+        content: company?.pk && (
+          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
+        )
       },
       {
         name: 'supplied-parts',
         label: t`Supplied Parts`,
         icon: <IconBuildingWarehouse />,
-        hidden: !company?.is_supplier
+        hidden: !company?.is_supplier,
+        content: company?.pk && (
+          <SupplierPartTable params={{ supplier: company.pk }} />
+        )
       },
       {
         name: 'purchase-orders',
@@ -125,7 +133,12 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         name: 'assigned-stock',
         label: t`Assigned Stock`,
         icon: <IconPackageExport />,
-        hidden: !company?.is_customer
+        hidden: !company?.is_customer,
+        content: company?.pk ? (
+          <StockItemTable params={{ customer: company.pk }} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'contacts',
