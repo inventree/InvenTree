@@ -14,7 +14,7 @@ import {
   IconQrcode,
   IconSitemap
 } from '@tabler/icons-react';
-import { lazy, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {

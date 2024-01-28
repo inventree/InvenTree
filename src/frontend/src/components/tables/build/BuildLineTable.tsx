@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
-import ReturnOrderDetail from '../../../pages/sales/ReturnOrderDetail';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { PartHoverCard } from '../../images/Thumbnail';
@@ -19,7 +18,6 @@ import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function BuildLineTable({ params = {} }: { params?: any }) {
