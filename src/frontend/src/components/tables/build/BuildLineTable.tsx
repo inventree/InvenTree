@@ -28,7 +28,28 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
   const navigate = useNavigate();
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [];
+    return [
+      {
+        name: 'allocated',
+        label: t`Allocated`,
+        description: t`Show allocated lines`
+      },
+      {
+        name: 'available',
+        label: t`Available`,
+        description: t`Show lines with available stock`
+      },
+      {
+        name: 'consumable',
+        label: t`Consumable`,
+        description: t`Show consumable lines`
+      },
+      {
+        name: 'optional',
+        label: t`Optional`,
+        description: t`Show optional lines`
+      }
+    ];
   }, []);
 
   const renderAvailableColumn = useCallback((record: any) => {
