@@ -41,7 +41,7 @@ msgstr "Vyplněno neplatné množství"
 #: InvenTree/conversion.py:144
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr "Vyplněno neplatné množství)"
+msgstr "Vyplněno neplatné množství ({exc})"
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
