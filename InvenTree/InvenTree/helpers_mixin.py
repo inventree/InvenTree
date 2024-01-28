@@ -22,10 +22,12 @@ class ClassValidationMixin:
     @classmethod
     def validate(cls):
         def attribute_missing(key):
-            return not hasattr(cls, key) or getattr(cls, key) == ""
+            return not hasattr(cls, key) or getattr(cls, key) == ''
 
         def override_missing(base_implementation):
-            return base_implementation == getattr(cls, base_implementation.__name__, None)
+            return base_implementation == getattr(
+                cls, base_implementation.__name__, None
+            )
 
         missing_attributes = list(filter(attribute_missing, cls.required_attributes))
         missing_overrides = list(filter(override_missing, cls.required_overrides))
@@ -33,12 +35,16 @@ class ClassValidationMixin:
         errors = []
 
         if len(missing_attributes) > 0:
-            errors.append(f"did not provide the following attributes: {', '.join(missing_attributes)}")
+            errors.append(
+                f"did not provide the following attributes: {', '.join(missing_attributes)}"
+            )
         if len(missing_overrides) > 0:
-            errors.append(f"did not override the required attributes: {', '.join(map(lambda attr: attr.__name__, missing_overrides))}")
+            errors.append(
+                f"did not override the required attributes: {', '.join(map(lambda attr: attr.__name__, missing_overrides))}"
+            )
 
         if len(errors) > 0:
-            raise NotImplementedError(f"'{cls}' " + " and ".join(errors))
+            raise NotImplementedError(f"'{cls}' " + ' and '.join(errors))
 
 
 class ClassProviderMixin:
