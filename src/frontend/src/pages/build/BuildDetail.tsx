@@ -110,7 +110,7 @@ export default function BuildDetail() {
           <BuildLineTable
             params={{
               build: id,
-              is_building: true
+              tracked: false
             }}
           />
         ) : (

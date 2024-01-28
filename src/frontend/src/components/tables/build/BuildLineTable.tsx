@@ -1,5 +1,10 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import {
+  IconArrowRight,
+  IconShoppingCart,
+  IconTool
+} from '@tabler/icons-react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
@@ -7,10 +12,12 @@ import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { PartHoverCard } from '../../images/Thumbnail';
+import { ProgressBar } from '../../items/ProgressBar';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 
 export default function BuildLineTable({ params = {} }: { params?: any }) {
   const table = useTable('buildline');
@@ -59,15 +66,59 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
       {
         accessor: 'available_stock',
         title: t`Available`,
-        sortable: true
+        sortable: true,
+        switchable: false
         // TODO: More information displayed here
       },
       {
         accessor: 'allocated',
-        title: t`Allocated`
+        title: t`Allocated`,
+        switchable: false,
+        render: (record: any) => {
+          return (
+            <ProgressBar
+              progressLabel={true}
+              value={record.allocated}
+              maximum={record.quantity}
+            />
+          );
+        }
       }
     ];
   }, []);
+
+  const rowActions: RowAction[] = useCallback(
+    (record: any) => {
+      let part = record.part_detail;
+
+      // Consumable items have no appropriate actions
+      if (record?.bom_item_detail?.consumable) {
+        return [];
+      }
+
+      return [
+        {
+          icon: <IconArrowRight />,
+          title: t`Allocate Stock`,
+          hidden: record.allocated >= record.quantity,
+          color: 'green'
+        },
+        {
+          icon: <IconShoppingCart />,
+          title: t`Order Stock`,
+          hidden: !part?.purchaseable,
+          color: 'blue'
+        },
+        {
+          icon: <IconTool />,
+          title: t`Build Stock`,
+          hidden: !part?.assembly,
+          color: 'blue'
+        }
+      ];
+    },
+    [user]
+  );
 
   return (
     <InvenTreeTable
@@ -80,6 +131,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
           part_detail: true
         },
         tableFilters: tableFilters,
+        rowActions: rowActions,
         onRowClick: (row: any) => {
           if (row?.part_detail?.pk) {
             navigate(`/part/${row.part_detail.pk}`);
