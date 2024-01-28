@@ -742,7 +742,7 @@ class PartSerializer(
     )
 
     creation_user = serializers.PrimaryKeyRelatedField(
-        queryset=users.models.User.objects.all(), required=True, allow_null=False
+        queryset=users.models.User.objects.all(), required=False, allow_null=True
     )
 
     # Annotated fields
