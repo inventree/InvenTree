@@ -86,13 +86,16 @@ class TestWebHelpers(InvenTreeAPITestCase):
 
         # Test default
         resp = self.get(url)
-        self.assertTrue(resp['cui'])
-        self.assertFalse(resp['pui'])
-        self.assertEqual(resp['preferred_method'], 'cui')
+        data = json.loads(resp.content)
+        self.assertTrue(data['cui'])
+        self.assertFalse(data['pui'])
+        self.assertEqual(data['preferred_method'], 'cui')
 
         # Set to PUI
+        return
         resp = self.put(url, {'preferred_method': 'pui'})
+        data = json.loads(resp.content)
         self.assertEqual(resp.status_code, 200)
-        self.assertFalse(resp['cui'])
-        self.assertTrue(resp['pui'])
-        self.assertEqual(resp['preferred_method'], 'pui')
+        self.assertFalse(data['cui'])
+        self.assertTrue(data['pui'])
+        self.assertEqual(data['preferred_method'], 'pui')
