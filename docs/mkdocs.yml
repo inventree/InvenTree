@@ -201,6 +201,7 @@ nav:
       - Developing a Plugin: extend/how_to_plugin.md
       - Model Metadata: extend/plugins/metadata.md
       - Tags: extend/plugins/tags.md
+      - Machines: extend/plugins/machines.md
     - Plugin Mixins:
       - Action Mixin: extend/plugins/action.md
       - API Mixin: extend/plugins/api.md
