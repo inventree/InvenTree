@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-29 06:52+0000\n"
-"PO-Revision-Date: 2024-01-26 16:38\n"
+"POT-Creation-Date: 2024-01-28 23:58+0000\n"
+"PO-Revision-Date: 2024-01-29 11:02\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -41,7 +41,7 @@ msgstr "Vyplněno neplatné množství"
 #: InvenTree/conversion.py:144
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr "Vyplněno neplatné množství ({exc})"
+msgstr "Vyplněno neplatné množství)"
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
@@ -291,10 +291,8 @@ msgid "Russian"
 msgstr "Ruština"
 
 #: InvenTree/locales.py:39
-#, fuzzy
-#| msgid "Slovenian"
 msgid "Slovak"
-msgstr "Slovinština"
+msgstr ""
 
 #: InvenTree/locales.py:40
 msgid "Slovenian"
@@ -604,13 +602,9 @@ msgstr "Vítá vás {current_site.name}"
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
-msgstr ""
-"Váš účet byl vytvořen.\n"
-"\n"
+msgstr "Váš účet byl vytvořen.\n\n"
 "Použijte prosím funkci obnovení hesla pro získání přístupu (v https://://{domain})."
 
 #: InvenTree/serializers.py:520
@@ -13533,8 +13527,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13709,3 +13702,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:401
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
