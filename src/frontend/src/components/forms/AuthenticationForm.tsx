@@ -89,7 +89,7 @@ export function AuthenticationForm() {
         <>
           <Group grow mb="md" mt="md">
             {auth_settings.providers.map((provider) => (
-              <SooButton provider={provider} />
+              <SoButton provider={provider} key={provider.id} />
             ))}
           </Group>
 
@@ -272,7 +272,7 @@ export function RegistrationForm() {
       {auth_settings?.sso_registration === true && (
         <Group grow mb="md" mt="md">
           {auth_settings.providers.map((provider) => (
-            <SooButton provider={provider} />
+            <SooButton provider={provider} key={provider.id} />
           ))}
         </Group>
       )}
