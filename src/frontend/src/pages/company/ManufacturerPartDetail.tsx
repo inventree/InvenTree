@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
+import ManufacturerPartParameterTable from '../../components/tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
@@ -39,7 +40,14 @@ export default function ManufacturerPartDetail() {
       {
         name: 'parameters',
         label: t`Parameters`,
-        icon: <IconList />
+        icon: <IconList />,
+        content: manufacturerPart?.pk ? (
+          <ManufacturerPartParameterTable
+            params={{ manufacturer_part: manufacturerPart.pk }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'suppliers',
