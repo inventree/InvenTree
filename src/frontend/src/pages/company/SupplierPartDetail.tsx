@@ -66,7 +66,7 @@ export default function SupplierPartDetail() {
       },
       {
         name: supplierPart?.supplier_detail?.name ?? t`Supplier`,
-        url: `/company/supplier/${supplierPart?.supplier_detail?.pk ?? ''}`
+        url: `/purchasing/supplier/${supplierPart?.supplier_detail?.pk ?? ''}`
       }
     ];
   }, [supplierPart]);
