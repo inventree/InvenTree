@@ -26,8 +26,16 @@ class PreferredSerializer(serializers.Serializer):
     """Serializer for the preferred serializer session setting."""
 
     preferred_method = serializers.ChoiceField(choices=['cui', 'pui'])
-    pui = serializers.BooleanField(read_only=True)
-    cui = serializers.BooleanField(read_only=True)
+    pui = serializers.SerializerMethodField(read_only=True)
+    cui = serializers.SerializerMethodField(read_only=True)
+
+    def get_pui(self, obj):
+        """Return true if preferred method is PUI."""
+        return obj['preferred_method'] == 'pui'
+
+    def get_cui(self, obj):
+        """Return true if preferred method is CUI."""
+        return obj['preferred_method'] == 'cui'
 
     class Meta:
         """Meta class for PreferedSerializer."""
@@ -46,31 +54,21 @@ class PreferredUiView(RetrieveUpdateAPI):
         """Retrieve the preferred UI method."""
         session = self.request.session
         session['preferred_method'] = session.get('preferred_method', 'cui')
-        data = {
-            'preferred_method': session['preferred_method'],
-            'pui': session['preferred_method'] == 'pui',
-            'cui': session['preferred_method'] == 'cui',
-        }
-        return JsonResponse(data)
+        serializer = self.get_serializer(data=dict(session))
+        serializer.is_valid(raise_exception=True)
+        return JsonResponse(serializer.data)
 
     def update(self, request, *args, **kwargs):
         """Update the preferred UI method."""
         serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        data = {
-            'preferred_method': serializer.data['preferred_method'],
-            'pui': serializer.data['preferred_method'] == 'pui',
-            'cui': serializer.data['preferred_method'] == 'cui',
-        }
-        return JsonResponse(data)
 
-    def perform_update(self, serializer):
-        """Update the preferred UI method in the session."""
+        # Run update
         session = self.request.session
         session['preferred_method'] = serializer.validated_data['preferred_method']
         session.modified = True
-        return
+
+        return JsonResponse(serializer.data)
 
 
 spa_view = ensure_csrf_cookie(TemplateView.as_view(template_name='web/index.html'))
