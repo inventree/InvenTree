@@ -57,10 +57,10 @@ class CustomTranslateNode(TranslateNode):
 
         escape = self.escape
 
-        if template and template.endswith('.js'):
+        if template and str(template).endswith('.js'):
             escape = True
 
-        if request and request.path.endswith('.js'):
+        if request and str(request.path).endswith('.js'):
             escape = True
 
         if escape:
