@@ -43,7 +43,7 @@ def setup_tracing(
         resources_input: The resources to send with the traces.
         console: Whether to output the traces to the console.
     """
-    if InvenTree.ready.isInWorkerThread():
+    if not InvenTree.ready.isInMainThread():
         # Don't setup tracing in the worker thread
         return
 
