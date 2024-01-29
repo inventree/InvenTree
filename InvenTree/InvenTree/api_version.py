@@ -572,4 +572,4 @@ v4  -> 2021-06-01
 v3  -> 2021-05-22:
     - The updated StockItem "history tracking" now uses a different interface
 
-"""
+"""  # pragma: no cover
