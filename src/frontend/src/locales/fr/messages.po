@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-24 16:14\n"
+"PO-Revision-Date: 2024-01-29 11:02\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -1550,7 +1550,7 @@ msgstr ""
 
 #: src/components/tables/build/BuildLineTable.tsx:107
 msgid "Available Stock"
-msgstr "Available Stock"
+msgstr ""
 
 #: src/components/tables/build/BuildLineTable.tsx:137
 msgid "Unit Quantity"
@@ -4672,3 +4672,4 @@ msgstr "L'interface utilisateur de la plateforme est optimisée pour les tablett
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Lire la documentation"
+
