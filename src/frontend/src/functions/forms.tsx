@@ -64,6 +64,11 @@ export function extractAvailableFields(
 
   method = method.toUpperCase();
 
+  // PATCH method is supported, but metadata is provided via PUT
+  if (method === 'PATCH') {
+    method = 'PUT';
+  }
+
   if (!(method in actions)) {
     // Missing method - this means user does not have appropriate permission
     permissionDenied();
@@ -290,7 +295,7 @@ export function openEditApiForm(props: OpenApiFormProps) {
   let editProps: OpenApiFormProps = {
     ...props,
     fetchInitialData: props.fetchInitialData ?? true,
-    method: 'PUT'
+    method: 'PATCH'
   };
 
   openModalApiForm(editProps);

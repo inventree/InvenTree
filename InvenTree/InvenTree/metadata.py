@@ -97,6 +97,9 @@ class InvenTreeMetadata(SimpleMetadata):
                 if method in actions and not result:
                     del actions[method]
 
+                if result and method not in actions:
+                    actions[method] = {}
+
             # Add a 'DELETE' action if we are allowed to delete
             if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
                 actions['DELETE'] = {}
