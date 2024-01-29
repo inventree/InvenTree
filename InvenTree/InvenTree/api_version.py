@@ -6,6 +6,9 @@ INVENTREE_API_VERSION = 164
 
 INVENTREE_API_TEXT = """
 
+v164 -> 2024-01-28 : https://github.com/inventree/InvenTree/pull/6040
+    - Adds supplier_part.name, part.creation_user, part.required_for_sales_order
+
 v163 -> 2024-01-22 : https://github.com/inventree/InvenTree/pull/6314
     - Extends API endpoint to expose auth configuration information for signin pages
 
