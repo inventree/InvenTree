@@ -674,7 +674,10 @@ def wait(c):
 
 @task(pre=[wait], help={'address': 'Server address:port (default=0.0.0.0:8000)'})
 def gunicorn(c, address='0.0.0.0:8000'):
-    """Launch a gunicorn webserver."""
+    """Launch a gunicorn webserver.
+
+    Note: This server will not auto-reload in response to code changes.
+    """
     c.run(
         'gunicorn -c ./docker/gunicorn.conf.py InvenTree.wsgi -b {address} --chdir ./InvenTree'.format(
             address=address
