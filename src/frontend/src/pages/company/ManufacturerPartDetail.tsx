@@ -86,7 +86,7 @@ export default function ManufacturerPartDetail() {
       },
       {
         name: manufacturerPart?.manufacturer_detail?.name ?? t`Manufacturer`,
-        url: `/company/manufacturer/${manufacturerPart?.manufacturer_detail?.id}/`
+        url: `/purchasing/manufacturer/${manufacturerPart?.manufacturer_detail?.pk}/`
       }
     ];
   }, [manufacturerPart]);
