@@ -98,7 +98,7 @@ export function useEditApiFormModal(props: ApiFormModalProps) {
     () => ({
       ...props,
       fetchInitialData: props.fetchInitialData ?? true,
-      method: 'PUT'
+      method: 'PATCH'
     }),
     [props]
   );
