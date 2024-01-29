@@ -43,6 +43,9 @@ def setup_tracing(
         resources_input: The resources to send with the traces.
         console: Whether to output the traces to the console.
     """
+    if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+        return
+
     if not InvenTree.ready.isInServerThread():
         # Don't setup tracing unless we are in the main program
         return
