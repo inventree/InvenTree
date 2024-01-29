@@ -21,7 +21,7 @@ import { api } from '../../App';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
-import { SooButton } from '../buttons/SSOButton';
+import { SsoButton } from '../buttons/SSOButton';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
@@ -89,7 +89,7 @@ export function AuthenticationForm() {
         <>
           <Group grow mb="md" mt="md">
             {auth_settings.providers.map((provider) => (
-              <SoButton provider={provider} key={provider.id} />
+              <SsoButton provider={provider} key={provider.id} />
             ))}
           </Group>
 
@@ -272,7 +272,7 @@ export function RegistrationForm() {
       {auth_settings?.sso_registration === true && (
         <Group grow mb="md" mt="md">
           {auth_settings.providers.map((provider) => (
-            <SooButton provider={provider} key={provider.id} />
+            <SsoButton provider={provider} key={provider.id} />
           ))}
         </Group>
       )}

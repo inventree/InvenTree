@@ -30,7 +30,7 @@ const brandIcons: { [key: string]: JSX.Element } = {
   microsoft: <IconBrandAzure />
 };
 
-export function SooButton({ provider }: { provider: Provider }) {
+export function SsoButton({ provider }: { provider: Provider }) {
   return (
     <Button
       leftIcon={getBrandIcon(provider)}
