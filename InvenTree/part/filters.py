@@ -47,6 +47,25 @@ from InvenTree.status_codes import (
 )
 
 
+def annotate_in_production_quantity(reference=''):
+    """Annotate the 'in production' quantity for each part in a queryset.
+
+    Sum the 'quantity' field for all stock items which are 'in production' for each part.
+
+    Arguments:
+        reference: Reference to the part from the current queryset (default = '')
+    """
+    building_filter = Q(
+        is_building=True, build__status__in=BuildStatusGroups.ACTIVE_CODES
+    )
+
+    return Coalesce(
+        SubquerySum(f'{reference}stock_items__quantity', filter=building_filter),
+        Decimal(0),
+        output_field=DecimalField(),
+    )
+
+
 def annotate_on_order_quantity(reference: str = ''):
     """Annotate the 'on order' quantity for each part in a queryset.
 

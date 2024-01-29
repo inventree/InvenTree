@@ -47,6 +47,7 @@ export enum ApiPaths {
   // Build order URLs
   build_order_list = 'api-build-list',
   build_order_attachment_list = 'api-build-attachment-list',
+  build_line_list = 'api-build-line-list',
 
   // BOM URLs
   bom_list = 'api-bom-list',
