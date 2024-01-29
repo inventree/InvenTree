@@ -24,7 +24,6 @@ import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
 
 export function QrCodeModal({
   context,

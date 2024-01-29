@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Button, Stack, Text } from '@mantine/core';
+import { Button, Stack } from '@mantine/core';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 

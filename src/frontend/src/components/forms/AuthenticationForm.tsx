@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useServerApiState } from '../../states/ApiState';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
