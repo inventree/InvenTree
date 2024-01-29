@@ -65,6 +65,7 @@ export interface ApiFormProps {
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   fields?: ApiFormFieldSet;
+  initialData?: FieldValues;
   submitText?: string;
   submitColor?: string;
   fetchInitialData?: boolean;
@@ -163,13 +164,21 @@ export function OptionsApiForm({
  * based on an API endpoint.
  */
 export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
-  const defaultValues: FieldValues = useMemo(
-    () =>
-      mapFields(props.fields ?? {}, (_path, field) => {
-        return field.default ?? undefined;
-      }),
-    [props.fields]
-  );
+  const defaultValues: FieldValues = useMemo(() => {
+    let defaultValuesMap = mapFields(props.fields ?? {}, (_path, field) => {
+      return field.value ?? field.default ?? undefined;
+    });
+
+    // If the user has specified initial data, use that instead
+    if (props.initialData) {
+      defaultValuesMap = {
+        ...defaultValuesMap,
+        ...props.initialData
+      };
+    }
+
+    return defaultValuesMap;
+  }, [props.fields, props.initialData]);
 
   // Form errors which are not associated with a specific field
   const [nonFieldErrors, setNonFieldErrors] = useState<string[]>([]);

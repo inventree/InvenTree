@@ -73,6 +73,12 @@ function ApiFormsPlayground() {
       url: ApiPaths.part_list,
       title: 'Create part',
       fields: partFieldsState,
+      initialData: {
+        is_template: true,
+        virtual: true,
+        minimum_stock: 10,
+        keywords: 'apple, banana, carrottt'
+      },
       preFormContent: (
         <Button onClick={() => setName('Hello world')}>
           Set name="Hello world"
