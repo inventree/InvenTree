@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-29 06:52+0000\n"
-"PO-Revision-Date: 2024-01-21 15:02\n"
+"POT-Creation-Date: 2024-01-28 23:58+0000\n"
+"PO-Revision-Date: 2024-01-29 11:02\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -291,10 +291,8 @@ msgid "Russian"
 msgstr "Rusça"
 
 #: InvenTree/locales.py:39
-#, fuzzy
-#| msgid "Slovenian"
 msgid "Slovak"
-msgstr "Slovakça"
+msgstr ""
 
 #: InvenTree/locales.py:40
 msgid "Slovenian"
@@ -604,9 +602,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:458
 #, python-brace-format
-msgid ""
-"Your account has been created.\n"
-"\n"
+msgid "Your account has been created.\n\n"
 "Please use the password reset function to get access (at https://{domain})."
 msgstr ""
 
@@ -13530,8 +13526,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13706,3 +13701,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:401
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
