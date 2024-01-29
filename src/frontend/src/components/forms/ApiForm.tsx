@@ -263,11 +263,6 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
 
   // Fetch initial data on form load
   useEffect(() => {
-    console.log('initial form load effect');
-
-    // Set initial form values
-    console.log(defaultValues);
-
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
       queryClient.removeQueries({
