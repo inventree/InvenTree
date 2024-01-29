@@ -6,6 +6,7 @@ import logging
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
+from django.views.generic.base import RedirectView
 
 from dj_rest_auth.views import LogoutView
 from rest_framework import exceptions, permissions
@@ -22,6 +23,7 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
+from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
@@ -275,6 +277,17 @@ class GetAuthToken(APIView):
 
         else:
             raise exceptions.NotAuthenticated()
+
+
+class LoginRedirect(RedirectView):
+    """Redirect to the correct starting page after backend login."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Return the URL to redirect to."""
+        session = self.request.session
+        if session.get('preferred_method', 'cui') == 'pui':
+            return f'/{FRONTEND_URL_BASE}/logged-in/'
+        return '/index/'
 
 
 user_urls = [
