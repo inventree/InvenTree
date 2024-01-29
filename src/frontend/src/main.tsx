@@ -42,6 +42,10 @@ window.INVENTREE_SETTINGS = {
       host: `${window.location.origin}/`,
       name: 'Current Server'
     },
+    'mantine-2j5j5j5j5': {
+      hots: 'http://localhost:8000',
+      name: 'Localhost'
+    },
     ...(IS_DEV_OR_DEMO
       ? {
           'mantine-u56l5jt85': {
@@ -51,7 +55,7 @@ window.INVENTREE_SETTINGS = {
         }
       : {})
   },
-  default_server: IS_DEMO ? 'mantine-u56l5jt85' : 'mantine-cqj63coxn',
+  default_server: IS_DEMO ? 'mantine-u56l5jt85' : 'mantine-2j5j5j5j5',
   show_server_selector: IS_DEV_OR_DEMO,
 
   // merge in settings that are already set via django's spa_view or for development
