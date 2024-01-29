@@ -4,9 +4,11 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { useSupplierPartFields } from '../../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
+import { getDetailUrl } from '../../../functions/urls';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -234,7 +236,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           tableActions: tableActions,
           onRowClick: (record: any) => {
             if (record?.pk) {
-              navigate(`/purchasing/supplier-part/${record.pk}/`);
+              navigate(getDetailUrl(ModelType.supplierpart, record.pk));
             }
           }
         }}
