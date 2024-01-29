@@ -1,4 +1,3 @@
-import { faL } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
