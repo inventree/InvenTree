@@ -3,9 +3,11 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { partCategoryFields } from '../../../forms/PartForms';
 import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -140,9 +142,8 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         tableFilters: tableFilters,
         tableActions: tableActions,
         rowActions: rowActions,
-        onRowClick: (record, index, event) => {
-          navigate(`/part/category/${record.pk}`);
-        }
+        onRowClick: (record, index, event) =>
+          navigate(getDetailUrl(ModelType.partcategory, record.pk))
       }}
     />
   );

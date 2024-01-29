@@ -3,9 +3,11 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { stockLocationFields } from '../../../forms/StockForms';
 import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -164,7 +166,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         tableActions: tableActions,
         rowActions: rowActions,
         onRowClick: (record) => {
-          navigate(`/stock/location/${record.pk}`);
+          navigate(getDetailUrl(ModelType.stocklocation, record.pk));
         }
         // TODO: allow for "tree view" with cascade
       }}

@@ -6,6 +6,7 @@ import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { notYetImplemented } from '../../../functions/notifications';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -123,7 +124,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         tableActions: tableActions,
         onRowClick: (row: any) => {
           if (row.pk) {
-            navigate(`/sales/return-order/${row.pk}/`);
+            navigate(getDetailUrl(ModelType.returnorder, row.pk));
           }
         }
       }}
