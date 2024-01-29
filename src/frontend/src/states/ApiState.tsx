@@ -151,6 +151,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'build/';
     case ApiPaths.build_order_attachment_list:
       return 'build/attachment/';
+    case ApiPaths.build_line_list:
+      return 'build/line/';
     case ApiPaths.bom_list:
       return 'bom/';
     case ApiPaths.part_list:
@@ -183,6 +185,8 @@ export function apiEndpoint(path: ApiPaths): string {
       return 'company/part/manufacturer/';
     case ApiPaths.manufacturer_part_attachment_list:
       return 'company/part/manufacturer/attachment/';
+    case ApiPaths.manufacturer_part_parameter_list:
+      return 'company/part/manufacturer/parameter/';
     case ApiPaths.stock_item_list:
       return 'stock/';
     case ApiPaths.stock_tracking_list:

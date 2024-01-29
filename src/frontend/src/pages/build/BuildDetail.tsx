@@ -29,6 +29,7 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import BuildLineTable from '../../components/tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
@@ -104,8 +105,17 @@ export default function BuildDetail() {
       {
         name: 'allocate-stock',
         label: t`Allocate Stock`,
-        icon: <IconListCheck />
-        // TODO: Hide if build is complete
+        icon: <IconListCheck />,
+        content: build?.pk ? (
+          <BuildLineTable
+            params={{
+              build: id,
+              tracked: false
+            }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'incomplete-outputs',

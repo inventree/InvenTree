@@ -95,6 +95,18 @@ export function useManufacturerPartFields() {
   }, []);
 }
 
+export function useManufacturerPartParameterFields() {
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      name: {},
+      value: {},
+      units: {}
+    };
+
+    return fields;
+  }, []);
+}
+
 /**
  * Field set for editing a company instance
  */

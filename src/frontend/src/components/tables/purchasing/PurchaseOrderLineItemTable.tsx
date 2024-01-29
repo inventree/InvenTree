@@ -2,12 +2,15 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ProgressBar } from '../../../components/items/ProgressBar';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
 import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -41,6 +44,7 @@ export function PurchaseOrderLineItemTable({
 }) {
   const table = useTable('purchase-order-line-item');
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   const rowActions = useCallback(
@@ -260,7 +264,12 @@ export function PurchaseOrderLineItemTable({
           part_detail: true
         },
         rowActions: rowActions,
-        tableActions: tableActions
+        tableActions: tableActions,
+        onRowClick: (row: any) => {
+          if (row.part) {
+            navigate(getDetailUrl(ModelType.supplierpart, row.part));
+          }
+        }
       }}
     />
   );

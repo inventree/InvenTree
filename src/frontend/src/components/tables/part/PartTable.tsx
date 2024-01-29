@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { formatPriceRange } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { shortenString } from '../../../functions/tables';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -280,9 +282,8 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
           ...props.params,
           category_detail: true
         },
-        onRowClick: (record, _index, _event) => {
-          navigate(`/part/${record.pk}/`);
-        }
+        onRowClick: (record) =>
+          navigate(getDetailUrl(ModelType.part, record.pk))
       }}
     />
   );

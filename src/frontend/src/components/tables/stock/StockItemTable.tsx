@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -345,7 +346,8 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         enableDownload: true,
         enableSelection: true,
         tableFilters: tableFilters,
-        onRowClick: (record) => navigate(`/stock/item/${record.pk}`),
+        onRowClick: (record) =>
+          navigate(getDetailUrl(ModelType.stockitem, record.pk)),
         params: {
           ...params,
           part_detail: true,

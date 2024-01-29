@@ -3,10 +3,12 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { useManufacturerPartFields } from '../../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
 import { notYetImplemented } from '../../../functions/notifications';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -132,7 +134,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
         tableActions: tableActions,
         onRowClick: (record: any) => {
           if (record?.pk) {
-            navigate(`/purchasing/manufacturer-part/${record.pk}/`);
+            navigate(getDetailUrl(ModelType.manufacturerpart, record.pk));
           }
         }
       }}
