@@ -173,8 +173,8 @@ def annotate_sales_order_requirements(reference: str = ''):
     """Annotate the total quantity of each part required for sales orders.
 
     - Only interested in 'active' sales orders
-    - We are looking for any BuildLine items which required this part (bom_item.sub_part)
-    - We are interested in the 'quantity' of each BuildLine item
+    - We are looking for any order lines which requires this part
+    - We are interested in 'quantity'-'shipped'
 
     """
     # Order filter only returns incomplete shipments for open orders
