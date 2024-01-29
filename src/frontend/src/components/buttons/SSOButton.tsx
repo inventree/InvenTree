@@ -14,6 +14,7 @@ import {
   IconLogin
 } from '@tabler/icons-react';
 
+import { api } from '../../App';
 import { Provider } from '../../states/states';
 
 const brandIcons: { [key: string]: JSX.Element } = {
@@ -31,12 +32,26 @@ const brandIcons: { [key: string]: JSX.Element } = {
 };
 
 export function SsoButton({ provider }: { provider: Provider }) {
+  function login() {
+    // set preferred provider
+    api
+      .put(
+        '/api/web/ui_preference/',
+        { preferred_method: 'pui' },
+        { headers: { Authorization: '' } }
+      )
+      .then(() => {
+        // redirect to login
+        window.location.href = provider.login;
+      });
+  }
+
   return (
     <Button
       leftIcon={getBrandIcon(provider)}
       radius="xl"
       component="a"
-      href={provider.login}
+      onClick={login}
     >
       {provider.display_name}{' '}
     </Button>

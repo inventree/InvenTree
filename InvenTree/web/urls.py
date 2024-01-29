@@ -46,7 +46,7 @@ class PreferredSerializer(serializers.Serializer):
 class PreferredUiView(RetrieveUpdateAPI):
     """Set preferred UI (CIU/PUI)."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     serializer_class = PreferredSerializer
     http_method_names = ['get', 'post', 'put', 'head', 'options']
 
