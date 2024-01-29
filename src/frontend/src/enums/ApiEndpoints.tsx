@@ -68,6 +68,7 @@ export enum ApiPaths {
   supplier_part_list = 'api-supplier-part-list',
   manufacturer_part_list = 'api-manufacturer-part-list',
   manufacturer_part_attachment_list = 'api-manufacturer-part-attachment-list',
+  manufacturer_part_parameter_list = 'api-manufacturer-part-parameter-list',
   address_list = 'api-address-list',
   contact_list = 'api-contact-list',
 
