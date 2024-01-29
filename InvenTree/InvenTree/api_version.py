@@ -4,7 +4,7 @@
 INVENTREE_API_VERSION = 163
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
-INVENTREE_API_TEXT = """  # pragma: no cover
+INVENTREE_API_TEXT = """
 
 v163 -> 2024-01-22 : https://github.com/inventree/InvenTree/pull/6314
     - Extends API endpoint to expose auth configuration information for signin pages
@@ -572,4 +572,4 @@ v4  -> 2021-06-01
 v3  -> 2021-05-22:
     - The updated StockItem "history tracking" now uses a different interface
 
-"""  # pragma: no cover
+"""
