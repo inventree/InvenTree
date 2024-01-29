@@ -46,11 +46,13 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         render: (record: any) => {
           let supplier = record?.supplier_detail ?? {};
 
-          return (
+          return supplier?.pk ? (
             <Thumbnail
               src={supplier?.thumbnail ?? supplier.image}
               text={supplier.name}
             />
+          ) : (
+            '-'
           );
         }
       },
@@ -68,11 +70,13 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         render: (record: any) => {
           let manufacturer = record?.manufacturer_detail ?? {};
 
-          return (
+          return manufacturer?.pk ? (
             <Thumbnail
               src={manufacturer?.thumbnail ?? manufacturer.image}
               text={manufacturer.name}
             />
+          ) : (
+            '-'
           );
         }
       },
