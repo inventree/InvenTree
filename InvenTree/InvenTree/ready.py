@@ -24,6 +24,20 @@ def isInWorkerThread():
     return 'qcluster' in sys.argv
 
 
+def isInServerThread():
+    """Returns True if the current thread is a server thread."""
+    if isInWorkerThread():
+        return False
+
+    if 'runserver' in sys.argv:
+        return True
+
+    if 'gunicorn' in sys.argv[0]:
+        return True
+
+    return False
+
+
 def isInMainThread():
     """Django runserver starts two processes, one for the actual dev server and the other to reload the application.
 
