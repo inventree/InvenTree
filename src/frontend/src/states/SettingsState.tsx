@@ -4,7 +4,7 @@
 import { create, createStore } from 'zustand';
 
 import { api } from '../App';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { isTrue } from '../functions/conversion';
 import { PathParams, apiUrl } from './ApiState';
 import { Setting, SettingsLookup } from './states';
@@ -13,7 +13,7 @@ export interface SettingsStateProps {
   settings: Setting[];
   lookup: SettingsLookup;
   fetchSettings: () => void;
-  endpoint: ApiPaths;
+  endpoint: ApiEndpoints;
   pathParams?: PathParams;
   getSetting: (key: string, default_value?: string) => string; // Return a raw setting value
   isSet: (key: string, default_value?: boolean) => boolean; // Check a "boolean" setting
@@ -26,10 +26,10 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
   (set, get) => ({
     settings: [],
     lookup: {},
-    endpoint: ApiPaths.settings_global_list,
+    endpoint: ApiEndpoints.settings_global_list,
     fetchSettings: async () => {
       await api
-        .get(apiUrl(ApiPaths.settings_global_list))
+        .get(apiUrl(ApiEndpoints.settings_global_list))
         .then((response) => {
           set({
             settings: response.data,
@@ -56,10 +56,10 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
 export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   settings: [],
   lookup: {},
-  endpoint: ApiPaths.settings_user_list,
+  endpoint: ApiEndpoints.settings_user_list,
   fetchSettings: async () => {
     await api
-      .get(apiUrl(ApiPaths.settings_user_list))
+      .get(apiUrl(ApiEndpoints.settings_user_list))
       .then((response) => {
         set({
           settings: response.data,
@@ -94,11 +94,11 @@ export const createPluginSettingsState = ({
   return createStore<SettingsStateProps>()((set, get) => ({
     settings: [],
     lookup: {},
-    endpoint: ApiPaths.plugin_setting_list,
+    endpoint: ApiEndpoints.plugin_setting_list,
     pathParams,
     fetchSettings: async () => {
       await api
-        .get(apiUrl(ApiPaths.plugin_setting_list, undefined, { plugin }))
+        .get(apiUrl(ApiEndpoints.plugin_setting_list, undefined, { plugin }))
         .then((response) => {
           const settings = response.data;
           set({

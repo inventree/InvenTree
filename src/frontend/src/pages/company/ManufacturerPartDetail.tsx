@@ -14,14 +14,14 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import ManufacturerPartParameterTable from '../../components/tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
 
   const { instance: manufacturerPart, instanceQuery } = useInstance({
-    endpoint: ApiPaths.manufacturer_part_list,
+    endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
     hasPrimaryKey: true,
     params: {
@@ -69,7 +69,7 @@ export default function ManufacturerPartDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.manufacturer_part_attachment_list}
+            endpoint={ApiEndpoints.manufacturer_part_attachment_list}
             model="manufacturer_part"
             pk={manufacturerPart?.pk}
           />

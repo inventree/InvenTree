@@ -2,7 +2,7 @@ import { faL } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { useManufacturerPartParameterFields } from '../../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
@@ -53,7 +53,7 @@ export default function ManufacturerPartParameterTable({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.manufacturer_part_parameter_list,
+              url: ApiEndpoints.manufacturer_part_parameter_list,
               pk: record.pk,
               title: t`Edit Parameter`,
               fields: fields,
@@ -67,7 +67,7 @@ export default function ManufacturerPartParameterTable({
           onClick: () => {
             record.pk &&
               openDeleteApiForm({
-                url: ApiPaths.manufacturer_part_parameter_list,
+                url: ApiEndpoints.manufacturer_part_parameter_list,
                 pk: record.pk,
                 title: t`Delete Parameter`,
                 onFormSuccess: table.refreshTable,
@@ -83,7 +83,7 @@ export default function ManufacturerPartParameterTable({
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.manufacturer_part_parameter_list)}
+      url={apiUrl(ApiEndpoints.manufacturer_part_parameter_list)}
       tableState={table}
       columns={tableColumns}
       props={{

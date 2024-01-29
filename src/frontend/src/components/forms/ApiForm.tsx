@@ -20,7 +20,7 @@ import {
 } from 'react-hook-form';
 
 import { api, queryClient } from '../../App';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   NestedDict,
   constructField,
@@ -60,7 +60,7 @@ export interface ApiFormAction {
  * @param onFormError : A callback function to call when the form is submitted with errors.
  */
 export interface ApiFormProps {
-  url: ApiPaths | string;
+  url: ApiEndpoints | string;
   pk?: number | string | undefined;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';

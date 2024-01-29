@@ -11,7 +11,7 @@ import {
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
 import { StylishText } from '../components/items/StylishText';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { PathParams, apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
@@ -20,7 +20,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(
-  url: ApiPaths | string,
+  url: ApiEndpoints | string,
   pk?: string | number,
   pathParams?: PathParams
 ): string {

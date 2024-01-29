@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { partCategoryFields } from '../../../forms/PartForms';
@@ -81,7 +81,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     }
 
     openCreateApiForm({
-      url: apiUrl(ApiPaths.category_list),
+      url: apiUrl(ApiEndpoints.category_list),
       title: t`Add Part Category`,
       fields: fields,
       onFormSuccess(data: any) {
@@ -115,7 +115,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
           hidden: !can_edit,
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.category_list,
+              url: ApiEndpoints.category_list,
               pk: record.pk,
               title: t`Edit Part Category`,
               fields: partCategoryFields({}),
@@ -131,7 +131,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.category_list)}
+      url={apiUrl(ApiEndpoints.category_list)}
       tableState={table}
       columns={tableColumns}
       props={{

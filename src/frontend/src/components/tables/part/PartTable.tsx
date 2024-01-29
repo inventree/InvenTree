@@ -4,7 +4,7 @@ import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { formatPriceRange } from '../../../defaults/formatters';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { shortenString } from '../../../functions/tables';
 import { getDetailUrl } from '../../../functions/urls';
@@ -271,7 +271,7 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.part_list)}
+      url={apiUrl(ApiEndpoints.part_list)}
       tableState={table}
       columns={tableColumns}
       props={{
