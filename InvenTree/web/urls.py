@@ -55,8 +55,15 @@ class PreferredUiView(RetrieveUpdateAPI):
 
     def update(self, request, *args, **kwargs):
         """Update the preferred UI method."""
-        # return JsonResponse(inventreeApiText())
-        return super().update(request, *args, **kwargs)
+        serializer = self.get_serializer(data=self.clean_data(request.data))
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        data = {
+            'preferred_method': serializer.data['preferred_method'],
+            'pui': serializer.data['preferred_method'] == 'pui',
+            'cui': serializer.data['preferred_method'] == 'cui',
+        }
+        return JsonResponse(data)
 
     def perform_update(self, serializer):
         """Update the preferred UI method in the session."""

@@ -92,7 +92,6 @@ class TestWebHelpers(InvenTreeAPITestCase):
         self.assertEqual(data['preferred_method'], 'cui')
 
         # Set to PUI
-        return
         resp = self.put(url, {'preferred_method': 'pui'})
         data = json.loads(resp.content)
         self.assertEqual(resp.status_code, 200)
