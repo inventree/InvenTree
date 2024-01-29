@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
   IconInfoCircle,
@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 
@@ -42,7 +43,12 @@ export default function SupplierPartDetail() {
       {
         name: 'purchaseorders',
         label: t`Purchase Orders`,
-        icon: <IconShoppingCart />
+        icon: <IconShoppingCart />,
+        content: supplierPart?.pk ? (
+          <PurchaseOrderTable params={{ supplier_part: supplierPart.pk }} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'pricing',
@@ -50,7 +56,7 @@ export default function SupplierPartDetail() {
         icon: <IconCurrencyDollar />
       }
     ];
-  }, []);
+  }, [supplierPart]);
 
   const breadcrumbs = useMemo(() => {
     return [
