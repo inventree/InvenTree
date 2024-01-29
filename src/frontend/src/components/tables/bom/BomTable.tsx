@@ -10,9 +10,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { formatPriceRange } from '../../../defaults/formatters';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { bomItemFields } from '../../../forms/BomForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -364,7 +366,8 @@ export function BomTable({
           sub_part_detail: true
         },
         tableFilters: tableFilters,
-        onRowClick: (row) => navigate(`/part/${row.sub_part}`),
+        onRowClick: (row) =>
+          navigate(getDetailUrl(ModelType.part, row.sub_part)),
         rowActions: rowActions
       }}
     />

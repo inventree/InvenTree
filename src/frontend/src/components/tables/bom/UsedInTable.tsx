@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { PartHoverCard } from '../../images/Thumbnail';
@@ -93,7 +95,7 @@ export function UsedInTable({
           sub_part_detail: true
         },
         tableFilters: tableFilters,
-        onRowClick: (row) => navigate(`/part/${row.part}`)
+        onRowClick: (row) => navigate(getDetailUrl(ModelType.part, row.part))
       }}
     />
   );
