@@ -147,6 +147,13 @@ export function OptionsApiForm({
         field: v,
         definition: data?.[k]
       });
+
+      // If the user has specified initial data, use that value here
+      let value = _props?.initialData?.[k];
+
+      if (value) {
+        _props.fields[k].value = value;
+      }
     }
 
     return _props;
@@ -177,6 +184,8 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
       };
     }
 
+    // Update the form values, but only for the fields specified for this form
+
     return defaultValuesMap;
   }, [props.fields, props.initialData]);
 
@@ -188,6 +197,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     criteriaMode: 'all',
     defaultValues
   });
+
   const {
     isValid,
     isDirty,
@@ -253,6 +263,11 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
 
   // Fetch initial data on form load
   useEffect(() => {
+    console.log('initial form load effect');
+
+    // Set initial form values
+    console.log(defaultValues);
+
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
       queryClient.removeQueries({
