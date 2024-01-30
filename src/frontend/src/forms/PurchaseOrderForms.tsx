@@ -20,35 +20,23 @@ import {
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
-export function purchaseOrderLineItemFields({
-  supplierId,
-  orderId,
-  create = false
-}: {
-  supplierId?: number;
-  orderId?: number;
-  create?: boolean;
-}) {
+export function purchaseOrderLineItemFields() {
   let fields: ApiFormFieldSet = {
     order: {
       filters: {
         supplier_detail: true
       },
-      value: orderId,
-      hidden: create != true || orderId != undefined
+      hidden: true
     },
     part: {
       filters: {
         part_detail: true,
-        supplier_detail: true,
-        supplier: supplierId
+        supplier_detail: true
       },
-      adjustFilters: (filters: any) => {
-        // TODO: Filter by the supplier associated with the order
-        return filters;
+      adjustFilters: (value: ApiFormAdjustFilterType) => {
+        // TODO: Adjust part based on the supplier associated with the supplier
+        return value.filters;
       }
-      // TODO: Custom onEdit callback (see purchase_order.js)
-      // TODO: secondary modal (see purchase_order.js)
     },
     quantity: {},
     reference: {},
