@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
@@ -9,6 +9,11 @@ import {
   openDeleteApiForm,
   openEditApiForm
 } from '../../../functions/forms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -108,6 +113,37 @@ export function AddressTable({
     ];
   }, []);
 
+  const newAddress = useCreateApiFormModal({
+    url: ApiPaths.address_list,
+    title: t`Create Address`,
+    fields: addressFields(),
+    initialData: {
+      company: companyId
+    },
+    successMessage: t`Address created`,
+    onFormSuccess: table.refreshTable
+  });
+
+  const [selectedAddress, setSelectedAddress] = useState<number | undefined>(
+    undefined
+  );
+
+  const editAddress = useEditApiFormModal({
+    url: ApiPaths.address_list,
+    pk: selectedAddress,
+    title: t`Edit Address`,
+    fields: addressFields(),
+    onFormSuccess: table.refreshTable
+  });
+
+  const deleteAddress = useDeleteApiFormModal({
+    url: ApiPaths.address_list,
+    pk: selectedAddress,
+    title: t`Delete Address`,
+    onFormSuccess: table.refreshTable,
+    preFormWarning: t`Are you sure you want to delete this address?`
+  });
+
   const rowActions = useCallback(
     (record: any) => {
       let can_edit =
@@ -122,47 +158,21 @@ export function AddressTable({
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            openEditApiForm({
-              url: ApiPaths.address_list,
-              pk: record.pk,
-              title: t`Edit Address`,
-              fields: addressFields(),
-              successMessage: t`Address updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedAddress(record.pk);
+            editAddress.open();
           }
         }),
         RowDeleteAction({
           hidden: !can_delete,
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiPaths.address_list,
-              pk: record.pk,
-              title: t`Delete Address`,
-              successMessage: t`Address deleted`,
-              onFormSuccess: table.refreshTable,
-              preFormWarning: t`Are you sure you want to delete this address?`
-            });
+            setSelectedAddress(record.pk);
+            deleteAddress.open();
           }
         })
       ];
     },
     [user]
   );
-
-  const addAddress = useCallback(() => {
-    let fields = addressFields();
-
-    fields['company'].value = companyId;
-
-    openCreateApiForm({
-      url: ApiPaths.address_list,
-      title: t`Add Address`,
-      fields: fields,
-      successMessage: t`Address created`,
-      onFormSuccess: table.refreshTable
-    });
-  }, [companyId]);
 
   const tableActions = useMemo(() => {
     let can_add =
@@ -172,25 +182,30 @@ export function AddressTable({
     return [
       <AddItemButton
         tooltip={t`Add Address`}
-        onClick={addAddress}
+        onClick={() => newAddress.open()}
         disabled={!can_add}
       />
     ];
   }, [user]);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiPaths.address_list)}
-      tableState={table}
-      columns={columns}
-      props={{
-        rowActions: rowActions,
-        tableActions: tableActions,
-        params: {
-          ...params,
-          company: companyId
-        }
-      }}
-    />
+    <>
+      {newAddress.modal}
+      {editAddress.modal}
+      {deleteAddress.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiPaths.address_list)}
+        tableState={table}
+        columns={columns}
+        props={{
+          rowActions: rowActions,
+          tableActions: tableActions,
+          params: {
+            ...params,
+            company: companyId
+          }
+        }}
+      />
+    </>
   );
 }

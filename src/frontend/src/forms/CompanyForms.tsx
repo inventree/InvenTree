@@ -166,9 +166,7 @@ export function contactFields(): ApiFormFieldSet {
 
 export function addressFields(): ApiFormFieldSet {
   return {
-    company: {
-      hidden: true
-    },
+    company: {},
     title: {},
     primary: {},
     line1: {},
