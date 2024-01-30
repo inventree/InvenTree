@@ -45,7 +45,7 @@ window.INVENTREE_SETTINGS = {
     ...(IS_DEV
       ? {
           'mantine-2j5j5j5j5': {
-            hots: 'http://localhost:8000',
+            host: 'http://localhost:8000',
             name: 'Localhost'
           }
         }
