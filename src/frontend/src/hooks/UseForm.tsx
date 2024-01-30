@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Divider, Stack } from '@mantine/core';
+import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
@@ -120,6 +120,11 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
       submitText: t`Delete`,
       submitColor: 'red',
       successMessage: props.successMessage ?? t`Item Deleted`,
+      preFormContent: props.preFormContent ?? (
+        <Alert
+          color={'red'}
+        >{t`Are you sure you want to delete this item?`}</Alert>
+      ),
       fields: {}
     }),
     [props]

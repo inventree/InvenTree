@@ -165,6 +165,14 @@ export function partParameterTemplateFields(): ApiFormFieldSet {
   };
 }
 
+export function partParameterFields(): ApiFormFieldSet {
+  return {
+    part: {},
+    template: {},
+    data: {}
+  };
+}
+
 export function partTestTemplateFields(): ApiFormFieldSet {
   return {
     part: {

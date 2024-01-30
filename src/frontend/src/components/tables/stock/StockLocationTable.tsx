@@ -1,14 +1,16 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { stockLocationFields } from '../../../forms/StockForms';
-import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { getDetailUrl } from '../../../functions/urls';
-import { useCreateApiFormModal } from '../../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -113,6 +115,18 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     }
   });
 
+  const [selectedLocation, setSelectedLocation] = useState<number | undefined>(
+    undefined
+  );
+
+  const editLocation = useEditApiFormModal({
+    url: ApiPaths.stock_location_list,
+    pk: selectedLocation,
+    title: t`Edit Stock Location`,
+    fields: stockLocationFields({}),
+    onFormSuccess: table.refreshTable
+  });
+
   const tableActions = useMemo(() => {
     let can_add = user.hasAddRole(UserRoles.stock_location);
 
@@ -133,14 +147,8 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            openEditApiForm({
-              url: ApiPaths.stock_location_list,
-              pk: record.pk,
-              title: t`Edit Stock Location`,
-              fields: stockLocationFields({}),
-              successMessage: t`Stock location updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedLocation(record.pk);
+            editLocation.open();
           }
         })
       ];
@@ -151,6 +159,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   return (
     <>
       {newLocation.modal}
+      {editLocation.modal}
       <InvenTreeTable
         url={apiUrl(ApiPaths.stock_location_list)}
         tableState={table}

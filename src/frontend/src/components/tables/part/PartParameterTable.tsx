@@ -1,14 +1,15 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
+import { partParameterFields } from '../../../forms/PartForms';
 import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../../functions/forms';
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -85,6 +86,35 @@ export function PartParameterTable({ partId }: { partId: any }) {
     ];
   }, [partId]);
 
+  const newParameter = useCreateApiFormModal({
+    url: ApiPaths.part_parameter_list,
+    title: t`New Part Parameter`,
+    fields: partParameterFields(),
+    initialData: {
+      part: partId
+    },
+    onFormSuccess: table.refreshTable
+  });
+
+  const [selectedParameter, setSelectedParameter] = useState<
+    number | undefined
+  >(undefined);
+
+  const editParameter = useEditApiFormModal({
+    url: ApiPaths.part_parameter_list,
+    pk: selectedParameter,
+    title: t`Edit Part Parameter`,
+    fields: partParameterFields(),
+    onFormSuccess: table.refreshTable
+  });
+
+  const deleteParameter = useDeleteApiFormModal({
+    url: ApiPaths.part_parameter_list,
+    pk: selectedParameter,
+    title: t`Delete Part Parameter`,
+    onFormSuccess: table.refreshTable
+  });
+
   // Callback for row actions
   const rowActions = useCallback(
     (record: any) => {
@@ -93,73 +123,27 @@ export function PartParameterTable({ partId }: { partId: any }) {
         return [];
       }
 
-      let actions = [];
-
-      actions.push(
+      return [
         RowEditAction({
           tooltip: t`Edit Part Parameter`,
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
-            openEditApiForm({
-              url: ApiPaths.part_parameter_list,
-              pk: record.pk,
-              title: t`Edit Part Parameter`,
-              fields: {
-                part: {
-                  hidden: true
-                },
-                template: {},
-                data: {}
-              },
-              successMessage: t`Part parameter updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedParameter(record.pk);
+            editParameter.open();
           }
-        })
-      );
-
-      actions.push(
+        }),
         RowDeleteAction({
           tooltip: t`Delete Part Parameter`,
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiPaths.part_parameter_list,
-              pk: record.pk,
-              title: t`Delete Part Parameter`,
-              successMessage: t`Part parameter deleted`,
-              onFormSuccess: table.refreshTable,
-              preFormWarning: t`Are you sure you want to remove this parameter?`
-            });
+            setSelectedParameter(record.pk);
+            deleteParameter.open();
           }
         })
-      );
-
-      return actions;
+      ];
     },
     [partId, user]
   );
-
-  const addParameter = useCallback(() => {
-    if (!partId) {
-      return;
-    }
-
-    openCreateApiForm({
-      url: ApiPaths.part_parameter_list,
-      title: t`Add Part Parameter`,
-      fields: {
-        part: {
-          hidden: true,
-          value: partId
-        },
-        template: {},
-        data: {}
-      },
-      successMessage: t`Part parameter added`,
-      onFormSuccess: table.refreshTable
-    });
-  }, [partId]);
 
   // Custom table actions
   const tableActions = useMemo(() => {
@@ -167,33 +151,41 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
     // TODO: Hide if user does not have permission to edit parts
     actions.push(
-      <AddItemButton tooltip={t`Add parameter`} onClick={addParameter} />
+      <AddItemButton
+        tooltip={t`Add parameter`}
+        onClick={() => newParameter.open()}
+      />
     );
 
     return actions;
   }, []);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiPaths.part_parameter_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        rowActions: rowActions,
-        tableActions: tableActions,
-        tableFilters: [
-          {
-            name: 'include_variants',
-            label: t`Include Variants`,
-            type: 'boolean'
+    <>
+      {newParameter.modal}
+      {editParameter.modal}
+      {deleteParameter.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiPaths.part_parameter_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          rowActions: rowActions,
+          tableActions: tableActions,
+          tableFilters: [
+            {
+              name: 'include_variants',
+              label: t`Include Variants`,
+              type: 'boolean'
+            }
+          ],
+          params: {
+            part: partId,
+            template_detail: true,
+            part_detail: true
           }
-        ],
-        params: {
-          part: partId,
-          template_detail: true,
-          part_detail: true
-        }
-      }}
-    />
+        }}
+      />
+    </>
   );
 }

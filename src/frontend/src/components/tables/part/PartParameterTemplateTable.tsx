@@ -1,14 +1,14 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { partParameterTemplateFields } from '../../../forms/PartForms';
 import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../../functions/forms';
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -69,6 +69,32 @@ export default function PartParameterTemplateTable() {
     ];
   }, []);
 
+  const newTemplate = useCreateApiFormModal({
+    url: ApiPaths.part_parameter_template_list,
+    title: t`Create Parameter Template`,
+    fields: partParameterTemplateFields(),
+    onFormSuccess: table.refreshTable
+  });
+
+  const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
+    undefined
+  );
+
+  const editTemplate = useEditApiFormModal({
+    url: ApiPaths.part_parameter_template_list,
+    pk: selectedTemplate,
+    title: t`Edit Parameter Template`,
+    fields: partParameterTemplateFields(),
+    onFormSuccess: table.refreshTable
+  });
+
+  const deleteTemplate = useDeleteApiFormModal({
+    url: ApiPaths.part_parameter_template_list,
+    pk: selectedTemplate,
+    title: t`Delete Parameter Template`,
+    onFormSuccess: table.refreshTable
+  });
+
   // Callback for row actions
   const rowActions = useCallback(
     (record: any) => {
@@ -76,27 +102,15 @@ export default function PartParameterTemplateTable() {
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
-            openEditApiForm({
-              url: ApiPaths.part_parameter_template_list,
-              pk: record.pk,
-              title: t`Edit Parameter Template`,
-              fields: partParameterTemplateFields(),
-              successMessage: t`Parameter template updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedTemplate(record.pk);
+            editTemplate.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiPaths.part_parameter_template_list,
-              pk: record.pk,
-              title: t`Delete Parameter Template`,
-              successMessage: t`Parameter template deleted`,
-              onFormSuccess: table.refreshTable,
-              preFormWarning: t`Are you sure you want to remove this parameter template?`
-            });
+            setSelectedTemplate(record.pk);
+            deleteTemplate.open();
           }
         })
       ];
@@ -104,36 +118,31 @@ export default function PartParameterTemplateTable() {
     [user]
   );
 
-  const addParameterTemplate = useCallback(() => {
-    openCreateApiForm({
-      url: ApiPaths.part_parameter_template_list,
-      title: t`Create Parameter Template`,
-      fields: partParameterTemplateFields(),
-      successMessage: t`Parameter template created`,
-      onFormSuccess: table.refreshTable
-    });
-  }, []);
-
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
         tooltip={t`Add parameter template`}
-        onClick={addParameterTemplate}
+        onClick={() => newTemplate.open()}
         disabled={!user.hasAddRole(UserRoles.part)}
       />
     ];
   }, [user]);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiPaths.part_parameter_template_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        rowActions: rowActions,
-        tableFilters: tableFilters,
-        tableActions: tableActions
-      }}
-    />
+    <>
+      {newTemplate.modal}
+      {editTemplate.modal}
+      {deleteTemplate.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiPaths.part_parameter_template_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          rowActions: rowActions,
+          tableFilters: tableFilters,
+          tableActions: tableActions
+        }}
+      />
+    </>
   );
 }

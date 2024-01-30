@@ -1,14 +1,16 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { partCategoryFields } from '../../../forms/PartForms';
-import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { getDetailUrl } from '../../../functions/urls';
-import { useCreateApiFormModal } from '../../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -90,6 +92,18 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     }
   });
 
+  const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
+    undefined
+  );
+
+  const editCategory = useEditApiFormModal({
+    url: ApiPaths.category_list,
+    pk: selectedCategory,
+    title: t`Edit Part Category`,
+    fields: partCategoryFields({}),
+    onFormSuccess: table.refreshTable
+  });
+
   const tableActions = useMemo(() => {
     let can_add = user.hasAddRole(UserRoles.part_category);
 
@@ -110,14 +124,8 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            openEditApiForm({
-              url: ApiPaths.category_list,
-              pk: record.pk,
-              title: t`Edit Part Category`,
-              fields: partCategoryFields({}),
-              successMessage: t`Part category updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedCategory(record.pk);
+            editCategory.open();
           }
         })
       ];
@@ -128,6 +136,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
   return (
     <>
       {newCategory.modal}
+      {editCategory.modal}
       <InvenTreeTable
         url={apiUrl(ApiPaths.category_list)}
         tableState={table}
