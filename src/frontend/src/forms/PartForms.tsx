@@ -2,8 +2,6 @@ import { t } from '@lingui/macro';
 import { IconPackages } from '@tabler/icons-react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { openCreateApiForm, openEditApiForm } from '../functions/forms';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
