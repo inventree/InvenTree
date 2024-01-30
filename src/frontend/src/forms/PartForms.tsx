@@ -99,39 +99,6 @@ export function partFields({
 }
 
 /**
- * Launch a dialog to create a new Part instance
- */
-export function createPart() {
-  openCreateApiForm({
-    title: t`Add Part`,
-    url: ApiEndpoints.part_list,
-    successMessage: t`Part created`,
-    fields: partFields({})
-  });
-}
-
-/**
- * Launch a dialog to edit an existing Part instance
- * @param part The ID of the part to edit
- */
-export function editPart({
-  part_id,
-  callback
-}: {
-  part_id: number;
-  callback?: () => void;
-}) {
-  openEditApiForm({
-    title: t`Edit Part`,
-    url: ApiEndpoints.part_list,
-    pk: part_id,
-    fields: partFields({ editing: true }),
-    successMessage: t`Part updated`,
-    onFormSuccess: callback
-  });
-}
-
-/**
  * Construct a set of fields for creating / editing a PartCategory instance
  */
 export function partCategoryFields({}: {}): ApiFormFieldSet {
