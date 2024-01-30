@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
-import { contactFields } from '../../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -13,6 +12,7 @@ import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../forms/fields/ApiFormField';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
@@ -57,6 +57,14 @@ export function ContactTable({
     ];
   }, []);
 
+  const contactFields: ApiFormFieldSet = {
+    company: {},
+    name: {},
+    phone: {},
+    email: {},
+    role: {}
+  };
+
   const [selectedContact, setSelectedContact] = useState<number | undefined>(
     undefined
   );
@@ -65,7 +73,7 @@ export function ContactTable({
     url: ApiEndpoints.contact_list,
     pk: selectedContact,
     title: t`Edit Contact`,
-    fields: contactFields(),
+    fields: contactFields,
     onFormSuccess: table.refreshTable
   });
 
@@ -75,7 +83,7 @@ export function ContactTable({
     initialData: {
       company: companyId
     },
-    fields: contactFields(),
+    fields: contactFields,
     onFormSuccess: table.refreshTable
   });
 

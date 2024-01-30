@@ -179,7 +179,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
   }, [id, company]);
 
   const editCompany = useEditApiFormModal({
-    url: ApiPaths.company_list,
+    url: ApiEndpoints.company_list,
     pk: company?.pk,
     title: t`Edit Company`,
     fields: companyFields(),

@@ -146,7 +146,7 @@ export function BuildOrderTable({
   const table = useTable('buildorder');
 
   const newBuild = useCreateApiFormModal({
-    url: ApiPaths.build_order_list,
+    url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
     fields: buildOrderFields(),
     initialData: {

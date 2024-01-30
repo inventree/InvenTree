@@ -131,30 +131,3 @@ export function companyFields(): ApiFormFieldSet {
     is_customer: {}
   };
 }
-
-export function contactFields(): ApiFormFieldSet {
-  return {
-    company: {},
-    name: {},
-    phone: {},
-    email: {},
-    role: {}
-  };
-}
-
-export function addressFields(): ApiFormFieldSet {
-  return {
-    company: {},
-    title: {},
-    primary: {},
-    line1: {},
-    line2: {},
-    postal_code: {},
-    postal_city: {},
-    province: {},
-    country: {},
-    shipping_notes: {},
-    internal_shipping_notes: {},
-    link: {}
-  };
-}

@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
-import { addressFields } from '../../../forms/CompanyForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -13,6 +12,7 @@ import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../forms/fields/ApiFormField';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -108,10 +108,25 @@ export function AddressTable({
     ];
   }, []);
 
+  const addressFields: ApiFormFieldSet = {
+    company: {},
+    title: {},
+    primary: {},
+    line1: {},
+    line2: {},
+    postal_code: {},
+    postal_city: {},
+    province: {},
+    country: {},
+    shipping_notes: {},
+    internal_shipping_notes: {},
+    link: {}
+  };
+
   const newAddress = useCreateApiFormModal({
     url: ApiEndpoints.address_list,
     title: t`Create Address`,
-    fields: addressFields(),
+    fields: addressFields,
     initialData: {
       company: companyId
     },
@@ -127,7 +142,7 @@ export function AddressTable({
     url: ApiEndpoints.address_list,
     pk: selectedAddress,
     title: t`Edit Address`,
-    fields: addressFields(),
+    fields: addressFields,
     onFormSuccess: table.refreshTable
   });
 
