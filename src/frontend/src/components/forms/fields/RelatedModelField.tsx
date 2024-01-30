@@ -4,7 +4,11 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import {
+  FieldValues,
+  UseControllerReturn,
+  useFormContext
+} from 'react-hook-form';
 import Select from 'react-select';
 
 import { api } from '../../../App';
@@ -31,6 +35,8 @@ export function RelatedModelField({
     field,
     fieldState: { error }
   } = controller;
+
+  const form = useFormContext();
 
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
@@ -88,7 +94,11 @@ export function RelatedModelField({
       let filters = definition.filters ?? {};
 
       if (definition.adjustFilters) {
-        filters = definition.adjustFilters(filters);
+        filters =
+          definition.adjustFilters({
+            filters: filters,
+            data: form.getValues()
+          }) ?? filters;
       }
 
       let params = {

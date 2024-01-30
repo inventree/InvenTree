@@ -14,6 +14,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useState } from 'react';
 import {
   FieldValues,
+  FormProvider,
   SubmitErrorHandler,
   SubmitHandler,
   useForm
@@ -409,16 +410,18 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
             {props.preFormWarning}
           </Alert>
         )}
-        <Stack spacing="xs">
-          {Object.entries(props.fields ?? {}).map(([fieldName, field]) => (
-            <ApiFormField
-              key={fieldName}
-              fieldName={fieldName}
-              definition={field}
-              control={form.control}
-            />
-          ))}
-        </Stack>
+        <FormProvider {...form}>
+          <Stack spacing="xs">
+            {Object.entries(props.fields ?? {}).map(([fieldName, field]) => (
+              <ApiFormField
+                key={fieldName}
+                fieldName={fieldName}
+                definition={field}
+                control={form.control}
+              />
+            ))}
+          </Stack>
+        </FormProvider>
         {props.postFormContent}
       </Stack>
       <Divider />

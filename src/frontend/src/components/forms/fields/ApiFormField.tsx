@@ -22,6 +22,11 @@ import { RelatedModelField } from './RelatedModelField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
 
+export type ApiFormAdjustFilterType = {
+  filters: any;
+  data: FieldValues;
+};
+
 /** Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
  * - All other attributes are optional, and may be provided by the API
@@ -80,7 +85,7 @@ export type ApiFormFieldType = {
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
   onValueChange?: (value: any) => void;
-  adjustFilters?: (filters: any) => any;
+  adjustFilters?: (value: ApiFormAdjustFilterType) => any;
 };
 
 /**
