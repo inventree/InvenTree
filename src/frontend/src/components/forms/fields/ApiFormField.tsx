@@ -7,7 +7,6 @@ import {
   Switch,
   TextInput
 } from '@mantine/core';
-import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
@@ -17,6 +16,7 @@ import { Control, FieldValues, useController } from 'react-hook-form';
 
 import { ModelType } from '../../../enums/ModelType';
 import { ChoiceField } from './ChoiceField';
+import DateField from './DateField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 
@@ -213,17 +213,10 @@ export function ApiFormField({
         );
       case 'date':
         return (
-          <DateInput
-            {...reducedDefinition}
-            ref={ref}
-            id={fieldId}
-            radius="sm"
-            type={undefined}
-            error={error?.message}
-            value={value}
-            clearable={!definition.required}
-            onChange={(value) => onChange(value)}
-            valueFormat="YYYY-MM-DD"
+          <DateField
+            controller={controller}
+            fieldName={fieldName}
+            definition={definition}
           />
         );
       case 'integer':

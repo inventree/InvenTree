@@ -61,6 +61,7 @@ export function ChoiceField({
       label={definition.label}
       description={definition.description}
       placeholder={definition.placeholder}
+      icon={definition.icon}
       withinPortal={true}
     />
   );
