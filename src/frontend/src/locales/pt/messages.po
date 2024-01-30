@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-25 16:16\n"
+"PO-Revision-Date: 2024-01-30 11:17\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1525,23 +1525,23 @@ msgstr "Alocado"
 
 #: src/components/tables/build/BuildLineTable.tsx:35
 msgid "Show allocated lines"
-msgstr ""
+msgstr "Mostrar linhas alocadas"
 
 #: src/components/tables/build/BuildLineTable.tsx:40
 msgid "Show lines with available stock"
-msgstr ""
+msgstr "Mostrar linhas com estoque disponível"
 
 #: src/components/tables/build/BuildLineTable.tsx:45
 msgid "Show consumable lines"
-msgstr ""
+msgstr "Mostrar linhas consumíveis"
 
 #: src/components/tables/build/BuildLineTable.tsx:50
 msgid "Show optional lines"
-msgstr ""
+msgstr "Mostrar linhas opcionais"
 
 #: src/components/tables/build/BuildLineTable.tsx:84
 msgid "In production"
-msgstr ""
+msgstr "Em produção"
 
 #: src/components/tables/build/BuildLineTable.tsx:104
 #: src/components/tables/stock/StockItemTable.tsx:143
@@ -1550,15 +1550,15 @@ msgstr "Nenhum estoque disponível"
 
 #: src/components/tables/build/BuildLineTable.tsx:107
 msgid "Available Stock"
-msgstr "Available Stock"
+msgstr "Estoque Disponível"
 
 #: src/components/tables/build/BuildLineTable.tsx:137
 msgid "Unit Quantity"
-msgstr ""
+msgstr "Quantidade Unitária"
 
 #: src/components/tables/build/BuildLineTable.tsx:152
 msgid "Required Quantity"
-msgstr ""
+msgstr "Quantidade Requerida"
 
 #: src/components/tables/build/BuildLineTable.tsx:203
 #: src/pages/build/BuildDetail.tsx:107
@@ -1567,11 +1567,11 @@ msgstr "Alocar Estoque"
 
 #: src/components/tables/build/BuildLineTable.tsx:209
 msgid "Order Stock"
-msgstr ""
+msgstr "Pedir estoque"
 
 #: src/components/tables/build/BuildLineTable.tsx:215
 msgid "Build Stock"
-msgstr ""
+msgstr "Estoque de Produção"
 
 #: src/components/tables/build/BuildOrderTable.tsx:52
 msgid "Progress"
@@ -2317,23 +2317,23 @@ msgstr "Instalado"
 
 #: src/components/tables/purchasing/ManufacturerPartParameterTable.tsx:57
 msgid "Edit Parameter"
-msgstr ""
+msgstr "Editar Parâmetro"
 
 #: src/components/tables/purchasing/ManufacturerPartParameterTable.tsx:60
 msgid "Parameter updated"
-msgstr ""
+msgstr "Parâmetro atualizado"
 
 #: src/components/tables/purchasing/ManufacturerPartParameterTable.tsx:71
 msgid "Delete Parameter"
-msgstr ""
+msgstr "Excluir Parâmetro"
 
 #: src/components/tables/purchasing/ManufacturerPartParameterTable.tsx:73
 msgid "Parameter deleted"
-msgstr ""
+msgstr "Parâmetro excluído"
 
 #: src/components/tables/purchasing/ManufacturerPartParameterTable.tsx:74
 msgid "Are you sure you want to delete this parameter?"
-msgstr ""
+msgstr "Tem certeza de que deseja remover este parâmetro?"
 
 #: src/components/tables/purchasing/ManufacturerPartTable.tsx:43
 #: src/components/tables/purchasing/SupplierPartTable.tsx:71
@@ -3223,7 +3223,7 @@ msgstr "Russo"
 
 #: src/contexts/LanguageContext.tsx:40
 msgid "Slovak"
-msgstr ""
+msgstr "Eslovaco"
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Slovenian"
@@ -4672,3 +4672,4 @@ msgstr "A interface de usuário da plataforma é otimizada para Tablets e Deskto
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Leia a documentação"
+
