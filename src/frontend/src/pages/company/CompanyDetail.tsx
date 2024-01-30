@@ -39,7 +39,8 @@ import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
-import { editCompany } from '../../forms/CompanyForms';
+import { companyFields } from '../../forms/CompanyForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -177,6 +178,14 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     ];
   }, [id, company]);
 
+  const editCompany = useEditApiFormModal({
+    url: ApiPaths.company_list,
+    pk: company?.pk,
+    title: t`Edit Company`,
+    fields: companyFields(),
+    onFormSuccess: refreshInstance
+  });
+
   const companyActions = useMemo(() => {
     return [
       <ActionDropdown
@@ -186,14 +195,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         actions={[
           EditItemAction({
             disabled: !user.hasChangeRole(UserRoles.purchase_order),
-            onClick: () => {
-              if (company?.pk) {
-                editCompany({
-                  pk: company?.pk,
-                  callback: refreshInstance
-                });
-              }
-            }
+            onClick: () => editCompany.open()
           }),
           DeleteItemAction({
             disabled: !user.hasDeleteRole(UserRoles.purchase_order)
@@ -204,16 +206,19 @@ export default function CompanyDetail(props: CompanyDetailProps) {
   }, [id, company, user]);
 
   return (
-    <Stack spacing="xs">
-      <LoadingOverlay visible={instanceQuery.isFetching} />
-      <PageDetail
-        title={t`Company` + `: ${company.name}`}
-        subtitle={company.description}
-        actions={companyActions}
-        imageUrl={company.image}
-        breadcrumbs={props.breadcrumbs}
-      />
-      <PanelGroup pageKey="company" panels={companyPanels} />
-    </Stack>
+    <>
+      {editCompany.modal}
+      <Stack spacing="xs">
+        <LoadingOverlay visible={instanceQuery.isFetching} />
+        <PageDetail
+          title={t`Company` + `: ${company.name}`}
+          subtitle={company.description}
+          actions={companyActions}
+          imageUrl={company.image}
+          breadcrumbs={props.breadcrumbs}
+        />
+        <PanelGroup pageKey="company" panels={companyPanels} />
+      </Stack>
+    </>
   );
 }

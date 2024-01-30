@@ -132,26 +132,6 @@ export function companyFields(): ApiFormFieldSet {
   };
 }
 
-/**
- * Edit a company instance
- */
-export function editCompany({
-  pk,
-  callback
-}: {
-  pk: number;
-  callback?: () => void;
-}) {
-  openEditApiForm({
-    title: t`Edit Company`,
-    url: ApiPaths.company_list,
-    pk: pk,
-    fields: companyFields(),
-    successMessage: t`Company updated`,
-    onFormSuccess: callback
-  });
-}
-
 export function contactFields(): ApiFormFieldSet {
   return {
     company: {},
