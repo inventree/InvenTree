@@ -122,16 +122,13 @@ class InfoView(AjaxView):
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
             'default_locale': settings.LANGUAGE_CODE,
+            # Following fields are only available to staff users
+            'system_health': check_system_health() if is_staff else None,
+            'database': InvenTree.version.inventreeDatabase() if is_staff else None,
+            'platform': InvenTree.version.inventreePlatform() if is_staff else None,
+            'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
+            'target': InvenTree.version.inventreeTarget() if is_staff else None,
         }
-
-        if is_staff:
-            data.update({
-                'system_health': check_system_health(),
-                'database': InvenTree.version.inventreeDatabase(),
-                'platform': InvenTree.version.inventreePlatform(),
-                'installer': InvenTree.version.inventreeInstaller(),
-                'target': InvenTree.version.inventreeTarget(),
-            })
 
         return JsonResponse(data)
 
