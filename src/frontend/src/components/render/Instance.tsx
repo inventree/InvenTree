@@ -112,7 +112,7 @@ export function RenderInlineModel({
   return (
     <Group spacing="xs" position="apart" noWrap={true}>
       <Group spacing="xs" position="left" noWrap={true}>
-        {Thumbnail({ src: image, size: 18 })}
+        {image && Thumbnail({ src: image, size: 18 })}
         <Text size="sm">{primary}</Text>
         {secondary && <Text size="xs">{secondary}</Text>}
       </Group>
