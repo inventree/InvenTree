@@ -133,24 +133,19 @@ class InfoView(AjaxView):
 
     def check_auth_header(self, request):
         """Check if user is authenticated via a token in the header."""
-        # TODO @matmair: remove after refacgtor of Token check is done
-        headers = request.headers.get(
-            'Authorization', request.headers.get('authorization')
-        )
-        if not headers:
-            return False
+        from InvenTree.middleware import get_token_from_request
 
-        auth = headers.strip()
-        if not (auth.lower().startswith('token') and len(auth.split()) == 2):
-            return False
+        if token := get_token_from_request(request):
+            # Does the provided token match a valid user?
+            try:
+                token = ApiToken.objects.get(key=token)
 
-        token_key = auth.split()[1]
-        try:
-            token = ApiToken.objects.get(key=token_key)
-            if token.active and token.user and token.user.is_staff:
-                return True
-        except ApiToken.DoesNotExist:
-            pass
+                # Check if the token is active and the user is a staff member
+                if token.active and token.user and token.user.is_staff:
+                    return True
+            except ApiToken.DoesNotExist:
+                pass
+
         return False
 
 
