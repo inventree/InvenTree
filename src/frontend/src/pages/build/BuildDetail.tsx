@@ -14,7 +14,7 @@ import {
   IconQrcode,
   IconSitemap
 } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -36,8 +36,9 @@ import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiPaths } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { buildOrderFields } from '../../forms/BuildForms';
-import { openEditApiForm } from '../../functions/forms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -187,24 +188,15 @@ export default function BuildDetail() {
     ];
   }, [build, id]);
 
-  const editBuildOrder = useCallback(() => {
-    let fields = buildOrderFields();
-
-    // Cannot edit part field after creation
-    fields['part'].hidden = true;
-
-    build.pk &&
-      openEditApiForm({
-        url: ApiPaths.build_order_list,
-        pk: build.pk,
-        title: t`Edit Build Order`,
-        fields: fields,
-        successMessage: t`Build Order updated`,
-        onFormSuccess: () => {
-          refreshInstance();
-        }
-      });
-  }, [build]);
+  const editBuild = useEditApiFormModal({
+    url: ApiPaths.build_order_list,
+    pk: build.pk,
+    title: t`Edit Build Order`,
+    fields: buildOrderFields(),
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
 
   const buildActions = useMemo(() => {
     // TODO: Disable certain actions based on user permissions
@@ -241,10 +233,10 @@ export default function BuildDetail() {
         icon={<IconDots />}
         actions={[
           EditItemAction({
-            onClick: editBuildOrder
+            onClick: () => editBuild.open(),
+            disabled: !user.hasChangeRole(UserRoles.build)
           }),
-          DuplicateItemAction({}),
-          DeleteItemAction({})
+          DuplicateItemAction({})
         ]}
       />
     ];
@@ -263,6 +255,7 @@ export default function BuildDetail() {
 
   return (
     <>
+      {editBuild.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
