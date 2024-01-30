@@ -154,9 +154,7 @@ export function editCompany({
 
 export function contactFields(): ApiFormFieldSet {
   return {
-    company: {
-      hidden: true
-    },
+    company: {},
     name: {},
     phone: {},
     email: {},
