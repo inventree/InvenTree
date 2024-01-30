@@ -7,7 +7,7 @@ setuptools>=69.0.0
 wheel>=0.41.0
 
 # Database links
-psycopg>=3.1.8
+psycopg2>=2.9.9
 mysqlclient>=2.2.0
 pgcli>=3.1.0
 mariadb>=1.1.8

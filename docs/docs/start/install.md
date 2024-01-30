@@ -159,7 +159,7 @@ grant all privileges on database inventree to myuser;
 The PostgreSQL python binding must also be installed (into your virtual environment):
 
 ```
-pip3 install psycopg pgcli
+pip3 install psycopg2 pgcli
 ```
 
 ### MySQL / MariaDB
