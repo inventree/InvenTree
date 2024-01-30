@@ -12,7 +12,12 @@ export function setApiDefaults() {
   const token = useSessionState.getState().token;
 
   api.defaults.baseURL = host;
-  api.defaults.headers.common['Authorization'] = `Token ${token}`;
+
+  if (!!token) {
+    api.defaults.headers.common['Authorization'] = `Token ${token}`;
+  } else {
+    api.defaults.headers.common['Authorization'] = undefined;
+  }
 
   // CSRF support (needed for POST, PUT, PATCH, DELETE)
   api.defaults.withCredentials = true;
