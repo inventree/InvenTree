@@ -69,13 +69,15 @@ export default function PartParameterTemplateTable() {
     ];
   }, []);
 
-  const partParameterTemplateFields: ApiFormFieldSet = {
-    name: {},
-    description: {},
-    units: {},
-    choices: {},
-    checkbox: {}
-  };
+  const partParameterTemplateFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      name: {},
+      description: {},
+      units: {},
+      choices: {},
+      checkbox: {}
+    };
+  }, []);
 
   const newTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,

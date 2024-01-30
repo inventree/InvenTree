@@ -57,13 +57,15 @@ export function ContactTable({
     ];
   }, []);
 
-  const contactFields: ApiFormFieldSet = {
-    company: {},
-    name: {},
-    phone: {},
-    email: {},
-    role: {}
-  };
+  const contactFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      company: {},
+      name: {},
+      phone: {},
+      email: {},
+      role: {}
+    };
+  }, []);
 
   const [selectedContact, setSelectedContact] = useState<number | undefined>(
     undefined

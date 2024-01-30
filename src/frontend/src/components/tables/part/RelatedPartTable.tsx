@@ -70,12 +70,14 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
     ];
   }, [partId]);
 
-  const relatedPartFields: ApiFormFieldSet = {
-    part_1: {
-      hidden: true
-    },
-    part_2: {}
-  };
+  const relatedPartFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      part_1: {
+        hidden: true
+      },
+      part_2: {}
+    };
+  }, []);
 
   const newRelatedPart = useCreateApiFormModal({
     url: ApiEndpoints.related_part_list,

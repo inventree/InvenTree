@@ -69,16 +69,18 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     ];
   }, []);
 
-  const partTestTemplateFields: ApiFormFieldSet = {
-    part: {
-      hidden: true
-    },
-    test_name: {},
-    description: {},
-    required: {},
-    requires_value: {},
-    requires_attachment: {}
-  };
+  const partTestTemplateFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      part: {
+        hidden: true
+      },
+      test_name: {},
+      description: {},
+      required: {},
+      requires_value: {},
+      requires_attachment: {}
+    };
+  }, []);
 
   const newTestTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_test_template_list,

@@ -92,11 +92,13 @@ export function PartParameterTable({ partId }: { partId: any }) {
     ];
   }, [partId]);
 
-  const partParameterFields: ApiFormFieldSet = {
-    part: {},
-    template: {},
-    data: {}
-  };
+  const partParameterFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      part: {},
+      template: {},
+      data: {}
+    };
+  }, []);
 
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,

@@ -108,20 +108,22 @@ export function AddressTable({
     ];
   }, []);
 
-  const addressFields: ApiFormFieldSet = {
-    company: {},
-    title: {},
-    primary: {},
-    line1: {},
-    line2: {},
-    postal_code: {},
-    postal_city: {},
-    province: {},
-    country: {},
-    shipping_notes: {},
-    internal_shipping_notes: {},
-    link: {}
-  };
+  const addressFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      company: {},
+      title: {},
+      primary: {},
+      line1: {},
+      line2: {},
+      postal_code: {},
+      postal_city: {},
+      province: {},
+      country: {},
+      shipping_notes: {},
+      internal_shipping_notes: {},
+      link: {}
+    };
+  }, []);
 
   const newAddress = useCreateApiFormModal({
     url: ApiEndpoints.address_list,
