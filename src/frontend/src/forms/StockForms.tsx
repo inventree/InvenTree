@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 
 /**
@@ -105,7 +105,7 @@ export function useCreateStockItem() {
   const fields = useStockFields({ create: true });
 
   return useCreateApiFormModal({
-    url: ApiPaths.stock_item_list,
+    url: ApiEndpoints.stock_item_list,
     fields: fields,
     title: t`Create Stock Item`
   });
@@ -125,7 +125,7 @@ export function useEditStockItem({
   const fields = useStockFields({ create: false });
 
   return useEditApiFormModal({
-    url: ApiPaths.stock_item_list,
+    url: ApiEndpoints.stock_item_list,
     pk: item_id,
     fields: fields,
     title: t`Edit Stock Item`,

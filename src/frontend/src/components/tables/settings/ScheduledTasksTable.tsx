@@ -3,7 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -53,7 +53,7 @@ export default function ScheduledTasksTable() {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.task_scheduled_list)}
+      url={apiUrl(ApiEndpoints.task_scheduled_list)}
       tableState={table}
       columns={columns}
       props={{}}

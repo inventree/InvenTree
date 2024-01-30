@@ -24,7 +24,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../../App';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { openEditApiForm } from '../../../functions/forms';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useInstance } from '../../../hooks/UseInstance';
@@ -82,7 +82,7 @@ export function PluginDrawer({
     refreshInstance,
     instanceQuery: { isFetching, error }
   } = useInstance<PluginI>({
-    endpoint: ApiPaths.plugin_list,
+    endpoint: ApiEndpoints.plugin_list,
     pk: id,
     throwError: true
   });
@@ -127,7 +127,7 @@ export function PluginDrawer({
               onClick: () => {
                 openEditApiForm({
                   title: t`Edit plugin`,
-                  url: ApiPaths.plugin_list,
+                  url: ApiEndpoints.plugin_list,
                   pk: id,
                   fields: {
                     active: {}
@@ -334,7 +334,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           confirm: t`Confirm`
         },
         onConfirm: () => {
-          let url = apiUrl(ApiPaths.plugin_list, plugin_id) + 'activate/';
+          let url = apiUrl(ApiEndpoints.plugin_list, plugin_id) + 'activate/';
 
           const id = 'plugin-activate';
 
@@ -403,7 +403,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
 
   const installPluginModal = useCreateApiFormModal({
     title: t`Install plugin`,
-    url: ApiPaths.plugin_install,
+    url: ApiEndpoints.plugin_install,
     fields: {
       packagename: {},
       url: {},
@@ -428,7 +428,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
 
   const reloadPlugins = useCallback(() => {
     api
-      .post(apiUrl(ApiPaths.plugin_reload), {
+      .post(apiUrl(ApiEndpoints.plugin_reload), {
         full_reload: true,
         force_reload: true,
         collect_plugins: true
@@ -482,7 +482,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         }}
       />
       <InvenTreeTable
-        url={apiUrl(ApiPaths.plugin_list)}
+        url={apiUrl(ApiEndpoints.plugin_list)}
         tableState={table}
         columns={pluginTableColumns}
         props={{

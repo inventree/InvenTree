@@ -12,7 +12,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { openEditApiForm } from '../functions/forms';
 
 /**
@@ -144,7 +144,7 @@ export function editCompany({
 }) {
   openEditApiForm({
     title: t`Edit Company`,
-    url: ApiPaths.company_list,
+    url: ApiEndpoints.company_list,
     pk: pk,
     fields: companyFields(),
     successMessage: t`Company updated`,

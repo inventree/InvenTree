@@ -7,7 +7,7 @@ import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../../App';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import {
   addAttachment,
   deleteAttachment,
@@ -78,7 +78,7 @@ export function AttachmentTable({
   model,
   pk
 }: {
-  endpoint: ApiPaths;
+  endpoint: ApiEndpoints;
   pk: number;
   model: string;
 }): ReactNode {

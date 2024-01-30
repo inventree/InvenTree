@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import {
   openCreateApiForm,
@@ -101,7 +101,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.part_parameter_list,
+              url: ApiEndpoints.part_parameter_list,
               pk: record.pk,
               title: t`Edit Part Parameter`,
               fields: {
@@ -124,7 +124,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({
-              url: ApiPaths.part_parameter_list,
+              url: ApiEndpoints.part_parameter_list,
               pk: record.pk,
               title: t`Delete Part Parameter`,
               successMessage: t`Part parameter deleted`,
@@ -146,7 +146,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
     }
 
     openCreateApiForm({
-      url: ApiPaths.part_parameter_list,
+      url: ApiEndpoints.part_parameter_list,
       title: t`Add Part Parameter`,
       fields: {
         part: {
@@ -175,7 +175,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.part_parameter_list)}
+      url={apiUrl(ApiEndpoints.part_parameter_list)}
       tableState={table}
       columns={tableColumns}
       props={{

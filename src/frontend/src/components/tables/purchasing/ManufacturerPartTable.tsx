@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { useManufacturerPartFields } from '../../../forms/CompanyForms';
@@ -91,7 +91,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
           onClick: () => {
             record.pk &&
               openEditApiForm({
-                url: ApiPaths.manufacturer_part_list,
+                url: ApiEndpoints.manufacturer_part_list,
                 pk: record.pk,
                 title: t`Edit Manufacturer Part`,
                 fields: editManufacturerPartFields,
@@ -105,7 +105,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
           onClick: () => {
             record.pk &&
               openDeleteApiForm({
-                url: ApiPaths.manufacturer_part_list,
+                url: ApiEndpoints.manufacturer_part_list,
                 pk: record.pk,
                 title: t`Delete Manufacturer Part`,
                 successMessage: t`Manufacturer part deleted`,
@@ -121,7 +121,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.manufacturer_part_list)}
+      url={apiUrl(ApiEndpoints.manufacturer_part_list)}
       tableState={table}
       columns={tableColumns}
       props={{

@@ -15,8 +15,8 @@ import { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
-import { ApiPaths } from '../../enums/ApiEndpoints';
-import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { CopyButton } from '../items/CopyButton';
@@ -47,7 +47,7 @@ export function AboutInvenTreeModal({
 
   const { isLoading, data } = useQuery({
     queryKey: ['version'],
-    queryFn: () => api.get(apiUrl(ApiPaths.version)).then((res) => res.data)
+    queryFn: () => api.get(ApiEndpoints.version).then((res) => res.data)
   });
 
   function fillTable(

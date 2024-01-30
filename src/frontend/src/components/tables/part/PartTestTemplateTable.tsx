@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { partTestTemplateFields } from '../../../forms/PartForms';
 import {
@@ -79,7 +79,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
           hidden: !can_edit,
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.part_test_template_list,
+              url: ApiEndpoints.part_test_template_list,
               pk: record.pk,
               title: t`Edit Test Template`,
               fields: partTestTemplateFields(),
@@ -92,7 +92,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
           hidden: !can_delete,
           onClick: () => {
             openDeleteApiForm({
-              url: ApiPaths.part_test_template_list,
+              url: ApiEndpoints.part_test_template_list,
               pk: record.pk,
               title: t`Delete Test Template`,
               successMessage: t`Test Template deleted`,
@@ -111,7 +111,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     fields['part'].value = partId;
 
     openCreateApiForm({
-      url: ApiPaths.part_test_template_list,
+      url: ApiEndpoints.part_test_template_list,
       title: t`Create Test Template`,
       fields: fields,
       successMessage: t`Template created`,
@@ -133,7 +133,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.part_test_template_list)}
+      url={apiUrl(ApiEndpoints.part_test_template_list)}
       tableState={table}
       columns={tableColumns}
       props={{
