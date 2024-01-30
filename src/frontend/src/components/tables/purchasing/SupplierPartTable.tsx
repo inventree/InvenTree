@@ -3,10 +3,12 @@ import { Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { useSupplierPartFields } from '../../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
+import { getDetailUrl } from '../../../functions/urls';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -46,11 +48,13 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         render: (record: any) => {
           let supplier = record?.supplier_detail ?? {};
 
-          return (
+          return supplier?.pk ? (
             <Thumbnail
               src={supplier?.thumbnail ?? supplier.image}
               text={supplier.name}
             />
+          ) : (
+            '-'
           );
         }
       },
@@ -68,11 +72,13 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         render: (record: any) => {
           let manufacturer = record?.manufacturer_detail ?? {};
 
-          return (
+          return manufacturer?.pk ? (
             <Thumbnail
               src={manufacturer?.thumbnail ?? manufacturer.image}
               text={manufacturer.name}
             />
+          ) : (
+            '-'
           );
         }
       },
@@ -155,7 +161,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
   });
   const { modal: addSupplierPartModal, open: openAddSupplierPartForm } =
     useCreateApiFormModal({
-      url: ApiPaths.supplier_part_list,
+      url: ApiEndpoints.supplier_part_list,
       title: t`Add Supplier Part`,
       fields: addSupplierPartFields,
       onFormSuccess: table.refreshTable,
@@ -188,7 +194,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           onClick: () => {
             record.pk &&
               openEditApiForm({
-                url: ApiPaths.supplier_part_list,
+                url: ApiEndpoints.supplier_part_list,
                 pk: record.pk,
                 title: t`Edit Supplier Part`,
                 fields: editSupplierPartFields,
@@ -202,7 +208,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           onClick: () => {
             record.pk &&
               openDeleteApiForm({
-                url: ApiPaths.supplier_part_list,
+                url: ApiEndpoints.supplier_part_list,
                 pk: record.pk,
                 title: t`Delete Supplier Part`,
                 successMessage: t`Supplier part deleted`,
@@ -220,7 +226,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     <>
       {addSupplierPartModal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.supplier_part_list)}
+        url={apiUrl(ApiEndpoints.supplier_part_list)}
         tableState={table}
         columns={tableColumns}
         props={{
@@ -234,7 +240,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           tableActions: tableActions,
           onRowClick: (record: any) => {
             if (record?.pk) {
-              navigate(`/purchasing/supplier-part/${record.pk}/`);
+              navigate(getDetailUrl(ModelType.supplierpart, record.pk));
             }
           }
         }}

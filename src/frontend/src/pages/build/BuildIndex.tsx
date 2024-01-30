@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
-import { Button, Stack, Text } from '@mantine/core';
+import { Button, Stack } from '@mantine/core';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { buildOrderFields } from '../../forms/BuildForms';
 import { openCreateApiForm } from '../../functions/forms';
 
@@ -17,7 +17,7 @@ export default function BuildIndex() {
 
   const newBuildOrder = useCallback(() => {
     openCreateApiForm({
-      url: ApiPaths.build_order_list,
+      url: ApiEndpoints.build_order_list,
       title: t`Add Build Order`,
       fields: buildOrderFields(),
       successMessage: t`Build order created`,

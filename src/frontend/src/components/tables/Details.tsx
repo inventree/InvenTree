@@ -14,7 +14,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense } from 'react';
 
 import { api } from '../../App';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { InvenTreeIcon } from '../../functions/icons';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
@@ -53,7 +53,7 @@ type LinkDetailField = {
 } & (InternalLinkField | ExternalLinkField);
 
 type InternalLinkField = {
-  path: ApiPaths;
+  path: ApiEndpoints;
   dest: string;
 };
 
@@ -183,13 +183,13 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
 
       switch (type) {
         case 'owner':
-          path = ApiPaths.owner_list;
+          path = ApiEndpoints.owner_list;
           break;
         case 'user':
-          path = ApiPaths.user_list;
+          path = ApiEndpoints.user_list;
           break;
         case 'group':
-          path = ApiPaths.group_list;
+          path = ApiEndpoints.group_list;
           break;
       }
 

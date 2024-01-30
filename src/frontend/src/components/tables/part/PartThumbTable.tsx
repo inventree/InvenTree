@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import React, { Suspense, useEffect, useState } from 'react';
 
 import { api } from '../../../App';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
 
@@ -103,7 +103,7 @@ async function setNewImage(
     return;
   }
 
-  const response = await api.patch(apiUrl(ApiPaths.part_list, pk), {
+  const response = await api.patch(apiUrl(ApiEndpoints.part_list, pk), {
     existing_image: image
   });
 
@@ -138,11 +138,11 @@ export function PartThumbTable({
   // Fetch thumbnails from API
   const thumbQuery = useQuery({
     queryKey: [
-      apiUrl(ApiPaths.part_thumbs_list),
+      ApiEndpoints.part_thumbs_list,
       { limit: limit, offset: offset, search: filterQuery }
     ],
     queryFn: async () => {
-      return api.get(apiUrl(ApiPaths.part_thumbs_list), {
+      return api.get(ApiEndpoints.part_thumbs_list, {
         params: {
           offset: offset,
           limit: limit,

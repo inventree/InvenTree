@@ -3,8 +3,9 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { renderDate } from '../../../defaults/formatters';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { PartHoverCard } from '../../images/Thumbnail';
@@ -134,7 +135,7 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.build_order_list)}
+      url={apiUrl(ApiEndpoints.build_order_list)}
       tableState={table}
       columns={tableColumns}
       props={{
@@ -144,7 +145,7 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
           part_detail: true
         },
         tableFilters: tableFilters,
-        onRowClick: (row) => navigate(`/build/${row.pk}`)
+        onRowClick: (row) => navigate(getDetailUrl(ModelType.build, row.pk))
       }}
     />
   );

@@ -12,15 +12,16 @@ import { useParams } from 'react-router-dom';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
+import ManufacturerPartParameterTable from '../../components/tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
 
   const { instance: manufacturerPart, instanceQuery } = useInstance({
-    endpoint: ApiPaths.manufacturer_part_list,
+    endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
     hasPrimaryKey: true,
     params: {
@@ -39,7 +40,14 @@ export default function ManufacturerPartDetail() {
       {
         name: 'parameters',
         label: t`Parameters`,
-        icon: <IconList />
+        icon: <IconList />,
+        content: manufacturerPart?.pk ? (
+          <ManufacturerPartParameterTable
+            params={{ manufacturer_part: manufacturerPart.pk }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'suppliers',
@@ -61,7 +69,7 @@ export default function ManufacturerPartDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.manufacturer_part_attachment_list}
+            endpoint={ApiEndpoints.manufacturer_part_attachment_list}
             model="manufacturer_part"
             pk={manufacturerPart?.pk}
           />
@@ -78,7 +86,7 @@ export default function ManufacturerPartDetail() {
       },
       {
         name: manufacturerPart?.manufacturer_detail?.name ?? t`Manufacturer`,
-        url: `/company/manufacturer/${manufacturerPart?.manufacturer_detail?.id}/`
+        url: `/purchasing/manufacturer/${manufacturerPart?.manufacturer_detail?.pk}/`
       }
     ];
   }, [manufacturerPart]);

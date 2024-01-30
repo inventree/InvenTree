@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
 import { useInstance } from '../../../hooks/UseInstance';
 import { useTable } from '../../../hooks/UseTable';
@@ -44,7 +44,7 @@ export function UserDrawer({
     refreshInstance,
     instanceQuery: { isFetching, error }
   } = useInstance<UserDetailI>({
-    endpoint: ApiPaths.user_list,
+    endpoint: ApiEndpoints.user_list,
     pk: id,
     throwError: true
   });
@@ -75,7 +75,7 @@ export function UserDrawer({
     <Stack>
       <EditApiForm
         props={{
-          url: ApiPaths.user_list,
+          url: ApiEndpoints.user_list,
           pk: id,
           fields: {
             username: {},
@@ -204,7 +204,7 @@ export function UserTable() {
       RowDeleteAction({
         onClick: () => {
           openDeleteApiForm({
-            url: ApiPaths.user_list,
+            url: ApiEndpoints.user_list,
             pk: record.pk,
             title: t`Delete user`,
             successMessage: t`User deleted`,
@@ -218,7 +218,7 @@ export function UserTable() {
 
   const addUser = useCallback(() => {
     openCreateApiForm({
-      url: ApiPaths.user_list,
+      url: ApiEndpoints.user_list,
       title: t`Add user`,
       fields: {
         username: {},
@@ -256,7 +256,7 @@ export function UserTable() {
         }}
       />
       <InvenTreeTable
-        url={apiUrl(ApiPaths.user_list)}
+        url={apiUrl(ApiEndpoints.user_list)}
         tableState={table}
         columns={columns}
         props={{

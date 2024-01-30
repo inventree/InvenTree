@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -44,7 +44,7 @@ export default function PendingTasksTable() {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.task_pending_list)}
+      url={apiUrl(ApiEndpoints.task_pending_list)}
       tableState={table}
       columns={columns}
       props={{

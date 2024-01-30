@@ -61,7 +61,7 @@ import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { formatPriceRange } from '../../defaults/formatters';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { editPart } from '../../forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
@@ -83,7 +83,7 @@ export default function PartDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.part_list,
+    endpoint: ApiEndpoints.part_list,
     pk: id,
     params: {
       path_detail: true
@@ -121,7 +121,7 @@ export default function PartDetail() {
           type: 'link',
           name: 'variant_of',
           label: t`Variant of`,
-          path: ApiPaths.part_list,
+          path: ApiEndpoints.part_list,
           dest: '/part/'
         }
       ]);
@@ -225,7 +225,7 @@ export default function PartDetail() {
           type: 'link',
           name: 'category',
           label: t`Category`,
-          path: ApiPaths.category_list,
+          path: ApiEndpoints.category_list,
           dest: '/part/category/'
         }
       ]);
@@ -297,7 +297,9 @@ export default function PartDetail() {
             const { data } = useSuspenseQuery({
               queryKey: ['pricing', id],
               queryFn: async () => {
-                const url = apiUrl(ApiPaths.part_pricing_get, null, { id: id });
+                const url = apiUrl(ApiEndpoints.part_pricing_get, null, {
+                  id: id
+                });
 
                 return api
                   .get(url)
@@ -333,7 +335,7 @@ export default function PartDetail() {
             const { data } = useSuspenseQuery({
               queryKey: ['stocktake', id],
               queryFn: async () => {
-                const url = apiUrl(ApiPaths.part_stocktake_list);
+                const url = ApiEndpoints.part_stocktake_list;
 
                 return api
                   .get(url, { params: { part: id, ordering: 'date' } })
@@ -361,7 +363,7 @@ export default function PartDetail() {
             const { data } = useSuspenseQuery({
               queryKey: ['stocktake', id],
               queryFn: async () => {
-                const url = apiUrl(ApiPaths.part_stocktake_list);
+                const url = ApiEndpoints.part_stocktake_list;
 
                 return api
                   .get(url, { params: { part: id, ordering: 'date' } })
@@ -389,7 +391,7 @@ export default function PartDetail() {
           type: 'link',
           name: 'default_location',
           label: t`Default Location`,
-          path: ApiPaths.stock_location_list,
+          path: ApiEndpoints.stock_location_list,
           dest: '/stock/location/'
         }
       ]);
@@ -401,7 +403,7 @@ export default function PartDetail() {
           type: 'link',
           name: 'default_supplier',
           label: t`Default Supplier`,
-          path: ApiPaths.supplier_part_list,
+          path: ApiEndpoints.supplier_part_list,
           dest: '/part/'
         }
       ]);
@@ -452,7 +454,7 @@ export default function PartDetail() {
           <ItemDetails
             appRole={UserRoles.part}
             params={part}
-            apiPath={apiUrl(ApiPaths.part_list, part.pk)}
+            apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
             refresh={refreshInstance}
             fields={detailFields(part)}
             partModel
@@ -603,7 +605,7 @@ export default function PartDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.part_attachment_list}
+            endpoint={ApiEndpoints.part_attachment_list}
             model="part"
             pk={part.pk ?? -1}
           />
@@ -615,7 +617,7 @@ export default function PartDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.part_list, part.pk)}
+            url={apiUrl(ApiEndpoints.part_list, part.pk)}
             data={part.notes ?? ''}
             allowEdit={true}
           />
