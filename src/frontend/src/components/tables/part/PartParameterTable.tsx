@@ -4,7 +4,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
-import { partParameterFields } from '../../../forms/PartForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -14,6 +13,7 @@ import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../forms/fields/ApiFormField';
 import { YesNoButton } from '../../items/YesNoButton';
 import { TableColumn } from '../Column';
 import { PartColumn } from '../ColumnRenderers';
@@ -86,10 +86,16 @@ export function PartParameterTable({ partId }: { partId: any }) {
     ];
   }, [partId]);
 
+  const partParameterFields: ApiFormFieldSet = {
+    part: {},
+    template: {},
+    data: {}
+  };
+
   const newParameter = useCreateApiFormModal({
     url: ApiPaths.part_parameter_list,
     title: t`New Part Parameter`,
-    fields: partParameterFields(),
+    fields: partParameterFields,
     initialData: {
       part: partId
     },
@@ -104,7 +110,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
     url: ApiPaths.part_parameter_list,
     pk: selectedParameter,
     title: t`Edit Part Parameter`,
-    fields: partParameterFields(),
+    fields: partParameterFields,
     onFormSuccess: table.refreshTable
   });
 
