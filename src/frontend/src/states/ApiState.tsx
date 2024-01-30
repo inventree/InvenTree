@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { api } from '../App';
-import { statusCodeList } from '../defaults/backendMappings';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { AuthProps, ServerAPIProps } from './states';
