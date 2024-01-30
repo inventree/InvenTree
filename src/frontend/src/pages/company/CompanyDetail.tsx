@@ -98,9 +98,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         hidden: !company?.is_supplier,
-        content: company?.pk && (
-          <PurchaseOrderTable params={{ supplier: company.pk }} />
-        )
+        content: company?.pk && <PurchaseOrderTable supplierId={company.pk} />
       },
       {
         name: 'stock-items',

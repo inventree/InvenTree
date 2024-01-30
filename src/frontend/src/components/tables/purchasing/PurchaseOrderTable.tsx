@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
-import { notYetImplemented } from '../../../functions/notifications';
+import { PurchaseOrderFormFields } from '../../../forms/PurchaseOrderForms';
 import { getDetailUrl } from '../../../functions/urls';
+import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -34,7 +35,13 @@ import { InvenTreeTable } from '../InvenTreeTable';
 /**
  * Display a table of purchase orders
  */
-export function PurchaseOrderTable({ params }: { params?: any }) {
+export function PurchaseOrderTable({
+  supplierId,
+  supplierPartId
+}: {
+  supplierId?: number;
+  supplierPartId?: number;
+}) {
   const navigate = useNavigate();
 
   const table = useTable('purchase-order');
@@ -55,10 +62,6 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
       // TODO: project_code
     ];
   }, []);
-
-  // TODO: Row actions
-
-  // TODO: Table actions (e.g. create new purchase order)
 
   const tableColumns = useMemo(() => {
     return [
@@ -100,38 +103,54 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
-  const addPurchaseOrder = useCallback(() => {
-    notYetImplemented();
-  }, []);
+  const newPurchaseOrder = useCreateApiFormModal({
+    url: ApiPaths.purchase_order_list,
+    title: t`Create Purchase Order`,
+    fields: PurchaseOrderFormFields(),
+    initialData: {
+      supplier: supplierId
+    },
+    onFormSuccess: (response) => {
+      if (response.pk) {
+        navigate(getDetailUrl(ModelType.purchaseorder, response.pk));
+      } else {
+        table.refreshTable();
+      }
+    }
+  });
 
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
         tooltip={t`Add Purchase Order`}
-        onClick={addPurchaseOrder}
+        onClick={() => newPurchaseOrder.open()}
         hidden={!user.hasAddRole(UserRoles.purchase_order)}
       />
     ];
   }, [user]);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiPaths.purchase_order_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          supplier_detail: true
-        },
-        tableFilters: tableFilters,
-        tableActions: tableActions,
-        onRowClick: (row: any) => {
-          if (row.pk) {
-            navigate(getDetailUrl(ModelType.purchaseorder, row.pk));
+    <>
+      {newPurchaseOrder.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiPaths.purchase_order_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            supplier_detail: true,
+            supplier: supplierId,
+            supplier_part: supplierPartId
+          },
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          onRowClick: (row: any) => {
+            if (row.pk) {
+              navigate(getDetailUrl(ModelType.purchaseorder, row.pk));
+            }
           }
-        }
-      }}
-    />
+        }}
+      />
+    </>
   );
 }

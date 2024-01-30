@@ -45,7 +45,9 @@ export default function SupplierPartDetail() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         content: supplierPart?.pk ? (
-          <PurchaseOrderTable params={{ supplier_part: supplierPart.pk }} />
+          <PurchaseOrderTable
+            supplierPartId={{ supplier_part: supplierPart.pk }}
+          />
         ) : (
           <Skeleton />
         )
