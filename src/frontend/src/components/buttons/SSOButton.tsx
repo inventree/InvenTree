@@ -15,6 +15,7 @@ import {
 } from '@tabler/icons-react';
 
 import { api } from '../../App';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { Provider } from '../../states/states';
 
 const brandIcons: { [key: string]: JSX.Element } = {
@@ -36,7 +37,7 @@ export function SsoButton({ provider }: { provider: Provider }) {
     // set preferred provider
     api
       .put(
-        '/api/web/ui_preference/',
+        ApiEndpoints.ui_preference,
         { preferred_method: 'pui' },
         { headers: { Authorization: '' } }
       )
