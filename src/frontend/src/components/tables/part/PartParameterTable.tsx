@@ -38,6 +38,12 @@ export function PartParameterTable({ partId }: { partId: any }) {
         render: (record: any) => PartColumn(record?.part_detail)
       },
       {
+        accessor: 'part_detail.IPN',
+        title: t`IPN`,
+        sortable: false,
+        switchable: true
+      },
+      {
         accessor: 'name',
         title: t`Parameter`,
         switchable: false,
