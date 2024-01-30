@@ -79,7 +79,7 @@ export default function PartParameterTemplateTable() {
 
   const newTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
-    title: t`Create Parameter Template`,
+    title: t`Add Parameter Template`,
     fields: partParameterTemplateFields,
     onFormSuccess: table.refreshTable
   });

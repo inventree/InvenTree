@@ -125,7 +125,7 @@ export function AddressTable({
 
   const newAddress = useCreateApiFormModal({
     url: ApiEndpoints.address_list,
-    title: t`Create Address`,
+    title: t`Add Address`,
     fields: addressFields,
     initialData: {
       company: companyId

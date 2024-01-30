@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
-import { PurchaseOrderFormFields } from '../../../forms/PurchaseOrderForms';
+import { purchaseOrderFields } from '../../../forms/PurchaseOrderForms';
 import { getDetailUrl } from '../../../functions/urls';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
@@ -105,8 +105,8 @@ export function PurchaseOrderTable({
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
-    title: t`Create Purchase Order`,
-    fields: PurchaseOrderFormFields(),
+    title: t`Add Purchase Order`,
+    fields: purchaseOrderFields(),
     initialData: {
       supplier: supplierId
     },

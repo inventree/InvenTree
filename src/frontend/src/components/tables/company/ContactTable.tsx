@@ -79,7 +79,7 @@ export function ContactTable({
 
   const newContact = useCreateApiFormModal({
     url: ApiEndpoints.contact_list,
-    title: t`Create Contact`,
+    title: t`Add Contact`,
     initialData: {
       company: companyId
     },

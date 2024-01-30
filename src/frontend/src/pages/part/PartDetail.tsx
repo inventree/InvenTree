@@ -183,15 +183,7 @@ export default function PartDetail() {
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
         hidden: !part.salable,
-        content: part.pk ? (
-          <SalesOrderTable
-            params={{
-              part: part.pk ?? -1
-            }}
-          />
-        ) : (
-          <Skeleton />
-        )
+        content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'scheduling',

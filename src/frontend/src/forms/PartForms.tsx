@@ -103,7 +103,7 @@ export function partFields({
  */
 export function createPart() {
   openCreateApiForm({
-    title: t`Create Part`,
+    title: t`Add Part`,
     url: ApiEndpoints.part_list,
     successMessage: t`Part created`,
     fields: partFields({})

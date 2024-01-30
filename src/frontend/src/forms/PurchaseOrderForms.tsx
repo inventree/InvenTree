@@ -66,18 +66,18 @@ export function purchaseOrderLineItemFields() {
 /**
  * Construct a set of fields for creating / editing a PurchaseOrder instance
  */
-export function PurchaseOrderFormFields(): ApiFormFieldSet {
+export function purchaseOrderFields(): ApiFormFieldSet {
   return {
     reference: {
       icon: <IconHash />
     },
+    description: {},
     supplier: {
       filters: {
         is_supplier: true
       }
     },
     supplier_reference: {},
-    description: {},
     project_code: {
       icon: <IconList />
     },
@@ -90,9 +90,6 @@ export function PurchaseOrderFormFields(): ApiFormFieldSet {
     link: {},
     contact: {
       icon: <IconUser />,
-      filters: {
-        supplier_detail: true
-      },
       adjustFilters: (value: ApiFormAdjustFilterType) => {
         return {
           ...value.filters,
