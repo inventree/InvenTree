@@ -47,7 +47,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
 
         // Fetch login/SSO behaviour
         await api
-          .get(ApiEndpoints.sso_providers, {
+          .get(apiUrl(ApiEndpoints.sso_providers), {
             headers: { Authorization: '' }
           })
           .then((response) => {

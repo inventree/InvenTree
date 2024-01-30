@@ -16,6 +16,7 @@ import {
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { apiUrl } from '../../states/ApiState';
 import { Provider } from '../../states/states';
 
 const brandIcons: { [key: string]: JSX.Element } = {
@@ -37,7 +38,7 @@ export function SsoButton({ provider }: { provider: Provider }) {
     // set preferred provider
     api
       .put(
-        ApiEndpoints.ui_preference,
+        apiUrl(ApiEndpoints.ui_preference),
         { preferred_method: 'pui' },
         { headers: { Authorization: '' } }
       )
