@@ -46,10 +46,6 @@ def setup_tracing(
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return
 
-    if not InvenTree.ready.isInServerThread():
-        # Don't setup tracing unless we are in the main program
-        return
-
     if resources_input is None:
         resources_input = {}
     if auth is None:
