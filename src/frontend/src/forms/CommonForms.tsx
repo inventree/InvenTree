@@ -11,3 +11,11 @@ export function projectCodeFields(): ApiFormFieldSet {
     }
   };
 }
+
+export function customUnitsFields(): ApiFormFieldSet {
+  return {
+    name: {},
+    definition: {},
+    symbol: {}
+  };
+}
