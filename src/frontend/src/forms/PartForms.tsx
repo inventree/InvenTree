@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { IconPackages } from '@tabler/icons-react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { openCreateApiForm, openEditApiForm } from '../functions/forms';
 
 /**
@@ -104,7 +104,7 @@ export function partFields({
 export function createPart() {
   openCreateApiForm({
     title: t`Create Part`,
-    url: ApiPaths.part_list,
+    url: ApiEndpoints.part_list,
     successMessage: t`Part created`,
     fields: partFields({})
   });
@@ -123,7 +123,7 @@ export function editPart({
 }) {
   openEditApiForm({
     title: t`Edit Part`,
-    url: ApiPaths.part_list,
+    url: ApiEndpoints.part_list,
     pk: part_id,
     fields: partFields({ editing: true }),
     successMessage: t`Part updated`,
@@ -162,5 +162,18 @@ export function partParameterTemplateFields(): ApiFormFieldSet {
     units: {},
     choices: {},
     checkbox: {}
+  };
+}
+
+export function partTestTemplateFields(): ApiFormFieldSet {
+  return {
+    part: {
+      hidden: true
+    },
+    test_name: {},
+    description: {},
+    required: {},
+    requires_value: {},
+    requires_attachment: {}
   };
 }

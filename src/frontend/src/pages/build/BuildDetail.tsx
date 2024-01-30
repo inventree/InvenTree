@@ -29,11 +29,12 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
+import BuildLineTable from '../../components/tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { buildOrderFields } from '../../forms/BuildForms';
 import { openEditApiForm } from '../../functions/forms';
@@ -54,7 +55,7 @@ export default function BuildDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.build_order_list,
+    endpoint: ApiEndpoints.build_order_list,
     pk: id,
     params: {
       part_detail: true
@@ -104,8 +105,17 @@ export default function BuildDetail() {
       {
         name: 'allocate-stock',
         label: t`Allocate Stock`,
-        icon: <IconListCheck />
-        // TODO: Hide if build is complete
+        icon: <IconListCheck />,
+        content: build?.pk ? (
+          <BuildLineTable
+            params={{
+              build: id,
+              tracked: false
+            }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'incomplete-outputs',
@@ -156,7 +166,7 @@ export default function BuildDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.build_order_attachment_list}
+            endpoint={ApiEndpoints.build_order_attachment_list}
             model="build"
             pk={Number(id)}
           />
@@ -168,7 +178,7 @@ export default function BuildDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.build_order_list, build.pk)}
+            url={apiUrl(ApiEndpoints.build_order_list, build.pk)}
             data={build.notes ?? ''}
             allowEdit={true}
           />
@@ -185,7 +195,7 @@ export default function BuildDetail() {
 
     build.pk &&
       openEditApiForm({
-        url: ApiPaths.build_order_list,
+        url: ApiEndpoints.build_order_list,
         pk: build.pk,
         title: t`Edit Build Order`,
         fields: fields,

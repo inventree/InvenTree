@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { contactFields } from '../../../forms/CompanyForms';
 import {
@@ -71,7 +71,7 @@ export function ContactTable({
           hidden: !can_edit,
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.contact_list,
+              url: ApiEndpoints.contact_list,
               pk: record.pk,
               title: t`Edit Contact`,
               fields: contactFields(),
@@ -84,7 +84,7 @@ export function ContactTable({
           hidden: !can_delete,
           onClick: () => {
             openDeleteApiForm({
-              url: ApiPaths.contact_list,
+              url: ApiEndpoints.contact_list,
               pk: record.pk,
               title: t`Delete Contact`,
               successMessage: t`Contact deleted`,
@@ -104,7 +104,7 @@ export function ContactTable({
     fields['company'].value = companyId;
 
     openCreateApiForm({
-      url: ApiPaths.contact_list,
+      url: ApiEndpoints.contact_list,
       title: t`Create Contact`,
       fields: fields,
       successMessage: t`Contact created`,
@@ -128,12 +128,12 @@ export function ContactTable({
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.contact_list)}
+      url={apiUrl(ApiEndpoints.contact_list)}
       tableState={table}
       columns={columns}
       props={{
         rowActions: rowActions,
-        customActionGroups: tableActions,
+        tableActions: tableActions,
         params: {
           ...params,
           company: companyId

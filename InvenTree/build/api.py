@@ -1,7 +1,7 @@
 """JSON API for the Build app."""
 
 from django.db.models import F, Q
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
@@ -588,43 +588,43 @@ build_api_urls = [
 
     # Attachments
     path('attachment/', include([
-        path(r'<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
-        re_path(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+        path('<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
+        path('', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
     ])),
 
     # Build lines
     path('line/', include([
-        path(r'<int:pk>/', BuildLineDetail.as_view(), name='api-build-line-detail'),
-        re_path(r'^.*$', BuildLineList.as_view(), name='api-build-line-list'),
+        path('<int:pk>/', BuildLineDetail.as_view(), name='api-build-line-detail'),
+        path('', BuildLineList.as_view(), name='api-build-line-list'),
     ])),
 
     # Build Items
     path('item/', include([
-        path(r'<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': BuildItem}, name='api-build-item-metadata'),
-            re_path(r'^.*$', BuildItemDetail.as_view(), name='api-build-item-detail'),
+        path('<int:pk>/', include([
+            path('metadata/', MetadataView.as_view(), {'model': BuildItem}, name='api-build-item-metadata'),
+            path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
         ])),
-        re_path(r'^.*$', BuildItemList.as_view(), name='api-build-item-list'),
+        path('', BuildItemList.as_view(), name='api-build-item-list'),
     ])),
 
     # Build Detail
-    path(r'<int:pk>/', include([
-        re_path(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
-        re_path(r'^auto-allocate/', BuildAutoAllocate.as_view(), name='api-build-auto-allocate'),
-        re_path(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
-        re_path(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
-        re_path(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
-        re_path(r'^scrap-outputs/', BuildOutputScrap.as_view(), name='api-build-output-scrap'),
-        re_path(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
-        re_path(r'^cancel/', BuildCancel.as_view(), name='api-build-cancel'),
-        re_path(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-        re_path(r'^metadata/', MetadataView.as_view(), {'model': Build}, name='api-build-metadata'),
-        re_path(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
+    path('<int:pk>/', include([
+        path('allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+        path('auto-allocate/', BuildAutoAllocate.as_view(), name='api-build-auto-allocate'),
+        path('complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
+        path('create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
+        path('delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
+        path('scrap-outputs/', BuildOutputScrap.as_view(), name='api-build-output-scrap'),
+        path('finish/', BuildFinish.as_view(), name='api-build-finish'),
+        path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
+        path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
+        path('metadata/', MetadataView.as_view(), {'model': Build}, name='api-build-metadata'),
+        path('', BuildDetail.as_view(), name='api-build-detail'),
     ])),
 
     # Build order status code information
-    re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: BuildStatus}, name='api-build-status-codes'),
+    path('status/', StatusView.as_view(), {StatusView.MODEL_REF: BuildStatus}, name='api-build-status-codes'),
 
     # Build List
-    re_path(r'^.*$', BuildList.as_view(), name='api-build-list'),
+    path('', BuildList.as_view(), name='api-build-list'),
 ]

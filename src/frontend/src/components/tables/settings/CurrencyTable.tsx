@@ -4,7 +4,7 @@ import { IconReload } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
 import { api } from '../../../App';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { ActionButton } from '../../buttons/ActionButton';
@@ -33,7 +33,7 @@ export function CurrencyTable() {
 
   const refreshCurrencies = useCallback(() => {
     api
-      .post(apiUrl(ApiPaths.currency_refresh), {})
+      .post(apiUrl(ApiEndpoints.currency_refresh), {})
       .then(() => {
         table.refreshTable();
         showNotification({
@@ -62,11 +62,11 @@ export function CurrencyTable() {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.currency_list)}
+      url={apiUrl(ApiEndpoints.currency_list)}
       tableState={table}
       columns={columns}
       props={{
-        customActionGroups: tableActions,
+        tableActions: tableActions,
         dataFormatter: (data) => {
           let rates = data?.exchange_rates ?? {};
 

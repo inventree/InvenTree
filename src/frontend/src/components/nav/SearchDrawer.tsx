@@ -30,10 +30,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
@@ -234,7 +233,6 @@ export function SearchDrawer({
 
   // Re-fetch data whenever the search term is updated
   useEffect(() => {
-    // TODO: Implement search functionality
     searchQuery.refetch();
   }, [searchText]);
 
@@ -259,7 +257,7 @@ export function SearchDrawer({
     });
 
     return api
-      .post(apiUrl(ApiPaths.api_search), params)
+      .post(ApiEndpoints.api_search, params)
       .then(function (response) {
         return response.data;
       })

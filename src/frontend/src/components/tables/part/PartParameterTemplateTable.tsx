@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { partParameterTemplateFields } from '../../../forms/PartForms';
 import {
@@ -57,7 +57,7 @@ export default function PartParameterTemplateTable() {
         title: t`Units`,
         sortable: true
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'checkbox',
         title: t`Checkbox`
@@ -77,7 +77,7 @@ export default function PartParameterTemplateTable() {
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.part_parameter_template_list,
+              url: ApiEndpoints.part_parameter_template_list,
               pk: record.pk,
               title: t`Edit Parameter Template`,
               fields: partParameterTemplateFields(),
@@ -90,7 +90,7 @@ export default function PartParameterTemplateTable() {
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({
-              url: ApiPaths.part_parameter_template_list,
+              url: ApiEndpoints.part_parameter_template_list,
               pk: record.pk,
               title: t`Delete Parameter Template`,
               successMessage: t`Parameter template deleted`,
@@ -106,7 +106,7 @@ export default function PartParameterTemplateTable() {
 
   const addParameterTemplate = useCallback(() => {
     openCreateApiForm({
-      url: ApiPaths.part_parameter_template_list,
+      url: ApiEndpoints.part_parameter_template_list,
       title: t`Create Parameter Template`,
       fields: partParameterTemplateFields(),
       successMessage: t`Parameter template created`,
@@ -126,13 +126,13 @@ export default function PartParameterTemplateTable() {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.part_parameter_template_list)}
+      url={apiUrl(ApiEndpoints.part_parameter_template_list)}
       tableState={table}
       columns={tableColumns}
       props={{
         rowActions: rowActions,
-        customFilters: tableFilters,
-        customActionGroups: tableActions
+        tableFilters: tableFilters,
+        tableActions: tableActions
       }}
     />
   );

@@ -3,7 +3,7 @@ import { Drawer, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useMemo, useState } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { StylishText } from '../../items/StylishText';
@@ -62,7 +62,7 @@ export default function FailedTasksTable() {
         })}
       </Drawer>
       <InvenTreeTable
-        url={apiUrl(ApiPaths.task_failed_list)}
+        url={apiUrl(ApiEndpoints.task_failed_list)}
         tableState={table}
         columns={columns}
         props={{

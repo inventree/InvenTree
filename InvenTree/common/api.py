@@ -402,6 +402,8 @@ class NewsFeedEntryList(NewsFeedMixin, BulkDeleteMixin, ListAPI):
 
     filter_backends = ORDER_FILTER
 
+    ordering = '-published'
+
     ordering_fields = ['published', 'author', 'read']
 
     filterset_fields = ['read']
@@ -610,7 +612,7 @@ settings_api_urls = [
                 name='api-user-setting-detail',
             ),
             # User Settings List
-            re_path(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
+            path('', UserSettingsList.as_view(), name='api-user-setting-list'),
         ]),
     ),
     # Notification settings
@@ -619,13 +621,13 @@ settings_api_urls = [
         include([
             # Notification Settings Detail
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 NotificationUserSettingsDetail.as_view(),
                 name='api-notification-setting-detail',
             ),
             # Notification Settings List
-            re_path(
-                r'^.*$',
+            path(
+                '',
                 NotificationUserSettingsList.as_view(),
                 name='api-notification-setting-list',
             ),
@@ -642,9 +644,7 @@ settings_api_urls = [
                 name='api-global-setting-detail',
             ),
             # Global Settings List
-            re_path(
-                r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'
-            ),
+            path('', GlobalSettingsList.as_view(), name='api-global-setting-list'),
         ]),
     ),
 ]
@@ -653,25 +653,26 @@ common_api_urls = [
     # Webhooks
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
     # Uploaded images for notes
-    re_path(
-        r'^notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'
-    ),
+    path('notes-image-upload/', NotesImageList.as_view(), name='api-notes-image-list'),
     # Background task information
-    re_path(
-        r'^background-task/',
+    path(
+        'background-task/',
         include([
-            re_path(
-                r'^pending/', PendingTaskList.as_view(), name='api-pending-task-list'
-            ),
-            re_path(
-                r'^scheduled/',
+            path('pending/', PendingTaskList.as_view(), name='api-pending-task-list'),
+            path(
+                'scheduled/',
                 ScheduledTaskList.as_view(),
                 name='api-scheduled-task-list',
             ),
-            re_path(r'^failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
-            re_path(
-                r'^.*$', BackgroundTaskOverview.as_view(), name='api-task-overview'
-            ),
+            path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
+            path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
+        ]),
+    ),
+    path(
+        'error-report/',
+        include([
+            path('<int:pk>/', ErrorMessageDetail.as_view(), name='api-error-detail'),
+            path('', ErrorMessageList.as_view(), name='api-error-list'),
         ]),
     ),
     # Project codes
@@ -679,22 +680,20 @@ common_api_urls = [
         'project-code/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': common.models.ProjectCode},
                         name='api-project-code-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
-                        ProjectCodeDetail.as_view(),
-                        name='api-project-code-detail',
+                    path(
+                        '', ProjectCodeDetail.as_view(), name='api-project-code-detail'
                     ),
                 ]),
             ),
-            re_path(r'^.*$', ProjectCodeList.as_view(), name='api-project-code-list'),
+            path('', ProjectCodeList.as_view(), name='api-project-code-list'),
         ]),
     ),
     # Custom physical units
@@ -702,29 +701,25 @@ common_api_urls = [
         'units/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^.*$',
-                        CustomUnitDetail.as_view(),
-                        name='api-custom-unit-detail',
-                    )
+                    path('', CustomUnitDetail.as_view(), name='api-custom-unit-detail')
                 ]),
             ),
-            re_path(r'^.*$', CustomUnitList.as_view(), name='api-custom-unit-list'),
+            path('', CustomUnitList.as_view(), name='api-custom-unit-list'),
         ]),
     ),
     # Currencies
     path(
         'currency/',
         include([
-            re_path(
-                r'^exchange/',
+            path(
+                'exchange/',
                 CurrencyExchangeView.as_view(),
                 name='api-currency-exchange',
             ),
-            re_path(
-                r'^refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'
+            path(
+                'refresh/', CurrencyRefreshView.as_view(), name='api-currency-refresh'
             ),
         ]),
     ),
@@ -734,23 +729,23 @@ common_api_urls = [
         include([
             # Individual purchase order detail URLs
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'.*$',
+                    path(
+                        '',
                         NotificationDetail.as_view(),
                         name='api-notifications-detail',
                     )
                 ]),
             ),
             # Read all
-            re_path(
-                r'^readall/',
+            path(
+                'readall/',
                 NotificationReadAll.as_view(),
                 name='api-notifications-readall',
             ),
             # Notification messages list
-            re_path(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
+            path('', NotificationList.as_view(), name='api-notifications-list'),
         ]),
     ),
     # News
@@ -758,22 +753,12 @@ common_api_urls = [
         'news/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'.*$', NewsFeedEntryDetail.as_view(), name='api-news-detail'
-                    )
+                    path('', NewsFeedEntryDetail.as_view(), name='api-news-detail')
                 ]),
             ),
-            re_path(r'^.*$', NewsFeedEntryList.as_view(), name='api-news-list'),
-        ]),
-    ),
-    # Error information
-    re_path(
-        r'^error-report/',
-        include([
-            path(r'<int:pk>/', ErrorMessageDetail.as_view(), name='api-error-detail'),
-            re_path(r'^.*$', ErrorMessageList.as_view(), name='api-error-list'),
+            path('', NewsFeedEntryList.as_view(), name='api-news-list'),
         ]),
     ),
     # Flags
@@ -781,7 +766,7 @@ common_api_urls = [
         'flags/',
         include([
             path('<str:key>/', FlagDetail.as_view(), name='api-flag-detail'),
-            re_path(r'^.*$', FlagList.as_view(), name='api-flag-list'),
+            path('', FlagList.as_view(), name='api-flag-list'),
         ]),
     ),
     # Status

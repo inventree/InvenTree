@@ -37,6 +37,7 @@ export const languages: Record<string, string> = {
   pt: t`Portuguese`,
   'pt-br': t`Portuguese (Brazilian)`,
   ru: t`Russian`,
+  sk: t`Slovak`,
   sl: t`Slovenian`,
   sv: t`Swedish`,
   th: t`Thai`,

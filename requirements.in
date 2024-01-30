@@ -51,3 +51,11 @@ sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 weasyprint                              # PDF generation
+
+# OpenTelemetry dependencies
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-otlp
+opentelemetry-instrumentation-django
+opentelemetry-instrumentation-requests
+opentelemetry-instrumentation-redis

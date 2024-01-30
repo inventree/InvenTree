@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -30,12 +30,14 @@ import { PanelType } from '../../components/nav/PanelGroup';
 import { AddressTable } from '../../components/tables/company/AddressTable';
 import { ContactTable } from '../../components/tables/company/ContactTable';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
+import { ManufacturerPartTable } from '../../components/tables/purchasing/ManufacturerPartTable';
 import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
+import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { editCompany } from '../../forms/CompanyForms';
 import { useInstance } from '../../hooks/UseInstance';
@@ -60,7 +62,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.company_list,
+    endpoint: ApiEndpoints.company_list,
     pk: id,
     params: {},
     refetchOnMount: true
@@ -77,13 +79,19 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         name: 'manufactured-parts',
         label: t`Manufactured Parts`,
         icon: <IconBuildingFactory2 />,
-        hidden: !company?.is_manufacturer
+        hidden: !company?.is_manufacturer,
+        content: company?.pk && (
+          <ManufacturerPartTable params={{ manufacturer: company.pk }} />
+        )
       },
       {
         name: 'supplied-parts',
         label: t`Supplied Parts`,
         icon: <IconBuildingWarehouse />,
-        hidden: !company?.is_supplier
+        hidden: !company?.is_supplier,
+        content: company?.pk && (
+          <SupplierPartTable params={{ supplier: company.pk }} />
+        )
       },
       {
         name: 'purchase-orders',
@@ -125,7 +133,12 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         name: 'assigned-stock',
         label: t`Assigned Stock`,
         icon: <IconPackageExport />,
-        hidden: !company?.is_customer
+        hidden: !company?.is_customer,
+        content: company?.pk ? (
+          <StockItemTable params={{ customer: company.pk }} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'contacts',
@@ -145,7 +158,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.company_attachment_list}
+            endpoint={ApiEndpoints.company_attachment_list}
             model="company"
             pk={company.pk ?? -1}
           />
@@ -157,7 +170,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.company_list, company.pk)}
+            url={apiUrl(ApiEndpoints.company_list, company.pk)}
             data={company?.notes ?? ''}
             allowEdit={true}
           />

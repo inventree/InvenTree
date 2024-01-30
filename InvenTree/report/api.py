@@ -518,15 +518,15 @@ report_api_urls = [
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
-                        r'print/',
+                        r'print/?',
                         PurchaseOrderReportPrint.as_view(),
                         name='api-po-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': PurchaseOrderReport},
                         name='api-po-report-metadata',
@@ -548,15 +548,15 @@ report_api_urls = [
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
-                        r'print/',
+                        r'print/?',
                         SalesOrderReportPrint.as_view(),
                         name='api-so-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': SalesOrderReport},
                         name='api-so-report-metadata',
@@ -576,15 +576,15 @@ report_api_urls = [
         'ro/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     path(
                         r'print/',
                         ReturnOrderReportPrint.as_view(),
                         name='api-return-order-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': ReturnOrderReport},
                         name='api-so-report-metadata',
@@ -607,28 +607,26 @@ report_api_urls = [
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
                         r'print/?',
                         BuildReportPrint.as_view(),
                         name='api-build-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': BuildReport},
                         name='api-build-report-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
-                        BuildReportDetail.as_view(),
-                        name='api-build-report-detail',
+                    path(
+                        '', BuildReportDetail.as_view(), name='api-build-report-detail'
                     ),
                 ]),
             ),
             # List view
-            re_path(r'^.*$', BuildReportList.as_view(), name='api-build-report-list'),
+            path('', BuildReportList.as_view(), name='api-build-report-list'),
         ]),
     ),
     # Bill of Material reports
@@ -637,26 +635,24 @@ report_api_urls = [
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
                         r'print/?',
                         BOMReportPrint.as_view(),
                         name='api-bom-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': BillOfMaterialsReport},
                         name='api-bom-report-metadata',
                     ),
-                    re_path(
-                        r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'
-                    ),
+                    path('', BOMReportDetail.as_view(), name='api-bom-report-detail'),
                 ]),
             ),
             # List view
-            re_path(r'^.*$', BOMReportList.as_view(), name='api-bom-report-list'),
+            path('', BOMReportList.as_view(), name='api-bom-report-list'),
         ]),
     ),
     # Stock item test reports
@@ -665,29 +661,29 @@ report_api_urls = [
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
                         r'print/?',
                         StockItemTestReportPrint.as_view(),
                         name='api-stockitem-testreport-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'report': TestReport},
                         name='api-stockitem-testreport-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         StockItemTestReportDetail.as_view(),
                         name='api-stockitem-testreport-detail',
                     ),
                 ]),
             ),
             # List view
-            re_path(
-                r'^.*$',
+            path(
+                '',
                 StockItemTestReportList.as_view(),
                 name='api-stockitem-testreport-list',
             ),
@@ -699,29 +695,29 @@ report_api_urls = [
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
                         r'print/?',
                         StockLocationReportPrint.as_view(),
                         name='api-stocklocation-report-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'report': StockLocationReport},
                         name='api-stocklocation-report-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         StockLocationReportDetail.as_view(),
                         name='api-stocklocation-report-detail',
                     ),
                 ]),
             ),
             # List view
-            re_path(
-                r'^.*$',
+            path(
+                '',
                 StockLocationReportList.as_view(),
                 name='api-stocklocation-report-list',
             ),

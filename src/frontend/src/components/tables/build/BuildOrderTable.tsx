@@ -3,11 +3,12 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { renderDate } from '../../../defaults/formatters';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
-import { ThumbnailHoverCard } from '../../images/Thumbnail';
+import { PartHoverCard } from '../../images/Thumbnail';
 import { ProgressBar } from '../../items/ProgressBar';
 import { RenderUser } from '../../render/User';
 import { TableColumn } from '../Column';
@@ -37,19 +38,7 @@ function buildOrderTableColumns(): TableColumn[] {
       sortable: true,
       switchable: false,
       title: t`Part`,
-      render: (record: any) => {
-        let part = record.part_detail;
-        return (
-          part && (
-            <ThumbnailHoverCard
-              src={part.thumbnail || part.image}
-              text={part.full_name}
-              alt={part.description}
-              link=""
-            />
-          )
-        );
-      }
+      render: (record: any) => <PartHoverCard part={record.part_detail} />
     },
     {
       accessor: 'title',
@@ -146,7 +135,7 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.build_order_list)}
+      url={apiUrl(ApiEndpoints.build_order_list)}
       tableState={table}
       columns={tableColumns}
       props={{
@@ -155,8 +144,8 @@ export function BuildOrderTable({ params = {} }: { params?: any }) {
           ...params,
           part_detail: true
         },
-        customFilters: tableFilters,
-        onRowClick: (row) => navigate(`/build/${row.pk}`)
+        tableFilters: tableFilters,
+        onRowClick: (row) => navigate(getDetailUrl(ModelType.build, row.pk))
       }}
     />
   );

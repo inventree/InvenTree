@@ -1,11 +1,16 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
+import { UserRoles } from '../../../enums/Roles';
+import { notYetImplemented } from '../../../functions/notifications';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
+import { AddItemButton } from '../../buttons/AddItemButton';
 import { Thumbnail } from '../../images/Thumbnail';
 import {
   CreationDateColumn,
@@ -27,6 +32,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export function ReturnOrderTable({ params }: { params?: any }) {
   const table = useTable('return-orders');
+  const user = useUserState();
 
   const navigate = useNavigate();
 
@@ -76,7 +82,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         accessor: 'customer_reference',
         title: t`Customer Reference`
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       LineItemsProgressColumn(),
       StatusColumn(ModelType.returnorder),
       ProjectCodeColumn(),
@@ -90,9 +96,23 @@ export function ReturnOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
+  const addReturnOrder = useCallback(() => {
+    notYetImplemented();
+  }, []);
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add Return Order`}
+        onClick={addReturnOrder}
+        hidden={!user.hasAddRole(UserRoles.sales_order)}
+      />
+    ];
+  }, [user]);
+
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.return_order_list)}
+      url={apiUrl(ApiEndpoints.return_order_list)}
       tableState={table}
       columns={tableColumns}
       props={{
@@ -100,10 +120,11 @@ export function ReturnOrderTable({ params }: { params?: any }) {
           ...params,
           customer_detail: true
         },
-        customFilters: tableFilters,
+        tableFilters: tableFilters,
+        tableActions: tableActions,
         onRowClick: (row: any) => {
           if (row.pk) {
-            navigate(`/sales/return-order/${row.pk}/`);
+            navigate(getDetailUrl(ModelType.returnorder, row.pk));
           }
         }
       }}

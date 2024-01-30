@@ -3,9 +3,11 @@
 import datetime
 import logging
 
+from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 
+from dj_rest_auth.views import LogoutView
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -199,6 +201,29 @@ class GroupList(ListCreateAPI):
     ordering_fields = ['name']
 
 
+class Logout(LogoutView):
+    """API view for logging out via API."""
+
+    def logout(self, request):
+        """Logout the current user.
+
+        Deletes user token associated with request.
+        """
+        from InvenTree.middleware import get_token_from_request
+
+        if request.user:
+            token_key = get_token_from_request(request)
+
+            if token_key:
+                try:
+                    token = ApiToken.objects.get(key=token_key, user=request.user)
+                    token.delete()
+                except ApiToken.DoesNotExist:
+                    pass
+
+        return super().logout(request)
+
+
 class GetAuthToken(APIView):
     """Return authentication token for an authenticated user."""
 
@@ -242,6 +267,10 @@ class GetAuthToken(APIView):
                 "Created new API token for user '%s' (name='%s')", user.username, name
             )
 
+            # Ensure that the users session is logged in (PUI -> CUI login)
+            if not get_user(request).is_authenticated:
+                login(request, user)
+
             return Response(data)
 
         else:
@@ -249,14 +278,14 @@ class GetAuthToken(APIView):
 
 
 user_urls = [
-    re_path(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
-    re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
-    re_path(r'^me/', MeUserDetail.as_view(), name='api-user-me'),
+    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+    path('token/', GetAuthToken.as_view(), name='api-token'),
+    path('me/', MeUserDetail.as_view(), name='api-user-me'),
     path(
         'owner/',
         include([
             path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
-            re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
+            path('', OwnerList.as_view(), name='api-owner-list'),
         ]),
     ),
     path(
@@ -265,7 +294,7 @@ user_urls = [
             re_path(
                 r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'
             ),
-            re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
+            path('', GroupList.as_view(), name='api-group-list'),
         ]),
     ),
     re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),

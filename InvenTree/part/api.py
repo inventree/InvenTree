@@ -367,6 +367,31 @@ class PartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartAttachmentSerializer
 
 
+class PartTestTemplateFilter(rest_filters.FilterSet):
+    """Custom filterset class for the PartTestTemplateList endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartTestTemplate
+        fields = ['required', 'requires_value', 'requires_attachment']
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.filter(trackable=True),
+        label='Part',
+        field_name='part',
+        method='filter_part',
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter by the 'part' field.
+
+        Note that for the 'part' field, we also include any parts "above" the specified part.
+        """
+        variants = part.get_ancestors(include_self=True)
+        return queryset.filter(part__in=variants)
+
+
 class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for PartTestTemplate model."""
 
@@ -375,44 +400,19 @@ class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
 
 
 class PartTestTemplateList(ListCreateAPI):
-    """API endpoint for listing (and creating) a PartTestTemplate.
-
-    TODO: Add filterset class for this view
-    """
+    """API endpoint for listing (and creating) a PartTestTemplate."""
 
     queryset = PartTestTemplate.objects.all()
     serializer_class = part_serializers.PartTestTemplateSerializer
-
-    def filter_queryset(self, queryset):
-        """Filter the test list queryset.
-
-        If filtering by 'part', we include results for any parts "above" the specified part.
-        """
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        part = params.get('part', None)
-
-        # Filter by part
-        if part:
-            try:
-                part = Part.objects.get(pk=part)
-                queryset = queryset.filter(
-                    part__in=part.get_ancestors(include_self=True)
-                )
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Filter by 'required' status
-        required = params.get('required', None)
-
-        if required is not None:
-            queryset = queryset.filter(required=str2bool(required))
-
-        return queryset
+    filterset_class = PartTestTemplateFilter
 
     filter_backends = SEARCH_ORDER_FILTER
+
+    search_fields = ['test_name', 'description']
+
+    ordering_fields = ['test_name', 'required', 'requires_value', 'requires_attachment']
+
+    ordering = 'test_name'
 
 
 class PartThumbs(ListAPI):
@@ -441,6 +441,15 @@ class PartThumbs(ListAPI):
         data = (
             queryset.values('image').annotate(count=Count('image')).order_by('-count')
         )
+
+        page = self.paginate_queryset(data)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(data, many=True)
+
+        data = serializer.data
 
         return Response(data)
 
@@ -1957,28 +1966,28 @@ part_api_urls = [
     path(
         'category/',
         include([
-            re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
+            path('tree/', CategoryTree.as_view(), name='api-part-category-tree'),
             path(
                 'parameters/',
                 include([
                     path(
                         '<int:pk>/',
                         include([
-                            re_path(
-                                r'^metadata/',
+                            path(
+                                'metadata/',
                                 MetadataView.as_view(),
                                 {'model': PartCategoryParameterTemplate},
                                 name='api-part-category-parameter-metadata',
                             ),
-                            re_path(
-                                r'^.*$',
+                            path(
+                                '',
                                 CategoryParameterDetail.as_view(),
                                 name='api-part-category-parameter-detail',
                             ),
                         ]),
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         CategoryParameterList.as_view(),
                         name='api-part-category-parameter-list',
                     ),
@@ -1986,20 +1995,16 @@ part_api_urls = [
             ),
             # Category detail endpoints
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': PartCategory},
                         name='api-part-category-metadata',
                     ),
                     # PartCategory detail endpoint
-                    re_path(
-                        r'^.*$',
-                        CategoryDetail.as_view(),
-                        name='api-part-category-detail',
-                    ),
+                    path('', CategoryDetail.as_view(), name='api-part-category-detail'),
                 ]),
             ),
             path('', CategoryList.as_view(), name='api-part-category-list'),
@@ -2010,16 +2015,16 @@ part_api_urls = [
         'test-template/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': PartTestTemplate},
                         name='api-part-test-template-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         PartTestTemplateDetail.as_view(),
                         name='api-part-test-template-detail',
                     ),
@@ -2035,7 +2040,7 @@ part_api_urls = [
         'attachment/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 PartAttachmentDetail.as_view(),
                 name='api-part-attachment-detail',
             ),
@@ -2047,13 +2052,11 @@ part_api_urls = [
         'sale-price/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 PartSalePriceDetail.as_view(),
                 name='api-part-sale-price-detail',
             ),
-            re_path(
-                r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'
-            ),
+            path('', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
         ]),
     ),
     # Base URL for part internal pricing
@@ -2061,14 +2064,12 @@ part_api_urls = [
         'internal-price/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 PartInternalPriceDetail.as_view(),
                 name='api-part-internal-price-detail',
             ),
-            re_path(
-                r'^.*$',
-                PartInternalPriceList.as_view(),
-                name='api-part-internal-price-list',
+            path(
+                '', PartInternalPriceList.as_view(), name='api-part-internal-price-list'
             ),
         ]),
     ),
@@ -2077,22 +2078,20 @@ part_api_urls = [
         'related/',
         include([
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': PartRelated},
                         name='api-part-related-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
-                        PartRelatedDetail.as_view(),
-                        name='api-part-related-detail',
+                    path(
+                        '', PartRelatedDetail.as_view(), name='api-part-related-detail'
                     ),
                 ]),
             ),
-            re_path(r'^.*$', PartRelatedList.as_view(), name='api-part-related-list'),
+            path('', PartRelatedList.as_view(), name='api-part-related-list'),
         ]),
     ),
     # Base URL for PartParameter API endpoints
@@ -2105,45 +2104,43 @@ part_api_urls = [
                     path(
                         '<int:pk>/',
                         include([
-                            re_path(
-                                r'^metadata/?',
+                            path(
+                                'metadata/',
                                 MetadataView.as_view(),
                                 {'model': PartParameterTemplate},
                                 name='api-part-parameter-template-metadata',
                             ),
-                            re_path(
-                                r'^.*$',
+                            path(
+                                '',
                                 PartParameterTemplateDetail.as_view(),
                                 name='api-part-parameter-template-detail',
                             ),
                         ]),
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         PartParameterTemplateList.as_view(),
                         name='api-part-parameter-template-list',
                     ),
                 ]),
             ),
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/?',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': PartParameter},
                         name='api-part-parameter-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         PartParameterDetail.as_view(),
                         name='api-part-parameter-detail',
                     ),
                 ]),
             ),
-            re_path(
-                r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'
-            ),
+            path('', PartParameterList.as_view(), name='api-part-parameter-list'),
         ]),
     ),
     # Part stocktake data
@@ -2158,21 +2155,19 @@ part_api_urls = [
                         PartStocktakeReportGenerate.as_view(),
                         name='api-part-stocktake-report-generate',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         PartStocktakeReportList.as_view(),
                         name='api-part-stocktake-report-list',
                     ),
                 ]),
             ),
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 PartStocktakeDetail.as_view(),
                 name='api-part-stocktake-detail',
             ),
-            re_path(
-                r'^.*$', PartStocktakeList.as_view(), name='api-part-stocktake-list'
-            ),
+            path('', PartStocktakeList.as_view(), name='api-part-stocktake-list'),
         ]),
     ),
     path(
@@ -2187,62 +2182,56 @@ part_api_urls = [
         ]),
     ),
     # BOM template
-    re_path(
-        r'^bom_template/?',
+    path(
+        'bom_template/',
         views.BomUploadTemplate.as_view(),
         name='api-bom-upload-template',
     ),
     path(
-        r'<int:pk>/',
+        '<int:pk>/',
         include([
             # Endpoint for extra serial number information
-            re_path(
-                r'^serial-numbers/',
+            path(
+                'serial-numbers/',
                 PartSerialNumberDetail.as_view(),
                 name='api-part-serial-number-detail',
             ),
             # Endpoint for future scheduling information
-            re_path(
-                r'^scheduling/', PartScheduling.as_view(), name='api-part-scheduling'
-            ),
-            re_path(
-                r'^requirements/',
+            path('scheduling/', PartScheduling.as_view(), name='api-part-scheduling'),
+            path(
+                'requirements/',
                 PartRequirements.as_view(),
                 name='api-part-requirements',
             ),
             # Endpoint for duplicating a BOM for the specific Part
-            re_path(r'^bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
+            path('bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
             # Endpoint for validating a BOM for the specific Part
-            re_path(
-                r'^bom-validate/',
-                PartValidateBOM.as_view(),
-                name='api-part-bom-validate',
+            path(
+                'bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'
             ),
             # Part metadata
-            re_path(
-                r'^metadata/',
+            path(
+                'metadata/',
                 MetadataView.as_view(),
                 {'model': Part},
                 name='api-part-metadata',
             ),
             # Part pricing
-            re_path(r'^pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
+            path('pricing/', PartPricingDetail.as_view(), name='api-part-pricing'),
             # BOM download
-            re_path(
-                r'^bom-download/?', views.BomDownload.as_view(), name='api-bom-download'
-            ),
+            path('bom-download/', views.BomDownload.as_view(), name='api-bom-download'),
             # Old pricing endpoint
-            re_path(r'^pricing2/', views.PartPricing.as_view(), name='part-pricing'),
+            path('pricing2/', views.PartPricing.as_view(), name='part-pricing'),
             # Part detail endpoint
-            re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
+            path('', PartDetail.as_view(), name='api-part-detail'),
         ]),
     ),
-    re_path(
-        r'^change_category/',
+    path(
+        'change_category/',
         PartChangeCategory.as_view(),
         name='api-part-change-category',
     ),
-    re_path(r'^.*$', PartList.as_view(), name='api-part-list'),
+    path('', PartList.as_view(), name='api-part-list'),
 ]
 
 bom_api_urls = [
@@ -2251,53 +2240,43 @@ bom_api_urls = [
         include([
             # Detail view
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/?',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': BomItemSubstitute},
                         name='api-bom-substitute-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         BomItemSubstituteDetail.as_view(),
                         name='api-bom-substitute-detail',
                     ),
                 ]),
             ),
             # Catch all
-            re_path(
-                r'^.*$', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'
-            ),
+            path('', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),
         ]),
     ),
     # BOM Item Detail
     path(
-        r'<int:pk>/',
+        '<int:pk>/',
         include([
-            re_path(
-                r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'
-            ),
-            re_path(
-                r'^metadata/?',
+            path('validate/', BomItemValidate.as_view(), name='api-bom-item-validate'),
+            path(
+                'metadata/',
                 MetadataView.as_view(),
                 {'model': BomItem},
                 name='api-bom-item-metadata',
             ),
-            re_path(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
+            path('', BomDetail.as_view(), name='api-bom-item-detail'),
         ]),
     ),
     # API endpoint URLs for importing BOM data
-    re_path(
-        r'^import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'
-    ),
-    re_path(
-        r'^import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'
-    ),
-    re_path(
-        r'^import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'
-    ),
+    path('import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
+    path('import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
+    path('import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
     # Catch-all
-    re_path(r'^.*$', BomList.as_view(), name='api-bom-list'),
+    path('', BomList.as_view(), name='api-bom-list'),
 ]

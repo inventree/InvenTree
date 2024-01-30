@@ -89,7 +89,7 @@ apipatterns = [
     # Common endpoints endpoint
     path('', include(common.api.common_api_urls)),
     # OpenAPI Schema
-    re_path(
+    path(
         'schema/',
         SpectacularAPIView.as_view(custom_settings={'SCHEMA_PATH_PREFIX': '/api/'}),
         name='schema',
@@ -148,6 +148,7 @@ apipatterns = [
                 SocialAccountDisconnectView.as_view(),
                 name='social_account_disconnect',
             ),
+            path('logout/', users.api.Logout.as_view(), name='api-logout'),
             path('', include('dj_rest_auth.urls')),
         ]),
     ),
@@ -163,13 +164,11 @@ apipatterns = [
 ]
 
 settings_urls = [
-    re_path(r'^i18n/?', include('django.conf.urls.i18n')),
-    re_path(
-        r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'
-    ),
+    path('i18n/', include('django.conf.urls.i18n')),
+    path('appearance/', AppearanceSelectView.as_view(), name='settings-appearance'),
     # Catch any other urls
-    re_path(
-        r'^.*$',
+    path(
+        '',
         SettingsView.as_view(template_name='InvenTree/settings/settings.html'),
         name='settings',
     ),
@@ -177,28 +176,28 @@ settings_urls = [
 
 notifications_urls = [
     # Catch any other urls
-    re_path(r'^.*$', NotificationsView.as_view(), name='notifications')
+    path('', NotificationsView.as_view(), name='notifications')
 ]
 
 # These javascript files are served "dynamically" - i.e. rendered on demand
 dynamic_javascript_urls = [
-    re_path(
-        r'^calendar.js',
+    path(
+        'calendar.js',
         DynamicJsView.as_view(template_name='js/dynamic/calendar.js'),
         name='calendar.js',
     ),
-    re_path(
-        r'^nav.js',
+    path(
+        'nav.js',
         DynamicJsView.as_view(template_name='js/dynamic/nav.js'),
         name='nav.js',
     ),
-    re_path(
-        r'^permissions.js',
+    path(
+        'permissions.js',
         DynamicJsView.as_view(template_name='js/dynamic/permissions.js'),
         name='permissions.js',
     ),
-    re_path(
-        r'^settings.js',
+    path(
+        'settings.js',
         DynamicJsView.as_view(template_name='js/dynamic/settings.js'),
         name='settings.js',
     ),
@@ -206,148 +205,148 @@ dynamic_javascript_urls = [
 
 # These javascript files are passed through the Django translation layer
 translated_javascript_urls = [
-    re_path(
-        r'^api.js',
+    path(
+        'api.js',
         DynamicJsView.as_view(template_name='js/translated/api.js'),
         name='api.js',
     ),
-    re_path(
-        r'^attachment.js',
+    path(
+        'attachment.js',
         DynamicJsView.as_view(template_name='js/translated/attachment.js'),
         name='attachment.js',
     ),
-    re_path(
-        r'^barcode.js',
+    path(
+        'barcode.js',
         DynamicJsView.as_view(template_name='js/translated/barcode.js'),
         name='barcode.js',
     ),
-    re_path(
-        r'^bom.js',
+    path(
+        'bom.js',
         DynamicJsView.as_view(template_name='js/translated/bom.js'),
         name='bom.js',
     ),
-    re_path(
-        r'^build.js',
+    path(
+        'build.js',
         DynamicJsView.as_view(template_name='js/translated/build.js'),
         name='build.js',
     ),
-    re_path(
-        r'^charts.js',
+    path(
+        'charts.js',
         DynamicJsView.as_view(template_name='js/translated/charts.js'),
         name='charts.js',
     ),
-    re_path(
-        r'^company.js',
+    path(
+        'company.js',
         DynamicJsView.as_view(template_name='js/translated/company.js'),
         name='company.js',
     ),
-    re_path(
-        r'^filters.js',
+    path(
+        'filters.js',
         DynamicJsView.as_view(template_name='js/translated/filters.js'),
         name='filters.js',
     ),
-    re_path(
-        r'^forms.js',
+    path(
+        'forms.js',
         DynamicJsView.as_view(template_name='js/translated/forms.js'),
         name='forms.js',
     ),
-    re_path(
-        r'^helpers.js',
+    path(
+        'helpers.js',
         DynamicJsView.as_view(template_name='js/translated/helpers.js'),
         name='helpers.js',
     ),
-    re_path(
-        r'^index.js',
+    path(
+        'index.js',
         DynamicJsView.as_view(template_name='js/translated/index.js'),
         name='index.js',
     ),
-    re_path(
-        r'^label.js',
+    path(
+        'label.js',
         DynamicJsView.as_view(template_name='js/translated/label.js'),
         name='label.js',
     ),
-    re_path(
-        r'^model_renderers.js',
+    path(
+        'model_renderers.js',
         DynamicJsView.as_view(template_name='js/translated/model_renderers.js'),
         name='model_renderers.js',
     ),
-    re_path(
-        r'^modals.js',
+    path(
+        'modals.js',
         DynamicJsView.as_view(template_name='js/translated/modals.js'),
         name='modals.js',
     ),
-    re_path(
-        r'^order.js',
+    path(
+        'order.js',
         DynamicJsView.as_view(template_name='js/translated/order.js'),
         name='order.js',
     ),
-    re_path(
-        r'^part.js',
+    path(
+        'part.js',
         DynamicJsView.as_view(template_name='js/translated/part.js'),
         name='part.js',
     ),
-    re_path(
-        r'^purchase_order.js',
+    path(
+        'purchase_order.js',
         DynamicJsView.as_view(template_name='js/translated/purchase_order.js'),
         name='purchase_order.js',
     ),
-    re_path(
-        r'^return_order.js',
+    path(
+        'return_order.js',
         DynamicJsView.as_view(template_name='js/translated/return_order.js'),
         name='return_order.js',
     ),
-    re_path(
-        r'^report.js',
+    path(
+        'report.js',
         DynamicJsView.as_view(template_name='js/translated/report.js'),
         name='report.js',
     ),
-    re_path(
-        r'^sales_order.js',
+    path(
+        'sales_order.js',
         DynamicJsView.as_view(template_name='js/translated/sales_order.js'),
         name='sales_order.js',
     ),
-    re_path(
-        r'^search.js',
+    path(
+        'search.js',
         DynamicJsView.as_view(template_name='js/translated/search.js'),
         name='search.js',
     ),
-    re_path(
-        r'^stock.js',
+    path(
+        'stock.js',
         DynamicJsView.as_view(template_name='js/translated/stock.js'),
         name='stock.js',
     ),
-    re_path(
-        r'^status_codes.js',
+    path(
+        'status_codes.js',
         DynamicJsView.as_view(template_name='js/translated/status_codes.js'),
         name='status_codes.js',
     ),
-    re_path(
-        r'^plugin.js',
+    path(
+        'plugin.js',
         DynamicJsView.as_view(template_name='js/translated/plugin.js'),
         name='plugin.js',
     ),
-    re_path(
-        r'^pricing.js',
+    path(
+        'pricing.js',
         DynamicJsView.as_view(template_name='js/translated/pricing.js'),
         name='pricing.js',
     ),
-    re_path(
-        r'^news.js',
+    path(
+        'news.js',
         DynamicJsView.as_view(template_name='js/translated/news.js'),
         name='news.js',
     ),
-    re_path(
-        r'^tables.js',
+    path(
+        'tables.js',
         DynamicJsView.as_view(template_name='js/translated/tables.js'),
         name='tables.js',
     ),
-    re_path(
-        r'^table_filters.js',
+    path(
+        'table_filters.js',
         DynamicJsView.as_view(template_name='js/translated/table_filters.js'),
         name='table_filters.js',
     ),
-    re_path(
-        r'^notification.js',
+    path(
+        'notification.js',
         DynamicJsView.as_view(template_name='js/translated/notification.js'),
         name='notification.js',
     ),
@@ -358,11 +357,9 @@ backendpatterns = [
     path('js/dynamic/', include(dynamic_javascript_urls)),
     path('js/i18n/', include(translated_javascript_urls)),
     path('auth/', include('rest_framework.urls', namespace='rest_framework')),
-    re_path(r'^auth/?', auth_request),
+    path('auth/', auth_request),
     path('api/', include(apipatterns)),
-    re_path(
-        r'^api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'
-    ),
+    path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
 
 classic_frontendpatterns = [
@@ -375,14 +372,14 @@ classic_frontendpatterns = [
     path('part/', include(part_urls)),
     path('stock/', include(stock_urls)),
     path('supplier-part/', include(supplier_part_urls)),
-    re_path(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
-    re_path(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
-    re_path(r'^index/', IndexView.as_view(), name='index'),
+    path('edit-user/', EditUserView.as_view(), name='edit-user'),
+    path('set-password/', SetPasswordView.as_view(), name='set-password'),
+    path('index/', IndexView.as_view(), name='index'),
     path('notifications/', include(notifications_urls)),
-    re_path(r'^search/', SearchView.as_view(), name='search'),
+    path('search/', SearchView.as_view(), name='search'),
     path('settings/', include(settings_urls)),
-    re_path(r'^about/', AboutView.as_view(), name='about'),
-    re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
+    path('about/', AboutView.as_view(), name='about'),
+    path('stats/', DatabaseStatsView.as_view(), name='stats'),
     # DB user sessions
     path(
         'accounts/sessions/other/delete/',
@@ -396,9 +393,9 @@ classic_frontendpatterns = [
     ),
     # Single Sign On / allauth
     # overrides of urlpatterns
-    re_path(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
-    re_path(
-        r'^accounts/social/connections/',
+    path('accounts/email/', CustomEmailView.as_view(), name='account_email'),
+    path(
+        'accounts/social/connections/',
         CustomConnectionsView.as_view(),
         name='socialaccount_connections',
     ),
@@ -408,7 +405,7 @@ classic_frontendpatterns = [
         name='account_reset_password_from_key',
     ),
     # Override login page
-    re_path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
+    path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
     path('accounts/', include('allauth_2fa.urls')),  # MFA support
     path('accounts/', include('allauth.urls')),  # included urlpatterns
 ]

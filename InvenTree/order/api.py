@@ -1503,8 +1503,8 @@ order_api_urls = [
                         PurchaseOrderAttachmentDetail.as_view(),
                         name='api-po-attachment-detail',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         PurchaseOrderAttachmentList.as_view(),
                         name='api-po-attachment-list',
                     ),
@@ -1512,45 +1512,41 @@ order_api_urls = [
             ),
             # Individual purchase order detail URLs
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
+                    path(
+                        'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
                     ),
-                    re_path(
-                        r'^complete/',
+                    path(
+                        'complete/',
                         PurchaseOrderComplete.as_view(),
                         name='api-po-complete',
                     ),
-                    re_path(
-                        r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'
-                    ),
-                    re_path(
-                        r'^metadata/',
+                    path('issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': models.PurchaseOrder},
                         name='api-po-metadata',
                     ),
-                    re_path(
-                        r'^receive/',
+                    path(
+                        'receive/',
                         PurchaseOrderReceive.as_view(),
                         name='api-po-receive',
                     ),
                     # PurchaseOrder detail API endpoint
-                    re_path(
-                        r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'
-                    ),
+                    path('', PurchaseOrderDetail.as_view(), name='api-po-detail'),
                 ]),
             ),
             # Purchase order status code information
-            re_path(
-                r'status/',
+            path(
+                'status/',
                 StatusView.as_view(),
                 {StatusView.MODEL_REF: PurchaseOrderStatus},
                 name='api-po-status-codes',
             ),
             # Purchase order list
-            re_path(r'^.*$', PurchaseOrderList.as_view(), name='api-po-list'),
+            path('', PurchaseOrderList.as_view(), name='api-po-list'),
         ]),
     ),
     # API endpoints for purchase order line items
@@ -1560,22 +1556,20 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': models.PurchaseOrderLineItem},
                         name='api-po-line-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         PurchaseOrderLineItemDetail.as_view(),
                         name='api-po-line-detail',
                     ),
                 ]),
             ),
-            re_path(
-                r'^.*$', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'
-            ),
+            path('', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
         ]),
     ),
     # API endpoints for purchase order extra line
@@ -1585,14 +1579,14 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': models.PurchaseOrderExtraLine},
                         name='api-po-extra-line-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         PurchaseOrderExtraLineDetail.as_view(),
                         name='api-po-extra-line-detail',
                     ),
@@ -1615,8 +1609,8 @@ order_api_urls = [
                         SalesOrderAttachmentDetail.as_view(),
                         name='api-so-attachment-detail',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         SalesOrderAttachmentList.as_view(),
                         name='api-so-attachment-list',
                     ),
@@ -1626,28 +1620,28 @@ order_api_urls = [
                 'shipment/',
                 include([
                     path(
-                        r'<int:pk>/',
+                        '<int:pk>/',
                         include([
                             path(
                                 'ship/',
                                 SalesOrderShipmentComplete.as_view(),
                                 name='api-so-shipment-ship',
                             ),
-                            re_path(
-                                r'^metadata/',
+                            path(
+                                'metadata/',
                                 MetadataView.as_view(),
                                 {'model': models.SalesOrderShipment},
                                 name='api-so-shipment-metadata',
                             ),
-                            re_path(
-                                r'^.*$',
+                            path(
+                                '',
                                 SalesOrderShipmentDetail.as_view(),
                                 name='api-so-shipment-detail',
                             ),
                         ]),
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         SalesOrderShipmentList.as_view(),
                         name='api-so-shipment-list',
                     ),
@@ -1655,46 +1649,44 @@ order_api_urls = [
             ),
             # Sales order detail view
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^allocate/',
+                    path(
+                        'allocate/',
                         SalesOrderAllocate.as_view(),
                         name='api-so-allocate',
                     ),
-                    re_path(
-                        r'^allocate-serials/',
+                    path(
+                        'allocate-serials/',
                         SalesOrderAllocateSerials.as_view(),
                         name='api-so-allocate-serials',
                     ),
-                    re_path(
-                        r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'
-                    ),
-                    re_path(r'^issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
-                    re_path(
-                        r'^complete/',
+                    path('cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
+                    path('issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
+                    path(
+                        'complete/',
                         SalesOrderComplete.as_view(),
                         name='api-so-complete',
                     ),
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': models.SalesOrder},
                         name='api-so-metadata',
                     ),
                     # SalesOrder detail endpoint
-                    re_path(r'^.*$', SalesOrderDetail.as_view(), name='api-so-detail'),
+                    path('', SalesOrderDetail.as_view(), name='api-so-detail'),
                 ]),
             ),
             # Sales order status code information
-            re_path(
-                r'status/',
+            path(
+                'status/',
                 StatusView.as_view(),
                 {StatusView.MODEL_REF: SalesOrderStatus},
                 name='api-so-status-codes',
             ),
             # Sales order list view
-            re_path(r'^.*$', SalesOrderList.as_view(), name='api-so-list'),
+            path('', SalesOrderList.as_view(), name='api-so-list'),
         ]),
     ),
     # API endpoints for sales order line items
@@ -1704,14 +1696,14 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': models.SalesOrderLineItem},
                         name='api-so-line-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         SalesOrderLineItemDetail.as_view(),
                         name='api-so-line-detail',
                     ),
@@ -1727,14 +1719,14 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': models.SalesOrderExtraLine},
                         name='api-so-extra-line-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         SalesOrderExtraLineDetail.as_view(),
                         name='api-so-extra-line-detail',
                     ),
@@ -1752,11 +1744,7 @@ order_api_urls = [
                 SalesOrderAllocationDetail.as_view(),
                 name='api-so-allocation-detail',
             ),
-            re_path(
-                r'^.*$',
-                SalesOrderAllocationList.as_view(),
-                name='api-so-allocation-list',
-            ),
+            path('', SalesOrderAllocationList.as_view(), name='api-so-allocation-list'),
         ]),
     ),
     # API endpoints for return orders
@@ -1771,8 +1759,8 @@ order_api_urls = [
                         ReturnOrderAttachmentDetail.as_view(),
                         name='api-return-order-attachment-detail',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         ReturnOrderAttachmentList.as_view(),
                         name='api-return-order-attachment-list',
                     ),
@@ -1782,48 +1770,46 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    re_path(
-                        r'cancel/',
+                    path(
+                        'cancel/',
                         ReturnOrderCancel.as_view(),
                         name='api-return-order-cancel',
                     ),
-                    re_path(
-                        r'complete/',
+                    path(
+                        'complete/',
                         ReturnOrderComplete.as_view(),
                         name='api-return-order-complete',
                     ),
-                    re_path(
-                        r'issue/',
+                    path(
+                        'issue/',
                         ReturnOrderIssue.as_view(),
                         name='api-return-order-issue',
                     ),
-                    re_path(
-                        r'receive/',
+                    path(
+                        'receive/',
                         ReturnOrderReceive.as_view(),
                         name='api-return-order-receive',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': models.ReturnOrder},
                         name='api-return-order-metadata',
                     ),
-                    re_path(
-                        r'.*$',
-                        ReturnOrderDetail.as_view(),
-                        name='api-return-order-detail',
+                    path(
+                        '', ReturnOrderDetail.as_view(), name='api-return-order-detail'
                     ),
                 ]),
             ),
             # Return order status code information
-            re_path(
-                r'status/',
+            path(
+                'status/',
                 StatusView.as_view(),
                 {StatusView.MODEL_REF: ReturnOrderStatus},
                 name='api-return-order-status-codes',
             ),
             # Return Order list
-            re_path(r'^.*$', ReturnOrderList.as_view(), name='api-return-order-list'),
+            path('', ReturnOrderList.as_view(), name='api-return-order-list'),
         ]),
     ),
     # API endpoints for return order lines
@@ -1833,22 +1819,22 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': models.ReturnOrderLineItem},
                         name='api-return-order-line-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         ReturnOrderLineItemDetail.as_view(),
                         name='api-return-order-line-detail',
                     ),
                 ]),
             ),
             # Return order line item status code information
-            re_path(
-                r'status/',
+            path(
+                'status/',
                 StatusView.as_view(),
                 {StatusView.MODEL_REF: ReturnOrderLineStatus},
                 name='api-return-order-line-status-codes',
@@ -1865,14 +1851,14 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': models.ReturnOrderExtraLine},
                         name='api-return-order-extra-line-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         ReturnOrderExtraLineDetail.as_view(),
                         name='api-return-order-extra-line-detail',
                     ),

@@ -658,6 +658,30 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
         ...
 
 
+class ErrorReportTest(InvenTreeAPITestCase):
+    """Unit tests for the error report API."""
+
+    def test_error_list(self):
+        """Test error list."""
+        from InvenTree.exceptions import log_error
+
+        url = reverse('api-error-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+        # Throw an error!
+        log_error(
+            'test error', error_name='My custom error', error_info={'test': 'data'}
+        )
+
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        err = response.data[0]
+        for k in ['when', 'info', 'data', 'path']:
+            self.assertIn(k, err)
+
+
 class TaskListApiTests(InvenTreeAPITestCase):
     """Unit tests for the background task API endpoints."""
 

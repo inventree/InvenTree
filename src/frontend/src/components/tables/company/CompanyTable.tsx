@@ -3,7 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { Thumbnail } from '../../images/Thumbnail';
@@ -44,7 +44,7 @@ export function CompanyTable({
           );
         }
       },
-      DescriptionColumn(),
+      DescriptionColumn({}),
       {
         accessor: 'website',
         title: t`Website`,
@@ -55,7 +55,7 @@ export function CompanyTable({
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.company_list)}
+      url={apiUrl(ApiEndpoints.company_list)}
       tableState={table}
       columns={columns}
       props={{

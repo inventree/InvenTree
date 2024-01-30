@@ -9,7 +9,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { StockLocationTable } from '../../components/tables/stock/StockLocationTable';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 
 export default function Stock() {
@@ -27,7 +27,7 @@ export default function Stock() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.stock_location_list,
+    endpoint: ApiEndpoints.stock_location_list,
     hasPrimaryKey: true,
     pk: id,
     params: {
@@ -53,13 +53,7 @@ export default function Stock() {
         name: 'sublocations',
         label: t`Stock Locations`,
         icon: <IconSitemap />,
-        content: (
-          <StockLocationTable
-            params={{
-              parent: id
-            }}
-          />
-        )
+        content: <StockLocationTable parentId={id} />
       }
     ];
   }, [location, id]);

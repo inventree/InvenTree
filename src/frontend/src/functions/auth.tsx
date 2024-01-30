@@ -4,7 +4,7 @@ import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
 import { api } from '../App';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
@@ -19,7 +19,7 @@ export const doClassicLogin = async (username: string, password: string) => {
 
   // Get token from server
   const token = await axios
-    .get(apiUrl(ApiPaths.user_token), {
+    .get(apiUrl(ApiEndpoints.user_token), {
       auth: { username, password },
       baseURL: host,
       timeout: 2000,
@@ -48,14 +48,17 @@ export const doClassicLogin = async (username: string, password: string) => {
  * Logout the user (invalidate auth token)
  */
 export const doClassicLogout = async () => {
-  // TODO @matmair - logout from the server session
   // Set token in context
   const { setToken } = useSessionState.getState();
+
   setToken(undefined);
+
+  // Logout from the server session
+  await api.post(apiUrl(ApiEndpoints.user_logout));
 
   notifications.show({
     title: t`Logout successful`,
-    message: t`See you soon.`,
+    message: t`You have been logged out`,
     color: 'green',
     icon: <IconCheck size="1rem" />
   });
@@ -66,7 +69,7 @@ export const doClassicLogout = async () => {
 export const doSimpleLogin = async (email: string) => {
   const { host } = useLocalState.getState();
   const mail = await axios
-    .post(apiUrl(ApiPaths.user_simple_login), {
+    .post(apiUrl(ApiEndpoints.user_simple_login), {
       email: email
     })
     .then((response) => response.data)
@@ -93,7 +96,7 @@ export const doTokenLogin = (token: string) => {
 
 export function handleReset(navigate: any, values: { email: string }) {
   api
-    .post(apiUrl(ApiPaths.user_reset), values, {
+    .post(apiUrl(ApiEndpoints.user_reset), values, {
       headers: { Authorization: '' }
     })
     .then((val) => {
@@ -118,9 +121,13 @@ export function handleReset(navigate: any, values: { email: string }) {
 /**
  * Check login state, and redirect the user as required
  */
-export function checkLoginState(navigate: any, redirect?: string) {
+export function checkLoginState(
+  navigate: any,
+  redirect?: string,
+  no_redirect?: boolean
+) {
   api
-    .get(apiUrl(ApiPaths.user_token), {
+    .get(apiUrl(ApiEndpoints.user_token), {
       timeout: 2000,
       params: {
         name: 'inventree-web-app'
@@ -142,6 +149,6 @@ export function checkLoginState(navigate: any, redirect?: string) {
       }
     })
     .catch(() => {
-      navigate('/login');
+      if (!no_redirect) navigate('/login');
     });
 }

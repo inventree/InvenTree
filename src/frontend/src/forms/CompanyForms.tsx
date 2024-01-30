@@ -12,7 +12,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { openEditApiForm } from '../functions/forms';
 
 /**
@@ -95,6 +95,18 @@ export function useManufacturerPartFields() {
   }, []);
 }
 
+export function useManufacturerPartParameterFields() {
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      name: {},
+      value: {},
+      units: {}
+    };
+
+    return fields;
+  }, []);
+}
+
 /**
  * Field set for editing a company instance
  */
@@ -132,7 +144,7 @@ export function editCompany({
 }) {
   openEditApiForm({
     title: t`Edit Company`,
-    url: ApiPaths.company_list,
+    url: ApiEndpoints.company_list,
     pk: pk,
     fields: companyFields(),
     successMessage: t`Company updated`,

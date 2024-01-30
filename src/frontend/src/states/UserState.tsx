@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { UserPermissions, UserRoles } from '../enums/Roles';
 import { doClassicLogout } from '../functions/auth';
 import { apiUrl } from './ApiState';
@@ -37,7 +37,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   fetchUserState: async () => {
     // Fetch user data
     await api
-      .get(apiUrl(ApiPaths.user_me), {
+      .get(apiUrl(ApiEndpoints.user_me), {
         timeout: 2000
       })
       .then((response) => {
@@ -58,7 +58,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
 
     // Fetch role data
     await api
-      .get(apiUrl(ApiPaths.user_roles))
+      .get(apiUrl(ApiEndpoints.user_roles))
       .then((response) => {
         const user: UserProps = get().user as UserProps;
 

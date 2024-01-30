@@ -3,7 +3,7 @@ import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
 import { useInstance } from '../../../hooks/UseInstance';
 import { useTable } from '../../../hooks/UseTable';
@@ -32,7 +32,7 @@ export function GroupDrawer({
     refreshInstance,
     instanceQuery: { isFetching, error }
   } = useInstance({
-    endpoint: ApiPaths.group_list,
+    endpoint: ApiEndpoints.group_list,
     pk: id,
     throwError: true
   });
@@ -57,7 +57,7 @@ export function GroupDrawer({
     <Stack>
       <EditApiForm
         props={{
-          url: ApiPaths.group_list,
+          url: ApiEndpoints.group_list,
           pk: id,
           fields: {
             name: {}
@@ -110,7 +110,7 @@ export function GroupTable() {
       RowDeleteAction({
         onClick: () => {
           openDeleteApiForm({
-            url: ApiPaths.group_list,
+            url: ApiEndpoints.group_list,
             pk: record.pk,
             title: t`Delete group`,
             successMessage: t`Group deleted`,
@@ -124,7 +124,7 @@ export function GroupTable() {
 
   const addGroup = useCallback(() => {
     openCreateApiForm({
-      url: ApiPaths.group_list,
+      url: ApiEndpoints.group_list,
       title: t`Add group`,
       fields: { name: {} },
       onFormSuccess: table.refreshTable,
@@ -161,12 +161,12 @@ export function GroupTable() {
         }}
       />
       <InvenTreeTable
-        url={apiUrl(ApiPaths.group_list)}
+        url={apiUrl(ApiEndpoints.group_list)}
         tableState={table}
         columns={columns}
         props={{
           rowActions: rowActions,
-          customActionGroups: tableActions,
+          tableActions: tableActions,
           onRowClick: (record) => openDetailDrawer(record.pk)
         }}
       />

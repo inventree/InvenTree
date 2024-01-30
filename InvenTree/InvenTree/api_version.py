@@ -1,10 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 162
+INVENTREE_API_VERSION = 165
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v165 -> 2024-01-28 : https://github.com/inventree/InvenTree/pull/6040
+    - Adds supplier_part.name, part.creation_user, part.required_for_sales_order
+
+v164 -> 2024-01-24 : https://github.com/inventree/InvenTree/pull/6343
+    - Adds "building" quantity to BuildLine API serializer
+
+v163 -> 2024-01-22 : https://github.com/inventree/InvenTree/pull/6314
+    - Extends API endpoint to expose auth configuration information for signin pages
 
 v162 -> 2024-01-14 : https://github.com/inventree/InvenTree/pull/6230
     - Adds API endpoints to provide information on background tasks

@@ -4,8 +4,9 @@ import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -338,14 +339,15 @@ export function StockItemTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.stock_item_list)}
+      url={apiUrl(ApiEndpoints.stock_item_list)}
       tableState={table}
       columns={tableColumns}
       props={{
         enableDownload: true,
         enableSelection: true,
-        customFilters: tableFilters,
-        onRowClick: (record) => navigate(`/stock/item/${record.pk}`),
+        tableFilters: tableFilters,
+        onRowClick: (record) =>
+          navigate(getDetailUrl(ModelType.stockitem, record.pk)),
         params: {
           ...params,
           part_detail: true,
