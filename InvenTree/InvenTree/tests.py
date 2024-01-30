@@ -1247,6 +1247,6 @@ class MagicLoginTest(InvenTreeTestCase):
         # Check that the login works
         resp = self.client.get(reverse('sesame-login') + '?sesame=' + token)
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, '/login-redirect/')
+        self.assertEqual(resp.url, '/api/auth/login-redirect/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)
