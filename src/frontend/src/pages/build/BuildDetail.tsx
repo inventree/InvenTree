@@ -153,12 +153,10 @@ export default function BuildDetail() {
         name: 'child-orders',
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
-        content: (
-          <BuildOrderTable
-            params={{
-              parent: id
-            }}
-          />
+        content: build.pk ? (
+          <BuildOrderTable parentBuildId={build.pk} />
+        ) : (
+          <Skeleton />
         )
       },
       {

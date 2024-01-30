@@ -95,9 +95,11 @@ function buildOrderTableColumns(): TableColumn[] {
  */
 export function BuildOrderTable({
   partId,
+  parentBuildId,
   salesOrderId
 }: {
   partId?: number;
+  parentBuildId?: number;
   salesOrderId?: number;
 }) {
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
@@ -146,12 +148,13 @@ export function BuildOrderTable({
   const table = useTable('buildorder');
 
   const newBuild = useCreateApiFormModal({
-    url: ApiEndpoints.build_order_list,
+    url: apiUrl(ApiEndpoints.build_order_list),
     title: t`Add Build Order`,
     fields: buildOrderFields(),
     initialData: {
       part: partId,
-      sales_order: salesOrderId
+      sales_order: salesOrderId,
+      parent: parentBuildId
     },
     onFormSuccess: (data: any) => {
       if (data.pk) {
@@ -174,7 +177,7 @@ export function BuildOrderTable({
     <>
       {newBuild.modal}
       <InvenTreeTable
-        url={ApiEndpoints.build_order_list}
+        url={apiUrl(ApiEndpoints.build_order_list)}
         tableState={table}
         columns={tableColumns}
         props={{
@@ -182,6 +185,7 @@ export function BuildOrderTable({
           params: {
             part: partId,
             sales_order: salesOrderId,
+            parent: parentBuildId,
             part_detail: true
           },
           tableActions: tableActions,
