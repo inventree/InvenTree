@@ -46,6 +46,8 @@ export function RelatedModelField({
   const [data, setData] = useState<any[]>([]);
   const dataRef = useRef<any[]>([]);
 
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   // If an initial value is provided, load from the API
   useEffect(() => {
     // If the value is unchanged, do nothing
@@ -91,7 +93,11 @@ export function RelatedModelField({
   }, [searchText, filters]);
 
   const selectQuery = useQuery({
-    enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
+    enabled:
+      isOpen &&
+      !definition.disabled &&
+      !!definition.api_url &&
+      !definition.hidden,
     queryKey: [`related-field-${fieldName}`, fieldId, offset, searchText],
     queryFn: async () => {
       if (!definition.api_url) {
@@ -217,9 +223,13 @@ export function RelatedModelField({
         onChange={onChange}
         onMenuScrollToBottom={() => setOffset(offset + limit)}
         onMenuOpen={() => {
+          setIsOpen(true);
           setValue('');
           resetSearch();
           selectQuery.refetch();
+        }}
+        onMenuClose={() => {
+          setIsOpen(false);
         }}
         isLoading={
           selectQuery.isFetching ||
