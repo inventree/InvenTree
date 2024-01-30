@@ -8,7 +8,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 
@@ -19,7 +19,7 @@ export default function ReturnOrderDetail() {
   const { id } = useParams();
 
   const { instance: order, instanceQuery } = useInstance({
-    endpoint: ApiPaths.return_order_list,
+    endpoint: ApiEndpoints.return_order_list,
     pk: id,
     params: {
       customer_detail: true
@@ -39,7 +39,7 @@ export default function ReturnOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.return_order_attachment_list}
+            endpoint={ApiEndpoints.return_order_attachment_list}
             model="order"
             pk={Number(id)}
           />
@@ -51,7 +51,7 @@ export default function ReturnOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.return_order_list, id)}
+            url={apiUrl(ApiEndpoints.return_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />

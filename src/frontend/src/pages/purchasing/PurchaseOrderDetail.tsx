@@ -26,7 +26,7 @@ import { AttachmentTable } from '../../components/tables/general/AttachmentTable
 import { PurchaseOrderLineItemTable } from '../../components/tables/purchasing/PurchaseOrderLineItemTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -40,7 +40,7 @@ export default function PurchaseOrderDetail() {
   const user = useUserState();
 
   const { instance: order, instanceQuery } = useInstance({
-    endpoint: ApiPaths.purchase_order_list,
+    endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
     params: {
       supplier_detail: true
@@ -79,7 +79,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.purchase_order_attachment_list}
+            endpoint={ApiEndpoints.purchase_order_attachment_list}
             model="order"
             pk={Number(id)}
           />
@@ -91,7 +91,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.purchase_order_list, id)}
+            url={apiUrl(ApiEndpoints.purchase_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />

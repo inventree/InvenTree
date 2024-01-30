@@ -3,7 +3,7 @@ import { Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { useSupplierPartFields } from '../../../forms/CompanyForms';
@@ -161,7 +161,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
   });
   const { modal: addSupplierPartModal, open: openAddSupplierPartForm } =
     useCreateApiFormModal({
-      url: ApiPaths.supplier_part_list,
+      url: ApiEndpoints.supplier_part_list,
       title: t`Add Supplier Part`,
       fields: addSupplierPartFields,
       onFormSuccess: table.refreshTable,
@@ -194,7 +194,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           onClick: () => {
             record.pk &&
               openEditApiForm({
-                url: ApiPaths.supplier_part_list,
+                url: ApiEndpoints.supplier_part_list,
                 pk: record.pk,
                 title: t`Edit Supplier Part`,
                 fields: editSupplierPartFields,
@@ -208,7 +208,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           onClick: () => {
             record.pk &&
               openDeleteApiForm({
-                url: ApiPaths.supplier_part_list,
+                url: ApiEndpoints.supplier_part_list,
                 pk: record.pk,
                 title: t`Delete Supplier Part`,
                 successMessage: t`Supplier part deleted`,
@@ -226,7 +226,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     <>
       {addSupplierPartModal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.supplier_part_list)}
+        url={apiUrl(ApiEndpoints.supplier_part_list)}
         tableState={table}
         columns={tableColumns}
         props={{

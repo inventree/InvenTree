@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { notYetImplemented } from '../../../functions/notifications';
@@ -116,7 +116,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.purchase_order_list)}
+      url={apiUrl(ApiEndpoints.purchase_order_list)}
       tableState={table}
       columns={tableColumns}
       props={{

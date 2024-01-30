@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import {
   openCreateApiForm,
@@ -44,7 +44,7 @@ export default function ProjectCodeTable() {
           hidden: !user.hasChangeRole(UserRoles.admin),
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.project_code_list,
+              url: ApiEndpoints.project_code_list,
               pk: record.pk,
               title: t`Edit project code`,
               fields: {
@@ -61,7 +61,7 @@ export default function ProjectCodeTable() {
           hidden: !user.hasDeleteRole(UserRoles.admin),
           onClick: () => {
             openDeleteApiForm({
-              url: ApiPaths.project_code_list,
+              url: ApiEndpoints.project_code_list,
               pk: record.pk,
               title: t`Delete project code`,
               successMessage: t`Project code deleted`,
@@ -77,7 +77,7 @@ export default function ProjectCodeTable() {
 
   const addProjectCode = useCallback(() => {
     openCreateApiForm({
-      url: ApiPaths.project_code_list,
+      url: ApiEndpoints.project_code_list,
       title: t`Add project code`,
       fields: {
         code: {},
@@ -101,7 +101,7 @@ export default function ProjectCodeTable() {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.project_code_list)}
+      url={apiUrl(ApiEndpoints.project_code_list)}
       tableState={table}
       columns={columns}
       props={{

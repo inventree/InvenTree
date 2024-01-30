@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { addressFields } from '../../../forms/CompanyForms';
 import {
@@ -123,7 +123,7 @@ export function AddressTable({
           hidden: !can_edit,
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.address_list,
+              url: ApiEndpoints.address_list,
               pk: record.pk,
               title: t`Edit Address`,
               fields: addressFields(),
@@ -136,7 +136,7 @@ export function AddressTable({
           hidden: !can_delete,
           onClick: () => {
             openDeleteApiForm({
-              url: ApiPaths.address_list,
+              url: ApiEndpoints.address_list,
               pk: record.pk,
               title: t`Delete Address`,
               successMessage: t`Address deleted`,
@@ -156,7 +156,7 @@ export function AddressTable({
     fields['company'].value = companyId;
 
     openCreateApiForm({
-      url: ApiPaths.address_list,
+      url: ApiEndpoints.address_list,
       title: t`Add Address`,
       fields: fields,
       successMessage: t`Address created`,
@@ -180,7 +180,7 @@ export function AddressTable({
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.address_list)}
+      url={apiUrl(ApiEndpoints.address_list)}
       tableState={table}
       columns={columns}
       props={{

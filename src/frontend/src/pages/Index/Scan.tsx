@@ -49,7 +49,7 @@ import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
 import { RenderInstance } from '../../components/render/Instance';
 import { ModelInformationDict } from '../../components/render/ModelType';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
@@ -143,7 +143,7 @@ export default function Scan() {
 
   function runBarcode(value: string, id?: string) {
     api
-      .post(apiUrl(ApiPaths.barcode), { barcode: value })
+      .post(apiUrl(ApiEndpoints.barcode), { barcode: value })
       .then((response) => {
         // update item in history
         if (!id) return;

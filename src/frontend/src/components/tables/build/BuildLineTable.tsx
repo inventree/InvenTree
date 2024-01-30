@@ -8,7 +8,7 @@ import {
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
@@ -223,7 +223,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.build_line_list)}
+      url={apiUrl(ApiEndpoints.build_line_list)}
       tableState={table}
       columns={tableColumns}
       props={{

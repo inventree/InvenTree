@@ -4,7 +4,7 @@ import { IconLayersLinked } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { openCreateApiForm, openDeleteApiForm } from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
@@ -69,7 +69,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   const addRelatedPart = useCallback(() => {
     openCreateApiForm({
       title: t`Add Related Part`,
-      url: ApiPaths.related_part_list,
+      url: ApiEndpoints.related_part_list,
       fields: {
         part_1: {
           hidden: true,
@@ -108,7 +108,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({
-              url: ApiPaths.related_part_list,
+              url: ApiEndpoints.related_part_list,
               pk: record.pk,
               title: t`Delete Related Part`,
               successMessage: t`Related part deleted`,
@@ -124,7 +124,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.related_part_list)}
+      url={apiUrl(ApiEndpoints.related_part_list)}
       tableState={table}
       columns={tableColumns}
       props={{
