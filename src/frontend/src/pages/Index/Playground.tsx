@@ -77,7 +77,9 @@ function ApiFormsPlayground() {
         is_template: true,
         virtual: true,
         minimum_stock: 10,
-        keywords: 'apple, banana, carrottt'
+        description: 'An example part description',
+        keywords: 'apple, banana, carrottt',
+        'initial_supplier.sku': 'SKU-123'
       },
       preFormContent: (
         <Button onClick={() => setName('Hello world')}>
