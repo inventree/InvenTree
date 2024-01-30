@@ -112,7 +112,6 @@ class InfoView(AjaxView):
             'server': 'InvenTree',
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),
-            'authenticated': request.user and request.user.is_authenticated,
             'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
             'worker_pending_tasks': self.worker_pending_tasks(),
