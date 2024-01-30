@@ -77,11 +77,18 @@ export function RelatedModelField({
   const [value, setValue] = useState<string>('');
   const [searchText, cancelSearchText] = useDebouncedValue(value, 250);
 
+  const [filters, setFilters] = useState<any>({});
+
+  const resetSearch = useCallback(() => {
+    setOffset(0);
+    setData([]);
+    dataRef.current = [];
+  }, []);
+
   // reset current data on search value change
   useEffect(() => {
-    dataRef.current = [];
-    setData([]);
-  }, [searchText]);
+    resetSearch();
+  }, [searchText, filters]);
 
   const selectQuery = useQuery({
     enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
@@ -91,18 +98,24 @@ export function RelatedModelField({
         return null;
       }
 
-      let filters = definition.filters ?? {};
+      let _filters = definition.filters ?? {};
 
       if (definition.adjustFilters) {
-        filters =
+        _filters =
           definition.adjustFilters({
-            filters: filters,
+            filters: _filters,
             data: form.getValues()
-          }) ?? filters;
+          }) ?? _filters;
+      }
+
+      // If the filters have changed, clear the data
+      if (_filters != filters) {
+        resetSearch();
+        setFilters(_filters);
       }
 
       let params = {
-        ...filters,
+        ..._filters,
         search: searchText,
         offset: offset,
         limit: limit
@@ -199,14 +212,13 @@ export function RelatedModelField({
         filterOption={null}
         onInputChange={(value: any) => {
           setValue(value);
-          setOffset(0);
-          setData([]);
+          resetSearch();
         }}
         onChange={onChange}
         onMenuScrollToBottom={() => setOffset(offset + limit)}
         onMenuOpen={() => {
           setValue('');
-          setOffset(0);
+          resetSearch();
           selectQuery.refetch();
         }}
         isLoading={
