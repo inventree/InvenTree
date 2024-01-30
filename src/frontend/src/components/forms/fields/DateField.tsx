@@ -6,12 +6,10 @@ import { ApiFormFieldType } from './ApiFormField';
 
 export default function DateField({
   controller,
-  definition,
-  fieldName
+  definition
 }: {
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
-  fieldName: string;
 }) {
   const fieldId = useId();
 

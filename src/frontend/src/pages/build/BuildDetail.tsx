@@ -19,7 +19,6 @@ import { useParams } from 'react-router-dom';
 
 import {
   ActionDropdown,
-  DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,

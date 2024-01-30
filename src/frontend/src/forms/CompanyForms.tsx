@@ -1,4 +1,3 @@
-import { t } from '@lingui/macro';
 import {
   IconAt,
   IconCurrencyDollar,
@@ -12,8 +11,6 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { openEditApiForm } from '../functions/forms';
 
 /**
  * Field set for SupplierPart instance

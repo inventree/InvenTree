@@ -149,7 +149,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
           tableFilters: tableFilters,
           tableActions: tableActions,
           rowActions: rowActions,
-          onRowClick: (record, index, event) =>
+          onRowClick: (record) =>
             navigate(getDetailUrl(ModelType.partcategory, record.pk))
         }}
       />

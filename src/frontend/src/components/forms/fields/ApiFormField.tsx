@@ -212,13 +212,7 @@ export function ApiFormField({
           />
         );
       case 'date':
-        return (
-          <DateField
-            controller={controller}
-            fieldName={fieldName}
-            definition={definition}
-          />
-        );
+        return <DateField controller={controller} definition={definition} />;
       case 'integer':
       case 'decimal':
       case 'float':

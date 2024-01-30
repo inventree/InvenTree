@@ -1,12 +1,11 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { salesOrderFields } from '../../../forms/SalesOrderForms';
-import { notYetImplemented } from '../../../functions/notifications';
 import { getDetailUrl } from '../../../functions/urls';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
