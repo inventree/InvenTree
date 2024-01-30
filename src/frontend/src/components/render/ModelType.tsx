@@ -52,7 +52,7 @@ export const ModelInformationDict: ModelDictory = {
     label: t`Part Category`,
     label_multiple: t`Part Categories`,
     url_overview: '/partcategory',
-    url_detail: '/partcategory/:pk/',
+    url_detail: '/part/category/:pk/',
     cui_detail: '/part/category/:pk/',
     api_endpoint: ApiPaths.category_list
   },
