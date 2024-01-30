@@ -112,6 +112,7 @@ class InfoView(AjaxView):
             'server': 'InvenTree',
             'version': InvenTree.version.inventreeVersion(),
             'instance': InvenTree.version.inventreeInstanceName(),
+            'authenticated': request.user and request.user.is_authenticated,
             'apiVersion': InvenTree.version.inventreeApiVersion(),
             'worker_running': is_worker_running(),
             'worker_pending_tasks': self.worker_pending_tasks(),
@@ -120,13 +121,17 @@ class InfoView(AjaxView):
             'email_configured': is_email_configured(),
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
-            'system_health': check_system_health() if is_staff else None,
-            'database': InvenTree.version.inventreeDatabase() if is_staff else None,
-            'platform': InvenTree.version.inventreePlatform() if is_staff else None,
-            'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
-            'target': InvenTree.version.inventreeTarget() if is_staff else None,
             'default_locale': settings.LANGUAGE_CODE,
         }
+
+        if is_staff:
+            data.update({
+                'system_health': check_system_health(),
+                'database': InvenTree.version.inventreeDatabase(),
+                'platform': InvenTree.version.inventreePlatform(),
+                'installer': InvenTree.version.inventreeInstaller(),
+                'target': InvenTree.version.inventreeTarget(),
+            })
 
         return JsonResponse(data)
 
