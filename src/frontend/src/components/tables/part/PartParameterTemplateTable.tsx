@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ApiPaths } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
-import { partParameterTemplateFields } from '../../../forms/PartForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -13,6 +12,7 @@ import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { AddItemButton } from '../../buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../forms/fields/ApiFormField';
 import { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
@@ -69,10 +69,18 @@ export default function PartParameterTemplateTable() {
     ];
   }, []);
 
+  const partParameterTemplateFields: ApiFormFieldSet = {
+    name: {},
+    description: {},
+    units: {},
+    choices: {},
+    checkbox: {}
+  };
+
   const newTemplate = useCreateApiFormModal({
     url: ApiPaths.part_parameter_template_list,
     title: t`Create Parameter Template`,
-    fields: partParameterTemplateFields(),
+    fields: partParameterTemplateFields,
     onFormSuccess: table.refreshTable
   });
 
@@ -84,7 +92,7 @@ export default function PartParameterTemplateTable() {
     url: ApiPaths.part_parameter_template_list,
     pk: selectedTemplate,
     title: t`Edit Parameter Template`,
-    fields: partParameterTemplateFields(),
+    fields: partParameterTemplateFields,
     onFormSuccess: table.refreshTable
   });
 

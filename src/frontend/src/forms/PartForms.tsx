@@ -154,34 +154,3 @@ export function partCategoryFields({}: {}): ApiFormFieldSet {
 
   return fields;
 }
-
-export function partParameterTemplateFields(): ApiFormFieldSet {
-  return {
-    name: {},
-    description: {},
-    units: {},
-    choices: {},
-    checkbox: {}
-  };
-}
-
-export function partParameterFields(): ApiFormFieldSet {
-  return {
-    part: {},
-    template: {},
-    data: {}
-  };
-}
-
-export function partTestTemplateFields(): ApiFormFieldSet {
-  return {
-    part: {
-      hidden: true
-    },
-    test_name: {},
-    description: {},
-    required: {},
-    requires_value: {},
-    requires_attachment: {}
-  };
-}
