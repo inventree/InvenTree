@@ -538,6 +538,7 @@ class PartSerializer(
             'category_path',
             'component',
             'creation_date',
+            'creation_user',
             'default_expiry',
             'default_location',
             'default_supplier',
@@ -575,6 +576,7 @@ class PartSerializer(
             'in_stock',
             'ordering',
             'required_for_build_orders',
+            'required_for_sales_orders',
             'stock_item_count',
             'suppliers',
             'total_in_stock',
@@ -715,7 +717,8 @@ class PartSerializer(
 
         # Annotate with the total 'required for builds' quantity
         queryset = queryset.annotate(
-            required_for_build_orders=part.filters.annotate_build_order_requirements()
+            required_for_build_orders=part.filters.annotate_build_order_requirements(),
+            required_for_sales_orders=part.filters.annotate_sales_order_requirements(),
         )
 
         return queryset
@@ -738,6 +741,10 @@ class PartSerializer(
         source='responsible_owner',
     )
 
+    creation_user = serializers.PrimaryKeyRelatedField(
+        queryset=users.models.User.objects.all(), required=False, allow_null=True
+    )
+
     # Annotated fields
     allocated_to_build_orders = serializers.FloatField(read_only=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
@@ -745,6 +752,7 @@ class PartSerializer(
     in_stock = serializers.FloatField(read_only=True)
     ordering = serializers.FloatField(read_only=True)
     required_for_build_orders = serializers.IntegerField(read_only=True)
+    required_for_sales_orders = serializers.IntegerField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True)
     suppliers = serializers.IntegerField(read_only=True)
     total_in_stock = serializers.FloatField(read_only=True)

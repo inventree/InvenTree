@@ -13,17 +13,19 @@ export function Thumbnail({
   src,
   alt = t`Thumbnail`,
   size = 20,
-  text
+  text,
+  align
 }: {
   src?: string | undefined;
   alt?: string;
   size?: number;
   text?: ReactNode;
+  align?: string;
 }) {
   const backup_image = '/static/img/blank_image.png';
 
   return (
-    <Group align="left" spacing="xs" noWrap={true}>
+    <Group align={align ?? 'left'} spacing="xs" noWrap={true}>
       <ApiImage
         src={src || backup_image}
         alt={alt}
