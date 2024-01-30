@@ -62,11 +62,7 @@ export default function SalesOrderDetail() {
         label: t`Build Orders`,
         icon: <IconTools />,
         content: order?.pk ? (
-          <BuildOrderTable
-            params={{
-              sales_order: order.pk
-            }}
-          />
+          <BuildOrderTable salesOrderId={order.pk} />
         ) : (
           <Skeleton />
         )

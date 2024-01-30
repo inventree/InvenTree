@@ -132,14 +132,7 @@ export default function PartDetail() {
         label: t`Build Orders`,
         icon: <IconTools />,
         hidden: !part.assembly,
-        content: (
-          <BuildOrderTable
-            params={{
-              part_detail: true,
-              part: part.pk ?? -1
-            }}
-          />
-        )
+        content: part?.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'used_in',

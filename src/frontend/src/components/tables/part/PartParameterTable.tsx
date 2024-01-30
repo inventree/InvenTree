@@ -159,18 +159,14 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
   // Custom table actions
   const tableActions = useMemo(() => {
-    let actions = [];
-
-    // TODO: Hide if user does not have permission to edit parts
-    actions.push(
+    return [
       <AddItemButton
+        hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Add parameter`}
         onClick={() => newParameter.open()}
       />
-    );
-
-    return actions;
-  }, []);
+    ];
+  }, [user]);
 
   return (
     <>
