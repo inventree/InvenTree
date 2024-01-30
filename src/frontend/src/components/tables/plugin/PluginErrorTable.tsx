@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { Code } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -43,7 +43,7 @@ export function PluginErrorTable({ props }: { props: InvenTreeTableProps }) {
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.plugin_registry_status)}
+      url={apiUrl(ApiEndpoints.plugin_registry_status)}
       tableState={table}
       columns={registryErrorTableColumns}
       props={{

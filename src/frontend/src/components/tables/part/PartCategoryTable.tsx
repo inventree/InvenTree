@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { partCategoryFields } from '../../../forms/PartForms';
@@ -77,7 +77,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
   }, []);
 
   const newCategory = useCreateApiFormModal({
-    url: ApiPaths.category_list,
+    url: ApiEndpoints.category_list,
     title: t`New Part Category`,
     fields: partCategoryFields({}),
     initialData: {
@@ -97,7 +97,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
   );
 
   const editCategory = useEditApiFormModal({
-    url: ApiPaths.category_list,
+    url: ApiEndpoints.category_list,
     pk: selectedCategory,
     title: t`Edit Part Category`,
     fields: partCategoryFields({}),
@@ -138,7 +138,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
       {newCategory.modal}
       {editCategory.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.category_list)}
+        url={apiUrl(ApiEndpoints.category_list)}
         tableState={table}
         columns={tableColumns}
         props={{

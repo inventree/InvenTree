@@ -9,7 +9,7 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { formatPriceRange } from '../../../defaults/formatters';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { bomItemFields } from '../../../forms/BomForms';
@@ -320,7 +320,7 @@ export function BomTable({
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.bom_list,
+              url: ApiEndpoints.bom_list,
               pk: record.pk,
               title: t`Edit Bom Item`,
               fields: bomItemFields(),
@@ -337,7 +337,7 @@ export function BomTable({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({
-              url: ApiPaths.bom_list,
+              url: ApiEndpoints.bom_list,
               pk: record.pk,
               title: t`Delete Bom Item`,
               successMessage: t`Bom item deleted`,
@@ -355,7 +355,7 @@ export function BomTable({
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.bom_list)}
+      url={apiUrl(ApiEndpoints.bom_list)}
       tableState={table}
       columns={tableColumns}
       props={{

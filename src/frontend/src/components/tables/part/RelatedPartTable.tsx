@@ -3,7 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import {
   useCreateApiFormModal,
@@ -78,7 +78,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   };
 
   const newRelatedPart = useCreateApiFormModal({
-    url: ApiPaths.related_part_list,
+    url: ApiEndpoints.related_part_list,
     title: t`Add Related Part`,
     fields: relatedPartFields,
     initialData: {
@@ -92,7 +92,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   >(undefined);
 
   const deleteRelatedPart = useDeleteApiFormModal({
-    url: ApiPaths.related_part_list,
+    url: ApiEndpoints.related_part_list,
     pk: selectedRelatedPart,
     title: t`Delete Related Part`,
     onFormSuccess: table.refreshTable
@@ -128,7 +128,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
       {newRelatedPart.modal}
       {deleteRelatedPart.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.related_part_list)}
+        url={apiUrl(ApiEndpoints.related_part_list)}
         tableState={table}
         columns={tableColumns}
         props={{

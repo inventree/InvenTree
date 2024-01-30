@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { customUnitsFields } from '../../../forms/CommonForms';
 import {
@@ -49,7 +49,7 @@ export default function CustomUnitsTable() {
   }, []);
 
   const newUnit = useCreateApiFormModal({
-    url: ApiPaths.custom_unit_list,
+    url: ApiEndpoints.custom_unit_list,
     title: t`Add Custom Unit`,
     fields: customUnitsFields(),
     onFormSuccess: table.refreshTable
@@ -60,7 +60,7 @@ export default function CustomUnitsTable() {
   );
 
   const editUnit = useEditApiFormModal({
-    url: ApiPaths.custom_unit_list,
+    url: ApiEndpoints.custom_unit_list,
     pk: selectedUnit,
     title: t`Edit Custom Unit`,
     fields: customUnitsFields(),
@@ -68,7 +68,7 @@ export default function CustomUnitsTable() {
   });
 
   const deleteUnit = useDeleteApiFormModal({
-    url: ApiPaths.custom_unit_list,
+    url: ApiEndpoints.custom_unit_list,
     pk: selectedUnit,
     title: t`Delete Custom Unit`,
     onFormSuccess: table.refreshTable
@@ -116,7 +116,7 @@ export default function CustomUnitsTable() {
       {editUnit.modal}
       {deleteUnit.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.custom_unit_list)}
+        url={apiUrl(ApiEndpoints.custom_unit_list)}
         tableState={table}
         columns={columns}
         props={{

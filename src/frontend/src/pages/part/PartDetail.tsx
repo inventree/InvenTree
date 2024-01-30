@@ -52,7 +52,7 @@ import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPa
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { editPart } from '../../forms/PartForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -73,7 +73,7 @@ export default function PartDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.part_list,
+    endpoint: ApiEndpoints.part_list,
     pk: id,
     params: {
       path_detail: true
@@ -226,7 +226,7 @@ export default function PartDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.part_attachment_list}
+            endpoint={ApiEndpoints.part_attachment_list}
             model="part"
             pk={part.pk ?? -1}
           />
@@ -238,7 +238,7 @@ export default function PartDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.part_list, part.pk)}
+            url={apiUrl(ApiEndpoints.part_list, part.pk)}
             data={part.notes ?? ''}
             allowEdit={true}
           />

@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import {
   useCreateApiFormModal,
@@ -81,7 +81,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
   };
 
   const newTestTemplate = useCreateApiFormModal({
-    url: ApiPaths.part_test_template_list,
+    url: ApiEndpoints.part_test_template_list,
     title: t`Add Test Template`,
     fields: partTestTemplateFields,
     initialData: {
@@ -95,7 +95,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
   );
 
   const editTestTemplate = useEditApiFormModal({
-    url: ApiPaths.part_test_template_list,
+    url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
     title: t`Edit Test Template`,
     fields: partTestTemplateFields,
@@ -103,7 +103,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
   });
 
   const deleteTestTemplate = useDeleteApiFormModal({
-    url: ApiPaths.part_test_template_list,
+    url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
     title: t`Delete Test Template`,
     onFormSuccess: table.refreshTable
@@ -152,7 +152,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       {editTestTemplate.modal}
       {deleteTestTemplate.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.part_test_template_list)}
+        url={apiUrl(ApiEndpoints.part_test_template_list)}
         tableState={table}
         columns={tableColumns}
         props={{

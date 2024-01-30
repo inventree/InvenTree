@@ -23,8 +23,7 @@ import { Html5QrcodeResult } from 'html5-qrcode/core';
 import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
-import { ApiPaths } from '../../enums/ApiEndpoints';
-import { apiUrl } from '../../states/ApiState';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 
 export function QrCodeModal({
   context,
@@ -66,7 +65,7 @@ export function QrCodeModal({
 
     handlers.append(decodedText);
     api
-      .post(apiUrl(ApiPaths.barcode), { barcode: decodedText })
+      .post(ApiEndpoints.barcode, { barcode: decodedText })
       .then((response) => {
         showNotification({
           title: response.data?.success || t`Unknown response`,

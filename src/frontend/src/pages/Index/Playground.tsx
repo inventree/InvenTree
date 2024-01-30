@@ -8,7 +8,7 @@ import { OptionsApiForm } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import {
   createPart,
@@ -28,14 +28,14 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 const fields = partCategoryFields({});
 function ApiFormsPlayground() {
   const editCategoryForm: OpenApiFormProps = {
-    url: ApiPaths.category_list,
+    url: ApiEndpoints.category_list,
     pk: 2,
     title: 'Edit Category',
     fields: fields
   };
 
   const createAttachmentForm: OpenApiFormProps = {
-    url: ApiPaths.part_attachment_list,
+    url: ApiEndpoints.part_attachment_list,
     title: 'Create Attachment',
     successMessage: 'Attachment uploaded',
     fields: {
@@ -70,7 +70,7 @@ function ApiFormsPlayground() {
 
   const { modal: createPartModal, open: openCreatePart } =
     useCreateApiFormModal({
-      url: ApiPaths.part_list,
+      url: ApiEndpoints.part_list,
       title: 'Create part',
       fields: partFieldsState,
       initialData: {
@@ -112,7 +112,7 @@ function ApiFormsPlayground() {
       <Card sx={{ padding: '30px' }}>
         <OptionsApiForm
           props={{
-            url: ApiPaths.part_list,
+            url: ApiEndpoints.part_list,
             method: 'POST',
             fields: {
               active: {

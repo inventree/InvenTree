@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import {
   useCreateApiFormModal,
@@ -78,7 +78,7 @@ export default function PartParameterTemplateTable() {
   };
 
   const newTemplate = useCreateApiFormModal({
-    url: ApiPaths.part_parameter_template_list,
+    url: ApiEndpoints.part_parameter_template_list,
     title: t`Create Parameter Template`,
     fields: partParameterTemplateFields,
     onFormSuccess: table.refreshTable
@@ -89,7 +89,7 @@ export default function PartParameterTemplateTable() {
   );
 
   const editTemplate = useEditApiFormModal({
-    url: ApiPaths.part_parameter_template_list,
+    url: ApiEndpoints.part_parameter_template_list,
     pk: selectedTemplate,
     title: t`Edit Parameter Template`,
     fields: partParameterTemplateFields,
@@ -97,7 +97,7 @@ export default function PartParameterTemplateTable() {
   });
 
   const deleteTemplate = useDeleteApiFormModal({
-    url: ApiPaths.part_parameter_template_list,
+    url: ApiEndpoints.part_parameter_template_list,
     pk: selectedTemplate,
     title: t`Delete Parameter Template`,
     onFormSuccess: table.refreshTable
@@ -142,7 +142,7 @@ export default function PartParameterTemplateTable() {
       {editTemplate.modal}
       {deleteTemplate.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.part_parameter_template_list)}
+        url={apiUrl(ApiEndpoints.part_parameter_template_list)}
         tableState={table}
         columns={tableColumns}
         props={{

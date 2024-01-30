@@ -3,7 +3,7 @@ import { Drawer, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { openDeleteApiForm } from '../../../functions/forms';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -46,7 +46,7 @@ export default function ErrorReportTable() {
       RowDeleteAction({
         onClick: () => {
           openDeleteApiForm({
-            url: ApiPaths.error_report_list,
+            url: ApiEndpoints.error_report_list,
             pk: record.pk,
             title: t`Delete error report`,
             onFormSuccess: table.refreshTable,
@@ -72,7 +72,7 @@ export default function ErrorReportTable() {
         })}
       </Drawer>
       <InvenTreeTable
-        url={apiUrl(ApiPaths.error_report_list)}
+        url={apiUrl(ApiEndpoints.error_report_list)}
         tableState={table}
         columns={columns}
         props={{

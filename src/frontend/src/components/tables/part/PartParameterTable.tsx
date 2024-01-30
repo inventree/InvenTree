@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import {
   useCreateApiFormModal,
@@ -99,7 +99,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
   };
 
   const newParameter = useCreateApiFormModal({
-    url: ApiPaths.part_parameter_list,
+    url: ApiEndpoints.part_parameter_list,
     title: t`New Part Parameter`,
     fields: partParameterFields,
     initialData: {
@@ -113,7 +113,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
   >(undefined);
 
   const editParameter = useEditApiFormModal({
-    url: ApiPaths.part_parameter_list,
+    url: ApiEndpoints.part_parameter_list,
     pk: selectedParameter,
     title: t`Edit Part Parameter`,
     fields: partParameterFields,
@@ -121,7 +121,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
   });
 
   const deleteParameter = useDeleteApiFormModal({
-    url: ApiPaths.part_parameter_list,
+    url: ApiEndpoints.part_parameter_list,
     pk: selectedParameter,
     title: t`Delete Part Parameter`,
     onFormSuccess: table.refreshTable
@@ -174,7 +174,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
       {editParameter.modal}
       {deleteParameter.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.part_parameter_list)}
+        url={apiUrl(ApiEndpoints.part_parameter_list)}
         tableState={table}
         columns={tableColumns}
         props={{

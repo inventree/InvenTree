@@ -12,14 +12,14 @@ import { useParams } from 'react-router-dom';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();
 
   const { instance: supplierPart, instanceQuery } = useInstance({
-    endpoint: ApiPaths.supplier_part_list,
+    endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
     hasPrimaryKey: true,
     params: {

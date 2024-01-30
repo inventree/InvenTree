@@ -37,7 +37,7 @@ import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
@@ -63,7 +63,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.company_list,
+    endpoint: ApiEndpoints.company_list,
     pk: id,
     params: {},
     refetchOnMount: true
@@ -157,7 +157,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.company_attachment_list}
+            endpoint={ApiEndpoints.company_attachment_list}
             model="company"
             pk={company.pk ?? -1}
           />
@@ -169,7 +169,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.company_list, company.pk)}
+            url={apiUrl(ApiEndpoints.company_list, company.pk)}
             data={company?.notes ?? ''}
             allowEdit={true}
           />

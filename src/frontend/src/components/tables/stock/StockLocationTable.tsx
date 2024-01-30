@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { stockLocationFields } from '../../../forms/StockForms';
@@ -100,7 +100,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   }, []);
 
   const newLocation = useCreateApiFormModal({
-    url: ApiPaths.stock_location_list,
+    url: ApiEndpoints.stock_location_list,
     title: t`Create Stock Location`,
     fields: stockLocationFields({}),
     initialData: {
@@ -120,7 +120,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   );
 
   const editLocation = useEditApiFormModal({
-    url: ApiPaths.stock_location_list,
+    url: ApiEndpoints.stock_location_list,
     pk: selectedLocation,
     title: t`Edit Stock Location`,
     fields: stockLocationFields({}),
@@ -161,7 +161,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
       {newLocation.modal}
       {editLocation.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.stock_location_list)}
+        url={apiUrl(ApiEndpoints.stock_location_list)}
         tableState={table}
         columns={tableColumns}
         props={{

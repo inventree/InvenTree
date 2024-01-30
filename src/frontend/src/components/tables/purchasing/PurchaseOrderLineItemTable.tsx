@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ProgressBar } from '../../../components/items/ProgressBar';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { purchaseOrderLineItemFields } from '../../../forms/PurchaseOrderForms';
@@ -179,7 +179,7 @@ export function PurchaseOrderLineItemTable({
   }, [orderId, user]);
 
   const newLine = useCreateApiFormModal({
-    url: ApiPaths.purchase_order_line_list,
+    url: ApiEndpoints.purchase_order_line_list,
     title: t`Add Line Item`,
     fields: purchaseOrderLineItemFields(),
     initialData: {
@@ -193,7 +193,7 @@ export function PurchaseOrderLineItemTable({
   );
 
   const editLine = useEditApiFormModal({
-    url: ApiPaths.purchase_order_line_list,
+    url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: purchaseOrderLineItemFields(),
@@ -201,7 +201,7 @@ export function PurchaseOrderLineItemTable({
   });
 
   const deleteLine = useDeleteApiFormModal({
-    url: ApiPaths.purchase_order_line_list,
+    url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Delete Line Item`,
     onFormSuccess: table.refreshTable
@@ -263,7 +263,7 @@ export function PurchaseOrderLineItemTable({
       {editLine.modal}
       {deleteLine.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.purchase_order_line_list)}
+        url={apiUrl(ApiEndpoints.purchase_order_line_list)}
         tableState={table}
         columns={tableColumns}
         props={{

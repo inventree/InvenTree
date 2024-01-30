@@ -36,7 +36,7 @@ import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useEditStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -54,7 +54,7 @@ export default function StockDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.stock_item_list,
+    endpoint: ApiEndpoints.stock_item_list,
     pk: id,
     params: {
       part_detail: true,
@@ -114,7 +114,7 @@ export default function StockDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.stock_attachment_list}
+            endpoint={ApiEndpoints.stock_attachment_list}
             model="stock_item"
             pk={Number(id)}
           />
@@ -126,7 +126,7 @@ export default function StockDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.stock_item_list, id)}
+            url={apiUrl(ApiEndpoints.stock_item_list, id)}
             data={stockitem.notes ?? ''}
             allowEdit={true}
           />

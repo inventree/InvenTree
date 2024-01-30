@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { addressFields } from '../../../forms/CompanyForms';
 import {
@@ -109,7 +109,7 @@ export function AddressTable({
   }, []);
 
   const newAddress = useCreateApiFormModal({
-    url: ApiPaths.address_list,
+    url: ApiEndpoints.address_list,
     title: t`Create Address`,
     fields: addressFields(),
     initialData: {
@@ -124,7 +124,7 @@ export function AddressTable({
   );
 
   const editAddress = useEditApiFormModal({
-    url: ApiPaths.address_list,
+    url: ApiEndpoints.address_list,
     pk: selectedAddress,
     title: t`Edit Address`,
     fields: addressFields(),
@@ -132,7 +132,7 @@ export function AddressTable({
   });
 
   const deleteAddress = useDeleteApiFormModal({
-    url: ApiPaths.address_list,
+    url: ApiEndpoints.address_list,
     pk: selectedAddress,
     title: t`Delete Address`,
     onFormSuccess: table.refreshTable,
@@ -189,7 +189,7 @@ export function AddressTable({
       {editAddress.modal}
       {deleteAddress.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.address_list)}
+        url={apiUrl(ApiEndpoints.address_list)}
         tableState={table}
         columns={columns}
         props={{

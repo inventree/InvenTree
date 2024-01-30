@@ -3,7 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { companyFields } from '../../../forms/CompanyForms';
 import { useCreateApiFormModal } from '../../../hooks/UseForm';
@@ -60,7 +60,7 @@ export function CompanyTable({
   }, []);
 
   const newCompany = useCreateApiFormModal({
-    url: ApiPaths.company_list,
+    url: ApiEndpoints.company_list,
     title: t`New Company`,
     fields: companyFields(),
     initialData: params,
@@ -93,7 +93,7 @@ export function CompanyTable({
     <>
       {newCompany.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.company_list)}
+        url={apiUrl(ApiEndpoints.company_list)}
         tableState={table}
         columns={columns}
         props={{

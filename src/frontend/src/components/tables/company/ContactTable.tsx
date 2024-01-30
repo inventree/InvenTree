@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { contactFields } from '../../../forms/CompanyForms';
 import {
@@ -62,7 +62,7 @@ export function ContactTable({
   );
 
   const editContact = useEditApiFormModal({
-    url: ApiPaths.contact_list,
+    url: ApiEndpoints.contact_list,
     pk: selectedContact,
     title: t`Edit Contact`,
     fields: contactFields(),
@@ -70,7 +70,7 @@ export function ContactTable({
   });
 
   const newContact = useCreateApiFormModal({
-    url: ApiPaths.contact_list,
+    url: ApiEndpoints.contact_list,
     title: t`Create Contact`,
     initialData: {
       company: companyId
@@ -80,7 +80,7 @@ export function ContactTable({
   });
 
   const deleteContact = useDeleteApiFormModal({
-    url: ApiPaths.contact_list,
+    url: ApiEndpoints.contact_list,
     pk: selectedContact,
     title: t`Delete Contact`,
     onFormSuccess: table.refreshTable
@@ -135,7 +135,7 @@ export function ContactTable({
       {editContact.modal}
       {deleteContact.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.contact_list)}
+        url={apiUrl(ApiEndpoints.contact_list)}
         tableState={table}
         columns={columns}
         props={{

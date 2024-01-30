@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { renderDate } from '../../../defaults/formatters';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { buildOrderFields } from '../../../forms/BuildForms';
@@ -174,7 +174,7 @@ export function BuildOrderTable({
     <>
       {newBuild.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.build_order_list)}
+        url={ApiEndpoints.build_order_list}
         tableState={table}
         columns={tableColumns}
         props={{

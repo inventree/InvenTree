@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
 import { projectCodeFields } from '../../../forms/CommonForms';
 import {
@@ -39,7 +39,7 @@ export default function ProjectCodeTable() {
   }, []);
 
   const newProjectCode = useCreateApiFormModal({
-    url: ApiPaths.project_code_list,
+    url: ApiEndpoints.project_code_list,
     title: t`Add Project Code`,
     fields: projectCodeFields(),
     onFormSuccess: table.refreshTable
@@ -50,7 +50,7 @@ export default function ProjectCodeTable() {
   >(undefined);
 
   const editProjectCode = useEditApiFormModal({
-    url: ApiPaths.project_code_list,
+    url: ApiEndpoints.project_code_list,
     pk: selectedProjectCode,
     title: t`Edit Project Code`,
     fields: projectCodeFields(),
@@ -58,7 +58,7 @@ export default function ProjectCodeTable() {
   });
 
   const deleteProjectCode = useDeleteApiFormModal({
-    url: ApiPaths.project_code_list,
+    url: ApiEndpoints.project_code_list,
     pk: selectedProjectCode,
     title: t`Delete Project Code`,
     onFormSuccess: table.refreshTable
@@ -105,7 +105,7 @@ export default function ProjectCodeTable() {
       {editProjectCode.modal}
       {deleteProjectCode.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.project_code_list)}
+        url={apiUrl(ApiEndpoints.project_code_list)}
         tableState={table}
         columns={columns}
         props={{

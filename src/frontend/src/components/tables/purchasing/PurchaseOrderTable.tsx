@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { PurchaseOrderFormFields } from '../../../forms/PurchaseOrderForms';
@@ -104,7 +104,7 @@ export function PurchaseOrderTable({
   }, []);
 
   const newPurchaseOrder = useCreateApiFormModal({
-    url: ApiPaths.purchase_order_list,
+    url: ApiEndpoints.purchase_order_list,
     title: t`Create Purchase Order`,
     fields: PurchaseOrderFormFields(),
     initialData: {
@@ -133,7 +133,7 @@ export function PurchaseOrderTable({
     <>
       {newPurchaseOrder.modal}
       <InvenTreeTable
-        url={apiUrl(ApiPaths.purchase_order_list)}
+        url={apiUrl(ApiEndpoints.purchase_order_list)}
         tableState={table}
         columns={tableColumns}
         props={{
