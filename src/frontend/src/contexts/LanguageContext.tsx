@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { api } from '../App';
 import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
+import { useGlobalStatusState } from '../states/StatusState';
 
 // Definitions
 export type Locales = keyof typeof languages | 'pseudo-LOCALE';
@@ -90,8 +91,9 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
         // Update default Accept-Language headers
         api.defaults.headers.common['Accept-Language'] = locales.join(', ');
 
-        // Reload server state (refresh status codes)
+        // Reload server state (and refresh status codes)
         useServerApiState.getState().fetchServerApiState();
+        useGlobalStatusState.getState().fetchStatus();
       })
       .catch((err) => {
         console.error('Failed loading translations', err);

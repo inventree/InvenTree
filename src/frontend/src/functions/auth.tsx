@@ -12,6 +12,7 @@ import {
   useGlobalSettingsState,
   useUserSettingsState
 } from '../states/SettingsState';
+import { useGlobalStatusState } from '../states/StatusState';
 import { useUserState } from '../states/UserState';
 
 export const doClassicLogin = async (username: string, password: string) => {
@@ -85,11 +86,18 @@ export const doTokenLogin = (token: string) => {
   const { fetchUserState } = useUserState.getState();
   const { fetchServerApiState } = useServerApiState.getState();
   const globalSettingsState = useGlobalSettingsState.getState();
+  const globalStatusState = useGlobalStatusState.getState();
   const userSettingsState = useUserSettingsState.getState();
 
+  // First, set the API token for auth
   setToken(token);
+
+  // Fetch user and server data
   fetchUserState();
   fetchServerApiState();
+
+  // Fetch settings
+  globalStatusState.fetchStatus();
   globalSettingsState.fetchSettings();
   userSettingsState.fetchSettings();
 };
