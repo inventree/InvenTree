@@ -9,7 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 
-import { doClassicLogout } from '../../functions/auth';
+import { doClasssicLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useUserState } from '../../states/UserState';
 

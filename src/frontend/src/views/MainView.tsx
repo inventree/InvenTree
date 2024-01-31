@@ -1,8 +1,9 @@
 import { useViewportSize } from '@mantine/hooks';
 import { lazy, useEffect } from 'react';
 
+import { setApiDefaults } from '../App';
 import { Loadable } from '../functions/loading';
-import { useServerApiState } from '../states/ApiState';
+import { useSessionState } from '../states/SessionState';
 
 function checkMobile() {
   const { height, width } = useViewportSize();
@@ -15,8 +16,11 @@ const DesktopAppView = Loadable(lazy(() => import('./DesktopAppView')));
 
 // Main App
 export default function MainView() {
+  // Set initial login status
   useEffect(() => {
-    useServerApiState.getState().setAuthenticated(false);
+    useSessionState.getState().setLoggedIn(false);
+    // Local state initialization
+    setApiDefaults();
   }, []);
 
   // Check if mobile

@@ -6,7 +6,8 @@ import { create, createStore } from 'zustand';
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { isTrue } from '../functions/conversion';
-import { PathParams, apiUrl, useServerApiState } from './ApiState';
+import { PathParams, apiUrl } from './ApiState';
+import { useSessionState } from './SessionState';
 import { Setting, SettingsLookup } from './states';
 
 export interface SettingsStateProps {
@@ -28,7 +29,7 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
     lookup: {},
     endpoint: ApiEndpoints.settings_global_list,
     fetchSettings: async () => {
-      if (!useServerApiState.getState().authenticated) {
+      if (!useSessionState.getState().loggedIn) {
         return;
       }
 
@@ -62,7 +63,7 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   lookup: {},
   endpoint: ApiEndpoints.settings_user_list,
   fetchSettings: async () => {
-    if (!useServerApiState.getState().authenticated) {
+    if (!useSessionState.getState().loggedIn) {
       return;
     }
 

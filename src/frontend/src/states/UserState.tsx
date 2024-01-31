@@ -4,7 +4,8 @@ import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { UserPermissions, UserRoles } from '../enums/Roles';
 import { doClassicLogout } from '../functions/auth';
-import { apiUrl, useServerApiState } from './ApiState';
+import { apiUrl } from './ApiState';
+import { useSessionState } from './SessionState';
 import { UserProps } from './states';
 
 interface UserStateProps {
@@ -35,7 +36,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
-    if (useServerApiState.getState().authenticated) {
+    if (!useSessionState.getState().loggedIn) {
       // Fetch user data
       await api
         .get(apiUrl(ApiEndpoints.user_me), {

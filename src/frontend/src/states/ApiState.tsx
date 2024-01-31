@@ -14,29 +14,12 @@ interface ServerApiStateProps {
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
   auth_settings?: AuthProps;
-  authenticated: boolean;
-  setAuthenticated: (newAuthenticated: boolean) => void;
 }
 
 export const useServerApiState = create<ServerApiStateProps>()(
   persist(
     (set, get) => ({
       server: emptyServerAPI,
-      authenticated: false,
-      setAuthenticated: (newAuthenticated: boolean) => {
-        // Check if we are transitioning from unauthenticated to authenticated
-        const refetch: boolean = newAuthenticated && !get().authenticated;
-
-        set({ authenticated: newAuthenticated });
-
-        // Refetch global data
-        if (refetch) {
-          useUserState().fetchUserState();
-          useGlobalStatusState().fetchStatus();
-          useGlobalSettingsState().fetchSettings();
-          useUserSettingsState().fetchSettings();
-        }
-      },
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
       fetchServerApiState: async () => {
         // Fetch server data

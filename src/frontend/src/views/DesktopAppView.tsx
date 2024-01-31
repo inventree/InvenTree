@@ -26,9 +26,6 @@ export default function DesktopAppView() {
     state.fetchSettings
   ]);
 
-  // Local state initialization
-  setApiDefaults();
-
   // Server Session
   const [fetchedServerSession, setFetchedServerSession] = useState(false);
   const sessionState = useSessionState.getState();
