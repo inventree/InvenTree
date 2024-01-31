@@ -27,8 +27,6 @@ export const useSessionState = create<SessionStateProps>()(
       setToken: (newToken) => {
         set({ token: newToken });
 
-        console.log('setToken:', newToken, '->', get().hasToken());
-
         setApiDefaults();
         fetchGlobalStates();
       },

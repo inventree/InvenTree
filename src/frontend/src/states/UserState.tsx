@@ -35,8 +35,6 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
-    console.log('fetchUserState:', useSessionState.getState().hasToken());
-
     if (!useSessionState.getState().hasToken()) {
       return;
     }

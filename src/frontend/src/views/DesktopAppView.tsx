@@ -32,7 +32,6 @@ export default function DesktopAppView() {
   const [token] = sessionState.token ? [sessionState.token] : [null];
   useEffect(() => {
     if (Object.keys(hostList).length === 0) {
-      console.log('Loading default host list', defaultHostList);
       useLocalState.setState({ hostList: defaultHostList });
     }
 

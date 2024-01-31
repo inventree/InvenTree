@@ -263,7 +263,6 @@ export function openModalApiForm(props: OpenApiFormProps) {
       });
     })
     .catch((error) => {
-      console.log('Error:', error);
       if (error.response) {
         invalidResponse(error.response.status);
       } else {
