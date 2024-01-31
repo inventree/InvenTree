@@ -17,6 +17,7 @@ import { useUserState } from '../states/UserState';
 
 export const doClassicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
+  const apiState = useServerApiState.getState();
 
   // Get token from server
   const token = await axios
@@ -38,7 +39,12 @@ export const doClassicLogin = async (username: string, password: string) => {
       return false;
     });
 
-  if (token === false) return token;
+  if (token === false) {
+    apiState.setAuthenticated(false);
+    return token;
+  }
+
+  apiState.setAuthenticated(true);
 
   // log in with token
   doTokenLogin(token);
@@ -134,6 +140,10 @@ export function checkLoginState(
   redirect?: string,
   no_redirect?: boolean
 ) {
+  const apiState = useServerApiState.getState();
+
+  apiState.setAuthenticated(false);
+
   api
     .get(apiUrl(ApiEndpoints.user_token), {
       timeout: 2000,
@@ -144,6 +154,8 @@ export function checkLoginState(
     .then((val) => {
       if (val.status === 200 && val.data.token) {
         doTokenLogin(val.data.token);
+
+        apiState.setAuthenticated(true);
 
         notifications.show({
           title: t`Already logged in`,

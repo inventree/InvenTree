@@ -4,6 +4,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { api } from '../App';
 import { emptyServerAPI } from '../defaults/defaults';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
+import { useGlobalStatusState } from './StatusState';
 import { AuthProps, ServerAPIProps } from './states';
 
 interface ServerApiStateProps {
@@ -11,12 +13,28 @@ interface ServerApiStateProps {
   setServer: (newServer: ServerAPIProps) => void;
   fetchServerApiState: () => void;
   auth_settings?: AuthProps;
+  authenticated: boolean;
+  setAuthenticated: (newAuthenticated: boolean) => void;
 }
 
 export const useServerApiState = create<ServerApiStateProps>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       server: emptyServerAPI,
+      authenticated: false,
+      setAuthenticated: (newAuthenticated: boolean) => {
+        // Check if we are transitioning from unauthenticated to authenticated
+        const refetch: boolean = newAuthenticated && !get().authenticated;
+
+        set({ authenticated: newAuthenticated });
+
+        // Refetch global data
+        if (refetch) {
+          useGlobalStatusState().fetchStatus();
+          useGlobalSettingsState().fetchSettings();
+          useUserSettingsState().fetchSettings();
+        }
+      },
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
       fetchServerApiState: async () => {
         // Fetch server data

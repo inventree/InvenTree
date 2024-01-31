@@ -92,7 +92,6 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
         api.defaults.headers.common['Accept-Language'] = locales.join(', ');
 
         // Reload server state (and refresh status codes)
-        useServerApiState.getState().fetchServerApiState();
         useGlobalStatusState.getState().fetchStatus();
       })
       .catch((err) => {
