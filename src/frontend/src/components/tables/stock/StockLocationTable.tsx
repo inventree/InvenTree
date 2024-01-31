@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { stockLocationFields } from '../../../forms/StockForms';
-import { openCreateApiForm, openEditApiForm } from '../../../functions/forms';
 import { getDetailUrl } from '../../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -96,26 +99,33 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     ];
   }, []);
 
-  const addLocation = useCallback(() => {
-    let fields = stockLocationFields({});
-
-    if (parentId) {
-      fields['parent'].value = parentId;
-    }
-
-    openCreateApiForm({
-      url: apiUrl(ApiEndpoints.stock_location_list),
-      title: t`Add Stock Location`,
-      fields: fields,
-      onFormSuccess(data: any) {
-        if (data.pk) {
-          navigate(`/stock/location/${data.pk}`);
-        } else {
-          table.refreshTable();
-        }
+  const newLocation = useCreateApiFormModal({
+    url: ApiEndpoints.stock_location_list,
+    title: t`Add Stock Location`,
+    fields: stockLocationFields({}),
+    initialData: {
+      parent: parentId
+    },
+    onFormSuccess(data: any) {
+      if (data.pk) {
+        navigate(getDetailUrl(ModelType.stocklocation, data.pk));
+      } else {
+        table.refreshTable();
       }
-    });
-  }, [parentId]);
+    }
+  });
+
+  const [selectedLocation, setSelectedLocation] = useState<number | undefined>(
+    undefined
+  );
+
+  const editLocation = useEditApiFormModal({
+    url: ApiEndpoints.stock_location_list,
+    pk: selectedLocation,
+    title: t`Edit Stock Location`,
+    fields: stockLocationFields({}),
+    onFormSuccess: table.refreshTable
+  });
 
   const tableActions = useMemo(() => {
     let can_add = user.hasAddRole(UserRoles.stock_location);
@@ -123,7 +133,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     return [
       <AddItemButton
         tooltip={t`Add Stock Location`}
-        onClick={addLocation}
+        onClick={() => newLocation.open()}
         disabled={!can_add}
       />
     ];
@@ -137,14 +147,8 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            openEditApiForm({
-              url: ApiEndpoints.stock_location_list,
-              pk: record.pk,
-              title: t`Edit Stock Location`,
-              fields: stockLocationFields({}),
-              successMessage: t`Stock location updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedLocation(record.pk);
+            editLocation.open();
           }
         })
       ];
@@ -153,23 +157,26 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   );
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.stock_location_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        enableDownload: true,
-        params: {
-          parent: parentId ?? 'null'
-        },
-        tableFilters: tableFilters,
-        tableActions: tableActions,
-        rowActions: rowActions,
-        onRowClick: (record) => {
-          navigate(getDetailUrl(ModelType.stocklocation, record.pk));
-        }
-        // TODO: allow for "tree view" with cascade
-      }}
-    />
+    <>
+      {newLocation.modal}
+      {editLocation.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.stock_location_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          enableDownload: true,
+          params: {
+            parent: parentId ?? 'null'
+          },
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          rowActions: rowActions,
+          onRowClick: (record) => {
+            navigate(getDetailUrl(ModelType.stocklocation, record.pk));
+          }
+        }}
+      />
+    </>
   );
 }
