@@ -1,12 +1,13 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
-import { notYetImplemented } from '../../../functions/notifications';
+import { salesOrderFields } from '../../../forms/SalesOrderForms';
 import { getDetailUrl } from '../../../functions/urls';
+import { useCreateApiFormModal } from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -31,7 +32,13 @@ import {
 } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
-export function SalesOrderTable({ params }: { params?: any }) {
+export function SalesOrderTable({
+  partId,
+  customerId
+}: {
+  partId?: number;
+  customerId?: number;
+}) {
   const table = useTable('sales-order');
   const user = useUserState();
 
@@ -53,9 +60,31 @@ export function SalesOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
-  // TODO: Row actions
+  const newSalesOrder = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_list,
+    title: t`Add Sales Order`,
+    fields: salesOrderFields(),
+    initialData: {
+      customer: customerId
+    },
+    onFormSuccess: (response) => {
+      if (response.pk) {
+        navigate(getDetailUrl(ModelType.salesorder, response.pk));
+      } else {
+        table.refreshTable();
+      }
+    }
+  });
 
-  // TODO: Table actions (e.g. create new sales order)
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add Sales Order`}
+        onClick={() => newSalesOrder.open()}
+        hidden={!user.hasAddRole(UserRoles.sales_order)}
+      />
+    ];
+  }, [user]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -97,38 +126,28 @@ export function SalesOrderTable({ params }: { params?: any }) {
     ];
   }, []);
 
-  const addSalesOrder = useCallback(() => {
-    notYetImplemented();
-  }, []);
-
-  const tableActions = useMemo(() => {
-    return [
-      <AddItemButton
-        tooltip={t`Add Sales Order`}
-        onClick={addSalesOrder}
-        hidden={!user.hasAddRole(UserRoles.sales_order)}
-      />
-    ];
-  }, [user]);
-
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.sales_order_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          customer_detail: true
-        },
-        tableFilters: tableFilters,
-        tableActions: tableActions,
-        onRowClick: (row: any) => {
-          if (row.pk) {
-            navigate(getDetailUrl(ModelType.salesorder, row.pk));
+    <>
+      {newSalesOrder.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.sales_order_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            customer_detail: true,
+            part: partId,
+            customer: customerId
+          },
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          onRowClick: (row: any) => {
+            if (row.pk) {
+              navigate(getDetailUrl(ModelType.salesorder, row.pk));
+            }
           }
-        }
-      }}
-    />
+        }}
+      />
+    </>
   );
 }

@@ -255,6 +255,12 @@ class GetAuthToken(APIView):
                 # User is authenticated, and requesting a token against the provided name.
                 token = ApiToken.objects.create(user=request.user, name=name)
 
+                logger.info(
+                    "Created new API token for user '%s' (name='%s')",
+                    user.username,
+                    name,
+                )
+
             # Add some metadata about the request
             token.set_metadata('user_agent', request.META.get('HTTP_USER_AGENT', ''))
             token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
@@ -264,10 +270,6 @@ class GetAuthToken(APIView):
             token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
             data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
-
-            logger.info(
-                "Created new API token for user '%s' (name='%s')", user.username, name
-            )
 
             # Ensure that the users session is logged in (PUI -> CUI login)
             if not get_user(request).is_authenticated:

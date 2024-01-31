@@ -122,6 +122,7 @@ function BasePanelGroup({
                   <Tabs.Tab
                     p="xs"
                     value={panel.name}
+                    //                    icon={(<InvenTreeIcon icon={panel.name}/>)}  // Enable when implementing Icon manager everywhere
                     icon={panel.icon}
                     hidden={panel.hidden}
                   >
