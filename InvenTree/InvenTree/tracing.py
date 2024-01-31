@@ -19,6 +19,7 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 
+import InvenTree.ready
 from InvenTree.version import inventreeVersion
 
 # Logger configuration
@@ -42,6 +43,9 @@ def setup_tracing(
         resources_input: The resources to send with the traces.
         console: Whether to output the traces to the console.
     """
+    if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+        return
+
     if resources_input is None:
         resources_input = {}
     if auth is None:
