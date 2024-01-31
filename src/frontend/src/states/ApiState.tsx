@@ -6,6 +6,7 @@ import { emptyServerAPI } from '../defaults/defaults';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
+import { useUserState } from './UserState';
 import { AuthProps, ServerAPIProps } from './states';
 
 interface ServerApiStateProps {
@@ -30,6 +31,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
 
         // Refetch global data
         if (refetch) {
+          useUserState().fetchUserState();
           useGlobalStatusState().fetchStatus();
           useGlobalSettingsState().fetchSettings();
           useUserSettingsState().fetchSettings();
