@@ -15,7 +15,7 @@ interface ServerApiStateProps {
 
 export const useServerApiState = create<ServerApiStateProps>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       server: emptyServerAPI,
       setServer: (newServer: ServerAPIProps) => set({ server: newServer }),
       fetchServerApiState: async () => {
