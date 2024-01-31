@@ -4,7 +4,7 @@ import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
 import { api } from '../App';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
@@ -19,7 +19,7 @@ export const doClassicLogin = async (username: string, password: string) => {
 
   // Get token from server
   const token = await axios
-    .get(apiUrl(ApiPaths.user_token), {
+    .get(apiUrl(ApiEndpoints.user_token), {
       auth: { username, password },
       baseURL: host,
       timeout: 2000,
@@ -54,7 +54,7 @@ export const doClassicLogout = async () => {
   setToken(undefined);
 
   // Logout from the server session
-  await api.post(apiUrl(ApiPaths.user_logout));
+  await api.post(apiUrl(ApiEndpoints.user_logout));
 
   notifications.show({
     title: t`Logout successful`,
@@ -69,7 +69,7 @@ export const doClassicLogout = async () => {
 export const doSimpleLogin = async (email: string) => {
   const { host } = useLocalState.getState();
   const mail = await axios
-    .post(apiUrl(ApiPaths.user_simple_login), {
+    .post(apiUrl(ApiEndpoints.user_simple_login), {
       email: email
     })
     .then((response) => response.data)
@@ -96,7 +96,7 @@ export const doTokenLogin = (token: string) => {
 
 export function handleReset(navigate: any, values: { email: string }) {
   api
-    .post(apiUrl(ApiPaths.user_reset), values, {
+    .post(apiUrl(ApiEndpoints.user_reset), values, {
       headers: { Authorization: '' }
     })
     .then((val) => {
@@ -127,7 +127,7 @@ export function checkLoginState(
   no_redirect?: boolean
 ) {
   api
-    .get(apiUrl(ApiPaths.user_token), {
+    .get(apiUrl(ApiEndpoints.user_token), {
       timeout: 2000,
       params: {
         name: 'inventree-web-app'

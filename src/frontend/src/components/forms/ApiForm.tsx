@@ -14,13 +14,14 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useState } from 'react';
 import {
   FieldValues,
+  FormProvider,
   SubmitErrorHandler,
   SubmitHandler,
   useForm
 } from 'react-hook-form';
 
 import { api, queryClient } from '../../App';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
   NestedDict,
   constructField,
@@ -60,11 +61,12 @@ export interface ApiFormAction {
  * @param onFormError : A callback function to call when the form is submitted with errors.
  */
 export interface ApiFormProps {
-  url: ApiPaths | string;
+  url: ApiEndpoints | string;
   pk?: number | string | undefined;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   fields?: ApiFormFieldSet;
+  initialData?: FieldValues;
   submitText?: string;
   submitColor?: string;
   fetchInitialData?: boolean;
@@ -146,6 +148,13 @@ export function OptionsApiForm({
         field: v,
         definition: data?.[k]
       });
+
+      // If the user has specified initial data, use that value here
+      let value = _props?.initialData?.[k];
+
+      if (value) {
+        _props.fields[k].value = value;
+      }
     }
 
     return _props;
@@ -163,13 +172,23 @@ export function OptionsApiForm({
  * based on an API endpoint.
  */
 export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
-  const defaultValues: FieldValues = useMemo(
-    () =>
-      mapFields(props.fields ?? {}, (_path, field) => {
-        return field.default ?? undefined;
-      }),
-    [props.fields]
-  );
+  const defaultValues: FieldValues = useMemo(() => {
+    let defaultValuesMap = mapFields(props.fields ?? {}, (_path, field) => {
+      return field.value ?? field.default ?? undefined;
+    });
+
+    // If the user has specified initial data, use that instead
+    if (props.initialData) {
+      defaultValuesMap = {
+        ...defaultValuesMap,
+        ...props.initialData
+      };
+    }
+
+    // Update the form values, but only for the fields specified for this form
+
+    return defaultValuesMap;
+  }, [props.fields, props.initialData]);
 
   // Form errors which are not associated with a specific field
   const [nonFieldErrors, setNonFieldErrors] = useState<string[]>([]);
@@ -179,6 +198,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     criteriaMode: 'all',
     defaultValues
   });
+
   const {
     isValid,
     isDirty,
@@ -390,16 +410,18 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
             {props.preFormWarning}
           </Alert>
         )}
-        <Stack spacing="xs">
-          {Object.entries(props.fields ?? {}).map(([fieldName, field]) => (
-            <ApiFormField
-              key={fieldName}
-              fieldName={fieldName}
-              definition={field}
-              control={form.control}
-            />
-          ))}
-        </Stack>
+        <FormProvider {...form}>
+          <Stack spacing="xs">
+            {Object.entries(props.fields ?? {}).map(([fieldName, field]) => (
+              <ApiFormField
+                key={fieldName}
+                fieldName={fieldName}
+                definition={field}
+                control={form.control}
+              />
+            ))}
+          </Stack>
+        </FormProvider>
         {props.postFormContent}
       </Stack>
       <Divider />

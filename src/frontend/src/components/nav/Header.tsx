@@ -7,9 +7,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { InvenTreeStyle } from '../../globalStyle';
-import { apiUrl } from '../../states/ApiState';
 import { ScanButton } from '../items/ScanButton';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
@@ -38,7 +37,7 @@ export function Header() {
     queryKey: ['notification-count'],
     queryFn: async () => {
       return api
-        .get(apiUrl(ApiPaths.notifications_list), {
+        .get(ApiEndpoints.notifications_list, {
           params: {
             read: false,
             limit: 1

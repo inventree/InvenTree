@@ -9,10 +9,12 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { formatPriceRange } from '../../../defaults/formatters';
-import { ApiPaths } from '../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { UserRoles } from '../../../enums/Roles';
 import { bomItemFields } from '../../../forms/BomForms';
 import { openDeleteApiForm, openEditApiForm } from '../../../functions/forms';
+import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -318,7 +320,7 @@ export function BomTable({
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             openEditApiForm({
-              url: ApiPaths.bom_list,
+              url: ApiEndpoints.bom_list,
               pk: record.pk,
               title: t`Edit Bom Item`,
               fields: bomItemFields(),
@@ -335,7 +337,7 @@ export function BomTable({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             openDeleteApiForm({
-              url: ApiPaths.bom_list,
+              url: ApiEndpoints.bom_list,
               pk: record.pk,
               title: t`Delete Bom Item`,
               successMessage: t`Bom item deleted`,
@@ -353,7 +355,7 @@ export function BomTable({
 
   return (
     <InvenTreeTable
-      url={apiUrl(ApiPaths.bom_list)}
+      url={apiUrl(ApiEndpoints.bom_list)}
       tableState={table}
       columns={tableColumns}
       props={{
@@ -364,7 +366,8 @@ export function BomTable({
           sub_part_detail: true
         },
         tableFilters: tableFilters,
-        onRowClick: (row) => navigate(`/part/${row.sub_part}`),
+        onRowClick: (row) =>
+          navigate(getDetailUrl(ModelType.part, row.sub_part)),
         rowActions: rowActions
       }}
     />

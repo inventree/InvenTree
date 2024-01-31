@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -37,9 +37,10 @@ import { ReturnOrderTable } from '../../components/tables/sales/ReturnOrderTable
 import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
-import { editCompany } from '../../forms/CompanyForms';
+import { companyFields } from '../../forms/CompanyForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -62,7 +63,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.company_list,
+    endpoint: ApiEndpoints.company_list,
     pk: id,
     params: {},
     refetchOnMount: true
@@ -98,9 +99,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         hidden: !company?.is_supplier,
-        content: company?.pk && (
-          <PurchaseOrderTable params={{ supplier: company.pk }} />
-        )
+        content: company?.pk && <PurchaseOrderTable supplierId={company.pk} />
       },
       {
         name: 'stock-items',
@@ -116,9 +115,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
         hidden: !company?.is_customer,
-        content: company?.pk && (
-          <SalesOrderTable params={{ customer: company.pk }} />
-        )
+        content: company?.pk && <SalesOrderTable customerId={company.pk} />
       },
       {
         name: 'return-orders',
@@ -133,7 +130,12 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         name: 'assigned-stock',
         label: t`Assigned Stock`,
         icon: <IconPackageExport />,
-        hidden: !company?.is_customer
+        hidden: !company?.is_customer,
+        content: company?.pk ? (
+          <StockItemTable params={{ customer: company.pk }} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'contacts',
@@ -153,7 +155,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.company_attachment_list}
+            endpoint={ApiEndpoints.company_attachment_list}
             model="company"
             pk={company.pk ?? -1}
           />
@@ -165,7 +167,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.company_list, company.pk)}
+            url={apiUrl(ApiEndpoints.company_list, company.pk)}
             data={company?.notes ?? ''}
             allowEdit={true}
           />
@@ -173,6 +175,14 @@ export default function CompanyDetail(props: CompanyDetailProps) {
       }
     ];
   }, [id, company]);
+
+  const editCompany = useEditApiFormModal({
+    url: ApiEndpoints.company_list,
+    pk: company?.pk,
+    title: t`Edit Company`,
+    fields: companyFields(),
+    onFormSuccess: refreshInstance
+  });
 
   const companyActions = useMemo(() => {
     return [
@@ -183,14 +193,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         actions={[
           EditItemAction({
             disabled: !user.hasChangeRole(UserRoles.purchase_order),
-            onClick: () => {
-              if (company?.pk) {
-                editCompany({
-                  pk: company?.pk,
-                  callback: refreshInstance
-                });
-              }
-            }
+            onClick: () => editCompany.open()
           }),
           DeleteItemAction({
             disabled: !user.hasDeleteRole(UserRoles.purchase_order)
@@ -201,16 +204,19 @@ export default function CompanyDetail(props: CompanyDetailProps) {
   }, [id, company, user]);
 
   return (
-    <Stack spacing="xs">
-      <LoadingOverlay visible={instanceQuery.isFetching} />
-      <PageDetail
-        title={t`Company` + `: ${company.name}`}
-        subtitle={company.description}
-        actions={companyActions}
-        imageUrl={company.image}
-        breadcrumbs={props.breadcrumbs}
-      />
-      <PanelGroup pageKey="company" panels={companyPanels} />
-    </Stack>
+    <>
+      {editCompany.modal}
+      <Stack spacing="xs">
+        <LoadingOverlay visible={instanceQuery.isFetching} />
+        <PageDetail
+          title={t`Company` + `: ${company.name}`}
+          subtitle={company.description}
+          actions={companyActions}
+          imageUrl={company.image}
+          breadcrumbs={props.breadcrumbs}
+        />
+        <PanelGroup pageKey="company" panels={companyPanels} />
+      </Stack>
+    </>
   );
 }

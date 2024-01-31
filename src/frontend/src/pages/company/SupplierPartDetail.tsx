@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
   IconInfoCircle,
@@ -11,14 +11,15 @@ import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();
 
   const { instance: supplierPart, instanceQuery } = useInstance({
-    endpoint: ApiPaths.supplier_part_list,
+    endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
     hasPrimaryKey: true,
     params: {
@@ -42,7 +43,12 @@ export default function SupplierPartDetail() {
       {
         name: 'purchaseorders',
         label: t`Purchase Orders`,
-        icon: <IconShoppingCart />
+        icon: <IconShoppingCart />,
+        content: supplierPart?.pk ? (
+          <PurchaseOrderTable supplierPartId={supplierPart.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'pricing',
@@ -50,7 +56,7 @@ export default function SupplierPartDetail() {
         icon: <IconCurrencyDollar />
       }
     ];
-  }, []);
+  }, [supplierPart]);
 
   const breadcrumbs = useMemo(() => {
     return [
@@ -60,7 +66,7 @@ export default function SupplierPartDetail() {
       },
       {
         name: supplierPart?.supplier_detail?.name ?? t`Supplier`,
-        url: `/company/supplier/${supplierPart?.supplier_detail?.pk ?? ''}`
+        url: `/purchasing/supplier/${supplierPart?.supplier_detail?.pk ?? ''}`
       }
     ];
   }, [supplierPart]);

@@ -36,6 +36,7 @@ LOCALES = [
     ('pt', _('Portuguese')),
     ('pt-br', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
+    ('sk', _('Slovak')),
     ('sl', _('Slovenian')),
     ('sr', _('Serbian')),
     ('sv', _('Swedish')),
