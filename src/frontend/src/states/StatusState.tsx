@@ -24,8 +24,8 @@ export const useGlobalStatusState = create<ServerStateProps>()(
       setStatus: (newStatus: StatusLookup) => set({ status: newStatus }),
       fetchStatus: async () => {
         // Fetch status data for rendering labels
-
-        if (!useSessionState.getState().loggedIn) {
+        console.log('fetchGlobalState:', useSessionState.getState().hasToken());
+        if (!useSessionState.getState().hasToken()) {
           return;
         }
 

@@ -43,7 +43,7 @@ export function AuthenticationForm() {
       ).then(() => {
         setIsLoggingIn(false);
 
-        if (useSessionState.getState().loggedIn) {
+        if (useSessionState.getState().hasToken()) {
           notifications.show({
             title: t`Login successful`,
             message: t`Welcome back!`,

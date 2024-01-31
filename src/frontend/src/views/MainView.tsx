@@ -3,7 +3,6 @@ import { lazy, useEffect } from 'react';
 
 import { setApiDefaults } from '../App';
 import { Loadable } from '../functions/loading';
-import { useSessionState } from '../states/SessionState';
 
 function checkMobile() {
   const { height, width } = useViewportSize();
@@ -18,7 +17,6 @@ const DesktopAppView = Loadable(lazy(() => import('./DesktopAppView')));
 export default function MainView() {
   // Set initial login status
   useEffect(() => {
-    useSessionState.getState().setLoggedIn(false);
     // Local state initialization
     setApiDefaults();
   }, []);

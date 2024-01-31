@@ -5,13 +5,13 @@ import { setApiDefaults } from '../App';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
 import { useUserState } from './UserState';
+import { fetchGlobalStates } from './states';
 
 interface SessionStateProps {
   token?: string;
   setToken: (newToken?: string) => void;
+  clearToken: () => void;
   hasToken: () => boolean;
-  loggedIn: boolean;
-  setLoggedIn: (isLoggedIn: boolean) => void;
 }
 
 /*
@@ -20,23 +20,19 @@ interface SessionStateProps {
 export const useSessionState = create<SessionStateProps>()(
   persist(
     (set, get) => ({
-      token: '',
+      token: undefined,
+      clearToken: () => {
+        set({ token: undefined });
+      },
       setToken: (newToken) => {
         set({ token: newToken });
+
+        console.log('setToken:', newToken, '->', get().hasToken());
+
         setApiDefaults();
+        fetchGlobalStates();
       },
-      hasToken: () => !!get().token,
-      loggedIn: false,
-      setLoggedIn: (isLoggedIn: boolean) => {
-        set({ loggedIn: isLoggedIn });
-        if (isLoggedIn) {
-          // A valid API token has been provided - refetch global state data
-          useUserState().fetchUserState();
-          useUserSettingsState().fetchSettings();
-          useGlobalStatusState().fetchStatus();
-          useGlobalSettingsState().fetchSettings();
-        }
-      }
+      hasToken: () => !!get().token
     }),
     {
       name: 'session-state',

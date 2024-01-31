@@ -29,7 +29,12 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
     lookup: {},
     endpoint: ApiEndpoints.settings_global_list,
     fetchSettings: async () => {
-      if (!useSessionState.getState().loggedIn) {
+      console.log(
+        'fetchGlobalSettings:',
+        useSessionState.getState().hasToken()
+      );
+
+      if (!useSessionState.getState().hasToken()) {
         return;
       }
 
@@ -63,7 +68,9 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   lookup: {},
   endpoint: ApiEndpoints.settings_user_list,
   fetchSettings: async () => {
-    if (!useSessionState.getState().loggedIn) {
+    console.log('fetchUserSettings:', useSessionState.getState().hasToken());
+
+    if (!useSessionState.getState().hasToken()) {
       return;
     }
 

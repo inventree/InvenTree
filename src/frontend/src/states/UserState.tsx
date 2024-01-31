@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { UserPermissions, UserRoles } from '../enums/Roles';
-import { doClassicLogout } from '../functions/auth';
 import { apiUrl } from './ApiState';
 import { useSessionState } from './SessionState';
 import { UserProps } from './states';
@@ -36,7 +35,9 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
-    if (!useSessionState.getState().loggedIn) {
+    console.log('fetchUserState:', useSessionState.getState().hasToken());
+
+    if (!useSessionState.getState().hasToken()) {
       return;
     }
 
@@ -57,8 +58,6 @@ export const useUserState = create<UserStateProps>((set, get) => ({
       })
       .catch((error) => {
         console.error('Error fetching user data:', error);
-        // Redirect to login page
-        doClassicLogout();
       });
 
     // Fetch role data

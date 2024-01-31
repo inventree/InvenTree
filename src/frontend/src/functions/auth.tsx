@@ -1,19 +1,13 @@
 import { t } from '@lingui/macro';
-import { notifications, showNotification } from '@mantine/notifications';
+import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl, useServerApiState } from '../states/ApiState';
+import { apiUrl } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
-import {
-  useGlobalSettingsState,
-  useUserSettingsState
-} from '../states/SettingsState';
-import { useGlobalStatusState } from '../states/StatusState';
-import { useUserState } from '../states/UserState';
 
 /**
  * Attempt to login using username:password combination.
@@ -29,8 +23,7 @@ export const doBasicLogin = async (username: string, password: string) => {
   }
 
   // At this stage, we can assume that we are not logged in, and we have no token
-  useSessionState.getState().setToken('');
-  useSessionState.getState().setLoggedIn(false);
+  useSessionState.getState().clearToken();
 
   // Request new token from the server
   await axios
@@ -43,12 +36,9 @@ export const doBasicLogin = async (username: string, password: string) => {
       }
     })
     .then((response) => {
-      if (response.status == 200) {
-        if (response.data?.token) {
-          // A valid token has been returned - save, and login
-          useSessionState.getState().setToken(response.data.token);
-          useSessionState.getState().setLoggedIn(true);
-        }
+      if (response.status == 200 && response.data.token) {
+        // A valid token has been returned - save, and login
+        useSessionState.getState().setToken(response.data.token);
       }
     })
     .catch(() => {});
@@ -59,15 +49,14 @@ export const doBasicLogin = async (username: string, password: string) => {
  *
  * @arg deleteToken: If true, delete the token from the server
  */
-export const doClassicLogout = async (deleteToken?: boolean) => {
+export const doClassicLogout = async (navigate: any, deleteToken?: boolean) => {
   if (deleteToken) {
     // Logout from the server session
     await api.post(apiUrl(ApiEndpoints.user_logout));
   }
 
   // Logout from this session
-  useSessionState.getState().setToken('');
-  useSessionState.getState().setLoggedIn(false);
+  useSessionState.getState().clearToken();
 
   notifications.show({
     title: t`Logout successful`,
@@ -76,7 +65,7 @@ export const doClassicLogout = async (deleteToken?: boolean) => {
     icon: <IconCheck size="1rem" />
   });
 
-  return true;
+  navigate('/login');
 };
 
 export const doSimpleLogin = async (email: string) => {
@@ -97,30 +86,6 @@ export const doSimpleLogin = async (email: string) => {
       return false;
     });
   return mail;
-};
-
-/*
- * Perform a login using a token
- */
-export const doTokenLogin = (token: string) => {
-  const { setToken } = useSessionState.getState();
-  const { fetchUserState } = useUserState.getState();
-  const { fetchServerApiState } = useServerApiState.getState();
-  const globalSettingsState = useGlobalSettingsState.getState();
-  const globalStatusState = useGlobalStatusState.getState();
-  const userSettingsState = useUserSettingsState.getState();
-
-  // First, set the API token for auth
-  setToken(token);
-
-  // Fetch user and server data
-  fetchUserState();
-  fetchServerApiState();
-
-  // Fetch settings
-  globalStatusState.fetchStatus();
-  globalSettingsState.fetchSettings();
-  userSettingsState.fetchSettings();
 };
 
 export function handleReset(navigate: any, values: { email: string }) {
@@ -172,7 +137,6 @@ export function checkLoginState(
     .then((val) => {
       if (val.status === 200) {
         // Success: we are logged in!
-        useSessionState().setLoggedIn(true);
 
         notifications.show({
           title: t`Logged In`,
@@ -182,10 +146,14 @@ export function checkLoginState(
         });
         navigate(redirect ?? '/home');
       } else {
+        // Token is invalid
+        useSessionState.getState().clearToken();
         if (!no_redirect) navigate('/login');
       }
     })
     .catch(() => {
+      // Token is invalid
+      useSessionState.getState().clearToken();
       if (!no_redirect) navigate('/login');
     });
 }
