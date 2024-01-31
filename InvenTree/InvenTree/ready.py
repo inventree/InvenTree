@@ -19,6 +19,25 @@ def isRunningMigrations():
     return any((x in sys.argv for x in ['migrate', 'makemigrations', 'showmigrations']))
 
 
+def isInWorkerThread():
+    """Returns True if the current thread is a background worker thread."""
+    return 'qcluster' in sys.argv
+
+
+def isInServerThread():
+    """Returns True if the current thread is a server thread."""
+    if isInWorkerThread():
+        return False
+
+    if 'runserver' in sys.argv:
+        return True
+
+    if 'gunicorn' in sys.argv[0]:
+        return True
+
+    return False
+
+
 def isInMainThread():
     """Django runserver starts two processes, one for the actual dev server and the other to reload the application.
 
@@ -28,7 +47,7 @@ def isInMainThread():
     if 'runserver' in sys.argv and '--noreload' not in sys.argv:
         return os.environ.get('RUN_MAIN', None) == 'true'
 
-    return True
+    return not isInWorkerThread()
 
 
 def canAppAccessDatabase(

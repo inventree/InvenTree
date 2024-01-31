@@ -86,7 +86,7 @@ def asset(filename):
         filename = '' + filename
 
     # If in debug mode, return URL to the image, not a local file
-    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
 
     # Test if the file actually exists
     full_path = settings.MEDIA_ROOT.joinpath('report', 'assets', filename).resolve()
@@ -131,7 +131,7 @@ def uploaded_image(
         filename = '' + filename
 
     # If in debug mode, return URL to the image, not a local file
-    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
 
     # Check if the file exists
     if not filename:
@@ -299,7 +299,7 @@ def logo_image(**kwargs):
     - Otherwise, return a path to the default InvenTree logo
     """
     # If in debug mode, return URL to the image, not a local file
-    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
 
     return InvenTree.helpers.getLogoImage(as_file=not debug_mode, **kwargs)
 
