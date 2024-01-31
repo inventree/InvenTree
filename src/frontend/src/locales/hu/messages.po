@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-01-24 16:14\n"
+"PO-Revision-Date: 2024-01-31 11:37\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -40,6 +40,7 @@ msgid "Form Errors Exist"
 msgstr "Form hibák vannak"
 
 #: src/components/forms/ApiForm.tsx:425
+#: src/components/images/DetailsImage.tsx:223
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
@@ -293,8 +294,65 @@ msgstr "Betöltés"
 msgid "No results found"
 msgstr "Nincs találat"
 
+#: src/components/images/DetailsImage.tsx:61
+msgid "Remove Image"
+msgstr ""
+
+#: src/components/images/DetailsImage.tsx:64
+msgid "Remove the associated image from this item?"
+msgstr ""
+
+#: src/components/images/DetailsImage.tsx:67
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:192
+#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
+#: src/pages/stock/StockDetail.tsx:183
+msgid "Remove"
+msgstr "Eltávolítás"
+
+#: src/components/images/DetailsImage.tsx:67
+#: src/components/tables/FilterSelectDrawer.tsx:209
+#: src/components/tables/InvenTreeTable.tsx:384
+#: src/components/tables/plugin/PluginListTable.tsx:333
+#: src/contexts/ThemeContext.tsx:64
+#: src/functions/forms.tsx:207
+#: src/hooks/UseForm.tsx:38
+msgid "Cancel"
+msgstr "Mégsem"
+
+#: src/components/images/DetailsImage.tsx:95
+msgid "Drag and drop to upload"
+msgstr ""
+
+#: src/components/images/DetailsImage.tsx:98
+msgid "Click to select file(s)"
+msgstr ""
+
+#: src/components/images/DetailsImage.tsx:220
+msgid "Clear"
+msgstr ""
+
+#: src/components/images/DetailsImage.tsx:252
+msgid "Select image"
+msgstr ""
+
+#: src/components/images/DetailsImage.tsx:263
+msgid "Select from existing images"
+msgstr ""
+
+#: src/components/images/DetailsImage.tsx:273
+msgid "Upload new image"
+msgstr ""
+
+#: src/components/images/DetailsImage.tsx:279
+msgid "Upload Image"
+msgstr ""
+
+#: src/components/images/DetailsImage.tsx:292
+msgid "Delete image"
+msgstr ""
+
 #: src/components/images/Thumbnail.tsx:14
-#: src/components/images/Thumbnail.tsx:49
+#: src/components/images/Thumbnail.tsx:51
 msgid "Thumbnail"
 msgstr "Bélyegkép"
 
@@ -784,7 +842,7 @@ msgstr "Ismeretlen model: {model}"
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:100
 #: src/components/tables/purchasing/SupplierPartTable.tsx:39
 #: src/components/tables/stock/StockItemTable.tsx:26
-#: src/pages/part/PartDetail.tsx:344
+#: src/pages/part/PartDetail.tsx:716
 msgid "Part"
 msgstr "Alkatrész"
 
@@ -795,7 +853,7 @@ msgstr "Alkatrész"
 #: src/pages/Index/Settings/SystemSettings.tsx:171
 #: src/pages/part/CategoryDetail.tsx:51
 #: src/pages/part/CategoryDetail.tsx:81
-#: src/pages/part/PartDetail.tsx:259
+#: src/pages/part/PartDetail.tsx:631
 msgid "Parts"
 msgstr "Alkatrészek"
 
@@ -895,7 +953,7 @@ msgstr "Beszerzési rendelés"
 #: src/pages/Index/Settings/SystemSettings.tsx:235
 #: src/pages/company/CompanyDetail.tsx:98
 #: src/pages/company/SupplierPartDetail.tsx:45
-#: src/pages/part/PartDetail.tsx:184
+#: src/pages/part/PartDetail.tsx:556
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
 msgstr "Beszerzési rendelések"
@@ -917,7 +975,7 @@ msgstr "Vevői rendelés"
 #: src/components/render/ModelType.tsx:118
 #: src/pages/Index/Settings/SystemSettings.tsx:249
 #: src/pages/company/CompanyDetail.tsx:116
-#: src/pages/part/PartDetail.tsx:190
+#: src/pages/part/PartDetail.tsx:562
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
 msgstr "Vevői rendelések"
@@ -990,7 +1048,7 @@ msgstr "Szállítmány"
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:202
-#: src/pages/part/PartDetail.tsx:100
+#: src/pages/part/PartDetail.tsx:472
 #: src/pages/stock/LocationDetail.tsx:63
 #: src/pages/stock/StockDetail.tsx:140
 msgid "Stock"
@@ -1035,11 +1093,13 @@ msgstr "Beállítás szerkesztése"
 #: src/components/tables/plugin/PluginListTable.tsx:160
 #: src/components/tables/plugin/PluginListTable.tsx:274
 #: src/components/tables/stock/StockItemTable.tsx:32
+#: src/pages/part/PartDetail.tsx:113
 msgid "Description"
 msgstr "Leírás"
 
 #: src/components/tables/ColumnRenderers.tsx:61
 #: src/components/tables/company/AddressTable.tsx:104
+#: src/pages/part/PartDetail.tsx:417
 msgid "Link"
 msgstr "Link"
 
@@ -1059,6 +1119,7 @@ msgid "Status"
 msgstr "Állapot"
 
 #: src/components/tables/ColumnRenderers.tsx:105
+#: src/pages/part/PartDetail.tsx:429
 msgid "Responsible"
 msgstr "Felelős"
 
@@ -1067,6 +1128,7 @@ msgid "Target Date"
 msgstr "Cél dátum"
 
 #: src/components/tables/ColumnRenderers.tsx:125
+#: src/pages/part/PartDetail.tsx:281
 msgid "Creation Date"
 msgstr "Létrehozás dátuma"
 
@@ -1087,6 +1149,57 @@ msgstr "Teljes ár"
 #: src/components/tables/ColumnSelect.tsx:24
 msgid "Select Columns"
 msgstr "Oszlopok kiválasztása"
+
+#: src/components/tables/Details.tsx:109
+msgid "Part is not active"
+msgstr ""
+
+#: src/components/tables/Details.tsx:115
+msgid "Inactive"
+msgstr ""
+
+#: src/components/tables/Details.tsx:122
+msgid "Part is a template part (variants can be made from this part)"
+msgstr ""
+
+#: src/components/tables/Details.tsx:128
+msgid "Part can be assembled from other parts"
+msgstr ""
+
+#: src/components/tables/Details.tsx:134
+msgid "Part can be used in assemblies"
+msgstr ""
+
+#: src/components/tables/Details.tsx:140
+msgid "Part stock is tracked by serial number"
+msgstr ""
+
+#: src/components/tables/Details.tsx:146
+msgid "Part can be purchased from external suppliers"
+msgstr ""
+
+#: src/components/tables/Details.tsx:152
+msgid "Part can be sold to customers"
+msgstr ""
+
+#: src/components/tables/Details.tsx:157
+msgid "Part is virtual (not a physical part)"
+msgstr ""
+
+#: src/components/tables/Details.tsx:163
+#: src/components/tables/part/PartTable.tsx:241
+#: src/components/tables/part/PartTable.tsx:245
+#: src/components/tables/part/PartVariantTable.tsx:25
+msgid "Virtual"
+msgstr "Virtuális"
+
+#: src/components/tables/Details.tsx:344
+msgid "Copied"
+msgstr ""
+
+#: src/components/tables/Details.tsx:344
+msgid "Copy"
+msgstr ""
 
 #: src/components/tables/DownloadAction.tsx:12
 msgid "CSV"
@@ -1168,15 +1281,6 @@ msgstr "Szűrő érték kiválasztása"
 #: src/components/tables/FilterSelectDrawer.tsx:188
 msgid "Table Filters"
 msgstr ""
-
-#: src/components/tables/FilterSelectDrawer.tsx:209
-#: src/components/tables/InvenTreeTable.tsx:384
-#: src/components/tables/plugin/PluginListTable.tsx:333
-#: src/contexts/ThemeContext.tsx:64
-#: src/functions/forms.tsx:207
-#: src/hooks/UseForm.tsx:38
-msgid "Cancel"
-msgstr "Mégsem"
 
 #: src/components/tables/FilterSelectDrawer.tsx:219
 msgid "Add Filter"
@@ -1323,6 +1427,7 @@ msgstr "Öröklődik"
 
 #: src/components/tables/bom/BomTable.tsx:145
 #: src/components/tables/part/PartTable.tsx:159
+#: src/pages/part/PartDetail.tsx:295
 msgid "Price Range"
 msgstr "Ártartomány"
 
@@ -1352,11 +1457,13 @@ msgstr "Változatokkal együtt"
 
 #: src/components/tables/bom/BomTable.tsx:189
 #: src/components/tables/build/BuildLineTable.tsx:93
+#: src/pages/part/PartDetail.tsx:164
 msgid "On order"
 msgstr "Rendelve"
 
 #: src/components/tables/bom/BomTable.tsx:197
 #: src/components/tables/part/PartTable.tsx:100
+#: src/pages/part/PartDetail.tsx:217
 msgid "Building"
 msgstr "Gyártásban"
 
@@ -1371,6 +1478,7 @@ msgid "Stock Information"
 msgstr "Készlet adatok"
 
 #: src/components/tables/bom/BomTable.tsx:213
+#: src/pages/part/PartDetail.tsx:206
 msgid "Can Build"
 msgstr "Gyártható"
 
@@ -1384,7 +1492,7 @@ msgstr "Fogyóeszköz tétel"
 #: src/components/tables/purchasing/SupplierPartTable.tsx:132
 #: src/pages/build/BuildDetail.tsx:177
 #: src/pages/company/CompanyDetail.tsx:169
-#: src/pages/part/PartDetail.tsx:244
+#: src/pages/part/PartDetail.tsx:616
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:90
 #: src/pages/sales/ReturnOrderDetail.tsx:50
 #: src/pages/sales/SalesOrderDetail.tsx:88
@@ -1549,8 +1657,9 @@ msgid "No stock available"
 msgstr "Nincs elérhető készlet"
 
 #: src/components/tables/build/BuildLineTable.tsx:107
+#: src/pages/part/PartDetail.tsx:135
 msgid "Available Stock"
-msgstr "Available Stock"
+msgstr ""
 
 #: src/components/tables/build/BuildLineTable.tsx:137
 msgid "Unit Quantity"
@@ -1761,6 +1870,7 @@ msgstr "Életkor"
 
 #: src/components/tables/notifications/NotificationsTable.tsx:29
 #: src/components/tables/part/PartTable.tsx:53
+#: src/pages/part/PartDetail.tsx:227
 msgid "Category"
 msgstr "Kategória"
 
@@ -1816,6 +1926,7 @@ msgstr "Paraméter"
 #: src/components/tables/part/PartParameterTemplateTable.tsx:57
 #: src/components/tables/part/PartTable.tsx:48
 #: src/components/tables/purchasing/ManufacturerPartParameterTable.tsx:39
+#: src/pages/part/PartDetail.tsx:261
 msgid "Units"
 msgstr "Mértékegységek"
 
@@ -1925,6 +2036,7 @@ msgid "Add parameter template"
 msgstr "Paraméter sablon létrehozás"
 
 #: src/components/tables/part/PartTable.tsx:42
+#: src/pages/part/PartDetail.tsx:239
 msgid "IPN"
 msgstr "IPN"
 
@@ -2018,12 +2130,6 @@ msgstr "Értékesíthető"
 msgid "Filter by parts which are salable"
 msgstr "Szűrés értékesíthetőség szerint"
 
-#: src/components/tables/part/PartTable.tsx:241
-#: src/components/tables/part/PartTable.tsx:245
-#: src/components/tables/part/PartVariantTable.tsx:25
-msgid "Virtual"
-msgstr "Virtuális"
-
 #: src/components/tables/part/PartTable.tsx:242
 msgid "Filter by parts which are virtual"
 msgstr "Szűrés virtuális alkatrészek szerint"
@@ -2089,6 +2195,10 @@ msgstr ""
 
 #: src/components/tables/part/PartTestTemplateTable.tsx:127
 msgid "Add Test Template"
+msgstr ""
+
+#: src/components/tables/part/PartThumbTable.tsx:202
+msgid "Search..."
 msgstr ""
 
 #: src/components/tables/part/PartVariantTable.tsx:16
@@ -2462,6 +2572,7 @@ msgstr "MPN (Gyártói cikkszám)"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:94
 #: src/components/tables/stock/StockItemTable.tsx:270
+#: src/pages/part/PartDetail.tsx:144
 msgid "In Stock"
 msgstr "Készleten"
 
@@ -2687,6 +2798,7 @@ msgid "Arguments"
 msgstr ""
 
 #: src/components/tables/settings/PendingTasksTable.tsx:40
+#: src/pages/part/PartDetail.tsx:271
 msgid "Keywords"
 msgstr ""
 
@@ -4103,12 +4215,6 @@ msgstr "Legyen elsődleges"
 msgid "Re-send Verification"
 msgstr "Megerősítés újraküldése"
 
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:192
-#: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
-#: src/pages/stock/StockDetail.tsx:183
-msgid "Remove"
-msgstr "Eltávolítás"
-
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:198
 msgid "Add Email"
 msgstr "Email hozzáadása"
@@ -4251,7 +4357,7 @@ msgstr "Vonalkódok"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:107
 #: src/pages/company/SupplierPartDetail.tsx:55
-#: src/pages/part/PartDetail.tsx:153
+#: src/pages/part/PartDetail.tsx:525
 msgid "Pricing"
 msgstr "Árazás"
 
@@ -4273,14 +4379,14 @@ msgid "Reporting"
 msgstr "Riportolás"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:224
-#: src/pages/part/PartDetail.tsx:210
+#: src/pages/part/PartDetail.tsx:582
 msgid "Stocktake"
 msgstr "Leltár"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:229
 #: src/pages/build/BuildDetail.tsx:274
 #: src/pages/build/BuildIndex.tsx:36
-#: src/pages/part/PartDetail.tsx:132
+#: src/pages/part/PartDetail.tsx:504
 #: src/pages/sales/SalesOrderDetail.tsx:62
 msgid "Build Orders"
 msgstr "Gyártási utasítások"
@@ -4364,7 +4470,7 @@ msgstr "Alárendelt gyártások"
 #: src/pages/build/BuildDetail.tsx:165
 #: src/pages/company/CompanyDetail.tsx:157
 #: src/pages/company/ManufacturerPartDetail.tsx:68
-#: src/pages/part/PartDetail.tsx:232
+#: src/pages/part/PartDetail.tsx:604
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:78
 #: src/pages/sales/ReturnOrderDetail.tsx:38
 #: src/pages/sales/SalesOrderDetail.tsx:76
@@ -4443,7 +4549,7 @@ msgstr "Új gyártási utasítás"
 #: src/pages/company/CompanyDetail.tsx:75
 #: src/pages/company/ManufacturerPartDetail.tsx:37
 #: src/pages/company/SupplierPartDetail.tsx:35
-#: src/pages/part/PartDetail.tsx:89
+#: src/pages/part/PartDetail.tsx:451
 #: src/pages/stock/StockDetail.tsx:70
 msgid "Details"
 msgstr "Részletek"
@@ -4474,12 +4580,12 @@ msgstr "Cég műveletek"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:42
 #: src/pages/part/CategoryDetail.tsx:71
-#: src/pages/part/PartDetail.tsx:94
+#: src/pages/part/PartDetail.tsx:466
 msgid "Parameters"
 msgstr "Paraméterek"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:54
-#: src/pages/part/PartDetail.tsx:171
+#: src/pages/part/PartDetail.tsx:543
 #: src/pages/purchasing/PurchasingIndex.tsx:27
 msgid "Suppliers"
 msgstr "Beszállítók"
@@ -4497,67 +4603,29 @@ msgstr "Beérkezett készlet"
 #~ msgid "Subcategories"
 #~ msgstr "Subcategories"
 
-#: src/pages/part/PartDetail.tsx:112
-msgid "Variants"
-msgstr "Változatok"
+#: src/pages/part/PartDetail.tsx:123
+msgid "Variant of"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:119
-#: src/pages/stock/StockDetail.tsx:82
-msgid "Allocations"
-msgstr "Foglalások"
+#: src/pages/part/PartDetail.tsx:154
+msgid "Minimum Stock"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:125
-msgid "Bill of Materials"
-msgstr "Alkatrészjegyzék"
+#: src/pages/part/PartDetail.tsx:180
+msgid "Allocated to Build Orders"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:146
-msgid "Used In"
-msgstr "Felhasználva ebben"
+#: src/pages/part/PartDetail.tsx:195
+msgid "Allocated to Sales Orders"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:158
-#: src/pages/purchasing/PurchasingIndex.tsx:38
-msgid "Manufacturers"
-msgstr "Gyártók"
-
-#: src/pages/part/PartDetail.tsx:205
-msgid "Scheduling"
-msgstr "Ütemezés"
-
-#: src/pages/part/PartDetail.tsx:215
-msgid "Test Templates"
-msgstr "Teszt sablonok"
-
-#: src/pages/part/PartDetail.tsx:226
-msgid "Related Parts"
-msgstr "Kapcsolódó alkatrészek"
-
-#: src/pages/part/PartDetail.tsx:294
-msgid "Stock Actions"
-msgstr "Készlet műveletek"
-
-#: src/pages/part/PartDetail.tsx:299
-msgid "Count Stock"
-msgstr "Leltározás"
-
-#: src/pages/part/PartDetail.tsx:300
-msgid "Count part stock"
-msgstr "Készlet számolása"
-
-#: src/pages/part/PartDetail.tsx:304
-msgid "Transfer Stock"
-msgstr "Készlet áthelyezése"
-
-#: src/pages/part/PartDetail.tsx:305
-msgid "Transfer part stock"
-msgstr "Készlet áthelyezése"
+#: src/pages/part/PartDetail.tsx:250
+msgid "Revision"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:310
 #~ msgid "Edit part"
 #~ msgstr "Edit part"
-
-#: src/pages/part/PartDetail.tsx:311
-msgid "Part Actions"
-msgstr "Alkatrész műveletek"
 
 #: src/pages/part/PartDetail.tsx:322
 #~ msgid "Duplicate part"
@@ -4566,6 +4634,76 @@ msgstr "Alkatrész műveletek"
 #: src/pages/part/PartDetail.tsx:327
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
+
+#: src/pages/part/PartDetail.tsx:332
+msgid "Last Stocktake"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:393
+msgid "Default Location"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:405
+msgid "Default Supplier"
+msgstr ""
+
+#: src/pages/part/PartDetail.tsx:484
+msgid "Variants"
+msgstr "Változatok"
+
+#: src/pages/part/PartDetail.tsx:491
+#: src/pages/stock/StockDetail.tsx:82
+msgid "Allocations"
+msgstr "Foglalások"
+
+#: src/pages/part/PartDetail.tsx:497
+msgid "Bill of Materials"
+msgstr "Alkatrészjegyzék"
+
+#: src/pages/part/PartDetail.tsx:518
+msgid "Used In"
+msgstr "Felhasználva ebben"
+
+#: src/pages/part/PartDetail.tsx:530
+#: src/pages/purchasing/PurchasingIndex.tsx:38
+msgid "Manufacturers"
+msgstr "Gyártók"
+
+#: src/pages/part/PartDetail.tsx:577
+msgid "Scheduling"
+msgstr "Ütemezés"
+
+#: src/pages/part/PartDetail.tsx:587
+msgid "Test Templates"
+msgstr "Teszt sablonok"
+
+#: src/pages/part/PartDetail.tsx:598
+msgid "Related Parts"
+msgstr "Kapcsolódó alkatrészek"
+
+#: src/pages/part/PartDetail.tsx:666
+msgid "Stock Actions"
+msgstr "Készlet műveletek"
+
+#: src/pages/part/PartDetail.tsx:671
+msgid "Count Stock"
+msgstr "Leltározás"
+
+#: src/pages/part/PartDetail.tsx:672
+msgid "Count part stock"
+msgstr "Készlet számolása"
+
+#: src/pages/part/PartDetail.tsx:676
+msgid "Transfer Stock"
+msgstr "Készlet áthelyezése"
+
+#: src/pages/part/PartDetail.tsx:677
+msgid "Transfer part stock"
+msgstr "Készlet áthelyezése"
+
+#: src/pages/part/PartDetail.tsx:683
+msgid "Part Actions"
+msgstr "Alkatrész műveletek"
 
 #: src/pages/part/PartIndex.tsx:29
 #~ msgid "Categories"
@@ -4672,3 +4810,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+
