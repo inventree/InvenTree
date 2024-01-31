@@ -9,6 +9,7 @@ import { useUserState } from './UserState';
 interface SessionStateProps {
   token?: string;
   setToken: (newToken?: string) => void;
+  hasToken: () => boolean;
   loggedIn: boolean;
   setLoggedIn: (isLoggedIn: boolean) => void;
 }
@@ -18,12 +19,13 @@ interface SessionStateProps {
  */
 export const useSessionState = create<SessionStateProps>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       token: '',
       setToken: (newToken) => {
         set({ token: newToken });
         setApiDefaults();
       },
+      hasToken: () => !!get().token,
       loggedIn: false,
       setLoggedIn: (isLoggedIn: boolean) => {
         set({ loggedIn: isLoggedIn });

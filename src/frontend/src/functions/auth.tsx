@@ -158,9 +158,10 @@ export function checkLoginState(
   redirect?: string,
   no_redirect?: boolean
 ) {
-  if (!useSessionState.getState().token) {
+  if (!useSessionState.getState().hasToken()) {
     // No token available - redirect to the login page
     if (!no_redirect) navigate('/login');
+    return;
   }
 
   // There *is* a token available: Test if it is valid

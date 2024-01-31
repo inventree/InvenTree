@@ -37,43 +37,45 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
     if (!useSessionState.getState().loggedIn) {
-      // Fetch user data
-      await api
-        .get(apiUrl(ApiEndpoints.user_me), {
-          timeout: 2000
-        })
-        .then((response) => {
-          const user: UserProps = {
-            pk: response.data.pk,
-            first_name: response.data?.first_name ?? '',
-            last_name: response.data?.last_name ?? '',
-            email: response.data.email,
-            username: response.data.username
-          };
-          set({ user: user });
-        })
-        .catch((error) => {
-          console.error('Error fetching user data:', error);
-          // Redirect to login page
-          doClassicLogout();
-        });
-
-      // Fetch role data
-      await api
-        .get(apiUrl(ApiEndpoints.user_roles))
-        .then((response) => {
-          const user: UserProps = get().user as UserProps;
-
-          // Update user with role data
-          user.roles = response.data?.roles ?? {};
-          user.is_staff = response.data?.is_staff ?? false;
-          user.is_superuser = response.data?.is_superuser ?? false;
-          set({ user: user });
-        })
-        .catch((error) => {
-          console.error('Error fetching user roles:', error);
-        });
+      return;
     }
+
+    // Fetch user data
+    await api
+      .get(apiUrl(ApiEndpoints.user_me), {
+        timeout: 2500
+      })
+      .then((response) => {
+        const user: UserProps = {
+          pk: response.data.pk,
+          first_name: response.data?.first_name ?? '',
+          last_name: response.data?.last_name ?? '',
+          email: response.data.email,
+          username: response.data.username
+        };
+        set({ user: user });
+      })
+      .catch((error) => {
+        console.error('Error fetching user data:', error);
+        // Redirect to login page
+        doClassicLogout();
+      });
+
+    // Fetch role data
+    await api
+      .get(apiUrl(ApiEndpoints.user_roles))
+      .then((response) => {
+        const user: UserProps = get().user as UserProps;
+
+        // Update user with role data
+        user.roles = response.data?.roles ?? {};
+        user.is_staff = response.data?.is_staff ?? false;
+        user.is_superuser = response.data?.is_superuser ?? false;
+        set({ user: user });
+      })
+      .catch((error) => {
+        console.error('Error fetching user roles:', error);
+      });
   },
   checkUserRole: (role: UserRoles, permission: UserPermissions) => {
     // Check if the user has the specified permission for the specified role
