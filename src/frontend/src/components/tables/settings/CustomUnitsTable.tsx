@@ -1,13 +1,14 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { UserRoles } from '../../../enums/Roles';
+import { customUnitsFields } from '../../../forms/CommonForms';
 import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../../functions/forms';
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../../hooks/UseForm';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
@@ -47,37 +48,47 @@ export default function CustomUnitsTable() {
     ];
   }, []);
 
+  const newUnit = useCreateApiFormModal({
+    url: ApiEndpoints.custom_unit_list,
+    title: t`Add Custom Unit`,
+    fields: customUnitsFields(),
+    onFormSuccess: table.refreshTable
+  });
+
+  const [selectedUnit, setSelectedUnit] = useState<number | undefined>(
+    undefined
+  );
+
+  const editUnit = useEditApiFormModal({
+    url: ApiEndpoints.custom_unit_list,
+    pk: selectedUnit,
+    title: t`Edit Custom Unit`,
+    fields: customUnitsFields(),
+    onFormSuccess: table.refreshTable
+  });
+
+  const deleteUnit = useDeleteApiFormModal({
+    url: ApiEndpoints.custom_unit_list,
+    pk: selectedUnit,
+    title: t`Delete Custom Unit`,
+    onFormSuccess: table.refreshTable
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.admin),
           onClick: () => {
-            openEditApiForm({
-              url: ApiEndpoints.custom_unit_list,
-              pk: record.pk,
-              title: t`Edit custom unit`,
-              fields: {
-                name: {},
-                definition: {},
-                symbol: {}
-              },
-              onFormSuccess: table.refreshTable,
-              successMessage: t`Custom unit updated`
-            });
+            setSelectedUnit(record.pk);
+            editUnit.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.admin),
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiEndpoints.custom_unit_list,
-              pk: record.pk,
-              title: t`Delete custom unit`,
-              successMessage: t`Custom unit deleted`,
-              onFormSuccess: table.refreshTable,
-              preFormWarning: t`Are you sure you want to remove this custom unit?`
-            });
+            setSelectedUnit(record.pk);
+            deleteUnit.open();
           }
         })
       ];
@@ -85,40 +96,34 @@ export default function CustomUnitsTable() {
     [user]
   );
 
-  const addCustomUnit = useCallback(() => {
-    openCreateApiForm({
-      url: ApiEndpoints.custom_unit_list,
-      title: t`Add custom unit`,
-      fields: {
-        name: {},
-        definition: {},
-        symbol: {}
-      },
-      successMessage: t`Custom unit created`,
-      onFormSuccess: table.refreshTable
-    });
-  }, []);
-
   const tableActions = useMemo(() => {
     let actions = [];
 
     actions.push(
       // TODO: Adjust actions based on user permissions
-      <AddItemButton tooltip={t`Add custom unit`} onClick={addCustomUnit} />
+      <AddItemButton
+        tooltip={t`Add custom unit`}
+        onClick={() => newUnit.open()}
+      />
     );
 
     return actions;
   }, []);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.custom_unit_list)}
-      tableState={table}
-      columns={columns}
-      props={{
-        rowActions: rowActions,
-        tableActions: tableActions
-      }}
-    />
+    <>
+      {newUnit.modal}
+      {editUnit.modal}
+      {deleteUnit.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.custom_unit_list)}
+        tableState={table}
+        columns={columns}
+        props={{
+          rowActions: rowActions,
+          tableActions: tableActions
+        }}
+      />
+    </>
   );
 }
