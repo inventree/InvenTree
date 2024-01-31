@@ -2,9 +2,6 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { setApiDefaults } from '../App';
-import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
-import { useGlobalStatusState } from './StatusState';
-import { useUserState } from './UserState';
 import { fetchGlobalStates } from './states';
 
 interface SessionStateProps {
