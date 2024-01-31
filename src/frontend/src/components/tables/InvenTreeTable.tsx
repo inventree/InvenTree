@@ -2,7 +2,9 @@ import { t } from '@lingui/macro';
 import {
   ActionIcon,
   Alert,
+  Box,
   Indicator,
+  LoadingOverlay,
   Space,
   Stack,
   Tooltip
@@ -17,9 +19,11 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
+import { extractAvailableFields } from '../../functions/forms';
 import { TableState } from '../../hooks/UseTable';
 import { ActionButton } from '../buttons/ActionButton';
 import { ButtonMenu } from '../buttons/ButtonMenu';
+import { ApiFormFieldType } from '../forms/fields/ApiFormField';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
@@ -111,6 +115,32 @@ export function InvenTreeTable<T = any>({
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }) {
+  const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
+
+  // Request OPTIONS data from the API, before we load the table
+  const tableOptionQuery = useQuery({
+    queryKey: ['options', url, tableState.tableKey],
+    queryFn: async () => {
+      return api.options(url).then((response) => {
+        if (response.status == 200) {
+          // Extract field information from the API
+          let fields: Record<string, ApiFormFieldType> =
+            extractAvailableFields(response, 'POST') || {};
+
+          let names: Record<string, string> = {};
+
+          for (const [k, v] of Object.entries(fields)) {
+            if (v.label) {
+              names[k] = v.label;
+            }
+          }
+
+          setFieldNames(names);
+        }
+      });
+    }
+  });
+
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
     return {
@@ -139,7 +169,8 @@ export function InvenTreeTable<T = any>({
 
       return {
         ...col,
-        hidden: hidden
+        hidden: hidden,
+        title: col.title ?? fieldNames[col.accessor] ?? undefined
       };
     });
 
@@ -165,6 +196,7 @@ export function InvenTreeTable<T = any>({
     return cols;
   }, [
     columns,
+    fieldNames,
     tableProps.rowActions,
     tableProps.enableSelection,
     tableState.hiddenColumns,
@@ -289,7 +321,7 @@ export function InvenTreeTable<T = any>({
     let queryParams = getTableFilters(true);
 
     return api
-      .get(`${url}`, {
+      .get(url, {
         params: queryParams,
         timeout: 30 * 1000
       })
@@ -513,40 +545,48 @@ export function InvenTreeTable<T = any>({
             )}
           </Group>
         </Group>
-        <DataTable
-          withBorder
-          striped
-          highlightOnHover
-          loaderVariant="dots"
-          pinLastColumn={tableProps.rowActions != undefined}
-          idAccessor={tableProps.idAccessor}
-          minHeight={300}
-          totalRecords={recordCount}
-          recordsPerPage={tableProps.pageSize ?? defaultPageSize}
-          page={page}
-          onPageChange={setPage}
-          sortStatus={sortStatus}
-          onSortStatusChange={handleSortStatusChange}
-          selectedRecords={
-            tableProps.enableSelection ? tableState.selectedRecords : undefined
-          }
-          onSelectedRecordsChange={
-            tableProps.enableSelection ? onSelectedRecordsChange : undefined
-          }
-          fetching={isFetching}
-          noRecordsText={missingRecordsText}
-          records={data}
-          columns={dataColumns}
-          onRowClick={tableProps.onRowClick}
-          defaultColumnProps={{
-            noWrap: true,
-            textAlignment: 'left',
-            cellsStyle: {
-              // TODO: Need a better way of handling "wide" cells,
-              overflow: 'hidden'
+        <Box pos="relative">
+          <LoadingOverlay
+            visible={tableOptionQuery.isLoading || tableOptionQuery.isFetching}
+          />
+
+          <DataTable
+            withBorder
+            striped
+            highlightOnHover
+            loaderVariant="dots"
+            pinLastColumn={tableProps.rowActions != undefined}
+            idAccessor={tableProps.idAccessor}
+            minHeight={300}
+            totalRecords={recordCount}
+            recordsPerPage={tableProps.pageSize ?? defaultPageSize}
+            page={page}
+            onPageChange={setPage}
+            sortStatus={sortStatus}
+            onSortStatusChange={handleSortStatusChange}
+            selectedRecords={
+              tableProps.enableSelection
+                ? tableState.selectedRecords
+                : undefined
             }
-          }}
-        />
+            onSelectedRecordsChange={
+              tableProps.enableSelection ? onSelectedRecordsChange : undefined
+            }
+            fetching={isFetching}
+            noRecordsText={missingRecordsText}
+            records={data}
+            columns={dataColumns}
+            onRowClick={tableProps.onRowClick}
+            defaultColumnProps={{
+              noWrap: true,
+              textAlignment: 'left',
+              cellsStyle: {
+                // TODO: Need a better way of handling "wide" cells,
+                overflow: 'hidden'
+              }
+            }}
+          />
+        </Box>
       </Stack>
     </>
   );
