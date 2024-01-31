@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
-import { useServerApiState } from '../../states/ApiState';
+import { apiUrl, useServerApiState } from '../../states/ApiState';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
@@ -165,7 +165,7 @@ export function RegistrationForm() {
   function handleRegistration() {
     setIsRegistering(true);
     api
-      .post(ApiEndpoints.user_register, registrationForm.values, {
+      .post(apiUrl(ApiEndpoints.user_register), registrationForm.values, {
         headers: { Authorization: '' }
       })
       .then((ret) => {
