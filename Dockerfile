@@ -13,9 +13,9 @@ ARG base_image=python:3.10-alpine3.18
 FROM ${base_image} as inventree_base
 
 # Build arguments for this image
+ARG commit_tag=""
 ARG commit_hash=""
 ARG commit_date=""
-ARG commit_tag=""
 
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
