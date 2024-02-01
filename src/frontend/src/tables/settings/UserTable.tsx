@@ -153,45 +153,37 @@ export function UserTable() {
     return [
       {
         accessor: 'email',
-        sortable: true,
-        title: t`Email`
+        sortable: true
       },
       {
         accessor: 'username',
         sortable: true,
-        switchable: false,
-        title: t`Username`
+        switchable: false
       },
       {
         accessor: 'first_name',
-        sortable: true,
-        title: t`First Name`
+        sortable: true
       },
       {
         accessor: 'last_name',
-        sortable: true,
-        title: t`Last Name`
+        sortable: true
       },
       {
         accessor: 'groups',
         sortable: true,
         switchable: true,
-        title: t`Groups`,
         render: (record: any) => {
           return record.groups.length;
         }
       },
       BooleanColumn({
-        accessor: 'is_staff',
-        title: t`Staff`
+        accessor: 'is_staff'
       }),
       BooleanColumn({
-        accessor: 'is_superuser',
-        title: t`Superuser`
+        accessor: 'is_superuser'
       }),
       BooleanColumn({
-        accessor: 'is_active',
-        title: t`Active`
+        accessor: 'is_active'
       })
     ];
   }, []);

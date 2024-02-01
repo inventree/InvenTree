@@ -48,23 +48,19 @@ export default function PartParameterTemplateTable() {
     return [
       {
         accessor: 'name',
-        title: t`Name`,
         sortable: true,
         switchable: false
       },
       {
         accessor: 'units',
-        title: t`Units`,
         sortable: true
       },
       DescriptionColumn({}),
       {
-        accessor: 'checkbox',
-        title: t`Checkbox`
+        accessor: 'checkbox'
       },
       {
-        accessor: 'choices',
-        title: t`Choices`
+        accessor: 'choices'
       }
     ];
   }, []);

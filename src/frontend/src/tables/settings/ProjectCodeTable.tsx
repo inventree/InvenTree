@@ -29,8 +29,7 @@ export default function ProjectCodeTable() {
     return [
       {
         accessor: 'code',
-        sortable: true,
-        title: t`Project Code`
+        sortable: true
       },
       DescriptionColumn({}),
       ResponsibleColumn()

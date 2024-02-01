@@ -28,19 +28,16 @@ export default function CustomUnitsTable() {
     return [
       {
         accessor: 'name',
-        title: t`Name`,
         switchable: false,
         sortable: true
       },
       {
         accessor: 'definition',
-        title: t`Definition`,
         switchable: false,
         sortable: false
       },
       {
         accessor: 'symbol',
-        title: t`Symbol`,
         switchable: false,
         sortable: true
       }

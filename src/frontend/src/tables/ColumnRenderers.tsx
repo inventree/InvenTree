@@ -25,7 +25,7 @@ export function BooleanColumn({
   switchable
 }: {
   accessor: string;
-  title: string;
+  title?: string;
   sortable?: boolean;
   switchable?: boolean;
 }): TableColumn {
