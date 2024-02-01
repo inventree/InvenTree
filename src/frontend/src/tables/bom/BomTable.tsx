@@ -235,32 +235,26 @@ export function BomTable({
       },
       {
         name: 'available_stock',
-        label: t`Has Available Stock`,
         description: t`Show items with available stock`
       },
       {
         name: 'on_order',
-        label: t`On Order`,
         description: t`Show items on order`
       },
       {
         name: 'validated',
-        label: t`Validated`,
         description: t`Show validated items`
       },
       {
         name: 'inherited',
-        label: t`Gets Inherited`,
         description: t`Show inherited items`
       },
       {
         name: 'optional',
-        label: t`Optional`,
         description: t`Show optional items`
       },
       {
         name: 'consumable',
-        label: t`Consumable`,
         description: t`Show consumable items`
       },
       {

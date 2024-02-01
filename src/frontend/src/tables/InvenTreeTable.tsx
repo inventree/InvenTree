@@ -119,6 +119,18 @@ export function InvenTreeTable<T = any>({
   const { getTableColumnNames, setTableColumnNames } = useLocalState();
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
+  // Construct table filters - note that we can introspect filter labels from column names
+  const filters: TableFilter[] = useMemo(() => {
+    return (
+      props.tableFilters?.map((filter) => {
+        return {
+          ...filter,
+          label: filter.label ?? fieldNames[filter.name] ?? `? ${filter.name} ?`
+        };
+      }) ?? []
+    );
+  }, [props.tableFilters, fieldNames]);
+
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
     enabled: false,
@@ -196,7 +208,7 @@ export function InvenTreeTable<T = any>({
       return {
         ...col,
         hidden: hidden,
-        title: col.title ?? fieldNames[col.accessor] ?? `- ${col.accessor} -`
+        title: col.title ?? fieldNames[col.accessor] ?? `? ${col.accessor} ?`
       };
     });
 
@@ -482,15 +494,14 @@ export function InvenTreeTable<T = any>({
 
   return (
     <>
-      {tableProps.enableFilters &&
-        (tableProps.tableFilters?.length ?? 0) > 0 && (
-          <FilterSelectDrawer
-            availableFilters={tableProps.tableFilters ?? []}
-            tableState={tableState}
-            opened={filtersVisible}
-            onClose={() => setFiltersVisible(false)}
-          />
-        )}
+      {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
+        <FilterSelectDrawer
+          availableFilters={filters}
+          tableState={tableState}
+          opened={filtersVisible}
+          onClose={() => setFiltersVisible(false)}
+        />
+      )}
       <Stack spacing="sm">
         <Group position="apart">
           <Group position="left" key="custom-actions" spacing={5}>
@@ -547,22 +558,21 @@ export function InvenTreeTable<T = any>({
                 onToggleColumn={toggleColumn}
               />
             )}
-            {tableProps.enableFilters &&
-              (tableProps.tableFilters?.length ?? 0 > 0) && (
-                <Indicator
-                  size="xs"
-                  label={tableState.activeFilters.length}
-                  disabled={tableState.activeFilters.length == 0}
-                >
-                  <ActionIcon>
-                    <Tooltip label={t`Table filters`}>
-                      <IconFilter
-                        onClick={() => setFiltersVisible(!filtersVisible)}
-                      />
-                    </Tooltip>
-                  </ActionIcon>
-                </Indicator>
-              )}
+            {tableProps.enableFilters && filters.length > 0 && (
+              <Indicator
+                size="xs"
+                label={tableState.activeFilters.length}
+                disabled={tableState.activeFilters.length == 0}
+              >
+                <ActionIcon>
+                  <Tooltip label={t`Table filters`}>
+                    <IconFilter
+                      onClick={() => setFiltersVisible(!filtersVisible)}
+                    />
+                  </Tooltip>
+                </ActionIcon>
+              </Indicator>
+            )}
             {tableProps.enableDownload && (
               <DownloadAction
                 key="download-action"

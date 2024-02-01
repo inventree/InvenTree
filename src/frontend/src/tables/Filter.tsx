@@ -20,7 +20,7 @@ export type TableFilterChoice = {
  */
 export type TableFilter = {
   name: string;
-  label: string;
+  label?: string;
   description?: string;
   type?: string;
   choices?: TableFilterChoice[];
