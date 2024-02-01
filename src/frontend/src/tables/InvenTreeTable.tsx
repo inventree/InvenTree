@@ -98,8 +98,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   barcodeActions: [],
   tableFilters: [],
   tableActions: [],
-  idAccessor: 'pk',
-  onRowClick: (record: any, index: number, event: any) => {}
+  idAccessor: 'pk'
 };
 
 /**

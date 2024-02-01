@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro';
 import { CloseButton, TextInput } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
@@ -19,11 +20,11 @@ export function TableSearchInput({
     <TextInput
       value={value}
       icon={<IconSearch />}
-      placeholder="Search"
+      placeholder={t`Search`}
       onChange={(event) => setValue(event.target.value)}
       rightSection={
         value.length > 0 ? (
-          <CloseButton size="xs" onClick={(event) => setValue('')} />
+          <CloseButton size="xs" onClick={() => setValue('')} />
         ) : null
       }
     />
