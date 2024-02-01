@@ -58,7 +58,6 @@ export function CompanyTable({
     fields: companyFields(),
     initialData: params,
     onFormSuccess: (response) => {
-      console.log('onFormSuccess:', response);
       if (response.pk) {
         let base = path ?? 'company';
         navigate(`/${base}/${response.pk}`);
