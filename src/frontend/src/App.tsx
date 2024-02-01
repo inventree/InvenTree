@@ -5,13 +5,20 @@ import { getCsrfCookie } from './functions/auth';
 import { useLocalState } from './states/LocalState';
 import { useSessionState } from './states/SessionState';
 
-// API
+// Global API instance
 export const api = axios.create({});
 
+/*
+ * Setup default settings for the Axios API instance.
+ *
+ * This includes:
+ * - Base URL
+ * - Authorization token (if available)
+ * - CSRF token (if available)
+ */
 export function setApiDefaults() {
   const host = useLocalState.getState().host;
   const token = useSessionState.getState().token;
-  const cookie = getCsrfCookie();
 
   api.defaults.baseURL = host;
 
@@ -21,7 +28,7 @@ export function setApiDefaults() {
     api.defaults.headers.common['Authorization'] = undefined;
   }
 
-  if (cookie) {
+  if (!!getCsrfCookie()) {
     api.defaults.withCredentials = true;
     api.defaults.xsrfCookieName = 'csrftoken';
     api.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -31,4 +38,5 @@ export function setApiDefaults() {
     api.defaults.xsrfHeaderName = undefined;
   }
 }
+
 export const queryClient = new QueryClient();
