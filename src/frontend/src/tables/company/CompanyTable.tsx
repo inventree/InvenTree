@@ -29,7 +29,6 @@ export function CompanyTable({
     return [
       {
         accessor: 'name',
-        title: t`Company Name`,
         sortable: true,
         render: (record: any) => {
           return (
@@ -47,7 +46,6 @@ export function CompanyTable({
       DescriptionColumn({}),
       {
         accessor: 'website',
-        title: t`Website`,
         sortable: false
       }
     ];
