@@ -21,7 +21,11 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
+import {
+  BooleanColumn,
+  DescriptionColumn,
+  NoteColumn
+} from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
@@ -58,10 +62,8 @@ export function BomTable({
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
-      // TODO: Improve column rendering
       {
         accessor: 'part',
-        title: t`Part`,
         switchable: false,
         sortable: true,
         render: (record) => {
@@ -91,18 +93,14 @@ export function BomTable({
           );
         }
       },
+      DescriptionColumn({
+        accessor: 'sub_part_detail.description'
+      }),
       {
-        accessor: 'description',
-        title: t`Description`,
-        render: (row) => row?.sub_part_detail?.description
-      },
-      {
-        accessor: 'reference',
-        title: t`Reference`
+        accessor: 'reference'
       },
       {
         accessor: 'quantity',
-        title: t`Quantity`,
         switchable: false,
         sortable: true
         // TODO: Custom quantity renderer
@@ -110,7 +108,6 @@ export function BomTable({
       },
       {
         accessor: 'substitutes',
-        title: t`Substitutes`,
         // TODO: Show hovercard with list of substitutes
         render: (row) => {
           let substitutes = row.substitutes ?? [];
@@ -123,20 +120,16 @@ export function BomTable({
         }
       },
       BooleanColumn({
-        accessor: 'optional',
-        title: t`Optional`
+        accessor: 'optional'
       }),
       BooleanColumn({
-        accessor: 'consumable',
-        title: t`Consumable`
+        accessor: 'consumable'
       }),
       BooleanColumn({
-        accessor: 'allow_variants',
-        title: t`Allow Variants`
+        accessor: 'allow_variants'
       }),
       BooleanColumn({
-        accessor: 'inherited',
-        title: t`Gets Inherited`
+        accessor: 'inherited'
         // TODO: Custom renderer for this column
         // TODO: See bom.js for existing implementation
       }),
@@ -150,7 +143,6 @@ export function BomTable({
       },
       {
         accessor: 'available_stock',
-        title: t`Available`,
 
         render: (record) => {
           let extra: ReactNode[] = [];
@@ -225,11 +217,7 @@ export function BomTable({
           );
         }
       },
-      {
-        accessor: 'note',
-        title: t`Notes`,
-        switchable: true
-      }
+      NoteColumn()
     ];
   }, [partId, params]);
 
