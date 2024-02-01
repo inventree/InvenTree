@@ -353,7 +353,7 @@ export default function PartDetail() {
                   });
               }
             });
-            return data.quantity;
+            return data?.quantity;
           }
         },
         {
@@ -381,7 +381,7 @@ export default function PartDetail() {
                   });
               }
             });
-            return data.user;
+            return data?.user;
           }
         }
       ]);

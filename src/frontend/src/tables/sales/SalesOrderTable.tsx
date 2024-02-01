@@ -18,6 +18,7 @@ import {
   DescriptionColumn,
   LineItemsProgressColumn,
   ProjectCodeColumn,
+  ReferenceColumn,
   ShipmentDateColumn,
   StatusColumn,
   TargetDateColumn,
@@ -88,12 +89,7 @@ export function SalesOrderTable({
 
   const tableColumns = useMemo(() => {
     return [
-      {
-        accessor: 'reference',
-        sortable: true,
-        switchable: false
-        // TODO: @SchrodingersGat - Display extra information if order is overdue
-      },
+      ReferenceColumn(),
       {
         accessor: 'customer__name',
         title: t`Customer`,

@@ -25,6 +25,7 @@ import { useUserState } from '../../states/UserState';
 import {
   CurrencyColumn,
   LinkColumn,
+  ReferenceColumn,
   TargetDateColumn,
   TotalPriceColumn
 } from '../ColumnRenderers';
@@ -74,11 +75,7 @@ export function PurchaseOrderLineItemTable({
         sortable: false,
         render: (record: any) => record?.part_detail?.description
       },
-      {
-        accessor: 'reference',
-        title: t`Reference`,
-        sortable: true
-      },
+      ReferenceColumn(),
       {
         accessor: 'quantity',
         title: t`Quantity`,

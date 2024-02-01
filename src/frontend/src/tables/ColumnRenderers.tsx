@@ -63,6 +63,14 @@ export function LinkColumn(): TableColumn {
   };
 }
 
+export function ReferenceColumn(): TableColumn {
+  return {
+    accessor: 'reference',
+    sortable: true,
+    switchable: false
+  };
+}
+
 export function NoteColumn(): TableColumn {
   return {
     accessor: 'note',

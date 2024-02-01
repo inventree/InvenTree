@@ -9,6 +9,7 @@ import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
+import { ReferenceColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -46,10 +47,7 @@ export function UsedInTable({
           return record.quantity;
         }
       },
-      {
-        accessor: 'reference',
-        sortable: true
-      }
+      ReferenceColumn()
     ];
   }, [partId]);
 

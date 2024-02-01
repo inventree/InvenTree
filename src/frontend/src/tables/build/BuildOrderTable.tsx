@@ -20,6 +20,7 @@ import { TableColumn } from '../Column';
 import {
   CreationDateColumn,
   ProjectCodeColumn,
+  ReferenceColumn,
   ResponsibleColumn,
   StatusColumn,
   TargetDateColumn
@@ -32,11 +33,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
  */
 function buildOrderTableColumns(): TableColumn[] {
   return [
-    {
-      accessor: 'reference',
-      sortable: true,
-      switchable: false
-    },
+    ReferenceColumn(),
     {
       accessor: 'part',
       sortable: true,

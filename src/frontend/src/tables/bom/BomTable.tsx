@@ -24,7 +24,8 @@ import { TableColumn } from '../Column';
 import {
   BooleanColumn,
   DescriptionColumn,
-  NoteColumn
+  NoteColumn,
+  ReferenceColumn
 } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -96,9 +97,7 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
-      {
-        accessor: 'reference'
-      },
+      ReferenceColumn(),
       {
         accessor: 'quantity',
         switchable: false,

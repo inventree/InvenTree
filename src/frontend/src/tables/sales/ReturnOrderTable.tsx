@@ -17,6 +17,7 @@ import {
   DescriptionColumn,
   LineItemsProgressColumn,
   ProjectCodeColumn,
+  ReferenceColumn,
   ResponsibleColumn,
   StatusColumn,
   TargetDateColumn,
@@ -57,11 +58,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
 
   const tableColumns = useMemo(() => {
     return [
-      {
-        accessor: 'reference',
-        sortable: true
-        // TODO: Display extra information if order is overdue
-      },
+      ReferenceColumn(),
       {
         accessor: 'customer__name',
         title: t`Customer`,

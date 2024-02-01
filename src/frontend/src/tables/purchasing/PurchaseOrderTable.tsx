@@ -18,6 +18,7 @@ import {
   DescriptionColumn,
   LineItemsProgressColumn,
   ProjectCodeColumn,
+  ReferenceColumn,
   ResponsibleColumn,
   StatusColumn,
   TargetDateColumn,
@@ -65,12 +66,7 @@ export function PurchaseOrderTable({
 
   const tableColumns = useMemo(() => {
     return [
-      {
-        accessor: 'reference',
-        sortable: true,
-        switchable: false
-        // TODO: Display extra information if order is overdue
-      },
+      ReferenceColumn(),
       DescriptionColumn({}),
       {
         accessor: 'supplier__name',
