@@ -2,20 +2,20 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { renderDate } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { ModelType } from '../../../enums/ModelType';
-import { UserRoles } from '../../../enums/Roles';
-import { buildOrderFields } from '../../../forms/BuildForms';
-import { getDetailUrl } from '../../../functions/urls';
-import { useCreateApiFormModal } from '../../../hooks/UseForm';
-import { useTable } from '../../../hooks/UseTable';
-import { apiUrl } from '../../../states/ApiState';
-import { useUserState } from '../../../states/UserState';
-import { AddItemButton } from '../../buttons/AddItemButton';
-import { PartHoverCard } from '../../images/Thumbnail';
-import { ProgressBar } from '../../items/ProgressBar';
-import { RenderUser } from '../../render/User';
+import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { PartHoverCard } from '../../components/images/Thumbnail';
+import { ProgressBar } from '../../components/items/ProgressBar';
+import { RenderUser } from '../../components/render/User';
+import { renderDate } from '../../defaults/formatters';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { buildOrderFields } from '../../forms/BuildForms';
+import { getDetailUrl } from '../../functions/urls';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
+import { useTable } from '../../hooks/UseTable';
+import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
   CreationDateColumn,
