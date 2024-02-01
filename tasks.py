@@ -298,6 +298,8 @@ def static(c, frontend=False):
     manage(c, 'prerender')
     if frontend and node_available():
         frontend_build(c)
+
+    print('Collecting static files...')
     manage(c, 'collectstatic --no-input --clear')
 
 
@@ -420,16 +422,16 @@ def update(
     # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
     # - `--no-frontend` flag is set
     if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
-        return
-
-    # Decide if we should compile the frontend or try to download it
-    if node_available(bypass_yarn=True):
-        frontend_compile(c)
+        pass
     else:
-        frontend_download(c)
+        # Decide if we should compile the frontend or try to download it
+        if node_available(bypass_yarn=True):
+            frontend_compile(c)
+        else:
+            frontend_download(c)
 
     if not skip_static:
-        static(c)
+        static(c, frontend=not no_frontend)
 
 
 # Data tasks
