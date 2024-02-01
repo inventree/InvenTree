@@ -5,6 +5,7 @@ import {
   Box,
   Indicator,
   LoadingOverlay,
+  Skeleton,
   Space,
   Stack,
   Tooltip
@@ -128,7 +129,7 @@ export function InvenTreeTable<T = any>({
       // First check the local cache
       const cachedNames = getTableColumnNames(cacheKey);
 
-      if (!!cachedNames) {
+      if (Object.keys(cachedNames).length > 0) {
         // Cached names are available - use them!
         setFieldNames(cachedNames);
         return;
@@ -181,10 +182,12 @@ export function InvenTreeTable<T = any>({
         hidden = tableState.hiddenColumns.includes(col.accessor);
       }
 
+      console.log(col.accessor, col.title, fieldNames[col.accessor]);
+
       return {
         ...col,
         hidden: hidden,
-        title: col.title ?? fieldNames[col.accessor] ?? undefined
+        title: col.title ?? fieldNames[col.accessor] ?? <Skeleton />
       };
     });
 
