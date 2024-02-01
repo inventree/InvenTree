@@ -30,7 +30,7 @@ export const doBasicLogin = async (username: string, password: string) => {
     .get(apiUrl(ApiEndpoints.user_token), {
       auth: { username, password },
       baseURL: host,
-      timeout: 2500,
+      timeout: 2000,
       params: {
         name: 'inventree-web-app'
       }
@@ -78,7 +78,7 @@ export const doSimpleLogin = async (email: string) => {
       },
       {
         baseURL: host,
-        timeout: 2500
+        timeout: 2000
       }
     )
     .then((response) => response.data)
@@ -132,7 +132,7 @@ export function checkLoginState(
   // There *is* a token available: Test if it is valid
   api
     .get(apiUrl(ApiEndpoints.user_me), {
-      timeout: 2500
+      timeout: 2000
     })
     .then((val) => {
       if (val.status === 200) {
