@@ -121,19 +121,9 @@ export function InvenTreeTable<T = any>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
+    enabled: false,
     queryKey: ['options', url, tableState.tableKey],
     queryFn: async () => {
-      const cacheKey = tableState.tableKey.split('-')[0];
-
-      // First check the local cache
-      const cachedNames = getTableColumnNames(cacheKey);
-
-      if (Object.keys(cachedNames).length > 0) {
-        // Cached names are available - use them!
-        setFieldNames(cachedNames);
-        return;
-      }
-
       return api.options(url).then((response) => {
         if (response.status == 200) {
           // Extract field information from the API
@@ -149,12 +139,33 @@ export function InvenTreeTable<T = any>({
             }
           });
 
+          const cacheKey = tableState.tableKey.split('-')[0];
+
           setFieldNames(names);
           setTableColumnNames(cacheKey)(names);
         }
+
+        return null;
       });
     }
   });
+
+  // Rebuild set of translated column names
+  useEffect(() => {
+    const cacheKey = tableState.tableKey.split('-')[0];
+
+    // First check the local cache
+    const cachedNames = getTableColumnNames(cacheKey);
+
+    if (Object.keys(cachedNames).length > 0) {
+      // Cached names are available - use them!
+      setFieldNames(cachedNames);
+      return;
+    }
+
+    // Otherwise, fetch the data from the API
+    tableOptionQuery.refetch();
+  }, [url, tableState.tableKey]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
