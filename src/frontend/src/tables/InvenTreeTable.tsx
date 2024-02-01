@@ -5,7 +5,6 @@ import {
   Box,
   Indicator,
   LoadingOverlay,
-  Skeleton,
   Space,
   Stack,
   Tooltip
@@ -24,6 +23,7 @@ import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 import { extractAvailableFields } from '../functions/forms';
+import { toTitleCase } from '../functions/string';
 import { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
@@ -145,7 +145,7 @@ export function InvenTreeTable<T = any>({
 
           for (const [k, v] of Object.entries(fields)) {
             if (v.label) {
-              names[k] = v.label;
+              names[k] = toTitleCase(v.label);
             }
           }
 
@@ -187,7 +187,7 @@ export function InvenTreeTable<T = any>({
       return {
         ...col,
         hidden: hidden,
-        title: col.title ?? fieldNames[col.accessor] ?? <Skeleton />
+        title: col.title ?? fieldNames[col.accessor] ?? `- ${col.accessor} -`
       };
     });
 
