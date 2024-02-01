@@ -27,7 +27,6 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     return [
       {
         accessor: 'test_name',
-        title: t`Test Name`,
         switchable: false,
         sortable: true
       },
@@ -35,16 +34,13 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         switchable: false
       }),
       BooleanColumn({
-        accessor: 'required',
-        title: t`Required`
+        accessor: 'required'
       }),
       BooleanColumn({
-        accessor: 'requires_value',
-        title: t`Requires Value`
+        accessor: 'requires_value'
       }),
       BooleanColumn({
-        accessor: 'requires_attachment',
-        title: t`Requires Attachment`
+        accessor: 'requires_attachment'
       })
     ];
   }, []);
@@ -53,17 +49,14 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     return [
       {
         name: 'required',
-        label: t`Required`,
         description: t`Show required tests`
       },
       {
         name: 'requires_value',
-        label: t`Requires Value`,
         description: t`Show tests that require a value`
       },
       {
         name: 'requires_attachment',
-        label: t`Requires Attachment`,
         description: t`Show tests that require an attachment`
       }
     ];

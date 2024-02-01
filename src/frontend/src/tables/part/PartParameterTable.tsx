@@ -3,6 +3,7 @@ import { Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { YesNoButton } from '../../components/items/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
@@ -30,19 +31,17 @@ export function PartParameterTable({ partId }: { partId: any }) {
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
-        title: t`Part`,
         accessor: 'part',
         sortable: true,
         render: (record: any) => PartColumn(record?.part_detail)
       },
       {
         accessor: 'part_detail.IPN',
-        title: t`IPN`,
         sortable: false,
         switchable: true
       },
       {
-        accessor: 'name',
+        accessor: 'template_detail.name',
         switchable: false,
         sortable: true,
         render: (record) => {
@@ -52,11 +51,10 @@ export function PartParameterTable({ partId }: { partId: any }) {
         }
       },
       DescriptionColumn({
-        accessor: 'part_detail.description'
+        accessor: 'template_detail.description'
       }),
       {
         accessor: 'data',
-        title: t`Value`,
         switchable: false,
         sortable: true,
         render: (record) => {
@@ -76,10 +74,8 @@ export function PartParameterTable({ partId }: { partId: any }) {
         }
       },
       {
-        accessor: 'units',
-        title: t`Units`,
-        sortable: true,
-        render: (record) => record.template_detail?.units
+        accessor: 'template_detail.units',
+        sortable: false
       }
     ];
   }, [partId]);

@@ -38,7 +38,6 @@ function partTableColumns(): TableColumn[] {
     },
     {
       accessor: 'IPN',
-      title: t`IPN`,
       sortable: true
     },
     {

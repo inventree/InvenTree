@@ -2,9 +2,15 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { YesNoButton } from '../../components/items/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -27,13 +33,11 @@ export function AddressTable({
     return [
       {
         accessor: 'title',
-        title: t`Title`,
         sortable: true,
         switchable: false
       },
       {
         accessor: 'primary',
-        title: t`Primary`,
         switchable: false,
         sortable: false,
         render: (record: any) => YesNoButton({ value: record.primary })
@@ -59,43 +63,36 @@ export function AddressTable({
       },
       {
         accessor: 'postal_code',
-        title: t`Postal Code`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'postal_city',
-        title: t`City`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'province',
-        title: t`State / Province`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'country',
-        title: t`Country`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'shipping_notes',
-        title: t`Courier Notes`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'internal_shipping_notes',
-        title: t`Internal Notes`,
         sortable: false,
         switchable: true
       },
       {
         accessor: 'link',
-        title: t`Link`,
         sortable: false,
         switchable: true
       }

@@ -104,14 +104,12 @@ export function BuildOrderTable({
       },
       {
         name: 'status',
-        label: t`Status`,
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.build)
       },
       {
         name: 'overdue',
         type: 'boolean',
-        label: t`Overdue`,
         description: t`Show overdue status`
       },
       {

@@ -17,7 +17,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowEditAction } from '../RowActions';
@@ -40,12 +40,10 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
       },
       {
         name: 'structural',
-        label: t`Structural`,
         description: t`Show structural locations`
       },
       {
         name: 'external',
-        label: t`External`,
         description: t`Show external locations`
       },
       {
@@ -71,16 +69,12 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         accessor: 'items',
         sortable: true
       },
-      {
-        accessor: 'structural',
-        sortable: true,
-        render: (record: any) => <YesNoButton value={record.structural} />
-      },
-      {
-        accessor: 'external',
-        sortable: true,
-        render: (record: any) => <YesNoButton value={record.external} />
-      },
+      BooleanColumn({
+        accessor: 'structural'
+      }),
+      BooleanColumn({
+        accessor: 'external'
+      }),
       {
         accessor: 'location_type',
         sortable: false,

@@ -32,25 +32,21 @@ export function ContactTable({
     return [
       {
         accessor: 'name',
-        title: t`Name`,
         sortable: true,
         switchable: false
       },
       {
         accessor: 'phone',
-        title: t`Phone`,
         switchable: true,
         sortable: false
       },
       {
         accessor: 'email',
-        title: t`Email`,
         switchable: true,
         sortable: false
       },
       {
         accessor: 'role',
-        title: t`Role`,
         switchable: true,
         sortable: false
       }
