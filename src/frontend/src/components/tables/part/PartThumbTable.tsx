@@ -142,7 +142,7 @@ export function PartThumbTable({
       { limit: limit, offset: offset, search: filterQuery }
     ],
     queryFn: async () => {
-      return api.get(ApiEndpoints.part_thumbs_list, {
+      return api.get(apiUrl(ApiEndpoints.part_thumbs_list), {
         params: {
           offset: offset,
           limit: limit,
