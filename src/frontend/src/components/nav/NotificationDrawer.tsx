@@ -36,7 +36,7 @@ export function NotificationDrawer({
     queryKey: ['notifications', opened],
     queryFn: async () =>
       api
-        .get(ApiEndpoints.notifications_list, {
+        .get(apiUrl(ApiEndpoints.notifications_list), {
           params: {
             read: false,
             limit: 10
