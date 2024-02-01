@@ -49,7 +49,7 @@ export const doBasicLogin = async (username: string, password: string) => {
  *
  * @arg deleteToken: If true, delete the token from the server
  */
-export const doClassicLogout = async (navigate: any, deleteToken?: boolean) => {
+export const doLogout = async (navigate: any, deleteToken?: boolean) => {
   if (deleteToken) {
     // Logout from the server session
     await api.post(apiUrl(ApiEndpoints.user_logout));

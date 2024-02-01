@@ -9,7 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { doClassicLogout } from '../../functions/auth';
+import { doLogout } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useUserState } from '../../states/UserState';
 
@@ -64,7 +64,7 @@ export function MainMenu() {
         <Menu.Item
           icon={<IconLogout />}
           onClick={() => {
-            doClassicLogout(navigate);
+            doLogout(navigate);
           }}
         >
           <Trans>Logout</Trans>
