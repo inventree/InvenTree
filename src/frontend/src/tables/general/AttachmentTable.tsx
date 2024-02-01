@@ -27,7 +27,6 @@ function attachmentTableColumns(): TableColumn[] {
   return [
     {
       accessor: 'attachment',
-      title: t`Attachment`,
       sortable: false,
       switchable: false,
       noWrap: true,
@@ -44,7 +43,6 @@ function attachmentTableColumns(): TableColumn[] {
     },
     {
       accessor: 'comment',
-      title: t`Comment`,
       sortable: false,
 
       render: function (record: any) {
@@ -52,9 +50,8 @@ function attachmentTableColumns(): TableColumn[] {
       }
     },
     {
-      accessor: 'uploaded',
-      title: t`Uploaded`,
-      sortable: false,
+      accessor: 'upload_date',
+      sortable: true,
 
       render: function (record: any) {
         return (

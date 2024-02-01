@@ -10,7 +10,11 @@ import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
-import { PartColumn, StatusColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  PartColumn,
+  StatusColumn
+} from '../ColumnRenderers';
 import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -23,14 +27,11 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'part',
       sortable: true,
-      title: t`Part`,
       render: (record: any) => PartColumn(record?.part_detail)
     },
-    {
-      accessor: 'part_detail.description',
-      sortable: false,
-      title: t`Description`
-    },
+    DescriptionColumn({
+      accessor: 'part_detail.description'
+    }),
     {
       accessor: 'quantity',
       sortable: true,
@@ -176,15 +177,11 @@ function stockItemTableColumns(): TableColumn[] {
     StatusColumn(ModelType.stockitem),
     {
       accessor: 'batch',
-      sortable: true,
-
-      title: t`Batch`
+      sortable: true
     },
     {
       accessor: 'location',
       sortable: true,
-
-      title: t`Location`,
       render: function (record: any) {
         // TODO: Custom renderer for location
         // TODO: Note, if not "In stock" we don't want to display the actual location here
@@ -195,14 +192,12 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'expiry_date',
       sortable: true,
-      title: t`Expiry Date`,
       switchable: true,
       render: (record: any) => renderDate(record.expiry_date)
     },
     {
       accessor: 'updated',
       sortable: true,
-      title: t`Last Updated`,
       switchable: true,
       render: (record: any) => renderDate(record.updated)
     },
@@ -211,7 +206,6 @@ function stockItemTableColumns(): TableColumn[] {
     {
       accessor: 'purchase_price',
       sortable: true,
-      title: t`Purchase Price`,
       switchable: true,
       render: (record: any) =>
         formatCurrency(record.purchase_price, {

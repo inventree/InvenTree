@@ -114,13 +114,12 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
     return [
       {
         accessor: 'bom_item',
-        title: t`Part`,
         sortable: true,
         switchable: false,
         render: (record: any) => <PartHoverCard part={record.part_detail} />
       },
       {
-        accessor: 'reference',
+        accessor: 'bom_item_detail.reference',
         title: t`Reference`,
         render: (record: any) => record.bom_item_detail.reference
       },
@@ -149,7 +148,6 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
       },
       {
         accessor: 'quantity',
-        title: t`Required Quantity`,
         sortable: true,
         render: (record: any) => {
           return (
@@ -164,14 +162,12 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
       },
       {
         accessor: 'available_stock',
-        title: t`Available`,
         sortable: true,
         switchable: false,
         render: renderAvailableColumn
       },
       {
         accessor: 'allocated',
-        title: t`Allocated`,
         switchable: false,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (

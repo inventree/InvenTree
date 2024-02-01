@@ -32,19 +32,16 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     return [
       {
         accessor: 'name',
-        title: t`Name`,
         sortable: true,
         switchable: false
       },
       DescriptionColumn({}),
       {
         accessor: 'pathstring',
-        title: t`Path`,
         sortable: false
       },
       {
         accessor: 'structural',
-        title: t`Structural`,
         sortable: true,
         render: (record: any) => {
           return <YesNoButton value={record.structural} />;
@@ -52,7 +49,6 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
       },
       {
         accessor: 'part_count',
-        title: t`Parts`,
         sortable: true
       }
     ];

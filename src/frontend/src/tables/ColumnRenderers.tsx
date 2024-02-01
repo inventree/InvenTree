@@ -63,6 +63,13 @@ export function LinkColumn(): TableColumn {
   };
 }
 
+export function NoteColumn(): TableColumn {
+  return {
+    accessor: 'note',
+    sortable: false
+  };
+}
+
 export function LineItemsProgressColumn(): TableColumn {
   return {
     accessor: 'line_items',

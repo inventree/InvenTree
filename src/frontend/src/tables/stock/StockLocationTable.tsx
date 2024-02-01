@@ -57,39 +57,29 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     return [
       {
         accessor: 'name',
-        title: t`Name`,
         switchable: false
       },
       DescriptionColumn({}),
       {
         accessor: 'pathstring',
-        title: t`Path`,
         sortable: true
       },
       {
         accessor: 'items',
-        title: t`Stock Items`,
-
         sortable: true
       },
       {
         accessor: 'structural',
-        title: t`Structural`,
-
         sortable: true,
         render: (record: any) => <YesNoButton value={record.structural} />
       },
       {
         accessor: 'external',
-        title: t`External`,
-
         sortable: true,
         render: (record: any) => <YesNoButton value={record.external} />
       },
       {
         accessor: 'location_type',
-        title: t`Location Type`,
-
         sortable: false,
         render: (record: any) => record.location_type_detail?.name
       }

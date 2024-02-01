@@ -15,7 +15,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { PartColumn } from '../ColumnRenderers';
+import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -30,15 +30,13 @@ export function PartParameterTable({ partId }: { partId: any }) {
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'part',
         title: t`Part`,
-
+        accessor: 'part',
         sortable: true,
         render: (record: any) => PartColumn(record?.part_detail)
       },
       {
         accessor: 'name',
-        title: t`Parameter`,
         switchable: false,
         sortable: true,
         render: (record) => {
@@ -47,13 +45,9 @@ export function PartParameterTable({ partId }: { partId: any }) {
           return <Text italic={variant}>{record.template_detail?.name}</Text>;
         }
       },
-      {
-        accessor: 'description',
-        title: t`Description`,
-        sortable: false,
-
-        render: (record) => record.template_detail?.description
-      },
+      DescriptionColumn({
+        accessor: 'part_detail.description'
+      }),
       {
         accessor: 'data',
         title: t`Value`,
@@ -78,7 +72,6 @@ export function PartParameterTable({ partId }: { partId: any }) {
       {
         accessor: 'units',
         title: t`Units`,
-
         sortable: true,
         render: (record) => record.template_detail?.units
       }

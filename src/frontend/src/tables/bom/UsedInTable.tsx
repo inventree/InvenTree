@@ -30,20 +30,17 @@ export function UsedInTable({
     return [
       {
         accessor: 'part',
-        title: t`Assembled Part`,
         switchable: false,
         sortable: true,
         render: (record: any) => <PartHoverCard part={record.part_detail} />
       },
       {
         accessor: 'sub_part',
-        title: t`Required Part`,
         sortable: true,
         render: (record: any) => <PartHoverCard part={record.sub_part_detail} />
       },
       {
         accessor: 'quantity',
-        title: t`Quantity`,
         render: (record: any) => {
           // TODO: render units if appropriate
           return record.quantity;
@@ -51,7 +48,6 @@ export function UsedInTable({
       },
       {
         accessor: 'reference',
-        title: t`Reference`,
         sortable: true
       }
     ];

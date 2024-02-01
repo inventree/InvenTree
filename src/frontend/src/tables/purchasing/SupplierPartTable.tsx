@@ -16,7 +16,12 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
+import {
+  DescriptionColumn,
+  LinkColumn,
+  NoteColumn,
+  PartColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -36,14 +41,12 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     return [
       {
         accessor: 'part',
-        title: t`Part`,
         switchable: 'part' in params,
         sortable: true,
         render: (record: any) => PartColumn(record?.part_detail)
       },
       {
         accessor: 'supplier',
-        title: t`Supplier`,
         sortable: true,
         render: (record: any) => {
           let supplier = record?.supplier_detail ?? {};
@@ -68,7 +71,6 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         accessor: 'manufacturer',
 
         sortable: true,
-        title: t`Manufacturer`,
         render: (record: any) => {
           let manufacturer = record?.manufacturer_detail ?? {};
 
@@ -91,17 +93,14 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       },
       {
         accessor: 'in_stock',
-        title: t`In Stock`,
         sortable: true
       },
       {
         accessor: 'packaging',
-        title: t`Packaging`,
         sortable: true
       },
       {
         accessor: 'pack_quantity',
-        title: t`Pack Quantity`,
         sortable: true,
 
         render: (record: any) => {
@@ -127,14 +126,9 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         }
       },
       LinkColumn(),
-      {
-        accessor: 'note',
-        title: t`Notes`,
-        sortable: false
-      },
+      NoteColumn(),
       {
         accessor: 'available',
-        title: t`Availability`,
         sortable: true,
 
         render: (record: any) => {

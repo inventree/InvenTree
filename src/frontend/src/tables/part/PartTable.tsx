@@ -26,7 +26,6 @@ function partTableColumns(): TableColumn[] {
       accessor: 'name',
       sortable: true,
       noWrap: true,
-      title: t`Part`,
       render: function (record: any) {
         return (
           <Thumbnail
@@ -44,13 +43,11 @@ function partTableColumns(): TableColumn[] {
     },
     {
       accessor: 'units',
-      sortable: true,
-      title: t`Units`
+      sortable: true
     },
     DescriptionColumn({}),
     {
       accessor: 'category',
-      title: t`Category`,
       sortable: true,
 
       render: function (record: any) {
@@ -62,7 +59,6 @@ function partTableColumns(): TableColumn[] {
     },
     {
       accessor: 'total_in_stock',
-      title: t`Stock`,
       sortable: true,
 
       render: (record) => {

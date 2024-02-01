@@ -33,14 +33,12 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     return [
       {
         accessor: 'part',
-        title: t`Part`,
         switchable: 'part' in params,
         sortable: true,
         render: (record: any) => PartColumn(record?.part_detail)
       },
       {
         accessor: 'manufacturer',
-        title: t`Manufacturer`,
         sortable: true,
         render: (record: any) => {
           let manufacturer = record?.manufacturer_detail ?? {};
