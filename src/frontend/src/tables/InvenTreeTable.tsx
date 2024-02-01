@@ -21,8 +21,8 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
-import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
-import { extractAvailableFields } from '../functions/forms';
+import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { extractAvailableFields, mapFields } from '../functions/forms';
 import { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
@@ -137,16 +137,17 @@ export function InvenTreeTable<T = any>({
       return api.options(url).then((response) => {
         if (response.status == 200) {
           // Extract field information from the API
-          let fields: Record<string, ApiFormFieldType> =
-            extractAvailableFields(response, 'POST') || {};
 
           let names: Record<string, string> = {};
+          let fields: ApiFormFieldSet =
+            extractAvailableFields(response, 'POST') || {};
 
-          for (const [k, v] of Object.entries(fields)) {
-            if (v.label) {
-              names[k] = v.label;
+          // Extract flattened map of fields
+          mapFields(fields, (path, field) => {
+            if (field.label) {
+              names[path] = field.label;
             }
-          }
+          });
 
           setFieldNames(names);
           setTableColumnNames(cacheKey)(names);
