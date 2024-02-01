@@ -29,6 +29,7 @@ interface LocalStateProps {
   setTableColumnNames: (
     tableKey: string
   ) => (names: Record<string, string>) => void;
+  clearTableColumnNames: () => void;
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -73,6 +74,9 @@ export const useLocalState = create<LocalStateProps>()(
             [tableKey]: names
           }
         });
+      },
+      clearTableColumnNames: () => {
+        set({ tableColumnNames: {} });
       }
     }),
     {
