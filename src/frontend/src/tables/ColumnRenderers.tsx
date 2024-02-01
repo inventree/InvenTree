@@ -58,7 +58,6 @@ export function DescriptionColumn({
 export function LinkColumn(): TableColumn {
   return {
     accessor: 'link',
-    title: t`Link`,
     sortable: false
     // TODO: Custom URL hyperlink renderer?
   };
@@ -67,7 +66,6 @@ export function LinkColumn(): TableColumn {
 export function LineItemsProgressColumn(): TableColumn {
   return {
     accessor: 'line_items',
-    title: t`Line Items`,
     sortable: true,
     render: (record: any) => (
       <ProgressBar
@@ -82,7 +80,6 @@ export function LineItemsProgressColumn(): TableColumn {
 export function ProjectCodeColumn(): TableColumn {
   return {
     accessor: 'project_code',
-    title: t`Project Code`,
     sortable: true,
     render: (record: any) => (
       <ProjectCodeHoverCard projectCode={record.project_code_detail} />
@@ -94,7 +91,6 @@ export function StatusColumn(model: ModelType) {
   return {
     accessor: 'status',
     sortable: true,
-    title: t`Status`,
     render: TableStatusRenderer(model)
   };
 }
@@ -102,7 +98,6 @@ export function StatusColumn(model: ModelType) {
 export function ResponsibleColumn(): TableColumn {
   return {
     accessor: 'responsible',
-    title: t`Responsible`,
     sortable: true,
     render: (record: any) =>
       record.responsible && RenderOwner({ instance: record.responsible_detail })
@@ -112,8 +107,8 @@ export function ResponsibleColumn(): TableColumn {
 export function TargetDateColumn(): TableColumn {
   return {
     accessor: 'target_date',
-    title: t`Target Date`,
     sortable: true,
+    title: t`Target Date`,
     // TODO: custom renderer which alerts user if target date is overdue
     render: (record: any) => renderDate(record.target_date)
   };
@@ -122,7 +117,6 @@ export function TargetDateColumn(): TableColumn {
 export function CreationDateColumn(): TableColumn {
   return {
     accessor: 'creation_date',
-    title: t`Creation Date`,
     sortable: true,
     render: (record: any) => renderDate(record.creation_date)
   };
@@ -131,7 +125,6 @@ export function CreationDateColumn(): TableColumn {
 export function ShipmentDateColumn(): TableColumn {
   return {
     accessor: 'shipment_date',
-    title: t`Shipment Date`,
     sortable: true,
     render: (record: any) => renderDate(record.shipment_date)
   };

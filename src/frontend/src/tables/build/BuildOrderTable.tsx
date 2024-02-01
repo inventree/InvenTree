@@ -30,26 +30,22 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'reference',
       sortable: true,
-      switchable: false,
-      title: t`Reference`
+      switchable: false
     },
     {
       accessor: 'part',
       sortable: true,
       switchable: false,
-      title: t`Part`,
       render: (record: any) => <PartHoverCard part={record.part_detail} />
     },
     {
       accessor: 'title',
-      sortable: false,
-      title: t`Description`
+      sortable: false
     },
     {
       accessor: 'completed',
       sortable: true,
       switchable: false,
-      title: t`Progress`,
       render: (record: any) => (
         <ProgressBar
           progressLabel={true}
@@ -62,7 +58,6 @@ function buildOrderTableColumns(): TableColumn[] {
     ProjectCodeColumn(),
     {
       accessor: 'priority',
-      title: t`Priority`,
       sortable: true
     },
     CreationDateColumn(),
@@ -70,13 +65,11 @@ function buildOrderTableColumns(): TableColumn[] {
     {
       accessor: 'completion_date',
       sortable: true,
-      title: t`Completed`,
       render: (record: any) => renderDate(record.completion_date)
     },
     {
       accessor: 'issued_by',
       sortable: true,
-      title: t`Issued By`,
       render: (record: any) => (
         <RenderUser instance={record?.issued_by_detail} />
       )
