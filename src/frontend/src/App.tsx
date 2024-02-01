@@ -1,6 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
+import { getCsrfCookie } from './functions/auth';
 import { useLocalState } from './states/LocalState';
 import { useSessionState } from './states/SessionState';
 
@@ -10,6 +11,7 @@ export const api = axios.create({});
 export function setApiDefaults() {
   const host = useLocalState.getState().host;
   const token = useSessionState.getState().token;
+  const cookie = getCsrfCookie();
 
   api.defaults.baseURL = host;
 
@@ -19,9 +21,14 @@ export function setApiDefaults() {
     api.defaults.headers.common['Authorization'] = undefined;
   }
 
-  // CSRF support (needed for POST, PUT, PATCH, DELETE)
-  api.defaults.withCredentials = true;
-  api.defaults.xsrfCookieName = 'csrftoken';
-  api.defaults.xsrfHeaderName = 'X-CSRFToken';
+  if (cookie) {
+    api.defaults.withCredentials = true;
+    api.defaults.xsrfCookieName = 'csrftoken';
+    api.defaults.xsrfHeaderName = 'X-CSRFToken';
+  } else {
+    api.defaults.withCredentials = false;
+    api.defaults.xsrfCookieName = undefined;
+    api.defaults.xsrfHeaderName = undefined;
+  }
 }
 export const queryClient = new QueryClient();

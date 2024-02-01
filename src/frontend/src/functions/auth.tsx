@@ -3,11 +3,13 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
-import { api } from '../App';
+import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useSessionState } from '../states/SessionState';
+
+const tokenName: string = 'inventree-web-app';
 
 /**
  * Attempt to login using username:password combination.
@@ -32,7 +34,7 @@ export const doBasicLogin = async (username: string, password: string) => {
       baseURL: host,
       timeout: 2000,
       params: {
-        name: 'inventree-web-app'
+        name: tokenName
       }
     })
     .then((response) => {
@@ -115,45 +117,84 @@ export function handleReset(navigate: any, values: { email: string }) {
 /**
  * Check login state, and redirect the user as required.
  *
- * If there is no token available in the session, then the user is *not* logged in.
- * If there is a token available, we need to test it!
+ * The user may be logged in via the following methods:
+ * - An existing API token is stored in the session
+ * - An existing CSRF cookie is stored in the browser
  */
 export function checkLoginState(
   navigate: any,
   redirect?: string,
   no_redirect?: boolean
 ) {
-  if (!useSessionState.getState().hasToken()) {
-    // No token available - redirect to the login page
-    if (!no_redirect) navigate('/login');
-    return;
-  }
+  setApiDefaults();
 
-  // There *is* a token available: Test if it is valid
-  api
-    .get(apiUrl(ApiEndpoints.user_me), {
-      timeout: 2000
-    })
-    .then((val) => {
-      if (val.status === 200) {
-        // Success: we are logged in!
-
-        notifications.show({
-          title: t`Logged In`,
-          message: t`Found an existing login - welcome back!`,
-          color: 'green',
-          icon: <IconCheck size="1rem" />
-        });
-        navigate(redirect ?? '/home');
-      } else {
-        // Token is invalid
-        useSessionState.getState().clearToken();
-        if (!no_redirect) navigate('/login');
-      }
-    })
-    .catch(() => {
-      // Token is invalid
-      useSessionState.getState().clearToken();
-      if (!no_redirect) navigate('/login');
+  // Callback function when login is successful
+  const loginSuccess = () => {
+    notifications.show({
+      title: t`Logged In`,
+      message: t`Found an existing login - welcome back!`,
+      color: 'green',
+      icon: <IconCheck size="1rem" />
     });
+    navigate(redirect ?? '/home');
+  };
+
+  // Callback function when login fails
+  const loginFailure = () => {
+    useSessionState.getState().clearToken();
+    if (!no_redirect) navigate('/login');
+  };
+
+  if (useSessionState.getState().hasToken()) {
+    // An existing token is available - check if it works
+    api
+      .get(apiUrl(ApiEndpoints.user_me), {
+        timeout: 2000
+      })
+      .then((val) => {
+        if (val.status === 200) {
+          // Success: we are logged in (and we already have a token)
+          loginSuccess();
+        } else {
+          loginFailure();
+        }
+      })
+      .catch(() => {
+        loginFailure();
+      });
+  } else if (getCsrfCookie()) {
+    // Try to fetch a new token using the CSRF cookie
+    api
+      .get(apiUrl(ApiEndpoints.user_token), {
+        params: {
+          name: tokenName
+        }
+      })
+      .then((response) => {
+        if (response.status == 200 && response.data.token) {
+          useSessionState.getState().setToken(response.data.token);
+          loginSuccess();
+        } else {
+          loginFailure();
+        }
+      })
+      .catch(() => {
+        loginFailure();
+      });
+  } else {
+    // No token, no cookie - redirect to login page
+    loginFailure();
+  }
+}
+
+/*
+ * Return the value of the CSRF cookie, if available
+ */
+export function getCsrfCookie() {
+  const cookieValue = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('csrftoken='))
+    ?.split('=')[1];
+
+  return cookieValue;
 }
