@@ -1,14 +1,14 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
+import { projectCodeFields } from '../../forms/CommonForms';
 import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../functions/forms';
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -36,37 +36,47 @@ export default function ProjectCodeTable() {
     ];
   }, []);
 
+  const newProjectCode = useCreateApiFormModal({
+    url: ApiEndpoints.project_code_list,
+    title: t`Add Project Code`,
+    fields: projectCodeFields(),
+    onFormSuccess: table.refreshTable
+  });
+
+  const [selectedProjectCode, setSelectedProjectCode] = useState<
+    number | undefined
+  >(undefined);
+
+  const editProjectCode = useEditApiFormModal({
+    url: ApiEndpoints.project_code_list,
+    pk: selectedProjectCode,
+    title: t`Edit Project Code`,
+    fields: projectCodeFields(),
+    onFormSuccess: table.refreshTable
+  });
+
+  const deleteProjectCode = useDeleteApiFormModal({
+    url: ApiEndpoints.project_code_list,
+    pk: selectedProjectCode,
+    title: t`Delete Project Code`,
+    onFormSuccess: table.refreshTable
+  });
+
   const rowActions = useCallback(
     (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.admin),
           onClick: () => {
-            openEditApiForm({
-              url: ApiEndpoints.project_code_list,
-              pk: record.pk,
-              title: t`Edit project code`,
-              fields: {
-                code: {},
-                description: {},
-                responsible: {}
-              },
-              onFormSuccess: table.refreshTable,
-              successMessage: t`Project code updated`
-            });
+            setSelectedProjectCode(record.pk);
+            editProjectCode.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.admin),
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiEndpoints.project_code_list,
-              pk: record.pk,
-              title: t`Delete project code`,
-              successMessage: t`Project code deleted`,
-              onFormSuccess: table.refreshTable,
-              preFormWarning: t`Are you sure you want to remove this project code?`
-            });
+            setSelectedProjectCode(record.pk);
+            deleteProjectCode.open();
           }
         })
       ];
@@ -74,39 +84,33 @@ export default function ProjectCodeTable() {
     [user]
   );
 
-  const addProjectCode = useCallback(() => {
-    openCreateApiForm({
-      url: ApiEndpoints.project_code_list,
-      title: t`Add project code`,
-      fields: {
-        code: {},
-        description: {},
-        responsible: {}
-      },
-      onFormSuccess: table.refreshTable,
-      successMessage: t`Added project code`
-    });
-  }, []);
-
   const tableActions = useMemo(() => {
     let actions = [];
 
     actions.push(
-      <AddItemButton onClick={addProjectCode} tooltip={t`Add project code`} />
+      <AddItemButton
+        onClick={() => newProjectCode.open()}
+        tooltip={t`Add project code`}
+      />
     );
 
     return actions;
   }, []);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.project_code_list)}
-      tableState={table}
-      columns={columns}
-      props={{
-        rowActions: rowActions,
-        tableActions: tableActions
-      }}
-    />
+    <>
+      {newProjectCode.modal}
+      {editProjectCode.modal}
+      {deleteProjectCode.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.project_code_list)}
+        tableState={table}
+        columns={columns}
+        props={{
+          rowActions: rowActions,
+          tableActions: tableActions
+        }}
+      />
+    </>
   );
 }

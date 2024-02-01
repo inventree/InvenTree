@@ -1,13 +1,17 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
-import { IconLayersLinked } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { Group, Text } from '@mantine/core';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
-import { openCreateApiForm, openDeleteApiForm } from '../../functions/forms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -66,55 +70,54 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
     ];
   }, [partId]);
 
-  const addRelatedPart = useCallback(() => {
-    openCreateApiForm({
-      title: t`Add Related Part`,
-      url: ApiEndpoints.related_part_list,
-      fields: {
-        part_1: {
-          hidden: true,
-          value: partId
-        },
-        part_2: {
-          label: t`Related Part`
-        }
+  const relatedPartFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      part_1: {
+        hidden: true
       },
-      successMessage: t`Related part added`,
-      onFormSuccess: table.refreshTable
-    });
-  }, [partId]);
-
-  const customActions: ReactNode[] = useMemo(() => {
-    // TODO: Hide if user does not have permission to edit parts
-    let actions = [];
-
-    actions.push(
-      <Tooltip label={t`Add related part`}>
-        <ActionIcon radius="sm" onClick={addRelatedPart}>
-          <IconLayersLinked />
-        </ActionIcon>
-      </Tooltip>
-    );
-
-    return actions;
+      part_2: {}
+    };
   }, []);
 
-  // Generate row actions
-  // TODO: Hide if user does not have permission to edit parts
+  const newRelatedPart = useCreateApiFormModal({
+    url: ApiEndpoints.related_part_list,
+    title: t`Add Related Part`,
+    fields: relatedPartFields,
+    initialData: {
+      part_1: partId
+    },
+    onFormSuccess: table.refreshTable
+  });
+
+  const [selectedRelatedPart, setSelectedRelatedPart] = useState<
+    number | undefined
+  >(undefined);
+
+  const deleteRelatedPart = useDeleteApiFormModal({
+    url: ApiEndpoints.related_part_list,
+    pk: selectedRelatedPart,
+    title: t`Delete Related Part`,
+    onFormSuccess: table.refreshTable
+  });
+
+  const tableActions: ReactNode[] = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add related part`}
+        hidden={!user.hasAddRole(UserRoles.part)}
+        onClick={() => newRelatedPart.open()}
+      />
+    ];
+  }, [user]);
+
   const rowActions = useCallback(
     (record: any) => {
       return [
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiEndpoints.related_part_list,
-              pk: record.pk,
-              title: t`Delete Related Part`,
-              successMessage: t`Related part deleted`,
-              preFormWarning: t`Are you sure you want to remove this relationship?`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedRelatedPart(record.pk);
+            deleteRelatedPart.open();
           }
         })
       ];
@@ -123,18 +126,22 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   );
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.related_part_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          part: partId,
-          category_detail: true
-        },
-        rowActions: rowActions,
-        tableActions: customActions
-      }}
-    />
+    <>
+      {newRelatedPart.modal}
+      {deleteRelatedPart.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.related_part_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            part: partId,
+            category_detail: true
+          },
+          rowActions: rowActions,
+          tableActions: tableActions
+        }}
+      />
+    </>
   );
 }

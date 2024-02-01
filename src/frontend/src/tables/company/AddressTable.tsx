@@ -1,16 +1,10 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/items/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
-import { addressFields } from '../../forms/CompanyForms';
-import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../functions/forms';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -108,6 +102,54 @@ export function AddressTable({
     ];
   }, []);
 
+  const addressFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      company: {},
+      title: {},
+      primary: {},
+      line1: {},
+      line2: {},
+      postal_code: {},
+      postal_city: {},
+      province: {},
+      country: {},
+      shipping_notes: {},
+      internal_shipping_notes: {},
+      link: {}
+    };
+  }, []);
+
+  const newAddress = useCreateApiFormModal({
+    url: ApiEndpoints.address_list,
+    title: t`Add Address`,
+    fields: addressFields,
+    initialData: {
+      company: companyId
+    },
+    successMessage: t`Address created`,
+    onFormSuccess: table.refreshTable
+  });
+
+  const [selectedAddress, setSelectedAddress] = useState<number | undefined>(
+    undefined
+  );
+
+  const editAddress = useEditApiFormModal({
+    url: ApiEndpoints.address_list,
+    pk: selectedAddress,
+    title: t`Edit Address`,
+    fields: addressFields,
+    onFormSuccess: table.refreshTable
+  });
+
+  const deleteAddress = useDeleteApiFormModal({
+    url: ApiEndpoints.address_list,
+    pk: selectedAddress,
+    title: t`Delete Address`,
+    onFormSuccess: table.refreshTable,
+    preFormWarning: t`Are you sure you want to delete this address?`
+  });
+
   const rowActions = useCallback(
     (record: any) => {
       let can_edit =
@@ -122,47 +164,21 @@ export function AddressTable({
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            openEditApiForm({
-              url: ApiEndpoints.address_list,
-              pk: record.pk,
-              title: t`Edit Address`,
-              fields: addressFields(),
-              successMessage: t`Address updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedAddress(record.pk);
+            editAddress.open();
           }
         }),
         RowDeleteAction({
           hidden: !can_delete,
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiEndpoints.address_list,
-              pk: record.pk,
-              title: t`Delete Address`,
-              successMessage: t`Address deleted`,
-              onFormSuccess: table.refreshTable,
-              preFormWarning: t`Are you sure you want to delete this address?`
-            });
+            setSelectedAddress(record.pk);
+            deleteAddress.open();
           }
         })
       ];
     },
     [user]
   );
-
-  const addAddress = useCallback(() => {
-    let fields = addressFields();
-
-    fields['company'].value = companyId;
-
-    openCreateApiForm({
-      url: ApiEndpoints.address_list,
-      title: t`Add Address`,
-      fields: fields,
-      successMessage: t`Address created`,
-      onFormSuccess: table.refreshTable
-    });
-  }, [companyId]);
 
   const tableActions = useMemo(() => {
     let can_add =
@@ -172,25 +188,30 @@ export function AddressTable({
     return [
       <AddItemButton
         tooltip={t`Add Address`}
-        onClick={addAddress}
+        onClick={() => newAddress.open()}
         disabled={!can_add}
       />
     ];
   }, [user]);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.address_list)}
-      tableState={table}
-      columns={columns}
-      props={{
-        rowActions: rowActions,
-        tableActions: tableActions,
-        params: {
-          ...params,
-          company: companyId
-        }
-      }}
-    />
+    <>
+      {newAddress.modal}
+      {editAddress.modal}
+      {deleteAddress.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.address_list)}
+        tableState={table}
+        columns={columns}
+        props={{
+          rowActions: rowActions,
+          tableActions: tableActions,
+          params: {
+            ...params,
+            company: companyId
+          }
+        }}
+      />
+    </>
   );
 }

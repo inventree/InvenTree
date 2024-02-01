@@ -1,15 +1,15 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
-import { contactFields } from '../../forms/CompanyForms';
 import {
-  openCreateApiForm,
-  openDeleteApiForm,
-  openEditApiForm
-} from '../../functions/forms';
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -57,6 +57,45 @@ export function ContactTable({
     ];
   }, []);
 
+  const contactFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      company: {},
+      name: {},
+      phone: {},
+      email: {},
+      role: {}
+    };
+  }, []);
+
+  const [selectedContact, setSelectedContact] = useState<number | undefined>(
+    undefined
+  );
+
+  const editContact = useEditApiFormModal({
+    url: ApiEndpoints.contact_list,
+    pk: selectedContact,
+    title: t`Edit Contact`,
+    fields: contactFields,
+    onFormSuccess: table.refreshTable
+  });
+
+  const newContact = useCreateApiFormModal({
+    url: ApiEndpoints.contact_list,
+    title: t`Add Contact`,
+    initialData: {
+      company: companyId
+    },
+    fields: contactFields,
+    onFormSuccess: table.refreshTable
+  });
+
+  const deleteContact = useDeleteApiFormModal({
+    url: ApiEndpoints.contact_list,
+    pk: selectedContact,
+    title: t`Delete Contact`,
+    onFormSuccess: table.refreshTable
+  });
+
   const rowActions = useCallback(
     (record: any) => {
       let can_edit =
@@ -70,47 +109,21 @@ export function ContactTable({
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            openEditApiForm({
-              url: ApiEndpoints.contact_list,
-              pk: record.pk,
-              title: t`Edit Contact`,
-              fields: contactFields(),
-              successMessage: t`Contact updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedContact(record.pk);
+            editContact.open();
           }
         }),
         RowDeleteAction({
           hidden: !can_delete,
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiEndpoints.contact_list,
-              pk: record.pk,
-              title: t`Delete Contact`,
-              successMessage: t`Contact deleted`,
-              onFormSuccess: table.refreshTable,
-              preFormWarning: t`Are you sure you want to delete this contact?`
-            });
+            setSelectedContact(record.pk);
+            deleteContact.open();
           }
         })
       ];
     },
     [user]
   );
-
-  const addContact = useCallback(() => {
-    var fields = contactFields();
-
-    fields['company'].value = companyId;
-
-    openCreateApiForm({
-      url: ApiEndpoints.contact_list,
-      title: t`Create Contact`,
-      fields: fields,
-      successMessage: t`Contact created`,
-      onFormSuccess: table.refreshTable
-    });
-  }, [companyId]);
 
   const tableActions = useMemo(() => {
     let can_add =
@@ -120,25 +133,30 @@ export function ContactTable({
     return [
       <AddItemButton
         tooltip={t`Add contact`}
-        onClick={addContact}
+        onClick={() => newContact.open()}
         disabled={!can_add}
       />
     ];
   }, [user]);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.contact_list)}
-      tableState={table}
-      columns={columns}
-      props={{
-        rowActions: rowActions,
-        tableActions: tableActions,
-        params: {
-          ...params,
-          company: companyId
-        }
-      }}
-    />
+    <>
+      {newContact.modal}
+      {editContact.modal}
+      {deleteContact.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.contact_list)}
+        tableState={table}
+        columns={columns}
+        props={{
+          rowActions: rowActions,
+          tableActions: tableActions,
+          params: {
+            ...params,
+            company: companyId
+          }
+        }}
+      />
+    </>
   );
 }

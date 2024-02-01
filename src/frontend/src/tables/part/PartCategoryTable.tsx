@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -8,8 +8,11 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
-import { openCreateApiForm, openEditApiForm } from '../../functions/forms';
 import { getDetailUrl } from '../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -69,26 +72,33 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     ];
   }, []);
 
-  const addCategory = useCallback(() => {
-    let fields = partCategoryFields({});
-
-    if (parentId) {
-      fields['parent'].value = parentId;
-    }
-
-    openCreateApiForm({
-      url: apiUrl(ApiEndpoints.category_list),
-      title: t`Add Part Category`,
-      fields: fields,
-      onFormSuccess(data: any) {
-        if (data.pk) {
-          navigate(`/part/category/${data.pk}`);
-        } else {
-          table.refreshTable();
-        }
+  const newCategory = useCreateApiFormModal({
+    url: ApiEndpoints.category_list,
+    title: t`New Part Category`,
+    fields: partCategoryFields({}),
+    initialData: {
+      parent: parentId
+    },
+    onFormSuccess(data: any) {
+      if (data.pk) {
+        navigate(getDetailUrl(ModelType.partcategory, data.pk));
+      } else {
+        table.refreshTable();
       }
-    });
-  }, [parentId]);
+    }
+  });
+
+  const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
+    undefined
+  );
+
+  const editCategory = useEditApiFormModal({
+    url: ApiEndpoints.category_list,
+    pk: selectedCategory,
+    title: t`Edit Part Category`,
+    fields: partCategoryFields({}),
+    onFormSuccess: table.refreshTable
+  });
 
   const tableActions = useMemo(() => {
     let can_add = user.hasAddRole(UserRoles.part_category);
@@ -96,7 +106,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     return [
       <AddItemButton
         tooltip={t`Add Part Category`}
-        onClick={addCategory}
+        onClick={() => newCategory.open()}
         disabled={!can_add}
       />
     ];
@@ -110,14 +120,8 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         RowEditAction({
           hidden: !can_edit,
           onClick: () => {
-            openEditApiForm({
-              url: ApiEndpoints.category_list,
-              pk: record.pk,
-              title: t`Edit Part Category`,
-              fields: partCategoryFields({}),
-              successMessage: t`Part category updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedCategory(record.pk);
+            editCategory.open();
           }
         })
       ];
@@ -126,21 +130,25 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
   );
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.category_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        enableDownload: true,
-        params: {
-          parent: parentId ?? 'null'
-        },
-        tableFilters: tableFilters,
-        tableActions: tableActions,
-        rowActions: rowActions,
-        onRowClick: (record, index, event) =>
-          navigate(getDetailUrl(ModelType.partcategory, record.pk))
-      }}
-    />
+    <>
+      {newCategory.modal}
+      {editCategory.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.category_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          enableDownload: true,
+          params: {
+            parent: parentId ?? 'null'
+          },
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          rowActions: rowActions,
+          onRowClick: (record) =>
+            navigate(getDetailUrl(ModelType.partcategory, record.pk))
+        }}
+      />
+    </>
   );
 }

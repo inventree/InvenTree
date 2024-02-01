@@ -20,7 +20,6 @@ export default function PurchasingIndex() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         content: <PurchaseOrderTable />
-        // TODO: Add optional "calendar" display here...
       },
       {
         name: 'suppliers',
