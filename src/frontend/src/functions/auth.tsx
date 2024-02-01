@@ -58,9 +58,13 @@ export const doLogout = async (navigate: any, deleteToken?: boolean) => {
   }
 
   // Logout from this session
+  // Note that clearToken() then calls setApiDefaults()
+  clearCsrfCookie();
   useSessionState.getState().clearToken();
 
+  notifications.hide('login');
   notifications.show({
+    id: 'login',
     title: t`Logout successful`,
     message: t`You have been logged out`,
     color: 'green',
@@ -130,7 +134,9 @@ export function checkLoginState(
 
   // Callback function when login is successful
   const loginSuccess = () => {
+    notifications.hide('login');
     notifications.show({
+      id: 'login',
       title: t`Logged In`,
       message: t`Found an existing login - welcome back!`,
       color: 'green',
@@ -197,4 +203,12 @@ export function getCsrfCookie() {
     ?.split('=')[1];
 
   return cookieValue;
+}
+
+/*
+ * Clear out the CSRF cookie (force session logout)
+ */
+export function clearCsrfCookie() {
+  document.cookie =
+    'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
