@@ -41,24 +41,6 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
-import { DetailsField } from '../../components/tables/Details';
-import {
-  DetailsImageType,
-  ItemDetailFields,
-  ItemDetails
-} from '../../components/tables/ItemDetails';
-import { BomTable } from '../../components/tables/bom/BomTable';
-import { UsedInTable } from '../../components/tables/bom/UsedInTable';
-import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
-import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
-import PartTestTemplateTable from '../../components/tables/part/PartTestTemplateTable';
-import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
-import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
-import { ManufacturerPartTable } from '../../components/tables/purchasing/ManufacturerPartTable';
-import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
-import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
-import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -68,6 +50,24 @@ import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { DetailsField } from '../../tables/Details';
+import {
+  DetailsImageType,
+  ItemDetailFields,
+  ItemDetails
+} from '../../tables/ItemDetails';
+import { BomTable } from '../../tables/bom/BomTable';
+import { UsedInTable } from '../../tables/bom/UsedInTable';
+import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import { PartParameterTable } from '../../tables/part/PartParameterTable';
+import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
+import { PartVariantTable } from '../../tables/part/PartVariantTable';
+import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
+import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
+import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
  * Detail view for a single Part instance
@@ -353,7 +353,7 @@ export default function PartDetail() {
                   });
               }
             });
-            return data.quantity;
+            return data?.quantity;
           }
         },
         {
@@ -381,7 +381,7 @@ export default function PartDetail() {
                   });
               }
             });
-            return data.user;
+            return data?.user;
           }
         }
       ]);

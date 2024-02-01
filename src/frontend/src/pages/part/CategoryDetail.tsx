@@ -12,10 +12,10 @@ import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
-import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
-import { PartListTable } from '../../components/tables/part/PartTable';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
+import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
+import { PartListTable } from '../../tables/part/PartTable';
 
 /**
  * Detail view for a single PartCategory instance.
