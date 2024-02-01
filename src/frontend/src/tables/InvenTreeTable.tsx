@@ -595,7 +595,7 @@ export function InvenTreeTable<T = any>({
               noWrap: true,
               textAlignment: 'left',
               cellsStyle: {
-                // TODO: Need a better way of handling "wide" cells,
+                // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
                 overflow: 'hidden'
               }
             }}
