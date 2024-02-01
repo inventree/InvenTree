@@ -119,22 +119,19 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         render: (record: any) => <PartHoverCard part={record.part_detail} />
       },
       {
-        accessor: 'bom_item_detail.reference',
-        title: t`Reference`,
-        render: (record: any) => record.bom_item_detail.reference
+        accessor: 'bom_item_detail.reference'
       },
       BooleanColumn({
-        accessor: 'bom_item_detail.consumable',
-        title: t`Consumable`
+        accessor: 'bom_item_detail.consumable'
       }),
       BooleanColumn({
-        accessor: 'bom_item_detail.optional',
-        title: t`Optional`
+        accessor: 'bom_item_detail.optional'
       }),
       {
-        accessor: 'unit_quantity',
-        title: t`Unit Quantity`,
+        accessor: 'bom_item_detail.quantity',
         sortable: true,
+        title: t`Unit Quantity`,
+        ordering: 'unit_quantity',
         render: (record: any) => {
           return (
             <Group position="apart">
