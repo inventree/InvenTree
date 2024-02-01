@@ -424,6 +424,7 @@ def update(
     if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
         pass
     else:
+        print('Updating frontend...')
         # Decide if we should compile the frontend or try to download it
         if node_available(bypass_yarn=True):
             frontend_compile(c)
@@ -947,6 +948,8 @@ def frontend_compile(c):
     Args:
         c: Context variable
     """
+    print('Compiling frontend code...')
+
     frontend_install(c)
     frontend_trans(c)
     frontend_build(c)
@@ -1036,6 +1039,8 @@ def frontend_download(
     from zipfile import ZipFile
 
     import requests
+
+    print('Downloading frontend...')
 
     # globals
     default_headers = {'Accept': 'application/vnd.github.v3+json'}
