@@ -29,7 +29,7 @@ export function TableColumnSelect({
               <Checkbox
                 checked={!col.hidden}
                 label={col.title || col.accessor}
-                onChange={(event) => onToggleColumn(col.accessor)}
+                onChange={() => onToggleColumn(col.accessor)}
                 radius="sm"
               />
             </Menu.Item>
