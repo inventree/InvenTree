@@ -19,7 +19,8 @@ import {
   ProjectCodeColumn,
   ResponsibleColumn,
   StatusColumn,
-  TargetDateColumn
+  TargetDateColumn,
+  TotalPriceColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -58,7 +59,6 @@ export function ReturnOrderTable({ params }: { params?: any }) {
     return [
       {
         accessor: 'reference',
-        title: t`Return Order`,
         sortable: true
         // TODO: Display extra information if order is overdue
       },
@@ -79,8 +79,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         }
       },
       {
-        accessor: 'customer_reference',
-        title: t`Customer Reference`
+        accessor: 'customer_reference'
       },
       DescriptionColumn({}),
       LineItemsProgressColumn(),
@@ -89,10 +88,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       CreationDateColumn(),
       TargetDateColumn(),
       ResponsibleColumn(),
-      {
-        accessor: 'total_cost',
-        title: t`Total Cost`
-      }
+      TotalPriceColumn()
     ];
   }, []);
 

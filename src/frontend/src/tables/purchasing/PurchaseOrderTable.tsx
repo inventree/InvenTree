@@ -64,7 +64,6 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
     return [
       {
         accessor: 'reference',
-        title: t`Reference`,
         sortable: true,
         switchable: false
         // TODO: Display extra information if order is overdue
@@ -87,8 +86,7 @@ export function PurchaseOrderTable({ params }: { params?: any }) {
         }
       },
       {
-        accessor: 'supplier_reference',
-        title: t`Supplier Reference`
+        accessor: 'supplier_reference'
       },
       LineItemsProgressColumn(),
       StatusColumn(ModelType.purchaseorder),

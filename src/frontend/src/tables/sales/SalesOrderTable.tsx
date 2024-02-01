@@ -61,7 +61,7 @@ export function SalesOrderTable({ params }: { params?: any }) {
     return [
       {
         accessor: 'reference',
-        title: t`Sales Order`,
+        // title: t`Sales Order`,
         sortable: true,
         switchable: false
         // TODO: Display extra information if order is overdue
