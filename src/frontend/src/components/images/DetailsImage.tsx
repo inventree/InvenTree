@@ -18,8 +18,8 @@ import { api } from '../../App';
 import { UserRoles } from '../../enums/Roles';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useUserState } from '../../states/UserState';
+import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { ActionButton } from '../buttons/ActionButton';
-import { PartThumbTable } from '../tables/part/PartThumbTable';
 import { ApiImage } from './ApiImage';
 
 /**

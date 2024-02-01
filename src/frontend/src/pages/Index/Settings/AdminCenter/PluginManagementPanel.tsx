@@ -3,9 +3,9 @@ import { Alert, Stack, Title } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
-import { PluginErrorTable } from '../../../../components/tables/plugin/PluginErrorTable';
-import { PluginListTable } from '../../../../components/tables/plugin/PluginListTable';
 import { useServerApiState } from '../../../../states/ApiState';
+import { PluginErrorTable } from '../../../../tables/plugin/PluginErrorTable';
+import { PluginListTable } from '../../../../tables/plugin/PluginListTable';
 
 export default function PluginManagementPanel() {
   const pluginsEnabled = useServerApiState(

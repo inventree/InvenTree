@@ -11,11 +11,11 @@ import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
-import ManufacturerPartParameterTable from '../../components/tables/purchasing/ManufacturerPartParameterTable';
-import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
+import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();

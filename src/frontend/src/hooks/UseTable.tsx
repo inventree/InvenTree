@@ -1,7 +1,7 @@
 import { randomId, useLocalStorage } from '@mantine/hooks';
 import { useCallback, useState } from 'react';
 
-import { TableFilter } from '../components/tables/Filter';
+import { TableFilter } from '../tables/Filter';
 
 /*
  * Type definition for representing the state of a table:

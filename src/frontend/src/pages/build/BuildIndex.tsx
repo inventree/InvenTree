@@ -4,10 +4,10 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
-import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { buildOrderFields } from '../../forms/BuildForms';
 import { openCreateApiForm } from '../../functions/forms';
+import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 
 /**
  * Build Order index page

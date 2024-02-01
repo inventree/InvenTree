@@ -30,22 +30,19 @@ const PluginManagementPanel = Loadable(
 );
 
 const ErrorReportTable = Loadable(
-  lazy(() => import('../../../../components/tables/settings/ErrorTable'))
+  lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
 
 const ProjectCodeTable = Loadable(
-  lazy(() => import('../../../../components/tables/settings/ProjectCodeTable'))
+  lazy(() => import('../../../../tables/settings/ProjectCodeTable'))
 );
 
 const CustomUnitsTable = Loadable(
-  lazy(() => import('../../../../components/tables/settings/CustomUnitsTable'))
+  lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
 );
 
 const PartParameterTemplateTable = Loadable(
-  lazy(
-    () =>
-      import('../../../../components/tables/part/PartParameterTemplateTable')
-  )
+  lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
 );
 
 export default function AdminCenter() {
