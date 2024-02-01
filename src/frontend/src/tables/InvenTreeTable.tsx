@@ -136,29 +136,33 @@ export function InvenTreeTable<T = any>({
     enabled: false,
     queryKey: ['options', url, tableState.tableKey],
     queryFn: async () => {
-      return api.options(url).then((response) => {
-        if (response.status == 200) {
-          // Extract field information from the API
+      return api
+        .options(url, {
+          params: tableProps.params
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            // Extract field information from the API
 
-          let names: Record<string, string> = {};
-          let fields: ApiFormFieldSet =
-            extractAvailableFields(response, 'POST') || {};
+            let names: Record<string, string> = {};
+            let fields: ApiFormFieldSet =
+              extractAvailableFields(response, 'POST') || {};
 
-          // Extract flattened map of fields
-          mapFields(fields, (path, field) => {
-            if (field.label) {
-              names[path] = field.label;
-            }
-          });
+            // Extract flattened map of fields
+            mapFields(fields, (path, field) => {
+              if (field.label) {
+                names[path] = field.label;
+              }
+            });
 
-          const cacheKey = tableState.tableKey.split('-')[0];
+            const cacheKey = tableState.tableKey.split('-')[0];
 
-          setFieldNames(names);
-          setTableColumnNames(cacheKey)(names);
-        }
+            setFieldNames(names);
+            setTableColumnNames(cacheKey)(names);
+          }
 
-        return null;
-      });
+          return null;
+        });
     }
   });
 
@@ -177,7 +181,7 @@ export function InvenTreeTable<T = any>({
 
     // Otherwise, fetch the data from the API
     tableOptionQuery.refetch();
-  }, [url, tableState.tableKey]);
+  }, [url, tableState.tableKey, props.params]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
