@@ -18,7 +18,7 @@ def get_plugin_urls():
         InvenTreeSetting.get_setting(
             'ENABLE_PLUGINS_URL', False, create=False, cache=False
         )
-        or settings.PLUGIN_TESTING
+        or settings.PLUGIN_TESTING_SETUP
     ):
         for plugin in registry.plugins.values():
             if plugin.mixin_enabled('urls'):
