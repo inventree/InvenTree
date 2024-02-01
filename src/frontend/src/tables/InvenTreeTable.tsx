@@ -24,6 +24,7 @@ import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
 import { extractAvailableFields } from '../functions/forms';
 import { TableState } from '../hooks/UseTable';
+import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
@@ -115,12 +116,24 @@ export function InvenTreeTable<T = any>({
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }) {
+  const { getTableColumnNames, setTableColumnNames } = useLocalState();
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
     queryKey: ['options', url, tableState.tableKey],
     queryFn: async () => {
+      const cacheKey = tableState.tableKey.split('-')[0];
+
+      // First check the local cache
+      const cachedNames = getTableColumnNames(cacheKey);
+
+      if (!!cachedNames) {
+        // Cached names are available - use them!
+        setFieldNames(cachedNames);
+        return;
+      }
+
       return api.options(url).then((response) => {
         if (response.status == 200) {
           // Extract field information from the API
@@ -136,6 +149,7 @@ export function InvenTreeTable<T = any>({
           }
 
           setFieldNames(names);
+          setTableColumnNames(cacheKey)(names);
         }
       });
     }
