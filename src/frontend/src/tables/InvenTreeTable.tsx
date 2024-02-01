@@ -181,8 +181,6 @@ export function InvenTreeTable<T = any>({
         hidden = tableState.hiddenColumns.includes(col.accessor);
       }
 
-      console.log(col.accessor, col.title, fieldNames[col.accessor]);
-
       return {
         ...col,
         hidden: hidden,
