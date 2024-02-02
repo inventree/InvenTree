@@ -1148,5 +1148,4 @@ if CUSTOM_FLAGS:
 
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
-# LOGIN_REDIRECT_URL = f"/{FRONTEND_URL_BASE}/logged-in/"
-LOGIN_REDIRECT_URL = '/index/'
+LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
