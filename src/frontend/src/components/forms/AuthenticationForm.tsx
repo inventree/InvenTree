@@ -2,6 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import {
   Anchor,
   Button,
+  Divider,
   Group,
   Loader,
   PasswordInput,
@@ -21,6 +22,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { doBasicLogin, doSimpleLogin } from '../../functions/auth';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useSessionState } from '../../states/SessionState';
+import { SsoButton } from '../buttons/SSOButton';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
@@ -83,76 +85,93 @@ export function AuthenticationForm() {
   }
 
   return (
-    <form onSubmit={classicForm.onSubmit(() => {})}>
-      {classicLoginMode ? (
-        <Stack spacing={0}>
-          <TextInput
-            required
-            label={t`Username`}
-            placeholder={t`Your username`}
-            {...classicForm.getInputProps('username')}
-          />
-          <PasswordInput
-            required
-            label={t`Password`}
-            placeholder={t`Your password`}
-            {...classicForm.getInputProps('password')}
-          />
-          {auth_settings?.password_forgotten_enabled === true && (
-            <Group position="apart" mt="0">
-              <Anchor
-                component="button"
-                type="button"
-                color="dimmed"
-                size="xs"
-                onClick={() => navigate('/reset-password')}
-              >
-                <Trans>Reset password</Trans>
-              </Anchor>
-            </Group>
-          )}
-        </Stack>
-      ) : (
-        <Stack>
-          <TextInput
-            required
-            label={t`Email`}
-            description={t`We will send you a link to login - if you are registered`}
-            placeholder="email@example.org"
-            {...simpleForm.getInputProps('email')}
-          />
-        </Stack>
-      )}
+    <>
+      {auth_settings?.sso_enabled === true ? (
+        <>
+          <Group grow mb="md" mt="md">
+            {auth_settings.providers.map((provider) => (
+              <SsoButton provider={provider} key={provider.id} />
+            ))}
+          </Group>
 
-      <Group position="apart" mt="xl">
-        <Anchor
-          component="button"
-          type="button"
-          color="dimmed"
-          size="xs"
-          onClick={() => setMode.toggle()}
-        >
-          {classicLoginMode ? (
-            <Trans>Send me an email</Trans>
-          ) : (
-            <Trans>Use username and password</Trans>
-          )}
-        </Anchor>
-        <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
-          {isLoggingIn ? (
-            <Loader size="sm" />
-          ) : (
-            <>
-              {classicLoginMode ? (
-                <Trans>Log In</Trans>
-              ) : (
-                <Trans>Send Email</Trans>
-              )}
-            </>
-          )}
-        </Button>
-      </Group>
-    </form>
+          <Divider
+            label={t`Or continue with other methods`}
+            labelPosition="center"
+            my="lg"
+          />
+        </>
+      ) : null}
+      <form onSubmit={classicForm.onSubmit(() => {})}>
+        {classicLoginMode ? (
+          <Stack spacing={0}>
+            <TextInput
+              required
+              label={t`Username`}
+              placeholder={t`Your username`}
+              {...classicForm.getInputProps('username')}
+            />
+            <PasswordInput
+              required
+              label={t`Password`}
+              placeholder={t`Your password`}
+              {...classicForm.getInputProps('password')}
+            />
+            {auth_settings?.password_forgotten_enabled === true && (
+              <Group position="apart" mt="0">
+                <Anchor
+                  component="button"
+                  type="button"
+                  color="dimmed"
+                  size="xs"
+                  onClick={() => navigate('/reset-password')}
+                >
+                  <Trans>Reset password</Trans>
+                </Anchor>
+              </Group>
+            )}
+          </Stack>
+        ) : (
+          <Stack>
+            <TextInput
+              required
+              label={t`Email`}
+              description={t`We will send you a link to login - if you are registered`}
+              placeholder="email@example.org"
+              {...simpleForm.getInputProps('email')}
+            />
+          </Stack>
+        )}
+
+        <Group position="apart" mt="xl">
+          <Anchor
+            component="button"
+            type="button"
+            color="dimmed"
+            size="xs"
+            onClick={() => setMode.toggle()}
+          >
+            {classicLoginMode ? (
+              <Trans>Send me an email</Trans>
+            ) : (
+              <Trans>Use username and password</Trans>
+            )}
+          </Anchor>
+          <Button type="submit" disabled={isLoggingIn} onClick={handleLogin}>
+            {isLoggingIn ? (
+              <Loader size="sm" />
+            ) : (
+              <>
+                {classicLoginMode ? (
+                  <Trans>Log In</Trans>
+                ) : (
+                  <Trans>Send Email</Trans>
+                )}
+              </>
+            )}
+          </Button>
+        </Group>
+      </form>
+    </>
   );
 }
 
@@ -161,6 +180,7 @@ export function RegistrationForm() {
     initialValues: { username: '', email: '', password1: '', password2: '' }
   });
   const navigate = useNavigate();
+  const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
   function handleRegistration() {
@@ -201,47 +221,63 @@ export function RegistrationForm() {
       });
   }
 
+  const both_reg_enabled =
+    auth_settings?.registration_enabled && auth_settings?.sso_registration;
   return (
-    <form onSubmit={registrationForm.onSubmit(() => {})}>
-      <Stack spacing={0}>
-        <TextInput
-          required
-          label={t`Username`}
-          placeholder={t`Your username`}
-          {...registrationForm.getInputProps('username')}
-        />
-        <TextInput
-          required
-          label={t`Email`}
-          description={t`This will be used for a confirmation`}
-          placeholder="email@example.org"
-          {...registrationForm.getInputProps('email')}
-        />
-        <PasswordInput
-          required
-          label={t`Password`}
-          placeholder={t`Your password`}
-          {...registrationForm.getInputProps('password1')}
-        />
-        <PasswordInput
-          required
-          label={t`Password repeat`}
-          placeholder={t`Repeat password`}
-          {...registrationForm.getInputProps('password2')}
-        />
-      </Stack>
+    <>
+      {auth_settings?.registration_enabled && (
+        <form onSubmit={registrationForm.onSubmit(() => {})}>
+          <Stack spacing={0}>
+            <TextInput
+              required
+              label={t`Username`}
+              placeholder={t`Your username`}
+              {...registrationForm.getInputProps('username')}
+            />
+            <TextInput
+              required
+              label={t`Email`}
+              description={t`This will be used for a confirmation`}
+              placeholder="email@example.org"
+              {...registrationForm.getInputProps('email')}
+            />
+            <PasswordInput
+              required
+              label={t`Password`}
+              placeholder={t`Your password`}
+              {...registrationForm.getInputProps('password1')}
+            />
+            <PasswordInput
+              required
+              label={t`Password repeat`}
+              placeholder={t`Repeat password`}
+              {...registrationForm.getInputProps('password2')}
+            />
+          </Stack>
 
-      <Group position="apart" mt="xl">
-        <Button
-          type="submit"
-          disabled={isRegistering}
-          onClick={handleRegistration}
-          fullWidth
-        >
-          <Trans>Register</Trans>
-        </Button>
-      </Group>
-    </form>
+          <Group position="apart" mt="xl">
+            <Button
+              type="submit"
+              disabled={isRegistering}
+              onClick={handleRegistration}
+              fullWidth
+            >
+              <Trans>Register</Trans>
+            </Button>
+          </Group>
+        </form>
+      )}
+      {both_reg_enabled && (
+        <Divider label={t`Or use SSO`} labelPosition="center" my="lg" />
+      )}
+      {auth_settings?.sso_registration === true && (
+        <Group grow mb="md" mt="md">
+          {auth_settings.providers.map((provider) => (
+            <SsoButton provider={provider} key={provider.id} />
+          ))}
+        </Group>
+      )}
+    </>
   );
 }
 
@@ -253,8 +289,12 @@ export function ModeSelector({
   setMode: any;
 }) {
   const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
+  const registration_enabled =
+    auth_settings?.registration_enabled ||
+    auth_settings?.sso_registration ||
+    false;
 
-  if (auth_settings?.registration_enabled === false) return null;
+  if (registration_enabled === false) return null;
   return (
     <Text ta="center" size={'xs'} mt={'md'}>
       {loginMode ? (
