@@ -14,7 +14,7 @@ class RuleSetModelTest(TestCase):
 
     def test_ruleset_models(self):
         """Test that the role rulesets work as intended."""
-        keys = RuleSet.RULESET_MODELS.keys()
+        keys = RuleSet.get_ruleset_models().keys()
 
         # Check if there are any rulesets which do not have models defined
 
@@ -30,16 +30,16 @@ class RuleSetModelTest(TestCase):
 
         if len(extra) > 0:  # pragma: no cover
             print(
-                'The following rulesets have been improperly added to RULESET_MODELS:'
+                'The following rulesets have been improperly added to get_ruleset_models():'
             )
             for e in extra:
                 print('-', e)
 
         # Check that each ruleset has models assigned
-        empty = [key for key in keys if len(RuleSet.RULESET_MODELS[key]) == 0]
+        empty = [key for key in keys if len(RuleSet.get_ruleset_models()[key]) == 0]
 
         if len(empty) > 0:  # pragma: no cover
-            print('The following rulesets have empty entries in RULESET_MODELS:')
+            print('The following rulesets have empty entries in get_ruleset_models():')
             for e in empty:
                 print('-', e)
 
@@ -62,8 +62,8 @@ class RuleSetModelTest(TestCase):
         assigned_models = set()
 
         # Now check that each defined model is a valid table name
-        for key in RuleSet.RULESET_MODELS.keys():
-            models = RuleSet.RULESET_MODELS[key]
+        for key in RuleSet.get_ruleset_models().keys():
+            models = RuleSet.get_ruleset_models()[key]
 
             for m in models:
                 assigned_models.add(m)
@@ -118,7 +118,7 @@ class RuleSetModelTest(TestCase):
         # Check that all permissions have been assigned permissions?
         permission_set = set()
 
-        for models in RuleSet.RULESET_MODELS.values():
+        for models in RuleSet.get_ruleset_models().values():
             for model in models:
                 permission_set.add(model)
 
