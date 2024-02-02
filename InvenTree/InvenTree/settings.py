@@ -978,7 +978,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-SITE_ID = 1
+SITE_ID = get_setting('INVENTREE_SITE_ID', 'site_id', None)
 
 # Load the allauth social backends
 SOCIAL_BACKENDS = get_setting(
@@ -1100,7 +1100,7 @@ PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
 
 if SITE_URL:
-    logger.info('Site URL: %s', SITE_URL)
+    logger.info('Using Site URL: %s', SITE_URL)
 
     # Check that the site URL is valid
     validator = URLValidator()
