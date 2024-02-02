@@ -62,6 +62,7 @@ export function ChoiceField({
       description={definition.description}
       placeholder={definition.placeholder}
       required={definition.required}
+      disabled={definition.disabled}
       icon={definition.icon}
       withinPortal={true}
     />

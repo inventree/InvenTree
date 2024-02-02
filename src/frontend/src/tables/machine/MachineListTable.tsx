@@ -485,7 +485,7 @@ export function MachineListTable({
       .filter((d) => d.machine_type === createFormMachineType)
       .map((d) => ({
         value: d.slug,
-        display_name: `${d.name} (${d.description})`
+        display_name: d.name
       }));
   }, [machineDrivers, createFormMachineType]);
 
@@ -503,7 +503,7 @@ export function MachineListTable({
         choices: machineTypes
           ? machineTypes.map((t) => ({
               value: t.slug,
-              display_name: `${t.name} (${t.description})`
+              display_name: t.name
             }))
           : [],
         onValueChange: (value) => setCreateFormMachineType(value)
