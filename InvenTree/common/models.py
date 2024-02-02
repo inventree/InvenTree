@@ -100,6 +100,10 @@ class BaseURLValidator(URLValidator):
         """Make sure empty values pass."""
         value = str(value).strip()
 
+        # If a configuration level value has been specified, prevent change
+        if settings.SITE_URL:
+            raise ValidationError(_('Site URL is locked by configuration'))
+
         if len(value) == 0:
             pass
 
@@ -646,7 +650,7 @@ class BaseInvenTreeSetting(models.Model):
         return value
 
     @classmethod
-    def set_setting(cls, key, value, change_user, create=True, **kwargs):
+    def set_setting(cls, key, value, change_user=None, create=True, **kwargs):
         """Set the value of a particular setting. If it does not exist, option to create it.
 
         Args:
