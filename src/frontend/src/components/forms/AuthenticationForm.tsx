@@ -18,8 +18,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { doClassicLogin, doSimpleLogin } from '../../functions/auth';
+import { doBasicLogin, doSimpleLogin } from '../../functions/auth';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useSessionState } from '../../states/SessionState';
 
 export function AuthenticationForm() {
   const classicForm = useForm({
@@ -36,19 +37,13 @@ export function AuthenticationForm() {
     setIsLoggingIn(true);
 
     if (classicLoginMode === true) {
-      doClassicLogin(
+      doBasicLogin(
         classicForm.values.username,
         classicForm.values.password
-      ).then((ret) => {
+      ).then(() => {
         setIsLoggingIn(false);
 
-        if (ret === false) {
-          notifications.show({
-            title: t`Login failed`,
-            message: t`Check your input and try again.`,
-            color: 'red'
-          });
-        } else {
+        if (useSessionState.getState().hasToken()) {
           notifications.show({
             title: t`Login successful`,
             message: t`Welcome back!`,
@@ -56,6 +51,12 @@ export function AuthenticationForm() {
             icon: <IconCheck size="1rem" />
           });
           navigate('/home');
+        } else {
+          notifications.show({
+            title: t`Login failed`,
+            message: t`Check your input and try again.`,
+            color: 'red'
+          });
         }
       });
     } else {

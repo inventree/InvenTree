@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 
 import { ModelType } from '../enums/ModelType';
-import { useServerApiState } from '../states/ApiState';
+import { useGlobalStatusState } from '../states/StatusState';
 
 /**
  * Interface for the table filter choice
@@ -60,7 +60,7 @@ export function StatusFilterOptions(
   model: ModelType
 ): () => TableFilterChoice[] {
   return () => {
-    const statusCodeList = useServerApiState.getState().status;
+    const statusCodeList = useGlobalStatusState.getState().status;
 
     if (!statusCodeList) {
       return [];

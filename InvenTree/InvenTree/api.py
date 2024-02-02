@@ -120,36 +120,32 @@ class InfoView(AjaxView):
             'email_configured': is_email_configured(),
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
+            'default_locale': settings.LANGUAGE_CODE,
+            # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,
             'platform': InvenTree.version.inventreePlatform() if is_staff else None,
             'installer': InvenTree.version.inventreeInstaller() if is_staff else None,
             'target': InvenTree.version.inventreeTarget() if is_staff else None,
-            'default_locale': settings.LANGUAGE_CODE,
         }
 
         return JsonResponse(data)
 
     def check_auth_header(self, request):
         """Check if user is authenticated via a token in the header."""
-        # TODO @matmair: remove after refacgtor of Token check is done
-        headers = request.headers.get(
-            'Authorization', request.headers.get('authorization')
-        )
-        if not headers:
-            return False
+        from InvenTree.middleware import get_token_from_request
 
-        auth = headers.strip()
-        if not (auth.lower().startswith('token') and len(auth.split()) == 2):
-            return False
+        if token := get_token_from_request(request):
+            # Does the provided token match a valid user?
+            try:
+                token = ApiToken.objects.get(key=token)
 
-        token_key = auth.split()[1]
-        try:
-            token = ApiToken.objects.get(key=token_key)
-            if token.active and token.user and token.user.is_staff:
-                return True
-        except ApiToken.DoesNotExist:
-            pass
+                # Check if the token is active and the user is a staff member
+                if token.active and token.user and token.user.is_staff:
+                    return True
+            except ApiToken.DoesNotExist:
+                pass
+
         return False
 
 

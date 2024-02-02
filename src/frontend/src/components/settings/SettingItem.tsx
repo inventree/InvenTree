@@ -47,7 +47,6 @@ function SettingValue({
         settingsState.fetchSettings();
       })
       .catch((error) => {
-        console.log('Error editing setting', error);
         showNotification({
           title: t`Error editing setting`,
           message: error.message,
