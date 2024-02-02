@@ -44,21 +44,7 @@ export function extractAvailableFields(
 
   let actions: any = response.data?.actions ?? null;
 
-  if (!method) {
-    notifications.show({
-      title: t`Form Error`,
-      message: t`Form method not provided`,
-      color: 'red'
-    });
-    return null;
-  }
-
-  if (!actions) {
-    notifications.show({
-      title: t`Form Error`,
-      message: t`Response did not contain action data`,
-      color: 'red'
-    });
+  if (!method || !actions) {
     return null;
   }
 
