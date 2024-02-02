@@ -34,7 +34,8 @@ export function constructFormUrl(
  */
 export function extractAvailableFields(
   response: AxiosResponse,
-  method?: string
+  method?: string,
+  hideErrors?: boolean
 ): Record<string, ApiFormFieldType> | null {
   // OPTIONS request *must* return 200 status
   if (response.status !== 200) {
@@ -57,7 +58,9 @@ export function extractAvailableFields(
 
   if (!(method in actions)) {
     // Missing method - this means user does not have appropriate permission
-    permissionDenied();
+    if (!hideErrors) {
+      permissionDenied();
+    }
     return null;
   }
 
