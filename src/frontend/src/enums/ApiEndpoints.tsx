@@ -26,6 +26,7 @@ export enum ApiEndpoints {
   user_logout = 'auth/logout/',
   user_register = 'auth/registration/',
 
+  // Generic API endpoints
   currency_list = 'currency/exchange/',
   currency_refresh = 'currency/refresh/',
   task_overview = 'background-task/',
@@ -43,6 +44,8 @@ export enum ApiEndpoints {
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+
+  // Build API endpoints
   build_order_list = 'build/',
   build_order_attachment_list = 'build/attachment/',
   build_line_list = 'build/line/',
@@ -61,6 +64,7 @@ export enum ApiEndpoints {
   part_attachment_list = 'part/attachment/',
   part_test_template_list = 'part/test-template/',
 
+  // Company API endpoints
   company_list = 'company/',
   contact_list = 'company/contact/',
   address_list = 'company/address/',
@@ -76,6 +80,8 @@ export enum ApiEndpoints {
   stock_location_list = 'stock/location/',
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
+
+  // Order API endpoints
   purchase_order_list = 'order/po/',
   purchase_order_line_list = 'order/po-line/',
   purchase_order_attachment_list = 'order/po/attachment/',
@@ -91,9 +97,6 @@ export enum ApiEndpoints {
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',
-  error_report_list = 'error-report/',
-  project_code_list = 'project-code/',
-  custom_unit_list = 'units/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',
@@ -102,5 +105,11 @@ export enum ApiEndpoints {
   machine_list = 'machine/',
   machine_restart = 'machine/:machine/restart/',
   machine_setting_list = 'machine/:machine/settings/',
-  machine_setting_detail = 'machine/:machine/settings/:config_type/'
+  machine_setting_detail = 'machine/:machine/settings/:config_type/',
+
+  // Miscellaneous API endpoints
+  error_report_list = 'error-report/',
+  project_code_list = 'project-code/',
+  custom_unit_list = 'units/',
+  ui_preference = 'web/ui_preference/'
 }

@@ -71,7 +71,11 @@ export default function Login() {
           <>
             <Paper radius="md" p="xl" withBorder>
               <Text size="lg" weight={500}>
-                <Trans>Welcome, log in below</Trans>
+                {loginMode ? (
+                  <Trans>Welcome, log in below</Trans>
+                ) : (
+                  <Trans>Register below</Trans>
+                )}
               </Text>
               {loginMode ? <AuthenticationForm /> : <RegistrationForm />}
               <ModeSelector loginMode={loginMode} setMode={setMode} />

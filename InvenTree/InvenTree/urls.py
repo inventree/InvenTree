@@ -36,6 +36,7 @@ from order.urls import order_urls
 from part.urls import part_urls
 from plugin.urls import get_plugin_urls
 from stock.urls import stock_urls
+from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
 
 from .api import APISearchView, InfoView, NotFoundView, VersionTextView, VersionView
@@ -86,6 +87,7 @@ apipatterns = [
     path('machine/', include(machine.api.machine_api_urls)),
     path('user/', include(users.api.user_urls)),
     path('admin/', include(common.api.admin_api_urls)),
+    path('web/', include(web_api_urls)),
     # Plugin endpoints
     path('', include(plugin.api.plugin_api_urls)),
     # Common endpoints endpoint
@@ -151,6 +153,11 @@ apipatterns = [
                 name='social_account_disconnect',
             ),
             path('logout/', users.api.Logout.as_view(), name='api-logout'),
+            path(
+                'login-redirect/',
+                users.api.LoginRedirect.as_view(),
+                name='api-login-redirect',
+            ),
             path('', include('dj_rest_auth.urls')),
         ]),
     ),
