@@ -1089,7 +1089,7 @@ function loadBuildOutputTable(build_info, options={}) {
     var params = options.params || {};
 
     // test templates for the part being assembled
-    let test_templates = null;
+    let test_templates = [];
 
     // tracked line items for this build
     let has_tracked_lines = false;
@@ -1133,6 +1133,9 @@ function loadBuildOutputTable(build_info, options={}) {
                         test_templates.push(item);
                     }
                 });
+            },
+            error: function() {
+                test_templates = [];
             }
         }
     );
