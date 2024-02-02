@@ -49,6 +49,7 @@ export default function Login() {
     // check if user is logged in in PUI
     checkLoginState(navigate, undefined, true);
   }, []);
+
   // Fetch server data on mount if no server data is present
   useEffect(() => {
     if (server.server === null) {

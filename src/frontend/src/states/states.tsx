@@ -1,3 +1,9 @@
+import { setApiDefaults } from '../App';
+import { useSessionState } from './SessionState';
+import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
+import { useGlobalStatusState } from './StatusState';
+import { useUserState } from './UserState';
+
 export interface Host {
   host: string;
   name: string;
@@ -111,3 +117,20 @@ export type ErrorResponse = {
 export type SettingsLookup = {
   [key: string]: string;
 };
+
+/*
+ * Refetch all global state information.
+ * Necessary on login, or if locale is changed.
+ */
+export function fetchGlobalStates() {
+  if (!useSessionState.getState().hasToken()) {
+    return;
+  }
+
+  setApiDefaults();
+
+  useUserState.getState().fetchUserState();
+  useUserSettingsState.getState().fetchSettings();
+  useGlobalSettingsState.getState().fetchSettings();
+  useGlobalStatusState.getState().fetchStatus();
+}
