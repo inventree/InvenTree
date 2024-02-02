@@ -10,7 +10,6 @@ from unittest import mock
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import Site
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
@@ -1048,6 +1047,12 @@ class TestInstanceName(InvenTreeTestCase):
         InvenTreeSetting.set_setting('INVENTREE_INSTANCE', 'Testing title', self.user)
 
         self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')
+
+        try:
+            from django.contrib.sites.models import Site
+        except (ImportError, RuntimeError):
+            # Multi-site support not enabled
+            return
 
         # The site should also be changed
         site_obj = Site.objects.all().order_by('id').first()

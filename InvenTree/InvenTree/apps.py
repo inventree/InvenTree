@@ -58,6 +58,7 @@ class InvenTreeConfig(AppConfig):
                 # Let the background worker check for migrations
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
+        self.update_site_url()
         self.collect_notification_methods()
         self.collect_state_transition_methods()
 
@@ -222,6 +223,23 @@ class InvenTreeConfig(AppConfig):
                 logger.warning('Could not update exchange rates - database not ready')
             except Exception as e:
                 logger.exception('Error updating exchange rates: %s (%s)', e, type(e))
+
+    def update_site_url(self):
+        """Update the site URL setting.
+
+        If a fixed SITE_URL is specified (via configuration), use that.
+        """
+        import common.models
+
+        if not InvenTree.ready.canAppAccessDatabase():
+            return
+
+        if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+            return
+
+        if settings.SITE_URL:
+            # A static SITE_URL has been specified
+            print('Using static SITE_URL:', settings.SITE_URL)
 
     def add_user_on_startup(self):
         """Add a user on startup."""

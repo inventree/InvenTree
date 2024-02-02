@@ -56,7 +56,8 @@ The following basic options are available:
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
 | INVENTREE_SITE_URL | site_url | Specify a fixed site URL | *Not specified* |
-| INVENTRE_SITE_ID | site_id | Specify a fixed site ID | *Not specified* |
+| INVENTREE_SITE_MULTI | site_multi | Enable multiple sites | False |
+| INVENTREE_SITE_ID | site_id | Specify a fixed site ID | *Not specified* |
 | INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface](https://docs.djangoproject.com/en/4.2/ref/contrib/admin/) | True |
 | INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
