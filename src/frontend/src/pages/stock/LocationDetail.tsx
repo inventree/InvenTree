@@ -7,10 +7,10 @@ import { useParams } from 'react-router-dom';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
-import { StockItemTable } from '../../components/tables/stock/StockItemTable';
-import { StockLocationTable } from '../../components/tables/stock/StockLocationTable';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { StockLocationTable } from '../../tables/stock/StockLocationTable';
 
 export default function Stock() {
   const { id: _id } = useParams();

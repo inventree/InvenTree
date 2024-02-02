@@ -14,12 +14,12 @@ import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
+import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
 
 /**
  * Detail page for a single SalesOrder

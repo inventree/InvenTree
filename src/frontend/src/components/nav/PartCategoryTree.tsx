@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 
 export function PartCategoryTree({
@@ -25,7 +26,7 @@ export function PartCategoryTree({
     queryKey: ['part_category_tree', opened],
     queryFn: async () =>
       api
-        .get(ApiEndpoints.category_tree, {})
+        .get(apiUrl(ApiEndpoints.category_tree), {})
         .then((response) =>
           response.data.map((category: any) => {
             return {

@@ -92,6 +92,9 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
 
         // Reload server state (refresh status codes)
         useServerApiState.getState().fetchServerApiState();
+
+        // Clear out cached table column names
+        useLocalState.getState().clearTableColumnNames();
       })
       .catch((err) => {
         console.error('Failed loading translations', err);
