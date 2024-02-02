@@ -369,7 +369,7 @@ class PurchaseOrderTest(OrderTest):
                 'description': 'PO created on 1988-11-10',
                 'creation_date': '1988-11-10',
             },
-            expected_code=201
+            expected_code=201,
         )
 
         po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
@@ -384,7 +384,7 @@ class PurchaseOrderTest(OrderTest):
                 'supplier': 1,
                 'description': 'Check that the creation date is today',
             },
-            expected_code=201
+            expected_code=201,
         )
 
         po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
