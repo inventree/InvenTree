@@ -39,11 +39,15 @@ def get_base_url(request=None):
 
     The base URL is determined in the following order of decreasing priority:
 
-    1. Multi-site is enabled, and the current site has a valid URL
-    2. If settings.SITE_URL is set (e.g. in the Django settings), use that
-    3. If the InvenTree setting INVENTREE_BASE_URL is set, use that
-    4. Otherwise, use the current request URL (if available)
+    1. If a request object is provided, use the request URL
+    2. Multi-site is enabled, and the current site has a valid URL
+    3. If settings.SITE_URL is set (e.g. in the Django settings), use that
+    4. If the InvenTree setting INVENTREE_BASE_URL is set, use that
     """
+    # Check if a request is provided
+    if request:
+        return request.build_absolute_uri('/')
+
     # Check if multi-site is enabled
     try:
         from django.contrib.sites.models import Site
@@ -65,24 +69,22 @@ def get_base_url(request=None):
     except (ProgrammingError, OperationalError):
         pass
 
-    # Check if a request is provided
-    if request:
-        return request.build_absolute_uri('/')
-
     # No base URL available
     return ''
 
 
-def construct_absolute_url(*arg, site_url=None, **kwargs):
+def construct_absolute_url(*arg, base_url=None, request=None):
     """Construct (or attempt to construct) an absolute URL from a relative URL.
 
-    This is useful when (for example) sending an email to a user with a link
-    to something in the InvenTree web framework.
-
+    Args:
+        *arg: The relative URL to construct
+        base_url: The base URL to use for the construction (if not provided, will attempt to determine from settings)
+        request: The request object to use for the construction (optional)
     """
     relative_url = '/'.join(arg)
 
-    base_url = get_base_url(site_url=site_url)
+    if not base_url:
+        base_url = get_base_url(request=request)
 
     return urljoin(base_url, relative_url)
 

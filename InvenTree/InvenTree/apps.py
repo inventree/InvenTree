@@ -227,7 +227,8 @@ class InvenTreeConfig(AppConfig):
     def update_site_url(self):
         """Update the site URL setting.
 
-        If a fixed SITE_URL is specified (via configuration), use that.
+        - If a fixed SITE_URL is specified (via configuration), it should override the INVENTREE_BASE_URL setting
+        - If multi-site support is enabled, update the site URL for the current site
         """
         import common.models
 
@@ -238,8 +239,30 @@ class InvenTreeConfig(AppConfig):
             return
 
         if settings.SITE_URL:
-            # A static SITE_URL has been specified
-            print('Using static SITE_URL:', settings.SITE_URL)
+            try:
+                if (
+                    common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+                    != settings.SITE_URL
+                ):
+                    common.models.InvenTreeSetting.set_setting(
+                        'INVENTREE_BASE_URL', settings.SITE_URL
+                    )
+                    logger.info(f'Updated INVENTREE_SITE_URL to {settings.SITE_URL}')
+            except Exception:
+                pass
+
+            # If multi-site support is enabled, update the site URL for the current site
+            try:
+                from django.contrib.sites.models import Site
+
+                site = Site.objects.get_current()
+                site.domain = settings.SITE_URL
+                site.save()
+
+                logger.info(f'Updated current site URL to {settings.SITE_URL}')
+
+            except Exception:
+                pass
 
     def add_user_on_startup(self):
         """Add a user on startup."""
