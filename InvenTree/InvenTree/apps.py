@@ -247,7 +247,7 @@ class InvenTreeConfig(AppConfig):
                     common.models.InvenTreeSetting.set_setting(
                         'INVENTREE_BASE_URL', settings.SITE_URL
                     )
-                    logger.info(f'Updated INVENTREE_SITE_URL to {settings.SITE_URL}')
+                    logger.info('Updated INVENTREE_SITE_URL to %s', settings.SITE_URL)
             except Exception:
                 pass
 
@@ -259,7 +259,7 @@ class InvenTreeConfig(AppConfig):
                 site.domain = settings.SITE_URL
                 site.save()
 
-                logger.info(f'Updated current site URL to {settings.SITE_URL}')
+                logger.info('Updated current site URL to %s', settings.SITE_URL)
 
             except Exception:
                 pass
