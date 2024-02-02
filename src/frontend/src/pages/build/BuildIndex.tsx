@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
 
 import { PageDetail } from '../../components/nav/PageDetail';
-import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
+import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 
 /**
  * Build Order index page

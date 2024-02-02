@@ -9,8 +9,8 @@ import { useMemo } from 'react';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
-import { CompanyTable } from '../../components/tables/company/CompanyTable';
-import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
+import { CompanyTable } from '../../tables/company/CompanyTable';
+import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 
 export default function PurchasingIndex() {
   const panels = useMemo(() => {

@@ -1075,16 +1075,34 @@ class BuildLineSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
+    bom_item = serializers.PrimaryKeyRelatedField(label=_('Bom Item'), read_only=True)
+
     # Foreign key fields
     bom_item_detail = BomItemSerializer(source='bom_item', many=False, read_only=True, pricing=False)
     part_detail = PartSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
     allocations = BuildItemSerializer(many=True, read_only=True)
 
     # Annotated (calculated) fields
-    allocated = serializers.FloatField(read_only=True)
-    on_order = serializers.FloatField(read_only=True)
-    in_production = serializers.FloatField(read_only=True)
-    available_stock = serializers.FloatField(read_only=True)
+    allocated = serializers.FloatField(
+        label=_('Allocated Stock'),
+        read_only=True
+    )
+
+    on_order = serializers.FloatField(
+        label=_('On Order'),
+        read_only=True
+    )
+
+    in_production = serializers.FloatField(
+        label=_('In Production'),
+        read_only=True
+    )
+
+    available_stock = serializers.FloatField(
+        label=_('Available Stock'),
+        read_only=True
+    )
+
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
     total_available_stock = serializers.FloatField(read_only=True)

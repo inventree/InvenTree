@@ -12,10 +12,10 @@ import { useMemo } from 'react';
 import { api } from '../App';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/nav/PanelGroup';
-import { NotificationTable } from '../components/tables/notifications/NotificationsTable';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useTable } from '../hooks/UseTable';
 import { apiUrl } from '../states/ApiState';
+import { NotificationTable } from '../tables/notifications/NotificationsTable';
 
 export default function NotificationsPage() {
   const unreadTable = useTable('unreadnotifications');
