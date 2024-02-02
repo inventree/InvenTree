@@ -122,12 +122,13 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         Kwargs:
             name: Machine name
             machine_type: Machine type definition (class)
-            driver: Machine driver (class)
             initialized: (bool, default: True)
             active: (bool)
             base_driver: base driver (class)
         """
         from machine import registry
+
+        kwargs.pop('driver', None)
 
         return registry.get_machines(driver=self, **kwargs)
 

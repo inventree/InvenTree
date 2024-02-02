@@ -13,7 +13,7 @@ class ClassValidationMixin:
 
     Class attributes:
         required_attributes: List of class attributes that need to be defined
-        required_overrides: List of functions that need override
+        required_overrides: List of functions that need override, a nested list mean either one of them needs an override
 
     Example:
     ```py
@@ -46,6 +46,9 @@ class ClassValidationMixin:
 
         def override_missing(base_implementation):
             """Check if override is missing."""
+            if isinstance(base_implementation, list):
+                return all(override_missing(x) for x in base_implementation)
+
             return base_implementation == getattr(
                 cls, base_implementation.__name__, None
             )
@@ -60,8 +63,17 @@ class ClassValidationMixin:
                 f"did not provide the following attributes: {', '.join(missing_attributes)}"
             )
         if len(missing_overrides) > 0:
+            missing_overrides_list = []
+            for base_implementation in missing_overrides:
+                if isinstance(base_implementation, list):
+                    missing_overrides_list.append(
+                        'one of '
+                        + ' or '.join(attr.__name__ for attr in base_implementation)
+                    )
+                else:
+                    missing_overrides_list.append(base_implementation.__name__)
             errors.append(
-                f"did not override the required attributes: {', '.join(attr.__name__ for attr in missing_overrides)}"
+                f"did not override the required attributes: {', '.join(missing_overrides_list)}"
             )
 
         if len(errors) > 0:

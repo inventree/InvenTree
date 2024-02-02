@@ -2,17 +2,23 @@
 
 from typing import Union
 
+from django.db.models.query import QuerySet
 from django.http import JsonResponse
 
 import pdf2image
 from rest_framework import serializers
 from rest_framework.request import Request
 
+from build.models import BuildLine
 from common.models import InvenTreeSetting
 from InvenTree.tasks import offload_task
 from label.models import LabelTemplate
+from part.models import Part
 from plugin.base.label import label as plugin_label
 from plugin.helpers import MixinNotImplementedError
+from stock.models import StockItem, StockLocation
+
+LabelItemType = Union[StockItem, StockLocation, Part, BuildLine]
 
 
 class LabelPrintingMixin:
@@ -77,9 +83,8 @@ class LabelPrintingMixin:
     def print_labels(
         self,
         label: LabelTemplate,
-        items: list,
+        items: QuerySet[LabelItemType],
         request: Request,
-        printing_options: dict,
         **kwargs,
     ):
         """Print one or more labels with the provided template and items.

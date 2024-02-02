@@ -209,5 +209,13 @@ class MachineRegistry:
         """Get machine from registry by pk."""
         return self.machines.get(str(pk), None)
 
+    def get_drivers(self, machine_type: str):
+        """Get all drivers for a specific machine type."""
+        return [
+            driver
+            for driver in self.driver_instances.values()
+            if driver.machine_type == machine_type
+        ]
+
 
 registry: MachineRegistry = MachineRegistry()
