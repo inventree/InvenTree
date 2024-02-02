@@ -11,7 +11,7 @@ import {
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
 import { StylishText } from '../components/items/StylishText';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { PathParams, apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
@@ -20,7 +20,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(
-  url: ApiPaths | string,
+  url: ApiEndpoints | string,
   pk?: string | number,
   pathParams?: PathParams
 ): string {
@@ -63,6 +63,11 @@ export function extractAvailableFields(
   }
 
   method = method.toUpperCase();
+
+  // PATCH method is supported, but metadata is provided via PUT
+  if (method === 'PATCH') {
+    method = 'PUT';
+  }
 
   if (!(method in actions)) {
     // Missing method - this means user does not have appropriate permission
@@ -258,7 +263,6 @@ export function openModalApiForm(props: OpenApiFormProps) {
       });
     })
     .catch((error) => {
-      console.log('Error:', error);
       if (error.response) {
         invalidResponse(error.response.status);
       } else {
@@ -290,7 +294,7 @@ export function openEditApiForm(props: OpenApiFormProps) {
   let editProps: OpenApiFormProps = {
     ...props,
     fetchInitialData: props.fetchInitialData ?? true,
-    method: 'PUT'
+    method: 'PATCH'
   };
 
   openModalApiForm(editProps);

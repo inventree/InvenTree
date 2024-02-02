@@ -373,7 +373,11 @@ onPanelLoad('allocate', function() {
     loadBuildLineTable(
         "#build-lines-table",
         {{ build.pk }},
-        {}
+        {
+            {% if build.project_code %}
+            project_code: {{ build.project_code.pk }},
+            {% endif %}
+        }
     );
 });
 

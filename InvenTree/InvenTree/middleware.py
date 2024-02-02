@@ -21,18 +21,18 @@ logger = logging.getLogger('inventree')
 def get_token_from_request(request):
     """Extract token information from a request object."""
     auth_keys = ['Authorization', 'authorization']
-
-    token = None
+    token_keys = ['token', 'bearer']
 
     for k in auth_keys:
         if auth_header := request.headers.get(k, None):
             auth_header = auth_header.strip().lower().split()
 
-            if len(auth_header) > 1 and auth_header[0].startswith('token'):
-                token = auth_header[1]
-                break
+            if len(auth_header) > 1:
+                if auth_header[0].strip().lower().replace(':', '') in token_keys:
+                    token = auth_header[1]
+                    return token
 
-    return token
+    return None
 
 
 class AuthRequiredMiddleware(object):

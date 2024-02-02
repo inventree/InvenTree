@@ -47,6 +47,25 @@ from InvenTree.status_codes import (
 )
 
 
+def annotate_in_production_quantity(reference=''):
+    """Annotate the 'in production' quantity for each part in a queryset.
+
+    Sum the 'quantity' field for all stock items which are 'in production' for each part.
+
+    Arguments:
+        reference: Reference to the part from the current queryset (default = '')
+    """
+    building_filter = Q(
+        is_building=True, build__status__in=BuildStatusGroups.ACTIVE_CODES
+    )
+
+    return Coalesce(
+        SubquerySum(f'{reference}stock_items__quantity', filter=building_filter),
+        Decimal(0),
+        output_field=DecimalField(),
+    )
+
+
 def annotate_on_order_quantity(reference: str = ''):
     """Annotate the 'on order' quantity for each part in a queryset.
 
@@ -144,6 +163,26 @@ def annotate_build_order_allocations(reference: str = ''):
     return Coalesce(
         SubquerySum(
             f'{reference}stock_items__allocations__quantity', filter=build_filter
+        ),
+        Decimal(0),
+        output_field=models.DecimalField(),
+    )
+
+
+def annotate_sales_order_requirements(reference: str = ''):
+    """Annotate the total quantity of each part required for sales orders.
+
+    - Only interested in 'active' sales orders
+    - We are looking for any order lines which requires this part
+    - We are interested in 'quantity'-'shipped'
+
+    """
+    # Order filter only returns incomplete shipments for open orders
+    order_filter = Q(order__status__in=SalesOrderStatusGroups.OPEN)
+    return Coalesce(
+        SubquerySum(f'{reference}sales_order_line_items__quantity', filter=order_filter)
+        - SubquerySum(
+            f'{reference}sales_order_line_items__shipped', filter=order_filter
         ),
         Decimal(0),
         output_field=models.DecimalField(),

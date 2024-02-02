@@ -814,7 +814,7 @@ class Owner(models.Model):
             self.owner_type.name == 'user'
             and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES')
         ):
-            return self.owner.get_full_name()
+            return self.owner.get_full_name() or str(self.owner)
         return str(self.owner)
 
     def label(self):

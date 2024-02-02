@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 
@@ -26,7 +26,7 @@ export function StockLocationTree({
     queryKey: ['stock_location_tree', opened],
     queryFn: async () =>
       api
-        .get(apiUrl(ApiPaths.stock_location_tree), {})
+        .get(apiUrl(ApiEndpoints.stock_location_tree), {})
         .then((response) =>
           response.data.map((location: any) => {
             return {

@@ -14,7 +14,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { LanguageContext } from '../../contexts/LanguageContext';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
 export default function Set_Password() {
@@ -58,7 +58,7 @@ export default function Set_Password() {
     // Set password with call to backend
     api
       .post(
-        apiUrl(ApiPaths.user_reset_set),
+        apiUrl(ApiEndpoints.user_reset_set),
         {
           uid: uid,
           token: token,

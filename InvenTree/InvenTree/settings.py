@@ -446,9 +446,9 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'users.authentication.ApiTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'users.authentication.ApiTokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (

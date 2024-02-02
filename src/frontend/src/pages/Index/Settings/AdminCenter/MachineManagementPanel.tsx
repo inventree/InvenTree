@@ -13,10 +13,10 @@ import { IconRefresh } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../../../App';
-import { MachineListTable } from '../../../../components/tables/machine/MachineListTable';
-import { MachineTypeListTable } from '../../../../components/tables/machine/MachineTypeTable';
-import { ApiPaths } from '../../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { apiUrl } from '../../../../states/ApiState';
+import { MachineListTable } from '../../../../tables/machine/MachineListTable';
+import { MachineTypeListTable } from '../../../../tables/machine/MachineTypeTable';
 
 interface MachineRegistryStatusI {
   registry_errors: { message: string }[];
@@ -26,7 +26,9 @@ export default function MachineManagementPanel() {
   const { data: registryStatus, refetch } = useQuery<MachineRegistryStatusI>({
     queryKey: ['machine-registry-status'],
     queryFn: () =>
-      api.get(apiUrl(ApiPaths.machine_registry_status)).then((res) => res.data),
+      api
+        .get(apiUrl(ApiEndpoints.machine_registry_status))
+        .then((res) => res.data),
     staleTime: 10 * 1000
   });
 
