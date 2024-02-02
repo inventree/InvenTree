@@ -402,7 +402,6 @@ export function MachineListTable({
     () => [
       {
         accessor: 'name',
-        title: t`Machine`,
         sortable: true,
         render: function (record) {
           return (
@@ -420,7 +419,6 @@ export function MachineListTable({
       },
       {
         accessor: 'machine_type',
-        title: t`Machine Type`,
         sortable: true,
         render: (record) => {
           const machineType = machineTypes?.find(
@@ -438,7 +436,6 @@ export function MachineListTable({
       },
       {
         accessor: 'driver',
-        title: t`Machine Driver`,
         sortable: true,
         render: (record) => {
           const driver = machineDrivers?.find((d) => d.slug === record.driver);
@@ -451,16 +448,13 @@ export function MachineListTable({
         }
       },
       BooleanColumn({
-        accessor: 'initialized',
-        title: t`Initialized`
+        accessor: 'initialized'
       }),
       BooleanColumn({
-        accessor: 'active',
-        title: t`Active`
+        accessor: 'active'
       }),
       {
         accessor: 'status',
-        title: t`Status`,
         sortable: false,
         render: (record) => {
           const renderer = TableStatusRenderer(
@@ -578,12 +572,10 @@ export function MachineListTable({
           tableFilters: [
             {
               name: 'active',
-              label: t`Active`,
               type: 'boolean'
             },
             {
               name: 'machine_type',
-              label: t`Machine Type`,
               type: 'choice',
               choiceFunction: () =>
                 machineTypes
@@ -592,7 +584,6 @@ export function MachineListTable({
             },
             {
               name: 'driver',
-              label: t`Machine Driver`,
               type: 'choice',
               choiceFunction: () =>
                 machineDrivers
