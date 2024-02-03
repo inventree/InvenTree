@@ -104,6 +104,8 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
                 'license',
                 'package_path',
                 'settings_url',
+                'is_package',
+                'package_install_name',
             ]
         }
 
