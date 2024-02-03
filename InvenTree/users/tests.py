@@ -72,7 +72,8 @@ class RuleSetModelTest(TestCase):
 
         for model in available_tables:
             if (
-                model not in assigned_models and model not in RuleSet.RULESET_IGNORE
+                model not in assigned_models
+                and model not in RuleSet.get_ruleset_ignore()
             ):  # pragma: no cover
                 missing_models.add(model)
 
@@ -90,7 +91,7 @@ class RuleSetModelTest(TestCase):
         for model in assigned_models:
             defined_models.add(model)
 
-        for model in RuleSet.RULESET_IGNORE:
+        for model in RuleSet.get_ruleset_ignore():
             defined_models.add(model)
 
         for model in defined_models:  # pragma: no cover
