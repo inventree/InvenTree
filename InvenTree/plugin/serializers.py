@@ -193,6 +193,37 @@ class PluginActivateSerializer(serializers.Serializer):
         return instance
 
 
+class PluginUpdateSerializer(serializers.Serializer):
+    """Serializer for updating a plugin."""
+
+    model = PluginConfig
+
+    version = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Version'),
+        help_text=_('Version specifier for the plugin'),
+    )
+
+    registry = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Registry'),
+        help_text=_('Name of the external registry to use'),
+    )
+
+    def update(self, instance, validated_data):
+        """Update the specified plugin (via PIP)."""
+        from plugin.installer import update_plugin
+
+        return update_plugin(
+            instance,
+            user=self.context['request'].user,
+            version=validated_data.get('version', None),
+            registry_name=validated_data.get('registry', None),
+        )
+
+
 class PluginSettingSerializer(GenericReferencedSettingSerializer):
     """Serializer for the PluginSetting model."""
 

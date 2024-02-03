@@ -337,7 +337,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           confirm: t`Confirm`
         },
         onConfirm: () => {
-          let url = apiUrl(ApiEndpoints.plugin_list, plugin_id) + 'activate/';
+          let url = apiUrl(ApiEndpoints.plugin_activate, plugin_id);
 
           const id = 'plugin-activate';
 
@@ -349,7 +349,13 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           });
 
           api
-            .patch(url, { active: active })
+            .patch(
+              url,
+              { active: active },
+              {
+                timeout: 30 * 1000
+              }
+            )
             .then(() => {
               table.refreshTable();
               notifications.hide(id);
@@ -375,8 +381,72 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
     []
   );
 
+  const updatePlugin = useCallback((plugin_id: number, plugin_name: string) => {
+    modals.openConfirmModal({
+      title: <StylishText>{t`Update Plugin`}</StylishText>,
+      children: (
+        <Alert
+          color="blue"
+          icon={<IconRefresh />}
+          title={t`Confirm plugin update`}
+        >
+          <Stack spacing="xs">
+            <Text>{t`The following plugin will be updated`}:</Text>
+            <Text size="lg" italic>
+              {plugin_name}
+            </Text>
+          </Stack>
+        </Alert>
+      ),
+      labels: {
+        cancel: t`Cancel`,
+        confirm: t`Confirm`
+      },
+      onConfirm: () => {
+        let url = apiUrl(ApiEndpoints.plugin_update, plugin_id);
+
+        const id = 'plugin-update';
+
+        // Show a progress notification
+        notifications.show({
+          id: id,
+          message: t`Updating plugin`,
+          loading: true
+        });
+
+        api
+          .patch(
+            url,
+            {},
+            {
+              timeout: 30 * 1000
+            }
+          )
+          .then(() => {
+            table.refreshTable();
+            notifications.hide(id);
+            notifications.show({
+              title: t`Plugin updated`,
+              message: t`The plugin was updated`,
+              color: 'green'
+            });
+          })
+          .catch((_err) => {
+            notifications.hide(id);
+            notifications.show({
+              title: t`Error`,
+              message: t`Error updating plugin`,
+              color: 'red'
+            });
+          });
+      }
+    });
+  }, []);
+
   // Determine available actions for a given plugin
   function rowActions(record: any): RowAction[] {
+    // TODO: Plugin actions should be updated based on on the users's permissions
+
     let actions: RowAction[] = [];
 
     if (!record.is_builtin && record.is_installed) {
@@ -405,7 +475,10 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
       actions.push({
         title: t`Update`,
         color: 'blue',
-        icon: <IconRefresh />
+        icon: <IconRefresh />,
+        onClick: () => {
+          updatePlugin(record.pk, record.name);
+        }
       });
     }
 

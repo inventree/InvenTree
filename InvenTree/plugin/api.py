@@ -179,6 +179,18 @@ class PluginInstall(CreateAPI):
         return serializer.save()
 
 
+class PluginUpdate(UpdateAPI):
+    """Endpoint for updating a single plugin."""
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginUpdateSerializer
+    permission_classes = [IsSuperuser]
+
+    def perform_update(self, serializer):
+        """Update the plugin."""
+        serializer.save()
+
+
 class PluginActivate(UpdateAPI):
     """Endpoint for activating a plugin.
 
@@ -192,12 +204,6 @@ class PluginActivate(UpdateAPI):
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginActivateSerializer
     permission_classes = [IsSuperuser]
-
-    def get_object(self):
-        """Returns the object for the view."""
-        if self.request.data.get('pk', None):
-            return self.queryset.get(pk=self.request.data.get('pk'))
-        return super().get_object()
 
     def perform_update(self, serializer):
         """Activate the plugin."""
@@ -421,6 +427,7 @@ plugin_api_urls = [
                         PluginActivate.as_view(),
                         name='api-plugin-detail-activate',
                     ),
+                    path('update/', PluginUpdate.as_view(), name='api-plugin-update'),
                     path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),
             ),

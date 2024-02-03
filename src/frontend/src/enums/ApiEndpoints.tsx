@@ -97,6 +97,8 @@ export enum ApiEndpoints {
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',
+  plugin_activate = 'plugins/:id/activate/',
+  plugin_update = 'plugins/:id/update/',
 
   // Miscellaneous API endpoints
   error_report_list = 'error-report/',

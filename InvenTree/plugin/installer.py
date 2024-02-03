@@ -9,6 +9,9 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import plugin.models
+from InvenTree.exceptions import log_error
+
 logger = logging.getLogger('inventree')
 
 
@@ -57,6 +60,8 @@ def check_package_path(packagename: str):
                 return match.group(1)
 
     except subprocess.CalledProcessError as error:
+        log_error('check_package_path')
+
         output = error.output.decode('utf-8')
         logger.exception('Plugin lookup failed: %s', str(output))
         return False
@@ -140,7 +145,7 @@ def install_plugin(url=None, packagename=None, user=None):
             _('Permission denied: only staff users can install plugins')
         )
 
-    logger.debug('install_plugin: %s, %s', url, packagename)
+    logger.info('install_plugin: %s, %s', url, packagename)
 
     # Check if we are running in a virtual environment
     # For now, just log a warning
@@ -197,6 +202,9 @@ def install_plugin(url=None, packagename=None, user=None):
     except subprocess.CalledProcessError as error:
         # If an error was thrown, we need to parse the output
 
+        # Log error to database
+        log_error('plugin_install')
+
         output = error.output.decode('utf-8')
         logger.exception('Plugin installation failed: %s', str(output))
 
@@ -220,5 +228,89 @@ def install_plugin(url=None, packagename=None, user=None):
     from plugin.registry import registry
 
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+    return ret
+
+
+def update_plugin(
+    cfg: plugin.models.PluginConfig, user=None, version=None, registry_name=None
+):
+    """Update the specified plugin (via PIP).
+
+    Args:
+        cfg: PluginConfig - the plugin to update
+        user: User - the user performing the update
+        version: Optional version specifier
+        registry_name: Optional name of the external registry to use
+    """
+    from InvenTree.tasks import check_for_migrations, offload_task
+    from plugin.registry import registry
+
+    if user and not user.is_staff:
+        raise ValidationError(
+            _('Permission denied: only staff users can install plugins')
+        )
+
+    if not cfg.active:
+        raise ValidationError(_('Plugin is not active'))
+
+    plugin = cfg.plugin
+
+    if not plugin:
+        raise ValidationError(_('Plugin was not found in registry'))
+
+    package_name = plugin.package_install_name
+
+    if not package_name:
+        raise ValidationError(_('Plugin package name not found'))
+
+    logger.info('Updating plugin: %s', plugin.name, '->', package_name)
+
+    cmd = ['install']
+
+    if version:
+        cmd.append(f'{package_name}=={version}')
+    else:
+        cmd.extend(['-U', package_name])
+
+    if registry_name:
+        cmd.extend(['-i', registry_name])
+
+    try:
+        result = pip_command(*cmd)
+
+        ret = {
+            'result': _('Updated plugin successfully'),
+            'success': True,
+            'output': str(result, 'utf-8'),
+        }
+
+        if path := check_package_path(package_name):
+            ret['result'] = _(f'Updated plugin into {path}')
+
+    except subprocess.CalledProcessError as error:
+        log_error('plugin_update')
+
+        output = error.output.decode('utf-8')
+        logger.exception('Plugin update failed: %s', str(output))
+
+        errors = [_('Plugin update failed')]
+
+        for msg in output.split('\n'):
+            msg = msg.strip()
+
+            if msg:
+                errors.append(msg)
+
+        if len(errors) > 1:
+            raise ValidationError(errors)
+        else:
+            raise ValidationError(errors[0])
+
+    # Reload the plugin registry, to discover the new plugin
+    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+    # Run a check for database migrations
+    offload_task(check_for_migrations)
 
     return ret
