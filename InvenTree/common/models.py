@@ -1843,6 +1843,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+        'PLUGIN_UPDATE_CHECK': {
+            'name': _('Check for plugin updates'),
+            'description': _('Enable periodic checks for updates to installed plugins'),
+            'default': True,
+            'validator': bool,
+        },
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
