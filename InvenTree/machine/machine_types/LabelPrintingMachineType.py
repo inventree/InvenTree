@@ -43,6 +43,8 @@ class BaseLabelPrintingDriver(BaseDriver):
 
         Keyword Arguments:
             printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
+                by default the following options are available:
+                - copies: number of copies to print for the label
 
         Note that the supplied args/kwargs may be different if the driver overrides the print_labels() method.
         """
@@ -66,6 +68,8 @@ class BaseLabelPrintingDriver(BaseDriver):
 
         Keyword Arguments:
             printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
+                by default the following options are available:
+                - copies: number of copies to print for each label
 
         Returns:
             If USE_BACKGROUND_WORKER=False, a JsonResponse object which indicates outcome to the user, otherwise None
@@ -94,7 +98,7 @@ class BaseLabelPrintingDriver(BaseDriver):
 
     def get_printing_options_serializer(
         self, request: Request, *args, **kwargs
-    ) -> Union[serializers.Serializer, None]:
+    ) -> 'BaseLabelPrintingDriver.BasePrintingOptionsSerializer':
         """Return a serializer class instance with dynamic printing options.
 
         Arguments:
@@ -108,7 +112,9 @@ class BaseLabelPrintingDriver(BaseDriver):
         serializer = getattr(self, 'PrintingOptionsSerializer', None)
 
         if not serializer:
-            return None
+            return BaseLabelPrintingDriver.BasePrintingOptionsSerializer(
+                *args, **kwargs
+            )
 
         return serializer(*args, **kwargs)
 
@@ -185,6 +191,15 @@ class BaseLabelPrintingDriver(BaseDriver):
         return png
 
     required_overrides = [[print_label, print_labels]]
+
+    class BasePrintingOptionsSerializer(serializers.Serializer):
+        """Printing options base serializer that implements common options."""
+
+        copies = serializers.IntegerField(
+            default=1,
+            label=_('Copies'),
+            help_text=_('Number of copies to print for each label'),
+        )
 
 
 class LabelPrintingMachineType(BaseMachineType):

@@ -162,6 +162,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
         machine = serializers.ChoiceField(choices=[])
 
         driver_options = DependentField(
+            label=_('Options'),
             depends_on=['machine'],
             field_serializer='get_driver_options',
             required=False,
