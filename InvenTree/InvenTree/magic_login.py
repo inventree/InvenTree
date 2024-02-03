@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -13,18 +12,20 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import InvenTree.version
+
 
 def send_simple_login_email(user, link):
     """Send an email with the login link to this user."""
-    site = Site.objects.get_current()
+    site_name = InvenTree.version.inventreeInstanceName()
 
-    context = {'username': user.username, 'site_name': site.name, 'link': link}
+    context = {'username': user.username, 'site_name': site_name, 'link': link}
     email_plaintext_message = render_to_string(
         'InvenTree/user_simple_login.txt', context
     )
 
     send_mail(
-        _(f'[{site.name}] Log in to the app'),
+        _(f'[{site_name}] Log in to the app'),
         email_plaintext_message,
         settings.DEFAULT_FROM_EMAIL,
         [user.email],
