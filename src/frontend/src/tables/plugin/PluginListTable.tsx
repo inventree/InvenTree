@@ -401,6 +401,14 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
       }
     }
 
+    if (record.meta?.is_package && record.meta?.package_install_name) {
+      actions.push({
+        title: t`Update`,
+        color: 'blue',
+        icon: <IconRefresh />
+      });
+    }
+
     return actions;
   }
 
