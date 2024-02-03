@@ -1,9 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { getCsrfCookie } from './functions/auth';
+import { hasToken } from './functions/auth';
 import { useLocalState } from './states/LocalState';
-import { useSessionState } from './states/SessionState';
 
 // Global API instance
 export const api = axios.create({});
@@ -13,22 +12,15 @@ export const api = axios.create({});
  *
  * This includes:
  * - Base URL
- * - Authorization token (if available)
  * - CSRF token (if available)
  */
 export function setApiDefaults() {
   const host = useLocalState.getState().host;
-  const token = useSessionState.getState().token;
 
   api.defaults.baseURL = host;
+  api.defaults.headers.common['Authorization'] = undefined;
 
-  if (!!token) {
-    api.defaults.headers.common['Authorization'] = `Token ${token}`;
-  } else {
-    api.defaults.headers.common['Authorization'] = undefined;
-  }
-
-  if (!!getCsrfCookie()) {
+  if (hasToken()) {
     api.defaults.withCredentials = true;
     api.defaults.xsrfCookieName = 'csrftoken';
     api.defaults.xsrfHeaderName = 'X-CSRFToken';

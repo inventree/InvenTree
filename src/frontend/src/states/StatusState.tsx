@@ -6,8 +6,8 @@ import { StatusCodeListInterface } from '../components/render/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
+import { hasToken } from '../functions/auth';
 import { apiUrl } from './ApiState';
-import { useSessionState } from './SessionState';
 
 type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
@@ -24,7 +24,7 @@ export const useGlobalStatusState = create<ServerStateProps>()(
       setStatus: (newStatus: StatusLookup) => set({ status: newStatus }),
       fetchStatus: async () => {
         // Fetch status data for rendering labels
-        if (!useSessionState.getState().hasToken()) {
+        if (!hasToken()) {
           return;
         }
 

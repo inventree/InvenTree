@@ -1,5 +1,5 @@
 import { setApiDefaults } from '../App';
-import { useSessionState } from './SessionState';
+import { hasToken } from '../functions/auth';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
 import { useUserState } from './UserState';
@@ -123,7 +123,7 @@ export type SettingsLookup = {
  * Necessary on login, or if locale is changed.
  */
 export function fetchGlobalStates() {
-  if (!useSessionState.getState().hasToken()) {
+  if (!hasToken()) {
     return;
   }
 

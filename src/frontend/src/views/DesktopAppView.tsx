@@ -5,10 +5,10 @@ import { BrowserRouter } from 'react-router-dom';
 import { queryClient } from '../App';
 import { BaseContext } from '../contexts/BaseContext';
 import { defaultHostList } from '../defaults/defaultHostList';
+import { hasToken } from '../functions/auth';
 import { base_url } from '../main';
 import { routes } from '../router';
 import { useLocalState } from '../states/LocalState';
-import { useSessionState } from '../states/SessionState';
 import {
   useGlobalSettingsState,
   useUserSettingsState
@@ -28,20 +28,18 @@ export default function DesktopAppView() {
 
   // Server Session
   const [fetchedServerSession, setFetchedServerSession] = useState(false);
-  const sessionState = useSessionState.getState();
-  const [token] = sessionState.token ? [sessionState.token] : [null];
   useEffect(() => {
     if (Object.keys(hostList).length === 0) {
       useLocalState.setState({ hostList: defaultHostList });
     }
 
-    if (token && !fetchedServerSession) {
+    if (hasToken() && !fetchedServerSession) {
       setFetchedServerSession(true);
       fetchUserState();
       fetchGlobalSettings();
       fetchUserSettings();
     }
-  }, [token, fetchedServerSession]);
+  }, [fetchedServerSession]);
 
   return (
     <BaseContext>

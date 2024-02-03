@@ -3,8 +3,8 @@ import { create } from 'zustand';
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { UserPermissions, UserRoles } from '../enums/Roles';
+import { hasToken } from '../functions/auth';
 import { apiUrl } from './ApiState';
-import { useSessionState } from './SessionState';
 import { UserProps } from './states';
 
 interface UserStateProps {
@@ -35,7 +35,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
-    if (!useSessionState.getState().hasToken()) {
+    if (!hasToken()) {
       return;
     }
 
