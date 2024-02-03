@@ -88,3 +88,15 @@ This can be used to track usage and performance of the InvenTree backend and con
 | `tracing.append_http` | `INVENTREE_TRACING_APPEND_HTTP` | Append default url routes (v1) to `tracing.endpoint` |
 | `tracing.console` | `INVENTREE_TRACING_CONSOLE` | Print out all exports (additionally) to the console for debugging. Do not use in production |
 | `tracing.resources` | `INVENTREE_TRACING_RESOURCES` | Add additional resources to all exports. This can be used to add custom tags to the traces. Format as a dict. |
+
+## Multi Site Support
+
+If your InvenTree instance is used in a multi-site environment, you can enable multi-site support. Note that supporting multiple sites is well outside the scope of most InvenTree installations. If you know what you are doing, and have a good reason to enable multi-site support, you can do so by setting the `INVENTREE_SITE_MULTI` environment variable to `True`.
+
+!!! tip "Django Documentation"
+    For more information on multi-site support, refer to the [Django documentation](https://docs.djangoproject.com/en/3.2/ref/contrib/sites/).
+
+| Environment Variable | Config Key | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_SITE_MULTI | site_multi | Enable multiple sites | False |
+| INVENTREE_SITE_ID | site_id | Specify a fixed site ID | *Not specified* |

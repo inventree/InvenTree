@@ -978,12 +978,29 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-SITE_ID = 1
+# Site URL can be specified statically, or via a run-time setting
+SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
+
+if SITE_URL:
+    logger.info('Using Site URL: %s', SITE_URL)
+
+    # Check that the site URL is valid
+    validator = URLValidator()
+    validator(SITE_URL)
+
+# Enable or disable multi-site framework
+SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
+
+# If a SITE_ID is specified
+SITE_ID = get_setting('INVENTREE_SITE_ID', 'site_id', 1 if SITE_MULTI else None)
 
 # Load the allauth social backends
 SOCIAL_BACKENDS = get_setting(
     'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
 )
+
+if not SITE_MULTI:
+    INSTALLED_APPS.remove('django.contrib.sites')
 
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
@@ -1095,16 +1112,6 @@ PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5
 )  # How often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
-
-# Site URL can be specified statically, or via a run-time setting
-SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
-
-if SITE_URL:
-    logger.info('Site URL: %s', SITE_URL)
-
-    # Check that the site URL is valid
-    validator = URLValidator()
-    validator(SITE_URL)
 
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
