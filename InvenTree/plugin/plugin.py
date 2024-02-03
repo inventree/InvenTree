@@ -5,7 +5,7 @@ import logging
 import warnings
 from datetime import datetime
 from distutils.sysconfig import get_python_lib
-from importlib.metadata import PackageNotFoundError, metadata
+from importlib.metadata import PackageNotFoundError, metadata, packages_distributions
 from pathlib import Path
 
 from django.conf import settings
@@ -352,6 +352,45 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     def package_path(self):
         """Path to the plugin."""
         return self.check_package_path()
+
+    @classmethod
+    def check_package_install_name(cls) -> [str, None]:
+        """Installable package name of the plugin.
+
+        e.g. if this plugin was installed via 'pip install <x>',
+        then this function should return '<x>'
+
+        Returns:
+            str: Install name of the package, else None
+        """
+        if not cls.check_is_package():
+            return None
+
+        path = cls.check_package_path()
+
+        if not path:
+            return None
+
+        path = path.split('.')[0]
+
+        install_name = packages_distributions().get(path, None)
+
+        if install_name and type(install_name) == list:
+            install_name = install_name[0]
+
+        return install_name
+
+    @property
+    def package_install_name(self) -> [str, None]:
+        """Installable package name of the plugin.
+
+        e.g. if this plugin was installed via 'pip install <x>',
+        then this function should return '<x>'
+
+        Returns:
+            str: Install name of the package, else None
+        """
+        return self.check_package_install_name()
 
     @property
     def settings_url(self):
