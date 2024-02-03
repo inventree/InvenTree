@@ -33,7 +33,7 @@ export default function DesktopAppView() {
       useLocalState.setState({ hostList: defaultHostList });
     }
 
-    if (hasToken() && !fetchedServerSession) {
+    if (hasToken(true) && !fetchedServerSession) {
       setFetchedServerSession(true);
       fetchUserState();
       fetchGlobalSettings();

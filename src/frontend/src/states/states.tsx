@@ -123,7 +123,7 @@ export type SettingsLookup = {
  * Necessary on login, or if locale is changed.
  */
 export function fetchGlobalStates() {
-  if (!hasToken()) {
+  if (!hasToken(true)) {
     return;
   }
 

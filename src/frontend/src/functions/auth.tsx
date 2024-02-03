@@ -168,7 +168,20 @@ export function getCsrfCookie() {
 /*
  * Check if a CSRF cookie is available
  */
-export function hasToken() {
+export function hasToken(check_backend = false) {
+  if (check_backend) {
+    // Check if the backend has a valid token
+    let is_auth = false;
+    api
+      .get(apiUrl(ApiEndpoints.user_me))
+      .then((response) => {
+        is_auth = response.status == 200;
+      })
+      .catch(() => {
+        is_auth = false;
+      });
+    return is_auth;
+  }
   return !!getCsrfCookie();
 }
 
