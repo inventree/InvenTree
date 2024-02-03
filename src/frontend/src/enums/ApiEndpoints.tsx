@@ -13,6 +13,7 @@ export enum ApiEndpoints {
   user_list = 'user/',
   user_me = 'user/me/',
   user_roles = 'user/roles/',
+  user_login = 'auth/login/',
   user_token = 'user/token/',
   user_simple_login = 'email/generate/',
   user_reset = 'auth/password/reset/', // Note leading prefix here

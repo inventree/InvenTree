@@ -22,7 +22,7 @@ export const doBasicLogin = async (username: string, password: string) => {
 
   // Login to the server
   await axios
-    .get(apiUrl(ApiEndpoints.user_token), {
+    .get(apiUrl(ApiEndpoints.user_login), {
       auth: { username, password },
       baseURL: host,
       timeout: 2000
