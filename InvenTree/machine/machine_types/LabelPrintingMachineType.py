@@ -14,6 +14,7 @@ from label.models import LabelTemplate
 from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
 from plugin import registry as plg_registry
 from plugin.base.label.mixins import LabelItemType, LabelPrintingMixin
+from stock.models import StockLocation
 
 
 class BaseLabelPrintingDriver(BaseDriver):
@@ -77,7 +78,7 @@ class BaseLabelPrintingDriver(BaseDriver):
 
     def get_printers(
         self, label: LabelTemplate, items: QuerySet[LabelItemType], **kwargs
-    ) -> list[BaseMachineType]:
+    ) -> list['LabelPrintingMachineType']:
         """Get all printers that would be available to print this job.
 
         By default all printers that are initialized using this driver are returned.
@@ -85,8 +86,11 @@ class BaseLabelPrintingDriver(BaseDriver):
         Arguments:
             label: The LabelTemplate object to use for printing
             items: The lost of database items to print (e.g. StockItem instances)
+
+        Keyword Arguments:
+            request: The django request used to make the get printers request
         """
-        return self.get_machines()
+        return cast(list['LabelPrintingMachineType'], self.get_machines())
 
     def get_printing_options_serializer(
         self, request: Request, *args, **kwargs
@@ -192,6 +196,14 @@ class LabelPrintingMachineType(BaseMachineType):
 
     base_driver = BaseLabelPrintingDriver
 
+    MACHINE_SETTINGS = {
+        'LOCATION': {
+            'name': _('Printer Location'),
+            'description': _('Scope the printer to a specific location'),
+            'model': 'stock.stocklocation',
+        }
+    }
+
     class LabelPrinterStatus(MachineStatus):
         """Label printer status codes."""
 
@@ -204,3 +216,13 @@ class LabelPrintingMachineType(BaseMachineType):
     MACHINE_STATUS = LabelPrinterStatus
 
     default_machine_status = LabelPrinterStatus.DISCONNECTED
+
+    @property
+    def location(self):
+        """Access the machines location instance using this property."""
+        location_pk = self.get_setting('LOCATION', 'M')
+
+        if not location_pk:
+            return None
+
+        return StockLocation.objects.get(pk=location_pk)

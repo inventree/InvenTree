@@ -10,7 +10,6 @@ from rest_framework import serializers
 from InvenTree.serializers import DependentField
 from InvenTree.tasks import offload_task
 from label.models import LabelTemplate
-from machine.machine_type import BaseMachineType
 from machine.machine_types import BaseLabelPrintingDriver, LabelPrintingMachineType
 from plugin import InvenTreePlugin
 from plugin.machine import registry
@@ -85,12 +84,28 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             template = view.get_object()
             items_to_print = view.get_items()
 
-            machines: list[BaseMachineType] = []
+            machines: list[LabelPrintingMachineType] = []
             for driver in cast(
                 list[BaseLabelPrintingDriver], registry.get_drivers('label_printer')
             ):
-                machines.extend(driver.get_printers(template, items_to_print))
-            self.fields['machine'].choices = [(m.pk, m.name) for m in machines]
+                machines.extend(
+                    driver.get_printers(
+                        template, items_to_print, request=kwargs['context']['request']
+                    )
+                )
+            choices = [(m.pk, self.get_printer_name(m)) for m in machines]
+            self.fields['machine'].choices = choices
+            if len(choices) > 0:
+                self.fields['machine'].default = choices[0][0]
+
+        def get_printer_name(self, machine: LabelPrintingMachineType):
+            """Construct the printers name."""
+            name = machine.name
+
+            if machine.location:
+                name += f' @ {machine.location.name}'
+
+            return name
 
         machine = serializers.ChoiceField(choices=[])
 

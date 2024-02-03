@@ -95,16 +95,10 @@ class MachineSettingSerializer(GenericReferencedSettingSerializer):
     EXTRA_FIELDS = ['config_type']
 
     def __init__(self, *args, **kwargs):
-        """Custom init method to remove unwanted fields."""
+        """Custom init method to make the config_type field read only."""
         super().__init__(*args, **kwargs)
 
-        # remove unwanted fields
-        unwanted_fields = ['pk', 'model_name', 'api_url', 'typ']
-        for f in unwanted_fields:
-            if f in self.Meta.fields:
-                self.Meta.fields.remove(f)
-
-        self.Meta.read_only_fields = ['config_type']
+        self.Meta.read_only_fields = ['config_type']  # type: ignore
 
 
 class BaseMachineClassSerializer(serializers.Serializer):
