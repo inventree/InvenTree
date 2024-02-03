@@ -115,7 +115,7 @@ export function RelatedModelField({
       }
 
       // If the filters have changed, clear the data
-      if (_filters != filters) {
+      if (JSON.stringify(_filters) !== JSON.stringify(filters)) {
         resetSearch();
         setFilters(_filters);
       }
