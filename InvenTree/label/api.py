@@ -233,7 +233,10 @@ class LabelPrintMixin(LabelFilterMixin):
         # The plugin is responsible for handling the request and returning a response.
 
         result = plugin.print_labels(
-            label, items_to_print, request, printing_options=request.data
+            label,
+            items_to_print,
+            request,
+            printing_options=(serializer.data if serializer else {}),
         )
 
         if isinstance(result, JsonResponse):
