@@ -408,6 +408,7 @@ class PluginsRegistry:
                     try:
                         plugin = entry.load()
                         plugin.is_package = True
+                        plugin.package_name = getattr(entry.dist, 'name', None)
                         plugin._get_package_metadata()
                         collected_plugins.append(plugin)
                     except Exception as error:  # pragma: no cover
