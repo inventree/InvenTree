@@ -58,6 +58,8 @@ export interface PluginI {
     human_name: string | null;
     license: string | null;
     package_path: string | null;
+    is_package: boolean;
+    package_install_name: string | null;
     pub_date: string | null;
     settings_url: string | null;
     slug: string | null;
@@ -247,7 +249,7 @@ function PluginIcon(plugin: PluginI) {
 /**
  * Table displaying list of available plugins
  */
-export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
+export default function PluginListTable() {
   const table = useTable('plugin');
   const navigate = useNavigate();
 
@@ -570,11 +572,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         tableState={table}
         columns={pluginTableColumns}
         props={{
-          ...props,
           enableDownload: false,
-          params: {
-            ...props.params
-          },
           rowActions: rowActions,
           onRowClick: (plugin) => navigate(`${plugin.pk}/`),
           tableActions: tableActions,

@@ -1,11 +1,19 @@
 import { Trans } from '@lingui/macro';
 import { Alert, Stack, Title } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { lazy } from 'react';
 
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
+import { Loadable } from '../../../../functions/loading';
 import { useServerApiState } from '../../../../states/ApiState';
-import { PluginErrorTable } from '../../../../tables/plugin/PluginErrorTable';
-import { PluginListTable } from '../../../../tables/plugin/PluginListTable';
+
+const PluginListTable = Loadable(
+  lazy(() => import('../../../../tables/plugin/PluginListTable'))
+);
+
+const PluginErrorTable = Loadable(
+  lazy(() => import('../../../../tables/plugin/PluginErrorTable'))
+);
 
 export default function PluginManagementPanel() {
   const pluginsEnabled = useServerApiState(
@@ -26,13 +34,13 @@ export default function PluginManagementPanel() {
         </Alert>
       )}
 
-      <PluginListTable props={{}} />
+      <PluginListTable />
 
       <Stack spacing={'xs'}>
         <Title order={5}>
           <Trans>Plugin Error Stack</Trans>
         </Title>
-        <PluginErrorTable props={{}} />
+        <PluginErrorTable />
       </Stack>
 
       <Stack spacing={'xs'}>
