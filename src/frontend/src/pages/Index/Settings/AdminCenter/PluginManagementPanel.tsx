@@ -1,8 +1,9 @@
-import { Trans } from '@lingui/macro';
-import { Alert, Stack, Title } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import { Accordion, Alert, Stack, Title } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { lazy } from 'react';
 
+import { StylishText } from '../../../../components/items/StylishText';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useServerApiState } from '../../../../states/ApiState';
@@ -34,30 +35,43 @@ export default function PluginManagementPanel() {
         </Alert>
       )}
 
-      <PluginListTable />
+      <Accordion defaultValue="pluginlist">
+        <Accordion.Item value="pluginlist">
+          <Accordion.Control>
+            <StylishText size="lg">{t`Plugins`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <PluginListTable />
+          </Accordion.Panel>
+        </Accordion.Item>
 
-      <Stack spacing={'xs'}>
-        <Title order={5}>
-          <Trans>Plugin Error Stack</Trans>
-        </Title>
-        <PluginErrorTable />
-      </Stack>
+        <Accordion.Item value="pluginerror">
+          <Accordion.Control>
+            <StylishText size="lg">{t`Plugin Errors`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <PluginErrorTable />
+          </Accordion.Panel>
+        </Accordion.Item>
 
-      <Stack spacing={'xs'}>
-        <Title order={5}>
-          <Trans>Plugin Settings</Trans>
-        </Title>
-        <GlobalSettingList
-          keys={[
-            'ENABLE_PLUGINS_SCHEDULE',
-            'ENABLE_PLUGINS_EVENTS',
-            'ENABLE_PLUGINS_URL',
-            'ENABLE_PLUGINS_NAVIGATION',
-            'ENABLE_PLUGINS_APP',
-            'PLUGIN_ON_STARTUP'
-          ]}
-        />
-      </Stack>
+        <Accordion.Item value="pluginsettings">
+          <Accordion.Control>
+            <StylishText size="lg">{t`Plugin Settings`}</StylishText>
+          </Accordion.Control>
+          <Accordion.Panel>
+            <GlobalSettingList
+              keys={[
+                'ENABLE_PLUGINS_SCHEDULE',
+                'ENABLE_PLUGINS_EVENTS',
+                'ENABLE_PLUGINS_URL',
+                'ENABLE_PLUGINS_NAVIGATION',
+                'ENABLE_PLUGINS_APP',
+                'PLUGIN_ON_STARTUP'
+              ]}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
     </Stack>
   );
 }
