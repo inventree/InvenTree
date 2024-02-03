@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+from common.models import InvenTreeUserSetting
 from InvenTree.serializers import DependentField
 from InvenTree.tasks import offload_task
 from label.models import LabelTemplate
@@ -35,6 +36,20 @@ def get_machine_and_driver(machine_pk: str):
     return machine, cast(BaseLabelPrintingDriver, driver)
 
 
+def get_last_used_printers(user):
+    """Get the last used printers for a specific user."""
+    return [
+        printer
+        for printer in cast(
+            str,
+            InvenTreeUserSetting.get_setting(
+                'LAST_USED_PRINTING_MACHINES', '', user=user
+            ),
+        ).split(',')
+        if printer
+    ]
+
+
 class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
     """Builtin plugin for machine label printing.
 
@@ -61,6 +76,20 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             'printing_options': kwargs['printing_options'].get('driver_options', {}),
         }
 
+        # save the current used printer as last used printer
+        # only the last ten used printers are saved so that this list doesn't grow infinitely
+        last_used_printers = get_last_used_printers(request.user)
+        machine_pk = str(machine.pk)
+        if machine_pk in last_used_printers:
+            last_used_printers.remove(machine_pk)
+        last_used_printers.insert(0, machine_pk)
+        InvenTreeUserSetting.set_setting(
+            'LAST_USED_PRINTING_MACHINES',
+            ','.join(last_used_printers[:10]),
+            user=request.user,
+        )
+
+        # execute the print job
         if driver.USE_BACKGROUND_WORKER is False:
             return driver.print_labels(machine, label, items, request, **print_kwargs)
 
@@ -84,6 +113,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             template = view.get_object()
             items_to_print = view.get_items()
 
+            # get all available printers for each driver
             machines: list[LabelPrintingMachineType] = []
             for driver in cast(
                 list[BaseLabelPrintingDriver], registry.get_drivers('label_printer')
@@ -93,10 +123,32 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
                         template, items_to_print, request=kwargs['context']['request']
                     )
                 )
-            choices = [(m.pk, self.get_printer_name(m)) for m in machines]
-            self.fields['machine'].choices = choices
+
+            # sort the last used printers for the user to the top
+            user = kwargs['context']['request'].user
+            last_used_printers = get_last_used_printers(user)[::-1]
+            machines = sorted(
+                machines,
+                key=lambda m: last_used_printers.index(str(m.pk))
+                if str(m.pk) in last_used_printers
+                else -1,
+                reverse=True,
+            )
+
+            choices = [(str(m.pk), self.get_printer_name(m)) for m in machines]
+
+            # if there are choices available, use the first as default
             if len(choices) > 0:
                 self.fields['machine'].default = choices[0][0]
+
+                # add 'last used' flag to the first choice
+                if choices[0][0] in last_used_printers:
+                    choices[0] = (
+                        choices[0][0],
+                        choices[0][1] + ' (' + _('last used') + ')',
+                    )
+
+            self.fields['machine'].choices = choices
 
         def get_printer_name(self, machine: LabelPrintingMachineType):
             """Construct the printers name."""

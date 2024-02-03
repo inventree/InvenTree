@@ -2339,6 +2339,11 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'LAST_USED_PRINTING_MACHINES': {
+            'name': _('Last used printing machines'),
+            'description': _('Save the last used printing machines for a user'),
+            'default': '',
+        },
     }
 
     typ = 'user'

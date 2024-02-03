@@ -215,6 +215,10 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         """String representation of a machine."""
         return f'{self.name}'
 
+    def __repr__(self):
+        """Python representation of a machine."""
+        return f'<{self.__class__.__name__}: {self.name}>'
+
     # --- properties
     @property
     def machine_config(self):
