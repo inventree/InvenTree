@@ -33,6 +33,7 @@ import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { RenderInstance } from '../render/Instance';
@@ -257,7 +258,7 @@ export function SearchDrawer({
     });
 
     return api
-      .post(ApiEndpoints.api_search, params)
+      .post(apiUrl(ApiEndpoints.api_search), params)
       .then(function (response) {
         return response.data;
       })

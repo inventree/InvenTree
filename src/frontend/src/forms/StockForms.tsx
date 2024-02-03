@@ -107,7 +107,7 @@ export function useCreateStockItem() {
   return useCreateApiFormModal({
     url: ApiEndpoints.stock_item_list,
     fields: fields,
-    title: t`Create Stock Item`
+    title: t`Add Stock Item`
   });
 }
 

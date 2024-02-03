@@ -4,7 +4,11 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FieldValues, UseControllerReturn } from 'react-hook-form';
+import {
+  FieldValues,
+  UseControllerReturn,
+  useFormContext
+} from 'react-hook-form';
 import Select from 'react-select';
 
 import { api } from '../../../App';
@@ -32,6 +36,8 @@ export function RelatedModelField({
     fieldState: { error }
   } = controller;
 
+  const form = useFormContext();
+
   // Keep track of the primary key value for this field
   const [pk, setPk] = useState<number | null>(null);
 
@@ -39,6 +45,8 @@ export function RelatedModelField({
 
   const [data, setData] = useState<any[]>([]);
   const dataRef = useRef<any[]>([]);
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   // If an initial value is provided, load from the API
   useEffect(() => {
@@ -71,28 +79,49 @@ export function RelatedModelField({
   const [value, setValue] = useState<string>('');
   const [searchText, cancelSearchText] = useDebouncedValue(value, 250);
 
+  const [filters, setFilters] = useState<any>({});
+
+  const resetSearch = useCallback(() => {
+    setOffset(0);
+    setData([]);
+    dataRef.current = [];
+  }, []);
+
   // reset current data on search value change
   useEffect(() => {
-    dataRef.current = [];
-    setData([]);
-  }, [searchText]);
+    resetSearch();
+  }, [searchText, filters]);
 
   const selectQuery = useQuery({
-    enabled: !definition.disabled && !!definition.api_url && !definition.hidden,
+    enabled:
+      isOpen &&
+      !definition.disabled &&
+      !!definition.api_url &&
+      !definition.hidden,
     queryKey: [`related-field-${fieldName}`, fieldId, offset, searchText],
     queryFn: async () => {
       if (!definition.api_url) {
         return null;
       }
 
-      let filters = definition.filters ?? {};
+      let _filters = definition.filters ?? {};
 
       if (definition.adjustFilters) {
-        filters = definition.adjustFilters(filters);
+        _filters =
+          definition.adjustFilters({
+            filters: _filters,
+            data: form.getValues()
+          }) ?? _filters;
+      }
+
+      // If the filters have changed, clear the data
+      if (JSON.stringify(_filters) !== JSON.stringify(filters)) {
+        resetSearch();
+        setFilters(_filters);
       }
 
       let params = {
-        ...filters,
+        ..._filters,
         search: searchText,
         offset: offset,
         limit: limit
@@ -189,15 +218,18 @@ export function RelatedModelField({
         filterOption={null}
         onInputChange={(value: any) => {
           setValue(value);
-          setOffset(0);
-          setData([]);
+          resetSearch();
         }}
         onChange={onChange}
         onMenuScrollToBottom={() => setOffset(offset + limit)}
         onMenuOpen={() => {
+          setIsOpen(true);
           setValue('');
-          setOffset(0);
+          resetSearch();
           selectQuery.refetch();
+        }}
+        onMenuClose={() => {
+          setIsOpen(false);
         }}
         isLoading={
           selectQuery.isFetching ||

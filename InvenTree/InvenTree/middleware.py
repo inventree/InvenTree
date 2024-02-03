@@ -23,8 +23,6 @@ def get_token_from_request(request):
     auth_keys = ['Authorization', 'authorization']
     token_keys = ['token', 'bearer']
 
-    token = None
-
     for k in auth_keys:
         if auth_header := request.headers.get(k, None):
             auth_header = auth_header.strip().lower().split()
@@ -32,9 +30,9 @@ def get_token_from_request(request):
             if len(auth_header) > 1:
                 if auth_header[0].strip().lower().replace(':', '') in token_keys:
                     token = auth_header[1]
-                    break
+                    return token
 
-    return token
+    return None
 
 
 class AuthRequiredMiddleware(object):
