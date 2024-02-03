@@ -16,11 +16,12 @@ import {
   IconCircleCheck,
   IconCircleX,
   IconHelpCircle,
+  IconInfoCircle,
   IconPlaylistAdd,
   IconRefresh
 } from '@tabler/icons-react';
 import { IconDots } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -35,7 +36,10 @@ import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { PluginSettingList } from '../../components/settings/SettingList';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { openEditApiForm } from '../../functions/forms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
@@ -383,68 +387,6 @@ export default function PluginListTable() {
     []
   );
 
-  const updatePlugin = useCallback((plugin_id: number, plugin_name: string) => {
-    modals.openConfirmModal({
-      title: <StylishText>{t`Update Plugin`}</StylishText>,
-      children: (
-        <Alert
-          color="blue"
-          icon={<IconRefresh />}
-          title={t`Confirm plugin update`}
-        >
-          <Stack spacing="xs">
-            <Text>{t`The following plugin will be updated`}:</Text>
-            <Text size="lg" italic>
-              {plugin_name}
-            </Text>
-          </Stack>
-        </Alert>
-      ),
-      labels: {
-        cancel: t`Cancel`,
-        confirm: t`Confirm`
-      },
-      onConfirm: () => {
-        let url = apiUrl(ApiEndpoints.plugin_update, plugin_id);
-
-        const id = 'plugin-update';
-
-        // Show a progress notification
-        notifications.show({
-          id: id,
-          message: t`Updating plugin`,
-          loading: true
-        });
-
-        api
-          .patch(
-            url,
-            {},
-            {
-              timeout: 30 * 1000
-            }
-          )
-          .then(() => {
-            table.refreshTable();
-            notifications.hide(id);
-            notifications.show({
-              title: t`Plugin updated`,
-              message: t`The plugin was updated`,
-              color: 'green'
-            });
-          })
-          .catch((_err) => {
-            notifications.hide(id);
-            notifications.show({
-              title: t`Error`,
-              message: t`Error updating plugin`,
-              color: 'red'
-            });
-          });
-      }
-    });
-  }, []);
-
   // Determine available actions for a given plugin
   function rowActions(record: any): RowAction[] {
     // TODO: Plugin actions should be updated based on on the users's permissions
@@ -479,7 +421,8 @@ export default function PluginListTable() {
         color: 'blue',
         icon: <IconRefresh />,
         onClick: () => {
-          updatePlugin(record.pk, record.name);
+          setSelectedPlugin(record.pk);
+          updatePluginModal.open();
         }
       });
     }
@@ -490,6 +433,7 @@ export default function PluginListTable() {
   const installPluginModal = useCreateApiFormModal({
     title: t`Install plugin`,
     url: ApiEndpoints.plugin_install,
+    timeout: 30000,
     fields: {
       packagename: {},
       url: {},
@@ -501,6 +445,41 @@ export default function PluginListTable() {
     onFormSuccess: (data) => {
       notifications.show({
         title: t`Plugin installed successfully`,
+        message: data.result,
+        autoClose: 30000,
+        color: 'green'
+      });
+
+      table.refreshTable();
+    }
+  });
+
+  const [selectedPlugin, setSelectedPlugin] = useState<number>(-1);
+
+  const updatePluginModal = useEditApiFormModal({
+    title: t`Update Plugin`,
+    url: ApiEndpoints.plugin_update,
+    pk: selectedPlugin,
+    fetchInitialData: false,
+    timeout: 30000,
+    fields: {
+      version: {}
+    },
+    preFormContent: (
+      <Alert
+        color="blue"
+        icon={<IconInfoCircle />}
+        title={t`Confirm plugin update`}
+      >
+        <Stack spacing="xs">
+          <Text>{t`The selected plugin will be updated.`}</Text>
+          <Text>{t`Specify plugin version, or leave blank to update to the latest available version.`}</Text>
+        </Stack>
+      </Alert>
+    ),
+    onFormSuccess: (data) => {
+      notifications.show({
+        title: t`Plugin updated successfully`,
         message: data.result,
         autoClose: 30000,
         color: 'green'
@@ -559,6 +538,7 @@ export default function PluginListTable() {
   return (
     <>
       {installPluginModal.modal}
+      {updatePluginModal.modal}
       <DetailDrawer
         title={t`Plugin detail`}
         size={'lg'}

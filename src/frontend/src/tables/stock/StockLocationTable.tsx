@@ -98,9 +98,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     }
   });
 
-  const [selectedLocation, setSelectedLocation] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedLocation, setSelectedLocation] = useState<number>(-1);
 
   const editLocation = useEditApiFormModal({
     url: ApiEndpoints.stock_location_list,

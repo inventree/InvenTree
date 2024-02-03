@@ -79,6 +79,7 @@ export interface ApiFormProps {
   onFormSuccess?: (data: any) => void;
   onFormError?: () => void;
   actions?: ApiFormAction[];
+  timeout?: number;
 }
 
 export function OptionsApiForm({
@@ -296,6 +297,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
       method: method,
       url: url,
       data: data,
+      timeout: props.timeout ?? 5000,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
       }

@@ -85,9 +85,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     onFormSuccess: table.refreshTable
   });
 
-  const [selectedTest, setSelectedTest] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedTest, setSelectedTest] = useState<number>(-1);
 
   const editTestTemplate = useEditApiFormModal({
     url: ApiEndpoints.part_test_template_list,
