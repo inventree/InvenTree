@@ -114,7 +114,7 @@ class BaseLabelPrintingDriver(BaseDriver):
         if not serializer:
             return BaseLabelPrintingDriver.BasePrintingOptionsSerializer(
                 *args, **kwargs
-            )
+            )  # type: ignore
 
         return serializer(*args, **kwargs)
 
