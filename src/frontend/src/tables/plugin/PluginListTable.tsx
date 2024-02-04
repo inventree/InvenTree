@@ -256,6 +256,7 @@ function PluginIcon(plugin: PluginI) {
 export default function PluginListTable() {
   const table = useTable('plugin');
   const navigate = useNavigate();
+  const user = useUserState();
 
   const pluginsEnabled = useServerApiState(
     (state) => state.server.plugins_enabled
@@ -388,47 +389,69 @@ export default function PluginListTable() {
   );
 
   // Determine available actions for a given plugin
-  function rowActions(record: any): RowAction[] {
-    // TODO: Plugin actions should be updated based on on the users's permissions
+  const rowActions = useCallback(
+    (record: any) => {
+      // TODO: Plugin actions should be updated based on on the users's permissions
 
-    let actions: RowAction[] = [];
+      let actions: RowAction[] = [];
 
-    if (!record.is_builtin && record.is_installed) {
-      if (record.active) {
+      if (!record.is_builtin && record.is_installed) {
+        if (record.active) {
+          actions.push({
+            title: t`Deactivate`,
+            color: 'red',
+            icon: <IconCircleX />,
+            onClick: () => {
+              activatePlugin(record.pk, record.name, false);
+            }
+          });
+        } else {
+          actions.push({
+            title: t`Activate`,
+            color: 'green',
+            icon: <IconCircleCheck />,
+            onClick: () => {
+              activatePlugin(record.pk, record.name, true);
+            }
+          });
+        }
+      }
+
+      // Active 'package' plugins can be updated
+      if (record.active && record.is_package && record.package_name) {
         actions.push({
-          title: t`Deactivate`,
-          color: 'red',
-          icon: <IconCircleX />,
+          title: t`Update`,
+          color: 'blue',
+          icon: <IconRefresh />,
           onClick: () => {
-            activatePlugin(record.pk, record.name, false);
-          }
-        });
-      } else {
-        actions.push({
-          title: t`Activate`,
-          color: 'green',
-          icon: <IconCircleCheck />,
-          onClick: () => {
-            activatePlugin(record.pk, record.name, true);
+            setSelectedPlugin(record.pk);
+            updatePluginModal.open();
           }
         });
       }
-    }
 
-    if (record.is_package && record.package_name) {
-      actions.push({
-        title: t`Update`,
-        color: 'blue',
-        icon: <IconRefresh />,
-        onClick: () => {
-          setSelectedPlugin(record.pk);
-          updatePluginModal.open();
-        }
-      });
-    }
+      // Inactive 'package' plugins can be uninstalled
+      if (
+        !record.active &&
+        record.is_installed &&
+        record.is_package &&
+        record.package_name
+      ) {
+        actions.push({
+          title: t`Uninstall`,
+          color: 'red',
+          icon: <IconCircleX />,
+          onClick: () => {
+            setSelectedPlugin(record.pk);
+            uninstallPluginModal.open();
+          }
+        });
+      }
 
-    return actions;
-  }
+      return actions;
+    },
+    [user, pluginsEnabled]
+  );
 
   const installPluginModal = useCreateApiFormModal({
     title: t`Install plugin`,
@@ -489,7 +512,36 @@ export default function PluginListTable() {
     }
   });
 
-  const user = useUserState();
+  const uninstallPluginModal = useEditApiFormModal({
+    title: t`Uninstall Plugin`,
+    url: ApiEndpoints.plugin_uninstall,
+    pk: selectedPlugin,
+    fetchInitialData: false,
+    timeout: 30000,
+    fields: {},
+    preFormContent: (
+      <Alert
+        color="red"
+        icon={<IconInfoCircle />}
+        title={t`Confirm plugin uninstall`}
+      >
+        <Stack spacing="xs">
+          <Text>{t`The selected plugin will be uninstalled.`}</Text>
+          <Text>{t`This action cannot be undone.`}</Text>
+        </Stack>
+      </Alert>
+    ),
+    onFormSuccess: (data) => {
+      notifications.show({
+        title: t`Plugin uninstalled successfully`,
+        message: data.result,
+        autoClose: 30000,
+        color: 'green'
+      });
+
+      table.refreshTable();
+    }
+  });
 
   const reloadPlugins = useCallback(() => {
     api
@@ -539,6 +591,7 @@ export default function PluginListTable() {
     <>
       {installPluginModal.modal}
       {updatePluginModal.modal}
+      {uninstallPluginModal.modal}
       <DetailDrawer
         title={t`Plugin detail`}
         size={'lg'}

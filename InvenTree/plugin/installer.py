@@ -274,6 +274,8 @@ def update_plugin(
 
     validate_package_plugin(cfg, user=user)
 
+    # TODO: Delete any database tables associated with the plugin
+
     package_name = cfg.package_name
 
     logger.info('Updating plugin: %s', package_name)

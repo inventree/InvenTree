@@ -227,7 +227,10 @@ class PluginUpdateSerializer(serializers.Serializer):
 
 
 class PluginUninstallSerializer(serializers.Serializer):
-    """Serializer for uninstalling a plugin."""
+    """Serializer for uninstalling a plugin.
+
+    TODO: Add an option to delete any database tables associated with the plugin.
+    """
 
     def update(self, instance, validated_data):
         """Uninstall the specified plugin."""

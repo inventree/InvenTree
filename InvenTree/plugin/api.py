@@ -183,7 +183,7 @@ class PluginUninstall(UpdateAPI):
     """Endpoint for uninstalling a single plugin."""
 
     queryset = PluginConfig.objects.all()
-    serializer_class = PluginSerializers.PluginConfigInstallSerializer
+    serializer_class = PluginSerializers.PluginUninstallSerializer
     permission_classes = [IsSuperuser]
 
     def perform_update(self, serializer):
