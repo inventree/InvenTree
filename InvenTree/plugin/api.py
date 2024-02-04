@@ -179,6 +179,18 @@ class PluginInstall(CreateAPI):
         return serializer.save()
 
 
+class PluginUninstall(UpdateAPI):
+    """Endpoint for uninstalling a single plugin."""
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginConfigInstallSerializer
+    permission_classes = [IsSuperuser]
+
+    def perform_update(self, serializer):
+        """Uninstall the plugin."""
+        serializer.save()
+
+
 class PluginUpdate(UpdateAPI):
     """Endpoint for updating a single plugin."""
 
@@ -428,6 +440,11 @@ plugin_api_urls = [
                         name='api-plugin-detail-activate',
                     ),
                     path('update/', PluginUpdate.as_view(), name='api-plugin-update'),
+                    path(
+                        'uninstall/',
+                        PluginUninstall.as_view(),
+                        name='api-plugin-uninstall',
+                    ),
                     path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),
             ),

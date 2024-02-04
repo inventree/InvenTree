@@ -310,3 +310,40 @@ def update_plugin(
     offload_task(check_for_migrations)
 
     return ret
+
+
+def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None):
+    """Uninstall a plugin from the python virtual environment.
+
+    - The plugin must not be active
+    - The plugin must be a "package" and have a valid package name
+    """
+    from plugin.registry import registry
+
+    if cfg.active:
+        raise ValidationError(
+            _('Plugin cannot be uninstalled as it is currently active')
+        )
+
+    validate_package_plugin(cfg, user)
+    package_name = cfg.package_name
+    logger.info('Uninstalling plugin: %s', package_name)
+
+    cmd = ['uninstall', '-y', package_name]
+
+    try:
+        result = pip_command(*cmd)
+
+        ret = {
+            'result': _('Uninstalled plugin successfully'),
+            'success': True,
+            'output': str(result, 'utf-8'),
+        }
+
+    except subprocess.CalledProcessError as error:
+        handle_pip_error(error, 'plugin_uninstall')
+
+    # Reload the plugin registry
+    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+    return ret

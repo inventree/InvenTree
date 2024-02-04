@@ -226,6 +226,16 @@ class PluginUpdateSerializer(serializers.Serializer):
         )
 
 
+class PluginUninstallSerializer(serializers.Serializer):
+    """Serializer for uninstalling a plugin."""
+
+    def update(self, instance, validated_data):
+        """Uninstall the specified plugin."""
+        from plugin.installer import uninstall_plugin
+
+        return uninstall_plugin(instance, user=self.context['request'].user)
+
+
 class PluginSettingSerializer(GenericReferencedSettingSerializer):
     """Serializer for the PluginSetting model."""
 

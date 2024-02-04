@@ -99,6 +99,7 @@ export enum ApiEndpoints {
   plugin_reload = 'plugins/reload/',
   plugin_activate = 'plugins/:id/activate/',
   plugin_update = 'plugins/:id/update/',
+  plugin_uninstall = 'plugins/:id/uninstall/',
 
   // Miscellaneous API endpoints
   error_report_list = 'error-report/',
