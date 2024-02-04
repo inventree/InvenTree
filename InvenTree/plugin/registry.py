@@ -507,9 +507,20 @@ class PluginsRegistry:
             # Check if this is a 'builtin' plugin
             builtin = plg.check_is_builtin()
 
+            package_name = None
+
+            # Extract plugin package name
+            if getattr(plg, 'is_package', False):
+                package_name = getattr(plg, 'package_name', None)
+
             # Auto-enable builtin plugins
             if builtin and plg_db and not plg_db.active:
                 plg_db.active = True
+                plg_db.save()
+
+            # Save the package_name attribute to the plugin
+            if plg_db.package_name != package_name:
+                plg_db.package_name = package_name
                 plg_db.save()
 
             # Determine if this plugin should be loaded:
@@ -538,6 +549,7 @@ class PluginsRegistry:
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)
+
                 plg_i.pk = plg_db.pk if plg_db else None
                 plg_i.db = plg_db
 
