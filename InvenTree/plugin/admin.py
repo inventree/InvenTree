@@ -53,7 +53,6 @@ class PluginConfigAdmin(admin.ModelAdmin):
     list_display = [
         'name',
         'key',
-        '__str__',
         'active',
         'is_builtin',
         'is_sample',
