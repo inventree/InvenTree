@@ -18,11 +18,14 @@ from stock.models import StockLocation
 
 
 class BaseLabelPrintingDriver(BaseDriver):
-    """Base label printing driver."""
+    """Base label printing driver.
+
+    Attributes:
+        USE_BACKGROUND_WORKER (bool): If True, the `print_label()` and `print_labels()` methods will be run in a background worker (default: True)
+    """
 
     machine_type = 'label_printer'
 
-    # Run printing functions by default in a background worker.
     USE_BACKGROUND_WORKER = True
 
     def print_label(
@@ -42,7 +45,7 @@ class BaseLabelPrintingDriver(BaseDriver):
             request: The HTTP request object which triggered this print job
 
         Keyword Arguments:
-            printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
+            printing_options (dict): The printing options set for this print job defined in the PrintingOptionsSerializer
                 by default the following options are available:
                 - copies: number of copies to print for the label
 
@@ -67,12 +70,12 @@ class BaseLabelPrintingDriver(BaseDriver):
             request: The HTTP request object which triggered this print job
 
         Keyword Arguments:
-            printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
+            printing_options (dict): The printing options set for this print job defined in the PrintingOptionsSerializer
                 by default the following options are available:
                 - copies: number of copies to print for each label
 
         Returns:
-            If USE_BACKGROUND_WORKER=False, a JsonResponse object which indicates outcome to the user, otherwise None
+            If `USE_BACKGROUND_WORKER=False`, a JsonResponse object which indicates outcome to the user, otherwise None
 
         The default implementation simply calls print_label() for each label, producing multiple single label output "jobs"
         but this can be overridden by the particular driver.
@@ -92,43 +95,37 @@ class BaseLabelPrintingDriver(BaseDriver):
             items: The lost of database items to print (e.g. StockItem instances)
 
         Keyword Arguments:
-            request: The django request used to make the get printers request
+            request (Request): The django request used to make the get printers request
         """
         return cast(list['LabelPrintingMachineType'], self.get_machines())
 
     def get_printing_options_serializer(
         self, request: Request, *args, **kwargs
-    ) -> 'BaseLabelPrintingDriver.BasePrintingOptionsSerializer':
+    ) -> 'BaseLabelPrintingDriver.PrintingOptionsSerializer':
         """Return a serializer class instance with dynamic printing options.
 
         Arguments:
             request: The request made to print a label or interfering the available serializer fields via an OPTIONS request
-            *args, **kwargs: need to be passed to the serializer instance
+
+        Note:
+            `*args`, `**kwargs` needs to be passed to the serializer instance
 
         Returns:
-            A class instance of a DRF serializer class, by default this an instance of
-            self.PrintingOptionsSerializer using the *args, **kwargs if existing for this driver
+            A class instance of a DRF serializer class, by default this an instance of self.PrintingOptionsSerializer using the *args, **kwargs if existing for this driver
         """
-        serializer = getattr(self, 'PrintingOptionsSerializer', None)
-
-        if not serializer:
-            return BaseLabelPrintingDriver.BasePrintingOptionsSerializer(
-                *args, **kwargs
-            )  # type: ignore
-
-        return serializer(*args, **kwargs)
+        return self.PrintingOptionsSerializer(*args, **kwargs)
 
     # --- helper functions
     @property
     def machine_plugin(self) -> LabelPrintingMixin:
-        """Returns the builtin machine label printing plugin."""
+        """Returns the builtin machine label printing plugin that manages printing through machines."""
         plg = plg_registry.get_plugin('inventreelabelmachine')
         return cast(LabelPrintingMixin, plg)
 
     def render_to_pdf(
         self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
     ) -> HttpResponse:
-        """Render this label to PDF format.
+        """Helper method to render a label to PDF format for a specific item.
 
         Arguments:
             label: The LabelTemplate object to render
@@ -143,7 +140,7 @@ class BaseLabelPrintingDriver(BaseDriver):
     def render_to_pdf_data(
         self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
     ) -> bytes:
-        """Render this label to PDF and return it as bytes.
+        """Helper method to render a label to PDF and return it as bytes for a specific item.
 
         Arguments:
             label: The LabelTemplate object to render
@@ -159,7 +156,7 @@ class BaseLabelPrintingDriver(BaseDriver):
     def render_to_html(
         self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
     ) -> str:
-        """Render this label to HTML format.
+        """Helper method to render a label to HTML format for a specific item.
 
         Arguments:
             label: The LabelTemplate object to render
@@ -174,7 +171,7 @@ class BaseLabelPrintingDriver(BaseDriver):
     def render_to_png(
         self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
     ) -> Image:
-        """Render this label to PNG format.
+        """Helper method to render a label to PNG format for a specific item.
 
         Arguments:
             label: The LabelTemplate object to render
@@ -182,8 +179,8 @@ class BaseLabelPrintingDriver(BaseDriver):
             request: The HTTP request object which triggered this print job
 
         Keyword Arguments:
-            pdf_data: The pdf document as bytes (optional)
-            dpi: The dpi used to render the image (optional)
+            pdf_data (bytes): The pdf document as bytes (optional)
+            dpi (int): The dpi used to render the image (optional)
         """
         label.object_to_print = item
         png = self.machine_plugin.render_to_png(label, request, **kwargs)
@@ -192,14 +189,49 @@ class BaseLabelPrintingDriver(BaseDriver):
 
     required_overrides = [[print_label, print_labels]]
 
-    class BasePrintingOptionsSerializer(serializers.Serializer):
-        """Printing options base serializer that implements common options."""
+    class PrintingOptionsSerializer(serializers.Serializer):
+        """Printing options serializer that implements common options.
+
+        This can be overridden by the driver to implement custom options, but the driver should always extend this class.
+
+        Example:
+            This example shows how to extend the default serializer and add a new option:
+            ```py
+            class MyDriver(BaseLabelPrintingDriver):
+                # ...
+
+                class PrintingOptionsSerializer(BaseLabelPrintingDriver.PrintingOptionsSerializer):
+                    auto_cut = serializers.BooleanField(
+                        default=True,
+                        label=_('Auto cut'),
+                        help_text=_('Automatically cut the label after printing'),
+                    )
+            ```
+        """
 
         copies = serializers.IntegerField(
             default=1,
             label=_('Copies'),
             help_text=_('Number of copies to print for each label'),
         )
+
+
+class LabelPrinterStatus(MachineStatus):
+    """Label printer status codes.
+
+    Attributes:
+        CONNECTED: The printer is connected and ready to print
+        STANDBY: The printers connection is in standby mode, but will be ready to print at any time
+        PRINTING: The printer is currently printing a label
+        NO_MEDIA: The printer is out of media (e.g. the label spool is empty)
+        DISCONNECTED: The driver cannot establish a connection to the printer
+    """
+
+    CONNECTED = 100, _('Connected'), 'success'
+    UNKNOWN = 101, _('Standby'), 'success'
+    PRINTING = 110, _('Printing'), 'primary'
+    NO_MEDIA = 301, _('No media'), 'warning'
+    DISCONNECTED = 400, _('Disconnected'), 'danger'
 
 
 class LabelPrintingMachineType(BaseMachineType):
@@ -218,15 +250,6 @@ class LabelPrintingMachineType(BaseMachineType):
             'model': 'stock.stocklocation',
         }
     }
-
-    class LabelPrinterStatus(MachineStatus):
-        """Label printer status codes."""
-
-        CONNECTED = 100, _('Connected'), 'success'
-        STANDBY = 101, _('Standby'), 'success'
-        PRINTING = 110, _('Printing'), 'primary'
-        LABEL_SPOOL_EMPTY = 301, _('Label spool empty'), 'warning'
-        DISCONNECTED = 400, _('Disconnected'), 'danger'
 
     MACHINE_STATUS = LabelPrinterStatus
 

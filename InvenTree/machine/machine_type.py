@@ -35,25 +35,27 @@ class MachineStatus(StatusCode):
     Additionally there are helpers to access all additional attributes `text`, `label`, `color`.
 
     Status code ranges:
+        ```
         1XX - Everything fine
         2XX - Warnings (e.g. ink is about to become empty)
         3XX - Something wrong with the machine (e.g. no labels are remaining on the spool)
         4XX - Something wrong with the driver (e.g. cannot connect to the machine)
         5XX - Unknown issues
+        ```
     """
 
     pass
 
 
 class BaseDriver(ClassValidationMixin, ClassProviderMixin):
-    """Base class for machine drivers.
+    """Base class for all machine drivers.
 
     Attributes:
-        SLUG: Slug string for identifying a machine
-        NAME: User friendly name for displaying
-        DESCRIPTION: Description of what this driver does
+        SLUG: Slug string for identifying the driver in format /[a-z-]+/ (required)
+        NAME: User friendly name for displaying (required)
+        DESCRIPTION: Description of what this driver does (required)
 
-        MACHINE_SETTINGS: Driver specific settings dict (optional)
+        MACHINE_SETTINGS: Driver specific settings dict
     """
 
     SLUG: str
@@ -109,7 +111,7 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         """This method gets called on manual machine restart e.g. by using the restart machine action in the Admin Center.
 
         Note:
-            machine.restart_required gets set to False again
+            `machine.restart_required` gets set to False again before this function is called
 
         Arguments:
             machine: Machine instance
@@ -119,12 +121,12 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
     def get_machines(self, **kwargs):
         """Return all machines using this driver (By default only initialized machines).
 
-        Kwargs:
-            name: Machine name
-            machine_type: Machine type definition (class)
-            initialized: (bool, default: True)
-            active: (bool)
-            base_driver: base driver (class)
+        Keyword Arguments:
+            name (str): Machine name
+            machine_type (BaseMachineType): Machine type definition (class)
+            initialized (bool): default: True
+            active (bool): machine needs to be active
+            base_driver (BaseDriver): base driver (class)
         """
         from machine import registry
 
@@ -133,7 +135,11 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         return registry.get_machines(driver=self, **kwargs)
 
     def handle_error(self, error: Union[Exception, str]):
-        """Handle driver error."""
+        """Handle driver error.
+
+        Arguments:
+            error: Exception or string
+        """
         self.errors.append(error)
 
 
@@ -141,9 +147,9 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
     """Base class for machine types.
 
     Attributes:
-        SLUG: Slug string for identifying a machine type
-        NAME: User friendly name for displaying
-        DESCRIPTION: Description of what this machine type can do (default: "")
+        SLUG: Slug string for identifying the machine type in format /[a-z-]+/ (required)
+        NAME: User friendly name for displaying (required)
+        DESCRIPTION: Description of what this machine type can do (required)
 
         base_driver: Reference to the base driver for this machine type
 
@@ -222,7 +228,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
     # --- properties
     @property
     def machine_config(self):
-        """Machine_config property."""
+        """Machine_config property which is a reference to the database entry."""
         # always fetch the machine_config if needed to ensure we get the newest reference
         from .models import MachineConfig
 
@@ -230,12 +236,12 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
     @property
     def name(self):
-        """Name property."""
+        """The machines name."""
         return self.machine_config.name
 
     @property
     def active(self):
-        """Active property."""
+        """The machines active status."""
         return self.machine_config.active
 
     # --- hook functions
@@ -263,7 +269,11 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
             self.handle_error(e)
 
     def update(self, old_state: dict[str, Any]):
-        """Machine update function, gets called if the machine itself changes or their settings."""
+        """Machine update function, gets called if the machine itself changes or their settings.
+
+        Arguments:
+            old_state: Dict holding the old machine state before update
+        """
         if self.driver is None:
             return
 
@@ -285,15 +295,21 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
     # --- helper functions
     def handle_error(self, error: Union[Exception, str]):
-        """Helper function for capturing errors with the machine."""
+        """Helper function for capturing errors with the machine.
+
+        Arguments:
+            error: Exception or string
+        """
         self.errors.append(error)
 
-    def get_setting(self, key: str, config_type_str: Literal['M', 'D'], cache=False):
+    def get_setting(
+        self, key: str, config_type_str: Literal['M', 'D'], cache: bool = False
+    ):
         """Return the 'value' of the setting associated with this machine.
 
         Arguments:
             key: The 'name' of the setting value to be retrieved
-            config_type: Either "M" (machine scoped settings) or "D" (driver scoped settings)
+            config_type_str: Either "M" (machine scoped settings) or "D" (driver scoped settings)
             cache: Whether to use RAM cached value (default = False)
         """
         from machine.models import MachineSetting
@@ -306,12 +322,12 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
             cache=cache,
         )
 
-    def set_setting(self, key: str, config_type_str: Literal['M', 'D'], value):
+    def set_setting(self, key: str, config_type_str: Literal['M', 'D'], value: Any):
         """Set plugin setting value by key.
 
         Arguments:
             key: The 'name' of the setting to set
-            config_type: Either "M" (machine scoped settings) or "D" (driver scoped settings)
+            config_type_str: Either "M" (machine scoped settings) or "D" (driver scoped settings)
             value: The 'value' of the setting
         """
         from machine.models import MachineSetting
@@ -351,9 +367,16 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
         """Set the machine status code. There are predefined ones for each MachineType.
 
         Import the MachineType to access it's `MACHINE_STATUS` enum.
+
+        Arguments:
+            status: The new MachineStatus code to set
         """
         self.status = status
 
     def set_status_text(self, status_text: str):
-        """Set the machine status text. It can be any arbitrary text."""
+        """Set the machine status text. It can be any arbitrary text.
+
+        Arguments:
+            status_text: The new status text to set
+        """
         self.status_text = status_text
