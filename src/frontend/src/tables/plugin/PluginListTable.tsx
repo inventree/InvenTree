@@ -195,15 +195,27 @@ export function PluginDrawer({
             <Trans>Package information</Trans>
           </Title>
           <Stack pos="relative" spacing="xs">
+            {plugin?.is_package && (
+              <InfoItem
+                type="text"
+                name={t`Package Name`}
+                value={plugin?.package_name}
+              />
+            )}
             <InfoItem
               type="text"
-              name={t`Installation path`}
+              name={t`Installation Path`}
               value={plugin?.meta.package_path}
             />
             <InfoItem
               type="boolean"
               name={t`Builtin`}
               value={plugin?.is_builtin}
+            />
+            <InfoItem
+              type="boolean"
+              name={t`Package`}
+              value={plugin?.is_package}
             />
           </Stack>
         </Stack>
@@ -594,7 +606,7 @@ export default function PluginListTable() {
       {uninstallPluginModal.modal}
       <DetailDrawer
         title={t`Plugin detail`}
-        size={'lg'}
+        size={'xl'}
         renderContent={(id) => {
           if (!id) return false;
           return <PluginDrawer id={id} refreshTable={table.refreshTable} />;
