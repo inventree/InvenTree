@@ -51,12 +51,14 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'pk',
             'key',
             'name',
+            'package_name',
             'active',
             'meta',
             'mixins',
             'is_builtin',
             'is_sample',
             'is_installed',
+            'is_package',
         ]
 
         read_only_fields = ['key', 'is_builtin', 'is_sample', 'is_installed']

@@ -56,14 +56,14 @@ export interface PluginI {
   is_builtin: boolean;
   is_sample: boolean;
   is_installed: boolean;
+  is_package: boolean;
+  package_name: string | null;
   meta: {
     author: string | null;
     description: string | null;
     human_name: string | null;
     license: string | null;
     package_path: string | null;
-    is_package: boolean;
-    package_install_name: string | null;
     pub_date: string | null;
     settings_url: string | null;
     slug: string | null;
@@ -415,7 +415,7 @@ export default function PluginListTable() {
       }
     }
 
-    if (record.meta?.is_package && record.meta?.package_install_name) {
+    if (record.is_package && record.package_name) {
       actions.push({
         title: t`Update`,
         color: 'blue',
