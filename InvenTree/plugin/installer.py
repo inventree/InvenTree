@@ -85,9 +85,11 @@ def install_plugins_file():
     except subprocess.CalledProcessError as error:
         output = error.output.decode('utf-8')
         logger.exception('Plugin file installation failed: %s', str(output))
+        log_error('pip')
         return False
     except Exception as exc:
         logger.exception('Plugin file installation failed: %s', exc)
+        log_error('pip')
         return False
 
     # At this point, the plugins file has been installed
