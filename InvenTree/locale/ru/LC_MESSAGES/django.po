@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-03 11:52+0000\n"
-"PO-Revision-Date: 2024-02-03 12:08\n"
+"POT-Creation-Date: 2024-02-04 09:11+0000\n"
+"PO-Revision-Date: 2024-02-04 12:12\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -54,7 +54,7 @@ msgstr "Введите дату"
 #: InvenTree/fields.py:209 InvenTree/models.py:951 build/serializers.py:437
 #: build/serializers.py:515 build/templates/build/sidebar.html:21
 #: company/models.py:826 company/templates/company/sidebar.html:37
-#: order/models.py:1261 order/templates/order/po_sidebar.html:11
+#: order/models.py:1260 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:59
 #: part/models.py:3148 part/templates/part/part_sidebar.html:63
@@ -127,7 +127,7 @@ msgstr "Указанный домен электронной почты не у�
 msgid "Registration is disabled."
 msgstr "Регистрация отключена."
 
-#: InvenTree/helpers.py:459 order/models.py:521 order/models.py:723
+#: InvenTree/helpers.py:459 order/models.py:520 order/models.py:722
 msgid "Invalid quantity provided"
 msgstr "недопустимое количество"
 
@@ -329,7 +329,7 @@ msgstr "Китайский (Традиционный)"
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr ""
+msgstr "[{site_name}] Войти в приложение"
 
 #: InvenTree/magic_login.py:38 company/models.py:134
 #: company/templates/company/company_base.html:132
@@ -394,7 +394,7 @@ msgstr "Выберите файл для вложения"
 
 #: InvenTree/models.py:497 common/models.py:2878 company/models.py:147
 #: company/models.py:452 company/models.py:507 company/models.py:809
-#: order/models.py:273 order/models.py:1266 order/models.py:1665
+#: order/models.py:272 order/models.py:1265 order/models.py:1664
 #: part/admin.py:55 part/models.py:902
 #: part/templates/part/part_scheduling.html:11
 #: report/templates/report/inventree_build_order_base.html:164
@@ -496,7 +496,7 @@ msgstr "Название"
 #: company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:107 label/models.py:122
-#: order/models.py:259 order/models.py:1294 part/admin.py:303 part/admin.py:413
+#: order/models.py:258 order/models.py:1293 part/admin.py:303 part/admin.py:413
 #: part/models.py:861 part/models.py:3590 part/templates/part/category.html:82
 #: part/templates/part/part_base.html:170
 #: part/templates/part/part_scheduling.html:12 report/models.py:185
@@ -715,7 +715,7 @@ msgstr "Возвращено"
 msgid "In Progress"
 msgstr "Выполняется"
 
-#: InvenTree/status_codes.py:43 order/models.py:1531
+#: InvenTree/status_codes.py:43 order/models.py:1530
 #: templates/js/translated/sales_order.js:1523
 #: templates/js/translated/sales_order.js:1644
 #: templates/js/translated/sales_order.js:1957
@@ -1000,8 +1000,8 @@ msgstr "Деталь заказа на производства не может 
 msgid "Build Order Reference"
 msgstr "Ссылка на заказ на производство"
 
-#: build/models.py:172 order/models.py:422 order/models.py:876
-#: order/models.py:1254 order/models.py:1954 part/admin.py:416
+#: build/models.py:172 order/models.py:421 order/models.py:875
+#: order/models.py:1253 order/models.py:1953 part/admin.py:416
 #: part/models.py:3992 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
@@ -1031,7 +1031,7 @@ msgstr "Заказ на производство, которому принад�
 
 #: build/models.py:197 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:1035
-#: order/models.py:1379 order/models.py:1511 order/models.py:1512
+#: order/models.py:1378 order/models.py:1510 order/models.py:1511
 #: part/models.py:388 part/models.py:2977 part/models.py:3121
 #: part/models.py:3265 part/models.py:3288 part/models.py:3309
 #: part/models.py:3331 part/models.py:3438 part/models.py:3723
@@ -1134,7 +1134,7 @@ msgstr "Статус заказа на производство"
 msgid "Build status code"
 msgstr "Код статуса заказа на производство"
 
-#: build/models.py:262 build/serializers.py:279 order/serializers.py:525
+#: build/models.py:262 build/serializers.py:279 order/serializers.py:527
 #: stock/models.py:818 stock/serializers.py:1234
 #: templates/js/translated/purchase_order.js:1125
 msgid "Batch Code"
@@ -1144,7 +1144,7 @@ msgstr "Код партии"
 msgid "Batch code for this build output"
 msgstr "Код партии для продукции"
 
-#: build/models.py:269 order/models.py:286 part/models.py:1062
+#: build/models.py:269 order/models.py:285 part/models.py:1062
 #: part/templates/part/part_base.html:310
 #: templates/js/translated/return_order.js:339
 #: templates/js/translated/sales_order.js:827
@@ -1159,7 +1159,7 @@ msgstr "Целевая дата завершения"
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Целевая дата для заказа на производства. Заказ будет просрочен после этой даты."
 
-#: build/models.py:277 order/models.py:480 order/models.py:1999
+#: build/models.py:277 order/models.py:479 order/models.py:1998
 #: templates/js/translated/build.js:2243
 msgid "Completion Date"
 msgstr "Дата завершения"
@@ -1178,7 +1178,7 @@ msgstr "Пользователь, создавший этот заказ на п
 
 #: build/models.py:300 build/templates/build/build_base.html:204
 #: build/templates/build/detail.html:122 common/models.py:145
-#: order/models.py:304 order/templates/order/order_base.html:217
+#: order/models.py:303 order/templates/order/order_base.html:217
 #: order/templates/order/return_order_base.html:188
 #: order/templates/order/sales_order_base.html:228 part/models.py:1079
 #: part/templates/part/part_base.html:390
@@ -1216,7 +1216,7 @@ msgid "Priority of this build order"
 msgstr "Приоритет этого заказа на производство"
 
 #: build/models.py:321 common/models.py:129 order/admin.py:18
-#: order/models.py:268 templates/InvenTree/settings/settings_staff_js.html:146
+#: order/models.py:267 templates/InvenTree/settings/settings_staff_js.html:146
 #: templates/js/translated/build.js:2140
 #: templates/js/translated/purchase_order.js:1707
 #: templates/js/translated/return_order.js:318
@@ -1252,8 +1252,8 @@ msgid "Build output does not match Build Order"
 msgstr "Продукция не совпадает с заказом на производство"
 
 #: build/models.py:860 build/serializers.py:222 build/serializers.py:261
-#: build/serializers.py:819 order/models.py:518 order/serializers.py:393
-#: order/serializers.py:520 part/serializers.py:1393 part/serializers.py:1759
+#: build/serializers.py:819 order/models.py:517 order/serializers.py:395
+#: order/serializers.py:522 part/serializers.py:1393 part/serializers.py:1759
 #: stock/models.py:659 stock/models.py:1469 stock/serializers.py:399
 msgid "Quantity must be greater than zero"
 msgstr "Количество должно быть больше нуля"
@@ -1269,7 +1269,7 @@ msgstr "Объект производства"
 #: build/models.py:1293 build/models.py:1551 build/serializers.py:209
 #: build/serializers.py:246 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2381
-#: order/models.py:1237 order/models.py:1877 order/serializers.py:1282
+#: order/models.py:1236 order/models.py:1876 order/serializers.py:1284
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:415
 #: part/forms.py:48 part/models.py:3135 part/models.py:3965
 #: part/templates/part/part_pricing.html:16
@@ -1326,11 +1326,11 @@ msgstr "Элемент производства должен указать пр
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Резервируемое количество ({q}) не должно превышать доступное количество на складе ({a})"
 
-#: build/models.py:1393 order/models.py:1828
+#: build/models.py:1393 order/models.py:1827
 msgid "Stock item is over-allocated"
 msgstr "Складская позиция перераспределена"
 
-#: build/models.py:1399 order/models.py:1831
+#: build/models.py:1399 order/models.py:1830
 msgid "Allocation quantity must be greater than zero"
 msgstr "Резервируемое количество должно быть больше нуля"
 
@@ -1342,8 +1342,8 @@ msgstr "Количество должно быть 1 для сериализов
 msgid "Selected stock item does not match BOM line"
 msgstr "Выбранная складская позиция не соответствует позиции в BOM"
 
-#: build/models.py:1538 build/serializers.py:799 order/serializers.py:1126
-#: order/serializers.py:1147 stock/serializers.py:493 stock/serializers.py:961
+#: build/models.py:1538 build/serializers.py:799 order/serializers.py:1128
+#: order/serializers.py:1149 stock/serializers.py:493 stock/serializers.py:961
 #: stock/serializers.py:1073 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:194
@@ -1408,7 +1408,7 @@ msgstr "Для отслеживаемых деталей должно быть �
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Требуется целое количество, так как материал содержит отслеживаемые детали"
 
-#: build/serializers.py:286 order/serializers.py:533 order/serializers.py:1286
+#: build/serializers.py:286 order/serializers.py:535 order/serializers.py:1288
 #: stock/serializers.py:410 templates/js/translated/purchase_order.js:1149
 #: templates/js/translated/stock.js:367 templates/js/translated/stock.js:565
 msgid "Serial Numbers"
@@ -1434,8 +1434,8 @@ msgstr "Следующие серийные номера уже существу
 msgid "A list of build outputs must be provided"
 msgstr "Необходимо представить список выхода деталей"
 
-#: build/serializers.py:425 build/serializers.py:497 order/serializers.py:509
-#: order/serializers.py:617 order/serializers.py:1622 part/serializers.py:1056
+#: build/serializers.py:425 build/serializers.py:497 order/serializers.py:511
+#: order/serializers.py:619 order/serializers.py:1624 part/serializers.py:1056
 #: stock/serializers.py:421 stock/serializers.py:576 stock/serializers.py:672
 #: stock/serializers.py:1105 stock/serializers.py:1353
 #: stock/templates/stock/item_base.html:394
@@ -1475,8 +1475,8 @@ msgid "Location for completed build outputs"
 msgstr "Место хранения для завершенной продукции"
 
 #: build/serializers.py:504 build/templates/build/build_base.html:151
-#: build/templates/build/detail.html:62 order/models.py:900
-#: order/models.py:1978 order/serializers.py:541 stock/admin.py:163
+#: build/templates/build/detail.html:62 order/models.py:899
+#: order/models.py:1977 order/serializers.py:543 stock/admin.py:163
 #: stock/serializers.py:723 stock/serializers.py:1241
 #: stock/templates/stock/item_base.html:427
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2187
@@ -1549,7 +1549,7 @@ msgstr "Подтвердите, что складские позиции не б
 msgid "Required stock has not been fully allocated"
 msgstr "Необходимые запасы не были полностью зарезервированы"
 
-#: build/serializers.py:672 order/serializers.py:278 order/serializers.py:1189
+#: build/serializers.py:672 order/serializers.py:280 order/serializers.py:1191
 msgid "Accept Incomplete"
 msgstr "Разрешить незавершенные производимые детали"
 
@@ -1589,7 +1589,7 @@ msgstr "bom_item.part должна указывать на ту же часть,
 msgid "Item must be in stock"
 msgstr "Элемент должен быть в наличии"
 
-#: build/serializers.py:853 order/serializers.py:1180
+#: build/serializers.py:853 order/serializers.py:1182
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Превышено доступное количество ({q})"
@@ -1602,7 +1602,7 @@ msgstr "Продукция должна быть указан для резер�
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Продукция не может быть указана для резервирования не отслеживаемых частей"
 
-#: build/serializers.py:890 order/serializers.py:1432
+#: build/serializers.py:890 order/serializers.py:1434
 msgid "Allocation items must be provided"
 msgstr "Необходимо указать резервируемые элементы"
 
@@ -1795,8 +1795,8 @@ msgid "Stock has not been fully allocated to this Build Order"
 msgstr "Остатки не были полностью зарезервированы для этого заказа на производство"
 
 #: build/templates/build/build_base.html:160
-#: build/templates/build/detail.html:138 order/models.py:279
-#: order/models.py:1272 order/templates/order/order_base.html:186
+#: build/templates/build/detail.html:138 order/models.py:278
+#: order/models.py:1271 order/templates/order/order_base.html:186
 #: order/templates/order/return_order_base.html:164
 #: order/templates/order/sales_order_base.html:192
 #: report/templates/report/inventree_build_order_base.html:125
@@ -1833,8 +1833,8 @@ msgid "Completed Outputs"
 msgstr "Завершенная продукция"
 
 #: build/templates/build/build_base.html:190
-#: build/templates/build/detail.html:101 order/api.py:1408 order/models.py:1503
-#: order/models.py:1613 order/models.py:1765
+#: build/templates/build/detail.html:101 order/api.py:1408 order/models.py:1502
+#: order/models.py:1612 order/models.py:1764
 #: order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
 #: report/templates/report/inventree_build_order_base.html:135
@@ -1884,7 +1884,7 @@ msgstr "Источник запаса"
 msgid "Stock can be taken from any available location."
 msgstr "Остатки не могут быть получены из любого доступного места хранения."
 
-#: build/templates/build/detail.html:49 order/models.py:1408
+#: build/templates/build/detail.html:49 order/models.py:1407
 #: templates/js/translated/purchase_order.js:2186
 msgid "Destination"
 msgstr "Назначение"
@@ -2605,7 +2605,7 @@ msgstr ""
 
 #: common/models.py:1578
 msgid "Internal Prices"
-msgstr ""
+msgstr "Внутренние цены"
 
 #: common/models.py:1579
 msgid "Enable internal prices for parts"
@@ -2910,7 +2910,7 @@ msgstr ""
 
 #: common/models.py:1838
 msgid "Allowed domains"
-msgstr ""
+msgstr "Разрешенные домены"
 
 #: common/models.py:1840
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
@@ -3453,7 +3453,7 @@ msgid "Price break quantity"
 msgstr ""
 
 #: common/models.py:2389 company/serializers.py:484 order/admin.py:42
-#: order/models.py:1311 order/models.py:2199
+#: order/models.py:1310 order/models.py:2198
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1885
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
@@ -3661,7 +3661,7 @@ msgstr "Ожидающие задачи"
 
 #: common/serializers.py:340
 msgid "Scheduled Tasks"
-msgstr ""
+msgstr "Запланированные задания"
 
 #: common/serializers.py:346
 msgid "Failed Tasks"
@@ -3728,7 +3728,7 @@ msgstr "Поля Соответствия"
 
 #: common/views.py:84
 msgid "Match Items"
-msgstr ""
+msgstr "Совпадающие элементы"
 
 #: common/views.py:401
 msgid "Fields matching failed"
@@ -3780,7 +3780,7 @@ msgid "Contact email address"
 msgstr "Контактный EMail"
 
 #: company/models.py:140 company/templates/company/company_base.html:139
-#: order/models.py:313 order/templates/order/order_base.html:203
+#: order/models.py:312 order/templates/order/order_base.html:203
 #: order/templates/order/return_order_base.html:174
 #: order/templates/order/sales_order_base.html:214
 msgid "Contact"
@@ -3894,7 +3894,7 @@ msgstr "Страна"
 
 #: company/models.py:432
 msgid "Address country"
-msgstr ""
+msgstr "Страна адреса"
 
 #: company/models.py:438
 msgid "Courier shipping notes"
@@ -4013,7 +4013,7 @@ msgid "Linked manufacturer part must reference the same base part"
 msgstr ""
 
 #: company/models.py:786 company/templates/company/company_base.html:81
-#: company/templates/company/supplier_part.html:129 order/models.py:445
+#: company/templates/company/supplier_part.html:129 order/models.py:444
 #: order/templates/order/order_base.html:136 part/bom.py:272 part/bom.py:310
 #: part/serializers.py:451 plugin/builtin/suppliers/digikey.py:25
 #: plugin/builtin/suppliers/lcsc.py:26 plugin/builtin/suppliers/mouser.py:24
@@ -4171,8 +4171,8 @@ msgstr "Скачать изображение по ссылке"
 msgid "Delete image"
 msgstr "Удалить изображение"
 
-#: company/templates/company/company_base.html:86 order/models.py:888
-#: order/models.py:1966 order/templates/order/return_order_base.html:131
+#: company/templates/company/company_base.html:86 order/models.py:887
+#: order/models.py:1965 order/templates/order/return_order_base.html:131
 #: order/templates/order/sales_order_base.html:144 stock/models.py:799
 #: stock/models.py:800 stock/serializers.py:1009
 #: stock/templates/stock/item_base.html:405
@@ -4189,7 +4189,7 @@ msgstr "Покупатель"
 msgid "Uses default currency"
 msgstr "Использовать валюту по умолчанию"
 
-#: company/templates/company/company_base.html:118 order/models.py:323
+#: company/templates/company/company_base.html:118 order/models.py:322
 #: order/templates/order/order_base.html:210
 #: order/templates/order/return_order_base.html:181
 #: order/templates/order/sales_order_base.html:221
@@ -4519,7 +4519,7 @@ msgstr "Информация о цене"
 #: templates/js/translated/company.js:398
 #: templates/js/translated/pricing.js:684
 msgid "Add Price Break"
-msgstr ""
+msgstr "Добавить разрыв цен"
 
 #: company/templates/company/supplier_part.html:276
 msgid "Supplier Part QR Code"
@@ -4660,7 +4660,7 @@ msgstr "Общая стоимость"
 msgid "No matching purchase order found"
 msgstr ""
 
-#: order/api.py:1406 order/models.py:1361 order/models.py:1457
+#: order/api.py:1406 order/models.py:1360 order/models.py:1456
 #: order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:18
 #: report/templates/report/inventree_po_report_base.html:14
@@ -4674,7 +4674,7 @@ msgstr ""
 msgid "Purchase Order"
 msgstr "Заказ на закупку"
 
-#: order/api.py:1410 order/models.py:2166 order/models.py:2217
+#: order/api.py:1410 order/models.py:2165 order/models.py:2216
 #: order/templates/order/return_order_base.html:9
 #: order/templates/order/return_order_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:13
@@ -4699,176 +4699,176 @@ msgstr "Валюта Заказа"
 msgid "Currency for this order (leave blank to use company default)"
 msgstr ""
 
-#: order/models.py:228
+#: order/models.py:227
 msgid "Contact does not match selected company"
 msgstr "Контакт не соответствует выбранной компании"
 
-#: order/models.py:260
+#: order/models.py:259
 msgid "Order description (optional)"
 msgstr "Описание заказа (дополнительно)"
 
-#: order/models.py:269
+#: order/models.py:268
 msgid "Select project code for this order"
 msgstr "Выберите код проекта для этого заказа"
 
-#: order/models.py:273 order/models.py:1266 order/models.py:1665
+#: order/models.py:272 order/models.py:1265 order/models.py:1664
 msgid "Link to external page"
 msgstr ""
 
-#: order/models.py:281
+#: order/models.py:280
 msgid "Expected date for order delivery. Order will be overdue after this date."
 msgstr ""
 
-#: order/models.py:295
+#: order/models.py:294
 msgid "Created By"
 msgstr "Создал"
 
-#: order/models.py:303
+#: order/models.py:302
 msgid "User or group responsible for this order"
 msgstr "Пользователь или группа, ответственная за этот заказ"
 
-#: order/models.py:314
+#: order/models.py:313
 msgid "Point of contact for this order"
 msgstr ""
 
-#: order/models.py:324
+#: order/models.py:323
 msgid "Company address for this order"
 msgstr ""
 
-#: order/models.py:423 order/models.py:877
+#: order/models.py:422 order/models.py:876
 msgid "Order reference"
-msgstr ""
+msgstr "Ссылка на заказ"
 
-#: order/models.py:431 order/models.py:901
+#: order/models.py:430 order/models.py:900
 msgid "Purchase order status"
 msgstr ""
 
-#: order/models.py:446
+#: order/models.py:445
 msgid "Company from which the items are being ordered"
 msgstr "Компания, в которой детали заказываются"
 
-#: order/models.py:457 order/templates/order/order_base.html:148
+#: order/models.py:456 order/templates/order/order_base.html:148
 #: templates/js/translated/purchase_order.js:1699
 msgid "Supplier Reference"
 msgstr ""
 
-#: order/models.py:458
+#: order/models.py:457
 msgid "Supplier order reference code"
 msgstr ""
 
-#: order/models.py:467
+#: order/models.py:466
 msgid "received by"
 msgstr "получил"
 
-#: order/models.py:473 order/models.py:1992
+#: order/models.py:472 order/models.py:1991
 msgid "Issue Date"
 msgstr "Дата создания"
 
-#: order/models.py:474 order/models.py:1993
+#: order/models.py:473 order/models.py:1992
 msgid "Date order was issued"
 msgstr ""
 
-#: order/models.py:481 order/models.py:2000
+#: order/models.py:480 order/models.py:1999
 msgid "Date order was completed"
 msgstr ""
 
-#: order/models.py:525
+#: order/models.py:524
 msgid "Part supplier must match PO supplier"
 msgstr ""
 
-#: order/models.py:719
+#: order/models.py:718
 msgid "Quantity must be a positive number"
 msgstr ""
 
-#: order/models.py:889
+#: order/models.py:888
 msgid "Company to which the items are being sold"
 msgstr "Компания, которой детали продаются"
 
-#: order/models.py:912 order/models.py:1985
+#: order/models.py:911 order/models.py:1984
 msgid "Customer Reference "
 msgstr ""
 
-#: order/models.py:913 order/models.py:1986
+#: order/models.py:912 order/models.py:1985
 msgid "Customer order reference code"
 msgstr ""
 
-#: order/models.py:917 order/models.py:1619
+#: order/models.py:916 order/models.py:1618
 #: templates/js/translated/sales_order.js:843
 #: templates/js/translated/sales_order.js:1024
 msgid "Shipment Date"
 msgstr "Дата отгрузки"
 
-#: order/models.py:926
+#: order/models.py:925
 msgid "shipped by"
 msgstr "Отправлено"
 
-#: order/models.py:977
+#: order/models.py:976
 msgid "Order cannot be completed as no parts have been assigned"
 msgstr ""
 
-#: order/models.py:982
+#: order/models.py:981
 msgid "Only an open order can be marked as complete"
 msgstr ""
 
-#: order/models.py:986 templates/js/translated/sales_order.js:506
+#: order/models.py:985 templates/js/translated/sales_order.js:506
 msgid "Order cannot be completed as there are incomplete shipments"
 msgstr ""
 
-#: order/models.py:991
+#: order/models.py:990
 msgid "Order cannot be completed as there are incomplete line items"
 msgstr ""
 
-#: order/models.py:1238
+#: order/models.py:1237
 msgid "Item quantity"
 msgstr "Количество"
 
-#: order/models.py:1255
+#: order/models.py:1254
 msgid "Line item reference"
 msgstr ""
 
-#: order/models.py:1262
+#: order/models.py:1261
 msgid "Line item notes"
-msgstr ""
+msgstr "Записи о позиции"
 
-#: order/models.py:1274
+#: order/models.py:1273
 msgid "Target date for this line item (leave blank to use the target date from the order)"
 msgstr ""
 
-#: order/models.py:1295
+#: order/models.py:1294
 msgid "Line item description (optional)"
 msgstr "Описание позиции (необязательно)"
 
-#: order/models.py:1301
+#: order/models.py:1300
 msgid "Context"
 msgstr "Контекст"
 
-#: order/models.py:1302
+#: order/models.py:1301
 msgid "Additional context for this line"
 msgstr "Дополнительный контекст для этой строки"
 
-#: order/models.py:1312
+#: order/models.py:1311
 msgid "Unit price"
 msgstr "Цена за единицу"
 
-#: order/models.py:1345
+#: order/models.py:1344
 msgid "Supplier part must match supplier"
 msgstr ""
 
-#: order/models.py:1352
+#: order/models.py:1351
 msgid "deleted"
 msgstr "удалено"
 
-#: order/models.py:1360 order/models.py:1456 order/models.py:1502
-#: order/models.py:1612 order/models.py:1764 order/models.py:2165
-#: order/models.py:2216 templates/js/translated/sales_order.js:1488
+#: order/models.py:1359 order/models.py:1455 order/models.py:1501
+#: order/models.py:1611 order/models.py:1763 order/models.py:2164
+#: order/models.py:2215 templates/js/translated/sales_order.js:1488
 msgid "Order"
 msgstr "Заказ"
 
-#: order/models.py:1380
+#: order/models.py:1379
 msgid "Supplier part"
 msgstr "Деталь поставщика"
 
-#: order/models.py:1387 order/templates/order/order_base.html:196
+#: order/models.py:1386 order/templates/order/order_base.html:196
 #: templates/js/translated/part.js:1869 templates/js/translated/part.js:1901
 #: templates/js/translated/purchase_order.js:1302
 #: templates/js/translated/purchase_order.js:2166
@@ -4878,325 +4878,325 @@ msgstr "Деталь поставщика"
 msgid "Received"
 msgstr "Получено"
 
-#: order/models.py:1388
+#: order/models.py:1387
 msgid "Number of items received"
 msgstr ""
 
-#: order/models.py:1396 stock/models.py:918 stock/serializers.py:327
+#: order/models.py:1395 stock/models.py:918 stock/serializers.py:327
 #: stock/templates/stock/item_base.html:183
 #: templates/js/translated/stock.js:2281
 msgid "Purchase Price"
 msgstr "Закупочная цена"
 
-#: order/models.py:1397
+#: order/models.py:1396
 msgid "Unit purchase price"
 msgstr ""
 
-#: order/models.py:1412
+#: order/models.py:1411
 msgid "Where does the Purchaser want this item to be stored?"
 msgstr ""
 
-#: order/models.py:1490
+#: order/models.py:1489
 msgid "Virtual part cannot be assigned to a sales order"
 msgstr ""
 
-#: order/models.py:1495
+#: order/models.py:1494
 msgid "Only salable parts can be assigned to a sales order"
 msgstr ""
 
-#: order/models.py:1521 part/templates/part/part_pricing.html:107
+#: order/models.py:1520 part/templates/part/part_pricing.html:107
 #: part/templates/part/prices.html:139 templates/js/translated/pricing.js:957
 msgid "Sale Price"
 msgstr "Цена продажи"
 
-#: order/models.py:1522
+#: order/models.py:1521
 msgid "Unit sale price"
-msgstr ""
+msgstr "Цена последней продажи"
 
-#: order/models.py:1532
+#: order/models.py:1531
 msgid "Shipped quantity"
 msgstr "Отгруженное кол-во"
 
-#: order/models.py:1620
+#: order/models.py:1619
 msgid "Date of shipment"
 msgstr "Дата отправления"
 
-#: order/models.py:1626 templates/js/translated/sales_order.js:1036
+#: order/models.py:1625 templates/js/translated/sales_order.js:1036
 msgid "Delivery Date"
 msgstr "Дата доставки"
 
-#: order/models.py:1627
+#: order/models.py:1626
 msgid "Date of delivery of shipment"
 msgstr ""
 
-#: order/models.py:1635
+#: order/models.py:1634
 msgid "Checked By"
 msgstr "Проверн"
 
-#: order/models.py:1636
+#: order/models.py:1635
 msgid "User who checked this shipment"
 msgstr ""
 
-#: order/models.py:1643 order/models.py:1854 order/serializers.py:1297
-#: order/serializers.py:1407 templates/js/translated/model_renderers.js:446
+#: order/models.py:1642 order/models.py:1853 order/serializers.py:1299
+#: order/serializers.py:1409 templates/js/translated/model_renderers.js:446
 msgid "Shipment"
 msgstr "Отправление"
 
-#: order/models.py:1644
+#: order/models.py:1643
 msgid "Shipment number"
-msgstr ""
+msgstr "Номер отправления"
+
+#: order/models.py:1651
+msgid "Tracking Number"
+msgstr "Номер отслеживания"
 
 #: order/models.py:1652
-msgid "Tracking Number"
-msgstr ""
-
-#: order/models.py:1653
 msgid "Shipment tracking information"
 msgstr "Информация об отслеживании доставки"
 
-#: order/models.py:1660
+#: order/models.py:1659
 msgid "Invoice Number"
 msgstr "Номер счета"
 
-#: order/models.py:1661
+#: order/models.py:1660
 msgid "Reference number for associated invoice"
 msgstr ""
 
-#: order/models.py:1681
+#: order/models.py:1680
 msgid "Shipment has already been sent"
 msgstr ""
 
-#: order/models.py:1684
+#: order/models.py:1683
 msgid "Shipment has no allocated stock items"
 msgstr "Отправка не имеет зарезервированных складских позиций"
 
-#: order/models.py:1800 order/models.py:1802
+#: order/models.py:1799 order/models.py:1801
 msgid "Stock item has not been assigned"
 msgstr "Складская позиция не была назначена"
 
-#: order/models.py:1809
+#: order/models.py:1808
 msgid "Cannot allocate stock item to a line with a different part"
 msgstr "Невозможно зарезервировать складскую позицию в позицию другой детали"
 
-#: order/models.py:1812
+#: order/models.py:1811
 msgid "Cannot allocate stock to a line without a part"
 msgstr ""
 
-#: order/models.py:1815
+#: order/models.py:1814
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr ""
 
-#: order/models.py:1834 order/serializers.py:1174
+#: order/models.py:1833 order/serializers.py:1176
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Количество должно быть 1 для сериализированных складских позиций"
 
-#: order/models.py:1837
+#: order/models.py:1836
 msgid "Sales order does not match shipment"
 msgstr ""
 
-#: order/models.py:1838 plugin/base/barcodes/api.py:481
+#: order/models.py:1837 plugin/base/barcodes/api.py:481
 msgid "Shipment does not match sales order"
 msgstr ""
 
-#: order/models.py:1846
+#: order/models.py:1845
 msgid "Line"
 msgstr "Строка"
 
-#: order/models.py:1855
+#: order/models.py:1854
 msgid "Sales order shipment reference"
 msgstr ""
 
-#: order/models.py:1868 order/models.py:2173
+#: order/models.py:1867 order/models.py:2172
 #: templates/js/translated/return_order.js:722
 msgid "Item"
 msgstr "Элемент"
 
-#: order/models.py:1869
+#: order/models.py:1868
 msgid "Select stock item to allocate"
 msgstr "Выберите складскую позицию для резервирования"
 
-#: order/models.py:1878
+#: order/models.py:1877
 msgid "Enter stock allocation quantity"
 msgstr "Укажите резервируемое количество"
 
-#: order/models.py:1955
+#: order/models.py:1954
 msgid "Return Order reference"
 msgstr ""
 
-#: order/models.py:1967
+#: order/models.py:1966
 msgid "Company from which items are being returned"
 msgstr ""
 
-#: order/models.py:1979
+#: order/models.py:1978
 msgid "Return order status"
 msgstr ""
 
-#: order/models.py:2158
+#: order/models.py:2157
 msgid "Only serialized items can be assigned to a Return Order"
 msgstr ""
 
-#: order/models.py:2174
+#: order/models.py:2173
 msgid "Select item to return from customer"
 msgstr "Выберите позицию, возвращаемую от клиента"
 
-#: order/models.py:2180
+#: order/models.py:2179
 msgid "Received Date"
 msgstr "Дата получения"
 
-#: order/models.py:2181
+#: order/models.py:2180
 msgid "The date this this return item was received"
 msgstr ""
 
-#: order/models.py:2192 templates/js/translated/return_order.js:733
+#: order/models.py:2191 templates/js/translated/return_order.js:733
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
 msgstr "Результат"
 
-#: order/models.py:2193
+#: order/models.py:2192
 msgid "Outcome for this line item"
 msgstr ""
 
-#: order/models.py:2200
+#: order/models.py:2199
 msgid "Cost associated with return or repair for this line item"
 msgstr ""
 
-#: order/serializers.py:264
+#: order/serializers.py:266
 msgid "Order cannot be cancelled"
 msgstr ""
 
-#: order/serializers.py:279 order/serializers.py:1190
+#: order/serializers.py:281 order/serializers.py:1192
 msgid "Allow order to be closed with incomplete line items"
 msgstr ""
 
-#: order/serializers.py:289 order/serializers.py:1200
+#: order/serializers.py:291 order/serializers.py:1202
 msgid "Order has incomplete line items"
 msgstr ""
 
-#: order/serializers.py:400
+#: order/serializers.py:402
 msgid "Order is not open"
 msgstr "Заказ не открыт"
 
-#: order/serializers.py:425
+#: order/serializers.py:427
 msgid "Purchase price currency"
 msgstr "Валюта цены закупки"
 
-#: order/serializers.py:443
+#: order/serializers.py:445
 msgid "Supplier part must be specified"
 msgstr ""
 
-#: order/serializers.py:446
+#: order/serializers.py:448
 msgid "Purchase order must be specified"
 msgstr ""
 
-#: order/serializers.py:454
+#: order/serializers.py:456
 msgid "Supplier must match purchase order"
 msgstr ""
 
-#: order/serializers.py:455
+#: order/serializers.py:457
 msgid "Purchase order must match supplier"
 msgstr ""
 
-#: order/serializers.py:494 order/serializers.py:1268
+#: order/serializers.py:496 order/serializers.py:1270
 msgid "Line Item"
 msgstr "Позиция"
 
-#: order/serializers.py:500
+#: order/serializers.py:502
 msgid "Line item does not match purchase order"
 msgstr ""
 
-#: order/serializers.py:510 order/serializers.py:618 order/serializers.py:1623
+#: order/serializers.py:512 order/serializers.py:620 order/serializers.py:1625
 msgid "Select destination location for received items"
 msgstr "Выберите место назначения для полученных элементов"
 
-#: order/serializers.py:526 templates/js/translated/purchase_order.js:1126
+#: order/serializers.py:528 templates/js/translated/purchase_order.js:1126
 msgid "Enter batch code for incoming stock items"
 msgstr "Введите код партии для поступающих складских позиций"
 
-#: order/serializers.py:534 templates/js/translated/purchase_order.js:1150
+#: order/serializers.py:536 templates/js/translated/purchase_order.js:1150
 msgid "Enter serial numbers for incoming stock items"
 msgstr "Введите серийные номера для входящих складских позиций"
 
-#: order/serializers.py:545 templates/js/translated/barcode.js:52
+#: order/serializers.py:547 templates/js/translated/barcode.js:52
 msgid "Barcode"
 msgstr "Штрих-код"
 
-#: order/serializers.py:546
+#: order/serializers.py:548
 msgid "Scanned barcode"
-msgstr ""
+msgstr "Сканированный штрих-код"
 
-#: order/serializers.py:562
+#: order/serializers.py:564
 msgid "Barcode is already in use"
 msgstr ""
 
-#: order/serializers.py:586
+#: order/serializers.py:588
 msgid "An integer quantity must be provided for trackable parts"
 msgstr "Для отслеживаемых деталей должно быть указано целочисленное количество"
 
-#: order/serializers.py:634 order/serializers.py:1639
+#: order/serializers.py:636 order/serializers.py:1641
 msgid "Line items must be provided"
 msgstr ""
 
-#: order/serializers.py:650
+#: order/serializers.py:652
 msgid "Destination location must be specified"
 msgstr ""
 
-#: order/serializers.py:661
+#: order/serializers.py:663
 msgid "Supplied barcode values must be unique"
 msgstr ""
 
-#: order/serializers.py:1018
+#: order/serializers.py:1020
 msgid "Sale price currency"
 msgstr "Валюта цены продажи"
 
-#: order/serializers.py:1078
+#: order/serializers.py:1080
 msgid "No shipment details provided"
 msgstr ""
 
-#: order/serializers.py:1138 order/serializers.py:1277
+#: order/serializers.py:1140 order/serializers.py:1279
 msgid "Line item is not associated with this order"
 msgstr ""
 
-#: order/serializers.py:1157
+#: order/serializers.py:1159
 msgid "Quantity must be positive"
 msgstr ""
 
-#: order/serializers.py:1287
+#: order/serializers.py:1289
 msgid "Enter serial numbers to allocate"
 msgstr "Введите серийные номера для резервирования"
 
-#: order/serializers.py:1309 order/serializers.py:1415
+#: order/serializers.py:1311 order/serializers.py:1417
 msgid "Shipment has already been shipped"
 msgstr ""
 
-#: order/serializers.py:1312 order/serializers.py:1418
+#: order/serializers.py:1314 order/serializers.py:1420
 msgid "Shipment is not associated with this order"
 msgstr ""
 
-#: order/serializers.py:1359
+#: order/serializers.py:1361
 msgid "No match found for the following serial numbers"
 msgstr ""
 
-#: order/serializers.py:1366
+#: order/serializers.py:1368
 msgid "The following serial numbers are already allocated"
 msgstr ""
 
-#: order/serializers.py:1593
+#: order/serializers.py:1595
 msgid "Return order line item"
 msgstr ""
 
-#: order/serializers.py:1599
+#: order/serializers.py:1601
 msgid "Line item does not match return order"
 msgstr ""
 
-#: order/serializers.py:1602
+#: order/serializers.py:1604
 msgid "Line item has already been received"
 msgstr ""
 
-#: order/serializers.py:1631
+#: order/serializers.py:1633
 msgid "Items can only be received against orders which are in progress"
 msgstr ""
 
-#: order/serializers.py:1709
+#: order/serializers.py:1711
 msgid "Line price currency"
 msgstr ""
 
@@ -5248,7 +5248,7 @@ msgstr "Отменить заказ"
 
 #: order/templates/order/order_base.html:73
 msgid "Duplicate order"
-msgstr ""
+msgstr "Дублировать заказ"
 
 #: order/templates/order/order_base.html:79
 #: order/templates/order/order_base.html:80
@@ -5278,7 +5278,7 @@ msgstr ""
 #: order/templates/order/return_order_base.html:101
 #: order/templates/order/sales_order_base.html:106
 msgid "Order Reference"
-msgstr ""
+msgstr "Ссылка на заказ"
 
 #: order/templates/order/order_base.html:111
 #: order/templates/order/return_order_base.html:106
@@ -5962,7 +5962,7 @@ msgstr "Эта деталь виртуальная, как программны�
 
 #: part/models.py:1040
 msgid "BOM checksum"
-msgstr ""
+msgstr "Контрольная сумма BOM"
 
 #: part/models.py:1041
 msgid "Stored BOM checksum"
@@ -5988,7 +5988,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:451
 #: templates/js/translated/part.js:2471
 msgid "Last Stocktake"
-msgstr ""
+msgstr "Последняя инвентаризация"
 
 #: part/models.py:1958
 msgid "Sell multiple"
@@ -6237,7 +6237,7 @@ msgstr ""
 
 #: part/models.py:3464 templates/js/translated/part.js:2885
 msgid "Requires Value"
-msgstr ""
+msgstr "Требуется значение"
 
 #: part/models.py:3465
 msgid "Does this test require a value when adding a test result?"
@@ -6269,7 +6269,7 @@ msgstr ""
 
 #: part/models.py:3576
 msgid "Parameter Name"
-msgstr ""
+msgstr "Название параметра"
 
 #: part/models.py:3583
 msgid "Physical units for this parameter"
@@ -6315,7 +6315,7 @@ msgstr "Данные"
 
 #: part/models.py:3738
 msgid "Parameter Value"
-msgstr ""
+msgstr "Значение Параметра"
 
 #: part/models.py:3815 templates/InvenTree/settings/settings_staff_js.html:304
 msgid "Default Value"
@@ -6387,7 +6387,7 @@ msgstr ""
 
 #: part/models.py:4001
 msgid "BOM item notes"
-msgstr ""
+msgstr "Записи о позиции BOM"
 
 #: part/models.py:4007
 msgid "Checksum"
@@ -6443,11 +6443,11 @@ msgstr ""
 
 #: part/models.py:4297
 msgid "Parent BOM item"
-msgstr ""
+msgstr "Позиция BOM-родителя"
 
 #: part/models.py:4305
 msgid "Substitute part"
-msgstr ""
+msgstr "Замена детали"
 
 #: part/models.py:4321
 msgid "Part 1"
@@ -6507,7 +6507,7 @@ msgstr ""
 
 #: part/serializers.py:409
 msgid "Copy Parameters"
-msgstr ""
+msgstr "Скопировать параметры"
 
 #: part/serializers.py:410
 msgid "Copy parameter data from original part"
@@ -6600,7 +6600,7 @@ msgstr "Копировать шаблоны параметров из выбра
 
 #: part/serializers.py:814
 msgid "Existing Image"
-msgstr ""
+msgstr "Существующее изображение"
 
 #: part/serializers.py:815
 msgid "Filename of an existing part image"
@@ -6632,7 +6632,7 @@ msgstr "Исключить складские позиции в внешних �
 
 #: part/serializers.py:1070
 msgid "Generate Report"
-msgstr ""
+msgstr "Создать отчет"
 
 #: part/serializers.py:1071
 msgid "Generate report file containing calculated stocktake data"
@@ -6763,15 +6763,15 @@ msgstr ""
 #: templates/js/translated/part.js:1821 templates/js/translated/part.js:1877
 #: templates/js/translated/purchase_order.js:2081
 msgid "Total Quantity"
-msgstr ""
+msgstr "Общее количество"
 
 #: part/stocktake.py:225
 msgid "Total Cost Min"
-msgstr ""
+msgstr "Общая стоимость Мин"
 
 #: part/stocktake.py:226
 msgid "Total Cost Max"
-msgstr ""
+msgstr "Общая стоимость Макс"
 
 #: part/stocktake.py:284
 msgid "Stocktake Report Available"
@@ -7035,7 +7035,7 @@ msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:8
 msgid "Return to Parts"
-msgstr ""
+msgstr "Вернуться в детали"
 
 #: part/templates/part/import_wizard/part_upload.html:13
 msgid "Import Parts from File"
@@ -7111,7 +7111,7 @@ msgstr "Действия с деталью"
 
 #: part/templates/part/part_base.html:94
 msgid "Duplicate part"
-msgstr ""
+msgstr "Дублировать деталь"
 
 #: part/templates/part/part_base.html:97
 msgid "Edit part"
@@ -7332,7 +7332,7 @@ msgstr "Последнее обновление"
 
 #: part/templates/part/prices.html:37 part/templates/part/prices.html:127
 msgid "Price Category"
-msgstr ""
+msgstr "Ценовая категория"
 
 #: part/templates/part/prices.html:38 part/templates/part/prices.html:128
 msgid "Minimum"
@@ -7352,7 +7352,7 @@ msgstr "История Закупок"
 
 #: part/templates/part/prices.html:98 part/templates/part/prices.html:274
 msgid "Variant Pricing"
-msgstr ""
+msgstr "Цены вариантов"
 
 #: part/templates/part/prices.html:106
 msgid "Pricing Overrides"
@@ -7360,7 +7360,7 @@ msgstr ""
 
 #: part/templates/part/prices.html:113
 msgid "Overall Pricing"
-msgstr ""
+msgstr "Общая цена"
 
 #: part/templates/part/prices.html:149 part/templates/part/prices.html:326
 msgid "Sale History"
@@ -7395,7 +7395,7 @@ msgstr ""
 
 #: part/templates/part/pricing_javascript.html:24
 msgid "Update Pricing"
-msgstr ""
+msgstr "Обновить цены"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
 #: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
@@ -7425,7 +7425,7 @@ msgstr "Загрузить BOM"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
-msgstr ""
+msgstr "Отправить данные BOM"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
@@ -7453,7 +7453,7 @@ msgstr ""
 
 #: part/views.py:111
 msgid "Match References"
-msgstr ""
+msgstr "Ссылки на совпадение"
 
 #: part/views.py:275
 #, python-brace-format
@@ -7861,7 +7861,7 @@ msgstr "Образец плагина"
 
 #: plugin/models.py:156
 msgid "Builtin Plugin"
-msgstr ""
+msgstr "Встроенный плагин"
 
 #: plugin/models.py:180 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
@@ -7917,7 +7917,7 @@ msgstr ""
 
 #: plugin/samples/integration/sample.py:69
 msgid "Choice Setting"
-msgstr ""
+msgstr "Настройки выбора"
 
 #: plugin/samples/integration/sample.py:70
 msgid "A setting with multiple choices"
@@ -7973,7 +7973,7 @@ msgstr ""
 
 #: plugin/serializers.py:146
 msgid "Force reload"
-msgstr ""
+msgstr "Принудительная перезагрузка"
 
 #: plugin/serializers.py:148
 msgid "Force a reload of the plugin registry, even if it is already loaded"
@@ -7981,7 +7981,7 @@ msgstr ""
 
 #: plugin/serializers.py:155
 msgid "Collect plugins"
-msgstr ""
+msgstr "Собрать плагины"
 
 #: plugin/serializers.py:156
 msgid "Collect plugins and add them to the registry"
@@ -8078,7 +8078,7 @@ msgstr "Фильтры запросов производства (разделе
 
 #: report/models.py:455
 msgid "Part Filters"
-msgstr ""
+msgstr "Фильтры деталей"
 
 #: report/models.py:456
 msgid "Part query filters (comma-separated list of key=value pairs"
@@ -8126,11 +8126,11 @@ msgstr ""
 
 #: report/templates/report/inventree_bill_of_materials_report.html:133
 msgid "Materials needed"
-msgstr ""
+msgstr "Необходимые материалы"
 
 #: report/templates/report/inventree_build_order_base.html:146
 msgid "Required For"
-msgstr ""
+msgstr "Требуется для"
 
 #: report/templates/report/inventree_po_report_base.html:15
 msgid "Supplier was deleted"
@@ -8150,7 +8150,7 @@ msgstr "Цена за Единицу"
 #: report/templates/report/inventree_return_order_report_base.html:48
 #: report/templates/report/inventree_so_report_base.html:55
 msgid "Extra Line Items"
-msgstr ""
+msgstr "Дополнительные элементы"
 
 #: report/templates/report/inventree_po_report_base.html:72
 #: report/templates/report/inventree_so_report_base.html:72
@@ -8279,7 +8279,7 @@ msgstr "ID Клиента"
 #: stock/admin.py:199 stock/models.py:784
 #: stock/templates/stock/item_base.html:354
 msgid "Installed In"
-msgstr ""
+msgstr "Установлено в"
 
 #: stock/admin.py:204
 msgid "Build ID"
@@ -8287,7 +8287,7 @@ msgstr "Код производства"
 
 #: stock/admin.py:214
 msgid "Sales Order ID"
-msgstr ""
+msgstr "ID заказа на продажу"
 
 #: stock/admin.py:219
 msgid "Purchase Order ID"
@@ -8810,7 +8810,7 @@ msgstr "Отчет тестирования"
 
 #: stock/templates/stock/item.html:89 stock/templates/stock/item.html:279
 msgid "Delete Test Data"
-msgstr ""
+msgstr "Удалить данные тестирования"
 
 #: stock/templates/stock/item.html:93
 msgid "Add Test Data"
@@ -8842,13 +8842,13 @@ msgstr "Найти складскую позицию"
 
 #: stock/templates/stock/item_base.html:51
 msgid "Scan to Location"
-msgstr ""
+msgstr "Сканировать в место хранения"
 
 #: stock/templates/stock/item_base.html:59
 #: stock/templates/stock/location.html:70
 #: templates/js/translated/filters.js:431
 msgid "Printing actions"
-msgstr ""
+msgstr "Действия печати"
 
 #: stock/templates/stock/item_base.html:75
 msgid "Stock adjustment actions"
@@ -8867,7 +8867,7 @@ msgstr "Добавить Остатки"
 #: stock/templates/stock/item_base.html:82
 #: templates/js/translated/stock.js:1783
 msgid "Remove stock"
-msgstr ""
+msgstr "Удалить запасы"
 
 #: stock/templates/stock/item_base.html:85
 msgid "Serialize stock"
@@ -8876,7 +8876,7 @@ msgstr "Сериализовать запасы"
 #: stock/templates/stock/item_base.html:88
 #: stock/templates/stock/location.html:96 templates/js/translated/stock.js:1801
 msgid "Transfer stock"
-msgstr ""
+msgstr "Переместить запасы"
 
 #: stock/templates/stock/item_base.html:91
 #: templates/js/translated/stock.js:1855
@@ -9131,7 +9131,7 @@ msgstr "Новое место хранения"
 #: stock/templates/stock/location.html:289
 #: templates/js/translated/stock.js:2543
 msgid "stock location"
-msgstr ""
+msgstr "места хранения"
 
 #: stock/templates/stock/location.html:317
 msgid "Scanned stock container into this location"
@@ -9151,7 +9151,7 @@ msgstr "Загрузка..."
 
 #: stock/templates/stock/stock_sidebar.html:5
 msgid "Stock Tracking"
-msgstr ""
+msgstr "Отслеживание запасов"
 
 #: stock/templates/stock/stock_sidebar.html:8
 msgid "Allocations"
@@ -9217,7 +9217,7 @@ msgstr "Индекс"
 
 #: templates/InvenTree/index.html:39
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Детали с включёнными уведомлениями"
 
 #: templates/InvenTree/index.html:52
 msgid "Subscribed Categories"
@@ -9225,7 +9225,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:62
 msgid "Latest Parts"
-msgstr ""
+msgstr "Последние детали"
 
 #: templates/InvenTree/index.html:77
 msgid "BOM Waiting Validation"
@@ -9233,7 +9233,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:106
 msgid "Recently Updated"
-msgstr ""
+msgstr "Недавно обновленные"
 
 #: templates/InvenTree/index.html:134
 msgid "Depleted Stock"
@@ -9281,7 +9281,7 @@ msgstr "Новости InvenTree"
 
 #: templates/InvenTree/index.html:301
 msgid "Current News"
-msgstr ""
+msgstr "Текущие новости"
 
 #: templates/InvenTree/notifications/history.html:9
 msgid "Notification History"
@@ -9300,7 +9300,7 @@ msgstr ""
 #: templates/InvenTree/notifications/inbox.html:13
 #: templates/InvenTree/notifications/inbox.html:14
 msgid "Mark all as read"
-msgstr ""
+msgstr "Пометить как прочитанное"
 
 #: templates/InvenTree/notifications/notifications.html:10
 #: templates/InvenTree/notifications/sidebar.html:5
@@ -9413,7 +9413,7 @@ msgstr "Настройки деталей"
 
 #: templates/InvenTree/settings/part.html:42
 msgid "Part Import"
-msgstr ""
+msgstr "Импорт деталей"
 
 #: templates/InvenTree/settings/part.html:46
 msgid "Import Part"
@@ -9568,7 +9568,7 @@ msgstr "Настройки заказа на закупку"
 
 #: templates/InvenTree/settings/pricing.html:7
 msgid "Pricing Settings"
-msgstr ""
+msgstr "Настройки ценообразования"
 
 #: templates/InvenTree/settings/pricing.html:34
 msgid "Exchange Rates"
@@ -9599,7 +9599,7 @@ msgstr "Коды проекта"
 #: templates/InvenTree/settings/project_codes.html:25
 #: templates/InvenTree/settings/settings_staff_js.html:216
 msgid "New Project Code"
-msgstr ""
+msgstr "Новый код проекта"
 
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reporting.html:9
@@ -9612,7 +9612,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/setting.html:31
 msgid "No value set"
-msgstr ""
+msgstr "Значение не задано"
 
 #: templates/InvenTree/settings/setting.html:46
 msgid "Edit setting"
@@ -9647,7 +9647,7 @@ msgstr "Удалить"
 
 #: templates/InvenTree/settings/settings_staff_js.html:95
 msgid "Edit Custom Unit"
-msgstr ""
+msgstr "Редактировать единицу"
 
 #: templates/InvenTree/settings/settings_staff_js.html:110
 msgid "Delete Custom Unit"
@@ -9655,7 +9655,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:124
 msgid "New Custom Unit"
-msgstr ""
+msgstr "Новая пользовательская единица"
 
 #: templates/InvenTree/settings/settings_staff_js.html:140
 msgid "No project codes found"
@@ -9830,7 +9830,7 @@ msgstr "Основной"
 
 #: templates/InvenTree/settings/user.html:86
 msgid "Make Primary"
-msgstr ""
+msgstr "Сделать основным"
 
 #: templates/InvenTree/settings/user.html:87
 msgid "Re-send Verification"
@@ -9924,7 +9924,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:206
 #, python-format
 msgid "%(time)s ago"
-msgstr ""
+msgstr "%(time)s назад"
 
 #: templates/InvenTree/settings/user.html:218
 msgid "Do you really want to remove the selected email address?"
@@ -9965,7 +9965,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:92
 msgid "Set Language"
-msgstr ""
+msgstr "Установить язык"
 
 #: templates/InvenTree/settings/user_display.html:95
 msgid "Some languages are not complete"
@@ -10017,7 +10017,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_sso.html:58
 msgid "Add SSO Account"
-msgstr ""
+msgstr "Добавить SSO аккаунт"
 
 #: templates/InvenTree/settings/user_sso.html:67
 msgid "Single Sign On is not enabled for this server"
@@ -10037,7 +10037,7 @@ msgstr "Последняя версия"
 
 #: templates/about.html:19
 msgid "Update Available"
-msgstr ""
+msgstr "Доступно обновление"
 
 #: templates/about.html:43
 msgid "Commit Branch"
@@ -10124,7 +10124,7 @@ msgstr "Зарегистрироваться"
 
 #: templates/account/login.html:45
 msgid "Forgot Password?"
-msgstr ""
+msgstr "Забыли пароль?"
 
 #: templates/account/login.html:53
 msgid "or log in with"
@@ -10212,7 +10212,7 @@ msgstr ""
 
 #: templates/allauth_2fa/authenticate.html:13
 msgid "Authenticate"
-msgstr ""
+msgstr "Авторизоваться"
 
 #: templates/allauth_2fa/backup_tokens.html:6
 msgid "Two-Factor Authentication Backup Tokens"
@@ -10475,7 +10475,7 @@ msgstr "Введите записи"
 
 #: templates/js/translated/barcode.js:188
 msgid "Server error"
-msgstr ""
+msgstr "Ошибка сервера"
 
 #: templates/js/translated/barcode.js:217
 msgid "Unknown response from server"
@@ -10492,7 +10492,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:420 templates/navbar.html:114
 msgid "Scan Barcode"
-msgstr ""
+msgstr "Сканировать штрихкод"
 
 #: templates/js/translated/barcode.js:458
 msgid "No URL in response"
@@ -10570,7 +10570,7 @@ msgstr "Создать Элемент BOM"
 
 #: templates/js/translated/bom.js:132
 msgid "Display row data"
-msgstr ""
+msgstr "Отображать данные строки"
 
 #: templates/js/translated/bom.js:188
 msgid "Row Data"
@@ -10686,7 +10686,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:826
 msgid "Delete items"
-msgstr ""
+msgstr "Удалить элементы"
 
 #: templates/js/translated/bom.js:936
 msgid "Load BOM for subassembly"
@@ -10777,7 +10777,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:142
 msgid "Edit Build Order"
-msgstr ""
+msgstr "Редактировать заказ на производство"
 
 #: templates/js/translated/build.js:190
 msgid "Create Build Order"
@@ -10984,7 +10984,7 @@ msgstr "Требуемые тесты"
 #: templates/js/translated/purchase_order.js:630
 #: templates/js/translated/sales_order.js:1171
 msgid "Select Parts"
-msgstr ""
+msgstr "Выбрать детали"
 
 #: templates/js/translated/build.js:1572
 #: templates/js/translated/sales_order.js:1172
@@ -11094,7 +11094,7 @@ msgstr "строка производства"
 
 #: templates/js/translated/build.js:2455
 msgid "build lines"
-msgstr ""
+msgstr "позиция производства"
 
 #: templates/js/translated/build.js:2473
 msgid "No build lines found"
@@ -11120,12 +11120,12 @@ msgstr "Расходник"
 
 #: templates/js/translated/build.js:2646
 msgid "Tracked item"
-msgstr ""
+msgstr "Отслеживаемый элемент"
 
 #: templates/js/translated/build.js:2653
 #: templates/js/translated/sales_order.js:2016
 msgid "Build stock"
-msgstr ""
+msgstr "Запасы производства"
 
 #: templates/js/translated/build.js:2658 templates/js/translated/stock.js:1836
 msgid "Order stock"
@@ -11142,7 +11142,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:98
 msgid "Add Manufacturer"
-msgstr ""
+msgstr "Добавить производителя"
 
 #: templates/js/translated/company.js:111
 #: templates/js/translated/company.js:213
@@ -11156,7 +11156,7 @@ msgstr ""
 #: templates/js/translated/company.js:201
 #: templates/js/translated/purchase_order.js:93
 msgid "Add Supplier"
-msgstr ""
+msgstr "Добавить поставщика"
 
 #: templates/js/translated/company.js:243
 #: templates/js/translated/purchase_order.js:352
@@ -11194,7 +11194,7 @@ msgstr ""
 #: templates/js/translated/company.js:625
 #: templates/js/translated/company.js:748
 msgid "Edit Contact"
-msgstr ""
+msgstr "Изменить контакт"
 
 #: templates/js/translated/company.js:662
 msgid "All selected contacts will be deleted"
@@ -11215,7 +11215,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:720
 msgid "Phone Number"
-msgstr ""
+msgstr "Номер телефона"
 
 #: templates/js/translated/company.js:726
 msgid "Email Address"
@@ -11232,7 +11232,7 @@ msgstr ""
 #: templates/js/translated/company.js:864
 #: templates/js/translated/company.js:1025
 msgid "Edit Address"
-msgstr ""
+msgstr "Редактировать адрес"
 
 #: templates/js/translated/company.js:899
 msgid "All selected addresses will be deleted"
@@ -11240,7 +11240,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:913
 msgid "Delete Addresses"
-msgstr ""
+msgstr "Удалить адрес"
 
 #: templates/js/translated/company.js:940
 msgid "No addresses found"
@@ -11248,7 +11248,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:979
 msgid "Postal city"
-msgstr ""
+msgstr "Почтовый индекс"
 
 #: templates/js/translated/company.js:985
 msgid "State/province"
@@ -11321,7 +11321,7 @@ msgstr "Редактировать параметр"
 
 #: templates/js/translated/company.js:1429 templates/js/translated/part.js:1528
 msgid "Delete parameter"
-msgstr ""
+msgstr "Удалить параметр"
 
 #: templates/js/translated/company.js:1446 templates/js/translated/part.js:1433
 msgid "Edit Parameter"
@@ -11329,7 +11329,7 @@ msgstr "Редактировать параметр"
 
 #: templates/js/translated/company.js:1455 templates/js/translated/part.js:1549
 msgid "Delete Parameter"
-msgstr ""
+msgstr "Удалить параметр"
 
 #: templates/js/translated/company.js:1486
 msgid "Delete supplier parts"
@@ -11345,7 +11345,7 @@ msgstr "Базовая Единица"
 
 #: templates/js/translated/company.js:1684
 msgid "Availability"
-msgstr ""
+msgstr "Доступность"
 
 #: templates/js/translated/company.js:1715
 msgid "Edit supplier part"
@@ -11363,7 +11363,7 @@ msgstr ""
 #: templates/js/translated/company.js:1779
 #: templates/js/translated/pricing.js:712
 msgid "Edit Price Break"
-msgstr ""
+msgstr "Изменить разрыв цен"
 
 #: templates/js/translated/company.js:1794
 msgid "No price break information found"
@@ -11371,11 +11371,11 @@ msgstr ""
 
 #: templates/js/translated/company.js:1823
 msgid "Last updated"
-msgstr ""
+msgstr "Последнее обновление"
 
 #: templates/js/translated/company.js:1830
 msgid "Edit price break"
-msgstr ""
+msgstr "Изменить разрыв цен"
 
 #: templates/js/translated/company.js:1831
 msgid "Delete price break"
@@ -11397,7 +11397,7 @@ msgstr "Выбрать фильтр"
 
 #: templates/js/translated/filters.js:437
 msgid "Print Labels"
-msgstr ""
+msgstr "Печать этикеток"
 
 #: templates/js/translated/filters.js:441
 msgid "Print Reports"
@@ -11459,7 +11459,7 @@ msgstr "Форма содержит ошибки"
 
 #: templates/js/translated/forms.js:1967
 msgid "No results found"
-msgstr ""
+msgstr "Результаты не найдены"
 
 #: templates/js/translated/forms.js:2271 templates/js/translated/search.js:239
 msgid "Searching"
@@ -11503,7 +11503,7 @@ msgstr ""
 
 #: templates/js/translated/label.js:53 templates/js/translated/report.js:123
 msgid "Select Items"
-msgstr ""
+msgstr "Выбрать элементы"
 
 #: templates/js/translated/label.js:54
 msgid "No items selected for printing"
@@ -11523,7 +11523,7 @@ msgstr "выбрано"
 
 #: templates/js/translated/label.js:133
 msgid "Printing Options"
-msgstr ""
+msgstr "Параметры печати"
 
 #: templates/js/translated/label.js:148
 msgid "Print label"
@@ -11531,7 +11531,7 @@ msgstr "Печать Этикетки"
 
 #: templates/js/translated/label.js:148
 msgid "Print labels"
-msgstr ""
+msgstr "Печать этикеток"
 
 #: templates/js/translated/label.js:149
 msgid "Print"
@@ -11578,7 +11578,7 @@ msgstr "Принять"
 
 #: templates/js/translated/modals.js:740
 msgid "Loading Data"
-msgstr ""
+msgstr "Загрузка данных"
 
 #: templates/js/translated/modals.js:1011
 msgid "Invalid response from server"
@@ -11624,7 +11624,7 @@ msgstr "Возраст"
 
 #: templates/js/translated/notification.js:65
 msgid "Notification"
-msgstr ""
+msgstr "Уведомление"
 
 #: templates/js/translated/notification.js:224
 msgid "Mark as unread"
@@ -11632,7 +11632,7 @@ msgstr "Пометить как непрочитанное"
 
 #: templates/js/translated/notification.js:228
 msgid "Mark as read"
-msgstr ""
+msgstr "Пометить как прочитанное"
 
 #: templates/js/translated/notification.js:254
 msgid "No unread notifications"
@@ -11648,7 +11648,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:126
 msgid "Export Order"
-msgstr ""
+msgstr "Экспорт заказа"
 
 #: templates/js/translated/order.js:241
 msgid "Duplicate Line"
@@ -11984,7 +11984,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:2905 templates/js/translated/stock.js:1436
 msgid "Edit test result"
-msgstr ""
+msgstr "Редактировать результаты тестирования"
 
 #: templates/js/translated/part.js:2906 templates/js/translated/stock.js:1437
 #: templates/js/translated/stock.js:1699
@@ -12029,7 +12029,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:3196
 msgid "Maximum Quantity"
-msgstr ""
+msgstr "Максимальное количество"
 
 #: templates/js/translated/part.js:3241
 msgid "Minimum Stock Level"
@@ -12037,7 +12037,7 @@ msgstr ""
 
 #: templates/js/translated/plugin.js:46
 msgid "No plugins found"
-msgstr ""
+msgstr "Плагины не найдены"
 
 #: templates/js/translated/plugin.js:58
 msgid "This plugin is no longer installed"
@@ -12254,7 +12254,7 @@ msgstr "Удалить штрихкод"
 
 #: templates/js/translated/purchase_order.js:1205
 msgid "Specify location"
-msgstr ""
+msgstr "Выберите место хранения"
 
 #: templates/js/translated/purchase_order.js:1213
 msgid "Add batch code"
@@ -12302,7 +12302,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:774
 #: templates/js/translated/sales_order.js:998
 msgid "Order is overdue"
-msgstr ""
+msgstr "Заказ просрочен"
 
 #: templates/js/translated/purchase_order.js:1744
 #: templates/js/translated/return_order.js:354
@@ -12335,7 +12335,7 @@ msgstr "Редактировать Позицию"
 #: templates/js/translated/return_order.js:682
 #: templates/js/translated/sales_order.js:2094
 msgid "Delete Line Item"
-msgstr ""
+msgstr "Удалить позицию"
 
 #: templates/js/translated/purchase_order.js:2221
 #: templates/js/translated/sales_order.js:2024
@@ -12352,7 +12352,7 @@ msgstr "Редактировать Позицию"
 #: templates/js/translated/return_order.js:805
 #: templates/js/translated/sales_order.js:2031
 msgid "Delete line item"
-msgstr ""
+msgstr "Удалить позицию"
 
 #: templates/js/translated/report.js:63
 msgid "items selected"
@@ -12368,7 +12368,7 @@ msgstr ""
 
 #: templates/js/translated/report.js:140
 msgid "No Reports Found"
-msgstr ""
+msgstr "Отчёты не найдены"
 
 #: templates/js/translated/report.js:141
 msgid "No report templates found which match the selected items"
@@ -12410,7 +12410,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:300
 #: templates/js/translated/sales_order.js:788
 msgid "Invalid Customer"
-msgstr ""
+msgstr "Некорректный клиент"
 
 #: templates/js/translated/return_order.js:562
 msgid "Receive Return Order Items"
@@ -13266,7 +13266,7 @@ msgstr "Статус Запасов"
 
 #: templates/js/translated/table_filters.js:400
 msgid "Has batch code"
-msgstr ""
+msgstr "Имеет код партии"
 
 #: templates/js/translated/table_filters.js:409
 msgid "Stock item is tracked by either batch code or serial number"
@@ -13569,7 +13569,7 @@ msgstr ""
 
 #: templates/stats.html:39
 msgid "Plugin Support"
-msgstr ""
+msgstr "Поддержка плагина"
 
 #: templates/stats.html:43
 msgid "Plugin support enabled"
