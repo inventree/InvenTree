@@ -35,6 +35,33 @@ def pip_command(*args):
     )
 
 
+def handle_pip_error(error, path: str) -> list:
+    """Raise a ValidationError when the pip command fails.
+
+    - Log the error to the database
+    - Format the output from a pip command into a list of error messages.
+    - Raise an appropriate error
+    """
+    log_error(path)
+
+    output = error.output.decode('utf-8')
+
+    logger.error('Pip command failed: %s', output)
+
+    errors = []
+
+    for line in output.split('\n'):
+        line = line.strip()
+
+        if line:
+            errors.append(line)
+
+    if len(errors) > 1:
+        raise ValidationError(errors)
+    else:
+        raise ValidationError(errors[0])
+
+
 def check_package_path(packagename: str):
     """Determine the install path of a particular package.
 
@@ -143,9 +170,7 @@ def install_plugin(url=None, packagename=None, user=None):
     - We must detect that we are running within a virtual environment
     """
     if user and not user.is_staff:
-        raise ValidationError(
-            _('Permission denied: only staff users can install plugins')
-        )
+        raise ValidationError(_('Only staff users can administer plugins'))
 
     logger.info('install_plugin: %s, %s', url, packagename)
 
@@ -202,26 +227,7 @@ def install_plugin(url=None, packagename=None, user=None):
                 ret['result'] = _(f'Installed plugin into {path}')
 
     except subprocess.CalledProcessError as error:
-        # If an error was thrown, we need to parse the output
-
-        # Log error to database
-        log_error('plugin_install')
-
-        output = error.output.decode('utf-8')
-        logger.exception('Plugin installation failed: %s', str(output))
-
-        errors = [_('Plugin installation failed')]
-
-        for msg in output.split('\n'):
-            msg = msg.strip()
-
-            if msg:
-                errors.append(msg)
-
-        if len(errors) > 1:
-            raise ValidationError(errors)
-        else:
-            raise ValidationError(errors[0])
+        handle_pip_error(error, 'plugin_install')
 
     # Save plugin to plugins file
     add_plugin_to_file(full_pkg)
@@ -232,6 +238,21 @@ def install_plugin(url=None, packagename=None, user=None):
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     return ret
+
+
+def validate_package_plugin(cfg: plugin.models.PluginConfig, user=None):
+    """Validate a package plugin for update or removal."""
+    if not cfg.plugin:
+        raise ValidationError(_('Plugin was not found in registry'))
+
+    if not cfg.is_package():
+        raise ValidationError(_('Plugin is not a packaged plugin'))
+
+    if not cfg.package_name:
+        raise ValidationError(_('Plugin package name not found'))
+
+    if user and not user.is_staff:
+        raise ValidationError(_('Only staff users can administer plugins'))
 
 
 def update_plugin(
@@ -248,25 +269,14 @@ def update_plugin(
     from InvenTree.tasks import check_for_migrations, offload_task
     from plugin.registry import registry
 
-    if user and not user.is_staff:
-        raise ValidationError(
-            _('Permission denied: only staff users can install plugins')
-        )
-
     if not cfg.active:
         raise ValidationError(_('Plugin is not active'))
 
-    plugin = cfg.plugin
+    validate_package_plugin(cfg, user=user)
 
-    if not plugin:
-        raise ValidationError(_('Plugin was not found in registry'))
+    package_name = cfg.package_name
 
-    package_name = plugin.package_install_name
-
-    if not package_name:
-        raise ValidationError(_('Plugin package name not found'))
-
-    logger.info('Updating plugin: %s', plugin.name, '->', package_name)
+    logger.info('Updating plugin: %s', package_name)
 
     cmd = ['install']
 
@@ -291,23 +301,7 @@ def update_plugin(
             ret['result'] = _(f'Updated plugin into {path}')
 
     except subprocess.CalledProcessError as error:
-        log_error('plugin_update')
-
-        output = error.output.decode('utf-8')
-        logger.exception('Plugin update failed: %s', str(output))
-
-        errors = [_('Plugin update failed')]
-
-        for msg in output.split('\n'):
-            msg = msg.strip()
-
-            if msg:
-                errors.append(msg)
-
-        if len(errors) > 1:
-            raise ValidationError(errors)
-        else:
-            raise ValidationError(errors[0])
+        handle_pip_error(error, 'plugin_update')
 
     # Reload the plugin registry, to discover the new plugin
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
