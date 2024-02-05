@@ -20,6 +20,24 @@ Any model which inherits the `PluginValidationMixin` mixin class is exposed to t
 
 Any plugin which inherits the `ValidationMixin` can implement the `validate_model_instance` method, and run a custom validation routine.
 
+The `validate_model_instance` method is passed the following arguments:
+
+| Argument | Description |
+| --- | --- |
+| `instance` | The model instance to be validated |
+| `deltas` | A dict of field deltas (if the instance is being updated) |
+
+```python
+def validate_model_instance(self, instance, deltas=None):
+    """Validate the supplied model instance.
+
+    Arguments:
+        instance: The model instance to be validated
+        deltas: A dict of field deltas (if the instance is being updated)
+    """
+    ...
+```
+
 ### Error Messages
 
 Any error messages must be raised as a `ValidationError`. The `ValidationMixin` class provides the `raise_error` method, which is a simple wrapper method which raises a `ValidationError`
@@ -48,10 +66,11 @@ import part.models
 class MyValidationMixin(Validationixin, InvenTreePlugin):
     """Custom validation plugin."""
 
-    def validate_model_instance(self, instance):
-        """ Ensures that parts are in the right category.
+    def validate_model_instance(self, instance, deltas=None):
+        """Custom model validation example.
 
-        - The part name and category name must have the same starting letter
+        - A part name and category name must have the same starting letter
+        - A PartCategory description field cannot be shortened after it has been created
         """
 
         if isinstance(instance, part.models.Part):
@@ -59,6 +78,16 @@ class MyValidationMixin(Validationixin, InvenTreePlugin):
                 if category.name[0] != part.name[0]:
                     self.raise_error({
                         "name": "Part name and category name must start with the same letter"
+                    })
+
+        if isinstance(instance, part.models.PartCategory):
+            if deltas and 'description' in deltas:
+                d_new = deltas['description']['new']
+                d_old = deltas['description']['old']
+
+                if len(d_new) < len(d_old):
+                    self.raise_error({
+                        "description": "Description cannot be shortened"
                     })
 
 ```
