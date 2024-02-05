@@ -44,6 +44,40 @@ def rename_attachment(instance, filename):
     return os.path.join(instance.getSubdir(), filename)
 
 
+class PluginValidationMixin:
+    """Mixin class which exposes the model instance to plugin validation.
+
+    Any model class which inherits from this mixin will be exposed to the plugin validation system.
+    """
+
+    def run_plugin_validation(self):
+        """Throw this model against the plugin validation interface."""
+        from plugin.registry import registry
+
+        for plugin in registry.with_mixin('validation'):
+            try:
+                if plugin.validate_model_instance(self) is True:
+                    return
+            except ValidationError as exc:
+                raise exc
+
+    def full_clean(self):
+        """Run plugin validation on full model clean.
+
+        Note that plugin validation is performed *after* super.full_clean()
+        """
+        super().full_clean()
+        self.run_plugin_validation()
+
+    def save(self, *args, **kwargs):
+        """Run plugin validation on model save.
+
+        Note that plugin validation is performed *before* super.save()
+        """
+        self.run_plugin_validation()
+        super().save(*args, **kwargs)
+
+
 class MetadataMixin(models.Model):
     """Model mixin class which adds a JSON metadata field to a model, for use by any (and all) plugins.
 
@@ -123,6 +157,21 @@ class MetadataMixin(models.Model):
 
         if commit:
             self.save()
+
+
+class InvenTreeModel(MetadataMixin, PluginValidationMixin, models.Model):
+    """Base class for InvenTree models, which provides some common functionality.
+
+    Includes the following mixins by default:
+
+    - MetadataMixin: Provides a JSON metadata field for use by plugins
+    - PluginValidationMixin: Provides a hook for plugins to validate model instances
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        abstract = True
 
 
 class DataImportMixin(object):
@@ -615,7 +664,7 @@ class InvenTreeAttachment(models.Model):
         return ''
 
 
-class InvenTreeTree(MPTTModel):
+class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     """Provides an abstracted self-referencing tree model for data categories.
 
     - Each Category has one parent Category, which can be blank (for a top-level Category).

@@ -7,7 +7,10 @@ import stock.models
 class ValidationMixin:
     """Mixin class that allows custom validation for various parts of InvenTree.
 
-    Custom generation and validation functionality can be provided for:
+    Any model which inherits from the PluginValidationMixin class is exposed here,
+    via the 'validate_model_instance' method (see below).
+
+    Additionally, custom generation and validation functionality is provided for:
 
     - Part names
     - Part IPN (internal part number) values
@@ -39,6 +42,23 @@ class ValidationMixin:
         """Register the mixin."""
         super().__init__()
         self.add_mixin('validation', True, __class__)
+
+    def validate_model_instance(self, instance):
+        """Run custom validation on a database model instance.
+
+        This method is called when a model instance is being validated.
+        It allows the plugin to raise a ValidationError on any field in the model.
+
+        Arguments:
+            instance: The model instance to validate
+
+        Returns:
+            None or True (refer to class docstring)
+
+        Raises:
+            ValidationError if the instance is invalid
+        """
+        return None
 
     def validate_part_name(self, name: str, part: part.models.Part):
         """Perform validation on a proposed Part name.
