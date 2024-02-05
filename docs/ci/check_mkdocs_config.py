@@ -1,6 +1,5 @@
 """Check mkdocs.yml config file for errors."""
 
-exit(0)
 import os
 
 import yaml
