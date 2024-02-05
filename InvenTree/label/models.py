@@ -15,11 +15,11 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import build.models
+import InvenTree.models
 import part.models
 import stock.models
 from InvenTree.helpers import normalize, validateFilterString
 from InvenTree.helpers_model import get_base_url
-from InvenTree.models import MetadataMixin
 from plugin.registry import registry
 
 try:
@@ -88,7 +88,9 @@ class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'label.pdf')
 
 
-class LabelTemplate(MetadataMixin, models.Model):
+class LabelTemplate(
+    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase
+):
     """Base class for generic, filterable labels."""
 
     class Meta:
