@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 from users.models import ApiToken, Owner, RuleSet
 
-User = get_user_model()
+CustomUser = get_user_model()
 
 
 class ApiTokenAdmin(admin.ModelAdmin):
@@ -97,7 +97,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
 
     # Add the users field.
     users = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
+        queryset=CustomUser.objects.all(),
         required=False,
         widget=FilteredSelectMultiple('users', False),
         label=_('Users'),
@@ -297,8 +297,8 @@ class OwnerAdmin(admin.ModelAdmin):
 admin.site.unregister(Group)
 admin.site.register(Group, RoleGroupAdmin)
 
-admin.site.unregister(User)
-admin.site.register(User, InvenTreeUserAdmin)
+admin.site.unregister(CustomUser)
+admin.site.register(CustomUser, InvenTreeUserAdmin)
 
 admin.site.register(Owner, OwnerAdmin)
 

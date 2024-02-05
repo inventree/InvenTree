@@ -35,7 +35,7 @@ import stock.models
 import users.models
 from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
-from users.admin import User
+from users.admin import CustomUser
 
 from .models import (
     BomItem,
@@ -743,7 +743,7 @@ class PartSerializer(
     )
 
     creation_user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), required=False, allow_null=True
+        queryset=CustomUser.objects.all(), required=False, allow_null=True
     )
 
     # Annotated fields

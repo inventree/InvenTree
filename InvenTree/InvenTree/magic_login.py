@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import InvenTree.version
-from users.admin import User
+from users.admin import CustomUser
 
 
 def send_simple_login_email(user, link):
@@ -63,8 +63,8 @@ class GetSimpleLoginView(APIView):
     def get_user(self, email):
         """Find the user with this email address."""
         try:
-            return User.objects.get(email=email)
-        except User.DoesNotExist:
+            return CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
             return None
 
     def create_link(self, user):

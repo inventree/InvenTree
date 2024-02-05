@@ -20,7 +20,7 @@ import build.admin
 import build.serializers
 from build.models import Build, BuildLine, BuildItem, BuildOrderAttachment
 import part.models
-from users.admin import User
+from users.admin import CustomUser
 from users.models import Owner
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
 
@@ -78,7 +78,7 @@ class BuildFilter(rest_filters.FilterSet):
 
         # if we query by a user, also find all ownerships through group memberships
         if len(owners) > 0 and owners[0].label() == 'user':
-            owners = Owner.get_owners_matching_user(User.objects.get(pk=owners[0].owner_id))
+            owners = Owner.get_owners_matching_user(CustomUser.objects.get(pk=owners[0].owner_id))
 
         return queryset.filter(responsible__in=owners)
 

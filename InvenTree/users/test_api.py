@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeAPITestCase
-from users.admin import User
+from users.admin import CustomUser
 from users.models import ApiToken
 
 
@@ -18,7 +18,7 @@ class UserAPITests(InvenTreeAPITestCase):
         response = self.get(reverse('api-user-list'), expected_code=200)
 
         # Check the correct number of results was returned
-        self.assertEqual(len(response.data), User.objects.count())
+        self.assertEqual(len(response.data), CustomUser.objects.count())
 
         for key in ['username', 'pk', 'email']:
             self.assertIn(key, response.data[0])

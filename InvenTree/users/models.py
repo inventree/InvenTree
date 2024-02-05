@@ -25,7 +25,7 @@ import common.models as common_models
 import InvenTree.helpers
 import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase, isImportingData
-from users.admin import User
+from users.admin import CustomUser
 
 logger = logging.getLogger('inventree')
 
@@ -41,7 +41,7 @@ def user_model_str(self):
     return self.username
 
 
-User.add_to_class('__str__', user_model_str)  # Overriding User.__str__
+CustomUser.add_to_class('__str__', user_model_str)  # Overriding User.__str__
 #  OVERRIDE END
 
 
