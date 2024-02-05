@@ -2,10 +2,11 @@
 
 import datetime
 
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeAPITestCase
+from users.admin import User
 from users.models import ApiToken
 
 

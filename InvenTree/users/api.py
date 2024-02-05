@@ -4,7 +4,7 @@ import datetime
 import logging
 
 from django.contrib.auth import get_user, login
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
@@ -24,6 +24,7 @@ from InvenTree.mixins import (
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from InvenTree.settings import FRONTEND_URL_BASE
+from users.admin import User
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 

@@ -6,7 +6,7 @@ import logging
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, Permission, User
+from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
@@ -25,6 +25,7 @@ import common.models as common_models
 import InvenTree.helpers
 import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase, isImportingData
+from users.admin import User
 
 logger = logging.getLogger('inventree')
 

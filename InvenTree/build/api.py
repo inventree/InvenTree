@@ -3,7 +3,6 @@
 from django.db.models import F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import User
 
 from rest_framework.exceptions import ValidationError
 
@@ -21,8 +20,10 @@ import build.admin
 import build.serializers
 from build.models import Build, BuildLine, BuildItem, BuildOrderAttachment
 import part.models
+from users.admin import User
 from users.models import Owner
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
+
 
 
 class BuildFilter(rest_filters.FilterSet):

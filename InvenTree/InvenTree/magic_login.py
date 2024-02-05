@@ -1,7 +1,6 @@
 """Functions for magic login."""
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -13,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import InvenTree.version
+from users.admin import User
 
 
 def send_simple_login_email(user, link):
