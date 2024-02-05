@@ -33,6 +33,7 @@ from InvenTree.ready import canAppAccessDatabase
 from .helpers import (
     IntegrationPluginError,
     get_entrypoints,
+    get_plugin_config,
     get_plugins,
     handle_error,
     log_error,
@@ -488,9 +489,7 @@ class PluginsRegistry:
                     plg_db = plugin_configs[plg_key]
                 else:
                     # Configuration needs to be created
-                    plg_db, _created = PluginConfig.objects.get_or_create(
-                        key=plg_key, name=plg_name
-                    )
+                    plg_db = get_plugin_config(plg_key, plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:

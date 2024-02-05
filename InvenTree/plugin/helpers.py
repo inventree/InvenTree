@@ -12,7 +12,7 @@ from importlib.metadata import entry_points
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 logger = logging.getLogger('inventree')
 
@@ -218,6 +218,37 @@ def get_plugins(pkg, baseclass, path=None):
                 plugins.append(plugin)
 
     return plugins
+
+
+def get_plugin_config(slug: str, name: [str, None] = None):
+    """Return the matching PluginConfig instance for a given plugin.
+
+    Args:
+        slug: The plugin slug
+        name: The plugin name (optional)
+    """
+    import InvenTree.ready
+    from plugin.models import PluginConfig
+
+    if InvenTree.ready.isImportingData():
+        return None
+
+    try:
+        cfg = PluginConfig.objects.get_or_create(key=slug)
+    except PluginConfig.DoesNotExist:
+        return None
+    except (IntegrityError, OperationalError, ProgrammingError):  # pragma: no cover
+        return None
+
+    if name and cfg.name != name:
+        # Update the name if it has changed
+        try:
+            cfg.name = name
+            cfg.save()
+        except Exception as e:
+            logger.exception(f'Failed to update plugin name: {e}')
+
+    return cfg
 
 
 # endregion

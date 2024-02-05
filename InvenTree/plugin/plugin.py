@@ -14,7 +14,7 @@ from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from plugin.helpers import get_git_log
+from plugin.helpers import get_git_log, get_plugin_config
 
 logger = logging.getLogger('inventree')
 
@@ -96,24 +96,7 @@ class MetaBase:
 
     def plugin_config(self):
         """Return the PluginConfig object associated with this plugin."""
-        import InvenTree.ready
-
-        # Database contains no information yet - return None
-        if InvenTree.ready.isImportingData():
-            return None
-
-        try:
-            import plugin.models
-
-            cfg, _ = plugin.models.PluginConfig.objects.get_or_create(
-                key=self.plugin_slug()
-            )
-        except (OperationalError, ProgrammingError):
-            cfg = None
-        except plugin.models.PluginConfig.DoesNotExist:
-            cfg = None
-
-        return cfg
+        return get_plugin_config(key=self.plugin_slug())
 
     def is_active(self):
         """Return True if this plugin is currently active."""
