@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-04 09:11+0000\n"
+"POT-Creation-Date: 2024-02-05 10:42+0000\n"
 "PO-Revision-Date: 2024-02-04 12:12\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -596,73 +596,78 @@ msgid "Only superusers can create new users"
 msgstr "Только суперпользователи могут создавать новых пользователей"
 
 #: InvenTree/serializers.py:455
-msgid "Your account has been created.\n\n"
-"Please use the password reset function to login"
+#, fuzzy
+#| msgid "Stock item has been rejected"
+msgid "Your account has been created."
+msgstr "Складская позиция была отклонена"
+
+#: InvenTree/serializers.py:457
+msgid "Please use the password reset function to login"
 msgstr ""
 
-#: InvenTree/serializers.py:462
+#: InvenTree/serializers.py:464
 msgid "Welcome to InvenTree"
 msgstr ""
 
-#: InvenTree/serializers.py:523
+#: InvenTree/serializers.py:525
 msgid "Filename"
 msgstr "Имя файла"
 
-#: InvenTree/serializers.py:557
+#: InvenTree/serializers.py:559
 msgid "Invalid value"
 msgstr "Неверное значение"
 
-#: InvenTree/serializers.py:577
+#: InvenTree/serializers.py:579
 msgid "Data File"
 msgstr "Файл данных"
 
-#: InvenTree/serializers.py:578
+#: InvenTree/serializers.py:580
 msgid "Select data file for upload"
 msgstr "Выберите файл данных для загрузки"
 
-#: InvenTree/serializers.py:595
+#: InvenTree/serializers.py:597
 msgid "Unsupported file type"
 msgstr "Неподдерживаемый тип файла"
 
-#: InvenTree/serializers.py:601
+#: InvenTree/serializers.py:603
 msgid "File is too large"
 msgstr "Файл слишком большой"
 
-#: InvenTree/serializers.py:622
+#: InvenTree/serializers.py:624
 msgid "No columns found in file"
 msgstr "Столбцы в файле не найдены"
 
-#: InvenTree/serializers.py:625
+#: InvenTree/serializers.py:627
 msgid "No data rows found in file"
 msgstr "Строки данных в файле не найдены"
 
-#: InvenTree/serializers.py:738
+#: InvenTree/serializers.py:740
 msgid "No data rows provided"
 msgstr "Строки данных в файле не найдены"
 
-#: InvenTree/serializers.py:741
+#: InvenTree/serializers.py:743
 msgid "No data columns supplied"
 msgstr "Столбцы данных не предоставлены"
 
-#: InvenTree/serializers.py:808
+#: InvenTree/serializers.py:810
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Отсутствует обязательный столбец: '{name}'"
 
-#: InvenTree/serializers.py:817
+#: InvenTree/serializers.py:819
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Повторяющийся столбец: '{col}'"
 
-#: InvenTree/serializers.py:840
+#: InvenTree/serializers.py:842
 msgid "Remote Image"
 msgstr "Удаленное изображение"
 
-#: InvenTree/serializers.py:841
+#: InvenTree/serializers.py:843
 msgid "URL of remote image file"
 msgstr "ССЫЛКА файла изображения на удаленном сервере"
 
-#: InvenTree/serializers.py:857
+#: InvenTree/serializers.py:859
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Загрузка изображений с удаленного URL-адреса не включена"
 
@@ -13535,7 +13540,8 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid "You are about to use your %(provider_name)s account to login to\n"
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13710,4 +13716,3 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
-
