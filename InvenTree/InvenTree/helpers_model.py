@@ -301,9 +301,6 @@ def notify_responsible(
     """
     import InvenTree.ready
 
-    if not InvenTree.ready.canAppAccessDatabase():
-        return
-
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return
 
