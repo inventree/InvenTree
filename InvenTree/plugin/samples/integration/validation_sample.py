@@ -65,6 +65,8 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         """
         import part.models
 
+        print('Validating model instance:', instance.__class__, f'<{instance.pk}>')
+
         if isinstance(instance, part.models.BomItem):
             if self.get_setting('BOM_ITEM_INTEGER'):
                 if float(instance.quantity) != int(instance.quantity):
