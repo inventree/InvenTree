@@ -94,7 +94,7 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-class ReportBase(InvenTree.models.InvenTreeModelBase):
+class ReportBase(InvenTree.models.InvenTreeModel):
     """Base class for uploading html templates."""
 
     class Meta:

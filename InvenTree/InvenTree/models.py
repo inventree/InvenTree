@@ -459,13 +459,22 @@ class ReferenceIndexingMixin(models.Model):
     reference_int = models.BigIntegerField(default=0)
 
 
-class InvenTreeModelBase(PluginValidationMixin, models.Model):
+class InvenTreeModel(PluginValidationMixin, models.Model):
     """Base class for InvenTree models, which provides some common functionality.
 
     Includes the following mixins by default:
 
     - PluginValidationMixin: Provides a hook for plugins to validate model instances
     """
+
+    class Meta:
+        """Metaclass options."""
+
+        abstract = True
+
+
+class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
+    """Base class for an InvenTree model which includes a metadata field."""
 
     class Meta:
         """Metaclass options."""
@@ -487,7 +496,7 @@ def rename_attachment(instance, filename):
     return os.path.join(instance.getSubdir(), filename)
 
 
-class InvenTreeAttachment(InvenTreeModelBase):
+class InvenTreeAttachment(InvenTreeModel):
     """Provides an abstracted class for managing file attachments.
 
     An attachment can be either an uploaded file, or an external URL

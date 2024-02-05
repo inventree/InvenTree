@@ -3367,9 +3367,7 @@ class PartCategoryStar(models.Model):
     )
 
 
-class PartTestTemplate(
-    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase
-):
+class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
@@ -3479,9 +3477,7 @@ def validate_template_name(name):
     """Placeholder for legacy function used in migrations."""
 
 
-class PartParameterTemplate(
-    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase
-):
+class PartParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartParameterTemplate provides a template for key:value pairs for extra parameters fields/values to be added to a Part.
 
     This allows users to arbitrarily assign data fields to a Part beyond the built-in attributes.
@@ -3626,9 +3622,7 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class PartParameter(
-    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase
-):
+class PartParameter(InvenTree.models.InvenTreeMetadataModel):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
@@ -3770,9 +3764,7 @@ class PartParameter(
         return part_parameter
 
 
-class PartCategoryParameterTemplate(
-    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase
-):
+class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate.
 
     Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
@@ -3827,7 +3819,7 @@ class PartCategoryParameterTemplate(
 class BomItem(
     InvenTree.models.DataImportMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModelBase,
+    InvenTree.models.InvenTreeModel,
 ):
     """A BomItem links a part to its component items.
 
@@ -4260,9 +4252,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         instance.part.schedule_pricing_update(create=False)
 
 
-class BomItemSubstitute(
-    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase
-):
+class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
@@ -4320,7 +4310,7 @@ class BomItemSubstitute(
     )
 
 
-class PartRelated(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase):
+class PartRelated(InvenTree.models.InvenTreeMetadataModel):
     """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
     class Meta:

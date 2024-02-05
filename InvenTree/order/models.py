@@ -175,7 +175,7 @@ class Order(
     InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.ReferenceIndexingMixin,
-    InvenTree.models.InvenTreeModelBase,
+    InvenTree.models.InvenTreeModel,
 ):
     """Abstract model for an order.
 
@@ -1196,9 +1196,7 @@ class SalesOrderAttachment(InvenTree.models.InvenTreeAttachment):
     )
 
 
-class OrderLineItem(
-    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase
-):
+class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
     """Abstract model for an order line item.
 
     Attributes:
@@ -1576,7 +1574,7 @@ class SalesOrderLineItem(OrderLineItem):
 class SalesOrderShipment(
     InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.InvenTreeModelBase,
+    InvenTree.models.InvenTreeModel,
 ):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 

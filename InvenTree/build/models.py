@@ -1246,7 +1246,7 @@ class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildLine(InvenTree.models.InvenTreeModelBase):
+class BuildLine(InvenTree.models.InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
@@ -1325,7 +1325,7 @@ class BuildLine(InvenTree.models.InvenTreeModelBase):
         return self.allocated_quantity() > self.quantity
 
 
-class BuildItem(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase):
+class BuildItem(InvenTree.models.InvenTreeMetadataModel):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.

@@ -2205,7 +2205,7 @@ class StockItemAttachment(InvenTree.models.InvenTreeAttachment):
     )
 
 
-class StockItemTracking(InvenTree.models.InvenTreeModelBase):
+class StockItemTracking(InvenTree.models.InvenTreeModel):
     """Stock tracking entry - used for tracking history of a particular StockItem.
 
     Note: 2021-05-11
@@ -2269,7 +2269,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
     )
 
 
-class StockItemTestResult(InvenTree.models.InvenTreeModelBase):
+class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
 
     This is useful for tracking unit acceptance tests, and particularly useful when integrated

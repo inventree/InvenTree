@@ -59,7 +59,7 @@ def rename_company_image(instance, filename):
 
 
 class Company(
-    InvenTree.models.InvenTreeNotesMixin, InvenTree.models.InvenTreeModelBase
+    InvenTree.models.InvenTreeNotesMixin, InvenTree.models.InvenTreeMetadataModel
 ):
     """A Company object represents an external company.
 
@@ -267,7 +267,7 @@ class CompanyAttachment(InvenTree.models.InvenTreeAttachment):
     )
 
 
-class Contact(InvenTree.models.InvenTreeModelBase):
+class Contact(InvenTree.models.InvenTreeMetadataModel):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
@@ -296,7 +296,7 @@ class Contact(InvenTree.models.InvenTreeModelBase):
     role = models.CharField(max_length=100, blank=True)
 
 
-class Address(InvenTree.models.InvenTreeModelBase):
+class Address(InvenTree.models.InvenTreeModel):
     """An address represents a physical location where the company is located. It is possible for a company to have multiple locations.
 
     Attributes:
@@ -452,7 +452,7 @@ class Address(InvenTree.models.InvenTreeModelBase):
 
 
 class ManufacturerPart(
-    InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeModelBase
+    InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeMetadataModel
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
@@ -574,7 +574,7 @@ class ManufacturerPartAttachment(InvenTree.models.InvenTreeAttachment):
     )
 
 
-class ManufacturerPartParameter(InvenTree.models.InvenTreeModelBase):
+class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
     """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
 
     This is used to represent parameters / properties for a particular manufacturer part.
@@ -643,7 +643,7 @@ class SupplierPart(
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     common.models.MetaMixin,
-    InvenTree.models.InvenTreeModelBase,
+    InvenTree.models.InvenTreeModel,
 ):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 

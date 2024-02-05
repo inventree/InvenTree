@@ -88,9 +88,7 @@ class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'label.pdf')
 
 
-class LabelTemplate(
-    InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModelBase
-):
+class LabelTemplate(InvenTree.models.InvenTreeMetadataModel):
     """Base class for generic, filterable labels."""
 
     class Meta:
