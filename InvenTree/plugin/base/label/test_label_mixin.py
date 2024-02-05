@@ -86,7 +86,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # But, it is not 'active'
         plugins = registry.with_mixin('labels', active=True)
-        self.assertEqual(len(plugins), 2)
+        self.assertEqual(len(plugins), 3)
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin."""
