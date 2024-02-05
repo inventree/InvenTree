@@ -8575,7 +8575,7 @@ msgstr ""
 
 #: stock/models.py:1583 stock/serializers.py:1149
 msgid "Duplicate stock items"
-msgstr "Дублировать складские позиции\n"
+msgstr "Дублировать складские позиции"
 
 #: stock/models.py:1587
 msgid "Stock items must refer to the same part"
@@ -9020,7 +9020,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1922
 msgid "stock item"
-msgstr "складская позиция\n"
+msgstr "складская позиция"
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -9056,7 +9056,7 @@ msgstr "Вернуть на склад"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr "Создать сериализированные позиции из этой складской позиции\n"
+msgstr "Создать сериализированные позиции из этой складской позиции"
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
@@ -10529,7 +10529,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Складская позиция уже просканирована\n"
+msgstr "Складская позиция уже просканирована"
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
@@ -12724,11 +12724,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Создана новая складская позиция\n"
+msgstr "Создана новая складская позиция"
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Создано несколько складских позиций\n"
+msgstr "Создано несколько складских позиций"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
