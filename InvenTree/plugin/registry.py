@@ -33,7 +33,6 @@ from InvenTree.ready import canAppAccessDatabase
 from .helpers import (
     IntegrationPluginError,
     get_entrypoints,
-    get_plugin_config,
     get_plugins,
     handle_error,
     log_error,
@@ -106,6 +105,36 @@ class PluginsRegistry:
                 return None
 
         return plg
+
+    def get_plugin_config(self, slug: str, name: [str, None] = None):
+        """Return the matching PluginConfig instance for a given plugin.
+
+        Args:
+            slug: The plugin slug
+            name: The plugin name (optional)
+        """
+        import InvenTree.ready
+        from plugin.models import PluginConfig
+
+        if InvenTree.ready.isImportingData():
+            return None
+
+        try:
+            cfg, _created = PluginConfig.objects.get_or_create(key=slug)
+        except PluginConfig.DoesNotExist:
+            return None
+        except (IntegrityError, OperationalError, ProgrammingError):  # pragma: no cover
+            return None
+
+        if name and cfg.name != name:
+            # Update the name if it has changed
+            try:
+                cfg.name = name
+                cfg.save()
+            except Exception as e:
+                logger.exception(f'Failed to update plugin name: {e}')
+
+        return cfg
 
     def set_plugin_state(self, slug, state):
         """Set the state(active/inactive) of a plugin.

@@ -9,12 +9,11 @@ from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
 
 from django.conf import settings
-from django.db.utils import OperationalError, ProgrammingError
 from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from plugin.helpers import get_git_log, get_plugin_config
+from plugin.helpers import get_git_log
 
 logger = logging.getLogger('inventree')
 
@@ -96,7 +95,9 @@ class MetaBase:
 
     def plugin_config(self):
         """Return the PluginConfig object associated with this plugin."""
-        return get_plugin_config(self.plugin_slug())
+        from plugin.registry import registry
+
+        return registry.get_plugin_config(self.plugin_slug())
 
     def is_active(self):
         """Return True if this plugin is currently active."""
