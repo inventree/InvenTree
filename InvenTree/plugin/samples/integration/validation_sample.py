@@ -6,7 +6,7 @@ from plugin import InvenTreePlugin
 from plugin.mixins import SettingsMixin, ValidationMixin
 
 
-class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
+class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
     """A sample plugin class for demonstrating custom validation functions.
 
     Simple of examples of custom validator code.
@@ -63,6 +63,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         """
         import part.models
 
+        # Print debug message to console (intentional)
         print('Validating model instance:', instance.__class__, f'<{instance.pk}>')
 
         if isinstance(instance, part.models.BomItem):
@@ -74,6 +75,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         if isinstance(instance, part.models.Part):
             # If the part description is being updated, prevent it from being reduced in length
+
             if deltas and 'description' in deltas:
                 old_desc = deltas['description']['old']
                 new_desc = deltas['description']['new']

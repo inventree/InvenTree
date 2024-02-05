@@ -90,7 +90,7 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
-    def get_plugin(self, slug):
+    def get_plugin(self, slug, active=None):
         """Lookup plugin by slug (unique key)."""
         # Check if the registry needs to be reloaded
         self.check_reload()
@@ -99,7 +99,13 @@ class PluginsRegistry:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return None
 
-        return self.plugins[slug]
+        plg = self.plugins[slug]
+
+        if active is not None:
+            if active != plg.is_active():
+                return None
+
+        return plg
 
     def set_plugin_state(self, slug, state):
         """Set the state(active/inactive) of a plugin.
@@ -115,9 +121,9 @@ class PluginsRegistry:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return
 
-        plugin = self.plugins_full[slug].db
-        plugin.active = state
-        plugin.save()
+        cfg = get_plugin_config(slug)
+        cfg.active = state
+        cfg.save()
 
         # Update the registry hash value
         self.update_plugin_hash()
@@ -143,8 +149,14 @@ class PluginsRegistry:
         return plugin_func(*args, **kwargs)
 
     # region registry functions
-    def with_mixin(self, mixin: str, active=None, builtin=None):
-        """Returns reference to all plugins that have a specified mixin enabled."""
+    def with_mixin(self, mixin: str, active=True, builtin=None):
+        """Returns reference to all plugins that have a specified mixin enabled.
+
+        Args:
+            mixin (str): Mixin name
+            active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
+            builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
+        """
         # Check if the registry needs to be loaded
         self.check_reload()
 
