@@ -49,7 +49,7 @@ class ValidationMixin:
         """Raise a ValidationError with the given message."""
         raise ValidationError(message)
 
-    def validate_model_instance(self, instance):
+    def validate_model_instance(self, instance, deltas=None):
         """Run custom validation on a database model instance.
 
         This method is called when a model instance is being validated.
@@ -57,6 +57,7 @@ class ValidationMixin:
 
         Arguments:
             instance: The model instance to validate
+            deltas: A dictionary of field names and updated values (if the instance is being updated)
 
         Returns:
             None or True (refer to class docstring)

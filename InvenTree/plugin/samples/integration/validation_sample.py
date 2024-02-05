@@ -12,9 +12,9 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
     Simple of examples of custom validator code.
     """
 
-    NAME = 'CustomValidator'
+    NAME = 'SampleValidator'
     SLUG = 'validator'
-    TITLE = 'Custom Validator Plugin'
+    TITLE = 'Sample Validator Plugin'
     DESCRIPTION = 'A sample plugin for demonstrating custom validation functionality'
     VERSION = '0.3.0'
 
@@ -55,7 +55,7 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         },
     }
 
-    def validate_model_instance(self, instance):
+    def validate_model_instance(self, instance, deltas=None):
         """Run validation against any saved model.
 
         - Check if the instance is a BomItem object
@@ -70,6 +70,17 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
                 if float(instance.quantity) != int(instance.quantity):
                     self.raise_error({
                         'quantity': 'Bom item quantity must be an integer'
+                    })
+
+        if isinstance(instance, part.models.Part):
+            # If the part description is being updated, prevent it from being reduced in length
+            if deltas and 'description' in deltas:
+                old_desc = deltas['description']['old']
+                new_desc = deltas['description']['new']
+
+                if len(new_desc) < len(old_desc):
+                    self.raise_error({
+                        'description': 'Part description cannot be shortened'
                     })
 
     def validate_part_name(self, name: str, part):

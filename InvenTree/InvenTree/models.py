@@ -80,7 +80,7 @@ class DiffMixin:
         return field_name in self.get_field_deltas()
 
 
-class PluginValidationMixin:
+class PluginValidationMixin(DiffMixin):
     """Mixin class which exposes the model instance to plugin validation.
 
     Any model class which inherits from this mixin will be exposed to the plugin validation system.
@@ -90,9 +90,11 @@ class PluginValidationMixin:
         """Throw this model against the plugin validation interface."""
         from plugin.registry import registry
 
+        deltas = self.get_field_deltas()
+
         for plugin in registry.with_mixin('validation'):
             try:
-                if plugin.validate_model_instance(self) is True:
+                if plugin.validate_model_instance(self, deltas=deltas) is True:
                     return
             except ValidationError as exc:
                 raise exc
@@ -503,7 +505,7 @@ def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
     return ref_int
 
 
-class InvenTreeModelBase(DiffMixin, PluginValidationMixin, models.Model):
+class InvenTreeModelBase(PluginValidationMixin, models.Model):
     """Base class for InvenTree models, which provides some common functionality.
 
     Includes the following mixins by default:

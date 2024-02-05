@@ -349,7 +349,6 @@ class StockItem(
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.MetadataMixin,
-    InvenTree.models.DiffMixin,
     InvenTree.models.PluginValidationMixin,
     common.models.MetaMixin,
     MPTTModel,
