@@ -126,7 +126,7 @@ class LabelPrintingMixin:
                 'user': user,
                 'width': label.width,
                 'height': label.height,
-                'printing_options': printing_options,
+                'printing_options': kwargs['printing_options'],
             }
 
             if self.BLOCKING_PRINT:

@@ -82,7 +82,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         """Test that the sample printing plugin is installed."""
         # Get all label plugins
         plugins = registry.with_mixin('labels')
-        self.assertEqual(len(plugins), 3)
+        self.assertEqual(len(plugins), 4)
 
         # But, it is not 'active'
         plugins = registry.with_mixin('labels', active=True)
@@ -110,7 +110,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         # Should be available via the API now
         response = self.client.get(url, {'mixin': 'labels', 'active': True})
 
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(len(response.data), 4)
 
         labels = [item['key'] for item in response.data]
 
