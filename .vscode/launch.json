@@ -10,7 +10,6 @@
       "request": "launch",
       "program": "${workspaceFolder}/InvenTree/manage.py",
       "args": ["runserver"],
-      "pythonArgs": ["-Xfrozen_modules=off"],
       "django": true,
       "justMyCode": true
     },
@@ -20,7 +19,6 @@
       "request": "launch",
       "program": "${workspaceFolder}/InvenTree/manage.py",
       "args": ["runserver"],
-      "pythonArgs": ["-Xfrozen_modules=off"],
       "django": true,
       "justMyCode": false
     },
