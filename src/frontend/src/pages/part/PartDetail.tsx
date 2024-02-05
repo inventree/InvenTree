@@ -44,6 +44,7 @@ import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partFields } from '../../forms/PartForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
@@ -122,8 +123,7 @@ export default function PartDetail() {
           type: 'link',
           name: 'variant_of',
           label: t`Variant of`,
-          path: ApiEndpoints.part_list,
-          dest: '/part/'
+          model: ModelType.part
         }
       ]);
     }
@@ -226,8 +226,7 @@ export default function PartDetail() {
           type: 'link',
           name: 'category',
           label: t`Category`,
-          path: ApiEndpoints.category_list,
-          dest: '/part/category/'
+          model: ModelType.partcategory
         }
       ]);
     }
@@ -336,7 +335,7 @@ export default function PartDetail() {
             const { data } = useSuspenseQuery({
               queryKey: ['stocktake', id],
               queryFn: async () => {
-                const url = ApiEndpoints.part_stocktake_list;
+                const url = apiUrl(ApiEndpoints.part_stocktake_list);
 
                 return api
                   .get(url, { params: { part: id, ordering: 'date' } })
@@ -364,7 +363,7 @@ export default function PartDetail() {
             const { data } = useSuspenseQuery({
               queryKey: ['stocktake', id],
               queryFn: async () => {
-                const url = ApiEndpoints.part_stocktake_list;
+                const url = apiUrl(ApiEndpoints.part_stocktake_list);
 
                 return api
                   .get(url, { params: { part: id, ordering: 'date' } })
@@ -392,8 +391,7 @@ export default function PartDetail() {
           type: 'link',
           name: 'default_location',
           label: t`Default Location`,
-          path: ApiEndpoints.stock_location_list,
-          dest: '/stock/location/'
+          model: ModelType.stocklocation
         }
       ]);
     }
@@ -404,8 +402,7 @@ export default function PartDetail() {
           type: 'link',
           name: 'default_supplier',
           label: t`Default Supplier`,
-          path: ApiEndpoints.supplier_part_list,
-          dest: '/part/'
+          model: ModelType.supplierpart
         }
       ]);
     }
