@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Accordion, Alert, Stack, Title } from '@mantine/core';
+import { Accordion, Alert, Stack } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { lazy } from 'react';
 
