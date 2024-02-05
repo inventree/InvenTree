@@ -390,7 +390,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
 
         # Collect possible methods
         if delivery_methods is None:
-            delivery_methods = storage.liste
+            delivery_methods = storage.liste or []
         else:
             delivery_methods = (delivery_methods - IGNORED_NOTIFICATION_CLS)
 
