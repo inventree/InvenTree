@@ -5,7 +5,6 @@ import logging
 import os
 from datetime import datetime
 
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
@@ -15,6 +14,7 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
@@ -277,7 +277,7 @@ class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBar
     completion_date = models.DateField(null=True, blank=True, verbose_name=_('Completion Date'))
 
     completed_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('completed by'),
@@ -285,7 +285,7 @@ class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBar
     )
 
     issued_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True, null=True,
         verbose_name=_('Issued by'),

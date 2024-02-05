@@ -5,7 +5,6 @@ import warnings
 
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -227,7 +226,7 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     method = models.CharField(max_length=255, verbose_name=_('Method'))
 
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
