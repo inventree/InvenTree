@@ -30,18 +30,54 @@ from InvenTree.sanitizer import sanitize_svg
 logger = logging.getLogger('inventree')
 
 
-def rename_attachment(instance, filename):
-    """Function for renaming an attachment file. The subdirectory for the uploaded file is determined by the implementing class.
+class DiffMixin:
+    """Mixin which can be used to determine which fields have changed, compared to the instance saved to the database."""
 
-    Args:
-        instance: Instance of a PartAttachment object
-        filename: name of uploaded file
+    def get_db_instance(self):
+        """Return the instance of the object saved in the database.
 
-    Returns:
-        path to store file, format: '<subdir>/<id>/filename'
-    """
-    # Construct a path to store a file attachment for a given model type
-    return os.path.join(instance.getSubdir(), filename)
+        Returns:
+            object: Instance of the object saved in the database
+        """
+        if self.pk:
+            try:
+                return self.__class__.objects.get(pk=self.pk)
+            except self.__class__.DoesNotExist:
+                pass
+
+        return None
+
+    def get_field_deltas(self):
+        """Return a dict of field deltas.
+
+        Compares the current instance with the instance saved in the database,
+        and returns a dict of fields which have changed.
+
+        Returns:
+            dict: Dict of field deltas
+        """
+        db_instance = self.get_db_instance()
+
+        if db_instance is None:
+            return {}
+
+        deltas = {}
+
+        for field in self._meta.fields:
+            if field.name == 'id':
+                continue
+
+            if getattr(self, field.name) != getattr(db_instance, field.name):
+                deltas[field.name] = {
+                    'old': getattr(db_instance, field.name),
+                    'new': getattr(self, field.name),
+                }
+
+        return deltas
+
+    def has_field_changed(self, field_name):
+        """Determine if a particular field has changed."""
+        return field_name in self.get_field_deltas()
 
 
 class PluginValidationMixin:
@@ -157,21 +193,6 @@ class MetadataMixin(models.Model):
 
         if commit:
             self.save()
-
-
-class InvenTreeModel(MetadataMixin, PluginValidationMixin, models.Model):
-    """Base class for InvenTree models, which provides some common functionality.
-
-    Includes the following mixins by default:
-
-    - MetadataMixin: Provides a JSON metadata field for use by plugins
-    - PluginValidationMixin: Provides a hook for plugins to validate model instances
-    """
-
-    class Meta:
-        """Metaclass options."""
-
-        abstract = True
 
 
 class DataImportMixin(object):
@@ -482,7 +503,35 @@ def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
     return ref_int
 
 
-class InvenTreeAttachment(models.Model):
+class InvenTreeModelBase(DiffMixin, PluginValidationMixin, models.Model):
+    """Base class for InvenTree models, which provides some common functionality.
+
+    Includes the following mixins by default:
+
+    - PluginValidationMixin: Provides a hook for plugins to validate model instances
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        abstract = True
+
+
+def rename_attachment(instance, filename):
+    """Function for renaming an attachment file. The subdirectory for the uploaded file is determined by the implementing class.
+
+    Args:
+        instance: Instance of a PartAttachment object
+        filename: name of uploaded file
+
+    Returns:
+        path to store file, format: '<subdir>/<id>/filename'
+    """
+    # Construct a path to store a file attachment for a given model type
+    return os.path.join(instance.getSubdir(), filename)
+
+
+class InvenTreeAttachment(InvenTreeModelBase):
     """Provides an abstracted class for managing file attachments.
 
     An attachment can be either an uploaded file, or an external URL
