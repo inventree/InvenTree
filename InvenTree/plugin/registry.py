@@ -119,6 +119,9 @@ class PluginsRegistry:
         plugin.active = state
         plugin.save()
 
+        # Update the registry hash value
+        self.update_plugin_hash()
+
     def call_plugin_function(self, slug, func, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
 
@@ -728,6 +731,7 @@ class PluginsRegistry:
         # Hash for all loaded plugins
         for slug, plug in self.plugins.items():
             data.update(str(slug).encode())
+            data.update(str(plug.name).encode())
             data.update(str(plug.version).encode())
             data.update(str(plug.is_active()).encode())
 
