@@ -341,13 +341,15 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
           switch (error.response.status) {
             case 400:
               // Data validation errors
-              const nonFieldErrors: string[] = [];
+              const _nonFieldErrors: string[] = [];
               const processErrors = (errors: any, _path?: string) => {
                 for (const [k, v] of Object.entries(errors)) {
                   const path = _path ? `${_path}.${k}` : k;
 
-                  if (k === 'non_field_errors') {
-                    nonFieldErrors.push((v as string[]).join(', '));
+                  if (k === 'non_field_errors' || k === '__all__') {
+                    if (Array.isArray(v)) {
+                      _nonFieldErrors.push(...v);
+                    }
                     continue;
                   }
 
@@ -360,7 +362,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
               };
 
               processErrors(error.response.data);
-              setNonFieldErrors(nonFieldErrors);
+              setNonFieldErrors(_nonFieldErrors);
               break;
             default:
               // Unexpected state on form error
