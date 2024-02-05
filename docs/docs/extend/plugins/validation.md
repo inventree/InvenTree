@@ -4,7 +4,7 @@ title: Validation Mixin
 
 ## ValidationMixin
 
-The `ValidationMixin` class enables plugins to perform custom validation of various fields.
+The `ValidationMixin` class enables plugins to perform custom validation of objects within the database.
 
 Any of the methods described below can be implemented in a custom plugin to provide functionality as required.
 
@@ -13,6 +13,59 @@ Any of the methods described below can be implemented in a custom plugin to prov
 
 !!! info "Multi Plugin Support"
     It is possible to have multiple plugins loaded simultaneously which support validation methods. For example when validating a field, if one plugin returns a null value (`None`) then the *next* plugin (if available) will be queried.
+
+## Model Validation
+
+Any model which inherits the `PluginValidationMixin` mixin class is exposed to the plugin system for custom validation. Before the model is saved to the database (either when created, or updated), it is first passed to the plugin ecosystem for validation.
+
+Any plugin which inherits the `ValidationMixin` can implement the `validate_model_instance` method, and run a custom validation routine.
+
+### Error Messages
+
+Any error messages must be raised as a `ValidationError`. The `ValidationMixin` class provides the `raise_error` method, which is a simple wrapper method which raises a `ValidationError`
+
+#### Instance Errors
+
+To indicate an *instance* validation error (i.e. the validation error applies to the entire model instance), the body of the error should be either a string, or a list of strings.
+
+#### Field Errors
+
+To indicate a *field* validation error (i.e. the validation error applies only to a single field on the model instance), the body of the error should be a dict, where the key(s) of the dict correspond to the model fields.
+
+Note that an error can be which corresponds to multiple model instance fields.
+
+### Example
+
+Presented below is a simple working example for a plugin which implements the `validate_model_instance` method:
+
+```python
+from plugin import InvenTreePlugin
+from plugin.mixins import ValidationMixin
+
+import part.models
+
+
+class MyValidationMixin(Validationixin, InvenTreePlugin):
+    """Custom validation plugin."""
+
+    def validate_model_instance(self, instance):
+        """ Ensures that parts are in the right category.
+
+        - The part name and category name must have the same starting letter
+        """
+
+        if isinstance(instance, part.models.Part):
+            if category := instance.category:
+                if category.name[0] != part.name[0]:
+                    self.raise_error({
+                        "name": "Part name and category name must start with the same letter"
+                    })
+
+```
+
+## Field Validation
+
+In addition to the general purpose model instance validation routine provided above, the following fields support custom validation routines:
 
 ### Part Name
 

@@ -1,5 +1,7 @@
 """Validation mixin class definition."""
 
+from django.core.exceptions import ValidationError
+
 import part.models
 import stock.models
 
@@ -42,6 +44,10 @@ class ValidationMixin:
         """Register the mixin."""
         super().__init__()
         self.add_mixin('validation', True, __class__)
+
+    def raise_error(self, message):
+        """Raise a ValidationError with the given message."""
+        raise ValidationError(message)
 
     def validate_model_instance(self, instance):
         """Run custom validation on a database model instance.
