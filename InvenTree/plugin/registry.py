@@ -150,7 +150,7 @@ class PluginsRegistry:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return
 
-        cfg = get_plugin_config(slug)
+        cfg = self.get_plugin_config(slug)
         cfg.active = state
         cfg.save()
 
@@ -533,7 +533,7 @@ class PluginsRegistry:
                     plg_db = plugin_configs[plg_key]
                 else:
                     # Configuration needs to be created
-                    plg_db = get_plugin_config(plg_key, plg_name)
+                    plg_db = self.get_plugin_config(plg_key, plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
