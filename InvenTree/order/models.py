@@ -1162,7 +1162,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
         notify_responsible(instance, sender, exclude=instance.created_by)
 
 
-class PurchaseOrderAttachment(InvenTreeAttachment):
+class PurchaseOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a PurchaseOrder object."""
 
     @staticmethod
