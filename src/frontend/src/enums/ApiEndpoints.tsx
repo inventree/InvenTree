@@ -98,7 +98,6 @@ export enum ApiEndpoints {
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',
   plugin_activate = 'plugins/:id/activate/',
-  plugin_update = 'plugins/:id/update/',
   plugin_uninstall = 'plugins/:id/uninstall/',
 
   // Miscellaneous API endpoints

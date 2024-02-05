@@ -83,6 +83,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             'Source for the package - this can be a custom registry or a VCS path'
         ),
     )
+
     packagename = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -91,6 +92,16 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             'Name for the Plugin Package - can also contain a version indicator'
         ),
     )
+
+    version = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Version'),
+        help_text=_(
+            'Version specifier for the plugin. Leave blank for latest version.'
+        ),
+    )
+
     confirm = serializers.BooleanField(
         label=_('Confirm plugin installation'),
         help_text=_(
@@ -122,8 +133,12 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
         packagename = data.get('packagename', '')
         url = data.get('url', '')
+        version = data.get('version', None)
+        user = self.context['request'].user
 
-        return install_plugin(url=url, packagename=packagename)
+        return install_plugin(
+            url=url, packagename=packagename, version=version, user=user
+        )
 
 
 class PluginConfigEmptySerializer(serializers.Serializer):
@@ -193,37 +208,6 @@ class PluginActivateSerializer(serializers.Serializer):
             offload_task(check_for_migrations)
 
         return instance
-
-
-class PluginUpdateSerializer(serializers.Serializer):
-    """Serializer for updating a plugin."""
-
-    model = PluginConfig
-
-    version = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        label=_('Version'),
-        help_text=_('Version specifier for the plugin'),
-    )
-
-    registry = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        label=_('Registry'),
-        help_text=_('Name of the external registry to use'),
-    )
-
-    def update(self, instance, validated_data):
-        """Update the specified plugin (via PIP)."""
-        from plugin.installer import update_plugin
-
-        return update_plugin(
-            instance,
-            user=self.context['request'].user,
-            version=validated_data.get('version', None),
-            registry_name=validated_data.get('registry', None),
-        )
 
 
 class PluginUninstallSerializer(serializers.Serializer):

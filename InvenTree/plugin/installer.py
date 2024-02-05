@@ -143,6 +143,10 @@ def add_plugin_to_file(install_name):
 
     # Check if plugin is already in file
     for line in lines:
+        # Ignore processing for any commented lines
+        if line.strip().startswith('#'):
+            continue
+
         if line.strip() == install_name:
             logger.debug('Plugin already exists in file')
             return
@@ -162,12 +166,14 @@ def add_plugin_to_file(install_name):
         logger.exception('Failed to add plugin to plugins file: %s', str(exc))
 
 
-def install_plugin(url=None, packagename=None, user=None):
+def install_plugin(url=None, packagename=None, user=None, version=None):
     """Install a plugin into the python virtual environment.
 
-    Rules:
-    - A staff user account is required
-    - We must detect that we are running within a virtual environment
+    Args:
+        packagename: Optional package name to install
+        url: Optional URL to install from
+        user: Optional user performing the installation
+        version: Optional version specifier
     """
     if user and not user.is_staff:
         raise ValidationError(_('Only staff users can administer plugins'))
@@ -209,6 +215,9 @@ def install_plugin(url=None, packagename=None, user=None):
     elif packagename:
         # use pypi
         full_pkg = packagename
+
+        if version:
+            full_pkg = f'{full_pkg}=={version}'
 
     install_name.append(full_pkg)
 
@@ -253,65 +262,6 @@ def validate_package_plugin(cfg: plugin.models.PluginConfig, user=None):
 
     if user and not user.is_staff:
         raise ValidationError(_('Only staff users can administer plugins'))
-
-
-def update_plugin(
-    cfg: plugin.models.PluginConfig, user=None, version=None, registry_name=None
-):
-    """Update the specified plugin (via PIP).
-
-    Args:
-        cfg: PluginConfig - the plugin to update
-        user: User - the user performing the update
-        version: Optional version specifier
-        registry_name: Optional name of the external registry to use
-    """
-    from InvenTree.tasks import check_for_migrations, offload_task
-    from plugin.registry import registry
-
-    if not cfg.active:
-        raise ValidationError(_('Plugin is not active'))
-
-    validate_package_plugin(cfg, user=user)
-
-    # TODO: Delete any database tables associated with the plugin
-
-    package_name = cfg.package_name
-
-    logger.info('Updating plugin: %s', package_name)
-
-    cmd = ['install']
-
-    if version:
-        cmd.append(f'{package_name}=={version}')
-    else:
-        cmd.extend(['-U', package_name])
-
-    if registry_name:
-        cmd.extend(['-i', registry_name])
-
-    try:
-        result = pip_command(*cmd)
-
-        ret = {
-            'result': _('Updated plugin successfully'),
-            'success': True,
-            'output': str(result, 'utf-8'),
-        }
-
-        if path := check_package_path(package_name):
-            ret['result'] = _(f'Updated plugin into {path}')
-
-    except subprocess.CalledProcessError as error:
-        handle_pip_error(error, 'plugin_update')
-
-    # Reload the plugin registry, to discover the new plugin
-    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
-
-    # Run a check for database migrations
-    offload_task(check_for_migrations)
-
-    return ret
 
 
 def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None):

@@ -436,8 +436,8 @@ export default function PluginListTable() {
           color: 'blue',
           icon: <IconRefresh />,
           onClick: () => {
-            setSelectedPlugin(record.pk);
-            updatePluginModal.open();
+            setPluginPackage(record.package_name);
+            installPluginModal.open();
           }
         });
       }
@@ -465,6 +465,8 @@ export default function PluginListTable() {
     [user, pluginsEnabled]
   );
 
+  const [pluginPackage, setPluginPackage] = useState<string>('');
+
   const installPluginModal = useCreateApiFormModal({
     title: t`Install plugin`,
     url: ApiEndpoints.plugin_install,
@@ -472,7 +474,11 @@ export default function PluginListTable() {
     fields: {
       packagename: {},
       url: {},
+      version: {},
       confirm: {}
+    },
+    initialData: {
+      packagename: pluginPackage
     },
     closeOnClickOutside: false,
     submitText: t`Install`,
@@ -490,39 +496,6 @@ export default function PluginListTable() {
   });
 
   const [selectedPlugin, setSelectedPlugin] = useState<number>(-1);
-
-  const updatePluginModal = useEditApiFormModal({
-    title: t`Update Plugin`,
-    url: ApiEndpoints.plugin_update,
-    pk: selectedPlugin,
-    fetchInitialData: false,
-    timeout: 30000,
-    fields: {
-      version: {}
-    },
-    preFormContent: (
-      <Alert
-        color="blue"
-        icon={<IconInfoCircle />}
-        title={t`Confirm plugin update`}
-      >
-        <Stack spacing="xs">
-          <Text>{t`The selected plugin will be updated.`}</Text>
-          <Text>{t`Specify plugin version, or leave blank to update to the latest available version.`}</Text>
-        </Stack>
-      </Alert>
-    ),
-    onFormSuccess: (data) => {
-      notifications.show({
-        title: t`Plugin updated successfully`,
-        message: data.result,
-        autoClose: 30000,
-        color: 'green'
-      });
-
-      table.refreshTable();
-    }
-  });
 
   const uninstallPluginModal = useEditApiFormModal({
     title: t`Uninstall Plugin`,
@@ -591,7 +564,10 @@ export default function PluginListTable() {
           color="green"
           icon={<IconPlaylistAdd />}
           tooltip={t`Install Plugin`}
-          onClick={() => installPluginModal.open()}
+          onClick={() => {
+            setPluginPackage('');
+            installPluginModal.open();
+          }}
         />
       );
     }
@@ -602,7 +578,6 @@ export default function PluginListTable() {
   return (
     <>
       {installPluginModal.modal}
-      {updatePluginModal.modal}
       {uninstallPluginModal.modal}
       <DetailDrawer
         title={t`Plugin detail`}
