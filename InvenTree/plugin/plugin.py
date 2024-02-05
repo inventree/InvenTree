@@ -96,7 +96,7 @@ class MetaBase:
 
     def plugin_config(self):
         """Return the PluginConfig object associated with this plugin."""
-        return get_plugin_config(key=self.plugin_slug())
+        return get_plugin_config(self.plugin_slug())
 
     def is_active(self):
         """Return True if this plugin is currently active."""
