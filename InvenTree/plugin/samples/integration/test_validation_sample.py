@@ -77,3 +77,39 @@ class SampleValidatorPluginTest(InvenTreeTestCase):
         prt.description = prt.description[:-1]
         with self.assertRaises(ValidationError):
             prt.save()
+
+        self.enable_plugin(False)
+
+    def test_validate_part_name(self):
+        """Test the validate_part_name function."""
+        self.enable_plugin(True)
+        plg = self.get_plugin()
+        self.assertIsNotNone(plg)
+
+        # Set the part description short
+        self.part.description = 'x'
+
+        with self.assertRaises(ValidationError):
+            self.part.save()
+
+        self.enable_plugin(False)
+        self.part.save()
+
+    def test_validate_ipn(self):
+        """Test the validate_ipn function."""
+        self.enable_plugin(True)
+        plg = self.get_plugin()
+        self.assertIsNotNone(plg)
+
+        self.part.IPN = 'LMNOP'
+        plg.set_setting('IPN_MUST_CONTAIN_Q', False)
+        self.part.save()
+
+        plg.set_setting('IPN_MUST_CONTAIN_Q', True)
+
+        with self.assertRaises(ValidationError):
+            self.part.save()
+
+        self.part.IPN = 'LMNOPQ'
+
+        self.part.save()
