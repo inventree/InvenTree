@@ -110,7 +110,7 @@ class StockLocationManager(TreeManager):
         return super().get_queryset().select_related('location_type')
 
 
-class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
+class StockLocation(InvenTreeBarcodeMixin, InvenTreeTree):
     """Organization tree for StockItem objects.
 
     A "StockLocation" can be considered a warehouse, or storage location

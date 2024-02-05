@@ -70,7 +70,7 @@ from stock import models as StockModels
 logger = logging.getLogger('inventree')
 
 
-class PartCategory(MetadataMixin, InvenTreeTree):
+class PartCategory(InvenTreeTree):
     """PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
