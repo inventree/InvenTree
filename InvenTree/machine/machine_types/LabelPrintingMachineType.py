@@ -221,14 +221,14 @@ class LabelPrinterStatus(MachineStatus):
 
     Attributes:
         CONNECTED: The printer is connected and ready to print
-        STANDBY: The printers connection is in standby mode, but will be ready to print at any time
+        UNKNOWN: The printer status is unknown (e.g. there is no active connection to the printer)
         PRINTING: The printer is currently printing a label
         NO_MEDIA: The printer is out of media (e.g. the label spool is empty)
         DISCONNECTED: The driver cannot establish a connection to the printer
     """
 
     CONNECTED = 100, _('Connected'), 'success'
-    UNKNOWN = 101, _('Standby'), 'success'
+    UNKNOWN = 101, _('Unknown'), 'secondary'
     PRINTING = 110, _('Printing'), 'primary'
     NO_MEDIA = 301, _('No media'), 'warning'
     DISCONNECTED = 400, _('Disconnected'), 'danger'
@@ -253,7 +253,7 @@ class LabelPrintingMachineType(BaseMachineType):
 
     MACHINE_STATUS = LabelPrinterStatus
 
-    default_machine_status = LabelPrinterStatus.DISCONNECTED
+    default_machine_status = LabelPrinterStatus.UNKNOWN
 
     @property
     def location(self):

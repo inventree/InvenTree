@@ -8,7 +8,7 @@ Take a look at the most basic required code for a driver in this [example](./ove
 
 ### Label printer status
 
-There are a couple of predefined status codes for label printers. By default the Disconnected status code is set.
+There are a couple of predefined status codes for label printers. By default the `UNKNOWN` status code is set for each machine, but they can be changed at any time by the driver. For more info about status code see [Machine status codes](./overview.md#machine-status).
 
 ::: machine.machine_types.LabelPrintingMachineType.LabelPrinterStatus
     options:

@@ -34,6 +34,9 @@ class MachineStatus(StatusCode):
 
     Additionally there are helpers to access all additional attributes `text`, `label`, `color`.
 
+    Available colors:
+        primary, secondary, warning, danger, success, warning, info
+
     Status code ranges:
         ```
         1XX - Everything fine
