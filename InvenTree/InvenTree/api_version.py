@@ -8,7 +8,7 @@ INVENTREE_API_TEXT = """
 
 v166 -> 2024-02-04 : https://github.com/inventree/InvenTree/pull/6400
     - Adds package_name to plugin API
-    - Adds mechanism for installing plugins via the API
+    - Adds mechanism for uninstalling plugins via the API
 
 v165 -> 2024-01-28 : https://github.com/inventree/InvenTree/pull/6040
     - Adds supplier_part.name, part.creation_user, part.required_for_sales_order
