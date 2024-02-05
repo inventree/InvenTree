@@ -24,7 +24,7 @@ class BaseLabelPrintingDriver(BaseDriver):
         USE_BACKGROUND_WORKER (bool): If True, the `print_label()` and `print_labels()` methods will be run in a background worker (default: True)
     """
 
-    machine_type = 'label_printer'
+    machine_type = 'label-printer'
 
     USE_BACKGROUND_WORKER = True
 
@@ -237,7 +237,7 @@ class LabelPrinterStatus(MachineStatus):
 class LabelPrintingMachineType(BaseMachineType):
     """Label printer machine type, is a direct integration to print labels for various items."""
 
-    SLUG = 'label_printer'
+    SLUG = 'label-printer'
     NAME = _('Label Printer')
     DESCRIPTION = _('Directly print labels for various items.')
 
