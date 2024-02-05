@@ -11,12 +11,15 @@ import {
   Tooltip
 } from '@mantine/core';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense } from 'react';
+import { Suspense, useMemo } from 'react';
 
 import { api } from '../App';
 import { ProgressBar } from '../components/items/ProgressBar';
+import { getModelInfo } from '../components/render/ModelType';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
+import { getDetailUrl } from '../functions/urls';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
@@ -53,8 +56,7 @@ type LinkDetailField = {
 } & (InternalLinkField | ExternalLinkField);
 
 type InternalLinkField = {
-  path: ApiEndpoints;
-  dest: string;
+  model: ModelType;
 };
 
 type ExternalLinkField = {
@@ -292,9 +294,15 @@ function TableAnchorValue(props: FieldProps) {
   }
 
   const { data } = useSuspenseQuery({
-    queryKey: ['detail', props.field_data.path],
+    queryKey: ['detail', props.field_data.model, props.field_value],
     queryFn: async () => {
-      const url = apiUrl(props.field_data.path, props.field_value);
+      const modelDef = getModelInfo(props.field_data.model);
+
+      if (!modelDef.api_endpoint) {
+        return {};
+      }
+
+      const url = apiUrl(modelDef.api_endpoint, props.field_value);
 
       return api
         .get(url)
@@ -312,14 +320,16 @@ function TableAnchorValue(props: FieldProps) {
     }
   });
 
+  const detailUrl = useMemo(() => {
+    return getDetailUrl(props.field_data.model, props.field_value);
+  }, [props.field_data.model, props.field_value]);
+
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
       <Anchor
-        href={
-          '/platform' + data.url ?? props.field_data.dest + props.field_value
-        }
-        target={data.external ? '_blank' : undefined}
-        rel={data.external ? 'noreferrer noopener' : undefined}
+        href={`/platform${detailUrl}`}
+        target={data?.external ? '_blank' : undefined}
+        rel={data?.external ? 'noreferrer noopener' : undefined}
       >
         <Text>{data.name ?? 'No name defined'}</Text>
       </Anchor>
