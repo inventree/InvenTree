@@ -103,6 +103,7 @@ def content_excludes(
     # Optionally exclude SSO application information
     if not allow_sso:
         excludes.append('socialaccount.socialapp')
+        excludes.append('socialaccount.socialtoken')
 
     output = ''
 
