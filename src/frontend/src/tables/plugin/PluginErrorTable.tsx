@@ -6,7 +6,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
-import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { InvenTreeTable } from '../InvenTreeTable';
 
 export interface PluginRegistryErrorI {
   id: number;
