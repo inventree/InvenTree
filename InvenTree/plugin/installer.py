@@ -264,11 +264,16 @@ def validate_package_plugin(cfg: plugin.models.PluginConfig, user=None):
         raise ValidationError(_('Only staff users can administer plugins'))
 
 
-def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None):
+def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=True):
     """Uninstall a plugin from the python virtual environment.
 
     - The plugin must not be active
     - The plugin must be a "package" and have a valid package name
+
+    Args:
+        cfg: PluginConfig object
+        user: User performing the uninstall
+        delete_config: If True, delete the plugin configuration from the database
     """
     from plugin.registry import registry
 
@@ -294,6 +299,10 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None):
 
     except subprocess.CalledProcessError as error:
         handle_pip_error(error, 'plugin_uninstall')
+
+    if delete_config:
+        # Remove the plugin configuration from the database
+        cfg.delete()
 
     # Reload the plugin registry
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)

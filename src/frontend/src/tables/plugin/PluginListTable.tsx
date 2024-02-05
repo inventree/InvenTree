@@ -503,7 +503,9 @@ export default function PluginListTable() {
     pk: selectedPlugin,
     fetchInitialData: false,
     timeout: 30000,
-    fields: {},
+    fields: {
+      delete_config: {}
+    },
     preFormContent: (
       <Alert
         color="red"
