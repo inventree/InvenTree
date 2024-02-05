@@ -2,17 +2,6 @@
 
 from django.db import migrations
 
-def update_tree(apps, schema_editor):
-    # Update the PartCategory MPTT model
-
-    PartCategory = apps.get_model('part', 'PartCategory')
-    try:
-        print("Rebuilding PartCategory objects")
-        PartCategory.objects.rebuild()
-        print("Rebuilding PartCategory objects - done")
-    except Exception as exc:
-        print("Error rebuilding PartCategory objects", exc)
-
 
 class Migration(migrations.Migration):
 
@@ -22,6 +11,4 @@ class Migration(migrations.Migration):
         ('part', '0019_auto_20190908_0404'),
     ]
 
-    operations = [
-        migrations.RunPython(update_tree)
-    ]
+    operations = []

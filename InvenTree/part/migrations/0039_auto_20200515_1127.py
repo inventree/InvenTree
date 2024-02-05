@@ -3,18 +3,6 @@
 from django.db import migrations, models
 
 
-def update_tree(apps, schema_editor):
-    # Update the MPTT for Part model
-
-    Part = apps.get_model('part', 'Part')
-    try:
-        print("Rebuilding Part objects")
-        Part.objects.rebuild()
-        print("Rebuilding Part objects - done")
-    except Exception as exc:
-        print("Error rebuilding Part objects", exc)
-
-
 class Migration(migrations.Migration):
 
     atomic = False
@@ -48,6 +36,4 @@ class Migration(migrations.Migration):
             field=models.PositiveIntegerField(db_index=True, default=0, editable=False),
             preserve_default=False,
         ),
-
-        migrations.RunPython(update_tree, reverse_code=migrations.RunPython.noop)
     ]

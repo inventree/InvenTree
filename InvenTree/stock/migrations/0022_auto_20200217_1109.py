@@ -3,18 +3,6 @@
 from django.db import migrations
 
 
-def update_stock_item_tree(apps, schema_editor):
-    # Update the StockItem MPTT model
-
-    StockItem = apps.get_model('stock', 'StockItem')
-    try:
-        print("Rebuilding StockItem objects")
-        StockItem.objects.rebuild()
-        print("Rebuilding StockItem objects - done")
-    except Exception as exc:
-        print("Error rebuilding StockItem objects", exc)
-
-
 class Migration(migrations.Migration):
 
     atomic = False
@@ -23,6 +11,4 @@ class Migration(migrations.Migration):
         ('stock', '0021_auto_20200215_2232'),
     ]
 
-    operations = [
-        migrations.RunPython(update_stock_item_tree)
-    ]
+    operations = []

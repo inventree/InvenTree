@@ -5,19 +5,6 @@ import django.db.models.deletion
 import mptt.fields
 
 
-def update_tree(apps, schema_editor):
-    # Update the Build MPTT model
-
-    Build = apps.get_model('build', 'Build')
-
-    try:
-        print("Rebuilding Build objects")
-        Build.objects.rebuild()
-        print("Rebuilding Build objects - done")
-    except Exception as exc:
-        print("Error rebuilding Build objects", exc)
-
-
 class Migration(migrations.Migration):
 
     atomic = False
@@ -56,5 +43,4 @@ class Migration(migrations.Migration):
             field=models.PositiveIntegerField(db_index=True, default=0, editable=False),
             preserve_default=False,
         ),
-        migrations.RunPython(update_tree, reverse_code=migrations.RunPython.noop),
     ]

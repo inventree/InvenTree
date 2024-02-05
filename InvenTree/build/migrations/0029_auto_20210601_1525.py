@@ -57,6 +57,4 @@ class Migration(migrations.Migration):
         ('build', '0028_builditem_bom_item'),
     ]
 
-    operations = [
-        migrations.RunPython(assign_bom_items, reverse_code=migrations.RunPython.noop),
-    ]
+    operations = []
