@@ -106,7 +106,7 @@ class MetaBase:
             import plugin.models
 
             cfg, _ = plugin.models.PluginConfig.objects.get_or_create(
-                key=self.plugin_slug(), name=self.plugin_name()
+                key=self.plugin_slug()
             )
         except (OperationalError, ProgrammingError):
             cfg = None
