@@ -57,7 +57,8 @@ class PurchaseOrderTests(OrderViewTestCase):
     def test_po_export(self):
         """Export PurchaseOrder."""
         response = self.client.get(
-            reverse('po-export', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+            reverse('po-export', args=(1,)),
+            headers={'x-requested-with': 'XMLHttpRequest'},
         )
 
         # Response should be streaming-content (file download)

@@ -2,12 +2,17 @@
 
 from django.db import migrations, models
 
-from part.models import Part
-
 
 def update_tree(apps, schema_editor):
     # Update the MPTT for Part model
-    Part.objects.rebuild()
+
+    Part = apps.get_model('part', 'Part')
+    try:
+        print("Rebuilding Part objects")
+        Part.objects.rebuild()
+        print("Rebuilding Part objects - done")
+    except Exception as exc:
+        print("Error rebuilding Part objects", exc)
 
 
 class Migration(migrations.Migration):

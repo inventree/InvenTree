@@ -85,6 +85,7 @@ class LocationInline(admin.TabularInline):
     model = StockLocation
 
 
+@admin.register(StockLocation)
 class LocationAdmin(ImportExportModelAdmin):
     """Admin class for Location."""
 
@@ -99,6 +100,7 @@ class LocationAdmin(ImportExportModelAdmin):
     autocomplete_fields = ['parent']
 
 
+@admin.register(StockLocationType)
 class LocationTypeAdmin(admin.ModelAdmin):
     """Admin class for StockLocationType."""
 
@@ -268,6 +270,7 @@ class StockItemResource(InvenTreeResource):
         StockItem.objects.rebuild()
 
 
+@admin.register(StockItem)
 class StockItemAdmin(ImportExportModelAdmin):
     """Admin class for StockItem."""
 
@@ -292,6 +295,7 @@ class StockItemAdmin(ImportExportModelAdmin):
     ]
 
 
+@admin.register(StockItemAttachment)
 class StockAttachmentAdmin(admin.ModelAdmin):
     """Admin class for StockAttachment."""
 
@@ -300,6 +304,7 @@ class StockAttachmentAdmin(admin.ModelAdmin):
     autocomplete_fields = ['stock_item']
 
 
+@admin.register(StockItemTracking)
 class StockTrackingAdmin(ImportExportModelAdmin):
     """Admin class for StockTracking."""
 
@@ -308,17 +313,10 @@ class StockTrackingAdmin(ImportExportModelAdmin):
     autocomplete_fields = ['item']
 
 
+@admin.register(StockItemTestResult)
 class StockItemTestResultAdmin(admin.ModelAdmin):
     """Admin class for StockItemTestResult."""
 
     list_display = ('stock_item', 'test', 'result', 'value')
 
     autocomplete_fields = ['stock_item']
-
-
-admin.site.register(StockLocation, LocationAdmin)
-admin.site.register(StockLocationType, LocationTypeAdmin)
-admin.site.register(StockItem, StockItemAdmin)
-admin.site.register(StockItemTracking, StockTrackingAdmin)
-admin.site.register(StockItemAttachment, StockAttachmentAdmin)
-admin.site.register(StockItemTestResult, StockItemTestResultAdmin)

@@ -2,13 +2,17 @@
 
 from django.db import migrations
 
-from stock import models
-
 
 def update_tree(apps, schema_editor):
     # Update the StockLocation MPTT model
 
-    models.StockLocation.objects.rebuild()
+    StockLocation = apps.get_model('stock', 'StockLocation')
+    try:
+        print("Rebuilding StockLocation objects")
+        StockLocation.objects.rebuild()
+        print("Rebuilding StockLocation objects - done")
+    except Exception as exc:
+        print("Error rebuilding StockLocation objects", exc)
 
 
 class Migration(migrations.Migration):
