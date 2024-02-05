@@ -4,7 +4,12 @@ import logging
 
 from django.apps import AppConfig
 
-from InvenTree.ready import canAppAccessDatabase, isInMainThread, isPluginRegistryLoaded
+from InvenTree.ready import (
+    canAppAccessDatabase,
+    isInMainThread,
+    isPluginRegistryLoaded,
+    isRunningMigrations,
+)
 
 logger = logging.getLogger('inventree')
 
@@ -20,6 +25,7 @@ class MachineConfig(AppConfig):
             not canAppAccessDatabase(allow_test=True)
             or not isPluginRegistryLoaded()
             or not isInMainThread()
+            or isRunningMigrations()
         ):
             logger.debug('Machine app: Skipping machine loading sequence')
             return
