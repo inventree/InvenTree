@@ -451,12 +451,10 @@ class UserCreateSerializer(ExendedUserSerializer):
         # Make sure the user cannot login until they have set a password
         instance.set_unusable_password()
 
-        message = _(
-            'Your account has been created.\n\nPlease use the password reset function to login'
-        )
+        message = _('Your account has been created.') + '\n\n' + _('Please use the password reset function to login')
 
         if base_url:
-            message += f'\nURL: {base_url}'
+            message += f'\n\nURL: {base_url}'
 
         # Send the user an onboarding email (from current site)
         instance.email_user(subject=_('Welcome to InvenTree'), message=message)
