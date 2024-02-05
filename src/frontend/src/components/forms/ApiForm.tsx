@@ -297,7 +297,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
       method: method,
       url: url,
       data: data,
-      timeout: props.timeout ?? 2000,
+      timeout: props.timeout,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
       }
