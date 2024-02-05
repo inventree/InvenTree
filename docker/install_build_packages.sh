@@ -6,6 +6,6 @@
 apk add gcc g++ musl-dev openssl-dev libffi-dev cargo python3-dev openldap-dev \
     jpeg-dev openjpeg-dev libwebp-dev zlib-dev \
     sqlite sqlite-dev \
-    mariadb-connector-c-dev mariadb-client maridb-dev \
+    mariadb-connector-c-dev mariadb-client mariadb-dev \
     postgresql13-dev postgresql-libs postgresql13-client \
     $@
