@@ -35,7 +35,7 @@ import stock.models
 import users.models
 from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
-from users.admin import CustomUser
+from users.CustomUser import CustomUser
 
 from .models import (
     BomItem,

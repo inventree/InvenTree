@@ -20,7 +20,7 @@ import build.admin
 import build.serializers
 from build.models import Build, BuildLine, BuildItem, BuildOrderAttachment
 import part.models
-from users.admin import CustomUser
+from users.CustomUser import CustomUser
 from users.models import Owner
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
 

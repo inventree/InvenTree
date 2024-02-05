@@ -3,14 +3,12 @@
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
+from users.CustomUser import CustomUser
 from users.models import ApiToken, Owner, RuleSet
-
-CustomUser = get_user_model()
 
 
 class ApiTokenAdmin(admin.ModelAdmin):

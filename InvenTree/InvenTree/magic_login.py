@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import InvenTree.version
-from users.admin import CustomUser
+from users.CustomUser import CustomUser
 
 
 def send_simple_login_email(user, link):

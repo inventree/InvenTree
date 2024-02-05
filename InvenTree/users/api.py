@@ -24,7 +24,7 @@ from InvenTree.mixins import (
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from InvenTree.settings import FRONTEND_URL_BASE
-from users.admin import CustomUser
+from users.CustomUser import CustomUser
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 

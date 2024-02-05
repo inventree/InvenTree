@@ -25,7 +25,7 @@ import common.models as common_models
 import InvenTree.helpers
 import InvenTree.models
 from InvenTree.ready import canAppAccessDatabase, isImportingData
-from users.admin import CustomUser
+from users.CustomUser import CustomUser
 
 logger = logging.getLogger('inventree')
 
