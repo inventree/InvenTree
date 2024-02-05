@@ -2850,9 +2850,28 @@ class NotificationMessage(models.Model):
 
     def age(self):
         """Age of the message in seconds."""
-        current = datetime.now(tz=timezone.utc) if settings.TESTING else now()
-        delta = current - self.creation
-        return delta.seconds
+
+        def is_aware(d):
+            return d.tzinfo is not None and d.tzinfo.utcoffset(d) is not None
+
+        def is_naive(d):
+            return d.tzinfo is None or d.tzinfo.utcoffset(d) is None
+
+        current = (
+            datetime.utcnow().replace(tzinfo=timezone.utc)
+            if settings.TESTING
+            else now()
+        )
+        try:
+            delta = current - self.creation
+            return delta.seconds
+        except TypeError as _e:
+            print(self)
+            print(f'current is {is_aware(current)} aware, {is_naive(current)} naive')
+            print(
+                f'creation is {is_aware(self.creation)} aware, {is_naive(self.creation)} naive'
+            )
+            raise _e
 
     def age_human(self):
         """Humanized age."""
