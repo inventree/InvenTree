@@ -2,7 +2,6 @@
 
 import logging
 import os
-import re
 from datetime import datetime
 from io import BytesIO
 
@@ -449,7 +448,7 @@ class ReferenceIndexingMixin(models.Model):
         except Exception:
             pass
 
-        reference_int = extract_int(reference)
+        reference_int = InvenTree.helpers.extract_int(reference)
 
         if validate:
             if reference_int > models.BigIntegerField.MAX_BIGINT:
@@ -458,51 +457,6 @@ class ReferenceIndexingMixin(models.Model):
         return reference_int
 
     reference_int = models.BigIntegerField(default=0)
-
-
-def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
-    """Extract an integer out of reference."""
-    # Default value if we cannot convert to an integer
-    ref_int = 0
-
-    reference = str(reference).strip()
-
-    # Ignore empty string
-    if len(reference) == 0:
-        return 0
-
-    # Look at the start of the string - can it be "integerized"?
-    result = re.match(r'^(\d+)', reference)
-
-    if result and len(result.groups()) == 1:
-        ref = result.groups()[0]
-        try:
-            ref_int = int(ref)
-        except Exception:
-            ref_int = 0
-    else:
-        # Look at the "end" of the string
-        result = re.search(r'(\d+)$', reference)
-
-        if result and len(result.groups()) == 1:
-            ref = result.groups()[0]
-            try:
-                ref_int = int(ref)
-            except Exception:
-                ref_int = 0
-
-    # Ensure that the returned values are within the range that can be stored in an IntegerField
-    # Note: This will result in large values being "clipped"
-    if clip is not None:
-        if ref_int > clip:
-            ref_int = clip
-        elif ref_int < -clip:
-            ref_int = -clip
-
-    if not allow_negative and ref_int < 0:
-        ref_int = abs(ref_int)
-
-    return ref_int
 
 
 class InvenTreeModelBase(PluginValidationMixin, models.Model):

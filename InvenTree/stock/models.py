@@ -445,7 +445,7 @@ class StockItem(
         serial_int = 0
 
         if serial not in [None, '']:
-            serial_int = extract_int(serial)
+            serial_int = InvenTree.helpers.extract_int(serial)
 
         self.serial_int = serial_int
 
