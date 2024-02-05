@@ -49,7 +49,28 @@ class CustomValidationMixin(SettingsMixin, ValidationMixin, InvenTreePlugin):
             'description': 'Required prefix for batch code',
             'default': 'B',
         },
+        'BOM_ITEM_INTEGER': {
+            'name': 'Integer Bom Quantity',
+            'description': 'Bom item quantity must be an integer',
+            'default': False,
+            'validator': bool,
+        },
     }
+
+    def validate_model_instance(self, instance):
+        """Run validation against any saved model.
+
+        - Check if the instance is a BomItem object
+        - Test if the quantity is an integer
+        """
+        import part.models
+
+        if isinstance(instance, part.models.BomItem):
+            if self.get_setting('BOM_ITEM_INTEGER'):
+                if float(instance.quantity) != int(instance.quantity):
+                    raise ValidationError({
+                        'quantity': 'Bom item quantity must be an integer'
+                    })
 
     def validate_part_name(self, name: str, part):
         """Custom validation for Part name field.
