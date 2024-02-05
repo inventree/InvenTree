@@ -220,13 +220,6 @@ class PluginUninstallSerializer(serializers.Serializer):
         help_text=_('Delete the plugin configuration from the database'),
     )
 
-    delete_tables = serializers.BooleanField(
-        required=False,
-        default=False,
-        label=_('Delete tables'),
-        help_text=_('Delete any database tables associated with the plugin'),
-    )
-
     def update(self, instance, validated_data):
         """Uninstall the specified plugin."""
         from plugin.installer import uninstall_plugin
@@ -235,7 +228,6 @@ class PluginUninstallSerializer(serializers.Serializer):
             instance,
             user=self.context['request'].user,
             delete_config=validated_data.get('delete_config', True),
-            delete_tables=validated_data.get('delete_tables', False),
         )
 
 

@@ -264,9 +264,7 @@ def validate_package_plugin(cfg: plugin.models.PluginConfig, user=None):
         raise ValidationError(_('Only staff users can administer plugins'))
 
 
-def uninstall_plugin(
-    cfg: plugin.models.PluginConfig, user=None, delete_config=True, delete_tables=False
-):
+def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=True):
     """Uninstall a plugin from the python virtual environment.
 
     - The plugin must not be active
@@ -276,7 +274,6 @@ def uninstall_plugin(
         cfg: PluginConfig object
         user: User performing the uninstall
         delete_config: If True, delete the plugin configuration from the database
-        delete_tables: If True, delete any database tables associated with the plugin
     """
     from plugin.registry import registry
 
@@ -288,10 +285,6 @@ def uninstall_plugin(
     validate_package_plugin(cfg, user)
     package_name = cfg.package_name
     logger.info('Uninstalling plugin: %s', package_name)
-
-    if delete_tables:
-        # TODO: Remove any database tables associated with this plugin
-        raise ValidationError(_('Database table deletion not yet implemented'))
 
     cmd = ['uninstall', '-y', package_name]
 
