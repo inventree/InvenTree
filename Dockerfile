@@ -60,13 +60,7 @@ RUN apk add --no-cache \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
-    # SQLite support
-    sqlite \
-    # PostgreSQL support
-    postgresql-libs postgresql-client \
-    # MySQL / MariaDB support
-    mariadb-connector-c-dev mariadb-client && \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
 

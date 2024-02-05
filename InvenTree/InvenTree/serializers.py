@@ -7,7 +7,6 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -26,7 +25,7 @@ from taggit.serializers import TaggitSerializer
 import common.models as common_models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
-from InvenTree.helpers_model import download_image_from_url
+from InvenTree.helpers_model import download_image_from_url, get_base_url
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -445,19 +444,25 @@ class UserCreateSerializer(ExendedUserSerializer):
 
     def create(self, validated_data):
         """Send an e email to the user after creation."""
+        base_url = get_base_url()
+
         instance = super().create(validated_data)
 
         # Make sure the user cannot login until they have set a password
         instance.set_unusable_password()
-        # Send the user an onboarding email (from current site)
-        current_site = Site.objects.get_current()
-        domain = current_site.domain
-        instance.email_user(
-            subject=_(f'Welcome to {current_site.name}'),
-            message=_(
-                f'Your account has been created.\n\nPlease use the password reset function to get access (at https://{domain}).'
-            ),
+
+        message = (
+            _('Your account has been created.')
+            + '\n\n'
+            + _('Please use the password reset function to login')
         )
+
+        if base_url:
+            message += f'\n\nURL: {base_url}'
+
+        # Send the user an onboarding email (from current site)
+        instance.email_user(subject=_('Welcome to InvenTree'), message=message)
+
         return instance
 
 

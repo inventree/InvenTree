@@ -133,7 +133,7 @@ class InvenTreeCoreNotificationsPlugin(
 
         def send_bulk(self):
             """Send the notifications out via slack."""
-            instance = registry.plugins.get(self.get_plugin().NAME.lower())
+            instance = registry.get_plugin(self.get_plugin().NAME.lower())
             url = instance.get_setting('NOTIFICATION_SLACK_URL')
 
             if not url:

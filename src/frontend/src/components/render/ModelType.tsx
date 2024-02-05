@@ -3,7 +3,7 @@ import { t } from '@lingui/macro';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 
-interface ModelInformationInterface {
+export interface ModelInformationInterface {
   label: string;
   label_multiple: string;
   url_overview?: string;
@@ -12,11 +12,11 @@ interface ModelInformationInterface {
   cui_detail?: string;
 }
 
-type ModelDictory = {
+export type ModelDict = {
   [key in keyof typeof ModelType]: ModelInformationInterface;
 };
 
-export const ModelInformationDict: ModelDictory = {
+export const ModelInformationDict: ModelDict = {
   part: {
     label: t`Part`,
     label_multiple: t`Parts`,
@@ -165,3 +165,12 @@ export const ModelInformationDict: ModelDictory = {
     api_endpoint: ApiEndpoints.user_list
   }
 };
+
+/*
+ * Extract model definition given the provided type
+ * @param type - ModelType to extract information from
+ * @returns ModelInformationInterface
+ */
+export function getModelInfo(type: ModelType): ModelInformationInterface {
+  return ModelInformationDict[type];
+}

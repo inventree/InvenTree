@@ -90,8 +90,8 @@ language: en-us
 timezone: UTC
 
 # Base URL for the InvenTree server
-# Use the environment variable INVENTREE_BASE_URL
-# base_url: 'http://localhost:8000'
+# Use the environment variable INVENTREE_SITE_URL
+# site_url: 'http://localhost:8000'
 
 # Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD

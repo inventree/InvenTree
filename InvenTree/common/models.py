@@ -24,7 +24,6 @@ from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
@@ -100,6 +99,10 @@ class BaseURLValidator(URLValidator):
     def __call__(self, value):
         """Make sure empty values pass."""
         value = str(value).strip()
+
+        # If a configuration level value has been specified, prevent change
+        if settings.SITE_URL:
+            raise ValidationError(_('Site URL is locked by configuration'))
 
         if len(value) == 0:
             pass
@@ -647,7 +650,7 @@ class BaseInvenTreeSetting(models.Model):
         return value
 
     @classmethod
-    def set_setting(cls, key, value, change_user, create=True, **kwargs):
+    def set_setting(cls, key, value, change_user=None, create=True, **kwargs):
         """Set the value of a particular setting. If it does not exist, option to create it.
 
         Args:
@@ -1065,6 +1068,15 @@ def settings_group_options():
 
 def update_instance_url(setting):
     """Update the first site objects domain to url."""
+    if not settings.SITE_MULTI:
+        return
+
+    try:
+        from django.contrib.sites.models import Site
+    except (ImportError, RuntimeError):
+        # Multi-site support not enabled
+        return
+
     site_obj = Site.objects.all().order_by('id').first()
     site_obj.domain = setting.value
     site_obj.save()
@@ -1072,6 +1084,15 @@ def update_instance_url(setting):
 
 def update_instance_name(setting):
     """Update the first site objects name to instance name."""
+    if not settings.SITE_MULTI:
+        return
+
+    try:
+        from django.contrib.sites.models import Site
+    except (ImportError, RuntimeError):
+        # Multi-site support not enabled
+        return
+
     site_obj = Site.objects.all().order_by('id').first()
     site_obj.name = setting.value
     site_obj.save()
