@@ -61,7 +61,7 @@ class MachineAPITest(InvenTreeAPITestCase):
                 'provider_plugin': None,
                 'is_builtin': True,
                 'machine_type': 'label-printer',
-                'errors': [],
+                'driver_errors': [],
             },
             response.data[0],
         )
