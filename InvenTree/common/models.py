@@ -111,7 +111,7 @@ class BaseURLValidator(URLValidator):
             super().__call__(value)
 
 
-class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+class ProjectCode(InvenTree.models.InvenTreeModelBase):
     """A ProjectCode is a unique identifier for a project."""
 
     @staticmethod
