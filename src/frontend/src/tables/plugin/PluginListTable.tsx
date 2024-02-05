@@ -38,6 +38,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { openEditApiForm } from '../../functions/forms';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -460,6 +461,19 @@ export default function PluginListTable() {
         });
       }
 
+      // Uninstalled 'package' plugins can be deleted
+      if (!record.is_installed) {
+        actions.push({
+          title: t`Delete`,
+          color: 'red',
+          icon: <IconCircleX />,
+          onClick: () => {
+            setSelectedPlugin(record.pk);
+            deletePluginModal.open();
+          }
+        });
+      }
+
       return actions;
     },
     [user, pluginsEnabled]
@@ -530,6 +544,14 @@ export default function PluginListTable() {
     }
   });
 
+  const deletePluginModal = useDeleteApiFormModal({
+    url: ApiEndpoints.plugin_list,
+    pk: selectedPlugin,
+    title: t`Delete Plugin`,
+    onFormSuccess: table.refreshTable,
+    preFormWarning: t`Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?`
+  });
+
   const reloadPlugins = useCallback(() => {
     api
       .post(apiUrl(ApiEndpoints.plugin_reload), {
@@ -581,6 +603,7 @@ export default function PluginListTable() {
     <>
       {installPluginModal.modal}
       {uninstallPluginModal.modal}
+      {deletePluginModal.modal}
       <DetailDrawer
         title={t`Plugin detail`}
         size={'xl'}

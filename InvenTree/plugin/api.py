@@ -1,6 +1,8 @@
 """API for the plugin app."""
 
+from django.core.exceptions import ValidationError
 from django.urls import include, path, re_path
+from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,7 +16,6 @@ import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
 from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
-from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
@@ -154,6 +155,20 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
+
+    def delete(self, request, *args, **kwargs):
+        """Handle DELETE request for a PluginConfig instance.
+
+        We only allow plugin deletion if the plugin is not active.
+        """
+        cfg = self.get_object()
+
+        if cfg.active:
+            raise ValidationError({
+                'detail': _('Plugin cannot be deleted as it is currently active')
+            })
+
+        return super().delete(request, *args, **kwargs)
 
 
 class PluginInstall(CreateAPI):
