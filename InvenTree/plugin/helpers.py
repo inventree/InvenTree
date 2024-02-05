@@ -234,7 +234,7 @@ def get_plugin_config(slug: str, name: [str, None] = None):
         return None
 
     try:
-        cfg = PluginConfig.objects.get_or_create(key=slug)
+        cfg, _created = PluginConfig.objects.get_or_create(key=slug)
     except PluginConfig.DoesNotExist:
         return None
     except (IntegrityError, OperationalError, ProgrammingError):  # pragma: no cover
