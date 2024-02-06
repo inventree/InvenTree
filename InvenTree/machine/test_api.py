@@ -243,12 +243,15 @@ class MachineAPITest(InvenTreeAPITestCase):
             active=True,
         )
 
+        # verify machine status before restart
         response = self.get(reverse('api-machine-detail', kwargs={'pk': machine.pk}))
         self.assertEqual(response.data['status_text'], '')
 
+        # restart the machine
         response = self.post(
             reverse('api-machine-restart', kwargs={'pk': machine.pk}), expected_code=200
         )
 
+        # verify machine status after restart
         response = self.get(reverse('api-machine-detail', kwargs={'pk': machine.pk}))
         self.assertEqual(response.data['status_text'], 'Restarting...')
