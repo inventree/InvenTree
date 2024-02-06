@@ -27,17 +27,11 @@ class LocatePluginView(GenericAPIView):
     """Endpoint for using a custom plugin to identify or 'locate' a stock item or location."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = LocatePluginSerializer
 
-    @extend_schema(
-        responses={
-            200: OpenApiResponse(
-                response=LocatePluginSerializer(),
-                description='You need to either supply an item or a location to identify.',
-            )
-        }
-    )
     def post(self, request, *args, **kwargs):
-        """Check inputs and offload the task to the plugin."""
+        """Identify or 'locate' a stock item or location with a plugin."""
+        # Check inputs and offload the task to the plugin
         # Which plugin to we wish to use?
         plugin = request.data.get('plugin', None)
 
