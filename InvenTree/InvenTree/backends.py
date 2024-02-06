@@ -1,6 +1,7 @@
 """Custom backend implementations."""
 
 import logging
+import time
 
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
@@ -29,7 +30,7 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
         """
         value = InvenTree.helpers.str2bool(
             common.models.InvenTreeSetting.get_setting(
-                self.SETTING_KEY, False, create=False, cache=False
+                self.SETTING_KEY, backup_value=False, create=False, cache=False
             )
         )
 
@@ -37,11 +38,22 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
 
         return value
 
-    def set_value(self, value: bool):
+    def set_value(self, value: bool, retries: int = 5):
         """Set the state of the maintenance mode."""
         logger.debug('Setting maintenance mode state: {state}'.format(state=value))
 
-        try:
-            common.models.InvenTreeSetting.set_setting(self.SETTING_KEY, value)
-        except (IntegrityError, OperationalError, ProgrammingError):
-            logger.warning('Failed to set maintenance mode state in database')
+        while retries > 0:
+            try:
+                common.models.InvenTreeSetting.set_setting(self.SETTING_KEY, value)
+
+                # Read the value back to confirm
+                if self.get_value() == value:
+                    break
+            except (IntegrityError, OperationalError, ProgrammingError):
+                logger.warning(
+                    'Failed to set maintenance mode state in database (%s retries left)',
+                    retries,
+                )
+                time.sleep(0.1)
+
+            retries -= 1
