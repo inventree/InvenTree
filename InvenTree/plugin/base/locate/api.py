@@ -1,6 +1,7 @@
 """API for location plugins."""
 
-from rest_framework import permissions
+from drf_spectacular.utils import OpenApiResponse, extend_schema
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotFound, ParseError
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -10,11 +11,31 @@ from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
 
+class LocatePluginSerializer(serializers.Serializer):
+    """Serializer for the LocatePluginView API endpoint."""
+
+    plugin = serializers.CharField(
+        help_text='Plugin to use for location identification'
+    )
+    item = serializers.IntegerField(required=False, help_text='StockItem to identify')
+    location = serializers.IntegerField(
+        required=False, help_text='StockLocation to identify'
+    )
+
+
 class LocatePluginView(GenericAPIView):
     """Endpoint for using a custom plugin to identify or 'locate' a stock item or location."""
 
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=LocatePluginSerializer(),
+                description='You need to either supply an item or a location to identify.',
+            )
+        }
+    )
     def post(self, request, *args, **kwargs):
         """Check inputs and offload the task to the plugin."""
         # Which plugin to we wish to use?
