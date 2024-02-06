@@ -324,7 +324,7 @@ def generate_batch_code():
         'year': now.year,
         'month': now.month,
         'day': now.day,
-        'hour': now.minute,
+        'hour': now.hour,
         'minute': now.minute,
         'week': now.isocalendar()[1],
     }
