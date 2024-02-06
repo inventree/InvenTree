@@ -123,7 +123,7 @@ def install_plugins_file():
     return True
 
 
-def add_plugin_to_file(install_name):
+def update_plugins_file(install_name, remove=False):
     """Add a plugin to the plugins file."""
     logger.info('Adding plugin to plugins file: %s', install_name)
 
@@ -133,6 +133,10 @@ def add_plugin_to_file(install_name):
         logger.warning('Plugin file %s does not exist', str(pf))
         return
 
+    def compare_line(line: str):
+        """Check if a line in the file matches the installname."""
+        return line.strip().split('==')[0] == install_name.split('==')[0]
+
     # First, read in existing plugin file
     try:
         with pf.open(mode='r') as f:
@@ -141,23 +145,34 @@ def add_plugin_to_file(install_name):
         logger.exception('Failed to read plugins file: %s', str(exc))
         return
 
+    # Reconstruct output file
+    output = []
+
+    found = False
+
     # Check if plugin is already in file
     for line in lines:
         # Ignore processing for any commented lines
         if line.strip().startswith('#'):
+            output.append(line)
             continue
 
-        if line.strip() == install_name:
-            logger.debug('Plugin already exists in file')
-            return
+        if compare_line(line):
+            found = True
+            if not remove:
+                # Replace line with new install name
+                output.append(install_name)
+        else:
+            output.append(line)
 
     # Append plugin to file
-    lines.append(f'{install_name}')
+    if not found and not remove:
+        output.append(install_name)
 
     # Write file back to disk
     try:
         with pf.open(mode='w') as f:
-            for line in lines:
+            for line in output:
                 f.write(line)
 
                 if not line.endswith('\n'):
@@ -239,7 +254,7 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
         handle_pip_error(error, 'plugin_install')
 
     # Save plugin to plugins file
-    add_plugin_to_file(full_pkg)
+    update_plugins_file(full_pkg)
 
     # Reload the plugin registry, to discover the new plugin
     from plugin.registry import registry
@@ -299,6 +314,9 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
 
     except subprocess.CalledProcessError as error:
         handle_pip_error(error, 'plugin_uninstall')
+
+    # Update the plugins file
+    update_plugins_file(package_name, remove=True)
 
     if delete_config:
         # Remove the plugin configuration from the database
