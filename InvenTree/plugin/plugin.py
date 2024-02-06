@@ -337,6 +337,30 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
         """Path to the plugin."""
         return self.check_package_path()
 
+    @classmethod
+    def check_package_install_name(cls) -> [str, None]:
+        """Installable package name of the plugin.
+
+        e.g. if this plugin was installed via 'pip install <x>',
+        then this function should return '<x>'
+
+        Returns:
+            str: Install name of the package, else None
+        """
+        return getattr(cls, 'package_name', None)
+
+    @property
+    def package_install_name(self) -> [str, None]:
+        """Installable package name of the plugin.
+
+        e.g. if this plugin was installed via 'pip install <x>',
+        then this function should return '<x>'
+
+        Returns:
+            str: Install name of the package, else None
+        """
+        return self.check_package_install_name()
+
     @property
     def settings_url(self):
         """URL to the settings panel for this plugin."""
