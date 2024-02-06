@@ -439,8 +439,8 @@ class PluginsRegistry:
                 raw_module = importlib.import_module(plugin)
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
 
-            if modules:
-                [collected_plugins.append(item) for item in modules]
+            for item in modules or []:
+                collected_plugins.append(item)
 
         # From this point any plugins are considered "external" and only loaded if plugins are explicitly enabled
         if settings.PLUGINS_ENABLED:
