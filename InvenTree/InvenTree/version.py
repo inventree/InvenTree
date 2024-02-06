@@ -19,7 +19,7 @@ from dulwich.repo import NotGitRepository, Repo
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.13.5"
+INVENTREE_SW_VERSION = "0.13.6"
 
 # Discover git
 try:
