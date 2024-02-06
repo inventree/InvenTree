@@ -9,7 +9,7 @@ from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
 from dj_rest_auth.views import LogoutView
-from drf_spectacular.utils import OpenApiResponse, extend_schema
+from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -204,12 +204,14 @@ class GroupList(ListCreateAPI):
     ordering_fields = ['name']
 
 
+@extend_schema_view(
+    post=extend_schema(
+        responses={200: OpenApiResponse(description='User successfully logged out')}
+    )
+)
 class Logout(LogoutView):
     """API view for logging out via API."""
 
-    @extend_schema(
-        responses={200: OpenApiResponse(description='User successfully logged out')}
-    )
     def post(self, request):
         """Logout the current user.
 

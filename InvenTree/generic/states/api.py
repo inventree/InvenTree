@@ -2,12 +2,19 @@
 
 import inspect
 
-from rest_framework import permissions
+from drf_spectacular.utils import OpenApiResponse, extend_schema
+from rest_framework import permissions, serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 
 from .states import StatusCode
+
+
+class StatusViewSerializer(serializers.Serializer):
+    """Serializer for the StatusView responses."""
+
+    class_name = serializers.CharField()
+    values = serializers.DictField()
 
 
 class StatusView(GenericAPIView):
@@ -28,12 +35,19 @@ class StatusView(GenericAPIView):
         status_model = self.kwargs.get(self.MODEL_REF, None)
 
         if status_model is None:
-            raise ValidationError(
+            raise serializers.ValidationError(
                 f"StatusView view called without '{self.MODEL_REF}' parameter"
             )
 
         return status_model
 
+    @extend_schema(
+        description='Retrieve information about a specific status code',
+        responses={
+            200: OpenApiResponse(description='Status code information'),
+            400: OpenApiResponse(description='Invalid request'),
+        },
+    )
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
         status_class = self.get_status_model()

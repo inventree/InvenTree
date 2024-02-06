@@ -28,11 +28,41 @@ from .version import inventreeApiText
 from .views import AjaxView
 
 
+class VersionViewSerializer(serializers.Serializer):
+    """Serializer for a single version."""
+
+    class VersionSerializer(serializers.Serializer):
+        """Serializer for server version."""
+
+        server = serializers.CharField()
+        api = serializers.IntegerField()
+        commit_hash = serializers.CharField()
+        commit_date = serializers.CharField()
+        commit_branch = serializers.CharField()
+        python = serializers.CharField()
+        django = serializers.CharField()
+
+    class LinkSerializer(serializers.Serializer):
+        """Serializer for all possible links."""
+
+        doc = serializers.URLField()
+        code = serializers.URLField()
+        credit = serializers.URLField()
+        app = serializers.URLField()
+        bug = serializers.URLField()
+
+    dev = serializers.BooleanField()
+    up_to_date = serializers.BooleanField()
+    version = VersionSerializer()
+    links = LinkSerializer()
+
+
 class VersionView(APIView):
     """Simple JSON endpoint for InvenTree version information."""
 
     permission_classes = [permissions.IsAdminUser]
 
+    @extend_schema(responses={200: OpenApiResponse(response=VersionViewSerializer)})
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
         return JsonResponse({
