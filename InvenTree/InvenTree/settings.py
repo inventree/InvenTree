@@ -445,9 +445,9 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'users.authentication.ApiTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'users.authentication.ApiTokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -591,11 +591,6 @@ db_options = db_config.get('OPTIONS', db_config.get('options', {}))
 
 # Specific options for postgres backend
 if 'postgres' in db_engine:  # pragma: no cover
-    from psycopg2.extensions import (
-        ISOLATION_LEVEL_READ_COMMITTED,
-        ISOLATION_LEVEL_SERIALIZABLE,
-    )
-
     # Connection timeout
     if 'connect_timeout' not in db_options:
         # The DB server is in the same data center, it should not take very
@@ -659,11 +654,7 @@ if 'postgres' in db_engine:  # pragma: no cover
         serializable = get_boolean_setting(
             'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
         )
-        db_options['isolation_level'] = (
-            ISOLATION_LEVEL_SERIALIZABLE
-            if serializable
-            else ISOLATION_LEVEL_READ_COMMITTED
-        )
+        db_options['isolation_level'] = 4 if serializable else 2
 
 # Specific options for MySql / MariaDB backend
 elif 'mysql' in db_engine:  # pragma: no cover
@@ -963,7 +954,6 @@ TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
 USE_I18N = True
 
-USE_L10N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
@@ -978,12 +968,29 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-SITE_ID = 1
+# Site URL can be specified statically, or via a run-time setting
+SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
+
+if SITE_URL:
+    logger.info('Using Site URL: %s', SITE_URL)
+
+    # Check that the site URL is valid
+    validator = URLValidator()
+    validator(SITE_URL)
+
+# Enable or disable multi-site framework
+SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
+
+# If a SITE_ID is specified
+SITE_ID = get_setting('INVENTREE_SITE_ID', 'site_id', 1 if SITE_MULTI else None)
 
 # Load the allauth social backends
 SOCIAL_BACKENDS = get_setting(
     'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
 )
+
+if not SITE_MULTI:
+    INSTALLED_APPS.remove('django.contrib.sites')
 
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
@@ -1096,16 +1103,6 @@ PLUGIN_RETRY = get_setting(
 )  # How often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 
-# Site URL can be specified statically, or via a run-time setting
-SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
-
-if SITE_URL:
-    logger.info('Site URL: %s', SITE_URL)
-
-    # Check that the site URL is valid
-    validator = URLValidator()
-    validator(SITE_URL)
-
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
     'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True
@@ -1148,5 +1145,4 @@ if CUSTOM_FLAGS:
 
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
-# LOGIN_REDIRECT_URL = f"/{FRONTEND_URL_BASE}/logged-in/"
-LOGIN_REDIRECT_URL = '/index/'
+LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'

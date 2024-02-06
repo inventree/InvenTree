@@ -12,10 +12,10 @@ import { useMemo } from 'react';
 import { api } from '../App';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/nav/PanelGroup';
-import { NotificationTable } from '../components/tables/notifications/NotificationsTable';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useTable } from '../hooks/UseTable';
 import { apiUrl } from '../states/ApiState';
+import { NotificationTable } from '../tables/notifications/NotificationsTable';
 
 export default function NotificationsPage() {
   const unreadTable = useTable('unreadnotifications');
@@ -37,7 +37,7 @@ export default function NotificationsPage() {
                 color: 'green',
                 icon: <IconCircleCheck />,
                 onClick: () => {
-                  let url = apiUrl(ApiPaths.notifications_list, record.pk);
+                  let url = apiUrl(ApiEndpoints.notifications_list, record.pk);
                   api
                     .patch(url, {
                       read: true
@@ -64,7 +64,7 @@ export default function NotificationsPage() {
                 title: t`Mark as unread`,
                 icon: <IconCircleX />,
                 onClick: () => {
-                  let url = apiUrl(ApiPaths.notifications_list, record.pk);
+                  let url = apiUrl(ApiEndpoints.notifications_list, record.pk);
 
                   api
                     .patch(url, {
@@ -81,7 +81,7 @@ export default function NotificationsPage() {
                 icon: <IconTrash />,
                 onClick: () => {
                   api
-                    .delete(apiUrl(ApiPaths.notifications_list, record.pk))
+                    .delete(apiUrl(ApiEndpoints.notifications_list, record.pk))
                     .then((response) => {
                       readTable.refreshTable();
                     });

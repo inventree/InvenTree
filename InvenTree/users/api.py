@@ -6,6 +6,7 @@ import logging
 from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
+from django.views.generic.base import RedirectView
 
 from dj_rest_auth.views import LogoutView
 from rest_framework import exceptions, permissions
@@ -22,6 +23,7 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
+from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
@@ -253,8 +255,14 @@ class GetAuthToken(APIView):
                 # User is authenticated, and requesting a token against the provided name.
                 token = ApiToken.objects.create(user=request.user, name=name)
 
+                logger.info(
+                    "Created new API token for user '%s' (name='%s')",
+                    user.username,
+                    name,
+                )
+
             # Add some metadata about the request
-            token.set_metadata('user_agent', request.META.get('HTTP_USER_AGENT', ''))
+            token.set_metadata('user_agent', request.headers.get('user-agent', ''))
             token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
             token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
             token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
@@ -262,10 +270,6 @@ class GetAuthToken(APIView):
             token.set_metadata('server_port', request.META.get('SERVER_PORT', ''))
 
             data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
-
-            logger.info(
-                "Created new API token for user '%s' (name='%s')", user.username, name
-            )
 
             # Ensure that the users session is logged in (PUI -> CUI login)
             if not get_user(request).is_authenticated:
@@ -275,6 +279,17 @@ class GetAuthToken(APIView):
 
         else:
             raise exceptions.NotAuthenticated()
+
+
+class LoginRedirect(RedirectView):
+    """Redirect to the correct starting page after backend login."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Return the URL to redirect to."""
+        session = self.request.session
+        if session.get('preferred_method', 'cui') == 'pui':
+            return f'/{FRONTEND_URL_BASE}/logged-in/'
+        return '/index/'
 
 
 user_urls = [

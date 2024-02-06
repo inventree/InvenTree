@@ -22,7 +22,6 @@ import InvenTree.status_codes
 import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
-from InvenTree.models import extract_int
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from part.serializers import PartBriefSerializer
 
@@ -114,7 +113,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
     def validate_serial(self, value):
         """Make sure serial is not to big."""
-        if abs(extract_int(value)) > 0x7FFFFFFF:
+        if abs(InvenTree.helpers.extract_int(value)) > 0x7FFFFFFF:
             raise serializers.ValidationError(_('Serial number is too large'))
         return value
 
@@ -170,6 +169,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'allocated',
             'expired',
             'installed_items',
+            'child_items',
             'stale',
             'tracking_items',
             'tags',
@@ -288,6 +288,9 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         # Annotate with the total number of "installed items"
         queryset = queryset.annotate(installed_items=SubqueryCount('installed_parts'))
 
+        # Annotate with the total number of "child items" (split stock items)
+        queryset = queryset.annotate(child_items=stock.filters.annotate_child_items())
+
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -315,6 +318,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     allocated = serializers.FloatField(required=False)
     expired = serializers.BooleanField(required=False, read_only=True)
     installed_items = serializers.IntegerField(read_only=True, required=False)
+    child_items = serializers.IntegerField(read_only=True, required=False)
     stale = serializers.BooleanField(required=False, read_only=True)
     tracking_items = serializers.IntegerField(read_only=True, required=False)
 

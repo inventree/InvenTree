@@ -24,6 +24,12 @@ interface LocalStateProps {
   loader: LoaderType;
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
+  tableColumnNames: Record<string, Record<string, string>>;
+  getTableColumnNames: (tableKey: string) => Record<string, string>;
+  setTableColumnNames: (
+    tableKey: string
+  ) => (names: Record<string, string>) => void;
+  clearTableColumnNames: () => void;
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -55,6 +61,22 @@ export const useLocalState = create<LocalStateProps>()(
             lastUsedPanels: { ...get().lastUsedPanels, [panelKey]: value }
           });
         }
+      },
+      tableColumnNames: {},
+      getTableColumnNames: (tableKey) => {
+        return get().tableColumnNames[tableKey] || {};
+      },
+      setTableColumnNames: (tableKey) => (names) => {
+        // Update the table column names for the given table
+        set({
+          tableColumnNames: {
+            ...get().tableColumnNames,
+            [tableKey]: names
+          }
+        });
+      },
+      clearTableColumnNames: () => {
+        set({ tableColumnNames: {} });
       }
     }),
     {

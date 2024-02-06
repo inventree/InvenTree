@@ -37,6 +37,7 @@ import common.models
 import common.settings
 import InvenTree.conversion
 import InvenTree.fields
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import part.helpers as part_helpers
@@ -49,14 +50,6 @@ from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
-from InvenTree.models import (
-    DataImportMixin,
-    InvenTreeAttachment,
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    InvenTreeTree,
-    MetadataMixin,
-)
 from InvenTree.status_codes import (
     BuildStatusGroups,
     PurchaseOrderStatus,
@@ -70,7 +63,7 @@ from stock import models as StockModels
 logger = logging.getLogger('inventree')
 
 
-class PartCategory(MetadataMixin, InvenTreeTree):
+class PartCategory(InvenTree.models.InvenTreeTree):
     """PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
@@ -341,7 +334,13 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel):
+class Part(
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PluginValidationMixin,
+    MPTTModel,
+):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -452,6 +451,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         If the part image has been updated, then check if the "old" (previous) image is still used by another part.
         If not, it is considered "orphaned" and will be deleted.
         """
+        _new = False
         if self.pk:
             try:
                 previous = Part.objects.get(pk=self.pk)
@@ -470,6 +470,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                         previous.image.delete(save=False)
             except Part.DoesNotExist:
                 pass
+        else:
+            _new = True
 
         self.full_clean()
 
@@ -477,6 +479,10 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             super().save(*args, **kwargs)
         except InvalidMove:
             raise ValidationError({'variant_of': _('Invalid choice for parent part')})
+
+        if _new:
+            # Only run if the check was not run previously (due to not existing in the database)
+            self.ensure_trackable()
 
     def __str__(self):
         """Return a string representation of the Part (for use in the admin interface)."""
@@ -827,6 +833,12 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         # Run custom validation for the name field
         self.validate_name()
 
+        if self.pk:
+            # Only run if the part already exists in the database
+            self.ensure_trackable()
+
+    def ensure_trackable(self):
+        """Ensure that trackable is set correctly downline."""
         if self.trackable:
             for part in self.get_used_in():
                 if not part.trackable:
@@ -3247,7 +3259,7 @@ class PartStocktakeReport(models.Model):
     )
 
 
-class PartAttachment(InvenTreeAttachment):
+class PartAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a Part object."""
 
     @staticmethod
@@ -3368,7 +3380,7 @@ class PartCategoryStar(models.Model):
     )
 
 
-class PartTestTemplate(MetadataMixin, models.Model):
+class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
@@ -3478,7 +3490,7 @@ def validate_template_name(name):
     """Placeholder for legacy function used in migrations."""
 
 
-class PartParameterTemplate(MetadataMixin, models.Model):
+class PartParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartParameterTemplate provides a template for key:value pairs for extra parameters fields/values to be added to a Part.
 
     This allows users to arbitrarily assign data fields to a Part beyond the built-in attributes.
@@ -3623,7 +3635,7 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class PartParameter(MetadataMixin, models.Model):
+class PartParameter(InvenTree.models.InvenTreeMetadataModel):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
@@ -3765,7 +3777,7 @@ class PartParameter(MetadataMixin, models.Model):
         return part_parameter
 
 
-class PartCategoryParameterTemplate(MetadataMixin, models.Model):
+class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate.
 
     Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
@@ -3817,7 +3829,11 @@ class PartCategoryParameterTemplate(MetadataMixin, models.Model):
     )
 
 
-class BomItem(DataImportMixin, MetadataMixin, models.Model):
+class BomItem(
+    InvenTree.models.DataImportMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -4249,7 +4265,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         instance.part.schedule_pricing_update(create=False)
 
 
-class BomItemSubstitute(MetadataMixin, models.Model):
+class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
@@ -4307,7 +4323,7 @@ class BomItemSubstitute(MetadataMixin, models.Model):
     )
 
 
-class PartRelated(MetadataMixin, models.Model):
+class PartRelated(InvenTree.models.InvenTreeMetadataModel):
     """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
     class Meta:

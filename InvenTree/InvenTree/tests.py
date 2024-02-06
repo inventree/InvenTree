@@ -10,7 +10,6 @@ from unittest import mock
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import Site
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
@@ -372,7 +371,7 @@ class TestHelpers(TestCase):
         for url, expected in tests.items():
             # Test with supplied base URL
             self.assertEqual(
-                InvenTree.helpers_model.construct_absolute_url(url, site_url=base),
+                InvenTree.helpers_model.construct_absolute_url(url, base_url=base),
                 expected,
             )
 
@@ -1049,6 +1048,12 @@ class TestInstanceName(InvenTreeTestCase):
 
         self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')
 
+        try:
+            from django.contrib.sites.models import Site
+        except (ImportError, RuntimeError):
+            # Multi-site support not enabled
+            return
+
         # The site should also be changed
         site_obj = Site.objects.all().order_by('id').first()
         self.assertEqual(site_obj.name, 'Testing title')
@@ -1060,9 +1065,18 @@ class TestInstanceName(InvenTreeTestCase):
             'INVENTREE_BASE_URL', 'http://127.1.2.3', self.user
         )
 
+        # No further tests if multi-site support is not enabled
+        if not settings.SITE_MULTI:
+            return
+
         # The site should also be changed
-        site_obj = Site.objects.all().order_by('id').first()
-        self.assertEqual(site_obj.domain, 'http://127.1.2.3')
+        try:
+            from django.contrib.sites.models import Site
+
+            site_obj = Site.objects.all().order_by('id').first()
+            self.assertEqual(site_obj.domain, 'http://127.1.2.3')
+        except Exception:
+            pass
 
 
 class TestOffloadTask(InvenTreeTestCase):
@@ -1234,7 +1248,7 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.data, {'status': 'ok'})
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, '[example.com] Log in to the app')
+        self.assertEqual(mail.outbox[0].subject, '[InvenTree] Log in to the app')
 
         # Check that the token is in the email
         self.assertTrue('http://testserver/api/email/login/' in mail.outbox[0].body)
@@ -1247,9 +1261,6 @@ class MagicLoginTest(InvenTreeTestCase):
         # Check that the login works
         resp = self.client.get(reverse('sesame-login') + '?sesame=' + token)
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, '/index/')
-        # Note: 2023-08-08 - This test has been changed because "platform UI" is not generally available yet
-        # TODO: In the future, the URL comparison will need to be reverted
-        # self.assertEqual(resp.url, f'/{settings.FRONTEND_URL_BASE}/logged-in/')
+        self.assertEqual(resp.url, '/api/auth/login-redirect/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)

@@ -538,6 +538,7 @@ class PartSerializer(
             'category_path',
             'component',
             'creation_date',
+            'creation_user',
             'default_expiry',
             'default_location',
             'default_supplier',
@@ -575,6 +576,7 @@ class PartSerializer(
             'in_stock',
             'ordering',
             'required_for_build_orders',
+            'required_for_sales_orders',
             'stock_item_count',
             'suppliers',
             'total_in_stock',
@@ -715,7 +717,8 @@ class PartSerializer(
 
         # Annotate with the total 'required for builds' quantity
         queryset = queryset.annotate(
-            required_for_build_orders=part.filters.annotate_build_order_requirements()
+            required_for_build_orders=part.filters.annotate_build_order_requirements(),
+            required_for_sales_orders=part.filters.annotate_sales_order_requirements(),
         )
 
         return queryset
@@ -738,6 +741,10 @@ class PartSerializer(
         source='responsible_owner',
     )
 
+    creation_user = serializers.PrimaryKeyRelatedField(
+        queryset=users.models.User.objects.all(), required=False, allow_null=True
+    )
+
     # Annotated fields
     allocated_to_build_orders = serializers.FloatField(read_only=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
@@ -745,6 +752,7 @@ class PartSerializer(
     in_stock = serializers.FloatField(read_only=True)
     ordering = serializers.FloatField(read_only=True)
     required_for_build_orders = serializers.IntegerField(read_only=True)
+    required_for_sales_orders = serializers.IntegerField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True)
     suppliers = serializers.IntegerField(read_only=True)
     total_in_stock = serializers.FloatField(read_only=True)
@@ -1365,7 +1373,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         sub_part_detail = kwargs.pop('sub_part_detail', False)
         pricing = kwargs.pop('pricing', True)
 
-        super(BomItemSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not part_detail:
             self.fields.pop('part_detail')
@@ -1400,8 +1408,9 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
 
-    on_order = serializers.FloatField(read_only=True)
-    building = serializers.FloatField(read_only=True)
+    on_order = serializers.FloatField(label=_('On Order'), read_only=True)
+
+    building = serializers.FloatField(label=_('In Production'), read_only=True)
 
     # Cached pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1412,7 +1421,8 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     )
 
     # Annotated fields for available stock
-    available_stock = serializers.FloatField(read_only=True)
+    available_stock = serializers.FloatField(label=_('Available Stock'), read_only=True)
+
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
 

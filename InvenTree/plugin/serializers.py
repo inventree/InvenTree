@@ -51,12 +51,14 @@ class PluginConfigSerializer(serializers.ModelSerializer):
             'pk',
             'key',
             'name',
+            'package_name',
             'active',
             'meta',
             'mixins',
             'is_builtin',
             'is_sample',
             'is_installed',
+            'is_package',
         ]
 
         read_only_fields = ['key', 'is_builtin', 'is_sample', 'is_installed']
@@ -81,6 +83,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             'Source for the package - this can be a custom registry or a VCS path'
         ),
     )
+
     packagename = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -89,6 +92,16 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             'Name for the Plugin Package - can also contain a version indicator'
         ),
     )
+
+    version = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Version'),
+        help_text=_(
+            'Version specifier for the plugin. Leave blank for latest version.'
+        ),
+    )
+
     confirm = serializers.BooleanField(
         label=_('Confirm plugin installation'),
         help_text=_(
@@ -120,8 +133,12 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
         packagename = data.get('packagename', '')
         url = data.get('url', '')
+        version = data.get('version', None)
+        user = self.context['request'].user
 
-        return install_plugin(url=url, packagename=packagename)
+        return install_plugin(
+            url=url, packagename=packagename, version=version, user=user
+        )
 
 
 class PluginConfigEmptySerializer(serializers.Serializer):
@@ -191,6 +208,27 @@ class PluginActivateSerializer(serializers.Serializer):
             offload_task(check_for_migrations)
 
         return instance
+
+
+class PluginUninstallSerializer(serializers.Serializer):
+    """Serializer for uninstalling a plugin."""
+
+    delete_config = serializers.BooleanField(
+        required=False,
+        default=True,
+        label=_('Delete configuration'),
+        help_text=_('Delete the plugin configuration from the database'),
+    )
+
+    def update(self, instance, validated_data):
+        """Uninstall the specified plugin."""
+        from plugin.installer import uninstall_plugin
+
+        return uninstall_plugin(
+            instance,
+            user=self.context['request'].user,
+            delete_config=validated_data.get('delete_config', True),
+        )
 
 
 class PluginSettingSerializer(GenericReferencedSettingSerializer):

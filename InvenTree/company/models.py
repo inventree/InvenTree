@@ -24,17 +24,12 @@ import common.settings
 import InvenTree.conversion
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.models import (
-    InvenTreeAttachment,
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    MetadataMixin,
-)
 from InvenTree.status_codes import PurchaseOrderStatusGroups
 
 
@@ -63,7 +58,9 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
+class Company(
+    InvenTree.models.InvenTreeNotesMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """A Company object represents an external company.
 
     It may be a supplier or a customer or a manufacturer (or a combination)
@@ -250,7 +247,7 @@ class Company(InvenTreeNotesMixin, MetadataMixin, models.Model):
         ).distinct()
 
 
-class CompanyAttachment(InvenTreeAttachment):
+class CompanyAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file or URL attachments against a Company object."""
 
     @staticmethod
@@ -270,7 +267,7 @@ class CompanyAttachment(InvenTreeAttachment):
     )
 
 
-class Contact(MetadataMixin, models.Model):
+class Contact(InvenTree.models.InvenTreeMetadataModel):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
@@ -299,7 +296,7 @@ class Contact(MetadataMixin, models.Model):
     role = models.CharField(max_length=100, blank=True)
 
 
-class Address(models.Model):
+class Address(InvenTree.models.InvenTreeModel):
     """An address represents a physical location where the company is located. It is possible for a company to have multiple locations.
 
     Attributes:
@@ -454,7 +451,9 @@ class Address(models.Model):
     )
 
 
-class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
+class ManufacturerPart(
+    InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeMetadataModel
+):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
     Attributes:
@@ -555,7 +554,7 @@ class ManufacturerPart(MetadataMixin, InvenTreeBarcodeMixin, models.Model):
         return s
 
 
-class ManufacturerPartAttachment(InvenTreeAttachment):
+class ManufacturerPartAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a ManufacturerPart object."""
 
     @staticmethod
@@ -575,7 +574,7 @@ class ManufacturerPartAttachment(InvenTreeAttachment):
     )
 
 
-class ManufacturerPartParameter(models.Model):
+class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
     """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
 
     This is used to represent parameters / properties for a particular manufacturer part.
@@ -640,7 +639,12 @@ class SupplierPartManager(models.Manager):
         )
 
 
-class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin):
+class SupplierPart(
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    common.models.MetaMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 
     Attributes:
@@ -894,6 +898,11 @@ class SupplierPart(MetadataMixin, InvenTreeBarcodeMixin, common.models.MetaMixin
         self.available = quantity
         self.availability_updated = datetime.now()
         self.save()
+
+    @property
+    def name(self):
+        """Return string representation of own name."""
+        return str(self)
 
     @property
     def manufacturer_string(self):

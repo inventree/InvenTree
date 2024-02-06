@@ -75,12 +75,11 @@ class SettingsMixin:
 
     def set_setting(self, key, value, user=None):
         """Set plugin setting value by key."""
-        from plugin.models import PluginConfig, PluginSetting
+        from plugin.models import PluginSetting
+        from plugin.registry import registry
 
         try:
-            plugin, _ = PluginConfig.objects.get_or_create(
-                key=self.plugin_slug(), name=self.plugin_name()
-            )
+            plugin = registry.get_plugin_config(self.plugin_slug(), self.plugin_name())
         except (OperationalError, ProgrammingError):  # pragma: no cover
             plugin = None
 

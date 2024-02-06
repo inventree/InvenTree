@@ -5,7 +5,7 @@ import { useToggle } from '@mantine/hooks';
 
 import { api } from '../../../../App';
 import { EditButton } from '../../../../components/items/EditButton';
-import { ApiPaths } from '../../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { apiUrl } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
 
@@ -17,7 +17,7 @@ export function AccountDetailPanel() {
   const form = useForm({ initialValues: user });
   const [editing, setEditing] = useToggle([false, true] as const);
   function SaveData(values: any) {
-    api.put(apiUrl(ApiPaths.user_me), values).then((res) => {
+    api.put(apiUrl(ApiEndpoints.user_me), values).then((res) => {
       if (res.status === 200) {
         setEditing();
         fetchUserState();
