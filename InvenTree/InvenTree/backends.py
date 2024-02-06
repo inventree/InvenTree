@@ -34,13 +34,13 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
             )
         )
 
-        logger.debug('Maintenance mode state: {state}'.format(state=value))
+        logger.debug('Maintenance mode state: %s', value)
 
         return value
 
     def set_value(self, value: bool, retries: int = 5):
         """Set the state of the maintenance mode."""
-        logger.debug('Setting maintenance mode state: {state}'.format(state=value))
+        logger.debug('Setting maintenance mode state: %s', value)
 
         while retries > 0:
             try:
