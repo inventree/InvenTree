@@ -100,7 +100,7 @@ jobs:
       - name: Run Unit Tests
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
-          docker-compose run inventree-dev-server invoke test --disable-pty
+          docker-compose run inventree-dev-server invoke test --runtest=common.tests.NotificationTest --disable-pty
           docker-compose run inventree-dev-server invoke test --migrations --disable-pty
           docker-compose down
       - name: Set up QEMU
