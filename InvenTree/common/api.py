@@ -47,12 +47,6 @@ class CsrfExemptMixin(object):
         return super().dispatch(*args, **kwargs)
 
 
-class WebhookSerializer(serializers.Serializer):
-    """Serializer for the WebhookView."""
-
-    body = serializers.JSONField()
-
-
 class WebhookView(CsrfExemptMixin, APIView):
     """Endpoint for receiving webhooks."""
 
@@ -64,8 +58,7 @@ class WebhookView(CsrfExemptMixin, APIView):
     @extend_schema(
         responses={
             200: OpenApiResponse(
-                response=WebhookSerializer,
-                description='Any data can be posted to the endpoint - everything will be passed to the WebhookEndpoint model.',
+                description='Any data can be posted to the endpoint - everything will be passed to the WebhookEndpoint model.'
             )
         }
     )
