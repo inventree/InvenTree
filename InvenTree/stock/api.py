@@ -1203,6 +1203,8 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
 
     filterset_fields = ['test', 'user', 'result', 'value']
 
+    ordering_fields = ['date', 'test', 'result']
+
     ordering = 'date'
 
     def filter_queryset(self, queryset):

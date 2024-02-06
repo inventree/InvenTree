@@ -1,12 +1,27 @@
+import { t } from '@lingui/macro';
+import { Badge, Group, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { api } from '../../App';
+import { AttachmentLink } from '../../components/items/AttachmentLink';
+import {
+  PassFailButton,
+  YesNoButton
+} from '../../components/items/YesNoButton';
+import { RenderUser } from '../../components/render/User';
+import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
+import {
+  BooleanColumn,
+  DateColumn,
+  DescriptionColumn,
+  NoteColumn
+} from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function StockItemTestResultTable({
@@ -64,11 +79,11 @@ export default function StockItemTestResultTable({
 
           // Most recent record is first
           if (!resultMap[key]) {
-            resultMap[key] = record;
-            resultMap[key]['old'] = [];
-            resultMap[key]['template'] = testTemplates.data.find(
-              (t: any) => t.key == key
-            );
+            resultMap[key] = {
+              ...record,
+              old: [],
+              template: testTemplates.data.find((t: any) => t.key == key)
+            };
           } else {
             resultMap[key]['old'].push(record);
           }
@@ -78,7 +93,8 @@ export default function StockItemTestResultTable({
       records.forEach((record, _idx) => {
         let key = record.key;
 
-        if (resultMap[key]) {
+        // Check if the record is already in the list
+        if (!resultList.find((r) => r.key == key)) {
           resultList.push(resultMap[key]);
         }
       });
@@ -93,13 +109,73 @@ export default function StockItemTestResultTable({
         }
       });
 
-      return records;
+      console.log(resultList);
+
+      return resultList;
     },
     [testTemplates.data]
   );
 
   const tableColumns: TableColumn[] = useMemo(() => {
-    return [];
+    return [
+      {
+        accessor: 'test',
+        title: t`Test`,
+        switchable: false,
+        sortable: true,
+        render: (record: any) => {
+          return (
+            <Text italic={!record.template}>
+              {record.template?.test_name ?? record.test}
+            </Text>
+          );
+        }
+      },
+      {
+        accessor: 'result',
+        title: t`Result`,
+        switchable: false,
+        sortable: true,
+        render: (record: any) => {
+          if (record.result === undefined) {
+            return (
+              <Badge color="lightblue" variant="filled">{t`No Result`}</Badge>
+            );
+          } else {
+            return <PassFailButton value={record.result} />;
+          }
+        }
+      },
+      DescriptionColumn({
+        accessor: 'template.description'
+      }),
+      {
+        accessor: 'value',
+        title: t`Value`
+      },
+      {
+        accessor: 'attachment',
+        title: t`Attachment`,
+        render: (record: any) =>
+          record.attachment && <AttachmentLink attachment={record.attachment} />
+      },
+      NoteColumn(),
+      {
+        accessor: 'date',
+        sortable: true,
+        title: t`Date`,
+        render: (record: any) => {
+          return (
+            <Group position="apart">
+              {renderDate(record.date)}
+              {record.user_detail && (
+                <RenderUser instance={record.user_detail} />
+              )}
+            </Group>
+          );
+        }
+      }
+    ];
   }, []);
 
   return (
