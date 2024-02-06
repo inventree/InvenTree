@@ -92,7 +92,10 @@ export default function StockDetail() {
         icon: <IconChecklist />,
         hidden: !stockitem?.part_detail?.trackable,
         content: stockitem?.pk ? (
-          <StockItemTestResultTable itemId={stockitem.pk} />
+          <StockItemTestResultTable
+            itemId={stockitem.pk}
+            partId={stockitem.part}
+          />
         ) : (
           <Skeleton />
         )
