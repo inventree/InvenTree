@@ -2859,9 +2859,9 @@ class NotificationMessage(models.Model):
 
         current = now()
         creation = (
-            self.creation
+            self.creation.replace(tzinfo=timezone.utc)
             if settings.USE_TZ
-            else self.creation.replace(tzinfo=timezone.utc)
+            else self.creation
         )
         try:
             delta = current - creation
