@@ -971,7 +971,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
                 switchable: false,
                 title: '{% trans "Build Order" %}',
                 formatter: function(value, row) {
-                    let ref = `${row.build_detail.reference}`;
+                    let ref = row.build_detail?.reference ?? row.build;
                     let html = renderLink(ref, `/build/${row.build}/`);
 
                     html += `- <small>${row.build_detail.title}</small>`;
