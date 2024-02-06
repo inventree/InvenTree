@@ -41,6 +41,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -89,7 +90,12 @@ export default function StockDetail() {
         name: 'testdata',
         label: t`Test Data`,
         icon: <IconChecklist />,
-        hidden: !stockitem?.part_detail?.trackable
+        hidden: !stockitem?.part_detail?.trackable,
+        content: stockitem?.pk ? (
+          <StockItemTestResultTable itemId={stockitem.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'installed_items',
