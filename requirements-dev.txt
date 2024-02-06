@@ -57,7 +57,7 @@ idna==3.6
     # via
     #   -c requirements.txt
     #   requests
-importlib-metadata==6.8.0
+importlib-metadata==6.11.0
     # via
     #   -c requirements.txt
     #   build
@@ -115,7 +115,7 @@ virtualenv==20.25.0
     # via pre-commit
 wheel==0.42.0
     # via pip-tools
-zipp==3.16.2
+zipp==3.17.0
     # via
     #   -c requirements.txt
     #   importlib-metadata
