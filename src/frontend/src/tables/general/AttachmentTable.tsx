@@ -4,7 +4,7 @@ import { ActionIcon } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
@@ -107,7 +107,7 @@ export function AttachmentTable({
   }, []);
 
   // Construct row actions for the attachment table
-  function rowActions(record: any): RowAction[] {
+  const rowActions = useCallback((record: any) => {
     let actions: RowAction[] = [];
 
     if (allowEdit) {
@@ -141,7 +141,7 @@ export function AttachmentTable({
     }
 
     return actions;
-  }
+  }, []);
 
   // Callback to upload file attachment(s)
   function uploadFiles(files: File[]) {

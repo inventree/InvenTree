@@ -1,5 +1,10 @@
 import { t } from '@lingui/macro';
 import { Badge, Group, Text } from '@mantine/core';
+import {
+  IconCircleCheck,
+  IconCirclePlus,
+  IconQuestionMark
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
@@ -12,6 +17,7 @@ import {
 import { RenderUser } from '../../components/render/User';
 import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { UserRoles } from '../../enums/Roles';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -23,6 +29,7 @@ import {
   NoteColumn
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function StockItemTestResultTable({
   partId,
@@ -82,7 +89,7 @@ export default function StockItemTestResultTable({
             resultMap[key] = {
               ...record,
               old: [],
-              template: testTemplates.data.find((t: any) => t.key == key)
+              template: testTemplates?.data?.find((t: any) => t.key == key)
             };
           } else {
             resultMap[key]['old'].push(record);
@@ -100,16 +107,16 @@ export default function StockItemTestResultTable({
       });
 
       // Also, check if there are any templates which have not been accounted for
-      testTemplates.data.forEach((template: any) => {
-        if (!resultMap[template.key]) {
+      testTemplates?.data?.forEach((template: any, index: number) => {
+        // Check if the record is already in the list
+        if (!resultList.find((r) => r.key == template.key)) {
           resultList.push({
-            key: template.key,
-            template: template
+            pk: `new-${index}`,
+            template: template,
+            old: []
           });
         }
       });
-
-      console.log(resultList);
 
       return resultList;
     },
@@ -125,9 +132,14 @@ export default function StockItemTestResultTable({
         sortable: true,
         render: (record: any) => {
           return (
-            <Text italic={!record.template}>
-              {record.template?.test_name ?? record.test}
-            </Text>
+            <Group position="apart">
+              <Text italic={!record.template}>
+                {record.template?.test_name ?? record.test}
+              </Text>
+              {(record.old?.length ?? 0) > 0 && (
+                <Text italic>+{record.old.length}</Text>
+              )}
+            </Group>
           );
         }
       },
@@ -178,6 +190,38 @@ export default function StockItemTestResultTable({
     ];
   }, []);
 
+  const rowActions = useCallback(
+    (record: any) => {
+      return [
+        {
+          title: t`Pass Test`,
+          color: 'green',
+          icon: <IconCircleCheck />,
+          hidden:
+            record?.template?.requires_attachment ||
+            record?.template?.requires_value ||
+            record.result
+        },
+        {
+          title: t`Add`,
+          tooltip: t`Add Test Result`,
+          color: 'green',
+          icon: <IconCirclePlus />,
+          hidden: !user.hasAddRole(UserRoles.stock)
+        },
+        RowEditAction({
+          tooltip: t`Edit Test Result`,
+          hidden: !user.hasChangeRole(UserRoles.stock)
+        }),
+        RowDeleteAction({
+          tooltip: t`Delete Test Result`,
+          hidden: !user.hasDeleteRole(UserRoles.stock)
+        })
+      ];
+    },
+    [user]
+  );
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiEndpoints.stock_test_result_list)}
@@ -186,6 +230,7 @@ export default function StockItemTestResultTable({
       props={{
         dataFormatter: formatRecords,
         enablePagination: false,
+        rowActions: rowActions,
         params: {
           stock_item: itemId,
           user_detail: true,
