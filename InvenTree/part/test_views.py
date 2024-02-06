@@ -108,7 +108,7 @@ class PartDetailTest(PartViewTestCase):
         """Test downloading a BOM for a valid part."""
         response = self.client.get(
             reverse('api-bom-download', args=(1,)),
-            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+            headers={'x-requested-with': 'XMLHttpRequest'},
         )
         self.assertEqual(response.status_code, 200)
         self.assertIn('streaming_content', dir(response))

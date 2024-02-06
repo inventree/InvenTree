@@ -1117,6 +1117,8 @@ class TestResultTest(StockTestBase):
         """Test duplicate item behaviour."""
         # Create an example stock item by copying one from the database (because we are lazy)
 
+        from plugin.registry import registry
+
         StockItem.objects.rebuild()
 
         item = StockItem.objects.get(pk=522)
@@ -1125,8 +1127,11 @@ class TestResultTest(StockTestBase):
         item.serial = None
         item.quantity = 50
 
-        # Try with an invalid batch code (according to sample validatoin plugin)
+        # Try with an invalid batch code (according to sample validation plugin)
         item.batch = 'X234'
+
+        # Ensure that the sample validation plugin is activated
+        registry.set_plugin_state('validator', True)
 
         with self.assertRaises(ValidationError):
             item.save()

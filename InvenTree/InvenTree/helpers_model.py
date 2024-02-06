@@ -299,6 +299,11 @@ def notify_responsible(
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
+    import InvenTree.ready
+
+    if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+        return
+
     notify_users(
         [instance.responsible], instance, sender, content=content, exclude=exclude
     )

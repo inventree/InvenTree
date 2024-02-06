@@ -13,7 +13,7 @@ import math
 import os
 import re
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from secrets import compare_digest
 from typing import Any, Callable, Dict, List, Tuple, TypedDict, Union
@@ -111,7 +111,7 @@ class BaseURLValidator(URLValidator):
             super().__call__(value)
 
 
-class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
     @staticmethod
@@ -2855,7 +2855,12 @@ class NotificationMessage(models.Model):
 
     def age(self):
         """Age of the message in seconds."""
-        delta = now() - self.creation
+        # Add timezone information if TZ is enabled (in production mode mostly)
+        delta = now() - (
+            self.creation.replace(tzinfo=timezone.utc)
+            if settings.USE_TZ
+            else self.creation
+        )
         return delta.seconds
 
     def age_human(self):
