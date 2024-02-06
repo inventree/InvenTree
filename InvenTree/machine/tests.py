@@ -1,5 +1,175 @@
 """Machine app tests."""
 
-# from django.test import TestCase
+from unittest.mock import MagicMock, Mock
 
-# Create your tests here.
+from django.test import TestCase
+
+from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
+from machine.models import MachineConfig
+from machine.registry import registry
+
+
+class TestDriverMachineInterface(TestCase):
+    """Test the machine registry."""
+
+    def setUp(self):
+        """Setup some testing drivers/machines."""
+
+        class TestingMachineBaseDriver(BaseDriver):
+            """Test base driver for testing machines."""
+
+            machine_type = 'testing-type'
+
+        class TestingMachineType(BaseMachineType):
+            """Test machine type for testing."""
+
+            SLUG = 'testing-type'
+            NAME = 'Testing machine type'
+            DESCRIPTION = 'This is a test machine type for testing.'
+
+            base_driver = TestingMachineBaseDriver
+
+            class TestingMachineTypeStatus(MachineStatus):
+                """Test machine status."""
+
+                UNKNOWN = 100, 'Unknown', 'secondary'
+
+            MACHINE_STATUS = TestingMachineTypeStatus
+            default_machine_status = MACHINE_STATUS.UNKNOWN
+
+        class TestingDriver(TestingMachineBaseDriver):
+            """Test driver for testing machines."""
+
+            SLUG = 'test-driver'
+            NAME = 'Test Driver'
+            DESCRIPTION = 'This is a test driver for testing.'
+
+            MACHINE_SETTINGS = {
+                'TEST_SETTING': {'name': 'Test Setting', 'description': 'Test setting'}
+            }
+
+        self.machine1 = MachineConfig.objects.create(
+            name='Test Machine 1',
+            machine_type='testing-type',
+            driver='test-driver',
+            active=True,
+        )
+        self.machine2 = MachineConfig.objects.create(
+            name='Test Machine 2',
+            machine_type='testing-type',
+            driver='test-driver',
+            active=True,
+        )
+        self.machine3 = MachineConfig.objects.create(
+            name='Test Machine 3',
+            machine_type='testing-type',
+            driver='test-driver',
+            active=False,
+        )
+        self.machines = [self.machine1, self.machine2, self.machine3]
+
+        # mock driver implementation
+        self.driver_mocks = {
+            k: Mock()
+            for k in [
+                'init_driver',
+                'init_machine',
+                'update_machine',
+                'restart_machine',
+            ]
+        }
+        for key, value in self.driver_mocks.items():
+            setattr(TestingDriver, key, value)
+
+        # save machines
+        for m in self.machines:
+            m.save()
+
+        # init registry
+        registry.initialize()
+
+        # mock machine implementation
+        self.machine_mocks = {
+            m: {k: MagicMock() for k in ['update', 'restart']} for m in self.machines
+        }
+        for machine_config, mock_dict in self.machine_mocks.items():
+            for key, mock in mock_dict.items():
+                mock.side_effect = getattr(machine_config.machine, key)
+                setattr(machine_config.machine, key, mock)
+
+        super().setUp()
+
+    def tearDown(self) -> None:
+        """Clean up after testing."""
+        registry.machine_types = {}
+        registry.drivers = {}
+        registry.driver_instances = {}
+        registry.machines = {}
+        registry.base_drivers = []
+        registry.errors = []
+
+        return super().tearDown()
+
+    def test_machine_lifecycle(self):
+        """Test the machine registry."""
+        # test that the registry is initialized correctly
+        self.assertEqual(len(registry.machines), 3)
+        self.assertEqual(len(registry.driver_instances), 1)
+
+        # test get_machines
+        self.assertEqual(len(registry.get_machines()), 2)
+        self.assertEqual(len(registry.get_machines(active=False, initialized=False)), 1)
+        self.assertEqual(len(registry.get_machines(name='Test Machine 1')), 1)
+        self.assertEqual(
+            len(registry.get_machines(name='Test Machine 1', active=False)), 0
+        )
+        self.assertEqual(
+            len(registry.get_machines(name='Test Machine 1', active=True)), 1
+        )
+
+        # test get_machine
+        self.assertEqual(registry.get_machine(self.machine1.pk), self.machine1.machine)
+
+        # test get_drivers
+        self.assertEqual(len(registry.get_drivers('testing-type')), 1)
+        self.assertEqual(registry.get_drivers('testing-type')[0].SLUG, 'test-driver')
+
+        # test that init hooks where called correctly
+        self.driver_mocks['init_driver'].assert_called_once()
+        self.assertEqual(self.driver_mocks['init_machine'].call_count, 2)
+
+        # Test machine restart hook
+        registry.restart_machine(self.machine1.machine)
+        self.driver_mocks['restart_machine'].assert_called_once_with(
+            self.machine1.machine
+        )
+        self.assertEqual(self.machine_mocks[self.machine1]['restart'].call_count, 1)
+
+        # Test machine update hook
+        self.machine1.name = 'Test Machine 1 - Updated'
+        self.machine1.save()
+        self.driver_mocks['update_machine'].assert_called_once()
+        self.assertEqual(self.machine_mocks[self.machine1]['update'].call_count, 1)
+        old_machine_state, machine = self.driver_mocks['update_machine'].call_args.args
+        self.assertEqual(old_machine_state['name'], 'Test Machine 1')
+        self.assertEqual(machine.name, 'Test Machine 1 - Updated')
+        self.assertEqual(self.machine1.machine, machine)
+        self.machine_mocks[self.machine1]['update'].reset_mock()
+
+        # get ref to machine 1
+        machine1: BaseMachineType = self.machine1.machine  # type: ignore
+        self.assertIsNotNone(machine1)
+
+        # Test machine setting update hook
+        self.assertEqual(machine1.get_setting('TEST_SETTING', 'D'), '')
+        machine1.set_setting('TEST_SETTING', 'D', 'test-value')
+        self.assertEqual(self.machine_mocks[self.machine1]['update'].call_count, 2)
+        old_machine_state, machine = self.driver_mocks['update_machine'].call_args.args
+        self.assertEqual(old_machine_state['settings']['D', 'TEST_SETTING'], '')
+        self.assertEqual(machine1.get_setting('TEST_SETTING', 'D'), 'test-value')
+        self.assertEqual(self.machine1.machine, machine)
+
+        # Test remove machine
+        self.assertEqual(len(registry.get_machines()), 2)
+        registry.remove_machine(machine1)
+        self.assertEqual(len(registry.get_machines()), 1)

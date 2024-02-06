@@ -15,14 +15,14 @@ class MachineAPITest(InvenTreeAPITestCase):
 
     roles = ['admin.add', 'admin.view', 'admin.change', 'admin.delete']
 
-    @classmethod
-    def setUpClass(cls):
+    # @classmethod
+    def setUp(self):
         """Setup some testing drivers/machines."""
 
         class TestingLabelPrinterDriver(BaseLabelPrintingDriver):
             """Test driver for label printing."""
 
-            SLUG = 'test-label-printer'
+            SLUG = 'test-label-printer-api'
             NAME = 'Test label printer'
             DESCRIPTION = 'This is a test label printer driver for testing.'
 
@@ -41,19 +41,23 @@ class MachineAPITest(InvenTreeAPITestCase):
                 """Override print_label."""
                 pass
 
-        class CopyTestingLabelPrinterDriver(BaseLabelPrintingDriver):
+        class TestingLabelPrinterDriverError1(BaseLabelPrintingDriver):
             """Test driver for label printing."""
 
-            SLUG = 'test-label-printer'
-            NAME = 'Test label printer'
+            SLUG = 'test-label-printer-error'
+            NAME = 'Test label printer error'
             DESCRIPTION = 'This is a test label printer driver for testing.'
 
-            MACHINE_SETTINGS = {
-                'TEST_SETTING': {
-                    'name': 'Test setting',
-                    'description': 'This is a test setting',
-                }
-            }
+            def print_label(self, *args, **kwargs) -> None:
+                """Override print_label."""
+                pass
+
+        class TestingLabelPrinterDriverError2(BaseLabelPrintingDriver):
+            """Test driver for label printing."""
+
+            SLUG = 'test-label-printer-error'
+            NAME = 'Test label printer error'
+            DESCRIPTION = 'This is a test label printer driver for testing.'
 
             def print_label(self, *args, **kwargs) -> None:
                 """Override print_label."""
@@ -61,12 +65,26 @@ class MachineAPITest(InvenTreeAPITestCase):
 
         registry.initialize()
 
-        super().setUpClass()
+        super().setUp()
+
+    # @classmethod
+    def tearDown(self) -> None:
+        """Clean up after testing."""
+        registry.machine_types = {}
+        registry.drivers = {}
+        registry.driver_instances = {}
+        registry.machines = {}
+        registry.base_drivers = []
+        registry.errors = []
+
+        return super().tearDown()
 
     def test_machine_type_list(self):
         """Test machine types list API endpoint."""
         response = self.get(reverse('api-machine-types'))
-        self.assertEqual(len(response.data), 1)
+        machine_type = [t for t in response.data if t['slug'] == 'label-printer']
+        self.assertEqual(len(machine_type), 1)
+        machine_type = machine_type[0]
         self.assertDictContainsSubset(
             {
                 'slug': 'label-printer',
@@ -75,10 +93,10 @@ class MachineAPITest(InvenTreeAPITestCase):
                 'provider_plugin': None,
                 'is_builtin': True,
             },
-            response.data[0],
+            machine_type,
         )
         self.assertTrue(
-            response.data[0]['provider_file'].endswith(
+            machine_type['provider_file'].endswith(
                 'machine/machine_types/LabelPrintingMachineType.py'
             )
         )
@@ -86,10 +104,12 @@ class MachineAPITest(InvenTreeAPITestCase):
     def test_machine_driver_list(self):
         """Test machine driver list API endpoint."""
         response = self.get(reverse('api-machine-drivers'))
-        self.assertEqual(len(response.data), 1)
+        driver = [a for a in response.data if a['slug'] == 'test-label-printer-api']
+        self.assertEqual(len(driver), 1)
+        driver = driver[0]
         self.assertDictContainsSubset(
             {
-                'slug': 'test-label-printer',
+                'slug': 'test-label-printer-api',
                 'name': 'Test label printer',
                 'description': 'This is a test label printer driver for testing.',
                 'provider_plugin': None,
@@ -97,14 +117,15 @@ class MachineAPITest(InvenTreeAPITestCase):
                 'machine_type': 'label-printer',
                 'driver_errors': [],
             },
-            response.data[0],
+            driver,
         )
+        self.assertEqual(driver['provider_file'], __file__)
 
     def test_machine_status(self):
         """Test machine status API endpoint."""
         response = self.get(reverse('api-machine-registry-status'))
         self.assertIn(
-            "Cannot re-register driver 'test-label-printer'",
+            "Cannot re-register driver 'test-label-printer-error'",
             [e['message'] for e in response.data['registry_errors']],
         )
 
@@ -115,7 +136,7 @@ class MachineAPITest(InvenTreeAPITestCase):
 
         MachineConfig.objects.create(
             machine_type='label-printer',
-            driver='test-label-printer',
+            driver='test-label-printer-api',
             name='Test Machine',
             active=True,
         )
@@ -126,7 +147,7 @@ class MachineAPITest(InvenTreeAPITestCase):
             {
                 'name': 'Test Machine',
                 'machine_type': 'label-printer',
-                'driver': 'test-label-printer',
+                'driver': 'test-label-printer-api',
                 'initialized': True,
                 'active': True,
                 'status': 101,
@@ -148,7 +169,7 @@ class MachineAPITest(InvenTreeAPITestCase):
 
         machine_data = {
             'machine_type': 'label-printer',
-            'driver': 'test-label-printer',
+            'driver': 'test-label-printer-api',
             'name': 'Test Machine',
             'active': True,
         }
@@ -190,7 +211,7 @@ class MachineAPITest(InvenTreeAPITestCase):
         """Test machine detail settings API endpoint."""
         machine = MachineConfig.objects.create(
             machine_type='label-printer',
-            driver='test-label-printer',
+            driver='test-label-printer-api',
             name='Test Machine with settings',
             active=True,
         )
@@ -238,7 +259,7 @@ class MachineAPITest(InvenTreeAPITestCase):
         """Test machine restart API endpoint."""
         machine = MachineConfig.objects.create(
             machine_type='label-printer',
-            driver='test-label-printer',
+            driver='test-label-printer-api',
             name='Test Machine',
             active=True,
         )
