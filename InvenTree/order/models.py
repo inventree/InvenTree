@@ -78,7 +78,14 @@ class TotalPriceMixin(models.Model):
         """Update the total_price field when saved."""
         # Recalculate total_price for this order
         self.update_total_price(commit=False)
-        super().save(*args, **kwargs)
+
+        if hasattr(self, '_SAVING_TOTAL_PRICE') and self._SAVING_TOTAL_PRICE:
+            # Avoid recursion on save
+            return super().save(*args, **kwargs)
+        self._SAVING_TOTAL_PRICE = True
+
+        # Save the object as we can not access foreign/m2m fields before saving
+        self.update_total_price(commit=True)
 
     total_price = InvenTreeModelMoneyField(
         null=True,
@@ -135,6 +142,10 @@ class TotalPriceMixin(models.Model):
             target_currency = currency_code_default()
 
         total = Money(0, target_currency)
+
+        # Check if the order has been saved (otherwise we can't calculate the total price)
+        if self.pk is None:
+            return total
 
         # order items
         for line in self.lines.all():

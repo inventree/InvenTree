@@ -13,7 +13,7 @@ import math
 import os
 import re
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from secrets import compare_digest
 from typing import Any, Callable, Dict, List, Tuple, TypedDict, Union
@@ -2850,7 +2850,12 @@ class NotificationMessage(models.Model):
 
     def age(self):
         """Age of the message in seconds."""
-        delta = now() - self.creation
+        # Add timezone information if TZ is enabled (in production mode mostly)
+        delta = now() - (
+            self.creation.replace(tzinfo=timezone.utc)
+            if settings.USE_TZ
+            else self.creation
+        )
         return delta.seconds
 
     def age_human(self):
