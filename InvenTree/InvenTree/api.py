@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -356,7 +357,17 @@ class AttachmentMixin:
         attachment.save()
 
 
-class APISearchView(APIView):
+class APISearchViewSerializer(serializers.Serializer):
+    """Serializer for the APISearchView."""
+
+    search = serializers.CharField()
+    search_regex = serializers.BooleanField(default=False, required=False)
+    search_whole = serializers.BooleanField(default=False, required=False)
+    limit = serializers.IntegerField(default=1, required=False)
+    offset = serializers.IntegerField(default=0, required=False)
+
+
+class APISearchView(GenericAPIView):
     """A general-purpose 'search' API endpoint.
 
     Returns hits against a number of different models simultaneously,
@@ -366,6 +377,7 @@ class APISearchView(APIView):
     """
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = APISearchViewSerializer
 
     def get_result_types(self):
         """Construct a list of search types we can return."""
