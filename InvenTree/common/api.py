@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 import django_q.models
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
@@ -46,6 +47,12 @@ class CsrfExemptMixin(object):
         return super().dispatch(*args, **kwargs)
 
 
+class WebhookSerializer(serializers.Serializer):
+    """Serializer for the WebhookView."""
+
+    body = serializers.JSONField()
+
+
 class WebhookView(CsrfExemptMixin, APIView):
     """Endpoint for receiving webhooks."""
 
@@ -54,6 +61,14 @@ class WebhookView(CsrfExemptMixin, APIView):
     model_class = common.models.WebhookEndpoint
     run_async = False
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=WebhookSerializer,
+                description='Any data can be posted to the endpoint - everything will be passed to the WebhookEndpoint model.',
+            )
+        }
+    )
     def post(self, request, endpoint, *args, **kwargs):
         """Process incoming webhook."""
         # get webhook definition
