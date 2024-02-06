@@ -75,7 +75,7 @@ export type InvenTreeTableProps<T = any> = {
   tableActions?: React.ReactNode[];
   printingActions?: any[];
   idAccessor?: string;
-  dataFormatter?: (data: T) => any;
+  dataFormatter?: (data: T[]) => T[];
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
 };
@@ -373,14 +373,11 @@ export function InvenTreeTable<T = any>({
               tableProps.noRecordsText ?? t`No records found`
             );
 
-            let results = [];
+            let results = response.data?.results ?? response.data ?? [];
 
             if (props.dataFormatter) {
               // Custom data formatter provided
-              results = props.dataFormatter(response.data);
-            } else {
-              // Extract returned data (accounting for pagination) and ensure it is a list
-              results = response.data?.results ?? response.data ?? [];
+              results = props.dataFormatter(results);
             }
 
             if (!Array.isArray(results)) {
