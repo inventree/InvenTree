@@ -1068,7 +1068,11 @@ class PartMixin:
 
         # Pass a list of "starred" parts to the current user to the serializer
         # We do this to reduce the number of database queries required!
-        if self.starred_parts is None and self.request is not None:
+        if (
+            self.starred_parts is None
+            and self.request is not None
+            and hasattr(self.request.user, 'starred_parts')
+        ):
             self.starred_parts = [
                 star.part for star in self.request.user.starred_parts.all()
             ]
