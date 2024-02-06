@@ -9,56 +9,6 @@ from InvenTree.fields import InvenTreeNotesField
 from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
 
 
-class DiffMixin:
-    """Mixin which can be used to determine which fields have changed, compared to the instance saved to the database."""
-
-    def get_db_instance(self):
-        """Return the instance of the object saved in the database.
-
-        Returns:
-            object: Instance of the object saved in the database
-        """
-        if self.pk:
-            try:
-                return self.__class__.objects.get(pk=self.pk)
-            except self.__class__.DoesNotExist:
-                pass
-
-        return None
-
-    def get_field_deltas(self):
-        """Return a dict of field deltas.
-
-        Compares the current instance with the instance saved in the database,
-        and returns a dict of fields which have changed.
-
-        Returns:
-            dict: Dict of field deltas
-        """
-        db_instance = self.get_db_instance()
-
-        if db_instance is None:
-            return {}
-
-        deltas = {}
-
-        for field in self._meta.fields:
-            if field.name == 'id':
-                continue
-
-            if getattr(self, field.name) != getattr(db_instance, field.name):
-                deltas[field.name] = {
-                    'old': getattr(db_instance, field.name),
-                    'new': getattr(self, field.name),
-                }
-
-        return deltas
-
-    def has_field_changed(self, field_name):
-        """Determine if a particular field has changed."""
-        return field_name in self.get_field_deltas()
-
-
 class CleanMixin:
     """Model mixin class which cleans inputs using the Mozilla bleach tools."""
 

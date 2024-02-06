@@ -22,7 +22,6 @@ import InvenTree.status_codes
 import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
-from InvenTree.models import extract_int
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from part.serializers import PartBriefSerializer
 
@@ -114,7 +113,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
     def validate_serial(self, value):
         """Make sure serial is not to big."""
-        if abs(extract_int(value)) > 0x7FFFFFFF:
+        if abs(InvenTree.helpers.extract_int(value)) > 0x7FFFFFFF:
             raise serializers.ValidationError(_('Serial number is too large'))
         return value
 

@@ -24,6 +24,7 @@ from mptt.models import TreeForeignKey
 
 import common.models as common_models
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -42,13 +43,6 @@ from InvenTree.fields import (
 )
 from InvenTree.helpers import decimal2string
 from InvenTree.helpers_model import getSetting, notify_responsible
-from InvenTree.models import (
-    InvenTreeAttachment,
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    MetadataMixin,
-    ReferenceIndexingMixin,
-)
 from InvenTree.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -188,10 +182,11 @@ class TotalPriceMixin(models.Model):
 
 class Order(
     StateTransitionMixin,
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    MetadataMixin,
-    ReferenceIndexingMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.ReferenceIndexingMixin,
+    InvenTree.models.InvenTreeModel,
 ):
     """Abstract model for an order.
 
@@ -1178,7 +1173,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
         notify_responsible(instance, sender, exclude=instance.created_by)
 
 
-class PurchaseOrderAttachment(InvenTreeAttachment):
+class PurchaseOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a PurchaseOrder object."""
 
     @staticmethod
@@ -1195,7 +1190,7 @@ class PurchaseOrderAttachment(InvenTreeAttachment):
     )
 
 
-class SalesOrderAttachment(InvenTreeAttachment):
+class SalesOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a SalesOrder object."""
 
     @staticmethod
@@ -1212,7 +1207,7 @@ class SalesOrderAttachment(InvenTreeAttachment):
     )
 
 
-class OrderLineItem(MetadataMixin, models.Model):
+class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
     """Abstract model for an order line item.
 
     Attributes:
@@ -1587,7 +1582,11 @@ class SalesOrderLineItem(OrderLineItem):
         return self.shipped >= self.quantity
 
 
-class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
+class SalesOrderShipment(
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 
     - Points to a single SalesOrder object
@@ -2228,7 +2227,7 @@ class ReturnOrderExtraLine(OrderExtraLine):
     )
 
 
-class ReturnOrderAttachment(InvenTreeAttachment):
+class ReturnOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a ReturnOrder object."""
 
     @staticmethod

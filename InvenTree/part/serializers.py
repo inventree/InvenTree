@@ -1373,7 +1373,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         sub_part_detail = kwargs.pop('sub_part_detail', False)
         pricing = kwargs.pop('pricing', True)
 
-        super(BomItemSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not part_detail:
             self.fields.pop('part_detail')

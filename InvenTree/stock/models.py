@@ -26,20 +26,13 @@ from taggit.managers import TaggableManager
 
 import common.models
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import label.models
 import report.models
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from InvenTree.models import (
-    InvenTreeAttachment,
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    InvenTreeTree,
-    MetadataMixin,
-    extract_int,
-)
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockHistoryCode,
@@ -53,7 +46,7 @@ from users.models import Owner
 logger = logging.getLogger('inventree')
 
 
-class StockLocationType(MetadataMixin, models.Model):
+class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
     """A type of stock location like Warehouse, room, shelf, drawer.
 
     Attributes:
@@ -111,7 +104,9 @@ class StockLocationManager(TreeManager):
         return super().get_queryset()
 
 
-class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
+class StockLocation(
+    InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeTree
+):
     """Organization tree for StockItem objects.
 
     A "StockLocation" can be considered a warehouse, or storage location
@@ -352,9 +347,10 @@ def default_delete_on_deplete():
 
 
 class StockItem(
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    MetadataMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PluginValidationMixin,
     common.models.MetaMixin,
     MPTTModel,
 ):
@@ -450,7 +446,7 @@ class StockItem(
         serial_int = 0
 
         if serial not in [None, '']:
-            serial_int = extract_int(serial)
+            serial_int = InvenTree.helpers.extract_int(serial)
 
         self.serial_int = serial_int
 
@@ -2193,7 +2189,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
             instance.part.schedule_pricing_update(create=True)
 
 
-class StockItemAttachment(InvenTreeAttachment):
+class StockItemAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a StockItem object."""
 
     @staticmethod
@@ -2210,7 +2206,7 @@ class StockItemAttachment(InvenTreeAttachment):
     )
 
 
-class StockItemTracking(models.Model):
+class StockItemTracking(InvenTree.models.InvenTreeModel):
     """Stock tracking entry - used for tracking history of a particular StockItem.
 
     Note: 2021-05-11
@@ -2274,7 +2270,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
     )
 
 
-class StockItemTestResult(MetadataMixin, models.Model):
+class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
 
     This is useful for tracking unit acceptance tests, and particularly useful when integrated
