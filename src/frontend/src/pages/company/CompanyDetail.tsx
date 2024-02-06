@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Group, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -18,6 +18,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsImage } from '../../components/images/DetailsImage';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -69,12 +70,37 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     refetchOnMount: true
   });
 
+  const details = useMemo(() => {
+    const canEdit =
+      user.hasChangeRole(UserRoles.purchase_order) ||
+      user.hasChangeRole(UserRoles.sales_order);
+    const canDelete =
+      user.hasDeleteRole(UserRoles.purchase_order) ||
+      user.hasDeleteRole(UserRoles.sales_order);
+    return (
+      <Stack spacing="xs">
+        <Group position="left">
+          <DetailsImage
+            src={company.image}
+            endpoint={ApiEndpoints.company_list}
+            pk={company.pk}
+            refresh={refreshInstance}
+            allowUpload={canEdit}
+            allowDownload={canEdit}
+            allowDelete={canDelete}
+          />
+        </Group>
+      </Stack>
+    );
+  }, [company]);
+
   const companyPanels: PanelType[] = useMemo(() => {
     return [
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle />
+        icon: <IconInfoCircle />,
+        content: details
       },
       {
         name: 'manufactured-parts',
