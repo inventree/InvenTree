@@ -10,7 +10,7 @@ asgiref==3.7.2
     #   django
 build==1.0.3
     # via pip-tools
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c requirements.txt
     #   requests
@@ -33,7 +33,7 @@ coverage[toml]==5.5
     #   coveralls
 coveralls==2.1.2
     # via -r requirements-dev.in
-cryptography==42.0.0
+cryptography==42.0.2
     # via
     #   -c requirements.txt
     #   pdfminer-six
@@ -51,7 +51,7 @@ docopt==0.6.2
     # via coveralls
 filelock==3.13.1
     # via virtualenv
-identify==2.5.31
+identify==2.5.33
     # via pre-commit
 idna==3.6
     # via
@@ -73,7 +73,7 @@ pdfminer-six==20231228
     # via -r requirements-dev.in
 pip-tools==7.3.0
     # via -r requirements-dev.in
-platformdirs==4.1.0
+platformdirs==4.2.0
     # via virtualenv
 pre-commit==3.6.0
     # via -r requirements-dev.in
@@ -107,7 +107,7 @@ typing-extensions==4.9.0
     #   -c requirements.txt
     #   asgiref
     #   django-test-migrations
-urllib3==2.1.0
+urllib3==2.2.0
     # via
     #   -c requirements.txt
     #   requests
