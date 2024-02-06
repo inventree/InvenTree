@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 
 import build.models
 import common.models
+import InvenTree.models
 import order.models
 import part.models
 import report.helpers
@@ -93,7 +94,7 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-class ReportBase(models.Model):
+class ReportBase(InvenTree.models.InvenTreeModel):
     """Base class for uploading html templates."""
 
     class Meta:

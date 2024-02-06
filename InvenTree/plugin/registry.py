@@ -89,7 +89,7 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
-    def get_plugin(self, slug):
+    def get_plugin(self, slug, active=None):
         """Lookup plugin by slug (unique key)."""
         # Check if the registry needs to be reloaded
         self.check_reload()
@@ -98,7 +98,43 @@ class PluginsRegistry:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return None
 
-        return self.plugins[slug]
+        plg = self.plugins[slug]
+
+        if active is not None:
+            if active != plg.is_active():
+                return None
+
+        return plg
+
+    def get_plugin_config(self, slug: str, name: [str, None] = None):
+        """Return the matching PluginConfig instance for a given plugin.
+
+        Args:
+            slug: The plugin slug
+            name: The plugin name (optional)
+        """
+        import InvenTree.ready
+        from plugin.models import PluginConfig
+
+        if InvenTree.ready.isImportingData():
+            return None
+
+        try:
+            cfg, _created = PluginConfig.objects.get_or_create(key=slug)
+        except PluginConfig.DoesNotExist:
+            return None
+        except (IntegrityError, OperationalError, ProgrammingError):  # pragma: no cover
+            return None
+
+        if name and cfg.name != name:
+            # Update the name if it has changed
+            try:
+                cfg.name = name
+                cfg.save()
+            except Exception as e:
+                logger.exception('Failed to update plugin name')
+
+        return cfg
 
     def set_plugin_state(self, slug, state):
         """Set the state(active/inactive) of a plugin.
@@ -114,9 +150,12 @@ class PluginsRegistry:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return
 
-        plugin = self.plugins_full[slug].db
-        plugin.active = state
-        plugin.save()
+        cfg = self.get_plugin_config(slug)
+        cfg.active = state
+        cfg.save()
+
+        # Update the registry hash value
+        self.update_plugin_hash()
 
     def call_plugin_function(self, slug, func, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
@@ -139,8 +178,14 @@ class PluginsRegistry:
         return plugin_func(*args, **kwargs)
 
     # region registry functions
-    def with_mixin(self, mixin: str, active=None, builtin=None):
-        """Returns reference to all plugins that have a specified mixin enabled."""
+    def with_mixin(self, mixin: str, active=True, builtin=None):
+        """Returns reference to all plugins that have a specified mixin enabled.
+
+        Args:
+            mixin (str): Mixin name
+            active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
+            builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
+        """
         # Check if the registry needs to be loaded
         self.check_reload()
 
@@ -489,9 +534,7 @@ class PluginsRegistry:
                     plg_db = plugin_configs[plg_key]
                 else:
                     # Configuration needs to be created
-                    plg_db, _created = PluginConfig.objects.get_or_create(
-                        key=plg_key, name=plg_name
-                    )
+                    plg_db = self.get_plugin_config(plg_key, plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
@@ -742,6 +785,7 @@ class PluginsRegistry:
         # Hash for all loaded plugins
         for slug, plug in self.plugins.items():
             data.update(str(slug).encode())
+            data.update(str(plug.name).encode())
             data.update(str(plug.version).encode())
             data.update(str(plug.is_active()).encode())
 

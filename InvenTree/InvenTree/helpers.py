@@ -30,6 +30,51 @@ from .settings import MEDIA_URL, STATIC_URL
 logger = logging.getLogger('inventree')
 
 
+def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
+    """Extract an integer out of reference."""
+    # Default value if we cannot convert to an integer
+    ref_int = 0
+
+    reference = str(reference).strip()
+
+    # Ignore empty string
+    if len(reference) == 0:
+        return 0
+
+    # Look at the start of the string - can it be "integerized"?
+    result = re.match(r'^(\d+)', reference)
+
+    if result and len(result.groups()) == 1:
+        ref = result.groups()[0]
+        try:
+            ref_int = int(ref)
+        except Exception:
+            ref_int = 0
+    else:
+        # Look at the "end" of the string
+        result = re.search(r'(\d+)$', reference)
+
+        if result and len(result.groups()) == 1:
+            ref = result.groups()[0]
+            try:
+                ref_int = int(ref)
+            except Exception:
+                ref_int = 0
+
+    # Ensure that the returned values are within the range that can be stored in an IntegerField
+    # Note: This will result in large values being "clipped"
+    if clip is not None:
+        if ref_int > clip:
+            ref_int = clip
+        elif ref_int < -clip:
+            ref_int = -clip
+
+    if not allow_negative and ref_int < 0:
+        ref_int = abs(ref_int)
+
+    return ref_int
+
+
 def generateTestKey(test_name):
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 

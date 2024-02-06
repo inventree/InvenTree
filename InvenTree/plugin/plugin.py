@@ -9,7 +9,6 @@ from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
 
 from django.conf import settings
-from django.db.utils import OperationalError, ProgrammingError
 from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -96,24 +95,9 @@ class MetaBase:
 
     def plugin_config(self):
         """Return the PluginConfig object associated with this plugin."""
-        import InvenTree.ready
+        from plugin.registry import registry
 
-        # Database contains no information yet - return None
-        if InvenTree.ready.isImportingData():
-            return None
-
-        try:
-            import plugin.models
-
-            cfg, _ = plugin.models.PluginConfig.objects.get_or_create(
-                key=self.plugin_slug(), name=self.plugin_name()
-            )
-        except (OperationalError, ProgrammingError):
-            cfg = None
-        except plugin.models.PluginConfig.DoesNotExist:
-            cfg = None
-
-        return cfg
+        return registry.get_plugin_config(self.plugin_slug())
 
     def is_active(self):
         """Return True if this plugin is currently active."""
