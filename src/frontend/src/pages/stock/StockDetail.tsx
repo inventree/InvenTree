@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Alert, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Alert,
+  Group,
+  LoadingOverlay,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
@@ -20,6 +27,7 @@ import {
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsImage } from '../../components/images/DetailsImage';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -29,7 +37,6 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
@@ -63,25 +70,40 @@ export default function StockDetail() {
     }
   });
 
+  const details = useMemo(() => {
+    // TODO: How to use "image" and not "thumbnail"?
+
+    return (
+      <Stack spacing="xs">
+        <Group position="left" grow>
+          <DetailsImage
+            src={stockitem.part_detail?.thumbnail}
+            endpoint={ApiEndpoints.part_list}
+            pk={stockitem.part}
+            refresh={refreshInstance}
+          />
+        </Group>
+      </Stack>
+    );
+  }, [stockitem]);
+
   const stockPanels: PanelType[] = useMemo(() => {
     return [
       {
         name: 'details',
         label: t`Details`,
         icon: <IconInfoCircle />,
-        content: <PlaceholderPanel />
+        content: details
       },
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory />,
-        content: <PlaceholderPanel />
+        icon: <IconHistory />
       },
       {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        content: <PlaceholderPanel />,
         hidden:
           !stockitem?.part_detail?.salable && !stockitem?.part_detail?.component
       },

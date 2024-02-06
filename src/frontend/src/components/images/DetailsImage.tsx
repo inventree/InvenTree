@@ -70,8 +70,6 @@ function UploadModal({ props }: { props: DetailImageProps }) {
   const [file1, setFile] = useState<FileWithPath | null>(null);
   let uploading = false;
 
-  const theme = useMantineTheme();
-
   // Components to show in the Dropzone when no file is selected
   const noFileIdle = (
     <Group>
@@ -81,7 +79,7 @@ function UploadModal({ props }: { props: DetailImageProps }) {
           <Trans>Drag and drop to upload</Trans>
         </Text>
         <Text size="sm" color="dimmed" inline mt={7}>
-          <Trans>Click to select file(s)</Trans>
+          <Trans>Click to select image file</Trans>
         </Text>
       </div>
     </Group>
