@@ -2,6 +2,7 @@
 
 import logging
 from importlib import import_module
+from math import e
 
 from django.urls import NoReverseMatch, include, path, reverse
 
@@ -9,6 +10,7 @@ from allauth.account.models import EmailAddress
 from allauth.socialaccount import providers
 from allauth.socialaccount.providers.oauth2.views import OAuth2Adapter, OAuth2LoginView
 from drf_spectacular.utils import OpenApiResponse, extend_schema
+from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -16,7 +18,7 @@ from rest_framework.response import Response
 import InvenTree.sso
 from common.models import InvenTreeSetting
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI
-from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.serializers import EmptySerializer, InvenTreeModelSerializer
 
 logger = logging.getLogger('inventree')
 
@@ -112,11 +114,36 @@ for name, provider in providers.registry.provider_map.items():
 social_auth_urlpatterns += provider_urlpatterns
 
 
+class SocialProviderListResponseSerializer(serializers.Serializer):
+    """Serializer for the SocialProviderListView."""
+
+    class SocialProvider(serializers.Serializer):
+        """Serializer for the SocialProviderListResponseSerializer."""
+
+        id = serializers.CharField()
+        name = serializers.CharField()
+        configured = serializers.BooleanField()
+        login = serializers.URLField()
+        connect = serializers.URLField()
+        display_name = serializers.CharField()
+
+    sso_enabled = serializers.BooleanField()
+    sso_registration = serializers.BooleanField()
+    mfa_required = serializers.BooleanField()
+    providers = SocialProvider(many=True)
+    registration_enabled = serializers.BooleanField()
+    password_forgotten_enabled = serializers.BooleanField()
+
+
 class SocialProviderListView(ListAPI):
     """List of available social providers."""
 
     permission_classes = (AllowAny,)
+    serializer_class = EmptySerializer
 
+    @extend_schema(
+        responses={200: OpenApiResponse(response=SocialProviderListResponseSerializer)}
+    )
     def get(self, request, *args, **kwargs):
         """Get the list of providers."""
         provider_list = []

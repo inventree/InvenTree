@@ -111,6 +111,7 @@ class RoleDetails(APIView):
     """
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     def get(self, request, *args, **kwargs):
         """Return the list of roles / permissions available to the current user."""
@@ -212,6 +213,8 @@ class GroupList(ListCreateAPI):
 class Logout(LogoutView):
     """API view for logging out via API."""
 
+    serializer_class = None
+
     def post(self, request):
         """Logout the current user.
 
@@ -236,6 +239,7 @@ class GetAuthToken(APIView):
     """Return authentication token for an authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated.

@@ -7,6 +7,8 @@ from rest_framework import permissions, serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
+from InvenTree.serializers import EmptySerializer
+
 from .states import StatusCode
 
 
@@ -67,6 +69,7 @@ class AllStatusViews(StatusView):
     """Endpoint for listing all defined status models."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = EmptySerializer
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""

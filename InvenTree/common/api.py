@@ -54,6 +54,7 @@ class WebhookView(CsrfExemptMixin, APIView):
     permission_classes = []
     model_class = common.models.WebhookEndpoint
     run_async = False
+    serializer_class = None
 
     @extend_schema(
         responses={
@@ -123,6 +124,7 @@ class CurrencyExchangeView(APIView):
     """API endpoint for displaying currency information."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     def get(self, request, format=None):
         """Return information on available currency conversions."""
@@ -165,6 +167,7 @@ class CurrencyRefreshView(APIView):
     """
 
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    serializer_class = None
 
     def post(self, request, *args, **kwargs):
         """Performing a POST request will update currency exchange rates."""
@@ -524,6 +527,7 @@ class BackgroundTaskOverview(APIView):
     """Provides an overview of the background task queue status."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    serializer_class = None
 
     def get(self, request, format=None):
         """Return information about the current status of the background task queue."""
