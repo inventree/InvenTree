@@ -2850,28 +2850,13 @@ class NotificationMessage(models.Model):
 
     def age(self):
         """Age of the message in seconds."""
-
-        def is_aware(d):
-            return d.tzinfo is not None and d.tzinfo.utcoffset(d) is not None
-
-        def is_naive(d):
-            return d.tzinfo is None or d.tzinfo.utcoffset(d) is None
-
-        current = now()
-        creation = (
+        # Add timezone information if TZ is enabled (in production mode mostly)
+        delta = now() - (
             self.creation.replace(tzinfo=timezone.utc)
             if settings.USE_TZ
             else self.creation
         )
-        try:
-            delta = current - creation
-            return delta.seconds
-        except TypeError as _e:
-            print(self)
-            print(f'Timezone is {settings.USE_TZ}')
-            print(f'current is {is_aware(current)} aware, {is_naive(current)} naive')
-            print(f'creation is {is_aware(creation)} aware, {is_naive(creation)} naive')
-            raise _e
+        return delta.seconds
 
     def age_human(self):
         """Humanized age."""
