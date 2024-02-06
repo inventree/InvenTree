@@ -196,7 +196,7 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['name', 'description', 'structural']
+    filterset_fields = ['name', 'description', 'structural', 'parent']
 
     ordering_fields = ['name', 'pathstring', 'level', 'tree_id', 'lft', 'part_count']
 

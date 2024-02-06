@@ -357,7 +357,14 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['name', 'structural', 'external', 'tags__name', 'tags__slug']
+    filterset_fields = [
+        'name',
+        'structural',
+        'external',
+        'parent',
+        'tags__name',
+        'tags__slug',
+    ]
 
     search_fields = ['name', 'description', 'tags__name', 'tags__slug']
 
