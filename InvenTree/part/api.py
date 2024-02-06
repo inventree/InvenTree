@@ -49,6 +49,7 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.permissions import RolePermission
+from InvenTree.serializers import EmptySerializer
 from InvenTree.status_codes import (
     BuildStatusGroups,
     PurchaseOrderStatusGroups,
@@ -487,6 +488,7 @@ class PartScheduling(RetrieveAPI):
     """
 
     queryset = Part.objects.all()
+    serializer_class = EmptySerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Return scheduling information for the referenced Part instance."""
@@ -687,6 +689,7 @@ class PartRequirements(RetrieveAPI):
     """
 
     queryset = Part.objects.all()
+    serializer_class = EmptySerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Construct a response detailing Part requirements."""
@@ -738,6 +741,7 @@ class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
     queryset = Part.objects.all()
+    serializer_class = EmptySerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Return serial number information for the referenced Part instance."""
