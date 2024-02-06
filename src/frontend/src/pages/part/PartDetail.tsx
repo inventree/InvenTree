@@ -1,5 +1,14 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Divider,
+  Group,
+  LoadingOverlay,
+  Skeleton,
+  Space,
+  Stack,
+  Text
+} from '@mantine/core';
+import { parseHotkey } from '@mantine/hooks/lib/use-hotkeys/parse-hotkey';
 import {
   IconBookmarks,
   IconBuilding,
@@ -28,6 +37,7 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
+import { DetailsImage } from '../../components/images/DetailsImage';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -92,6 +102,28 @@ export default function PartDetail() {
     },
     refetchOnMount: true
   });
+
+  const details = useMemo(() => {
+    const canEdit = user.hasChangeRole(UserRoles.part);
+    const canDelete = user.hasDeleteRole(UserRoles.part);
+
+    return (
+      <Stack spacing="xs">
+        <Group position="left" grow>
+          <DetailsImage
+            src={part.image}
+            endpoint={ApiEndpoints.part_list}
+            pk={part.pk}
+            refresh={refreshInstance}
+            allowUpload={canEdit}
+            allowDelete={canDelete}
+            allowSelect={canEdit}
+            allowDownload={true}
+          />
+        </Group>
+      </Stack>
+    );
+  }, [part]);
 
   const detailFields = (part: any): ItemDetailFields => {
     let left: DetailsField[][] = [];
@@ -449,14 +481,18 @@ export default function PartDetail() {
         label: t`Details`,
         icon: <IconInfoCircle />,
         content: !instanceQuery.isFetching && (
-          <ItemDetails
-            appRole={UserRoles.part}
-            params={part}
-            apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
-            refresh={refreshInstance}
-            fields={detailFields(part)}
-            partModel
-          />
+          <Stack spacing="xs">
+            {details}
+            <Divider />
+            <ItemDetails
+              appRole={UserRoles.part}
+              params={part}
+              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+              refresh={refreshInstance}
+              fields={detailFields(part)}
+              partModel
+            />
+          </Stack>
         )
       },
       {

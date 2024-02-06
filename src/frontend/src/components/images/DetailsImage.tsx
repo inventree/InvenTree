@@ -1,24 +1,24 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  AspectRatio,
   Button,
   Group,
   Image,
-  Modal,
+  Overlay,
   Paper,
   Text,
   rem,
   useMantineTheme
 } from '@mantine/core';
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { useDisclosure, useHover } from '@mantine/hooks';
+import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { api } from '../../App';
-import { UserRoles } from '../../enums/Roles';
 import { InvenTreeIcon } from '../../functions/icons';
-import { useUserState } from '../../states/UserState';
-import { PartThumbTable } from '../../tables/part/PartThumbTable';
+import { notYetImplemented } from '../../functions/notifications';
+import { apiUrl } from '../../states/ApiState';
 import { ActionButton } from '../buttons/ActionButton';
 import { ApiImage } from './ApiImage';
 
@@ -26,37 +26,23 @@ import { ApiImage } from './ApiImage';
  * Props for detail image
  */
 export type DetailImageProps = {
-  appRole: UserRoles;
   src: string;
-  apiPath: string;
+  endpoint: string;
+  pk: number;
+  allowUpload?: boolean;
+  allowDownload?: boolean;
+  allowSelect?: boolean;
+  allowDelete?: boolean;
   refresh: () => void;
-  imageActions?: DetailImageButtonProps;
-  pk: string;
-};
-
-/**
- * Actions for Detail Images.
- * If true, the button type will be visible
- * @param {boolean} selectExisting - PART ONLY. Allows selecting existing images as part image
- * @param {boolean} uploadFile - Allows uploading a new image
- * @param {boolean} deleteFile - Allows deleting the current image
- */
-export type DetailImageButtonProps = {
-  selectExisting?: boolean;
-  uploadFile?: boolean;
-  deleteFile?: boolean;
 };
 
 // Image is expected to be 1:1 square, so only 1 dimension is needed
 const IMAGE_DIMENSION = 256;
 
-// Image to display if instance has no image
-const backup_image = '/static/img/blank_image.png';
-
 /**
  * Modal used for removing/deleting the current image relation
  */
-const removeModal = (apiPath: string, setImage: (image: string) => void) =>
+function RemoveImage(props: DetailImageProps) {
   modals.openConfirmModal({
     title: t`Remove Image`,
     children: (
@@ -66,21 +52,21 @@ const removeModal = (apiPath: string, setImage: (image: string) => void) =>
     ),
     labels: { confirm: t`Remove`, cancel: t`Cancel` },
     onConfirm: async () => {
-      await api.patch(apiPath, { image: null });
-      setImage(backup_image);
+      api
+        .patch(apiUrl(props.endpoint, props.pk), {
+          image: null
+        })
+        .then(() => {
+          props.refresh();
+        });
     }
   });
+}
 
 /**
  * Modal used for uploading a new image
  */
-function UploadModal({
-  apiPath,
-  setImage
-}: {
-  apiPath: string;
-  setImage: (image: string) => void;
-}) {
+function UploadModal({ props }: { props: DetailImageProps }) {
   const [file1, setFile] = useState<FileWithPath | null>(null);
   let uploading = false;
 
@@ -149,17 +135,11 @@ function UploadModal({
     const formData = new FormData();
     formData.append('image', file, file.name);
 
-    const response = await api.patch(apiPath, formData);
-
-    if (response.data.image.includes(file.name)) {
-      setImage(response.data.image);
-      modals.closeAll();
-    }
+    api.patch(apiUrl(props.endpoint, props.pk), formData).then((response) => {
+      modals.close('upload-image');
+      props.refresh();
+    });
   };
-
-  const primaryColor =
-    theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6];
-  const redColor = theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6];
 
   return (
     <Paper sx={{ height: '220px' }}>
@@ -180,7 +160,7 @@ function UploadModal({
               iconProps={{
                 size: '3.2rem',
                 stroke: 1.5,
-                color: primaryColor
+                color: 'green'
               }}
             />
           </Dropzone.Accept>
@@ -190,7 +170,7 @@ function UploadModal({
               iconProps={{
                 size: '3.2rem',
                 stroke: 1.5,
-                color: redColor
+                color: 'red'
               }}
             />
           </Dropzone.Reject>
@@ -227,77 +207,64 @@ function UploadModal({
   );
 }
 
-/**
- * Generate components for Action buttons used with the Details Image
+/*
+ * Construct a group of buttons which appear when the image is hovered
  */
-function ImageActionButtons({
-  actions = {},
-  visible,
-  apiPath,
-  hasImage,
-  pk,
-  setImage
-}: {
-  actions?: DetailImageButtonProps;
-  visible: boolean;
-  apiPath: string;
-  hasImage: boolean;
-  pk: string;
-  setImage: (image: string) => void;
-}) {
-  const [opened, { open, close }] = useDisclosure(false);
-
+function ImageButtonGroup({ props }: { props: DetailImageProps }) {
   return (
     <>
-      <Modal opened={opened} onClose={close} title={t`Select image`} size="70%">
-        <PartThumbTable pk={pk} close={close} setImage={setImage} />
-      </Modal>
-      {visible && (
-        <Group
-          spacing="xs"
-          style={{ zIndex: 2, position: 'absolute', top: '10px', left: '10px' }}
-        >
-          {actions.selectExisting && (
-            <ActionButton
-              icon={<InvenTreeIcon icon="select_image" />}
-              tooltip={t`Select from existing images`}
-              variant="outline"
-              size="lg"
-              tooltipAlignment="top"
-              onClick={open}
-            />
-          )}
-          {actions.uploadFile && (
-            <ActionButton
-              icon={<InvenTreeIcon icon="upload" />}
-              tooltip={t`Upload new image`}
-              variant="outline"
-              size="lg"
-              tooltipAlignment="top"
-              onClick={() => {
-                modals.open({
-                  title: t`Upload Image`,
-                  children: (
-                    <UploadModal apiPath={apiPath} setImage={setImage} />
-                  )
-                });
-              }}
-            />
-          )}
-          {actions.deleteFile && hasImage && (
-            <ActionButton
-              icon={
-                <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />
-              }
-              tooltip={t`Delete image`}
-              variant="outline"
-              size="lg"
-              tooltipAlignment="top"
-              onClick={() => removeModal(apiPath, setImage)}
-            />
-          )}
-        </Group>
-      )}
+      <Group
+        position="left"
+        spacing="xs"
+        style={{ zIndex: 2, position: 'absolute', top: '10px', left: '10px' }}
+      >
+        {props.allowSelect && (
+          <ActionButton
+            icon={<InvenTreeIcon icon="select_image" />}
+            tooltip={t`Select Existing Image`}
+            variant="filled"
+            size="lg"
+            tooltipAlignment="top"
+            onClick={() => notYetImplemented()}
+          />
+        )}
+        {props.allowDownload && (
+          <ActionButton
+            icon={<InvenTreeIcon icon="download" />}
+            tooltip={t`Download Image`}
+            variant="filled"
+            size="lg"
+            tooltipAlignment="top"
+            onClick={() => notYetImplemented()}
+          />
+        )}
+        {props.allowUpload && (
+          <ActionButton
+            icon={<InvenTreeIcon icon="upload" />}
+            tooltip={t`Upload Image`}
+            variant="filled"
+            size="lg"
+            tooltipAlignment="top"
+            onClick={() => {
+              modals.open({
+                title: t`Upload Image`,
+                modalId: 'upload-image',
+                children: <UploadModal props={props} />
+              });
+            }}
+          />
+        )}
+        {props.allowDelete && props.src && (
+          <ActionButton
+            icon={<InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />}
+            tooltip={t`Delete image`}
+            variant="filled"
+            size="lg"
+            tooltipAlignment="top"
+            onClick={() => RemoveImage(props)}
+          />
+        )}
+      </Group>
     </>
   );
 }
@@ -307,52 +274,33 @@ function ImageActionButtons({
  */
 export function DetailsImage(props: DetailImageProps) {
   // Displays a group of ActionButtons on hover
+
   const { hovered, ref } = useHover();
-  const [img, setImg] = useState<string>(props.src ?? backup_image);
+  const hasActions = props.allowDelete || props.allowUpload;
 
-  // Sets a new image, and triggers upstream instance refresh
-  const setAndRefresh = (image: string) => {
-    setImg(image);
-    props.refresh();
-  };
-
-  const permissions = useUserState();
+  const img: string = useMemo(() => {
+    return props.src || '/static/img/blank_image.png';
+  }, [props.src]);
 
   return (
-    <>
-      <Paper
-        ref={ref}
-        style={{
-          position: 'relative',
-          width: `${IMAGE_DIMENSION}px`,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
+    <AspectRatio ref={ref} ratio={1} maw={IMAGE_DIMENSION} mx="auto">
+      <ApiImage
+        src={img}
+        style={{ zIndex: 1 }}
+        height={IMAGE_DIMENSION}
+        width={IMAGE_DIMENSION}
+        onClick={() => {
+          modals.open({
+            children: <ApiImage src={img} />,
+            withCloseButton: false
+          });
         }}
-      >
-        <ApiImage
-          src={img}
-          style={{ zIndex: 1 }}
-          height={IMAGE_DIMENSION}
-          width={IMAGE_DIMENSION}
-          onClick={() => {
-            modals.open({
-              children: <ApiImage src={img} />,
-              withCloseButton: false
-            });
-          }}
-        />
-        {permissions.hasChangeRole(props.appRole) && (
-          <ImageActionButtons
-            visible={hovered}
-            actions={props.imageActions}
-            apiPath={props.apiPath}
-            hasImage={props.src ? true : false}
-            pk={props.pk}
-            setImage={setAndRefresh}
-          />
-        )}
-      </Paper>
-    </>
+      />
+      {hasActions && hovered && (
+        <Overlay opacity={0.35} zIndex={1} radius="sm">
+          <ImageButtonGroup props={props} />
+        </Overlay>
+      )}
+    </AspectRatio>
   );
 }
