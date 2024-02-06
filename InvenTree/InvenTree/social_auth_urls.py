@@ -2,7 +2,6 @@
 
 import logging
 from importlib import import_module
-from math import e
 
 from django.urls import NoReverseMatch, include, path, reverse
 
