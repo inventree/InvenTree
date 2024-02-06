@@ -28,6 +28,7 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 from common.models import CustomUnit, InvenTreeSetting
 from common.settings import currency_codes
+from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartCategory
@@ -1264,3 +1265,98 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.url, '/api/auth/login-redirect/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)
+
+
+class ClassValidationMixinTest(TestCase):
+    """Tests for the ClassValidationMixin class."""
+
+    class BaseTestClass(ClassValidationMixin):
+        """A valid class that inherits from ClassValidationMixin."""
+
+        NAME: str
+
+        def test(self):
+            """Test function."""
+            pass
+
+        def test1(self):
+            """Test function."""
+            pass
+
+        def test2(self):
+            """Test function."""
+            pass
+
+        required_attributes = ['NAME']
+        required_overrides = [test, [test1, test2]]
+
+    class InvalidClass:
+        """An invalid class that does not inherit from ClassValidationMixin."""
+
+        pass
+
+    def test_valid_class(self):
+        """Test that a valid class passes the validation."""
+
+        class TestClass(self.BaseTestClass):
+            """A valid class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test(self):
+                """Test function."""
+                pass
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        TestClass.validate()
+
+    def test_invalid_class(self):
+        """Test that an invalid class fails the validation."""
+
+        class TestClass1(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass1\'>\' did not provide the following attributes: NAME and did not override the required attributes: test, one of test1 or test2',
+        ):
+            TestClass1.validate()
+
+        class TestClass2(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass2\'>\' did not override the required attributes: test',
+        ):
+            TestClass2.validate()
+
+
+class ClassProviderMixinTest(TestCase):
+    """Tests for the ClassProviderMixin class."""
+
+    class TestClass(ClassProviderMixin):
+        """This class is a dummy class to test the ClassProviderMixin."""
+
+        pass
+
+    def test_get_provider_file(self):
+        """Test the get_provider_file function."""
+        self.assertEqual(self.TestClass.get_provider_file(), __file__)
+
+    def test_provider_plugin(self):
+        """Test the provider_plugin function."""
+        self.assertEqual(self.TestClass.get_provider_plugin(), None)
+
+    def test_get_is_builtin(self):
+        """Test the get_is_builtin function."""
+        self.assertTrue(self.TestClass.get_is_builtin())

@@ -405,7 +405,7 @@ export function MachineListTable({
         sortable: true,
         render: function (record) {
           return (
-            <Group position="left">
+            <Group position="left" noWrap>
               <MachineStatusIndicator machine={record} />
               <Text>{record.name}</Text>
               {record.restart_required && (
