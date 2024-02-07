@@ -88,6 +88,20 @@ jobs:
         run: |
           pip install requests
           python3 ci/version_check.py
+      - name: Download public schema
+        run: |
+          version = $((python3 ci/version_check.py only_version) 2> &1)
+          echo "Version: $version"
+          curl -s -o schema.yaml https://github.com/inventree/schema/blob/main/export/$version/api.yaml
+      - name: Download working schema
+        uses: actions/download-artifact
+        with:
+          name: api.yaml
+          path: api.yaml
+      - name: Check for differences
+        run: |
+          diff -u api.yaml schema.yaml
+          diff -u api.yaml schema.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
 
   mkdocs:
     name: Style [Documentation]
@@ -136,8 +150,18 @@ jobs:
           dev-install: true
           update: true
       - name: Export API Documentation
+        run: invoke apidoc --ignore-warnings
+      - name: Upload schema
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # pin@v3.1.3
+        with:
+          name: api.yaml
+          path: api.yaml
+      - name: Find differences to current schema
         run: |
-          invoke apidoc
+          git fetch origin master
+          git diff --name-only origin/master api.yaml
+      - name: Check schema - including warnings
+        run: invoke apidoc
 
   python:
     name: Tests - inventree-python
