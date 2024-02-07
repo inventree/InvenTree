@@ -2281,6 +2281,7 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
 
     Attributes:
         stock_item: Link to StockItem
+        template: Link to TestTemplate
         test: Test name (simple string matching)
         result: Test result value (pass / fail / etc)
         value: Recorded test output value (optional)
@@ -2333,6 +2334,14 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
 
     stock_item = models.ForeignKey(
         StockItem, on_delete=models.CASCADE, related_name='test_results'
+    )
+
+    template = models.ForeignKey(
+        'part.parttesttemplate',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='test_results',
     )
 
     test = models.CharField(
