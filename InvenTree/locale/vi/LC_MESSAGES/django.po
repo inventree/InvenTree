@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-07 11:35+0000\n"
-"PO-Revision-Date: 2024-02-03 12:08\n"
+"POT-Creation-Date: 2024-02-07 09:13+0000\n"
+"PO-Revision-Date: 2024-02-07 12:22\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -292,7 +292,7 @@ msgstr "Tiếng Nga"
 
 #: InvenTree/locales.py:39
 msgid "Slovak"
-msgstr ""
+msgstr "Tiếng Slo-va-ki-a"
 
 #: InvenTree/locales.py:40
 msgid "Slovenian"
@@ -596,16 +596,12 @@ msgid "Only superusers can create new users"
 msgstr "Chỉ có siêu người dùng là có thể tạo người dùng mới"
 
 #: InvenTree/serializers.py:455
-#, fuzzy
-#| msgid "Token has been revoked"
 msgid "Your account has been created."
-msgstr "Mã thông báo đã bị thu hồi"
+msgstr ""
 
 #: InvenTree/serializers.py:457
-#, fuzzy
-#| msgid "Enable password forgot function on the login pages"
 msgid "Please use the password reset function to login"
-msgstr "Bật chức năng quên mật khẩu trong trang đăng nhập"
+msgstr ""
 
 #: InvenTree/serializers.py:464
 msgid "Welcome to InvenTree"
@@ -2948,10 +2944,8 @@ msgid "Check that all plugins are installed on startup - enable in container env
 msgstr "Kiểm tra toàn bộ phần mở rộng đã được cài đặt khi khởi dộng - bật trong môi trường ảo hóa"
 
 #: common/models.py:1868
-#, fuzzy
-#| msgid "Check plugins on startup"
 msgid "Check for plugin updates"
-msgstr "Kiểm tra phần mở rộng khi khởi động"
+msgstr ""
 
 #: common/models.py:1869
 msgid "Enable periodic checks for updates to installed plugins"
@@ -7227,7 +7221,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:512
 msgid "Calculate"
-msgstr ""
+msgstr "Tính toán"
 
 #: part/templates/part/part_base.html:529
 msgid "Remove associated image from this part"
@@ -7239,7 +7233,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:676
 msgid "Hide Part Details"
-msgstr ""
+msgstr "Ẩn chi tiết sản phẩm"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:76
 #: part/templates/part/prices.html:227 templates/js/translated/pricing.js:485
@@ -7412,7 +7406,7 @@ msgstr "Thêm định giá bán hàng"
 
 #: part/templates/part/pricing_javascript.html:24
 msgid "Update Pricing"
-msgstr ""
+msgstr "Cập nhập giá bán"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
 #: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
@@ -7831,10 +7825,8 @@ msgid "The Supplier which acts as 'TME'"
 msgstr "Nhà cung cấp hoạt động như 'TME'"
 
 #: plugin/installer.py:194 plugin/installer.py:279
-#, fuzzy
-#| msgid "Permission denied: only staff users can install plugins"
 msgid "Only staff users can administer plugins"
-msgstr "Quyền bị từ chối: chỉ người dùng là nhân viên mới có thể cài đặt phần mở rộng"
+msgstr ""
 
 #: plugin/installer.py:245
 msgid "Installed plugin successfully"
@@ -7850,26 +7842,20 @@ msgid "Plugin was not found in registry"
 msgstr ""
 
 #: plugin/installer.py:273
-#, fuzzy
-#| msgid "PluginName of the plugin"
 msgid "Plugin is not a packaged plugin"
-msgstr "Tên của phần bổ sung"
+msgstr ""
 
 #: plugin/installer.py:276
-#, fuzzy
-#| msgid "Price not found"
 msgid "Plugin package name not found"
-msgstr "Không tìm thấy giá"
+msgstr ""
 
 #: plugin/installer.py:297
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr ""
 
 #: plugin/installer.py:310
-#, fuzzy
-#| msgid "Installed plugin successfully"
 msgid "Uninstalled plugin successfully"
-msgstr "Cài đặt phần mở rộng thành công"
+msgstr ""
 
 #: plugin/models.py:30
 msgid "Plugin Configuration"
@@ -7917,10 +7903,8 @@ msgid "Builtin Plugin"
 msgstr "Plugin có sẵn"
 
 #: plugin/models.py:173
-#, fuzzy
-#| msgid "Packaging"
 msgid "Package Plugin"
-msgstr "Đóng gói"
+msgstr ""
 
 #: plugin/models.py:197 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
@@ -8061,10 +8045,8 @@ msgid "Activate this plugin"
 msgstr "Kích hoạt phần bổ sung này"
 
 #: plugin/serializers.py:219
-#, fuzzy
-#| msgid "Delete Notifications"
 msgid "Delete configuration"
-msgstr "Xóa thông báo"
+msgstr ""
 
 #: plugin/serializers.py:220
 msgid "Delete the plugin configuration from the database"
@@ -8851,10 +8833,8 @@ msgid "At least two stock items must be provided"
 msgstr "Cần cung cấp ít nhất hai mặt hàng"
 
 #: stock/serializers.py:1201
-#, fuzzy
-#| msgid "Change"
 msgid "No Change"
-msgstr "Đổi"
+msgstr ""
 
 #: stock/serializers.py:1230
 msgid "StockItem primary key value"
@@ -13611,8 +13591,7 @@ msgstr "Nhà cung cấp SSO đã chọn không hợp lệ hoặc đã không đ�
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr "Bạn chuân bị sử dụng tài khoản %(provider_name)s của bạn để đăng nhập%(site_name)s<br>Vì là bước cuối cùng, xin hãy hoàn thiện biểu mẫu dưới đây:"
 
@@ -13788,5 +13767,3 @@ msgstr "Quyển để sửa mục"
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
 
-#~ msgid "Plugin installation failed"
-#~ msgstr "Cài đặt phần bổ sung thất bại"
