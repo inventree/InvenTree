@@ -249,7 +249,10 @@ function MachineDrawer({
                     preFormContent: (
                       <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
                     ),
-                    onFormSuccess: () => navigate(-1)
+                    onFormSuccess: () => {
+                      refreshTable();
+                      navigate(-1);
+                    }
                   });
                 }
               }),
