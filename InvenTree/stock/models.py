@@ -2032,8 +2032,7 @@ class StockItem(
         result_map = {}
 
         for result in results:
-            key = InvenTree.helpers.generateTestKey(result.test)
-            result_map[key] = result
+            result_map[result.key] = result
 
         # Do we wish to "cascade" and include test results from installed stock items?
         cascade = kwargs.get('cascade', False)
@@ -2329,7 +2328,7 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     @property
     def key(self):
         """Return key for test."""
-        return InvenTree.helpers.generateTestKey(self.test)
+        return InvenTree.helpers.generateTestKey(self.test_name)
 
     stock_item = models.ForeignKey(
         StockItem, on_delete=models.CASCADE, related_name='test_results'
@@ -2339,11 +2338,6 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     def test_name(self):
         """Return the test name of the associated test template."""
         return self.template.test_name
-
-    @property
-    def test_key(self):
-        """Return the test key of the associated test template."""
-        return self.template.key
 
     template = models.ForeignKey(
         'part.parttesttemplate',
