@@ -522,15 +522,6 @@ def export_records(
 
             data_out.append(entry)
 
-            if 'model' in entry:
-                # Clear out any permissions specified for a group
-                if entry['model'] == 'auth.group':
-                    entry['fields']['permissions'] = []
-
-                # Clear out any permissions specified for a user
-                if entry['model'] == 'auth.user':
-                    entry['fields']['user_permissions'] = []
-
     # Write the processed data to file
     with open(filename, 'w') as f_out:
         f_out.write(json.dumps(data_out, indent=2))
