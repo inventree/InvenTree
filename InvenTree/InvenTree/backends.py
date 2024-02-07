@@ -56,10 +56,9 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
                 if self.get_value() == value:
                     break
             except (IntegrityError, OperationalError, ProgrammingError):
-                # In the database is locked, then 
+                # In the database is locked, then
                 logger.debug(
-                    'Failed to set maintenance mode state (%s retries left)',
-                    retries,
+                    'Failed to set maintenance mode state (%s retries left)', retries
                 )
                 time.sleep(0.1)
 
