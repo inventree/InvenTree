@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
-import { Badge, Group, Text } from '@mantine/core';
+import { Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconCircleCheck, IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { api } from '../../App';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
@@ -29,52 +29,79 @@ export default function StockItemTestResultTable({
   const user = useUserState();
   const table = useTable('stocktests');
 
+  // Fetch the test templates required for this stock item
+  const { data: testTemplates } = useQuery({
+    queryKey: ['stocktesttemplates', partId],
+    queryFn: async () => {
+      if (!partId) {
+        return [];
+      }
+
+      return api
+        .get(apiUrl(ApiEndpoints.part_test_template_list), {
+          params: {
+            part: partId,
+            include_inherited: true
+          }
+        })
+        .then((response) => response.data)
+        .catch((error) => []);
+    }
+  });
+
+  useEffect(() => {
+    table.refreshTable();
+  }, [testTemplates]);
+
   // Format the test results based on the returned data
-  const formatRecords = useCallback((records: any[]): any[] => {
-    let resultMap: Record<string, any> = {};
-    let resultList: any[] = [];
-
-    // Iterate through the returned records
-    // Note that the results are sorted by newest first,
-    // to ensure that the most recent result is displayed "on top"
-    records
-      .sort((a, b) => {
-        let aDate = new Date(a.date);
-        let bDate = new Date(b.date);
-        if (aDate < bDate) {
-          return -1;
-        } else if (aDate > bDate) {
-          return 1;
-        } else {
-          return 0;
-        }
-      })
-      .forEach((record, _idx) => {
-        let key = record.key;
-
-        // Most recent record is first
-        if (!resultMap[key]) {
-          resultMap[key] = {
-            ...record,
-            old: []
-          };
-        } else {
-          resultMap[key]['old'].push(record);
-        }
+  const formatRecords = useCallback(
+    (records: any[]): any[] => {
+      let results = testTemplates.map((template: any) => {
+        return {
+          ...template,
+          results: [],
+          value: undefined,
+          result: undefined,
+          attachment: undefined,
+          date: undefined,
+          note: undefined
+        };
       });
 
-    // Now, re-create the original list of records
-    records.forEach((record, _idx) => {
-      let key = record.key;
+      // Iterate through the returned records
+      // Note that the results are sorted by oldest first,
+      // to ensure that the most recent result is displayed "on top"
+      records
+        .sort((a, b) => {
+          let aDate = new Date(a.date);
+          let bDate = new Date(b.date);
+          if (aDate < bDate) {
+            return 1;
+          } else if (aDate > bDate) {
+            return -1;
+          } else {
+            return 0;
+          }
+        })
+        .forEach((record, _idx) => {
+          // Find matching template
+          let templateIndex = results.findIndex(
+            (r: any) => r.pk == record.template
+          );
+          if (templateIndex >= 0) {
+            results[templateIndex].results.push(record);
+            results[templateIndex].value = record.value;
+            results[templateIndex].result = record.result;
+            results[templateIndex].attachment = record.attachment;
+            results[templateIndex].date = record.date;
+            results[templateIndex].note = record.note;
+          }
+        });
 
-      // Check if the record is already in the list
-      if (!resultList.find((r) => r.key == key)) {
-        resultList.push(resultMap[key]);
-      }
-    });
-
-    return resultList;
-  }, []);
+      return results;
+    },
+    [testTemplates]
+  );
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -86,9 +113,13 @@ export default function StockItemTestResultTable({
         render: (record: any) => {
           return (
             <Group position="apart">
-              <Text>{record.template_detail.test_name}</Text>
-              {(record.old?.length ?? 0) > 0 && (
-                <Text italic>+{record.old.length}</Text>
+              <Text>{record.test_name}</Text>
+              {record.results.length > 0 && (
+                <Tooltip label={t`Test Results`}>
+                  <Badge color="lightblue" variant="filled">
+                    {record.results.length}
+                  </Badge>
+                </Tooltip>
               )}
             </Group>
           );
@@ -110,7 +141,7 @@ export default function StockItemTestResultTable({
         }
       },
       DescriptionColumn({
-        accessor: 'template_detail.description'
+        accessor: 'description'
       }),
       {
         accessor: 'value',
