@@ -9,6 +9,7 @@ from maintenance_mode.backends import AbstractStateBackend
 
 import common.models
 import InvenTree.helpers
+import InvenTree.ready
 
 logger = logging.getLogger('inventree')
 
@@ -28,6 +29,16 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
         Returns:
             bool: True if maintenance mode is active, False otherwise.
         """
+        # If any of the following conditions are true, maintenance mode is active
+        if InvenTree.ready.isImportingData():
+            return True
+
+        if InvenTree.ready.isRunningMigrations():
+            return True
+
+        if InvenTree.ready.isRebuildingData():
+            return True
+
         try:
             setting = common.models.InvenTreeSetting.objects.get(key=self.SETTING_KEY)
             value = InvenTree.helpers.str2bool(setting.value)

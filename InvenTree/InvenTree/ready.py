@@ -24,6 +24,13 @@ def isRunningMigrations():
     )
 
 
+def isRebuildingData():
+    """Return true if any of the rebuilding commands are being executed."""
+    return any(
+        (x in sys.argv for x in ['rebuild_models', 'rebuild_thumbnails', 'rebuild'])
+    )
+
+
 def isInWorkerThread():
     """Returns True if the current thread is a background worker thread."""
     return 'qcluster' in sys.argv
