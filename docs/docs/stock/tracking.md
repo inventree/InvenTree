@@ -30,6 +30,19 @@ Batch codes can be generated automatically based on a provided pattern. The defa
 {% include 'img.html' %}
 {% endwith %}
 
+#### Context Variables
+
+The following context variables are available by default when generating a batch code using the builtin generation functionality:
+
+| Variable | Description |
+| --- | --- |
+| year | The current year e.g. `2024` |
+| month | The current month number, e.g. `5` |
+| day | The current day of month, e.g. `21` |
+| hour | The current hour of day, in 24-hour format, e.g. `23` |
+| minute | The current minute of hour, e.g. `17` |
+| week | The current week of year, e.g. `51` |
+
 #### Plugin Support
 
 To implement custom batch code functionality, refer to the details on the [Validation Plugin Mixin](../extend/plugins/validation.md#batch-codes).
