@@ -1237,6 +1237,14 @@ class StockMergeSerializer(serializers.Serializer):
         )
 
 
+def stock_item_adjust_status_options():
+    """Return a custom set of options for the StockItem status adjustment field.
+
+    In particular, include a Null option for the status field.
+    """
+    return [(None, _('No Change'))] + InvenTree.status_codes.StockStatus.items()
+
+
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjument request.
 
@@ -1284,8 +1292,8 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=InvenTree.status_codes.StockStatus.items(),
-        default=InvenTree.status_codes.StockStatus.OK.value,
+        choices=stock_item_adjust_status_options(),
+        default=None,
         label=_('Status'),
         help_text=_('Stock item status code'),
         required=False, allow_blank=True,
@@ -1443,8 +1451,8 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 kwargs = {}
 
                 for field_name in StockItem.optional_transfer_fields():
-                    if field_name in item:
-                        kwargs[field_name] = item[field_name]
+                    if field_value := item.get(field_name, None):
+                        kwargs[field_name] = field_value
 
                 stock_item.move(
                     location,
