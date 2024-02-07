@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-07 11:35+0000\n"
-"PO-Revision-Date: 2024-02-03 12:07\n"
+"POT-Creation-Date: 2024-02-07 09:13+0000\n"
+"PO-Revision-Date: 2024-02-07 12:21\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -329,7 +329,7 @@ msgstr "Chinesisch (Traditionell)"
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr ""
+msgstr "[{site_name}] In App einloggen"
 
 #: InvenTree/magic_login.py:38 company/models.py:131
 #: company/templates/company/company_base.html:132
@@ -597,13 +597,11 @@ msgstr "Nur Superuser können neue Benutzer erstellen"
 
 #: InvenTree/serializers.py:455
 msgid "Your account has been created."
-msgstr ""
+msgstr "Ihr Konto wurde erstellt."
 
 #: InvenTree/serializers.py:457
-#, fuzzy
-#| msgid "Enable password forgot function on the login pages"
 msgid "Please use the password reset function to login"
-msgstr "Passwort-vergessen-Funktion auf den Anmeldeseiten aktivieren"
+msgstr ""
 
 #: InvenTree/serializers.py:464
 msgid "Welcome to InvenTree"
@@ -2946,10 +2944,8 @@ msgid "Check that all plugins are installed on startup - enable in container env
 msgstr "Beim Start überprüfen, ob alle Plugins installiert sind - Für Container aktivieren"
 
 #: common/models.py:1868
-#, fuzzy
-#| msgid "Check plugins on startup"
 msgid "Check for plugin updates"
-msgstr "Plugins beim Start prüfen"
+msgstr ""
 
 #: common/models.py:1869
 msgid "Enable periodic checks for updates to installed plugins"
@@ -7846,16 +7842,12 @@ msgid "Plugin was not found in registry"
 msgstr ""
 
 #: plugin/installer.py:273
-#, fuzzy
-#| msgid "PluginName of the plugin"
 msgid "Plugin is not a packaged plugin"
-msgstr "Name des Plugins"
+msgstr ""
 
 #: plugin/installer.py:276
-#, fuzzy
-#| msgid "Price not found"
 msgid "Plugin package name not found"
-msgstr "Preis nicht gefunden"
+msgstr ""
 
 #: plugin/installer.py:297
 msgid "Plugin cannot be uninstalled as it is currently active"
@@ -7911,10 +7903,8 @@ msgid "Builtin Plugin"
 msgstr "Integriertes Plugin"
 
 #: plugin/models.py:173
-#, fuzzy
-#| msgid "Packaging"
 msgid "Package Plugin"
-msgstr "Verpackungen"
+msgstr ""
 
 #: plugin/models.py:197 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
@@ -8055,10 +8045,8 @@ msgid "Activate this plugin"
 msgstr "Dieses Plugin aktivieren"
 
 #: plugin/serializers.py:219
-#, fuzzy
-#| msgid "Delete Notifications"
 msgid "Delete configuration"
-msgstr "Benachrichtigungen löschen"
+msgstr ""
 
 #: plugin/serializers.py:220
 msgid "Delete the plugin configuration from the database"
@@ -8845,10 +8833,8 @@ msgid "At least two stock items must be provided"
 msgstr "Mindestens zwei Lagerartikel müssen angegeben werden"
 
 #: stock/serializers.py:1201
-#, fuzzy
-#| msgid "Change"
 msgid "No Change"
-msgstr "Ändern"
+msgstr ""
 
 #: stock/serializers.py:1230
 msgid "StockItem primary key value"
@@ -13605,11 +13591,9 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
+msgstr "Sie sind dabei, Ihr %(provider_name)s Konto zu verwenden, um sich bei\n"
 "%(site_name)s anzumelden.<br>Als letzten Schritt füllen Sie bitte folgendes Formular aus:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13783,3 +13767,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
