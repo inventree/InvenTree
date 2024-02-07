@@ -44,8 +44,6 @@ jobs:
             migrations:
               - '**/migrations/**'
               - '.github/workflows**'
-            api_version:
-              - 'InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
 
@@ -131,6 +129,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # pin@v2.11.1
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'InvenTree/InvenTree/api_version.py'
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -145,7 +149,7 @@ jobs:
           name: api.yaml
           path: api.yaml
       - name: Download public schema
-        if: needs.paths-filter.outputs.api_version == 'false'
+        if: steps.filter.outputs.api == 'false'
         run: |
           pip install requests >/dev/null 2>&1
           version="$(python3 ci/version_check.py only_version 2>&1)"
@@ -155,7 +159,7 @@ jobs:
           curl -s -o schema.yaml $url
           echo "Downloaded schema.yaml"
       - name: Check for differences in schemas
-        if: needs.paths-filter.outputs.api_version == 'false'
+        if: steps.filter.outputs.api == 'false'
         run: |
           diff --color -u api.yaml schema.yaml
           diff -u api.yaml schema.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
