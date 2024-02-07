@@ -10,13 +10,18 @@ def isInTestMode():
 
 
 def isImportingData():
-    """Returns True if the database is currently importing data, e.g. 'loaddata' command is performed."""
-    return 'loaddata' in sys.argv
+    """Returns True if the database is currently importing (or exporting) data, e.g. 'loaddata' command is performed."""
+    return any((x in sys.argv for x in ['loaddata', 'dumpdata']))
 
 
 def isRunningMigrations():
     """Return True if the database is currently running migrations."""
-    return any((x in sys.argv for x in ['migrate', 'makemigrations', 'showmigrations']))
+    return any(
+        (
+            x in sys.argv
+            for x in ['migrate', 'makemigrations', 'showmigrations', 'runmigrations']
+        )
+    )
 
 
 def isInWorkerThread():
