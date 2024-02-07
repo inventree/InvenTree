@@ -22,17 +22,17 @@ def get_machine_and_driver(machine_pk: str):
     machine = registry.get_machine(machine_pk)
 
     # machine should be valid due to the machine select field validator
-    if machine is None:  # pragma: no cover
-        return None, None
+    if machine is None:
+        return None, None  # pragma: no cover
 
-    if machine.SLUG != 'label-printer':  # pragma: no cover
-        return None, None
+    if machine.SLUG != 'label-printer':
+        return None, None  # pragma: no cover
 
     machine = cast(LabelPrinterMachine, machine)
     driver = machine.driver
 
     if driver is None:
-        return machine, None
+        return machine, None  # pragma: no cover
 
     return machine, cast(LabelPrinterBaseDriver, driver)
 
