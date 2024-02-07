@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/ash
+
 # exit when any command fails
 set -e
 
