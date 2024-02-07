@@ -388,8 +388,14 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
 
         Note that for the 'part' field, we also include any parts "above" the specified part.
         """
-        variants = part.get_ancestors(include_self=True)
-        return queryset.filter(part__in=variants)
+        include_inherited = str2bool(
+            self.request.query_params.get('include_inherited', True)
+        )
+
+        if include_inherited:
+            return queryset.filter(part__in=part.get_ancestors(include_self=True))
+        else:
+            return queryset.filter(part=part)
 
 
 class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):

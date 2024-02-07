@@ -58,6 +58,11 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       {
         name: 'requires_attachment',
         description: t`Show tests that require an attachment`
+      },
+      {
+        name: 'include_inherited',
+        label: t`Include Inherited`,
+        description: t`Show tests from inherited templates`
       }
     ];
   }, []);
@@ -150,7 +155,8 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         columns={tableColumns}
         props={{
           params: {
-            part: partId
+            part: partId,
+            part_detail: true
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
