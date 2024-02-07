@@ -1412,6 +1412,7 @@ function loadStockTestResultsTable(table, options) {
 
     let params = {
         part: options.part,
+        include_inherited: true,
     };
 
     var filters = loadTableFilters(filterKey, params);
@@ -1532,10 +1533,17 @@ function loadStockTestResultsTable(table, options) {
         ],
         onLoadSuccess: function(tableData) {
 
-            // Set "parent" for each existing row
-            tableData.forEach(function(item, idx) {
-                tableData[idx].parent = parent_node;
+            // Construct an initial dataset based on the returned templates
+            let results = tableData.map((template) => {
+                return {
+                    ...template,
+                    templateId: template.pk,
+                    parent: parent_node,
+                    results: []
+                };
             });
+
+            console.log("initial data:", results);
 
             // Once the test template data are loaded, query for test results
 
@@ -1545,6 +1553,7 @@ function loadStockTestResultsTable(table, options) {
                 stock_item: options.stock_item,
                 user_detail: true,
                 attachment_detail: true,
+                template_detail: false,
                 ordering: '-date',
             };
 
@@ -1561,55 +1570,27 @@ function loadStockTestResultsTable(table, options) {
                 query_params,
                 {
                     success: function(data) {
-                        // Iterate through the returned test data
-                        data.forEach(function(item) {
 
-                            var match = false;
-                            var override = false;
+                        data.forEach((row) => {
+                            let idx = results.findIndex((template) => {
+                                return template.pk == row.template;
+                            });
 
-                            // Extract the simplified test key
-                            var key = item.key;
+                            if (idx > -1) {
 
-                            // Attempt to associate this result with an existing test
-                            for (var idx = 0; idx < tableData.length; idx++) {
+                                row.parent = row.template;
+                                results[idx].results.push(row);
 
-                                var row = tableData[idx];
-
-                                if (key == row.key) {
-
-                                    item.test_name = row.template_detail?.test_name;
-                                    item.test_description = row.template_detail?.description;
-                                    item.required = row.template_detail?.required;
-
-                                    if (row.result == null) {
-                                        item.parent = parent_node;
-                                        tableData[idx] = item;
-                                        override = true;
-                                    } else {
-                                        item.parent = row.pk;
-                                    }
-
-                                    match = true;
-
-                                    break;
-                                }
+                                results[idx].value = row.value;
+                                results[idx].result = row.result;
+                                results[idx].attachment = row.attachment;
+                                results[idx].date = row.date;
+                                results[idx].note = row.note;
                             }
-
-                            // No match could be found
-                            if (!match) {
-                                item.test_name = item.template_detail?.test_name;
-                                item.description = item.template_detail?.description;
-                                item.parent = parent_node;
-                            }
-
-                            if (!override) {
-                                tableData.push(item);
-                            }
-
                         });
 
                         // Push data back into the table
-                        table.bootstrapTable('load', tableData);
+                        table.bootstrapTable('load', results);
                     }
                 }
             );
