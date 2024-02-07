@@ -117,7 +117,7 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         Keyword Arguments:
             name (str): Machine name
             machine_type (BaseMachineType): Machine type definition (class)
-            initialized (bool): default: True
+            initialized (bool | None): use None to get all machines (default: True)
             active (bool): machine needs to be active
             base_driver (BaseDriver): base driver (class)
         """

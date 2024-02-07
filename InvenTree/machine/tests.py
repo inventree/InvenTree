@@ -132,6 +132,7 @@ class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
 
         # test get_machines
         self.assertEqual(len(registry.get_machines()), 2)
+        self.assertEqual(len(registry.get_machines(initialized=None)), 3)
         self.assertEqual(len(registry.get_machines(active=False, initialized=False)), 1)
         self.assertEqual(len(registry.get_machines(name='Test Machine 1')), 1)
         self.assertEqual(

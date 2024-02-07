@@ -525,7 +525,11 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(choices):
             # Evaluate the function (we expect it will return a list of tuples...)
-            return choices()
+            try:
+                # Attempt to pass the kwargs to the function, if it doesn't expect them, ignore and call without
+                return choices(**kwargs)
+            except TypeError:
+                return choices()
 
         return choices
 

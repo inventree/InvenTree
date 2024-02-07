@@ -165,7 +165,7 @@ class MachineRegistry:
             name: Machine name
             machine_type: Machine type definition (class)
             driver: Machine driver (class)
-            initialized: (bool, default: True)
+            initialized (bool | None): use None to get all machines (default: True)
             active: (bool)
             base_driver: base driver (class)
         """
@@ -178,7 +178,10 @@ class MachineRegistry:
             'base_driver',
         ]
 
-        kwargs = {'initialized': True, **kwargs}
+        if 'initialized' not in kwargs:
+            kwargs['initialized'] = True
+        if kwargs['initialized'] is None:
+            del kwargs['initialized']
 
         def filter_machine(machine: BaseMachineType):
             for key, value in kwargs.items():
