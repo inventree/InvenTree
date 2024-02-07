@@ -703,6 +703,9 @@ class BaseInvenTreeSetting(models.Model):
                     attempts=attempts - 1,
                     **kwargs,
                 )
+        except (OperationalError, ProgrammingError):
+            # Likely the DB is locked - not much we can do here
+            pass
         except Exception as exc:
             # Some other error
             logger.exception(

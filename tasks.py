@@ -369,10 +369,8 @@ def migrate(c):
     print('Running InvenTree database migrations...')
     print('========================================')
 
-    manage(c, 'makemigrations')
-    manage(c, 'migrate --noinput')
-    manage(c, 'migrate --run-syncdb')
-    manage(c, 'check')
+    # Run custom management command which wraps migrations in "maintenance mode"
+    manage(c, 'check_migrations')
 
     print('========================================')
     print('InvenTree database migrations completed!')
