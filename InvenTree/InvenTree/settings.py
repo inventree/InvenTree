@@ -1083,8 +1083,8 @@ MARKDOWNIFY = {
 IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
-MAINTENANCE_MODE_RETRY_AFTER = 60
-MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.StaticStorageBackend'
+MAINTENANCE_MODE_RETRY_AFTER = 10
+MAINTENANCE_MODE_STATE_BACKEND = 'InvenTree.backends.InvenTreeMaintenanceModeBackend'
 
 # Are plugins enabled?
 PLUGINS_ENABLED = get_boolean_setting(
