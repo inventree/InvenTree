@@ -1397,6 +1397,10 @@ function stockItemTestResultFields(options={}) {
         },
     };
 
+    if (options.part) {
+        fields.template.filters.part = options.part;
+    }
+
     if (options.stock_item) {
         fields.stock_item.value = options.stock_item;
     }
