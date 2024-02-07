@@ -8,7 +8,7 @@ msgstr ""
 "Language: sl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-01 11:37\n"
+"PO-Revision-Date: 2024-02-07 12:23\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
@@ -1070,7 +1070,7 @@ msgstr ""
 
 #: src/components/tables/ColumnRenderers.tsx:134
 #~ msgid "Shipment Date"
-#~ msgstr ""
+#~ msgstr "Shipment Date"
 
 #: src/components/tables/FilterGroup.tsx:29
 #~ msgid "Add table filter"
@@ -1103,25 +1103,25 @@ msgstr ""
 #: src/components/tables/bom/BomTable.tsx:101
 #: src/components/tables/bom/UsedInTable.tsx:54
 #: src/components/tables/build/BuildLineTable.tsx:124
-#: src/components/tables/build/BuildOrderTable.tsx:39
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:79
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:70
+#: src/components/tables/build/BuildOrderTable.tsx:34
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:121
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:67
 #~ msgid "Reference"
-#~ msgstr ""
+#~ msgstr "Reference"
 
 #: src/components/tables/bom/BomTable.tsx:113
 #~ msgid "Substitutes"
-#~ msgstr ""
+#~ msgstr "Substitutes"
 
 #: src/components/tables/bom/BomTable.tsx:135
 #~ msgid "Allow Variants"
-#~ msgstr ""
+#~ msgstr "Allow Variants"
 
 #: src/components/tables/bom/BomTable.tsx:139
 #: src/components/tables/bom/BomTable.tsx:265
 #: src/components/tables/bom/UsedInTable.tsx:64
 #~ msgid "Gets Inherited"
-#~ msgstr ""
+#~ msgstr "Gets Inherited"
 
 #: src/components/tables/bom/BomTable.tsx:200
 #~ msgid "Validate"
@@ -1129,59 +1129,59 @@ msgstr ""
 
 #: src/components/tables/bom/BomTable.tsx:250
 #~ msgid "Has Available Stock"
-#~ msgstr ""
+#~ msgstr "Has Available Stock"
 
 #: src/components/tables/bom/BomTable.tsx:260
 #~ msgid "Validated"
-#~ msgstr ""
+#~ msgstr "Validated"
 
 #: src/components/tables/bom/UsedInTable.tsx:40
 #~ msgid "Required Part"
-#~ msgstr ""
+#~ msgstr "Required Part"
 
 #: src/components/tables/build/BuildLineTable.tsx:152
 #~ msgid "Required Quantity"
-#~ msgstr ""
+#~ msgstr "Required Quantity"
 
-#: src/components/tables/build/BuildOrderTable.tsx:57
+#: src/components/tables/build/BuildOrderTable.tsx:52
 #~ msgid "Progress"
-#~ msgstr ""
+#~ msgstr "Progress"
 
-#: src/components/tables/build/BuildOrderTable.tsx:70
+#: src/components/tables/build/BuildOrderTable.tsx:65
 #~ msgid "Priority"
-#~ msgstr ""
+#~ msgstr "Priority"
 
-#: src/components/tables/build/BuildOrderTable.tsx:78
+#: src/components/tables/build/BuildOrderTable.tsx:73
 #~ msgid "Completed"
-#~ msgstr ""
+#~ msgstr "Completed"
 
-#: src/components/tables/build/BuildOrderTable.tsx:84
+#: src/components/tables/build/BuildOrderTable.tsx:79
 #~ msgid "Issued By"
-#~ msgstr ""
+#~ msgstr "Issued By"
 
 #: src/components/tables/company/AddressTable.tsx:68
 #~ msgid "Postal Code"
-#~ msgstr ""
+#~ msgstr "Postal Code"
 
 #: src/components/tables/company/AddressTable.tsx:74
 #~ msgid "City"
-#~ msgstr ""
+#~ msgstr "City"
 
 #: src/components/tables/company/AddressTable.tsx:80
 #~ msgid "State / Province"
-#~ msgstr ""
+#~ msgstr "State / Province"
 
 #: src/components/tables/company/AddressTable.tsx:86
 #~ msgid "Country"
-#~ msgstr ""
+#~ msgstr "Country"
 
 #: src/components/tables/company/AddressTable.tsx:92
 #~ msgid "Courier Notes"
-#~ msgstr ""
+#~ msgstr "Courier Notes"
 
 #: src/components/tables/company/AddressTable.tsx:98
 #~ msgid "Internal Notes"
-#~ msgstr ""
+#~ msgstr "Internal Notes"
 
 #: src/components/tables/company/AddressTable.tsx:130
 #~ msgid "Address updated"
@@ -1191,17 +1191,17 @@ msgstr ""
 #~ msgid "Address deleted"
 #~ msgstr "Address deleted"
 
-#: src/components/tables/company/CompanyTable.tsx:38
+#: src/components/tables/company/CompanyTable.tsx:32
 #~ msgid "Company Name"
-#~ msgstr ""
+#~ msgstr "Company Name"
 
 #: src/components/tables/company/ContactTable.tsx:41
 #~ msgid "Phone"
-#~ msgstr ""
+#~ msgstr "Phone"
 
 #: src/components/tables/company/ContactTable.tsx:53
 #~ msgid "Role"
-#~ msgstr ""
+#~ msgstr "Role"
 
 #: src/components/tables/company/ContactTable.tsx:78
 #~ msgid "Contact updated"
@@ -1225,23 +1225,23 @@ msgstr ""
 
 #: src/components/tables/general/AttachmentTable.tsx:30
 #~ msgid "Attachment"
-#~ msgstr ""
+#~ msgstr "Attachment"
 
 #: src/components/tables/general/AttachmentTable.tsx:47
 #~ msgid "Comment"
-#~ msgstr ""
+#~ msgstr "Comment"
 
 #: src/components/tables/general/AttachmentTable.tsx:56
 #~ msgid "Uploaded"
-#~ msgstr ""
+#~ msgstr "Uploaded"
 
-#: src/components/tables/part/PartCategoryTable.tsx:120
+#: src/components/tables/part/PartCategoryTable.tsx:122
 #~ msgid "Part category updated"
 #~ msgstr "Part category updated"
 
-#: src/components/tables/part/PartParameterTable.tsx:48
+#: src/components/tables/part/PartParameterTable.tsx:41
 #~ msgid "Parameter"
-#~ msgstr ""
+#~ msgstr "Parameter"
 
 #: src/components/tables/part/PartParameterTable.tsx:114
 #~ msgid "Part parameter updated"
@@ -1265,7 +1265,7 @@ msgstr ""
 
 #: src/components/tables/part/PartParameterTemplateTable.tsx:67
 #~ msgid "Choices"
-#~ msgstr ""
+#~ msgstr "Choices"
 
 #: src/components/tables/part/PartParameterTemplateTable.tsx:83
 #~ msgid "Remove parameter template"
@@ -1297,22 +1297,22 @@ msgstr ""
 
 #: src/components/tables/part/PartTestTemplateTable.tsx:30
 #~ msgid "Test Name"
-#~ msgstr ""
+#~ msgstr "Test Name"
 
 #: src/components/tables/part/PartTestTemplateTable.tsx:39
 #: src/components/tables/part/PartTestTemplateTable.tsx:56
 #~ msgid "Required"
-#~ msgstr ""
+#~ msgstr "Required"
 
 #: src/components/tables/part/PartTestTemplateTable.tsx:43
 #: src/components/tables/part/PartTestTemplateTable.tsx:61
 #~ msgid "Requires Value"
-#~ msgstr ""
+#~ msgstr "Requires Value"
 
 #: src/components/tables/part/PartTestTemplateTable.tsx:47
 #: src/components/tables/part/PartTestTemplateTable.tsx:66
 #~ msgid "Requires Attachment"
-#~ msgstr ""
+#~ msgstr "Requires Attachment"
 
 #: src/components/tables/part/PartTestTemplateTable.tsx:86
 #~ msgid "Template updated"
@@ -1348,43 +1348,43 @@ msgstr ""
 
 #: src/components/tables/plugin/PluginListTable.tsx:191
 #~ msgid "Installation path"
-#~ msgstr ""
+#~ msgstr "Installation path"
 
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:55
 #~ msgid "Receive"
 #~ msgstr "Receive"
 
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:77
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:81
 #~ msgid "Line item updated"
 #~ msgstr "Line item updated"
 
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:228
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:232
 #~ msgid "Line item added"
 #~ msgstr "Line item added"
 
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:94
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:91
 #~ msgid "Supplier Reference"
-#~ msgstr ""
+#~ msgstr "Supplier Reference"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:99
 #~ msgid "Packaging"
-#~ msgstr ""
+#~ msgstr "Packaging"
 
 #: src/components/tables/purchasing/SupplierPartTable.tsx:137
 #~ msgid "Availability"
-#~ msgstr ""
+#~ msgstr "Availability"
 
 #: src/components/tables/sales/ReturnOrderTable.tsx:94
 #~ msgid "Total Cost"
-#~ msgstr ""
+#~ msgstr "Total Cost"
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:38
+#: src/components/tables/settings/CustomUnitsTable.tsx:37
 #~ msgid "Definition"
-#~ msgstr ""
+#~ msgstr "Definition"
 
-#: src/components/tables/settings/CustomUnitsTable.tsx:44
+#: src/components/tables/settings/CustomUnitsTable.tsx:43
 #~ msgid "Symbol"
-#~ msgstr ""
+#~ msgstr "Symbol"
 
 #: src/components/tables/settings/CustomUnitsTable.tsx:59
 #~ msgid "Edit custom unit"
@@ -1476,39 +1476,39 @@ msgstr ""
 
 #: src/components/tables/settings/UserTable.tsx:168
 #~ msgid "First Name"
-#~ msgstr ""
+#~ msgstr "First Name"
 
 #: src/components/tables/settings/UserTable.tsx:173
 #~ msgid "Last Name"
-#~ msgstr ""
+#~ msgstr "Last Name"
 
 #: src/components/tables/settings/UserTable.tsx:186
 #~ msgid "Staff"
-#~ msgstr ""
+#~ msgstr "Staff"
 
 #: src/components/tables/settings/UserTable.tsx:190
 #~ msgid "Superuser"
-#~ msgstr ""
+#~ msgstr "Superuser"
 
 #: src/components/tables/stock/StockItemTable.tsx:181
 #~ msgid "Batch"
-#~ msgstr ""
+#~ msgstr "Batch"
 
 #: src/components/tables/stock/StockItemTable.tsx:187
 #~ msgid "Location"
-#~ msgstr ""
+#~ msgstr "Location"
 
 #: src/components/tables/stock/StockItemTable.tsx:198
 #~ msgid "Expiry Date"
-#~ msgstr ""
+#~ msgstr "Expiry Date"
 
 #: src/components/tables/stock/StockItemTable.tsx:205
 #~ msgid "Last Updated"
-#~ msgstr ""
+#~ msgstr "Last Updated"
 
 #: src/components/tables/stock/StockItemTable.tsx:214
 #~ msgid "Purchase Price"
-#~ msgstr ""
+#~ msgstr "Purchase Price"
 
 #: src/components/tables/stock/StockItemTable.tsx:247
 #~ msgid "Test Filter"
@@ -1518,16 +1518,16 @@ msgstr ""
 #~ msgid "This is a test filter"
 #~ msgstr "This is a test filter"
 
-#: src/components/tables/stock/StockLocationTable.tsx:48
-#: src/components/tables/stock/StockLocationTable.tsx:87
+#: src/components/tables/stock/StockLocationTable.tsx:45
+#: src/components/tables/stock/StockLocationTable.tsx:84
 #~ msgid "External"
-#~ msgstr ""
+#~ msgstr "External"
 
-#: src/components/tables/stock/StockLocationTable.tsx:94
+#: src/components/tables/stock/StockLocationTable.tsx:91
 #~ msgid "Location Type"
-#~ msgstr ""
+#~ msgstr "Location Type"
 
-#: src/components/tables/stock/StockLocationTable.tsx:143
+#: src/components/tables/stock/StockLocationTable.tsx:145
 #~ msgid "Stock location updated"
 #~ msgstr "Stock location updated"
 
@@ -2035,7 +2035,7 @@ msgstr ""
 msgid "Are you sure you want to delete this attachment?"
 msgstr ""
 
-#: src/forms/CompanyForms.tsx:138
+#: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
 #~ msgstr "Company updated"
 
@@ -2093,7 +2093,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:34
 #~ msgid "Error fetching token from server."
-#~ msgstr ""
+#~ msgstr "Error fetching token from server."
 
 #: src/functions/auth.tsx:36
 #~ msgid "Logout successfull"
@@ -2130,19 +2130,19 @@ msgstr ""
 
 #: src/functions/auth.tsx:141
 #~ msgid "Already logged in"
-#~ msgstr ""
+#~ msgstr "Already logged in"
 
 #: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
-#~ msgstr ""
+#~ msgstr "Found an existing login - using it to log you in."
 
 #: src/functions/forms.tsx:50
 #~ msgid "Form method not provided"
-#~ msgstr ""
+#~ msgstr "Form method not provided"
 
 #: src/functions/forms.tsx:59
 #~ msgid "Response did not contain action data"
-#~ msgstr ""
+#~ msgstr "Response did not contain action data"
 
 #: src/functions/forms.tsx:182
 msgid "Invalid Form"
@@ -2712,7 +2712,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
 #~ msgid "Plugin Error Stack"
-#~ msgstr ""
+#~ msgstr "Plugin Error Stack"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
 #~ msgid "Warning"
@@ -2917,14 +2917,14 @@ msgstr ""
 msgid "Edit Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:192
-#~ msgid "Build Order updated"
-#~ msgstr "Build Order updated"
-
 #: src/pages/build/BuildDetail.tsx:196
 #: src/pages/part/PartDetail.tsx:280
 #~ msgid "Unlink custom barcode from part"
 #~ msgstr "Unlink custom barcode from part"
+
+#: src/pages/build/BuildDetail.tsx:202
+#~ msgid "Build Order updated"
+#~ msgstr "Build Order updated"
 
 #: src/pages/build/BuildDetail.tsx:211
 #~ msgid "Build Order"
@@ -4877,3 +4877,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
