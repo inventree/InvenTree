@@ -224,14 +224,12 @@ export function InvenTreeTable<T = any>({
         hidden: false,
         switchable: false,
         width: 50,
-        render: function (record: any) {
-          return (
-            <RowActions
-              actions={tableProps.rowActions?.(record) ?? []}
-              disabled={tableState.selectedRecords.length > 0}
-            />
-          );
-        }
+        render: (record: any) => (
+          <RowActions
+            actions={tableProps.rowActions?.(record) ?? []}
+            disabled={tableState.selectedRecords.length > 0}
+          />
+        )
       });
     }
 

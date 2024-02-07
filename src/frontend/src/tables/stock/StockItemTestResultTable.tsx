@@ -18,7 +18,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowActions, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function StockItemTestResultTable({
   partId,
@@ -102,7 +102,10 @@ export default function StockItemTestResultTable({
         render: (record: any) => {
           return (
             <Group position="apart">
-              <Text>{record.template_detail.test_name}</Text>
+              <Text italic={!record.templateId}>
+                {!record.templateId && '- '}
+                {record.template_detail.test_name}
+              </Text>
               {record.results && record.results.length > 1 && (
                 <Tooltip label={t`Test Results`}>
                   <Badge color="lightblue" variant="filled">
@@ -169,6 +172,7 @@ export default function StockItemTestResultTable({
           color: 'green',
           icon: <IconCircleCheck />,
           hidden:
+            !record.templateId ||
             record?.template?.requires_attachment ||
             record?.template?.requires_value ||
             record.result
@@ -178,7 +182,7 @@ export default function StockItemTestResultTable({
           tooltip: t`Add Test Result`,
           color: 'green',
           icon: <IconCirclePlus />,
-          hidden: !user.hasAddRole(UserRoles.stock)
+          hidden: !user.hasAddRole(UserRoles.stock) || !record.templateId
         },
         RowEditAction({
           tooltip: t`Edit Test Result`,
@@ -195,12 +199,24 @@ export default function StockItemTestResultTable({
 
   // Row expansion controller
   const rowExpansion: any = useMemo(() => {
-    const cols: any = [...tableColumns];
+    const cols: any = [
+      ...tableColumns,
+      {
+        accessor: 'actions',
+        title: '  ',
+        hidden: false,
+        switchable: false,
+        width: 50,
+        render: (record: any) => (
+          <RowActions actions={rowActions(record) ?? []} />
+        )
+      }
+    ];
 
     return {
       allowMultiple: true,
       content: ({ record }: { record: any }) => {
-        if (!record) {
+        if (!record || !record.results || record.results.length < 2) {
           return null;
         }
 
@@ -211,7 +227,7 @@ export default function StockItemTestResultTable({
             key={record.pk}
             noHeader
             columns={cols}
-            records={results}
+            records={results.slice(1)}
           />
         );
       }
