@@ -881,18 +881,6 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
         setup_dev(c)
 
 
-@task(
-    help={
-        'filename': "Output filename (default = 'schema.yml')",
-        'overwrite': 'Overwrite existing files without asking first (default = off/False)',
-    }
-)
-def schema(c, filename='schema.yml', overwrite=False):
-    """Export current API schema."""
-    check_file_existance(filename, overwrite)
-    manage(c, f'spectacular --file {filename}')
-
-
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
