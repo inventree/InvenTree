@@ -5,16 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: es_MX\n"
+"Language: es\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-03 12:08\n"
+"PO-Revision-Date: 2024-02-07 12:22\n"
 "Last-Translator: \n"
-"Language-Team: Spanish, Mexico\n"
+"Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: es-MX\n"
+"X-Crowdin-Language: es-ES\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
@@ -68,11 +68,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr "Inicio de sesión exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr "¡Bienvenido de vuelta!"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -80,7 +80,7 @@ msgstr "¡Bienvenido de vuelta!"
 
 #: src/components/forms/AuthenticationForm.tsx:58
 msgid "Login failed"
-msgstr "Error al iniciar sesión"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:59
 #: src/components/forms/AuthenticationForm.tsx:79
@@ -97,16 +97,16 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:70
 #: src/functions/auth.tsx:103
 msgid "Mail delivery successful"
-msgstr "Envío de correo exitoso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:71
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr "Revisa tu bandeja de entrada para el enlace de inicio de sesión. Si tienes una cuenta, recibirás un enlace de inicio de sesión. Revisa también el correo no deseado."
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:78
 #: src/components/forms/AuthenticationForm.tsx:215
 msgid "Input error"
-msgstr "Error de entrada"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Or continue with other methods"
@@ -115,7 +115,7 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/components/forms/AuthenticationForm.tsx:233
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:110
 #: src/components/forms/AuthenticationForm.tsx:234
@@ -126,17 +126,17 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:246
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr "Contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:116
 #: src/components/forms/AuthenticationForm.tsx:247
 msgid "Your password"
-msgstr "Tu contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:128
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr "Restablecer contraseña"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -151,17 +151,17 @@ msgstr "Restablecer contraseña"
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
-msgstr "Correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:138
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr "Te enviaremos un enlace para iniciar sesión - si estás registrado"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:154
 msgid "Send me an email"
-msgstr "Envíame un correo electrónico"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:156
 msgid "Use username and password"
@@ -225,11 +225,11 @@ msgstr ""
 #: src/tables/settings/GroupTable.tsx:103
 #: src/tables/settings/PendingTasksTable.tsx:26
 msgid "Name"
-msgstr "Nombre"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr "Nadie aquí..."
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
@@ -238,11 +238,11 @@ msgstr ""
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr "Guardar"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr "Seleccionar instancia de destino"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
@@ -250,15 +250,15 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr "Versión: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr "API:{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr "Nombre: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
@@ -944,7 +944,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:547
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
-msgstr "Órdenes de compra"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:112
 msgid "Purchase Order Line"
@@ -985,7 +985,7 @@ msgstr ""
 #: src/pages/company/CompanyDetail.tsx:122
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
-msgstr "Ordenes de devolución"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:140
 #: src/tables/company/AddressTable.tsx:47
@@ -1100,25 +1100,26 @@ msgstr ""
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/bom/BomTable.tsx:99
-#: src/components/tables/bom/UsedInTable.tsx:76
-#: src/components/tables/build/BuildOrderTable.tsx:33
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:117
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:66
+#: src/components/tables/bom/BomTable.tsx:101
+#: src/components/tables/bom/UsedInTable.tsx:54
+#: src/components/tables/build/BuildLineTable.tsx:124
+#: src/components/tables/build/BuildOrderTable.tsx:34
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:121
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:67
 #~ msgid "Reference"
 #~ msgstr "Reference"
 
-#: src/components/tables/bom/BomTable.tsx:111
+#: src/components/tables/bom/BomTable.tsx:113
 #~ msgid "Substitutes"
 #~ msgstr "Substitutes"
 
-#: src/components/tables/bom/BomTable.tsx:133
+#: src/components/tables/bom/BomTable.tsx:135
 #~ msgid "Allow Variants"
 #~ msgstr "Allow Variants"
 
-#: src/components/tables/bom/BomTable.tsx:137
-#: src/components/tables/bom/BomTable.tsx:263
-#: src/components/tables/bom/UsedInTable.tsx:86
+#: src/components/tables/bom/BomTable.tsx:139
+#: src/components/tables/bom/BomTable.tsx:265
+#: src/components/tables/bom/UsedInTable.tsx:64
 #~ msgid "Gets Inherited"
 #~ msgstr "Gets Inherited"
 
@@ -1126,31 +1127,35 @@ msgstr ""
 #~ msgid "Validate"
 #~ msgstr "Validate"
 
-#: src/components/tables/bom/BomTable.tsx:248
+#: src/components/tables/bom/BomTable.tsx:250
 #~ msgid "Has Available Stock"
 #~ msgstr "Has Available Stock"
 
-#: src/components/tables/bom/BomTable.tsx:258
+#: src/components/tables/bom/BomTable.tsx:260
 #~ msgid "Validated"
 #~ msgstr "Validated"
 
-#: src/components/tables/bom/UsedInTable.tsx:50
+#: src/components/tables/bom/UsedInTable.tsx:40
 #~ msgid "Required Part"
 #~ msgstr "Required Part"
 
-#: src/components/tables/build/BuildOrderTable.tsx:63
+#: src/components/tables/build/BuildLineTable.tsx:152
+#~ msgid "Required Quantity"
+#~ msgstr "Required Quantity"
+
+#: src/components/tables/build/BuildOrderTable.tsx:52
 #~ msgid "Progress"
 #~ msgstr "Progress"
 
-#: src/components/tables/build/BuildOrderTable.tsx:76
+#: src/components/tables/build/BuildOrderTable.tsx:65
 #~ msgid "Priority"
 #~ msgstr "Priority"
 
-#: src/components/tables/build/BuildOrderTable.tsx:84
+#: src/components/tables/build/BuildOrderTable.tsx:73
 #~ msgid "Completed"
 #~ msgstr "Completed"
 
-#: src/components/tables/build/BuildOrderTable.tsx:90
+#: src/components/tables/build/BuildOrderTable.tsx:79
 #~ msgid "Issued By"
 #~ msgstr "Issued By"
 
@@ -1230,7 +1235,7 @@ msgstr ""
 #~ msgid "Uploaded"
 #~ msgstr "Uploaded"
 
-#: src/components/tables/part/PartCategoryTable.tsx:120
+#: src/components/tables/part/PartCategoryTable.tsx:122
 #~ msgid "Part category updated"
 #~ msgstr "Part category updated"
 
@@ -1341,31 +1346,35 @@ msgstr ""
 #~ msgid "Are you sure you want to remove this relationship?"
 #~ msgstr "Are you sure you want to remove this relationship?"
 
+#: src/components/tables/plugin/PluginListTable.tsx:191
+#~ msgid "Installation path"
+#~ msgstr "Installation path"
+
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:55
 #~ msgid "Receive"
 #~ msgstr "Receive"
 
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:77
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:81
 #~ msgid "Line item updated"
 #~ msgstr "Line item updated"
 
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:228
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:232
 #~ msgid "Line item added"
 #~ msgstr "Line item added"
 
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:90
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:91
 #~ msgid "Supplier Reference"
 #~ msgstr "Supplier Reference"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:93
+#: src/components/tables/purchasing/SupplierPartTable.tsx:99
 #~ msgid "Packaging"
 #~ msgstr "Packaging"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:131
+#: src/components/tables/purchasing/SupplierPartTable.tsx:137
 #~ msgid "Availability"
 #~ msgstr "Availability"
 
-#: src/components/tables/sales/ReturnOrderTable.tsx:93
+#: src/components/tables/sales/ReturnOrderTable.tsx:94
 #~ msgid "Total Cost"
 #~ msgstr "Total Cost"
 
@@ -1481,23 +1490,23 @@ msgstr ""
 #~ msgid "Superuser"
 #~ msgstr "Superuser"
 
-#: src/components/tables/stock/StockItemTable.tsx:180
+#: src/components/tables/stock/StockItemTable.tsx:181
 #~ msgid "Batch"
 #~ msgstr "Batch"
 
-#: src/components/tables/stock/StockItemTable.tsx:186
+#: src/components/tables/stock/StockItemTable.tsx:187
 #~ msgid "Location"
 #~ msgstr "Location"
 
-#: src/components/tables/stock/StockItemTable.tsx:197
+#: src/components/tables/stock/StockItemTable.tsx:198
 #~ msgid "Expiry Date"
 #~ msgstr "Expiry Date"
 
-#: src/components/tables/stock/StockItemTable.tsx:204
+#: src/components/tables/stock/StockItemTable.tsx:205
 #~ msgid "Last Updated"
 #~ msgstr "Last Updated"
 
-#: src/components/tables/stock/StockItemTable.tsx:213
+#: src/components/tables/stock/StockItemTable.tsx:214
 #~ msgid "Purchase Price"
 #~ msgstr "Purchase Price"
 
@@ -1509,16 +1518,16 @@ msgstr ""
 #~ msgid "This is a test filter"
 #~ msgstr "This is a test filter"
 
-#: src/components/tables/stock/StockLocationTable.tsx:43
-#: src/components/tables/stock/StockLocationTable.tsx:82
+#: src/components/tables/stock/StockLocationTable.tsx:45
+#: src/components/tables/stock/StockLocationTable.tsx:84
 #~ msgid "External"
 #~ msgstr "External"
 
-#: src/components/tables/stock/StockLocationTable.tsx:89
+#: src/components/tables/stock/StockLocationTable.tsx:91
 #~ msgid "Location Type"
 #~ msgstr "Location Type"
 
-#: src/components/tables/stock/StockLocationTable.tsx:143
+#: src/components/tables/stock/StockLocationTable.tsx:145
 #~ msgid "Stock location updated"
 #~ msgstr "Stock location updated"
 
@@ -1792,7 +1801,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:11
 msgid "Website"
-msgstr "Sitio web"
+msgstr ""
 
 #: src/defaults/links.tsx:16
 msgid "GitHub"
@@ -2026,7 +2035,7 @@ msgstr ""
 msgid "Are you sure you want to delete this attachment?"
 msgstr ""
 
-#: src/forms/CompanyForms.tsx:138
+#: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
 #~ msgstr "Company updated"
 
@@ -2194,7 +2203,7 @@ msgstr ""
 
 #: src/pages/Auth/Login.tsx:75
 msgid "Welcome, log in below"
-msgstr "Bienvenido, inicia sesión a continuación"
+msgstr ""
 
 #: src/pages/Auth/Login.tsx:77
 msgid "Register below"
@@ -2570,7 +2579,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:144
 msgid "Primary"
-msgstr "Primario"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:149
 msgid "Verified"
@@ -2703,7 +2712,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
 #~ msgid "Plugin Error Stack"
-#~ msgstr ""
+#~ msgstr "Plugin Error Stack"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
 #~ msgid "Warning"
@@ -2748,17 +2757,17 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:66
 msgid "Login"
-msgstr "Ingresar"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:88
 msgid "Barcodes"
-msgstr "Códigos de barras"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:107
 #: src/pages/company/SupplierPartDetail.tsx:55
 #: src/pages/part/PartDetail.tsx:516
 msgid "Pricing"
-msgstr "Precios"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:118
 #~ msgid "Physical Units"
@@ -2766,16 +2775,16 @@ msgstr "Precios"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:136
 msgid "Exchange Rates"
-msgstr "Tasas de cambio"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:144
 msgid "Labels"
-msgstr "Etiquetas"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:150
 #: src/pages/Index/Settings/UserSettings.tsx:99
 msgid "Reporting"
-msgstr "Informes"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:224
 #: src/pages/part/PartDetail.tsx:565
@@ -2788,23 +2797,23 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:502
 #: src/pages/sales/SalesOrderDetail.tsx:62
 msgid "Build Orders"
-msgstr "Ordenes de Producción"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:286
 msgid "Switch to User Setting"
-msgstr "Cambiar a Configuración de Usuario"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:29
 msgid "Account"
-msgstr "Cuenta"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:35
 msgid "Security"
-msgstr "Seguridad"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:46
 msgid "Display Options"
-msgstr "Opciones de visualización"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:115
 msgid "Account Settings"
@@ -2824,7 +2833,7 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr "No encontrado"
+msgstr ""
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
@@ -2908,14 +2917,14 @@ msgstr ""
 msgid "Edit Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:192
-#~ msgid "Build Order updated"
-#~ msgstr "Build Order updated"
-
 #: src/pages/build/BuildDetail.tsx:196
 #: src/pages/part/PartDetail.tsx:280
 #~ msgid "Unlink custom barcode from part"
 #~ msgstr "Unlink custom barcode from part"
+
+#: src/pages/build/BuildDetail.tsx:202
+#~ msgid "Build Order updated"
+#~ msgstr "Build Order updated"
 
 #: src/pages/build/BuildDetail.tsx:211
 #~ msgid "Build Order"
@@ -2931,7 +2940,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:222
 msgid "Report"
-msgstr "Informe"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:223
 msgid "Print build report"
@@ -2963,7 +2972,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:449
 #: src/pages/stock/StockDetail.tsx:70
 msgid "Details"
-msgstr "Detalles"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:81
 msgid "Manufactured Parts"
@@ -3008,13 +3017,13 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:71
 #: src/pages/part/PartDetail.tsx:464
 msgid "Parameters"
-msgstr "Parámetros"
+msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:54
 #: src/pages/part/PartDetail.tsx:534
 #: src/pages/purchasing/PurchasingIndex.tsx:26
 msgid "Suppliers"
-msgstr "Proveedores"
+msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:98
 msgid "ManufacturerPart"
@@ -3024,7 +3033,7 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:68
 #: src/tables/purchasing/PurchaseOrderTable.tsx:73
 msgid "Supplier"
-msgstr "Proveedor"
+msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:40
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:66
@@ -3055,7 +3064,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:145
 #: src/tables/stock/StockItemTable.tsx:264
 msgid "In Stock"
-msgstr "En Stock"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:155
 msgid "Minimum Stock"
@@ -3278,31 +3287,31 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:174
 msgid "Count stock"
-msgstr "Contar stock"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:178
 msgid "Add"
-msgstr "Agregar"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:179
 msgid "Add stock"
-msgstr "Agregar stock"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:184
 msgid "Remove stock"
-msgstr "Remover stock"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:188
 msgid "Transfer"
-msgstr "Transferir"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:189
 msgid "Transfer stock"
-msgstr "Transferir stock"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:201
 msgid "Duplicate stock item"
-msgstr "Duplicar artículo de stock"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:205
 #~ msgid "Edit stock item"
@@ -3653,7 +3662,7 @@ msgstr ""
 #: src/tables/plugin/PluginListTable.tsx:627
 #: src/tables/stock/StockItemTable.tsx:228
 msgid "Active"
-msgstr "Activo"
+msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:67
 msgid "Show active assemblies"
@@ -3663,11 +3672,11 @@ msgstr ""
 #: src/tables/part/PartTable.tsx:194
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
-msgstr "Rastreable"
+msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:72
 msgid "Show trackable assemblies"
-msgstr "Mostrar ensamblajes rastreables"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:34
 msgid "Show allocated lines"
@@ -3723,14 +3732,14 @@ msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:103
 msgid "Show active orders"
-msgstr "Mostrar órdenes activas"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:107
 #: src/tables/purchasing/PurchaseOrderTable.tsx:56
 #: src/tables/sales/ReturnOrderTable.tsx:46
 #: src/tables/sales/SalesOrderTable.tsx:53
 msgid "Filter by order status"
-msgstr "Filtrar por estado de la orden"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:113
 msgid "Show overdue status"
@@ -3744,23 +3753,23 @@ msgstr ""
 #: src/tables/company/AddressTable.tsx:121
 #: src/tables/company/AddressTable.tsx:185
 msgid "Add Address"
-msgstr "Añadir Dirección"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:126
 msgid "Address created"
-msgstr "Dirección creada"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:135
 msgid "Edit Address"
-msgstr "Editar Dirección"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:143
 msgid "Delete Address"
-msgstr "Eliminar Dirección"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:145
 msgid "Are you sure you want to delete this address?"
-msgstr "¿Estás seguro de que deseas eliminar esta dirección?"
+msgstr ""
 
 #: src/tables/company/CompanyTable.tsx:62
 msgid "New Company"
@@ -3772,7 +3781,7 @@ msgstr ""
 
 #: src/tables/company/ContactTable.tsx:73
 msgid "Edit Contact"
-msgstr "Editar contacto"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:80
 msgid "Add Contact"
@@ -3780,23 +3789,23 @@ msgstr ""
 
 #: src/tables/company/ContactTable.tsx:91
 msgid "Delete Contact"
-msgstr "Eliminar contacto"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:131
 msgid "Add contact"
-msgstr "Agregar contacto"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:157
 msgid "File uploaded"
-msgstr "Archivo subido"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:158
 msgid "File {0} uploaded successfully"
-msgstr "Archivo {0} se subió correctamente"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:169
 msgid "Upload Error"
-msgstr "Error al subir"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:170
 msgid "File could not be uploaded"
@@ -3922,7 +3931,7 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:80
 msgid "Minimum stock"
-msgstr "Stock mínimo"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:89
 msgid "On Order"
@@ -4111,10 +4120,6 @@ msgstr ""
 #: src/tables/plugin/PluginListTable.tsx:180
 msgid "Date"
 msgstr ""
-
-#: src/tables/plugin/PluginListTable.tsx:194
-#~ msgid "Installation path"
-#~ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:196
 msgid "Package information"
@@ -4398,11 +4403,11 @@ msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:245
 msgid "Add line item"
-msgstr "Añadir Artículo de Línea"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:251
 msgid "Receive items"
-msgstr "Recibir artículos"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderTable.tsx:55
 #: src/tables/sales/ReturnOrderTable.tsx:45
@@ -4422,7 +4427,7 @@ msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:114
 msgid "Base units"
-msgstr "Unidades base"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:140
 msgid "Updated"
@@ -4475,11 +4480,11 @@ msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:28
 msgid "Rate"
-msgstr "Tarifa"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:40
 msgid "Exchange rates updated"
-msgstr "Tipos de cambio actualizados"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:46
 msgid "Exchange rate update error"
@@ -4571,7 +4576,7 @@ msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:126
 msgid "Delete group"
-msgstr "Eliminar grupo"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:127
 msgid "Group deleted"
@@ -4584,11 +4589,11 @@ msgstr ""
 #: src/tables/settings/GroupTable.tsx:134
 #: src/tables/settings/GroupTable.tsx:146
 msgid "Add group"
-msgstr "Agregar grupo"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:158
 msgid "Edit group"
-msgstr "Editar grupo"
+msgstr ""
 
 #: src/tables/settings/PendingTasksTable.tsx:30
 msgid "Created"
@@ -4612,7 +4617,7 @@ msgstr ""
 
 #: src/tables/settings/ProjectCodeTable.tsx:94
 msgid "Add project code"
-msgstr "Agregar código de proyecto"
+msgstr ""
 
 #: src/tables/settings/ScheduledTasksTable.tsx:25
 msgid "Last Run"
@@ -4681,11 +4686,11 @@ msgstr ""
 
 #: src/tables/settings/UserTable.tsx:222
 msgid "Added user"
-msgstr "Usuario agregado"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:239
 msgid "Edit user"
-msgstr "Editar usuario"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:59
 msgid "This stock item is in production"
@@ -4774,7 +4779,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:269
 msgid "In Production"
-msgstr "En producción"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:270
 msgid "Show items which are in production"
@@ -4871,4 +4876,5 @@ msgstr ""
 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
-msgstr "Leer la documentación"
+msgstr ""
+
