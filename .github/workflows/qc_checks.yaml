@@ -145,6 +145,7 @@ jobs:
       - name: Download public schema
         run: |
           pip install requests
+          ci/version_check.py only_version
           version="$(python3 ci/version_check.py only_version 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
