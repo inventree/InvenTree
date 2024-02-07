@@ -1,5 +1,7 @@
 """Main JSON interface views."""
 
+import sys
+
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
@@ -19,6 +21,7 @@ from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from InvenTree.templatetags.inventree_extras import plugins_info
+from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
@@ -490,4 +493,7 @@ class MetadataView(RetrieveUpdateAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance."""
+        # Detect if we are currently generating the OpenAPI schema
+        if 'spectacular' in sys.argv:
+            return MetadataSerializer(Part, *args, **kwargs)
         return MetadataSerializer(self.get_model_type(), *args, **kwargs)
