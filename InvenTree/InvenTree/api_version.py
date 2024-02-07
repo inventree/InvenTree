@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 165
+INVENTREE_API_VERSION = 166
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v166 -> 2024-02-04 : https://github.com/inventree/InvenTree/pull/6400
+    - Adds package_name to plugin API
+    - Adds mechanism for uninstalling plugins via the API
 
 v165 -> 2024-01-28 : https://github.com/inventree/InvenTree/pull/6040
     - Adds supplier_part.name, part.creation_user, part.required_for_sales_order
