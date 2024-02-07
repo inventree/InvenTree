@@ -473,9 +473,9 @@ function completePendingShipmentsHelper(shipments, shipment_idx, options={}) {
 
 
 /*
- * Launches a modal form to mark a SalesOrder as "complete"
+ * Launches a modal form to mark a SalesOrder as "shipped"
  */
-function completeSalesOrder(order_id, options={}) {
+function shipSalesOrder(order_id, options={}) {
 
     constructForm(
         `/api/order/so/${order_id}/complete/`,
@@ -522,6 +522,27 @@ function completeSalesOrder(order_id, options={}) {
             }
         }
     );
+}
+
+/*
+ * Launches a modal form to mark a SalesOrder as "completed"
+ */
+function issueSalesOrder(order_id, options={}) {
+
+    let html = `
+    <div class='alert alert-block alert-info'>
+    {% trans "Issue this Sales Order?" %}
+    </div>`;
+
+    constructForm(`{% url "api-so-list" %}${order_id}/issue/`, {
+        method: 'POST',
+        title: '{% trans "Issue Sales Order" %}',
+        confirm: true,
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
 }
 
 

@@ -88,7 +88,11 @@ src="{% static 'img/blank_image.png' %}"
     <button type='button' class='btn btn-success' id='complete-order-shipments' title='{% trans "Ship Items" %}'>
         <span class='fas fa-truck'></span> {% trans "Ship Items" %}
     </button>
+    <button type='button' class='btn btn-success' id='ship-order' title='{% trans "Mark As Shipped" %}'>
+        <span class='fas fa-check-circle'></span> {% trans "Mark As Shipped" %}
+    </button>
     {% endif %}
+    {% elif order.status == SalesOrderStatus.SHIPPED %}
     <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
         <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
     </button>
@@ -279,6 +283,15 @@ $('#issue-order').click(function() {
 $("#cancel-order").click(function() {
 
     cancelSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+});
+
+$("#ship-order").click(function() {
+    shipSalesOrder(
         {{ order.pk }},
         {
             reload: true,
