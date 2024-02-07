@@ -2282,7 +2282,6 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     Attributes:
         stock_item: Link to StockItem
         template: Link to TestTemplate
-        test: Test name (simple string matching)
         result: Test result value (pass / fail / etc)
         value: Recorded test output value (optional)
         attachment: Link to StockItem attachment (optional)
@@ -2336,16 +2335,21 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         StockItem, on_delete=models.CASCADE, related_name='test_results'
     )
 
+    @property
+    def test_name(self):
+        """Return the test name of the associated test template."""
+        return self.template.test_name
+
+    @property
+    def test_key(self):
+        """Return the test key of the associated test template."""
+        return self.template.key
+
     template = models.ForeignKey(
         'part.parttesttemplate',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE,
+        blank=False,
         related_name='test_results',
-    )
-
-    test = models.CharField(
-        blank=False, max_length=100, verbose_name=_('Test'), help_text=_('Test name')
     )
 
     result = models.BooleanField(
