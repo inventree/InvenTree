@@ -1577,9 +1577,9 @@ function loadStockTestResultsTable(table, options) {
 
                                 if (key == row.key) {
 
-                                    item.test_name = row.test_name;
-                                    item.test_description = row.description;
-                                    item.required = row.required;
+                                    item.test_name = row.template_detail?.test_name;
+                                    item.test_description = row.template_detail?.description;
+                                    item.required = row.template_detail?.required;
 
                                     if (row.result == null) {
                                         item.parent = parent_node;
@@ -1597,7 +1597,8 @@ function loadStockTestResultsTable(table, options) {
 
                             // No match could be found
                             if (!match) {
-                                item.test_name = item.test;
+                                item.test_name = item.template_detail?.test_name;
+                                item.description = item.template_detail?.description;
                                 item.parent = parent_node;
                             }
 

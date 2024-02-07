@@ -1,19 +1,12 @@
 import { t } from '@lingui/macro';
 import { Badge, Group, Text } from '@mantine/core';
-import {
-  IconCircleCheck,
-  IconCirclePlus,
-  IconQuestionMark
-} from '@tabler/icons-react';
+import { IconCircleCheck, IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
 import { api } from '../../App';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import {
-  PassFailButton,
-  YesNoButton
-} from '../../components/items/YesNoButton';
+import { PassFailButton } from '../../components/items/YesNoButton';
 import { RenderUser } from '../../components/render/User';
 import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -22,14 +15,9 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import {
-  BooleanColumn,
-  DateColumn,
-  DescriptionColumn,
-  NoteColumn
-} from '../ColumnRenderers';
+import { DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function StockItemTestResultTable({
   partId,
@@ -41,87 +29,52 @@ export default function StockItemTestResultTable({
   const user = useUserState();
   const table = useTable('stocktests');
 
-  // Query to fetch test templates associated with the part
-  const testTemplates = useQuery({
-    queryKey: ['testtemplates', partId],
-    queryFn: async () => {
-      if (!partId || !itemId) {
-        return [];
-      }
-
-      return await api
-        .get(apiUrl(ApiEndpoints.part_test_template_list), {
-          params: {
-            part: partId
-          }
-        })
-        .then((response) => response.data)
-        .catch(() => []);
-    }
-  });
-
   // Format the test results based on the returned data
-  const formatRecords = useCallback(
-    (records: any[]): any[] => {
-      let resultMap: Record<string, any> = {};
-      let resultList: any[] = [];
+  const formatRecords = useCallback((records: any[]): any[] => {
+    let resultMap: Record<string, any> = {};
+    let resultList: any[] = [];
 
-      // Iterate through the returned records
-      // Note that the results are sorted by newest first,
-      // to ensure that the most recent result is displayed "on top"
-      records
-        .sort((a, b) => {
-          let aDate = new Date(a.date);
-          let bDate = new Date(b.date);
-          if (aDate < bDate) {
-            return -1;
-          } else if (aDate > bDate) {
-            return 1;
-          } else {
-            return 0;
-          }
-        })
-        .forEach((record, _idx) => {
-          let key = record.key;
-
-          // Most recent record is first
-          if (!resultMap[key]) {
-            resultMap[key] = {
-              ...record,
-              old: [],
-              template: testTemplates?.data?.find((t: any) => t.key == key)
-            };
-          } else {
-            resultMap[key]['old'].push(record);
-          }
-        });
-
-      // Now, re-create the original list of records
-      records.forEach((record, _idx) => {
+    // Iterate through the returned records
+    // Note that the results are sorted by newest first,
+    // to ensure that the most recent result is displayed "on top"
+    records
+      .sort((a, b) => {
+        let aDate = new Date(a.date);
+        let bDate = new Date(b.date);
+        if (aDate < bDate) {
+          return -1;
+        } else if (aDate > bDate) {
+          return 1;
+        } else {
+          return 0;
+        }
+      })
+      .forEach((record, _idx) => {
         let key = record.key;
 
-        // Check if the record is already in the list
-        if (!resultList.find((r) => r.key == key)) {
-          resultList.push(resultMap[key]);
-        }
-      });
-
-      // Also, check if there are any templates which have not been accounted for
-      testTemplates?.data?.forEach((template: any, index: number) => {
-        // Check if the record is already in the list
-        if (!resultList.find((r) => r.key == template.key)) {
-          resultList.push({
-            pk: `new-${index}`,
-            template: template,
+        // Most recent record is first
+        if (!resultMap[key]) {
+          resultMap[key] = {
+            ...record,
             old: []
-          });
+          };
+        } else {
+          resultMap[key]['old'].push(record);
         }
       });
 
-      return resultList;
-    },
-    [testTemplates.data]
-  );
+    // Now, re-create the original list of records
+    records.forEach((record, _idx) => {
+      let key = record.key;
+
+      // Check if the record is already in the list
+      if (!resultList.find((r) => r.key == key)) {
+        resultList.push(resultMap[key]);
+      }
+    });
+
+    return resultList;
+  }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -133,9 +86,7 @@ export default function StockItemTestResultTable({
         render: (record: any) => {
           return (
             <Group position="apart">
-              <Text italic={!record.template}>
-                {record.template?.test_name ?? record.test}
-              </Text>
+              <Text>{record.template_detail.test_name}</Text>
               {(record.old?.length ?? 0) > 0 && (
                 <Text italic>+{record.old.length}</Text>
               )}
@@ -159,7 +110,7 @@ export default function StockItemTestResultTable({
         }
       },
       DescriptionColumn({
-        accessor: 'template.description'
+        accessor: 'template_detail.description'
       }),
       {
         accessor: 'value',

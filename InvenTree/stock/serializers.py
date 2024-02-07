@@ -23,7 +23,7 @@ import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
-from part.serializers import PartBriefSerializer
+from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
 from .models import (
     StockItem,
@@ -56,8 +56,6 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
         fields = [
             'pk',
             'stock_item',
-            'key',
-            'test',
             'result',
             'value',
             'attachment',
@@ -65,6 +63,8 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
             'user',
             'user_detail',
             'date',
+            'template',
+            'template_detail',
         ]
 
         read_only_fields = ['pk', 'user', 'date']
@@ -80,7 +80,7 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
     user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
 
-    key = serializers.CharField(read_only=True)
+    template_detail = PartTestTemplateSerializer(source='template', read_only=True)
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
         required=False
