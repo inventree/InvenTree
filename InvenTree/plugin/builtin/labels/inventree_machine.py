@@ -21,10 +21,11 @@ def get_machine_and_driver(machine_pk: str):
     """Get the driver by machine pk and ensure that it is a label printing driver."""
     machine = registry.get_machine(machine_pk)
 
-    if machine is None:
+    # machine should be valid due to the machine select field validator
+    if machine is None:  # pragma: no cover
         return None, None
 
-    if machine.SLUG != 'label_printer':
+    if machine.SLUG != 'label-printer':  # pragma: no cover
         return None, None
 
     machine = cast(LabelPrinterMachine, machine)
@@ -68,7 +69,8 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             kwargs['printing_options'].get('machine', '')
         )
 
-        if driver is None or machine is None:
+        # the driver and machine should be valid due to the machine select field validator
+        if driver is None or machine is None:  # pragma: no cover
             return None
 
         print_kwargs = {
@@ -116,7 +118,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             # get all available printers for each driver
             machines: list[LabelPrinterMachine] = []
             for driver in cast(
-                list[LabelPrinterBaseDriver], registry.get_drivers('label_printer')
+                list[LabelPrinterBaseDriver], registry.get_drivers('label-printer')
             ):
                 machines.extend(
                     driver.get_printers(

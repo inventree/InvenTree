@@ -19,8 +19,6 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
 
     roles = ['admin.add', 'admin.view', 'admin.change', 'admin.delete']
 
-    placeholder_uuid = '00000000-0000-0000-0000-000000000000'
-
     def setUp(self):
         """Setup some testing drivers/machines."""
 

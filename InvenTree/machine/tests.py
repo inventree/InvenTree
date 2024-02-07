@@ -1,16 +1,29 @@
 """Machine app tests."""
 
+from typing import cast
 from unittest.mock import MagicMock, Mock
 
+from django.apps import apps
 from django.test import TestCase
+from django.urls import reverse
 
+from rest_framework import serializers
+
+from InvenTree.unit_test import InvenTreeAPITestCase
+from label.models import PartLabel
 from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
+from machine.machine_types.label_printer import LabelPrinterBaseDriver
 from machine.models import MachineConfig
 from machine.registry import registry
+from part.models import Part
+from plugin.models import PluginConfig
+from plugin.registry import registry as plg_registry
 
 
 class TestMachineRegistryMixin(TestCase):
     """Machine registry test mixin to setup the registry between tests correctly."""
+
+    placeholder_uuid = '00000000-0000-0000-0000-000000000000'
 
     def tearDown(self) -> None:
         """Clean up after testing."""
@@ -181,3 +194,109 @@ class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
         self.assertEqual(len(registry.get_machines()), 2)
         registry.remove_machine(machine1)
         self.assertEqual(len(registry.get_machines()), 1)
+
+
+class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase):
+    """Test the label printer machine type."""
+
+    fixtures = ['category', 'part', 'location', 'stock']
+
+    def setUp(self):
+        """Setup the label printer machine type."""
+        super().setUp()
+
+        class TestingLabelPrinterDriver(LabelPrinterBaseDriver):
+            """Label printer driver for testing."""
+
+            SLUG = 'testing-label-printer'
+            NAME = 'Testing Label Printer'
+            DESCRIPTION = 'This is a test label printer driver for testing.'
+
+            class PrintingOptionsSerializer(
+                LabelPrinterBaseDriver.PrintingOptionsSerializer
+            ):
+                """Test printing options serializer."""
+
+                test_option = serializers.IntegerField()
+
+            def print_label(self, *args, **kwargs):
+                """Mock print label method so that there are no errors."""
+
+        self.machine = MachineConfig.objects.create(
+            name='Test Label Printer',
+            machine_type='label-printer',
+            driver='testing-label-printer',
+            active=True,
+        )
+
+        registry.initialize()
+        driver_instance = cast(
+            TestingLabelPrinterDriver,
+            registry.get_driver_instance('testing-label-printer'),
+        )
+
+        self.print_label = Mock()
+        driver_instance.print_label = self.print_label
+
+        self.print_labels = Mock(side_effect=driver_instance.print_labels)
+        driver_instance.print_labels = self.print_labels
+
+    def test_print_label(self):
+        """Test the print label method."""
+        plugin_ref = 'inventreelabelmachine'
+
+        # setup the label app
+        apps.get_app_config('label').create_labels()  # type: ignore
+        plg_registry.reload_plugins()
+        config = cast(PluginConfig, plg_registry.get_plugin(plugin_ref).plugin_config())  # type: ignore
+        config.active = True
+        config.save()
+
+        parts = Part.objects.all()[:2]
+        label = cast(PartLabel, PartLabel.objects.first())
+
+        url = reverse('api-part-label-print', kwargs={'pk': label.pk})
+        url += f'/?plugin={plugin_ref}&part[]={parts[0].pk}&part[]={parts[1].pk}'
+
+        self.post(
+            url,
+            {
+                'machine': str(self.machine.pk),
+                'driver_options': {'copies': '1', 'test_option': '2'},
+            },
+            expected_code=200,
+        )
+
+        # test the print labels method call
+        self.print_labels.assert_called_once()
+        self.assertEqual(self.print_labels.call_args.args[0], self.machine.machine)
+        self.assertEqual(self.print_labels.call_args.args[1], label)
+        self.assertQuerySetEqual(
+            self.print_labels.call_args.args[2], parts, transform=lambda x: x
+        )
+        self.assertIn('printing_options', self.print_labels.call_args.kwargs)
+        self.assertEqual(
+            self.print_labels.call_args.kwargs['printing_options'],
+            {'copies': 1, 'test_option': 2},
+        )
+
+        # test the single print label method calls
+        self.assertEqual(self.print_label.call_count, 2)
+        self.assertEqual(self.print_label.call_args.args[0], self.machine.machine)
+        self.assertEqual(self.print_label.call_args.args[1], label)
+        self.assertEqual(self.print_label.call_args.args[2], parts[1])
+        self.assertIn('printing_options', self.print_labels.call_args.kwargs)
+        self.assertEqual(
+            self.print_labels.call_args.kwargs['printing_options'],
+            {'copies': 1, 'test_option': 2},
+        )
+
+        # test with non existing machine
+        self.post(
+            url,
+            {
+                'machine': self.placeholder_uuid,
+                'driver_options': {'copies': '1', 'test_option': '2'},
+            },
+            expected_code=400,
+        )

@@ -36,7 +36,7 @@ Each machine type can provide a different type of connection functionality betwe
 If you want to create your own machine type, please also take a look at the already existing machine types in `machines/machine_types/*.py`. The following example creates a machine type called `abc`.
 
 ```py
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from plugin.machine import BaseDriver, BaseMachineType, MachineStatus
 
 class ABCBaseDriver(BaseDriver):
