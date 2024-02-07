@@ -28,7 +28,6 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
         Returns:
             bool: True if maintenance mode is active, False otherwise.
         """
-
         try:
             setting = common.models.InvenTreeSetting.objects.get(key=self.SETTING_KEY)
             value = InvenTree.helpers.str2bool(setting.value)
