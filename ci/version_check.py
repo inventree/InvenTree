@@ -90,7 +90,14 @@ def check_version_number(version_string, allow_duplicate=False):
 
 
 if __name__ == '__main__':
-    only_version = 'only_version' in sys.argv
+    if 'only_version' in sys.argv:
+        here = Path(__file__).parent.absolute()
+        version_file = here.joinpath('..', 'InvenTree', 'InvenTree', 'api_version.py')
+        results = re.findall(
+            r"""INVENTREE_API_VERSION = '(.*)'""", version_file.read_text()
+        )
+        print(results[0])
+        exit(0)
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'
     GITHUB_REF_TYPE = os.environ['GITHUB_REF_TYPE']
 
@@ -102,11 +109,10 @@ if __name__ == '__main__':
     GITHUB_BASE_REF = os.environ['GITHUB_BASE_REF']
 
     # Print out version information, makes debugging actions *much* easier!
-    if not only_version:
-        print(f'GITHUB_REF: {GITHUB_REF}')
-        print(f'GITHUB_REF_NAME: {GITHUB_REF_NAME}')
-        print(f'GITHUB_REF_TYPE: {GITHUB_REF_TYPE}')
-        print(f'GITHUB_BASE_REF: {GITHUB_BASE_REF}')
+    print(f'GITHUB_REF: {GITHUB_REF}')
+    print(f'GITHUB_REF_NAME: {GITHUB_REF_NAME}')
+    print(f'GITHUB_REF_TYPE: {GITHUB_REF_TYPE}')
+    print(f'GITHUB_BASE_REF: {GITHUB_BASE_REF}')
 
     here = Path(__file__).parent.absolute()
     version_file = here.joinpath('..', 'InvenTree', 'InvenTree', 'version.py')
@@ -124,10 +130,6 @@ if __name__ == '__main__':
             sys.exit(1)
 
         version = results[0]
-
-    if only_version:
-        print(version)
-        exit(0)
 
     print(f"InvenTree Version: '{version}'")
 
