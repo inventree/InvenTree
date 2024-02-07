@@ -39,7 +39,7 @@ cryptography==42.0.0
     #   pdfminer-six
 distlib==0.3.7
     # via virtualenv
-django==3.2.23
+django==3.2.24
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
