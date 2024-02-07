@@ -52,9 +52,7 @@ export default function CustomUnitsTable() {
     onFormSuccess: table.refreshTable
   });
 
-  const [selectedUnit, setSelectedUnit] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedUnit, setSelectedUnit] = useState<number>(-1);
 
   const editUnit = useEditApiFormModal({
     url: ApiEndpoints.custom_unit_list,

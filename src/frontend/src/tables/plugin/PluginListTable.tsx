@@ -16,11 +16,12 @@ import {
   IconCircleCheck,
   IconCircleX,
   IconHelpCircle,
+  IconInfoCircle,
   IconPlaylistAdd,
   IconRefresh
 } from '@tabler/icons-react';
 import { IconDots } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -35,13 +36,17 @@ import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { PluginSettingList } from '../../components/settings/SettingList';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { openEditApiForm } from '../../functions/forms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
 
 export interface PluginI {
@@ -52,6 +57,8 @@ export interface PluginI {
   is_builtin: boolean;
   is_sample: boolean;
   is_installed: boolean;
+  is_package: boolean;
+  package_name: string | null;
   meta: {
     author: string | null;
     description: string | null;
@@ -189,15 +196,27 @@ export function PluginDrawer({
             <Trans>Package information</Trans>
           </Title>
           <Stack pos="relative" spacing="xs">
+            {plugin?.is_package && (
+              <InfoItem
+                type="text"
+                name={t`Package Name`}
+                value={plugin?.package_name}
+              />
+            )}
             <InfoItem
               type="text"
-              name={t`Installation path`}
+              name={t`Installation Path`}
               value={plugin?.meta.package_path}
             />
             <InfoItem
               type="boolean"
               name={t`Builtin`}
               value={plugin?.is_builtin}
+            />
+            <InfoItem
+              type="boolean"
+              name={t`Package`}
+              value={plugin?.is_package}
             />
           </Stack>
         </Stack>
@@ -247,9 +266,10 @@ function PluginIcon(plugin: PluginI) {
 /**
  * Table displaying list of available plugins
  */
-export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
+export default function PluginListTable() {
   const table = useTable('plugin');
   const navigate = useNavigate();
+  const user = useUserState();
 
   const pluginsEnabled = useServerApiState(
     (state) => state.server.plugins_enabled
@@ -337,7 +357,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           confirm: t`Confirm`
         },
         onConfirm: () => {
-          let url = apiUrl(ApiEndpoints.plugin_list, plugin_id) + 'activate/';
+          let url = apiUrl(ApiEndpoints.plugin_activate, plugin_id);
 
           const id = 'plugin-activate';
 
@@ -349,7 +369,13 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           });
 
           api
-            .patch(url, { active: active })
+            .patch(
+              url,
+              { active: active },
+              {
+                timeout: 30 * 1000
+              }
+            )
             .then(() => {
               table.refreshTable();
               notifications.hide(id);
@@ -376,41 +402,97 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
   );
 
   // Determine available actions for a given plugin
-  function rowActions(record: any): RowAction[] {
-    let actions: RowAction[] = [];
+  const rowActions = useCallback(
+    (record: any) => {
+      // TODO: Plugin actions should be updated based on on the users's permissions
 
-    if (!record.is_builtin && record.is_installed) {
-      if (record.active) {
+      let actions: RowAction[] = [];
+
+      if (!record.is_builtin && record.is_installed) {
+        if (record.active) {
+          actions.push({
+            title: t`Deactivate`,
+            color: 'red',
+            icon: <IconCircleX />,
+            onClick: () => {
+              activatePlugin(record.pk, record.name, false);
+            }
+          });
+        } else {
+          actions.push({
+            title: t`Activate`,
+            color: 'green',
+            icon: <IconCircleCheck />,
+            onClick: () => {
+              activatePlugin(record.pk, record.name, true);
+            }
+          });
+        }
+      }
+
+      // Active 'package' plugins can be updated
+      if (record.active && record.is_package && record.package_name) {
         actions.push({
-          title: t`Deactivate`,
-          color: 'red',
-          icon: <IconCircleX />,
+          title: t`Update`,
+          color: 'blue',
+          icon: <IconRefresh />,
           onClick: () => {
-            activatePlugin(record.pk, record.name, false);
-          }
-        });
-      } else {
-        actions.push({
-          title: t`Activate`,
-          color: 'green',
-          icon: <IconCircleCheck />,
-          onClick: () => {
-            activatePlugin(record.pk, record.name, true);
+            setPluginPackage(record.package_name);
+            installPluginModal.open();
           }
         });
       }
-    }
 
-    return actions;
-  }
+      // Inactive 'package' plugins can be uninstalled
+      if (
+        !record.active &&
+        record.is_installed &&
+        record.is_package &&
+        record.package_name
+      ) {
+        actions.push({
+          title: t`Uninstall`,
+          color: 'red',
+          icon: <IconCircleX />,
+          onClick: () => {
+            setSelectedPlugin(record.pk);
+            uninstallPluginModal.open();
+          }
+        });
+      }
+
+      // Uninstalled 'package' plugins can be deleted
+      if (!record.is_installed) {
+        actions.push({
+          title: t`Delete`,
+          color: 'red',
+          icon: <IconCircleX />,
+          onClick: () => {
+            setSelectedPlugin(record.pk);
+            deletePluginModal.open();
+          }
+        });
+      }
+
+      return actions;
+    },
+    [user, pluginsEnabled]
+  );
+
+  const [pluginPackage, setPluginPackage] = useState<string>('');
 
   const installPluginModal = useCreateApiFormModal({
     title: t`Install plugin`,
     url: ApiEndpoints.plugin_install,
+    timeout: 30000,
     fields: {
       packagename: {},
       url: {},
+      version: {},
       confirm: {}
+    },
+    initialData: {
+      packagename: pluginPackage
     },
     closeOnClickOutside: false,
     submitText: t`Install`,
@@ -427,7 +509,48 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
     }
   });
 
-  const user = useUserState();
+  const [selectedPlugin, setSelectedPlugin] = useState<number>(-1);
+
+  const uninstallPluginModal = useEditApiFormModal({
+    title: t`Uninstall Plugin`,
+    url: ApiEndpoints.plugin_uninstall,
+    pk: selectedPlugin,
+    fetchInitialData: false,
+    timeout: 30000,
+    fields: {
+      delete_config: {}
+    },
+    preFormContent: (
+      <Alert
+        color="red"
+        icon={<IconInfoCircle />}
+        title={t`Confirm plugin uninstall`}
+      >
+        <Stack spacing="xs">
+          <Text>{t`The selected plugin will be uninstalled.`}</Text>
+          <Text>{t`This action cannot be undone.`}</Text>
+        </Stack>
+      </Alert>
+    ),
+    onFormSuccess: (data) => {
+      notifications.show({
+        title: t`Plugin uninstalled successfully`,
+        message: data.result,
+        autoClose: 30000,
+        color: 'green'
+      });
+
+      table.refreshTable();
+    }
+  });
+
+  const deletePluginModal = useDeleteApiFormModal({
+    url: ApiEndpoints.plugin_list,
+    pk: selectedPlugin,
+    title: t`Delete Plugin`,
+    onFormSuccess: table.refreshTable,
+    preFormWarning: t`Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?`
+  });
 
   const reloadPlugins = useCallback(() => {
     api
@@ -465,7 +588,10 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
           color="green"
           icon={<IconPlaylistAdd />}
           tooltip={t`Install Plugin`}
-          onClick={() => installPluginModal.open()}
+          onClick={() => {
+            setPluginPackage('');
+            installPluginModal.open();
+          }}
         />
       );
     }
@@ -476,9 +602,11 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
   return (
     <>
       {installPluginModal.modal}
+      {uninstallPluginModal.modal}
+      {deletePluginModal.modal}
       <DetailDrawer
         title={t`Plugin detail`}
-        size={'lg'}
+        size={'xl'}
         renderContent={(id) => {
           if (!id) return false;
           return <PluginDrawer id={id} refreshTable={table.refreshTable} />;
@@ -489,11 +617,7 @@ export function PluginListTable({ props }: { props: InvenTreeTableProps }) {
         tableState={table}
         columns={pluginTableColumns}
         props={{
-          ...props,
           enableDownload: false,
-          params: {
-            ...props.params
-          },
           rowActions: rowActions,
           onRowClick: (plugin) => navigate(`${plugin.pk}/`),
           tableActions: tableActions,

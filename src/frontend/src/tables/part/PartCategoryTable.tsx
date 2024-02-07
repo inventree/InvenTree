@@ -88,9 +88,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     }
   });
 
-  const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedCategory, setSelectedCategory] = useState<number>(-1);
 
   const editCategory = useEditApiFormModal({
     url: ApiEndpoints.category_list,

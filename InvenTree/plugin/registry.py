@@ -439,8 +439,8 @@ class PluginsRegistry:
                 raw_module = importlib.import_module(plugin)
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
 
-            if modules:
-                [collected_plugins.append(item) for item in modules]
+            for item in modules or []:
+                collected_plugins.append(item)
 
         # From this point any plugins are considered "external" and only loaded if plugins are explicitly enabled
         if settings.PLUGINS_ENABLED:
@@ -453,6 +453,7 @@ class PluginsRegistry:
                     try:
                         plugin = entry.load()
                         plugin.is_package = True
+                        plugin.package_name = getattr(entry.dist, 'name', None)
                         plugin._get_package_metadata()
                         collected_plugins.append(plugin)
                     except Exception as error:  # pragma: no cover
@@ -549,9 +550,20 @@ class PluginsRegistry:
             # Check if this is a 'builtin' plugin
             builtin = plg.check_is_builtin()
 
+            package_name = None
+
+            # Extract plugin package name
+            if getattr(plg, 'is_package', False):
+                package_name = getattr(plg, 'package_name', None)
+
             # Auto-enable builtin plugins
             if builtin and plg_db and not plg_db.active:
                 plg_db.active = True
+                plg_db.save()
+
+            # Save the package_name attribute to the plugin
+            if plg_db.package_name != package_name:
+                plg_db.package_name = package_name
                 plg_db.save()
 
             # Determine if this plugin should be loaded:
@@ -580,6 +592,7 @@ class PluginsRegistry:
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)
+
                 plg_i.pk = plg_db.pk if plg_db else None
                 plg_i.db = plg_db
 
