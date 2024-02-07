@@ -72,7 +72,7 @@ jobs:
   pre-commit:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
-    needs: paths-filter
+    needs: [paths-filter, apidoc]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
 
     steps:
