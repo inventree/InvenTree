@@ -57,7 +57,6 @@ class MachineConfigSerializer(serializers.ModelSerializer):
         """Serializer method for the status model field."""
         if obj.machine and obj.machine.MACHINE_STATUS:
             return obj.machine.MACHINE_STATUS.__name__
-        return None
 
     def get_status_text(self, obj: MachineConfig) -> str:
         """Serializer method for the status text field."""

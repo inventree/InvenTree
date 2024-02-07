@@ -51,7 +51,6 @@ class BaseLabelPrintingDriver(BaseDriver):
 
         Note that the supplied args/kwargs may be different if the driver overrides the print_labels() method.
         """
-        pass
 
     def print_labels(
         self,

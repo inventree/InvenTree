@@ -1,21 +1,26 @@
 """Machine API tests."""
 
+import re
+from typing import cast
+
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeAPITestCase
 from machine import registry
-from machine.machine_type import BaseMachineType
+from machine.machine_type import BaseDriver, BaseMachineType
 from machine.machine_types import BaseLabelPrintingDriver
 from machine.models import MachineConfig
+from machine.tests import TestMachineRegistryMixin
 from stock.models import StockLocation
 
 
-class MachineAPITest(InvenTreeAPITestCase):
+class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
     """Class for unit testing machine API endpoints."""
 
     roles = ['admin.add', 'admin.view', 'admin.change', 'admin.delete']
 
-    # @classmethod
+    placeholder_uuid = '00000000-0000-0000-0000-000000000000'
+
     def setUp(self):
         """Setup some testing drivers/machines."""
 
@@ -39,7 +44,6 @@ class MachineAPITest(InvenTreeAPITestCase):
 
             def print_label(self, *args, **kwargs) -> None:
                 """Override print_label."""
-                pass
 
         class TestingLabelPrinterDriverError1(BaseLabelPrintingDriver):
             """Test driver for label printing."""
@@ -50,7 +54,6 @@ class MachineAPITest(InvenTreeAPITestCase):
 
             def print_label(self, *args, **kwargs) -> None:
                 """Override print_label."""
-                pass
 
         class TestingLabelPrinterDriverError2(BaseLabelPrintingDriver):
             """Test driver for label printing."""
@@ -61,23 +64,17 @@ class MachineAPITest(InvenTreeAPITestCase):
 
             def print_label(self, *args, **kwargs) -> None:
                 """Override print_label."""
-                pass
+
+        class TestingLabelPrinterDriverNotImplemented(BaseLabelPrintingDriver):
+            """Test driver for label printing."""
+
+            SLUG = 'test-label-printer-not-implemented'
+            NAME = 'Test label printer error not implemented'
+            DESCRIPTION = 'This is a test label printer driver for testing.'
 
         registry.initialize()
 
         super().setUp()
-
-    # @classmethod
-    def tearDown(self) -> None:
-        """Clean up after testing."""
-        registry.machine_types = {}
-        registry.drivers = {}
-        registry.driver_instances = {}
-        registry.machines = {}
-        registry.base_drivers = []
-        registry.errors = []
-
-        return super().tearDown()
 
     def test_machine_type_list(self):
         """Test machine types list API endpoint."""
@@ -121,13 +118,38 @@ class MachineAPITest(InvenTreeAPITestCase):
         )
         self.assertEqual(driver['provider_file'], __file__)
 
+        # Test driver with errors
+        driver_instance = cast(
+            BaseDriver, registry.get_driver_instance('test-label-printer-api')
+        )
+        self.assertIsNotNone(driver_instance)
+        driver_instance.handle_error('Test error')
+
+        response = self.get(reverse('api-machine-drivers'))
+        driver = [a for a in response.data if a['slug'] == 'test-label-printer-api']
+        self.assertEqual(len(driver), 1)
+        driver = driver[0]
+        self.assertEqual(driver['driver_errors'], ['Test error'])
+
     def test_machine_status(self):
         """Test machine status API endpoint."""
         response = self.get(reverse('api-machine-registry-status'))
-        self.assertIn(
+        errors_msgs = [e['message'] for e in response.data['registry_errors']]
+
+        required_patterns = [
+            r'\'<class \'.*\.TestingLabelPrinterDriverNotImplemented\'>\' did not override the required attributes: one of print_label or print_labels',
             "Cannot re-register driver 'test-label-printer-error'",
-            [e['message'] for e in response.data['registry_errors']],
-        )
+        ]
+
+        for pattern in required_patterns:
+            for error in errors_msgs:
+                if re.match(pattern, error):
+                    break
+            else:
+                errors_str = '\n'.join([f'- {e}' for e in errors_msgs])
+                self.fail(
+                    f"""Error message matching pattern '{pattern}' not found in machine registry errors:\n{errors_str}"""
+                )
 
     def test_machine_list(self):
         """Test machine list API endpoint."""
@@ -160,10 +182,9 @@ class MachineAPITest(InvenTreeAPITestCase):
 
     def test_machine_detail(self):
         """Test machine detail API endpoint."""
-        placeholder_uuid = '00000000-0000-0000-0000-000000000000'
         self.assertFalse(len(MachineConfig.objects.all()), 0)
         self.get(
-            reverse('api-machine-detail', kwargs={'pk': placeholder_uuid}),
+            reverse('api-machine-detail', kwargs={'pk': self.placeholder_uuid}),
             expected_code=404,
         )
 
@@ -209,12 +230,22 @@ class MachineAPITest(InvenTreeAPITestCase):
 
     def test_machine_detail_settings(self):
         """Test machine detail settings API endpoint."""
+        machine_setting_url = reverse(
+            'api-machine-settings-detail',
+            kwargs={'pk': self.placeholder_uuid, 'config_type': 'M', 'key': 'LOCATION'},
+        )
+
+        # Test machine settings for non-existent machine
+        self.get(machine_setting_url, expected_code=404)
+
+        # Create a machine
         machine = MachineConfig.objects.create(
             machine_type='label-printer',
             driver='test-label-printer-api',
             name='Test Machine with settings',
             active=True,
         )
+
         machine_setting_url = reverse(
             'api-machine-settings-detail',
             kwargs={'pk': machine.pk, 'config_type': 'M', 'key': 'LOCATION'},

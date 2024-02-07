@@ -9,7 +9,22 @@ from machine.models import MachineConfig
 from machine.registry import registry
 
 
-class TestDriverMachineInterface(TestCase):
+class TestMachineRegistryMixin(TestCase):
+    """Machine registry test mixin to setup the registry between tests correctly."""
+
+    def tearDown(self) -> None:
+        """Clean up after testing."""
+        registry.machine_types = {}
+        registry.drivers = {}
+        registry.driver_instances = {}
+        registry.machines = {}
+        registry.base_drivers = []
+        registry.errors = []
+
+        return super().tearDown()
+
+
+class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
     """Test the machine registry."""
 
     def setUp(self):
@@ -48,6 +63,20 @@ class TestDriverMachineInterface(TestCase):
                 'TEST_SETTING': {'name': 'Test Setting', 'description': 'Test setting'}
             }
 
+        # mock driver implementation
+        self.driver_mocks = {
+            k: Mock()
+            for k in [
+                'init_driver',
+                'init_machine',
+                'update_machine',
+                'restart_machine',
+            ]
+        }
+
+        for key, value in self.driver_mocks.items():
+            setattr(TestingDriver, key, value)
+
         self.machine1 = MachineConfig.objects.create(
             name='Test Machine 1',
             machine_type='testing-type',
@@ -68,23 +97,6 @@ class TestDriverMachineInterface(TestCase):
         )
         self.machines = [self.machine1, self.machine2, self.machine3]
 
-        # mock driver implementation
-        self.driver_mocks = {
-            k: Mock()
-            for k in [
-                'init_driver',
-                'init_machine',
-                'update_machine',
-                'restart_machine',
-            ]
-        }
-        for key, value in self.driver_mocks.items():
-            setattr(TestingDriver, key, value)
-
-        # save machines
-        for m in self.machines:
-            m.save()
-
         # init registry
         registry.initialize()
 
@@ -99,19 +111,8 @@ class TestDriverMachineInterface(TestCase):
 
         super().setUp()
 
-    def tearDown(self) -> None:
-        """Clean up after testing."""
-        registry.machine_types = {}
-        registry.drivers = {}
-        registry.driver_instances = {}
-        registry.machines = {}
-        registry.base_drivers = []
-        registry.errors = []
-
-        return super().tearDown()
-
     def test_machine_lifecycle(self):
-        """Test the machine registry."""
+        """Test the machine lifecycle."""
         # test that the registry is initialized correctly
         self.assertEqual(len(registry.machines), 3)
         self.assertEqual(len(registry.driver_instances), 1)
@@ -126,6 +127,13 @@ class TestDriverMachineInterface(TestCase):
         self.assertEqual(
             len(registry.get_machines(name='Test Machine 1', active=True)), 1
         )
+
+        # test get_machines with an unknown filter
+        with self.assertRaisesMessage(
+            ValueError,
+            "'unknown_filter' is not a valid filter field for registry.get_machines.",
+        ):
+            registry.get_machines(unknown_filter='test')
 
         # test get_machine
         self.assertEqual(registry.get_machine(self.machine1.pk), self.machine1.machine)

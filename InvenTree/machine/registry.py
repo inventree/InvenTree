@@ -183,7 +183,9 @@ class MachineRegistry:
         def filter_machine(machine: BaseMachineType):
             for key, value in kwargs.items():
                 if key not in allowed_fields:
-                    continue
+                    raise ValueError(
+                        f"'{key}' is not a valid filter field for registry.get_machines."
+                    )
 
                 # check if current driver is subclass from base_driver
                 if key == 'base_driver':

@@ -14,12 +14,8 @@ else:  # pragma: no cover
     class MachineConfig:
         """Only used if not typechecking currently."""
 
-        pass
-
     class SettingsKeyType:
         """Only used if not typechecking currently."""
-
-        pass
 
 
 class MachineStatus(StatusCode):
@@ -46,8 +42,6 @@ class MachineStatus(StatusCode):
         5XX - Unknown issues
         ```
     """
-
-    pass
 
 
 class BaseDriver(ClassValidationMixin, ClassProviderMixin):
@@ -83,7 +77,6 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         After the driver is initialized, the self.init_machine function is
         called for each machine associated with that driver.
         """
-        pass
 
     def init_machine(self, machine: 'BaseMachineType'):
         """This method gets called for each active machine using that driver while initialization.
@@ -94,7 +87,6 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         Arguments:
             machine: Machine instance
         """
-        pass
 
     def update_machine(
         self, old_machine_state: Dict[str, Any], machine: 'BaseMachineType'
@@ -108,7 +100,6 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
             old_machine_state: Dict holding the old machine state before update
             machine: Machine instance with the new state
         """
-        pass
 
     def restart_machine(self, machine: 'BaseMachineType'):
         """This method gets called on manual machine restart e.g. by using the restart machine action in the Admin Center.
@@ -119,7 +110,6 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         Arguments:
             machine: Machine instance
         """
-        pass
 
     def get_machines(self, **kwargs):
         """Return all machines using this driver (By default only initialized machines).
