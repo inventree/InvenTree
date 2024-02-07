@@ -159,8 +159,9 @@ jobs:
         run: |
           diff --color -u api.yaml schema.yaml
           diff -u api.yaml schema.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
-      # - name: Check schema - including warnings
-      #   run: invoke apidoc
+      - name: Check schema - including warnings
+        run: invoke apidoc
+        continue-on-error: true
 
   python:
     name: Tests - inventree-python
