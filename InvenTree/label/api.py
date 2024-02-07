@@ -241,7 +241,6 @@ class LabelPrintMixin(LabelFilterMixin):
         except ValidationError as e:
             raise (e)
         except Exception as e:
-            InvenTree.exceptions.log_error(request.path_info)
             raise ValidationError([_('Error printing label'), str(e)])
 
         if isinstance(result, JsonResponse):
