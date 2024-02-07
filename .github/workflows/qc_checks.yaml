@@ -72,7 +72,7 @@ jobs:
   pre-commit:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
-    needs: [paths-filter, apidoc]
+    needs: paths-filter
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
 
     steps:
@@ -88,20 +88,6 @@ jobs:
         run: |
           pip install requests
           python3 ci/version_check.py
-      - name: Download public schema
-        run: |
-          version=$((python3 ci/version_check.py only_version) 2> &1)
-          echo "Version: $version"
-          curl -s -o schema.yaml https://github.com/inventree/schema/blob/main/export/$version/api.yaml
-      - name: Download working schema
-        uses: actions/download-artifact@v4
-        with:
-          name: api.yaml
-          path: api.yaml
-      - name: Check for differences
-        run: |
-          diff -u api.yaml schema.yaml
-          diff -u api.yaml schema.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
 
   mkdocs:
     name: Style [Documentation]
@@ -156,12 +142,18 @@ jobs:
         with:
           name: api.yaml
           path: api.yaml
-      - name: Find differences to current schema
+      - name: Download public schema
         run: |
-          git fetch origin master
-          git diff --name-only origin/master api.yaml
-      - name: Check schema - including warnings
-        run: invoke apidoc
+          pip install requests
+          version=$((python3 ci/version_check.py only_version) 2> &1)
+          echo "Version: $version"
+          curl -s -o schema.yaml https://github.com/inventree/schema/blob/main/export/$version/api.yaml
+      - name: Check for differences in schemas
+        run: |
+          diff -u api.yaml schema.yaml
+          diff -u api.yaml schema.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
+      # - name: Check schema - including warnings
+      #   run: invoke apidoc
 
   python:
     name: Tests - inventree-python
