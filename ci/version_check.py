@@ -93,9 +93,8 @@ if __name__ == '__main__':
     if 'only_version' in sys.argv:
         here = Path(__file__).parent.absolute()
         version_file = here.joinpath('..', 'InvenTree', 'InvenTree', 'api_version.py')
-        results = re.findall(
-            r"""INVENTREE_API_VERSION = '(.*)'""", version_file.read_text()
-        )
+        text = version_file.read_text()
+        results = re.findall(r"""INVENTREE_API_VERSION = (.*)""", text)
         print(results[0])
         exit(0)
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'
