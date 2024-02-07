@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-07 11:35+0000\n"
-"PO-Revision-Date: 2024-02-03 12:08\n"
+"POT-Creation-Date: 2024-02-07 09:13+0000\n"
+"PO-Revision-Date: 2024-02-07 12:22\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -596,16 +596,12 @@ msgid "Only superusers can create new users"
 msgstr "Bare superbrukere kan opprette nye brukere"
 
 #: InvenTree/serializers.py:455
-#, fuzzy
-#| msgid "Token has been revoked"
 msgid "Your account has been created."
-msgstr "Token er tilbakekalt"
+msgstr ""
 
 #: InvenTree/serializers.py:457
-#, fuzzy
-#| msgid "Enable password forgot function on the login pages"
 msgid "Please use the password reset function to login"
-msgstr "Ativer funskjon for glemt passord på innloggingssidene"
+msgstr ""
 
 #: InvenTree/serializers.py:464
 msgid "Welcome to InvenTree"
@@ -2948,10 +2944,8 @@ msgid "Check that all plugins are installed on startup - enable in container env
 msgstr "Sjekk at alle utvidelser er installert ved oppstart - aktiver i containermiljøer"
 
 #: common/models.py:1868
-#, fuzzy
-#| msgid "Check plugins on startup"
 msgid "Check for plugin updates"
-msgstr "Sjekk utvidelser ved oppstart"
+msgstr ""
 
 #: common/models.py:1869
 msgid "Enable periodic checks for updates to installed plugins"
@@ -7831,10 +7825,8 @@ msgid "The Supplier which acts as 'TME'"
 msgstr "Leverandøren som fungerer som \"TME\""
 
 #: plugin/installer.py:194 plugin/installer.py:279
-#, fuzzy
-#| msgid "Permission denied: only staff users can install plugins"
 msgid "Only staff users can administer plugins"
-msgstr "Tillatelse nektet: bare ansatt-brukere kan installere utvidelser"
+msgstr ""
 
 #: plugin/installer.py:245
 msgid "Installed plugin successfully"
@@ -7850,26 +7842,20 @@ msgid "Plugin was not found in registry"
 msgstr ""
 
 #: plugin/installer.py:273
-#, fuzzy
-#| msgid "PluginName of the plugin"
 msgid "Plugin is not a packaged plugin"
-msgstr "Navn på utvidelsen"
+msgstr ""
 
 #: plugin/installer.py:276
-#, fuzzy
-#| msgid "Price not found"
 msgid "Plugin package name not found"
-msgstr "Pris ikke funnet"
+msgstr ""
 
 #: plugin/installer.py:297
 msgid "Plugin cannot be uninstalled as it is currently active"
 msgstr ""
 
 #: plugin/installer.py:310
-#, fuzzy
-#| msgid "Installed plugin successfully"
 msgid "Uninstalled plugin successfully"
-msgstr "Installasjon av utvidelse vellykket"
+msgstr ""
 
 #: plugin/models.py:30
 msgid "Plugin Configuration"
@@ -7917,10 +7903,8 @@ msgid "Builtin Plugin"
 msgstr "Innebygd utvidelse"
 
 #: plugin/models.py:173
-#, fuzzy
-#| msgid "Packaging"
 msgid "Package Plugin"
-msgstr "Emballasje"
+msgstr ""
 
 #: plugin/models.py:197 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
@@ -8061,10 +8045,8 @@ msgid "Activate this plugin"
 msgstr "Aktivér denne utvidelsen"
 
 #: plugin/serializers.py:219
-#, fuzzy
-#| msgid "Delete Notifications"
 msgid "Delete configuration"
-msgstr "Slett varlser"
+msgstr ""
 
 #: plugin/serializers.py:220
 msgid "Delete the plugin configuration from the database"
@@ -8851,10 +8833,8 @@ msgid "At least two stock items must be provided"
 msgstr "Minst to lagervarer må oppgis"
 
 #: stock/serializers.py:1201
-#, fuzzy
-#| msgid "Change"
 msgid "No Change"
-msgstr "Endre"
+msgstr ""
 
 #: stock/serializers.py:1230
 msgid "StockItem primary key value"
@@ -13611,11 +13591,9 @@ msgstr "Valgt SSO-leverandør er ugyldig, eller den er ikke riktig konfigurert"
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
-msgstr ""
-"Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
+msgstr "Du er i ferd med å bruke din %(provider_name)s konto for å logge inn på\n"
 "%(site_name)s.<br>Som et siste steg, vennligst fullfør skjemaet:"
 
 #: templates/socialaccount/snippets/provider_list.html:26
@@ -13790,5 +13768,3 @@ msgstr "Tillatelse til å endre elementer"
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
 
-#~ msgid "Plugin installation failed"
-#~ msgstr "Installasjon av utvidelse mislyktes"
