@@ -3408,6 +3408,8 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         """Clean fields for the PartTestTemplate model."""
         self.test_name = self.test_name.strip()
 
+        self.key = helpers.generateTestKey(self.test_name)
+
         self.validate_unique()
         super().clean()
 
@@ -3437,11 +3439,6 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         super().validate_unique(exclude)
 
-    @property
-    def key(self):
-        """Generate a key for this test."""
-        return helpers.generateTestKey(self.test_name)
-
     part = models.ForeignKey(
         Part,
         on_delete=models.CASCADE,
@@ -3455,6 +3452,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         max_length=100,
         verbose_name=_('Test Name'),
         help_text=_('Enter a name for the test'),
+    )
+
+    key = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_('Test Key'),
+        help_text=_('Simplified key for the test'),
     )
 
     description = models.CharField(
