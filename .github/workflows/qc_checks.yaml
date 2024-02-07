@@ -44,6 +44,8 @@ jobs:
             migrations:
               - '**/migrations/**'
               - '.github/workflows**'
+            api_version:
+              - 'InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
 
@@ -143,6 +145,7 @@ jobs:
           name: api.yaml
           path: api.yaml
       - name: Download public schema
+        if: needs.paths-filter.outputs.api_version == 'false'
         run: |
           pip install requests >/dev/null 2>&1
           version="$(python3 ci/version_check.py only_version 2>&1)"
@@ -152,6 +155,7 @@ jobs:
           curl -s -o schema.yaml $url
           echo "Downloaded schema.yaml"
       - name: Check for differences in schemas
+        if: needs.paths-filter.outputs.api_version == 'false'
         run: |
           diff --color -u api.yaml schema.yaml
           diff -u api.yaml schema.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
