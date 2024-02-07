@@ -147,7 +147,9 @@ jobs:
           pip install requests
           version="$(python3 ci/version_check.py only_version 2>&1)"
           echo "Version: $version"
-          curl -s -o schema.yaml https://github.com/inventree/schema/blob/main/export/$version/api.yaml
+          url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
+          echo "URL: $url"
+          curl -s -o schema.yaml $url
       - name: Check for differences in schemas
         run: |
           diff -u api.yaml schema.yaml
