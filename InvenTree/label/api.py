@@ -4,6 +4,7 @@ from django.core.exceptions import FieldError, ValidationError
 from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -237,8 +238,11 @@ class LabelPrintMixin(LabelFilterMixin):
             result = plugin.print_labels(
                 label, items_to_print, request, printing_options=request.data
             )
+        except ValidationError as e:
+            raise (e)
         except Exception as e:
             InvenTree.exceptions.log_error(request.path_info)
+            raise ValidationError([_('Error printing label'), str(e)])
 
         if isinstance(result, JsonResponse):
             result['plugin'] = plugin.plugin_slug()
