@@ -112,8 +112,8 @@ jobs:
           pip install linkcheckmd requests
           python -m linkcheckmd docs --recurse
 
-  apidoc:
-    name: Tests - API Documentation
+  schema:
+    name: Tests - API Schema Documentation
     runs-on: ubuntu-20.04
     needs: paths-filter
     if: needs.paths-filter.outputs.server == 'true'
@@ -137,7 +137,7 @@ jobs:
           update: true
       - name: Export API Documentation
         run: |
-          invoke apidoc
+          invoke schema
 
   python:
     name: Tests - inventree-python
