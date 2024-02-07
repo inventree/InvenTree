@@ -115,6 +115,8 @@ jobs:
   apidoc:
     name: Tests - API Documentation
     runs-on: ubuntu-20.04
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true'
     env:
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
