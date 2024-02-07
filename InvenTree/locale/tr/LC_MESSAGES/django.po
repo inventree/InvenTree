@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-07 11:35+0000\n"
-"PO-Revision-Date: 2024-02-03 12:08\n"
+"POT-Creation-Date: 2024-02-07 09:13+0000\n"
+"PO-Revision-Date: 2024-02-07 12:22\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -32,16 +32,16 @@ msgstr "Değer verilmemiş"
 #: InvenTree/conversion.py:128
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "{original} birimi {unit} birimine dönüştürülemedi"
 
 #: InvenTree/conversion.py:130
 msgid "Invalid quantity supplied"
-msgstr ""
+msgstr "Geçersiz miktar sağlandı"
 
 #: InvenTree/conversion.py:144
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr ""
+msgstr "Geçersiz miktar sağlandı({exc})"
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
@@ -142,17 +142,17 @@ msgstr "Yinelenen seri"
 #: InvenTree/helpers.py:573 InvenTree/helpers.py:616
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr ""
+msgstr "Geçersiz grup aralığı: {group}"
 
 #: InvenTree/helpers.py:604
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr ""
+msgstr "Grup aralığı {group}, izin verilen miktarı aşmaktadır ({expected_quantity})"
 
 #: InvenTree/helpers.py:634 InvenTree/helpers.py:641 InvenTree/helpers.py:660
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr ""
+msgstr "Geçersiz grup aralığı: {group}"
 
 #: InvenTree/helpers.py:670
 msgid "No serial numbers found"
@@ -160,11 +160,11 @@ msgstr "Seri numarası bulunamadı"
 
 #: InvenTree/helpers.py:675
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr ""
+msgstr "Benzersiz seri numaralarının sayısı ({len(serials)}) ile miktarın ({expected_quantity}) eşleşmesi gerekmektedir"
 
 #: InvenTree/helpers.py:793
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Bu değerden HTML etiketlerini kaldır"
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
@@ -200,7 +200,7 @@ msgstr "Sağlanan URL geçerli bir resim dosyası değil"
 
 #: InvenTree/locales.py:16
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgarca"
 
 #: InvenTree/locales.py:17
 msgid "Czech"
@@ -248,7 +248,7 @@ msgstr "İbranice"
 
 #: InvenTree/locales.py:28
 msgid "Hindi"
-msgstr ""
+msgstr "Hintçe"
 
 #: InvenTree/locales.py:29
 msgid "Hungarian"
@@ -292,7 +292,7 @@ msgstr "Rusça"
 
 #: InvenTree/locales.py:39
 msgid "Slovak"
-msgstr ""
+msgstr "Slovakça"
 
 #: InvenTree/locales.py:40
 msgid "Slovenian"
@@ -300,7 +300,7 @@ msgstr "Slovakça"
 
 #: InvenTree/locales.py:41
 msgid "Serbian"
-msgstr ""
+msgstr "Sırpça"
 
 #: InvenTree/locales.py:42
 msgid "Swedish"
@@ -320,16 +320,16 @@ msgstr "Vietnamca"
 
 #: InvenTree/locales.py:46
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Çince (Basitleştirilmiş)"
 
 #: InvenTree/locales.py:47
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Çince (Geleneksel)"
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr ""
+msgstr "[{site_name}] Uygulamaya giriş yap"
 
 #: InvenTree/magic_login.py:38 company/models.py:131
 #: company/templates/company/company_base.html:132
@@ -340,31 +340,31 @@ msgstr "E-posta"
 
 #: InvenTree/models.py:154
 msgid "Metadata must be a python dict object"
-msgstr ""
+msgstr "Metadata, bir python dict nesnesi olmalıdır"
 
 #: InvenTree/models.py:160
 msgid "Plugin Metadata"
-msgstr ""
+msgstr "Plugin Metaverileri"
 
 #: InvenTree/models.py:161
 msgid "JSON metadata field, for use by external plugins"
-msgstr ""
+msgstr "Harici eklentiler tarafından kullanım için JSON metadata alanı"
 
 #: InvenTree/models.py:391
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Yanlış biçimlendirilmiş desen"
 
 #: InvenTree/models.py:398
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Belirtilen bilinmeyen format anahtarı"
 
 #: InvenTree/models.py:404
 msgid "Missing required format key"
-msgstr ""
+msgstr "Gerekli format anahtarı eksik"
 
 #: InvenTree/models.py:415
 msgid "Reference field cannot be empty"
-msgstr ""
+msgstr "Referans alanı boş olamaz"
 
 #: InvenTree/models.py:423
 msgid "Reference must match required pattern"
@@ -7903,10 +7903,8 @@ msgid "Builtin Plugin"
 msgstr ""
 
 #: plugin/models.py:173
-#, fuzzy
-#| msgid "Packaging"
 msgid "Package Plugin"
-msgstr "Paketleme"
+msgstr ""
 
 #: plugin/models.py:197 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
@@ -8047,10 +8045,8 @@ msgid "Activate this plugin"
 msgstr ""
 
 #: plugin/serializers.py:219
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete configuration"
-msgstr "Konumu sil"
+msgstr ""
 
 #: plugin/serializers.py:220
 msgid "Delete the plugin configuration from the database"
@@ -8837,10 +8833,8 @@ msgid "At least two stock items must be provided"
 msgstr ""
 
 #: stock/serializers.py:1201
-#, fuzzy
-#| msgid "Change"
 msgid "No Change"
-msgstr "Değiştir"
+msgstr ""
 
 #: stock/serializers.py:1230
 msgid "StockItem primary key value"
@@ -13597,8 +13591,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13773,3 +13766,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
