@@ -398,18 +398,30 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
             return queryset.filter(part=part)
 
 
-class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
+class PartTestTemplateMixin:
+    """Mixin class for the PartTestTemplate API endpoints."""
+
+    queryset = PartTestTemplate.objects.all()
+    serializer_class = part_serializers.PartTestTemplateSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the PartTestTemplateDetail endpoints."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.PartTestTemplateSerializer.annotate_queryset(
+            queryset
+        )
+        return queryset
+
+
+class PartTestTemplateDetail(PartTestTemplateMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for PartTestTemplate model."""
 
-    queryset = PartTestTemplate.objects.all()
-    serializer_class = part_serializers.PartTestTemplateSerializer
+    pass
 
 
-class PartTestTemplateList(ListCreateAPI):
+class PartTestTemplateList(PartTestTemplateMixin, ListCreateAPI):
     """API endpoint for listing (and creating) a PartTestTemplate."""
 
-    queryset = PartTestTemplate.objects.all()
-    serializer_class = part_serializers.PartTestTemplateSerializer
     filterset_class = PartTestTemplateFilter
 
     filter_backends = SEARCH_ORDER_FILTER

@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Badge, Group, Text, Tooltip } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -32,7 +33,19 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       {
         accessor: 'test_name',
         switchable: false,
-        sortable: true
+        sortable: true,
+        render: (record: any) => {
+          return (
+            <Group position="apart">
+              <Text>{record.test_name}</Text>
+              {record.results && (
+                <Tooltip label={t`Test Results`}>
+                  <Badge color="blue">{record.results}</Badge>
+                </Tooltip>
+              )}
+            </Group>
+          );
+        }
       },
       DescriptionColumn({
         switchable: false

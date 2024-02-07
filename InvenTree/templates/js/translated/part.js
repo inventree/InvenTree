@@ -2867,6 +2867,18 @@ function loadPartTestTemplateTable(table, options) {
                 field: 'test_name',
                 title: '{% trans "Test Name" %}',
                 sortable: true,
+                formatter: function(value, row) {
+                    let html = value;
+
+                    if (row.results && row.results > 0) {
+                        html += `
+                        <span class='badge bg-dark rounded-pill float-right' title='${row.results} {% trans "results" %}'>
+                            ${row.results}
+                        </span>`;
+                    }
+
+                    return html;
+                }
             },
             {
                 field: 'description',
