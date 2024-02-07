@@ -67,8 +67,15 @@ def set_template(apps, schema_editor):
 
             # Create a new template, based on the available test information
             else:
+
+                # Find the parent part template
+                top_level_part = part
+
+                while top_level_part.variant_of:
+                    top_level_part = top_level_part.variant_of
+
                 template = PartTestTemplate.objects.create(
-                    part=part,
+                    part=top_level_part,
                     test_name=name,
                     key=key,
                 )
