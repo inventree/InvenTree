@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconCircleCheck, IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { api } from '../../App';
@@ -59,6 +60,7 @@ export default function StockItemTestResultTable({
       let results = testTemplates.map((template: any) => {
         return {
           ...template,
+          templateId: template.pk,
           results: []
         };
       });
@@ -72,14 +74,16 @@ export default function StockItemTestResultTable({
         })
         .forEach((record) => {
           // Find matching template
-          let idx = results.findIndex((r: any) => r.pk == record.template);
+          let idx = results.findIndex(
+            (r: any) => r.templateId == record.template
+          );
           if (idx >= 0) {
+            results[idx] = {
+              ...results[idx],
+              ...record
+            };
+
             results[idx].results.push(record);
-            results[idx].value = record.value;
-            results[idx].result = record.result;
-            results[idx].attachment = record.attachment;
-            results[idx].date = record.date;
-            results[idx].note = record.note;
           }
         });
 
@@ -98,8 +102,8 @@ export default function StockItemTestResultTable({
         render: (record: any) => {
           return (
             <Group position="apart">
-              <Text>{record.test_name}</Text>
-              {record.results.length > 0 && (
+              <Text>{record.template_detail.test_name}</Text>
+              {record.results && record.results.length > 1 && (
                 <Tooltip label={t`Test Results`}>
                   <Badge color="lightblue" variant="filled">
                     {record.results.length}
@@ -126,7 +130,7 @@ export default function StockItemTestResultTable({
         }
       },
       DescriptionColumn({
-        accessor: 'description'
+        accessor: 'template_detail.description'
       }),
       {
         accessor: 'value',
@@ -189,6 +193,31 @@ export default function StockItemTestResultTable({
     [user]
   );
 
+  // Row expansion controller
+  const rowExpansion: any = useMemo(() => {
+    const cols: any = [...tableColumns];
+
+    return {
+      allowMultiple: true,
+      content: ({ record }: { record: any }) => {
+        if (!record) {
+          return null;
+        }
+
+        const results = record?.results ?? [];
+
+        return (
+          <DataTable
+            key={record.pk}
+            noHeader
+            columns={cols}
+            records={results}
+          />
+        );
+      }
+    };
+  }, []);
+
   return (
     <InvenTreeTable
       url={apiUrl(ApiEndpoints.stock_test_result_list)}
@@ -198,10 +227,12 @@ export default function StockItemTestResultTable({
         dataFormatter: formatRecords,
         enablePagination: false,
         rowActions: rowActions,
+        rowExpansion: rowExpansion,
         params: {
           stock_item: itemId,
           user_detail: true,
-          attachment_detail: true
+          attachment_detail: true,
+          template_detail: true
         }
       }}
     />

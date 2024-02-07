@@ -74,6 +74,7 @@ export type InvenTreeTableProps<T = any> = {
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   printingActions?: any[];
+  rowExpansion?: any;
   idAccessor?: string;
   dataFormatter?: (data: T[]) => T[];
   rowActions?: (record: T) => RowAction[];
@@ -492,6 +493,20 @@ export function InvenTreeTable<T = any>({
     });
   }, [tableState.selectedRecords]);
 
+  const rowExpansion: any = useMemo(() => {
+    if (props.rowExpansion) {
+      return {
+        ...props.rowExpansion,
+        expanded: {
+          recordIds: tableState.expandedRecords,
+          onRecordIdsChange: tableState.setExpandedRecords
+        }
+      };
+    } else {
+      return undefined;
+    }
+  }, [props.rowExpansion]);
+
   return (
     <>
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
@@ -608,6 +623,7 @@ export function InvenTreeTable<T = any>({
             onSelectedRecordsChange={
               tableProps.enableSelection ? onSelectedRecordsChange : undefined
             }
+            rowExpansion={tableProps.rowExpansion}
             fetching={isFetching}
             noRecordsText={missingRecordsText}
             records={data}

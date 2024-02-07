@@ -59,6 +59,9 @@ export function useTable(tableName: string): TableState {
     setActiveFilters([]);
   }, []);
 
+  // Array of expanded records
+  const [expandedRecords, setExpandedRecords] = useState<any[]>([]);
+
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
@@ -81,6 +84,8 @@ export function useTable(tableName: string): TableState {
     activeFilters,
     setActiveFilters,
     clearActiveFilters,
+    expandedRecords,
+    setExpandedRecords,
     selectedRecords,
     setSelectedRecords,
     clearSelectedRecords,
