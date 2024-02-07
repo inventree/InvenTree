@@ -106,7 +106,7 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
         # To support legacy API, we can accept a test name instead of a template
         # In such a case, we use the test name to lookup the appropriate template
-        test_name = self.context['request'].data.pop('test', None)
+        test_name = self.context['request'].data.get('test', None)
 
         if not template and not test_name:
             raise ValidationError(_('Template ID or test name must be provided'))
@@ -122,8 +122,6 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
                 print('found template:', template.test_name, template.key)
             else:
                 raise ValidationError({'test': _('Test template not found')})
-
-        print('validate:', data)
 
         return super().validate(data)
 

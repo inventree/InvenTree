@@ -1,17 +1,24 @@
 import { t } from '@lingui/macro';
 import { Badge, Group, Text, Tooltip } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import { IconCircleCheck, IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
+import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { PassFailButton } from '../../components/items/YesNoButton';
 import { RenderUser } from '../../components/render/User';
 import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -164,6 +171,74 @@ export default function StockItemTestResultTable({
     ];
   }, []);
 
+  const resultFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      template: {
+        filters: {
+          include_inherited: true,
+          part: partId
+        }
+      },
+      result: {},
+      value: {},
+      attachment: {},
+      notes: {},
+      stock_item: {
+        value: itemId,
+        hidden: true
+      }
+    };
+  }, [partId, itemId]);
+
+  const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
+    undefined
+  );
+
+  const newTestModal = useCreateApiFormModal({
+    url: ApiEndpoints.stock_test_result_list,
+    fields: resultFields,
+    initialData: {
+      template: selectedTemplate,
+      result: true
+    },
+    title: t`Add Test Result`,
+    onFormSuccess: () => table.refreshTable(),
+    successMessage: t`Test result added`
+  });
+
+  const [selectedTest, setSelectedTest] = useState<number | undefined>(
+    undefined
+  );
+
+  const editTestModal = useEditApiFormModal({
+    url: ApiEndpoints.stock_test_result_list,
+    pk: selectedTest,
+    fields: resultFields,
+    title: t`Edit Test Result`,
+    onFormSuccess: () => table.refreshTable(),
+    successMessage: t`Test result updated`
+  });
+
+  const passTest = useCallback(
+    (templateId: number) => {
+      api
+        .post(apiUrl(ApiEndpoints.stock_test_result_list), {
+          template: templateId,
+          stock_item: itemId,
+          result: true
+        })
+        .then(() => {
+          table.refreshTable();
+          showNotification({
+            title: t`Test Passed`,
+            message: t`Test result has been recorded`,
+            color: 'green'
+          });
+        });
+    },
+    [itemId]
+  );
+
   const rowActions = useCallback(
     (record: any) => {
       return [
@@ -175,18 +250,27 @@ export default function StockItemTestResultTable({
             !record.templateId ||
             record?.template?.requires_attachment ||
             record?.template?.requires_value ||
-            record.result
+            record.result,
+          onClick: () => passTest(record.templateId)
         },
         {
           title: t`Add`,
           tooltip: t`Add Test Result`,
           color: 'green',
           icon: <IconCirclePlus />,
-          hidden: !user.hasAddRole(UserRoles.stock) || !record.templateId
+          hidden: !user.hasAddRole(UserRoles.stock) || !record.templateId,
+          onClick: () => {
+            setSelectedTemplate(record.templateId);
+            newTestModal.open();
+          }
         },
         RowEditAction({
           tooltip: t`Edit Test Result`,
-          hidden: !user.hasChangeRole(UserRoles.stock)
+          hidden: !user.hasChangeRole(UserRoles.stock),
+          onClick: () => {
+            setSelectedTest(record.pk);
+            editTestModal.open();
+          }
         }),
         RowDeleteAction({
           tooltip: t`Delete Test Result`,
@@ -196,6 +280,19 @@ export default function StockItemTestResultTable({
     },
     [user]
   );
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add Test Result`}
+        onClick={() => {
+          setSelectedTemplate(undefined);
+          newTestModal.open();
+        }}
+        hidden={!user.hasAddRole(UserRoles.stock)}
+      />
+    ];
+  }, [user]);
 
   // Row expansion controller
   const rowExpansion: any = useMemo(() => {
@@ -227,7 +324,7 @@ export default function StockItemTestResultTable({
             key={record.pk}
             noHeader
             columns={cols}
-            records={results.slice(1)}
+            records={results.slice(0, -1)}
           />
         );
       }
@@ -235,22 +332,27 @@ export default function StockItemTestResultTable({
   }, []);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.stock_test_result_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        dataFormatter: formatRecords,
-        enablePagination: false,
-        rowActions: rowActions,
-        rowExpansion: rowExpansion,
-        params: {
-          stock_item: itemId,
-          user_detail: true,
-          attachment_detail: true,
-          template_detail: true
-        }
-      }}
-    />
+    <>
+      {newTestModal.modal}
+      {editTestModal.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.stock_test_result_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          dataFormatter: formatRecords,
+          enablePagination: false,
+          tableActions: tableActions,
+          rowActions: rowActions,
+          rowExpansion: rowExpansion,
+          params: {
+            stock_item: itemId,
+            user_detail: true,
+            attachment_detail: true,
+            template_detail: true
+          }
+        }}
+      />
+    </>
   );
 }
