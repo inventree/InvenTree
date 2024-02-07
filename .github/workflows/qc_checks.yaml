@@ -134,7 +134,7 @@ jobs:
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
-          update: true
+          install: true
       - name: Export API Documentation
         run: invoke apidoc --ignore-warnings
       - name: Upload schema
