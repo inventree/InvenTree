@@ -6,7 +6,7 @@ INVENTREE_API_VERSION = 167
 
 INVENTREE_API_TEXT = """
 
-v167 -> 2024-02-7 :
+v167 -> 2024-02-7 : https://github.com/inventree/InvenTree/pull/6430
     - Adds 'key' field to PartTestTemplate API endpoint
     - Adds annotated 'results' field to PartTestTemplate API endpoint
     - Adds 'template' field to StockItemTestResult API endpoint
