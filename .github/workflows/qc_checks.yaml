@@ -134,6 +134,7 @@ jobs:
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
+          update: true
       - name: Export API Documentation
         run: invoke apidoc --ignore-warnings
       - name: Upload schema
@@ -144,7 +145,7 @@ jobs:
       - name: Download public schema
         run: |
           pip install requests
-          version=$((python3 ci/version_check.py only_version) 2> &1)
+          version="$(python3 ci/version_check.py only_version 2>&1)"
           echo "Version: $version"
           curl -s -o schema.yaml https://github.com/inventree/schema/blob/main/export/$version/api.yaml
       - name: Check for differences in schemas
