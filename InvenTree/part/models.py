@@ -3432,7 +3432,7 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         # Check that this test is unique within the part tree
         tests = PartTestTemplate.objects.filter(
-            part__tree_id=self.part.tree_id
+            key=self.key, part__tree_id=self.part.tree_id
         ).exclude(pk=self.pk)
 
         if tests.exists():
