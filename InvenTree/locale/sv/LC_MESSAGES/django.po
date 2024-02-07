@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-07 11:35+0000\n"
-"PO-Revision-Date: 2024-02-03 12:08\n"
+"POT-Creation-Date: 2024-02-07 09:13+0000\n"
+"PO-Revision-Date: 2024-02-07 12:22\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -605,7 +605,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:464
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Välkommen till InvenTree"
 
 #: InvenTree/serializers.py:525
 msgid "Filename"
@@ -8045,10 +8045,8 @@ msgid "Activate this plugin"
 msgstr ""
 
 #: plugin/serializers.py:219
-#, fuzzy
-#| msgid "Delete company"
 msgid "Delete configuration"
-msgstr "Radera företag"
+msgstr ""
 
 #: plugin/serializers.py:220
 msgid "Delete the plugin configuration from the database"
@@ -11261,11 +11259,11 @@ msgstr ""
 #: templates/js/translated/company.js:668
 #: templates/js/translated/company.js:732
 msgid "Role"
-msgstr ""
+msgstr "Roll"
 
 #: templates/js/translated/company.js:676
 msgid "Delete Contacts"
-msgstr ""
+msgstr "Radera kontakter"
 
 #: templates/js/translated/company.js:707
 msgid "No contacts found"
@@ -11273,7 +11271,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:720
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefonnummer"
 
 #: templates/js/translated/company.js:726
 msgid "Email Address"
@@ -11281,16 +11279,16 @@ msgstr "E-postadress"
 
 #: templates/js/translated/company.js:752
 msgid "Delete Contact"
-msgstr ""
+msgstr "Radera kontakt"
 
 #: templates/js/translated/company.js:849
 msgid "Create New Address"
-msgstr ""
+msgstr "Skapa ny adress"
 
 #: templates/js/translated/company.js:864
 #: templates/js/translated/company.js:1025
 msgid "Edit Address"
-msgstr ""
+msgstr "Redigera adress"
 
 #: templates/js/translated/company.js:899
 msgid "All selected addresses will be deleted"
@@ -11610,7 +11608,7 @@ msgstr ""
 #: templates/js/translated/modals.js:58 templates/js/translated/modals.js:158
 #: templates/js/translated/modals.js:683
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: templates/js/translated/modals.js:63 templates/js/translated/modals.js:157
 #: templates/js/translated/modals.js:751 templates/js/translated/modals.js:1059
@@ -11686,11 +11684,11 @@ msgstr ""
 
 #: templates/js/translated/notification.js:224
 msgid "Mark as unread"
-msgstr ""
+msgstr "Markera som oläst"
 
 #: templates/js/translated/notification.js:228
 msgid "Mark as read"
-msgstr ""
+msgstr "Markera som läst"
 
 #: templates/js/translated/notification.js:254
 msgid "No unread notifications"
@@ -12009,7 +12007,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:2384
 msgid "No category"
-msgstr ""
+msgstr "Ingen kategori"
 
 #: templates/js/translated/part.js:2531 templates/js/translated/part.js:2661
 #: templates/js/translated/stock.js:2640
@@ -12300,7 +12298,7 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1187
 msgid "Stock Status"
-msgstr ""
+msgstr "Lagerstatus"
 
 #: templates/js/translated/purchase_order.js:1201
 msgid "Add barcode"
@@ -12435,7 +12433,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:60
 #: templates/js/translated/sales_order.js:86
 msgid "Add Customer"
-msgstr ""
+msgstr "Lägg till kund"
 
 #: templates/js/translated/return_order.js:134
 msgid "Create Return Order"
@@ -12590,7 +12588,7 @@ msgstr ""
 
 #: templates/js/translated/sales_order.js:1052
 msgid "Invoice"
-msgstr ""
+msgstr "Faktura"
 
 #: templates/js/translated/sales_order.js:1219
 msgid "Add Shipment"
@@ -12662,7 +12660,7 @@ msgstr ""
 
 #: templates/js/translated/search.js:270
 msgid "No results"
-msgstr ""
+msgstr "Inga resultat"
 
 #: templates/js/translated/search.js:292 templates/search.html:25
 msgid "Enter search query"
@@ -13059,7 +13057,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2821
 msgid "No changes"
-msgstr ""
+msgstr "Inga ändringar"
 
 #: templates/js/translated/stock.js:2833
 msgid "Part information unavailable"
@@ -13445,7 +13443,7 @@ msgstr ""
 
 #: templates/js/translated/tables.js:532
 msgid "rows per page"
-msgstr ""
+msgstr "rader per sida"
 
 #: templates/js/translated/tables.js:537
 msgid "Showing all rows"
@@ -13457,15 +13455,15 @@ msgstr ""
 
 #: templates/js/translated/tables.js:539
 msgid "to"
-msgstr ""
+msgstr "till"
 
 #: templates/js/translated/tables.js:539
 msgid "of"
-msgstr ""
+msgstr "av"
 
 #: templates/js/translated/tables.js:539
 msgid "rows"
-msgstr ""
+msgstr "rader"
 
 #: templates/js/translated/tables.js:546
 msgid "No matching results"
@@ -13481,7 +13479,7 @@ msgstr ""
 
 #: templates/js/translated/tables.js:558
 msgid "Columns"
-msgstr ""
+msgstr "Kolumner"
 
 #: templates/js/translated/tables.js:561
 msgid "All"
@@ -13593,8 +13591,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13769,3 +13766,4 @@ msgstr ""
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr ""
+
