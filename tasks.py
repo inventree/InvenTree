@@ -504,8 +504,25 @@ def export_records(
     with open(tmpfile, 'r') as f_in:
         data = json.loads(f_in.read())
 
+    data_out = []
+
     if include_permissions is False:
         for entry in data:
+            model_name = entry.get('model', None)
+
+            # Ignore any temporary settings (start with underscore)
+            if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
+                if entry['fields'].get('key', '').startswith('_'):
+                    continue
+
+            if model_name == 'auth.group':
+                entry['fields']['permissions'] = []
+
+            if model_name == 'auth.user':
+                entry['fields']['user_permissions'] = []
+
+            data_out.append(entry)
+
             if 'model' in entry:
                 # Clear out any permissions specified for a group
                 if entry['model'] == 'auth.group':
@@ -517,7 +534,7 @@ def export_records(
 
     # Write the processed data to file
     with open(filename, 'w') as f_out:
-        f_out.write(json.dumps(data, indent=2))
+        f_out.write(json.dumps(data_out, indent=2))
 
     print('Data export completed')
 
