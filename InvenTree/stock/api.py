@@ -1186,18 +1186,37 @@ class StockAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
 
-class StockItemTestResultDetail(RetrieveUpdateDestroyAPI):
+class StockItemTestResultMixin:
+    """Mixin class for the StockItemTestResult API endpoints."""
+
+    queryset = StockItemTestResult.objects.all()
+    serializer_class = StockSerializers.StockItemTestResultSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        """Set context before returning serializer."""
+        try:
+            kwargs['user_detail'] = str2bool(
+                self.request.query_params.get('user_detail', False)
+            )
+            kwargs['template_detail'] = str2bool(
+                self.request.query_params.get('template_detail', False)
+            )
+        except Exception:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+
+class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for StockItemTestResult."""
 
-    queryset = StockItemTestResult.objects.all()
-    serializer_class = StockSerializers.StockItemTestResultSerializer
+    pass
 
 
-class StockItemTestResultList(ListCreateDestroyAPIView):
+class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
-
-    queryset = StockItemTestResult.objects.all()
-    serializer_class = StockSerializers.StockItemTestResultSerializer
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -1250,19 +1269,6 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
                 pass
 
         return queryset
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        try:
-            kwargs['user_detail'] = str2bool(
-                self.request.query_params.get('user_detail', False)
-            )
-        except Exception:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
 
     def perform_create(self, serializer):
         """Create a new test result object.

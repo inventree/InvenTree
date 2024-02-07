@@ -72,11 +72,15 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
         user_detail = kwargs.pop('user_detail', False)
+        template_detail = kwargs.pop('template_detail', False)
 
         super().__init__(*args, **kwargs)
 
         if user_detail is not True:
             self.fields.pop('user_detail')
+
+        if template_detail is not True:
+            self.fields.pop('template_detail')
 
     user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
 
