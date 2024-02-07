@@ -428,7 +428,13 @@ class PartTestTemplateList(PartTestTemplateMixin, ListCreateAPI):
 
     search_fields = ['test_name', 'description']
 
-    ordering_fields = ['test_name', 'required', 'requires_value', 'requires_attachment']
+    ordering_fields = [
+        'test_name',
+        'required',
+        'requires_value',
+        'requires_attachment',
+        'results',
+    ]
 
     ordering = 'test_name'
 

@@ -33,18 +33,15 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       {
         accessor: 'test_name',
         switchable: false,
+        sortable: true
+      },
+      {
+        accessor: 'results',
+        switchable: true,
         sortable: true,
+        title: t`Results`,
         render: (record: any) => {
-          return (
-            <Group position="apart">
-              <Text>{record.test_name}</Text>
-              {record.results && (
-                <Tooltip label={t`Test Results`}>
-                  <Badge color="blue">{record.results}</Badge>
-                </Tooltip>
-              )}
-            </Group>
-          );
+          return record.results || <Badge color="blue">{t`No Results`}</Badge>;
         }
       },
       DescriptionColumn({
@@ -60,7 +57,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         accessor: 'requires_attachment'
       })
     ];
-  }, []);
+  }, [partId]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
