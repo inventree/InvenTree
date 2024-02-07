@@ -11,7 +11,7 @@ from common.models import InvenTreeUserSetting
 from InvenTree.serializers import DependentField
 from InvenTree.tasks import offload_task
 from label.models import LabelTemplate
-from machine.machine_types import BaseLabelPrintingDriver, LabelPrintingMachineType
+from machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
 from plugin import InvenTreePlugin
 from plugin.machine import registry
 from plugin.mixins import LabelPrintingMixin
@@ -27,13 +27,13 @@ def get_machine_and_driver(machine_pk: str):
     if machine.SLUG != 'label_printer':
         return None, None
 
-    machine = cast(LabelPrintingMachineType, machine)
+    machine = cast(LabelPrinterMachine, machine)
     driver = machine.driver
 
     if driver is None:
         return machine, None
 
-    return machine, cast(BaseLabelPrintingDriver, driver)
+    return machine, cast(LabelPrinterBaseDriver, driver)
 
 
 def get_last_used_printers(user):
@@ -114,9 +114,9 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             items_to_print = view.get_items()
 
             # get all available printers for each driver
-            machines: list[LabelPrintingMachineType] = []
+            machines: list[LabelPrinterMachine] = []
             for driver in cast(
-                list[BaseLabelPrintingDriver], registry.get_drivers('label_printer')
+                list[LabelPrinterBaseDriver], registry.get_drivers('label_printer')
             ):
                 machines.extend(
                     driver.get_printers(
@@ -150,7 +150,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
 
             self.fields['machine'].choices = choices
 
-        def get_printer_name(self, machine: LabelPrintingMachineType):
+        def get_printer_name(self, machine: LabelPrinterMachine):
             """Construct the printers name."""
             name = machine.name
 

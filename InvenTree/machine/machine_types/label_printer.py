@@ -17,8 +17,8 @@ from plugin.base.label.mixins import LabelItemType, LabelPrintingMixin
 from stock.models import StockLocation
 
 
-class BaseLabelPrintingDriver(BaseDriver):
-    """Base label printing driver.
+class LabelPrinterBaseDriver(BaseDriver):
+    """Base driver for label printer machines.
 
     Attributes:
         USE_BACKGROUND_WORKER (bool): If True, the `print_label()` and `print_labels()` methods will be run in a background worker (default: True)
@@ -30,7 +30,7 @@ class BaseLabelPrintingDriver(BaseDriver):
 
     def print_label(
         self,
-        machine: 'LabelPrintingMachineType',
+        machine: 'LabelPrinterMachine',
         label: LabelTemplate,
         item: LabelItemType,
         request: Request,
@@ -54,7 +54,7 @@ class BaseLabelPrintingDriver(BaseDriver):
 
     def print_labels(
         self,
-        machine: 'LabelPrintingMachineType',
+        machine: 'LabelPrinterMachine',
         label: LabelTemplate,
         items: QuerySet[LabelItemType],
         request: Request,
@@ -84,7 +84,7 @@ class BaseLabelPrintingDriver(BaseDriver):
 
     def get_printers(
         self, label: LabelTemplate, items: QuerySet[LabelItemType], **kwargs
-    ) -> list['LabelPrintingMachineType']:
+    ) -> list['LabelPrinterMachine']:
         """Get all printers that would be available to print this job.
 
         By default all printers that are initialized using this driver are returned.
@@ -96,11 +96,11 @@ class BaseLabelPrintingDriver(BaseDriver):
         Keyword Arguments:
             request (Request): The django request used to make the get printers request
         """
-        return cast(list['LabelPrintingMachineType'], self.get_machines())
+        return cast(list['LabelPrinterMachine'], self.get_machines())
 
     def get_printing_options_serializer(
         self, request: Request, *args, **kwargs
-    ) -> 'BaseLabelPrintingDriver.PrintingOptionsSerializer':
+    ) -> 'LabelPrinterBaseDriver.PrintingOptionsSerializer':
         """Return a serializer class instance with dynamic printing options.
 
         Arguments:
@@ -196,10 +196,10 @@ class BaseLabelPrintingDriver(BaseDriver):
         Example:
             This example shows how to extend the default serializer and add a new option:
             ```py
-            class MyDriver(BaseLabelPrintingDriver):
+            class MyDriver(LabelPrinterBaseDriver):
                 # ...
 
-                class PrintingOptionsSerializer(BaseLabelPrintingDriver.PrintingOptionsSerializer):
+                class PrintingOptionsSerializer(LabelPrinterBaseDriver.PrintingOptionsSerializer):
                     auto_cut = serializers.BooleanField(
                         default=True,
                         label=_('Auto cut'),
@@ -233,14 +233,14 @@ class LabelPrinterStatus(MachineStatus):
     DISCONNECTED = 400, _('Disconnected'), 'danger'
 
 
-class LabelPrintingMachineType(BaseMachineType):
+class LabelPrinterMachine(BaseMachineType):
     """Label printer machine type, is a direct integration to print labels for various items."""
 
     SLUG = 'label-printer'
     NAME = _('Label Printer')
     DESCRIPTION = _('Directly print labels for various items.')
 
-    base_driver = BaseLabelPrintingDriver
+    base_driver = LabelPrinterBaseDriver
 
     MACHINE_SETTINGS = {
         'LOCATION': {

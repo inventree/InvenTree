@@ -8,7 +8,7 @@ from django.urls import reverse
 from InvenTree.unit_test import InvenTreeAPITestCase
 from machine import registry
 from machine.machine_type import BaseDriver, BaseMachineType
-from machine.machine_types import BaseLabelPrintingDriver
+from machine.machine_types import LabelPrinterBaseDriver
 from machine.models import MachineConfig
 from machine.tests import TestMachineRegistryMixin
 from stock.models import StockLocation
@@ -24,7 +24,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
     def setUp(self):
         """Setup some testing drivers/machines."""
 
-        class TestingLabelPrinterDriver(BaseLabelPrintingDriver):
+        class TestingLabelPrinterDriver(LabelPrinterBaseDriver):
             """Test driver for label printing."""
 
             SLUG = 'test-label-printer-api'
@@ -45,7 +45,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             def print_label(self, *args, **kwargs) -> None:
                 """Override print_label."""
 
-        class TestingLabelPrinterDriverError1(BaseLabelPrintingDriver):
+        class TestingLabelPrinterDriverError1(LabelPrinterBaseDriver):
             """Test driver for label printing."""
 
             SLUG = 'test-label-printer-error'
@@ -55,7 +55,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             def print_label(self, *args, **kwargs) -> None:
                 """Override print_label."""
 
-        class TestingLabelPrinterDriverError2(BaseLabelPrintingDriver):
+        class TestingLabelPrinterDriverError2(LabelPrinterBaseDriver):
             """Test driver for label printing."""
 
             SLUG = 'test-label-printer-error'
@@ -65,7 +65,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             def print_label(self, *args, **kwargs) -> None:
                 """Override print_label."""
 
-        class TestingLabelPrinterDriverNotImplemented(BaseLabelPrintingDriver):
+        class TestingLabelPrinterDriverNotImplemented(LabelPrinterBaseDriver):
             """Test driver for label printing."""
 
             SLUG = 'test-label-printer-not-implemented'
@@ -94,7 +94,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
         )
         self.assertTrue(
             machine_type['provider_file'].endswith(
-                'machine/machine_types/LabelPrintingMachineType.py'
+                'machine/machine_types/label_printer.py'
             )
         )
 

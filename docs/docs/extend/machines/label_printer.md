@@ -4,13 +4,13 @@ Label printer machines can directly print labels for various items in InvenTree.
 
 ### Writing your own printing driver
 
-Take a look at the most basic required code for a driver in this [example](./overview.md#example-driver). Next either implement the [`print_label`](#machine.machine_types.BaseLabelPrintingDriver.print_label) or [`print_labels`](#machine.machine_types.BaseLabelPrintingDriver.print_labels) function.
+Take a look at the most basic required code for a driver in this [example](./overview.md#example-driver). Next either implement the [`print_label`](#machine.machine_types.LabelPrinterBaseDriver.print_label) or [`print_labels`](#machine.machine_types.LabelPrinterBaseDriver.print_labels) function.
 
 ### Label printer status
 
 There are a couple of predefined status codes for label printers. By default the `UNKNOWN` status code is set for each machine, but they can be changed at any time by the driver. For more info about status code see [Machine status codes](./overview.md#machine-status).
 
-::: machine.machine_types.LabelPrintingMachineType.LabelPrinterStatus
+::: machine.machine_types.label_printer.LabelPrinterStatus
     options:
         heading_level: 4
         show_bases: false
@@ -18,7 +18,7 @@ There are a couple of predefined status codes for label printers. By default the
 
 ### LabelPrintingDriver API
 
-::: machine.machine_types.BaseLabelPrintingDriver
+::: machine.machine_types.LabelPrinterBaseDriver
     options:
         heading_level: 4
         show_bases: false

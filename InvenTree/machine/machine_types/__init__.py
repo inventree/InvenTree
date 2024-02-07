@@ -1,11 +1,11 @@
-from machine.machine_types.LabelPrintingMachineType import (
-    BaseLabelPrintingDriver,
-    LabelPrintingMachineType,
+from machine.machine_types.label_printer import (
+    LabelPrinterBaseDriver,
+    LabelPrinterMachine,
 )
 
 __all__ = [
     # machine types
-    'LabelPrintingMachineType',
+    'LabelPrinterMachine',
     # base drivers
-    'BaseLabelPrintingDriver',
+    'LabelPrinterBaseDriver',
 ]

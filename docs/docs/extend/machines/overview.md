@@ -39,7 +39,7 @@ If you want to create your own machine type, please also take a look at the alre
 from django.utils.translation import ugettext_lazy as _
 from plugin.machine import BaseDriver, BaseMachineType, MachineStatus
 
-class BaseABCDriver(BaseDriver):
+class ABCBaseDriver(BaseDriver):
     """Base xyz driver."""
 
     machine_type = 'abc'
@@ -54,12 +54,12 @@ class BaseABCDriver(BaseDriver):
 
     required_overrides = [my_custom_required_method]
 
-class ABCMachineType(BaseMachineType):
+class ABCMachine(BaseMachineType):
     SLUG = 'abc'
     NAME = _('ABC')
     DESCRIPTION = _('This is an awesome machine type for ABC.')
 
-    base_driver = BaseABCDriver
+    base_driver = ABCBaseDriver
 
     class ABCStatus(MachineStatus):
         CONNECTED = 100, _('Connected'), 'success'
@@ -67,7 +67,6 @@ class ABCMachineType(BaseMachineType):
         PRINTING = 110, _('Printing'), 'primary'
 
     MACHINE_STATUS = ABCStatus
-
     default_machine_status = ABCStatus.DISCONNECTED
 ```
 
@@ -103,18 +102,18 @@ A basic driver only needs to specify the basic attributes like `SLUG`, `NAME`, `
 
 ```py
 from plugin import InvenTreePlugin
-from plugin.machine.machine_types import BaseXYZDriver
+from plugin.machine.machine_types import ABCBaseDriver
 
-class MyABCXYZDriverPlugin(InvenTreePlugin):
-    NAME = "ABCXYZDriver"
-    SLUG = "abc-driver"
-    TITLE = "ABC XYZ Driver"
+class MyXyzAbcDriverPlugin(InvenTreePlugin):
+    NAME = "XyzAbcDriver"
+    SLUG = "xyz-driver"
+    TITLE = "Xyz Abc Driver"
     # ...
 
-class MyXYZDriver(BaseXYZDriver):
-    SLUG = 'my-abc-driver'
-    NAME = 'My ABC driver'
-    DESCRIPTION = 'This is an awesome driver for ABC'
+class XYZDriver(ABCBaseDriver):
+    SLUG = 'my-xyz-driver'
+    NAME = 'My XYZ driver'
+    DESCRIPTION = 'This is an awesome XYZ driver for a ABC machine'
 ```
 
 #### Driver API
@@ -136,7 +135,7 @@ class MyXYZDriver(BaseXYZDriver):
 Each machine can have different settings configured. There are machine settings that are specific to that machine type and driver settings that are specific to the driver, but both can be specified individually for each machine. Define them by adding a `MACHINE_SETTINGS` dictionary attribute to either the driver or the machine type. The format follows the same pattern as the `SETTINGS` for normal plugins documented on the [`SettingsMixin`](../plugins/settings.md)
 
 ```py
-class MyXYZDriver(BaseXYZDriver):
+class MyXYZDriver(ABCBaseDriver):
     MACHINE_SETTINGS = {
         'SERVER': {
             'name': _('Server'),
@@ -175,7 +174,7 @@ class XYZMachineType(BaseMachineType):
 And to set a status code for a machine by the driver.
 
 ```py
-class MyXYZDriver(BaseXYZDriver):
+class MyXYZDriver(ABCBaseDriver):
     # ...
     def init_machine(self, machine):
         # ... do some init stuff here
@@ -194,7 +193,7 @@ class MyXYZDriver(BaseXYZDriver):
 There can also be a free text status code defined.
 
 ```py
-class MyXYZDriver(BaseXYZDriver):
+class MyXYZDriver(ABCBaseDriver):
     # ...
     def init_machine(self, machine):
         # ... do some init stuff here
