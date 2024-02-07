@@ -59,12 +59,7 @@ export default function StockItemTestResultTable({
       let results = testTemplates.map((template: any) => {
         return {
           ...template,
-          results: [],
-          value: undefined,
-          result: undefined,
-          attachment: undefined,
-          date: undefined,
-          note: undefined
+          results: []
         };
       });
 
@@ -72,29 +67,19 @@ export default function StockItemTestResultTable({
       // Note that the results are sorted by oldest first,
       // to ensure that the most recent result is displayed "on top"
       records
-        .sort((a, b) => {
-          let aDate = new Date(a.date);
-          let bDate = new Date(b.date);
-          if (aDate < bDate) {
-            return 1;
-          } else if (aDate > bDate) {
-            return -1;
-          } else {
-            return 0;
-          }
+        .sort((a: any, b: any) => {
+          return a.pk > b.pk ? 1 : -1;
         })
-        .forEach((record, _idx) => {
+        .forEach((record) => {
           // Find matching template
-          let templateIndex = results.findIndex(
-            (r: any) => r.pk == record.template
-          );
-          if (templateIndex >= 0) {
-            results[templateIndex].results.push(record);
-            results[templateIndex].value = record.value;
-            results[templateIndex].result = record.result;
-            results[templateIndex].attachment = record.attachment;
-            results[templateIndex].date = record.date;
-            results[templateIndex].note = record.note;
+          let idx = results.findIndex((r: any) => r.pk == record.template);
+          if (idx >= 0) {
+            results[idx].results.push(record);
+            results[idx].value = record.value;
+            results[idx].result = record.result;
+            results[idx].attachment = record.attachment;
+            results[idx].date = record.date;
+            results[idx].note = record.note;
           }
         });
 

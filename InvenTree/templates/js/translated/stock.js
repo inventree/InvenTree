@@ -1381,7 +1381,11 @@ function formatDate(row) {
 /* Construct set of default fields for a StockItemTestResult */
 function stockItemTestResultFields(options={}) {
     let fields = {
-        test: {},
+        template: {
+            filters: {
+                include_inherited: true,
+            }
+        },
         result: {},
         value: {},
         attachment: {},
@@ -1425,17 +1429,16 @@ function loadStockTestResultsTable(table, options) {
 
         let html = '';
 
-        if (row.requires_attachment == false && row.requires_value == false && !row.result) {
+        if (row.parent != parent_node && row.requires_attachment == false && row.requires_value == false && !row.result) {
             // Enable a "quick tick" option for this test result
             html += makeIconButton('fa-check-circle icon-green', 'button-test-tick', row.test_name, '{% trans "Pass test" %}');
         }
 
-        html += makeIconButton('fa-plus icon-green', 'button-test-add', row.test_name, '{% trans "Add test result" %}');
+        html += makeIconButton('fa-plus icon-green', 'button-test-add', row.templateId, '{% trans "Add test result" %}');
 
         if (!grouped && row.result != null) {
-            var pk = row.pk;
-            html += makeEditButton('button-test-edit', pk, '{% trans "Edit test result" %}');
-            html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test result" %}');
+            html += makeEditButton('button-test-edit', row.testId, '{% trans "Edit test result" %}');
+            html += makeDeleteButton('button-test-delete', row.testId, '{% trans "Delete test result" %}');
         }
 
         return wrapButtons(html);
@@ -1543,8 +1546,6 @@ function loadStockTestResultsTable(table, options) {
                 };
             });
 
-            console.log("initial data:", results);
-
             // Once the test template data are loaded, query for test results
 
             var filters = loadTableFilters(filterKey);
@@ -1571,21 +1572,34 @@ function loadStockTestResultsTable(table, options) {
                 {
                     success: function(data) {
 
-                        data.forEach((row) => {
+                        data.sort((a, b) => {
+                            return a.pk < b.pk;
+                        }).forEach((row) => {
                             let idx = results.findIndex((template) => {
-                                return template.pk == row.template;
+                                return template.templateId == row.template;
                             });
 
                             if (idx > -1) {
 
-                                row.parent = row.template;
                                 results[idx].results.push(row);
 
-                                results[idx].value = row.value;
-                                results[idx].result = row.result;
-                                results[idx].attachment = row.attachment;
-                                results[idx].date = row.date;
-                                results[idx].note = row.note;
+                                // Check if a test result is already recorded
+                                if (results[idx].testId) {
+                                    // Push this result into the results array
+                                    results.push({
+                                        ...results[idx],
+                                        ...row,
+                                        parent: results[idx].templateId,
+                                        testId: row.pk,
+                                    });
+                                } else {
+                                    // First result - update the parent row
+                                    results[idx] = {
+                                        ...row,
+                                        ...results[idx],
+                                        testId: row.pk,
+                                    };
+                                }
                             }
                         });
 
@@ -1627,25 +1641,17 @@ function loadStockTestResultsTable(table, options) {
     $(table).on('click', '.button-test-add', function() {
         var button = $(this);
 
-        var test_name = button.attr('pk');
+        var templateId = button.attr('pk');
+
+        let fields = stockItemTestResultFields();
+
+        fields['stock_item']['value'] = options.stock_item;
+        fields['template']['value'] = templateId;
+        fields['template']['filters']['part'] = options.part;
 
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
-            fields: {
-                test: {
-                    value: test_name,
-                },
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {
-                    icon: 'fa-sticky-note',
-                },
-                stock_item: {
-                    value: options.stock_item,
-                    hidden: true,
-                }
-            },
+            fields: fields,
             title: '{% trans "Add Test Result" %}',
             onSuccess: reloadTestTable,
         });
@@ -1674,11 +1680,9 @@ function loadStockTestResultsTable(table, options) {
 
         var url = `/api/stock/test/${pk}/`;
 
-        var row = $(table).bootstrapTable('getRowByUniqueId', pk);
-
         var html = `
         <div class='alert alert-block alert-danger'>
-        <strong>{% trans "Delete test result" %}:</strong> ${row.test_name || row.test || row.key}
+        <strong>{% trans "Delete test result" %}</strong>
         </div>`;
 
         constructForm(url, {
