@@ -94,7 +94,7 @@ jobs:
           echo "Version: $version"
           curl -s -o schema.yaml https://github.com/inventree/schema/blob/main/export/$version/api.yaml
       - name: Download working schema
-        uses: actions/download-artifact
+        uses: actions/download-artifact@v4
         with:
           name: api.yaml
           path: api.yaml
