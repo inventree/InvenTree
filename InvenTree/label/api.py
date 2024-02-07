@@ -13,6 +13,7 @@ from rest_framework.request import clone_request
 
 import build.models
 import common.models
+import InvenTree.exceptions
 import InvenTree.helpers
 import label.models
 import label.serializers
@@ -232,9 +233,12 @@ class LabelPrintMixin(LabelFilterMixin):
         # At this point, we offload the label(s) to the selected plugin.
         # The plugin is responsible for handling the request and returning a response.
 
-        result = plugin.print_labels(
-            label, items_to_print, request, printing_options=request.data
-        )
+        try:
+            result = plugin.print_labels(
+                label, items_to_print, request, printing_options=request.data
+            )
+        except Exception as e:
+            InvenTree.exceptions.log_error(request.path_info)
 
         if isinstance(result, JsonResponse):
             result['plugin'] = plugin.plugin_slug()
