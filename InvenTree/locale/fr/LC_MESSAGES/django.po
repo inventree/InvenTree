@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-07 11:35+0000\n"
-"PO-Revision-Date: 2024-02-03 12:07\n"
+"POT-Creation-Date: 2024-02-07 09:13+0000\n"
+"PO-Revision-Date: 2024-02-07 12:22\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -600,10 +600,8 @@ msgid "Your account has been created."
 msgstr ""
 
 #: InvenTree/serializers.py:457
-#, fuzzy
-#| msgid "Enable password forgot function on the login pages"
 msgid "Please use the password reset function to login"
-msgstr "Activer la fonction \"Mot de passe oublié\" sur les pages de connexion"
+msgstr ""
 
 #: InvenTree/serializers.py:464
 msgid "Welcome to InvenTree"
@@ -2946,10 +2944,8 @@ msgid "Check that all plugins are installed on startup - enable in container env
 msgstr "Vérifier que tous les plugins sont installés au démarrage - activer dans les environnements conteneurs"
 
 #: common/models.py:1868
-#, fuzzy
-#| msgid "Check plugins on startup"
 msgid "Check for plugin updates"
-msgstr "Vérifier les plugins au démarrage"
+msgstr ""
 
 #: common/models.py:1869
 msgid "Enable periodic checks for updates to installed plugins"
@@ -7846,16 +7842,12 @@ msgid "Plugin was not found in registry"
 msgstr ""
 
 #: plugin/installer.py:273
-#, fuzzy
-#| msgid "PluginName of the plugin"
 msgid "Plugin is not a packaged plugin"
-msgstr "Non du Plugin"
+msgstr ""
 
 #: plugin/installer.py:276
-#, fuzzy
-#| msgid "Price not found"
 msgid "Plugin package name not found"
-msgstr "Prix introuvable"
+msgstr ""
 
 #: plugin/installer.py:297
 msgid "Plugin cannot be uninstalled as it is currently active"
@@ -7911,10 +7903,8 @@ msgid "Builtin Plugin"
 msgstr "Extension Intégrée"
 
 #: plugin/models.py:173
-#, fuzzy
-#| msgid "Packaging"
 msgid "Package Plugin"
-msgstr "Conditionnement"
+msgstr ""
 
 #: plugin/models.py:197 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
@@ -8055,10 +8045,8 @@ msgid "Activate this plugin"
 msgstr ""
 
 #: plugin/serializers.py:219
-#, fuzzy
-#| msgid "Delete Notifications"
 msgid "Delete configuration"
-msgstr "Supprimer les notifications"
+msgstr ""
 
 #: plugin/serializers.py:220
 msgid "Delete the plugin configuration from the database"
@@ -8845,10 +8833,8 @@ msgid "At least two stock items must be provided"
 msgstr ""
 
 #: stock/serializers.py:1201
-#, fuzzy
-#| msgid "Change"
 msgid "No Change"
-msgstr "Modifier"
+msgstr ""
 
 #: stock/serializers.py:1230
 msgid "StockItem primary key value"
@@ -13605,8 +13591,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13781,3 +13766,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
