@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-07 11:35+0000\n"
-"PO-Revision-Date: 2024-02-04 12:12\n"
+"POT-Creation-Date: 2024-02-07 09:13+0000\n"
+"PO-Revision-Date: 2024-02-07 12:22\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -72,7 +72,7 @@ msgstr "Введите дату"
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1516 templates/js/translated/stock.js:2398
 msgid "Notes"
-msgstr "Заметки"
+msgstr "Записи"
 
 #: InvenTree/format.py:164
 #, python-brace-format
@@ -542,7 +542,7 @@ msgstr "Путь"
 
 #: InvenTree/models.py:1014
 msgid "Markdown notes (optional)"
-msgstr "Описание обновления (необязательное)"
+msgstr "Записи о скидке (необязательно)"
 
 #: InvenTree/models.py:1043
 msgid "Barcode Data"
@@ -596,10 +596,8 @@ msgid "Only superusers can create new users"
 msgstr "Только суперпользователи могут создавать новых пользователей"
 
 #: InvenTree/serializers.py:455
-#, fuzzy
-#| msgid "Stock item has been rejected"
 msgid "Your account has been created."
-msgstr "Складская позиция была отклонена"
+msgstr ""
 
 #: InvenTree/serializers.py:457
 msgid "Please use the password reset function to login"
@@ -769,7 +767,7 @@ msgstr "Присвоенный серийный номер"
 
 #: InvenTree/status_codes.py:100
 msgid "Stock counted"
-msgstr "Запасы подсчитаны"
+msgstr "Новое значение запасов установлено"
 
 #: InvenTree/status_codes.py:101
 msgid "Stock manually added"
@@ -957,7 +955,7 @@ msgstr "Отслеживается"
 #: templates/js/translated/sales_order.js:1929
 #: templates/js/translated/table_filters.js:567
 msgid "Allocated"
-msgstr "Выделено"
+msgstr "Зарезервировано"
 
 #: build/api.py:293 company/models.py:885
 #: company/templates/company/supplier_part.html:114
@@ -2011,11 +2009,11 @@ msgstr "Завершенная продукция"
 #: part/templates/part/part_sidebar.html:61 stock/templates/stock/item.html:110
 #: stock/templates/stock/stock_sidebar.html:23
 msgid "Attachments"
-msgstr "Приложения"
+msgstr "Файлы"
 
 #: build/templates/build/detail.html:271
 msgid "Build Notes"
-msgstr "Примечания производства"
+msgstr "Записи производства"
 
 #: build/templates/build/detail.html:426
 msgid "Allocation Complete"
@@ -2946,10 +2944,8 @@ msgid "Check that all plugins are installed on startup - enable in container env
 msgstr ""
 
 #: common/models.py:1868
-#, fuzzy
-#| msgid "Plugin updated"
 msgid "Check for plugin updates"
-msgstr "Плагин обновлен"
+msgstr ""
 
 #: common/models.py:1869
 msgid "Enable periodic checks for updates to installed plugins"
@@ -3913,19 +3909,19 @@ msgstr "Страна адреса"
 
 #: company/models.py:435
 msgid "Courier shipping notes"
-msgstr ""
+msgstr "Записи отправления"
 
 #: company/models.py:436
 msgid "Notes for shipping courier"
-msgstr ""
+msgstr "Записи для курьера"
 
 #: company/models.py:442
 msgid "Internal shipping notes"
-msgstr ""
+msgstr "Внутренние записи отправления"
 
 #: company/models.py:443
 msgid "Shipping notes for internal use"
-msgstr ""
+msgstr "Записи отправления для внутреннего пользования"
 
 #: company/models.py:450
 msgid "Link to address information (external)"
@@ -4072,7 +4068,7 @@ msgstr ""
 #: report/templates/report/inventree_so_report_base.html:32
 #: stock/serializers.py:505
 msgid "Note"
-msgstr "Примечание"
+msgstr "Запись"
 
 #: company/models.py:838 part/models.py:1962
 msgid "base cost"
@@ -4348,7 +4344,7 @@ msgstr "Новый Заказ на Возврат"
 
 #: company/templates/company/detail.html:168
 msgid "Company Notes"
-msgstr "Примечания о компании"
+msgstr "Записи о компании"
 
 #: company/templates/company/detail.html:183
 msgid "Company Contacts"
@@ -5217,7 +5213,7 @@ msgstr ""
 
 #: order/tasks.py:25
 msgid "Overdue Purchase Order"
-msgstr ""
+msgstr "Просроченные заказы на закупку"
 
 #: order/tasks.py:30
 #, python-brace-format
@@ -5226,7 +5222,7 @@ msgstr ""
 
 #: order/tasks.py:75
 msgid "Overdue Sales Order"
-msgstr ""
+msgstr "Просроченные заказы на продажу"
 
 #: order/tasks.py:80
 #, python-brace-format
@@ -5314,7 +5310,7 @@ msgstr ""
 #: order/templates/order/order_base.html:154
 #: order/templates/order/sales_order_base.html:157
 msgid "Completed Line Items"
-msgstr ""
+msgstr "Завершенные позиции"
 
 #: order/templates/order/order_base.html:160
 #: order/templates/order/sales_order_base.html:163
@@ -5457,7 +5453,7 @@ msgstr "Полученные Запасы"
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
-msgstr ""
+msgstr "Позиции заказа на закупку"
 
 #: order/templates/order/purchase_order_detail.html:27
 #: order/templates/order/return_order_detail.html:24
@@ -5550,7 +5546,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:88
 #: order/templates/order/sales_order_base.html:89
 msgid "Ship Items"
-msgstr "Отправленные Элементы"
+msgstr "Отправить"
 
 #: order/templates/order/sales_order_base.html:92
 #: templates/js/translated/sales_order.js:484
@@ -5577,12 +5573,12 @@ msgstr ""
 
 #: order/templates/order/sales_order_detail.html:18
 msgid "Sales Order Items"
-msgstr ""
+msgstr "Позиции заказа на закупку"
 
 #: order/templates/order/sales_order_detail.html:67
 #: order/templates/order/so_sidebar.html:8 templates/InvenTree/index.html:284
 msgid "Pending Shipments"
-msgstr ""
+msgstr "Ожидающие отправления"
 
 #: order/templates/order/sales_order_detail.html:71
 #: templates/js/translated/bom.js:1271 templates/js/translated/filters.js:296
@@ -6534,7 +6530,7 @@ msgstr "Копировать Записи"
 
 #: part/serializers.py:417
 msgid "Copy notes from original part"
-msgstr ""
+msgstr "Скопировать записи из оригинальной детали"
 
 #: part/serializers.py:430
 msgid "Initial Stock Quantity"
@@ -6971,7 +6967,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:232 part/templates/part/part_sidebar.html:58
 msgid "Related Parts"
-msgstr "Связанная деталь"
+msgstr "Связанные детали"
 
 #: part/templates/part/detail.html:236 part/templates/part/detail.html:237
 msgid "Add Related"
@@ -7114,11 +7110,11 @@ msgstr "Действия со складом"
 
 #: part/templates/part/part_base.html:70
 msgid "Count part stock"
-msgstr "Пересчитать запасы детали"
+msgstr "Установить запасы детали"
 
 #: part/templates/part/part_base.html:76
 msgid "Transfer part stock"
-msgstr ""
+msgstr "Переместить запасы детали"
 
 #: part/templates/part/part_base.html:91 templates/js/translated/part.js:2293
 msgid "Part actions"
@@ -7179,7 +7175,7 @@ msgstr ""
 #: part/templates/part/part_base.html:163
 #: part/templates/part/part_base.html:682
 msgid "Show Part Details"
-msgstr ""
+msgstr "Показать описание детали"
 
 #: part/templates/part/part_base.html:218
 #: stock/templates/stock/item_base.html:388
@@ -7237,7 +7233,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:676
 msgid "Hide Part Details"
-msgstr ""
+msgstr "Скрыть описание детали"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:76
 #: part/templates/part/prices.html:227 templates/js/translated/pricing.js:485
@@ -7850,10 +7846,8 @@ msgid "Plugin is not a packaged plugin"
 msgstr ""
 
 #: plugin/installer.py:276
-#, fuzzy
-#| msgid "Price not found"
 msgid "Plugin package name not found"
-msgstr "Цена не найдена"
+msgstr ""
 
 #: plugin/installer.py:297
 msgid "Plugin cannot be uninstalled as it is currently active"
@@ -7909,10 +7903,8 @@ msgid "Builtin Plugin"
 msgstr "Встроенный плагин"
 
 #: plugin/models.py:173
-#, fuzzy
-#| msgid "Packaging"
 msgid "Package Plugin"
-msgstr "Упаковка"
+msgstr ""
 
 #: plugin/models.py:197 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
@@ -8053,10 +8045,8 @@ msgid "Activate this plugin"
 msgstr ""
 
 #: plugin/serializers.py:219
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete configuration"
-msgstr "Удалить место хранения"
+msgstr ""
 
 #: plugin/serializers.py:220
 msgid "Delete the plugin configuration from the database"
@@ -8642,7 +8632,7 @@ msgstr ""
 
 #: stock/models.py:1581 stock/serializers.py:1148
 msgid "Duplicate stock items"
-msgstr "Дублировать складские позиции"
+msgstr "Дублировать складские позиции\n"
 
 #: stock/models.py:1585
 msgid "Stock items must refer to the same part"
@@ -8662,7 +8652,7 @@ msgstr ""
 
 #: stock/models.py:2259
 msgid "Entry notes"
-msgstr "Примечания к записи"
+msgstr ""
 
 #: stock/models.py:2318
 msgid "Value must be provided for this test"
@@ -8723,7 +8713,7 @@ msgstr ""
 
 #: stock/serializers.py:428
 msgid "Optional note field"
-msgstr ""
+msgstr "Опциональное поле записей"
 
 #: stock/serializers.py:438
 msgid "Serial numbers cannot be assigned to this part"
@@ -8744,7 +8734,7 @@ msgstr ""
 #: stock/serializers.py:506 stock/serializers.py:581 stock/serializers.py:677
 #: stock/serializers.py:727
 msgid "Add transaction note (optional)"
-msgstr ""
+msgstr "Добавить запись к транзакции (необязательно)"
 
 #: stock/serializers.py:514
 msgid "Quantity to install must be at least 1"
@@ -8812,7 +8802,7 @@ msgstr "Выбранная компания не является покупат
 
 #: stock/serializers.py:1023
 msgid "Stock assignment notes"
-msgstr ""
+msgstr "Записи о назначенных запасах"
 
 #: stock/serializers.py:1033 stock/serializers.py:1287
 msgid "A list of stock items must be provided"
@@ -8820,7 +8810,7 @@ msgstr "Необходимо предоставить список складс�
 
 #: stock/serializers.py:1112
 msgid "Stock merging notes"
-msgstr ""
+msgstr "Записи о слияниях запасов"
 
 #: stock/serializers.py:1117
 msgid "Allow mismatched suppliers"
@@ -8843,10 +8833,8 @@ msgid "At least two stock items must be provided"
 msgstr "Необходимо предоставить как минимум 2 складские позиции"
 
 #: stock/serializers.py:1201
-#, fuzzy
-#| msgid "No changes"
 msgid "No Change"
-msgstr "Нет изменений"
+msgstr ""
 
 #: stock/serializers.py:1230
 msgid "StockItem primary key value"
@@ -8858,11 +8846,11 @@ msgstr "Статус складской позиции"
 
 #: stock/serializers.py:1277
 msgid "Stock transaction notes"
-msgstr ""
+msgstr "Записи о перемещениях запасов"
 
 #: stock/templates/stock/item.html:17
 msgid "Stock Tracking Information"
-msgstr ""
+msgstr "История запасов"
 
 #: stock/templates/stock/item.html:63
 msgid "Child Stock Items"
@@ -8891,7 +8879,7 @@ msgstr "Добавить Данные Тестирования"
 
 #: stock/templates/stock/item.html:125
 msgid "Stock Item Notes"
-msgstr "Примечания складской позиции"
+msgstr "Записи складской позиции"
 
 #: stock/templates/stock/item.html:140
 msgid "Installed Stock Items"
@@ -8930,7 +8918,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:79
 #: stock/templates/stock/location.html:90 templates/js/translated/stock.js:1792
 msgid "Count stock"
-msgstr "Посчтитать Запас"
+msgstr "Установить запасы"
 
 #: stock/templates/stock/item_base.html:81
 #: templates/js/translated/stock.js:1774
@@ -9056,7 +9044,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:340
 msgid "Available Quantity"
-msgstr ""
+msgstr "Доступный запас"
 
 #: stock/templates/stock/item_base.html:398
 #: templates/js/translated/build.js:2376
@@ -9093,7 +9081,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1922
 msgid "stock item"
-msgstr "складская позиция"
+msgstr "складская позиция\n"
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -9129,7 +9117,7 @@ msgstr "Вернуть на склад"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr "Создать сериализированные позиции из этой складской позиции"
+msgstr "Создать сериализированные позиции из этой складской позиции\n"
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
@@ -9224,7 +9212,7 @@ msgstr "Загрузка..."
 
 #: stock/templates/stock/stock_sidebar.html:5
 msgid "Stock Tracking"
-msgstr "Отслеживание запасов"
+msgstr "Запас"
 
 #: stock/templates/stock/stock_sidebar.html:8
 msgid "Allocations"
@@ -9290,11 +9278,11 @@ msgstr "Индекс"
 
 #: templates/InvenTree/index.html:39
 msgid "Subscribed Parts"
-msgstr "Детали с включёнными уведомлениями"
+msgstr "Детали с подпиской"
 
 #: templates/InvenTree/index.html:52
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Категории с подпиской"
 
 #: templates/InvenTree/index.html:62
 msgid "Latest Parts"
@@ -9302,7 +9290,7 @@ msgstr "Последние детали"
 
 #: templates/InvenTree/index.html:77
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "BOM ожидающие проверки"
 
 #: templates/InvenTree/index.html:106
 msgid "Recently Updated"
@@ -9314,7 +9302,7 @@ msgstr "Истощенный Запас"
 
 #: templates/InvenTree/index.html:148
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Требуется для заказов на производство"
 
 #: templates/InvenTree/index.html:156
 msgid "Expired Stock"
@@ -9326,27 +9314,27 @@ msgstr "Залежалые Запасы"
 
 #: templates/InvenTree/index.html:199
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Активные заказы на производство"
 
 #: templates/InvenTree/index.html:210
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Просроченные заказы на производство"
 
 #: templates/InvenTree/index.html:230
 msgid "Outstanding Purchase Orders"
-msgstr ""
+msgstr "Ожидающие заказы на закупку"
 
 #: templates/InvenTree/index.html:241
 msgid "Overdue Purchase Orders"
-msgstr ""
+msgstr "Просроченные заказы на закупку"
 
 #: templates/InvenTree/index.html:262
 msgid "Outstanding Sales Orders"
-msgstr ""
+msgstr "Ожидающие заказы на продажу"
 
 #: templates/InvenTree/index.html:273
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Просроченные заказы на продажу"
 
 #: templates/InvenTree/index.html:299
 msgid "InvenTree News"
@@ -10397,7 +10385,7 @@ msgstr ""
 #: templates/email/build_order_required_stock.html:18
 #: templates/js/translated/bom.js:1668 templates/js/translated/build.js:2555
 msgid "Required Quantity"
-msgstr ""
+msgstr "Требуемое кол-во"
 
 #: templates/email/build_order_required_stock.html:38
 #: templates/email/low_stock_notification.html:30
@@ -10535,7 +10523,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:138
 msgid "Enter optional notes for stock transfer"
-msgstr ""
+msgstr "Добавьте записи для перемещения запасов (необязательно)"
 
 #: templates/js/translated/barcode.js:139
 msgid "Enter notes"
@@ -10597,7 +10585,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Складская позиция уже просканирована"
+msgstr "Складская позиция уже просканирована\n"
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
@@ -10895,7 +10883,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:379
 msgid "The Bill of Materials contains trackable parts"
-msgstr ""
+msgstr "BOM содержит отслеживаемые детали"
 
 #: templates/js/translated/build.js:380
 msgid "Build outputs must be generated individually"
@@ -11006,7 +10994,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:989 templates/js/translated/build.js:2340
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Зарезервированное количество"
 
 #: templates/js/translated/build.js:1003
 msgid "Location not specified"
@@ -11075,7 +11063,7 @@ msgstr ""
 #: templates/js/translated/build.js:1727
 #: templates/js/translated/sales_order.js:1186
 msgid "Select source location (leave blank to take from all locations)"
-msgstr ""
+msgstr "Выберите место хранения - источник (оставьте пустым, чтобы взять из всех мест)"
 
 #: templates/js/translated/build.js:1755
 msgid "Allocate Stock Items to Build Order"
@@ -11197,7 +11185,7 @@ msgstr "Запасы производства"
 
 #: templates/js/translated/build.js:2658 templates/js/translated/stock.js:1836
 msgid "Order stock"
-msgstr "Запасы заказа"
+msgstr "Заказать запасы"
 
 #: templates/js/translated/build.js:2662
 #: templates/js/translated/sales_order.js:2010
@@ -11761,7 +11749,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:121
 msgid "Add Part Category"
-msgstr ""
+msgstr "Добавить категорию детали"
 
 #: templates/js/translated/part.js:308
 msgid "Parent part category"
@@ -11914,7 +11902,7 @@ msgstr "Виртуальная Деталь"
 
 #: templates/js/translated/part.js:806
 msgid "Subscribed part"
-msgstr "Детали с подпиской"
+msgstr "Деталь с подпиской"
 
 #: templates/js/translated/part.js:810
 msgid "Salable part"
@@ -12044,7 +12032,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:2777
 msgid "Subscribed category"
-msgstr ""
+msgstr "Категория с подпиской"
 
 #: templates/js/translated/part.js:2854
 msgid "No test templates matching query"
@@ -12792,11 +12780,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Создана новая складская позиция"
+msgstr "Создана новая складская позиция\n"
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Создано несколько складских позиций"
+msgstr "Создано несколько складских позиций\n"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
@@ -12860,7 +12848,7 @@ msgstr "Переместить"
 
 #: templates/js/translated/stock.js:1031
 msgid "Count Stock"
-msgstr "Посчтитать Запас"
+msgstr "Установить запасы"
 
 #: templates/js/translated/stock.js:1032
 msgid "Count"
@@ -12960,7 +12948,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1810
 msgid "Change stock status"
-msgstr ""
+msgstr "Изменить статус запасов"
 
 #: templates/js/translated/stock.js:1819
 msgid "Merge stock"
@@ -13161,7 +13149,7 @@ msgstr "Выбранные складские позиции"
 
 #: templates/js/translated/stock.js:3285
 msgid "Change Stock Status"
-msgstr ""
+msgstr "Изменить статус запасов"
 
 #: templates/js/translated/table_filters.js:74
 msgid "Has project code"
@@ -13603,8 +13591,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13779,3 +13766,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
