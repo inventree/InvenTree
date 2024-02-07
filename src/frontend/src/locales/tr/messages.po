@@ -22,32 +22,33 @@ msgstr ""
 msgid "Title"
 msgstr "Başlık"
 
-#: src/components/forms/ApiForm.tsx:131
+#: src/components/forms/ApiForm.tsx:132
 #: src/functions/forms.tsx:259
 msgid "Form Error"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:321
+#: src/components/forms/ApiForm.tsx:323
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
 msgstr "Başarılı"
 
-#: src/components/forms/ApiForm.tsx:392
+#: src/components/forms/ApiForm.tsx:396
 msgid "Form Errors Exist"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:447
+#: src/components/forms/ApiForm.tsx:451
 #: src/components/images/DetailsImage.tsx:223
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
 msgstr "Gönder"
 
-#: src/components/forms/ApiForm.tsx:483
+#: src/components/forms/ApiForm.tsx:487
+#: src/tables/plugin/PluginListTable.tsx:436
 msgid "Update"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:503
+#: src/components/forms/ApiForm.tsx:507
 #: src/components/items/ActionDropdown.tsx:173
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:120
@@ -55,6 +56,7 @@ msgstr ""
 #: src/pages/Notifications.tsx:79
 #: src/tables/InvenTreeTable.tsx:456
 #: src/tables/RowActions.tsx:70
+#: src/tables/plugin/PluginListTable.tsx:467
 msgid "Delete"
 msgstr ""
 
@@ -218,7 +220,7 @@ msgstr "Sunucu"
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
 #: src/tables/plugin/PluginErrorTable.tsx:33
-#: src/tables/plugin/PluginListTable.tsx:160
+#: src/tables/plugin/PluginListTable.tsx:167
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:27
 #: src/tables/settings/GroupTable.tsx:103
 #: src/tables/settings/PendingTasksTable.tsx:26
@@ -270,7 +272,7 @@ msgstr "Durum: <0>worker</0> ({0}), <1>eklenti</1>{1}"
 #: src/pages/ErrorPage.tsx:25
 #: src/tables/InvenTreeTable.tsx:416
 #: src/tables/InvenTreeTable.tsx:489
-#: src/tables/plugin/PluginListTable.tsx:367
+#: src/tables/plugin/PluginListTable.tsx:393
 msgid "Error"
 msgstr "Hata"
 
@@ -312,7 +314,7 @@ msgstr ""
 #: src/hooks/UseForm.tsx:38
 #: src/tables/FilterSelectDrawer.tsx:209
 #: src/tables/InvenTreeTable.tsx:457
-#: src/tables/plugin/PluginListTable.tsx:336
+#: src/tables/plugin/PluginListTable.tsx:356
 msgid "Cancel"
 msgstr "Vazgeç"
 
@@ -670,8 +672,8 @@ msgid "Email settings not configured"
 msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:121
-#: src/tables/plugin/PluginListTable.tsx:178
-#: src/tables/plugin/PluginListTable.tsx:290
+#: src/tables/plugin/PluginListTable.tsx:185
+#: src/tables/plugin/PluginListTable.tsx:310
 msgid "Version"
 msgstr ""
 
@@ -745,6 +747,7 @@ msgstr "Sayfalar"
 
 #: src/components/nav/NavigationDrawer.tsx:67
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:95
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
 msgstr "Eklentiler"
 
@@ -829,7 +832,7 @@ msgid "Unknown model: {model}"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:21
-#: src/pages/part/PartDetail.tsx:706
+#: src/pages/part/PartDetail.tsx:703
 #: src/tables/part/RelatedPartTable.tsx:45
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:59
 msgid "Part"
@@ -841,7 +844,7 @@ msgstr "Parça"
 #: src/pages/Index/Settings/SystemSettings.tsx:171
 #: src/pages/part/CategoryDetail.tsx:51
 #: src/pages/part/CategoryDetail.tsx:81
-#: src/pages/part/PartDetail.tsx:617
+#: src/pages/part/PartDetail.tsx:614
 msgid "Parts"
 msgstr "Parçalar"
 
@@ -938,7 +941,7 @@ msgstr ""
 #: src/pages/Index/Settings/SystemSettings.tsx:235
 #: src/pages/company/CompanyDetail.tsx:99
 #: src/pages/company/SupplierPartDetail.tsx:45
-#: src/pages/part/PartDetail.tsx:550
+#: src/pages/part/PartDetail.tsx:547
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
 msgstr "Satın Alma Emirleri"
@@ -959,7 +962,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:118
 #: src/pages/Index/Settings/SystemSettings.tsx:249
 #: src/pages/company/CompanyDetail.tsx:115
-#: src/pages/part/PartDetail.tsx:556
+#: src/pages/part/PartDetail.tsx:553
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
 msgstr "Satış Emirleri"
@@ -1029,7 +1032,7 @@ msgstr ""
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:202
-#: src/pages/part/PartDetail.tsx:473
+#: src/pages/part/PartDetail.tsx:470
 #: src/pages/stock/LocationDetail.tsx:63
 #: src/pages/stock/StockDetail.tsx:140
 #: src/tables/stock/StockItemTable.tsx:38
@@ -2689,22 +2692,18 @@ msgstr ""
 msgid "Advanced Options"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:19
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:28
 #: src/tables/settings/UserTable.tsx:103
 msgid "Info"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:23
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
 msgid "External plugins are not enabled for this InvenTree installation."
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
-msgid "Plugin Error Stack"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:40
-msgid "Plugin Settings"
-msgstr ""
+#~ msgid "Plugin Error Stack"
+#~ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
 #~ msgid "Warning"
@@ -2713,6 +2712,14 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:47
 #~ msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 #~ msgstr "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:50
+msgid "Plugin Errors"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:59
+msgid "Plugin Settings"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:25
 msgid "Pending Tasks"
@@ -2749,7 +2756,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:107
 #: src/pages/company/SupplierPartDetail.tsx:55
-#: src/pages/part/PartDetail.tsx:519
+#: src/pages/part/PartDetail.tsx:516
 msgid "Pricing"
 msgstr ""
 
@@ -2771,14 +2778,14 @@ msgid "Reporting"
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:224
-#: src/pages/part/PartDetail.tsx:568
+#: src/pages/part/PartDetail.tsx:565
 msgid "Stocktake"
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:229
 #: src/pages/build/BuildDetail.tsx:264
 #: src/pages/build/BuildIndex.tsx:14
-#: src/pages/part/PartDetail.tsx:505
+#: src/pages/part/PartDetail.tsx:502
 #: src/pages/sales/SalesOrderDetail.tsx:62
 msgid "Build Orders"
 msgstr "Yapım İşi Emirleri"
@@ -2867,7 +2874,7 @@ msgstr ""
 #: src/pages/build/BuildDetail.tsx:163
 #: src/pages/company/CompanyDetail.tsx:154
 #: src/pages/company/ManufacturerPartDetail.tsx:68
-#: src/pages/part/PartDetail.tsx:590
+#: src/pages/part/PartDetail.tsx:587
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:78
 #: src/pages/sales/ReturnOrderDetail.tsx:38
 #: src/pages/sales/SalesOrderDetail.tsx:72
@@ -2877,7 +2884,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:175
 #: src/pages/company/CompanyDetail.tsx:166
-#: src/pages/part/PartDetail.tsx:602
+#: src/pages/part/PartDetail.tsx:599
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:90
 #: src/pages/sales/ReturnOrderDetail.tsx:50
 #: src/pages/sales/SalesOrderDetail.tsx:84
@@ -2953,7 +2960,7 @@ msgstr ""
 #: src/pages/company/CompanyDetail.tsx:76
 #: src/pages/company/ManufacturerPartDetail.tsx:37
 #: src/pages/company/SupplierPartDetail.tsx:35
-#: src/pages/part/PartDetail.tsx:452
+#: src/pages/part/PartDetail.tsx:449
 #: src/pages/stock/StockDetail.tsx:70
 msgid "Details"
 msgstr ""
@@ -2999,12 +3006,12 @@ msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:42
 #: src/pages/part/CategoryDetail.tsx:71
-#: src/pages/part/PartDetail.tsx:467
+#: src/pages/part/PartDetail.tsx:464
 msgid "Parameters"
 msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:54
-#: src/pages/part/PartDetail.tsx:537
+#: src/pages/part/PartDetail.tsx:534
 #: src/pages/purchasing/PurchasingIndex.tsx:26
 msgid "Suppliers"
 msgstr ""
@@ -3028,15 +3035,15 @@ msgstr ""
 #~ msgid "Subcategories"
 #~ msgstr "Subcategories"
 
-#: src/pages/part/PartDetail.tsx:114
+#: src/pages/part/PartDetail.tsx:115
 #: src/tables/ColumnRenderers.tsx:52
 #: src/tables/part/RelatedPartTable.tsx:64
-#: src/tables/plugin/PluginListTable.tsx:163
-#: src/tables/plugin/PluginListTable.tsx:277
+#: src/tables/plugin/PluginListTable.tsx:170
+#: src/tables/plugin/PluginListTable.tsx:297
 msgid "Description"
 msgstr "Açıklama"
 
-#: src/pages/part/PartDetail.tsx:124
+#: src/pages/part/PartDetail.tsx:125
 msgid "Variant of"
 msgstr ""
 
@@ -3084,29 +3091,29 @@ msgstr ""
 msgid "Category"
 msgstr "Kategori"
 
-#: src/pages/part/PartDetail.tsx:240
+#: src/pages/part/PartDetail.tsx:239
 msgid "IPN"
 msgstr "DPN"
 
-#: src/pages/part/PartDetail.tsx:251
+#: src/pages/part/PartDetail.tsx:250
 msgid "Revision"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:262
+#: src/pages/part/PartDetail.tsx:261
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:39
 msgid "Units"
 msgstr "Birim"
 
-#: src/pages/part/PartDetail.tsx:272
+#: src/pages/part/PartDetail.tsx:271
 #: src/tables/settings/PendingTasksTable.tsx:40
 msgid "Keywords"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:282
+#: src/pages/part/PartDetail.tsx:281
 msgid "Creation Date"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:296
+#: src/pages/part/PartDetail.tsx:295
 #: src/tables/bom/BomTable.tsx:137
 #: src/tables/part/PartTable.tsx:154
 msgid "Price Range"
@@ -3124,85 +3131,85 @@ msgstr "Fiyat Aralığı"
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:333
+#: src/pages/part/PartDetail.tsx:332
 msgid "Last Stocktake"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:394
+#: src/pages/part/PartDetail.tsx:393
 msgid "Default Location"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:406
+#: src/pages/part/PartDetail.tsx:404
 msgid "Default Supplier"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:418
+#: src/pages/part/PartDetail.tsx:415
 msgid "Link"
 msgstr "Bağlantı"
 
-#: src/pages/part/PartDetail.tsx:430
+#: src/pages/part/PartDetail.tsx:427
 msgid "Responsible"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:485
+#: src/pages/part/PartDetail.tsx:482
 msgid "Variants"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:492
+#: src/pages/part/PartDetail.tsx:489
 #: src/pages/stock/StockDetail.tsx:82
 msgid "Allocations"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:498
+#: src/pages/part/PartDetail.tsx:495
 msgid "Bill of Materials"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:512
+#: src/pages/part/PartDetail.tsx:509
 msgid "Used In"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:524
+#: src/pages/part/PartDetail.tsx:521
 #: src/pages/purchasing/PurchasingIndex.tsx:37
 msgid "Manufacturers"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:563
+#: src/pages/part/PartDetail.tsx:560
 msgid "Scheduling"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:573
+#: src/pages/part/PartDetail.tsx:570
 msgid "Test Templates"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:584
+#: src/pages/part/PartDetail.tsx:581
 msgid "Related Parts"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:639
+#: src/pages/part/PartDetail.tsx:636
 msgid "Edit Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:660
+#: src/pages/part/PartDetail.tsx:657
 msgid "Stock Actions"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:665
+#: src/pages/part/PartDetail.tsx:662
 msgid "Count Stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:666
+#: src/pages/part/PartDetail.tsx:663
 msgid "Count part stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:670
+#: src/pages/part/PartDetail.tsx:667
 msgid "Transfer Stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:671
+#: src/pages/part/PartDetail.tsx:668
 msgid "Transfer part stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:677
+#: src/pages/part/PartDetail.tsx:674
 msgid "Part Actions"
 msgstr ""
 
@@ -3323,54 +3330,54 @@ msgstr ""
 msgid "Select Columns"
 msgstr "Sütunları Seç"
 
-#: src/tables/Details.tsx:109
+#: src/tables/Details.tsx:111
 msgid "Part is not active"
 msgstr ""
 
-#: src/tables/Details.tsx:115
+#: src/tables/Details.tsx:117
 msgid "Inactive"
 msgstr ""
 
-#: src/tables/Details.tsx:122
+#: src/tables/Details.tsx:124
 msgid "Part is a template part (variants can be made from this part)"
 msgstr ""
 
-#: src/tables/Details.tsx:128
+#: src/tables/Details.tsx:130
 msgid "Part can be assembled from other parts"
 msgstr ""
 
-#: src/tables/Details.tsx:134
+#: src/tables/Details.tsx:136
 msgid "Part can be used in assemblies"
 msgstr ""
 
-#: src/tables/Details.tsx:140
+#: src/tables/Details.tsx:142
 msgid "Part stock is tracked by serial number"
 msgstr ""
 
-#: src/tables/Details.tsx:146
+#: src/tables/Details.tsx:148
 msgid "Part can be purchased from external suppliers"
 msgstr ""
 
-#: src/tables/Details.tsx:152
+#: src/tables/Details.tsx:154
 msgid "Part can be sold to customers"
 msgstr ""
 
-#: src/tables/Details.tsx:157
+#: src/tables/Details.tsx:159
 msgid "Part is virtual (not a physical part)"
 msgstr ""
 
-#: src/tables/Details.tsx:163
+#: src/tables/Details.tsx:165
 #: src/tables/part/PartTable.tsx:236
 #: src/tables/part/PartTable.tsx:240
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Sanal"
 
-#: src/tables/Details.tsx:344
+#: src/tables/Details.tsx:354
 msgid "Copied"
 msgstr ""
 
-#: src/tables/Details.tsx:344
+#: src/tables/Details.tsx:354
 msgid "Copy"
 msgstr ""
 
@@ -3642,8 +3649,8 @@ msgstr ""
 #: src/tables/build/BuildOrderTable.tsx:102
 #: src/tables/part/PartTable.tsx:170
 #: src/tables/part/PartVariantTable.tsx:15
-#: src/tables/plugin/PluginListTable.tsx:181
-#: src/tables/plugin/PluginListTable.tsx:503
+#: src/tables/plugin/PluginListTable.tsx:188
+#: src/tables/plugin/PluginListTable.tsx:627
 #: src/tables/stock/StockItemTable.tsx:228
 msgid "Active"
 msgstr "Aktif"
@@ -3735,7 +3742,7 @@ msgid "Add Build Order"
 msgstr ""
 
 #: src/tables/company/AddressTable.tsx:121
-#: src/tables/company/AddressTable.tsx:187
+#: src/tables/company/AddressTable.tsx:185
 msgid "Add Address"
 msgstr ""
 
@@ -3743,15 +3750,15 @@ msgstr ""
 msgid "Address created"
 msgstr ""
 
-#: src/tables/company/AddressTable.tsx:137
+#: src/tables/company/AddressTable.tsx:135
 msgid "Edit Address"
 msgstr ""
 
-#: src/tables/company/AddressTable.tsx:145
+#: src/tables/company/AddressTable.tsx:143
 msgid "Delete Address"
 msgstr ""
 
-#: src/tables/company/AddressTable.tsx:147
+#: src/tables/company/AddressTable.tsx:145
 msgid "Are you sure you want to delete this address?"
 msgstr ""
 
@@ -3841,11 +3848,11 @@ msgstr ""
 msgid "New Part Category"
 msgstr ""
 
-#: src/tables/part/PartCategoryTable.tsx:98
+#: src/tables/part/PartCategoryTable.tsx:96
 msgid "Edit Part Category"
 msgstr ""
 
-#: src/tables/part/PartCategoryTable.tsx:108
+#: src/tables/part/PartCategoryTable.tsx:106
 msgid "Add Part Category"
 msgstr ""
 
@@ -4019,15 +4026,15 @@ msgid "Show tests that require an attachment"
 msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:80
-#: src/tables/part/PartTestTemplateTable.tsx:137
+#: src/tables/part/PartTestTemplateTable.tsx:135
 msgid "Add Test Template"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:95
+#: src/tables/part/PartTestTemplateTable.tsx:93
 msgid "Edit Test Template"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:103
+#: src/tables/part/PartTestTemplateTable.tsx:101
 msgid "Delete Test Template"
 msgstr ""
 
@@ -4071,174 +4078,218 @@ msgstr ""
 msgid "Stage"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:106
+#: src/tables/plugin/PluginListTable.tsx:113
 msgid "Plugin with id {id} not found"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:108
+#: src/tables/plugin/PluginListTable.tsx:115
 msgid "An error occurred while fetching plugin details"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:125
+#: src/tables/plugin/PluginListTable.tsx:132
 msgid "Plugin Actions"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:129
-#: src/tables/plugin/PluginListTable.tsx:132
+#: src/tables/plugin/PluginListTable.tsx:136
+#: src/tables/plugin/PluginListTable.tsx:139
 msgid "Edit plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:143
-#: src/tables/plugin/PluginListTable.tsx:144
+#: src/tables/plugin/PluginListTable.tsx:150
+#: src/tables/plugin/PluginListTable.tsx:151
 msgid "Reload"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:157
+#: src/tables/plugin/PluginListTable.tsx:164
 msgid "Plugin information"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:168
+#: src/tables/plugin/PluginListTable.tsx:175
 msgid "Author"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:173
+#: src/tables/plugin/PluginListTable.tsx:180
 msgid "Date"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:189
+#: src/tables/plugin/PluginListTable.tsx:194
+#~ msgid "Installation path"
+#~ msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:196
 msgid "Package information"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:194
-msgid "Installation path"
+#: src/tables/plugin/PluginListTable.tsx:202
+msgid "Package Name"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:199
-#: src/tables/plugin/PluginListTable.tsx:508
+#: src/tables/plugin/PluginListTable.tsx:208
+msgid "Installation Path"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:213
+#: src/tables/plugin/PluginListTable.tsx:632
 msgid "Builtin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:210
+#: src/tables/plugin/PluginListTable.tsx:218
+msgid "Package"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:229
 msgid "Plugin settings"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:227
+#: src/tables/plugin/PluginListTable.tsx:246
 msgid "Plugin is active"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:233
+#: src/tables/plugin/PluginListTable.tsx:252
 msgid "Plugin is inactive"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:240
+#: src/tables/plugin/PluginListTable.tsx:259
 msgid "Plugin is not installed"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:262
+#: src/tables/plugin/PluginListTable.tsx:282
 msgid "Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:284
+#: src/tables/plugin/PluginListTable.tsx:304
 msgid "Description not available"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:309
+#: src/tables/plugin/PluginListTable.tsx:329
 msgid "Activate Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:309
+#: src/tables/plugin/PluginListTable.tsx:329
 msgid "Deactivate Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:318
+#: src/tables/plugin/PluginListTable.tsx:338
 msgid "Confirm plugin activation"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:319
+#: src/tables/plugin/PluginListTable.tsx:339
 msgid "Confirm plugin deactivation"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:325
+#: src/tables/plugin/PluginListTable.tsx:345
 msgid "The following plugin will be activated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:326
+#: src/tables/plugin/PluginListTable.tsx:346
 msgid "The following plugin will be deactivated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:337
+#: src/tables/plugin/PluginListTable.tsx:357
 msgid "Confirm"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:347
+#: src/tables/plugin/PluginListTable.tsx:367
 msgid "Activating plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:347
+#: src/tables/plugin/PluginListTable.tsx:367
 msgid "Deactivating plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:357
+#: src/tables/plugin/PluginListTable.tsx:383
 msgid "Plugin updated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:359
+#: src/tables/plugin/PluginListTable.tsx:385
 msgid "The plugin was activated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:360
+#: src/tables/plugin/PluginListTable.tsx:386
 msgid "The plugin was deactivated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:368
+#: src/tables/plugin/PluginListTable.tsx:394
 msgid "Error updating plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:385
+#: src/tables/plugin/PluginListTable.tsx:414
 msgid "Deactivate"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:394
+#: src/tables/plugin/PluginListTable.tsx:423
 msgid "Activate"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:408
+#: src/tables/plugin/PluginListTable.tsx:454
+msgid "Uninstall"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:485
 msgid "Install plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:416
+#: src/tables/plugin/PluginListTable.tsx:498
 msgid "Install"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:420
+#: src/tables/plugin/PluginListTable.tsx:502
 msgid "Plugin installed successfully"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:441
+#: src/tables/plugin/PluginListTable.tsx:515
+msgid "Uninstall Plugin"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:527
+msgid "Confirm plugin uninstall"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:530
+msgid "The selected plugin will be uninstalled."
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:531
+msgid "This action cannot be undone."
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:537
+msgid "Plugin uninstalled successfully"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:550
+msgid "Delete Plugin"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:552
+msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:564
 msgid "Plugins reloaded"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:442
+#: src/tables/plugin/PluginListTable.tsx:565
 msgid "Plugins were reloaded successfully"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:458
+#: src/tables/plugin/PluginListTable.tsx:581
 msgid "Reload Plugins"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:467
+#: src/tables/plugin/PluginListTable.tsx:590
 msgid "Install Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:480
+#: src/tables/plugin/PluginListTable.tsx:608
 msgid "Plugin detail"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:513
+#: src/tables/plugin/PluginListTable.tsx:637
 msgid "Sample"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:518
+#: src/tables/plugin/PluginListTable.tsx:642
 #: src/tables/stock/StockItemTable.tsx:279
 msgid "Installed"
 msgstr ""
@@ -4442,15 +4493,15 @@ msgstr ""
 msgid "Add Custom Unit"
 msgstr ""
 
-#: src/tables/settings/CustomUnitsTable.tsx:62
+#: src/tables/settings/CustomUnitsTable.tsx:60
 msgid "Edit Custom Unit"
 msgstr ""
 
-#: src/tables/settings/CustomUnitsTable.tsx:70
+#: src/tables/settings/CustomUnitsTable.tsx:68
 msgid "Delete Custom Unit"
 msgstr ""
 
-#: src/tables/settings/CustomUnitsTable.tsx:102
+#: src/tables/settings/CustomUnitsTable.tsx:100
 msgid "Add custom unit"
 msgstr ""
 
@@ -4518,24 +4569,24 @@ msgstr ""
 msgid "Permission set"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:128
+#: src/tables/settings/GroupTable.tsx:126
 msgid "Delete group"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:129
+#: src/tables/settings/GroupTable.tsx:127
 msgid "Group deleted"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:131
+#: src/tables/settings/GroupTable.tsx:129
 msgid "Are you sure you want to delete this group?"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:136
-#: src/tables/settings/GroupTable.tsx:148
+#: src/tables/settings/GroupTable.tsx:134
+#: src/tables/settings/GroupTable.tsx:146
 msgid "Add group"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:160
+#: src/tables/settings/GroupTable.tsx:158
 msgid "Edit group"
 msgstr ""
 
@@ -4802,11 +4853,11 @@ msgid "Has location type"
 msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:87
-#: src/tables/stock/StockLocationTable.tsx:118
+#: src/tables/stock/StockLocationTable.tsx:116
 msgid "Add Stock Location"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:108
+#: src/tables/stock/StockLocationTable.tsx:106
 msgid "Edit Stock Location"
 msgstr ""
 
@@ -4821,4 +4872,3 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Belgeleri okuyun"
-
