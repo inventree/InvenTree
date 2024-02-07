@@ -63,7 +63,6 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
             'user',
             'user_detail',
             'date',
-            'test',
             'template',
             'template_detail',
         ]
@@ -94,14 +93,6 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
         label=_('Test template for this result'),
     )
 
-    test = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        write_only=True,
-        label=_('Test Name'),
-        help_text=_('Name of the test'),
-    )
-
     template_detail = PartTestTemplateSerializer(source='template', read_only=True)
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
@@ -111,8 +102,11 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
     def validate(self, data):
         """Validate the test result data."""
         stock_item = data['stock_item']
-        test_name = data.pop('test', None)
         template = data.get('template', None)
+
+        # To support legacy API, we can accept a test name instead of a template
+        # In such a case, we use the test name to lookup the appropriate template
+        test_name = self.context['request'].data.pop('test', None)
 
         if not template and not test_name:
             raise ValidationError(_('Template ID or test name must be provided'))
@@ -125,19 +119,13 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
                 part__tree_id=stock_item.part.tree_id, key=test_key
             ).first():
                 data['template'] = template
-                print('foud template:', template.test_name, template.key)
+                print('found template:', template.test_name, template.key)
             else:
                 raise ValidationError({'test': _('Test template not found')})
 
         print('validate:', data)
 
         return super().validate(data)
-
-    def create(self, validated_data):
-        """Create a new StockItemTestResult object."""
-        print('create:', validated_data)
-
-        return super().create(validated_data)
 
 
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):

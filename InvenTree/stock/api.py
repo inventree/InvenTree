@@ -1192,6 +1192,12 @@ class StockItemTestResultMixin:
     queryset = StockItemTestResult.objects.all()
     serializer_class = StockSerializers.StockItemTestResultSerializer
 
+    def get_serializer_context(self):
+        """Extend serializer context."""
+        ctx = super().get_serializer_context()
+        ctx['request'] = self.request
+        return ctx
+
     def get_serializer(self, *args, **kwargs):
         """Set context before returning serializer."""
         try:
@@ -1220,9 +1226,8 @@ class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['test', 'user', 'result', 'value']
-
-    ordering_fields = ['date', 'test', 'result']
+    filterset_fields = ['user', 'template', 'result', 'value']
+    ordering_fields = ['date', 'result']
 
     ordering = 'date'
 
