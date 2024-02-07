@@ -144,16 +144,16 @@ jobs:
           path: api.yaml
       - name: Download public schema
         run: |
-          pip install requests
-          python3 ci/version_check.py only_version
+          pip install requests >/dev/null 2>&1
           version="$(python3 ci/version_check.py only_version 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
           curl -s -o schema.yaml $url
+          echo "Downloaded schema.yaml"
       - name: Check for differences in schemas
         run: |
-          diff -u api.yaml schema.yaml
+          diff --color -u api.yaml schema.yaml
           diff -u api.yaml schema.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
       # - name: Check schema - including warnings
       #   run: invoke apidoc
