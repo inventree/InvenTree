@@ -17,6 +17,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -219,6 +220,14 @@ export default function StockItemTestResultTable({
     successMessage: t`Test result updated`
   });
 
+  const deleteTestModal = useDeleteApiFormModal({
+    url: ApiEndpoints.stock_test_result_list,
+    pk: selectedTest,
+    title: t`Delete Test Result`,
+    onFormSuccess: () => table.refreshTable(),
+    successMessage: t`Test result deleted`
+  });
+
   const passTest = useCallback(
     (templateId: number) => {
       api
@@ -274,7 +283,11 @@ export default function StockItemTestResultTable({
         }),
         RowDeleteAction({
           tooltip: t`Delete Test Result`,
-          hidden: !user.hasDeleteRole(UserRoles.stock)
+          hidden: !user.hasDeleteRole(UserRoles.stock),
+          onClick: () => {
+            setSelectedTest(record.pk);
+            deleteTestModal.open();
+          }
         })
       ];
     },
@@ -335,6 +348,7 @@ export default function StockItemTestResultTable({
     <>
       {newTestModal.modal}
       {editTestModal.modal}
+      {deleteTestModal.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_test_result_list)}
         tableState={table}
