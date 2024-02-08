@@ -30,6 +30,7 @@ jobs:
       server: ${{ steps.filter.outputs.server }}
       migrations: ${{ steps.filter.outputs.migrations }}
       frontend: ${{ steps.filter.outputs.frontend }}
+      api: ${{ steps.filter.outputs.api }}
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -44,6 +45,8 @@ jobs:
             migrations:
               - '**/migrations/**'
               - '.github/workflows**'
+            api:
+              - 'InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
 
@@ -126,15 +129,11 @@ jobs:
       INVENTREE_PYTHON_TEST_SERVER: http://localhost:12345
       INVENTREE_PYTHON_TEST_USERNAME: testuser
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
-      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # pin@v2.11.1
-        id: filter
-        with:
-          filters: |
-            api:
-              - 'InvenTree/InvenTree/api_version.py'
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -149,7 +148,7 @@ jobs:
           name: api.yaml
           path: api.yaml
       - name: Download public schema
-        if: steps.filter.outputs.api == 'false'
+        if: needs.paths-filter.outputs.api == 'false'
         run: |
           pip install requests >/dev/null 2>&1
           version="$(python3 ci/version_check.py only_version 2>&1)"
@@ -159,24 +158,47 @@ jobs:
           curl -s -o schema.yaml $url
           echo "Downloaded schema.yaml"
       - name: Check for differences in schemas
-        if: steps.filter.outputs.api == 'false'
+        if: needs.paths-filter.outputs.api == 'false'
         run: |
           diff --color -u api.yaml schema.yaml
           diff -u api.yaml schema.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
       - name: Check schema - including warnings
         run: invoke apidoc
         continue-on-error: true
-      - name: Push new schema if change & on master
-        if: github.ref == 'refs/heads/master' && steps.filter.outputs.api == 'true'
+      - name: Extract version for publishing
+        id: version
+        if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
         run: |
           pip install requests >/dev/null 2>&1
           version="$(python3 ci/version_check.py only_version 2>&1)"
           echo "Version: $version"
-          url="https://api.github.com/repos/inventree/schema/contents/export/${version}/api.yaml"
-          echo "URL: $url"
-          content="$(cat api.yaml | base64)"
-          curl -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" $url -d '{"message":"Update API schema for ${version}","content":$content}'
-          echo "Uploaded api.yaml"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  apidoc-push:
+            name: Push new schema
+            runs-on: ubuntu-20.04
+            needs: [paths-filter, apidoc]
+            if: needs.apidoc.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+            env:
+              version: ${{ needs.apidoc.outputs.version }}
+
+            steps:
+              - uses: actions/checkout@v4
+                with:
+                    repository: inventree/schema
+                    token: ${{ secrets.SCHEMA_PAT }}
+              - name: Download schema artifact
+                uses: actions/download-artifact@v3
+                with:
+                  name: api.yaml
+              - name: Move schema to correct location
+                run: |
+                  echo "Version: $version"
+                  mkdir export/${version}
+                  mv api.yaml export/${version}/api.yaml
+              - uses: stefanzweifel/git-auto-commit-action@v5
+                with:
+                  commit_message: "Update API schema for ${version}"
 
   python:
     name: Tests - inventree-python
