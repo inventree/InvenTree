@@ -704,6 +704,7 @@ class BaseInvenTreeSetting(models.Model):
                     **kwargs,
                 )
         except (OperationalError, ProgrammingError):
+            logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
             pass
         except Exception as exc:
