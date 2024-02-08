@@ -120,7 +120,10 @@ STATIC_ROOT = config.get_static_dir()
 # The filesystem location for uploaded meadia files
 MEDIA_ROOT = config.get_media_dir()
 
+''
+
 # List of allowed hosts (default = allow all)
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = get_setting(
     'INVENTREE_ALLOWED_HOSTS',
     config_key='allowed_hosts',
@@ -128,7 +131,30 @@ ALLOWED_HOSTS = get_setting(
     typecast=list,
 )
 
+# List of trusted origins for unsafe requests
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
+CSRF_TRUSTED_ORIGINS = get_setting(
+    'INVENTREE_TRUSTED_ORIGINS',
+    config_key='trusted_origins',
+    default_value=[],
+    typecast=list,
+)
+
+USE_X_FORWARDED_HOST = get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_HOST',
+    config_key='use_x_forwarded_host',
+    default_value=False,
+)
+
+USE_X_FORWARDED_PORT = get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_PORT',
+    config_key='use_x_forwarded_port',
+    default_value=False,
+)
+
 # Cross Origin Resource Sharing (CORS) options
+# Refer to the django-cors-headers documentation for more information
+# Ref: https://github.com/adamchainz/django-cors-headers
 
 # Extract CORS options from configuration file
 CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
