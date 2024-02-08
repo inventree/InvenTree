@@ -9,7 +9,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'InvenTree',
-  tagline: 'Intuitive InvenTree Management',
+  tagline: 'Intuitive Inventory Management',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -58,6 +58,16 @@ const config = {
     ({
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
+      imageZoom: {
+        // CSS selector to apply the plugin to, defaults to '.markdown img'
+        selector: '.markdown img',
+        // Optional medium-zoom options
+        // see: https://www.npmjs.com/package/medium-zoom#options
+        options: {
+          margin: 24,
+          background: '#777',
+        },
+      },
       navbar: {
         title: 'My Site',
         logo: {
