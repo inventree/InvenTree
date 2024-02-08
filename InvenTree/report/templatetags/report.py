@@ -3,6 +3,7 @@
 import base64
 import logging
 import os
+from decimal import Decimal
 
 from django import template
 from django.conf import settings
@@ -376,3 +377,46 @@ def render_html_text(text: str, **kwargs):
     output += ''.join([f'</{tag}>' for tag in tags])
 
     return mark_safe(output)
+
+
+@register.simple_tag
+def format_number(number, **kwargs):
+    """Render a number with optional formatting options.
+
+    kwargs:
+        decimal_places: Number of decimal places to render
+        show_sign: Boolean, whether to show the sign of the number
+        integer: Boolean, whether to render the number as an integer
+        leading: Number of leading zeros
+    """
+    try:
+        number = Decimal(str(number))
+    except Exception:
+        # If the number cannot be converted to a Decimal, just return the original value
+        return str(number)
+
+    if kwargs.get('integer', False):
+        # Convert to integer
+        number = Decimal(int(number))
+
+    decimals = kwargs.get('decimal_places', None)
+
+    if decimals is not None:
+        try:
+            decimals = int(decimals)
+            number = round(number, decimals)
+        except ValueError:
+            pass
+
+    value = str(number)
+
+    leading = kwargs.get('leading', None)
+
+    if leading is not None:
+        try:
+            leading = int(leading)
+            value = '0' * leading + value
+        except ValueError:
+            pass
+
+    return value
