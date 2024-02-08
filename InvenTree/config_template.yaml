@@ -188,10 +188,9 @@ use_x_forwarded_port: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
-  # CORS_ALLOW_ALL_ORIGINS - If True, the whitelist will not be used and all origins will be accepted.
   allow_all: True
+  allow_credentials: True,
 
-  # CORS_ALLOWED_ORIGINS - A list of origins that are authorized to make cross-site HTTP requests. Defaults to []
   # whitelist:
   # - https://example.com
   # - https://sub.example.com
