@@ -7,7 +7,7 @@ setuptools>=69.0.0
 wheel>=0.41.0
 
 # Database links
-psycopg[binary, c, pool]
+psycopg[binary, pool]
 mysqlclient>=2.2.0
 mariadb>=1.1.8
 
