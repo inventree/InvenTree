@@ -25,6 +25,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from taggit.managers import TaggableManager
 
 import common.models
+import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
@@ -601,6 +602,10 @@ class StockItem(
                 plugin.validate_batch_code(self.batch, self)
             except ValidationError as exc:
                 raise ValidationError({'batch': exc.message})
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugin.{plugin.slug}.validate_batch_code'
+                )
 
     def clean(self):
         """Validate the StockItem object (separate to field validation).
