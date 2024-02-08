@@ -64,6 +64,20 @@ To return an element corresponding to a certain key in a container which support
 {% endraw %}
 ```
 
+## Formatting Numbers
+
+The helper function `format_number` allows for some common number formatting options. It takes a number (or a number-like string) as an input, as well as some formatting arguments. It returns a *string* containing the formatted number:
+
+```html
+{% raw %}
+{% load report %}
+{% format_number 3.14159265359 decimal_places=5, leading=3 %}
+<!-- output: 0003.14159 -->
+{% format_number 3.14159265359 integer=True %}
+<!-- output: 3 -->
+{% endraw %}
+```
+
 ## Rendering Currency
 
 The helper function `render_currency` allows for simple rendering of currency data. This function can also convert the specified amount of currency into a different target currency:

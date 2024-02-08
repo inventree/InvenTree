@@ -385,7 +385,6 @@ def format_number(number, **kwargs):
 
     kwargs:
         decimal_places: Number of decimal places to render
-        show_sign: Boolean, whether to show the sign of the number
         integer: Boolean, whether to render the number as an integer
         leading: Number of leading zeros
     """
@@ -398,6 +397,9 @@ def format_number(number, **kwargs):
     if kwargs.get('integer', False):
         # Convert to integer
         number = Decimal(int(number))
+
+    # Normalize the number (remove trailing zeroes)
+    number = number.normalize()
 
     decimals = kwargs.get('decimal_places', None)
 
