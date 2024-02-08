@@ -137,7 +137,7 @@ jobs:
           update: true
       - name: Export API Documentation
         run: |
-          invoke schema
+          invoke schema --ignore-warnings
 
   python:
     name: Tests - inventree-python

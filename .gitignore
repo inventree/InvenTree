@@ -48,6 +48,7 @@ label.pdf
 label.png
 InvenTree/my_special*
 _tests*.txt
+schema.yml
 
 # Local static and media file storage (only when running in development mode)
 inventree_media
