@@ -97,6 +97,14 @@ class PluginValidationMixin(DiffMixin):
                     return
             except ValidationError as exc:
                 raise exc
+            except Exception as exc:
+                # Log the exception to the database
+                import InvenTree.exceptions
+
+                InvenTree.exceptions.log_error(
+                    f'plugins.{plugin.slug}.validate_model_instance'
+                )
+                raise ValidationError(_('Error running plugin validation'))
 
     def full_clean(self):
         """Run plugin validation on full model clean.

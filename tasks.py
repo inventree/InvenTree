@@ -369,10 +369,9 @@ def migrate(c):
     print('Running InvenTree database migrations...')
     print('========================================')
 
-    manage(c, 'makemigrations')
-    manage(c, 'migrate --noinput')
+    # Run custom management command which wraps migrations in "maintenance mode"
+    manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
-    manage(c, 'check')
 
     print('========================================')
     print('InvenTree database migrations completed!')
@@ -889,6 +888,24 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
         setup_dev(c)
 
 
+@task(
+    help={
+        'filename': "Output filename (default = 'schema.yml')",
+        'overwrite': 'Overwrite existing files without asking first (default = off/False)',
+    }
+)
+def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
+    """Export current API schema."""
+    check_file_existance(filename, overwrite)
+
+    cmd = f'spectacular --file {filename} --validate --color'
+
+    if not ignore_warnings:
+        cmd += ' --fail-on-warn'
+
+    manage(c, cmd, pty=True)
+
+
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
@@ -932,25 +949,6 @@ You are probably running the package installer / single-line installer. Please m
 Use '--list' for a list of available commands
 Use '--help' for help on a specific command"""
         )
-
-
-@task(
-    help={
-        'filename': "Output filename (default = 'api.yaml')",
-        'ignore_warnings': 'Ignore warnings (default = False)',
-    }
-)
-def apidoc(c, filename='api.yaml', ignore_warnings=False):
-    """Generate API documentation."""
-    if not os.path.isabs(filename):
-        filename = localDir().joinpath(filename).resolve()
-
-    cmd = f'spectacular --file {filename} --validate --color'
-
-    if not ignore_warnings:
-        cmd += ' --fail-on-warn'
-
-    manage(c, cmd, pty=True)
 
 
 @task()

@@ -8,7 +8,7 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from maintenance_mode.backends import AbstractStateBackend
 
 import common.models
-import InvenTree.helpers
+import InvenTree.ready
 
 logger = logging.getLogger('inventree')
 
