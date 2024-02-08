@@ -1,0 +1,133 @@
+---
+title: Part Views
+---
+
+import Thumbnail from '@site/src/components/Thumbnail';
+
+## Part Category View
+
+From the *home screen*, select *Parts* to open the top-level part category view.
+
+### Details Tab
+
+The *Details* tab shows information about the selected part category. In particular, it shows the name and description of the category, a link to the parent category (if available) and a list of subcategories.
+
+<Thumbnail src="/img/app/part_category_detail.png" title="Part category detail" />
+
+#### Parent Category
+
+If the current category has a parent category (i.e. it is not a top-level category) then a link is provided to the parent category. Tap the *parent category* tile to navigate to the category detail page for the parent category.
+
+#### Subcategories
+
+If the current category has any subcategories, these are listed here. Select any of the subcategories to navigate to it.
+
+### Parts Tab
+
+The *Parts* tab displays all the parts available in this category. Tap a displayed part to navigate to the part detail view.
+
+<Thumbnail src="/img/app/category_parts_tab.png" title="Category parts" />
+
+The list of available parts can be filtered using the input box at the top of the screen:
+
+<Thumbnail src="/img/app/category_parts_filter.png" title="category parts filter" />
+
+### Context Actions
+
+The following *Context Actions* are available for the selected category:
+
+<Thumbnail src="/img/app/category_actions_tab.png" title="Category actions" />
+
+#### New Category
+
+Create a new subcategory under the current category:
+
+<Thumbnail src="/img/app/new_category.jpg" title="New category" />
+
+#### New Part
+
+Create a new part within the current category:
+
+<Thumbnail src="/img/app/new_part.jpg" title="New part" />
+
+### Edit Category
+
+Select the *Edit* button in the top right corner of the screen to edit the details for the selected part category:
+
+<Thumbnail src="/img/app/part_category_edit.jpg" title="Edit category" />
+
+:::info Permission Required
+If the user does not have permission to edit part details, this button will be hidden
+:::
+
+In the part category display screen, there are three tabs of information available:
+
+## Part Detail View
+
+The *Part Detail* view displays information about a single part:
+
+<Thumbnail src="/img/app/part_details.png" title="Part details" />
+
+### Details Tab
+
+The *details* tab shows information about the selected part. Some of the displayed tiles provide further information when selected:
+
+#### Category
+
+Tap on the displayed part category to navigate to a detail view for that category.
+
+#### Stock
+
+The *stock* tile shows the total quantity of stock available for the part. Tap on this tile to navigate to the *Stock Tab* view for this part.
+
+#### Notes
+
+Tap on the *notes* tile to view (and edit) the notes for this part:
+
+<Thumbnail src="/img/app/part_notes.jpg" title="Part notes" />
+
+#### Attachments
+
+Tap on the *attachments* tile to view the file attachments for this part:
+
+<Thumbnail src="/img/app/part_attachments.jpg" title="Part attachments" />
+
+New attachments can be uploaded by tapping on the icons in the top right of the screen.
+
+Select a particular attachment file to downloaded it to the local device.
+
+### Stock Tab
+
+The *Stock* tab displays all the stock items available for this part. Tap on a particular stock item to navigate to a detail view for that item.
+
+<Thumbnail src="/img/app/part_stock.png" title="Part stock" />
+
+The list of available stock items can be filtered using the input box at the top of the screen.
+
+### Actions Tab
+
+The *Actions* tab displays the available actions for the selected part:
+
+#### New Stock Item
+
+Create a new stock item for this part:
+
+<Thumbnail src="/img/app/new_stock_item.jpg" title="New stock item" />
+
+### Edit Part
+
+To edit the part details, select the *Edit* button in the top right corner of the screen:
+
+<Thumbnail src="/img/app/part_edit.jpg" title="Edit part" />
+
+:::info Permission Required
+If the user does not have permission to edit part details, this button will be hidden
+:::
+
+### Part Image View
+
+Tap the image of the part (displayed at the top left of the screen) to launch the part image view:
+
+<Thumbnail src="/img/app/part_image.jpg" title="Part image" />
+
+A full-screen view of the image is displayed. The user can also upload a new image for the part, either selecting an image from the device, or taking a new picture with the device's camera.

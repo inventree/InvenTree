@@ -53,6 +53,19 @@ const config = {
     ],
   ],
 
+  plugins: [
+    'plugin-image-zoom',
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'app',
+        path: 'app',
+        routeBasePath: 'app',
+        sidebarPath: './sidebarApp.ts',
+      }
+    ]
+  ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
