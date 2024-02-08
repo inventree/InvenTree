@@ -69,9 +69,9 @@ const config = {
         },
       },
       navbar: {
-        title: 'My Site',
+        title: 'InvenTree',
         logo: {
-          alt: 'My Site Logo',
+          alt: 'InvenTree Logo',
           src: 'img/logo.svg',
         },
         items: [
