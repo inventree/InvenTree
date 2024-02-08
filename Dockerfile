@@ -57,6 +57,7 @@ LABEL org.label-schema.schema-version="1.0" \
 # Install required system level packages
 RUN apk add --no-cache \
     git gettext py-cryptography \
+    sqlite postgresql-libs mariadb-client \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
