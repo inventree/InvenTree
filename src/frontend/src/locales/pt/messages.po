@@ -8,13 +8,13 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-02 11:45\n"
+"PO-Revision-Date: 2024-02-07 12:23\n"
 "Last-Translator: \n"
-"Language-Team: Portuguese, Brazilian\n"
+"Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-Language: pt-PT\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
@@ -22,32 +22,33 @@ msgstr ""
 msgid "Title"
 msgstr "Título"
 
-#: src/components/forms/ApiForm.tsx:131
+#: src/components/forms/ApiForm.tsx:132
 #: src/functions/forms.tsx:259
 msgid "Form Error"
-msgstr "Erro no formulário"
+msgstr "Erro de formulário"
 
-#: src/components/forms/ApiForm.tsx:321
+#: src/components/forms/ApiForm.tsx:323
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
 msgstr "Sucesso"
 
-#: src/components/forms/ApiForm.tsx:392
+#: src/components/forms/ApiForm.tsx:396
 msgid "Form Errors Exist"
-msgstr "Há erros de formulário"
+msgstr "Existem erros no formulário"
 
-#: src/components/forms/ApiForm.tsx:447
+#: src/components/forms/ApiForm.tsx:451
 #: src/components/images/DetailsImage.tsx:223
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
 msgstr "Enviar"
 
-#: src/components/forms/ApiForm.tsx:483
+#: src/components/forms/ApiForm.tsx:487
+#: src/tables/plugin/PluginListTable.tsx:436
 msgid "Update"
 msgstr "Atualizar"
 
-#: src/components/forms/ApiForm.tsx:503
+#: src/components/forms/ApiForm.tsx:507
 #: src/components/items/ActionDropdown.tsx:173
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:120
@@ -55,8 +56,9 @@ msgstr "Atualizar"
 #: src/pages/Notifications.tsx:79
 #: src/tables/InvenTreeTable.tsx:456
 #: src/tables/RowActions.tsx:70
+#: src/tables/plugin/PluginListTable.tsx:467
 msgid "Delete"
-msgstr "Excluir"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -66,11 +68,11 @@ msgstr "Excluir"
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr "Acesso bem-sucedido"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
-msgstr "Bem-vindo(a) de volta!"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -78,14 +80,14 @@ msgstr "Bem-vindo(a) de volta!"
 
 #: src/components/forms/AuthenticationForm.tsx:58
 msgid "Login failed"
-msgstr "Falha ao acessar"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:59
 #: src/components/forms/AuthenticationForm.tsx:79
 #: src/components/forms/AuthenticationForm.tsx:216
 #: src/functions/auth.tsx:112
 msgid "Check your input and try again."
-msgstr "Verifique sua entrada e tente novamente."
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -95,16 +97,16 @@ msgstr "Verifique sua entrada e tente novamente."
 #: src/components/forms/AuthenticationForm.tsx:70
 #: src/functions/auth.tsx:103
 msgid "Mail delivery successful"
-msgstr "Envio de e-mail concluído"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:71
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr "Verifique sua caixa de entrada para o link de acesso. Se você tiver uma conta, você receberá um link de acesso. Também verifique o spam."
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:78
 #: src/components/forms/AuthenticationForm.tsx:215
 msgid "Input error"
-msgstr "Erro de entrada"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Or continue with other methods"
@@ -113,28 +115,28 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/components/forms/AuthenticationForm.tsx:233
 msgid "Username"
-msgstr "Nome de usuário"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:110
 #: src/components/forms/AuthenticationForm.tsx:234
 msgid "Your username"
-msgstr "Seu nome de usuário"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:115
 #: src/components/forms/AuthenticationForm.tsx:246
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr "Senha"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:116
 #: src/components/forms/AuthenticationForm.tsx:247
 msgid "Your password"
-msgstr "Sua senha"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:128
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr "Redefinir senha"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -149,54 +151,54 @@ msgstr "Redefinir senha"
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
-msgstr "Email"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:138
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr "Enviaremos um link para fazer o acesso - se você estiver registrado"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:154
 msgid "Send me an email"
-msgstr "Me envie um e-mail"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:156
 msgid "Use username and password"
-msgstr "Usar nome de usuário e senha"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:165
 msgid "Log In"
-msgstr "Entrar"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:167
 msgid "Send Email"
-msgstr "Enviar E-mail"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:196
 msgid "Registration successful"
-msgstr "Cadastrado com sucesso"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:197
 msgid "Please confirm your email address to complete the registration"
-msgstr "Por favor, confirme seu endereço de e-mail para concluir o registro"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:240
 msgid "This will be used for a confirmation"
-msgstr "Isto será usado para uma confirmação"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:252
 msgid "Password repeat"
-msgstr "Repetir senha"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:253
 msgid "Repeat password"
-msgstr "Repita a senha"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:265
 #: src/components/forms/AuthenticationForm.tsx:310
 msgid "Register"
-msgstr "Registrar"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:271
 msgid "Or use SSO"
@@ -204,63 +206,63 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:302
 msgid "Don't have an account?"
-msgstr "Não possui uma conta?"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:321
 msgid "Go back to login"
-msgstr "Voltar ao login"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr "Servidor"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
 #: src/tables/plugin/PluginErrorTable.tsx:33
-#: src/tables/plugin/PluginListTable.tsx:160
+#: src/tables/plugin/PluginListTable.tsx:167
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:27
 #: src/tables/settings/GroupTable.tsx:103
 #: src/tables/settings/PendingTasksTable.tsx:26
 msgid "Name"
-msgstr "Nome"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
-msgstr "Ninguém aqui..."
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr "Adicionar Host"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr "Salvar"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr "Selecionar instância de destino"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr "Editar possíveis opções de servidor"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr "Versão: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr "API:{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr "Nome: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr "Estado: <0>funcionário</0> ({0}), <1>extensões</1>{1}"
+msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:271
 #: src/components/nav/SearchDrawer.tsx:411
@@ -270,41 +272,41 @@ msgstr "Estado: <0>funcionário</0> ({0}), <1>extensões</1>{1}"
 #: src/pages/ErrorPage.tsx:25
 #: src/tables/InvenTreeTable.tsx:416
 #: src/tables/InvenTreeTable.tsx:489
-#: src/tables/plugin/PluginListTable.tsx:367
+#: src/tables/plugin/PluginListTable.tsx:393
 msgid "Error"
-msgstr "Erro"
+msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:242
 #: src/pages/Index/Settings/UserSettings.tsx:64
 #: src/tables/Search.tsx:23
 msgid "Search"
-msgstr "Buscar"
+msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:243
 #: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
-msgstr "Carregando"
+msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:245
 msgid "No results found"
-msgstr "Nenhum resultado encontrado"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:61
 msgid "Remove Image"
-msgstr "Remover Imagem"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:64
 msgid "Remove the associated image from this item?"
-msgstr "Remover imagem associada a este item?"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:67
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:192
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 #: src/pages/stock/StockDetail.tsx:183
 msgid "Remove"
-msgstr "Remover"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:67
 #: src/contexts/ThemeContext.tsx:64
@@ -312,302 +314,302 @@ msgstr "Remover"
 #: src/hooks/UseForm.tsx:38
 #: src/tables/FilterSelectDrawer.tsx:209
 #: src/tables/InvenTreeTable.tsx:457
-#: src/tables/plugin/PluginListTable.tsx:336
+#: src/tables/plugin/PluginListTable.tsx:356
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:95
 msgid "Drag and drop to upload"
-msgstr "Arraste e solte para carregar"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:98
 msgid "Click to select file(s)"
-msgstr "Clique para selecionar o(s) arquivo(s)"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:220
 msgid "Clear"
-msgstr "Limpar"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:252
 msgid "Select image"
-msgstr "Selecionar imagem"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:263
 msgid "Select from existing images"
-msgstr "Selecionar de imagens existentes"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:273
 msgid "Upload new image"
-msgstr "Carregar nova imagem"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:279
 msgid "Upload Image"
-msgstr "Enviar Imagem"
+msgstr ""
 
 #: src/components/images/DetailsImage.tsx:292
 msgid "Delete image"
-msgstr "Excluir imagem"
+msgstr ""
 
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:51
 msgid "Thumbnail"
-msgstr "Miniatura"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:84
 #: src/pages/build/BuildDetail.tsx:203
 msgid "Barcode Actions"
-msgstr "Ações de código de barras"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:101
 msgid "View"
-msgstr "Visualizar"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:102
 msgid "View barcode"
-msgstr "Ver código de barras"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:118
 msgid "Link Barcode"
-msgstr "Vincular Código de Barras"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:119
 msgid "Link custom barcode"
-msgstr "Vincular código de barras personalizado"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:135
 msgid "Unlink Barcode"
-msgstr "Desvincular Código de Barras"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:136
 msgid "Unlink custom barcode"
-msgstr "Desvincular código de barras personalizado"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:154
 #: src/tables/RowActions.tsx:50
 msgid "Edit"
-msgstr "Editar"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:174
 msgid "Delete item"
-msgstr "Apagar item"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:192
 #: src/pages/stock/StockDetail.tsx:200
 #: src/tables/RowActions.tsx:30
 msgid "Duplicate"
-msgstr "Duplicar"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:193
 msgid "Duplicate item"
-msgstr "Duplicar item"
+msgstr ""
 
 #: src/components/items/CopyButton.tsx:18
 msgid "Copy to clipboard"
-msgstr "Copiar para área de transferência"
+msgstr ""
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr "Leia Mais"
+msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/tables/InvenTreeTable.tsx:408
 msgid "Unknown error"
-msgstr "Erro desconhecido"
+msgstr ""
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr "Um erro ocorreu:"
+msgstr ""
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr "Ler mais"
+msgstr ""
 
 #: src/components/items/InfoItem.tsx:25
 msgid "None"
-msgstr "Nenhum"
+msgstr ""
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
-msgstr "Logotipo InvenTree"
+msgstr ""
 
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:44
 msgid "This information is only available for staff users"
-msgstr "Esta informação só está disponível para usuários da equipe"
+msgstr ""
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr "Este recurso/botão/site é um supositório para um recurso que não está implementado, somente parcial ou destinado a testes."
+msgstr ""
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr "PLH"
+msgstr ""
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
-msgstr "Este painel é um espaço reservado."
+msgstr ""
 
 #: src/components/items/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr "Escanear código QR"
+msgstr ""
 
 #: src/components/items/YesNoButton.tsx:16
 #: src/tables/Filter.tsx:51
 msgid "Yes"
-msgstr "Sim"
+msgstr ""
 
 #: src/components/items/YesNoButton.tsx:16
 #: src/tables/Filter.tsx:52
 msgid "No"
-msgstr "Não"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Version Information"
-msgstr "Informações da Versão"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:103
 msgid "Your InvenTree version status is"
-msgstr "Sua versão do InvenTree é"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:107
 msgid "Development Version"
-msgstr "Versão de desenvolvimento"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:111
 msgid "Up to Date"
-msgstr "Atualizado"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:115
 msgid "Update Available"
-msgstr "Atualização disponível"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:125
 msgid "InvenTree Version"
-msgstr "Versão do InvenTree"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:131
 msgid "Commit Hash"
-msgstr "Hash do Commit"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:136
 msgid "Commit Date"
-msgstr "Data do Commit"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:141
 msgid "Commit Branch"
-msgstr "Ramo do Commit"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:146
 #: src/components/modals/ServerInfoModal.tsx:133
 msgid "API Version"
-msgstr "Versão da API"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Python Version"
-msgstr "Versão do Python"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:152
 msgid "Django Version"
-msgstr "Versão do Django"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:162
 msgid "Links"
-msgstr "Links"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 msgid "InvenTree Documentation"
-msgstr "Documentação do InvenTree"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 msgid "View Code on GitHub"
-msgstr "Veja o código no GitHub"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:170
 msgid "Credits"
-msgstr "Créditos"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Mobile App"
-msgstr "Aplicativo para celular"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:172
 msgid "Submit Bug Report"
-msgstr "Enviar Relatório de Erro"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:183
 msgid "Copy version information"
-msgstr "Copiar informações da versão"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
-msgstr "Dispensar"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
-msgstr "Resposta desconhecida"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:102
 #: src/pages/Index/Scan.tsx:618
 msgid "Error while getting camera"
-msgstr "Erro ao obter a câmera"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:125
 #: src/pages/Index/Scan.tsx:641
 msgid "Error while scanning"
-msgstr "Erro ao escanear"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:139
 #: src/pages/Index/Scan.tsx:655
 msgid "Error while stopping"
-msgstr "Erro ao parar"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/defaults/menuItems.tsx:21
 #: src/pages/Index/Scan.tsx:724
 msgid "Scanning"
-msgstr "Escaneando"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/pages/Index/Scan.tsx:724
 msgid "Not scanning"
-msgstr "Não está escaneando"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:159
 #: src/pages/Index/Scan.tsx:730
 msgid "Select Camera"
-msgstr "Selecionar Camera"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:169
 #: src/pages/Index/Scan.tsx:716
 msgid "Start scanning"
-msgstr "Começar a escanear"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:176
 #: src/pages/Index/Scan.tsx:710
 msgid "Stop scanning"
-msgstr "Parar escaneamento"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:181
 msgid "No scans yet!"
-msgstr "Ainda não há escaneamentos!"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:201
 msgid "Close modal"
-msgstr "Fechar o modal"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:26
 #: src/pages/Index/Settings/SystemSettings.tsx:37
 msgid "Server"
-msgstr "Servidor"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:32
 msgid "Instance Name"
-msgstr "Nome da Instância"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:38
 msgid "Database"
-msgstr "Banco de Dados"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:38
 #~ msgid "Bebug Mode"
@@ -615,74 +617,74 @@ msgstr "Banco de Dados"
 
 #: src/components/modals/ServerInfoModal.tsx:47
 msgid "Debug Mode"
-msgstr "Modo de depuração"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:50
 msgid "Server is running in debug mode"
-msgstr "Servidor está em execução em modo de depuração"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:57
 msgid "Docker Mode"
-msgstr "Modo Docker"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:60
 msgid "Server is deployed using docker"
-msgstr "O servidor está implantado usando o docker"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:66
 msgid "Plugin Support"
-msgstr "Suporte a Plugins"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:71
 msgid "Plugin support enabled"
-msgstr "Suporte a plugin habilitado"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:73
 msgid "Plugin support disabled"
-msgstr "Suporte a plugin desabilitado"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:80
 msgid "Server status"
-msgstr "Estado do servidor"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:86
 msgid "Healthy"
-msgstr "Saudável"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:88
 msgid "Issues detected"
-msgstr "Problemas detectados"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:97
 msgid "Background Worker"
-msgstr "Trabalhador em Segundo Plano"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:101
 msgid "Background worker not running"
-msgstr "Trabalhador em segundo plano não está funcionando"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:109
 msgid "Email Settings"
-msgstr "Configurações de Email"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:113
 msgid "Email settings not configured"
-msgstr "Email não configurado"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:121
-#: src/tables/plugin/PluginListTable.tsx:178
-#: src/tables/plugin/PluginListTable.tsx:290
+#: src/tables/plugin/PluginListTable.tsx:185
+#: src/tables/plugin/PluginListTable.tsx:310
 msgid "Version"
-msgstr "Versão"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:127
 msgid "Server Version"
-msgstr "Versão do servidor"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:39
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
 msgid "Settings"
-msgstr "Configurações"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
@@ -692,19 +694,19 @@ msgstr "Configurações"
 #: src/components/nav/MainMenu.tsx:42
 #: src/defaults/menuItems.tsx:15
 msgid "Account settings"
-msgstr "Configurações de conta"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:50
 #: src/defaults/menuItems.tsx:58
 #: src/pages/Index/Settings/SystemSettings.tsx:283
 msgid "System Settings"
-msgstr "Configurações do Sistema"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:60
 #: src/defaults/menuItems.tsx:63
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:128
 msgid "Admin Center"
-msgstr "Centro de Administração"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
@@ -712,7 +714,7 @@ msgstr "Centro de Administração"
 
 #: src/components/nav/MainMenu.tsx:70
 msgid "Logout"
-msgstr "Sair"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:71
 #~ msgid "Switch to pseudo language"
@@ -720,41 +722,42 @@ msgstr "Sair"
 
 #: src/components/nav/NavHoverMenu.tsx:61
 msgid "Open Navigation"
-msgstr "Abrir Navegação"
+msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:79
 msgid "View all"
-msgstr "Visualizar Tudo"
+msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:93
 #: src/components/nav/NavHoverMenu.tsx:103
 msgid "Get started"
-msgstr "Introdução"
+msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:96
 msgid "Overview over high-level objects, functions and possible usecases."
-msgstr "Visão geral sobre objetos de alto nível, funções e possíveis usos."
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:59
 msgid "Navigation"
-msgstr "Navegação"
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:62
 msgid "Pages"
-msgstr "Páginas"
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:67
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:95
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
-msgstr "Extensões"
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:77
 msgid "Documentation"
-msgstr "Documentação"
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:80
 msgid "About"
-msgstr "Sobre"
+msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:70
 #: src/pages/Index/Settings/SystemSettings.tsx:102
@@ -762,78 +765,78 @@ msgstr "Sobre"
 #: src/pages/Notifications.tsx:28
 #: src/pages/Notifications.tsx:100
 msgid "Notifications"
-msgstr "Notificações"
+msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:87
 msgid "You have no unread notifications."
-msgstr "Você não tem notificações não lidas."
+msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:102
 #: src/components/nav/NotificationDrawer.tsx:108
 #: src/tables/notifications/NotificationsTable.tsx:34
 msgid "Notification"
-msgstr "Notificação"
+msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:131
 #: src/pages/Notifications.tsx:36
 msgid "Mark as read"
-msgstr "Marcar como lido"
+msgstr ""
 
 #: src/components/nav/PartCategoryTree.tsx:80
 #: src/components/render/ModelType.tsx:53
 #: src/pages/Index/Settings/SystemSettings.tsx:166
 #: src/pages/part/CategoryDetail.tsx:65
 msgid "Part Categories"
-msgstr "Categorias de Peça"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:76
 msgid "results"
-msgstr "resultados"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:336
 msgid "Enter search text"
-msgstr "Digite o texto de pesquisa"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:363
 msgid "Search Options"
-msgstr "Opções de pesquisa"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:366
 msgid "Regex search"
-msgstr "Busca por Regex"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:376
 msgid "Whole word search"
-msgstr "Pesquisa de palavras inteira"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:414
 msgid "An error occurred during search query"
-msgstr "Ocorreu um erro durante a pesquisa"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:425
 msgid "No results"
-msgstr "Nenhum resultado"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:428
 msgid "No results available for search query"
-msgstr "Não há resultados disponíveis para a pesquisa"
+msgstr ""
 
 #: src/components/nav/StockLocationTree.tsx:80
 #: src/components/render/ModelType.tsx:69
 #: src/pages/stock/LocationDetail.tsx:54
 msgid "Stock Locations"
-msgstr "Locais de estoque"
+msgstr ""
 
 #: src/components/render/Instance.tsx:135
 msgid "Unknown model: {model}"
-msgstr "Modelo desconhecido: {model}"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:21
-#: src/pages/part/PartDetail.tsx:706
+#: src/pages/part/PartDetail.tsx:703
 #: src/tables/part/RelatedPartTable.tsx:45
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:59
 msgid "Part"
-msgstr "Peça"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:22
 #: src/defaults/links.tsx:28
@@ -841,229 +844,229 @@ msgstr "Peça"
 #: src/pages/Index/Settings/SystemSettings.tsx:171
 #: src/pages/part/CategoryDetail.tsx:51
 #: src/pages/part/CategoryDetail.tsx:81
-#: src/pages/part/PartDetail.tsx:617
+#: src/pages/part/PartDetail.tsx:614
 msgid "Parts"
-msgstr "Peças"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:29
 msgid "Part Parameter Template"
-msgstr "Modelo de Parâmetro de Peça"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:30
 msgid "Part Parameter Templates"
-msgstr "Modelos de Parâmetro de Peça"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:36
 #: src/pages/company/SupplierPartDetail.tsx:78
 #: src/tables/purchasing/SupplierPartTable.tsx:66
 msgid "Supplier Part"
-msgstr "Fornecedor da Peça"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:37
 msgid "Supplier Parts"
-msgstr "Peças do Fornecedor"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:44
 msgid "Manufacturer Part"
-msgstr "Fabricante da peça"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:45
 msgid "Manufacturer Parts"
-msgstr "Peças do Fabricante"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:52
 #: src/pages/part/CategoryDetail.tsx:101
 msgid "Part Category"
-msgstr "Categoria da Peça"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:60
 #: src/pages/stock/StockDetail.tsx:225
 msgid "Stock Item"
-msgstr "Item de estoque"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:61
 #: src/pages/company/CompanyDetail.tsx:106
 #: src/pages/stock/LocationDetail.tsx:42
 #: src/pages/stock/LocationDetail.tsx:82
 msgid "Stock Items"
-msgstr "Itens de Estoque"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:68
 msgid "Stock Location"
-msgstr "Localização do estoque"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:76
 msgid "Stock History"
-msgstr "Histórico de estoque"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:77
 msgid "Stock Histories"
-msgstr "Históricos de estoque"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:81
 #: src/defaults/links.tsx:30
 #: src/defaults/menuItems.tsx:43
 msgid "Build"
-msgstr "Produzir"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:82
 msgid "Builds"
-msgstr "Compilações"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:89
 #: src/pages/company/CompanyDetail.tsx:212
 msgid "Company"
-msgstr "Empresa"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:90
 msgid "Companies"
-msgstr "Empresas"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:97
 #: src/tables/TableHoverCard.tsx:58
 msgid "Project Code"
-msgstr "Código do Projeto"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:98
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:71
 msgid "Project Codes"
-msgstr "Códigos de Projeto"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:104
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:131
 msgid "Purchase Order"
-msgstr "Pedido de Compra"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:105
 #: src/pages/Index/Settings/SystemSettings.tsx:235
 #: src/pages/company/CompanyDetail.tsx:99
 #: src/pages/company/SupplierPartDetail.tsx:45
-#: src/pages/part/PartDetail.tsx:550
+#: src/pages/part/PartDetail.tsx:547
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
-msgstr "Pedidos de compra"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:112
 msgid "Purchase Order Line"
-msgstr "Linha do Pedido de Compra"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:113
 msgid "Purchase Order Lines"
-msgstr "Linhas do Pedido de Compra"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:117
 #: src/pages/sales/SalesOrderDetail.tsx:102
 msgid "Sales Order"
-msgstr "Pedido de Venda"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:118
 #: src/pages/Index/Settings/SystemSettings.tsx:249
 #: src/pages/company/CompanyDetail.tsx:115
-#: src/pages/part/PartDetail.tsx:556
+#: src/pages/part/PartDetail.tsx:553
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
-msgstr "Pedidos de vendas"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:125
 msgid "Sales Order Shipment"
-msgstr "Envio do Pedido Venda"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:126
 msgid "Sales Order Shipments"
-msgstr "Envios do Pedido Venda"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:132
 #: src/pages/sales/ReturnOrderDetail.tsx:68
 msgid "Return Order"
-msgstr "Pedido de Devolução"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:133
 #: src/pages/Index/Settings/SystemSettings.tsx:263
 #: src/pages/company/CompanyDetail.tsx:122
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
-msgstr "Pedidos de Devolução"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:140
 #: src/tables/company/AddressTable.tsx:47
 msgid "Address"
-msgstr "Endereço"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:141
 #: src/pages/company/CompanyDetail.tsx:148
 msgid "Addresses"
-msgstr "Endereços"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:147
 msgid "Contact"
-msgstr "Contato"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:148
 #: src/pages/company/CompanyDetail.tsx:142
 msgid "Contacts"
-msgstr "Contatos"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:154
 msgid "Owner"
-msgstr "Proprietário"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:155
 msgid "Owners"
-msgstr "Proprietários"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:161
 msgid "User"
-msgstr "Usuário"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:162
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:53
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
-msgstr "Usuários"
+msgstr ""
 
 #: src/components/render/Order.tsx:85
 msgid "Shipment"
-msgstr "Remessa"
+msgstr ""
 
 #: src/components/render/Part.tsx:10
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:202
-#: src/pages/part/PartDetail.tsx:473
+#: src/pages/part/PartDetail.tsx:470
 #: src/pages/stock/LocationDetail.tsx:63
 #: src/pages/stock/StockDetail.tsx:140
 #: src/tables/stock/StockItemTable.tsx:38
 msgid "Stock"
-msgstr "Estoque"
+msgstr ""
 
 #: src/components/render/Stock.tsx:26
 msgid "Serial Number"
-msgstr "Número de Série"
+msgstr ""
 
 #: src/components/render/Stock.tsx:28
 #: src/pages/build/BuildDetail.tsx:76
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:81
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:109
 msgid "Quantity"
-msgstr "Quantidade"
+msgstr ""
 
 #: src/components/settings/SettingItem.tsx:43
 #: src/components/settings/SettingItem.tsx:95
 msgid "Setting updated"
-msgstr "Configurações atualizadas"
+msgstr ""
 
 #: src/components/settings/SettingItem.tsx:44
 #: src/components/settings/SettingItem.tsx:96
 msgid "{0} updated successfully"
-msgstr "{0} atualizado com sucesso"
+msgstr ""
 
 #: src/components/settings/SettingItem.tsx:51
 msgid "Error editing setting"
-msgstr "Erro ao editar configuração"
+msgstr ""
 
 #: src/components/settings/SettingItem.tsx:88
 msgid "Edit Setting"
-msgstr "Editar configurações"
+msgstr ""
 
 #: src/components/tables/ColumnRenderers.tsx:134
 #~ msgid "Shipment Date"
@@ -1097,25 +1100,26 @@ msgstr "Editar configurações"
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/bom/BomTable.tsx:99
-#: src/components/tables/bom/UsedInTable.tsx:76
-#: src/components/tables/build/BuildOrderTable.tsx:33
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:117
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:66
+#: src/components/tables/bom/BomTable.tsx:101
+#: src/components/tables/bom/UsedInTable.tsx:54
+#: src/components/tables/build/BuildLineTable.tsx:124
+#: src/components/tables/build/BuildOrderTable.tsx:34
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:121
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:67
 #~ msgid "Reference"
 #~ msgstr "Reference"
 
-#: src/components/tables/bom/BomTable.tsx:111
+#: src/components/tables/bom/BomTable.tsx:113
 #~ msgid "Substitutes"
 #~ msgstr "Substitutes"
 
-#: src/components/tables/bom/BomTable.tsx:133
+#: src/components/tables/bom/BomTable.tsx:135
 #~ msgid "Allow Variants"
 #~ msgstr "Allow Variants"
 
-#: src/components/tables/bom/BomTable.tsx:137
-#: src/components/tables/bom/BomTable.tsx:263
-#: src/components/tables/bom/UsedInTable.tsx:86
+#: src/components/tables/bom/BomTable.tsx:139
+#: src/components/tables/bom/BomTable.tsx:265
+#: src/components/tables/bom/UsedInTable.tsx:64
 #~ msgid "Gets Inherited"
 #~ msgstr "Gets Inherited"
 
@@ -1123,31 +1127,35 @@ msgstr "Editar configurações"
 #~ msgid "Validate"
 #~ msgstr "Validate"
 
-#: src/components/tables/bom/BomTable.tsx:248
+#: src/components/tables/bom/BomTable.tsx:250
 #~ msgid "Has Available Stock"
 #~ msgstr "Has Available Stock"
 
-#: src/components/tables/bom/BomTable.tsx:258
+#: src/components/tables/bom/BomTable.tsx:260
 #~ msgid "Validated"
 #~ msgstr "Validated"
 
-#: src/components/tables/bom/UsedInTable.tsx:50
+#: src/components/tables/bom/UsedInTable.tsx:40
 #~ msgid "Required Part"
 #~ msgstr "Required Part"
 
-#: src/components/tables/build/BuildOrderTable.tsx:63
+#: src/components/tables/build/BuildLineTable.tsx:152
+#~ msgid "Required Quantity"
+#~ msgstr "Required Quantity"
+
+#: src/components/tables/build/BuildOrderTable.tsx:52
 #~ msgid "Progress"
 #~ msgstr "Progress"
 
-#: src/components/tables/build/BuildOrderTable.tsx:76
+#: src/components/tables/build/BuildOrderTable.tsx:65
 #~ msgid "Priority"
 #~ msgstr "Priority"
 
-#: src/components/tables/build/BuildOrderTable.tsx:84
+#: src/components/tables/build/BuildOrderTable.tsx:73
 #~ msgid "Completed"
 #~ msgstr "Completed"
 
-#: src/components/tables/build/BuildOrderTable.tsx:90
+#: src/components/tables/build/BuildOrderTable.tsx:79
 #~ msgid "Issued By"
 #~ msgstr "Issued By"
 
@@ -1227,7 +1235,7 @@ msgstr "Editar configurações"
 #~ msgid "Uploaded"
 #~ msgstr "Uploaded"
 
-#: src/components/tables/part/PartCategoryTable.tsx:120
+#: src/components/tables/part/PartCategoryTable.tsx:122
 #~ msgid "Part category updated"
 #~ msgstr "Part category updated"
 
@@ -1338,31 +1346,35 @@ msgstr "Editar configurações"
 #~ msgid "Are you sure you want to remove this relationship?"
 #~ msgstr "Are you sure you want to remove this relationship?"
 
+#: src/components/tables/plugin/PluginListTable.tsx:191
+#~ msgid "Installation path"
+#~ msgstr "Installation path"
+
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:55
 #~ msgid "Receive"
 #~ msgstr "Receive"
 
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:77
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:81
 #~ msgid "Line item updated"
 #~ msgstr "Line item updated"
 
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:228
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:232
 #~ msgid "Line item added"
 #~ msgstr "Line item added"
 
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:90
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:91
 #~ msgid "Supplier Reference"
 #~ msgstr "Supplier Reference"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:93
+#: src/components/tables/purchasing/SupplierPartTable.tsx:99
 #~ msgid "Packaging"
 #~ msgstr "Packaging"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:131
+#: src/components/tables/purchasing/SupplierPartTable.tsx:137
 #~ msgid "Availability"
 #~ msgstr "Availability"
 
-#: src/components/tables/sales/ReturnOrderTable.tsx:93
+#: src/components/tables/sales/ReturnOrderTable.tsx:94
 #~ msgid "Total Cost"
 #~ msgstr "Total Cost"
 
@@ -1478,23 +1490,23 @@ msgstr "Editar configurações"
 #~ msgid "Superuser"
 #~ msgstr "Superuser"
 
-#: src/components/tables/stock/StockItemTable.tsx:180
+#: src/components/tables/stock/StockItemTable.tsx:181
 #~ msgid "Batch"
 #~ msgstr "Batch"
 
-#: src/components/tables/stock/StockItemTable.tsx:186
+#: src/components/tables/stock/StockItemTable.tsx:187
 #~ msgid "Location"
 #~ msgstr "Location"
 
-#: src/components/tables/stock/StockItemTable.tsx:197
+#: src/components/tables/stock/StockItemTable.tsx:198
 #~ msgid "Expiry Date"
 #~ msgstr "Expiry Date"
 
-#: src/components/tables/stock/StockItemTable.tsx:204
+#: src/components/tables/stock/StockItemTable.tsx:205
 #~ msgid "Last Updated"
 #~ msgstr "Last Updated"
 
-#: src/components/tables/stock/StockItemTable.tsx:213
+#: src/components/tables/stock/StockItemTable.tsx:214
 #~ msgid "Purchase Price"
 #~ msgstr "Purchase Price"
 
@@ -1506,278 +1518,278 @@ msgstr "Editar configurações"
 #~ msgid "This is a test filter"
 #~ msgstr "This is a test filter"
 
-#: src/components/tables/stock/StockLocationTable.tsx:43
-#: src/components/tables/stock/StockLocationTable.tsx:82
+#: src/components/tables/stock/StockLocationTable.tsx:45
+#: src/components/tables/stock/StockLocationTable.tsx:84
 #~ msgid "External"
 #~ msgstr "External"
 
-#: src/components/tables/stock/StockLocationTable.tsx:89
+#: src/components/tables/stock/StockLocationTable.tsx:91
 #~ msgid "Location Type"
 #~ msgstr "Location Type"
 
-#: src/components/tables/stock/StockLocationTable.tsx:143
+#: src/components/tables/stock/StockLocationTable.tsx:145
 #~ msgid "Stock location updated"
 #~ msgstr "Stock location updated"
 
 #: src/components/widgets/DisplayWidget.tsx:11
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:16
 msgid "Display Settings"
-msgstr "Configurações de tela"
+msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:15
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:22
 msgid "Color Mode"
-msgstr "Modo de cores"
+msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:21
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:32
 msgid "Language"
-msgstr "Idioma"
+msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
-msgstr "Algo novo: Interface da Plataforma"
+msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:20
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr "Estamos construindo uma nova interface moderna de usuário. O que você vê no momento não foi corrigido e será redesenhado, mas demonstra as possibilidades de UI/UX que teremos adiante."
+msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
-msgstr "Forneça Avaliação"
+msgstr ""
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
-msgstr "Iniciando"
+msgstr ""
 
 #: src/components/widgets/MarkdownEditor.tsx:109
 msgid "Failed to upload image"
-msgstr "Falha no carregamento da imagem"
+msgstr ""
 
 #: src/components/widgets/MarkdownEditor.tsx:147
 msgid "Notes saved"
-msgstr "Notas salvas"
+msgstr ""
 
 #: src/components/widgets/MarkdownEditor.tsx:155
 msgid "Failed to save notes"
-msgstr "Falha em salvar notas"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
-msgstr "Disposição"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:186
 msgid "Reset Layout"
-msgstr "Redefinir Disposição"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
-msgstr "Parar Edição"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
-msgstr "Editar Disposição"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:205
 msgid "Appearance"
-msgstr "Aparência"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
-msgstr "Mostrar Caixas"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:18
 msgid "Bulgarian"
-msgstr "Búlgaro"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:19
 msgid "Czech"
-msgstr "Tcheco"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Danish"
-msgstr "Dinamarquês"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:21
 msgid "German"
-msgstr "Alemão"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:22
 msgid "Greek"
-msgstr "Grego"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:23
 msgid "English"
-msgstr "Inglês"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:24
 msgid "Spanish"
-msgstr "Espanhol"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:25
 msgid "Spanish (Mexican)"
-msgstr "Espanhol (Mexicano)"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:26
 msgid "Farsi / Persian"
-msgstr "Persa"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:27
 msgid "Finnish"
-msgstr "Finlandês"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "French"
-msgstr "Francês"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Hebrew"
-msgstr "Hebraico"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:30
 msgid "Hindi"
-msgstr "Hindi"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:31
 msgid "Hungarian"
-msgstr "Húngaro"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:32
 msgid "Italian"
-msgstr "Italiano"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:33
 msgid "Japanese"
-msgstr "Japonês"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:34
 msgid "Korean"
-msgstr "Coreano"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:35
 msgid "Dutch"
-msgstr "Holandês"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:36
 msgid "Norwegian"
-msgstr "Norueguês"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:37
 msgid "Polish"
-msgstr "Polonês"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:38
 msgid "Portuguese"
-msgstr "Português"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:39
 msgid "Portuguese (Brazilian)"
-msgstr "Português (Brasileiro)"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:40
 msgid "Russian"
-msgstr "Russo"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Slovak"
-msgstr "Eslovaco"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:42
 msgid "Slovenian"
-msgstr "Esloveno"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Swedish"
-msgstr "Sueco"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:44
 msgid "Thai"
-msgstr "Tailandês"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:45
 msgid "Turkish"
-msgstr "Turco"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:46
 msgid "Vietnamese"
-msgstr "Vietnamita"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:47
 msgid "Chinese (Simplified)"
-msgstr "Chinês (Simplificado)"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:48
 msgid "Chinese (Traditional)"
-msgstr "Chinês (Tradicional)"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
-msgstr "Peças inscritas"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:22
 msgid "Subscribed Categories"
-msgstr "Categorias Inscritas"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:29
 msgid "Latest Parts"
-msgstr "Peças mais recentes"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:36
 msgid "BOM Waiting Validation"
-msgstr "LDM Aguardando Validação"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:43
 msgid "Recently Updated"
-msgstr "Atualizados Recentemente"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:50
 #: src/tables/part/PartTable.tsx:218
 msgid "Low Stock"
-msgstr "Estoque Baixo"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:57
 msgid "Depleted Stock"
-msgstr "Estoque Esgotado"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:64
 msgid "Required for Build Orders"
-msgstr "Necessário para pedidos de produção"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:71
 msgid "Expired Stock"
-msgstr "Estoque Expirado"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:78
 msgid "Stale Stock"
-msgstr "Estoque Parado"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:85
 msgid "Build Orders In Progress"
-msgstr "Pedido de Produção em Progresso"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:92
 msgid "Overdue Build Orders"
-msgstr "Pedido de produção atrasado"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:99
 msgid "Outstanding Purchase Orders"
-msgstr "Pedidos de Compra Pendentes"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:106
 msgid "Overdue Purchase Orders"
-msgstr "Pedido de Compra Vencido"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:113
 msgid "Outstanding Sales Orders"
-msgstr "Pedidos de Venda Pendentes"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:120
 msgid "Overdue Sales Orders"
-msgstr "Pedidos de Venda Vencidos"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:127
 msgid "Current News"
-msgstr "Notícias Atuais"
+msgstr ""
 
 #: src/defaults/defaultHostList.tsx:8
 #~ msgid "InvenTree Demo"
@@ -1789,27 +1801,27 @@ msgstr "Notícias Atuais"
 
 #: src/defaults/links.tsx:11
 msgid "Website"
-msgstr "Página Web"
+msgstr ""
 
 #: src/defaults/links.tsx:16
 msgid "GitHub"
-msgstr "GitHub"
+msgstr ""
 
 #: src/defaults/links.tsx:21
 msgid "Demo"
-msgstr "Demonstração"
+msgstr ""
 
 #: src/defaults/links.tsx:26
 #: src/defaults/menuItems.tsx:9
 msgid "Home"
-msgstr "Início"
+msgstr ""
 
 #: src/defaults/links.tsx:27
 #: src/defaults/menuItems.tsx:28
 #: src/pages/Index/Dashboard.tsx:19
 #: src/pages/Index/Settings/UserSettings.tsx:41
 msgid "Dashboard"
-msgstr "Painel de Controle"
+msgstr ""
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
@@ -1820,7 +1832,7 @@ msgstr "Painel de Controle"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:134
 #: src/pages/purchasing/PurchasingIndex.tsx:52
 msgid "Purchasing"
-msgstr "Comprando"
+msgstr ""
 
 #: src/defaults/links.tsx:32
 #: src/defaults/menuItems.tsx:53
@@ -1829,45 +1841,45 @@ msgstr "Comprando"
 #: src/pages/sales/SalesIndex.tsx:45
 #: src/pages/sales/SalesOrderDetail.tsx:105
 msgid "Sales"
-msgstr "Vendas"
+msgstr ""
 
 #: src/defaults/links.tsx:35
 #: src/defaults/menuItems.tsx:71
 #: src/pages/Index/Playground.tsx:192
 msgid "Playground"
-msgstr "Área de testes"
+msgstr ""
 
 #: src/defaults/links.tsx:49
 msgid "Getting Started"
-msgstr "Primeiros passos"
+msgstr ""
 
 #: src/defaults/links.tsx:50
 msgid "Getting started with InvenTree"
-msgstr "Primeiros passos com InvenTree"
+msgstr ""
 
 #: src/defaults/links.tsx:56
 msgid "API"
-msgstr "API"
+msgstr ""
 
 #: src/defaults/links.tsx:57
 msgid "InvenTree API documentation"
-msgstr "Documentação de API do InvenTree"
+msgstr ""
 
 #: src/defaults/links.tsx:62
 msgid "Developer Manual"
-msgstr "Manual do Desenvolvedor"
+msgstr ""
 
 #: src/defaults/links.tsx:63
 msgid "InvenTree developer manual"
-msgstr "Manual do desenvolvedor InvenTree"
+msgstr ""
 
 #: src/defaults/links.tsx:68
 msgid "FAQ"
-msgstr "FAQ"
+msgstr ""
 
 #: src/defaults/links.tsx:69
 msgid "Frequently asked questions"
-msgstr "Perguntas Frequentes"
+msgstr ""
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
@@ -1876,7 +1888,7 @@ msgstr "Perguntas Frequentes"
 #: src/defaults/links.tsx:79
 #: src/defaults/links.tsx:104
 msgid "System Information"
-msgstr "Informação do Sistema"
+msgstr ""
 
 #: src/defaults/links.tsx:83
 #~ msgid "InvenTree"
@@ -1885,23 +1897,23 @@ msgstr "Informação do Sistema"
 #: src/defaults/links.tsx:92
 #: src/defaults/links.tsx:110
 msgid "About InvenTree"
-msgstr "Sobre o InvenTree"
+msgstr ""
 
 #: src/defaults/links.tsx:105
 msgid "About this Inventree instance"
-msgstr "Sobre esta instância do Inventree"
+msgstr ""
 
 #: src/defaults/links.tsx:111
 msgid "About the InvenTree org"
-msgstr "Sobre a organização InvenTree"
+msgstr ""
 
 #: src/defaults/links.tsx:116
 msgid "Licenses"
-msgstr "Licenças"
+msgstr ""
 
 #: src/defaults/links.tsx:117
 msgid "Licenses for packages used by InvenTree"
-msgstr "Licenças para pacotes usados pelo InvenTree"
+msgstr ""
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -1929,7 +1941,7 @@ msgstr "Licenças para pacotes usados pelo InvenTree"
 
 #: src/defaults/menuItems.tsx:17
 msgid "User attributes and design settings."
-msgstr "Atributos de usuário e configurações de design."
+msgstr ""
 
 #: src/defaults/menuItems.tsx:21
 #~ msgid "Free for everyone"
@@ -1941,7 +1953,7 @@ msgstr "Atributos de usuário e configurações de design."
 
 #: src/defaults/menuItems.tsx:23
 msgid "View for interactive scanning and multiple actions."
-msgstr "Visualização para varredura interativa e várias ações."
+msgstr ""
 
 #: src/defaults/menuItems.tsx:24
 #~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
@@ -1981,55 +1993,55 @@ msgstr "Visualização para varredura interativa e várias ações."
 
 #: src/forms/AttachmentForms.tsx:57
 msgid "Add File"
-msgstr "Adicionar Arquivo"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:57
 msgid "Add Link"
-msgstr "Adicionar Link"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:58
 msgid "File added"
-msgstr "Arquivo adicionado"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:58
 msgid "Link added"
-msgstr "Link adicionado"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:99
 msgid "Edit File"
-msgstr "Editar Arquivo"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:99
 msgid "Edit Link"
-msgstr "Editar Link"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "File updated"
-msgstr "Arquivo atualizado"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "Link updated"
-msgstr "Link atualizado"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:124
 msgid "Delete Attachment"
-msgstr "Excluir Anexo"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:125
 msgid "Attachment deleted"
-msgstr "Anexo excluído"
+msgstr ""
 
 #: src/forms/AttachmentForms.tsx:128
 msgid "Are you sure you want to delete this attachment?"
-msgstr "Tem certeza de que deseja excluir este anexo?"
+msgstr ""
 
-#: src/forms/CompanyForms.tsx:138
+#: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
 #~ msgstr "Company updated"
 
 #: src/forms/PartForms.tsx:105
 msgid "Parent part category"
-msgstr "Categoria de peça parental"
+msgstr ""
 
 #: src/forms/PartForms.tsx:106
 #~ msgid "Create Part"
@@ -2045,23 +2057,23 @@ msgstr "Categoria de peça parental"
 
 #: src/forms/StockForms.tsx:44
 msgid "Add given quantity as packs instead of individual items"
-msgstr "Adicionar quantidade dada como pacotes e não itens individuais"
+msgstr ""
 
 #: src/forms/StockForms.tsx:55
 msgid "Enter initial quantity for this stock item"
-msgstr "Inserir quantidade inicial deste item de estoque"
+msgstr ""
 
 #: src/forms/StockForms.tsx:60
 msgid "Serial Numbers"
-msgstr "Números de Série"
+msgstr ""
 
 #: src/forms/StockForms.tsx:61
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr "Insira o número de série para novo estoque (ou deixe em branco)"
+msgstr ""
 
 #: src/forms/StockForms.tsx:110
 msgid "Add Stock Item"
-msgstr "Adicionar Item do Estoque"
+msgstr ""
 
 #: src/forms/StockForms.tsx:110
 #~ msgid "Create Stock Item"
@@ -2069,15 +2081,15 @@ msgstr "Adicionar Item do Estoque"
 
 #: src/forms/StockForms.tsx:131
 msgid "Edit Stock Item"
-msgstr "Editar Item do Estoque"
+msgstr ""
 
 #: src/forms/StockForms.tsx:132
 msgid "Stock item updated"
-msgstr "Item de estoque atualizado"
+msgstr ""
 
 #: src/forms/StockForms.tsx:140
 msgid "Parent stock location"
-msgstr "Local de estoque pai"
+msgstr ""
 
 #: src/functions/auth.tsx:34
 #~ msgid "Error fetching token from server."
@@ -2093,20 +2105,20 @@ msgstr "Local de estoque pai"
 
 #: src/functions/auth.tsx:66
 msgid "Logout successful"
-msgstr "Sessão terminada"
+msgstr ""
 
 #: src/functions/auth.tsx:67
 msgid "You have been logged out"
-msgstr "Você foi desconectado"
+msgstr ""
 
 #: src/functions/auth.tsx:104
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
-msgstr "Verifique sua caixa de entrada para o link de redefinição. Isso só funciona se você tiver uma conta. Cheque no spam também."
+msgstr ""
 
 #: src/functions/auth.tsx:111
 #: src/pages/Auth/Set-Password.tsx:39
 msgid "Reset failed"
-msgstr "A redefinação falhou"
+msgstr ""
 
 #: src/functions/auth.tsx:138
 msgid "Logged In"
@@ -2134,64 +2146,64 @@ msgstr ""
 
 #: src/functions/forms.tsx:182
 msgid "Invalid Form"
-msgstr "Formulário inválido"
+msgstr ""
 
 #: src/functions/forms.tsx:183
 msgid "method parameter not supplied"
-msgstr "parâmetro do método não fornecido"
+msgstr ""
 
 #: src/functions/notifications.tsx:9
 msgid "Not implemented"
-msgstr "Não implementado"
+msgstr ""
 
 #: src/functions/notifications.tsx:10
 msgid "This feature is not yet implemented"
-msgstr "Esta função ainda não foi implementada"
+msgstr ""
 
 #: src/functions/notifications.tsx:20
 msgid "Permission denied"
-msgstr "Permissão negada"
+msgstr ""
 
 #: src/functions/notifications.tsx:21
 msgid "You do not have permission to perform this action"
-msgstr "Você não tem permissão para realizar esta ação"
+msgstr ""
 
 #: src/functions/notifications.tsx:32
 msgid "Invalid Return Code"
-msgstr "Código de retorno inválido"
+msgstr ""
 
 #: src/functions/notifications.tsx:33
 msgid "Server returned status {returnCode}"
-msgstr "O servidor retornou o estado {returnCode}"
+msgstr ""
 
 #: src/hooks/UseForm.tsx:86
 msgid "Item Created"
-msgstr "Item Criado"
+msgstr ""
 
 #: src/hooks/UseForm.tsx:103
 msgid "Item Updated"
-msgstr "Item Atualizado"
+msgstr ""
 
 #: src/hooks/UseForm.tsx:122
 msgid "Item Deleted"
-msgstr "Item Excluído"
+msgstr ""
 
 #: src/hooks/UseForm.tsx:126
 msgid "Are you sure you want to delete this item?"
-msgstr "Tem certeza que deseja remover este item?"
+msgstr ""
 
 #: src/pages/Auth/Logged-In.tsx:22
 msgid "Checking if you are already logged in"
-msgstr "Checando se você já está conectado"
+msgstr ""
 
 #: src/pages/Auth/Login.tsx:31
 #: src/pages/Index/Scan.tsx:318
 msgid "No selection"
-msgstr "Nada selecionado"
+msgstr ""
 
 #: src/pages/Auth/Login.tsx:75
 msgid "Welcome, log in below"
-msgstr "Bem-vindo(a), acesse abaixo"
+msgstr ""
 
 #: src/pages/Auth/Login.tsx:77
 msgid "Register below"
@@ -2204,59 +2216,59 @@ msgstr ""
 #: src/pages/Auth/Reset.tsx:41
 #: src/pages/Auth/Set-Password.tsx:112
 msgid "Send mail"
-msgstr "Enviar e-mail"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:30
 msgid "Token invalid"
-msgstr "Token inválido"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:31
 msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
-msgstr "Você precisa fornecer um token válido para definir uma nova senha. Verifique sua caixa de entrada para um link de redefinição."
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:49
 msgid "No token provided"
-msgstr "Nenhum token fornecido"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:50
 msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
-msgstr "Você precisa fornecer um token para definir uma nova senha. Verifique sua caixa de entrada para um link de redefinição."
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:73
 msgid "Password set"
-msgstr "Senha definida"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:74
 msgid "The password was set successfully. You can now login with your new password"
-msgstr "Sua senha foi alterada com sucesso. Agora você pode acessar usando sua nova senha"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:101
 msgid "Set new password"
-msgstr "Defina uma nova senha"
+msgstr ""
 
 #: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
-msgstr "Erro: {0}"
+msgstr ""
 
 #: src/pages/ErrorPage.tsx:28
 msgid "Sorry, an unexpected error has occurred."
-msgstr "Desculpe, ocorreu um erro inesperado."
+msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
-msgstr "Atualizar automaticamente"
+msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
-msgstr "Esta página é uma substituição para a página inicial antiga com as mesmas informações. Esta página será descontinuada e substituída pela página inicial."
+msgstr ""
 
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
-msgstr "Bem-vindo ao seu painel{0}"
+msgstr ""
 
 #: src/pages/Index/Playground.tsx:197
 msgid "This page is a showcase for the possibilities of Platform UI."
-msgstr "Esta página é uma demonstração para as possibilidades da interface de plataforma."
+msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
@@ -2396,133 +2408,133 @@ msgstr "Esta página é uma demonstração para as possibilidades da interface d
 
 #: src/pages/Index/Scan.tsx:214
 msgid "Manual input"
-msgstr "Entrada manual"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:215
 msgid "Image Barcode"
-msgstr "Imagem do Código de Barras"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:245
 msgid "Selected elements are not known"
-msgstr "Selecionar elementos não conhecidos"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:252
 msgid "Multiple object types selected"
-msgstr "Múltiplos tipos de objetos selecionados"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:259
 msgid "Actions for {0}"
-msgstr "Ações para {0}"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:262
 #: src/pages/stock/StockDetail.tsx:173
 msgid "Count"
-msgstr "Contar"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:276
 msgid "Scan Page"
-msgstr "Escanear Página"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:279
 msgid "This page can be used for continuously scanning items and taking actions on them."
-msgstr "Esta página pode ser usada para escanear itens continuamente e executar ações sobre eles."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:294
 msgid "Select the input method you want to use to scan items."
-msgstr "Selecione o método de entrada que você deseja usar para escanear os itens."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:296
 msgid "Input"
-msgstr "Entrada"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:303
 msgid "Select input method"
-msgstr "Selecionar método de entrada"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:304
 msgid "Nothing found"
-msgstr "Nada encontrado"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:312
 msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
-msgstr "Dependendo das peças selecionadas as ações serão exibidas aqui. Nem todos os códigos de barras são suportados atualmente."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:314
 msgid "Action"
-msgstr "Ação"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:323
 msgid "{0} items selected"
-msgstr "{0} itens selecionados"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:326
 msgid "General Actions"
-msgstr "Ações Gerais"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:339
 msgid "Lookup part"
-msgstr "Peça Pesquisada"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:346
 msgid "Open Link"
-msgstr "Abrir Link"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:361
 msgid "History is locally kept in this browser."
-msgstr "O histórico é guardado localmente neste navegador."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:362
 msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
-msgstr "O histórico é mantido no armazenamento local deste navegador. Por isso, ele não será compartilhado com outros usuários ou dispositivos, mas será persistente através de recarregamentos. Você pode selecionar itens no histórico para executar ações neles. Para adicionar itens, digitalize-os na área de entrada."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:364
 #: src/pages/Notifications.tsx:56
 msgid "History"
-msgstr "Histórico"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:430
 msgid "No history"
-msgstr "Sem histórico"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:449
 msgid "Item"
-msgstr "Item"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:452
 msgid "Type"
-msgstr "Tipo"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:455
 msgid "Source"
-msgstr "Fonte"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:458
 msgid "Scanned at"
-msgstr "Escaneado em"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:510
 msgid "Enter item serial or data"
-msgstr "Inserir número de série ou dados do item"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:522
 msgid "Add dummy item"
-msgstr "Adicionar Item fictício"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:32
 msgid "Account Details"
-msgstr "Detalhes da Conta"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
 msgid "First name"
-msgstr "Primeiro nome"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 msgid "Last name"
-msgstr "Sobrenome"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 msgid "First name:"
-msgstr "Primeiro nome:"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
@@ -2534,124 +2546,124 @@ msgstr "Primeiro nome:"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
 msgid "Last name:"
-msgstr "Sobrenome:"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:39
 msgid "Use pseudo language"
-msgstr "Usar pseudo-idioma"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:53
 msgid "Single Sign On Accounts"
-msgstr "Contas de Login Único (SSO)"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:78
 msgid "Not enabled"
-msgstr "Não habilitado"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:63
 msgid "Single Sign On is not enabled for this server"
-msgstr "Contas de Login Único (SSO) não estão habilitadas neste servidor"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:67
 msgid "Multifactor"
-msgstr "Multifator"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:81
 msgid "Multifactor authentication is not configured for your account"
-msgstr "A autenticação de múltiplos fatores não está configurada para sua conta"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:132
 msgid "The following email addresses are associated with your account:"
-msgstr "Os seguintes endereços de e-mail estão associados à sua conta:"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:144
 msgid "Primary"
-msgstr "Principal"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:149
 msgid "Verified"
-msgstr "Verificado"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:153
 msgid "Unverified"
-msgstr "Não Verificado"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:166
 msgid "Add Email Address"
-msgstr "Adicionar E-mail"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:169
 msgid "E-Mail"
-msgstr "E-mail"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:170
 msgid "E-Mail address"
-msgstr "Endereço de e-mail"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:182
 msgid "Make Primary"
-msgstr "Tornar Principal"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:187
 msgid "Re-send Verification"
-msgstr "Reenviar Verificação"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:198
 msgid "Add Email"
-msgstr "Adicionar E-mail"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:263
 msgid "Provider has not been configured"
-msgstr "O provedor não foi configurado"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:273
 msgid "Not configured"
-msgstr "Não configurado"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:276
 msgid "There are no social network accounts connected to this account."
-msgstr "Não há nenhuma rede social conectada a essa conta."
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:286
 msgid "You can sign in to your account using any of the following third party accounts"
-msgstr "Você pode entrar na sua conta usando qualquer uma das seguintes contas de terceiros"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:68
 msgid "bars"
-msgstr "barras"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:69
 msgid "oval"
-msgstr "oval"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:70
 msgid "dots"
-msgstr "pontos"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:81
 msgid "Theme"
-msgstr "Tema"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:87
 msgid "Primary color"
-msgstr "Cor primária"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:100
 msgid "White color"
-msgstr "Cor branca"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:108
 msgid "Black color"
-msgstr "Cor preta"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:116
 msgid "Border Radius"
-msgstr "Raio da borda"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:132
 msgid "Loader"
-msgstr "Carregador"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter.tsx:30
 #~ msgid "User Management"
@@ -2663,48 +2675,44 @@ msgstr "Carregador"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:59
 msgid "Background Tasks"
-msgstr "Tarefas de segundo plano"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:65
 msgid "Error Reports"
-msgstr "Relatórios de Erro"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:83
 msgid "Custom Units"
-msgstr "Unidades personalizadas"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:89
 msgid "Part Parameters"
-msgstr "Parâmetros da Peça"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:105
 msgid "Quick Actions"
-msgstr "Ações Rápidas"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:110
 msgid "Add a new user"
-msgstr "Adicionar novo usuário"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:129
 msgid "Advanced Options"
-msgstr "Opções Avançadas"
+msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:19
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:28
 #: src/tables/settings/UserTable.tsx:103
 msgid "Info"
-msgstr "Info"
+msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:23
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
 msgid "External plugins are not enabled for this InvenTree installation."
-msgstr "Extensões externas não estão ativados para esta instalação do InvenTree."
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
-msgid "Plugin Error Stack"
-msgstr "Pilha de Erros da Extensão"
-
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:40
-msgid "Plugin Settings"
-msgstr "Configurações da Extensão"
+#~ msgid "Plugin Error Stack"
+#~ msgstr "Plugin Error Stack"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
 #~ msgid "Warning"
@@ -2714,44 +2722,52 @@ msgstr "Configurações da Extensão"
 #~ msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 #~ msgstr "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:50
+msgid "Plugin Errors"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:59
+msgid "Plugin Settings"
+msgstr ""
+
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:25
 msgid "Pending Tasks"
-msgstr "Tarefas Pendentes"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:33
 msgid "Scheduled Tasks"
-msgstr "Tarefas Agendadas"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:41
 msgid "Failed Tasks"
-msgstr "Tarefas com Falhas"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:18
 #: src/tables/settings/UserTable.tsx:121
 msgid "Groups"
-msgstr "Grupos"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:30
 msgid "Select settings relevant for user lifecycle. More available in"
-msgstr "Selecione as configurações relevantes para o ciclo de vida dos usuários. Mais informações disponíveis em"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:35
 msgid "System settings"
-msgstr "Configurações do sistema"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:66
 msgid "Login"
-msgstr "Entrar"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:88
 msgid "Barcodes"
-msgstr "Códigos de barras"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:107
 #: src/pages/company/SupplierPartDetail.tsx:55
-#: src/pages/part/PartDetail.tsx:519
+#: src/pages/part/PartDetail.tsx:516
 msgid "Pricing"
-msgstr "Preços"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:118
 #~ msgid "Physical Units"
@@ -2759,53 +2775,53 @@ msgstr "Preços"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:136
 msgid "Exchange Rates"
-msgstr "Taxas de Câmbio"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:144
 msgid "Labels"
-msgstr "Etiquetas"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:150
 #: src/pages/Index/Settings/UserSettings.tsx:99
 msgid "Reporting"
-msgstr "Relatórios"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:224
-#: src/pages/part/PartDetail.tsx:568
+#: src/pages/part/PartDetail.tsx:565
 msgid "Stocktake"
-msgstr "Balanço"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:229
 #: src/pages/build/BuildDetail.tsx:264
 #: src/pages/build/BuildIndex.tsx:14
-#: src/pages/part/PartDetail.tsx:505
+#: src/pages/part/PartDetail.tsx:502
 #: src/pages/sales/SalesOrderDetail.tsx:62
 msgid "Build Orders"
-msgstr "Ordens de Produções"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:286
 msgid "Switch to User Setting"
-msgstr "Mudar para Configuração de Usuário"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:29
 msgid "Account"
-msgstr "Conta"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:35
 msgid "Security"
-msgstr "Segurança"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:46
 msgid "Display Options"
-msgstr "Opções de exibição"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:115
 msgid "Account Settings"
-msgstr "Configurações de Conta"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:119
 msgid "Switch to System Setting"
-msgstr "Mudar para Configuração do Sistema"
+msgstr ""
 
 #: src/pages/Index/UserSettings.tsx:103
 #~ msgid "User Settings"
@@ -2817,74 +2833,74 @@ msgstr "Mudar para Configuração do Sistema"
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr "Não encontrado"
+msgstr ""
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
-msgstr "Desculpe, esta página não é conhecida ou foi movida."
+msgstr ""
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
-msgstr "Ir para a página inicial"
+msgstr ""
 
 #: src/pages/Notifications.tsx:64
 msgid "Mark as unread"
-msgstr "Marcar como não lido"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:72
 msgid "Base Part"
-msgstr "Peça base"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:80
 msgid "Build Status"
-msgstr "Estado da Produção"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:101
 msgid "Build Details"
-msgstr "Detalhes da Produção"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:107
 #: src/tables/build/BuildLineTable.tsx:195
 msgid "Allocate Stock"
-msgstr "Alocar Estoque"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:122
 msgid "Incomplete Outputs"
-msgstr "Saídas Incompletas"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:128
 msgid "Completed Outputs"
-msgstr "Saídas Completas"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:141
 msgid "Consumed Stock"
-msgstr "Estoque Consumido"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:153
 msgid "Child Build Orders"
-msgstr "Pedido de Produção Filhos"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:163
 #: src/pages/company/CompanyDetail.tsx:154
 #: src/pages/company/ManufacturerPartDetail.tsx:68
-#: src/pages/part/PartDetail.tsx:590
+#: src/pages/part/PartDetail.tsx:587
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:78
 #: src/pages/sales/ReturnOrderDetail.tsx:38
 #: src/pages/sales/SalesOrderDetail.tsx:72
 #: src/pages/stock/StockDetail.tsx:113
 msgid "Attachments"
-msgstr "Anexos"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:175
 #: src/pages/company/CompanyDetail.tsx:166
-#: src/pages/part/PartDetail.tsx:602
+#: src/pages/part/PartDetail.tsx:599
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:90
 #: src/pages/sales/ReturnOrderDetail.tsx:50
 #: src/pages/sales/SalesOrderDetail.tsx:84
 #: src/pages/stock/StockDetail.tsx:125
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:172
 msgid "Notes"
-msgstr "Anotações"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:185
 #: src/pages/part/PartDetail.tsx:269
@@ -2899,16 +2915,16 @@ msgstr "Anotações"
 
 #: src/pages/build/BuildDetail.tsx:191
 msgid "Edit Build Order"
-msgstr "Editar Pedido de Produção"
-
-#: src/pages/build/BuildDetail.tsx:192
-#~ msgid "Build Order updated"
-#~ msgstr "Build Order updated"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:196
 #: src/pages/part/PartDetail.tsx:280
 #~ msgid "Unlink custom barcode from part"
 #~ msgstr "Unlink custom barcode from part"
+
+#: src/pages/build/BuildDetail.tsx:202
+#~ msgid "Build Order updated"
+#~ msgstr "Build Order updated"
 
 #: src/pages/build/BuildDetail.tsx:211
 #~ msgid "Build Order"
@@ -2916,7 +2932,7 @@ msgstr "Editar Pedido de Produção"
 
 #: src/pages/build/BuildDetail.tsx:217
 msgid "Reporting Actions"
-msgstr "Ações para Reportar"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:221
 #~ msgid "Edit build order"
@@ -2924,11 +2940,11 @@ msgstr "Ações para Reportar"
 
 #: src/pages/build/BuildDetail.tsx:222
 msgid "Report"
-msgstr "Reportar"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:223
 msgid "Print build report"
-msgstr "Imprimir relatório de construção"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:226
 #~ msgid "Duplicate build order"
@@ -2936,7 +2952,7 @@ msgstr "Imprimir relatório de construção"
 
 #: src/pages/build/BuildDetail.tsx:229
 msgid "Build Order Actions"
-msgstr "Ações do Pedido de Produção"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:231
 #~ msgid "Delete build order"
@@ -2953,22 +2969,22 @@ msgstr "Ações do Pedido de Produção"
 #: src/pages/company/CompanyDetail.tsx:76
 #: src/pages/company/ManufacturerPartDetail.tsx:37
 #: src/pages/company/SupplierPartDetail.tsx:35
-#: src/pages/part/PartDetail.tsx:452
+#: src/pages/part/PartDetail.tsx:449
 #: src/pages/stock/StockDetail.tsx:70
 msgid "Details"
-msgstr "Detalhes"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:81
 msgid "Manufactured Parts"
-msgstr "Peças Fabricadas"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:90
 msgid "Supplied Parts"
-msgstr "Peças Fornecidas"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:131
 msgid "Assigned Stock"
-msgstr "Estoque Atribuído"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:175
 #~ msgid "Edit company"
@@ -2976,7 +2992,7 @@ msgstr "Estoque Atribuído"
 
 #: src/pages/company/CompanyDetail.tsx:182
 msgid "Edit Company"
-msgstr "Editar Empresa"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:189
 #~ msgid "Delete company"
@@ -2984,133 +3000,133 @@ msgstr "Editar Empresa"
 
 #: src/pages/company/CompanyDetail.tsx:191
 msgid "Company Actions"
-msgstr "Ações da Empresa"
+msgstr ""
 
 #: src/pages/company/CustomerDetail.tsx:8
 #: src/tables/sales/ReturnOrderTable.tsx:64
 #: src/tables/sales/SalesOrderTable.tsx:95
 msgid "Customer"
-msgstr "Cliente"
+msgstr ""
 
 #: src/pages/company/ManufacturerDetail.tsx:8
 #: src/pages/company/ManufacturerPartDetail.tsx:88
 msgid "Manufacturer"
-msgstr "Fabricante"
+msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:42
 #: src/pages/part/CategoryDetail.tsx:71
-#: src/pages/part/PartDetail.tsx:467
+#: src/pages/part/PartDetail.tsx:464
 msgid "Parameters"
-msgstr "Parâmetros"
+msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:54
-#: src/pages/part/PartDetail.tsx:537
+#: src/pages/part/PartDetail.tsx:534
 #: src/pages/purchasing/PurchasingIndex.tsx:26
 msgid "Suppliers"
-msgstr "Fornecedores"
+msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:98
 msgid "ManufacturerPart"
-msgstr "Peça do Fabricante"
+msgstr ""
 
 #: src/pages/company/SupplierDetail.tsx:8
 #: src/pages/company/SupplierPartDetail.tsx:68
 #: src/tables/purchasing/PurchaseOrderTable.tsx:73
 msgid "Supplier"
-msgstr "Fornecedor"
+msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:40
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:66
 msgid "Received Stock"
-msgstr "Estoque Recebido"
+msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:52
 #~ msgid "Subcategories"
 #~ msgstr "Subcategories"
 
-#: src/pages/part/PartDetail.tsx:114
+#: src/pages/part/PartDetail.tsx:115
 #: src/tables/ColumnRenderers.tsx:52
 #: src/tables/part/RelatedPartTable.tsx:64
-#: src/tables/plugin/PluginListTable.tsx:163
-#: src/tables/plugin/PluginListTable.tsx:277
+#: src/tables/plugin/PluginListTable.tsx:170
+#: src/tables/plugin/PluginListTable.tsx:297
 msgid "Description"
-msgstr "Descrição"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:124
+#: src/pages/part/PartDetail.tsx:125
 msgid "Variant of"
-msgstr "Variante de"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:136
 #: src/tables/build/BuildLineTable.tsx:106
 msgid "Available Stock"
-msgstr "Estoque Disponível"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:145
 #: src/tables/stock/StockItemTable.tsx:264
 msgid "In Stock"
-msgstr "Em Estoque"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:155
 msgid "Minimum Stock"
-msgstr "Estoque Mínimo"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:165
 #: src/tables/bom/BomTable.tsx:180
 #: src/tables/build/BuildLineTable.tsx:92
 msgid "On order"
-msgstr "No pedido"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:181
 msgid "Allocated to Build Orders"
-msgstr "Alocado para Pedidos de Construção"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:196
 msgid "Allocated to Sales Orders"
-msgstr "Alocado para Pedidos de Venda"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:207
 #: src/tables/bom/BomTable.tsx:204
 msgid "Can Build"
-msgstr "Pode Produzir"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:218
 #: src/tables/bom/BomTable.tsx:188
 #: src/tables/part/PartTable.tsx:95
 msgid "Building"
-msgstr "Produzindo"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:228
 #: src/tables/notifications/NotificationsTable.tsx:29
 msgid "Category"
-msgstr "Categoria"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:240
+#: src/pages/part/PartDetail.tsx:239
 msgid "IPN"
-msgstr "IPN"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:251
+#: src/pages/part/PartDetail.tsx:250
 msgid "Revision"
-msgstr "Revisão"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:262
+#: src/pages/part/PartDetail.tsx:261
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:39
 msgid "Units"
-msgstr "Unidades"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:272
+#: src/pages/part/PartDetail.tsx:271
 #: src/tables/settings/PendingTasksTable.tsx:40
 msgid "Keywords"
-msgstr "Palavras-chave"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:282
+#: src/pages/part/PartDetail.tsx:281
 msgid "Creation Date"
-msgstr "Criado em"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:296
+#: src/pages/part/PartDetail.tsx:295
 #: src/tables/bom/BomTable.tsx:137
 #: src/tables/part/PartTable.tsx:154
 msgid "Price Range"
-msgstr "Faixa de Preço"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:310
 #~ msgid "Edit part"
@@ -3124,87 +3140,87 @@ msgstr "Faixa de Preço"
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:333
+#: src/pages/part/PartDetail.tsx:332
 msgid "Last Stocktake"
-msgstr "Último Balanço"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:394
+#: src/pages/part/PartDetail.tsx:393
 msgid "Default Location"
-msgstr "Local Padrão"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:406
+#: src/pages/part/PartDetail.tsx:404
 msgid "Default Supplier"
-msgstr "Fornecedor Padrão"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:418
+#: src/pages/part/PartDetail.tsx:415
 msgid "Link"
-msgstr "Link"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:430
+#: src/pages/part/PartDetail.tsx:427
 msgid "Responsible"
-msgstr "Responsável"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:485
+#: src/pages/part/PartDetail.tsx:482
 msgid "Variants"
-msgstr "Variantes"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:492
+#: src/pages/part/PartDetail.tsx:489
 #: src/pages/stock/StockDetail.tsx:82
 msgid "Allocations"
-msgstr "Alocações"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:498
+#: src/pages/part/PartDetail.tsx:495
 msgid "Bill of Materials"
-msgstr "Lista de Materiais"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:512
+#: src/pages/part/PartDetail.tsx:509
 msgid "Used In"
-msgstr "Usado em"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:524
+#: src/pages/part/PartDetail.tsx:521
 #: src/pages/purchasing/PurchasingIndex.tsx:37
 msgid "Manufacturers"
-msgstr "Fabricantes"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:563
+#: src/pages/part/PartDetail.tsx:560
 msgid "Scheduling"
-msgstr "Agendamento"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:573
+#: src/pages/part/PartDetail.tsx:570
 msgid "Test Templates"
-msgstr "Testar Modelos"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:584
+#: src/pages/part/PartDetail.tsx:581
 msgid "Related Parts"
-msgstr "Peças Relacionadas"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:639
+#: src/pages/part/PartDetail.tsx:636
 msgid "Edit Part"
-msgstr "Editar Peça"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:660
+#: src/pages/part/PartDetail.tsx:657
 msgid "Stock Actions"
-msgstr "Ações de Estoque"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:665
+#: src/pages/part/PartDetail.tsx:662
 msgid "Count Stock"
-msgstr "Contar Estoque"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:666
+#: src/pages/part/PartDetail.tsx:663
 msgid "Count part stock"
-msgstr "Contagem do estoque"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:670
+#: src/pages/part/PartDetail.tsx:667
 msgid "Transfer Stock"
-msgstr "Transferir Estoque"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:671
+#: src/pages/part/PartDetail.tsx:668
 msgid "Transfer part stock"
-msgstr "Transferir estoque de peça"
+msgstr ""
 
-#: src/pages/part/PartDetail.tsx:677
+#: src/pages/part/PartDetail.tsx:674
 msgid "Part Actions"
-msgstr "Ações da Peça"
+msgstr ""
 
 #: src/pages/part/PartIndex.tsx:29
 #~ msgid "Categories"
@@ -3214,28 +3230,28 @@ msgstr "Ações da Peça"
 #: src/pages/sales/ReturnOrderDetail.tsx:33
 #: src/pages/sales/SalesOrderDetail.tsx:42
 msgid "Order Details"
-msgstr "Detalhes do pedido"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:60
 #: src/pages/sales/SalesOrderDetail.tsx:47
 msgid "Line Items"
-msgstr "Itens de linha"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:119
 msgid "Order Actions"
-msgstr "Ações de Pedido"
+msgstr ""
 
 #: src/pages/sales/SalesIndex.tsx:33
 msgid "Customers"
-msgstr "Clientes"
+msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:52
 msgid "Pending Shipments"
-msgstr "Envios Pendentes"
+msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:57
 msgid "Completed Shipments"
-msgstr "Envios Concluídos"
+msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:38
 #~ msgid "Sublocations"
@@ -3243,19 +3259,19 @@ msgstr "Envios Concluídos"
 
 #: src/pages/stock/StockDetail.tsx:76
 msgid "Stock Tracking"
-msgstr "Rastreamento de Estoque"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:90
 msgid "Test Data"
-msgstr "Dados de Teste"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:96
 msgid "Installed Items"
-msgstr "Itens Instalados"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:102
 msgid "Child Items"
-msgstr "Itens Filhos"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:155
 #~ msgid "Link custom barcode to stock item"
@@ -3267,35 +3283,35 @@ msgstr "Itens Filhos"
 
 #: src/pages/stock/StockDetail.tsx:169
 msgid "Stock Operations"
-msgstr "Operações de Estoque"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:174
 msgid "Count stock"
-msgstr "Contagem de estoque"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:178
 msgid "Add"
-msgstr "Adicionar"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:179
 msgid "Add stock"
-msgstr "Adicionar estoque"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:184
 msgid "Remove stock"
-msgstr "Remover estoque"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:188
 msgid "Transfer"
-msgstr "Transferir"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:189
 msgid "Transfer stock"
-msgstr "Transferir estoque"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:201
 msgid "Duplicate stock item"
-msgstr "Duplicar item de estoque"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:205
 #~ msgid "Edit stock item"
@@ -3307,1518 +3323,1558 @@ msgstr "Duplicar item de estoque"
 
 #: src/tables/ColumnRenderers.tsx:126
 msgid "Target Date"
-msgstr "Data Prevista"
+msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:163
 #: src/tables/settings/CurrencyTable.tsx:23
 msgid "Currency"
-msgstr "Moeda"
+msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:177
 msgid "Total Price"
-msgstr "Preço Total"
+msgstr ""
 
 #: src/tables/ColumnSelect.tsx:17
 #: src/tables/ColumnSelect.tsx:24
 msgid "Select Columns"
-msgstr "Selecionar Colunas"
+msgstr ""
 
-#: src/tables/Details.tsx:109
+#: src/tables/Details.tsx:111
 msgid "Part is not active"
-msgstr "Peça inativa"
+msgstr ""
 
-#: src/tables/Details.tsx:115
+#: src/tables/Details.tsx:117
 msgid "Inactive"
-msgstr "Inativo"
+msgstr ""
 
-#: src/tables/Details.tsx:122
+#: src/tables/Details.tsx:124
 msgid "Part is a template part (variants can be made from this part)"
-msgstr "Esta é uma peça modelo (as variantes podem ser feitas a partir desta peça)"
+msgstr ""
 
-#: src/tables/Details.tsx:128
+#: src/tables/Details.tsx:130
 msgid "Part can be assembled from other parts"
-msgstr "Peça pode ser montada a partir de outras peças"
+msgstr ""
 
-#: src/tables/Details.tsx:134
+#: src/tables/Details.tsx:136
 msgid "Part can be used in assemblies"
-msgstr "Peça pode ser usada em montagens"
+msgstr ""
 
-#: src/tables/Details.tsx:140
+#: src/tables/Details.tsx:142
 msgid "Part stock is tracked by serial number"
-msgstr "Peça em estoque é controlada por número de série"
+msgstr ""
 
-#: src/tables/Details.tsx:146
+#: src/tables/Details.tsx:148
 msgid "Part can be purchased from external suppliers"
-msgstr "Peça pode ser comprada de fornecedores externos"
+msgstr ""
 
-#: src/tables/Details.tsx:152
+#: src/tables/Details.tsx:154
 msgid "Part can be sold to customers"
-msgstr "Peça pode ser vendida a clientes"
+msgstr ""
 
-#: src/tables/Details.tsx:157
+#: src/tables/Details.tsx:159
 msgid "Part is virtual (not a physical part)"
-msgstr "Peça é virtual (não é física)"
+msgstr ""
 
-#: src/tables/Details.tsx:163
+#: src/tables/Details.tsx:165
 #: src/tables/part/PartTable.tsx:236
 #: src/tables/part/PartTable.tsx:240
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
-msgstr "Virtual"
+msgstr ""
 
-#: src/tables/Details.tsx:344
+#: src/tables/Details.tsx:354
 msgid "Copied"
-msgstr "Copiada"
+msgstr ""
 
-#: src/tables/Details.tsx:344
+#: src/tables/Details.tsx:354
 msgid "Copy"
-msgstr "Copiar"
+msgstr ""
 
 #: src/tables/DownloadAction.tsx:12
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: src/tables/DownloadAction.tsx:13
 msgid "TSV"
-msgstr "TSV"
+msgstr ""
 
 #: src/tables/DownloadAction.tsx:14
 msgid "Excel"
-msgstr "Excel"
+msgstr ""
 
 #: src/tables/DownloadAction.tsx:22
 msgid "Download selected data"
-msgstr "Baixar os dados selecionados"
+msgstr ""
 
 #: src/tables/Filter.tsx:88
 #: src/tables/build/BuildOrderTable.tsx:118
 msgid "Assigned to me"
-msgstr "Atribuído a mim"
+msgstr ""
 
 #: src/tables/Filter.tsx:89
 #: src/tables/build/BuildOrderTable.tsx:119
 msgid "Show orders assigned to me"
-msgstr "Mostrar pedidos atribuídos a mim"
+msgstr ""
 
 #: src/tables/Filter.tsx:96
 msgid "Outstanding"
-msgstr "Pendente"
+msgstr ""
 
 #: src/tables/Filter.tsx:97
 msgid "Show outstanding orders"
-msgstr "Mostrar pedidos pendentes"
+msgstr ""
 
 #: src/tables/Filter.tsx:104
 msgid "Overdue"
-msgstr "Em atraso"
+msgstr ""
 
 #: src/tables/Filter.tsx:105
 msgid "Show overdue orders"
-msgstr "Mostrar pedidos atrasados"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:51
 msgid "Remove filter"
-msgstr "Remover filtro"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:145
 msgid "Select filter"
-msgstr "Selecionar filtro"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:146
 msgid "Filter"
-msgstr "Filtro"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:153
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:33
 msgid "Value"
-msgstr "Valor"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:154
 msgid "Select filter value"
-msgstr "Selecionar valor do filtro"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:188
 msgid "Table Filters"
-msgstr "Filtros da Tabela"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:219
 msgid "Add Filter"
-msgstr "Adicionar Filtro"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:228
 msgid "Clear Filters"
-msgstr "Limpar Filtros"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:88
 #: src/tables/InvenTreeTable.tsx:352
 #: src/tables/InvenTreeTable.tsx:373
 msgid "No records found"
-msgstr "Nenhum registro encontrado"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:387
 msgid "Server returned incorrect data type"
-msgstr "O servidor retornou um tipo de dado incorreto"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:395
 msgid "Bad request"
-msgstr "Requisição inválida"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:398
 msgid "Unauthorized"
-msgstr "Não autorizado"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:401
 msgid "Forbidden"
-msgstr "Proibido"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:404
 msgid "Not found"
-msgstr "Não encontrado"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:446
 #: src/tables/InvenTreeTable.tsx:537
 msgid "Delete selected records"
-msgstr "Remover registros selecionados"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:450
 msgid "Are you sure you want to delete the selected records?"
-msgstr "Tem certeza que deseja apagar os registros selecionados?"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:452
 msgid "This action cannot be undone!"
-msgstr "Essa ação não pode ser desfeita!"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:480
 msgid "Deleted records"
-msgstr "Registos removidos"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:481
 msgid "Records were deleted successfully"
-msgstr "Registros foram removidos com sucesso"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:490
 msgid "Failed to delete records"
-msgstr "Falha ao remover registros"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:518
 #: src/tables/InvenTreeTable.tsx:519
 msgid "Barcode actions"
-msgstr "Ações de código de barras"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:527
 #: src/tables/InvenTreeTable.tsx:528
 msgid "Print actions"
-msgstr "Ações de impressão"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:553
 msgid "Refresh data"
-msgstr "Atualizar dados"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:571
 msgid "Table filters"
-msgstr "Filtros da Tabela"
+msgstr ""
 
 #: src/tables/RowActions.tsx:149
 msgid "Actions"
-msgstr "Ações"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:76
 msgid "This BOM item is defined for a different parent"
-msgstr "Este item da BOM é definido para um pai diferente"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:91
 msgid "Part Information"
-msgstr "Informação da Peça"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:155
 #: src/tables/part/PartTable.tsx:127
 msgid "No stock"
-msgstr "Sem Estoque"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:163
 #: src/tables/build/BuildLineTable.tsx:64
 msgid "Includes substitute stock"
-msgstr "Incluir estoque de substitutos"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:172
 #: src/tables/build/BuildLineTable.tsx:74
 msgid "Includes variant stock"
-msgstr "Incluir estoque de variantes"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:197
 #: src/tables/part/PartTable.tsx:146
 #: src/tables/stock/StockItemTable.tsx:171
 msgid "Stock Information"
-msgstr "Informação do Estoque"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:208
 #: src/tables/build/BuildLineTable.tsx:170
 msgid "Consumable item"
-msgstr "Item Consumível"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:227
 msgid "Trackable Part"
-msgstr "Peça Rastreável"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:228
 msgid "Show trackable items"
-msgstr "Mostrar itens rastreáveis"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:232
 msgid "Assembled Part"
-msgstr "Peça Montada"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:233
 msgid "Show asssmbled items"
-msgstr "Exibir itens montados"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:237
 msgid "Show items with available stock"
-msgstr "Mostrar itens com estoque disponível"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:241
 msgid "Show items on order"
-msgstr "Mostrar itens no pedido"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:245
 msgid "Show validated items"
-msgstr "Mostrar itens validados"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:249
 #: src/tables/bom/UsedInTable.tsx:58
 msgid "Show inherited items"
-msgstr "Mostrar itens herdados"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:253
 #: src/tables/bom/UsedInTable.tsx:62
 msgid "Show optional items"
-msgstr "Mostrar itens opcionais"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:257
 msgid "Show consumable items"
-msgstr "Mostrar itens consumíveis"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:261
 msgid "Has Pricing"
-msgstr "Tem Preço"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:262
 msgid "Show items with pricing"
-msgstr "Exibir itens com preço"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:273
 msgid "View BOM"
-msgstr "Ver BOM"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:284
 msgid "Validate BOM line"
-msgstr "Validar linha da BOM"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:292
 msgid "Edit Substitutes"
-msgstr "Editar substitutos"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:306
 msgid "Edit Bom Item"
-msgstr "Editar Item da BOM"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:308
 msgid "Bom item updated"
-msgstr "Item da BOM atualizado"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:323
 msgid "Delete Bom Item"
-msgstr "Apagar Item da BOM"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:324
 msgid "Bom item deleted"
-msgstr "Item da BOM apagado"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:326
 msgid "Are you sure you want to remove this BOM item?"
-msgstr "Tem certeza que deseja remover este item da BOM?"
+msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:66
 #: src/tables/build/BuildOrderTable.tsx:102
 #: src/tables/part/PartTable.tsx:170
 #: src/tables/part/PartVariantTable.tsx:15
-#: src/tables/plugin/PluginListTable.tsx:181
-#: src/tables/plugin/PluginListTable.tsx:503
+#: src/tables/plugin/PluginListTable.tsx:188
+#: src/tables/plugin/PluginListTable.tsx:627
 #: src/tables/stock/StockItemTable.tsx:228
 msgid "Active"
-msgstr "Ativo"
+msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:67
 msgid "Show active assemblies"
-msgstr "Mostrar montagens ativas"
+msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:71
 #: src/tables/part/PartTable.tsx:194
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
-msgstr "Rastreável"
+msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:72
 msgid "Show trackable assemblies"
-msgstr "Mostrar montagens rastreáveis"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:34
 msgid "Show allocated lines"
-msgstr "Mostrar linhas alocadas"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:38
 #: src/tables/part/PartTable.tsx:119
 #: src/tables/stock/StockItemTable.tsx:135
 #: src/tables/stock/StockItemTable.tsx:249
 msgid "Available"
-msgstr "Disponível"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:39
 msgid "Show lines with available stock"
-msgstr "Mostrar linhas com estoque disponível"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:43
 msgid "Consumable"
-msgstr "Consumível"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:44
 msgid "Show consumable lines"
-msgstr "Mostrar linhas consumíveis"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:48
 msgid "Optional"
-msgstr "Opcional"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:49
 msgid "Show optional lines"
-msgstr "Mostrar linhas opcionais"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:83
 msgid "In production"
-msgstr "Em produção"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:103
 #: src/tables/stock/StockItemTable.tsx:144
 msgid "No stock available"
-msgstr "Nenhum estoque disponível"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:132
 msgid "Unit Quantity"
-msgstr "Quantidade Unitária"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:201
 msgid "Order Stock"
-msgstr "Pedir estoque"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:207
 msgid "Build Stock"
-msgstr "Estoque de Produção"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:103
 msgid "Show active orders"
-msgstr "Mostrar pedidos ativos"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:107
 #: src/tables/purchasing/PurchaseOrderTable.tsx:56
 #: src/tables/sales/ReturnOrderTable.tsx:46
 #: src/tables/sales/SalesOrderTable.tsx:53
 msgid "Filter by order status"
-msgstr "Filtrar por estado do pedido"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:113
 msgid "Show overdue status"
-msgstr "Mostrar estados atrasados"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:140
 #: src/tables/build/BuildOrderTable.tsx:158
 msgid "Add Build Order"
-msgstr "Adicionar Pedido de Produção"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:121
-#: src/tables/company/AddressTable.tsx:187
+#: src/tables/company/AddressTable.tsx:185
 msgid "Add Address"
-msgstr "Adicionar endereço"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:126
 msgid "Address created"
-msgstr "Endereço criado"
+msgstr ""
 
-#: src/tables/company/AddressTable.tsx:137
+#: src/tables/company/AddressTable.tsx:135
 msgid "Edit Address"
-msgstr "Editar o Endereço"
+msgstr ""
+
+#: src/tables/company/AddressTable.tsx:143
+msgid "Delete Address"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:145
-msgid "Delete Address"
-msgstr "Excluir Endereço"
-
-#: src/tables/company/AddressTable.tsx:147
 msgid "Are you sure you want to delete this address?"
-msgstr "Tem a certeza de que quer apagar esta endereço?"
+msgstr ""
 
 #: src/tables/company/CompanyTable.tsx:62
 msgid "New Company"
-msgstr "Nova Empresa"
+msgstr ""
 
 #: src/tables/company/CompanyTable.tsx:82
 msgid "Add Company"
-msgstr "Adicionar Empresa"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:73
 msgid "Edit Contact"
-msgstr "Editar Contato"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:80
 msgid "Add Contact"
-msgstr "Adicionar Contato"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:91
 msgid "Delete Contact"
-msgstr "Excluir Contato"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:131
 msgid "Add contact"
-msgstr "Adicionar contato"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:157
 msgid "File uploaded"
-msgstr "Arquivo enviado"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:158
 msgid "File {0} uploaded successfully"
-msgstr "Arquivo {0} carregado com sucesso"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:169
 msgid "Upload Error"
-msgstr "Erro no carregamento"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:170
 msgid "File could not be uploaded"
-msgstr "Arquivo não pode ser carregado"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:183
 msgid "Add attachment"
-msgstr "Adicionar anexo"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:202
 msgid "Add external link"
-msgstr "Adicionar um link externo"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:233
 msgid "No attachments found"
-msgstr "Nenhum anexo encontrado"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:248
 msgid "Upload attachment"
-msgstr "Carregar anexo"
+msgstr ""
 
 #: src/tables/notifications/NotificationsTable.tsx:24
 msgid "Age"
-msgstr "Idade"
+msgstr ""
 
 #: src/tables/notifications/NotificationsTable.tsx:38
 #: src/tables/plugin/PluginErrorTable.tsx:37
 msgid "Message"
-msgstr "Mensagem"
+msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:64
 #: src/tables/part/PartTable.tsx:182
 msgid "Include Subcategories"
-msgstr "Incluir Subcategorias"
+msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:65
 msgid "Include subcategories in results"
-msgstr "Incluir subcategorias nos resultados"
+msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:69
 msgid "Structural"
-msgstr "Estrutural"
+msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:70
 msgid "Show structural categories"
-msgstr "Mostrar categorias estruturais"
+msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:77
 msgid "New Part Category"
-msgstr "Nova Categoria de Peça"
+msgstr ""
 
-#: src/tables/part/PartCategoryTable.tsx:98
+#: src/tables/part/PartCategoryTable.tsx:96
 msgid "Edit Part Category"
-msgstr "Editar Categoria da Peça"
+msgstr ""
 
-#: src/tables/part/PartCategoryTable.tsx:108
+#: src/tables/part/PartCategoryTable.tsx:106
 msgid "Add Part Category"
-msgstr "Adicionar Categoria de Peça"
+msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:93
 msgid "New Part Parameter"
-msgstr "Novo Parâmetro de Peça"
+msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:108
 #: src/tables/part/PartParameterTable.tsx:130
 msgid "Edit Part Parameter"
-msgstr "Editar Parâmetro da Peça"
+msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:116
 #: src/tables/part/PartParameterTable.tsx:138
 msgid "Delete Part Parameter"
-msgstr "Apagar Parâmetro da Peça"
+msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:155
 msgid "Add parameter"
-msgstr "Adiciona parâmetro"
+msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:176
 #: src/tables/stock/StockItemTable.tsx:274
 msgid "Include Variants"
-msgstr "Incluir Variantes"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:31
 msgid "Checkbox"
-msgstr "Caixa de seleção"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:32
 msgid "Show checkbox templates"
-msgstr "Mostrar modelos da caixa de seleção"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:36
 msgid "Has choices"
-msgstr "Tem escolhas"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:37
 msgid "Show templates with choices"
-msgstr "Mostrar modelos com escolhas"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:41
 #: src/tables/part/PartTable.tsx:200
 msgid "Has Units"
-msgstr "Possui unidades"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:42
 msgid "Show templates with units"
-msgstr "Mostrar modelos com unidades"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:80
 msgid "Add Parameter Template"
-msgstr "Adicionar Modelo de Parâmetro"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:92
 msgid "Edit Parameter Template"
-msgstr "Edital Modelo de Parâmetro"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:100
 msgid "Delete Parameter Template"
-msgstr "Excluir Modelo de Parâmetro"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:130
 msgid "Add parameter template"
-msgstr "Adicionar modelo de parâmetro"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:80
 msgid "Minimum stock"
-msgstr "Estoque mínimo"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:89
 msgid "On Order"
-msgstr "No pedido"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:102
 msgid "Build Order Allocations"
-msgstr "Alocações de Pedido de Produção"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:111
 msgid "Sales Order Allocations"
-msgstr "Alocações do Pedido de Vendas"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:171
 msgid "Filter by part active status"
-msgstr "Filtrar por peça em estado ativo"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:176
 #: src/tables/stock/StockItemTable.tsx:239
 msgid "Assembly"
-msgstr "Montagem"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:177
 msgid "Filter by assembly attribute"
-msgstr "Filtrar por atributo de montagem"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:183
 msgid "Include parts in subcategories"
-msgstr "Incluir peças em subcategorias"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:188
 msgid "Component"
-msgstr "Componente"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:189
 msgid "Filter by component attribute"
-msgstr "Filtrar por atributo do componente"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:195
 msgid "Filter by trackable attribute"
-msgstr "Filtrar por atributo rastreável"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:201
 msgid "Filter by parts which have units"
-msgstr "Filtrar por peças que têm unidades"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:206
 msgid "Has IPN"
-msgstr "Tem IPN"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:207
 msgid "Filter by parts which have an internal part number"
-msgstr "Filtrar por partes que tenham um número de peça interna"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:212
 msgid "Has Stock"
-msgstr "Tem estoque"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:213
 msgid "Filter by parts which have stock"
-msgstr "Filtrar por peças que têm estoque"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:219
 msgid "Filter by parts which have low stock"
-msgstr "Filtrar por peças que tenham estoque baixo"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:224
 msgid "Purchaseable"
-msgstr "Comprável"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:225
 msgid "Filter by parts which are purchaseable"
-msgstr "Filtrar por peças que são compráveis"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:230
 msgid "Salable"
-msgstr "Vendível"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:231
 msgid "Filter by parts which are salable"
-msgstr "Filtrar por peças que são vendíveis"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:237
 msgid "Filter by parts which are virtual"
-msgstr "Filtrar por peças que são virtuais"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:241
 msgid "Not Virtual"
-msgstr "Não é Virtual"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:52
 msgid "Show required tests"
-msgstr "Mostrar testes necessários"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:56
 msgid "Show tests that require a value"
-msgstr "Mostrar testes que exigem um valor"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:60
 msgid "Show tests that require an attachment"
-msgstr "Mostrar testes que exigem um anexo"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:80
-#: src/tables/part/PartTestTemplateTable.tsx:137
+#: src/tables/part/PartTestTemplateTable.tsx:135
 msgid "Add Test Template"
-msgstr "Adicionar Modelo de Teste"
+msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:95
+#: src/tables/part/PartTestTemplateTable.tsx:93
 msgid "Edit Test Template"
-msgstr "Editar Modelo de Teste"
+msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:103
+#: src/tables/part/PartTestTemplateTable.tsx:101
 msgid "Delete Test Template"
-msgstr "Excluir Modelo de Teste"
+msgstr ""
 
 #: src/tables/part/PartThumbTable.tsx:202
 msgid "Search..."
-msgstr "Buscar..."
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:16
 msgid "Show active variants"
-msgstr "Mostrar variantes ativos"
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:20
 msgid "Template"
-msgstr "Modelo"
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:21
 msgid "Show template variants"
-msgstr "Mostrar variantes modelo"
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:26
 msgid "Show virtual variants"
-msgstr "Mostrar variantes virtuais"
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:31
 msgid "Show trackable variants"
-msgstr "Mostrar variantes rastreáveis"
+msgstr ""
 
 #: src/tables/part/RelatedPartTable.tsx:84
 msgid "Add Related Part"
-msgstr "Adicionar Peça Relacionada"
+msgstr ""
 
 #: src/tables/part/RelatedPartTable.tsx:99
 msgid "Delete Related Part"
-msgstr "Excluir Peça Relacionada"
+msgstr ""
 
 #: src/tables/part/RelatedPartTable.tsx:106
 msgid "Add related part"
-msgstr "Adicionar peça relacionada"
+msgstr ""
 
 #: src/tables/plugin/PluginErrorTable.tsx:29
 msgid "Stage"
-msgstr "Fase"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:106
+#: src/tables/plugin/PluginListTable.tsx:113
 msgid "Plugin with id {id} not found"
-msgstr "Plugin com o id {id} não encontrado"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:108
+#: src/tables/plugin/PluginListTable.tsx:115
 msgid "An error occurred while fetching plugin details"
-msgstr "Ocorreu um erro ao obter os detalhes do plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:125
-msgid "Plugin Actions"
-msgstr "Ações do Plugin"
-
-#: src/tables/plugin/PluginListTable.tsx:129
 #: src/tables/plugin/PluginListTable.tsx:132
+msgid "Plugin Actions"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:136
+#: src/tables/plugin/PluginListTable.tsx:139
 msgid "Edit plugin"
-msgstr "Editar plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:143
-#: src/tables/plugin/PluginListTable.tsx:144
+#: src/tables/plugin/PluginListTable.tsx:150
+#: src/tables/plugin/PluginListTable.tsx:151
 msgid "Reload"
-msgstr "Recarregar"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:157
+#: src/tables/plugin/PluginListTable.tsx:164
 msgid "Plugin information"
-msgstr "Informações do plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:168
+#: src/tables/plugin/PluginListTable.tsx:175
 msgid "Author"
-msgstr "Autor"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:173
+#: src/tables/plugin/PluginListTable.tsx:180
 msgid "Date"
-msgstr "Data"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:189
+#: src/tables/plugin/PluginListTable.tsx:196
 msgid "Package information"
-msgstr "Informações do pacote"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:194
-msgid "Installation path"
-msgstr "Caminho de instalação"
+#: src/tables/plugin/PluginListTable.tsx:202
+msgid "Package Name"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:199
-#: src/tables/plugin/PluginListTable.tsx:508
+#: src/tables/plugin/PluginListTable.tsx:208
+msgid "Installation Path"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:213
+#: src/tables/plugin/PluginListTable.tsx:632
 msgid "Builtin"
-msgstr "Embutido"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:210
+#: src/tables/plugin/PluginListTable.tsx:218
+msgid "Package"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:229
 msgid "Plugin settings"
-msgstr "Configurações do Plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:227
+#: src/tables/plugin/PluginListTable.tsx:246
 msgid "Plugin is active"
-msgstr "Plugin está ativo"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:233
+#: src/tables/plugin/PluginListTable.tsx:252
 msgid "Plugin is inactive"
-msgstr "Plugin está inativo"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:240
+#: src/tables/plugin/PluginListTable.tsx:259
 msgid "Plugin is not installed"
-msgstr "Plugin não está instalado"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:262
+#: src/tables/plugin/PluginListTable.tsx:282
 msgid "Plugin"
-msgstr "Plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:284
+#: src/tables/plugin/PluginListTable.tsx:304
 msgid "Description not available"
-msgstr "Descrição não disponível"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:309
+#: src/tables/plugin/PluginListTable.tsx:329
 msgid "Activate Plugin"
-msgstr "Ativar Plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:309
+#: src/tables/plugin/PluginListTable.tsx:329
 msgid "Deactivate Plugin"
-msgstr "Desativar Plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:318
+#: src/tables/plugin/PluginListTable.tsx:338
 msgid "Confirm plugin activation"
-msgstr "Confirmar ativação do plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:319
+#: src/tables/plugin/PluginListTable.tsx:339
 msgid "Confirm plugin deactivation"
-msgstr "Confirmar desativação do plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:325
+#: src/tables/plugin/PluginListTable.tsx:345
 msgid "The following plugin will be activated"
-msgstr "O seguinte plugin será ativado"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:326
+#: src/tables/plugin/PluginListTable.tsx:346
 msgid "The following plugin will be deactivated"
-msgstr "O seguinte plugin será desativado"
-
-#: src/tables/plugin/PluginListTable.tsx:337
-msgid "Confirm"
-msgstr "Confirmar"
-
-#: src/tables/plugin/PluginListTable.tsx:347
-msgid "Activating plugin"
-msgstr "Ativando plugin"
-
-#: src/tables/plugin/PluginListTable.tsx:347
-msgid "Deactivating plugin"
-msgstr "Desativando plugin"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:357
+msgid "Confirm"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:367
+msgid "Activating plugin"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:367
+msgid "Deactivating plugin"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:383
 msgid "Plugin updated"
-msgstr "Plugin atualizado"
-
-#: src/tables/plugin/PluginListTable.tsx:359
-msgid "The plugin was activated"
-msgstr "O plugin foi ativado"
-
-#: src/tables/plugin/PluginListTable.tsx:360
-msgid "The plugin was deactivated"
-msgstr "O plugin foi desativado"
-
-#: src/tables/plugin/PluginListTable.tsx:368
-msgid "Error updating plugin"
-msgstr "Erro ao atualizar plugin"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:385
-msgid "Deactivate"
-msgstr "Desativar"
+msgid "The plugin was activated"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:386
+msgid "The plugin was deactivated"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:394
+msgid "Error updating plugin"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:414
+msgid "Deactivate"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:423
 msgid "Activate"
-msgstr "Ativar"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:408
+#: src/tables/plugin/PluginListTable.tsx:454
+msgid "Uninstall"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:485
 msgid "Install plugin"
-msgstr "Instalar plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:416
+#: src/tables/plugin/PluginListTable.tsx:498
 msgid "Install"
-msgstr "Instalar"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:420
+#: src/tables/plugin/PluginListTable.tsx:502
 msgid "Plugin installed successfully"
-msgstr "Plugin instalado com sucesso"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:441
+#: src/tables/plugin/PluginListTable.tsx:515
+msgid "Uninstall Plugin"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:527
+msgid "Confirm plugin uninstall"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:530
+msgid "The selected plugin will be uninstalled."
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:531
+msgid "This action cannot be undone."
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:537
+msgid "Plugin uninstalled successfully"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:550
+msgid "Delete Plugin"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:552
+msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:564
 msgid "Plugins reloaded"
-msgstr "Plugins recarregados"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:442
+#: src/tables/plugin/PluginListTable.tsx:565
 msgid "Plugins were reloaded successfully"
-msgstr "Plugins foram recarregados com sucesso"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:458
+#: src/tables/plugin/PluginListTable.tsx:581
 msgid "Reload Plugins"
-msgstr "Recarregar plugins"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:467
+#: src/tables/plugin/PluginListTable.tsx:590
 msgid "Install Plugin"
-msgstr "Instalar Plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:480
+#: src/tables/plugin/PluginListTable.tsx:608
 msgid "Plugin detail"
-msgstr "Detalhes do plugin"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:513
+#: src/tables/plugin/PluginListTable.tsx:637
 msgid "Sample"
-msgstr "Amostra"
+msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:518
+#: src/tables/plugin/PluginListTable.tsx:642
 #: src/tables/stock/StockItemTable.tsx:279
 msgid "Installed"
-msgstr "Instalado"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:57
 msgid "Edit Parameter"
-msgstr "Editar Parâmetro"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:60
 msgid "Parameter updated"
-msgstr "Parâmetro atualizado"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:71
 msgid "Delete Parameter"
-msgstr "Excluir Parâmetro"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:73
 msgid "Parameter deleted"
-msgstr "Parâmetro excluído"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:74
 msgid "Are you sure you want to delete this parameter?"
-msgstr "Tem certeza de que deseja remover este parâmetro?"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:56
 msgid "Manufacturer Part Number"
-msgstr "Número de Peça do Fabricante"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:75
 msgid "Add Manufacturer Part"
-msgstr "Adicionar Peça do Fabricante"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:94
 msgid "Edit Manufacturer Part"
-msgstr "Editar Peça do Fabricante"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:97
 msgid "Manufacturer part updated"
-msgstr "Peça do Fabricante atualizada"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:108
 msgid "Delete Manufacturer Part"
-msgstr "Excluir Peça do Fabricante"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:109
 msgid "Manufacturer part deleted"
-msgstr "Peça do Fabricante excluída"
+msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:111
 msgid "Are you sure you want to remove this manufacturer part?"
-msgstr "Tem certeza de que deseja remover esta peça do fabricante?"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:73
 msgid "Part Description"
-msgstr "Descrição da Peça"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:94
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:130
 #: src/tables/purchasing/SupplierPartTable.tsx:123
 msgid "Pack Quantity"
-msgstr "Quantidade de embalagens"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:100
 msgid "Total Quantity"
-msgstr "Quantidade Total"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:116
 msgid "Received"
-msgstr "Recebido"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:135
 msgid "Supplier Code"
-msgstr "Código do Fornecedor"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:142
 msgid "Supplier Link"
-msgstr "Link do Fornecedor"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:149
 msgid "Manufacturer Code"
-msgstr "Código do Fabricante"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:157
 msgid "Unit Price"
-msgstr "Preço Unitário"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:163
 msgid "Destination"
-msgstr "Destino"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:180
 msgid "Add Line Item"
-msgstr "Adicionar Item de Linha"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:195
 msgid "Edit Line Item"
-msgstr "Editar Item de Linha"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:203
 msgid "Delete Line Item"
-msgstr "Excluir Item de Linha"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:214
 msgid "Receive line item"
-msgstr "Receber item de linha"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:245
 msgid "Add line item"
-msgstr "Adicionar item de linha"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:251
 msgid "Receive items"
-msgstr "Receber itens"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderTable.tsx:55
 #: src/tables/sales/ReturnOrderTable.tsx:45
 #: src/tables/sales/SalesOrderTable.tsx:52
 #: src/tables/stock/StockItemTable.tsx:233
 msgid "Status"
-msgstr "Estado"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderTable.tsx:102
 #: src/tables/purchasing/PurchaseOrderTable.tsx:119
 msgid "Add Purchase Order"
-msgstr "Adicionar Ordem de Compra"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:91
 msgid "MPN"
-msgstr "MPN"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:114
 msgid "Base units"
-msgstr "Unidade base"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:140
 msgid "Updated"
-msgstr "Atualizado"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:159
 msgid "Add Supplier Part"
-msgstr "Adicionar Peça do Fornecedor"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:162
 msgid "Supplier part created"
-msgstr "Peça do fornecedor criada"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:171
 msgid "Add supplier part"
-msgstr "Adicionar peça do fornecedor"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:193
 msgid "Edit Supplier Part"
-msgstr "Editar Peça do Fornecedor"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:196
 msgid "Supplier part updated"
-msgstr "Peça do fornecedor atualizada"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:207
 msgid "Delete Supplier Part"
-msgstr "Excluir Peça do Fornecedor"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:208
 msgid "Supplier part deleted"
-msgstr "Peça do fornecedor excluída"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:210
 msgid "Are you sure you want to remove this supplier part?"
-msgstr "Tem certeza de que deseja remover esta peça do fornecedor?"
+msgstr ""
 
 #: src/tables/sales/ReturnOrderTable.tsx:99
 msgid "Add Return Order"
-msgstr "Adicionar Pedido de Devolução"
+msgstr ""
 
 #: src/tables/sales/SalesOrderTable.tsx:66
 #: src/tables/sales/SalesOrderTable.tsx:83
 msgid "Add Sales Order"
-msgstr "Adicionar Pedido de Vendas"
+msgstr ""
 
 #: src/tables/sales/SalesOrderTable.tsx:111
 msgid "Customer Reference"
-msgstr "Referência do Cliente"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:28
 msgid "Rate"
-msgstr "Taxa"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:40
 msgid "Exchange rates updated"
-msgstr "Taxas de câmbio atualizadas"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:46
 msgid "Exchange rate update error"
-msgstr "Erro ao atualizar taxa de câmbio"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:57
 msgid "Refresh currency exchange rates"
-msgstr "Atualizar taxas de câmbio"
+msgstr ""
 
 #: src/tables/settings/CustomUnitsTable.tsx:50
 msgid "Add Custom Unit"
-msgstr "Adicionar Unidade Personalizada"
+msgstr ""
 
-#: src/tables/settings/CustomUnitsTable.tsx:62
+#: src/tables/settings/CustomUnitsTable.tsx:60
 msgid "Edit Custom Unit"
-msgstr "Editar Unidade Personalizada"
+msgstr ""
 
-#: src/tables/settings/CustomUnitsTable.tsx:70
+#: src/tables/settings/CustomUnitsTable.tsx:68
 msgid "Delete Custom Unit"
-msgstr "Excluir Unidade Personalizada"
+msgstr ""
 
-#: src/tables/settings/CustomUnitsTable.tsx:102
+#: src/tables/settings/CustomUnitsTable.tsx:100
 msgid "Add custom unit"
-msgstr "Adicionar unidade personalizada"
+msgstr ""
 
 #: src/tables/settings/ErrorTable.tsx:29
 msgid "When"
-msgstr "Quando"
+msgstr ""
 
 #: src/tables/settings/ErrorTable.tsx:34
 msgid "Path"
-msgstr "Caminho"
+msgstr ""
 
 #: src/tables/settings/ErrorTable.tsx:39
 msgid "Error Information"
-msgstr "Informação do erro"
+msgstr ""
 
 #: src/tables/settings/ErrorTable.tsx:51
 msgid "Delete error report"
-msgstr "Excluir relatório de erros"
+msgstr ""
 
 #: src/tables/settings/ErrorTable.tsx:53
 msgid "Error report deleted"
-msgstr "Relatório de erro excluído"
+msgstr ""
 
 #: src/tables/settings/ErrorTable.tsx:54
 msgid "Are you sure you want to delete this error report?"
-msgstr "Tem certeza de que deseja excluir este relatório de erro?"
+msgstr ""
 
 #: src/tables/settings/ErrorTable.tsx:67
 #: src/tables/settings/FailedTasksTable.tsx:57
 msgid "Error Details"
-msgstr "Detalhes do Erro"
+msgstr ""
 
 #: src/tables/settings/FailedTasksTable.tsx:24
 #: src/tables/settings/PendingTasksTable.tsx:17
 #: src/tables/settings/ScheduledTasksTable.tsx:19
 msgid "Task"
-msgstr "Tarefa"
+msgstr ""
 
 #: src/tables/settings/FailedTasksTable.tsx:30
 #: src/tables/settings/PendingTasksTable.tsx:22
 msgid "Task ID"
-msgstr "ID da Tarefa"
+msgstr ""
 
 #: src/tables/settings/FailedTasksTable.tsx:34
 msgid "Started"
-msgstr "Iniciado"
+msgstr ""
 
 #: src/tables/settings/FailedTasksTable.tsx:40
 msgid "Stopped"
-msgstr "Parado"
+msgstr ""
 
 #: src/tables/settings/FailedTasksTable.tsx:46
 msgid "Attempts"
-msgstr "Tentativas"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:51
 msgid "Group with id {id} not found"
-msgstr "Grupo com o id {id} não encontrado"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:53
 msgid "An error occurred while fetching group details"
-msgstr "Ocorreu um erro ao obter os detalhes do grupo"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:77
 msgid "Permission set"
-msgstr "Permissão definida"
+msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:128
+#: src/tables/settings/GroupTable.tsx:126
 msgid "Delete group"
-msgstr "Apagar grupo"
+msgstr ""
+
+#: src/tables/settings/GroupTable.tsx:127
+msgid "Group deleted"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:129
-msgid "Group deleted"
-msgstr "Grupo excluído"
-
-#: src/tables/settings/GroupTable.tsx:131
 msgid "Are you sure you want to delete this group?"
-msgstr "Você tem certeza de que deseja excluir este grupo?"
+msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:136
-#: src/tables/settings/GroupTable.tsx:148
+#: src/tables/settings/GroupTable.tsx:134
+#: src/tables/settings/GroupTable.tsx:146
 msgid "Add group"
-msgstr "Adicionar grupo"
+msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:160
+#: src/tables/settings/GroupTable.tsx:158
 msgid "Edit group"
-msgstr "Editar grupo"
+msgstr ""
 
 #: src/tables/settings/PendingTasksTable.tsx:30
 msgid "Created"
-msgstr "Criado"
+msgstr ""
 
 #: src/tables/settings/PendingTasksTable.tsx:36
 msgid "Arguments"
-msgstr "Argumentos"
+msgstr ""
 
 #: src/tables/settings/ProjectCodeTable.tsx:42
 msgid "Add Project Code"
-msgstr "Adicionar Código do Projeto"
+msgstr ""
 
 #: src/tables/settings/ProjectCodeTable.tsx:54
 msgid "Edit Project Code"
-msgstr "Editar Código do Projeto"
+msgstr ""
 
 #: src/tables/settings/ProjectCodeTable.tsx:62
 msgid "Delete Project Code"
-msgstr "Excluir Código do Projeto"
+msgstr ""
 
 #: src/tables/settings/ProjectCodeTable.tsx:94
 msgid "Add project code"
-msgstr "Adicionar código do projeto"
+msgstr ""
 
 #: src/tables/settings/ScheduledTasksTable.tsx:25
 msgid "Last Run"
-msgstr "Última Execução"
+msgstr ""
 
 #: src/tables/settings/ScheduledTasksTable.tsx:47
 msgid "Next Run"
-msgstr "Próxima Execução"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:66
 msgid "User with id {id} not found"
-msgstr "Usuário com o id {id} não encontrado"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:68
 msgid "An error occurred while fetching user details"
-msgstr "Ocorreu um erro ao obter os detalhes do usuário"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:86
 msgid "Is Active"
-msgstr "Está Ativo"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:87
 msgid "Designates whether this user should be treated as active. Unselect this instead of deleting accounts."
-msgstr "Designa se esse usuário deve ser tratado como ativo. Desmarque isso em vez de excluir contas."
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:91
 msgid "Is Staff"
-msgstr "É da Equipe"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:92
 msgid "Designates whether the user can log into the django admin site."
-msgstr "Designa se o usuário pode fazer entrar no site administrativo do django."
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:96
 msgid "Is Superuser"
-msgstr "É Superusuário"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:97
 msgid "Designates that this user has all permissions without explicitly assigning them."
-msgstr "Indica que este usuário tem todas as permissões sem atribuí-las explicitamente."
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:107
 msgid "You cannot edit the rights for the currently logged-in user."
-msgstr "Você não pode editar os direitos para o usuário conectado no momento."
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:133
 msgid "No groups"
-msgstr "Sem grupos"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:201
 msgid "Delete user"
-msgstr "Excluir usuário"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:202
 msgid "User deleted"
-msgstr "Usuário excluído"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:204
 msgid "Are you sure you want to delete this user?"
-msgstr "Tem certeza de que deseja excluir este usuário?"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:214
 #: src/tables/settings/UserTable.tsx:230
 msgid "Add user"
-msgstr "Adicionar usuário"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:222
 msgid "Added user"
-msgstr "Usuário adicionado"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:239
 msgid "Edit user"
-msgstr "Editar usuário"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:59
 msgid "This stock item is in production"
-msgstr "Este item de estoque está em produção"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:68
 msgid "This stock item has been assigned to a sales order"
-msgstr "Este item em estoque foi reservado para um pedido"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:77
 msgid "This stock item has been assigned to a customer"
-msgstr "Este item em estoque foi reservado para um cliente"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:86
 msgid "This stock item is installed in another stock item"
-msgstr "Este item em estoque foi instalado em outro item de estoque"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:95
 msgid "This stock item has been consumed by a build order"
-msgstr "Este item de estoque foi consumido por um pedido de produção"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:104
 msgid "This stock item has expired"
-msgstr "Este item de estoque expirou"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:108
 msgid "This stock item is stale"
-msgstr "Este item de estoque está velho"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:119
 msgid "This stock item is fully allocated"
-msgstr "Este item de estoque está totalmente alocado"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:126
 msgid "This stock item is partially allocated"
-msgstr "Este item de estoque está parcialmente alocado"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:155
 msgid "This stock item has been depleted"
-msgstr "Este item de estoque foi esgotado"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:229
 msgid "Show stock for active parts"
-msgstr "Mostrar estoque de peças ativas"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:234
 msgid "Filter by stock status"
-msgstr "Filtrar por estado do estoque"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:240
 msgid "Show stock for assmebled parts"
-msgstr "Mostrar estoque para peças montadas"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:244
 msgid "Allocated"
-msgstr "Alocado"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:245
 msgid "Show items which have been allocated"
-msgstr "Mostrar itens que foram alocados"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:250
 msgid "Show items which are available"
-msgstr "Mostrar itens que estão disponíveis"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:254
 #: src/tables/stock/StockLocationTable.tsx:37
 msgid "Include Sublocations"
-msgstr "Incluir Sublocais"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:255
 msgid "Include stock in sublocations"
-msgstr "Incluir estoque em sublocais"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:259
 msgid "Depleted"
-msgstr "Esgotado"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:260
 msgid "Show depleted stock items"
-msgstr "Mostrar itens de estoque esgotados"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:265
 msgid "Show items which are in stock"
-msgstr "Mostrar itens que estão em estoque"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:269
 msgid "In Production"
-msgstr "Em Produção"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:270
 msgid "Show items which are in production"
-msgstr "Mostrar itens que estão em produção"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:275
 msgid "Include stock items for variant parts"
-msgstr "Incluir itens de estoque para peças variantes"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:280
 msgid "Show stock items which are installed in other items"
-msgstr "Mostrar itens de estoque que estão instalados em outros itens"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:284
 msgid "Sent to Customer"
-msgstr "Enviar para Cliente"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:285
 msgid "Show items which have been sent to a customer"
-msgstr "Mostrar itens enviados para um cliente"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:289
 msgid "Is Serialized"
-msgstr "É Serializado"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:290
 msgid "Show items which have a serial number"
-msgstr "Mostrar itens com um número de série"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:297
 msgid "Has Batch Code"
-msgstr "Possuí Código de Lote"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:298
 msgid "Show items which have a batch code"
-msgstr "Mostrar itens com um código de lote"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:303
 msgid "Tracked"
-msgstr "Monitorado"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:304
 msgid "Show tracked items"
-msgstr "Mostrar itens monitorados"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:308
 msgid "Has Purchase Price"
-msgstr "Tem Preço de Compra"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:309
 msgid "Show items which have a purchase price"
-msgstr "Mostrar itens com preço de compra"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:317
 msgid "External Location"
-msgstr "Localização Externa"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:318
 msgid "Show items in an external location"
-msgstr "Mostrar itens com localização externa"
+msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:38
 msgid "Include sublocations in results"
-msgstr "Incluir sublocais nos resultados"
+msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:42
 msgid "Show structural locations"
-msgstr "Mostrar locais estruturais"
+msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:46
 msgid "Show external locations"
-msgstr "Mostrar locais externos"
+msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:50
 msgid "Has location type"
-msgstr "Tem Tipo de localização"
+msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:87
-#: src/tables/stock/StockLocationTable.tsx:118
+#: src/tables/stock/StockLocationTable.tsx:116
 msgid "Add Stock Location"
-msgstr "Adicionar Local de Estoque"
+msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:108
+#: src/tables/stock/StockLocationTable.tsx:106
 msgid "Edit Stock Location"
-msgstr "Editar Local de Estoque"
+msgstr ""
 
 #: src/views/MobileAppView.tsx:14
 msgid "Mobile viewport detected"
-msgstr "Visualização móvel detectada"
+msgstr ""
 
 #: src/views/MobileAppView.tsx:17
 msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
-msgstr "A interface de usuário da plataforma é otimizada para Tablets e Desktops, você pode usar o app oficial para uma experiência para celulares."
+msgstr ""
 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
-msgstr "Leia a documentação"
+msgstr ""
 

@@ -8,7 +8,7 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from maintenance_mode.backends import AbstractStateBackend
 
 import common.models
-import InvenTree.helpers
+import InvenTree.ready
 
 logger = logging.getLogger('inventree')
 
@@ -28,11 +28,16 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
         Returns:
             bool: True if maintenance mode is active, False otherwise.
         """
-        value = InvenTree.helpers.str2bool(
-            common.models.InvenTreeSetting.get_setting(
-                self.SETTING_KEY, backup_value=False, create=False, cache=False
-            )
-        )
+        try:
+            setting = common.models.InvenTreeSetting.objects.get(key=self.SETTING_KEY)
+            value = InvenTree.helpers.str2bool(setting.value)
+        except common.models.InvenTreeSetting.DoesNotExist:
+            # Database is accessible, but setting is not available - assume False
+            value = False
+        except (IntegrityError, OperationalError, ProgrammingError):
+            # Database is inaccessible - assume we are not in maintenance mode
+            logger.warning('Failed to read maintenance mode state - assuming True')
+            value = True
 
         logger.debug('Maintenance mode state: %s', value)
 
@@ -50,10 +55,13 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
                 if self.get_value() == value:
                     break
             except (IntegrityError, OperationalError, ProgrammingError):
-                logger.warning(
-                    'Failed to set maintenance mode state in database (%s retries left)',
-                    retries,
+                # In the database is locked, then
+                logger.debug(
+                    'Failed to set maintenance mode state (%s retries left)', retries
                 )
                 time.sleep(0.1)
 
             retries -= 1
+
+            if retries == 0:
+                logger.warning('Failed to set maintenance mode state')
