@@ -120,8 +120,6 @@ STATIC_ROOT = config.get_static_dir()
 # The filesystem location for uploaded meadia files
 MEDIA_ROOT = config.get_media_dir()
 
-''
-
 # List of allowed hosts (default = allow all)
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = get_setting(
