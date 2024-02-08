@@ -9,6 +9,7 @@ from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
 from dj_rest_auth.views import LogoutView
+from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -110,6 +111,7 @@ class RoleDetails(APIView):
     """
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     def get(self, request, *args, **kwargs):
         """Return the list of roles / permissions available to the current user."""
@@ -203,10 +205,17 @@ class GroupList(ListCreateAPI):
     ordering_fields = ['name']
 
 
+@extend_schema_view(
+    post=extend_schema(
+        responses={200: OpenApiResponse(description='User successfully logged out')}
+    )
+)
 class Logout(LogoutView):
     """API view for logging out via API."""
 
-    def logout(self, request):
+    serializer_class = None
+
+    def post(self, request):
         """Logout the current user.
 
         Deletes user token associated with request.
@@ -230,6 +239,7 @@ class GetAuthToken(APIView):
     """Return authentication token for an authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated.

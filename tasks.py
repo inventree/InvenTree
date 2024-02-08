@@ -894,10 +894,16 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
         'overwrite': 'Overwrite existing files without asking first (default = off/False)',
     }
 )
-def schema(c, filename='schema.yml', overwrite=False):
+def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
-    manage(c, f'spectacular --file {filename}')
+
+    cmd = f'spectacular --file {filename} --validate --color'
+
+    if not ignore_warnings:
+        cmd += ' --fail-on-warn'
+
+    manage(c, cmd, pty=True)
 
 
 @task(default=True)

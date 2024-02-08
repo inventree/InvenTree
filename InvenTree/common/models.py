@@ -2868,7 +2868,7 @@ class NotificationMessage(models.Model):
         """Return API endpoint."""
         return reverse('api-notifications-list')
 
-    def age(self):
+    def age(self) -> int:
         """Age of the message in seconds."""
         # Add timezone information if TZ is enabled (in production mode mostly)
         delta = now() - (
@@ -2878,7 +2878,7 @@ class NotificationMessage(models.Model):
         )
         return delta.seconds
 
-    def age_human(self):
+    def age_human(self) -> str:
         """Humanized age."""
         return naturaltime(self.creation)
 

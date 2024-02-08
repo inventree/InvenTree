@@ -184,7 +184,7 @@ class StockLocation(
     )
 
     @property
-    def icon(self):
+    def icon(self) -> str:
         """Get the current icon used for this location.
 
         The icon field on this model takes precedences over the possibly assigned stock location type
