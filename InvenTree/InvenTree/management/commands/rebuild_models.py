@@ -17,8 +17,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         """Rebuild all database models which leverage the MPTT structure."""
-        from time import sleep
-
         with maintenance_mode_on():
             self.rebuild_models()
 
