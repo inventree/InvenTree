@@ -20,6 +20,7 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
+import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
@@ -97,6 +98,12 @@ class PluginValidationMixin(DiffMixin):
                     return
             except ValidationError as exc:
                 raise exc
+            except Exception as exc:
+                # Log the exception to the database
+                InvenTree.exceptions.log_error(
+                    f'plugins.{plugin.slug}.validate_model_instance'
+                )
+                raise ValidationError(_('Error running plugin validation'))
 
     def full_clean(self):
         """Run plugin validation on full model clean.
