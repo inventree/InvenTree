@@ -25,6 +25,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from taggit.managers import TaggableManager
 
 import common.models
+import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
@@ -32,7 +33,6 @@ import InvenTree.tasks
 import label.models
 import report.models
 from company import models as CompanyModels
-from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
@@ -603,7 +603,9 @@ class StockItem(
             except ValidationError as exc:
                 raise ValidationError({'batch': exc.message})
             except Exception:
-                log_error(f'plugin.{plugin.slug}.validate_batch_code')
+                InvenTree.exceptions.log_error(
+                    f'plugin.{plugin.slug}.validate_batch_code'
+                )
 
     def clean(self):
         """Validate the StockItem object (separate to field validation).

@@ -20,7 +20,6 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
-import InvenTree.exceptions
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
@@ -100,6 +99,8 @@ class PluginValidationMixin(DiffMixin):
                 raise exc
             except Exception as exc:
                 # Log the exception to the database
+                import InvenTree.exceptions
+
                 InvenTree.exceptions.log_error(
                     f'plugins.{plugin.slug}.validate_model_instance'
                 )

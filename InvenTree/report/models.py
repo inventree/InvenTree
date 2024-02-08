@@ -16,12 +16,12 @@ from django.utils.translation import gettext_lazy as _
 
 import build.models
 import common.models
+import InvenTree.exceptions
 import InvenTree.models
 import order.models
 import part.models
 import report.helpers
 import stock.models
-from InvenTree.exceptions import log_error
 from InvenTree.helpers import validateFilterString
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
@@ -267,7 +267,9 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
             try:
                 plugin.add_report_context(self, self.object_to_print, request, context)
             except Exception:
-                log_error(f'plugins.{plugin.slug}.add_report_context')
+                InvenTree.exceptions.log_error(
+                    f'plugins.{plugin.slug}.add_report_context'
+                )
 
         return context
 
