@@ -971,7 +971,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
                 switchable: false,
                 title: '{% trans "Build Order" %}',
                 formatter: function(value, row) {
-                    let ref = `${row.build_detail.reference}`;
+                    let ref = row.build_detail?.reference ?? row.build;
                     let html = renderLink(ref, `/build/${row.build}/`);
 
                     html += `- <small>${row.build_detail.title}</small>`;
@@ -1094,7 +1094,7 @@ function loadBuildOutputTable(build_info, options={}) {
     var params = options.params || {};
 
     // test templates for the part being assembled
-    let test_templates = null;
+    let test_templates = [];
 
     // tracked line items for this build
     let has_tracked_lines = false;
@@ -1138,6 +1138,9 @@ function loadBuildOutputTable(build_info, options={}) {
                         test_templates.push(item);
                     }
                 });
+            },
+            error: function() {
+                test_templates = [];
             }
         }
     );

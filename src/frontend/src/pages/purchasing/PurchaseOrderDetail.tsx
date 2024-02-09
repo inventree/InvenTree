@@ -22,14 +22,14 @@ import {
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
-import { PurchaseOrderLineItemTable } from '../../components/tables/purchasing/PurchaseOrderLineItemTable';
-import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
  * Detail page for a single PurchaseOrder

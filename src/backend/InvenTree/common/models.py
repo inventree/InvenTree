@@ -13,7 +13,7 @@ import math
 import os
 import re
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from secrets import compare_digest
 from typing import Any, Callable, Dict, List, Tuple, TypedDict, Union
@@ -24,7 +24,6 @@ from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
@@ -101,6 +100,10 @@ class BaseURLValidator(URLValidator):
         """Make sure empty values pass."""
         value = str(value).strip()
 
+        # If a configuration level value has been specified, prevent change
+        if settings.SITE_URL:
+            raise ValidationError(_('Site URL is locked by configuration'))
+
         if len(value) == 0:
             pass
 
@@ -108,7 +111,7 @@ class BaseURLValidator(URLValidator):
             super().__call__(value)
 
 
-class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
     @staticmethod
@@ -647,7 +650,7 @@ class BaseInvenTreeSetting(models.Model):
         return value
 
     @classmethod
-    def set_setting(cls, key, value, change_user, create=True, **kwargs):
+    def set_setting(cls, key, value, change_user=None, create=True, **kwargs):
         """Set the value of a particular setting. If it does not exist, option to create it.
 
         Args:
@@ -674,6 +677,16 @@ class BaseInvenTreeSetting(models.Model):
                 setting = cls(key=key, **kwargs)
             else:
                 return
+        except (OperationalError, ProgrammingError):
+            if not key.startswith('_'):
+                logger.warning("Database is locked, cannot set setting '%s'", key)
+            # Likely the DB is locked - not much we can do here
+            return
+        except Exception as exc:
+            logger.exception(
+                "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
+            )
+            return
 
         # Enforce standard boolean representation
         if setting.is_bool():
@@ -700,6 +713,10 @@ class BaseInvenTreeSetting(models.Model):
                     attempts=attempts - 1,
                     **kwargs,
                 )
+        except (OperationalError, ProgrammingError):
+            logger.warning("Database is locked, cannot set setting '%s'", key)
+            # Likely the DB is locked - not much we can do here
+            pass
         except Exception as exc:
             # Some other error
             logger.exception(
@@ -1065,6 +1082,15 @@ def settings_group_options():
 
 def update_instance_url(setting):
     """Update the first site objects domain to url."""
+    if not settings.SITE_MULTI:
+        return
+
+    try:
+        from django.contrib.sites.models import Site
+    except (ImportError, RuntimeError):
+        # Multi-site support not enabled
+        return
+
     site_obj = Site.objects.all().order_by('id').first()
     site_obj.domain = setting.value
     site_obj.save()
@@ -1072,6 +1098,15 @@ def update_instance_url(setting):
 
 def update_instance_name(setting):
     """Update the first site objects name to instance name."""
+    if not settings.SITE_MULTI:
+        return
+
+    try:
+        from django.contrib.sites.models import Site
+    except (ImportError, RuntimeError):
+        # Multi-site support not enabled
+        return
+
     site_obj = Site.objects.all().order_by('id').first()
     site_obj.name = setting.value
     site_obj.save()
@@ -1842,6 +1877,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             in ['1', 'true'],
             'validator': bool,
             'requires_restart': True,
+        },
+        'PLUGIN_UPDATE_CHECK': {
+            'name': _('Check for plugin updates'),
+            'description': _('Enable periodic checks for updates to installed plugins'),
+            'default': True,
+            'validator': bool,
         },
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
@@ -2827,12 +2868,17 @@ class NotificationMessage(models.Model):
         """Return API endpoint."""
         return reverse('api-notifications-list')
 
-    def age(self):
+    def age(self) -> int:
         """Age of the message in seconds."""
-        delta = now() - self.creation
+        # Add timezone information if TZ is enabled (in production mode mostly)
+        delta = now() - (
+            self.creation.replace(tzinfo=timezone.utc)
+            if settings.USE_TZ
+            else self.creation
+        )
         return delta.seconds
 
-    def age_human(self):
+    def age_human(self) -> str:
         """Humanized age."""
         return naturaltime(self.creation)
 

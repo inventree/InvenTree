@@ -11,9 +11,9 @@ import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { PurchaseOrderTable } from '../../components/tables/purchasing/PurchaseOrderTable';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
+import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();

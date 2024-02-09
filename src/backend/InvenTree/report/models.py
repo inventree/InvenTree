@@ -16,6 +16,8 @@ from django.utils.translation import gettext_lazy as _
 
 import build.models
 import common.models
+import InvenTree.exceptions
+import InvenTree.models
 import order.models
 import part.models
 import report.helpers
@@ -93,7 +95,7 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-class ReportBase(models.Model):
+class ReportBase(InvenTree.models.InvenTreeModel):
     """Base class for uploading html templates."""
 
     class Meta:
@@ -262,7 +264,12 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
 
         for plugin in plugins:
             # Let each plugin add its own context data
-            plugin.add_report_context(self, self.object_to_print, request, context)
+            try:
+                plugin.add_report_context(self, self.object_to_print, request, context)
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugins.{plugin.slug}.add_report_context'
+                )
 
         return context
 

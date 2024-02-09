@@ -123,6 +123,10 @@ InvenTree/
 ├─ tasks.py                            # Action definitions for development, testing and deployment
 ```
 
+## API versioning
+
+The [API version](https://github.com/inventree/InvenTree/blob/master/InvenTree/InvenTree/api_version.py) needs to be bumped every time when the API is changed.
+
 ## Environment
 ### Target version
 We are currently targeting:

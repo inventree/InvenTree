@@ -34,7 +34,8 @@ export function constructFormUrl(
  */
 export function extractAvailableFields(
   response: AxiosResponse,
-  method?: string
+  method?: string,
+  hideErrors?: boolean
 ): Record<string, ApiFormFieldType> | null {
   // OPTIONS request *must* return 200 status
   if (response.status !== 200) {
@@ -44,21 +45,7 @@ export function extractAvailableFields(
 
   let actions: any = response.data?.actions ?? null;
 
-  if (!method) {
-    notifications.show({
-      title: t`Form Error`,
-      message: t`Form method not provided`,
-      color: 'red'
-    });
-    return null;
-  }
-
-  if (!actions) {
-    notifications.show({
-      title: t`Form Error`,
-      message: t`Response did not contain action data`,
-      color: 'red'
-    });
+  if (!method || !actions) {
     return null;
   }
 
@@ -71,7 +58,9 @@ export function extractAvailableFields(
 
   if (!(method in actions)) {
     // Missing method - this means user does not have appropriate permission
-    permissionDenied();
+    if (!hideErrors) {
+      permissionDenied();
+    }
     return null;
   }
 
@@ -263,7 +252,6 @@ export function openModalApiForm(props: OpenApiFormProps) {
       });
     })
     .catch((error) => {
-      console.log('Error:', error);
       if (error.response) {
         invalidResponse(error.response.status);
       } else {

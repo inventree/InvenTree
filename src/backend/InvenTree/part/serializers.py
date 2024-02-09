@@ -91,7 +91,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
         if not path_detail:
             self.fields.pop('path')
 
-    def get_starred(self, category):
+    def get_starred(self, category) -> bool:
         """Return True if the category is directly "starred" by the current user."""
         return category in self.context.get('starred_categories', [])
 
@@ -723,7 +723,7 @@ class PartSerializer(
 
         return queryset
 
-    def get_starred(self, part):
+    def get_starred(self, part) -> bool:
         """Return "true" if the part is starred by the current user."""
         return part in self.starred_parts
 
@@ -1373,7 +1373,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         sub_part_detail = kwargs.pop('sub_part_detail', False)
         pricing = kwargs.pop('pricing', True)
 
-        super(BomItemSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not part_detail:
             self.fields.pop('part_detail')
@@ -1408,8 +1408,9 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
 
-    on_order = serializers.FloatField(read_only=True)
-    building = serializers.FloatField(read_only=True)
+    on_order = serializers.FloatField(label=_('On Order'), read_only=True)
+
+    building = serializers.FloatField(label=_('In Production'), read_only=True)
 
     # Cached pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1420,7 +1421,8 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     )
 
     # Annotated fields for available stock
-    available_stock = serializers.FloatField(read_only=True)
+    available_stock = serializers.FloatField(label=_('Available Stock'), read_only=True)
+
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
 

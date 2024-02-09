@@ -15,31 +15,30 @@ from .models import (
 )
 
 
+@admin.register(
+    BillOfMaterialsReport,
+    BuildReport,
+    PurchaseOrderReport,
+    ReturnOrderReport,
+    SalesOrderReport,
+    StockLocationReport,
+    TestReport,
+)
 class ReportTemplateAdmin(admin.ModelAdmin):
     """Admin class for the various reporting models."""
 
     list_display = ('name', 'description', 'template', 'filters', 'enabled', 'revision')
 
 
+@admin.register(ReportSnippet)
 class ReportSnippetAdmin(admin.ModelAdmin):
     """Admin class for the ReportSnippet model."""
 
     list_display = ('id', 'snippet', 'description')
 
 
+@admin.register(ReportAsset)
 class ReportAssetAdmin(admin.ModelAdmin):
     """Admin class for the ReportAsset model."""
 
     list_display = ('id', 'asset', 'description')
-
-
-admin.site.register(ReportSnippet, ReportSnippetAdmin)
-admin.site.register(ReportAsset, ReportAssetAdmin)
-
-admin.site.register(StockLocationReport, ReportTemplateAdmin)
-admin.site.register(TestReport, ReportTemplateAdmin)
-admin.site.register(BuildReport, ReportTemplateAdmin)
-admin.site.register(BillOfMaterialsReport, ReportTemplateAdmin)
-admin.site.register(PurchaseOrderReport, ReportTemplateAdmin)
-admin.site.register(ReturnOrderReport, ReportTemplateAdmin)
-admin.site.register(SalesOrderReport, ReportTemplateAdmin)
