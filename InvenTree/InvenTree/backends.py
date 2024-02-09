@@ -9,7 +9,6 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from maintenance_mode.backends import AbstractStateBackend
 
 import common.models
-import InvenTree.ready
 
 logger = logging.getLogger('inventree')
 
@@ -50,7 +49,7 @@ class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
 
     def set_value(self, value: bool, retries: int = 5, minutes: int = 5):
         """Set the state of the maintenance mode.
-        
+
         Instead of simply writing "true" or "false" to the setting,
         we write a timestamp to the setting, which is used to determine
         when maintenance mode will elapse.
