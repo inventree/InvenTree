@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-08 06:33+0000\n"
-"PO-Revision-Date: 2024-02-07 12:22\n"
+"PO-Revision-Date: 2024-02-09 13:35\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -339,10 +339,8 @@ msgid "Email"
 msgstr "EMail"
 
 #: InvenTree/models.py:107
-#, fuzzy
-#| msgid "Error reading file (invalid format)"
 msgid "Error running plugin validation"
-msgstr "Ошибка чтения файла (неверный формат)"
+msgstr ""
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
@@ -603,7 +601,7 @@ msgstr "Только суперпользователи могут создав�
 
 #: InvenTree/serializers.py:459
 msgid "Your account has been created."
-msgstr ""
+msgstr "Ваша учётная запись была успешно создана."
 
 #: InvenTree/serializers.py:461
 msgid "Please use the password reset function to login"
@@ -611,7 +609,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:468
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Добро пожаловать в InvenTree"
 
 #: InvenTree/serializers.py:529
 msgid "Filename"
@@ -2206,7 +2204,7 @@ msgstr "Валюта по умолчанию"
 
 #: common/models.py:1257
 msgid "Select base currency for pricing calculations"
-msgstr ""
+msgstr "Выберите базовую валюту для расчета цены"
 
 #: common/models.py:1263
 msgid "Currency Update Interval"
@@ -4593,10 +4591,8 @@ msgid "New Company"
 msgstr "Новая компания"
 
 #: label/api.py:244
-#, fuzzy
-#| msgid "Error renaming file"
 msgid "Error printing label"
-msgstr "Ошибка переименования файла"
+msgstr ""
 
 #: label/models.py:115
 msgid "Label name"
@@ -7665,22 +7661,16 @@ msgid "Label printing failed"
 msgstr ""
 
 #: plugin/base/label/mixins.py:57
-#, fuzzy
-#| msgid "Error renaming file"
 msgid "Error rendering label to PDF"
-msgstr "Ошибка переименования файла"
+msgstr ""
 
 #: plugin/base/label/mixins.py:70
-#, fuzzy
-#| msgid "Error renaming file"
 msgid "Error rendering label to HTML"
-msgstr "Ошибка переименования файла"
+msgstr ""
 
 #: plugin/base/label/mixins.py:89
-#, fuzzy
-#| msgid "Error renaming file"
 msgid "Error rendering label to PNG"
-msgstr "Ошибка переименования файла"
+msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:25
 msgid "InvenTree Barcodes"
@@ -8662,7 +8652,7 @@ msgstr ""
 
 #: stock/models.py:1586 stock/serializers.py:1148
 msgid "Duplicate stock items"
-msgstr "Дублировать складские позиции"
+msgstr "Дублировать складские позиции\n"
 
 #: stock/models.py:1590
 msgid "Stock items must refer to the same part"
@@ -9111,7 +9101,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1922
 msgid "stock item"
-msgstr "складская позиция"
+msgstr "складская позиция\n"
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -9147,7 +9137,7 @@ msgstr "Вернуть на склад"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr "Создать сериализированные позиции из этой складской позиции"
+msgstr "Создать сериализированные позиции из этой складской позиции\n"
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
@@ -10615,7 +10605,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Складская позиция уже просканирована"
+msgstr "Складская позиция уже просканирована\n"
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
@@ -12810,11 +12800,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Создана новая складская позиция"
+msgstr "Создана новая складская позиция\n"
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Создано несколько складских позиций"
+msgstr "Создано несколько складских позиций\n"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
@@ -13621,8 +13611,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13797,3 +13786,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
