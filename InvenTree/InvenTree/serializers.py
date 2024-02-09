@@ -29,6 +29,10 @@ from InvenTree.helpers_model import download_image_from_url, get_base_url
 from users.CustomUser import CustomUser
 
 
+class EmptySerializer(serializers.Serializer):
+    """Empty serializer for use in testing."""
+
+
 class InvenTreeMoneySerializer(MoneyField):
     """Custom serializer for 'MoneyField', which ensures that passed values are numerically valid.
 

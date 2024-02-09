@@ -634,7 +634,7 @@ class PurchaseOrderTest(OrderTest):
         response = self.client.get(
             reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
             format='json',
-            HTTP_AUTHORIZATION=f'basic {base64_token}',
+            headers={'authorization': f'basic {base64_token}'},
         )
         self.assertEqual(response.status_code, 200)
 

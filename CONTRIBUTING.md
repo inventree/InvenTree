@@ -79,6 +79,10 @@ The HEAD of the "stable" branch represents the latest stable release code.
 - When approved, the branch is merged back *into* stable, with an incremented PATCH number (e.g. 0.4.1 -> 0.4.2)
 - The bugfix *must* also be cherry picked into the *master* branch.
 
+## API versioning
+
+The [API version](https://github.com/inventree/InvenTree/blob/master/InvenTree/InvenTree/api_version.py) needs to be bumped every time when the API is changed.
+
 ## Environment
 ### Target version
 We are currently targeting:

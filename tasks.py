@@ -369,10 +369,9 @@ def migrate(c):
     print('Running InvenTree database migrations...')
     print('========================================')
 
-    manage(c, 'makemigrations')
-    manage(c, 'migrate --noinput')
+    # Run custom management command which wraps migrations in "maintenance mode"
+    manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
-    manage(c, 'check')
 
     print('========================================')
     print('InvenTree database migrations completed!')
@@ -504,20 +503,28 @@ def export_records(
     with open(tmpfile, 'r') as f_in:
         data = json.loads(f_in.read())
 
+    data_out = []
+
     if include_permissions is False:
         for entry in data:
-            if 'model' in entry:
-                # Clear out any permissions specified for a group
-                if entry['model'] == 'auth.group':
-                    entry['fields']['permissions'] = []
+            model_name = entry.get('model', None)
 
-                # Clear out any permissions specified for a user
-                if entry['model'] == 'auth.user':
-                    entry['fields']['user_permissions'] = []
+            # Ignore any temporary settings (start with underscore)
+            if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
+                if entry['fields'].get('key', '').startswith('_'):
+                    continue
+
+            if model_name == 'auth.group':
+                entry['fields']['permissions'] = []
+
+            if model_name == 'auth.user':
+                entry['fields']['user_permissions'] = []
+
+            data_out.append(entry)
 
     # Write the processed data to file
     with open(filename, 'w') as f_out:
-        f_out.write(json.dumps(data, indent=2))
+        f_out.write(json.dumps(data_out, indent=2))
 
     print('Data export completed')
 
@@ -887,10 +894,16 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
         'overwrite': 'Overwrite existing files without asking first (default = off/False)',
     }
 )
-def schema(c, filename='schema.yml', overwrite=False):
+def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
-    manage(c, f'spectacular --file {filename}')
+
+    cmd = f'spectacular --file {filename} --validate --color'
+
+    if not ignore_warnings:
+        cmd += ' --fail-on-warn'
+
+    manage(c, cmd, pty=True)
 
 
 @task(default=True)

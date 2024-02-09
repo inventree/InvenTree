@@ -30,7 +30,9 @@ def annotate_location_items(filter: Q = None):
         Subquery(
             subquery.annotate(
                 total=Func(F('pk'), function='COUNT', output_field=IntegerField())
-            ).values('total')
+            )
+            .values('total')
+            .order_by()
         ),
         0,
         output_field=IntegerField(),
@@ -50,7 +52,9 @@ def annotate_child_items():
         Subquery(
             child_stock_query.annotate(
                 count=Func(F('pk'), function='COUNT', output_field=IntegerField())
-            ).values('count')
+            )
+            .values('count')
+            .order_by()
         ),
         0,
         output_field=IntegerField(),

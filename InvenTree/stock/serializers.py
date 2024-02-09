@@ -22,7 +22,6 @@ import InvenTree.status_codes
 import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
-from InvenTree.models import extract_int
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from part.serializers import PartBriefSerializer
 
@@ -114,7 +113,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
     def validate_serial(self, value):
         """Make sure serial is not to big."""
-        if abs(extract_int(value)) > 0x7FFFFFFF:
+        if abs(InvenTree.helpers.extract_int(value)) > 0x7FFFFFFF:
             raise serializers.ValidationError(_('Serial number is too large'))
         return value
 
@@ -1194,6 +1193,14 @@ class StockMergeSerializer(serializers.Serializer):
         )
 
 
+def stock_item_adjust_status_options():
+    """Return a custom set of options for the StockItem status adjustment field.
+
+    In particular, include a Null option for the status field.
+    """
+    return [(None, _('No Change'))] + InvenTree.status_codes.StockStatus.items()
+
+
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjument request.
 
@@ -1236,8 +1243,8 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=InvenTree.status_codes.StockStatus.items(),
-        default=InvenTree.status_codes.StockStatus.OK.value,
+        choices=stock_item_adjust_status_options(),
+        default=None,
         label=_('Status'),
         help_text=_('Stock item status code'),
         required=False,
@@ -1374,8 +1381,8 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 kwargs = {}
 
                 for field_name in StockItem.optional_transfer_fields():
-                    if field_name in item:
-                        kwargs[field_name] = item[field_name]
+                    if field_value := item.get(field_name, None):
+                        kwargs[field_name] = field_value
 
                 stock_item.move(
                     location, notes, request.user, quantity=quantity, **kwargs

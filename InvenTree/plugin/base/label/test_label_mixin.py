@@ -81,7 +81,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
     def test_installed(self):
         """Test that the sample printing plugin is installed."""
         # Get all label plugins
-        plugins = registry.with_mixin('labels')
+        plugins = registry.with_mixin('labels', active=None)
         self.assertEqual(len(plugins), 3)
 
         # But, it is not 'active'

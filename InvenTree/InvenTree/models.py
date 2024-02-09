@@ -2,7 +2,6 @@
 
 import logging
 import os
-import re
 from datetime import datetime
 from io import BytesIO
 
@@ -29,18 +28,98 @@ from InvenTree.sanitizer import sanitize_svg
 logger = logging.getLogger('inventree')
 
 
-def rename_attachment(instance, filename):
-    """Function for renaming an attachment file. The subdirectory for the uploaded file is determined by the implementing class.
+class DiffMixin:
+    """Mixin which can be used to determine which fields have changed, compared to the instance saved to the database."""
 
-    Args:
-        instance: Instance of a PartAttachment object
-        filename: name of uploaded file
+    def get_db_instance(self):
+        """Return the instance of the object saved in the database.
 
-    Returns:
-        path to store file, format: '<subdir>/<id>/filename'
+        Returns:
+            object: Instance of the object saved in the database
+        """
+        if self.pk:
+            try:
+                return self.__class__.objects.get(pk=self.pk)
+            except self.__class__.DoesNotExist:
+                pass
+
+        return None
+
+    def get_field_deltas(self):
+        """Return a dict of field deltas.
+
+        Compares the current instance with the instance saved in the database,
+        and returns a dict of fields which have changed.
+
+        Returns:
+            dict: Dict of field deltas
+        """
+        db_instance = self.get_db_instance()
+
+        if db_instance is None:
+            return {}
+
+        deltas = {}
+
+        for field in self._meta.fields:
+            if field.name == 'id':
+                continue
+
+            if getattr(self, field.name) != getattr(db_instance, field.name):
+                deltas[field.name] = {
+                    'old': getattr(db_instance, field.name),
+                    'new': getattr(self, field.name),
+                }
+
+        return deltas
+
+    def has_field_changed(self, field_name):
+        """Determine if a particular field has changed."""
+        return field_name in self.get_field_deltas()
+
+
+class PluginValidationMixin(DiffMixin):
+    """Mixin class which exposes the model instance to plugin validation.
+
+    Any model class which inherits from this mixin will be exposed to the plugin validation system.
     """
-    # Construct a path to store a file attachment for a given model type
-    return os.path.join(instance.getSubdir(), filename)
+
+    def run_plugin_validation(self):
+        """Throw this model against the plugin validation interface."""
+        from plugin.registry import registry
+
+        deltas = self.get_field_deltas()
+
+        for plugin in registry.with_mixin('validation'):
+            try:
+                if plugin.validate_model_instance(self, deltas=deltas) is True:
+                    return
+            except ValidationError as exc:
+                raise exc
+            except Exception as exc:
+                # Log the exception to the database
+                import InvenTree.exceptions
+
+                InvenTree.exceptions.log_error(
+                    f'plugins.{plugin.slug}.validate_model_instance'
+                )
+                raise ValidationError(_('Error running plugin validation'))
+
+    def full_clean(self):
+        """Run plugin validation on full model clean.
+
+        Note that plugin validation is performed *after* super.full_clean()
+        """
+        super().full_clean()
+        self.run_plugin_validation()
+
+    def save(self, *args, **kwargs):
+        """Run plugin validation on model save.
+
+        Note that plugin validation is performed *before* super.save()
+        """
+        self.run_plugin_validation()
+        super().save(*args, **kwargs)
 
 
 class MetadataMixin(models.Model):
@@ -376,7 +455,7 @@ class ReferenceIndexingMixin(models.Model):
         except Exception:
             pass
 
-        reference_int = extract_int(reference)
+        reference_int = InvenTree.helpers.extract_int(reference)
 
         if validate:
             if reference_int > models.BigIntegerField.MAX_BIGINT:
@@ -387,52 +466,44 @@ class ReferenceIndexingMixin(models.Model):
     reference_int = models.BigIntegerField(default=0)
 
 
-def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
-    """Extract an integer out of reference."""
-    # Default value if we cannot convert to an integer
-    ref_int = 0
+class InvenTreeModel(PluginValidationMixin, models.Model):
+    """Base class for InvenTree models, which provides some common functionality.
 
-    reference = str(reference).strip()
+    Includes the following mixins by default:
 
-    # Ignore empty string
-    if len(reference) == 0:
-        return 0
+    - PluginValidationMixin: Provides a hook for plugins to validate model instances
+    """
 
-    # Look at the start of the string - can it be "integerized"?
-    result = re.match(r'^(\d+)', reference)
+    class Meta:
+        """Metaclass options."""
 
-    if result and len(result.groups()) == 1:
-        ref = result.groups()[0]
-        try:
-            ref_int = int(ref)
-        except Exception:
-            ref_int = 0
-    else:
-        # Look at the "end" of the string
-        result = re.search(r'(\d+)$', reference)
-
-        if result and len(result.groups()) == 1:
-            ref = result.groups()[0]
-            try:
-                ref_int = int(ref)
-            except Exception:
-                ref_int = 0
-
-    # Ensure that the returned values are within the range that can be stored in an IntegerField
-    # Note: This will result in large values being "clipped"
-    if clip is not None:
-        if ref_int > clip:
-            ref_int = clip
-        elif ref_int < -clip:
-            ref_int = -clip
-
-    if not allow_negative and ref_int < 0:
-        ref_int = abs(ref_int)
-
-    return ref_int
+        abstract = True
 
 
-class InvenTreeAttachment(models.Model):
+class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
+    """Base class for an InvenTree model which includes a metadata field."""
+
+    class Meta:
+        """Metaclass options."""
+
+        abstract = True
+
+
+def rename_attachment(instance, filename):
+    """Function for renaming an attachment file. The subdirectory for the uploaded file is determined by the implementing class.
+
+    Args:
+        instance: Instance of a PartAttachment object
+        filename: name of uploaded file
+
+    Returns:
+        path to store file, format: '<subdir>/<id>/filename'
+    """
+    # Construct a path to store a file attachment for a given model type
+    return os.path.join(instance.getSubdir(), filename)
+
+
+class InvenTreeAttachment(InvenTreeModel):
     """Provides an abstracted class for managing file attachments.
 
     An attachment can be either an uploaded file, or an external URL
@@ -614,7 +685,7 @@ class InvenTreeAttachment(models.Model):
         return ''
 
 
-class InvenTreeTree(MPTTModel):
+class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     """Provides an abstracted self-referencing tree model for data categories.
 
     - Each Category has one parent Category, which can be blank (for a top-level Category).

@@ -245,7 +245,9 @@ def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
         Subquery(
             subquery.annotate(
                 total=Func(F(reference), function='SUM', output_field=FloatField())
-            ).values('total')
+            )
+            .values('total')
+            .order_by()
         ),
         0,
         output_field=FloatField(),
@@ -270,7 +272,9 @@ def annotate_category_parts():
         Subquery(
             subquery.annotate(
                 total=Func(F('pk'), function='COUNT', output_field=IntegerField())
-            ).values('total')
+            )
+            .values('total')
+            .order_by()
         ),
         0,
         output_field=IntegerField(),

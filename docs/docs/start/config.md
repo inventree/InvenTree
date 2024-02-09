@@ -196,18 +196,28 @@ A list of currency codes (e.g. *AUD*, *CAD*, *JPY*, *USD*) can be specified usin
 !!! tip "More Info"
     Read the [currencies documentation](../settings/currency.md) for more information on currency support in InvenTree
 
-## Allowed Hosts / CORS
+## Server Access
 
-By default, all hosts are allowed, and CORS requests are enabled from any origin.
+Depending on how your InvenTree installation is configured, you will need to pay careful attention to the following settings. If you are running your server behind a proxy, or want to adjust support for CORS requests, one or more of the following settings may need to be adjusted.
+
+!!! warning "Advanced Users"
+    The following settings require a certain assumed level of knowledge. You should also refer to the [django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/) for more information.
 
 !!! danger "Not Secure"
     Allowing access from any host is not secure, and should be adjusted for your installation.
 
+!!! info "Environment Variables"
+    Note that a provided environment variable will override the value provided in the configuration file.
+
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_ALLOWED_HOSTS | allowed_hosts | List of allowed hosts | `*` |
+| INVENTREE_TRUSTED_ORIGINS | trusted_origins | List of trusted origins | *Empty list* |
+| INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | False |
+| INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | False |
 | INVENTREE_CORS_ORIGIN_ALLOW_ALL | cors.allow_all | Allow all remote URLS for CORS checks | False |
 | INVENTREE_CORS_ORIGIN_WHITELIST | cors.whitelist | List of whitelisted CORS URLs | *Empty list* |
+| INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | True |
 
 !!! info "Configuration File"
     Allowed hosts and CORS options must be changed in the configuration file, and cannot be set via environment variables

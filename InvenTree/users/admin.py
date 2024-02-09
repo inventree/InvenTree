@@ -11,6 +11,7 @@ from users.CustomUser import CustomUser
 from users.models import ApiToken, Owner, RuleSet
 
 
+@admin.register(ApiToken)
 class ApiTokenAdmin(admin.ModelAdmin):
     """Admin class for the ApiToken model."""
 
@@ -286,6 +287,7 @@ class InvenTreeUserAdmin(UserAdmin):
     )
 
 
+@admin.register(Owner)
 class OwnerAdmin(admin.ModelAdmin):
     """Custom admin interface for the Owner model."""
 

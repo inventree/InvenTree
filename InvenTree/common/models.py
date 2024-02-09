@@ -13,7 +13,7 @@ import math
 import os
 import re
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from secrets import compare_digest
 from typing import Any, Callable, Dict, List, Tuple, TypedDict, Union
@@ -111,7 +111,7 @@ class BaseURLValidator(URLValidator):
             super().__call__(value)
 
 
-class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
     @staticmethod
@@ -677,6 +677,16 @@ class BaseInvenTreeSetting(models.Model):
                 setting = cls(key=key, **kwargs)
             else:
                 return
+        except (OperationalError, ProgrammingError):
+            if not key.startswith('_'):
+                logger.warning("Database is locked, cannot set setting '%s'", key)
+            # Likely the DB is locked - not much we can do here
+            return
+        except Exception as exc:
+            logger.exception(
+                "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
+            )
+            return
 
         # Enforce standard boolean representation
         if setting.is_bool():
@@ -703,6 +713,10 @@ class BaseInvenTreeSetting(models.Model):
                     attempts=attempts - 1,
                     **kwargs,
                 )
+        except (OperationalError, ProgrammingError):
+            logger.warning("Database is locked, cannot set setting '%s'", key)
+            # Likely the DB is locked - not much we can do here
+            pass
         except Exception as exc:
             # Some other error
             logger.exception(
@@ -1864,6 +1878,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+        'PLUGIN_UPDATE_CHECK': {
+            'name': _('Check for plugin updates'),
+            'description': _('Enable periodic checks for updates to installed plugins'),
+            'default': True,
+            'validator': bool,
+        },
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
@@ -2848,12 +2868,17 @@ class NotificationMessage(models.Model):
         """Return API endpoint."""
         return reverse('api-notifications-list')
 
-    def age(self):
+    def age(self) -> int:
         """Age of the message in seconds."""
-        delta = now() - self.creation
+        # Add timezone information if TZ is enabled (in production mode mostly)
+        delta = now() - (
+            self.creation.replace(tzinfo=timezone.utc)
+            if settings.USE_TZ
+            else self.creation
+        )
         return delta.seconds
 
-    def age_human(self):
+    def age_human(self) -> str:
         """Humanized age."""
         return naturaltime(self.creation)
 
