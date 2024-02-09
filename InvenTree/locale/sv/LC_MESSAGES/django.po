@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-08 06:33+0000\n"
-"PO-Revision-Date: 2024-02-07 12:22\n"
+"PO-Revision-Date: 2024-02-09 13:36\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -200,7 +200,7 @@ msgstr "Angiven URL är inte en giltig bildfil"
 
 #: InvenTree/locales.py:16
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgariska"
 
 #: InvenTree/locales.py:17
 msgid "Czech"
@@ -292,7 +292,7 @@ msgstr "Ryska"
 
 #: InvenTree/locales.py:39
 msgid "Slovak"
-msgstr ""
+msgstr "Slovakiska"
 
 #: InvenTree/locales.py:40
 msgid "Slovenian"
@@ -339,10 +339,8 @@ msgid "Email"
 msgstr "E-post"
 
 #: InvenTree/models.py:107
-#, fuzzy
-#| msgid "Error reading file (invalid format)"
 msgid "Error running plugin validation"
-msgstr "Fel vid läsning av filen (ogiltigt format)"
+msgstr ""
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
@@ -4593,10 +4591,8 @@ msgid "New Company"
 msgstr ""
 
 #: label/api.py:244
-#, fuzzy
-#| msgid "Error renaming file"
 msgid "Error printing label"
-msgstr "Fel vid namnbyte av fil"
+msgstr ""
 
 #: label/models.py:115
 msgid "Label name"
@@ -7665,22 +7661,16 @@ msgid "Label printing failed"
 msgstr ""
 
 #: plugin/base/label/mixins.py:57
-#, fuzzy
-#| msgid "Error renaming file"
 msgid "Error rendering label to PDF"
-msgstr "Fel vid namnbyte av fil"
+msgstr ""
 
 #: plugin/base/label/mixins.py:70
-#, fuzzy
-#| msgid "Error renaming file"
 msgid "Error rendering label to HTML"
-msgstr "Fel vid namnbyte av fil"
+msgstr ""
 
 #: plugin/base/label/mixins.py:89
-#, fuzzy
-#| msgid "Error renaming file"
 msgid "Error rendering label to PNG"
-msgstr "Fel vid namnbyte av fil"
+msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:25
 msgid "InvenTree Barcodes"
@@ -13481,7 +13471,7 @@ msgstr ""
 
 #: templates/js/translated/tables.js:539
 msgid "Showing"
-msgstr ""
+msgstr "Visar"
 
 #: templates/js/translated/tables.js:539
 msgid "to"
@@ -13621,8 +13611,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:10
 #, python-format
-msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
+msgid "You are about to use your %(provider_name)s account to login to\n"
 "%(site_name)s.<br>As a final step, please complete the following form:"
 msgstr ""
 
@@ -13797,3 +13786,4 @@ msgstr ""
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr ""
+
