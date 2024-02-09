@@ -299,7 +299,3 @@ admin.site.register(Group, RoleGroupAdmin)
 
 admin.site.unregister(CustomUser)
 admin.site.register(CustomUser, InvenTreeUserAdmin)
-
-admin.site.register(Owner, OwnerAdmin)
-
-admin.site.register(ApiToken, ApiTokenAdmin)
