@@ -15,7 +15,6 @@ def image_data(img, fmt='PNG'):
 
     Returns a string ``data:image/FMT;base64,xxxxxxxxx`` which can be rendered to an <img> tag
     """
-
     return report.helpers.encode_image_base64(img, fmt)
 
 
@@ -35,11 +34,7 @@ def qrcode(data, **kwargs):
 
     """
     # Construct "default" values
-    params = {
-        "box_size": 20,
-        "border": 1,
-        "version": 1,
-    }
+    params = {'box_size': 20, 'border': 1, 'version': 1}
 
     fill_color = kwargs.pop('fill_color', 'black')
     back_color = kwargs.pop('back_color', 'white')
@@ -53,10 +48,7 @@ def qrcode(data, **kwargs):
     qr.add_data(data, optimize=20)
     qr.make(fit=True)
 
-    qri = qr.make_image(
-        fill_color=fill_color,
-        back_color=back_color
-    )
+    qri = qr.make_image(fill_color=fill_color, back_color=back_color)
 
     # Render to byte-encoded image
     return image_data(qri, fmt=format)

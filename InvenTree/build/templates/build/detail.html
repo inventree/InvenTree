@@ -373,7 +373,11 @@ onPanelLoad('allocate', function() {
     loadBuildLineTable(
         "#build-lines-table",
         {{ build.pk }},
-        {}
+        {
+            {% if build.project_code %}
+            project_code: {{ build.project_code.pk }},
+            {% endif %}
+        }
     );
 });
 
@@ -419,8 +423,8 @@ function allocateSelectedLines() {
 
     if (unallocated_lines.length == 0) {
         showAlertDialog(
-            '{% trans "Allocation Complete" %}',
-            '{% trans "All lines have been fully allocated" %}',
+            '{% trans "Allocation Complete" escape %}',
+            '{% trans "All lines have been fully allocated" escape %}',
         );
     } else {
 

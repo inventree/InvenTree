@@ -28,7 +28,6 @@ from build.validators import generate_next_build_reference, validate_build_order
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.helpers_model
-import InvenTree.mixins
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
@@ -45,7 +44,7 @@ import users.models
 logger = logging.getLogger('inventree')
 
 
-class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.ReferenceIndexingMixin):
+class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.PluginValidationMixin, InvenTree.models.ReferenceIndexingMixin, MPTTModel):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -109,17 +108,22 @@ class Build(MPTTModel, InvenTree.mixins.DiffMixin, InvenTree.models.InvenTreeBar
         self.validate_reference_field(self.reference)
         self.reference_int = self.rebuild_reference_field(self.reference)
 
-        # Prevent changing target part after creation
-        if self.has_field_changed('part'):
-            raise ValidationError({
-                'part': _('Build order part cannot be changed')
-            })
-
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
             raise ValidationError({
                 'parent': _('Invalid choice for parent build'),
+            })
+
+    def clean(self):
+        """Validate the BuildOrder model"""
+
+        super().clean()
+
+        # Prevent changing target part after creation
+        if self.has_field_changed('part'):
+            raise ValidationError({
+                'part': _('Build order part cannot be changed')
             })
 
     @staticmethod
@@ -1242,7 +1246,7 @@ class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildLine(models.Model):
+class BuildLine(InvenTree.models.InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
@@ -1321,7 +1325,7 @@ class BuildLine(models.Model):
         return self.allocated_quantity() > self.quantity
 
 
-class BuildItem(InvenTree.models.MetadataMixin, models.Model):
+class BuildItem(InvenTree.models.InvenTreeMetadataModel):
     """A BuildItem links multiple StockItem objects to a Build.
 
     These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.

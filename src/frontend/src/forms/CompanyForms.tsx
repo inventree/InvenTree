@@ -1,4 +1,3 @@
-import { t } from '@lingui/macro';
 import {
   IconAt,
   IconCurrencyDollar,
@@ -12,8 +11,6 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../enums/ApiEndpoints';
-import { openEditApiForm } from '../functions/forms';
 
 /**
  * Field set for SupplierPart instance
@@ -81,6 +78,32 @@ export function useSupplierPartFields({
   }, [part]);
 }
 
+export function useManufacturerPartFields() {
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      part: {},
+      manufacturer: {},
+      MPN: {},
+      description: {},
+      link: {}
+    };
+
+    return fields;
+  }, []);
+}
+
+export function useManufacturerPartParameterFields() {
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      name: {},
+      value: {},
+      units: {}
+    };
+
+    return fields;
+  }, []);
+}
+
 /**
  * Field set for editing a company instance
  */
@@ -103,56 +126,5 @@ export function companyFields(): ApiFormFieldSet {
     is_supplier: {},
     is_manufacturer: {},
     is_customer: {}
-  };
-}
-
-/**
- * Edit a company instance
- */
-export function editCompany({
-  pk,
-  callback
-}: {
-  pk: number;
-  callback?: () => void;
-}) {
-  openEditApiForm({
-    title: t`Edit Company`,
-    url: ApiPaths.company_list,
-    pk: pk,
-    fields: companyFields(),
-    successMessage: t`Company updated`,
-    onFormSuccess: callback
-  });
-}
-
-export function contactFields(): ApiFormFieldSet {
-  return {
-    company: {
-      hidden: true
-    },
-    name: {},
-    phone: {},
-    email: {},
-    role: {}
-  };
-}
-
-export function addressFields(): ApiFormFieldSet {
-  return {
-    company: {
-      hidden: true
-    },
-    title: {},
-    primary: {},
-    line1: {},
-    line2: {},
-    postal_code: {},
-    postal_city: {},
-    province: {},
-    country: {},
-    shipping_notes: {},
-    internal_shipping_notes: {},
-    link: {}
   };
 }

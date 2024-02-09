@@ -9,12 +9,12 @@ mkdir -p $1/dev/{commandhistory,plugins}
 cd $1
 
 # create venv
-python3 -m venv dev/venv
-. dev/venv/bin/activate
+python3 -m venv $1/dev/venv
+. $1/dev/venv/bin/activate
 
 # setup InvenTree server
 pip install invoke
-invoke update --no-frontend
+invoke update
 invoke setup-dev
 invoke frontend-install
 

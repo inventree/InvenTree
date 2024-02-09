@@ -1,11 +1,11 @@
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { Button, Group, Stack, Text, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useToggle } from '@mantine/hooks';
 
 import { api } from '../../../../App';
 import { EditButton } from '../../../../components/items/EditButton';
-import { ApiPaths } from '../../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { apiUrl } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
 
@@ -17,7 +17,7 @@ export function AccountDetailPanel() {
   const form = useForm({ initialValues: user });
   const [editing, setEditing] = useToggle([false, true] as const);
   function SaveData(values: any) {
-    api.put(apiUrl(ApiPaths.user_me), values).then((res) => {
+    api.put(apiUrl(ApiEndpoints.user_me), values).then((res) => {
       if (res.status === 200) {
         setEditing();
         fetchUserState();
@@ -37,13 +37,13 @@ export function AccountDetailPanel() {
         {editing ? (
           <Stack spacing="xs">
             <TextInput
-              label="First name"
-              placeholder="First name"
+              label="first name"
+              placeholder={t`First name`}
               {...form.getInputProps('first_name')}
             />
             <TextInput
               label="Last name"
-              placeholder="Last name"
+              placeholder={t`Last name`}
               {...form.getInputProps('last_name')}
             />
             <Group position="right" mt="md">
@@ -55,10 +55,12 @@ export function AccountDetailPanel() {
         ) : (
           <Stack spacing="0">
             <Text>
-              <Trans>First name: {form.values.first_name}</Trans>
+              <Trans>First name: </Trans>
+              {form.values.first_name}
             </Text>
             <Text>
-              <Trans>Last name: {form.values.last_name}</Trans>
+              <Trans>Last name: </Trans>
+              {form.values.last_name}
             </Text>
           </Stack>
         )}

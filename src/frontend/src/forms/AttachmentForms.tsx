@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import {
   openCreateApiForm,
   openDeleteApiForm,
@@ -31,7 +31,7 @@ export function addAttachment({
   attachmentType,
   callback
 }: {
-  endpoint: ApiPaths;
+  endpoint: ApiEndpoints;
   model: string;
   pk: number;
   attachmentType: 'file' | 'link';
@@ -76,7 +76,7 @@ export function editAttachment({
   attachmentType,
   callback
 }: {
-  endpoint: ApiPaths;
+  endpoint: ApiEndpoints;
   model: string;
   pk: number;
   attachmentType: 'file' | 'link';
@@ -114,7 +114,7 @@ export function deleteAttachment({
   pk,
   callback
 }: {
-  endpoint: ApiPaths;
+  endpoint: ApiEndpoints;
   pk: number;
   callback: () => void;
 }) {

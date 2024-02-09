@@ -1,6 +1,5 @@
 """Tests for api_version."""
 
-
 from django.urls import reverse
 
 from InvenTree.api_version import INVENTREE_API_VERSION
@@ -18,6 +17,11 @@ class ApiVersionTests(InvenTreeAPITestCase):
         data = response.json()
 
         self.assertEqual(len(data), 10)
+
+        response = self.client.get(reverse('api-version'), format='json').json()
+        self.assertIn('version', response)
+        self.assertIn('dev', response)
+        self.assertIn('up_to_date', response)
 
     def test_inventree_api_text(self):
         """Test that the inventreeApiText function works expected."""

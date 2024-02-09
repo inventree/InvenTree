@@ -1,4 +1,5 @@
 """Plugin mixin class for AppMixin."""
+
 import logging
 from importlib import reload
 from pathlib import Path
@@ -26,7 +27,9 @@ class AppMixin:
         self.add_mixin('app', 'has_app', __class__)
 
     @classmethod
-    def _activate_mixin(cls, registry, plugins, force_reload=False, full_reload: bool = False):
+    def _activate_mixin(
+        cls, registry, plugins, force_reload=False, full_reload: bool = False
+    ):
         """Activate AppMixin plugins - add custom apps and reload.
 
         Args:
@@ -37,7 +40,9 @@ class AppMixin:
         """
         from common.models import InvenTreeSetting
 
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP'):
+        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting(
+            'ENABLE_PLUGINS_APP'
+        ):
             logger.info('Registering IntegrationPlugin apps')
             apps_changed = False
 
@@ -177,7 +182,7 @@ class AppMixin:
 
         return plugin_path
 
-# endregion
+    # endregion
 
     @property
     def has_app(self):

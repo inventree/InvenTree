@@ -7,14 +7,19 @@ import { useParams } from 'react-router-dom';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
-import { PartListTable } from '../../components/tables/part/PartTable';
-import { StockItemTable } from '../../components/tables/stock/StockItemTable';
-import { StockLocationTable } from '../../components/tables/stock/StockLocationTable';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
+import { PartListTable } from '../../tables/part/PartTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { StockLocationTable } from '../../tables/stock/StockLocationTable';
 
 export default function Stock() {
-  const { id } = useParams();
+  const { id: _id } = useParams();
+
+  const id = useMemo(
+    () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
+    [_id]
+  );
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -23,7 +28,8 @@ export default function Stock() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.stock_location_list,
+    endpoint: ApiEndpoints.stock_location_list,
+    hasPrimaryKey: true,
     pk: id,
     params: {
       path_detail: true
@@ -39,7 +45,7 @@ export default function Stock() {
         content: (
           <StockItemTable
             params={{
-              location: location.pk ?? null
+              location: id
             }}
           />
         )
@@ -48,13 +54,7 @@ export default function Stock() {
         name: 'sublocations',
         label: t`Stock Locations`,
         icon: <IconSitemap />,
-        content: (
-          <StockLocationTable
-            params={{
-              parent: location.pk ?? null
-            }}
-          />
-        )
+        content: <StockLocationTable parentId={id} />
       },
       {
         name: 'default_parts',

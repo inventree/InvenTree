@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { Alert, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
@@ -33,13 +33,14 @@ import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useEditStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -53,7 +54,7 @@ export default function StockDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.stock_item_list,
+    endpoint: ApiEndpoints.stock_item_list,
     pk: id,
     params: {
       part_detail: true,
@@ -94,14 +95,18 @@ export default function StockDetail() {
         name: 'installed_items',
         label: t`Installed Items`,
         icon: <IconBoxPadding />,
-        content: <PlaceholderPanel />,
         hidden: !stockitem?.part_detail?.assembly
       },
       {
         name: 'child_items',
         label: t`Child Items`,
         icon: <IconSitemap />,
-        content: <PlaceholderPanel />
+        hidden: (stockitem?.child_items ?? 0) == 0,
+        content: stockitem?.pk ? (
+          <StockItemTable params={{ ancestor: stockitem.pk }} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'attachments',
@@ -109,9 +114,9 @@ export default function StockDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.stock_attachment_list}
+            endpoint={ApiEndpoints.stock_attachment_list}
             model="stock_item"
-            pk={stockitem.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -121,7 +126,7 @@ export default function StockDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.stock_item_list, stockitem.pk)}
+            url={apiUrl(ApiEndpoints.stock_item_list, id)}
             data={stockitem.notes ?? ''}
             allowEdit={true}
           />

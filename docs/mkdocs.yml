@@ -174,6 +174,7 @@ nav:
     - Parts: app/part.md
     - Stock: app/stock.md
     - Purchase Orders: app/po.md
+    - Sales Orders: app/so.md
     - Settings: app/settings.md
     - Privacy: app/privacy.md
     - Translation: app/translation.md
@@ -239,7 +240,11 @@ markdown_extensions:
   - meta
   - pymdownx.details
   - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          # format: !!python/name:pymdownx.superfences.fence_code_format
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
   #     emoji_generator: !!python/name:materialx.emoji.to_svg

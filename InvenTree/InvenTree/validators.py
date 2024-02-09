@@ -60,9 +60,24 @@ def allowable_url_schemes():
 
 class AllowedURLValidator(validators.URLValidator):
     """Custom URL validator to allow for custom schemes."""
+
     def __call__(self, value):
         """Validate the URL."""
+        import common.models
+
         self.schemes = allowable_url_schemes()
+
+        # Determine if 'strict' URL validation is required (i.e. if the URL must have a schema prefix)
+        strict_urls = common.models.InvenTreeSetting.get_setting(
+            'INVENTREE_STRICT_URLS', True, cache=False
+        )
+
+        if not strict_urls:
+            # Allow URLs which do not have a provided schema
+            if '://' not in value:
+                # Validate as if it were http
+                value = 'http://' + value
+
         super().__call__(value)
 
 
@@ -103,7 +118,7 @@ def validate_overage(value):
         i = Decimal(value)
 
         if i < 0:
-            raise ValidationError(_("Overage value must not be negative"))
+            raise ValidationError(_('Overage value must not be negative'))
 
         # Looks like a number
         return True
@@ -119,17 +134,15 @@ def validate_overage(value):
             f = float(v)
 
             if f < 0:
-                raise ValidationError(_("Overage value must not be negative"))
+                raise ValidationError(_('Overage value must not be negative'))
             elif f > 100:
-                raise ValidationError(_("Overage must not exceed 100%"))
+                raise ValidationError(_('Overage must not exceed 100%'))
 
             return True
         except ValueError:
             pass
 
-    raise ValidationError(
-        _("Invalid value for overage")
-    )
+    raise ValidationError(_('Invalid value for overage'))
 
 
 def validate_part_name_format(value):
@@ -165,8 +178,6 @@ def validate_part_name_format(value):
     try:
         Template(value).render({'part': p})
     except Exception as exc:
-        raise ValidationError({
-            'value': str(exc)
-        })
+        raise ValidationError({'value': str(exc)})
 
     return True

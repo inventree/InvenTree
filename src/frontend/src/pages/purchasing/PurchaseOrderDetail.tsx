@@ -22,14 +22,14 @@ import {
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
-import { PurchaseOrderLineItemTable } from '../../components/tables/purchasing/PurchaseOrderLineItemTable';
-import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
  * Detail page for a single PurchaseOrder
@@ -40,7 +40,7 @@ export default function PurchaseOrderDetail() {
   const user = useUserState();
 
   const { instance: order, instanceQuery } = useInstance({
-    endpoint: ApiPaths.purchase_order_list,
+    endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
     params: {
       supplier_detail: true
@@ -59,7 +59,7 @@ export default function PurchaseOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: order?.pk && <PurchaseOrderLineItemTable orderId={order.pk} />
+        content: <PurchaseOrderLineItemTable orderId={Number(id)} />
       },
       {
         name: 'received-stock',
@@ -79,9 +79,9 @@ export default function PurchaseOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.purchase_order_attachment_list}
+            endpoint={ApiEndpoints.purchase_order_attachment_list}
             model="order"
-            pk={order.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -91,7 +91,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.purchase_order_list, order.pk)}
+            url={apiUrl(ApiEndpoints.purchase_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />

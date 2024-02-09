@@ -51,6 +51,7 @@ class BuildResource(InvenTreeResource):
     notes = Field(attribute='notes')
 
 
+@admin.register(Build)
 class BuildAdmin(ImportExportModelAdmin):
     """Class for managing the Build model via the admin interface"""
 
@@ -83,8 +84,9 @@ class BuildAdmin(ImportExportModelAdmin):
     ]
 
 
+@admin.register(BuildItem)
 class BuildItemAdmin(admin.ModelAdmin):
-    """Class for managing the BuildItem model via the admin interface"""
+    """Class for managing the BuildItem model via the admin interface."""
 
     list_display = (
         'stock_item',
@@ -98,6 +100,7 @@ class BuildItemAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(BuildLine)
 class BuildLineAdmin(admin.ModelAdmin):
     """Class for managing the BuildLine model via the admin interface"""
 
@@ -112,8 +115,3 @@ class BuildLineAdmin(admin.ModelAdmin):
         'build__reference',
         'bom_item__sub_part__name',
     ]
-
-
-admin.site.register(Build, BuildAdmin)
-admin.site.register(BuildItem, BuildItemAdmin)
-admin.site.register(BuildLine, BuildLineAdmin)

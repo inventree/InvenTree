@@ -1,11 +1,9 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Stack, Table } from '@mantine/core';
+import { Group, LoadingOverlay, Skeleton, Stack, Table } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
-  IconCopy,
   IconDots,
-  IconEdit,
   IconFileTypePdf,
   IconInfoCircle,
   IconList,
@@ -16,12 +14,11 @@ import {
   IconQrcode,
   IconSitemap
 } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
   ActionDropdown,
-  DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
@@ -31,17 +28,19 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
-import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { buildOrderFields } from '../../forms/BuildForms';
-import { openEditApiForm } from '../../functions/forms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import BuildLineTable from '../../tables/build/BuildLineTable';
+import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
  * Detail page for a single Build Order
@@ -56,7 +55,7 @@ export default function BuildDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.build_order_list,
+    endpoint: ApiEndpoints.build_order_list,
     pk: id,
     params: {
       part_detail: true
@@ -80,7 +79,7 @@ export default function BuildDetail() {
             <tr>
               <td>{t`Build Status`}</td>
               <td>
-                {build.status && (
+                {build?.status && (
                   <StatusRenderer
                     status={build.status}
                     type={ModelType.build}
@@ -106,8 +105,17 @@ export default function BuildDetail() {
       {
         name: 'allocate-stock',
         label: t`Allocate Stock`,
-        icon: <IconListCheck />
-        // TODO: Hide if build is complete
+        icon: <IconListCheck />,
+        content: build?.pk ? (
+          <BuildLineTable
+            params={{
+              build: id,
+              tracked: false
+            }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'incomplete-outputs',
@@ -122,7 +130,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             params={{
-              build: build.pk ?? -1,
+              build: id,
               is_building: false
             }}
           />
@@ -135,7 +143,7 @@ export default function BuildDetail() {
         content: (
           <StockItemTable
             params={{
-              consumed_by: build.pk ?? -1
+              consumed_by: id
             }}
           />
         )
@@ -144,12 +152,10 @@ export default function BuildDetail() {
         name: 'child-orders',
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
-        content: (
-          <BuildOrderTable
-            params={{
-              parent: build.pk ?? -1
-            }}
-          />
+        content: build.pk ? (
+          <BuildOrderTable parentBuildId={build.pk} />
+        ) : (
+          <Skeleton />
         )
       },
       {
@@ -158,9 +164,9 @@ export default function BuildDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.build_order_attachment_list}
+            endpoint={ApiEndpoints.build_order_attachment_list}
             model="build"
-            pk={build.pk ?? -1}
+            pk={Number(id)}
           />
         )
       },
@@ -170,33 +176,24 @@ export default function BuildDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.build_order_list, build.pk)}
+            url={apiUrl(ApiEndpoints.build_order_list, build.pk)}
             data={build.notes ?? ''}
             allowEdit={true}
           />
         )
       }
     ];
-  }, [build]);
+  }, [build, id]);
 
-  const editBuildOrder = useCallback(() => {
-    let fields = buildOrderFields();
-
-    // Cannot edit part field after creation
-    fields['part'].hidden = true;
-
-    build.pk &&
-      openEditApiForm({
-        url: ApiPaths.build_order_list,
-        pk: build.pk,
-        title: t`Edit Build Order`,
-        fields: fields,
-        successMessage: t`Build Order updated`,
-        onFormSuccess: () => {
-          refreshInstance();
-        }
-      });
-  }, [build]);
+  const editBuild = useEditApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    pk: build.pk,
+    title: t`Edit Build Order`,
+    fields: buildOrderFields(),
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
 
   const buildActions = useMemo(() => {
     // TODO: Disable certain actions based on user permissions
@@ -233,24 +230,29 @@ export default function BuildDetail() {
         icon={<IconDots />}
         actions={[
           EditItemAction({
-            onClick: editBuildOrder
+            onClick: () => editBuild.open(),
+            disabled: !user.hasChangeRole(UserRoles.build)
           }),
-          DuplicateItemAction({}),
-          DeleteItemAction({})
+          DuplicateItemAction({})
         ]}
       />
     ];
   }, [id, build, user]);
 
   const buildDetail = useMemo(() => {
-    return StatusRenderer({
-      status: build.status,
-      type: ModelType.build
-    });
+    return build?.status ? (
+      StatusRenderer({
+        status: build.status,
+        type: ModelType.build
+      })
+    ) : (
+      <Skeleton />
+    );
   }, [build, id]);
 
   return (
     <>
+      {editBuild.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail

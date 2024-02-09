@@ -16,17 +16,22 @@ from django.core.exceptions import AppRegistryNotReady
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.db.migrations.executor import MigrationExecutor
-from django.db.utils import (NotSupportedError, OperationalError,
-                             ProgrammingError)
+from django.db.utils import NotSupportedError, OperationalError, ProgrammingError
 from django.utils import timezone
 
 import requests
-from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
-                                   set_maintenance_mode)
+from maintenance_mode.core import (
+    get_maintenance_mode,
+    maintenance_mode_on,
+    set_maintenance_mode,
+)
 
 from InvenTree.config import get_setting
+from plugin import registry
 
-logger = logging.getLogger("inventree")
+from .version import isInvenTreeUpToDate
+
+logger = logging.getLogger('inventree')
 
 
 def schedule_task(taskname, **kwargs):
@@ -41,7 +46,7 @@ def schedule_task(taskname, **kwargs):
     try:
         from django_q.models import Schedule
     except AppRegistryNotReady:  # pragma: no cover
-        logger.info("Could not start background tasks - App registry not ready")
+        logger.info('Could not start background tasks - App registry not ready')
         return
 
     try:
@@ -54,11 +59,7 @@ def schedule_task(taskname, **kwargs):
         else:
             logger.info("Creating scheduled task '%s'", taskname)
 
-            Schedule.objects.create(
-                name=taskname,
-                func=taskname,
-                **kwargs
-            )
+            Schedule.objects.create(name=taskname, func=taskname, **kwargs)
     except (OperationalError, ProgrammingError):  # pragma: no cover
         # Required if the DB is not ready yet
         pass
@@ -77,8 +78,8 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     """Check if a periodic task should be run, based on the provided setting name.
 
     Arguments:
-        task_name: The name of the task being run, e.g. 'dummy_task'
-        setting_name: The name of the global setting, e.g. 'INVENTREE_DUMMY_TASK_INTERVAL'
+        task_name (str): The name of the task being run, e.g. 'dummy_task'
+        n_days (int): The number of days between task runs (default = 1)
 
     Returns:
         bool: If the task should be run *now*, or wait another day
@@ -93,7 +94,9 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     from InvenTree.ready import isInTestMode
 
     if n_days <= 0:
-        logger.info("Specified interval for task '%s' < 1 - task will not run", task_name)
+        logger.info(
+            "Specified interval for task '%s' < 1 - task will not run", task_name
+        )
         return False
 
     # Sleep a random number of seconds to prevent worker conflict
@@ -116,7 +119,9 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
         threshold = datetime.now() - timedelta(days=n_days)
 
         if last_success > threshold:
-            logger.info("Last successful run for '%s' was too recent - skipping task", task_name)
+            logger.info(
+                "Last successful run for '%s' was too recent - skipping task", task_name
+            )
             return False
 
     # Check for any information we have about this task
@@ -133,7 +138,9 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
         threshold = datetime.now() - timedelta(hours=12)
 
         if last_attempt > threshold:
-            logger.info("Last attempt for '%s' was too recent - skipping task", task_name)
+            logger.info(
+                "Last attempt for '%s' was too recent - skipping task", task_name
+            )
             return False
 
     # Record this attempt
@@ -144,22 +151,28 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
 
 
 def record_task_attempt(task_name: str):
-    """Record that a multi-day task has been attempted *now*"""
+    """Record that a multi-day task has been attempted *now*."""
     from common.models import InvenTreeSetting
 
     logger.info("Logging task attempt for '%s'", task_name)
 
-    InvenTreeSetting.set_setting(f'_{task_name}_ATTEMPT', datetime.now().isoformat(), None)
+    InvenTreeSetting.set_setting(
+        f'_{task_name}_ATTEMPT', datetime.now().isoformat(), None
+    )
 
 
 def record_task_success(task_name: str):
-    """Record that a multi-day task was successful *now*"""
+    """Record that a multi-day task was successful *now*."""
     from common.models import InvenTreeSetting
 
-    InvenTreeSetting.set_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
+    InvenTreeSetting.set_setting(
+        f'_{task_name}_SUCCESS', datetime.now().isoformat(), None
+    )
 
 
-def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs) -> bool:
+def offload_task(
+    taskname, *args, force_async=False, force_sync=False, **kwargs
+) -> bool:
     """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
     If workers are not running or force_sync flag, is set then the task is ran synchronously.
@@ -202,7 +215,6 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
             raise_warning(f"WARNING: '{taskname}' not offloaded due to {str(exc)}")
             return False
     else:
-
         if callable(taskname):
             # function was passed - use that
             _func = taskname
@@ -212,14 +224,18 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
                 app, mod, func = taskname.split('.')
                 app_mod = app + '.' + mod
             except ValueError:
-                raise_warning(f"WARNING: '{taskname}' not started - Malformed function path")
+                raise_warning(
+                    f"WARNING: '{taskname}' not started - Malformed function path"
+                )
                 return False
 
             # Import module from app
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
-                raise_warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
+                raise_warning(
+                    f"WARNING: '{taskname}' not started - No module named '{app_mod}'"
+                )
                 return False
 
             # Retrieve function
@@ -233,7 +249,9 @@ def offload_task(taskname, *args, force_async=False, force_sync=False, **kwargs)
                 if not _func:
                     _func = eval(func)  # pragma: no cover
             except NameError:
-                raise_warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
+                raise_warning(
+                    f"WARNING: '{taskname}' not started - No function named '{func}'"
+                )
                 return False
 
         # Workers are not running: run it as synchronous task
@@ -260,18 +278,19 @@ class ScheduledTask:
     interval: str
     minutes: int = None
 
-    MINUTES = "I"
-    HOURLY = "H"
-    DAILY = "D"
-    WEEKLY = "W"
-    MONTHLY = "M"
-    QUARTERLY = "Q"
-    YEARLY = "Y"
+    MINUTES = 'I'
+    HOURLY = 'H'
+    DAILY = 'D'
+    WEEKLY = 'W'
+    MONTHLY = 'M'
+    QUARTERLY = 'Q'
+    YEARLY = 'Y'
     TYPE = [MINUTES, HOURLY, DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY]
 
 
 class TaskRegister:
     """Registry for periodic tasks."""
+
     task_list: List[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
@@ -317,6 +336,7 @@ def scheduled_task(interval: str, minutes: int = None, tasklist: TaskRegister = 
         _tasks.register(admin_class, interval, minutes=minutes)
 
         return admin_class
+
     return _task_wrapper
 
 
@@ -327,9 +347,9 @@ def heartbeat():
     (There is probably a less "hacky" way of achieving this)?
     """
     try:
-        from django_q.models import Success
+        from django_q.models import OrmQ, Success
     except AppRegistryNotReady:  # pragma: no cover
-        logger.info("Could not perform heartbeat task - App registry not ready")
+        logger.info('Could not perform heartbeat task - App registry not ready')
         return
 
     threshold = timezone.now() - timedelta(minutes=30)
@@ -337,16 +357,20 @@ def heartbeat():
     # Delete heartbeat results more than half an hour old,
     # otherwise they just create extra noise
     heartbeats = Success.objects.filter(
-        func='InvenTree.tasks.heartbeat',
-        started__lte=threshold
+        func='InvenTree.tasks.heartbeat', started__lte=threshold
     )
 
     heartbeats.delete()
 
+    # Clear out any other pending heartbeat tasks
+    for task in OrmQ.objects.all():
+        if task.func() == 'InvenTree.tasks.heartbeat':
+            task.delete()
+
 
 @scheduled_task(ScheduledTask.DAILY)
 def delete_successful_tasks():
-    """Delete successful task logs which are older than a specified period"""
+    """Delete successful task logs which are older than a specified period."""
     try:
         from django_q.models import Success
 
@@ -356,21 +380,21 @@ def delete_successful_tasks():
         threshold = timezone.now() - timedelta(days=days)
 
         # Delete successful tasks
-        results = Success.objects.filter(
-            started__lte=threshold
-        )
+        results = Success.objects.filter(started__lte=threshold)
 
         if results.count() > 0:
-            logger.info("Deleting %s successful task records", results.count())
+            logger.info('Deleting %s successful task records', results.count())
             results.delete()
 
     except AppRegistryNotReady:  # pragma: no cover
-        logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
+        logger.info(
+            "Could not perform 'delete_successful_tasks' - App registry not ready"
+        )
 
 
 @scheduled_task(ScheduledTask.DAILY)
 def delete_failed_tasks():
-    """Delete failed task logs which are older than a specified period"""
+    """Delete failed task logs which are older than a specified period."""
     try:
         from django_q.models import Failure
 
@@ -380,12 +404,10 @@ def delete_failed_tasks():
         threshold = timezone.now() - timedelta(days=days)
 
         # Delete failed tasks
-        results = Failure.objects.filter(
-            started__lte=threshold
-        )
+        results = Failure.objects.filter(started__lte=threshold)
 
         if results.count() > 0:
-            logger.info("Deleting %s failed task records", results.count())
+            logger.info('Deleting %s failed task records', results.count())
             results.delete()
 
     except AppRegistryNotReady:  # pragma: no cover
@@ -403,47 +425,48 @@ def delete_old_error_logs():
         days = InvenTreeSetting.get_setting('INVENTREE_DELETE_ERRORS_DAYS', 30)
         threshold = timezone.now() - timedelta(days=days)
 
-        errors = Error.objects.filter(
-            when__lte=threshold,
-        )
+        errors = Error.objects.filter(when__lte=threshold)
 
         if errors.count() > 0:
-            logger.info("Deleting %s old error logs", errors.count())
+            logger.info('Deleting %s old error logs', errors.count())
             errors.delete()
 
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded
-        logger.info("Could not perform 'delete_old_error_logs' - App registry not ready")
+        logger.info(
+            "Could not perform 'delete_old_error_logs' - App registry not ready"
+        )
 
 
 @scheduled_task(ScheduledTask.DAILY)
 def delete_old_notifications():
-    """Delete old notification logs"""
+    """Delete old notification logs."""
     try:
-        from common.models import (InvenTreeSetting, NotificationEntry,
-                                   NotificationMessage)
+        from common.models import (
+            InvenTreeSetting,
+            NotificationEntry,
+            NotificationMessage,
+        )
 
         days = InvenTreeSetting.get_setting('INVENTREE_DELETE_NOTIFICATIONS_DAYS', 30)
         threshold = timezone.now() - timedelta(days=days)
 
-        items = NotificationEntry.objects.filter(
-            updated__lte=threshold
-        )
+        items = NotificationEntry.objects.filter(updated__lte=threshold)
 
         if items.count() > 0:
-            logger.info("Deleted %s old notification entries", items.count())
+            logger.info('Deleted %s old notification entries', items.count())
             items.delete()
 
-        items = NotificationMessage.objects.filter(
-            creation__lte=threshold
-        )
+        items = NotificationMessage.objects.filter(creation__lte=threshold)
 
         if items.count() > 0:
-            logger.info("Deleted %s old notification messages", items.count())
+            logger.info('Deleted %s old notification messages', items.count())
             items.delete()
 
     except AppRegistryNotReady:
-        logger.info("Could not perform 'delete_old_notifications' - App registry not ready")
+        logger.info(
+            "Could not perform 'delete_old_notifications' - App registry not ready"
+        )
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -451,18 +474,23 @@ def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
         import common.models
+        from common.notifications import trigger_superuser_notification
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
         return
 
-    interval = int(common.models.InvenTreeSetting.get_setting('INVENTREE_UPDATE_CHECK_INTERVAL', 7, cache=False))
+    interval = int(
+        common.models.InvenTreeSetting.get_setting(
+            'INVENTREE_UPDATE_CHECK_INTERVAL', 7, cache=False
+        )
+    )
 
     # Check if we should check for updates *today*
     if not check_daily_holdoff('check_for_updates', interval):
         return
 
-    logger.info("Checking for InvenTree software updates")
+    logger.info('Checking for InvenTree software updates')
 
     headers = {}
 
@@ -471,15 +499,17 @@ def check_for_updates():
         token = os.getenv('GITHUB_TOKEN', None)
 
         if token:
-            headers['Authorization'] = f"Bearer {token}"
+            headers['Authorization'] = f'Bearer {token}'
 
     response = requests.get(
         'https://api.github.com/repos/inventree/inventree/releases/latest',
-        headers=headers
+        headers=headers,
     )
 
     if response.status_code != 200:
-        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')  # pragma: no cover
+        raise ValueError(
+            f'Unexpected status code from GitHub API: {response.status_code}'
+        )  # pragma: no cover
 
     data = json.loads(response.text)
 
@@ -488,7 +518,7 @@ def check_for_updates():
     if not tag:
         raise ValueError("'tag_name' missing from GitHub response")  # pragma: no cover
 
-    match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
+    match = re.match(r'^.*(\d+)\.(\d+)\.(\d+).*$', tag)
 
     if len(match.groups()) != 3:  # pragma: no cover
         logger.warning("Version '%s' did not match expected pattern", tag)
@@ -502,19 +532,32 @@ def check_for_updates():
     logger.info("Latest InvenTree version: '%s'", tag)
 
     # Save the version to the database
-    common.models.InvenTreeSetting.set_setting(
-        '_INVENTREE_LATEST_VERSION',
-        tag,
-        None
-    )
+    common.models.InvenTreeSetting.set_setting('_INVENTREE_LATEST_VERSION', tag, None)
 
     # Record that this task was successful
     record_task_success('check_for_updates')
 
+    # Send notification if there is a new version
+    if not isInvenTreeUpToDate():
+        logger.warning('InvenTree is not up-to-date, sending notification')
+
+        plg = registry.get_plugin('InvenTreeCoreNotificationsPlugin')
+        if not plg:
+            logger.warning('Cannot send notification - plugin not found')
+            return
+        plg = plg.plugin_config()
+        if not plg:
+            logger.warning('Cannot send notification - plugin config not found')
+            return
+        # Send notification
+        trigger_superuser_notification(
+            plg, f'An update for InvenTree to version {tag} is available'
+        )
+
 
 @scheduled_task(ScheduledTask.DAILY)
 def update_exchange_rates(force: bool = False):
-    """Update currency exchange rates
+    """Update currency exchange rates.
 
     Arguments:
         force: If True, force the update to run regardless of the last update time
@@ -527,17 +570,21 @@ def update_exchange_rates(force: bool = False):
         from InvenTree.exchange import InvenTreeExchange
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
-        logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
+        logger.info(
+            "Could not perform 'update_exchange_rates' - App registry not ready"
+        )
         return
     except Exception as exc:  # pragma: no cover
         logger.info("Could not perform 'update_exchange_rates' - %s", exc)
         return
 
     if not force:
-        interval = int(InvenTreeSetting.get_setting('CURRENCY_UPDATE_INTERVAL', 1, cache=False))
+        interval = int(
+            InvenTreeSetting.get_setting('CURRENCY_UPDATE_INTERVAL', 1, cache=False)
+        )
 
         if not check_daily_holdoff('update_exchange_rates', interval):
-            logger.info("Skipping exchange rate update (interval not reached)")
+            logger.info('Skipping exchange rate update (interval not reached)')
             return
 
     backend = InvenTreeExchange()
@@ -548,15 +595,17 @@ def update_exchange_rates(force: bool = False):
         backend.update_rates(base_currency=base)
 
         # Remove any exchange rates which are not in the provided currencies
-        Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
+        Rate.objects.filter(backend='InvenTreeExchange').exclude(
+            currency__in=currency_codes()
+        ).delete()
 
         # Record successful task execution
         record_task_success('update_exchange_rates')
 
     except (AppRegistryNotReady, OperationalError, ProgrammingError):
-        logger.warning("Could not update exchange rates - database not ready")
+        logger.warning('Could not update exchange rates - database not ready')
     except Exception as e:  # pragma: no cover
-        logger.exception("Error updating exchange rates: %s", str(type(e)))
+        logger.exception('Error updating exchange rates: %s', str(type(e)))
 
 
 @scheduled_task(ScheduledTask.DAILY)
@@ -568,16 +617,20 @@ def run_backup():
         # Backups are not enabled - exit early
         return
 
-    interval = int(InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1, cache=False))
+    interval = int(
+        InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1, cache=False)
+    )
 
     # Check if should run this task *today*
     if not check_daily_holdoff('run_backup', interval):
         return
 
-    logger.info("Performing automated database backup task")
+    logger.info('Performing automated database backup task')
 
-    call_command("dbbackup", noinput=True, clean=True, compress=True, interactive=False)
-    call_command("mediabackup", noinput=True, clean=True, compress=True, interactive=False)
+    call_command('dbbackup', noinput=True, clean=True, compress=True, interactive=False)
+    call_command(
+        'mediabackup', noinput=True, clean=True, compress=True, interactive=False
+    )
 
     # Record that this task was successful
     record_task_success('run_backup')
@@ -591,7 +644,7 @@ def get_migration_plan():
 
 
 @scheduled_task(ScheduledTask.DAILY)
-def check_for_migrations():
+def check_for_migrations(force: bool = False, reload_registry: bool = True):
     """Checks if migrations are needed.
 
     If the setting auto_update is enabled we will start updating.
@@ -600,15 +653,15 @@ def check_for_migrations():
     from plugin import registry
 
     def set_pending_migrations(n: int):
-        """Helper function to inform the user about pending migrations"""
-
+        """Helper function to inform the user about pending migrations."""
         logger.info('There are %s pending migrations', n)
         InvenTreeSetting.set_setting('_PENDING_MIGRATIONS', n, None)
 
-    logger.info("Checking for pending database migrations")
+    logger.info('Checking for pending database migrations')
 
-    # Force plugin registry reload
-    registry.check_reload()
+    if reload_registry:
+        # Force plugin registry reload
+        registry.check_reload()
 
     plan = get_migration_plan()
 
@@ -622,13 +675,13 @@ def check_for_migrations():
     set_pending_migrations(n)
 
     # Test if auto-updates are enabled
-    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
-        logger.info("Auto-update is disabled - skipping migrations")
+    if not force and not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+        logger.info('Auto-update is disabled - skipping migrations')
         return
 
     # Log open migrations
     for migration in plan:
-        logger.info("- %s", str(migration[0]))
+        logger.info('- %s', str(migration[0]))
 
     # Set the application to maintenance mode - no access from now on.
     set_maintenance_mode(True)
@@ -646,14 +699,15 @@ def check_for_migrations():
         else:
             set_pending_migrations(0)
 
-            logger.info("Completed %s migrations", n)
+            logger.info('Completed %s migrations', n)
 
     # Make sure we are out of maintenance mode
     if get_maintenance_mode():
-        logger.warning("Maintenance mode was not disabled - forcing it now")
+        logger.warning('Maintenance mode was not disabled - forcing it now')
         set_maintenance_mode(False)
-        logger.info("Manually released maintenance mode")
+        logger.info('Manually released maintenance mode')
 
-    # We should be current now - triggering full reload to make sure all models
-    # are loaded fully in their new state.
-    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+    if reload_registry:
+        # We should be current now - triggering full reload to make sure all models
+        # are loaded fully in their new state.
+        registry.reload_plugins(full_reload=True, force_reload=True, collect=True)

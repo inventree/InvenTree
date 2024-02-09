@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { Divider, Stack } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { AxiosResponse } from 'axios';
@@ -10,7 +11,7 @@ import {
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
 import { StylishText } from '../components/items/StylishText';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { PathParams, apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
 import { generateUniqueId } from './uid';
@@ -19,7 +20,7 @@ import { generateUniqueId } from './uid';
  * Construct an API url from the provided ApiFormProps object
  */
 export function constructFormUrl(
-  url: ApiPaths,
+  url: ApiEndpoints | string,
   pk?: string | number,
   pathParams?: PathParams
 ): string {
@@ -33,7 +34,8 @@ export function constructFormUrl(
  */
 export function extractAvailableFields(
   response: AxiosResponse,
-  method?: string
+  method?: string,
+  hideErrors?: boolean
 ): Record<string, ApiFormFieldType> | null {
   // OPTIONS request *must* return 200 status
   if (response.status !== 200) {
@@ -43,29 +45,22 @@ export function extractAvailableFields(
 
   let actions: any = response.data?.actions ?? null;
 
-  if (!method) {
-    notifications.show({
-      title: t`Form Error`,
-      message: t`Form method not provided`,
-      color: 'red'
-    });
-    return null;
-  }
-
-  if (!actions) {
-    notifications.show({
-      title: t`Form Error`,
-      message: t`Response did not contain action data`,
-      color: 'red'
-    });
+  if (!method || !actions) {
     return null;
   }
 
   method = method.toUpperCase();
 
+  // PATCH method is supported, but metadata is provided via PUT
+  if (method === 'PATCH') {
+    method = 'PUT';
+  }
+
   if (!(method in actions)) {
     // Missing method - this means user does not have appropriate permission
-    permissionDenied();
+    if (!hideErrors) {
+      permissionDenied();
+    }
     return null;
   }
 
@@ -248,11 +243,15 @@ export function openModalApiForm(props: OpenApiFormProps) {
         onClose: () => {
           props.onClose ? props.onClose() : null;
         },
-        children: <ApiForm id={modalId} props={props} />
+        children: (
+          <Stack spacing={'xs'}>
+            <Divider />
+            <ApiForm id={modalId} props={props} />
+          </Stack>
+        )
       });
     })
     .catch((error) => {
-      console.log('Error:', error);
       if (error.response) {
         invalidResponse(error.response.status);
       } else {
@@ -284,7 +283,7 @@ export function openEditApiForm(props: OpenApiFormProps) {
   let editProps: OpenApiFormProps = {
     ...props,
     fetchInitialData: props.fetchInitialData ?? true,
-    method: 'PUT'
+    method: 'PATCH'
   };
 
   openModalApiForm(editProps);
