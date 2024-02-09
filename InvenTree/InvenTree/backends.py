@@ -17,8 +17,7 @@ logger = logging.getLogger('inventree')
 class InvenTreeMaintenanceModeBackend(AbstractStateBackend):
     """Custom backend for managing state of maintenance mode.
 
-    Stores the current state of the maintenance mode in the database,
-    using an InvenTreeSetting object.
+    Stores a timestamp in the database to determine when maintenance mode will elapse.
     """
 
     SETTING_KEY = '_MAINTENANCE_MODE'
