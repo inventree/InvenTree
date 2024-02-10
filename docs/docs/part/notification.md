@@ -7,7 +7,7 @@ title: Part Notifications
 Users can select to receive notifications when certain events occur.
 
 !!! warning "Email Configuration Required"
-    External notifications require correct [email configuration](../../start/config/#email-settings). They also need to be enabled in the settings under notifications`.
+    External notifications require correct [email configuration](../start/config.md#email-settings). They also need to be enabled in the settings under notifications`.
 
 !!! warning "Valid Email Address"
     Each user must have a valid email address associated with their account to receive email notifications
@@ -50,7 +50,7 @@ Any users who are subscribed to notifications for the part in question will rece
 
 ### Build Order Notification
 
-When a new [Build Order](../../build/build/) is created, the InvenTree software checks to see if any of the parts required to complete the order are low on stock.
+When a new [Build Order](../build/build.md) is created, the InvenTree software checks to see if any of the parts required to complete the order are low on stock.
 
 If there are any parts with low stock, a notification is generated for any users subscribed to notifications for the part being built.
 

@@ -21,7 +21,7 @@ The [unit of measure](../part/part.md#units-of-measure) field for the [Part](../
 
 ### Supplier Part
 
-The [supplier part](../part/part/#supplier-parts) model uses real-world units to convert between supplier part quantities and internal stock quantities. Unit conversion rules ensure that only compatible unit types can be supplied
+The [supplier part](../part/part.md/#supplier-parts) model uses real-world units to convert between supplier part quantities and internal stock quantities. Unit conversion rules ensure that only compatible unit types can be supplied
 
 ### Part Parameter
 
