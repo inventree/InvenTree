@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-08 06:33+0000\n"
-"PO-Revision-Date: 2024-02-09 13:35\n"
+"POT-Creation-Date: 2024-02-09 21:42+0000\n"
+"PO-Revision-Date: 2024-02-10 14:54\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -292,7 +292,7 @@ msgstr "Russisk"
 
 #: InvenTree/locales.py:39
 msgid "Slovak"
-msgstr ""
+msgstr "Slovakisk"
 
 #: InvenTree/locales.py:40
 msgid "Slovenian"
@@ -329,7 +329,7 @@ msgstr "Kinesisk (tradisjonell)"
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr ""
+msgstr "[{site_name}] Logg inn på appen"
 
 #: InvenTree/magic_login.py:38 company/models.py:131
 #: company/templates/company/company_base.html:132
@@ -340,7 +340,7 @@ msgstr "E-post"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Feil under validering av utvidelse"
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
@@ -601,15 +601,15 @@ msgstr "Bare superbrukere kan opprette nye brukere"
 
 #: InvenTree/serializers.py:459
 msgid "Your account has been created."
-msgstr ""
+msgstr "Din konto er opprettet."
 
 #: InvenTree/serializers.py:461
 msgid "Please use the password reset function to login"
-msgstr ""
+msgstr "Vennligst bruk funksjonen for å tilbakestille passord for å logge inn"
 
 #: InvenTree/serializers.py:468
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Velkommen til InvenTree"
 
 #: InvenTree/serializers.py:529
 msgid "Filename"
@@ -1649,13 +1649,14 @@ msgstr "Valgfrie artikler"
 msgid "Allocate optional BOM items to build order"
 msgstr "Tildel valgfrie BOM-artikler til produksjonsordre"
 
-#: build/serializers.py:1078
-msgid "Bom Item"
-msgstr ""
+#: build/serializers.py:1078 part/models.py:3876 part/models.py:4312
+#: stock/api.py:717
+msgid "BOM Item"
+msgstr "BOM-artikkel"
 
 #: build/serializers.py:1087 templates/js/translated/index.js:130
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Tildelt lagerbeholdning"
 
 #: build/serializers.py:1092 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:1411 part/templates/part/part_base.html:210
@@ -1669,7 +1670,7 @@ msgstr "I bestilling"
 #: templates/js/translated/build.js:2616
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr ""
+msgstr "I produksjon"
 
 #: build/serializers.py:1102 part/bom.py:172 part/serializers.py:1424
 #: part/templates/part/part_base.html:192
@@ -1869,15 +1870,15 @@ msgstr "Prioritet"
 
 #: build/templates/build/build_base.html:273
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Slett Produksjonsordre"
 
 #: build/templates/build/build_base.html:283
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "Produksjonsordrens QR-kode"
 
 #: build/templates/build/build_base.html:295
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Koble Strekkode til Produksjonsordre"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -2021,11 +2022,11 @@ msgstr "Produksjonsnotater"
 
 #: build/templates/build/detail.html:426
 msgid "Allocation Complete"
-msgstr ""
+msgstr "Tildeling fullført"
 
 #: build/templates/build/detail.html:427
 msgid "All lines have been fully allocated"
-msgstr ""
+msgstr "Alle linjer er fullt tildelt"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
@@ -6363,10 +6364,6 @@ msgstr "Nivå"
 #: part/models.py:3870
 msgid "BOM level"
 msgstr "BOM-nivå"
-
-#: part/models.py:3876 part/models.py:4312 stock/api.py:717
-msgid "BOM Item"
-msgstr "BOM-artikkel"
 
 #: part/models.py:3960
 msgid "Select parent part"
