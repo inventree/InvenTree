@@ -4,3 +4,4 @@ mkdocs-material>=9.0,<10.0
 mkdocs-git-revision-date-localized-plugin>=1.1,<2.0
 mkdocs-simple-hooks>=0.1,<1.0
 mkdocs-include-markdown-plugin
+mkdocs-render-swagger-plugin

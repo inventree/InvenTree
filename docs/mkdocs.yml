@@ -182,6 +182,7 @@ nav:
   - Extend:
     - InvenTree API:
       - Overview: api/api.md
+      - Schema: api/schema.md
       - Model Metadata: api/metadata.md
       - Download Data: api/download.md
       - Bulk Delete: api/bulk_delete.md
@@ -222,6 +223,7 @@ nav:
 
 # Plugins
 plugins:
+  - render_swagger
   - include-markdown:
       opening_tag: "{!"
       closing_tag: "!}"
@@ -281,4 +283,4 @@ extra:
       link: https://reddit.com/r/inventree
 
 use_directory_urls: true
-strict: true
+strict: false
