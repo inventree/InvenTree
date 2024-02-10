@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-08 06:33+0000\n"
-"PO-Revision-Date: 2024-02-09 13:35\n"
+"POT-Creation-Date: 2024-02-09 21:42+0000\n"
+"PO-Revision-Date: 2024-02-10 14:54\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -1649,8 +1649,9 @@ msgstr "Volitelné položky"
 msgid "Allocate optional BOM items to build order"
 msgstr ""
 
-#: build/serializers.py:1078
-msgid "Bom Item"
+#: build/serializers.py:1078 part/models.py:3876 part/models.py:4312
+#: stock/api.py:717
+msgid "BOM Item"
 msgstr ""
 
 #: build/serializers.py:1087 templates/js/translated/index.js:130
@@ -6362,10 +6363,6 @@ msgstr ""
 
 #: part/models.py:3870
 msgid "BOM level"
-msgstr ""
-
-#: part/models.py:3876 part/models.py:4312 stock/api.py:717
-msgid "BOM Item"
 msgstr ""
 
 #: part/models.py:3960
