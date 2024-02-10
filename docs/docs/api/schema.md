@@ -6,4 +6,4 @@ The InvenTree API is implemented using the [Django REST framework](https://www.d
 
 ## Schama
 
-!!swagger api.json!!
+!!swagger api.yaml!!
