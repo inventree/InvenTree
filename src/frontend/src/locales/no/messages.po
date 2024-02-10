@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-07 12:23\n"
+"PO-Revision-Date: 2024-02-10 14:55\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -4877,3 +4877,4 @@ msgstr "Plattformgrensesnittet er optimalisert for Nettbrett og Desktop, du kan 
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Les dokumentasjonen"
+
