@@ -514,21 +514,6 @@ if USE_JWT:
     INSTALLED_APPS.append('rest_framework_simplejwt')
 
 # WSGI default setting
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'InvenTree API',
-    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
-    'LICENSE': {
-        'name': 'MIT',
-        'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE',
-    },
-    'EXTERNAL_DOCS': {
-        'description': 'More information about InvenTree in the official docs',
-        'url': 'https://docs.inventree.org',
-    },
-    'VERSION': str(inventreeApiVersion()),
-    'SERVE_INCLUDE_SCHEMA': False,
-}
-
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
 """
@@ -1177,3 +1162,23 @@ if CUSTOM_FLAGS:
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
+
+# Configuratino for API schema generation
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'InvenTree API',
+    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
+    'LICENSE': {
+        'name': 'MIT',
+        'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE',
+    },
+    'EXTERNAL_DOCS': {
+        'description': 'More information about InvenTree in the official docs',
+        'url': 'https://docs.inventree.org',
+    },
+    'VERSION': str(inventreeApiVersion()),
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': '/api/',
+}
+
+if SITE_URL:
+    SPECTACULAR_SETTINGS['SERVERS'] = [SITE_URL]

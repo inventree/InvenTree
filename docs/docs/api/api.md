@@ -17,6 +17,9 @@ The API is self-documenting, and the documentation is provided alongside any Inv
 {% include 'img.html' %}
 {% endwith %}
 
+!!! info "Schema Description"
+    The API schema is also documented in the [API Schema](./schema.md) page.
+
 ## Authentication
 
 Users must be authenticated to gain access to the InvenTree API. The API accepts either basic username:password authentication, or token authentication. Token authentication is recommended as it provides much faster API access.

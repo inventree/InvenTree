@@ -898,6 +898,8 @@ def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
 
+    filename = os.path.abspath(filename)
+
     cmd = f'spectacular --file {filename} --validate --color'
 
     if not ignore_warnings:
