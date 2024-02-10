@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-08 06:33+0000\n"
-"PO-Revision-Date: 2024-02-09 13:36\n"
+"POT-Creation-Date: 2024-02-09 21:42+0000\n"
+"PO-Revision-Date: 2024-02-10 14:54\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -601,7 +601,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:459
 msgid "Your account has been created."
-msgstr ""
+msgstr "Ditt konto har skapats."
 
 #: InvenTree/serializers.py:461
 msgid "Please use the password reset function to login"
@@ -1649,8 +1649,9 @@ msgstr ""
 msgid "Allocate optional BOM items to build order"
 msgstr ""
 
-#: build/serializers.py:1078
-msgid "Bom Item"
+#: build/serializers.py:1078 part/models.py:3876 part/models.py:4312
+#: stock/api.py:717
+msgid "BOM Item"
 msgstr ""
 
 #: build/serializers.py:1087 templates/js/translated/index.js:130
@@ -6364,10 +6365,6 @@ msgstr ""
 msgid "BOM level"
 msgstr ""
 
-#: part/models.py:3876 part/models.py:4312 stock/api.py:717
-msgid "BOM Item"
-msgstr ""
-
 #: part/models.py:3960
 msgid "Select parent part"
 msgstr ""
@@ -9105,7 +9102,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
-msgstr ""
+msgstr "Redigera lagerstatus"
 
 #: stock/templates/stock/item_base.html:541
 msgid "Stock Item QR Code"
@@ -9735,7 +9732,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:140
 msgid "No project codes found"
-msgstr ""
+msgstr "Inga projektkoder hittades"
 
 #: templates/InvenTree/settings/settings_staff_js.html:158
 #: templates/js/translated/build.js:2224
@@ -10491,7 +10488,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:266
 msgid "Error code"
-msgstr ""
+msgstr "Felkod"
 
 #: templates/js/translated/attachment.js:114
 msgid "All selected attachments will be deleted"
@@ -10511,7 +10508,7 @@ msgstr ""
 
 #: templates/js/translated/attachment.js:275
 msgid "No attachments found"
-msgstr ""
+msgstr "Inga bilagor hittades"
 
 #: templates/js/translated/attachment.js:315
 msgid "Edit Attachment"
@@ -10551,7 +10548,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:188
 msgid "Server error"
-msgstr ""
+msgstr "Serverfel"
 
 #: templates/js/translated/barcode.js:217
 msgid "Unknown response from server"
@@ -11249,7 +11246,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:465
 msgid "Add new Company"
-msgstr ""
+msgstr "Lägg till nytt företag"
 
 #: templates/js/translated/company.js:536
 msgid "Parts Supplied"
@@ -11265,12 +11262,12 @@ msgstr ""
 
 #: templates/js/translated/company.js:609
 msgid "Create New Contact"
-msgstr ""
+msgstr "Skapa ny kontakt"
 
 #: templates/js/translated/company.js:625
 #: templates/js/translated/company.js:748
 msgid "Edit Contact"
-msgstr ""
+msgstr "Redigera kontakt"
 
 #: templates/js/translated/company.js:662
 msgid "All selected contacts will be deleted"
@@ -11287,7 +11284,7 @@ msgstr "Radera kontakter"
 
 #: templates/js/translated/company.js:707
 msgid "No contacts found"
-msgstr ""
+msgstr "Inga kontakter hittades"
 
 #: templates/js/translated/company.js:720
 msgid "Phone Number"
@@ -11320,7 +11317,7 @@ msgstr "Radera adresser"
 
 #: templates/js/translated/company.js:940
 msgid "No addresses found"
-msgstr ""
+msgstr "Inga adresser hittades"
 
 #: templates/js/translated/company.js:979
 msgid "Postal city"
@@ -11473,7 +11470,7 @@ msgstr ""
 
 #: templates/js/translated/filters.js:437
 msgid "Print Labels"
-msgstr ""
+msgstr "Skriv ut etiketter"
 
 #: templates/js/translated/filters.js:441
 msgid "Print Reports"
@@ -11489,15 +11486,15 @@ msgstr ""
 
 #: templates/js/translated/filters.js:469
 msgid "Add new filter"
-msgstr ""
+msgstr "Lägg till nytt filter"
 
 #: templates/js/translated/filters.js:477
 msgid "Clear all filters"
-msgstr ""
+msgstr "Rensa alla filter"
 
 #: templates/js/translated/filters.js:582
 msgid "Create filter"
-msgstr ""
+msgstr "Skapa filter"
 
 #: templates/js/translated/forms.js:374 templates/js/translated/forms.js:389
 #: templates/js/translated/forms.js:403 templates/js/translated/forms.js:417
@@ -11535,11 +11532,11 @@ msgstr ""
 
 #: templates/js/translated/forms.js:1967
 msgid "No results found"
-msgstr ""
+msgstr "Inga resultat hittades"
 
 #: templates/js/translated/forms.js:2271 templates/js/translated/search.js:239
 msgid "Searching"
-msgstr ""
+msgstr "Söker"
 
 #: templates/js/translated/forms.js:2485
 msgid "Clear input"
@@ -11559,11 +11556,11 @@ msgstr ""
 
 #: templates/js/translated/helpers.js:77
 msgid "YES"
-msgstr ""
+msgstr "JA"
 
 #: templates/js/translated/helpers.js:80
 msgid "NO"
-msgstr ""
+msgstr "NEJ"
 
 #: templates/js/translated/helpers.js:93
 msgid "True"
@@ -11587,7 +11584,7 @@ msgstr ""
 
 #: templates/js/translated/label.js:72
 msgid "No Labels Found"
-msgstr ""
+msgstr "Inga etiketter hittades"
 
 #: templates/js/translated/label.js:73
 msgid "No label templates found which match the selected items"
@@ -11603,15 +11600,15 @@ msgstr ""
 
 #: templates/js/translated/label.js:148
 msgid "Print label"
-msgstr ""
+msgstr "Skriv ut etikett"
 
 #: templates/js/translated/label.js:148
 msgid "Print labels"
-msgstr ""
+msgstr "Skriv ut etiketter"
 
 #: templates/js/translated/label.js:149
 msgid "Print"
-msgstr ""
+msgstr "Skriv ut"
 
 #: templates/js/translated/label.js:155
 msgid "Select label template"
@@ -12040,7 +12037,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:2645
 msgid "No subcategories found"
-msgstr ""
+msgstr "Inga underkategorier hittades"
 
 #: templates/js/translated/part.js:2681 templates/js/translated/stock.js:2660
 msgid "Display as tree"
@@ -12149,11 +12146,11 @@ msgstr ""
 
 #: templates/js/translated/plugin.js:189
 msgid "Enable"
-msgstr ""
+msgstr "Aktivera"
 
 #: templates/js/translated/plugin.js:189
 msgid "Disable"
-msgstr ""
+msgstr "Inaktivera"
 
 #: templates/js/translated/plugin.js:203
 msgid "Plugin updated"
@@ -12322,7 +12319,7 @@ msgstr "Lagerstatus"
 
 #: templates/js/translated/purchase_order.js:1201
 msgid "Add barcode"
-msgstr ""
+msgstr "Lägg till streckkod"
 
 #: templates/js/translated/purchase_order.js:1202
 msgid "Remove barcode"
@@ -12486,7 +12483,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:300
 #: templates/js/translated/sales_order.js:788
 msgid "Invalid Customer"
-msgstr ""
+msgstr "Ogiltig kund"
 
 #: templates/js/translated/return_order.js:562
 msgid "Receive Return Order Items"
@@ -12688,11 +12685,11 @@ msgstr ""
 
 #: templates/js/translated/search.js:342
 msgid "result"
-msgstr ""
+msgstr "resultat"
 
 #: templates/js/translated/search.js:342
 msgid "results"
-msgstr ""
+msgstr "resultat"
 
 #: templates/js/translated/search.js:352
 msgid "Minimize results"
@@ -13271,7 +13268,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:383
 #: templates/js/translated/table_filters.js:384
 msgid "Serial number"
-msgstr ""
+msgstr "Serienummer"
 
 #: templates/js/translated/table_filters.js:314
 #: templates/js/translated/table_filters.js:405
@@ -13338,7 +13335,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:396
 #: templates/js/translated/table_filters.js:397
 msgid "Stock status"
-msgstr ""
+msgstr "Lagerstatus"
 
 #: templates/js/translated/table_filters.js:400
 msgid "Has batch code"
@@ -13467,7 +13464,7 @@ msgstr "rader per sida"
 
 #: templates/js/translated/tables.js:537
 msgid "Showing all rows"
-msgstr ""
+msgstr "Visar alla rader"
 
 #: templates/js/translated/tables.js:539
 msgid "Showing"
