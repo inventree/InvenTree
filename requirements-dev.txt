@@ -39,7 +39,7 @@ cryptography==42.0.2
     #   pdfminer-six
 distlib==0.3.8
     # via virtualenv
-django==4.2.9
+django==4.2.10
     # via
     #   -c requirements.txt
     #   django-slowtests

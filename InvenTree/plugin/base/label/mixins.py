@@ -2,8 +2,10 @@
 
 from typing import Union
 
+from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
 from django.http import JsonResponse
+from django.utils.translation import gettext_lazy as _
 
 import pdf2image
 from rest_framework import serializers
@@ -11,6 +13,7 @@ from rest_framework.request import Request
 
 from build.models import BuildLine
 from common.models import InvenTreeSetting
+from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
 from label.models import LabelTemplate
 from part.models import Part
@@ -53,7 +56,11 @@ class LabelPrintingMixin:
             label: The LabelTemplate object to render
             request: The HTTP request object which triggered this print job
         """
-        return label.render(request)
+        try:
+            return label.render(request)
+        except Exception as e:
+            log_error('label.render_to_pdf')
+            raise ValidationError(_('Error rendering label to PDF'))
 
     def render_to_html(self, label: LabelTemplate, request, **kwargs):
         """Render this label to HTML format.
@@ -62,7 +69,11 @@ class LabelPrintingMixin:
             label: The LabelTemplate object to render
             request: The HTTP request object which triggered this print job
         """
-        return label.render_as_string(request)
+        try:
+            return label.render_as_string(request)
+        except Exception as e:
+            log_error('label.render_to_html')
+            raise ValidationError(_('Error rendering label to HTML'))
 
     def render_to_png(self, label: LabelTemplate, request=None, **kwargs):
         """Render this label to PNG format."""
@@ -77,8 +88,11 @@ class LabelPrintingMixin:
         dpi = kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300))
 
         # Convert to png data
-        png = pdf2image.convert_from_bytes(pdf_data, dpi=dpi)[0]
-        return png
+        try:
+            return pdf2image.convert_from_bytes(pdf_data, dpi=dpi)[0]
+        except Exception as e:
+            log_error('label.render_to_png')
+            raise ValidationError(_('Error rendering label to PNG'))
 
     def print_labels(
         self,

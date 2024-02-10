@@ -681,6 +681,16 @@ class BaseInvenTreeSetting(models.Model):
                 setting = cls(key=key, **kwargs)
             else:
                 return
+        except (OperationalError, ProgrammingError):
+            if not key.startswith('_'):
+                logger.warning("Database is locked, cannot set setting '%s'", key)
+            # Likely the DB is locked - not much we can do here
+            return
+        except Exception as exc:
+            logger.exception(
+                "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
+            )
+            return
 
         # Enforce standard boolean representation
         if setting.is_bool():
@@ -707,6 +717,10 @@ class BaseInvenTreeSetting(models.Model):
                     attempts=attempts - 1,
                     **kwargs,
                 )
+        except (OperationalError, ProgrammingError):
+            logger.warning("Database is locked, cannot set setting '%s'", key)
+            # Likely the DB is locked - not much we can do here
+            pass
         except Exception as exc:
             # Some other error
             logger.exception(
@@ -2863,7 +2877,7 @@ class NotificationMessage(models.Model):
         """Return API endpoint."""
         return reverse('api-notifications-list')
 
-    def age(self):
+    def age(self) -> int:
         """Age of the message in seconds."""
         # Add timezone information if TZ is enabled (in production mode mostly)
         delta = now() - (
@@ -2873,7 +2887,7 @@ class NotificationMessage(models.Model):
         )
         return delta.seconds
 
-    def age_human(self):
+    def age_human(self) -> str:
         """Humanized age."""
         return naturaltime(self.creation)
 

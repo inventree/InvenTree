@@ -7,6 +7,7 @@ from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 
+import InvenTree.exceptions
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
 from plugin.registry import registry
@@ -95,8 +96,15 @@ def process_event(plugin_slug, event, *args, **kwargs):
         logger.error("Could not find matching plugin for '%s'", plugin_slug)
         return
 
-    plugin.process_event(event, *args, **kwargs)
     logger.debug("Plugin '%s' is processing triggered event '%s'", plugin_slug, event)
+
+    try:
+        plugin.process_event(event, *args, **kwargs)
+    except Exception as e:
+        # Log the exception to the database
+        InvenTree.exceptions.log_error(f'plugins.{plugin_slug}.process_event')
+        # Re-throw the exception so that the background worker tries again
+        raise Exception
 
 
 def allow_table_event(table_name):
