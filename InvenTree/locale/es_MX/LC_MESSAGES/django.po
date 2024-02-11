@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-08 06:33+0000\n"
+"POT-Creation-Date: 2024-02-11 02:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1650,8 +1650,9 @@ msgstr ""
 msgid "Allocate optional BOM items to build order"
 msgstr ""
 
-#: build/serializers.py:1078
-msgid "Bom Item"
+#: build/serializers.py:1078 part/models.py:3876 part/models.py:4312
+#: stock/api.py:717
+msgid "BOM Item"
 msgstr ""
 
 #: build/serializers.py:1087 templates/js/translated/index.js:130
@@ -6365,10 +6366,6 @@ msgstr ""
 msgid "BOM level"
 msgstr ""
 
-#: part/models.py:3876 part/models.py:4312 stock/api.py:717
-msgid "BOM Item"
-msgstr ""
-
 #: part/models.py:3960
 msgid "Select parent part"
 msgstr ""
@@ -10195,7 +10192,7 @@ msgstr ""
 
 #: templates/account/login.html:23 templates/account/signup.html:11
 #: templates/account/signup.html:22 templates/socialaccount/signup.html:8
-#: templates/socialaccount/signup.html:20
+#: templates/socialaccount/signup.html:25
 msgid "Sign Up"
 msgstr ""
 
@@ -10275,7 +10272,7 @@ msgstr ""
 
 #: templates/account/signup_closed.html:15
 #: templates/socialaccount/authentication_error.html:19
-#: templates/socialaccount/login.html:38 templates/socialaccount/signup.html:27
+#: templates/socialaccount/login.html:38 templates/socialaccount/signup.html:32
 msgid "Return to login page"
 msgstr ""
 
@@ -13610,11 +13607,16 @@ msgstr ""
 msgid "The selected SSO provider is invalid, or has not been correctly configured"
 msgstr ""
 
-#: templates/socialaccount/signup.html:10
+#: templates/socialaccount/signup.html:11
 #, python-format
 msgid ""
-"You are about to use your %(provider_name)s account to login to\n"
-"%(site_name)s.<br>As a final step, please complete the following form:"
+"\n"
+"    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
+"  "
+msgstr ""
+
+#: templates/socialaccount/signup.html:15
+msgid "As a final step, please complete the following form"
 msgstr ""
 
 #: templates/socialaccount/snippets/provider_list.html:26

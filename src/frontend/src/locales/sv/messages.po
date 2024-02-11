@@ -4877,4 +4877,3 @@ msgstr "Plattform UI är optimerad för surfplattor och stationära datorer, kan
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Läs dokumenten"
-
