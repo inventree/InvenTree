@@ -317,7 +317,8 @@ def translate_stats(c):
     except Exception:
         print('WARNING: Translation files could not be compiled:')
 
-    manage(c, 'translation_stats')
+    path = Path('InvenTree', 'script', 'translation_stats.py')
+    c.run(f'python3 {path}')
 
 
 @task(post=[translate_stats])
