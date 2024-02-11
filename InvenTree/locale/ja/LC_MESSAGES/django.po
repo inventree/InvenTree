@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-11 02:25+0000\n"
-"PO-Revision-Date: 2024-02-10 14:54\n"
+"PO-Revision-Date: 2024-02-11 15:02\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -13608,8 +13608,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13789,3 +13788,4 @@ msgstr "項目を編集する権限"
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
+
