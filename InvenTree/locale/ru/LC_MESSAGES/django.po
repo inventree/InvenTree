@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-11 02:25+0000\n"
-"PO-Revision-Date: 2024-02-10 14:54\n"
+"PO-Revision-Date: 2024-02-11 15:02\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -8649,7 +8649,7 @@ msgstr ""
 
 #: stock/models.py:1586 stock/serializers.py:1148
 msgid "Duplicate stock items"
-msgstr "Дублировать складские позиции"
+msgstr "Дублировать складские позиции\n"
 
 #: stock/models.py:1590
 msgid "Stock items must refer to the same part"
@@ -9098,7 +9098,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1922
 msgid "stock item"
-msgstr "складская позиция"
+msgstr "складская позиция\n"
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -9134,7 +9134,7 @@ msgstr "Вернуть на склад"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr "Создать сериализированные позиции из этой складской позиции"
+msgstr "Создать сериализированные позиции из этой складской позиции\n"
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
@@ -10602,7 +10602,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Складская позиция уже просканирована"
+msgstr "Складская позиция уже просканирована\n"
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
@@ -12797,11 +12797,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Создана новая складская позиция"
+msgstr "Создана новая складская позиция\n"
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Создано несколько складских позиций"
+msgstr "Создано несколько складских позиций\n"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
@@ -13608,8 +13608,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13789,3 +13788,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:411
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
