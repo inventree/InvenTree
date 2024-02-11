@@ -14,7 +14,7 @@ class MyUrlsPlugin(UrlsMixin, InvenTreePlugin):
     NAME = "UrlsMixin"
 
     URLS = [
-        url(r'increase/(?P<location>\d+)/(?P<pk>\d+)/', self.view_increase, name='increase-level'),
+        re_path(r'increase/(?P<location>\d+)/(?P<pk>\d+)/', self.view_increase, name='increase-level'),
     ]
 ```
 
