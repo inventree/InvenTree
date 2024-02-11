@@ -1,35 +1,59 @@
+{% load l10n %}
 {% load report %}
 {% load barcode %}
 
 <head>
     <style>
-        @page {
-            size: {{ width }}mm {{ height }}mm;
-            {% block margin %}
-            margin: 0mm;
-            {% endblock %}
-        }
 
+        {% block page_style %}
+        {% if page_style %}
+        /* @page styling */
+        {% localize off %}
+        {{ page_style }}
+        {% endlocalize %}
+        {% endif %}
+        {% endblock page_style %}
+
+        {% block body_style %}
+        /* body styling */
         body {
             font-family: Arial, Helvetica, sans-serif;
             margin: 0mm;
             color: #000;
             background-color: #FFF;
+            page-break-before: always;
+            page-break-after: always;
         }
+        {% endblock body_style %}
 
         img {
             display: inline-block;
             image-rendering: pixelated;
         }
 
+        /* Global content wrapper div which takes up entire page area */
+        .content {
+            {% localize off %}
+            width: {{ width }}mm;
+            height: {{ height }}mm;
+            {% endlocalize %}
+            break-after: always;
+            position: relative;
+            left: 0mm;
+            top: 0mm;
+        }
+
         {% block style %}
-        {% endblock %}
+        /* User-defined styles can go here, and override any styles defined above */
+        {% endblock style %}
 
     </style>
 </head>
 
 <body>
-    {% block content %}
-    <!-- Label data rendered here! -->
-    {% endblock %}
+    <div class='content'>
+        {% block content %}
+        <!-- Label data rendered here! -->
+        {% endblock content %}
+    </div>
 </body>

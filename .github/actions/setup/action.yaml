@@ -1,0 +1,90 @@
+name: 'Setup Enviroment'
+description: 'Setup the environment for general InvenTree tests'
+author: 'InvenTree'
+inputs:
+    python:
+        required: false
+        description: 'Install python.'
+        default: 'true'
+    npm:
+        required: false
+        description: 'Install npm.'
+        default: 'false'
+
+    install:
+        required: false
+        description: 'Install the InvenTree requirements?'
+        default: 'false'
+    dev-install:
+        required: false
+        description: 'Install the InvenTree development requirements?'
+        default: 'false'
+    update:
+        required: false
+        description: 'Should a full update cycle be run?'
+        default: 'false'
+
+    apt-dependency:
+        required: false
+        description: 'Extra APT package for install.'
+    pip-dependency:
+        required: false
+        description: 'Extra python package for install.'
+
+runs:
+    using: 'composite'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+
+      # Python installs
+      - name: Set up Python ${{ env.python_version }}
+        if: ${{ inputs.python == 'true' }}
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
+        with:
+          python-version: ${{ env.python_version }}
+          cache: pip
+      - name: Install Base Python Dependencies
+        if: ${{ inputs.python == 'true' }}
+        shell: bash
+        run: |
+          python3 -m pip install -U pip
+          pip3 install invoke wheel
+      - name: Install Specific Python Dependencies
+        if: ${{ inputs.pip-dependency }}
+        shell: bash
+        run: pip3 install ${{ inputs.pip-dependency }}
+
+      # NPM installs
+      - name: Install node.js ${{ env.node_version }}
+        if: ${{ inputs.npm == 'true' }}
+        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7  # pin to v3.8.2
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+      - name: Install npm packages
+        if: ${{ inputs.npm == 'true' }}
+        shell: bash
+        run: npm install
+
+      # OS installs
+      - name: Install OS Dependencies
+        if: ${{ inputs.apt-dependency }}
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install ${{ inputs.apt-dependency }}
+
+      # Invoke commands
+      - name: Install dev requirements
+        if: ${{ inputs.dev-install == 'true' ||inputs.install == 'true' }}
+        shell: bash
+        run: pip install -r requirements-dev.txt
+      - name: Run invoke install
+        if: ${{ inputs.install == 'true' }}
+        shell: bash
+        run: invoke install
+      - name: Run invoke update
+        if: ${{ inputs.update == 'true' }}
+        shell: bash
+        run: invoke update

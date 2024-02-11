@@ -7,11 +7,11 @@
 {% url "part-detail" part.id as url %}
 {% trans "Return to BOM" as text %}
 {% include "sidebar_link.html" with url=url text=text icon="fa-undo" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block heading %}
 {% trans "Upload Bill of Materials" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 <!--
@@ -28,7 +28,7 @@
 <button type='button' class='btn btn-success' id='bom-submit' style='display: none;'>
     <span class='fas fa-sign-in-alt' id='bom-submit-icon'></span> {% trans "Submit BOM Data" %}
 </button>
-{% endblock %}
+{% endblock actions %}
 
 {% block page_info %}
 <div class='panel-content'>
@@ -54,7 +54,7 @@
                 <th>{% trans "Reference" %}</th>
                 <th>{% trans "Overage" %}</th>
                 <th>{% trans "Allow Variants" %}</th>
-                <th>{% trans "Inherited" %}</th>
+                <th>{% trans "Gets inherited" %}</th>
                 <th>{% trans "Optional" %}</th>
                 <th>{% trans "Note" %}</th>
                 <th><!-- Buttons Column --></th>

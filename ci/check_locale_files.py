@@ -1,12 +1,9 @@
-""" Check that there are no database migration files which have not been committed. """
+"""Check that there are no database migration files which have not been committed."""
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import sys
 import subprocess
+import sys
 
-print("Checking for uncommitted locale files...")
+print('Checking for uncommitted locale files...')
 
 cmd = ['git', 'status']
 
@@ -22,9 +19,9 @@ for line in str(out.decode()).split('\n'):
         locales.append(line)
 
 if len(locales) > 0:
-    print("There are {n} unstaged locale files:".format(n=len(locales)))
+    print('There are {n} unstaged locale files:'.format(n=len(locales)))
 
     for lang in locales:
-        print(" - {l}".format(l=lang))
+        print(' - {l}'.format(l=lang))
 
 sys.exit(len(locales))

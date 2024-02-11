@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}reporting{% endblock %}
+{% block label %}reporting{% endblock label %}
 
 {% block heading %}
 {% trans "Report Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -16,7 +16,8 @@
         {% include "InvenTree/settings/setting.html" with key="REPORT_DEFAULT_PAGE_SIZE" icon="fa-print" %}
         {% include "InvenTree/settings/setting.html" with key="REPORT_DEBUG_MODE" icon="fa-laptop-code" %}
         {% include "InvenTree/settings/setting.html" with key="REPORT_ENABLE_TEST_REPORT" icon="fa-vial" %}
+        {% include "InvenTree/settings/setting.html" with key="REPORT_ATTACH_TEST_REPORT" icon="fa-file-upload" %}
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}

@@ -1,0 +1,23 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Social Network Login Failure" %}{% endblock head_title %}
+
+{% block content %}
+<h3>{% trans "Account Login Failure" %}</h3>
+
+<p>
+    {% trans "An error occurred while attempting to login via your social network account." %}
+    <br>
+    {% trans "Contact your system administrator for further information." %}
+</p>
+
+<hr>
+<div>
+    <a href='{% url "account_login" %}'>
+        {% trans "Return to login page" %}
+    </a>
+</div>
+
+{% endblock content %}

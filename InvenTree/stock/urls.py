@@ -1,54 +1,29 @@
-"""
-URL lookup for Stock app
-"""
+"""URL lookup for Stock app."""
 
-from django.urls import include, re_path
+from django.urls import include, path
 
 from stock import views
 
 location_urls = [
-
-    re_path(r'^(?P<pk>\d+)/', include([
-        re_path(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
-        re_path(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
-
-        # Anything else
-        re_path('^.*$', views.StockLocationDetail.as_view(), name='stock-location-detail'),
-    ])),
-
+    path(
+        '<int:pk>/',
+        include([
+            # Anything else - direct to the location detail view
+            path('', views.StockLocationDetail.as_view(), name='stock-location-detail')
+        ]),
+    )
 ]
 
 stock_item_detail_urls = [
-    re_path(r'^convert/', views.StockItemConvert.as_view(), name='stock-item-convert'),
-    re_path(r'^delete/', views.StockItemDelete.as_view(), name='stock-item-delete'),
-    re_path(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
-    re_path(r'^delete_test_data/', views.StockItemDeleteTestData.as_view(), name='stock-item-delete-test-data'),
-    re_path(r'^return/', views.StockItemReturnToStock.as_view(), name='stock-item-return'),
-
-    re_path(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
-
-    re_path('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
-]
-
-stock_tracking_urls = [
-
-    # edit
-    re_path(r'^(?P<pk>\d+)/edit/', views.StockItemTrackingEdit.as_view(), name='stock-tracking-edit'),
-
-    # delete
-    re_path(r'^(?P<pk>\d+)/delete', views.StockItemTrackingDelete.as_view(), name='stock-tracking-delete'),
+    # Anything else - direct to the item detail view
+    path('', views.StockItemDetail.as_view(), name='stock-item-detail')
 ]
 
 stock_urls = [
     # Stock location
-    re_path(r'^location/', include(location_urls)),
-
-    re_path(r'^track/', include(stock_tracking_urls)),
-
+    path('location/', include(location_urls)),
     # Individual stock items
-    re_path(r'^item/(?P<pk>\d+)/', include(stock_item_detail_urls)),
-
-    re_path(r'^sublocations/', views.StockIndex.as_view(template_name='stock/sublocation.html'), name='stock-sublocations'),
-
-    re_path(r'^.*$', views.StockIndex.as_view(), name='stock-index'),
+    path('item/<int:pk>/', include(stock_item_detail_urls)),
+    # Default to the stock index page
+    path('', views.StockIndex.as_view(), name='stock-index'),
 ]

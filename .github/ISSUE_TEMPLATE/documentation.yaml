@@ -1,0 +1,15 @@
+name: "Documentation"
+description: "Create an issue to improve the documentation"
+labels: ["documentation", "triage:not-checked"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Create a new issue regarding the InvenTree documentation
+  - type: textarea
+    id: repro
+    attributes:
+      label: Body of the issue
+      description: Please provide one distinct thing to fix or a clearly defined enhancement
+    validations:
+      required: true

@@ -3,7 +3,7 @@ name: Mark stale issues and pull requests
 
 on:
   schedule:
-  - cron: '24 11 * * *'
+    - cron: '24 11 * * *'
 
 jobs:
   stale:
@@ -14,12 +14,12 @@ jobs:
       pull-requests: write
 
     steps:
-    - uses: actions/stale@v3
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        stale-issue-message: 'This issue seems stale. Please react to show this is still important.'
-        stale-pr-message: 'This PR seems stale. Please react to show this is still important.'
-        stale-issue-label: 'no-activity'
-        stale-pr-label: 'no-activity'
-        start-date: '2022-01-01'
-        exempt-all-milestones: true
+      - uses: actions/stale@1160a2240286f5da8ec72b1c0816ce2481aabf84 # pin@v8.0.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: 'This issue seems stale. Please react to show this is still important.'
+          stale-pr-message: 'This PR seems stale. Please react to show this is still important.'
+          stale-issue-label: 'inactive'
+          stale-pr-label: 'inactive'
+          start-date: '2022-01-01'
+          exempt-all-milestones: true

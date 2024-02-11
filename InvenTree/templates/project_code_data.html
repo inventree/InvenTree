@@ -1,0 +1,11 @@
+{% load i18n %}
+
+{% if instance and instance.project_code %}
+<tr>
+    <td><span class='fas fa-list'></span></td>
+    <td>{% trans "Project Code" %}</td>
+    <td>
+        {{ instance.project_code.code }} - <em><small>{{ instance.project_code.description }}</small></em>
+    </td>
+</tr>
+{% endif %}

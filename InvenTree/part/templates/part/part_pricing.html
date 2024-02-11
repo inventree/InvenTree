@@ -10,7 +10,7 @@
 <table class='table table-striped table-condensed table-price-two'>
     <tr>
         <td><strong>{% trans 'Part' %}</strong></td>
-        <td>{{ part  }}</td>
+        <td>{{ part }}</td>
     </tr>
     <tr>
         <td><strong>{% trans 'Quantity' %}</strong></td>
@@ -60,6 +60,7 @@
         <td>Max: {% include "price.html" with price=max_total_bom_price %}</td>
     </tr>
     {% endif %}
+    {% endif %}
     {% if min_total_bom_purchase_price %}
     <tr>
         <td><strong>{% trans 'Unit Purchase Price' %}</strong></td>
@@ -75,13 +76,7 @@
     {% endif %}
     {% endif %}
 
-    {% if part.has_complete_bom_pricing == False %}
-    <tr>
-        <td colspan='3'>
-            <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>
-        </td>
-    </tr>
-    {% endif %}
+    {% if min_total_bom_price or min_total_bom_purchase_price %}
     {% else %}
     <tr>
         <td colspan='3'>
@@ -122,11 +117,11 @@
     </table>
 {% endif %}
 
-{% if min_unit_buy_price or min_unit_bom_price %}
+{% if min_unit_buy_price or min_unit_bom_price or min_unit_bom_purchase_price %}
 {% else %}
 <div class='alert alert-danger alert-block'>
     {% trans 'No pricing information is available for this part.' %}
 </div>
 {% endif %}
 <hr>
-{% endblock %}
+{% endblock pre_form_content %}

@@ -73,7 +73,7 @@
                 <tr id="node-1-2-1" class="treegrid-4 treegrid-parent-3">
                     <td>Node 1-2-1</td><td>Additional info</td>
                 </tr>
-            </table>	  
+            </table>
 
             <h2>Code</h2>
 
@@ -95,16 +95,16 @@
             $('.tree').treegrid({
             onChange: function() {
                 alert("Changed: "+$(this).attr("id"));
-            }, 
+            },
             onCollapse: function() {
                 alert("Collapsed: "+$(this).attr("id"));
-            }, 
+            },
             onExpand: function() {
                 alert("Expanded "+$(this).attr("id"));
             }});
             $('#node-1').on("change", function() {
                 alert("Event from " + $(this).attr("id"));
-            });            
+            });
       });
     &lt;/script&gt;
 
@@ -124,7 +124,7 @@
         &lt;tr class=&quot;treegrid-4 treegrid-parent-3&quot;&gt;
           &lt;td&gt;Node 1-2-1&lt;/td&gt;&lt;td&gt;Additional info&lt;/td&gt;
         &lt;/tr&gt;
-      &lt;/table&gt;	  
+      &lt;/table&gt;
 
   &lt;/body&gt;
 &lt;/html&gt;

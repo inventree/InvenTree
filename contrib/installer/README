@@ -1,0 +1,14 @@
+The installer is generated using bashly.
+
+## Installation
+Check out the docs: https://bashly.dannyb.co/installation/
+
+If you have ruby already installed run
+```bash
+gem install bashly
+```
+
+## Regenerate script
+```bash
+bashly generate
+```

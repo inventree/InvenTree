@@ -1,21 +1,21 @@
 {% extends "panel.html" %}
 {% load i18n %}
 
-{% block label %}category{% endblock %}
+{% block label %}category{% endblock label %}
 
 {% block heading %}
 {% trans "Category Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
-<button class='btn btn-success' id='new-cat-param' disabled=''>
+<button class='btn btn-success' id='new-cat-param'>
     <div class='fas fa-plus-circle'></div> {% trans "New Parameter" %}
 </button>
-{% endblock %}
+{% endblock actions %}
 
 {% block content %}
 
-<div class='row'>
+<div class='row' id='cat-param-buttons'>
     <form action=''>
         <div class='col-sm-6' style='width: 250px'>
             <div class='form-group'><div class='controls'>
@@ -30,4 +30,4 @@
 <table class='table table-striped table-condensed' id='cat-param-table' data-toolbar='#cat-param-buttons'>
 </table>
 
-{% endblock %}
+{% endblock content %}

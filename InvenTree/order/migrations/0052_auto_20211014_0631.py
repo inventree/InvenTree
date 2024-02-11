@@ -20,8 +20,12 @@ def build_refs(apps, schema_editor):
         if result and len(result.groups()) == 1:
             try:
                 ref = int(result.groups()[0])
-            except:  # pragma: no cover
+            except Exception:  # pragma: no cover
                 ref = 0
+
+        # Clip integer value to ensure it does not overflow database field
+        if ref > 0x7fffffff:
+            ref = 0x7fffffff
 
         order.reference_int = ref
         order.save()
@@ -37,18 +41,15 @@ def build_refs(apps, schema_editor):
         if result and len(result.groups()) == 1:
             try:
                 ref = int(result.groups()[0])
-            except:  # pragma: no cover
+            except Exception:  # pragma: no cover
                 ref = 0
+
+        # Clip integer value to ensure it does not overflow database field
+        if ref > 0x7fffffff:
+            ref = 0x7fffffff
 
         order.reference_int = ref
         order.save()
-
-
-def unbuild_refs(apps, schema_editor):  # pragma: no cover
-    """
-    Provided only for reverse migration compatibility
-    """
-    pass
 
 
 class Migration(migrations.Migration):
@@ -59,8 +60,5 @@ class Migration(migrations.Migration):
 
 
     operations = [
-        migrations.RunPython(
-            build_refs,
-            reverse_code=unbuild_refs
-        )
+        migrations.RunPython(build_refs, reverse_code=migrations.RunPython.noop)
     ]

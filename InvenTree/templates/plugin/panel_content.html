@@ -1,0 +1,19 @@
+{% if plugin_panels %}
+<!-- Custom panel items, loaded via plugins -->
+{% for panel in plugin_panels %}
+<div class='panel panel-hidden' id='panel-{{ panel.key }}'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{{ panel.title }}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                <!-- TODO: Implement custom action buttons for plugin panels -->
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {{ panel.content | safe }}
+    </div>
+</div>
+{% endfor %}
+{% endif %}

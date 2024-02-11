@@ -14,8 +14,8 @@
   {% trans 'Scan the QR code below with a token generator of your choice (for instance Google Authenticator).' %}
 </p>
 
-<div class="bg-light rounded">
-<img src="{{ qr_code_url }}" class="mx-auto d-block"/>
+<div class="bg-qr-code rounded">
+<img src="{{ qr_code_url }}" alt="{% trans 'QR Code' %}" class="mx-auto d-block"/>
 </div>
 <br>
 
@@ -31,12 +31,17 @@
   {% csrf_token %}
   {{ form|crispy }}
 
-  <button type="submit" class="btn btn-primary btn-block w-100">
-    {% trans 'Verify' %}
-  </button>
+  <hr>
+  <div class='btn-group float-right' role='group'>
+    <button type="submit" class="btn btn-primary btn-block w-100">
+      <span class='fas fa-check-circle'></span> {% trans 'Verify' %}
+    </button>
+  </div>
 </form>
 
 <div>
-<a href="{% url 'settings' %}" class="btn btn-secondary w-100 btn-sm mt-3">{% trans "Back to settings" %}</a>
+  <a type='button' href="{% url 'settings' %}" class="btn btn-secondary">
+    <span class='fas fa-undo-alt'></span> {% trans "Return to Site" %}
+  </a>
 </div>
-{% endblock %}
+{% endblock content %}

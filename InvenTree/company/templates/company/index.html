@@ -5,12 +5,12 @@
 {% load inventree_extras %}
 
 {% block page_title %}
-{% inventree_title %} | {% trans "Supplier List" %} 
-{% endblock %}
+{% inventree_title %}{% if title %} | {{ title }}{% endif %}
+{% endblock page_title %}
 
 {% block heading %}
 {{ title }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if pagetype == 'manufacturers' and roles.purchase_order.add or pagetype == 'suppliers' and roles.purchase_order.add or pagetype == 'customers' and roles.sales_order.add %}
@@ -18,21 +18,21 @@
     <span class='fas fa-plus-circle'></span> {{ button_text }}
 </button>
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block page_info %}
 
 <div class='panel-content'>
-    
-    <div id='button-toolbar'>
+
+    <div id='company-button-toolbar'>
         {% include "filter_list.html" with id='company' %}
     </div>
-    
-    <table class='table table-striped table-condensed' id='company-table' data-toolbar='#button-toolbar'>
+
+    <table class='table table-striped table-condensed' id='company-table' data-toolbar='#company-button-toolbar'>
     </table>
 </div>
 
-{% endblock %}
+{% endblock page_info %}
 {% block js_ready %}
 {{ block.super }}
 
@@ -59,4 +59,4 @@
         }
     );
 
-{% endblock %}
+{% endblock js_ready %}

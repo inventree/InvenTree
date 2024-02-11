@@ -1,109 +1,107 @@
-"""
-Django views for interacting with Order app
-"""
-
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django.db.utils import IntegrityError
-from django.http.response import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, ListView
-from django.forms import HiddenInput, IntegerField
+"""Django views for interacting with Order app."""
 
 import logging
 from decimal import Decimal, InvalidOperation
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
-from .models import SalesOrder, SalesOrderLineItem
-from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
-from company.models import SupplierPart  # ManufacturerPart
-from part.models import Part
+from django.db.utils import IntegrityError
+from django.forms import HiddenInput, IntegerField
+from django.http import HttpResponseRedirect
+from django.http.response import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import DetailView, ListView
 
-from common.forms import UploadFileForm, MatchFieldForm
-from common.views import FileManagementFormView
 from common.files import FileManager
+from common.forms import MatchFieldForm, UploadFileForm
+from common.views import FileManagementFormView
+from company.models import SupplierPart  # ManufacturerPart
+from InvenTree.helpers import DownloadFile
+from InvenTree.views import AjaxView, InvenTreeRoleMixin
+from part.models import Part
+from part.views import PartPricing
+from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as order_forms
-from part.views import PartPricing
+from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
+from .models import (
+    PurchaseOrder,
+    PurchaseOrderLineItem,
+    ReturnOrder,
+    SalesOrder,
+    SalesOrderLineItem,
+)
 
-from InvenTree.helpers import DownloadFile
-from InvenTree.views import InvenTreeRoleMixin, AjaxView
-
-
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
-    """ List view for all purchase orders """
+    """List view for all purchase orders."""
 
     model = PurchaseOrder
     template_name = 'order/purchase_orders.html'
     context_object_name = 'orders'
 
     def get_queryset(self):
-        """ Retrieve the list of purchase orders,
-        ensure that the most recent ones are returned first. """
-
+        """Retrieve the list of purchase orders, ensure that the most recent ones are returned first."""
         queryset = PurchaseOrder.objects.all().order_by('-creation_date')
 
         return queryset
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        return ctx
-
 
 class SalesOrderIndex(InvenTreeRoleMixin, ListView):
+    """SalesOrder index (list) view class."""
 
     model = SalesOrder
     template_name = 'order/sales_orders.html'
     context_object_name = 'orders'
 
 
-class PurchaseOrderDetail(InvenTreeRoleMixin, DetailView):
-    """ Detail view for a PurchaseOrder object """
+class ReturnOrderIndex(InvenTreeRoleMixin, ListView):
+    """ReturnOrder index (list) view."""
+
+    model = ReturnOrder
+    template_name = 'order/return_orders.html'
+    context_object_name = 'orders'
+
+
+class PurchaseOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
+    """Detail view for a PurchaseOrder object."""
 
     context_object_name = 'order'
     queryset = PurchaseOrder.objects.all().prefetch_related('lines')
     template_name = 'order/purchase_order_detail.html'
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
 
-        return ctx
-
-
-class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
-    """ Detail view for a SalesOrder object """
+class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
+    """Detail view for a SalesOrder object."""
 
     context_object_name = 'order'
-    queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
+    queryset = SalesOrder.objects.all().prefetch_related(
+        'lines__allocations__item__purchase_order'
+    )
     template_name = 'order/sales_order_detail.html'
 
 
+class ReturnOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
+    """Detail view for a ReturnOrder object."""
+
+    context_object_name = 'order'
+    queryset = ReturnOrder.objects.all()
+    template_name = 'order/return_order_detail.html'
+
+
 class PurchaseOrderUpload(FileManagementFormView):
-    ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
+    """PurchaseOrder: Upload file, match to fields and parts (using multi-Step form)."""
 
     class OrderFileManager(FileManager):
-        REQUIRED_HEADERS = [
-            'Quantity',
-        ]
+        """Specify required fields."""
 
-        ITEM_MATCH_HEADERS = [
-            'Manufacturer_MPN',
-            'Supplier_SKU',
-        ]
+        REQUIRED_HEADERS = ['Quantity']
 
-        OPTIONAL_HEADERS = [
-            'Purchase_Price',
-            'Reference',
-            'Notes',
-        ]
+        ITEM_MATCH_HEADERS = ['Manufacturer_MPN', 'Supplier_SKU']
+
+        OPTIONAL_HEADERS = ['Purchase_Price', 'Reference', 'Notes']
 
     name = 'order'
     form_list = [
@@ -117,9 +115,9 @@ class PurchaseOrderUpload(FileManagementFormView):
         'order/order_wizard/match_parts.html',
     ]
     form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match Supplier Parts"),
+        _('Upload File'),
+        _('Match Fields'),
+        _('Match Supplier Parts'),
     ]
     form_field_map = {
         'item_select': 'part',
@@ -131,13 +129,11 @@ class PurchaseOrderUpload(FileManagementFormView):
     file_manager_class = OrderFileManager
 
     def get_order(self):
-        """ Get order or return 404 """
-
+        """Get order or return 404."""
         return get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
 
     def get_context_data(self, form, **kwargs):
-        """ Handle context data for order """
-
+        """Handle context data for order."""
         context = super().get_context_data(form=form, **kwargs)
 
         order = self.get_order()
@@ -147,14 +143,16 @@ class PurchaseOrderUpload(FileManagementFormView):
         return context
 
     def get_field_selection(self):
-        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
+        """Once data columns have been selected, attempt to pre-select the proper data from the database.
+
         This function is called once the field selection has been validated.
         The pre-fill data are then passed through to the SupplierPart selection form.
         """
-
         order = self.get_order()
 
-        self.allowed_items = SupplierPart.objects.filter(supplier=order.supplier).prefetch_related('manufacturer_part')
+        self.allowed_items = SupplierPart.objects.filter(
+            supplier=order.supplier
+        ).prefetch_related('manufacturer_part')
 
         # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
         q_idx = self.get_column_index('Quantity')
@@ -165,7 +163,6 @@ class PurchaseOrderUpload(FileManagementFormView):
         n_idx = self.get_column_index('Notes')
 
         for row in self.rows:
-
             # Initially use a quantity of zero
             quantity = Decimal(0)
 
@@ -195,7 +192,11 @@ class PurchaseOrderUpload(FileManagementFormView):
                 try:
                     # Attempt SupplierPart lookup based on SKU value
                     exact_match_part = self.allowed_items.get(SKU__contains=sku)
-                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                except (
+                    ValueError,
+                    SupplierPart.DoesNotExist,
+                    SupplierPart.MultipleObjectsReturned,
+                ):
                     exact_match_part = None
 
             # Check if there is a column corresponding to "Manufacturer MPN" and no exact match found yet
@@ -204,8 +205,14 @@ class PurchaseOrderUpload(FileManagementFormView):
 
                 try:
                     # Attempt SupplierPart lookup based on MPN value
-                    exact_match_part = self.allowed_items.get(manufacturer_part__MPN__contains=mpn)
-                except (ValueError, SupplierPart.DoesNotExist, SupplierPart.MultipleObjectsReturned):
+                    exact_match_part = self.allowed_items.get(
+                        manufacturer_part__MPN__contains=mpn
+                    )
+                except (
+                    ValueError,
+                    SupplierPart.DoesNotExist,
+                    SupplierPart.MultipleObjectsReturned,
+                ):
                     exact_match_part = None
 
             # Supply list of part options for each row, sorted by how closely they match the part name
@@ -236,15 +243,16 @@ class PurchaseOrderUpload(FileManagementFormView):
                 row['notes'] = notes
 
     def done(self, form_list, **kwargs):
-        """ Once all the data is in, process it to add PurchaseOrderLineItem instances to the order """
-
+        """Once all the data is in, process it to add PurchaseOrderLineItem instances to the order."""
         order = self.get_order()
         items = self.get_clean_items()
 
         # Create PurchaseOrderLineItem instances
         for purchase_order_item in items.values():
             try:
-                supplier_part = SupplierPart.objects.get(pk=int(purchase_order_item['part']))
+                supplier_part = SupplierPart.objects.get(
+                    pk=int(purchase_order_item['part'])
+                )
             except (ValueError, SupplierPart.DoesNotExist):
                 continue
 
@@ -264,12 +272,13 @@ class PurchaseOrderUpload(FileManagementFormView):
                     # PurchaseOrderLineItem already exists
                     pass
 
-        return HttpResponseRedirect(reverse('po-detail', kwargs={'pk': self.kwargs['pk']}))
+        return HttpResponseRedirect(
+            reverse('po-detail', kwargs={'pk': self.kwargs['pk']})
+        )
 
 
 class SalesOrderExport(AjaxView):
-    """
-    Export a sales order
+    """Export a sales order.
 
     - File format can optionally be passed as a query parameter e.g. ?format=CSV
     - Default file format is CSV
@@ -280,12 +289,12 @@ class SalesOrderExport(AjaxView):
     role_required = 'sales_order.view'
 
     def get(self, request, *args, **kwargs):
-
+        """Perform GET request to export SalesOrder dataset."""
         order = get_object_or_404(SalesOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')
 
-        filename = f"{str(order)} - {order.customer.name}.{export_format}"
+        filename = f'{str(order)} - {order.customer.name}.{export_format}'
 
         dataset = SalesOrderLineItemResource().export(queryset=order.lines.all())
 
@@ -295,7 +304,7 @@ class SalesOrderExport(AjaxView):
 
 
 class PurchaseOrderExport(AjaxView):
-    """ File download for a purchase order
+    """File download for a purchase order.
 
     - File format can be optionally passed as a query param e.g. ?format=CSV
     - Default file format is CSV
@@ -307,16 +316,12 @@ class PurchaseOrderExport(AjaxView):
     role_required = 'purchase_order.view'
 
     def get(self, request, *args, **kwargs):
-
+        """Perform GET request to export PurchaseOrder dataset."""
         order = get_object_or_404(PurchaseOrder, pk=self.kwargs.get('pk', None))
 
         export_format = request.GET.get('format', 'csv')
 
-        filename = '{order} - {company}.{fmt}'.format(
-            order=str(order),
-            company=order.supplier.name,
-            fmt=export_format
-        )
+        filename = f'{str(order)} - {order.supplier.name}.{export_format}'
 
         dataset = PurchaseOrderLineItemResource().export(queryset=order.lines.all())
 
@@ -326,15 +331,18 @@ class PurchaseOrderExport(AjaxView):
 
 
 class LineItemPricing(PartPricing):
-    """ View for inspecting part pricing information """
+    """View for inspecting part pricing information."""
 
     class EnhancedForm(PartPricing.form_class):
+        """Extra form options."""
+
         pk = IntegerField(widget=HiddenInput())
         so_line = IntegerField(widget=HiddenInput())
 
     form_class = EnhancedForm
 
     def get_part(self, id=False):
+        """Return the Part instance associated with this view."""
         if 'line_item' in self.request.GET:
             try:
                 part_id = self.request.GET.get('line_item')
@@ -350,11 +358,13 @@ class LineItemPricing(PartPricing):
         else:
             return None
 
-        if id:
+        if part and id:
             return part.id
+
         return part
 
     def get_so(self, pk=False):
+        """Return the SalesOrderLineItem associated with this view."""
         so_line = self.request.GET.get('line_item', None)
         if not so_line:
             so_line = self.request.POST.get('so_line', None)
@@ -370,20 +380,21 @@ class LineItemPricing(PartPricing):
         return None
 
     def get_quantity(self):
-        """ Return set quantity in decimal format """
+        """Return set quantity in decimal format."""
         qty = Decimal(self.request.GET.get('quantity', 1))
         if qty == 1:
             return Decimal(self.request.POST.get('quantity', 1))
         return qty
 
     def get_initials(self):
+        """Return initial context values for this view."""
         initials = super().get_initials()
         initials['pk'] = self.get_part(id=True)
         initials['so_line'] = self.get_so(pk=True)
         return initials
 
     def post(self, request, *args, **kwargs):
-        # parse extra actions
+        """Respond to a POST request to get particular pricing information."""
         REF = 'act-btn_'
         act_btn = [a.replace(REF, '') for a in self.request.POST if REF in a]
 
@@ -406,7 +417,9 @@ class LineItemPricing(PartPricing):
                     # check qunatity and update if different
                     if so_line.quantity != quantity:
                         so_line.quantity = quantity
-                        note = _('Updated {part} unit-price to {price} and quantity to {qty}')
+                        note = _(
+                            'Updated {part} unit-price to {price} and quantity to {qty}'
+                        )
 
                     # update sale_price
                     so_line.sale_price = price
@@ -415,7 +428,11 @@ class LineItemPricing(PartPricing):
                     # parse response
                     data = {
                         'form_valid': True,
-                        'success': note.format(part=str(so_line.part), price=str(so_line.sale_price), qty=quantity)
+                        'success': note.format(
+                            part=str(so_line.part),
+                            price=str(so_line.sale_price),
+                            qty=quantity,
+                        ),
                     }
                     return JsonResponse(data=data)
 

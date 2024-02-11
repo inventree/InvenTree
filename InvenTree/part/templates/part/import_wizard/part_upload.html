@@ -7,17 +7,110 @@
 {% url 'part-index' as url %}
 {% trans "Return to Parts" as text %}
 {% include "sidebar_link.html" with url=url text=text icon="fa-undo" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
     {% trans "Import Parts from File" as header_text %}
-    {% trans "Unsuffitient privileges." as error_text %}
-    {% include "patterns/wizard/upload.html" with header_text=header_text upload_go_ahead=roles.part.change error_text=error_text %}
-{% endblock %}
+    {% trans "Insufficient privileges." as error_text %}
+
+    <div class='panel' id='panel-upload-file'>
+        <div class='panel-heading'>
+            <h4>
+                {{ header_text }}
+                {{ wizard.form.media }}
+            </h4>
+        </div>
+        <div class='panel-content'>
+        {% if roles.part.change %}
+
+            <p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
+            {% if description %}- {{ description }}{% endif %}</p>
+
+            {% block form_alert %}
+            <div class='alert alert-info alert-block'>
+                <strong>{% trans "Requirements for part import" %}:</strong>
+                <ul>
+                    <li>{% trans "The part import file must contain the required named columns as provided in the " %} <strong><a href='#' id='part-template-download'>{% trans "Part Import Template" %}</a></strong></li>
+                </ul>
+            </div>
+            {% endblock form_alert %}
+
+            <form action='' method='post' class='js-modal-form' enctype='multipart/form-data'>
+            {% csrf_token %}
+            {% load crispy_forms_tags %}
+
+            {% block form_buttons_top %}
+            {% endblock form_buttons_top %}
+
+            <div style='overflow-x:scroll;'>
+                <table class='table table-striped' style='margin-top: 12px; margin-bottom: 0px; table-layout: auto; width: 100%;'>
+                {{ wizard.management_form }}
+                {% block form_content %}
+                {% crispy wizard.form %}
+                {% endblock form_content %}
+                </table>
+            </div>
+
+            {% block form_buttons_bottom %}
+            {% if wizard.steps.prev %}
+            <button name='wizard_goto_step' type='submit' value='{{ wizard.steps.prev }}' class='save btn btn-outline-secondary'>{% trans "Previous Step" %}</button>
+            {% endif %}
+            <button type='submit' class='save btn btn-outline-secondary'>{% trans "Upload File" %}</button>
+            </form>
+            {% endblock form_buttons_bottom %}
+
+        {% else %}
+            <div class='alert alert-danger alert-block' role='alert'>
+                {{ error_text }}
+            </div>
+        {% endif %}
+        </div>
+    </div>
+{% endblock content %}
 
 {% block js_ready %}
 {{ block.super }}
 
 enableSidebar('partupload');
 
-{% endblock %}
+$('#part-template-download').click(function() {
+    downloadPartImportTemplate();
+});
+
+function downloadPartImportTemplate(options={}) {
+
+    var format = options.format;
+
+    if (!format) {
+        format = inventreeLoad('part-import-format', 'csv');
+    }
+
+    constructFormBody({}, {
+        title: '{% trans "Download Part Import Template" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select file format" %}',
+                required: true,
+                type: 'choice',
+                value: format,
+                choices: exportFormatOptions(),
+            }
+        },
+        onSubmit: function(fields, opts) {
+            var format = getFormFieldValue('format', fields['format'], opts);
+
+            // Save the format for next time
+            inventreeSave('part-import-format', format);
+
+            // Hide the modal
+            $(opts.modal).modal('hide');
+
+            // Download the file
+            location.href = `{% url "part-template-download" %}?format=${format}`;
+
+        }
+    });
+}
+
+{% endblock js_ready %}

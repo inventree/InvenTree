@@ -3,16 +3,6 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import mptt.fields
-from build.models import Build
-
-
-def update_tree(apps, schema_editor):
-    # Update the Build MPTT model
-    Build.objects.rebuild()
-
-
-def nupdate_tree(apps, schema_editor):  # pragma: no cover
-    pass
 
 
 class Migration(migrations.Migration):
@@ -53,5 +43,4 @@ class Migration(migrations.Migration):
             field=models.PositiveIntegerField(db_index=True, default=0, editable=False),
             preserve_default=False,
         ),
-        migrations.RunPython(update_tree, reverse_code=nupdate_tree),
     ]

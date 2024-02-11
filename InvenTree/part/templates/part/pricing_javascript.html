@@ -1,0 +1,99 @@
+{% load inventree_extras %}
+{% load i18n %}
+
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+{% default_currency as currency %}
+
+// Callback for "part pricing" button
+$('#part-pricing-refresh').click(function() {
+    inventreePut(
+        '{% url "api-part-pricing" part.pk %}',
+        {
+            update: true,
+        },
+        {
+            success: function(response) {
+                location.reload();
+            }
+        }
+    );
+});
+
+$('#part-pricing-edit').click(function() {
+    constructForm('{% url "api-part-pricing" part.pk %}', {
+        title: '{% trans "Update Pricing" escape %}',
+        fields: {
+            override_min: {},
+            override_min_currency: {},
+            override_max: {},
+            override_max_currency: {},
+            update: {
+                hidden: true,
+                value: true,
+            }
+        },
+        onSuccess: function(response) {
+            location.reload();
+        }
+    });
+});
+
+// Internal Pricebreaks
+{% if show_internal_price and roles.sales_order.view %}
+initPriceBreakSet($('#internal-price-break-table'), {
+    part_id: {{ part.id }},
+    pb_human_name: 'internal price break',
+    pb_url_slug: 'internal-price',
+    pb_url: '{% url 'api-part-internal-price-list' %}',
+    pb_new_btn: $('#new-internal-price-break'),
+    pb_new_url: '{% url 'api-part-internal-price-list' %}',
+    linkedGraph: $('#InternalPriceBreakChart'),
+});
+{% endif %}
+
+// Purchase price history
+loadPurchasePriceHistoryTable({
+    part: {{ part.pk }},
+});
+
+{% if part.purchaseable and roles.purchase_order.view %}
+// Supplier pricing information
+loadPartSupplierPricingTable({
+    part: {{ part.pk }},
+});
+{% endif %}
+
+{% if part.assembly and part.has_bom %}
+// BOM Pricing Data
+loadBomPricingChart({
+    part: {{ part.pk }}
+});
+{% endif %}
+
+{% if part.is_template %}
+// Variant pricing data
+loadVariantPricingChart({
+    part: {{ part.pk }}
+});
+{% endif %}
+
+{% if part.salable and roles.sales_order.view %}
+    // Sales pricebreaks
+    initPriceBreakSet(
+        $('#price-break-table'),
+        {
+            part_id: {{ part.id }},
+            pb_human_name: 'sale price break',
+            pb_url_slug: 'sale-price',
+            pb_url: "{% url 'api-part-sale-price-list' %}",
+            pb_new_btn: $('#new-price-break'),
+            pb_new_url: '{% url 'api-part-sale-price-list' %}',
+            linkedGraph: $('#SalePriceBreakChart'),
+        },
+    );
+
+    loadSalesPriceHistoryTable({
+        part: {{ part.pk }}
+    });
+
+{% endif %}

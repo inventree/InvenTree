@@ -5,7 +5,7 @@
         @page {
             {% block page_style %}
             {% block page_size %}
-            size: {{ default_page_size }};
+            size: {{ page_size }};
             {% endblock %}
             {% block page_margin %}
             margin: 2cm;
@@ -91,17 +91,17 @@
 
     <div class='header'>
         {% block header_content %}
-        {% endblock %}
+        {% endblock header_content %}
     </div>
 
     <div class='content'>
         {% block page_content %}
-        {% endblock %}
+        {% endblock page_content %}
     </div>
 
     <div class='footer'>
         {% block footer_content %}
-        {% endblock %}
+        {% endblock footer_content %}
     </div>
 
 </body>

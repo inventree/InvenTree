@@ -3,24 +3,24 @@
 
 /* globals
     createNewModal,
+    enableSubmitButton,
+    formatDecimal,
     inventreeFormDataUpload,
     inventreeGet,
     inventreePut,
+    global_settings,
     modalEnable,
     modalShowSubmitButton,
-    renderBuild,
-    renderCompany,
-    renderManufacturerPart,
-    renderOwner,
-    renderPart,
-    renderPartCategory,
-    renderPartParameterTemplate,
-    renderStockItem,
-    renderStockLocation,
-    renderSupplierPart,
-    renderUser,
+    getModelRenderer,
+    reloadBootstrapTable,
+    sanitizeInputString,
     showAlertOrCache,
     showApiError,
+    showMessage,
+    showModalSpinner,
+    toBool,
+    showQuestionDialog,
+    generateTreeStructure,
 */
 
 /* exported
@@ -32,6 +32,7 @@
     setFormGroupVisibility,
     showFormInput,
     selectImportFields,
+    updateForm,
 */
 
 /**
@@ -62,7 +63,7 @@ $.fn.select2.defaults.set('theme', 'bootstrap-5');
  * can perform a GET method at the endpoint.
  */
 function canView(OPTIONS) {
-    
+
     if ('actions' in OPTIONS) {
         return ('GET' in OPTIONS.actions);
     } else {
@@ -90,7 +91,7 @@ function canCreate(OPTIONS) {
  * can perform a PUT or PATCH method at the endpoint
  */
 function canChange(OPTIONS) {
-    
+
     if ('actions' in OPTIONS) {
         return ('PUT' in OPTIONS.actions || 'PATCH' in OPTIONS.actions);
     } else {
@@ -147,25 +148,25 @@ function getApiEndpointOptions(url, callback) {
 
 /*
  * Construct a 'creation' (POST) form, to create a new model in the database.
- * 
+ *
  * arguments:
  * - fields: The 'actions' object provided by the OPTIONS endpoint
- * 
+ *
  * options:
- * - 
+ * -
  */
 function constructCreateForm(fields, options) {
 
     // Check if default values were provided for any fields
     for (const name in fields) {
-    
+
         var field = fields[name];
 
         var field_options = options.fields[name] || {};
 
         // If a 'value' is not provided for the field,
         if (field.value == null) {
-            
+
             if ('value' in field_options) {
                 // Client has specified the default value for the field
                 field.value = field_options.value;
@@ -183,12 +184,12 @@ function constructCreateForm(fields, options) {
 
 /*
  * Construct a 'change' (PATCH) form, to create a new model in the database.
- * 
+ *
  * arguments:
  * - fields: The 'actions' object provided by the OPTIONS endpoint
- * 
+ *
  * options:
- * - 
+ * -
  */
 function constructChangeForm(fields, options) {
 
@@ -203,12 +204,12 @@ function constructChangeForm(fields, options) {
             json: 'application/json',
         },
         success: function(data) {
-            
+
             // An optional function can be provided to process the returned results,
             // before they are rendered to the form
             if (options.processResults) {
                 var processed = options.processResults(data, fields, options);
-                
+
                 // If the processResults function returns data, it will be stored
                 if (processed) {
                     data = processed;
@@ -225,7 +226,7 @@ function constructChangeForm(fields, options) {
 
             // Store the entire data object
             options.instance = data;
-            
+
             constructFormBody(fields, options);
         },
         error: function(xhr) {
@@ -240,58 +241,64 @@ function constructChangeForm(fields, options) {
 
 /*
  * Construct a 'delete' form, to remove a model instance from the database.
- * 
+ *
  * arguments:
  * - fields: The 'actions' object provided by the OPTIONS request
  * - options: The 'options' object provided by the client
  */
 function constructDeleteForm(fields, options) {
 
-    // Force the "confirm" property if not set
-    if (!('confirm' in options)) {
-        options.confirm = true;
+    // If we are deleting a specific "instance" (i.e. a single object)
+    // then we request the instance information first
+
+    // However we may be performing a "multi-delete" (against a list endpoint),
+    // in which case we do not want to perform such a request!
+
+    if (options.multi_delete) {
+        constructFormBody(fields, options);
+    } else {
+        // Request existing data from the API endpoint
+        // This data can be used to render some information on the form
+        $.ajax({
+            url: options.url,
+            type: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            accepts: {
+                json: 'application/json',
+            },
+            success: function(data) {
+
+                // Store the instance data
+                options.instance = data;
+
+                constructFormBody(fields, options);
+            },
+            error: function(xhr) {
+                // TODO: Handle error here
+                console.error(`Error in constructDeleteForm at '${options.url}`);
+
+                showApiError(xhr, options.url);
+            }
+        });
     }
-
-    // Request existing data from the API endpoint
-    // This data can be used to render some information on the form
-    $.ajax({
-        url: options.url,
-        type: 'GET',
-        contentType: 'application/json',
-        dataType: 'json',
-        accepts: {
-            json: 'application/json',
-        },
-        success: function(data) {
-
-            // Store the instance data
-            options.instance = data;
-
-            constructFormBody(fields, options);
-        },
-        error: function(xhr) {
-            // TODO: Handle error here
-            console.error(`Error in constructDeleteForm at '${options.url}`);
-
-            showApiError(xhr, options.url);
-        }
-    });
 }
 
 
 /*
  * Request API OPTIONS data from the server,
  * and construct a modal form based on the response.
- * 
+ *
  * url: API URL which defines form data
  * options:
  * - method: The HTTP method e.g. 'PUT', 'POST', 'DELETE' (default='PATCH')
  * - title: The form title
  * - submitText: Text for the "submit" button
+ * - submitClass: CSS class for the "submit" button (default = ')
  * - closeText: Text for the "close" button
  * - fields: list of fields to display, with the following options
  *      - filters: API query filters
- *      - onEdit: callback when field is edited
+ *      - onEdit: callback or array of callbacks which get fired when field is edited
  *      - secondary: Define a secondary modal form for this field
  *      - label: Specify custom label
  *      - help_text: Specify custom help_text
@@ -300,6 +307,7 @@ function constructDeleteForm(fields, options) {
  *      - hidden: Set to true to hide the field
  *      - icon: font-awesome icon to display before the field
  *      - prefix: Custom HTML prefix to display before the field
+ *      - localOnly: If true, this field will only be rendered, but not send to the server
  * - data: map of data to fill out field values with
  * - focus: Name of field to focus on when modal is displayed
  * - preventClose: Set to true to prevent form from closing on success
@@ -309,18 +317,17 @@ function constructDeleteForm(fields, options) {
  * - reload: Set to true to reload the current page after form success
  * - confirm: Set to true to require a "confirm" button
  * - confirmText: Text for confirm button (default = "Confirm")
- * 
+ * - disableSuccessMessage: Set to true to suppress the success message if the response contains a success key by accident
+ *
  */
-function constructForm(url, options) {
+function constructForm(url, options={}) {
 
     // An "empty" form will be defined locally
     if (url == null) {
         constructFormBody({}, options);
     }
 
-    options.fields = options.fields || {};
-
-    // Save the URL 
+    // Save the URL
     options.url = url;
 
     // Default HTTP method
@@ -338,13 +345,23 @@ function constructForm(url, options) {
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
 
+        // Copy across entire actions struct
+        options.actions = OPTIONS.actions.POST || OPTIONS.actions.PUT || OPTIONS.actions.PATCH || OPTIONS.actions.DELETE || {};
+
         // Extract any custom 'context' information from the OPTIONS data
         options.context = OPTIONS.context || {};
+
+        // Construct fields (can be a static parameter or a function)
+        if (options.fieldsFunction) {
+            options.fields = options.fieldsFunction(options);
+        } else {
+            options.fields = options.fields || {};
+        }
 
         /*
          * Determine what "type" of form we want to construct,
          * based on the requested action.
-         * 
+         *
          * First we must determine if the user has the correct permissions!
          */
 
@@ -359,7 +376,7 @@ function constructForm(url, options) {
                     details: '{% trans "Create operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
-            
+
                 console.warn(`'POST action unavailable at ${url}`);
             }
             break;
@@ -374,7 +391,7 @@ function constructForm(url, options) {
                     details: '{% trans "Update operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
-            
+
                 console.warn(`${options.method} action unavailable at ${url}`);
             }
             break;
@@ -388,7 +405,7 @@ function constructForm(url, options) {
                     details: '{% trans "Delete operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
-            
+
                 console.warn(`DELETE action unavailable at ${url}`);
             }
             break;
@@ -402,7 +419,7 @@ function constructForm(url, options) {
                     details: '{% trans "View operation not allowed" %}',
                     icon: 'fas fa-user-times',
                 });
-            
+
                 console.warn(`GET action unavailable at ${url}`);
             }
             break;
@@ -415,19 +432,117 @@ function constructForm(url, options) {
 
 
 /*
+ * Extracted information about a 'nested field' from the API metadata:
+ *
+ * - Nested fields are designated using a '__' (double underscore) separator
+ * - Currently only single-depth nesting is supported
+ */
+function extractNestedField(field_name, fields) {
+
+    var field_path = field_name.split('__');
+    var parent_name = field_path[0];
+    var child_name = field_path[1];
+
+    var parent_field = fields[parent_name];
+    var child_field = null;
+
+    // Check that the parent field exists
+    if (!parent_field) {
+        console.warn(`Expected parent field '${parent_name}' missing from API metadata`);
+        return;
+    }
+
+    // Check that the parent field is a 'nested object'
+    if (parent_field.type != 'nested object') {
+        console.warn(`Parent field '${parent_name}' is not designated as a nested object`);
+        return;
+    }
+
+    // Check that the field has a 'children' attribute
+    if ('children' in parent_field) {
+        child_field = parent_field['children'][child_name];
+    } else {
+        console.warn(`Parent field '${parent_name}' missing 'children' field`);
+        return;
+    }
+
+    if (child_field) {
+        // Mark this as a nested child field
+        child_field['nested_child'] = true;
+        child_field['parent_name'] = parent_name;
+        child_field['child_name'] = child_name;
+    }
+
+    return child_field;
+}
+
+
+/*
  * Construct a modal form based on the provided options
- * 
+ *
  * arguments:
  * - fields: The endpoint description returned from the OPTIONS request
  * - options: form options object provided by the client.
  */
 function constructFormBody(fields, options) {
 
-    var html = '';
+    let html = '';
 
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
-    var displayed_fields = options.fields || fields;
+    const displayed_fields = options.fields || fields || {};
+
+    if(!options.fields) {
+        options.fields = displayed_fields;
+    }
+
+    // add additional content as a header on top (provided as html by the caller)
+    if (options.header_html) {
+        html += options.header_html;
+    }
+
+    // process every field by recursively walking down nested fields
+    const processField = (name, field, optionsField) => {
+        if (typeof optionsField !== "object") return;
+
+        if (field.type === "nested object" && optionsField.children) {
+            for (const [k, v] of Object.entries(field.children)) {
+                processField(`${name}__${k}`, v, optionsField.children[k]);
+            }
+        }
+
+        if (field.type === "dependent field") {
+            if(field.child) {
+                // copy child attribute from parameters to options
+                optionsField.child = field.child;
+
+                processField(name, field.child, optionsField.child);
+            } else {
+                delete optionsField.child;
+            }
+        }
+    }
+
+    for (const [k,v] of Object.entries(fields)) {
+        if (options.fields && k in options.fields) {
+            processField(k, v, options.fields[k]);
+        }
+    }
+
+    // Override default option values if a 'DELETE' form is specified
+    if (options.method == 'DELETE') {
+        if (!('confirm' in options)) {
+            options.confirm = true;
+        }
+
+        if (!('submitClass' in options)) {
+            options.submitClass = 'danger';
+        }
+
+        if (!('submitText' in options)) {
+            options.submitText = '{% trans "Delete" %}';
+        }
+    }
 
     // Handle initial data overrides
     if (options.data) {
@@ -446,10 +561,22 @@ function constructFormBody(fields, options) {
         }
     }
 
+
     // Provide each field object with its own name
     for (field in fields) {
         fields[field].name = field;
-        
+
+        /* Handle metadata for 'nested' fields.
+         * - Nested fields are designated using a '__' (double underscore) separator
+         * - Currently only single depth nesting is supported
+         */
+        if (field.includes('__')) {
+            var nested_field_info = extractNestedField(field, fields);
+
+            // Update the field data
+            fields[field] = Object.assign(fields[field], nested_field_info);
+        }
+
         // If any "instance_filters" are defined for the endpoint, copy them across (overwrite)
         if (fields[field].instance_filters) {
             fields[field].filters = Object.assign(fields[field].filters || {}, fields[field].instance_filters);
@@ -504,14 +631,6 @@ function constructFormBody(fields, options) {
 
         var field = fields[field_name];
 
-        switch (field.type) {
-        // Skip field types which are simply not supported
-        case 'nested object':
-            continue;
-        default:
-            break;
-        }
-        
         html += constructField(field_name, field, options);
     }
 
@@ -528,16 +647,18 @@ function constructFormBody(fields, options) {
     var modal = options.modal;
 
     modalEnable(modal, true);
-    
+
     // Insert generated form content
     $(modal).find('#form-content').html(html);
 
     if (options.preFormContent) {
 
+        let content = '';
+
         if (typeof(options.preFormContent) === 'function') {
-            var content = options.preFormContent(options);
+            content = options.preFormContent(options);
         } else {
-            var content = options.preFormContent;
+            content = options.preFormContent;
         }
 
         $(modal).find('#pre-form-content').html(content);
@@ -546,18 +667,23 @@ function constructFormBody(fields, options) {
     if (options.postFormContent) {
         $(modal).find('#post-form-content').html(options.postFormContent);
     }
-    
+
     // Clear any existing buttons from the modal
     $(modal).find('#modal-footer-buttons').html('');
 
     // Insert "confirm" button (if required)
-    if (options.confirm) {
+    if (options.confirm && global_settings.INVENTREE_REQUIRE_CONFIRM) {
         insertConfirmButton(options);
     }
 
     // Insert "persist" button (if required)
     if (options.persist) {
         insertPersistButton(options);
+    }
+
+    // Insert secondary buttons (if required)
+    if (options.buttons) {
+        insertSecondaryButtons(options);
     }
 
     // Display the modal
@@ -580,7 +706,7 @@ function constructFormBody(fields, options) {
 
         // Immediately disable the "submit" button,
         // to prevent the form being submitted multiple times!
-        $(options.modal).find('#modal-form-submit').prop('disabled', true);
+        enableSubmitButton(options, false);
 
         // Run custom code before normal form submission
         if (options.beforeSubmit) {
@@ -604,6 +730,36 @@ function constructFormBody(fields, options) {
 
     // Scroll to the top
     $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
+
+    // Focus on a particular field
+    let focus_field = options.focus;
+
+    if (focus_field == null && field_names.length > 0) {
+        // If no focus field is specified, focus on the first field
+        focus_field = field_names[0];
+    }
+
+    let el = $(options.modal + ` #id_${focus_field}`);
+
+    // Add a callback to focus on the first field
+    $(options.modal).on('shown.bs.modal', function() {
+        el.focus();
+    });
+}
+
+/**
+ * This Method updates an existing form by replacing all form fields with the new ones
+ * @param {*} options new form definition options
+ */
+function updateForm(options) {
+    // merge already entered values in the newly constructed form
+    options.data = extractFormData(options.fields, options);
+
+    // remove old submit handlers
+    $(options.modal).off('click', '#modal-form-submit');
+
+    // construct new form
+    constructFormBody(options.fields, options);
 }
 
 
@@ -623,13 +779,13 @@ function insertConfirmButton(options) {
     $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
-    $(options.modal).find('#modal-form-submit').prop('disabled', true);
+    enableSubmitButton(options, false);
 
     // Trigger event
     $(options.modal).find('#modal-confirm').change(function() {
         var enabled = this.checked;
 
-        $(options.modal).find('#modal-form-submit').prop('disabled', !enabled);
+        enableSubmitButton(options, enabled);
     });
 }
 
@@ -642,23 +798,48 @@ function insertPersistButton(options) {
     var html = `
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" id="modal-persist">
-        <label class="form-check-label" for="modal-persist">${message}</label>
+        <label class="form-check-label" for="modal-persist"><small>${message}</small></label>
     </div>
     `;
 
     $(options.modal).find('#modal-footer-buttons').append(html);
 }
 
+/*
+ * Add secondary buttons to the left of the close and submit buttons
+ * with callback functions
+ */
+function insertSecondaryButtons(options) {
+    for (var idx = 0; idx < options.buttons.length; idx++) {
+
+        var html = `
+        <button type="button" class="btn btn-outline-secondary" id="modal-form-${options.buttons[idx].name}">
+            ${options.buttons[idx].title}
+        </button>
+        `;
+
+        $(options.modal).find('#modal-footer-secondary-buttons').append(html);
+
+        if (options.buttons[idx].onClick instanceof Function) {
+            // Copy callback reference to prevent errors if `idx` changes value before execution
+            var onclick_callback = options.buttons[idx].onClick;
+
+            $(options.modal).find(`#modal-form-${options.buttons[idx].name}`).click(function() {
+                onclick_callback(options);
+            });
+        }
+    }
+}
 
 /*
  * Extract all specified form values as a single object
  */
-function extractFormData(fields, options) {
+function extractFormData(fields, options, includeLocal = true) {
 
     var data = {};
 
     for (var idx = 0; idx < options.field_names.length; idx++) {
-        
+
         var name = options.field_names[idx];
 
         var field = fields[name] || null;
@@ -666,6 +847,7 @@ function extractFormData(fields, options) {
         if (!field) continue;
 
         if (field.type == 'candy') continue;
+        if (!includeLocal && field.localOnly) continue;
 
         data[name] = getFormFieldValue(name, field, options);
     }
@@ -676,7 +858,7 @@ function extractFormData(fields, options) {
 
 /*
  * Submit form data to the server.
- * 
+ *
  */
 function submitFormData(fields, options) {
 
@@ -684,7 +866,8 @@ function submitFormData(fields, options) {
     // Only used if file / image upload is required
     var form_data = new FormData();
 
-    var data = {};
+    // We can (optionally) provide a "starting point" for the submitted data
+    var data = options.form_data || {};
 
     var has_files = false;
 
@@ -701,6 +884,7 @@ function submitFormData(fields, options) {
 
         // Ignore visual fields
         if (field && field.type == 'candy') continue;
+        if (field && field.localOnly === true) continue;
 
         if (field) {
 
@@ -711,7 +895,7 @@ function submitFormData(fields, options) {
             case 'decimal':
                 if (!validateFormField(name, options)) {
                     data_valid = false;
-    
+
                     data_errors[name] = ['{% trans "Enter a valid number" %}'];
                 }
                 break;
@@ -733,7 +917,7 @@ function submitFormData(fields, options) {
                     var file = field_files[0];
 
                     form_data.append(name, file);
-                    
+
                     has_files = true;
                 }
             } else {
@@ -741,7 +925,16 @@ function submitFormData(fields, options) {
                 // Normal field (not a file or image)
                 form_data.append(name, value);
 
-                data[name] = value;
+                if (field.parent_name && field.child_name) {
+                    // "Nested" fields are handled a little differently
+                    if (!(field.parent_name in data)) {
+                        data[field.parent_name] = {};
+                    }
+
+                    data[field.parent_name][field.child_name] = value;
+                } else {
+                    data[name] = value;
+                }
             }
         } else {
             console.warn(`Could not find field matching '${name}'`);
@@ -766,7 +959,7 @@ function submitFormData(fields, options) {
     }
 
     // Show the progress spinner
-    $(options.modal).find('#modal-progress-spinner').show();
+    showModalSpinner(options.modal);
 
     // Submit data
     upload_func(
@@ -779,7 +972,7 @@ function submitFormData(fields, options) {
                 handleFormSuccess(response, options);
             },
             error: function(xhr) {
-                
+
                 $(options.modal).find('#modal-progress-spinner').hide();
 
                 switch (xhr.status) {
@@ -807,7 +1000,7 @@ function submitFormData(fields, options) {
  *
  */
 function updateFieldValues(fields, options) {
-  
+
     for (var idx = 0; idx < options.field_names.length; idx++) {
 
         var name = options.field_names[idx];
@@ -844,11 +1037,17 @@ function updateFieldValue(name, value, field, options) {
         return;
     }
 
+    if (field.type == null) {
+        field.type = guessFieldType(el);
+    }
+
     switch (field.type) {
+    case 'decimal':
+        // Strip trailing zeros
+        el.val(formatDecimal(value));
+        break;
     case 'boolean':
-        if (value == true || value.toString().toLowerCase() == 'true') {
-            el.prop('checked');
-        }
+        el.prop('checked', toBool(value));
         break;
     case 'related field':
         // Clear?
@@ -856,6 +1055,17 @@ function updateFieldValue(name, value, field, options) {
             el.val(null).trigger('change');
         }
         // TODO - Specify an actual value!
+        break;
+    case 'nested object':
+        for (const [k, v] of Object.entries(value)) {
+            if (!(k in field.children)) continue;
+            updateFieldValue(`${name}__${k}`, v, field.children[k], options);
+        }
+        break;
+    case 'dependent field':
+        if (field.child) {
+            updateFieldValue(name, value, field.child, options);
+        }
         break;
     case 'file upload':
     case 'image upload':
@@ -882,7 +1092,7 @@ function getFormFieldElement(name, options) {
         el = $(`#id_${field_name}`);
     }
 
-    if (!el.exists) {
+    if (!el.exists()) {
         console.error(`Could not find form element for field '${name}'`);
     }
 
@@ -893,16 +1103,17 @@ function getFormFieldElement(name, options) {
 /*
  * Check that a "numerical" input field has a valid number in it.
  * An invalid number is expunged at the client side by the getFormFieldValue() function,
- * which means that an empty string '' is sent to the server if the number is not valud.
+ * which means that an empty string '' is sent to the server if the number is not valid.
  * This can result in confusing error messages displayed under the form field.
- * 
+ *
  * So, we can invalid numbers and display errors *before* the form is submitted!
  */
 function validateFormField(name, options) {
 
     if (getFormFieldElement(name, options)) {
 
-        var el = document.getElementById(`id_${name}`);
+        var field_name = getFieldName(name, options);
+        var el = document.getElementById(`id_${field_name}`);
 
         if (el.validity.valueMissing) {
             // Accept empty strings (server will validate)
@@ -914,6 +1125,34 @@ function validateFormField(name, options) {
         return false;
     }
 
+}
+
+
+/*
+ * Introspect the HTML element to guess the field type
+ */
+function guessFieldType(element) {
+
+    if (!element.exists) {
+        console.error(`Could not find element '${element}' for guessFieldType`);
+        return null;
+    }
+
+    switch (element.attr('type')) {
+    case 'number':
+        return 'decimal';
+    case 'checkbox':
+        return 'boolean';
+    case 'date':
+        return 'date';
+    case 'datetime':
+        return 'datetime';
+    case 'text':
+        return 'string';
+    default:
+        // Unknown field type
+        return null;
+    }
 }
 
 
@@ -937,9 +1176,16 @@ function getFormFieldValue(name, field={}, options={}) {
 
     var value = null;
 
+    let guessed_type = guessFieldType(el);
+
+    // If field type is not specified, try to guess it
+    if (field.type == null || guessed_type == 'boolean') {
+        field.type = guessed_type;
+    }
+
     switch (field.type) {
     case 'boolean':
-        value = el.is(':checked');
+        value = toBool(el.prop("checked"));
         break;
     case 'date':
     case 'datetime':
@@ -949,6 +1195,22 @@ function getFormFieldValue(name, field={}, options={}) {
         if (!value || value.length == 0) {
             value = null;
         }
+        break;
+    case 'string':
+    case 'url':
+    case 'email':
+        value = sanitizeInputString(el.val());
+        break;
+    case 'nested object':
+        value = {};
+        for (const [name, subField] of Object.entries(field.children)) {
+            value[name] = getFormFieldValue(subField.name, subField, options);
+        }
+        break;
+    case 'dependent field':
+        if(!field.child) return undefined;
+
+        value = getFormFieldValue(name, field.child, options);
         break;
     default:
         value = el.val();
@@ -961,7 +1223,7 @@ function getFormFieldValue(name, field={}, options={}) {
 
 /*
  * Handle successful form posting
- * 
+ *
  * arguments:
  * - response: The JSON response object from the server
  * - options: The original options object provided by the client
@@ -989,12 +1251,12 @@ function handleFormSuccess(response, options) {
     var msg_target = null;
 
     if (persist) {
-        // If the modal is persistant, the target for any messages should be the modal!
+        // If the modal is persistent, the target for any messages should be the modal!
         msg_target = $(options.modal).find('#pre-form-content');
     }
 
     // Display any messages
-    if (response && (response.success || options.successMessage)) {
+    if (!options.disableSuccessMessage && response && (response.success || options.successMessage)) {
         showAlertOrCache(
             response.success || options.successMessage,
             cache,
@@ -1003,7 +1265,7 @@ function handleFormSuccess(response, options) {
                 target: msg_target,
             });
     }
-    
+
     if (response && response.info) {
         showAlertOrCache(response.info, cache, {style: 'info'});
     }
@@ -1019,10 +1281,10 @@ function handleFormSuccess(response, options) {
     if (persist) {
         // Instead of closing the form and going somewhere else,
         // reload (empty) the form so the user can input more data
-        
+
         // Reset the status of the "submit" button
         if (options.modal) {
-            $(options.modal).find('#modal-form-submit').prop('disabled', false);
+            enableSubmitButton(options, true);
         }
 
         // Remove any error flags from the form
@@ -1034,6 +1296,11 @@ function handleFormSuccess(response, options) {
         if (!options.preventClose) {
             // Note: The modal will be deleted automatically after closing
             $(options.modal).modal('hide');
+        }
+
+        // Refresh a table
+        if (options.refreshTable) {
+            reloadBootstrapTable(options.refreshTable);
         }
 
         if (options.onSuccess) {
@@ -1064,7 +1331,7 @@ function clearFormErrors(options={}) {
     if (options && options.modal) {
         // Remove the individual error messages
         $(options.modal).find('.form-error-message').remove();
-    
+
         $(options.modal).find('.modal-content').removeClass('modal-error');
 
         // Remove the "has error" class
@@ -1085,12 +1352,12 @@ function clearFormErrors(options={}) {
  *
  * We need to know the unique ID of each item in the array,
  * and the array length must equal the length of the array returned from the server
- * 
+ *
  * arguments:
  * - response: The JSON error response from the server
  * - parent: The name of the parent field e.g. "items"
  * - options: The global options struct
- * 
+ *
  * options:
  * - nested: A map of nested ID values for the "parent" field
  *           e.g.
@@ -1101,10 +1368,10 @@ function clearFormErrors(options={}) {
  *                  12
  *               ]
  *           }
- * 
+ *
  */
 
-function handleNestedErrors(errors, field_name, options={}) {
+function handleNestedArrayErrors(errors, field_name, options={}) {
 
     var error_list = errors[field_name];
 
@@ -1114,29 +1381,29 @@ function handleNestedErrors(errors, field_name, options={}) {
     }
 
     var nest_list = nest_list = options['nested'][field_name];
-    
+
     // Nest list must be provided!
     if (!nest_list) {
-        console.warn(`handleNestedErrors missing nesting options for field '${fieldName}'`);
+        console.warn(`handleNestedArrayErrors missing nesting options for field '${field_name}'`);
         return;
     }
 
     for (var idx = 0; idx < error_list.length; idx++) {
-        
+
         var error_item = error_list[idx];
-        
+
         if (idx >= nest_list.length) {
-            console.warn(`handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
+            console.warn(`handleNestedArrayErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
             break;
         }
 
         // Extract the particular ID of the nested item
         var nest_id = nest_list[idx];
-        
-        // Here, error_item is a map of field names to error messages
-        for (sub_field_name in error_item) {
 
-            var errors = error_item[sub_field_name];
+        // Here, error_item is a map of field names to error messages
+        for (var sub_field_name in error_item) {
+
+            var sub_errors = error_item[sub_field_name];
 
             if (sub_field_name == 'non_field_errors') {
 
@@ -1148,27 +1415,22 @@ function handleNestedErrors(errors, field_name, options={}) {
                     row = $(`#items_${nest_id}`);
                 }
 
-                for (var ii = errors.length - 1; ii >= 0; ii--) {
+                for (var ii = sub_errors.length - 1; ii >= 0; ii--) {
 
                     var html = `
                     <div id='error_${ii}_non_field_error' class='help-block form-field-error form-error-message'>
-                        <strong>${errors[ii]}</strong>
+                        <strong>${sub_errors[ii]}</strong>
                     </div>`;
 
                     row.after(html);
                 }
-                
+
             }
 
             // Find the target (nested) field
             var target = `${field_name}_${sub_field_name}_${nest_id}`;
 
-            for (var ii = errors.length-1; ii >= 0; ii--) {
-
-                var error_text = errors[ii];
-
-                addFieldErrorMessage(target, error_text, ii, options);
-            }
+            addFieldErrorMessage(target, sub_errors, options);
         }
     }
 }
@@ -1177,7 +1439,7 @@ function handleNestedErrors(errors, field_name, options={}) {
 
 /*
  * Display form error messages as returned from the server.
- * 
+ *
  * arguments:
  * - errors: The JSON error response from the server
  * - fields: The form data object
@@ -1187,14 +1449,14 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     // Reset the status of the "submit" button
     if (options.modal) {
-        $(options.modal).find('#modal-form-submit').prop('disabled', false);
+        enableSubmitButton(options, true);
     }
 
     // Remove any existing error messages from the form
     clearFormErrors(options);
 
     var non_field_errors = null;
-    
+
     if (options.modal) {
         non_field_errors = $(options.modal).find('#non-field-errors');
     } else {
@@ -1232,34 +1494,54 @@ function handleFormErrors(errors, fields={}, options={}) {
     for (var field_name in errors) {
 
         var field = fields[field_name] || {};
+        var field_errors = errors[field_name];
 
-        if ((field.type == 'field') && ('child' in field)) {
-            // This is a "nested" field
-            handleNestedErrors(errors, field_name, options);
+        // for nested objects with children and dependent fields with a child defined, extract nested errors
+        if (((field.type == 'nested object') && ('children' in field)) || ((field.type == 'dependent field') && ('child' in field))) {
+            // Handle multi-level nested errors
+            const handleNestedError = (parent_name, sub_field_errors) => {
+                for (const sub_field in sub_field_errors) {
+                    const sub_sub_field_name = `${parent_name}__${sub_field}`;
+                    const sub_sub_field_errors = sub_field_errors[sub_field];
+
+                    if (!first_error_field && sub_sub_field_errors && isFieldVisible(sub_sub_field_name, options)) {
+                        first_error_field = sub_sub_field_name;
+                    }
+
+                    // if the error is an object, its a nested object, recursively handle the errors
+                    if (typeof sub_sub_field_errors === "object" && !Array.isArray(sub_sub_field_errors)) {
+                        handleNestedError(sub_sub_field_name, sub_sub_field_errors)
+                    } else {
+                        addFieldErrorMessage(sub_sub_field_name, sub_sub_field_errors, options);
+                    }
+                }
+            }
+
+            handleNestedError(field_name, field_errors);
+        } else if ((field.type == 'field') && ('child' in field)) {
+            // This is a "nested" array field
+            handleNestedArrayErrors(errors, field_name, options);
         } else {
             // This is a "simple" field
-
-            var field_errors = errors[field_name];
-
-            if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+            if (!first_error_field && field_errors && isFieldVisible(field_name, options)) {
                 first_error_field = field_name;
             }
 
-            // Add an entry for each returned error message
-            for (var ii = field_errors.length-1; ii >= 0; ii--) {
-
-                var error_text = field_errors[ii];
-
-                addFieldErrorMessage(field_name, error_text, ii, options);
-            }
+            addFieldErrorMessage(field_name, field_errors, options);
         }
     }
 
     if (first_error_field) {
         // Ensure that the field in question is visible
-        document.querySelector(`#div_id_${field_name}`).scrollIntoView({
-            behavior: 'smooth',
-        });
+        var error_element = document.querySelector(`#div_id_${first_error_field}`);
+
+        if (error_element) {
+            error_element.scrollIntoView({
+                behavior: 'smooth',
+            });
+        } else {
+            console.warn(`Could not scroll to field '${first_error_field}' - element not found`);
+        }
     } else {
         // Scroll to the top of the form
         $(options.modal).find('.modal-form-content-wrapper').scrollTop(0);
@@ -1274,7 +1556,17 @@ function handleFormErrors(errors, fields={}, options={}) {
  */
 function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
 
-    field_name = getFieldName(name, options);
+    // Handle a 'list' of error message recursively
+    if (typeof(error_text) == 'object') {
+        // Iterate backwards through the list
+        for (var ii = error_text.length - 1; ii >= 0; ii--) {
+            addFieldErrorMessage(name, error_text[ii], ii, options);
+        }
+
+        return;
+    }
+
+    let field_name = getFieldName(name, options);
 
     var field_dom = null;
 
@@ -1309,18 +1601,18 @@ function isFieldVisible(field, options) {
 /*
  * Attach callbacks to specified fields,
  * triggered after the field value is edited.
- * 
+ *
  * Callback function is called with arguments (name, field, options)
  */
 function addFieldCallbacks(fields, options) {
 
     for (var idx = 0; idx < options.field_names.length; idx++) {
-        
+
         var name = options.field_names[idx];
 
         var field = fields[name];
 
-        if (!field || !field.onEdit) continue;
+        if (!field || field.type === "candy") continue;
 
         addFieldCallback(name, field, options);
     }
@@ -1328,15 +1620,34 @@ function addFieldCallbacks(fields, options) {
 
 
 function addFieldCallback(name, field, options) {
+    const el = getFormFieldElement(name, options);
 
-    var el = getFormFieldElement(name, options);
+    if (field.onEdit) {
+        el.change(function() {
 
-    el.change(function() {
+            var value = getFormFieldValue(name, field, options);
+            let onEditHandlers = field.onEdit;
 
-        var value = getFormFieldValue(name, field, options);
+            if (!Array.isArray(onEditHandlers)) {
+                onEditHandlers = [onEditHandlers];
+            }
 
-        field.onEdit(value, name, field, options);
-    });
+            for (const onEdit of onEditHandlers) {
+                onEdit(value, name, field, options);
+            }
+        });
+    }
+
+    // attach field callback for nested fields
+    if(field.type === "nested object") {
+        for (const [c_name, c_field] of Object.entries(field.children)) {
+            addFieldCallback(`${name}__${c_name}`, c_field, options);
+        }
+    }
+
+    if(field.type === "dependent field" && field.child) {
+        addFieldCallback(name, field.child, options);
+    }
 }
 
 
@@ -1491,16 +1802,32 @@ function initializeRelatedFields(fields, options={}) {
 
         if (!field || field.hidden) continue;
 
-        switch (field.type) {
-        case 'related field':
-            initializeRelatedField(field, fields, options);
-            break;
-        case 'choice':
-            initializeChoiceField(field, fields, options);
-            break;
-        default:
-            break;
+        initializeRelatedFieldsRecursively(field, fields, options);
+    }
+}
+
+function initializeRelatedFieldsRecursively(field, fields, options) {
+    switch (field.type) {
+    case 'related field':
+        initializeRelatedField(field, fields, options);
+        break;
+    case 'choice':
+        initializeChoiceField(field, fields, options);
+        break;
+    case 'nested object':
+        for (const [c_name, c_field] of Object.entries(field.children)) {
+            if(!c_field.name) c_field.name = `${field.name}__${c_name}`;
+            initializeRelatedFieldsRecursively(c_field, field.children, options);
         }
+        break;
+    case 'dependent field':
+        if (field.child) {
+            if(!field.child.name) field.child.name = field.name;
+            initializeRelatedFieldsRecursively(field.child, fields, options);
+        }
+        break;
+    default:
+        break;
     }
 }
 
@@ -1537,10 +1864,17 @@ function addSecondaryModal(field, fields, options) {
         var url = secondary.api_url || field.api_url;
 
         // If the "fields" attribute is a function, call it with data
-        if (secondary.fields instanceof Function) {
+        if (secondary.fields instanceof Function || secondary.fieldsFunction instanceof Function) {
 
             // Extract form values at time of button press
             var data = extractFormData(fields, options);
+
+            // Backup and execute fields function in sequential executions of modal
+            if (secondary.fields instanceof Function) {
+                secondary.fieldsFunction = secondary.fields;
+            } else if (secondary.fieldsFunction instanceof Function) {
+                secondary.fields = secondary.fieldsFunction;
+            }
 
             secondary.fields = secondary.fields(data);
         }
@@ -1580,7 +1914,7 @@ function addSecondaryModal(field, fields, options) {
 
 /*
  * Initialize a single related-field
- * 
+ *
  * argument:
  * - modal: DOM identifier for the modal window
  * - name: name of the field e.g. 'location'
@@ -1653,10 +1987,11 @@ function initializeRelatedField(field, fields, options={}) {
                 var query = field.filters || {};
 
                 // Add search and pagination options
-                query.search = params.term;
+                query.search = sanitizeInputString(params.term);
+
                 query.offset = offset;
                 query.limit = pageSize;
-                
+
                 // Allow custom run-time filter augmentation
                 if ('adjustFilters' in field) {
                     query = field.adjustFilters(query, options);
@@ -1706,7 +2041,7 @@ function initializeRelatedField(field, fields, options={}) {
             // Extract 'instance' data passed through from an initial value
             // Or, use the raw 'item' data as a backup
             var data = item;
-            
+
             if (item.element && item.element.instance) {
                 data = item.element.instance;
             }
@@ -1718,10 +2053,10 @@ function initializeRelatedField(field, fields, options={}) {
             // Custom formatting for the search results
             if (field.model) {
                 // If the 'model' is specified, hand it off to the custom model render
-                var html = renderModelData(name, field.model, data, field, options);
+                var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
-                // Return a simple renderering
+                // Return a simple rendering
                 console.warn(`templateResult() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
@@ -1731,7 +2066,7 @@ function initializeRelatedField(field, fields, options={}) {
             // Extract 'instance' data passed through from an initial value
             // Or, use the raw 'item' data as a backup
             var data = item;
-            
+
             if (item.element && item.element.instance) {
                 data = item.element.instance;
             }
@@ -1748,10 +2083,10 @@ function initializeRelatedField(field, fields, options={}) {
             // Custom formatting for selected item
             if (field.model) {
                 // If the 'model' is specified, hand it off to the custom model render
-                var html = renderModelData(name, field.model, data, field, options);
+                var html = renderModelData(name, field.model, data, field);
                 return $(html);
             } else {
-                // Return a simple renderering
+                // Return a simple rendering
                 console.warn(`templateSelection() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
@@ -1760,7 +2095,7 @@ function initializeRelatedField(field, fields, options={}) {
 
     // If a 'value' is already defined, grab the model info from the server
     if (field.value) {
-        
+
         var pk = field.value;
         var url = `${field.api_url}/${pk}/`.replace('//', '/');
 
@@ -1799,13 +2134,101 @@ function initializeRelatedField(field, fields, options={}) {
             }
         });
     }
+
+    if(field.tree_picker) {
+        // construct button
+        const button = $(`<button class="input-group-text px-2"><i class="fas fa-external-link-alt"></i></button>`);
+
+        // insert open tree picker button after select
+        select.parent().find(".select2").after(button);
+
+        // save copy of filters, because of possible side effects
+        const filters = field.filters ? { ...field.filters } : {};
+
+        button.on("click", () => {
+            const tree_id = `${name}_tree`;
+
+            const title = '{% trans "Select" %}' + " " + options.actions[name].label;
+            const content = `
+                <div class="mb-1">
+                    <div class="input-group mb-2">
+                        <input class="form-control" type="text" id="${name}_tree_search" placeholder="{% trans "Search" %} ${options.actions[name].label}..." />
+                        <button class="input-group-text" id="${name}_tree_search_btn"><i class="fas fa-search"></i></button>
+                    </div>
+
+                    <div id="${tree_id}" style="height: 65vh; overflow-y: auto;">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border" role="status"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showQuestionDialog(title, content, {
+                accept_text: '{% trans "Select" %}',
+                accept: () => {
+                    const selectedNode = $(`#${tree_id}`).treeview('getSelected');
+                    if(selectedNode.length > 0) {
+                        const url = `${field.api_url}/${selectedNode[0].pk}/`.replace('//', '/');
+
+                        inventreeGet(url, field.filters || {}, {
+                            success: function(data) {
+                                setRelatedFieldData(name, data, options);
+                            }
+                        });
+                    }
+                }
+            });
+
+            inventreeGet(field.tree_picker.url, {}, {
+                success: (data) => {
+                    const current_value = getFormFieldValue(name, field, options);
+
+                    const rootNodes = generateTreeStructure(data, {
+                        selected: current_value,
+                        processNode: (node) => {
+                            node.selectable = true;
+                            node.text = node.name;
+
+                            // disable this node, if it doesn't match the filter criteria
+                            for (const [k, v] of Object.entries(filters)) {
+                                if (k in node && node[k] !== v) {
+                                    node.selectable = false;
+                                    node.color = "grey";
+                                    break;
+                                }
+                            }
+
+                            return node;
+                        }
+                    });
+
+                    $(`#${tree_id}`).treeview({
+                        data: rootNodes,
+                        expandIcon: 'fas fa-plus-square large-treeview-icon',
+                        collapseIcon: 'fa fa-minus-square large-treeview-icon',
+                        nodeIcon: field.tree_picker.defaultIcon,
+                        color: "black",
+                    });
+                }
+            });
+
+            $(`#${name}_tree_search_btn`).on("click", () => {
+                const searchValue = $(`#${name}_tree_search`).val();
+                $(`#${tree_id}`).treeview("search", [searchValue, {
+                    ignoreCase: true,
+                    exactMatch: false,
+                    revealResults: true,
+                }]);
+            });
+        });
+    }
 }
 
 
 /*
- * Set the value of a select2 instace for a "related field",
+ * Set the value of a select2 instance for a "related field",
  * e.g. with data returned from a secondary modal
- * 
+ *
  * arguments:
  * - name: The name of the field
  * - data: JSON data representing the model instance
@@ -1851,7 +2274,7 @@ function searching() {
 /*
  * Render a "foreign key" model reference in a select2 instance.
  * Allows custom rendering with access to the entire serialized object.
- * 
+ *
  * arguments:
  * - name: The name of the field e.g. 'location'
  * - model: The name of the InvenTree model e.g. 'stockitem'
@@ -1859,68 +2282,18 @@ function searching() {
  * - parameters: The field definition (OPTIONS) request
  * - options: Other options provided at time of modal creation by the client
  */
-function renderModelData(name, model, data, parameters, options) {
+function renderModelData(name, model, data, parameters) {
 
     if (!data) {
         return parameters.placeholder || '';
     }
 
-    // TODO: Implement this function for various models
-
     var html = null;
 
-    var renderer = null;
+    var renderer = getModelRenderer(model);
 
-    // Find a custom renderer 
-    switch (model) {
-    case 'company':
-        renderer = renderCompany;
-        break;
-    case 'stockitem':
-        renderer = renderStockItem;
-        break;
-    case 'stocklocation':
-        renderer = renderStockLocation;
-        break;
-    case 'part':
-        renderer = renderPart;
-        break;
-    case 'partcategory':
-        renderer = renderPartCategory;
-        break;
-    case 'partparametertemplate':
-        renderer = renderPartParameterTemplate;
-        break;
-    case 'purchaseorder':
-        renderer = renderPurchaseOrder;
-        break;
-    case 'salesorder':
-        renderer = renderSalesOrder;
-        break;
-    case 'salesordershipment':
-        renderer = renderSalesOrderShipment;
-        break;
-    case 'manufacturerpart':
-        renderer = renderManufacturerPart;
-        break;
-    case 'supplierpart':
-        renderer = renderSupplierPart;
-        break;
-    case 'build':
-        renderer = renderBuild;
-        break;
-    case 'owner':
-        renderer = renderOwner;
-        break;
-    case 'user':
-        renderer = renderUser;
-        break;
-    default:
-        break;
-    }
-    
     if (renderer != null) {
-        html = renderer(name, data, parameters, options);
+        html = renderer(data, parameters);
     }
 
     if (html != null) {
@@ -1953,16 +2326,16 @@ function getFieldName(name, options={}) {
 
 /*
  * Construct a single form 'field' for rendering in a form.
- * 
+ *
  * arguments:
  * - name: The 'name' of the field
  * - parameters: The field parameters supplied by the DRF OPTIONS method
- * 
+ *
  * options:
- * - 
- * 
+ * -
+ *
  * The function constructs a fieldset which mostly replicates django "crispy" forms:
- * 
+ *
  * - Field name
  * - Field <input> (depends on specified field type)
  * - Field description (help text)
@@ -1981,11 +2354,13 @@ function constructField(name, parameters, options={}) {
 
     // Hidden inputs are rendered without label / help text / etc
     if (parameters.hidden) {
-        return constructHiddenInput(name, parameters, options);
+        return constructHiddenInput(field_name, parameters, options);
     }
 
+    var group_name = parameters.group || parameters.parent_name;
+
     // Are we ending a group?
-    if (options.current_group && parameters.group != options.current_group) {
+    if (options.current_group && group_name != options.current_group) {
         html += `</div></div>`;
 
         // Null out the current "group" so we can start a new one
@@ -1993,9 +2368,9 @@ function constructField(name, parameters, options={}) {
     }
 
     // Are we starting a new group?
-    if (parameters.group) {
+    if (group_name) {
 
-        var group = parameters.group;
+        var group = group_name;
 
         var group_id = getFieldName(group, options);
 
@@ -2003,7 +2378,7 @@ function constructField(name, parameters, options={}) {
 
         // Are we starting a new group?
         // Add HTML for the start of a separate panel
-        if (parameters.group != options.current_group) {
+        if (group_name != options.current_group) {
 
             html += `
             <div class='panel form-panel' id='form-panel-${group_id}' group='${group}'>
@@ -2011,13 +2386,13 @@ function constructField(name, parameters, options={}) {
             if (group_options.collapsible) {
                 html += `
                 <div data-bs-toggle='collapse' data-bs-target='#form-panel-content-${group_id}'>
-                    <a href='#'><span id='group-icon-${group_id}' class='fas fa-angle-up'></span> 
+                    <a href='#'><span id='group-icon-${group_id}' class='fas fa-angle-up'></span>
                 `;
             } else {
                 html += `<div>`;
             }
 
-            html += `<h4 style='display: inline;'>${group_options.title || group}</h4>`;
+            html += `<h5 style='display: inline;'>${group_options.title || group}</h5>`;
 
             if (group_options.collapsible) {
                 html += `</a>`;
@@ -2043,25 +2418,34 @@ function constructField(name, parameters, options={}) {
     if (parameters.before) {
         html += parameters.before;
     }
-    
+
     var hover_title = '';
 
     if (parameters.help_text) {
         hover_title = ` title='${parameters.help_text}'`;
     }
 
-    html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title}>`;
+    var css = '';
+
+    if (parameters.css) {
+        let str = Object.keys(parameters.css).map(function(key) {
+            return `${key}: ${parameters.css[key]};`;
+        })
+        css = ` style="${str}"`;
+    }
+
+    html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title} ${css}>`;
 
     // Add a label
-    if (!options.hideLabels) {
+    if (!options.hideLabels && parameters.type !== "nested object" && parameters.type !== "dependent field") {
         html += constructLabel(name, parameters);
     }
 
     html += `<div class='controls'>`;
 
     // Does this input deserve "extra" decorators?
-    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null);
-    
+    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null) || (parameters.tree_picker != null);
+
     // Some fields can have 'clear' inputs associated with them
     if (!parameters.required && !parameters.read_only) {
         switch (parameters.type) {
@@ -2079,10 +2463,10 @@ function constructField(name, parameters, options={}) {
             break;
         }
     }
-    
+
     if (extra) {
-        html += `<div class='input-group'>`;
- 
+        html += `<div class='input-group flex-nowrap'>`;
+
         if (parameters.prefix) {
             html += `<span class='input-group-text'>${parameters.prefix}</span>`;
         } else if (parameters.prefixRaw) {
@@ -2098,9 +2482,9 @@ function constructField(name, parameters, options={}) {
 
         if (!parameters.required && !options.hideClearButton) {
             html += `
-            <span class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
+            <button class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>
-            </span>`;
+            </button>`;
         }
 
         html += `</div>`; // input-group
@@ -2119,7 +2503,7 @@ function constructField(name, parameters, options={}) {
 
     html += `</div>`; // controls
     html += `</div>`; // form-group
-    
+
     if (parameters.after) {
         html += parameters.after;
     }
@@ -2144,17 +2528,17 @@ function constructLabel(name, parameters) {
     }
 
     var html = `<label class='${label_classes}' for='id_${name}'>`;
-    
+
     if (parameters.label) {
         html += `${parameters.label}`;
     } else {
         html += `${name}`;
     }
-    
+
     if (parameters.required) {
         html += `<span class='asteriskField'>*</span>`;
     }
-    
+
     html += `</label>`;
 
     return html;
@@ -2163,11 +2547,11 @@ function constructLabel(name, parameters) {
 
 /*
  * Construct a form input based on the field parameters
- * 
+ *
  * arguments:
  * - name: The name of the field
  * - parameters: Field parameters returned by the OPTIONS method
- * 
+ *
  */
 function constructInput(name, parameters, options={}) {
 
@@ -2207,11 +2591,18 @@ function constructInput(name, parameters, options={}) {
         break;
     case 'raw':
         func = constructRawInput;
+        break;
+    case 'nested object':
+        func = constructNestedObject;
+        break;
+    case 'dependent field':
+        func = constructDependentField;
+        break;
     default:
         // Unsupported field type!
         break;
     }
-        
+
     if (func != null) {
         html = func(name, parameters, options);
     } else {
@@ -2255,18 +2646,8 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
             opts.push(`value='${parameters.value}'`);
         }
     } else if (parameters.default != null) {
-        // Otherwise, a defualt value?
+        // Otherwise, a default value?
         opts.push(`value='${parameters.default}'`);
-    }
-
-    // Maximum input length
-    if (parameters.max_length != null) {
-        opts.push(`maxlength='${parameters.max_length}'`);
-    }
-
-    // Minimum input length
-    if (parameters.min_length != null) {
-        opts.push(`minlength='${parameters.min_length}'`);
     }
 
     // Maximum value
@@ -2330,13 +2711,14 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
 
 
 // Construct a "hidden" input
-function constructHiddenInput(name, parameters) {
+function constructHiddenInput(name, parameters, options={}) {
 
     return constructInputOptions(
         name,
         'hiddeninput',
         'hidden',
-        parameters
+        parameters,
+        options
     );
 }
 
@@ -2495,17 +2877,140 @@ function constructRawInput(name, parameters) {
 
 }
 
+/*
+ * Construct a nested object input
+ */
+function constructNestedObject(name, parameters, options) {
+    let html = `
+        <div id="div_id_${name}" class='panel form-panel' style="margin-bottom: 0; padding-bottom: 0;">
+            <div class='panel-heading form-panel-heading'>
+                <div>
+                    <h6 style='display: inline;'>${parameters.label}</h6>
+                </div>
+            </div>
+            <div class='panel-content form-panel-content' id="id_${name}">
+    `;
+
+    parameters.field_names = [];
+
+    for (const [key, field] of Object.entries(parameters.children)) {
+        const subFieldName = `${name}__${key}`;
+        field.name = subFieldName;
+        parameters.field_names.push(subFieldName);
+
+        html += constructField(subFieldName, field, options);
+    }
+
+    html += "</div></div>";
+
+    return html;
+}
+
+function getFieldByNestedPath(name, fields) {
+    if (typeof name === "string") {
+        name = name.split("__");
+    }
+
+    if (name.length === 0) return fields;
+
+    if (fields.type === "nested object") fields = fields.children;
+
+    if (!(name[0] in fields)) return null;
+    let field = fields[name[0]];
+
+    if (field.type === "dependent field" && field.child) {
+        field = field.child;
+    }
+
+    return getFieldByNestedPath(name.slice(1), field);
+}
+
+/*
+ * Construct a dependent field input
+ */
+function constructDependentField(name, parameters, options) {
+    // add onEdit handler to all fields this dependent field depends on
+    for (let d_field_name of parameters.depends_on) {
+        const d_field = getFieldByNestedPath([...name.split("__").slice(0, -1), d_field_name], options.fields);
+        if (!d_field) continue;
+
+        const onEdit = (value, name, field, options) => {
+            if(value === undefined) return;
+
+            // extract the current form data to include in OPTIONS request
+            const data = extractFormData(options.fields, options, false)
+
+            $.ajax({
+                url: options.url,
+                type: "OPTIONS",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: "json",
+                accepts: { json: "application/json" },
+                success: (res) => {
+                    const fields = res.actions[options.method];
+
+                    // merge already entered values in the newly constructed form
+                    options.data = extractFormData(options.fields, options);
+
+                    // remove old submit handlers
+                    $(options.modal).off('click', '#modal-form-submit');
+
+                    if (options.method === "POST") {
+                        constructCreateForm(fields, options);
+                    }
+
+                    if (options.method === "PUT" || options.method === "PATCH") {
+                        constructChangeForm(fields, options);
+                    }
+
+                    if (options.method === "DELETE") {
+                        constructDeleteForm(fields, options);
+                    }
+                },
+                error: (xhr) => showApiError(xhr, options.url)
+            });
+        }
+
+        // attach on edit handler
+        const originalOnEdit = d_field.onEdit;
+        d_field.onEdit = [onEdit];
+
+        if(typeof originalOnEdit === "function") {
+            d_field.onEdit.push(originalOnEdit);
+        } else if (Array.isArray(originalOnEdit)) {
+            // push old onEdit handlers, but omit the old
+            d_field.onEdit.push(...originalOnEdit.filter(h => h !== d_field._currentDependentFieldOnEdit));
+        }
+
+        // track current onEdit handler function
+        d_field._currentDependentFieldOnEdit = onEdit;
+    }
+
+    // child is not specified already, return a dummy div with id so no errors can happen
+    if (!parameters.child) {
+        return `<div id="id_${name}" hidden></div>`;
+    }
+
+    // copy label to child if not already provided
+    if(!parameters.child.label) {
+        parameters.child.label = parameters.label;
+    }
+
+    // construct the provided child field
+    return constructField(name, parameters.child, options);
+}
 
 /*
  * Construct a 'help text' div based on the field parameters
- * 
+ *
  * arguments:
  * - name: The name of the field
  * - parameters: Field parameters returned by the OPTIONS method
- *  
+ *
  */
 function constructHelpText(name, parameters) {
-    
+
     var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
@@ -2566,7 +3071,7 @@ function selectImportFields(url, data={}, options={}) {
     var headers = `<tr><th>{% trans "File Column" %}</th><th>{% trans "Field Name" %}</th></tr>`;
 
     var html = '';
-    
+
     if (options.preamble) {
         html += options.preamble;
     }
@@ -2579,14 +3084,14 @@ function selectImportFields(url, data={}, options={}) {
         fields: {},
         preFormContent: html,
         onSubmit: function(fields, opts) {
-            
+
             var columns = [];
 
             for (var idx = 0; idx < field_names.length; idx++) {
                 columns.push(getFormFieldValue(`column_${idx}`, {}, opts));
             }
 
-            $(opts.modal).find('#modal-progress-spinner').show();
+            showModalSpinner(opts.modal);
 
             inventreePut(
                 opts.url,
@@ -2604,16 +3109,16 @@ function selectImportFields(url, data={}, options={}) {
                         }
                     },
                     error: function(xhr) {
-                
+
                         $(opts.modal).find('#modal-progress-spinner').hide();
-        
+
                         switch (xhr.status) {
                         case 400:
                             handleFormErrors(xhr.responseJSON, fields, opts);
                             break;
                         default:
                             $(opts.modal).modal('hide');
-        
+
                             console.error(`upload error at ${opts.url}`);
                             showApiError(xhr, opts.url);
                             break;

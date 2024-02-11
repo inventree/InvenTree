@@ -1,6 +1,12 @@
 {% load i18n %}
 
 /* globals
+    checkPermission,
+    getModelRenderer,
+    inventreeGet,
+    inventreePut,
+    sanitizeInputString,
+    user_settings,
 */
 
 /* exported
@@ -17,6 +23,7 @@ function closeSearchPanel() {
 }
 
 
+
 /*
  * Callback when the search panel is opened.
  * Ensure the panel is in a known state
@@ -25,20 +32,25 @@ function openSearchPanel() {
 
     var panel = $('#offcanvas-search');
 
+    let search_input = panel.find('#search-input');
+    search_input.find('#search-input').val('');
+    search_input.focus();
+
     clearSearchResults();
 
-    panel.find('#search-input').on('keyup change', searchTextChanged);
+    // Callback for text input changed
+    search_input.on('keyup change', searchTextChanged);
 
     // Callback for "clear search" button
     panel.find('#search-clear').click(function(event) {
 
         // Prevent this button from actually submitting the form
         event.preventDefault();
-        
-        panel.find('#search-input').val('');
+
+        search_input('#search-input').val('');
         clearSearchResults();
     });
-    
+
     // Callback for the "close search" button
     panel.find('#search-close').click(function(event) {
         // Prevent this button from actually submitting the form
@@ -49,17 +61,28 @@ function openSearchPanel() {
 var searchInputTimer = null;
 var searchText = null;
 var searchTextCurrent = null;
-var searchQueries = [];
+var searchQuery = null;
+var searchResultTypes = [];
+var searchRequest = null;
 
+
+/*
+ * Callback for when the search text is changed
+ */
 function searchTextChanged(event) {
 
-    searchText = $('#offcanvas-search').find('#search-input').val();
+    var text = $('#offcanvas-search').find('#search-input').val();
+
+    searchText = sanitizeInputString(text);
 
     clearTimeout(searchInputTimer);
     searchInputTimer = setTimeout(updateSearch, 250);
-};
+}
 
 
+/*
+ * Update the search results
+ */
 function updateSearch() {
 
     if (searchText == searchTextCurrent) {
@@ -67,156 +90,209 @@ function updateSearch() {
     }
 
     clearSearchResults();
-    
+
     if (searchText.length == 0) {
         return;
     }
-    
+
     searchTextCurrent = searchText;
 
-    // Cancel any previous AJAX requests
-    searchQueries.forEach(function(query) {
-        query.abort();
-    });
-
-    searchQueries = [];
+    // Cancel previous search request
+    if (searchRequest != null) {
+        searchRequest.abort();
+        searchRequest = null;
+    }
 
     // Show the "searching" text
     $('#offcanvas-search').find('#search-pending').show();
-    
-    if (user_settings.SEARCH_PREVIEW_SHOW_PARTS) {
 
-        var params = {};
+    searchResultTypes = [];
+
+    // Construct base query
+    searchQuery = {
+        search: searchTextCurrent,
+        search_regex: user_settings.SEARCH_REGEX ? true : false,
+        search_whole: user_settings.SEARCH_WHOLE ? true : false,
+        limit: user_settings.SEARCH_PREVIEW_RESULTS,
+        offset: 0,
+    };
+
+    // Search for 'part' results
+    if (checkPermission('part') && user_settings.SEARCH_PREVIEW_SHOW_PARTS) {
+
+        let filters = {};
 
         if (user_settings.SEARCH_HIDE_INACTIVE_PARTS) {
             // Return *only* active parts
-            params.active = true;
+            filters.active = true;
         }
 
-        // Search for matching parts
-        addSearchQuery(
-            'part',
-            '{% trans "Parts" %}',
-            '{% url "api-part-list" %}',
-            params,
-            renderPart,
-            {
-                url: '/part',
-            }
-        );
+        addSearchQuery('part', '{% trans "Parts" %}', filters);
     }
 
-    if (user_settings.SEARCH_PREVIEW_SHOW_CATEGORIES) {
-        // Search for matching part categories
-        addSearchQuery(
-            'category',
-            '{% trans "Part Categories" %}',
-            '{% url "api-part-category-list" %}',
-            {},
-            renderPartCategory,
-            {
-                url: '/part/category',
+    if (checkPermission('part') && checkPermission('purchase_order')) {
+
+        let filters = {
+            part_detail: true,
+            supplier_detail: true,
+            manufacturer_detail: true,
+        };
+
+        if (user_settings.SEARCH_HIDE_INACTIVE_PARTS) {
+            // Return *only* active parts
+            filters.active = true;
+        }
+
+        if (user_settings.SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS) {
+            addSearchQuery('supplierpart', '{% trans "Supplier Parts" %}', filters);
+        }
+
+        if (user_settings.SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS) {
+            addSearchQuery('manufacturerpart', '{% trans "Manufacturer Parts" %}', filters);
+        }
+    }
+
+    if (checkPermission('part_category') && user_settings.SEARCH_PREVIEW_SHOW_CATEGORIES) {
+        let filters = {};
+
+        addSearchQuery('partcategory', '{% trans "Part Categories" %}', filters);
+    }
+
+    if (checkPermission('stock') && user_settings.SEARCH_PREVIEW_SHOW_STOCK) {
+        let filters = {
+            part_detail: true,
+            location_detail: true,
+        };
+
+        if (user_settings.SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK) {
+            // Only show 'in stock' items in the preview windoww
+            filters.in_stock = true;
+        }
+
+        addSearchQuery('stockitem', '{% trans "Stock Items" %}', filters);
+    }
+
+    if (checkPermission('stock_location') && user_settings.SEARCH_PREVIEW_SHOW_LOCATIONS) {
+        let filters = {};
+
+        addSearchQuery('stocklocation', '{% trans "Stock Locations" %}', filters);
+    }
+
+    if (checkPermission('build') && user_settings.SEARCH_PREVIEW_SHOW_BUILD_ORDERS) {
+        let filters = {
+            part_detail: true
+        };
+
+        addSearchQuery('build', '{% trans "Build Orders" %}', filters);
+    }
+
+    if ((checkPermission('sales_order') || checkPermission('purchase_order')) && user_settings.SEARCH_PREVIEW_SHOW_COMPANIES) {
+        let filters = {};
+
+        addSearchQuery('company', '{% trans "Companies" %}', filters);
+    }
+
+    if (checkPermission('purchase_order') && user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
+
+        let filters = {
+            supplier_detail: true,
+        };
+
+        if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS) {
+            filters.outstanding = true;
+        }
+
+        addSearchQuery('purchaseorder', '{% trans "Purchase Orders" %}', filters);
+    }
+
+    if (checkPermission('sales_order') && user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
+
+        let filters = {
+            customer_detail: true,
+        };
+
+        // Hide inactive (not "outstanding" orders)
+        if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS) {
+            filters.outstanding = true;
+        }
+
+        addSearchQuery('salesorder', '{% trans "Sales Orders" %}', filters);
+    }
+
+    if (checkPermission('return_order') && user_settings.SEARCH_PREVIEW_SHOW_RETURN_ORDERS) {
+        let filters = {
+            customer_detail: true,
+        };
+
+        // Hide inactive (not "outstanding" orders)
+        if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS) {
+            filters.outstanding = true;
+        }
+
+        addSearchQuery('returnorder', '{% trans "Return Orders" %}', filters);
+    }
+
+    let ctx = $('#offcanvas-search').find('#search-context');
+
+    ctx.html(`
+    <div class='alert alert-block alert-secondary'>
+        <span class='fas fa-spinner fa-spin'></span> <em>{% trans "Searching" %}</em>
+    </div>
+    `);
+
+    // Send off the search query
+    searchRequest = inventreePut(
+        '{% url "api-search" %}',
+        searchQuery,
+        {
+            method: 'POST',
+            success: function(response) {
+
+                let any_results = false;
+
+                searchResultTypes.forEach(function(resultType) {
+                    if (resultType.key in response) {
+                        let result = response[resultType.key];
+
+                        if (result.count != null && result.count > 0 && result.results) {
+                            addSearchResults(result.results, resultType, result.count);
+
+                            any_results = true;
+                        }
+                    }
+                });
+
+                if (any_results) {
+                    ctx.html('');
+                } else {
+                    ctx.html(`
+                    <div class='alert alert-block alert-warning'>
+                        <span class='fas fa-exclamation-circle'></span> <em>{% trans "No results" %}</em>
+                    </div>
+                    `);
+                }
             },
-        );
-    }
-
-    if (user_settings.SEARCH_PREVIEW_SHOW_STOCK) {
-        // Search for matching stock items
-        addSearchQuery(
-            'stock',
-            '{% trans "Stock Items" %}',
-            '{% url "api-stock-list" %}',
-            {
-                part_detail: true,
-                location_detail: true,
-            },
-            renderStockItem,
-            {
-                url: '/stock/item',
-                render_location_detail: true,
+            complete: function() {
+                // Hide the "pending" icon
+                $('#offcanvas-search').find('#search-pending').hide();
             }
-        );
-    }
-
-    if (user_settings.SEARCH_PREVIEW_SHOW_LOCATIONS) {
-        // Search for matching stock locations
-        addSearchQuery(
-            'location',
-            '{% trans "Stock Locations" %}',
-            '{% url "api-location-list" %}',
-            {},
-            renderStockLocation,
-            {
-                url: '/stock/location',
-            }
-        );
-    }
-
-    if (user_settings.SEARCH_PREVIEW_SHOW_COMPANIES) {
-        // Search for matching companies
-        addSearchQuery(
-            'company',
-            '{% trans "Companies" %}',
-            '{% url "api-company-list" %}',
-            {},
-            renderCompany,
-            {
-                url: '/company',
-            }
-        );
-    }
-
-    if (user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
-        // Search for matching purchase orders
-        addSearchQuery(
-            'purchaseorder',
-            '{% trans "Purchase Orders" %}',
-            '{% url "api-po-list" %}',
-            {
-                supplier_detail: true,
-                outstanding: true,
-            },
-            renderPurchaseOrder,
-            {
-                url: '/order/purchase-order',
-            }
-        );
-    }
-
-    if (user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
-        // Search for matching sales orders
-        addSearchQuery(
-            'salesorder',
-            '{% trans "Sales Orders" %}',
-            '{% url "api-so-list" %}',
-            {
-                customer_detail: true,
-                outstanding: true,
-            },
-            renderSalesOrder,
-            {
-                url: '/order/sales-order',
-            }
-        );
-    }
-    
-    // Wait until all the pending queries are completed
-    $.when.apply($, searchQueries).done(function() {
-        $('#offcanvas-search').find('#search-pending').hide();
-    });
+        }
+    );
 }
 
 
 function clearSearchResults() {
 
     var panel = $('#offcanvas-search');
-    
-    // Ensure the 'no results found' element is visible
-    panel.find('#search-no-results').show();
 
-    // Ensure that the 'searching' element is hidden
     panel.find('#search-pending').hide();
-    
+
+    panel.find('#search-context').html(`
+    <div class='alert alert-block alert-info'>
+        <span class='fas fa-search'></span> <em>{% trans "Enter search query" %}</em>
+    </div>
+    `);
+
     // Delete any existing search results
     panel.find('#search-results').empty();
 
@@ -225,62 +301,52 @@ function clearSearchResults() {
 }
 
 
-function addSearchQuery(key, title, query_url, query_params, render_func, render_params={}) {
+/*
+ * Add an individual search query, with callback for rendering
+ */
+function addSearchQuery(key, title, query_params, render_params={}) {
 
-    // Include current search term
-    query_params.search = searchTextCurrent;
+    searchQuery[key] = query_params;
 
-    // How many results to show in each group?
-    query_params.offset = 0;
-    query_params.limit = user_settings.SEARCH_PREVIEW_RESULTS;
+    render_params.showImage = true;
+    render_params.showLink = true;
+    render_params.showLabels = true;
 
-    // Do not display "pk" value for search results
-    render_params.render_pk = false;
-
-    // Add the result group to the panel
-    $('#offcanvas-search').find('#search-results').append(`
-    <div class='search-result-group-wrapper' id='search-results-wrapper-${key}'></div>
-    `);
-
-    var request = inventreeGet(
-        query_url,
-        query_params,
-        {
-            success: function(response) {
-                addSearchResults(
-                    key,
-                    response.results,
-                    title,
-                    render_func,
-                    render_params,
-                );
-            }
-        },
-    );
-
-    // Add the query to the stack
-    searchQueries.push(request);
-
+    searchResultTypes.push({
+        key: key,
+        title: title,
+        renderer: getModelRenderer(key),
+        renderParams: render_params,
+    });
 }
 
 
 // Add a group of results to the list
-function addSearchResults(key, results, title, renderFunc, renderParams={}) {
-    
+function addSearchResults(results, resultType, resultCount) {
+
     if (results.length == 0) {
         // Do not display this group, as there are no results
         return;
     }
 
-    var panel = $('#offcanvas-search');
+    let panel = $('#offcanvas-search');
 
     // Ensure the 'no results found' element is hidden
     panel.find('#search-no-results').hide();
-    
-    panel.find(`#search-results-wrapper-${key}`).append(`
+
+    let key = resultType.key;
+    let title = resultType.title;
+    let renderer = resultType.renderer;
+    let renderParams = resultType.renderParams;
+
+    let resultText = resultCount == 1 ? '{% trans "result" %}' : '{% trans "results" %}';
+
+    // Add the result group to the panel
+    panel.find('#search-results').append(`
+    <div class='search-result-group-wrapper' id='search-results-wrapper-${key}'>
         <div class='search-result-group' id='search-results-${key}'>
             <div class='search-result-header' style='display: flex;'>
-                <h5>${title}</h5>
+                <h5>${title}</h5><span class='float-right'><em><small>&nbsp;-&nbsp;${resultCount} ${resultText}</small></em></span>
                 <span class='flex' style='flex-grow: 1;'></span>
                 <div class='search-result-group-buttons btn-group float-right' role='group'>
                     <button class='btn btn-outline-secondary' id='hide-results-${key}' title='{% trans "Minimize results" %}'>
@@ -294,17 +360,14 @@ function addSearchResults(key, results, title, renderFunc, renderParams={}) {
             <div class='collapse search-result-list' id='search-result-list-${key}'>
             </div>
         </div>
+    </div>
     `);
 
     results.forEach(function(result) {
 
         var pk = result.pk || result.id;
 
-        var html = renderFunc(key, result, renderParams);
-
-        if (renderParams.url) {
-            html = `<a href='${renderParams.url}/${pk}/'>` + html + `</a>`;
-        }
+        var html = renderer(result, renderParams);
 
         var result_html = `
         <div class='search-result-entry' id='search-result-${key}-${pk}'>

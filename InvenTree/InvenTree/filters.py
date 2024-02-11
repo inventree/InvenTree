@@ -1,12 +1,89 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""General filters for InvenTree."""
 
-from rest_framework.filters import OrderingFilter
+from datetime import datetime
+
+from django.conf import settings
+from django.utils import timezone
+from django.utils.timezone import make_aware
+
+from django_filters import rest_framework as rest_filters
+from rest_framework import filters
+
+import InvenTree.helpers
 
 
-class InvenTreeOrderingFilter(OrderingFilter):
-    """
-    Custom OrderingFilter class which allows aliased filtering of related fields.
+class InvenTreeDateFilter(rest_filters.DateFilter):
+    """Custom DateFilter class which handles timezones correctly."""
+
+    def filter(self, qs, value):
+        """Override the filter method to handle timezones correctly."""
+        if settings.USE_TZ:
+            if value is not None:
+                tz = timezone.get_current_timezone()
+                value = datetime(value.year, value.month, value.day)
+                value = make_aware(value, tz, True)
+
+        return super().filter(qs, value)
+
+
+class InvenTreeSearchFilter(filters.SearchFilter):
+    """Custom search filter which allows adjusting of search terms dynamically."""
+
+    def get_search_fields(self, view, request):
+        """Return a set of search fields for the request, adjusted based on request params.
+
+        The following query params are available to 'augment' the search (in decreasing order of priority)
+        - search_regex: If True, search is performed on 'regex' comparison
+        """
+        regex = InvenTree.helpers.str2bool(
+            request.query_params.get('search_regex', False)
+        )
+
+        search_fields = super().get_search_fields(view, request)
+
+        fields = []
+
+        if search_fields:
+            for field in search_fields:
+                if regex:
+                    field = '$' + field
+
+                fields.append(field)
+
+        return fields
+
+    def get_search_terms(self, request):
+        """Return the search terms for this search request.
+
+        Depending on the request parameters, we may "augment" these somewhat
+        """
+        whole = InvenTree.helpers.str2bool(
+            request.query_params.get('search_whole', False)
+        )
+
+        terms = []
+
+        search_terms = super().get_search_terms(request)
+
+        if search_terms:
+            for term in search_terms:
+                term = term.strip()
+
+                if not term:
+                    # Ignore blank inputs
+                    continue
+
+                if whole:
+                    # Wrap the search term to enable word-boundary matching
+                    term = r'\y' + term + r'\y'
+
+                terms.append(term)
+
+        return terms
+
+
+class InvenTreeOrderingFilter(filters.OrderingFilter):
+    """Custom OrderingFilter class which allows aliased filtering of related fields.
 
     To use, simply specify this filter in the "filter_backends" section.
 
@@ -23,22 +100,19 @@ class InvenTreeOrderingFilter(OrderingFilter):
     """
 
     def get_ordering(self, request, queryset, view):
-
+        """Override ordering for supporting aliases."""
         ordering = super().get_ordering(request, queryset, view)
 
         aliases = getattr(view, 'ordering_field_aliases', None)
 
         # Attempt to map ordering fields based on provided aliases
         if ordering is not None and aliases is not None:
-            """
-            Ordering fields should be mapped to separate fields
-            """
+            """Ordering fields should be mapped to separate fields."""
 
             ordering_initial = ordering
             ordering = []
 
             for field in ordering_initial:
-
                 reverse = field.startswith('-')
 
                 if reverse:
@@ -78,3 +152,18 @@ class InvenTreeOrderingFilter(OrderingFilter):
                     ordering.append(a)
 
         return ordering
+
+
+SEARCH_ORDER_FILTER = [
+    rest_filters.DjangoFilterBackend,
+    InvenTreeSearchFilter,
+    filters.OrderingFilter,
+]
+
+SEARCH_ORDER_FILTER_ALIAS = [
+    rest_filters.DjangoFilterBackend,
+    InvenTreeSearchFilter,
+    InvenTreeOrderingFilter,
+]
+
+ORDER_FILTER = [rest_filters.DjangoFilterBackend, filters.OrderingFilter]

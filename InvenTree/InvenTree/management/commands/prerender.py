@@ -1,33 +1,35 @@
-"""
-Custom management command to prerender files
-"""
-
-from django.core.management.base import BaseCommand
-from django.conf import settings
-from django.template.loader import render_to_string
-from django.utils.module_loading import import_string
-from django.http.request import HttpRequest
-from django.utils.translation import override as lang_over
+"""Custom management command to prerender files."""
 
 import os
 
+from django.conf import settings
+from django.core.management.base import BaseCommand
+from django.http.request import HttpRequest
+from django.template.loader import render_to_string
+from django.utils.module_loading import import_string
+from django.utils.translation import override as lang_over
+
 
 def render_file(file_name, source, target, locales, ctx):
-    """ renders a file into all provided locales """
+    """Renders a file into all provided locales."""
     for locale in locales:
+        # Enforce lower-case for locale names
+        locale = locale.lower()
+        locale = locale.replace('_', '-')
+
         target_file = os.path.join(target, locale + '.' + file_name)
+
         with open(target_file, 'w') as localised_file:
             with lang_over(locale):
-                renderd = render_to_string(os.path.join(source, file_name), ctx)
-                localised_file.write(renderd)
+                rendered = render_to_string(os.path.join(source, file_name), ctx)
+                localised_file.write(rendered)
 
 
 class Command(BaseCommand):
-    """
-    django command to prerender files
-    """
+    """Django command to prerender files."""
 
     def handle(self, *args, **kwargs):
+        """Django command to prerender files."""
         # static directories
         LC_DIR = settings.LOCALE_PATHS[0]
         SOURCE_DIR = settings.STATICFILES_I18_SRC
@@ -47,15 +49,18 @@ class Command(BaseCommand):
         # render!
         request = HttpRequest()
         ctx = {}
-        processors = tuple(import_string(path) for path in settings.STATFILES_I18_PROCESSORS)
+        processors = tuple(
+            import_string(path) for path in settings.STATFILES_I18_PROCESSORS
+        )
         for processor in processors:
             ctx.update(processor(request))
 
-        for file in os.listdir(SOURCE_DIR, ):
+        for file in os.listdir(SOURCE_DIR):
             path = os.path.join(SOURCE_DIR, file)
             if os.path.exists(path) and os.path.isfile(path):
-                print(f"render {file}")
                 render_file(file, SOURCE_DIR, TARGET_DIR, locales, ctx)
             else:
-                raise NotImplementedError('Using multi-level directories is not implemented at this point')  # TODO multilevel dir if needed
-        print(f"rendered all files in {SOURCE_DIR}")
+                raise NotImplementedError(
+                    'Using multi-level directories is not implemented at this point'
+                )  # TODO multilevel dir if needed
+        print(f'Rendered all files in {SOURCE_DIR}')

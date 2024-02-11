@@ -1,31 +1,167 @@
 {% load i18n %}
 
 /* global
+    constructFormBody,
+    exportFormatOptions,
+    getFormFieldValue,
     inventreeLoad,
     inventreeSave,
+    sanitizeData,
+    sanitizeInputString,
+    user_settings,
 */
 
 /* exported
     customGroupSorter,
     downloadTableData,
-    reloadtable,
+    getTableData,
+    reloadBootstrapTable,
     renderLink,
     reloadTableFilters,
+    constructExpandCollapseButtons,
+    constructOrderTableButtons,
 */
 
 /**
  * Reload a named table
- * @param table 
+ * @param table
  */
-function reloadtable(table) {
-    $(table).bootstrapTable('refresh');
+function reloadBootstrapTable(table) {
+
+    let tbl = table;
+
+    if (tbl) {
+        if (typeof tbl === 'string' || tbl instanceof String) {
+            tbl = $(tbl);
+        }
+
+        if (tbl.exists()) {
+            tbl.bootstrapTable('refresh');
+        } else {
+            console.error(`Invalid table name passed to reloadBootstrapTable(): ${table}`);
+        }
+    } else {
+        console.error(`Null value passed to reloadBootstrapTable()`);
+    }
+}
+
+
+/*
+ * Construct a set of extra buttons to display against a list of orders,
+ * allowing the orders to be displayed in various 'view' modes:
+ *
+ * - Calendar view
+ * - List view
+ * - Tree view
+ *
+ * Options:
+ * - callback: Callback function to be called when one of the buttons is pressed
+ * - prefix: The prefix to use when saving display data to user session
+ * - display: Which button to set as 'active' by default
+ *
+ */
+function constructOrderTableButtons(options={}) {
+
+    var display_mode = options.display;
+
+    var key = `${options.prefix || 'order'}-table-display-mode`;
+
+    // If display mode is not provided, look up from session
+    if (!display_mode) {
+        display_mode = inventreeLoad(key, 'list');
+    }
+
+    var idx = 0;
+    var buttons = [];
+
+    function buttonCallback(view_mode) {
+        inventreeSave(key, view_mode);
+
+        if (options.callback) {
+            options.callback(view_mode);
+        }
+    }
+
+    var class_calendar = display_mode == 'calendar' ? 'btn-secondary' : 'btn-outline-secondary';
+    var class_list = display_mode == 'list' ? 'btn-secondary' : 'btn-outline-secondary';
+    var class_tree = display_mode == 'tree' ? 'btn-secondary' : 'btn-outline-secondary';
+
+    // Calendar view button
+    if (!options.disableCalendarView) {
+        buttons.push({
+            html: `<button type='button' name='${idx++}' class='btn ${class_calendar}' title='{% trans "Display calendar view" %}'><span class='fas fa-calendar-alt'></span></button>`,
+            event: function() {
+                buttonCallback('calendar');
+            }
+        });
+    }
+
+    // List view button
+    if (!options.disableListView) {
+        buttons.push({
+            html: `<button type='button' name='${idx++}' class='btn ${class_list}' title='{% trans "Display list view" %}'><span class='fas fa-th-list'></span></button>`,
+            event: function() {
+                buttonCallback('list');
+            }
+        });
+    }
+
+    // Tree view button
+    if (!options.disableTreeView) {
+        buttons.push({
+            html: `<button type='button' name='${idx++}' class='btn ${class_tree}' title='{% trans "Display tree view" %}'><span class='fas fa-sitemap'></span></button>`,
+            event: function() {
+                buttonCallback('tree');
+            }
+        });
+    }
+
+    return buttons;
+}
+
+
+/*
+ * Construct buttons to expand / collapse all rows in a table
+ */
+function constructExpandCollapseButtons(table, idx=0) {
+
+    return [
+        {
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Expand all rows" %}'><span class='fas fa-expand'></span></button>`,
+            event: function() {
+                $(table).bootstrapTable('expandAllRows');
+            }
+        },
+        {
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Collapse all rows" %}'><span class='fas fa-compress'></span></button>`,
+            event: function() {
+                $(table).bootstrapTable('collapseAllRows');
+            }
+        }
+    ];
+}
+
+
+/* Return the 'selected' data rows from a bootstrap table.
+ * If allowEmpty = false, and the returned dataset is empty,
+ * then instead try to return *all* the data
+ */
+function getTableData(table, allowEmpty=false) {
+
+    let data = $(table).bootstrapTable('getSelections');
+
+    if (data.length == 0 && !allowEmpty) {
+        data = $(table).bootstrapTable('getData');
+    }
+
+    return data;
 }
 
 
 /**
  * Download data from a table, via the API.
  * This requires a number of conditions to be met:
- * 
+ *
  * - The API endpoint supports data download (on the server side)
  * - The table is "flat" (does not support multi-level loading, etc)
  * - The table has been loaded using the inventreeTable() function, not bootstrapTable()
@@ -60,50 +196,21 @@ function downloadTableData(table, opts={}) {
         },
         onSubmit: function(fields, form_options) {
             var format = getFormFieldValue('format', fields['format'], form_options);
-            
+
             // Hide the modal
             $(form_options.modal).modal('hide');
 
             for (const [key, value] of Object.entries(query_params)) {
                 url += `${key}=${value}&`;
             }
-        
+
             url += `export=${format}`;
-        
+
             location.href = url;
         }
     });
 }
 
-
-
-
-/**
- * Render a URL for display
- * @param {String} text 
- * @param {String} url 
- * @param {object} options 
- * @returns link text
- */
-function renderLink(text, url, options={}) {
-    if (url === null || url === undefined || url === '') {
-        return text;
-    }
-
-    var max_length = options.max_length || -1;
-
-    // Shorten the displayed length if required
-    if ((max_length > 0) && (text.length > max_length)) {
-        var slice_length = (max_length - 3) / 2;
-
-        var text_start = text.slice(0, slice_length);
-        var text_end = text.slice(-slice_length);
-
-        text = `${text_start}...${text_end}`;
-    }
-
-    return '<a href="' + url + '">' + text + '</a>';
-}
 
 
 function enableButtons(elements, enabled) {
@@ -113,29 +220,10 @@ function enableButtons(elements, enabled) {
 }
 
 
-/* Link a bootstrap-table object to one or more buttons.
- * The buttons will only be enabled if there is at least one row selected
- */
-function linkButtonsToSelection(table, buttons) {
-
-    if (typeof table === 'string') {
-        table = $(table);
-    }
-
-    // Initially set the enable state of the buttons
-    enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-
-    // Add a callback
-    table.on('check.bs.table uncheck.bs.table check-some.bs.table uncheck-some.bs.table check-all.bs.table uncheck-all.bs.table', function() {
-        enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-    });
-}
-
-
 /**
  * Returns true if the input looks like a valid number
- * @param {String} n 
- * @returns 
+ * @param {String} n
+ * @returns
  */
 function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -146,7 +234,13 @@ function isNumeric(n) {
  * Reload a table which has already been made into a bootstrap table.
  * New filters can be optionally provided, to change the query params.
  */
-function reloadTableFilters(table, filters) {
+function reloadTableFilters(table, filters, options={}) {
+
+    // If a callback is specified, let's use that
+    if (options.callback) {
+        options.callback(table, filters, options);
+        return;
+    }
 
     // Simply perform a refresh
     if (filters == null) {
@@ -155,20 +249,14 @@ function reloadTableFilters(table, filters) {
     }
 
     // More complex refresh with new filters supplied
-    var options = table.bootstrapTable('getOptions');
+    options = table.bootstrapTable('getOptions');
 
     // Construct a new list of filters to use for the query
-    var params = {};
-
-    for (var k in filters) {
-        params[k] = filters[k];
-    }
+    let params = Object.assign({}, filters);
 
     // Original query params will override
-    if (options.original != null) {
-        for (var key in options.original) {
-            params[key] = options.original[key];
-        }
+    if (options.original) {
+        params = Object.assign(params, options.original);
     }
 
     // Store the total set of query params
@@ -224,9 +312,7 @@ function convertQueryParameters(params, filters) {
 
     }
 
-    for (var key in filters) {
-        params[key] = filters[key];
-    }
+    params = Object.assign(params, filters);
 
     // Add "order" back in (if it was originally specified by InvenTree)
     // Annoyingly, "order" shadows some field names in InvenTree...
@@ -247,11 +333,23 @@ function convertQueryParameters(params, filters) {
     if ('original_search' in params) {
         var search = params['search'] || '';
 
-        params['search'] = search + ' ' + params['original_search'];
+        var clean_search = sanitizeInputString(search + ' ' + params['original_search']);
+
+        params['search'] = clean_search;
 
         delete params['original_search'];
     }
-    
+
+    // Enable regex search
+    if (user_settings.SEARCH_REGEX) {
+        params['search_regex'] = true;
+    }
+
+    // Enable whole word search
+    if (user_settings.SEARCH_WHOLE) {
+        params['search_whole'] = true;
+    }
+
     return params;
 }
 
@@ -275,12 +373,15 @@ $.fn.inventreeTable = function(options) {
         options.pageList = [25, 50, 100, 250, 'all'];
         options.totalField = 'count';
         options.dataField = 'results';
+
     } else {
         options.pagination = false;
     }
 
     // Extract query params
     var filters = options.queryParams || options.filters || {};
+
+    options.escape = true;
 
     // Store the total set of query params
     options.query_params = filters;
@@ -346,11 +447,6 @@ $.fn.inventreeTable = function(options) {
             console.error(`Could not get list of visible columns for table '${tableName}'`);
         }
     }
-
-    // Optionally, link buttons to the table selection
-    if (options.buttons) {
-        linkButtonsToSelection(table, options.buttons);
-    }
 };
 
 
@@ -372,17 +468,17 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         var bb = sortName.split('.').reduce(extract, b);
 
         // Extract parent information
-        var aparent = a._data && a._data['parent-index'];
+        var apparent = a._data && a._data['parent-index'];
         var bparent = b._data && b._data['parent-index'];
 
         // If either of the comparisons are in a group
-        if (aparent || bparent) {
+        if (apparent || bparent) {
 
             // If the parents are different (or one item does not have a parent,
             // then we need to extract the parent value for the selected column.
 
-            if (aparent != bparent) {
-                if (aparent) {
+            if (apparent != bparent) {
+                if (apparent) {
                     aa = a._data['table'].options.groupByFormatter(sortName, 0, a._data['group-data']);
                 }
 
@@ -437,7 +533,7 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         },
         formatShowingRows: function(pageFrom, pageTo, totalRows) {
 
-            if (totalRows === undefined || totalRows === NaN) {
+            if (totalRows === undefined || isNaN(totalRows)) {
                 return '{% trans "Showing all rows" %}';
             } else {
                 return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;
@@ -467,6 +563,49 @@ function customGroupSorter(sortName, sortOrder, sortData) {
     };
 
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales['en-US-custom']);
+
+    // Enable HTML escaping by default
+    $.fn.bootstrapTable.escape = true;
+
+    // Override the 'calculateObjectValue' function at bootstrap-table.js:3525
+    // Allows us to escape any nasty HTML tags which are rendered to the DOM
+    $.fn.bootstrapTable.utils._calculateObjectValue = $.fn.bootstrapTable.utils.calculateObjectValue;
+
+    $.fn.bootstrapTable.utils.calculateObjectValue = function escapeCellValue(self, name, args, defaultValue) {
+
+        var args_list = [];
+
+        if (args) {
+
+            args_list.push(args[0]);
+
+            if (name && typeof(name) === 'function' && name.name == 'formatter') {
+                /* This is a custom "formatter" function for a particular cell,
+                * which may side-step regular HTML escaping, and inject malicious code into the DOM.
+                *
+                * Here we have access to the 'args' supplied to the custom 'formatter' function,
+                * which are in the order:
+                * args = [value, row, index, field]
+                *
+                * 'row' is the one we are interested in
+                */
+
+                var row = Object.assign({}, args[1]);
+
+                args_list.push(sanitizeData(row));
+            } else {
+                args_list.push(args[1]);
+            }
+
+            for (var ii = 2; ii < args.length; ii++) {
+                args_list.push(args[ii]);
+            }
+        }
+
+        var value = $.fn.bootstrapTable.utils._calculateObjectValue(self, name, args_list, defaultValue);
+
+        return value;
+    };
 
 })(jQuery);
 

@@ -1,0 +1,50 @@
+{% extends "page_base.html" %}
+
+{% load inventree_extras %}
+{% load static %}
+{% load i18n %}
+
+{% block page_title %}
+{% inventree_title %} | {% trans "Return Orders" %}
+{% endblock page_title %}
+
+{% block breadcrumb_list %}
+{% endblock breadcrumb_list %}
+
+{% block heading %}
+{% trans "Return Orders" %}
+{% endblock heading %}
+
+{% block actions %}
+{% if roles.return_order.add %}
+<button class='btn btn-success' type='button' id='return-order-create' title='{% trans "Create new return order" %}'>
+    <span class='fas fa-plus-circle'></span> {% trans "New Return Order" %}
+</button>
+{% endif %}
+{% endblock actions %}
+
+{% block page_info %}
+
+<div class='panel-content'>
+    <div id='return-order-table-buttons'>
+        {% include "filter_list.html" with id="returnorder" %}
+    </div>
+
+    <table class='table table-striped table-condensed' data-toolbar='#return-order-table-buttons' id='return-order-table'>
+    </table>
+
+    <div id='return-order-calendar'></div>
+</div>
+
+{% endblock page_info %}
+
+{% block js_ready %}
+{{ block.super }}
+
+loadReturnOrderTable('#return-order-table', {});
+
+$('#return-order-create').click(function() {
+    createReturnOrder();
+});
+
+{% endblock js_ready %}

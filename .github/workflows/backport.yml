@@ -1,0 +1,37 @@
+# Backport tagged issues to a stable branch.
+#
+# To enable backporting for a pullrequest, add the label "backport" to the PR.
+# Additionally, add a label with the prefix "backport-to-" and the target branch
+
+name: Backport
+
+on:
+  pull_request_target:
+    types: [ "labeled", "closed" ]
+
+jobs:
+  backport:
+    name: Backport PR
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.merged == true
+      && contains(github.event.pull_request.labels.*.name, 'backport')
+      && (
+        (github.event.action == 'labeled' && github.event.label.name == 'backport')
+        || (github.event.action == 'closed')
+      )
+    steps:
+      - name: Backport Action
+        uses: sqren/backport-github-action@f54e19901f2a57f8b82360f2490d47ee82ec82c6 # pin@v9.2.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          auto_backport_label_prefix: backport-to-
+          add_original_reviewers: true
+
+      - name: Info log
+        if: ${{ success() }}
+        run: cat ~/.backport/backport.info.log
+
+      - name: Debug log
+        if: ${{ failure() }}
+        run: cat ~/.backport/backport.debug.log

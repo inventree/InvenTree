@@ -2,15 +2,14 @@
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas-notification" data-bs-scroll="true" aria-labelledby="offcanvas-notification-label">
     <div class="offcanvas-header">
-      <h5 id="offcanvas-notification-label">{% trans "Notifications" %}</h5>
+      <h5 id="offcanvas-notification-label"><span class='fas fa-bell'></span>&nbsp;{% trans "Notifications" %}</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
+      <a href="{% url 'notifications' %}">{% trans "Show all notifications and history" %}</a>
+      <hr>
       <div id="notification-center">
         <p class='text-muted'>{% trans "Notifications will load here" %}</p>
       </div>
-      <hr>
-      <a href="{% url 'notifications' %}">{% trans "Show all notifications and history" %}</a>
     </div>
 </div>
-

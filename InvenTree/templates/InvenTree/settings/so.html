@@ -1,18 +1,20 @@
 {% extends "panel.html" %}
 {% load i18n %}
 
-{% block label %}sales-order{% endblock %}
+{% block label %}sales-order{% endblock label %}
 
 {% block heading %}
 {% trans "Sales Order Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
 <table class='table table-striped table-condensed'>
     <tbody>
-        {% include "InvenTree/settings/setting.html" with key="SALESORDER_REFERENCE_PREFIX" %}
+        {% include "InvenTree/settings/setting.html" with key="SALESORDER_REFERENCE_PATTERN" %}
+        {% include "InvenTree/settings/setting.html" with key="SALESORDER_DEFAULT_SHIPMENT" icon="fa-truck-loading" %}
+        {% include "InvenTree/settings/setting.html" with key="SALESORDER_EDIT_COMPLETED_ORDERS" icon='fa-edit' %}
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}

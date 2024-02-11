@@ -65,7 +65,7 @@ def reverse_association(apps, schema_editor):  # pragma: no cover
 
         # Now extract the "name" for the manufacturer
         response = cursor.execute(f"SELECT name from company_company where id={manufacturer_id};")
-        
+
         row = cursor.fetchone()
 
         name = row[0]
@@ -77,7 +77,7 @@ def reverse_association(apps, schema_editor):  # pragma: no cover
 def associate_manufacturers(apps, schema_editor):
     """
     This migration is the "middle step" in migration of the "manufacturer" field for the SupplierPart model.
-    
+
     Previously the "manufacturer" field was a simple text field with the manufacturer name.
     This is quite insufficient.
     The new "manufacturer" field is a link to Company object which has the "is_manufacturer" parameter set to True
@@ -87,7 +87,7 @@ def associate_manufacturers(apps, schema_editor):
 
     It uses fuzzy pattern matching to help the user out as much as possible.
     """
-    
+
     def get_manufacturer_name(part_id):
         """
         THIS IS CRITICAL!
@@ -149,7 +149,7 @@ def associate_manufacturers(apps, schema_editor):
 
             return True
 
-        # Have we already mapped this 
+        # Have we already mapped this
         if name in links.keys():  # pragma: no cover
             print(" - Part[{pk}]: Mapped '{n}' - manufacturer <{c}>".format(pk=part_id, n=name, c=links[name]))
 
@@ -178,7 +178,7 @@ def associate_manufacturers(apps, schema_editor):
         links[company_name] = manufacturer.pk
 
         companies[company_name] = manufacturer.pk
-        
+
         print(" - Part[{pk}]: Created new manufacturer: '{name}'".format(pk=part_id, name=company_name))
 
         # Update SupplierPart object in the database
@@ -228,9 +228,9 @@ def associate_manufacturers(apps, schema_editor):
         # Present a list of options
         if not TESTING:  # pragma: no cover
             print("----------------------------------")
-    
+
         print("Checking part [{pk}] ({idx} of {total})".format(pk=part_id, idx=idx+1, total=total))
-    
+
         if not TESTING:  # pragma: no cover
             print("Manufacturer name: '{n}'".format(n=name))
             print("----------------------------------")
@@ -293,7 +293,7 @@ def associate_manufacturers(apps, schema_editor):
                 if not response or len(response) == 0:
                     # Response cannot be empty!
                     print("Please select an option")
-                
+
                 # Double-check if the typed name corresponds to an existing item
                 elif response in companies.keys():
                     link_part(part, companies[response])
@@ -334,7 +334,7 @@ def associate_manufacturers(apps, schema_editor):
     results = cursor.fetchall()
 
     part_count = len(results)
-    
+
     # Create a unique set of manufacturer names
     for index, row in enumerate(results):
         pk, MPN, SKU, manufacturer_id, manufacturer_name = row

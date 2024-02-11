@@ -1,0 +1,284 @@
+# Project
+site_url: https://inventree.readthedocs.io
+site_name: InvenTree Documentation
+site_description: InvenTree - Open Source Inventory Management
+site_author: InvenTree
+
+# Repository
+repo_url: https://github.com/inventree/inventree
+repo_name: inventree/inventree
+
+# Theme
+theme:
+  name: material
+  font:
+    text: Roboto
+  custom_dir: _includes/overrides
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to light mode
+  logo: assets/logo.png
+  favicon: assets/favicon.ico
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - header.autohide
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    # - navigation.sections
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+    - toc.autohide
+    - toc.follow
+edit_uri: "" # Disable "Edit" button
+extra_css:
+  - stylesheets/brands.css
+  - stylesheets/regular.css
+  - stylesheets/solid.css
+  - stylesheets/bootstrap.css
+  - stylesheets/splide.min.css
+  - stylesheets/extra.css
+extra_javascript:
+  - javascripts/extra.js
+  - javascripts/fontawesome.js
+  - javascripts/brands.js
+  - javascripts/regular.js
+  - javascripts/solid.js
+  - javascripts/splide.min.js
+  - https://code.jquery.com/jquery-3.6.0.js
+  - https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.js
+
+# Navigation
+nav:
+  - InvenTree:
+    - InvenTree: index.md
+    - Features: features.md
+    - FAQ: faq.md
+    - Core Concepts:
+      - Terminology: concepts/terminology.md
+      - Physical Units: concepts/units.md
+    - Development:
+      - Getting started: develop/starting.md
+      - Contributing: develop/contributing.md
+      - Devcontainer: develop/devcontainer.md
+      - Platform UI: develop/react-frontend.md
+    - Credits: credits.md
+    - Privacy: privacy.md
+    - Release Notes: releases/release_notes.md
+  - Install:
+    - Introduction: start/intro.md
+    - Configuration: start/config.md
+    - Docker:
+        - Introduction: start/docker.md
+        - Production: start/docker_prod.md
+        - Development: start/docker_dev.md
+    - Bare Metal:
+        - Introduction: start/install.md
+        - Installer: start/installer.md
+        - Production: start/bare_prod.md
+        - Development: start/bare_dev.md
+    - Serving Files: start/serving_files.md
+    - Data Backup: start/backup.md
+    - Migrating Data: start/migrate.md
+    - Advanced Topics: start/advanced.md
+  - Parts:
+    - Parts: part/part.md
+    - Creating Parts: part/create.md
+    - Part Views: part/views.md
+    - Tracking: part/trackable.md
+    - Parameters: part/parameter.md
+    - Templates: part/template.md
+    - Tests: part/test.md
+    - Pricing: part/pricing.md
+    - Scheduling: part/scheduling.md
+    - Stocktake: part/stocktake.md
+    - Notifications: part/notification.md
+  - Stock:
+    - Stock Items: stock/stock.md
+    - Stock Status: stock/status.md
+    - Stock Tracking: stock/tracking.md
+    - Adjusting Stock: stock/adjust.md
+    - Stock Expiry: stock/expiry.md
+    - Stock Ownership: stock/owner.md
+    - Test Results: stock/test.md
+  - Build:
+    - Build Orders: build/build.md
+    - Build Outputs: build/output.md
+    - Allocating Stock: build/allocate.md
+    - Example Build Order: build/example.md
+    - Bill of Materials: build/bom.md
+    - Importing BOM Data: build/bom_import.md
+    - Exporting BOM Data: build/bom_export.md
+  - Orders:
+    - Companies: order/company.md
+    - Purchase Orders: order/purchase_order.md
+    - Sales Orders: order/sales_order.md
+    - Return Orders: order/return_order.md
+    - Project Codes: order/project_codes.md
+  - Report:
+    - Templates: report/report.md
+    - Report Types:
+      - Test Reports: report/test.md
+      - Build Order: report/build.md
+      - Purchase Order: report/purchase_order.md
+      - Sales Order: report/sales_order.md
+      - Return Order: report/return_order.md
+      - BOM: report/bom.md
+      - Stock Location: report/stock_location.md
+    - Labels:
+      - Custom Labels: report/labels.md
+      - Part Labels: report/labels/part_labels.md
+      - Stock Labels: report/labels/stock_labels.md
+      - Location Labels: report/labels/location_labels.md
+      - Build Labels: report/labels/build_labels.md
+    - Helper Functions: report/helpers.md
+    - Barcodes: report/barcodes.md
+    - Context Variables: report/context_variables.md
+  - Admin:
+    - Global Settings: settings/global.md
+    - User Settings: settings/user.md
+    - Reference Patterns: settings/reference.md
+    - Admin Interface: settings/admin.md
+    - User Permissions: settings/permissions.md
+    - Single Sign on: settings/SSO.md
+    - Multi Factor Authentication: settings/MFA.md
+    - Export Data: settings/export.md
+    - Import Data: settings/import.md
+    - Error Logs: settings/logs.md
+    - Email: settings/email.md
+    - Background Tasks: settings/tasks.md
+    - Currency Support: settings/currency.md
+  - App:
+    - InvenTree App: app/app.md
+    - Connect: app/connect.md
+    - Navigation: app/navigation.md
+    - Search: app/search.md
+    - Barcodes: app/barcode.md
+    - Parts: app/part.md
+    - Stock: app/stock.md
+    - Purchase Orders: app/po.md
+    - Sales Orders: app/so.md
+    - Settings: app/settings.md
+    - Privacy: app/privacy.md
+    - Translation: app/translation.md
+    - Suggestions: app/issues.md
+  - Extend:
+    - InvenTree API:
+      - Overview: api/api.md
+      - Model Metadata: api/metadata.md
+      - Download Data: api/download.md
+      - Bulk Delete: api/bulk_delete.md
+      - Interactive API: api/browse.md
+    - Python Interface:
+      - Overview: api/python/python.md
+      - Currency Support: api/python/currency.md
+      - Examples: api/python/examples.md
+    - Barcodes:
+      - Overview: barcodes/barcodes.md
+      - Internal Barcodes: barcodes/internal.md
+      - External Barcodes: barcodes/external.md
+      - Custom Barcodes: barcodes/custom.md
+    - Plugins:
+      - Overview: extend/plugins.md
+      - Installation: extend/plugins/install.md
+      - Developing a Plugin: extend/how_to_plugin.md
+      - Model Metadata: extend/plugins/metadata.md
+      - Tags: extend/plugins/tags.md
+    - Plugin Mixins:
+      - Action Mixin: extend/plugins/action.md
+      - API Mixin: extend/plugins/api.md
+      - App Mixin: extend/plugins/app.md
+      - Barcode Mixin: extend/plugins/barcode.md
+      - Currency Mixin: extend/plugins/currency.md
+      - Event Mixin: extend/plugins/event.md
+      - Label Printing Mixin: extend/plugins/label.md
+      - Locate Mixin: extend/plugins/locate.md
+      - Navigation Mixin: extend/plugins/navigation.md
+      - Panel Mixin: extend/plugins/panel.md
+      - Report Mixin: extend/plugins/report.md
+      - Schedule Mixin: extend/plugins/schedule.md
+      - Settings Mixin: extend/plugins/settings.md
+      - URL Mixin: extend/plugins/urls.md
+      - Validation Mixin: extend/plugins/validation.md
+    - Themes: extend/themes.md
+    - Third-Party: extend/integrate.md
+
+# Plugins
+plugins:
+  - include-markdown:
+      opening_tag: "{!"
+      closing_tag: "!}"
+  - search
+  - git-revision-date-localized
+  - mkdocs-simple-hooks:
+      hooks:
+        on_config: "docs.docs.hooks:on_config"
+  - macros:
+      include_dir: docs/_includes
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - attr_list
+  - meta
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          # format: !!python/name:pymdownx.superfences.fence_code_format
+  # - pymdownx.emoji:
+  #     emoji_index: !!python/name:materialx.emoji.twemoji
+  #     emoji_generator: !!python/name:materialx.emoji.to_svg
+  - toc:
+      permalink: true
+
+# Global Variables
+extra:
+  static_folder_source: ./InvenTree/InvenTree/static/
+  static_folder_local_default: ./inventree_static/
+
+  # Site Analytics
+  # See https://squidfunk.github.io/mkdocs-material/setup/setting-up-site-analytics/
+  # analytics:
+  #  provider: google
+  #  property: UA-143467500-1
+
+  version:
+    default: stable
+    provider: mike
+
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/inventree/inventree
+      name: InvenTree on GitHub
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/inventreedb
+      name: InvenTree on Twitter
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/inventree/inventree
+      name: InvenTree on Docker
+    - icon: fontawesome/brands/reddit
+      name: InvenTree on Reddit
+      link: https://reddit.com/r/inventree
+
+use_directory_urls: true
+strict: true

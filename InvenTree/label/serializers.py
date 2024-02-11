@@ -1,64 +1,58 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""API serializers for the label app."""
 
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
+import label.models
+from InvenTree.serializers import (
+    InvenTreeAttachmentSerializerField,
+    InvenTreeModelSerializer,
+)
 
-from .models import StockItemLabel, StockLocationLabel, PartLabel
 
-
-class StockItemLabelSerializer(InvenTreeModelSerializer):
-    """
-    Serializes a StockItemLabel object.
-    """
+class LabelSerializerBase(InvenTreeModelSerializer):
+    """Base class for label serializer."""
 
     label = InvenTreeAttachmentSerializerField(required=True)
 
-    class Meta:
-        model = StockItemLabel
-        fields = [
-            'pk',
-            'name',
-            'description',
-            'label',
-            'filters',
-            'enabled',
-        ]
+    @staticmethod
+    def label_fields():
+        """Generic serializer fields for a label template."""
+        return ['pk', 'name', 'description', 'label', 'filters', 'enabled']
 
 
-class StockLocationLabelSerializer(InvenTreeModelSerializer):
-    """
-    Serializes a StockLocationLabel object
-    """
-
-    label = InvenTreeAttachmentSerializerField(required=True)
+class StockItemLabelSerializer(LabelSerializerBase):
+    """Serializes a StockItemLabel object."""
 
     class Meta:
-        model = StockLocationLabel
-        fields = [
-            'pk',
-            'name',
-            'description',
-            'label',
-            'filters',
-            'enabled',
-        ]
+        """Metaclass options."""
+
+        model = label.models.StockItemLabel
+        fields = LabelSerializerBase.label_fields()
 
 
-class PartLabelSerializer(InvenTreeModelSerializer):
-    """
-    Serializes a PartLabel object
-    """
-
-    label = InvenTreeAttachmentSerializerField(required=True)
+class StockLocationLabelSerializer(LabelSerializerBase):
+    """Serializes a StockLocationLabel object."""
 
     class Meta:
-        model = PartLabel
-        fields = [
-            'pk',
-            'name',
-            'description',
-            'label',
-            'filters',
-            'enabled',
-        ]
+        """Metaclass options."""
+
+        model = label.models.StockLocationLabel
+        fields = LabelSerializerBase.label_fields()
+
+
+class PartLabelSerializer(LabelSerializerBase):
+    """Serializes a PartLabel object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = label.models.PartLabel
+        fields = LabelSerializerBase.label_fields()
+
+
+class BuildLineLabelSerializer(LabelSerializerBase):
+    """Serializes a BuildLineLabel object."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = label.models.BuildLineLabel
+        fields = LabelSerializerBase.label_fields()

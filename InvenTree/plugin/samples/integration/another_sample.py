@@ -1,19 +1,16 @@
-"""sample implementation for IntegrationPlugin"""
-from plugin import IntegrationPluginBase
+"""Sample implementation for IntegrationPlugin."""
+
+from plugin import InvenTreePlugin
 from plugin.mixins import UrlsMixin
 
 
-class NoIntegrationPlugin(IntegrationPluginBase):
-    """
-    An basic integration plugin
-    """
+class NoIntegrationPlugin(InvenTreePlugin):
+    """A basic plugin."""
 
-    PLUGIN_NAME = "NoIntegrationPlugin"
+    NAME = 'NoIntegrationPlugin'
 
 
-class WrongIntegrationPlugin(UrlsMixin, IntegrationPluginBase):
-    """
-    An basic integration plugin
-    """
+class WrongIntegrationPlugin(UrlsMixin, InvenTreePlugin):
+    """A basic wrong plugin with urls."""
 
-    PLUGIN_NAME = "WrongIntegrationPlugin"
+    NAME = 'WrongIntegrationPlugin'

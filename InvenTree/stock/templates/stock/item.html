@@ -7,7 +7,7 @@
 
 {% block sidebar %}
 {% include "stock/stock_sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
 
@@ -17,19 +17,12 @@
             <h4>{% trans "Stock Tracking Information" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if user_owns_item and roles.stock.change and not item.is_building %}
-                <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Entry" %}
-                </button>
-                {% endif %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        <div id='tracking-table-toolbar'>  
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="stocktracking" %}
-            </div>
+        <div id='tracking-table-toolbar'>
+            {% include "filter_list.html" with id="stocktracking" %}
         </div>
         <table class='table table-condensed table-striped' id='track-table' data-toolbar='#tracking-table-toolbar'>
         </table>
@@ -45,9 +38,7 @@
     </div>
     <div class='panel-content'>
         <div id='build-order-allocations-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="buildorderallocation" %}
-            </div>
+            {% include "filter_list.html" with id="buildorderallocation" %}
         </div>
         <table class='table table-striped table-condensed' data-toolbar='#build-order-allocations-toolbar' id='build-order-allocation-table'></table>
     </div>
@@ -60,11 +51,9 @@
     </div>
     <div class='panel-content'>
         <div id='sales-order-allocations-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="salesorderallocation" %}
-            </div>
+            {% include "filter_list.html" with id="salesorderallocation" %}
         </div>
-        <table class='table table-striped table-condensed' data-toolbar='#sales-order-allocation-toolbar' id='sales-order-allocation-table'></table>
+        <table class='table table-striped table-condensed' data-toolbar='#sales-order-allocations-toolbar' id='sales-order-allocation-table'></table>
     </div>
     {% endif %}
 </div>
@@ -76,6 +65,7 @@
     </div>
     <div class='panel-content'>
         {% if item.child_count > 0 %}
+        {% include "filter_list.html" with id="stock-childs" %}
         {% include "stock_table.html" with prefix="childs-" %}
         {% else %}
         <div class='alert alert-block alert-info'>
@@ -107,12 +97,10 @@
     </div>
     <div class='panel-content'>
         <div id='test-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="stocktests" %}
-            </div>
+            {% include "filter_list.html" with id="stocktests" %}
         </div>
-        
-        <table class='table table-striped table-condensed' data-toolbar='#test-button-toolbar' id='test-result-table'></table>                        
+
+        <table class='table table-striped table-condensed' data-toolbar='#test-button-toolbar' id='test-result-table'></table>
     </div>
 </div>
 
@@ -152,23 +140,23 @@
             <h4>{% trans "Installed Stock Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
+                {% if roles.stock.add %}
                 <button type='button' class='btn btn-success' id='stock-item-install'>
                     <span class='fas fa-plus-circle'></span> {% trans "Install Stock Item" %}
                 </button>
+                {% endif %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
         <div id='installed-table-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id='installed-items' %}
-            </div>
+            {% include "filter_list.html" with id='installed-items' %}
         </div>
         <table class='table table-striped table-condensed' id='installed-table' data-toolbar='#installed-table-toolbar'></table>
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -210,7 +198,7 @@
             quantity: {{ item.quantity|unlocalize }},
         }
     );
-    
+
     onPanelLoad('notes', function() {
         setupNotesField(
             'stock-notes',
@@ -225,30 +213,18 @@
         );
     });
 
-    enableDragAndDrop(
-            '#attachment-dropzone',
-            "{% url 'api-stock-attachment-list' %}",
-            {
-                data: {
-                    stock_item: {{ item.id }},
-                },
-                label: 'attachment',
-                success: function(data, status, xhr) {
-                    reloadAttachmentTable();
+    onPanelLoad('attachments', function() {
+        loadAttachmentTable('{% url "api-stock-attachment-list" %}', {
+            filters: {
+                stock_item: {{ item.pk }},
+            },
+            fields: {
+                stock_item: {
+                    value: {{ item.pk }},
+                    hidden: true,
                 }
             }
-        );
-
-    loadAttachmentTable('{% url "api-stock-attachment-list" %}', {
-        filters: {
-            stock_item: {{ item.pk }},
-        },
-        fields: {
-            stock_item: {
-                value: {{ item.pk }},
-                hidden: true,
-            }
-        }
+        });
     });
 
     loadStockTestResultsTable(
@@ -258,22 +234,53 @@
         }
     );
 
-    function reloadTable() {
-        $("#test-result-table").bootstrapTable("refresh");
-    }
-
-    {% if item.has_test_reports %}
     $("#test-report").click(function() {
-        printTestReports([{{ item.pk }}]);
+        printReports({
+            items: [{{ item.pk }}],
+            key: 'item',
+            url: '{% url "api-stockitem-testreport-list" %}',
+        });
     });
-    {% endif %}
 
     {% if user.is_staff %}
     $("#delete-test-results").click(function() {
-        launchModalForm(
-            "{% url 'stock-item-delete-test-data' item.id %}",
+
+        var url = '{% url "api-stock-test-result-list" %}';
+
+        inventreeGet(
+            url,
             {
-                success: reloadTable,
+                stock_item: {{ item.pk }},
+            },
+            {
+                success: function(response) {
+
+                    var items = [];
+
+                    // Ensure that we are only deleting the correct test results
+                    response.forEach(function(result) {
+                        items.push(result.pk);
+                    });
+
+                    var html = `
+                    <div class='alert alert-block alert-danger'>
+                        {% trans "Delete all test results for this stock item" %}
+                    </div>`;
+
+                    constructForm(url, {
+                        form_data: {
+                            items: items,
+                            filters: {
+                                stock_item: {{ item.pk }},
+                            }
+                        },
+                        multi_delete: true,
+                        method: 'DELETE',
+                        title: '{% trans "Delete Test Data" escape %}',
+                        preFormContent: html,
+                        refreshTable: '#test-result-table',
+                    });
+                }
             }
         );
     });
@@ -283,46 +290,24 @@
 
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
-            fields: {
-                test: {},
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-                stock_item: {
-                    value: {{ item.pk }},
-                    hidden: true,
-                }
-            },
-            title: '{% trans "Add Test Result" %}',
-            onSuccess: reloadTable,
+            fields: stockItemTestResultFields({
+                stock_item: {{ item.pk }},
+            }),
+            title: '{% trans "Add Test Result" escape %}',
+            refreshTable: '#test-result-table',
         });
     });
 
     {% if item.child_count > 0 %}
     loadStockTable($("#childs-stock-table"), {
         params: {
-            location_detail: true,
-            part_detail: false,
             ancestor: {{ item.id }},
         },
         name: 'item-childs',
-        groupByField: 'location',
-        buttons: [
-            '#stock-options',
-        ],
-        url: "{% url 'api-stock-list' %}",
+        filterTarget: '#filter-list-stock-childs',
+        filterKey: 'stock',
     });
     {% endif %}
-
-    $("#new-entry").click(function() {
-        launchModalForm(
-            "{% url 'stock-tracking-create' item.id %}",
-            {
-                reload: true,
-            }
-        );
-    }); 
 
     loadStockTrackingTable($("#track-table"), {
         params: {
@@ -330,9 +315,9 @@
             item: {{ item.pk }},
             user_detail: true,
         },
-        url: "{% url 'api-stock-tracking-list' %}", 
+        url: "{% url 'api-stock-tracking-list' %}",
     });
 
     enableSidebar('stockitem');
 
-{% endblock %}
+{% endblock js_ready %}

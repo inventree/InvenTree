@@ -3,35 +3,52 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Sales Order" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumbs %}
-<li class='breadcrumb-item'><a href='{% url "so-index" %}'>{% trans "Sales Orders" %}</a></li>
+<li class='breadcrumb-item'><a href='{% url "sales-order-index" %}'>{% trans "Sales Orders" %}</a></li>
 <li class="breadcrumb-item active" aria-current="page"><a href='{% url "so-detail" order.id %}'>{{ order }}</a></li>
-{% endblock %}
+{% endblock breadcrumbs %}
 
 {% block thumbnail %}
-<img class='part-thumb'
+<img alt="{% trans "Customer logo thumbnail" %}" class='part-thumb'
 {% if order.customer and order.customer.image %}
 src="{{ order.customer.image.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
 {% endif %}
 />
-{% endblock %}
+{% endblock thumbnail %}
 
 {% block heading %}
 {% trans "Sales Order" %} {{ order.reference }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
-{% if user.is_staff and roles.sales_order.change %}
-{% url 'admin:order_salesorder_change' order.pk as url %}
+{% admin_url user "order.salesorder" order.pk as url %}
 {% include "admin_button.html" with url=url %}
+
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group' role='group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-qrcode'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if roles.sales_order.change %}
+        {% if order.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
+        {% endif %}
+    </ul>
+</div>
 {% endif %}
 <!-- Printing actions -->
 <div class='btn-group' role='group'>
@@ -56,17 +73,27 @@ src="{% static 'img/blank_image.png' %}"
     </button>
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
-        {% if order.status == SalesOrderStatus.PENDING %}
+        {% if order.is_open %}
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
     </ul>
-
 </div>
-{% if order.status == SalesOrderStatus.PENDING %}
-<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'{% if not order.is_completed %} disabled{% endif %}>
-    <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
-</button>
-{% endif %}
+<div class='btn-group' role='group'>
+    {% if order.is_pending %}
+    <button type='button' class='btn btn-primary' id='issue-order' title='{% trans "Issue Order" %}'>
+        <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
+    </button>
+    {% elif order.status == SalesOrderStatus.IN_PROGRESS %}
+    {% if not order.is_completed %}
+    <button type='button' class='btn btn-success' id='complete-order-shipments' title='{% trans "Ship Items" %}'>
+        <span class='fas fa-truck'></span> {% trans "Ship Items" %}
+    </button>
+    {% endif %}
+    <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
+        <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
+    </button>
+    {% endif %}
+</div>
 {% endif %}
 {% endblock actions %}
 
@@ -77,18 +104,20 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}{{ order.reference }}{% include "clip.html"%}</td>
+        <td>{{ order.reference }}{% include "clip.html" %}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
         <td>{% trans "Order Description" %}</td>
         <td>{{ order.description }}{% include "clip.html" %}</td>
     </tr>
+    {% include "project_code_data.html" with instance=order %}
+    {% include "barcode_data.html" with instance=order %}
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>
         <td>
-            {% sales_order_status_label order.status %}
+            {% status_label 'sales_order' order.status %}
             {% if order.is_overdue %}
             <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
@@ -104,7 +133,7 @@ src="{% static 'img/blank_image.png' %}"
     {% endif %}
 </div>
 
-{% endblock %}
+{% endblock details %}
 
 {% block details_right %}
 <table class='table table-striped table-condensed'>
@@ -113,14 +142,14 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html"%}</td>
+        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html" %}</td>
     </tr>
     {% endif %}
     {% if order.customer_reference %}
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Customer Reference" %}</td>
-        <td>{{ order.customer_reference }}{% include "clip.html"%}</td>
+        <td>{{ order.customer_reference }}{% include "clip.html" %}</td>
     </tr>
     {% endif %}
     <tr>
@@ -148,8 +177,8 @@ src="{% static 'img/blank_image.png' %}"
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
-        <td>External Link</td>
-        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html"%}</td>
+        <td>{% trans "External Link" %}</td>
+        <td>{% include 'clip_link.html' with link=order.link new_window=True new_window=True %}</td>
     </tr>
     {% endif %}
     <tr>
@@ -161,7 +190,10 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Target Date" %}</td>
-        <td>{% render_date order.target_date %}</td>
+        <td>
+            {% render_date order.target_date %}
+            {% if order.is_overdue %}<span class='fas fa-calendar-times icon-red float-right'></span>{% endif %}
+        </td>
     </tr>
     {% endif %}
     {% if order.shipment_date %}
@@ -176,6 +208,20 @@ src="{% static 'img/blank_image.png' %}"
         </td>
     </tr>
     {% endif %}
+    {% if order.contact %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Contact" %}</td>
+        <td>{{ order.contact.name }}</td>
+    </tr>
+    {% endif %}
+    {% if order.address %}
+    <tr>
+        <td><span class='fas fa-map'></span></td>
+        <td>{% trans "Address" %}</td>
+        <td><b>{{ order.address.title }}</b>: {{ order.address }}</td>
+    </tr>
+    {% endif %}
     {% if order.responsible %}
     <tr>
         <td><span class='fas fa-users'></span></td>
@@ -183,44 +229,51 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
-
+    {% include "currency_data.html" with instance=order %}
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
-        <td>{% trans "Total cost" %}</td>
-        <td id="soTotalPrice">{{ order.get_total_price }}</td>
+        <td>{% trans "Total Cost" %}</td>
+        <td id="soTotalPrice">
+            {% with order.total_price as tp %}
+            {% if tp == None %}
+            <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
+            {% else %}
+            {% render_currency tp currency=order.currency %}
+            {% endif %}
+            {% endwith %}
+        </td>
     </tr>
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 {% block js_ready %}
 {{ block.super }}
 
+{% if roles.sales_order.change %}
 $("#edit-order").click(function() {
-
-    constructForm('{% url "api-so-detail" order.pk %}', {
-        fields: {
-            reference: {
-                prefix: global_settings.SALESORDER_REFERENCE_PREFIX,
-            },
-            {% if order.lines.count == 0 and order.status == SalesOrderStatus.PENDING %}
-            customer: {
-            },
-            {% endif %}
-            customer_reference: {},
-            description: {},
-            target_date: {
-                icon: 'fa-calendar-alt',
-            },
-            link: {
-                icon: 'fa-link',
-            },
-            responsible: {
-                icon: 'fa-user',
-            },
-        },
-        title: '{% trans "Edit Sales Order" %}',
+    editSalesOrder({{ order.pk }}, {
         reload: true,
     });
+});
+{% endif %}
+
+$("#complete-order-shipments").click(function() {
+
+    completePendingShipments(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+});
+
+$('#issue-order').click(function() {
+    issueSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true
+        }
+    );
 });
 
 $("#cancel-order").click(function() {
@@ -234,22 +287,55 @@ $("#cancel-order").click(function() {
 });
 
 $("#complete-order").click(function() {
-    constructForm('{% url "api-so-complete" order.id %}', {
-        method: 'POST',
-        title: '{% trans "Complete Sales Order" %}',
-        confirm: true,
-        reload: true,
-    });
+    completeSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
 });
 
 {% if report_enabled %}
 $('#print-order-report').click(function() {
-    printSalesOrderReports([{{ order.pk }}]);
+    printReports({
+        items: [{{ order.pk }}],
+        key: 'order',
+        url: '{% url "api-so-report-list" %}',
+    });
 });
+{% endif %}
+
+{% if barcodes %}
+<!-- Barcode functionality callbacks -->
+$('#show-qr-code').click(function() {
+    showQRDialog(
+        '{% trans "Sales Order QR Code" escape %}',
+        '{"salesorder": {{ order.pk }} }'
+    );
+});
+
+{% if roles.sales_order.change %}
+$("#barcode-link").click(function() {
+    linkBarcodeDialog(
+        {
+            salesorder: {{ order.pk }},
+        },
+        {
+            title: '{% trans "Link Barcode to Sales Order" escape %}',
+        }
+    );
+});
+
+$("#barcode-unlink").click(function() {
+    unlinkBarcode({
+        salesorder: {{ order.pk }},
+    });
+});
+{% endif %}
 {% endif %}
 
 $('#export-order').click(function() {
     exportOrder('{% url "so-export" order.id %}');
 });
 
-{% endblock %}
+{% endblock js_ready %}

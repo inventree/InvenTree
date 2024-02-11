@@ -2,11 +2,13 @@
 
 from django.db import migrations, connection
 import djmoney.models.fields
+import common.settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('common', '0004_inventreesetting'),
         ('company', '0024_unique_name_email_constraint'),
     ]
 
@@ -14,11 +16,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='supplierpricebreak',
             name='price',
-            field=djmoney.models.fields.MoneyField(decimal_places=4, default_currency='USD', help_text='Unit price at specified quantity', max_digits=19, null=True, verbose_name='Price'),
+            field=djmoney.models.fields.MoneyField(decimal_places=4, default_currency=common.settings.currency_code_default(), help_text='Unit price at specified quantity', max_digits=19, null=True, verbose_name='Price'),
         ),
         migrations.AddField(
             model_name='supplierpricebreak',
             name='price_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[('AUD', 'Australian Dollar'), ('CAD', 'Canadian Dollar'), ('EUR', 'Euro'), ('NZD', 'New Zealand Dollar'), ('GBP', 'Pound Sterling'), ('USD', 'US Dollar'), ('JPY', 'Yen')], default='USD', editable=False, max_length=3),
+            field=djmoney.models.fields.CurrencyField(choices=common.settings.currency_code_mappings(), default=common.settings.currency_code_default(), editable=False, max_length=3),
         ),
     ]

@@ -1,2 +1,99 @@
 {% extends "order/order_wizard/po_upload.html" %}
-{% include "patterns/wizard/match_fields.html" %}
+{% load inventree_extras %}
+{% load i18n %}
+{% load static %}
+
+{% block form_alert %}
+{% if missing_columns and missing_columns|length > 0 %}
+<div class='alert alert-danger alert-block' style='margin-top:12px;' role='alert'>
+    {% trans "Missing selections for the following required columns" %}:
+    <br>
+    <ul>
+        {% for col in missing_columns %}
+        <li>{{ col }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% if duplicates and duplicates|length > 0 %}
+<div class='alert alert-danger alert-block' role='alert'>
+    {% trans "Duplicate selections found, see below. Fix them then retry submitting." %}
+</div>
+{% endif %}
+{% endblock form_alert %}
+
+{% block form_buttons_top %}
+    {% if wizard.steps.prev %}
+    <button name='wizard_goto_step' type='submit' value='{{ wizard.steps.prev }}' class='save btn btn-outline-secondary'>{% trans "Previous Step" %}</button>
+    {% endif %}
+    <button type='submit' class='save btn btn-outline-secondary'>{% trans "Submit Selections" %}</button>
+{% endblock form_buttons_top %}
+
+{% block form_content %}
+    <thead>
+        <tr>
+            <th>{% trans "File Fields" %}</th>
+            <th></th>
+            {% for col in form %}
+            <th>
+                <div>
+                    <input type='hidden' name='col_name_{{ forloop.counter0 }}' value='{{ col.name }}'/>
+                    {{ col.name }}
+                    <button class='btn btn-outline-secondary btn-remove' onClick='removeColFromBomWizard()' id='del_col_{{ forloop.counter0 }}' style='display: inline; float: right;' title='{% trans "Remove column" %}'>
+                        <span col_id='{{ forloop.counter0 }}' class='fas fa-trash-alt icon-red'></span>
+                    </button>
+                </div>
+            </th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{% trans "Match Fields" %}</td>
+            <td></td>
+            {% for col in form %}
+            <td>
+                {{ col }}
+                {% for duplicate in duplicates %}
+                    {% if duplicate == col.value %}
+                    <div class='alert alert-danger alert-block text-center' role='alert' style='padding:2px; margin-top:6px; margin-bottom:2px'>
+                        <strong>{% trans "Duplicate selection" %}</strong>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% for row in rows %}
+        {% with forloop.counter as row_index %}
+        <tr>
+            <td style='width: 32px;'>
+                <button class='btn btn-outline-secondary btn-remove' onClick='removeRowFromBomWizard()' id='del_row_{{ row_index }}' style='display: inline; float: left;' title='{% trans "Remove row" %}'>
+                    <span row_id='{{ row_index }}' class='fas fa-trash-alt icon-red'></span>
+                </button>
+            </td>
+            <td style='text-align: left;'>{{ row_index }}</td>
+            {% for item in row.data %}
+            <td>
+                <input type='hidden' name='row_{{ row_index }}_col_{{ forloop.counter0 }}' value='{{ item }}'/>
+                {{ item }}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endwith %}
+        {% endfor %}
+    </tbody>
+{% endblock form_content %}
+
+{% block form_buttons_bottom %}
+{% endblock form_buttons_bottom %}
+
+{% block js_ready %}
+{{ block.super }}
+
+$('.fieldselect').select2({
+    width: '100%',
+    matcher: partialMatcher,
+});
+
+{% endblock js_ready %}

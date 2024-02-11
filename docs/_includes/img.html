@@ -1,0 +1,30 @@
+{% if 'http' in url %}
+{% set img_url = url %}
+{% else %}
+{% set img_url = config.assets_dir + '/images/' + url %}
+{% endif %}
+
+<figure class='image image-inventree'>
+    {% if id %}
+    <!-- The link that, when clicked, will display the image in full screen -->
+    <a href="#{{ id }}">
+    {% elif img_url %}
+    <a href="{{ img_url }}">
+    {% endif %}
+        <img class='img-inline' src='{{ img_url }}' alt='{{ description }}' title='{{ description }}'
+        {% if maxwidth or maxheight %}style='
+        {% if maxwidth %} max-width:{{ maxwidth }};{% endif %}
+        {% if maxheight %} max-height: {{ maxheight }};{% endif %}
+        '{% endif %}
+        >
+    {% if id or img_url %}
+    </a>
+    {% endif %}
+
+    {% if id %}
+    <!-- The full screen image, hidden by default  -->
+    <a href="#_" class="overlay" id="{{ id }}">
+      <img src="{{ img_url }}" alt="{{ description }}" />
+    </a>
+    {% endif %}
+</figure>

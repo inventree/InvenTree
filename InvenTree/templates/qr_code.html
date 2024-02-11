@@ -4,7 +4,7 @@
 <div class='container' style='width: 80%;'>
     {% if qr_data %}
     <div class='d-flex justify-content-center'>
-        <img src="{% qrcode qr_data %}">
+        <img alt='{% trans "QR code" %}' src="{% qrcode qr_data %}">
     </div>
     {% else %}
     <div class='alert alert-block alert-warning'>

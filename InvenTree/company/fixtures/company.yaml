@@ -46,3 +46,12 @@
     name: Another manufacturer
     description: They build things and sell it to us
     is_manufacturer: True
+
+- model: company.company
+  pk: 8
+  fields:
+    name: Customer only
+    description: Just a customer
+    is_customer: True
+    is_supplier: False
+    is_manufacturer: False

@@ -1,0 +1,15 @@
+{% if False and config.version_banner %}
+<div class='alert alert-warning alert-dismissable alert-version' role='alert'>
+    <div class='md-grid md-typeset'>
+        <small>
+        {% if config.readthedocs.version == 'latest' %}
+            This documentation is for the <strong>development</strong> version of InvenTree.
+        {% else %}
+            This documentation is for an outdated version of InvenTree.
+        {% endif %}
+        For <strong>stable</strong> release documentation, use the version selector located in the bottom right corner of this page.
+        </small>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+</div>
+{% endif %}

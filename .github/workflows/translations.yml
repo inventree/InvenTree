@@ -17,23 +17,27 @@ jobs:
       INVENTREE_DEBUG: info
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
+      INVENTREE_BACKUP_DIR: ./backup
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Set up Python 3.9
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
-          python-version: 3.7
+          python-version: 3.9
+      - name: Set up Node 16
+        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7  # pin to v3.8.2
+        with:
+          node-version: 16
       - name: Install Dependencies
         run: |
-            sudo apt-get update
-            sudo apt-get install -y gettext
-            pip3 install invoke
-            invoke install
+          sudo apt-get update
+          sudo apt-get install -y gettext
+          pip3 install invoke
+          invoke install
       - name: Make Translations
-        run: |
-          invoke translate
+        run: invoke translate
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -42,7 +46,7 @@ jobs:
           git add "*.po"
           git commit -m "updated translation base"
       - name: Push changes
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: l10

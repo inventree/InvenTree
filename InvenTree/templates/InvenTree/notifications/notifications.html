@@ -4,20 +4,20 @@
 {% load inventree_extras %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Notifications" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block sidebar %}
     {% include "InvenTree/notifications/sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
     {% include "InvenTree/notifications/inbox.html" %}
     {% include "InvenTree/notifications/history.html" %}
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -29,95 +29,13 @@ function updateNotificationTables() {
 // this allows the global notification panel to update the tables
 window.updateNotifications = updateNotificationTables
 
-function loadNotificationTable(table, options={}, enableDelete=false) {
-
-    var params = options.params || {};
-    var read = typeof(params.read) === 'undefined' ? true : params.read;
-
-    $(table).inventreeTable({
-        url: options.url,
-        name: options.name,
-        groupBy: false,
-        search: true,
-        queryParams: {
-            ordering: 'age',
-            read: read,
-        },
-        paginationVAlign: 'bottom',
-        formatNoMatches: options.no_matches,
-        columns: [
-            {
-                field: 'pk',
-                title: '{% trans "ID" %}',
-                visible: false,
-                switchable: false,
-            },
-            {
-                field: 'age',
-                title: '{% trans "Age" %}',
-                sortable: 'true',
-                formatter: function(value, row) {
-                    return row.age_human
-                }
-            },
-            {
-                field: 'category',
-                title: '{% trans "Category" %}',
-                sortable: 'true',
-            },
-            {
-                field: 'target',
-                title: '{% trans "Item" %}',
-                sortable: 'true',
-                formatter: function(value, row, index, field) {
-                    if (value == null) {
-                        return '';
-                    }
-
-                    var html = `${value.model}: ${value.name}`;
-                    if (value.link ) {html = `<a href='${value.link}'>${html}</a>`;}
-                    return html;
-                }
-            },
-            {
-                field: 'name',
-                title: '{% trans "Name" %}',
-            },
-            {
-                field: 'message',
-                title: '{% trans "Message" %}',
-            },
-            {
-                formatter: function(value, row, index, field) {
-                    var bRead = getReadEditButton(row.pk, row.read)
-                    if (enableDelete) {
-                        var bDel = "<button title='{% trans "Delete Notification" %}' class='notification-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
-                    } else {
-                        var bDel = '';
-                    }
-                    var html = "<div class='btn-group float-right' role='group'>" + bRead + bDel + "</div>";
-                    return html;
-                }
-            }
-        ]
-    });
-
-    $(table).on('click', '.notification-read', function() {
-        updateNotificationReadState($(this));
-    });
-}
-
 loadNotificationTable("#inbox-table", {
     name: 'inbox',
     url: '{% url 'api-notifications-list' %}',
     params: {
         read: false,
     },
-    no_matches: function() { return '{% trans "No unread notifications found" %}'; },
-});
-
-$("#inbox-refresh").on('click', function() {
-    $("#inbox-table").bootstrapTable('refresh');
+    no_matches: function() { return '{% trans "No unread notifications found" escape %}'; },
 });
 
 $("#mark-all").on('click', function() {
@@ -137,17 +55,38 @@ $("#mark-all").on('click', function() {
 loadNotificationTable("#history-table", {
     name: 'history',
     url: '{% url 'api-notifications-list' %}',
-    no_matches: function() { return '{% trans "No notification history found" %}'; },
+    no_matches: function() { return '{% trans "No notification history found" escape %}'; },
 }, true);
 
-$("#history-refresh").on('click', function() {
-    $("#history-table").bootstrapTable('refresh');
+$('#history-delete').click(function() {
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+        {% trans "Delete all read notifications" %}
+    </div>`;
+
+    // Perform a bulk delete of all 'read' notifications for this user
+    constructForm(
+        '{% url "api-notifications-list" %}',
+        {
+            method: 'DELETE',
+            multi_delete: true,
+            preFormContent: html,
+            title: '{% trans "Delete Notifications" escape %}',
+            refreshTable: '#history-table',
+            form_data: {
+                filters: {
+                    read: true,
+                }
+            }
+        }
+    );
 });
 
 $("#history-table").on('click', '.notification-delete', function() {
-    constructForm(`/api/notifications/${$(this).attr('pk')}/`, {
+    constructForm(`{% url "api-notifications-list" %}${$(this).attr('pk')}/`, {
         method: 'DELETE',
-        title: '{% trans "Delete Notification" %}',
+        title: '{% trans "Delete Notification" escape %}',
         onSuccess: function(data) {
             updateNotificationTables();
         }
@@ -155,4 +94,4 @@ $("#history-table").on('click', '.notification-delete', function() {
 });
 
 enableSidebar('notifications');
-{% endblock %}
+{% endblock js_ready %}

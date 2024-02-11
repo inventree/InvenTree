@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+"""Basic unit tests for the BuildOrder app"""
 
-from django.test import TestCase
 from django.urls import reverse
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-
 from datetime import datetime, timedelta
+
+from InvenTree.unit_test import InvenTreeTestCase
 
 from .models import Build
 from stock.models import StockItem
@@ -15,7 +12,8 @@ from stock.models import StockItem
 from InvenTree.status_codes import BuildStatus
 
 
-class BuildTestSimple(TestCase):
+class BuildTestSimple(InvenTreeTestCase):
+    """Basic set of tests for the BuildOrder model functionality"""
 
     fixtures = [
         'category',
@@ -24,42 +22,28 @@ class BuildTestSimple(TestCase):
         'build',
     ]
 
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        user.objects.create_user('testuser', 'test@testing.com', 'password')
-
-        self.user = user.objects.get(username='testuser')
-
-        g = Group.objects.create(name='builders')
-        self.user.groups.add(g)
-
-        for rule in g.rule_sets.all():
-            if rule.name == 'build':
-                rule.can_change = True
-                rule.can_add = True
-                rule.can_delete = True
-
-                rule.save()
-
-        g.save()
-
-        self.client.login(username='testuser', password='password')
+    roles = [
+        'build.change',
+        'build.add',
+        'build.delete',
+    ]
 
     def test_build_objects(self):
-        # Ensure the Build objects were correctly created
+        """Ensure the Build objects were correctly created"""
         self.assertEqual(Build.objects.count(), 5)
         b = Build.objects.get(pk=2)
         self.assertEqual(b.batch, 'B2')
         self.assertEqual(b.quantity, 21)
 
-        self.assertEqual(str(b), 'BO0002')
+        self.assertEqual(str(b), 'BO-0002')
 
     def test_url(self):
+        """Test URL lookup"""
         b1 = Build.objects.get(pk=1)
         self.assertEqual(b1.get_absolute_url(), '/build/1/')
 
     def test_is_complete(self):
+        """Test build completion status"""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
@@ -69,10 +53,7 @@ class BuildTestSimple(TestCase):
         self.assertEqual(b2.status, BuildStatus.COMPLETE)
 
     def test_overdue(self):
-        """
-        Test overdue status functionality
-        """
-
+        """Test overdue status functionality."""
         today = datetime.now().date()
 
         build = Build.objects.get(pk=1)
@@ -87,19 +68,15 @@ class BuildTestSimple(TestCase):
         self.assertFalse(build.is_overdue)
 
     def test_is_active(self):
+        """Test active / inactive build status"""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
         self.assertEqual(b1.is_active, True)
         self.assertEqual(b2.is_active, False)
 
-    def test_required_parts(self):
-        # TODO - Generate BOM for test part
-        pass
-
     def test_cancel_build(self):
-        """ Test build cancellation function """
-
+        """Test build cancellation function."""
         build = Build.objects.get(id=1)
 
         self.assertEqual(build.status, BuildStatus.PENDING)
@@ -109,8 +86,8 @@ class BuildTestSimple(TestCase):
         self.assertEqual(build.status, BuildStatus.CANCELLED)
 
 
-class TestBuildViews(TestCase):
-    """ Tests for Build app views """
+class TestBuildViews(InvenTreeTestCase):
+    """Tests for Build app views."""
 
     fixtures = [
         'category',
@@ -119,27 +96,15 @@ class TestBuildViews(TestCase):
         'build',
     ]
 
+    roles = [
+        'build.change',
+        'build.add',
+        'build.delete',
+    ]
+
     def setUp(self):
+        """Fixturing for this suite of unit tests"""
         super().setUp()
-
-        # Create a user
-        user = get_user_model()
-        self.user = user.objects.create_user('username', 'user@email.com', 'password')
-
-        g = Group.objects.create(name='builders')
-        self.user.groups.add(g)
-
-        for rule in g.rule_sets.all():
-            if rule.name == 'build':
-                rule.can_change = True
-                rule.can_add = True
-                rule.can_delete = True
-
-                rule.save()
-
-        g.save()
-
-        self.client.login(username='username', password='password')
 
         # Create a build output for build # 1
         self.build = Build.objects.get(pk=1)
@@ -152,14 +117,12 @@ class TestBuildViews(TestCase):
         )
 
     def test_build_index(self):
-        """ test build index view """
-
+        """Test build index view."""
         response = self.client.get(reverse('build-index'))
         self.assertEqual(response.status_code, 200)
 
     def test_build_detail(self):
-        """ Test the detail view for a Build object """
-
+        """Test the detail view for a Build object."""
         pk = 1
 
         response = self.client.get(reverse('build-detail', args=(pk,)))

@@ -2,6 +2,7 @@
 
 import InvenTree.fields
 import django.core.validators
+import common.settings
 from django.db import migrations, models
 import django.db.models.deletion
 import djmoney.models.fields
@@ -19,8 +20,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantity', InvenTree.fields.RoundingDecimalField(decimal_places=5, default=1, help_text='Price break quantity', max_digits=15, validators=[django.core.validators.MinValueValidator(1)], verbose_name='Quantity')),
-                ('price_currency', djmoney.models.fields.CurrencyField(choices=[('AUD', 'Australian Dollar'), ('CAD', 'Canadian Dollar'), ('EUR', 'Euro'), ('NZD', 'New Zealand Dollar'), ('GBP', 'Pound Sterling'), ('USD', 'US Dollar'), ('JPY', 'Yen')], default='USD', editable=False, max_length=3)),
-                ('price', djmoney.models.fields.MoneyField(decimal_places=4, default_currency='USD', help_text='Unit price at specified quantity', max_digits=19, null=True, verbose_name='Price')),
+                ('price_currency', djmoney.models.fields.CurrencyField(choices=common.settings.currency_code_mappings(), default=common.settings.currency_code_default(), editable=False, max_length=3)),
+                ('price', djmoney.models.fields.MoneyField(decimal_places=4, default_currency=common.settings.currency_code_default(), help_text='Unit price at specified quantity', max_digits=19, null=True, verbose_name='Price')),
                 ('part', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='internalpricebreaks', to='part.part', verbose_name='Part')),
             ],
             options={

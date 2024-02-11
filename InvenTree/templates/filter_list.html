@@ -1,1 +1,3 @@
-<div class='filter-list d-flex flex-row form-row' id='filter-list-{{ id }}'><!-- Empty div for table filters --></div>
+<div class='filter-list d-flex flex-row form-row' id='filter-list-{% if prefix %}{{ prefix }}{% endif %}{{ id }}'>
+  <!-- Empty div for table filters -->
+</div>

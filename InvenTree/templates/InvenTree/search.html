@@ -6,10 +6,10 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Search Results" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block content %}
 
@@ -22,7 +22,7 @@
 <div id='detail-panels'>
 </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -32,6 +32,8 @@
             text: title,
         });
     }
+
+    var search_text = sanitizeInputString("{{ query|escapejs }}");
 
     function addItem(label, title, icon, options) {
 
@@ -77,37 +79,37 @@
     }
 
     {% if roles.part.view %}
-    addItemTitle('{% trans "Part" %}');
+    addItemTitle('{% trans "Part" escape %}');
 
-    addItem('part', '{% trans "Parts" %}', 'fa-shapes');
+    addItem('part', '{% trans "Parts" escape %}', 'fa-shapes');
 
     loadPartTable("#table-part",
         "{% url 'api-part-list' %}",
         {
             params: {
-                original_search: "{{ query }}",
+                original_search: search_text,
             },
             checkbox: false,
             disableFilters: true,
         }
     );
 
-    addItem('category', '{% trans "Part Categories" %}', 'fa-sitemap');
+    addItem('category', '{% trans "Part Categories" escape %}', 'fa-sitemap');
 
     loadPartCategoryTable($("#table-category"), {
         params: {
-            original_search: "{{ query }}",
+            original_search: search_text,
         }
     });
 
-    addItem('manufacturer-part', '{% trans "Manufacturer Parts" %}', 'fa-toolbox');
+    addItem('manufacturer-part', '{% trans "Manufacturer Parts" escape %}', 'fa-toolbox');
 
     loadManufacturerPartTable(
         "#table-manufacturer-part",
         "{% url 'api-manufacturer-part-list' %}",
         {
             params: {
-                original_search: "{{ query }}",
+                original_search: search_text,
                 part_detail: true,
                 supplier_detail: true,
                 manufacturer_detail: true
@@ -115,14 +117,14 @@
         }
     );
 
-    addItem('supplier-part', '{% trans "Supplier Parts" %}', 'fa-pallet');
+    addItem('supplier-part', '{% trans "Supplier Parts" escape %}', 'fa-pallet');
 
     loadSupplierPartTable(
         "#table-supplier-part",
         "{% url 'api-supplier-part-list' %}",
         {
             params: {
-                original_search: "{{ query }}",
+                original_search: search_text,
                 part_detail: true,
                 supplier_detail: true,
                 manufacturer_detail: true
@@ -134,103 +136,103 @@
 
     {% if roles.build.view %}
 
-    addItemTitle('{% trans "Build" %}');
+    addItemTitle('{% trans "Build" escape %}');
 
-    addItem('build-order', '{% trans "Build Orders" %}', 'fa-tools');
+    addItem('build-order', '{% trans "Build Orders" escape %}', 'fa-tools');
 
     loadBuildTable('#table-build-order', {
+        locale: '{{ request.LANGUAGE_CODE }}',
         params: {
-            original_search: '{{ query }}',
+            original_search: search_text,
         }
     });
 
     {% endif %}
 
     {% if roles.stock.view %}
-    addItemTitle('{% trans "Stock" %}');
+    addItemTitle('{% trans "Stock" escape %}');
 
-    addItem('stock', '{% trans "Stock Items" %}', 'fa-boxes');
+    addItem('stock', '{% trans "Stock Items" escape %}', 'fa-boxes');
 
     loadStockTable($('#table-stock'), {
         filterKey: 'stocksearch',
-        url: "{% url 'api-stock-list' %}",
         params: {
-            original_search: "{{ query }}",
+            original_search: search_text,
             part_detail: true,
             location_detail: true
         }
     });
 
-    addItem('location', '{% trans "Stock Locations" %}', 'fa-map-marker-alt');
+    addItem('location', '{% trans "Stock Locations" escape %}', 'fa-map-marker-alt');
 
     loadStockLocationTable($("#table-location"), {
         filterKey: 'locationsearch',
         params: {
-            original_search: "{{ query }}",
+            original_search: search_text,
         },
     });
 
     {% endif %}
 
     {% if roles.purchase_order.view or roles.sales_order.view %}
-    addItemTitle('{% trans "Company" %}');
+    addItemTitle('{% trans "Company" escape %}');
 
-    addItem('manufacturer', '{% trans "Manufacturers" %}', 'fa-industry');
+    addItem('manufacturer', '{% trans "Manufacturers" escape %}', 'fa-industry');
 
     loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
         params: {
-            original_search: "{{ query }}",
-            is_manufacturer: "true",
+            original_search: search_text,
+            is_manufacturer: true,
         }
     });
 
     {% if roles.purchase_order.view %}
-    addItem('supplier', '{% trans "Suppliers" %}', 'fa-building');
+    addItem('supplier', '{% trans "Suppliers" escape %}', 'fa-building');
 
     loadCompanyTable('#table-supplier', "{% url 'api-company-list' %}", {
         params: {
-            original_search: "{{ query }}",
-            is_supplier: "true",
+            original_search: search_text,
+            is_supplier: true,
         }
     });
 
-    addItem('purchase-order', '{% trans "Purchase Orders" %}', 'fa-shopping-cart');
+    addItem('purchase-order', '{% trans "Purchase Orders" escape %}', 'fa-shopping-cart');
 
     loadPurchaseOrderTable('#table-purchase-order', {
         params: {
-            original_search: '{{ query }}',
+            original_search: search_text,
         }
     });
 
     {% endif %}
 
     {% if roles.sales_order.view %}
-    addItem('customer', '{% trans "Customers" %}', 'fa-user-tie');
+    addItem('customer', '{% trans "Customers" escape %}', 'fa-user-tie');
 
     loadCompanyTable('#table-customer', "{% url 'api-company-list' %}", {
         params: {
-            original_search: "{{ query }}",
-            is_customer: "true",
+            original_search: search_text,
+            is_customer: true,
         }
     });
 
-    addItem('sales-orders', '{% trans "Sales Orders" %}', 'fa-truck');
+    addItem('sales-orders', '{% trans "Sales Orders" escape %}', 'fa-truck');
 
     loadSalesOrderTable('#table-sales-orders', {
         params: {
-            original_search: '{{ query }}',
+            original_search: search_text,
         }
     });
 
     {% endif %}
 
-    {% endif %}    
+    {% endif %}
 
     enableSidebar(
         'search',
         {
-            hide_toggle: 'true',
+            hide_toggle: true,
         }
     );
 
-{% endblock %}
+{% endblock js_ready %}

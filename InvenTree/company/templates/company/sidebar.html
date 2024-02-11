@@ -17,10 +17,24 @@
 {% include "sidebar_item.html" with label='company-stock' text=text icon="fa-boxes" %}
 {% endif %}
 {% if company.is_customer %}
+{% if roles.sales_order.view %}
 {% trans "Sales Orders" as text %}
 {% include "sidebar_item.html" with label='sales-orders' text=text icon="fa-truck" %}
+{% endif %}
+{% if roles.stock.view %}
 {% trans "Assigned Stock Items" as text %}
 {% include "sidebar_item.html" with label='assigned-stock' text=text icon="fa-sign-out-alt" %}
 {% endif %}
+{% if roles.return_order.view and return_order_enabled %}
+{% trans "Return Orders" as text %}
+{% include "sidebar_item.html" with label='return-orders' text=text icon="fa-undo" %}
+{% endif %}
+{% endif %}
+{% trans "Contacts" as text %}
+{% include "sidebar_item.html" with label='company-contacts' text=text icon="fa-users" %}
+{% trans "Addresses" as text %}
+{% include "sidebar_item.html" with label='company-addresses' text=text icon="fa-map-marked" %}
 {% trans "Notes" as text %}
 {% include "sidebar_item.html" with label='company-notes' text=text icon="fa-clipboard" %}
+{% trans "Attachments" as text %}
+{% include "sidebar_item.html" with label='attachments' text=text icon="fa-paperclip" %}

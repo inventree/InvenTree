@@ -1,68 +1,69 @@
-"""
-Custom management command to rebuild thumbnail images
+"""Custom management command to rebuild thumbnail images.
 
 - May be required after importing a new dataset, for example
 """
 
-import os
 import logging
+import os
+
+from django.core.management.base import BaseCommand
+from django.db.utils import OperationalError, ProgrammingError
 
 from PIL import UnidentifiedImageError
 
-from django.core.management.base import BaseCommand
-from django.conf import settings
-from django.db.utils import OperationalError, ProgrammingError
-
 from company.models import Company
 from part.models import Part
-
 
 logger = logging.getLogger('inventree')
 
 
 class Command(BaseCommand):
-    """
-    Rebuild all thumbnail images
-    """
+    """Rebuild all thumbnail images."""
 
     def rebuild_thumbnail(self, model):
-        """
-        Rebuild the thumbnail specified by the "image" field of the provided model
-        """
-
+        """Rebuild the thumbnail specified by the "image" field of the provided model."""
         if not model.image:
             return
 
         img = model.image
-        url = img.thumbnail.name
-        loc = os.path.join(settings.MEDIA_ROOT, url)
 
-        if not os.path.exists(loc):
-            logger.info(f"Generating thumbnail image for '{img}'")
+        # Check for image paths
+        img_paths = []
 
-            try:
-                model.image.render_variations(replace=False)
-            except FileNotFoundError:
-                logger.warning(f"Warning: Image file '{img}' is missing")
-            except UnidentifiedImageError:
-                logger.warning(f"Warning: Image file '{img}' is not a valid image")
+        for x in [model.image, model.image.thumbnail, model.image.preview]:
+            if x and x.path:
+                img_paths.append(x.path)
+
+        if len(img_paths) > 0:
+            if all((os.path.exists(path) for path in img_paths)):
+                # All images exist - skip further work
+                return
+
+        logger.info("Generating thumbnail image for '%s'", img)
+
+        try:
+            model.image.render_variations(replace=False)
+        except FileNotFoundError:
+            logger.warning("Warning: Image file '%s' is missing", img)
+        except UnidentifiedImageError:
+            logger.warning("Warning: Image file '%s' is not a valid image", img)
 
     def handle(self, *args, **kwargs):
-
-        logger.info("Rebuilding Part thumbnails")
+        """Rebuild all thumbnail images."""
+        logger.info('Rebuilding Part thumbnails')
 
         for part in Part.objects.exclude(image=None):
             try:
                 self.rebuild_thumbnail(part)
             except (OperationalError, ProgrammingError):
-                logger.error("ERROR: Database read error.")
+                logger.exception('ERROR: Database read error.')
                 break
 
-        logger.info("Rebuilding Company thumbnails")
+        logger.info('Rebuilding Company thumbnails')
 
         for company in Company.objects.exclude(image=None):
             try:
                 self.rebuild_thumbnail(company)
             except (OperationalError, ProgrammingError):
-                logger.error("ERROR: abase read error.")
+                logger.exception('ERROR: abase read error.')
                 break

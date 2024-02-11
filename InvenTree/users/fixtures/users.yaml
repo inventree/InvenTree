@@ -36,6 +36,7 @@
     first_name: "Alan"
     last_name: "Allgroup"
     is_active: false
+    is_staff: true
     groups:
       - 1
       - 2

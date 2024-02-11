@@ -3,7 +3,7 @@
 {% load inventree_extras %}
 {% load i18n account socialaccount crispy_forms_tags inventree_extras %}
 
-{% block head_title %}{% trans "Sign In" %}{% endblock %}
+{% block head_title %}{% trans "Sign In" %}{% endblock head_title %}
 
 {% block content %}
 
@@ -13,46 +13,51 @@
 {% inventree_customize 'login_message' as login_message %}
 {% mail_configured as mail_conf %}
 
-<h1>{% trans "Sign In" %}</h1>
+<div class='d-flex flex-wrap'>
+  <h3>{% trans "Sign In" %}</h3>
+  {% include "spacer.html" %}
+  {% if enable_reg %}
+  <div class='float-right'>
+    {% trans "Not a member?" %}&nbsp;
+    <a class="btn btn-primary btn-small" href="{{ signup_url }}">
+      <span class='fas fa-user-plus'></span>&nbsp;{% trans "Sign Up" %}
+    </a>
+  </div>
+  {% endif %}
+</div>
 
-{% if enable_reg %}
-{% get_providers as socialaccount_providers %}
-{% if socialaccount_providers %}
-<p>{% blocktrans with site.name as site_name %}Please sign in with one
-of your existing third party accounts or  <a class="btn btn-primary btn-small" href="{{ signup_url }}">sign up</a>
-for a account and sign in below:{% endblocktrans %}</p>
-{% else %}
-<p>{% blocktrans %}If you have not created an account yet, then please
-<a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
-{% endif %}
-{% endif %}
-
-<form class="login" method="POST" action="{% url 'account_login' %}">
+<form class="login" method="post" action="{% url 'account_login' %}">
   {% csrf_token %}
   {{ form|crispy }}
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
 
-  <hr>
+  <div class="btn-group" role="group" style='width: 100%;'>
+    <button class="btn btn-success" type="submit">
+      <span class='fas fa-sign-in-alt'></span> {% trans "Sign In" %}
+    </button>
+  </div>
   {% if login_message %}
   <div>{{ login_message | safe }}<hr></div>
   {% endif %}
-  <div class="btn-group float-right" role="group">
-    <button class="btn btn-success" type="submit">{% trans "Sign In" %}</button>
-  </div>
   {% if mail_conf and enable_pwd_forgot %}
-  <a class="" href="{% url 'account_reset_password' %}"><small>{% trans "Forgot Password?" %}</small></a>
+  <a href="{% url 'account_reset_password' %}"><small>{% trans "Forgot Password?" %}</small></a>
   {% endif %}
 </form>
 
 {% if enable_sso %}
-<br>
-<h4 class="text-center">{% trans 'or use SSO' %}</h4>
+<hr>
+
+<div class='sso-header'>
+  <em>{% trans "or log in with" %}</em>
+</div>
+
 <div>
   {% include "socialaccount/snippets/provider_list.html" with process="login" %}
 </div>
+
 {% include "socialaccount/snippets/login_extra.html" %}
 {% endif %}
 
-{% endblock %}
+{% endblock content %}

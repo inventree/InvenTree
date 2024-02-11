@@ -3,12 +3,11 @@
 {% load inventree_extras %}
 {% load plugin_extras %}
 
-{% block label %}plugin-{{plugin_key}}{% endblock %}
-
+{% block label %}plugin-{{ plugin_key }}{% endblock label %}
 
 {% block heading %}
-{% blocktrans with name=plugin.human_name %}Plugin details for {{name}}{% endblocktrans %}
-{% endblock %}
+{% trans "Plugin" %}: <em>{{ plugin.human_name }}</em>
+{% endblock heading %}
 
 {% block content %}
 
@@ -24,14 +23,14 @@
                 <td>{{ plugin.human_name }}{% include "clip.html" %}</td>
             </tr>
             <tr>
-                <td><span class='fas fa-user'></span></span></td>
-                <td>{% trans "Author" %}</td>
-                <td>{{ plugin.author }}{% include "clip.html" %}</td>
-            </tr>
-            <tr>
                 <td></td>
                 <td>{% trans "Description" %}</td>
                 <td>{{ plugin.description }}{% include "clip.html" %}</td>
+            </tr>
+            <tr>
+                <td><span class='fas fa-user'></span></span></td>
+                <td>{% trans "Author" %}</td>
+                <td>{{ plugin.author }}{% include "clip.html" %}</td>
             </tr>
             <tr>
                 <td><span class='fas fa-calendar-alt'></span></td>
@@ -70,7 +69,7 @@
         <div class='alert alert-block alert-info'>
             {% trans 'The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running.' %}
         </div>
-            
+
         {% endif %}
     </div>
     <div class="col">
@@ -94,7 +93,21 @@
                 <td>{% trans "Installation path" %}</td>
                 <td>{{ plugin.package_path }}</td>
             </tr>
-            {% if plugin.is_package == False %}
+            {% if plugin.is_package %}
+            {% elif plugin.is_builtin %}
+            <tr>
+                <td><span class='fas fa-check-circle icon-green'></span></td>
+                <td>{% trans "Builtin" %}</td>
+                <td>{% trans "This is a builtin plugin which cannot be disabled" %}</td>
+            </tr>
+            {% else %}
+            {% if plugin.is_sample %}
+            <tr>
+                <td><span class='fas fa-check-circle icon-blue'></span></td>
+                <td>{% trans "Sample" %}</td>
+                <td>{% trans "This is a sample plugin" %}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <td><span class='fas fa-user'></span></td>
                 <td>{% trans "Commit Author" %}</td><td>{{ plugin.package.author }} - {{ plugin.package.mail }}{% include "clip.html" %}</td>
@@ -112,16 +125,6 @@
                 <td>{% trans "Commit Message" %}</td><td>{{ plugin.package.message }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
-            <tr>
-                <td><span class='text-{{plugin.sign_color}} fas fa-check'></span></td>
-                <td>{% trans "Sign Status" %}</td>
-                <td class="bg-{{plugin.sign_color}}">{% if plugin.package.verified %}{{ plugin.package.verified }}: {% endif%}{{ plugin.sign_state.msg }}</td>
-            </tr>
-            <tr>
-                <td><span class='text-{{plugin.sign_color}} fas fa-key'></span></td>
-                <td>{% trans "Sign Key" %}</td>
-                <td class="bg-{{plugin.sign_color}}">{{ plugin.package.key }}{% include "clip.html" %}</td>
-            </tr>
         </table>
         </div>
     </div>
@@ -137,4 +140,6 @@
     {% include 'InvenTree/settings/mixins/urls.html' %}
 {% endif %}
 
-{% endblock %}
+{% include 'InvenTree/settings/mixins/settings_content.html' %}
+
+{% endblock content %}

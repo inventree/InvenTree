@@ -6,18 +6,16 @@
 {% trans "User Settings" as text %}
 {% include "sidebar_header.html" with text=text icon='fa-user-cog' %}
 
-{% trans "Account Settings" as text %}
+{% trans "Account" as text %}
 {% include "sidebar_item.html" with label='account' text=text icon="fa-sign-in-alt" %}
-{% trans "Display Settings" as text %}
+{% trans "Display" as text %}
 {% include "sidebar_item.html" with label='user-display' text=text icon="fa-desktop" %}
 {% trans "Home Page" as text %}
 {% include "sidebar_item.html" with label='user-home' text=text icon="fa-home" %}
-{% trans "Search Settings" as text %}
+{% trans "Search" as text %}
 {% include "sidebar_item.html" with label='user-search' text=text icon="fa-search" %}
 {% trans "Notifications" as text %}
 {% include "sidebar_item.html" with label='user-notifications' text=text icon="fa-bell" %}
-{% trans "Label Printing" as text %}
-{% include "sidebar_item.html" with label='user-labels' text=text icon="fa-tag" %}
 {% trans "Reporting" as text %}
 {% include "sidebar_item.html" with label='user-reports' text=text icon="fa-file-pdf" %}
 
@@ -26,33 +24,47 @@
 {% trans "Global Settings" as text %}
 {% include "sidebar_header.html" with text=text icon='fa-cogs' %}
 
-{% trans "Server Configuration" as text %}
+{% trans "Server" as text %}
 {% include "sidebar_item.html" with label='server' text=text icon="fa-server" %}
-{% trans "Login Settings" as text %}
+{% trans "Login" as text %}
 {% include "sidebar_item.html" with label='login' text=text icon="fa-fingerprint" %}
 {% trans "Barcode Support" as text %}
 {% include "sidebar_item.html" with label='barcodes' text=text icon="fa-qrcode" %}
-{% trans "Currencies" as text %}
-{% include "sidebar_item.html" with label='currencies' text=text icon="fa-dollar-sign" %}
+{% trans "Project Codes" as text %}
+{% include "sidebar_item.html" with label='project-codes' text=text icon="fa-list" %}
+{% trans "Physical Units" as text %}
+{% include "sidebar_item.html" with label='units' text=text icon="fa-balance-scale" %}
+{% trans "Notifications" as text %}
+{% include "sidebar_item.html" with label='global-notifications' text=text icon="fa-bell" %}
+{% trans "Pricing" as text %}
+{% include "sidebar_item.html" with label='pricing' text=text icon="fa-dollar-sign" %}
+{% trans "Labels" as text %}
+{% include "sidebar_item.html" with label='labels' text=text icon='fa-tag' %}
 {% trans "Reporting" as text %}
 {% include "sidebar_item.html" with label='reporting' text=text icon="fa-file-pdf" %}
-{% trans "Parts" as text %}
-{% include "sidebar_item.html" with label='parts' text=text icon="fa-shapes" %}
 {% trans "Categories" as text %}
 {% include "sidebar_item.html" with label='category' text=text icon="fa-sitemap" %}
+{% trans "Parts" as text %}
+{% include "sidebar_item.html" with label='parts' text=text icon="fa-shapes" %}
+{% trans "Part Parameters" as text %}
+{% include "sidebar_item.html" with label='part-parameters' text=text icon="fa-th-list" %}
 {% trans "Stock" as text %}
 {% include "sidebar_item.html" with label='stock' text=text icon="fa-boxes" %}
+{% trans "Stocktake" as text %}
+{% include "sidebar_item.html" with label='stocktake' text=text icon="fa-clipboard-check" %}
 {% trans "Build Orders" as text %}
 {% include "sidebar_item.html" with label='build-order' text=text icon="fa-tools" %}
 {% trans "Purchase Orders" as text %}
 {% include "sidebar_item.html" with label='purchase-order' text=text icon="fa-shopping-cart" %}
 {% trans "Sales Orders" as text %}
 {% include "sidebar_item.html" with label='sales-order' text=text icon="fa-truck" %}
+{% trans "Return Orders" as text %}
+{% include "sidebar_item.html" with label='return-order' text=text icon="fa-undo" %}
 
-{% plugins_enabled as plug %}
-{% if plug %}
-{% include "sidebar_header.html" with text="Plugin Settings" %}
-{% include "sidebar_item.html" with label='plugin' text="Plugins" icon="fa-plug" %}
+{% trans "Plugin Settings" as text %}
+{% include "sidebar_header.html" with text=text %}
+{% trans "Plugins" as text %}
+{% include "sidebar_item.html" with label='plugin' text=text icon="fa-plug" %}
 
 {% plugin_list as pl_list %}
 {% for plugin_key, plugin in pl_list.items %}
@@ -60,6 +72,5 @@
 {% include "sidebar_item.html" with label='plugin-'|add:plugin_key text=plugin.human_name %}
 {% endif %}
 {% endfor %}
-{% endif %}
 
 {% endif %}

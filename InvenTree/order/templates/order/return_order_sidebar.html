@@ -1,0 +1,10 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+{% trans "Order Details" as text %}
+{% include "sidebar_item.html" with label='order-details' text=text icon="fa-info-circle" %}
+{% trans "Attachments" as text %}
+{% include "sidebar_item.html" with label='order-attachments' text=text icon="fa-paperclip" %}
+{% trans "Notes" as text %}
+{% include "sidebar_item.html" with label='order-notes' text=text icon="fa-clipboard" %}

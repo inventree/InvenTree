@@ -1,19 +1,13 @@
-"""
-Test that the "translated" javascript files to not contain template tags
-which need to be determined at "run time".
+"""Test that the "translated" javascript files to not contain template tags which need to be determined at "run time".
 
 This is because the "translated" javascript files are compiled into the "static" directory.
-
 They should only contain template tags that render static information.
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import sys
-import re
 import os
 import pathlib
+import re
+import sys
 
 here = os.path.abspath(os.path.dirname(__file__))
 template_dir = os.path.abspath(os.path.join(here, '..', 'InvenTree', 'templates'))
@@ -24,31 +18,30 @@ js_dynamic_dir = os.path.join(template_dir, 'js', 'dynamic')
 
 errors = 0
 
-print("=================================")
-print("Checking static javascript files:")
-print("=================================")
+print('=================================')
+print('Checking static javascript files:')
+print('=================================')
 
 
 def check_invalid_tag(data):
-
-    pattern = r"{%(\w+)"
+    """Check for invalid tags."""
+    pattern = r'{%(\w+)'
 
     err_count = 0
 
     for idx, line in enumerate(data):
-
         results = re.findall(pattern, line)
 
         for result in results:
             err_count += 1
 
-            print(f" - Error on line {idx+1}: %{{{result[0]}")
+            print(f' - Error on line {idx+1}: %{{{result[0]}')
 
     return err_count
 
 
 def check_prohibited_tags(data):
-
+    """Check for prohibited tags."""
     allowed_tags = [
         'if',
         'elif',
@@ -62,32 +55,20 @@ def check_prohibited_tags(data):
         'url',
     ]
 
-    pattern = r"{% (\w+)\s"
+    pattern = r'{% (\w+)\s'
 
     err_count = 0
 
-    has_trans = False
-
     for idx, line in enumerate(data):
-
         for tag in re.findall(pattern, line):
-
             if tag not in allowed_tags:
                 print(f" > Line {idx+1} contains prohibited template tag '{tag}'")
                 err_count += 1
-
-            if tag == 'trans':
-                has_trans = True
-
-    if not has_trans:
-        print(" > file is missing 'trans' tags")
-        err_count += 1
 
     return err_count
 
 
 for filename in pathlib.Path(js_i18n_dir).rglob('*.js'):
-
     print(f"Checking file 'translated/{os.path.basename(filename)}':")
 
     with open(filename, 'r') as js_file:
@@ -97,27 +78,26 @@ for filename in pathlib.Path(js_i18n_dir).rglob('*.js'):
     errors += check_prohibited_tags(data)
 
 for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
-
     print(f"Checking file 'dynamic/{os.path.basename(filename)}':")
 
     # Check that the 'dynamic' files do not contains any translated strings
     with open(filename, 'r') as js_file:
         data = js_file.readlines()
 
-    pattern = r'{% trans '
+    invalid_tags = ['blocktrans', 'blocktranslate', 'trans', 'translate']
 
     err_count = 0
 
     for idx, line in enumerate(data):
+        for tag in invalid_tags:
+            tag = '{% ' + tag
+            if tag in line:
+                err_count += 1
 
-        results = re.findall(pattern, line)
+                print(f" > Error on line {idx+1}: Prohibited tag '{tag}' found")
 
-        if len(results) > 0:
-            errors += 1
-
-            print(f" > prohibited {{% trans %}} tag found at line {idx + 1}")
 
 if errors > 0:
-    print(f"Found {errors} incorrect template tags")
+    print(f'Found {errors} incorrect template tags')
 
 sys.exit(errors)

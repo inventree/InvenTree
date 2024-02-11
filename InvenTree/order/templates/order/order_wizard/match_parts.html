@@ -44,7 +44,7 @@
             </tr>
         </thead>
         <tbody>
-             <tr></tr> {% comment %} Dummy row for javascript del_row method {% endcomment %}
+             <tr>{% comment %} Dummy row for javascript del_row method {% endcomment %}</tr>
             {% for row in rows %}
             <tr {% if row.errors %} style='background: #ffeaea;'{% endif %} part-select='#select_part_{{ row.index }}'>
                 <td>
@@ -123,4 +123,4 @@ $('.currencyselect').select2({
     dropdownAutoWidth: true,
 });
 
-{% endblock %}
+{% endblock js_ready %}

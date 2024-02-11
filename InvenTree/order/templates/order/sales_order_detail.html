@@ -1,15 +1,16 @@
 {% extends "order/sales_order_base.html" %}
 
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 {% load i18n %}
 {% load static %}
 
 {% block sidebar %}
-{% include "order/so_sidebar.html"  %}
-{% endblock %}
+{% include "order/so_sidebar.html" %}
+{% endblock sidebar %}
 
 {% block page_content %}
+{% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
 
 <div class='panel panel-hidden' id='panel-order-items'>
     <div class='panel-heading'>
@@ -17,19 +18,19 @@
             <h4>{% trans "Sales Order Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.sales_order.change and order.is_pending %}
+                {% if roles.sales_order.add %}
+                {% if order.is_open or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-so-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="sales-order-lines" %}
-            </div>
+        <div id='order-toolbar-buttons'>
+            {% include "filter_list.html" with id="sales-order-lines" %}
         </div>
         <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
         </table>
@@ -40,26 +41,26 @@
             <h4>{% trans "Extra Lines" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.sales_order.change and order.is_pending %}
+                {% if roles.sales_order.change %}
+                {% if order.is_open or allow_extra_editing %}
                 <button type='button' class='btn btn-success' id='new-so-extra-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-extra-toolbar-buttons' class='btn-group' style='float: right;'>
-            <div class='btn-group'>
-                {% include "filter_list.html" with id="sales-order-extra-lines" %}
-            </div>
+        <div id='order-extra-toolbar-buttons'>
+            {% include "filter_list.html" with id="sales-order-extra-lines" %}
         </div>
         <table class='table table-striped table-condensed' id='so-extra-lines-table' data-toolbar='#order-extra-toolbar-buttons'>
         </table>
     </div>
 </div>
 
-{% if order.is_pending %}
+{% if order.is_open %}
 <div class='panel panel-hidden' id='panel-order-shipments'>
     <div class='panel-heading'>
         <div class='d-flex flex-row'>
@@ -84,10 +85,8 @@
     </div>
     <div class='panel-content'>
         {% if roles.sales_order.change %}
-        <div id='pending-shipment-toolbar' class='btn-group' style='float: right;'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="pending-shipments" %}
-            </div>
+        <div id='pending-shipment-toolbar'>
+            {% include "filter_list.html" with id="pending-shipments" %}
         </div>
         {% endif %}
         <table class='table table-striped table-condensed' id='pending-shipments-table' data-toolbar='#pending-shipment-toolbar'></table>
@@ -100,10 +99,8 @@
         <h4>{% trans "Completed Shipments" %}</h4>
     </div>
     <div class='panel-content'>
-        <div id='completed-shipment-toolbar' class='btn-group' style='float: right;'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="completed-shipments" %}
-            </div>
+        <div id='completed-shipment-toolbar'>
+            {% include "filter_list.html" with id="completed-shipments" %}
         </div>
         <table class='table table-striped table-condensed' id='completed-shipments-table' data-toolbar='#completed-shipment-toolbar'></table>
     </div>
@@ -114,10 +111,8 @@
         <h4>{% trans "Build Orders" %}</h4>
     </div>
     <div class='panel-content'>
-        <div id='builds-toolbar' class='btn-group' style='float: right;'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id='build' %}
-            </div>
+        <div id='builds-toolbar'>
+            {% include "filter_list.html" with id='build' %}
         </div>
         <table class='table table-striped table-condensed' id='builds-table' data-toolbar='#builds-toolbar'></table>
     </div>
@@ -153,7 +148,7 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -161,7 +156,7 @@
     // Callback when the "shipments" panel is first loaded
     onPanelLoad('order-shipments', function() {
 
-        {% if order.is_pending %}
+        {% if order.is_open %}
         loadSalesOrderShipmentTable('#pending-shipments-table', {
             order: {{ order.pk }},
             shipped: false,
@@ -181,7 +176,7 @@
         {% endif %}
 
     });
-    
+
     onPanelLoad('order-shipments-complete', function() {
         loadSalesOrderShipmentTable('#completed-shipments-table', {
             order: {{ order.pk }},
@@ -204,86 +199,96 @@
         );
     });
 
-    enableDragAndDrop(
-        '#attachment-dropzone',
-        '{% url "api-so-attachment-list" %}',
-        {
-            data: {
-                order: {{ order.id }},
-            },
-            label: 'attachment',
-            success: function(data, status, xhr) {
-                reloadAttachmentTable();
-            }
-        }
-    );
+    onPanelLoad('order-attachments', function() {
 
-    loadAttachmentTable('{% url "api-so-attachment-list" %}', {
-        filters: {
-            order: {{ order.pk }},
-        },
-        fields: {
-            order: {
-                value: {{ order.pk }},
-                hidden: true,
+        loadAttachmentTable('{% url "api-so-attachment-list" %}', {
+            filters: {
+                order: {{ order.pk }},
             },
-        }
+            fields: {
+            order: {
+                    value: {{ order.pk }},
+                    hidden: true,
+                },
+            }
+        });
     });
 
     loadBuildTable($("#builds-table"), {
-        url: "{% url 'api-build-list' %}",
+        locale: '{{ request.LANGUAGE_CODE }}',
         params: {
             sales_order: {{ order.id }},
         },
     });
 
-    $("#new-so-line").click(function() {
+    onPanelLoad('order-items', function() {
 
-        var fields = soLineItemFields({
-            order: {{ order.pk }},
+        $("#new-so-line").click(function() {
+            createSalesOrderLineItem({
+                order: {{ order.pk }},
+                onSuccess: function() {
+                    $("#so-lines-table").bootstrapTable('refresh');
+                }
+            });
+
+            // Create a new SalesOrderLine item
+            var fields = soLineItemFields({
+                order: {{ order.pk }},
+            });
         });
 
-        constructForm('{% url "api-so-line-list" %}', {
-            fields: fields,
-            method: 'POST',
-            title: '{% trans "Add Line Item" %}',
-            onSuccess: function() {
-                $("#so-lines-table").bootstrapTable("refresh");
-            },
+        loadSalesOrderLineItemTable(
+            '#so-lines-table',
+            {
+                order: {{ order.pk }},
+                reference: '{{ order.reference }}',
+                status: {{ order.status }},
+                {% if order.project_code %}
+                project_code: {{ order.project_code.pk }},
+                {% endif %}
+                open: {% js_bool order.is_open %},
+                {% if roles.sales_order.change %}
+                {% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
+                {% if allow_edit or order.is_open %}
+                allow_edit: true,
+                {% endif %}
+                {% if order.status == SalesOrderStatus.IN_PROGRESS %}
+                allow_ship: true,
+                {% endif %}
+                {% endif %}
+                {% if roles.sales_order.delete %}
+                allow_delete: true,
+                {% endif %}
+            }
+        );
+
+        $("#new-so-extra-line").click(function() {
+
+            createExtraLineItem({
+                order: {{ order.pk }},
+                table: '#so-extra-lines-table',
+                url: '{% url "api-so-extra-line-list" %}',
+                currency: '{{ order.currency }}',
+            });
+        });
+
+        loadExtraLineTable({
+            order: {{ order.pk }},
+            table: '#so-extra-lines-table',
+            url: '{% url "api-so-extra-line-list" %}',
+            name: 'salesorderextraline',
+            filtertarget: '#filter-list-sales-order-extra-lines',
+            {% settings_value "SALESORDER_EDIT_COMPLETED_ORDERS" as allow_edit %}
+            {% if order.is_open or allow_edit %}
+            allow_edit: {% js_bool roles.sales_order.change %},
+            allow_delete: {% js_bool roles.sales_order.delete %},
+            {% else %}
+            allow_edit: false,
+            allow_delete: false,
+            {% endif %}
+            pricing: true,
         });
     });
-
-    loadSalesOrderLineItemTable(
-        '#so-lines-table',
-        {
-            order: {{ order.pk }},
-            status: {{ order.status }},
-        }
-    );
-
-    $("#new-so-extra-line").click(function() {
-
-        var fields = extraLineFields({
-            order: {{ order.pk }},
-        });
-
-        constructForm('{% url "api-so-extra-line-list" %}', {
-            fields: fields,
-            method: 'POST',
-            title: '{% trans "Add Extra Line" %}',
-            onSuccess: function() {
-                $("#so-extra-lines-table").bootstrapTable("refresh");
-            },
-        });
-    });
-
-    loadSalesOrderExtraLineTable(
-        '#so-extra-lines-table',
-        {
-            order: {{ order.pk }},
-            status: {{ order.status }},
-        }
-    );
 
     loadOrderTotal(
         '#soTotalPrice',
@@ -293,5 +298,5 @@
     );
 
     enableSidebar('salesorder');
-    
-{% endblock %}
+
+{% endblock js_ready %}

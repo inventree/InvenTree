@@ -1,0 +1,69 @@
+{% extends "report/inventree_report_base.html" %}
+
+{% load i18n %}
+{% load report %}
+{% load barcode %}
+{% load inventree_extras %}
+{% load markdownify %}
+
+{% block page_margin %}
+margin: 2cm;
+margin-top: 4cm;
+{% endblock page_margin %}
+
+{% block bottom_left %}
+content: "v{{ report_revision }} - {{ date.isoformat }}";
+{% endblock bottom_left %}
+
+{% block bottom_center %}
+content: "{% inventree_version shortstring=True %}";
+{% endblock bottom_center %}
+
+{% block style %}
+
+.header-right {
+    text-align: right;
+    float: right;
+}
+
+.logo {
+    height: 20mm;
+    vertical-align: middle;
+}
+
+.thumb-container {
+    width: 32px;
+    display: inline;
+}
+
+.part-thumb {
+    max-width: 32px;
+    max-height: 32px;
+    display: inline;
+}
+
+.part-text {
+    display: inline;
+}
+
+table {
+    border: 1px solid #eee;
+    border-radius: 3px;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 80%;
+}
+
+table td {
+    border: 1px solid #eee;
+}
+
+table td.shrink {
+    white-space: nowrap
+}
+
+table td.expand {
+    width: 99%
+}
+
+{% endblock style %}

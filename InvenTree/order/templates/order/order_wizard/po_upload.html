@@ -7,21 +7,62 @@
 {% url "po-detail" order.id as url %}
 {% trans "Return to Orders" as text %}
 {% include "sidebar_item.html" with url=url text=text icon="fa-undo" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
     {% trans "Upload File for Purchase Order" as header_text %}
     {% trans "Order is already processed. Files cannot be uploaded." as error_text %}
-    {% with "panel-upload-file" as panel_id %}
-    {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
-        {% include "patterns/wizard/upload.html" with header_text=header_text upload_go_ahead=True error_text=error_text panel_id=panel_id %}
-    {% else %}
-        {% include "patterns/wizard/upload.html" with header_text=header_text upload_go_ahead=False error_text=error_text panel_id=panel_id %}
-    {% endif %}
+    {% with panel_id="panel-upload-file" %}
+
+        <div class='panel' id='{{ panel_id }}'>
+            <div class='panel-heading'>
+                <h4>
+                    {{ header_text }}
+                    {{ wizard.form.media }}
+                </h4>
+            </div>
+            <div class='panel-content'>
+            {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
+
+                <p>{% blocktrans with step=wizard.steps.step1 count=wizard.steps.count %}Step {{step}} of {{count}}{% endblocktrans %}
+                {% if description %}- {{ description }}{% endif %}</p>
+
+                {% block form_alert %}
+                {% endblock form_alert %}
+
+                <form action='' method='post' class='js-modal-form' enctype='multipart/form-data'>
+                {% csrf_token %}
+                {% load crispy_forms_tags %}
+
+                {% block form_buttons_top %}
+                {% endblock form_buttons_top %}
+
+                <table class='table table-striped' style='margin-top: 12px; margin-bottom: 0px'>
+                {{ wizard.management_form }}
+                {% block form_content %}
+                {% crispy wizard.form %}
+                {% endblock form_content %}
+                </table>
+
+                {% block form_buttons_bottom %}
+                {% if wizard.steps.prev %}
+                <button name='wizard_goto_step' type='submit' value='{{ wizard.steps.prev }}' class='save btn btn-outline-secondary'>{% trans "Previous Step" %}</button>
+                {% endif %}
+                <button type='submit' class='save btn btn-outline-secondary'>{% trans "Upload File" %}</button>
+                </form>
+                {% endblock form_buttons_bottom %}
+
+            {% else %}
+                <div class='alert alert-danger alert-block' role='alert'>
+                    {{ error_text }}
+                </div>
+            {% endif %}
+            </div>
+        </div>
     {% endwith %}
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
 
-{% endblock %}
+{% endblock js_ready %}

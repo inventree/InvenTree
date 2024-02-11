@@ -1,0 +1,64 @@
+{% extends "panel.html" %}
+{% load i18n %}
+
+{% block label %}pricing{% endblock label %}
+
+{% block heading %}
+{% trans "Pricing Settings" %}
+{% endblock heading %}
+
+{% block panel_content %}
+<div class='panel-content'>
+    <table class='table table-striped table-condensed'>
+        <tbody>
+            {% include "InvenTree/settings/setting.html" with key="INVENTREE_DEFAULT_CURRENCY" icon="fa-globe" %}
+            {% include "InvenTree/settings/setting.html" with key="PART_INTERNAL_PRICE" %}
+            {% include "InvenTree/settings/setting.html" with key="PART_BOM_USE_INTERNAL_PRICE" %}
+            {% include "InvenTree/settings/setting.html" with key="PRICING_DECIMAL_PLACES_MIN" icon='fa-dollar-sign' %}
+            {% include "InvenTree/settings/setting.html" with key="PRICING_DECIMAL_PLACES" icon='fa-dollar-sign' %}
+            {% include "InvenTree/settings/setting.html" with key="PRICING_UPDATE_DAYS" icon='fa-calendar-alt' %}
+            <tr><td colspan='5'></td></tr>
+            {% include "InvenTree/settings/setting.html" with key="PRICING_USE_SUPPLIER_PRICING" icon='fa-check-circle' %}
+            {% include "InvenTree/settings/setting.html" with key="PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER" icon='fa-shopping-cart' %}
+            {% include "InvenTree/settings/setting.html" with key="PRICING_USE_STOCK_PRICING" icon='fa-boxes' %}
+            {% include "InvenTree/settings/setting.html" with key="PRICING_STOCK_ITEM_AGE_DAYS" icon='fa-calendar-alt' %}
+            {% include "InvenTree/settings/setting.html" with key="PRICING_USE_VARIANT_PRICING" icon='fa-check-circle' %}
+            {% include "InvenTree/settings/setting.html" with key="PRICING_ACTIVE_VARIANTS" %}
+
+        </tbody>
+    </table>
+</div>
+
+<div class='panel-heading'>
+    <div class='d-flex flex-wrap'>
+        <h4>{% trans "Exchange Rates" %}</h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            <button type='button' id='btn-update-rates' class='btn btn-primary float-right'>
+                <span class='fas fa-sync-alt'></span> {% trans "Update Now" %}
+            </button>
+        </div>
+    </div>
+</div>
+<div class='panel-content'>
+    {% if rates_updated %}
+    <div class='alert alert-block alert-info'>
+        {% trans "Last Update" %} - {{ rates_updated }}
+    </div>
+    {% else %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "Last Update" %} - {% trans "Never" %}
+    </div>
+    {% endif %}
+
+    <table class='table table-striped table-condensed'>
+        <tbody>
+            {% include "InvenTree/settings/setting.html" with key="CURRENCY_UPDATE_PLUGIN" icon="fa-cog" %}
+            {% include "InvenTree/settings/setting.html" with key="CURRENCY_UPDATE_INTERVAL" icon="fa-calendar-alt" %}
+        </tbody>
+    </table>
+
+    <table class='table table-striped table-condensed' id='exchange-rate-table'></table>
+
+</div>
+{% endblock panel_content %}

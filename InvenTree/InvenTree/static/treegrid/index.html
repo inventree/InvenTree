@@ -51,7 +51,7 @@
                 <li>Ability to save the state of the tree</li>
                 <li>Events support</li>
 
-            </ul>            
+            </ul>
             <h2>Usage</h2>
             <p>Step 1. Initialize plugin</p>
             <pre><code>
@@ -95,7 +95,7 @@
                 <tr class="treegrid-4 treegrid-parent-3">
                     <td>Node 1-2-1</td><td>Additional info</td>
                 </tr>
-            </table>            
+            </table>
 
             <h2>Other examples</h2>
             <p><a href="examples/example-basic.html" target="_blank">Basic example</a></p>
@@ -241,27 +241,27 @@ $('.tree').treegrid('getRootNodes').treegrid('expand');</code></pre>
       //Do something with all last nodes
     }
   });
-</code></pre>		  
+</code></pre>
                     </td>
-                </tr>                 
+                </tr>
                 <tr>
                     <td>getParentNode</td>
                     <td>Return the parent node or null if node is root</td>
                     <td>
                         <pre><code class="javascript">// Expand parent node
 $('#node-2').treegrid('getParentNode').treegrid('collapse');
-</code></pre>		  
+</code></pre>
                     </td>
-                </tr>    
+                </tr>
                 <tr>
                     <td>getChildNodes</td>
                     <td>Return the child nodes or null if node is leaf</td>
                     <td>
                         <pre><code class="javascript">// Expand child nodes
 $('#node-2').treegrid('getChildNodes').treegrid('expand');
-</code></pre>		  
+</code></pre>
                     </td>
-                </tr>  
+                </tr>
                 <tr>
                     <td>getDepth</td>
                     <td>Returns the depth of nested branch</td>
@@ -285,7 +285,7 @@ $('.tree').find('tr').each(function(){
   });
 </code></pre>
                     </td>
-                </tr>                    
+                </tr>
                 <tr>
                     <td>isLeaf</td>
                     <td>Is there a node leaf</td>
@@ -298,7 +298,7 @@ $('.tree').find('tr').each(function(){
 });</code></pre>
                     </td>
 
-                </tr>          
+                </tr>
                 <tr>
                     <td>isLast</td>
                     <td>Return true if node is last in branch</td>
@@ -322,7 +322,7 @@ $('.tree').find('tr').each(function(){
   }
 });</code></pre>
                     </td>
-                </tr>                
+                </tr>
                 <tr>
                     <td>isExpanded</td>
                     <td>Is node expanded</td>
@@ -356,7 +356,7 @@ $('.tree').find('tr').each(function(){
                     <td>
                         <pre><code class="javascript">$('#node-2').treegrid('expand');</code></pre>
                     </td>
-                </tr>        
+                </tr>
                 <tr>
                     <td>collapse</td>
                     <td>Collapse node</td>
@@ -370,7 +370,7 @@ $('.tree').find('tr').each(function(){
                     <td>
                         <pre><code class="javascript">$('#node-2').treegrid('expandRecursive');</code></pre>
                     </td>
-                </tr>        
+                </tr>
                 <tr>
                     <td>collapseRecursive</td>
                     <td>Collapse nodes recursively</td>
@@ -384,28 +384,28 @@ $('.tree').find('tr').each(function(){
                     <td>
                         <pre><code class="javascript">$('#tree').treegrid('expandAll');</code></pre>
                     </td>
-                </tr>        
+                </tr>
                 <tr>
                     <td>collapseAll</td>
                     <td>Collapse all nodes</td>
                     <td>
                         <pre><code class="javascript">$('#tree').treegrid('collapseAll');</code></pre>
                     </td>
-                </tr>        
+                </tr>
                 <tr>
                     <td>toggle</td>
                     <td>Collapse node if it expanded and expand when collapsed</td>
                     <td>
                         <pre><code class="javascript">$('#node-2').treegrid('toggle');</code></pre>
                     </td>
-                </tr> 
+                </tr>
                 <tr>
                     <td>render</td>
                     <td>Redraw the node and all its children</td>
                     <td>
                         <pre><code class="javascript">$('#node-2').treegrid('render');</code></pre>
                     </td>
-                </tr> 
+                </tr>
 
 
             </table>
@@ -440,12 +440,12 @@ $('#node1').on('expand', function(){
                     <td>change</td>
                     <td>Will fire when node changed. Expanded or collapsed</td>
                     <td>
-                        <pre><code class="javascript">//Alert when node in treegrid with class "tree" changed. 
+                        <pre><code class="javascript">//Alert when node in treegrid with class "tree" changed.
 $('.tree').treegrid('getRootNodes').on('change', function(){
    alert(this);
 });</code></pre>
                     </td>
-                </tr>                
+                </tr>
             </table>
             <h2><a href="test.html">Unit Tests</a></h2>
 
@@ -454,7 +454,7 @@ $('.tree').treegrid('getRootNodes').on('change', function(){
         <script type="text/javascript" src="js/jquery.treegrid.min.js"></script>
         <script type="text/javascript">
             $('.tree').treegrid();
-        </script>    
+        </script>
         <script type="text/javascript">
             var metas = document.getElementsByTagName('meta');
             var i;

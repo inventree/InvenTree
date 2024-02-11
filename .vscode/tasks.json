@@ -1,0 +1,70 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+
+  // the problemMatchers should prevent vscode from asking how it should check the output
+
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "worker",
+      "type": "shell",
+      "command": "inv worker",
+      "problemMatcher": [],
+    },
+    {
+      "label": "clean-settings",
+      "type": "shell",
+      "command": "inv clean-settings",
+      "problemMatcher": [],
+    },
+    {
+      "label": "delete-data",
+      "type": "shell",
+      "command": "inv delete-data",
+      "problemMatcher": [],
+    },
+    {
+      "label": "migrate",
+      "type": "shell",
+      "command": "inv migrate",
+      "problemMatcher": [],
+    },
+    {
+      "label": "server",
+      "type": "shell",
+      "command": "inv server",
+      "problemMatcher": [],
+    },
+    {
+      "label": "setup-dev",
+      "type": "shell",
+      "command": "inv setup-dev",
+      "problemMatcher": [],
+    },
+    {
+      "label": "setup-test",
+      "type": "shell",
+      "command": "inv setup-test --path dev/inventree-demo-dataset",
+      "problemMatcher": [],
+    },
+    {
+      "label": "superuser",
+      "type": "shell",
+      "command": "inv superuser",
+      "problemMatcher": [],
+    },
+    {
+      "label": "test",
+      "type": "shell",
+      "command": "inv test",
+      "problemMatcher": [],
+    },
+    {
+      "label": "update",
+      "type": "shell",
+      "command": "inv update",
+      "problemMatcher": [],
+    },
+  ]
+}

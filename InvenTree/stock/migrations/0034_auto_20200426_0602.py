@@ -4,7 +4,6 @@ import InvenTree.fields
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import markdownx.models
 import mptt.fields
 
 
@@ -56,7 +55,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='stockitem',
             name='notes',
-            field=markdownx.models.MarkdownxField(blank=True, help_text='Stock Item Notes', null=True, verbose_name='Notes'),
+            field=models.TextField(blank=True, help_text='Stock Item Notes', null=True, verbose_name='Notes'),
         ),
         migrations.AlterField(
             model_name='stockitem',

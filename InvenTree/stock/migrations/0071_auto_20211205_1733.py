@@ -20,28 +20,31 @@ def delete_scheduled(apps, schema_editor):
 
     items = StockItem.objects.filter(scheduled_for_deletion=True)
 
-    logger.info(f"Removing {items.count()} stock items scheduled for deletion")
+    if items.count() > 0:
+        logger.info(f"Removing {items.count()} stock items scheduled for deletion")
 
-    items.delete()
+        # Ensure any parent / child relationships are updated!
+        for item in items:
+            children = StockItem.objects.filter(parent=item)
+            children.update(parent=item.parent)
+
+            item.delete()
 
     Task = apps.get_model('django_q', 'schedule')
 
     Task.objects.filter(func='stock.tasks.delete_old_stock_items').delete()
 
 
-def reverse(apps, schema_editor):  # pragma: no cover
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('django_q', '0007_ormq'),
         ('stock', '0070_auto_20211128_0151'),
     ]
 
     operations = [
         migrations.RunPython(
             delete_scheduled,
-            reverse_code=reverse,
+            reverse_code=migrations.RunPython.noop,
         )
     ]

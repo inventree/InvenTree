@@ -1,7 +1,6 @@
 {
   "dependencies": {
-    "eslint": "^8.3.0",
-    "eslint-config-google": "^0.14.0",
-    "markuplint": "^1.11.4"
+    "eslint": "^8.51.0",
+    "eslint-config-google": "^0.14.0"
   }
 }

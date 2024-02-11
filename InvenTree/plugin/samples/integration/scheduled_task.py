@@ -1,35 +1,36 @@
-"""
-Sample plugin which supports task scheduling
-"""
+"""Sample plugin which supports task scheduling."""
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import ScheduleMixin, SettingsMixin
 
 
 # Define some simple tasks to perform
 def print_hello():
-    print("Hello")  # pragma: no cover
+    """Sample function that can be called on schedule.
+
+    Contents do not matter - therefore no coverage.
+    """
+    print('Hello')  # pragma: no cover
 
 
 def print_world():
-    print("World")  # pragma: no cover
+    """Sample function that can be called on schedule.
 
-
-class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
+    Contents do not matter - therefore no coverage.
     """
-    A sample plugin which provides support for scheduled tasks
-    """
+    print('World')  # pragma: no cover
 
-    PLUGIN_NAME = "ScheduledTasksPlugin"
-    PLUGIN_SLUG = "schedule"
-    PLUGIN_TITLE = "Scheduled Tasks"
+
+class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
+    """A sample plugin which provides support for scheduled tasks."""
+
+    NAME = 'ScheduledTasksPlugin'
+    SLUG = 'schedule'
+    TITLE = 'Scheduled Tasks'
+    VERSION = '0.2.0'
 
     SCHEDULED_TASKS = {
-        'member': {
-            'func': 'member_func',
-            'schedule': 'I',
-            'minutes': 30,
-        },
+        'member': {'func': 'member_func', 'schedule': 'I', 'minutes': 30},
         'hello': {
             'func': 'plugin.samples.integration.scheduled_task.print_hello',
             'schedule': 'I',
@@ -47,15 +48,12 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
             'description': 'Print true or false when running the periodic task',
             'validator': bool,
             'default': False,
-        },
+        }
     }
 
     def member_func(self, *args, **kwargs):
-        """
-        A simple member function to demonstrate functionality
-        """
-
+        """A simple member function to demonstrate functionality."""
         t_or_f = self.get_setting('T_OR_F')
 
-        print(f"Called member_func - value is {t_or_f}")
+        print(f'Called member_func - value is {t_or_f}')
         return t_or_f

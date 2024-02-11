@@ -1,4 +1,12 @@
+{% load inventree_extras %}
 {% load i18n %}
-<button id='admin-button' title='{% trans "View in administration panel" %}' type='button' class='btn btn-primary admin-button' url='{{ url }}'>
-    <span class='fas fa-user-shield'></span>
-</button>
+
+{% inventree_customize 'hide_admin_link' as hidden %}
+
+{% if url and not hidden and user.is_staff %}
+<a href='{{ url }}'>
+    <button id='admin-button' href='{{ url }}' title='{% trans "View in administration panel" %}' type='button' class='btn btn-primary admin-button'>
+        <span class='fas fa-user-shield'></span>
+    </button>
+</a>
+{% endif %}

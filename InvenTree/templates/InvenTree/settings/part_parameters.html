@@ -1,0 +1,40 @@
+{% extends "panel.html" %}
+{% load i18n %}
+
+{% block label %}part-parameters{% endblock label %}
+
+{% block heading %}
+{% trans "Part Parameters" %}
+{% endblock heading %}
+
+{% block panel_content %}
+
+<table class='table table-striped table-condensed'>
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="PART_PARAMETER_ENFORCE_UNITS" icon="fa-clipboard-check" %}
+    </tbody>
+</table>
+
+<div class='panel-heading'>
+    <div class='d-flex flex-wrap'>
+        <h4>{% trans "Part Parameter Templates" %}</h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            <button class='btn btn-success' id='new-param'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class='panel-content'>
+    <div id='param-buttons'>
+        <div class='btn-group' role='group'>
+            {% include "filter_list.html" with id="parameter-templates" %}
+        </div>
+    </div>
+    <table class='table table-striped table-condensed' id='param-table' data-toolbar='#param-buttons'>
+    </table>
+</div>
+
+{% endblock panel_content %}

@@ -25,19 +25,15 @@ def update_serials(apps, schema_editor):
         if result and len(result.groups()) == 1:
             try:
                 serial = int(result.groups()[0])
-            except:
+            except Exception:
                 serial = 0
 
+        # Ensure the integer value is not too large for the database field
+        if serial > 0x7fffffff:
+            serial = 0x7fffffff
 
         item.serial_int = serial
         item.save()
-
-
-def nupdate_serials(apps, schema_editor):  # pragma: no cover
-    """
-    Provided only for reverse migration compatibility
-    """
-    pass
 
 
 class Migration(migrations.Migration):
@@ -49,6 +45,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             update_serials,
-            reverse_code=nupdate_serials,
+            reverse_code=migrations.RunPython.noop,
         )
     ]

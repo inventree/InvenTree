@@ -1,0 +1,51 @@
+# Runs on releases
+
+name: Publish release notes
+on:
+  release:
+    types: [ published ]
+
+jobs:
+
+  stable:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Version Check
+        run: |
+          pip install requests
+          python3 ci/version_check.py
+      - name: Push to Stable Branch
+        uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0
+        if: env.stable_release == 'true'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: stable
+          force: true
+
+  publish-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+      - name: Install dependencies
+        run: cd src/frontend && yarn install
+      - name: Build frontend
+        run: cd src/frontend && npm run build
+      - name: Zip frontend
+        run: |
+          cd InvenTree/web/static/web
+          zip -r ../frontend-build.zip *
+      - uses: svenstaro/upload-release-action@1beeb572c19a9242f4361f4cee78f8e0d9aec5df # pin@2.7.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: InvenTree/web/static/frontend-build.zip
+          asset_name: frontend-build.zip
+          tag: ${{ github.ref }}
+          overwrite: true

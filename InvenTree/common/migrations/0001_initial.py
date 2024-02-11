@@ -4,15 +4,40 @@ import django.core.validators
 from django.db import migrations, models
 
 
+class CreateModelOrSkip(migrations.CreateModel):
+    """Custom migration operation to create a model if it does not already exist.
+
+    - If the model already exists, the migration is skipped
+    - This class has been added to deal with some errors being thrown in CI tests
+    - The 'common_currency' table doesn't exist anymore anyway!
+    - In the future, these migrations will be squashed
+    """
+
+    def database_forwards(self, app_label, schema_editor, from_state, to_state) -> None:
+        """Forwards migration *attempts* to create the model, but will fail gracefully if it already exists"""
+
+        try:
+            super().database_forwards(app_label, schema_editor, from_state, to_state)
+        except Exception:
+            pass
+
+    def state_forwards(self, app_label, state) -> None:
+        try:
+            super().state_forwards(app_label, state)
+        except Exception:
+            pass
+
+
 class Migration(migrations.Migration):
 
     initial = True
+    atomic = False
 
     dependencies = [
     ]
 
     operations = [
-        migrations.CreateModel(
+        CreateModelOrSkip(
             name='Currency',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),

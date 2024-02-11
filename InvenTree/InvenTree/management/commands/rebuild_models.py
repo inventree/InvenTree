@@ -1,60 +1,75 @@
-"""
-Custom management command to rebuild all MPTT models
+"""Custom management command to rebuild all MPTT models.
 
 - This is crucial after importing any fixtures, etc
 """
 
+import logging
+
 from django.core.management.base import BaseCommand
+
+from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
+
+logger = logging.getLogger('inventree')
 
 
 class Command(BaseCommand):
-    """
-    Rebuild all database models which leverage the MPTT structure.
-    """
+    """Rebuild all database models which leverage the MPTT structure."""
 
     def handle(self, *args, **kwargs):
+        """Rebuild all database models which leverage the MPTT structure."""
+        with maintenance_mode_on():
+            self.rebuild_models()
 
+        set_maintenance_mode(False)
+
+    def rebuild_models(self):
+        """Rebuild all MPTT models in the database."""
         # Part model
         try:
-            print("Rebuilding Part objects")
+            logger.info('Rebuilding Part objects')
 
             from part.models import Part
+
             Part.objects.rebuild()
-        except:
-            print("Error rebuilding Part objects")
+        except Exception:
+            logger.info('Error rebuilding Part objects')
 
         # Part category
         try:
-            print("Rebuilding PartCategory objects")
+            logger.info('Rebuilding PartCategory objects')
 
             from part.models import PartCategory
+
             PartCategory.objects.rebuild()
-        except:
-            print("Error rebuilding PartCategory objects")
+        except Exception:
+            logger.info('Error rebuilding PartCategory objects')
 
         # StockItem model
         try:
-            print("Rebuilding StockItem objects")
+            logger.info('Rebuilding StockItem objects')
 
             from stock.models import StockItem
+
             StockItem.objects.rebuild()
-        except:
-            print("Error rebuilding StockItem objects")
+        except Exception:
+            logger.info('Error rebuilding StockItem objects')
 
         # StockLocation model
         try:
-            print("Rebuilding StockLocation objects")
+            logger.info('Rebuilding StockLocation objects')
 
             from stock.models import StockLocation
+
             StockLocation.objects.rebuild()
-        except:
-            print("Error rebuilding StockLocation objects")
+        except Exception:
+            logger.info('Error rebuilding StockLocation objects')
 
         # Build model
         try:
-            print("Rebuilding Build objects")
+            logger.info('Rebuilding Build objects')
 
             from build.models import Build
+
             Build.objects.rebuild()
-        except:
-            print("Error rebuilding Build objects")
+        except Exception:
+            logger.info('Error rebuilding Build objects')

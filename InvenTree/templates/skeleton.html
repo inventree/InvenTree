@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,48 +39,41 @@
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
 
 {% block head_css %}
-{% endblock %}
+{% endblock head_css %}
 
 <style>
     {% block css %}
-    {% endblock %}
+    {% endblock css %}
 </style>
 
 {% block head %}
-{% endblock %}
+{% endblock head %}
 
 <title>
 {% block page_title %}
-{% endblock %}
+{% endblock page_title %}
 </title>
 </head>
 
-<body class='{% block body_class %}{% endblock %}'>
+<body class='{% block body_class %}{% endblock body_class %}'>
 {% block body %}
-{% endblock %}
+{% endblock body %}
 
 <!-- Scripts -->
 <script type="text/javascript" src="{% static 'script/jquery_3.3.1_jquery.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/jquery-ui/jquery-ui.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 {% block body_scripts_general %}
-{% endblock %}
+{% endblock body_scripts_general %}
 
-
-<!-- 3rd party general js -->
-<script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
-<script type="text/javascript" src="{% static 'fullcalendar/locales-all.js' %}"></script>
-<script type="text/javascript" src="{% static 'select2/js/select2.full.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/chart.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/clipboard.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/randomColor.min.js' %}"></script>
+{% include "third_party_js.html" %}
 
 <!-- general JS -->
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
+<script type='text/javascript' src="{% static 'script/inventree/message.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'notification.js' %}"></script>
 {% block body_scripts_inventree %}
-{% endblock %}
+{% endblock body_scripts_inventree %}
 
 <!-- fontawesome -->
 <script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
@@ -87,13 +81,13 @@
 <script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
 
 {% block js_load %}
-{% endblock %}
+{% endblock js_load %}
 
 {% block js_base %}
-{% endblock %}
+{% endblock js_base %}
 
 {% block js %}
-{% endblock %}
+{% endblock js %}
 
 </body>
 </html>

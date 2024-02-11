@@ -1,0 +1,19 @@
+{% load spa_helper %}
+{% load inventree_extras %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% inventree_instance_name %}</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  {% spa_settings %}
+  {% spa_bundle %}
+</body>
+
+</html>

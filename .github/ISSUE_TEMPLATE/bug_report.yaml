@@ -1,0 +1,69 @@
+name: "Bug"
+description: "Create a bug report to help us improve InvenTree!"
+labels: ["bug", "question", "triage:not-checked"]
+body:
+  - type: checkboxes
+    id: no-duplicate-issues
+    attributes:
+      label: "Please verify that this bug has NOT been raised before."
+      description: "Search in the issues sections by clicking [HERE](https://github.com/inventree/inventree/issues?q=) and read the [Frequently Asked Questions](https://docs.inventree.org/en/latest/faq/)!"
+      options:
+        - label: "I checked and didn't find a similar issue"
+          required: true
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: "Describe the bug*"
+      description: "A clear and concise description of what the bug is."
+  - type: textarea
+    id: steps-to-reproduce
+    validations:
+      required: true
+    attributes:
+      label: "Steps to Reproduce"
+      description: "Steps to reproduce the behaviour, please make it detailed"
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See the error
+  - type: textarea
+    id: expected-behavior
+    validations:
+      required: true
+    attributes:
+      label: "Expected behaviour"
+      description: "A clear and concise description of what you expected to happen."
+      placeholder: "..."
+  - type: checkboxes
+    id: deployment
+    attributes:
+      label: "Deployment Method"
+      options:
+        - label: "Docker"
+        - label: "Bare metal"
+  - type: textarea
+    id: version-info
+    validations:
+      required: true
+    attributes:
+      label: "Version Information"
+      description: "The version info block."
+      placeholder: "You can get this by going to the `About InvenTree` section in the upper right corner and clicking on the `copy version information` button"
+  - type: checkboxes
+    id: can-reproduce
+    attributes:
+      label: "Please verify if you can reproduce this bug on the demo site."
+      description: "You can sign in at [InvenTree Demo](https://demo.inventree.org) with admin:inventree. Note that this instance runs on the latest dev version, so your bug may be fixed there."
+      options:
+        - label: "I can reproduce this bug on the demo site."
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Relevant log output"
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+    validations:
+      required: false

@@ -9,8 +9,10 @@
 
 <table class='table table-striped table-condensed'>
     <tbody>
-    {% for setting in plugin_settings %}
-        {% include "InvenTree/settings/setting.html" with key=setting plugin=plugin %}
+    {% for setting, value in plugin_settings.items %}
+        {% if not value.hidden %}
+            {% include "InvenTree/settings/setting.html" with key=setting plugin=plugin %}
+        {% endif %}
     {% endfor %}
     </tbody>
 </table>

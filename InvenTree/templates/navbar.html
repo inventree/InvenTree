@@ -14,7 +14,7 @@
 <nav class="navbar {% if sticky %}fixed-top{% endif %} navbar-expand-lg navbar-light">
   <div class="container-fluid">
     <div class="navbar-header clearfix content-heading">
-      <a class="navbar-brand" id='logo' href="{% url 'index' %}" style="padding-top: 7px; padding-bottom: 5px;"><img src="{% inventree_logo %}" width="32" height="32" style="display:block; margin: auto;"/></a>
+      <a class="navbar-brand" id='logo' href="{% url 'index' %}" style="padding-top: 7px; padding-bottom: 5px;"><img src="{% inventree_logo %}" alt="{% trans 'InvenTree logo' %}" width="32" height="32" style="display:block; margin: auto;"/></a>
     </div>
     <div class="navbar-collapse collapse" id="navbar-objects">
       <ul class="navbar-nav">
@@ -47,18 +47,23 @@
           <ul class='dropdown-menu' aria-labelledby="buyMenuDropdown">
             <li><a class='dropdown-item' href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
             <li><a class='dropdown-item' href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
-            <li><a class='dropdown-item' href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
+            <li><a class='dropdown-item' href="{% url 'purchase-order-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
           </ul>
         </li>
         {% endif %}
-        {% if roles.sales_order.view %}
+        {% if roles.sales_order.view or roles.return_order.view %}
         <li class='nav-item dropdown'>
           <a class='nav-link dropdown-toggle' href='#' id='sellMenuDropdown' role='button' data-bs-toggle='dropdown'>
             <span class='fas fa-truck icon-header'></span>{% trans "Sell" %}
           </a>
           <ul class='dropdown-menu'>
             <li><a class='dropdown-item' href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
-            <li><a class='dropdown-item' href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
+            {% if roles.sales_order.view %}
+            <li><a class='dropdown-item' href="{% url 'sales-order-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
+            {% endif %}
+            {% if roles.return_order.view and return_order_enabled %}
+            <li><a class='dropdown-item' href="{% url 'return-order-index' %}"><span class='fas fa-undo icon-header'></span>{% trans "Return Orders" %}</a></li>
+            {% endif %}
           </ul>
         </li>
         {% endif %}
@@ -70,13 +75,13 @@
           {% if navigation %}
           <li class='nav-item dropdown'>
             <a class='nav-link dropdown-toggle' data-bs-toggle="dropdown" aria-expanded="false" href='#'>
-              <span class='{{plugin.navigation_icon}} icon-header'></span>{{plugin.navigation_name}}
+              <span class='{{ plugin.navigation_icon }} icon-header'></span>{{ plugin.navigation_name }}
             </a>
             <ul class='dropdown-menu'>
              {% for nav_item in plugin.navigation %}
                 {% safe_url nav_item.link as nav_link %}
                 {% if nav_link %}
-                <li><a href="{{ nav_link }}" class="dropdown-item"><span class='{{nav_item.icon}} icon-header'></span>{{nav_item.name}}</a>
+                <li><a href="{{ nav_link }}" class="dropdown-item"><span class='{{ nav_item.icon }} icon-header'></span>{{ nav_item.name }}</a>
                 {% endif %}
              {% endfor %}
             </ul>
@@ -95,9 +100,9 @@
       {% include "spacer.html" %}
       {% include "spacer.html" %}
     {% endif %}
-    
+
     <ul class='navbar-nav flex-row'>
-      
+
       <li class='nav-item me-2'>
         <button data-bs-toggle='offcanvas' data-bs-target="#offcanvas-search" class='btn position-relative' title='{% trans "Search" %}'>
           <span class='fas fa-search'></span>
@@ -134,7 +139,10 @@
         <ul class='dropdown-menu dropdown-menu-end inventree-navbar-menu'>
           {% if user.is_authenticated %}
           {% if user.is_staff and not hide_admin_link %}
-          <li><a class='dropdown-item' href="{% url 'admin:index' %}"><span class="fas fa-user-shield"></span> {% trans "Admin" %}</a></li>
+          {% admin_index user as admin_idx %}
+          {% if admin_idx %}
+          <li><a class='dropdown-item' href="{{ admin_idx }}"><span class="fas fa-user-shield"></span> {% trans "Admin" %}</a></li>
+          {% endif %}
           {% endif %}
           <li><a class='dropdown-item' href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
           <li><a class='dropdown-item' href="{% url 'account_logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
