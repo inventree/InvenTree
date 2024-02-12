@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
@@ -100,12 +100,13 @@ export function Header() {
 
 function NavTabs() {
   const { classes } = InvenTreeStyle();
-  const { tabValue } = useParams();
+  const defaultTabValue = "home";
+  const tabValue = useLocation().pathname.split('/')[1] || defaultTabValue;
   const navigate = useNavigate();
 
   return (
     <Tabs
-      defaultValue="home"
+      defaultValue={defaultTabValue}
       classNames={{
         root: classes.tabs,
         tabsList: classes.tabsList,
