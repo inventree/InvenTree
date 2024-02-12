@@ -9,7 +9,7 @@ import string
 import warnings
 from pathlib import Path
 
-from django.core.files import File
+from django.core.files.base import ContentFile
 from django.core.files.storage import Storage, default_storage
 
 logger = logging.getLogger('inventree')
@@ -71,14 +71,14 @@ def get_base_dir() -> Path:
     return Path(__file__).parent.parent.resolve()
 
 
-def ensure_dir(path: Path, storage: Storage = None) -> None:
+def ensure_dir(path: Path, storage: Storage | None = None) -> None:
     """Ensure that a directory exists.
 
     If it does not exist, create it.
     """
     if storage:
         if not storage.exists(str(path)):
-            storage.save(str(path), File(None))
+            storage.save(str(path), ContentFile(''))
         return
 
     if not path.exists():
@@ -96,7 +96,7 @@ def get_config_file(create=True) -> Path:
 
     if not cfg_filename:
         # Config file is *not* specified - use the default
-        cfg_filename = Path('config.yaml')
+        cfg_filename = Path('InvenTree', 'config.yaml')
 
     if not default_storage.exists(cfg_filename) and create:
         print(
@@ -105,7 +105,7 @@ def get_config_file(create=True) -> Path:
         ensure_dir(cfg_filename.parent)
 
         cfg_template = base_dir.joinpath('config_template.yaml')
-        default_storage.save(cfg_filename, open(cfg_template, 'rb').read())
+        default_storage.save(cfg_filename, ContentFile(open(cfg_template, 'rb').read()))
         print(f'Created config file {cfg_filename}')
 
     return cfg_filename
