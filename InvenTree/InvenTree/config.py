@@ -96,7 +96,7 @@ def get_config_file(create=True) -> Path:
 
     if not cfg_filename:
         # Config file is *not* specified - use the default
-        cfg_filename = Path('InvenTree', 'config.yaml')
+        cfg_filename = Path('config.yaml')
 
     if not default_storage.exists(cfg_filename) and create:
         print(
