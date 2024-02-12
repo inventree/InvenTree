@@ -100,7 +100,7 @@ export function Header() {
 
 function NavTabs() {
   const { classes } = InvenTreeStyle();
-  const defaultTabValue = "home";
+  const defaultTabValue = 'home';
   const tabValue = useLocation().pathname.split('/')[1] || defaultTabValue;
   const navigate = useNavigate();
 
