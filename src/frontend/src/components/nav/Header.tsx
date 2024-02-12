@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
