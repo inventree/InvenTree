@@ -71,12 +71,12 @@ def get_base_dir() -> Path:
     return Path(__file__).parent.parent.resolve()
 
 
-def ensure_dir(path: Path, storage: Storage | None = None) -> None:
+def ensure_dir(path: Path, storage=None) -> None:
     """Ensure that a directory exists.
 
     If it does not exist, create it.
     """
-    if storage:
+    if storage and isinstance(storage, Storage):
         if not storage.exists(str(path)):
             storage.save(str(path), ContentFile(''))
         return
