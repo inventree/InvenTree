@@ -67,11 +67,6 @@ BASE_DIR = config.get_base_dir()
 # Load configuration data
 CONFIG = config.load_config_data(set_cache=True)
 
-with default_storage.open(cfg_filename, 'r') as cfg:
-    CONFIG = yaml.safe_load(cfg)
-
-# We will place any config files in the same directory as the config file
-config_dir = os.path.dirname(cfg_filename)
 # Load VERSION data if it exists
 version_file = BASE_DIR.parent.joinpath('VERSION')
 if version_file.exists():

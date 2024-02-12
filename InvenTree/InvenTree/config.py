@@ -9,7 +9,8 @@ import string
 import warnings
 from pathlib import Path
 
-from django.core.files.storage import default_storage
+from django.core.files import File
+from django.core.files.storage import Storage, default_storage
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -70,11 +71,16 @@ def get_base_dir() -> Path:
     return Path(__file__).parent.parent.resolve()
 
 
-def ensure_dir(path: Path) -> None:
+def ensure_dir(path: Path, storage: Storage = None) -> None:
     """Ensure that a directory exists.
 
     If it does not exist, create it.
     """
+    if storage:
+        if not storage.exists(str(path)):
+            storage.save(str(path), File(None))
+        return
+
     if not path.exists():
         path.mkdir(parents=True, exist_ok=True)
 
@@ -90,14 +96,15 @@ def get_config_file(create=True) -> Path:
 
     if not cfg_filename:
         # Config file is *not* specified - use the default
-        cfg_filename = 'config.yaml'
+        cfg_filename = Path('InvenTree', 'config.yaml')
 
-    if not default_storage.exists(cfg_filename):
+    if not default_storage.exists(cfg_filename) and create:
         print(
             "InvenTree configuration file 'config.yaml' not found - creating default file"
         )
+        ensure_dir(cfg_filename.parent)
 
-        cfg_template = os.path.join(base_dir, 'config_template.yaml')
+        cfg_template = base_dir.joinpath('config_template.yaml')
         default_storage.save(cfg_filename, open(cfg_template, 'rb').read())
         print(f'Created config file {cfg_filename}')
 
@@ -121,7 +128,7 @@ def load_config_data(set_cache: bool = False) -> map:
 
     cfg_file = get_config_file()
 
-    with open(cfg_file, 'r') as cfg:
+    with default_storage.open(cfg_file, 'r') as cfg:
         data = yaml.safe_load(cfg)
 
     # Set the cache if requested
