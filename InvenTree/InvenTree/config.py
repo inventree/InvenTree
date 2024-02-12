@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import random
+import shutil
 import string
 import warnings
 from pathlib import Path
@@ -94,18 +95,20 @@ def get_config_file(create=True) -> Path:
 
     cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
 
-    if not cfg_filename:
+    if cfg_filename:
+        cfg_filename = Path(cfg_filename.strip()).resolve()
+    else:
         # Config file is *not* specified - use the default
-        cfg_filename = Path('InvenTree', 'config.yaml')
+        cfg_filename = base_dir.joinpath('config.yaml').resolve()
 
-    if not default_storage.exists(cfg_filename) and create:
+    if not cfg_filename.exists() and create:
         print(
             "InvenTree configuration file 'config.yaml' not found - creating default file"
         )
         ensure_dir(cfg_filename.parent)
 
         cfg_template = base_dir.joinpath('config_template.yaml')
-        default_storage.save(cfg_filename, ContentFile(open(cfg_template, 'rb').read()))
+        shutil.copyfile(cfg_template, cfg_filename)
         print(f'Created config file {cfg_filename}')
 
     return cfg_filename
@@ -128,7 +131,7 @@ def load_config_data(set_cache: bool = False) -> map:
 
     cfg_file = get_config_file()
 
-    with default_storage.open(cfg_file, 'r') as cfg:
+    with open(cfg_file, 'r') as cfg:
         data = yaml.safe_load(cfg)
 
     # Set the cache if requested
