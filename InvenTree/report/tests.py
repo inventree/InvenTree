@@ -215,7 +215,7 @@ class ReportTest(InvenTreeAPITestCase):
 
     def copyReportTemplate(self, filename, description):
         """Copy the provided report template into the required media directory."""
-        src_dir = TEMPLATES_DIR.joinpath('report')
+        src_dir = TEMPLATES_DIR.joinpath('report', 'templates', 'report')
         template_dir = os.path.join('report', 'inventree', self.model.getSubdir())
         dst_dir = MEDIA_STORAGE_DIR.joinpath(template_dir)
 

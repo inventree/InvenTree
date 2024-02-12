@@ -68,7 +68,7 @@ class ReportConfig(AppConfig):
     def create_default_reports(self, model, reports):
         """Copy default report files across to the media directory."""
         # Source directory for report templates
-        src_dir = TEMPLATES_DIR.joinpath('report')
+        src_dir = TEMPLATES_DIR.joinpath('report', 'templates', 'report')
 
         # Destination directory
         dst_dir = MEDIA_STORAGE_DIR.joinpath('report', 'inventree', model.getSubdir())

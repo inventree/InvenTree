@@ -135,7 +135,7 @@ class LabelConfig(AppConfig):
     def create_labels_category(self, model, ref_name, labels):
         """Create folder and database entries for the default templates, if they do not already exist."""
         # Create root dir for templates
-        src_dir = TEMPLATES_DIR.joinpath('label', ref_name)
+        src_dir = TEMPLATES_DIR.joinpath('label', 'templates', 'label', ref_name)
         dst_dir = MEDIA_STORAGE_DIR.joinpath('label', 'inventree', ref_name)
 
         if not dst_dir.exists():
