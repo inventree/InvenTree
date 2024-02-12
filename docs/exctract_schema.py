@@ -82,7 +82,7 @@ def generate_index_file(version: str):
 
     output += '\n'
 
-    output_file = os.path.join(os.path.dirname(__file__), OUTPUT_DIR, 'schema.md')
+    output_file = os.path.join(os.path.dirname(__file__), OUTPUT_DIR, '..', 'schema.md')
 
     print('Writing index file to:', output_file)
 
