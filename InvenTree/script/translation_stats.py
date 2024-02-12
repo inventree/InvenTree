@@ -4,8 +4,6 @@ import json
 import os
 import sys
 
-from django.core.files.storage import default_storage
-
 
 def calculate_coverage(filename):
     """Calculate translation coverage for a .po file."""
@@ -33,6 +31,9 @@ def calculate_coverage(filename):
 if __name__ == '__main__':
     MY_DIR = os.path.dirname(os.path.realpath(__file__))
     LC_DIR = os.path.abspath(os.path.join(MY_DIR, '..', 'locale'))
+    STAT_FILE = os.path.abspath(
+        os.path.join(MY_DIR, '..', 'InvenTree/locale_stats.json')
+    )
 
     locales = {}
     locales_perc = {}
@@ -74,7 +75,7 @@ if __name__ == '__main__':
         print('-' * 16)
 
     # write locale stats
-    with default_storage.open('locale_stats.json', 'w') as target:
+    with open(STAT_FILE, 'w') as target:
         json.dump(locales_perc, target)
 
     if len(percentages) > 0:
