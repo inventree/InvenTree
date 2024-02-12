@@ -225,10 +225,10 @@ class SupplierBarcodeMixin(BarcodeMixin):
             return None
 
         if supplier_pk := self.get_setting("SUPPLIER_ID"):
-            if (supplier := Company.objects.get(pk=supplier_pk)):
-                return supplier
-            else:
-                logger.error(
+            try:
+                return Company.objects.get(pk=supplier_pk)
+            except Company.DoesNotExist:
+                logger.exception(
                     "No company with pk %d (set \"SUPPLIER_ID\" setting to a valid value)",
                     supplier_pk
                 )
