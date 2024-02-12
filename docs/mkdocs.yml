@@ -183,7 +183,7 @@ nav:
   - Extend:
     - InvenTree API:
       - Overview: api/api.md
-      - Schema: api/schema.md
+      - API Schema: api/schema.md
       - Model Metadata: api/metadata.md
       - Download Data: api/download.md
       - Bulk Delete: api/bulk_delete.md
