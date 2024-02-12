@@ -4,7 +4,6 @@ import logging
 import os
 import shutil
 import warnings
-from pathlib import Path
 
 from django.apps import AppConfig
 from django.conf import settings
@@ -14,6 +13,7 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.helpers
+from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
 
 logger = logging.getLogger('inventree')
 
@@ -68,10 +68,10 @@ class ReportConfig(AppConfig):
     def create_default_reports(self, model, reports):
         """Copy default report files across to the media directory."""
         # Source directory for report templates
-        src_dir = Path(__file__).parent.joinpath('templates', 'report')
+        src_dir = TEMPLATES_DIR.joinpath('report')
 
         # Destination directory
-        dst_dir = settings.MEDIA_ROOT.joinpath('report', 'inventree', model.getSubdir())
+        dst_dir = MEDIA_STORAGE_DIR.joinpath('report', 'inventree', model.getSubdir())
 
         if not dst_dir.exists():
             logger.info("Creating missing directory: '%s'", dst_dir)

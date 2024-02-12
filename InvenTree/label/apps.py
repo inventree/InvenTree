@@ -16,6 +16,7 @@ from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.helpers
 import InvenTree.ready
+from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
 
 logger = logging.getLogger('inventree')
 
@@ -134,9 +135,8 @@ class LabelConfig(AppConfig):
     def create_labels_category(self, model, ref_name, labels):
         """Create folder and database entries for the default templates, if they do not already exist."""
         # Create root dir for templates
-        src_dir = Path(__file__).parent.joinpath('templates', 'label', ref_name)
-
-        dst_dir = settings.MEDIA_ROOT.joinpath('label', 'inventree', ref_name)
+        src_dir = TEMPLATES_DIR.joinpath('label', ref_name)
+        dst_dir = MEDIA_STORAGE_DIR.joinpath('label', 'inventree', ref_name)
 
         if not dst_dir.exists():
             logger.info("Creating required directory: '%s'", dst_dir)
