@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import textwrap
 
 import yaml
 
@@ -74,6 +75,8 @@ def generate_index_file(version: str):
     | Category | Description |
     | --- | --- |
     """
+
+    output = textwrap.dedent(output).strip() + '\n'
 
     for key, value in SPECIAL_PATHS.items():
         output += f'| [{value}](./schema/{key}.md) | {value} |\n'
