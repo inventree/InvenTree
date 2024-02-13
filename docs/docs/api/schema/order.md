@@ -1,8 +1,7 @@
+---
+title: External Order Management API Schema
+---
 
-    ---
-    title: External Order Management API Schema
-    ---
+The *External Order Management* API schema is documented below.
 
-    The *External Order Management* API schema is documented below.
-
-    [OAD(./docs/docs/api/schema/order.yml)]
+[OAD(./docs/docs/api/schema/order.yml)]

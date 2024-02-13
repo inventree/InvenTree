@@ -1,8 +1,7 @@
+---
+title: Barcode Scanning API Schema
+---
 
-    ---
-    title: Barcode Scanning API Schema
-    ---
+The *Barcode Scanning* API schema is documented below.
 
-    The *Barcode Scanning* API schema is documented below.
-
-    [OAD(./docs/docs/api/schema/barcode.yml)]
+[OAD(./docs/docs/api/schema/barcode.yml)]

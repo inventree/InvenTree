@@ -1,8 +1,7 @@
+---
+title: Authorization and Authentication API Schema
+---
 
-    ---
-    title: Authorization and Authentication API Schema
-    ---
+The *Authorization and Authentication* API schema is documented below.
 
-    The *Authorization and Authentication* API schema is documented below.
-
-    [OAD(./docs/docs/api/schema/auth.yml)]
+[OAD(./docs/docs/api/schema/auth.yml)]

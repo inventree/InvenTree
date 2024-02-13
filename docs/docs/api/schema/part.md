@@ -1,8 +1,7 @@
+---
+title: Parts and Part Categories API Schema
+---
 
-    ---
-    title: Parts and Part Categories API Schema
-    ---
+The *Parts and Part Categories* API schema is documented below.
 
-    The *Parts and Part Categories* API schema is documented below.
-
-    [OAD(./docs/docs/api/schema/part.yml)]
+[OAD(./docs/docs/api/schema/part.yml)]

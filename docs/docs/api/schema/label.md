@@ -1,8 +1,7 @@
+---
+title: Label Printing API Schema
+---
 
-    ---
-    title: Label Printing API Schema
-    ---
+The *Label Printing* API schema is documented below.
 
-    The *Label Printing* API schema is documented below.
-
-    [OAD(./docs/docs/api/schema/label.yml)]
+[OAD(./docs/docs/api/schema/label.yml)]

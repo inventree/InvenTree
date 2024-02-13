@@ -1,8 +1,7 @@
+---
+title: Plugin Functionality API Schema
+---
 
-    ---
-    title: Plugin Functionality API Schema
-    ---
+The *Plugin Functionality* API schema is documented below.
 
-    The *Plugin Functionality* API schema is documented below.
-
-    [OAD(./docs/docs/api/schema/plugins.yml)]
+[OAD(./docs/docs/api/schema/plugins.yml)]
