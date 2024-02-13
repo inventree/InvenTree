@@ -16,8 +16,8 @@ build:
     post_install:
       - echo "Generating API schema file"
       - pip install -U invoke
-      - invoke schema --filename docs/schema.yml --ignore-warnings
       - export INVENTREE_STATIC_ROOT="./static"
       - export INVENTREE_MEDIA_ROOT="./media"
       - export INVENTREE_DB_ENGINE="sqlite3"
       - export INVENTREE_DB_NAME="inventree"
+      - invoke schema --filename docs/schema.yml --ignore-warnings
