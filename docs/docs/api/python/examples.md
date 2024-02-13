@@ -251,6 +251,6 @@ BomItem.create(api,data={'part':sofa_id, 'sub_part':armrest_id, 'quantity':2, 'r
 ```
 
 Now you have three BOM items that make the BOM for the sofa. The _id are the primary keys of the
-specified parts. The reverence can be any string that names the instances. The string gets longer
+specified parts. The reference can be any string that names the instances. The string gets longer
 the more names you put inside which is OK. Anyhow InvenTree does not do anything with the references.
 You can just write Hugo for a quantity of 100. Up to you.
