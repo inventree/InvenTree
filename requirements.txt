@@ -87,6 +87,7 @@ django==4.2.10
     #   django-sql-utils
     #   django-sslserver
     #   django-stdimage
+    #   django-storages
     #   django-taggit
     #   django-user-sessions
     #   django-weasyprint
@@ -149,6 +150,8 @@ django-sql-utils==0.7.0
 django-sslserver==0.22
     # via -r requirements.in
 django-stdimage==6.0.2
+    # via -r requirements.in
+django-storages==1.14.2
     # via -r requirements.in
 django-taggit==5.0.1
     # via -r requirements.in

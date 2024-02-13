@@ -1177,3 +1177,5 @@ if CUSTOM_FLAGS:
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
+
+# File storage settings

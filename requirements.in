@@ -27,6 +27,7 @@ django-sesame                           # Magic link authentication
 django-sql-utils                        # Advanced query annotation / aggregation
 django-sslserver                        # Secure HTTP development server
 django-stdimage                         # Advanced ImageField management
+django-storages                         # Cloud storage support
 django-taggit                           # Tagging support
 django-user-sessions                    # user sessions in DB
 django-weasyprint                       # django weasyprint integration
