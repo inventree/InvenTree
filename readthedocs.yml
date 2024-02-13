@@ -15,4 +15,5 @@ build:
   jobs:
     post_install:
       - echo "Generating API schema file"
+      - pip install -U invoke
       - invoke schema --filename docs/schema.yml --ignore-warnings
