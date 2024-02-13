@@ -337,6 +337,8 @@ class PluginsRegistry:
                 collect,
             )
 
+            _maintenance_mode = get_maintenance_mode()
+
             with maintenance_mode_on():
                 if collect:
                     logger.info('Collecting plugins')
@@ -346,6 +348,10 @@ class PluginsRegistry:
                 self._unload_plugins(force_reload=force_reload)
                 self.plugins_loaded = True
                 self._load_plugins(full_reload=full_reload)
+
+            # Check if we wish to exit maintenance mode
+            if not _maintenance_mode:
+                set_maintenance_mode(False)
 
             self.update_plugin_hash()
 

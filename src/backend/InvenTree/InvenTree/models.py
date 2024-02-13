@@ -106,12 +106,12 @@ class PluginValidationMixin(DiffMixin):
                 )
                 raise ValidationError(_('Error running plugin validation'))
 
-    def full_clean(self):
+    def full_clean(self, *args, **kwargs):
         """Run plugin validation on full model clean.
 
         Note that plugin validation is performed *after* super.full_clean()
         """
-        super().full_clean()
+        super().full_clean(*args, **kwargs)
         self.run_plugin_validation()
 
     def save(self, *args, **kwargs):

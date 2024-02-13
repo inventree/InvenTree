@@ -30,6 +30,7 @@ jobs:
       server: ${{ steps.filter.outputs.server }}
       migrations: ${{ steps.filter.outputs.migrations }}
       frontend: ${{ steps.filter.outputs.frontend }}
+      api: ${{ steps.filter.outputs.api }}
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -44,6 +45,8 @@ jobs:
             migrations:
               - '**/migrations/**'
               - '.github/workflows**'
+            api:
+              - 'InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
 
@@ -126,6 +129,8 @@ jobs:
       INVENTREE_PYTHON_TEST_SERVER: http://localhost:12345
       INVENTREE_PYTHON_TEST_USERNAME: testuser
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
+    outputs:
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -136,8 +141,64 @@ jobs:
           dev-install: true
           update: true
       - name: Export API Documentation
+        run: invoke schema --ignore-warnings
+      - name: Upload schema
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # pin@v3.1.3
+        with:
+          name: schema.yml
+          path: InvenTree/schema.yml
+      - name: Download public schema
+        if: needs.paths-filter.outputs.api == 'false'
         run: |
-          invoke schema --ignore-warnings
+          pip install requests >/dev/null 2>&1
+          version="$(python3 ci/version_check.py only_version 2>&1)"
+          echo "Version: $version"
+          url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
+          echo "URL: $url"
+          curl -s -o api.yaml $url
+          echo "Downloaded api.yaml"
+      - name: Check for differences in schemas
+        if: needs.paths-filter.outputs.api == 'false'
+        run: |
+          diff --color -u InvenTree/schema.yml api.yaml
+          diff -u InvenTree/schema.yml api.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
+      - name: Check schema - including warnings
+        run: invoke schema
+        continue-on-error: true
+      - name: Extract version for publishing
+        id: version
+        if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+        run: |
+          pip install requests >/dev/null 2>&1
+          version="$(python3 ci/version_check.py only_version 2>&1)"
+          echo "Version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  schema-push:
+            name: Push new schema
+            runs-on: ubuntu-20.04
+            needs: [paths-filter, schema]
+            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+            env:
+              version: ${{ needs.schema.outputs.version }}
+
+            steps:
+              - uses: actions/checkout@v4
+                with:
+                    repository: inventree/schema
+                    token: ${{ secrets.SCHEMA_PAT }}
+              - name: Download schema artifact
+                uses: actions/download-artifact@v3
+                with:
+                  name: schema.yml
+              - name: Move schema to correct location
+                run: |
+                  echo "Version: $version"
+                  mkdir export/${version}
+                  mv schema.yml export/${version}/api.yaml
+              - uses: stefanzweifel/git-auto-commit-action@v5
+                with:
+                  commit_message: "Update API schema for ${version}"
 
   python:
     name: Tests - inventree-python
