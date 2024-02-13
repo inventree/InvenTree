@@ -17,8 +17,16 @@ The API is self-documenting, and the documentation is provided alongside any Inv
 {% include 'img.html' %}
 {% endwith %}
 
-!!! info "Schema Description"
+### Schema Description
     The API schema is also documented in the [API Schema](./schema.md) page.
+
+### Generating Schema File
+
+If you want to generate the API schema file yourself (for example to use with an external client, use the `invoke schema` command. Run with the `-help` command to see available options.
+
+```
+invoke schema -help
+```
 
 ## Authentication
 
