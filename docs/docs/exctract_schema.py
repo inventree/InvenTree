@@ -1,6 +1,5 @@
 """Extract API schema and split into smaller subsections."""
 
-import argparse
 import os
 import textwrap
 
@@ -134,12 +133,3 @@ def parse_api_file(filename: str):
 
     # Finally, generate an index file for the API schema
     generate_index_file(data['info']['version'])
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('input', help='Input API schema file (.yml)')
-
-    args = parser.parse_args()
-
-    parse_api_file(args.input)
