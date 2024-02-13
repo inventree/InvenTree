@@ -9,12 +9,6 @@ from distutils.version import StrictVersion
 import requests
 
 
-def rebuild_api_schema():
-    """Rebuild InvenTree API schema on RTD build."""
-    # TODO
-    print('Rebuilding InvenTree API schema')
-
-
 def fetch_rtd_versions():
     """Get a list of RTD docs versions to build the version selector."""
     print('Fetching documentation versions from ReadTheDocs')
@@ -248,7 +242,5 @@ def on_config(config, *args, **kwargs):
 
     # Sort releases by descending date
     config['releases'] = sorted(releases, key=lambda it: it['date'], reverse=True)
-
-    rebuild_api_schema()
 
     return config

@@ -18,3 +18,4 @@ build:
       - pip install -U invoke
       - invoke migrate
       - invoke schema --filename docs/schema.yml --ignore-warnings
+      - python docs/extract_schema.py docs/schema.yml
