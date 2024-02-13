@@ -9,6 +9,9 @@ The API schema as documented below is generated using the [drf-spectactular](htt
 
 This documentation is for API version: `166`
 
+!!! tip "API Schema History"
+    We track API schema changes, and provide a snapshot of each API schema version in the [API schema repository](https://github.com/inventree/schema/).
+
 ## API Schema File
 
 The API schema file is available for download, and can be used for generating client libraries, or for testing API endpoints.
