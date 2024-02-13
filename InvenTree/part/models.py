@@ -57,6 +57,7 @@ from InvenTree.status_codes import (
     SalesOrderStatus,
     SalesOrderStatusGroups,
 )
+from InvenTree.storage_backends import PrivateMediaStorage
 from order import models as OrderModels
 from stock import models as StockModels
 
@@ -3235,6 +3236,7 @@ class PartStocktakeReport(models.Model):
     date = models.DateField(verbose_name=_('Date'), auto_now_add=True)
 
     report = models.FileField(
+        storage=PrivateMediaStorage(),
         upload_to=save_stocktake_report,
         unique=False,
         blank=False,

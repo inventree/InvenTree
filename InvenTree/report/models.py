@@ -25,6 +25,7 @@ import stock.models
 from InvenTree.helpers import validateFilterString
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
+from InvenTree.storage_backends import PrivateMediaStorage
 from plugin.registry import registry
 
 try:
@@ -176,6 +177,7 @@ class ReportBase(InvenTree.models.InvenTreeModel):
     )
 
     template = models.FileField(
+        storage=PrivateMediaStorage(),
         upload_to=rename_template,
         verbose_name=_('Template'),
         help_text=_('Report template file'),
@@ -611,6 +613,7 @@ class ReportSnippet(models.Model):
     """
 
     snippet = models.FileField(
+        storage=PrivateMediaStorage(),
         upload_to=rename_snippet,
         verbose_name=_('Snippet'),
         help_text=_('Report snippet file'),
@@ -656,6 +659,7 @@ class ReportAsset(models.Model):
 
     # Asset file
     asset = models.FileField(
+        storage=PrivateMediaStorage(),
         upload_to=rename_asset,
         verbose_name=_('Asset'),
         help_text=_('Report asset file'),

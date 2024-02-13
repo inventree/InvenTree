@@ -40,6 +40,7 @@ from InvenTree.status_codes import (
     StockStatus,
     StockStatusGroups,
 )
+from InvenTree.storage_backends import PrivateMediaStorage
 from part import models as PartModels
 from plugin.events import trigger_event
 from users.models import Owner
@@ -2356,6 +2357,7 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     )
 
     attachment = models.FileField(
+        storage=PrivateMediaStorage(),
         null=True,
         blank=True,
         upload_to=rename_stock_item_test_result_attachment,

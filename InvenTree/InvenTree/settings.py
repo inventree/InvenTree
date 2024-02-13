@@ -114,12 +114,6 @@ logger = logging.getLogger('inventree')
 # Load SECRET_KEY
 SECRET_KEY = config.get_secret_key()
 
-# The filesystem location for served static files
-STATIC_ROOT = config.get_static_dir()
-
-# The filesystem location for uploaded meadia files
-MEDIA_ROOT = config.get_media_dir()
-
 # List of allowed hosts (default = allow all)
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = get_setting(
@@ -178,9 +172,7 @@ CORS_ALLOWED_ORIGINS = get_setting(
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
-# Web URL endpoint for served static files
-STATIC_URL = '/static/'
-
+# Loccal static files (CSS, JavaScript, Images) discovery
 STATICFILES_DIRS = []
 
 # Translated Template settings
@@ -197,12 +189,6 @@ if DEBUG and 'collectstatic' not in sys.argv:
         STATICFILES_DIRS.append(web_dir)
 
 STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
-
-# Color Themes Directory
-STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
-
-# Web URL endpoint for served media files
-MEDIA_URL = '/media/'
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -283,6 +269,7 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
+    'storages',  # Cloud storage
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -1151,9 +1138,6 @@ FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')
 
-logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
-logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
-
 # Flags
 FLAGS = {
     'EXPERIMENTAL': [
@@ -1179,3 +1163,36 @@ SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
 # File storage settings
+USE_S3 = os.getenv('USE_S3') == 'TRUE'
+
+STATIC_LOCATION = 'static'
+PUBLIC_MEDIA_LOCATION = 'media'
+PRIVATE_MEDIA_LOCATION = 'private'
+# Settings for served static files
+if USE_S3:
+    # aws settings
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_DEFAULT_ACL = None
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+    # s3 static settings
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+    STATICFILES_STORAGE = 'InvenTree.storage_backends.StaticStorage'
+    # s3 public media settings
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'InvenTree.storage_backends.PublicMediaStorage'
+    # s3 private media settings
+    PRIVATE_FILE_STORAGE = 'InvenTree.storage_backends.PrivateMediaStorage'
+else:
+    STATIC_URL = '/static/'
+    STATIC_ROOT = config.get_static_dir()
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = config.get_media_dir()
+
+# Color Themes Directory
+STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
+
+logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
+logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
