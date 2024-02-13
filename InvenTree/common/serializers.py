@@ -59,6 +59,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     units = serializers.CharField(read_only=True)
 
+    typ = serializers.CharField(read_only=True)
+
     def get_choices(self, obj):
         """Returns the choices available for a given item."""
         results = []
@@ -195,7 +197,7 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     read = serializers.BooleanField()
 
-    def get_target(self, obj):
+    def get_target(self, obj) -> dict:
         """Function to resolve generic object reference to target."""
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
@@ -217,7 +219,7 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
         return target
 
-    def get_source(self, obj):
+    def get_source(self, obj) -> dict:
         """Function to resolve generic object reference to source."""
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 

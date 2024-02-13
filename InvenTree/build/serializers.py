@@ -1075,7 +1075,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
-    bom_item = serializers.PrimaryKeyRelatedField(label=_('Bom Item'), read_only=True)
+    bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 
     # Foreign key fields
     bom_item_detail = BomItemSerializer(source='bom_item', many=False, read_only=True, pricing=False)

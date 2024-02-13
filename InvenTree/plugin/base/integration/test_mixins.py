@@ -263,14 +263,17 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         """Test that building up args work."""
         # api_build_url_args
         # 1 arg
-        result = self.mixin.api_build_url_args({'a': 'b'})
-        self.assertEqual(result, '?a=b')
+        result = self.mixin.api_build_url_args({'a': 'abc123'})
+        self.assertEqual(result, '?a=abc123')
+        # non string arg
+        result = self.mixin.api_build_url_args({'a': 1})
+        self.assertEqual(result, '?a=1')
         # more args
-        result = self.mixin.api_build_url_args({'a': 'b', 'c': 'd'})
-        self.assertEqual(result, '?a=b&c=d')
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': 42})
+        self.assertEqual(result, '?a=b&c=42')
         # list args
-        result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'e', 'f']})
-        self.assertEqual(result, '?a=b&c=d,e,f')
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'efgh', 1337]})
+        self.assertEqual(result, '?a=b&c=d,efgh,1337')
 
     def test_api_call(self):
         """Test that api calls work."""
