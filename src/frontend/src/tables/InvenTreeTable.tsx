@@ -76,7 +76,7 @@ export type InvenTreeTableProps<T = any> = {
   printingActions?: any[];
   rowExpansion?: any;
   idAccessor?: string;
-  dataFormatter?: (data: T[]) => T[];
+  dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
 };

@@ -68,7 +68,7 @@ export function CurrencyTable() {
       props={{
         tableActions: tableActions,
         dataFormatter: (data: any) => {
-          let rates = data?.exchange_rates ?? {};
+          let rates = data.exchange_rates ?? {};
 
           return Object.entries(rates).map(([currency, rate]) => {
             return {
