@@ -171,13 +171,26 @@ auto_update: False
 allowed_hosts:
   - '*'
 
-# Cross Origin Resource Sharing (CORS) settings (see https://github.com/ottoyiu/django-cors-headers)
-# Following parameters are
-cors:
-  # CORS_ORIGIN_ALLOW_ALL - If True, the whitelist will not be used and all origins will be accepted.
-  allow_all: True
+# Trusted origins (see CSRF_TRUSTED_ORIGINS in Django settings documentation)
+# If you are running behind a proxy, you may need to add the proxy address here
+trusted_origins:
+  - 'http://localhost:8000'
 
-  # CORS_ORIGIN_WHITELIST - A list of origins that are authorized to make cross-site HTTP requests. Defaults to []
+
+# Proxy forwarding settings
+# If InvenTree is running behind a proxy, you may need to configure these settings
+
+# Override with the environment variable INVENTREE_USE_X_FORWARDED_HOST
+use_x_forwarded_host: false
+
+# Override with the environment variable INVENTREE_USE_X_FORWARDED_PORT
+use_x_forwarded_port: false
+
+# Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
+cors:
+  allow_all: True
+  allow_credentials: True,
+
   # whitelist:
   # - https://example.com
   # - https://sub.example.com

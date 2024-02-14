@@ -21,12 +21,6 @@ from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from maintenance_mode.core import (
-    get_maintenance_mode,
-    maintenance_mode_on,
-    set_maintenance_mode,
-)
-
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
 
@@ -218,11 +212,6 @@ class PluginsRegistry:
         """
         logger.info('Loading plugins')
 
-        # Set maintenance mode
-        _maintenance = bool(get_maintenance_mode())
-        if not _maintenance:
-            set_maintenance_mode(True)
-
         registered_successful = False
         blocked_plugin = None
         retry_counter = settings.PLUGIN_RETRY
@@ -272,10 +261,6 @@ class PluginsRegistry:
         # ensure plugins_loaded is True
         self.plugins_loaded = True
 
-        # Remove maintenance mode
-        if not _maintenance:
-            set_maintenance_mode(False)
-
         logger.debug('Finished loading plugins')
 
         # Trigger plugins_loaded event
@@ -292,20 +277,11 @@ class PluginsRegistry:
         """
         logger.info('Start unloading plugins')
 
-        # Set maintenance mode
-        _maintenance = bool(get_maintenance_mode())
-        if not _maintenance:
-            set_maintenance_mode(True)  # pragma: no cover
-
         # remove all plugins from registry
         self._clean_registry()
 
         # deactivate all integrations
         self._deactivate_plugins(force_reload=force_reload)
-
-        # remove maintenance
-        if not _maintenance:
-            set_maintenance_mode(False)  # pragma: no cover
 
         logger.info('Finished unloading plugins')
 
@@ -337,15 +313,14 @@ class PluginsRegistry:
                 collect,
             )
 
-            with maintenance_mode_on():
-                if collect:
-                    logger.info('Collecting plugins')
-                    self.plugin_modules = self.collect_plugins()
+            if collect:
+                logger.info('Collecting plugins')
+                self.plugin_modules = self.collect_plugins()
 
-                self.plugins_loaded = False
-                self._unload_plugins(force_reload=force_reload)
-                self.plugins_loaded = True
-                self._load_plugins(full_reload=full_reload)
+            self.plugins_loaded = False
+            self._unload_plugins(force_reload=force_reload)
+            self.plugins_loaded = True
+            self._load_plugins(full_reload=full_reload)
 
             self.update_plugin_hash()
 
@@ -439,8 +414,8 @@ class PluginsRegistry:
                 raw_module = importlib.import_module(plugin)
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
 
-            if modules:
-                [collected_plugins.append(item) for item in modules]
+            for item in modules or []:
+                collected_plugins.append(item)
 
         # From this point any plugins are considered "external" and only loaded if plugins are explicitly enabled
         if settings.PLUGINS_ENABLED:
@@ -453,6 +428,7 @@ class PluginsRegistry:
                     try:
                         plugin = entry.load()
                         plugin.is_package = True
+                        plugin.package_name = getattr(entry.dist, 'name', None)
                         plugin._get_package_metadata()
                         collected_plugins.append(plugin)
                     except Exception as error:  # pragma: no cover
@@ -549,9 +525,20 @@ class PluginsRegistry:
             # Check if this is a 'builtin' plugin
             builtin = plg.check_is_builtin()
 
+            package_name = None
+
+            # Extract plugin package name
+            if getattr(plg, 'is_package', False):
+                package_name = getattr(plg, 'package_name', None)
+
             # Auto-enable builtin plugins
             if builtin and plg_db and not plg_db.active:
                 plg_db.active = True
+                plg_db.save()
+
+            # Save the package_name attribute to the plugin
+            if plg_db.package_name != package_name:
+                plg_db.package_name = package_name
                 plg_db.save()
 
             # Determine if this plugin should be loaded:
@@ -580,6 +567,7 @@ class PluginsRegistry:
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)
+
                 plg_i.pk = plg_db.pk if plg_db else None
                 plg_i.db = plg_db
 

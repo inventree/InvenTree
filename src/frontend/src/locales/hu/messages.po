@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-02 11:45\n"
+"PO-Revision-Date: 2024-02-10 14:55\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -22,32 +22,33 @@ msgstr ""
 msgid "Title"
 msgstr "Cím"
 
-#: src/components/forms/ApiForm.tsx:131
+#: src/components/forms/ApiForm.tsx:132
 #: src/functions/forms.tsx:259
 msgid "Form Error"
 msgstr "Form hiba"
 
-#: src/components/forms/ApiForm.tsx:321
+#: src/components/forms/ApiForm.tsx:323
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
 msgstr "Siker"
 
-#: src/components/forms/ApiForm.tsx:392
+#: src/components/forms/ApiForm.tsx:396
 msgid "Form Errors Exist"
 msgstr "Form hibák vannak"
 
-#: src/components/forms/ApiForm.tsx:447
+#: src/components/forms/ApiForm.tsx:451
 #: src/components/images/DetailsImage.tsx:223
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
 msgstr "Küldés"
 
-#: src/components/forms/ApiForm.tsx:483
+#: src/components/forms/ApiForm.tsx:487
+#: src/tables/plugin/PluginListTable.tsx:436
 msgid "Update"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:503
+#: src/components/forms/ApiForm.tsx:507
 #: src/components/items/ActionDropdown.tsx:173
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:120
@@ -55,6 +56,7 @@ msgstr ""
 #: src/pages/Notifications.tsx:79
 #: src/tables/InvenTreeTable.tsx:456
 #: src/tables/RowActions.tsx:70
+#: src/tables/plugin/PluginListTable.tsx:467
 msgid "Delete"
 msgstr "Törlés"
 
@@ -218,7 +220,7 @@ msgstr "Kiszolgáló"
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
 #: src/tables/plugin/PluginErrorTable.tsx:33
-#: src/tables/plugin/PluginListTable.tsx:160
+#: src/tables/plugin/PluginListTable.tsx:167
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:27
 #: src/tables/settings/GroupTable.tsx:103
 #: src/tables/settings/PendingTasksTable.tsx:26
@@ -270,7 +272,7 @@ msgstr "Státusz: <0>worker</0> ({0}), <1>plugins</1>{1}"
 #: src/pages/ErrorPage.tsx:25
 #: src/tables/InvenTreeTable.tsx:416
 #: src/tables/InvenTreeTable.tsx:489
-#: src/tables/plugin/PluginListTable.tsx:367
+#: src/tables/plugin/PluginListTable.tsx:393
 msgid "Error"
 msgstr "Hiba"
 
@@ -312,7 +314,7 @@ msgstr "Eltávolítás"
 #: src/hooks/UseForm.tsx:38
 #: src/tables/FilterSelectDrawer.tsx:209
 #: src/tables/InvenTreeTable.tsx:457
-#: src/tables/plugin/PluginListTable.tsx:336
+#: src/tables/plugin/PluginListTable.tsx:356
 msgid "Cancel"
 msgstr "Mégsem"
 
@@ -670,8 +672,8 @@ msgid "Email settings not configured"
 msgstr "Email beállítások hiányoznak"
 
 #: src/components/modals/ServerInfoModal.tsx:121
-#: src/tables/plugin/PluginListTable.tsx:178
-#: src/tables/plugin/PluginListTable.tsx:290
+#: src/tables/plugin/PluginListTable.tsx:185
+#: src/tables/plugin/PluginListTable.tsx:310
 msgid "Version"
 msgstr "Verzió"
 
@@ -745,6 +747,7 @@ msgstr "Oldalak"
 
 #: src/components/nav/NavigationDrawer.tsx:67
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:95
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
 msgstr "Pluginok"
 
@@ -829,7 +832,7 @@ msgid "Unknown model: {model}"
 msgstr "Ismeretlen model: {model}"
 
 #: src/components/render/ModelType.tsx:21
-#: src/pages/part/PartDetail.tsx:706
+#: src/pages/part/PartDetail.tsx:703
 #: src/tables/part/RelatedPartTable.tsx:45
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:59
 msgid "Part"
@@ -841,7 +844,7 @@ msgstr "Alkatrész"
 #: src/pages/Index/Settings/SystemSettings.tsx:171
 #: src/pages/part/CategoryDetail.tsx:51
 #: src/pages/part/CategoryDetail.tsx:81
-#: src/pages/part/PartDetail.tsx:617
+#: src/pages/part/PartDetail.tsx:614
 msgid "Parts"
 msgstr "Alkatrészek"
 
@@ -938,7 +941,7 @@ msgstr "Beszerzési rendelés"
 #: src/pages/Index/Settings/SystemSettings.tsx:235
 #: src/pages/company/CompanyDetail.tsx:99
 #: src/pages/company/SupplierPartDetail.tsx:45
-#: src/pages/part/PartDetail.tsx:550
+#: src/pages/part/PartDetail.tsx:547
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
 msgstr "Beszerzési rendelések"
@@ -959,7 +962,7 @@ msgstr "Vevői rendelés"
 #: src/components/render/ModelType.tsx:118
 #: src/pages/Index/Settings/SystemSettings.tsx:249
 #: src/pages/company/CompanyDetail.tsx:115
-#: src/pages/part/PartDetail.tsx:556
+#: src/pages/part/PartDetail.tsx:553
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
 msgstr "Vevői rendelések"
@@ -1029,7 +1032,7 @@ msgstr "Szállítmány"
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:202
-#: src/pages/part/PartDetail.tsx:473
+#: src/pages/part/PartDetail.tsx:470
 #: src/pages/stock/LocationDetail.tsx:63
 #: src/pages/stock/StockDetail.tsx:140
 #: src/tables/stock/StockItemTable.tsx:38
@@ -1097,25 +1100,26 @@ msgstr "Beállítás szerkesztése"
 #~ msgid "Select from the available filters"
 #~ msgstr "Select from the available filters"
 
-#: src/components/tables/bom/BomTable.tsx:99
-#: src/components/tables/bom/UsedInTable.tsx:76
-#: src/components/tables/build/BuildOrderTable.tsx:33
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:117
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:66
+#: src/components/tables/bom/BomTable.tsx:101
+#: src/components/tables/bom/UsedInTable.tsx:54
+#: src/components/tables/build/BuildLineTable.tsx:124
+#: src/components/tables/build/BuildOrderTable.tsx:34
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:121
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:67
 #~ msgid "Reference"
 #~ msgstr "Reference"
 
-#: src/components/tables/bom/BomTable.tsx:111
+#: src/components/tables/bom/BomTable.tsx:113
 #~ msgid "Substitutes"
 #~ msgstr "Substitutes"
 
-#: src/components/tables/bom/BomTable.tsx:133
+#: src/components/tables/bom/BomTable.tsx:135
 #~ msgid "Allow Variants"
 #~ msgstr "Allow Variants"
 
-#: src/components/tables/bom/BomTable.tsx:137
-#: src/components/tables/bom/BomTable.tsx:263
-#: src/components/tables/bom/UsedInTable.tsx:86
+#: src/components/tables/bom/BomTable.tsx:139
+#: src/components/tables/bom/BomTable.tsx:265
+#: src/components/tables/bom/UsedInTable.tsx:64
 #~ msgid "Gets Inherited"
 #~ msgstr "Gets Inherited"
 
@@ -1123,31 +1127,35 @@ msgstr "Beállítás szerkesztése"
 #~ msgid "Validate"
 #~ msgstr "Validate"
 
-#: src/components/tables/bom/BomTable.tsx:248
+#: src/components/tables/bom/BomTable.tsx:250
 #~ msgid "Has Available Stock"
 #~ msgstr "Has Available Stock"
 
-#: src/components/tables/bom/BomTable.tsx:258
+#: src/components/tables/bom/BomTable.tsx:260
 #~ msgid "Validated"
 #~ msgstr "Validated"
 
-#: src/components/tables/bom/UsedInTable.tsx:50
+#: src/components/tables/bom/UsedInTable.tsx:40
 #~ msgid "Required Part"
 #~ msgstr "Required Part"
 
-#: src/components/tables/build/BuildOrderTable.tsx:63
+#: src/components/tables/build/BuildLineTable.tsx:152
+#~ msgid "Required Quantity"
+#~ msgstr "Required Quantity"
+
+#: src/components/tables/build/BuildOrderTable.tsx:52
 #~ msgid "Progress"
 #~ msgstr "Progress"
 
-#: src/components/tables/build/BuildOrderTable.tsx:76
+#: src/components/tables/build/BuildOrderTable.tsx:65
 #~ msgid "Priority"
 #~ msgstr "Priority"
 
-#: src/components/tables/build/BuildOrderTable.tsx:84
+#: src/components/tables/build/BuildOrderTable.tsx:73
 #~ msgid "Completed"
 #~ msgstr "Completed"
 
-#: src/components/tables/build/BuildOrderTable.tsx:90
+#: src/components/tables/build/BuildOrderTable.tsx:79
 #~ msgid "Issued By"
 #~ msgstr "Issued By"
 
@@ -1227,7 +1235,7 @@ msgstr "Beállítás szerkesztése"
 #~ msgid "Uploaded"
 #~ msgstr "Uploaded"
 
-#: src/components/tables/part/PartCategoryTable.tsx:120
+#: src/components/tables/part/PartCategoryTable.tsx:122
 #~ msgid "Part category updated"
 #~ msgstr "Part category updated"
 
@@ -1338,31 +1346,35 @@ msgstr "Beállítás szerkesztése"
 #~ msgid "Are you sure you want to remove this relationship?"
 #~ msgstr "Are you sure you want to remove this relationship?"
 
+#: src/components/tables/plugin/PluginListTable.tsx:191
+#~ msgid "Installation path"
+#~ msgstr "Installation path"
+
 #: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:55
 #~ msgid "Receive"
 #~ msgstr "Receive"
 
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:77
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:81
 #~ msgid "Line item updated"
 #~ msgstr "Line item updated"
 
-#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:228
+#: src/components/tables/purchasing/PurchaseOrderLineItemTable.tsx:232
 #~ msgid "Line item added"
 #~ msgstr "Line item added"
 
-#: src/components/tables/purchasing/PurchaseOrderTable.tsx:90
+#: src/components/tables/purchasing/PurchaseOrderTable.tsx:91
 #~ msgid "Supplier Reference"
 #~ msgstr "Supplier Reference"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:93
+#: src/components/tables/purchasing/SupplierPartTable.tsx:99
 #~ msgid "Packaging"
 #~ msgstr "Packaging"
 
-#: src/components/tables/purchasing/SupplierPartTable.tsx:131
+#: src/components/tables/purchasing/SupplierPartTable.tsx:137
 #~ msgid "Availability"
 #~ msgstr "Availability"
 
-#: src/components/tables/sales/ReturnOrderTable.tsx:93
+#: src/components/tables/sales/ReturnOrderTable.tsx:94
 #~ msgid "Total Cost"
 #~ msgstr "Total Cost"
 
@@ -1478,23 +1490,23 @@ msgstr "Beállítás szerkesztése"
 #~ msgid "Superuser"
 #~ msgstr "Superuser"
 
-#: src/components/tables/stock/StockItemTable.tsx:180
+#: src/components/tables/stock/StockItemTable.tsx:181
 #~ msgid "Batch"
 #~ msgstr "Batch"
 
-#: src/components/tables/stock/StockItemTable.tsx:186
+#: src/components/tables/stock/StockItemTable.tsx:187
 #~ msgid "Location"
 #~ msgstr "Location"
 
-#: src/components/tables/stock/StockItemTable.tsx:197
+#: src/components/tables/stock/StockItemTable.tsx:198
 #~ msgid "Expiry Date"
 #~ msgstr "Expiry Date"
 
-#: src/components/tables/stock/StockItemTable.tsx:204
+#: src/components/tables/stock/StockItemTable.tsx:205
 #~ msgid "Last Updated"
 #~ msgstr "Last Updated"
 
-#: src/components/tables/stock/StockItemTable.tsx:213
+#: src/components/tables/stock/StockItemTable.tsx:214
 #~ msgid "Purchase Price"
 #~ msgstr "Purchase Price"
 
@@ -1506,16 +1518,16 @@ msgstr "Beállítás szerkesztése"
 #~ msgid "This is a test filter"
 #~ msgstr "This is a test filter"
 
-#: src/components/tables/stock/StockLocationTable.tsx:43
-#: src/components/tables/stock/StockLocationTable.tsx:82
+#: src/components/tables/stock/StockLocationTable.tsx:45
+#: src/components/tables/stock/StockLocationTable.tsx:84
 #~ msgid "External"
 #~ msgstr "External"
 
-#: src/components/tables/stock/StockLocationTable.tsx:89
+#: src/components/tables/stock/StockLocationTable.tsx:91
 #~ msgid "Location Type"
 #~ msgstr "Location Type"
 
-#: src/components/tables/stock/StockLocationTable.tsx:143
+#: src/components/tables/stock/StockLocationTable.tsx:145
 #~ msgid "Stock location updated"
 #~ msgstr "Stock location updated"
 
@@ -2023,7 +2035,7 @@ msgstr "Melléklet törölve"
 msgid "Are you sure you want to delete this attachment?"
 msgstr "Biztos törölni akarod ezt a mellékletet?"
 
-#: src/forms/CompanyForms.tsx:138
+#: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
 #~ msgstr "Company updated"
 
@@ -2689,22 +2701,18 @@ msgstr "Új felhasználó hozzáadása"
 msgid "Advanced Options"
 msgstr "További beállítások"
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:19
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:28
 #: src/tables/settings/UserTable.tsx:103
 msgid "Info"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:23
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
 msgid "External plugins are not enabled for this InvenTree installation."
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
-msgid "Plugin Error Stack"
-msgstr ""
-
-#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:40
-msgid "Plugin Settings"
-msgstr "Plugin beállítások"
+#~ msgid "Plugin Error Stack"
+#~ msgstr "Plugin Error Stack"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:45
 #~ msgid "Warning"
@@ -2713,6 +2721,14 @@ msgstr "Plugin beállítások"
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:47
 #~ msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 #~ msgstr "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:50
+msgid "Plugin Errors"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:59
+msgid "Plugin Settings"
+msgstr "Plugin beállítások"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:25
 msgid "Pending Tasks"
@@ -2749,7 +2765,7 @@ msgstr "Vonalkódok"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:107
 #: src/pages/company/SupplierPartDetail.tsx:55
-#: src/pages/part/PartDetail.tsx:519
+#: src/pages/part/PartDetail.tsx:516
 msgid "Pricing"
 msgstr "Árazás"
 
@@ -2771,14 +2787,14 @@ msgid "Reporting"
 msgstr "Riportolás"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:224
-#: src/pages/part/PartDetail.tsx:568
+#: src/pages/part/PartDetail.tsx:565
 msgid "Stocktake"
 msgstr "Leltár"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:229
 #: src/pages/build/BuildDetail.tsx:264
 #: src/pages/build/BuildIndex.tsx:14
-#: src/pages/part/PartDetail.tsx:505
+#: src/pages/part/PartDetail.tsx:502
 #: src/pages/sales/SalesOrderDetail.tsx:62
 msgid "Build Orders"
 msgstr "Gyártási utasítások"
@@ -2867,7 +2883,7 @@ msgstr "Alárendelt gyártások"
 #: src/pages/build/BuildDetail.tsx:163
 #: src/pages/company/CompanyDetail.tsx:154
 #: src/pages/company/ManufacturerPartDetail.tsx:68
-#: src/pages/part/PartDetail.tsx:590
+#: src/pages/part/PartDetail.tsx:587
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:78
 #: src/pages/sales/ReturnOrderDetail.tsx:38
 #: src/pages/sales/SalesOrderDetail.tsx:72
@@ -2877,7 +2893,7 @@ msgstr "Mellékletek"
 
 #: src/pages/build/BuildDetail.tsx:175
 #: src/pages/company/CompanyDetail.tsx:166
-#: src/pages/part/PartDetail.tsx:602
+#: src/pages/part/PartDetail.tsx:599
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:90
 #: src/pages/sales/ReturnOrderDetail.tsx:50
 #: src/pages/sales/SalesOrderDetail.tsx:84
@@ -2901,14 +2917,14 @@ msgstr "Megjegyzések"
 msgid "Edit Build Order"
 msgstr "Gyártási utasítás szerkesztése"
 
-#: src/pages/build/BuildDetail.tsx:192
-#~ msgid "Build Order updated"
-#~ msgstr "Build Order updated"
-
 #: src/pages/build/BuildDetail.tsx:196
 #: src/pages/part/PartDetail.tsx:280
 #~ msgid "Unlink custom barcode from part"
 #~ msgstr "Unlink custom barcode from part"
+
+#: src/pages/build/BuildDetail.tsx:202
+#~ msgid "Build Order updated"
+#~ msgstr "Build Order updated"
 
 #: src/pages/build/BuildDetail.tsx:211
 #~ msgid "Build Order"
@@ -2953,7 +2969,7 @@ msgstr "Gyártáshoz foglalások"
 #: src/pages/company/CompanyDetail.tsx:76
 #: src/pages/company/ManufacturerPartDetail.tsx:37
 #: src/pages/company/SupplierPartDetail.tsx:35
-#: src/pages/part/PartDetail.tsx:452
+#: src/pages/part/PartDetail.tsx:449
 #: src/pages/stock/StockDetail.tsx:70
 msgid "Details"
 msgstr "Részletek"
@@ -2999,12 +3015,12 @@ msgstr "Gyártó"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:42
 #: src/pages/part/CategoryDetail.tsx:71
-#: src/pages/part/PartDetail.tsx:467
+#: src/pages/part/PartDetail.tsx:464
 msgid "Parameters"
 msgstr "Paraméterek"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:54
-#: src/pages/part/PartDetail.tsx:537
+#: src/pages/part/PartDetail.tsx:534
 #: src/pages/purchasing/PurchasingIndex.tsx:26
 msgid "Suppliers"
 msgstr "Beszállítók"
@@ -3028,15 +3044,15 @@ msgstr "Beérkezett készlet"
 #~ msgid "Subcategories"
 #~ msgstr "Subcategories"
 
-#: src/pages/part/PartDetail.tsx:114
+#: src/pages/part/PartDetail.tsx:115
 #: src/tables/ColumnRenderers.tsx:52
 #: src/tables/part/RelatedPartTable.tsx:64
-#: src/tables/plugin/PluginListTable.tsx:163
-#: src/tables/plugin/PluginListTable.tsx:277
+#: src/tables/plugin/PluginListTable.tsx:170
+#: src/tables/plugin/PluginListTable.tsx:297
 msgid "Description"
 msgstr "Leírás"
 
-#: src/pages/part/PartDetail.tsx:124
+#: src/pages/part/PartDetail.tsx:125
 msgid "Variant of"
 msgstr ""
 
@@ -3084,29 +3100,29 @@ msgstr "Gyártásban"
 msgid "Category"
 msgstr "Kategória"
 
-#: src/pages/part/PartDetail.tsx:240
+#: src/pages/part/PartDetail.tsx:239
 msgid "IPN"
 msgstr "IPN"
 
-#: src/pages/part/PartDetail.tsx:251
+#: src/pages/part/PartDetail.tsx:250
 msgid "Revision"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:262
+#: src/pages/part/PartDetail.tsx:261
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:39
 msgid "Units"
 msgstr "Mértékegységek"
 
-#: src/pages/part/PartDetail.tsx:272
+#: src/pages/part/PartDetail.tsx:271
 #: src/tables/settings/PendingTasksTable.tsx:40
 msgid "Keywords"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:282
+#: src/pages/part/PartDetail.tsx:281
 msgid "Creation Date"
 msgstr "Létrehozás dátuma"
 
-#: src/pages/part/PartDetail.tsx:296
+#: src/pages/part/PartDetail.tsx:295
 #: src/tables/bom/BomTable.tsx:137
 #: src/tables/part/PartTable.tsx:154
 msgid "Price Range"
@@ -3124,85 +3140,85 @@ msgstr "Ártartomány"
 #~ msgid "Delete part"
 #~ msgstr "Delete part"
 
-#: src/pages/part/PartDetail.tsx:333
+#: src/pages/part/PartDetail.tsx:332
 msgid "Last Stocktake"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:394
+#: src/pages/part/PartDetail.tsx:393
 msgid "Default Location"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:406
+#: src/pages/part/PartDetail.tsx:404
 msgid "Default Supplier"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:418
+#: src/pages/part/PartDetail.tsx:415
 msgid "Link"
 msgstr "Link"
 
-#: src/pages/part/PartDetail.tsx:430
+#: src/pages/part/PartDetail.tsx:427
 msgid "Responsible"
 msgstr "Felelős"
 
-#: src/pages/part/PartDetail.tsx:485
+#: src/pages/part/PartDetail.tsx:482
 msgid "Variants"
 msgstr "Változatok"
 
-#: src/pages/part/PartDetail.tsx:492
+#: src/pages/part/PartDetail.tsx:489
 #: src/pages/stock/StockDetail.tsx:82
 msgid "Allocations"
 msgstr "Foglalások"
 
-#: src/pages/part/PartDetail.tsx:498
+#: src/pages/part/PartDetail.tsx:495
 msgid "Bill of Materials"
 msgstr "Alkatrészjegyzék"
 
-#: src/pages/part/PartDetail.tsx:512
+#: src/pages/part/PartDetail.tsx:509
 msgid "Used In"
 msgstr "Felhasználva ebben"
 
-#: src/pages/part/PartDetail.tsx:524
+#: src/pages/part/PartDetail.tsx:521
 #: src/pages/purchasing/PurchasingIndex.tsx:37
 msgid "Manufacturers"
 msgstr "Gyártók"
 
-#: src/pages/part/PartDetail.tsx:563
+#: src/pages/part/PartDetail.tsx:560
 msgid "Scheduling"
 msgstr "Ütemezés"
 
-#: src/pages/part/PartDetail.tsx:573
+#: src/pages/part/PartDetail.tsx:570
 msgid "Test Templates"
 msgstr "Teszt sablonok"
 
-#: src/pages/part/PartDetail.tsx:584
+#: src/pages/part/PartDetail.tsx:581
 msgid "Related Parts"
 msgstr "Kapcsolódó alkatrészek"
 
-#: src/pages/part/PartDetail.tsx:639
+#: src/pages/part/PartDetail.tsx:636
 msgid "Edit Part"
 msgstr "Alkatrész szerkesztése"
 
-#: src/pages/part/PartDetail.tsx:660
+#: src/pages/part/PartDetail.tsx:657
 msgid "Stock Actions"
 msgstr "Készlet műveletek"
 
-#: src/pages/part/PartDetail.tsx:665
+#: src/pages/part/PartDetail.tsx:662
 msgid "Count Stock"
 msgstr "Leltározás"
 
-#: src/pages/part/PartDetail.tsx:666
+#: src/pages/part/PartDetail.tsx:663
 msgid "Count part stock"
 msgstr "Készlet számolása"
 
-#: src/pages/part/PartDetail.tsx:670
+#: src/pages/part/PartDetail.tsx:667
 msgid "Transfer Stock"
 msgstr "Készlet áthelyezése"
 
-#: src/pages/part/PartDetail.tsx:671
+#: src/pages/part/PartDetail.tsx:668
 msgid "Transfer part stock"
 msgstr "Készlet áthelyezése"
 
-#: src/pages/part/PartDetail.tsx:677
+#: src/pages/part/PartDetail.tsx:674
 msgid "Part Actions"
 msgstr "Alkatrész műveletek"
 
@@ -3323,54 +3339,54 @@ msgstr "Teljes ár"
 msgid "Select Columns"
 msgstr "Oszlopok kiválasztása"
 
-#: src/tables/Details.tsx:109
+#: src/tables/Details.tsx:111
 msgid "Part is not active"
 msgstr ""
 
-#: src/tables/Details.tsx:115
+#: src/tables/Details.tsx:117
 msgid "Inactive"
 msgstr ""
 
-#: src/tables/Details.tsx:122
+#: src/tables/Details.tsx:124
 msgid "Part is a template part (variants can be made from this part)"
 msgstr ""
 
-#: src/tables/Details.tsx:128
+#: src/tables/Details.tsx:130
 msgid "Part can be assembled from other parts"
 msgstr ""
 
-#: src/tables/Details.tsx:134
+#: src/tables/Details.tsx:136
 msgid "Part can be used in assemblies"
 msgstr ""
 
-#: src/tables/Details.tsx:140
+#: src/tables/Details.tsx:142
 msgid "Part stock is tracked by serial number"
 msgstr ""
 
-#: src/tables/Details.tsx:146
+#: src/tables/Details.tsx:148
 msgid "Part can be purchased from external suppliers"
 msgstr ""
 
-#: src/tables/Details.tsx:152
+#: src/tables/Details.tsx:154
 msgid "Part can be sold to customers"
 msgstr ""
 
-#: src/tables/Details.tsx:157
+#: src/tables/Details.tsx:159
 msgid "Part is virtual (not a physical part)"
 msgstr ""
 
-#: src/tables/Details.tsx:163
+#: src/tables/Details.tsx:165
 #: src/tables/part/PartTable.tsx:236
 #: src/tables/part/PartTable.tsx:240
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Virtuális"
 
-#: src/tables/Details.tsx:344
+#: src/tables/Details.tsx:354
 msgid "Copied"
 msgstr ""
 
-#: src/tables/Details.tsx:344
+#: src/tables/Details.tsx:354
 msgid "Copy"
 msgstr ""
 
@@ -3642,8 +3658,8 @@ msgstr "Biztos benne, hogy eltávolítja ezt az alkatrészjegyzék tételt?"
 #: src/tables/build/BuildOrderTable.tsx:102
 #: src/tables/part/PartTable.tsx:170
 #: src/tables/part/PartVariantTable.tsx:15
-#: src/tables/plugin/PluginListTable.tsx:181
-#: src/tables/plugin/PluginListTable.tsx:503
+#: src/tables/plugin/PluginListTable.tsx:188
+#: src/tables/plugin/PluginListTable.tsx:627
 #: src/tables/stock/StockItemTable.tsx:228
 msgid "Active"
 msgstr "Aktív"
@@ -3735,7 +3751,7 @@ msgid "Add Build Order"
 msgstr "Gyártási utasítás létrehozása"
 
 #: src/tables/company/AddressTable.tsx:121
-#: src/tables/company/AddressTable.tsx:187
+#: src/tables/company/AddressTable.tsx:185
 msgid "Add Address"
 msgstr ""
 
@@ -3743,15 +3759,15 @@ msgstr ""
 msgid "Address created"
 msgstr ""
 
-#: src/tables/company/AddressTable.tsx:137
+#: src/tables/company/AddressTable.tsx:135
 msgid "Edit Address"
 msgstr ""
 
-#: src/tables/company/AddressTable.tsx:145
+#: src/tables/company/AddressTable.tsx:143
 msgid "Delete Address"
 msgstr ""
 
-#: src/tables/company/AddressTable.tsx:147
+#: src/tables/company/AddressTable.tsx:145
 msgid "Are you sure you want to delete this address?"
 msgstr ""
 
@@ -3841,11 +3857,11 @@ msgstr ""
 msgid "New Part Category"
 msgstr ""
 
-#: src/tables/part/PartCategoryTable.tsx:98
+#: src/tables/part/PartCategoryTable.tsx:96
 msgid "Edit Part Category"
 msgstr ""
 
-#: src/tables/part/PartCategoryTable.tsx:108
+#: src/tables/part/PartCategoryTable.tsx:106
 msgid "Add Part Category"
 msgstr ""
 
@@ -4019,15 +4035,15 @@ msgid "Show tests that require an attachment"
 msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:80
-#: src/tables/part/PartTestTemplateTable.tsx:137
+#: src/tables/part/PartTestTemplateTable.tsx:135
 msgid "Add Test Template"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:95
+#: src/tables/part/PartTestTemplateTable.tsx:93
 msgid "Edit Test Template"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:103
+#: src/tables/part/PartTestTemplateTable.tsx:101
 msgid "Delete Test Template"
 msgstr ""
 
@@ -4071,174 +4087,214 @@ msgstr "Kapcsolódó alkatrész hozzáadása"
 msgid "Stage"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:106
+#: src/tables/plugin/PluginListTable.tsx:113
 msgid "Plugin with id {id} not found"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:108
+#: src/tables/plugin/PluginListTable.tsx:115
 msgid "An error occurred while fetching plugin details"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:125
+#: src/tables/plugin/PluginListTable.tsx:132
 msgid "Plugin Actions"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:129
-#: src/tables/plugin/PluginListTable.tsx:132
+#: src/tables/plugin/PluginListTable.tsx:136
+#: src/tables/plugin/PluginListTable.tsx:139
 msgid "Edit plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:143
-#: src/tables/plugin/PluginListTable.tsx:144
+#: src/tables/plugin/PluginListTable.tsx:150
+#: src/tables/plugin/PluginListTable.tsx:151
 msgid "Reload"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:157
+#: src/tables/plugin/PluginListTable.tsx:164
 msgid "Plugin information"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:168
+#: src/tables/plugin/PluginListTable.tsx:175
 msgid "Author"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:173
+#: src/tables/plugin/PluginListTable.tsx:180
 msgid "Date"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:189
+#: src/tables/plugin/PluginListTable.tsx:196
 msgid "Package information"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:194
-msgid "Installation path"
+#: src/tables/plugin/PluginListTable.tsx:202
+msgid "Package Name"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:199
-#: src/tables/plugin/PluginListTable.tsx:508
+#: src/tables/plugin/PluginListTable.tsx:208
+msgid "Installation Path"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:213
+#: src/tables/plugin/PluginListTable.tsx:632
 msgid "Builtin"
 msgstr "Beépített"
 
-#: src/tables/plugin/PluginListTable.tsx:210
+#: src/tables/plugin/PluginListTable.tsx:218
+msgid "Package"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:229
 msgid "Plugin settings"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:227
+#: src/tables/plugin/PluginListTable.tsx:246
 msgid "Plugin is active"
 msgstr "Ez a plugin aktív"
 
-#: src/tables/plugin/PluginListTable.tsx:233
+#: src/tables/plugin/PluginListTable.tsx:252
 msgid "Plugin is inactive"
 msgstr "Ez a plugin nem aktív"
 
-#: src/tables/plugin/PluginListTable.tsx:240
+#: src/tables/plugin/PluginListTable.tsx:259
 msgid "Plugin is not installed"
 msgstr "Ez a plugin nincs telepítve"
 
-#: src/tables/plugin/PluginListTable.tsx:262
+#: src/tables/plugin/PluginListTable.tsx:282
 msgid "Plugin"
 msgstr "Plugin"
 
-#: src/tables/plugin/PluginListTable.tsx:284
+#: src/tables/plugin/PluginListTable.tsx:304
 msgid "Description not available"
 msgstr "Leírás nem elérhető"
 
-#: src/tables/plugin/PluginListTable.tsx:309
+#: src/tables/plugin/PluginListTable.tsx:329
 msgid "Activate Plugin"
 msgstr "Plugin aktiválása"
 
-#: src/tables/plugin/PluginListTable.tsx:309
+#: src/tables/plugin/PluginListTable.tsx:329
 msgid "Deactivate Plugin"
 msgstr "Plugin kikapcsolása"
 
-#: src/tables/plugin/PluginListTable.tsx:318
+#: src/tables/plugin/PluginListTable.tsx:338
 msgid "Confirm plugin activation"
 msgstr "Plugin telepítésének megerősítése"
 
-#: src/tables/plugin/PluginListTable.tsx:319
+#: src/tables/plugin/PluginListTable.tsx:339
 msgid "Confirm plugin deactivation"
 msgstr "Plugin kikapcsolásának megerősítése"
 
-#: src/tables/plugin/PluginListTable.tsx:325
+#: src/tables/plugin/PluginListTable.tsx:345
 msgid "The following plugin will be activated"
 msgstr "Az alábbi plugin be lesz kapcsolva"
 
-#: src/tables/plugin/PluginListTable.tsx:326
+#: src/tables/plugin/PluginListTable.tsx:346
 msgid "The following plugin will be deactivated"
 msgstr "Az alábbi plugin ki lesz kapcsolva"
 
-#: src/tables/plugin/PluginListTable.tsx:337
+#: src/tables/plugin/PluginListTable.tsx:357
 msgid "Confirm"
 msgstr "Megerősítés"
 
-#: src/tables/plugin/PluginListTable.tsx:347
+#: src/tables/plugin/PluginListTable.tsx:367
 msgid "Activating plugin"
 msgstr "Plugin bekapcsolása"
 
-#: src/tables/plugin/PluginListTable.tsx:347
+#: src/tables/plugin/PluginListTable.tsx:367
 msgid "Deactivating plugin"
 msgstr "Plugin kikapcsolása"
 
-#: src/tables/plugin/PluginListTable.tsx:357
+#: src/tables/plugin/PluginListTable.tsx:383
 msgid "Plugin updated"
 msgstr "Plugin frissítve"
 
-#: src/tables/plugin/PluginListTable.tsx:359
+#: src/tables/plugin/PluginListTable.tsx:385
 msgid "The plugin was activated"
 msgstr "Plugin bekapcsolva"
 
-#: src/tables/plugin/PluginListTable.tsx:360
+#: src/tables/plugin/PluginListTable.tsx:386
 msgid "The plugin was deactivated"
 msgstr "Plugin kikapcsolva"
 
-#: src/tables/plugin/PluginListTable.tsx:368
+#: src/tables/plugin/PluginListTable.tsx:394
 msgid "Error updating plugin"
 msgstr "Plugin frissítési hiba"
 
-#: src/tables/plugin/PluginListTable.tsx:385
+#: src/tables/plugin/PluginListTable.tsx:414
 msgid "Deactivate"
 msgstr "Kikapcsolás"
 
-#: src/tables/plugin/PluginListTable.tsx:394
+#: src/tables/plugin/PluginListTable.tsx:423
 msgid "Activate"
 msgstr "Bekapcsolás"
 
-#: src/tables/plugin/PluginListTable.tsx:408
+#: src/tables/plugin/PluginListTable.tsx:454
+msgid "Uninstall"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:485
 msgid "Install plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:416
+#: src/tables/plugin/PluginListTable.tsx:498
 msgid "Install"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:420
+#: src/tables/plugin/PluginListTable.tsx:502
 msgid "Plugin installed successfully"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:441
+#: src/tables/plugin/PluginListTable.tsx:515
+msgid "Uninstall Plugin"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:527
+msgid "Confirm plugin uninstall"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:530
+msgid "The selected plugin will be uninstalled."
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:531
+msgid "This action cannot be undone."
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:537
+msgid "Plugin uninstalled successfully"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:550
+msgid "Delete Plugin"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:552
+msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
+msgstr ""
+
+#: src/tables/plugin/PluginListTable.tsx:564
 msgid "Plugins reloaded"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:442
+#: src/tables/plugin/PluginListTable.tsx:565
 msgid "Plugins were reloaded successfully"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:458
+#: src/tables/plugin/PluginListTable.tsx:581
 msgid "Reload Plugins"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:467
+#: src/tables/plugin/PluginListTable.tsx:590
 msgid "Install Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:480
+#: src/tables/plugin/PluginListTable.tsx:608
 msgid "Plugin detail"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:513
+#: src/tables/plugin/PluginListTable.tsx:637
 msgid "Sample"
 msgstr "Minta"
 
-#: src/tables/plugin/PluginListTable.tsx:518
+#: src/tables/plugin/PluginListTable.tsx:642
 #: src/tables/stock/StockItemTable.tsx:279
 msgid "Installed"
 msgstr "Telepítve"
@@ -4442,15 +4498,15 @@ msgstr "Árfolyam frissítés"
 msgid "Add Custom Unit"
 msgstr ""
 
-#: src/tables/settings/CustomUnitsTable.tsx:62
+#: src/tables/settings/CustomUnitsTable.tsx:60
 msgid "Edit Custom Unit"
 msgstr ""
 
-#: src/tables/settings/CustomUnitsTable.tsx:70
+#: src/tables/settings/CustomUnitsTable.tsx:68
 msgid "Delete Custom Unit"
 msgstr ""
 
-#: src/tables/settings/CustomUnitsTable.tsx:102
+#: src/tables/settings/CustomUnitsTable.tsx:100
 msgid "Add custom unit"
 msgstr "Egyedi mértékegység hozzáadása"
 
@@ -4518,24 +4574,24 @@ msgstr ""
 msgid "Permission set"
 msgstr ""
 
-#: src/tables/settings/GroupTable.tsx:128
+#: src/tables/settings/GroupTable.tsx:126
 msgid "Delete group"
 msgstr "Csoport törlése"
 
-#: src/tables/settings/GroupTable.tsx:129
+#: src/tables/settings/GroupTable.tsx:127
 msgid "Group deleted"
 msgstr "Csoport törölve"
 
-#: src/tables/settings/GroupTable.tsx:131
+#: src/tables/settings/GroupTable.tsx:129
 msgid "Are you sure you want to delete this group?"
 msgstr "Biztos, hogy törölni szeretné ezt a csoportot?"
 
-#: src/tables/settings/GroupTable.tsx:136
-#: src/tables/settings/GroupTable.tsx:148
+#: src/tables/settings/GroupTable.tsx:134
+#: src/tables/settings/GroupTable.tsx:146
 msgid "Add group"
 msgstr "Csoport hozzáadása"
 
-#: src/tables/settings/GroupTable.tsx:160
+#: src/tables/settings/GroupTable.tsx:158
 msgid "Edit group"
 msgstr "Csoport szerkesztése"
 
@@ -4802,11 +4858,11 @@ msgid "Has location type"
 msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:87
-#: src/tables/stock/StockLocationTable.tsx:118
+#: src/tables/stock/StockLocationTable.tsx:116
 msgid "Add Stock Location"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:108
+#: src/tables/stock/StockLocationTable.tsx:106
 msgid "Edit Stock Location"
 msgstr ""
 

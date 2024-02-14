@@ -10,13 +10,45 @@ def isInTestMode():
 
 
 def isImportingData():
-    """Returns True if the database is currently importing data, e.g. 'loaddata' command is performed."""
-    return 'loaddata' in sys.argv
+    """Returns True if the database is currently importing (or exporting) data, e.g. 'loaddata' command is performed."""
+    return any((x in sys.argv for x in ['flush', 'loaddata', 'dumpdata']))
 
 
 def isRunningMigrations():
     """Return True if the database is currently running migrations."""
-    return any((x in sys.argv for x in ['migrate', 'makemigrations', 'showmigrations']))
+    return any(
+        (
+            x in sys.argv
+            for x in ['migrate', 'makemigrations', 'showmigrations', 'runmigrations']
+        )
+    )
+
+
+def isRebuildingData():
+    """Return true if any of the rebuilding commands are being executed."""
+    return any(
+        (
+            x in sys.argv
+            for x in ['prerender', 'rebuild_models', 'rebuild_thumbnails', 'rebuild']
+        )
+    )
+
+
+def isRunningBackup():
+    """Return true if any of the backup commands are being executed."""
+    return any(
+        (
+            x in sys.argv
+            for x in [
+                'backup',
+                'restore',
+                'dbbackup',
+                'dbresotore',
+                'mediabackup',
+                'mediarestore',
+            ]
+        )
+    )
 
 
 def isInWorkerThread():
@@ -58,26 +90,30 @@ def canAppAccessDatabase(
     There are some circumstances where we don't want the ready function in apps.py
     to touch the database
     """
+    # Prevent database access if we are running backups
+    if isRunningBackup():
+        return False
+
+    # Prevent database access if we are importing data
+    if isImportingData():
+        return False
+
+    # Prevent database access if we are rebuilding data
+    if isRebuildingData():
+        return False
+
+    # Prevent database access if we are running migrations
+    if not allow_plugins and isRunningMigrations():
+        return False
+
     # If any of the following management commands are being executed,
     # prevent custom "on load" code from running!
     excluded_commands = [
-        'flush',
-        'loaddata',
-        'dumpdata',
         'check',
         'createsuperuser',
         'wait_for_db',
-        'prerender',
-        'rebuild_models',
-        'rebuild_thumbnails',
         'makemessages',
         'compilemessages',
-        'backup',
-        'dbbackup',
-        'mediabackup',
-        'restore',
-        'dbrestore',
-        'mediarestore',
     ]
 
     if not allow_shell:
@@ -88,12 +124,7 @@ def canAppAccessDatabase(
         excluded_commands.append('test')
 
     if not allow_plugins:
-        excluded_commands.extend([
-            'makemigrations',
-            'showmigrations',
-            'migrate',
-            'collectstatic',
-        ])
+        excluded_commands.extend(['collectstatic'])
 
     for cmd in excluded_commands:
         if cmd in sys.argv:

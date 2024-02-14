@@ -42,6 +42,16 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         help_text=_('PluginName of the plugin'),
     )
 
+    package_name = models.CharField(
+        null=True,
+        blank=True,
+        max_length=255,
+        verbose_name=_('Package Name'),
+        help_text=_(
+            'Name of the installed package, if the plugin was installed via PIP'
+        ),
+    )
+
     active = models.BooleanField(
         default=False, verbose_name=_('Active'), help_text=_('Is the plugin active')
     )
@@ -159,6 +169,14 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             return False
 
         return self.plugin.check_is_builtin()
+
+    @admin.display(boolean=True, description=_('Package Plugin'))
+    def is_package(self) -> bool:
+        """Return True if this is a 'package' plugin."""
+        if not self.plugin:
+            return False
+
+        return getattr(self.plugin, 'is_package', False)
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):

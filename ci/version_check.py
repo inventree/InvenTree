@@ -90,6 +90,13 @@ def check_version_number(version_string, allow_duplicate=False):
 
 
 if __name__ == '__main__':
+    if 'only_version' in sys.argv:
+        here = Path(__file__).parent.absolute()
+        version_file = here.joinpath('..', 'InvenTree', 'InvenTree', 'api_version.py')
+        text = version_file.read_text()
+        results = re.findall(r"""INVENTREE_API_VERSION = (.*)""", text)
+        print(results[0])
+        exit(0)
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'
     GITHUB_REF_TYPE = os.environ['GITHUB_REF_TYPE']
 

@@ -25,6 +25,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from taggit.managers import TaggableManager
 
 import common.models
+import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
@@ -184,7 +185,7 @@ class StockLocation(
     )
 
     @property
-    def icon(self):
+    def icon(self) -> str:
         """Get the current icon used for this location.
 
         The icon field on this model takes precedences over the possibly assigned stock location type
@@ -324,8 +325,9 @@ def generate_batch_code():
         'year': now.year,
         'month': now.month,
         'day': now.day,
-        'hour': now.minute,
+        'hour': now.hour,
         'minute': now.minute,
+        'week': now.isocalendar()[1],
     }
 
     return Template(batch_template).render(context)
@@ -600,6 +602,10 @@ class StockItem(
                 plugin.validate_batch_code(self.batch, self)
             except ValidationError as exc:
                 raise ValidationError({'batch': exc.message})
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugin.{plugin.slug}.validate_batch_code'
+                )
 
     def clean(self):
         """Validate the StockItem object (separate to field validation).
