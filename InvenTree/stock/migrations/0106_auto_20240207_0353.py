@@ -121,7 +121,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('stock', '0105_stockitemtestresult_template'),
-        ('part', '0120_parttesttemplate_key')
+        ('part', '0121_auto_20240207_0344')
     ]
 
     operations = [
