@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-07 12:23\n"
+"PO-Revision-Date: 2024-02-10 14:55\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -202,7 +202,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:271
 msgid "Or use SSO"
-msgstr ""
+msgstr "Eller använd SSO"
 
 #: src/components/forms/AuthenticationForm.tsx:302
 msgid "Don't have an account?"
@@ -250,7 +250,7 @@ msgstr "Redigera möjliga värdalternativ"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr "Version {0}"
+msgstr "Version: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
@@ -1600,7 +1600,7 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:18
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgariska"
 
 #: src/contexts/LanguageContext.tsx:19
 msgid "Czech"
@@ -1608,23 +1608,23 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Danish"
-msgstr ""
+msgstr "Danska"
 
 #: src/contexts/LanguageContext.tsx:21
 msgid "German"
-msgstr ""
+msgstr "Tyska"
 
 #: src/contexts/LanguageContext.tsx:22
 msgid "Greek"
-msgstr ""
+msgstr "Grekiska"
 
 #: src/contexts/LanguageContext.tsx:23
 msgid "English"
-msgstr ""
+msgstr "Engelska"
 
 #: src/contexts/LanguageContext.tsx:24
 msgid "Spanish"
-msgstr ""
+msgstr "Spanska"
 
 #: src/contexts/LanguageContext.tsx:25
 msgid "Spanish (Mexican)"
@@ -1636,11 +1636,11 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:27
 msgid "Finnish"
-msgstr ""
+msgstr "Finska"
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "French"
-msgstr ""
+msgstr "Franska"
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Hebrew"
@@ -1648,19 +1648,19 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:30
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: src/contexts/LanguageContext.tsx:31
 msgid "Hungarian"
-msgstr ""
+msgstr "Ungerska"
 
 #: src/contexts/LanguageContext.tsx:32
 msgid "Italian"
-msgstr ""
+msgstr "Italienska"
 
 #: src/contexts/LanguageContext.tsx:33
 msgid "Japanese"
-msgstr ""
+msgstr "Japanska"
 
 #: src/contexts/LanguageContext.tsx:34
 msgid "Korean"
@@ -1672,11 +1672,11 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:36
 msgid "Norwegian"
-msgstr ""
+msgstr "Norska"
 
 #: src/contexts/LanguageContext.tsx:37
 msgid "Polish"
-msgstr ""
+msgstr "Polska"
 
 #: src/contexts/LanguageContext.tsx:38
 msgid "Portuguese"
@@ -1688,11 +1688,11 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:40
 msgid "Russian"
-msgstr ""
+msgstr "Ryska"
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Slovak"
-msgstr ""
+msgstr "Slovakiska"
 
 #: src/contexts/LanguageContext.tsx:42
 msgid "Slovenian"
@@ -1700,7 +1700,7 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Swedish"
-msgstr ""
+msgstr "Svenska"
 
 #: src/contexts/LanguageContext.tsx:44
 msgid "Thai"
@@ -1708,7 +1708,7 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:45
 msgid "Turkish"
-msgstr ""
+msgstr "Turkiska"
 
 #: src/contexts/LanguageContext.tsx:46
 msgid "Vietnamese"
@@ -3463,7 +3463,7 @@ msgstr "Lägg till filter"
 
 #: src/tables/FilterSelectDrawer.tsx:228
 msgid "Clear Filters"
-msgstr ""
+msgstr "Rensa filter"
 
 #: src/tables/InvenTreeTable.tsx:88
 #: src/tables/InvenTreeTable.tsx:352
@@ -4049,7 +4049,7 @@ msgstr ""
 
 #: src/tables/part/PartThumbTable.tsx:202
 msgid "Search..."
-msgstr ""
+msgstr "Sök..."
 
 #: src/tables/part/PartVariantTable.tsx:16
 msgid "Show active variants"

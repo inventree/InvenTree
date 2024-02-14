@@ -21,12 +21,6 @@ from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from maintenance_mode.core import (
-    get_maintenance_mode,
-    maintenance_mode_on,
-    set_maintenance_mode,
-)
-
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
 
@@ -218,11 +212,6 @@ class PluginsRegistry:
         """
         logger.info('Loading plugins')
 
-        # Set maintenance mode
-        _maintenance = bool(get_maintenance_mode())
-        if not _maintenance:
-            set_maintenance_mode(True)
-
         registered_successful = False
         blocked_plugin = None
         retry_counter = settings.PLUGIN_RETRY
@@ -272,10 +261,6 @@ class PluginsRegistry:
         # ensure plugins_loaded is True
         self.plugins_loaded = True
 
-        # Remove maintenance mode
-        if not _maintenance:
-            set_maintenance_mode(False)
-
         logger.debug('Finished loading plugins')
 
         # Trigger plugins_loaded event
@@ -292,20 +277,11 @@ class PluginsRegistry:
         """
         logger.info('Start unloading plugins')
 
-        # Set maintenance mode
-        _maintenance = bool(get_maintenance_mode())
-        if not _maintenance:
-            set_maintenance_mode(True)  # pragma: no cover
-
         # remove all plugins from registry
         self._clean_registry()
 
         # deactivate all integrations
         self._deactivate_plugins(force_reload=force_reload)
-
-        # remove maintenance
-        if not _maintenance:
-            set_maintenance_mode(False)  # pragma: no cover
 
         logger.info('Finished unloading plugins')
 
@@ -337,15 +313,14 @@ class PluginsRegistry:
                 collect,
             )
 
-            with maintenance_mode_on():
-                if collect:
-                    logger.info('Collecting plugins')
-                    self.plugin_modules = self.collect_plugins()
+            if collect:
+                logger.info('Collecting plugins')
+                self.plugin_modules = self.collect_plugins()
 
-                self.plugins_loaded = False
-                self._unload_plugins(force_reload=force_reload)
-                self.plugins_loaded = True
-                self._load_plugins(full_reload=full_reload)
+            self.plugins_loaded = False
+            self._unload_plugins(force_reload=force_reload)
+            self.plugins_loaded = True
+            self._load_plugins(full_reload=full_reload)
 
             self.update_plugin_hash()
 
