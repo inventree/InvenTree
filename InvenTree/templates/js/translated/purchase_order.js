@@ -225,7 +225,7 @@ function createPurchaseOrder(options={}) {
         };
     }
 
-    constructForm('{% url "api-po-list" %}', {
+    constructForm('{% url "api-po-list" %}?supplier_detail=true', {
         method: 'POST',
         fields: fields,
         groups: groups,
@@ -268,6 +268,37 @@ function duplicatePurchaseOrder(order_id, options={}) {
 
 /* Construct a set of fields for the PurchaseOrderLineItem form */
 function poLineItemFields(options={}) {
+    function updatePricing(supplier_part_id, quantity, opts) {
+        if (options.update_pricing) {
+            inventreeGet(
+                '{% url "api-part-supplier-price-list" %}',
+                {
+                    part: supplier_part_id,
+                    ordering: 'quantity',
+                },
+                {
+                    success: function(response) {
+                        // Returned prices are in increasing order of quantity
+                        if (response.length > 0) {
+                            let index = 0;
+
+                            for (var idx = 0; idx < response.length; idx++) {
+                                if (response[idx].quantity > quantity) {
+                                    break;
+                                }
+
+                                index = idx;
+                            }
+
+                            // Update price and currency data in the form
+                            updateFieldValue('purchase_price', response[index].price, {}, opts);
+                            updateFieldValue('purchase_price_currency', response[index].price_currency, {}, opts);
+                        }
+                    }
+                }
+            );
+        }
+    }
 
     var fields = {
         order: {
@@ -316,35 +347,7 @@ function poLineItemFields(options={}) {
                     }
                 }).then(function() {
                     // Update pricing data (if available)
-                    if (options.update_pricing) {
-                        inventreeGet(
-                            '{% url "api-part-supplier-price-list" %}',
-                            {
-                                part: supplier_part_id,
-                                ordering: 'quantity',
-                            },
-                            {
-                                success: function(response) {
-                                    // Returned prices are in increasing order of quantity
-                                    if (response.length > 0) {
-                                        let index = 0;
-
-                                        for (var idx = 0; idx < response.length; idx++) {
-                                            if (response[idx].quantity > quantity) {
-                                                break;
-                                            }
-
-                                            index = idx;
-                                        }
-
-                                        // Update price and currency data in the form
-                                        updateFieldValue('purchase_price', response[index].price, {}, opts);
-                                        updateFieldValue('purchase_price_currency', response[index].price_currency, {}, opts);
-                                    }
-                                }
-                            }
-                        );
-                    }
+                    updatePricing(supplier_part_id, quantity, opts);
                 });
             },
             secondary: {
@@ -373,7 +376,12 @@ function poLineItemFields(options={}) {
                 }
             }
         },
-        quantity: {},
+        quantity: {
+            onEdit: function(value, name, field, opts) {
+                const supplier_part_id = getFormFieldValue('part', {}, opts);
+                updatePricing(supplier_part_id, value, opts);
+            }
+        },
         reference: {},
         purchase_price: {
             icon: 'fa-dollar-sign',
@@ -838,6 +846,10 @@ function orderParts(parts_list, options={}) {
                                 success: function(response) {
                                     pack_quantity = response.pack_quantity_native || 1;
                                     units = response.part_detail.units || '';
+                                    if(response.supplier) {
+                                        order_filters.supplier = response.supplier;
+                                        options.supplier = response.supplier;
+                                    }
                                 }
                             }
                         ).then(function() {
@@ -984,7 +996,7 @@ function orderParts(parts_list, options={}) {
                 var pk = $(this).attr('pk');
 
                 // Launch dialog to create new purchase order
-                createPurchaseOrder({
+                const poOptions = {
                     onSuccess: function(response) {
                         setRelatedFieldData(
                             `order_${pk}`,
@@ -992,7 +1004,14 @@ function orderParts(parts_list, options={}) {
                             opts
                         );
                     }
-                });
+                }
+
+                if(options.supplier) {
+                    poOptions.supplier = options.supplier;
+                    poOptions.hide_supplier = true;
+                }
+
+                createPurchaseOrder(poOptions);
             });
         }
     });
