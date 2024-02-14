@@ -45,6 +45,8 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { IconFlag } from '@tabler/icons-react';
+import { IconSquareXFilled } from '@tabler/icons-react';
+import { IconArrowBigDownLineFilled } from '@tabler/icons-react';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { IconCalendarTime } from '@tabler/icons-react';
 import { TablerIconsProps } from '@tabler/icons-react';
@@ -111,7 +113,9 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     user: IconUser,
     group: IconUsersGroup,
     check: IconCheck,
-    copy: IconCopy
+    copy: IconCopy,
+    square_x: IconSquareXFilled,
+    arrow_down: IconArrowBigDownLineFilled
   };
 
 /**

@@ -35,7 +35,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { useEditStockItem } from '../../forms/StockForms';
+import { useEditStockItem, useTransferStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -151,6 +151,11 @@ export default function StockDetail() {
     callback: () => refreshInstance()
   });
 
+  const transferStockItem = useTransferStockItem({
+    itemId: stockitem,
+    refresh: () => refreshInstance()
+  });
+
   const stockActions = useMemo(
     () => /* TODO: Disable actions based on user permissions*/ [
       <BarcodeActionDropdown
@@ -187,7 +192,10 @@ export default function StockDetail() {
           {
             name: t`Transfer`,
             tooltip: t`Transfer stock`,
-            icon: <IconTransfer color="blue" />
+            icon: <IconTransfer color="blue" />,
+            onClick: () => {
+              stockitem.pk && transferStockItem.open();
+            }
           }
         ]}
       />,
@@ -238,6 +246,7 @@ export default function StockDetail() {
       />
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
       {editStockItem.modal}
+      {transferStockItem.modal}
     </Stack>
   );
 }

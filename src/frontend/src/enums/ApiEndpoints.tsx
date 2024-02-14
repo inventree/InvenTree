@@ -80,6 +80,7 @@ export enum ApiEndpoints {
   stock_location_list = 'stock/location/',
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
+  stock_transfer = 'stock/transfer/',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',

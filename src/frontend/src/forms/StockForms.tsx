@@ -1,9 +1,28 @@
 import { t } from '@lingui/macro';
-import { useMemo, useState } from 'react';
+import {
+  NumberInput,
+  Paper,
+  Skeleton,
+  Table,
+  Text,
+  Tooltip
+} from '@mantine/core';
+import { modals } from '@mantine/modals';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 
+import { api } from '../App';
+import { ActionButton } from '../components/buttons/ActionButton';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { Thumbnail } from '../components/images/Thumbnail';
+import { StylishText } from '../components/items/StylishText';
+import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
+import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
+import { useModal } from '../hooks/UseModal';
+import { apiUrl } from '../states/ApiState';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
@@ -131,6 +150,203 @@ export function useEditStockItem({
     title: t`Edit Stock Item`,
     successMessage: t`Stock item updated`,
     onFormSuccess: callback
+  });
+}
+
+function StockOperationsRow({
+  item,
+  refresh
+}: {
+  item: any;
+  refresh: () => void;
+}) {
+  const [value, setValue] = useState<number | ''>(item.quantity);
+  const { data } = useSuspenseQuery({
+    queryKey: ['location', item.part_detail.default_location],
+    queryFn: async () => {
+      const url = apiUrl(
+        ApiEndpoints.stock_location_list,
+        item.part_detail.default_location
+      );
+
+      return api
+        .get(url)
+        .then((response) => {
+          switch (response.status) {
+            case 200:
+              return response.data;
+            default:
+              return null;
+          }
+        })
+        .catch(() => {
+          return null;
+        });
+    }
+  });
+
+  function _moveToDefault() {
+    modals.openConfirmModal({
+      title: <StylishText>Confirm Stock Transfer</StylishText>,
+      children: (
+        <div
+          style={{
+            display: 'flex',
+            gap: '10px',
+            alignItems: 'center',
+            justifyContent: 'space-evenly'
+          }}
+        >
+          <Paper
+            style={{
+              display: 'flex',
+              gap: '10px',
+              flexDirection: 'column',
+              alignItems: 'center',
+              alignContent: 'space-between'
+            }}
+          >
+            <Text>
+              {value} x {item.part_detail.name}
+            </Text>
+            <Thumbnail
+              src={item.part_detail.thumbnail}
+              size={80}
+              align="center"
+            />
+          </Paper>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
+              alignItems: 'center'
+            }}
+          >
+            <Text>{item.location_detail.pathstring}</Text>
+            <InvenTreeIcon icon="arrow_down" />
+            <Suspense fallback={<Skeleton width="150px" />}>
+              <Text>{data.pathstring}</Text>
+            </Suspense>
+          </div>
+        </div>
+      ),
+      onConfirm: () => {
+        api
+          .post(apiUrl(ApiEndpoints.stock_transfer), {
+            items: [
+              {
+                pk: item.pk,
+                quantity: value,
+                batch: item.batch,
+                status: item.status
+              }
+            ],
+            location: item.part_detail.default_location
+          })
+          .then((response) => {
+            console.log(response);
+            refresh();
+            return response.data;
+          })
+          .catch((e) => {
+            console.log(e);
+            return null;
+          });
+      }
+    });
+  }
+
+  console.log(item);
+  return (
+    <tr>
+      <td>
+        <div
+          style={{
+            display: 'flex',
+            gap: '5px',
+            alignItems: 'center'
+          }}
+        >
+          <Thumbnail
+            size={40}
+            src={item.part_detail.thumbnail}
+            align="center"
+          />
+          <div>{item.part_detail.name}</div>
+        </div>
+      </td>
+      <td>{item.location_detail.pathstring}</td>
+      <td>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {item.quantity}
+          <StatusRenderer status={item.status} type={ModelType.stockitem} />
+        </div>
+      </td>
+      <td>
+        <NumberInput
+          value={value}
+          onChange={setValue}
+          max={item.quantity}
+          min={0}
+          style={{ maxWidth: '100px' }}
+        />
+      </td>
+      <td>
+        <div style={{ display: 'flex', gap: '3px' }}>
+          <ActionButton
+            onClick={() => _moveToDefault()}
+            icon={<InvenTreeIcon icon="default_location" />}
+            tooltip="Move to default location"
+            tooltipAlignment="top"
+          />
+          <ActionButton
+            icon={<InvenTreeIcon icon="square_x" />}
+            tooltip="Remove from list"
+            tooltipAlignment="top"
+            color="red"
+          />
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+function StockItemOperationsTable({
+  items,
+  refresh
+}: {
+  items: any;
+  refresh: () => void;
+}) {
+  return (
+    <Table highlightOnHover striped>
+      <thead>
+        <tr>
+          <th>{t`Part`}</th>
+          <th>{t`Location`}</th>
+          <th>{t`In Stock`}</th>
+          <th>{t`Move`}</th>
+          <th>{t`Actions`}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <StockOperationsRow item={items} refresh={refresh} />
+      </tbody>
+    </Table>
+  );
+}
+
+export function useTransferStockItem({
+  itemId,
+  refresh
+}: {
+  itemId: any;
+  refresh: () => void;
+}) {
+  return useModal({
+    title: t`Transfer Stock`,
+    children: <StockItemOperationsTable items={itemId} refresh={refresh} />
   });
 }
 
