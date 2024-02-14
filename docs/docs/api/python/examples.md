@@ -253,4 +253,4 @@ BomItem.create(api, data={'part':sofa_id, 'sub_part':armrest_id, 'quantity':2, '
 ```
 
 Now you have three BOM items that make the BOM for the sofa. The `id` values are the primary keys of the
-specified parts. The reference can be any string that names the instances. 
+specified parts. The reference can be any string that names the instances.

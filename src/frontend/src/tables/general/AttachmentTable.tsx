@@ -4,7 +4,7 @@ import { ActionIcon } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
@@ -99,6 +99,7 @@ export function AttachmentTable({
 
         setAllowEdit('POST' in actions);
         setAllowDelete('DELETE' in actions);
+
         return response;
       })
       .catch((error) => {
@@ -107,41 +108,44 @@ export function AttachmentTable({
   }, []);
 
   // Construct row actions for the attachment table
-  function rowActions(record: any): RowAction[] {
-    let actions: RowAction[] = [];
+  const rowActions = useCallback(
+    (record: any) => {
+      let actions: RowAction[] = [];
 
-    if (allowEdit) {
-      actions.push(
-        RowEditAction({
-          onClick: () => {
-            editAttachment({
-              endpoint: endpoint,
-              model: model,
-              pk: record.pk,
-              attachmentType: record.attachment ? 'file' : 'link',
-              callback: table.refreshTable
-            });
-          }
-        })
-      );
-    }
+      if (allowEdit) {
+        actions.push(
+          RowEditAction({
+            onClick: () => {
+              editAttachment({
+                endpoint: endpoint,
+                model: model,
+                pk: record.pk,
+                attachmentType: record.attachment ? 'file' : 'link',
+                callback: table.refreshTable
+              });
+            }
+          })
+        );
+      }
 
-    if (allowDelete) {
-      actions.push(
-        RowDeleteAction({
-          onClick: () => {
-            deleteAttachment({
-              endpoint: endpoint,
-              pk: record.pk,
-              callback: table.refreshTable
-            });
-          }
-        })
-      );
-    }
+      if (allowDelete) {
+        actions.push(
+          RowDeleteAction({
+            onClick: () => {
+              deleteAttachment({
+                endpoint: endpoint,
+                pk: record.pk,
+                callback: table.refreshTable
+              });
+            }
+          })
+        );
+      }
 
-    return actions;
-  }
+      return actions;
+    },
+    [allowEdit, allowDelete]
+  );
 
   // Callback to upload file attachment(s)
   function uploadFiles(files: File[]) {
