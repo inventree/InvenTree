@@ -34,6 +34,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
     fixtures = [
         'category',
         'part',
+        'test_templates',
         'bom',
         'company',
         'location',
@@ -1598,14 +1599,15 @@ class StockTestResultTest(StockAPITestCase):
         with open(image_file, 'rb') as bitmap:
             data = {
                 'stock_item': 105,
-                'test': 'Checked Steam Valve',
+                'test': 'Temperature Test',
                 'result': False,
-                'value': '150kPa',
-                'notes': 'I guess there was just too much pressure?',
+                'value': '550C',
+                'notes': 'I guess there was just too much heat?',
                 'attachment': bitmap,
             }
 
             response = self.client.post(self.get_url(), data)
+
             self.assertEqual(response.status_code, 201)
 
             # Check that an attachment has been uploaded
