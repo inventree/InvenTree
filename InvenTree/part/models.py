@@ -3393,6 +3393,10 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     run on the model (refer to the validate_unique function).
     """
 
+    def __str__(self):
+        """Format a string representation of this PartTestTemplate."""
+        return ' | '.join([self.part.name, self.test_name])
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the PartTestTemplate model."""

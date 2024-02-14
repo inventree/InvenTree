@@ -363,6 +363,7 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
     """Admin class for the PartTestTemplate model."""
 
     list_display = ('part', 'test_name', 'required')
+    readonly_fields = ['key']
 
     autocomplete_fields = ('part',)
 
