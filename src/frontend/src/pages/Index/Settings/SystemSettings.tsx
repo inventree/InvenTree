@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Divider, Stack } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,

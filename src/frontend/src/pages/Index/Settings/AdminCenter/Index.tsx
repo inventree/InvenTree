@@ -3,7 +3,6 @@ import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
   IconCoins,
   IconCpu,
-  IconCurrency,
   IconDevicesPc,
   IconExclamationCircle,
   IconList,
