@@ -40,7 +40,7 @@ export default function StockItemTestResultTable({
 
   // Fetch the test templates required for this stock item
   const { data: testTemplates } = useQuery({
-    queryKey: ['stocktesttemplates', partId],
+    queryKey: ['stocktesttemplates', partId, itemId],
     queryFn: async () => {
       if (!partId) {
         return [];
@@ -54,7 +54,7 @@ export default function StockItemTestResultTable({
           }
         })
         .then((response) => response.data)
-        .catch((error) => []);
+        .catch((_error) => []);
     }
   });
 
@@ -97,7 +97,7 @@ export default function StockItemTestResultTable({
 
       return results;
     },
-    [testTemplates]
+    [partId, itemId, testTemplates]
   );
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -112,7 +112,7 @@ export default function StockItemTestResultTable({
             <Group position="apart">
               <Text italic={!record.templateId}>
                 {!record.templateId && '- '}
-                {record.template_detail.test_name}
+                {record.test_name ?? record.template_detail?.test_name}
               </Text>
               {record.results && record.results.length > 1 && (
                 <Tooltip label={t`Test Results`}>
@@ -141,7 +141,7 @@ export default function StockItemTestResultTable({
         }
       },
       DescriptionColumn({
-        accessor: 'template_detail.description'
+        accessor: 'description'
       }),
       {
         accessor: 'value',
