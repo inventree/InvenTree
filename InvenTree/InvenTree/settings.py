@@ -121,6 +121,7 @@ STATIC_ROOT = config.get_static_dir()
 MEDIA_ROOT = config.get_media_dir()
 
 # List of allowed hosts (default = allow all)
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = get_setting(
     'INVENTREE_ALLOWED_HOSTS',
     config_key='allowed_hosts',
@@ -128,14 +129,41 @@ ALLOWED_HOSTS = get_setting(
     typecast=list,
 )
 
+# List of trusted origins for unsafe requests
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
+CSRF_TRUSTED_ORIGINS = get_setting(
+    'INVENTREE_TRUSTED_ORIGINS',
+    config_key='trusted_origins',
+    default_value=[],
+    typecast=list,
+)
+
+USE_X_FORWARDED_HOST = get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_HOST',
+    config_key='use_x_forwarded_host',
+    default_value=False,
+)
+
+USE_X_FORWARDED_PORT = get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_PORT',
+    config_key='use_x_forwarded_port',
+    default_value=False,
+)
+
 # Cross Origin Resource Sharing (CORS) options
+# Refer to the django-cors-headers documentation for more information
+# Ref: https://github.com/adamchainz/django-cors-headers
 
 # Extract CORS options from configuration file
 CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
     'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
 )
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = get_boolean_setting(
+    'INVENTREE_CORS_ALLOW_CREDENTIALS',
+    config_key='cors.allow_credentials',
+    default_value=True,
+)
 
 # Only allow CORS access to API and media endpoints
 CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
@@ -489,12 +517,15 @@ if USE_JWT:
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
-    'LICENSE': {'MIT': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
-    'EXTERNAL_DOCS': {
-        'docs': 'https://docs.inventree.org',
-        'web': 'https://inventree.org',
+    'LICENSE': {
+        'name': 'MIT',
+        'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE',
     },
-    'VERSION': inventreeApiVersion(),
+    'EXTERNAL_DOCS': {
+        'description': 'More information about InvenTree in the official docs',
+        'url': 'https://docs.inventree.org',
+    },
+    'VERSION': str(inventreeApiVersion()),
     'SERVE_INCLUDE_SCHEMA': False,
 }
 

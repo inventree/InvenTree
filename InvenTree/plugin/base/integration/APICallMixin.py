@@ -2,6 +2,7 @@
 
 import json as json_pkg
 import logging
+from collections.abc import Iterable
 
 import requests
 
@@ -107,7 +108,9 @@ class APICallMixin:
         """Returns an encoded path for the provided dict."""
         groups = []
         for key, val in arguments.items():
-            groups.append(f'{key}={",".join([str(a) for a in val])}')
+            if isinstance(val, Iterable) and not isinstance(val, str):
+                val = ','.join([str(a) for a in val])
+            groups.append(f'{key}={val}')
         return f'?{"&".join(groups)}'
 
     def api_call(

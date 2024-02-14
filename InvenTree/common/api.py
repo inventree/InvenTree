@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 import django_q.models
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
 from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotAcceptable, NotFound
@@ -53,7 +54,15 @@ class WebhookView(CsrfExemptMixin, APIView):
     permission_classes = []
     model_class = common.models.WebhookEndpoint
     run_async = False
+    serializer_class = None
 
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                description='Any data can be posted to the endpoint - everything will be passed to the WebhookEndpoint model.'
+            )
+        }
+    )
     def post(self, request, endpoint, *args, **kwargs):
         """Process incoming webhook."""
         # get webhook definition
@@ -115,6 +124,7 @@ class CurrencyExchangeView(APIView):
     """API endpoint for displaying currency information."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     def get(self, request, format=None):
         """Return information on available currency conversions."""
@@ -157,6 +167,7 @@ class CurrencyRefreshView(APIView):
     """
 
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    serializer_class = None
 
     def post(self, request, *args, **kwargs):
         """Performing a POST request will update currency exchange rates."""
@@ -516,6 +527,7 @@ class BackgroundTaskOverview(APIView):
     """Provides an overview of the background task queue status."""
 
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    serializer_class = None
 
     def get(self, request, format=None):
         """Return information about the current status of the background task queue."""

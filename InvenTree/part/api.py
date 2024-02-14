@@ -49,6 +49,7 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.permissions import RolePermission
+from InvenTree.serializers import EmptySerializer
 from InvenTree.status_codes import (
     BuildStatusGroups,
     PurchaseOrderStatusGroups,
@@ -511,6 +512,7 @@ class PartScheduling(RetrieveAPI):
     """
 
     queryset = Part.objects.all()
+    serializer_class = EmptySerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Return scheduling information for the referenced Part instance."""
@@ -711,6 +713,7 @@ class PartRequirements(RetrieveAPI):
     """
 
     queryset = Part.objects.all()
+    serializer_class = EmptySerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Construct a response detailing Part requirements."""
@@ -762,6 +765,7 @@ class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
     queryset = Part.objects.all()
+    serializer_class = EmptySerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Return serial number information for the referenced Part instance."""
@@ -1092,7 +1096,11 @@ class PartMixin:
 
         # Pass a list of "starred" parts to the current user to the serializer
         # We do this to reduce the number of database queries required!
-        if self.starred_parts is None and self.request is not None:
+        if (
+            self.starred_parts is None
+            and self.request is not None
+            and hasattr(self.request.user, 'starred_parts')
+        ):
             self.starred_parts = [
                 star.part for star in self.request.user.starred_parts.all()
             ]

@@ -1,5 +1,7 @@
 """Main JSON interface views."""
 
+import sys
+
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
@@ -8,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from django_q.models import OrmQ
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
@@ -18,6 +21,7 @@ from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
 from InvenTree.permissions import RolePermission
 from InvenTree.templatetags.inventree_extras import plugins_info
+from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
@@ -28,11 +32,41 @@ from .version import inventreeApiText
 from .views import AjaxView
 
 
+class VersionViewSerializer(serializers.Serializer):
+    """Serializer for a single version."""
+
+    class VersionSerializer(serializers.Serializer):
+        """Serializer for server version."""
+
+        server = serializers.CharField()
+        api = serializers.IntegerField()
+        commit_hash = serializers.CharField()
+        commit_date = serializers.CharField()
+        commit_branch = serializers.CharField()
+        python = serializers.CharField()
+        django = serializers.CharField()
+
+    class LinkSerializer(serializers.Serializer):
+        """Serializer for all possible links."""
+
+        doc = serializers.URLField()
+        code = serializers.URLField()
+        credit = serializers.URLField()
+        app = serializers.URLField()
+        bug = serializers.URLField()
+
+    dev = serializers.BooleanField()
+    up_to_date = serializers.BooleanField()
+    version = VersionSerializer()
+    links = LinkSerializer()
+
+
 class VersionView(APIView):
     """Simple JSON endpoint for InvenTree version information."""
 
     permission_classes = [permissions.IsAdminUser]
 
+    @extend_schema(responses={200: OpenApiResponse(response=VersionViewSerializer)})
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
         return JsonResponse({
@@ -80,6 +114,8 @@ class VersionApiSerializer(serializers.Serializer):
 
 class VersionTextView(ListAPI):
     """Simple JSON endpoint for InvenTree version text."""
+
+    serializer_class = VersionSerializer
 
     permission_classes = [permissions.IsAdminUser]
 
@@ -324,7 +360,17 @@ class AttachmentMixin:
         attachment.save()
 
 
-class APISearchView(APIView):
+class APISearchViewSerializer(serializers.Serializer):
+    """Serializer for the APISearchView."""
+
+    search = serializers.CharField()
+    search_regex = serializers.BooleanField(default=False, required=False)
+    search_whole = serializers.BooleanField(default=False, required=False)
+    limit = serializers.IntegerField(default=1, required=False)
+    offset = serializers.IntegerField(default=0, required=False)
+
+
+class APISearchView(GenericAPIView):
     """A general-purpose 'search' API endpoint.
 
     Returns hits against a number of different models simultaneously,
@@ -334,6 +380,7 @@ class APISearchView(APIView):
     """
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = APISearchViewSerializer
 
     def get_result_types(self):
         """Construct a list of search types we can return."""
@@ -446,4 +493,7 @@ class MetadataView(RetrieveUpdateAPI):
 
     def get_serializer(self, *args, **kwargs):
         """Return MetadataSerializer instance."""
+        # Detect if we are currently generating the OpenAPI schema
+        if 'spectacular' in sys.argv:
+            return MetadataSerializer(Part, *args, **kwargs)
         return MetadataSerializer(self.get_model_type(), *args, **kwargs)
