@@ -55,7 +55,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         set({ user: user });
       })
       .catch((error) => {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching user data');
       });
 
     // Fetch role data
@@ -73,7 +73,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         }
       })
       .catch((error) => {
-        console.error('Error fetching user roles:', error);
+        console.error('Error fetching user roles');
       });
   },
   checkUserRole: (role: UserRoles, permission: UserPermissions) => {
