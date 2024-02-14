@@ -19,6 +19,8 @@ export type TableState = {
   activeFilters: TableFilter[];
   setActiveFilters: (filters: TableFilter[]) => void;
   clearActiveFilters: () => void;
+  expandedRecords: any[];
+  setExpandedRecords: (records: any[]) => void;
   selectedRecords: any[];
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
