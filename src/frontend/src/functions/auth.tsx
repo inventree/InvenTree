@@ -53,7 +53,11 @@ export const doBasicLogin = async (username: string, password: string) => {
  */
 export const doLogout = async (navigate: any) => {
   // Logout from the server session
-  await api.post(apiUrl(ApiEndpoints.user_logout));
+  await api.post(apiUrl(ApiEndpoints.user_logout)).catch(() => {
+    // If an error occurs here, we are likely already logged out
+    navigate('/login');
+    return;
+  });
 
   // Logout from this session
   // Note that clearToken() then calls setApiDefaults()
