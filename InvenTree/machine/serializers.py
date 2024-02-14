@@ -1,6 +1,6 @@
 """Serializers for the machine app."""
 
-from typing import List, Union
+from typing import Union
 
 from rest_framework import serializers
 
@@ -62,7 +62,7 @@ class MachineConfigSerializer(serializers.ModelSerializer):
         """Serializer method for the status text field."""
         return getattr(obj.machine, 'status_text', '')
 
-    def get_errors(self, obj: MachineConfig) -> List[str]:
+    def get_errors(self, obj: MachineConfig) -> list[str]:
         """Serializer method for the errors field."""
         return [str(err) for err in obj.errors]
 
@@ -165,7 +165,7 @@ class MachineDriverSerializer(BaseMachineClassSerializer):
 
     driver_errors = serializers.SerializerMethodField('get_errors')
 
-    def get_errors(self, obj) -> List[str]:
+    def get_errors(self, obj) -> list[str]:
         """Serializer method for the errors field."""
         driver_instance = registry.driver_instances.get(obj.SLUG, None)
         if driver_instance is None:

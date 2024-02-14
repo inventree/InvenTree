@@ -16,7 +16,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from secrets import compare_digest
-from typing import Any, Callable, Dict, List, Tuple, TypedDict, Union
+from typing import Any, Callable, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -157,7 +157,7 @@ class SettingsKeyType(TypedDict, total=False):
         units: Units of the particular setting (optional)
         validator: Validation function/list of functions for the setting (optional, default: None, e.g: bool, int, str, MinValueValidator, ...)
         default: Default value or function that returns default value (optional)
-        choices: (Function that returns) Tuple[str: key, str: display value] (optional)
+        choices: (Function that returns) tuple[str: key, str: display value] (optional)
         hidden: Hide this setting from settings page (optional)
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
@@ -169,9 +169,9 @@ class SettingsKeyType(TypedDict, total=False):
     name: str
     description: str
     units: str
-    validator: Union[Callable, List[Callable], Tuple[Callable]]
+    validator: Union[Callable, list[Callable], tuple[Callable]]
     default: Union[Callable, Any]
-    choices: Union[Tuple[str, str], Callable[[], Tuple[str, str]]]
+    choices: Union[list[tuple[str, str]], Callable[[], list[tuple[str, str]]]]
     hidden: bool
     before_save: Callable[..., None]
     after_save: Callable[..., None]
@@ -188,9 +188,9 @@ class BaseInvenTreeSetting(models.Model):
         extra_unique_fields: List of extra fields used to be unique, e.g. for PluginConfig -> plugin
     """
 
-    SETTINGS: Dict[str, SettingsKeyType] = {}
+    SETTINGS: dict[str, SettingsKeyType] = {}
 
-    extra_unique_fields: List[str] = []
+    extra_unique_fields: list[str] = []
 
     class Meta:
         """Meta options for BaseInvenTreeSetting -> abstract stops creation of database entry."""
@@ -332,7 +332,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[Dict[str, SettingsKeyType], None] = None,
+        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
         **kwargs,
     ):
         """Return a list of "all" defined settings.
@@ -352,7 +352,7 @@ class BaseInvenTreeSetting(models.Model):
         # Optionally filter by other keys
         results = results.filter(**filters)
 
-        settings: Dict[str, BaseInvenTreeSetting] = {}
+        settings: dict[str, BaseInvenTreeSetting] = {}
 
         # Query the database
         for setting in results:
@@ -394,7 +394,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[Dict[str, SettingsKeyType], None] = None,
+        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
         **kwargs,
     ):
         """Return a dict of "all" defined global settings.
@@ -409,7 +409,7 @@ class BaseInvenTreeSetting(models.Model):
             **kwargs,
         )
 
-        settings: Dict[str, Any] = {}
+        settings: dict[str, Any] = {}
 
         for key, setting in all_settings.items():
             settings[key] = setting.value
@@ -421,7 +421,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[Dict[str, SettingsKeyType], None] = None,
+        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
         **kwargs,
     ):
         """Check if all required settings are set by definition.
@@ -436,7 +436,7 @@ class BaseInvenTreeSetting(models.Model):
             **kwargs,
         )
 
-        missing_settings: List[str] = []
+        missing_settings: list[str] = []
 
         for setting in all_settings.values():
             if setting.required:
@@ -1171,12 +1171,24 @@ def reload_plugin_registry(setting):
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
 
+class InvenTreeSettingsKeyType(SettingsKeyType):
+    """InvenTreeSettingsKeyType has additional properties only global settings support.
+
+    Attributes:
+        requires_restart: If True, a server restart is required after changing the setting
+    """
+
+    requires_restart: bool
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
     even if that key does not exist.
     """
+
+    SETTINGS: dict[str, InvenTreeSettingsKeyType]
 
     class Meta:
         """Meta options for InvenTreeSetting."""
