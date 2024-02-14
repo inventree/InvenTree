@@ -288,7 +288,7 @@ pillow==10.2.0
     #   python-barcode
     #   qrcode
     #   weasyprint
-pint==0.21
+pint==0.23
     # via -r requirements.in
 protobuf==4.25.2
     # via
