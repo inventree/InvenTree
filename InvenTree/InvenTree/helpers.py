@@ -8,6 +8,7 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from typing import Set, Type, TypeVar
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
@@ -885,7 +886,10 @@ def get_objectreference(
     return {'name': str(item), 'model': str(model_cls._meta.verbose_name), **ret}
 
 
-def inheritors(cls):
+Inheritors_T = TypeVar('Inheritors_T')
+
+
+def inheritors(cls: Type[Inheritors_T]) -> Set[Type[Inheritors_T]]:
     """Return all classes that are subclasses from the supplied cls."""
     subcls = set()
     work = [cls]

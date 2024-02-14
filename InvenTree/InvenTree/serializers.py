@@ -158,8 +158,15 @@ class DependentField(serializers.Field):
 
         # check if the request data contains the dependent fields, otherwise skip getting the child
         for f in self.depends_on:
-            if not data.get(f, None):
-                return
+            if data.get(f, None) is None:
+                if (
+                    self.parent
+                    and (v := getattr(self.parent.fields[f], 'default', None))
+                    is not None
+                ):
+                    data[f] = v
+                else:
+                    return
 
         # partially validate the data for options requests that set raise_exception while calling .get_child(...)
         if raise_exception:

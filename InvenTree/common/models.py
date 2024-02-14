@@ -525,7 +525,11 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(choices):
             # Evaluate the function (we expect it will return a list of tuples...)
-            return choices()
+            try:
+                # Attempt to pass the kwargs to the function, if it doesn't expect them, ignore and call without
+                return choices(**kwargs)
+            except TypeError:
+                return choices()
 
         return choices
 
@@ -2358,6 +2362,11 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Receive notifications for system errors'),
             'default': True,
             'validator': bool,
+        },
+        'LAST_USED_PRINTING_MACHINES': {
+            'name': _('Last used printing machines'),
+            'description': _('Save the last used printing machines for a user'),
+            'default': '',
         },
     }
 

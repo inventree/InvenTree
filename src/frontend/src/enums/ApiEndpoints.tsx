@@ -100,6 +100,15 @@ export enum ApiEndpoints {
   plugin_activate = 'plugins/:id/activate/',
   plugin_uninstall = 'plugins/:id/uninstall/',
 
+  // Machine API endpoints
+  machine_types_list = 'machine/types/',
+  machine_driver_list = 'machine/drivers/',
+  machine_registry_status = 'machine/status/',
+  machine_list = 'machine/',
+  machine_restart = 'machine/:machine/restart/',
+  machine_setting_list = 'machine/:machine/settings/',
+  machine_setting_detail = 'machine/:machine/settings/:config_type/',
+
   // Miscellaneous API endpoints
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
