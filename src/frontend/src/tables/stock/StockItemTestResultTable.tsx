@@ -257,8 +257,8 @@ export default function StockItemTestResultTable({
           icon: <IconCircleCheck />,
           hidden:
             !record.templateId ||
-            record?.template?.requires_attachment ||
-            record?.template?.requires_value ||
+            record?.requires_attachment ||
+            record?.requires_value ||
             record.result,
           onClick: () => passTest(record.templateId)
         },
@@ -275,7 +275,8 @@ export default function StockItemTestResultTable({
         },
         RowEditAction({
           tooltip: t`Edit Test Result`,
-          hidden: !user.hasChangeRole(UserRoles.stock),
+          hidden:
+            !user.hasChangeRole(UserRoles.stock) || !record.template_detail,
           onClick: () => {
             setSelectedTest(record.pk);
             editTestModal.open();
@@ -283,7 +284,8 @@ export default function StockItemTestResultTable({
         }),
         RowDeleteAction({
           tooltip: t`Delete Test Result`,
-          hidden: !user.hasDeleteRole(UserRoles.stock),
+          hidden:
+            !user.hasDeleteRole(UserRoles.stock) || !record.template_detail,
           onClick: () => {
             setSelectedTest(record.pk);
             deleteTestModal.open();
