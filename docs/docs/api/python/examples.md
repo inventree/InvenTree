@@ -235,22 +235,22 @@ part = Part(api, pk=47)
 part.uploadAttachment('data.txt', comment='A data file')
 ```
 
-### Adding a BOM
+### Adding a Bill of Materials
+
 Imagine your sofa is made from three parts: one seat, one back and two arm rests. To enable this
 the assembly flag of the sofa part has to be set. You need to have all three parts in you InvenTree
 database.
 
-A BOM contains BOM items. These are separate entities in the database that refer to the part that
-is built and the part that is used to build this. You have to create BOM items:
+A BOM (Bill of Materials) contains BOM items. These are separate records in the database that refer to the master assembly (the *part*)
+and the component which is being used (the *sub_part*).
 
+BOM Items can be created using the Python API interface as follows:
 
 ```python
-BomItem.create(api,data={'part':sofa_id, 'sub_part':back_id, 'quantity':1, 'reference':'p1'})
-BomItem.create(api,data={'part':sofa_id, 'sub_part':seat_id, 'quantity':1, 'reference':'p2'})
-BomItem.create(api,data={'part':sofa_id, 'sub_part':armrest_id, 'quantity':2, 'reference':'p3, p4'})
+BomItem.create(api, data={'part':sofa_id, 'sub_part':back_id, 'quantity':1, 'reference':'p1'})
+BomItem.create(api, data={'part':sofa_id, 'sub_part':seat_id, 'quantity':1, 'reference':'p2'})
+BomItem.create(api, data={'part':sofa_id, 'sub_part':armrest_id, 'quantity':2, 'reference':'p3, p4'})
 ```
 
-Now you have three BOM items that make the BOM for the sofa. The _id are the primary keys of the
-specified parts. The reference can be any string that names the instances. The string gets longer
-the more names you put inside which is OK. Anyhow InvenTree does not do anything with the references.
-You can just write Hugo for a quantity of 100. Up to you.
+Now you have three BOM items that make the BOM for the sofa. The `id` values are the primary keys of the
+specified parts. The reference can be any string that names the instances. 
