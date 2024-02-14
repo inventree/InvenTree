@@ -1,10 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 167
+INVENTREE_API_VERSION = 168
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v168 -> 2024-02-07 : https://github.com/inventree/InvenTree/pull/4824
+    - Adds machine CRUD API endpoints
+    - Adds machine settings API endpoints
+    - Adds machine restart API endpoint
+    - Adds machine types/drivers list API endpoints
+    - Adds machine registry status API endpoint
+    - Adds 'required' field to the global Settings API
+    - Discover sub-sub classes of the StatusCode API
 
 v167 -> 2024-02-07: https://github.com/inventree/InvenTree/pull/6440
     - Fixes for OpenAPI schema generation

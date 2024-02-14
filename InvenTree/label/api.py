@@ -236,7 +236,10 @@ class LabelPrintMixin(LabelFilterMixin):
 
         try:
             result = plugin.print_labels(
-                label, items_to_print, request, printing_options=request.data
+                label,
+                items_to_print,
+                request,
+                printing_options=(serializer.data if serializer else {}),
             )
         except ValidationError as e:
             raise (e)
