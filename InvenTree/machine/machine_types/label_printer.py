@@ -180,6 +180,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         Keyword Arguments:
             pdf_data (bytes): The pdf document as bytes (optional)
             dpi (int): The dpi used to render the image (optional)
+            pdf2image_kwargs (dict): Additional keyword arguments to pass to the pdf2image.convert_from_bytes method (optional)
         """
         label.object_to_print = item
         png = self.machine_plugin.render_to_png(label, request, **kwargs)

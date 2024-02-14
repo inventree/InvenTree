@@ -76,7 +76,16 @@ class LabelPrintingMixin:
             raise ValidationError(_('Error rendering label to HTML'))
 
     def render_to_png(self, label: LabelTemplate, request=None, **kwargs):
-        """Render this label to PNG format."""
+        """Render this label to PNG format.
+
+        Arguments:
+            label: The LabelTemplate object to render
+            request: The HTTP request object which triggered this print job
+        Keyword Arguments:
+            pdf_data: The raw PDF data of the rendered label (if already rendered)
+            dpi: The DPI to use for the PNG rendering
+            pdf2image_kwargs: Additional keyword arguments to pass to the pdf2image.convert_from_bytes method
+        """
         # Check if pdf data is provided
         pdf_data = kwargs.get('pdf_data', None)
 
@@ -86,10 +95,13 @@ class LabelPrintingMixin:
             )
 
         dpi = kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300))
+        pdf2image_kwargs = kwargs.get('pdf2image_kwargs', {})
 
         # Convert to png data
         try:
-            return pdf2image.convert_from_bytes(pdf_data, dpi=dpi)[0]
+            return pdf2image.convert_from_bytes(pdf_data, dpi=dpi, **pdf2image_kwargs)[
+                0
+            ]
         except Exception as e:
             log_error('label.render_to_png')
             raise ValidationError(_('Error rendering label to PNG'))
