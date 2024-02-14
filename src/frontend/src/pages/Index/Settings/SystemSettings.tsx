@@ -24,7 +24,6 @@ import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
-import { CurrencyTable } from '../../../tables/settings/CurrencyTable';
 
 /**
  * System settings page
@@ -134,8 +133,6 @@ export default function SystemSettings() {
               keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
             />
             <StylishText size="xl">{t`Exchange Rates`}</StylishText>
-            <Divider />
-            <CurrencyTable />
           </>
         )
       },

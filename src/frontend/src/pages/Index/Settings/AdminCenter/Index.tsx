@@ -1,7 +1,9 @@
 import { Trans, t } from '@lingui/macro';
 import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
+  IconCoins,
   IconCpu,
+  IconCurrency,
   IconDevicesPc,
   IconExclamationCircle,
   IconList,
@@ -50,6 +52,10 @@ const PartParameterTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
 );
 
+const CurrencyTable = Loadable(
+  lazy(() => import('../../../../tables/settings/CurrencyTable'))
+);
+
 export default function AdminCenter() {
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
@@ -70,6 +76,12 @@ export default function AdminCenter() {
         label: t`Error Reports`,
         icon: <IconExclamationCircle />,
         content: <ErrorReportTable />
+      },
+      {
+        name: 'currencies',
+        label: t`Currencies`,
+        icon: <IconCoins />,
+        content: <CurrencyTable />
       },
       {
         name: 'projectcodes',
