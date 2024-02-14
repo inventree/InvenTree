@@ -1,5 +1,11 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Menu, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Indicator,
+  IndicatorProps,
+  Menu,
+  Tooltip
+} from '@mantine/core';
 import {
   IconCopy,
   IconEdit,
@@ -18,6 +24,7 @@ export type ActionDropdownItem = {
   tooltip?: string;
   disabled?: boolean;
   onClick?: () => void;
+  indicator?: Omit<IndicatorProps, 'children'>;
 };
 
 /**
@@ -37,34 +44,45 @@ export function ActionDropdown({
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.disabled);
   }, [actions]);
+  const indicatorProps = useMemo(() => {
+    return actions.find((action) => action.indicator);
+  }, [actions]);
 
   return hasActions ? (
     <Menu position="bottom-end">
-      <Menu.Target>
-        <Tooltip label={tooltip} hidden={!tooltip}>
-          <ActionIcon size="lg" radius="sm" variant="outline">
-            {icon}
-          </ActionIcon>
-        </Tooltip>
-      </Menu.Target>
+      <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
+        <Menu.Target>
+          <Tooltip label={tooltip} hidden={!tooltip}>
+            <ActionIcon size="lg" radius="sm" variant="outline">
+              {icon}
+            </ActionIcon>
+          </Tooltip>
+        </Menu.Target>
+      </Indicator>
       <Menu.Dropdown>
         {actions.map((action) =>
           action.disabled ? null : (
-            <Tooltip label={action.tooltip} key={action.name}>
-              <Menu.Item
-                icon={action.icon}
-                onClick={() => {
-                  if (action.onClick != undefined) {
-                    action.onClick();
-                  } else {
-                    notYetImplemented();
-                  }
-                }}
-                disabled={action.disabled}
-              >
-                {action.name}
-              </Menu.Item>
-            </Tooltip>
+            <Indicator
+              disabled={!action.indicator}
+              {...action.indicator}
+              key={action.name}
+            >
+              <Tooltip label={action.tooltip}>
+                <Menu.Item
+                  icon={action.icon}
+                  onClick={() => {
+                    if (action.onClick != undefined) {
+                      action.onClick();
+                    } else {
+                      notYetImplemented();
+                    }
+                  }}
+                  disabled={action.disabled}
+                >
+                  {action.name}
+                </Menu.Item>
+              </Tooltip>
+            </Indicator>
           )
         )}
       </Menu.Dropdown>

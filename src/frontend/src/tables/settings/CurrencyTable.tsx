@@ -13,7 +13,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 /*
  * Table for displaying available currencies
  */
-export function CurrencyTable() {
+export default function CurrencyTable() {
   const table = useTable('currency');
 
   const columns = useMemo(() => {
