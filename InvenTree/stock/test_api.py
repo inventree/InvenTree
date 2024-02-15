@@ -19,7 +19,7 @@ import part.models
 from common.models import InvenTreeSetting
 from InvenTree.status_codes import StockHistoryCode, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
-from part.models import Part
+from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
     StockItemTestResult,
@@ -1560,6 +1560,8 @@ class StockTestResultTest(StockAPITestCase):
         response = self.client.get(url)
         n = len(response.data)
 
+        # Test upload using test name (legacy method)
+        # Note that a new test template will be created
         data = {
             'stock_item': 105,
             'test': 'Checked Steam Valve',
@@ -1569,6 +1571,9 @@ class StockTestResultTest(StockAPITestCase):
         }
 
         response = self.post(url, data, expected_code=201)
+
+        # Check that a new test template has been created
+        test_template = PartTestTemplate.objects.get(key='checkedsteamvalve')
 
         response = self.client.get(url)
         self.assertEqual(len(response.data), n + 1)
@@ -1581,6 +1586,27 @@ class StockTestResultTest(StockAPITestCase):
         test = response.data[0]
         self.assertEqual(test['value'], '150kPa')
         self.assertEqual(test['user'], self.user.pk)
+
+        # Test upload using template reference (new method)
+        data = {
+            'stock_item': 105,
+            'template': test_template.pk,
+            'result': True,
+            'value': '75kPa',
+        }
+
+        response = self.post(url, data, expected_code=201)
+
+        # Check that a new test template has been created
+        self.assertEqual(test_template.test_results.all().count(), 2)
+
+        # List test results against the template
+        response = self.client.get(url, data={'template': test_template.pk})
+
+        self.assertEqual(len(response.data), 2)
+
+        for item in response.data:
+            self.assertEqual(item['template'], test_template.pk)
 
     def test_post_bitmap(self):
         """2021-08-25.
