@@ -1234,12 +1234,12 @@ class StockItemTestResultFilter(rest_filters.FilterSet):
         fields = ['user', 'template', 'result', 'value']
 
     build = rest_filters.ModelChoiceFilter(
-        label='Build', queryset=Build.objects.all(), method='filter_build'
+        label='Build', queryset=Build.objects.all(), field_name='stock_item__build'
     )
 
-    def filter_build(self, queryset, name, value):
-        """Filter by build."""
-        return queryset.filter(stock_item__build=value)
+    part = rest_filters.ModelChoiceFilter(
+        label='Part', queryset=Part.objects.all(), field_name='stock_item__part'
+    )
 
     test = rest_filters.CharFilter(
         label='Test name (case insensitive)', method='filter_test_name'
