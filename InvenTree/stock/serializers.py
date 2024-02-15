@@ -1,5 +1,6 @@
 """JSON serializers for Stock app."""
 
+import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
 
@@ -33,6 +34,8 @@ from .models import (
     StockLocation,
     StockLocationType,
 )
+
+logger = logging.getLogger('inventree')
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -119,9 +122,17 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
                 part__tree_id=stock_item.part.tree_id, key=test_key
             ).first():
                 data['template'] = template
-                print('found template:', template.test_name, template.key)
+
             else:
-                raise ValidationError({'test': _('Test template not found')})
+                # Create a new test template based on the provided dasta
+                data['template'] = part_models.PartTestTemplate.objects.create(
+                    part=stock_item.part, test_name=test_name
+                )
+
+                logger.warning(
+                    "No matching test template found for '%s' - creating a new template",
+                    test_name,
+                )
 
         return super().validate(data)
 

@@ -38,6 +38,7 @@ from InvenTree.filters import (
 from InvenTree.helpers import (
     DownloadFile,
     extract_serial_numbers,
+    generateTestKey,
     is_ajax,
     isNull,
     str2bool,
@@ -1221,9 +1222,44 @@ class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyA
     pass
 
 
+class StockItemTestResultFilter(rest_filters.FilterSet):
+    """API filter for the StockItemTestResult list."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemTestResult
+
+        # Simple filter fields
+        fields = ['user', 'template', 'result', 'value']
+
+    build = rest_filters.ModelChoiceFilter(
+        label='Build', queryset=Build.objects.all(), method='filter_build'
+    )
+
+    def filter_build(self, queryset, name, value):
+        """Filter by build."""
+        return queryset.filter(stock_item__build=value)
+
+    test = rest_filters.CharFilter(
+        label='Test name (case insensitive)', method='filter_test_name'
+    )
+
+    def filter_test_name(self, queryset, name, value):
+        """Filter by test name.
+
+        This method is provided for legacy support,
+        where the StockItemTestResult model had a "test" field.
+        Now the "test" name is stored against the PartTestTemplate model
+        """
+        key = generateTestKey(value)
+        return queryset.filter(template__key=key)
+
+
 class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
+    filterset_class = StockItemTestResultFilter
     filter_backends = SEARCH_ORDER_FILTER
 
     filterset_fields = ['user', 'template', 'result', 'value']
@@ -1236,18 +1272,6 @@ class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
-
-        # Filter by 'build'
-        build = params.get('build', None)
-
-        if build is not None:
-            try:
-                build = Build.objects.get(pk=build)
-
-                queryset = queryset.filter(stock_item__build=build)
-
-            except (ValueError, Build.DoesNotExist):
-                pass
 
         # Filter by stock item
         item = params.get('stock_item', None)
