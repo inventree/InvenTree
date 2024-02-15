@@ -181,9 +181,9 @@ class LabelPrinterBaseDriver(BaseDriver):
             pdf_data (bytes): The pdf document as bytes (optional)
             dpi (int): The dpi used to render the image (optional)
             use_cairo (bool): Whether to use the pdftocairo backend for rendering which provides better results
-                see https://github.com/inventree/InvenTree/pull/6488 for details. If False, pdftoppm is used (default: True)
+                see [#6488](https://github.com/inventree/InvenTree/pull/6488) for details. If False, pdftoppm is used (default: True)
             pdf2image_kwargs (dict): Additional keyword arguments to pass to the pdf2image.convert_from_bytes method
-                see https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes
+                see [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes)
         """
         label.object_to_print = item
         png = self.machine_plugin.render_to_png(label, request, **kwargs)
