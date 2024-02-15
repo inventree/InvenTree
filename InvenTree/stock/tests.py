@@ -12,7 +12,7 @@ from company.models import Company
 from InvenTree.status_codes import StockHistoryCode
 from InvenTree.unit_test import InvenTreeTestCase
 from order.models import SalesOrder
-from part.models import Part
+from part.models import Part, PartTestTemplate
 
 from .models import StockItem, StockItemTestResult, StockItemTracking, StockLocation
 
@@ -1201,11 +1201,20 @@ class TestResultTest(StockTestBase):
         )
 
         # Now, create some test results against the sub item
+        # Ensure there is a matching PartTestTemplate
+        if template := PartTestTemplate.objects.filter(
+            part=item.part, key='firmwareversion'
+        ).first():
+            pass
+        else:
+            template = PartTestTemplate.objects.create(
+                part=item.part, test_name='Firmware Version', required=True
+            )
 
         # First test is overshadowed by the same test for the parent part
         StockItemTestResult.objects.create(
             stock_item=sub_item,
-            test='firmware version',
+            template=template,
             date=datetime.datetime.now().date(),
             result=True,
         )
@@ -1214,10 +1223,19 @@ class TestResultTest(StockTestBase):
         tests = item.testResultMap(include_installed=True)
         self.assertEqual(len(tests), 3)
 
+        if template := PartTestTemplate.objects.filter(
+            part=item.part, key='somenewtest'
+        ).first():
+            pass
+        else:
+            template = PartTestTemplate.objects.create(
+                part=item.part, test_name='Some New Test', required=True
+            )
+
         # Now, add a *unique* test result for the sub item
         StockItemTestResult.objects.create(
             stock_item=sub_item,
-            test='some new test',
+            template=template,
             date=datetime.datetime.now().date(),
             result=False,
             value='abcde',
