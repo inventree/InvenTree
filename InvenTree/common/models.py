@@ -157,7 +157,7 @@ class SettingsKeyType(TypedDict, total=False):
         units: Units of the particular setting (optional)
         validator: Validation function/list of functions for the setting (optional, default: None, e.g: bool, int, str, MinValueValidator, ...)
         default: Default value or function that returns default value (optional)
-        choices: (Function that returns) tuple[str: key, str: display value] (optional)
+        choices: Function that returns or value of list[tuple[str: key, str: display value]] (optional)
         hidden: Hide this setting from settings page (optional)
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
