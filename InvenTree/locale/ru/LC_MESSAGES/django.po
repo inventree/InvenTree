@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-15 00:38+0000\n"
-"PO-Revision-Date: 2024-02-10 14:54\n"
+"POT-Creation-Date: 2024-02-14 14:18+0000\n"
+"PO-Revision-Date: 2024-02-15 02:43\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -3465,10 +3465,8 @@ msgid "Receive notifications for system errors"
 msgstr ""
 
 #: common/models.py:2367
-#, fuzzy
-#| msgid "Printing actions"
 msgid "Last used printing machines"
-msgstr "Действия печати"
+msgstr ""
 
 #: common/models.py:2368
 msgid "Save the last used printing machines for a user"
@@ -4683,16 +4681,12 @@ msgid "Copies"
 msgstr ""
 
 #: machine/machine_types/label_printer.py:214
-#, fuzzy
-#| msgid "Number of stock items to build"
 msgid "Number of copies to print for each label"
-msgstr "Количество складских позиций для производства"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:229
-#, fuzzy
-#| msgid "Connection error"
 msgid "Connected"
-msgstr "Ошибка соединения"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:230 order/api.py:1412
 #: templates/js/translated/sales_order.js:1042
@@ -4700,36 +4694,28 @@ msgid "Unknown"
 msgstr "Неизвестно"
 
 #: machine/machine_types/label_printer.py:231
-#, fuzzy
-#| msgid "Print"
 msgid "Printing"
-msgstr "Печать"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:232
 msgid "No media"
 msgstr ""
 
 #: machine/machine_types/label_printer.py:233
-#, fuzzy
-#| msgid "selected"
 msgid "Disconnected"
-msgstr "выбрано"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:240
-#, fuzzy
-#| msgid "Label name"
 msgid "Label Printer"
-msgstr "Имя метки"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:241
 msgid "Directly print labels for various items."
 msgstr ""
 
 #: machine/machine_types/label_printer.py:247
-#, fuzzy
-#| msgid "Print actions"
 msgid "Printer Location"
-msgstr "Печать"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:248
 msgid "Scope the printer to a specific location"
@@ -4760,40 +4746,28 @@ msgid "Machines can be disabled"
 msgstr ""
 
 #: machine/models.py:95
-#, fuzzy
-#| msgid "Available"
 msgid "Driver available"
-msgstr "Доступно"
+msgstr ""
 
 #: machine/models.py:100
-#, fuzzy
-#| msgid "Form errors exist"
 msgid "No errors"
-msgstr "Форма содержит ошибки"
+msgstr ""
 
 #: machine/models.py:105
-#, fuzzy
-#| msgid "Is Serialized"
 msgid "Initialized"
-msgstr "Сериализовано"
+msgstr ""
 
 #: machine/models.py:110
-#, fuzzy
-#| msgid "Error code"
 msgid "Errors"
-msgstr "Код ошибки"
+msgstr ""
 
 #: machine/models.py:117
-#, fuzzy
-#| msgid "Order status"
 msgid "Machine status"
-msgstr "Статус заказа"
+msgstr ""
 
 #: machine/models.py:145
-#, fuzzy
-#| msgid "Searching"
 msgid "Machine"
-msgstr "Поиск"
+msgstr ""
 
 #: machine/models.py:151
 msgid "Machine Config"
@@ -7891,16 +7865,12 @@ msgid "Provides support for printing using a machine"
 msgstr ""
 
 #: plugin/builtin/labels/inventree_machine.py:150
-#, fuzzy
-#| msgid "Last updated"
 msgid "last used"
-msgstr "Последнее обновление"
+msgstr ""
 
 #: plugin/builtin/labels/inventree_machine.py:167
-#, fuzzy
-#| msgid "Optional"
 msgid "Options"
-msgstr "Необязательно"
+msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:29
 msgid "Page size for the label sheet"
@@ -8802,7 +8772,7 @@ msgstr ""
 
 #: stock/models.py:1586 stock/serializers.py:1148
 msgid "Duplicate stock items"
-msgstr "Дублировать складские позиции"
+msgstr "Дублировать складские позиции\n"
 
 #: stock/models.py:1590
 msgid "Stock items must refer to the same part"
@@ -9251,7 +9221,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1922
 msgid "stock item"
-msgstr "складская позиция"
+msgstr "складская позиция\n"
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -9287,7 +9257,7 @@ msgstr "Вернуть на склад"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr "Создать сериализированные позиции из этой складской позиции"
+msgstr "Создать сериализированные позиции из этой складской позиции\n"
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
@@ -10755,7 +10725,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Складская позиция уже просканирована"
+msgstr "Складская позиция уже просканирована\n"
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
@@ -12950,11 +12920,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Создана новая складская позиция"
+msgstr "Создана новая складская позиция\n"
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Создано несколько складских позиций"
+msgstr "Создано несколько складских позиций\n"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
@@ -13761,8 +13731,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13942,3 +13911,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
