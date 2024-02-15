@@ -16,7 +16,9 @@ from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.helpers
 import InvenTree.ready
+from InvenTree.config import ensure_dir
 from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
+from InvenTree.storage_backends import PrivateMediaStorage
 
 logger = logging.getLogger('inventree')
 
@@ -137,10 +139,7 @@ class LabelConfig(AppConfig):
         # Create root dir for templates
         src_dir = TEMPLATES_DIR.joinpath('label', 'templates', 'label', ref_name)
         dst_dir = MEDIA_STORAGE_DIR.joinpath('label', 'inventree', ref_name)
-
-        if not dst_dir.exists():
-            logger.info("Creating required directory: '%s'", dst_dir)
-            dst_dir.mkdir(parents=True, exist_ok=True)
+        ensure_dir(dst_dir, PrivateMediaStorage() if settings.USE_S3 else None)
 
         # Create labels
         for label in labels:
@@ -151,7 +150,7 @@ class LabelConfig(AppConfig):
         filename = os.path.join('label', 'inventree', ref_name, label['file'])
 
         src_file = src_dir.joinpath(label['file'])
-        dst_file = settings.MEDIA_ROOT.joinpath(filename)
+        dst_file = MEDIA_STORAGE_DIR.joinpath(filename)
 
         to_copy = False
 
@@ -174,7 +173,10 @@ class LabelConfig(AppConfig):
             dst_file.parent.mkdir(parents=True, exist_ok=True)
 
             # Copy file
-            shutil.copyfile(src_file, dst_file)
+            if settings.USE_S3:
+                PrivateMediaStorage().save(filename, src_file.open('rb'))
+            else:
+                shutil.copyfile(src_file, dst_file)
 
         # Check if a label matching the template already exists
         try:

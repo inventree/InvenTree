@@ -173,20 +173,17 @@ function attachmentIcon(filename) {
 /*
  * Render a link (with icon) to an internal attachment (file)
  */
-function attachmentLink(filename) {
+function attachmentLink(link, filename) {
 
-    if (!filename) {
+    if (!link) {
         return null;
     }
 
-    let split = filename.split('/');
-    let fn = split[split.length - 1];
+    let icon = attachmentIcon(link);
 
-    let icon = attachmentIcon(filename);
+    let html = makeIcon(icon) + ` ${filename}`;
 
-    let html = makeIcon(icon) + ` ${fn}`;
-
-    return renderLink(html, filename, {download: true});
+    return renderLink(html, link, {download: true});
 }
 
 
@@ -327,7 +324,7 @@ function loadAttachmentTable(url, options) {
                 formatter: function(value, row) {
 
                     if (row.attachment) {
-                        return attachmentLink(row.attachment);
+                        return attachmentLink(row.attachment, row.filename);
                     } else if (row.link) {
                         let html = makeIcon('fa-link') + ` ${row.link}`;
                         return renderLink(html, row.link);

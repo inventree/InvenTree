@@ -424,12 +424,7 @@ ROOT_URLCONF = 'InvenTree.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR.joinpath('templates'),
-            # Allow templates in the reporting directory to be accessed
-            MEDIA_ROOT.joinpath('report'),
-            MEDIA_ROOT.joinpath('label'),
-        ],
+        'DIRS': [BASE_DIR.joinpath('templates'), BASE_DIR.joinpath('templates')],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -1164,6 +1159,7 @@ LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
 # File storage settings
 USE_S3 = os.getenv('USE_S3') == 'TRUE'
+USE_S3 = False
 
 STATIC_LOCATION = 'static'
 PUBLIC_MEDIA_LOCATION = 'media'
@@ -1175,24 +1171,34 @@ if USE_S3:
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
     AWS_DEFAULT_ACL = None
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
     # s3 static settings
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+    STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/{STATIC_LOCATION}/'
     STATICFILES_STORAGE = 'InvenTree.storage_backends.StaticStorage'
     # s3 public media settings
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{PUBLIC_MEDIA_LOCATION}/'
     DEFAULT_FILE_STORAGE = 'InvenTree.storage_backends.PublicMediaStorage'
     # s3 private media settings
     PRIVATE_FILE_STORAGE = 'InvenTree.storage_backends.PrivateMediaStorage'
+
+    logger.info("MEDIA_ROOT: '%s'", MEDIA_URL)
+    logger.info("STATIC_ROOT: '%s'", STATIC_URL)
 else:
     STATIC_URL = '/static/'
     STATIC_ROOT = config.get_static_dir()
     MEDIA_URL = '/media/'
     MEDIA_ROOT = config.get_media_dir()
 
-# Color Themes Directory
-STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
+    logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
+    logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
 
-logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
-logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
+    # Allow templates in the reporting directory to be accessed
+    TEMPLATES[0]['DIRS'] += [
+        MEDIA_ROOT.joinpath('report'),
+        MEDIA_ROOT.joinpath('label'),
+    ]
+
+# Color Themes Directory
+STATIC_COLOR_THEMES_DIR = BASE_DIR.joinpath('css', 'color-themes').resolve()

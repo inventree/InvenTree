@@ -13,7 +13,9 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.helpers
+from InvenTree.config import ensure_dir
 from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
+from InvenTree.storage_backends import PrivateMediaStorage
 
 logger = logging.getLogger('inventree')
 
@@ -72,10 +74,7 @@ class ReportConfig(AppConfig):
 
         # Destination directory
         dst_dir = MEDIA_STORAGE_DIR.joinpath('report', 'inventree', model.getSubdir())
-
-        if not dst_dir.exists():
-            logger.info("Creating missing directory: '%s'", dst_dir)
-            dst_dir.mkdir(parents=True, exist_ok=True)
+        ensure_dir(dst_dir, PrivateMediaStorage() if settings.USE_S3 else None)
 
         # Copy each report template across (if required)
         for report in reports:
@@ -85,7 +84,7 @@ class ReportConfig(AppConfig):
             )
 
             src_file = src_dir.joinpath(report['file'])
-            dst_file = settings.MEDIA_ROOT.joinpath(filename)
+            dst_file = MEDIA_STORAGE_DIR.joinpath(filename)
 
             do_copy = False
 
@@ -103,7 +102,10 @@ class ReportConfig(AppConfig):
 
             if do_copy:
                 logger.info("Copying test report template '%s'", dst_file)
-                shutil.copyfile(src_file, dst_file)
+                if settings.USE_S3:
+                    PrivateMediaStorage().save(filename, src_file.open('rb'))
+                else:
+                    shutil.copyfile(src_file, dst_file)
 
             try:
                 # Check if a report matching the template already exists
