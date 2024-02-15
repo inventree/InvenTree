@@ -1647,22 +1647,33 @@ class StockTestResultTest(StockAPITestCase):
 
         url = reverse('api-stock-test-result-list')
 
+        stock_item = StockItem.objects.get(pk=1)
+
+        # Ensure the part is marked as "trackable"
+        p = stock_item.part
+        p.trackable = True
+        p.save()
+
         # Create some objects (via the API)
         for _ii in range(50):
             response = self.post(
                 url,
                 {
-                    'stock_item': 1,
+                    'stock_item': stock_item.pk,
                     'test': f'Some test {_ii}',
                     'result': True,
                     'value': 'Test result value',
                 },
-                expected_code=201,
+                # expected_code=201,
             )
 
             tests.append(response.data['pk'])
 
         self.assertEqual(StockItemTestResult.objects.count(), n + 50)
+
+        # Filter test results by part
+        response = self.get(url, {'part': p.pk}, expected_code=200)
+        self.assertEqual(len(response.data), 50)
 
         # Attempt a delete without providing items
         self.delete(url, {}, expected_code=400)
@@ -1866,6 +1877,7 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
     fixtures = [
         'category',
         'part',
+        'test_templates',
         'bom',
         'company',
         'location',

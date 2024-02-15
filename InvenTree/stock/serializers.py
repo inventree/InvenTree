@@ -124,14 +124,14 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
                 data['template'] = template
 
             else:
+                logger.info(
+                    "No matching test template found for '%s' - creating a new template",
+                    test_name,
+                )
+
                 # Create a new test template based on the provided dasta
                 data['template'] = part_models.PartTestTemplate.objects.create(
                     part=stock_item.part, test_name=test_name
-                )
-
-                logger.warning(
-                    "No matching test template found for '%s' - creating a new template",
-                    test_name,
                 )
 
         return super().validate(data)
