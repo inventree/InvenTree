@@ -84,10 +84,10 @@ class LabelPrintingMixin:
         Keyword Arguments:
             pdf_data: The raw PDF data of the rendered label (if already rendered)
             dpi: The DPI to use for the PNG rendering
-            use_cairo: Whether to use the pdftocairo backend for rendering which provides better results
-                see #6488. If False, pdftoppm is used (default: True)
-            pdf2image_kwargs: Additional keyword arguments to pass to the pdf2image.convert_from_bytes method
-                see https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes
+            use_cairo (bool): Whether to use the pdftocairo backend for rendering which provides better results in tests,
+                see [#6488](https://github.com/inventree/InvenTree/pull/6488) for details. If False, pdftoppm is used (default: True)
+            pdf2image_kwargs (dict): Additional keyword arguments to pass to the
+                [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes) method
         """
         # Check if pdf data is provided
         pdf_data = kwargs.get('pdf_data', None)
