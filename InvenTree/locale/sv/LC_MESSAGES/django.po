@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-15 00:38+0000\n"
-"PO-Revision-Date: 2024-02-10 14:54\n"
+"POT-Creation-Date: 2024-02-14 14:18+0000\n"
+"PO-Revision-Date: 2024-02-15 02:43\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -4681,16 +4681,12 @@ msgid "Copies"
 msgstr ""
 
 #: machine/machine_types/label_printer.py:214
-#, fuzzy
-#| msgid "Number of stock items to build"
 msgid "Number of copies to print for each label"
-msgstr "Antal lagerobjekt att bygga"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:229
-#, fuzzy
-#| msgid "Connection error"
 msgid "Connected"
-msgstr "Anslutningsfel"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:230 order/api.py:1412
 #: templates/js/translated/sales_order.js:1042
@@ -4698,10 +4694,8 @@ msgid "Unknown"
 msgstr ""
 
 #: machine/machine_types/label_printer.py:231
-#, fuzzy
-#| msgid "Print"
 msgid "Printing"
-msgstr "Skriv ut"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:232
 msgid "No media"
@@ -4720,10 +4714,8 @@ msgid "Directly print labels for various items."
 msgstr ""
 
 #: machine/machine_types/label_printer.py:247
-#, fuzzy
-#| msgid "Source Location"
 msgid "Printer Location"
-msgstr "Källa Plats"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:248
 msgid "Scope the printer to a specific location"
@@ -4766,22 +4758,16 @@ msgid "Initialized"
 msgstr ""
 
 #: machine/models.py:110
-#, fuzzy
-#| msgid "Error code"
 msgid "Errors"
-msgstr "Felkod"
+msgstr ""
 
 #: machine/models.py:117
-#, fuzzy
-#| msgid "Stock status"
 msgid "Machine status"
-msgstr "Lagerstatus"
+msgstr ""
 
 #: machine/models.py:145
-#, fuzzy
-#| msgid "Searching"
 msgid "Machine"
-msgstr "Söker"
+msgstr ""
 
 #: machine/models.py:151
 msgid "Machine Config"
@@ -13745,8 +13731,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13926,3 +13911,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
