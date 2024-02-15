@@ -1994,19 +1994,24 @@ class StockItem(
 
         results.delete()
 
-    def getTestResults(self, test=None, result=None, user=None):
+    def getTestResults(self, template=None, test=None, result=None, user=None):
         """Return all test results associated with this StockItem.
 
         Optionally can filter results by:
+        - Test template ID
         - Test name
         - Test result
         - User
         """
         results = self.test_results
 
+        if template:
+            results = results.filter(template=template)
+
         if test:
             # Filter by test name
-            results = results.filter(test=test)
+            test_key = InvenTree.helpers.generateTestKey(test)
+            results = results.filter(template__key=test_key)
 
         if result is not None:
             # Filter by test status
