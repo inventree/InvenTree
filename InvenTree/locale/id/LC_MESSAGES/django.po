@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-15 00:38+0000\n"
-"PO-Revision-Date: 2024-02-10 14:55\n"
+"POT-Creation-Date: 2024-02-14 14:18+0000\n"
+"PO-Revision-Date: 2024-02-15 02:43\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -4681,10 +4681,8 @@ msgid "Copies"
 msgstr ""
 
 #: machine/machine_types/label_printer.py:214
-#, fuzzy
-#| msgid "Number of stock items to build"
 msgid "Number of copies to print for each label"
-msgstr "Jumlah item stok yang akan dibuat"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:229
 msgid "Connected"
@@ -4696,10 +4694,8 @@ msgid "Unknown"
 msgstr ""
 
 #: machine/machine_types/label_printer.py:231
-#, fuzzy
-#| msgid "Print actions"
 msgid "Printing"
-msgstr "Cetak aksi"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:232
 msgid "No media"
@@ -4718,10 +4714,8 @@ msgid "Directly print labels for various items."
 msgstr ""
 
 #: machine/machine_types/label_printer.py:247
-#, fuzzy
-#| msgid "Print actions"
 msgid "Printer Location"
-msgstr "Cetak aksi"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:248
 msgid "Scope the printer to a specific location"
@@ -13737,8 +13731,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13918,3 +13911,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
