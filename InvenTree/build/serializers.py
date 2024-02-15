@@ -525,7 +525,8 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
             for output in outputs:
                 stock_item = output['output']
                 if stock_item.hasRequiredTests() and not stock_item.passedAllRequiredTests():
-                    errors.append(_(f"The {stock_item.serial} stock item was not passed on all of the required tests"))
+                    serial = stock_item.serial
+                    errors.append(_(f"Build output {serial} has not passed all required tests"))
 
             if errors:
                 raise ValidationError(errors)
