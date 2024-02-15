@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-15 00:38+0000\n"
-"PO-Revision-Date: 2024-02-10 14:54\n"
+"POT-Creation-Date: 2024-02-14 14:18+0000\n"
+"PO-Revision-Date: 2024-02-15 02:42\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -4685,10 +4685,8 @@ msgid "Number of copies to print for each label"
 msgstr ""
 
 #: machine/machine_types/label_printer.py:229
-#, fuzzy
-#| msgid "Connection error"
 msgid "Connected"
-msgstr "Yhteysvirhe"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:230 order/api.py:1412
 #: templates/js/translated/sales_order.js:1042
@@ -4716,10 +4714,8 @@ msgid "Directly print labels for various items."
 msgstr ""
 
 #: machine/machine_types/label_printer.py:247
-#, fuzzy
-#| msgid "New Location"
 msgid "Printer Location"
-msgstr "Uusi sijainti"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:248
 msgid "Scope the printer to a specific location"
@@ -4750,10 +4746,8 @@ msgid "Machines can be disabled"
 msgstr ""
 
 #: machine/models.py:95
-#, fuzzy
-#| msgid "Available"
 msgid "Driver available"
-msgstr "Saatavilla"
+msgstr ""
 
 #: machine/models.py:100
 msgid "No errors"
@@ -7875,10 +7869,8 @@ msgid "last used"
 msgstr ""
 
 #: plugin/builtin/labels/inventree_machine.py:167
-#, fuzzy
-#| msgid "Actions"
 msgid "Options"
-msgstr "Toiminnot"
+msgstr ""
 
 #: plugin/builtin/labels/label_sheet.py:29
 msgid "Page size for the label sheet"
@@ -13739,8 +13731,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13920,3 +13911,4 @@ msgstr "Oikeus muokata kohteita"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
+
