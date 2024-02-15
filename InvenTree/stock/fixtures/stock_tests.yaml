@@ -57,3 +57,11 @@
     template: 4
     result: True
     date: 2020-05-17
+
+- model: stock.stockitemtestresult
+  pk: 8
+  fields:
+    stock_item: 522
+    template: 3
+    result: True
+    date: 2024-02-15

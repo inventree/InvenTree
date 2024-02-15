@@ -2102,7 +2102,7 @@ class StockItem(
 
     def hasRequiredTests(self):
         """Return True if there are any 'required tests' associated with this StockItem."""
-        return self.part.getRequiredTests().count() > 0
+        return self.required_test_count > 0
 
     def passedAllRequiredTests(self):
         """Returns True if this StockItem has passed all required tests."""
@@ -2298,6 +2298,10 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         user: User who uploaded the test result
         date: Date the test result was recorded
     """
+
+    def __str__(self):
+        """Return string representation."""
+        return f'{self.test_name} - {self.result}'
 
     @staticmethod
     def get_api_url():

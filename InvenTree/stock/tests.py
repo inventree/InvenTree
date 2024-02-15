@@ -1086,30 +1086,50 @@ class TestResultTest(StockTestBase):
 
         self.assertEqual(status['total'], 5)
         self.assertEqual(status['passed'], 2)
-        self.assertEqual(status['failed'], 2)
+        self.assertEqual(status['failed'], 1)
 
         self.assertFalse(item.passedAllRequiredTests())
 
         # Add some new test results to make it pass!
-        test = StockItemTestResult.objects.get(pk=12345)
-        test.result = True
+        test = StockItemTestResult.objects.get(pk=8)
+        test.result = False
         test.save()
 
+        status = item.requiredTestStatus()
+        self.assertEqual(status['total'], 5)
+        self.assertEqual(status['passed'], 1)
+        self.assertEqual(status['failed'], 2)
+
+        template = PartTestTemplate.objects.get(pk=3)
+
         StockItemTestResult.objects.create(
-            stock_item=item, test='sew cushion', result=True
+            stock_item=item, template=template, result=True
         )
 
         # Still should be failing at this point,
         # as the most recent "apply paint" test was False
         self.assertFalse(item.passedAllRequiredTests())
 
+        template = PartTestTemplate.objects.get(pk=2)
+
         # Add a new test result against this required test
         StockItemTestResult.objects.create(
             stock_item=item,
-            test='apply paint',
+            template=template,
             date=datetime.datetime(2022, 12, 12),
             result=True,
         )
+
+        self.assertFalse(item.passedAllRequiredTests())
+
+        # Generate a passing result for all required tests
+        for template in item.part.getRequiredTests():
+            StockItemTestResult.objects.create(
+                stock_item=item,
+                template=template,
+                result=True,
+                date=datetime.datetime(2025, 12, 12),
+            )
 
         self.assertTrue(item.passedAllRequiredTests())
 
