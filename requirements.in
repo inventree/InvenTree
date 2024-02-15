@@ -52,6 +52,7 @@ setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 weasyprint                              # PDF generation
 
+
 # OpenTelemetry dependencies
 opentelemetry-api
 opentelemetry-sdk
