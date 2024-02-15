@@ -1241,6 +1241,10 @@ class StockItemTestResultFilter(rest_filters.FilterSet):
         label='Part', queryset=Part.objects.all(), field_name='stock_item__part'
     )
 
+    required = rest_filters.BooleanFilter(
+        label='Required', field_name='template__required'
+    )
+
     test = rest_filters.CharFilter(
         label='Test name (case insensitive)', method='filter_test_name'
     )

@@ -3408,16 +3408,6 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         super().save(*args, **kwargs)
 
-    def delete(self, *args, **kwargs):
-        """Delete this PartTestTemplate instance.
-
-        If there are test results associated with this template, prevent deletion.
-        """
-        if self.test_results.count() > 0:
-            raise ValidationError(_('Test template has associated test results'))
-
-        super().delete(*args, **kwargs)
-
     def clean(self):
         """Clean fields for the PartTestTemplate model."""
         self.test_name = self.test_name.strip()

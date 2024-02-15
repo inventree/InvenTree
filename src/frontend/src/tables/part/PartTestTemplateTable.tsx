@@ -1,5 +1,5 @@
-import { t } from '@lingui/macro';
-import { Badge, Group, Text, Tooltip } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import { Alert, Badge, Group, Text, Tooltip } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -118,6 +118,15 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
     title: t`Delete Test Template`,
+    preFormContent: (
+      <Alert color="red" title={t`This action cannot be reversed`}>
+        <Text>
+          <Trans>
+            Any tests results associated with this template will be deleted
+          </Trans>
+        </Text>
+      </Alert>
+    ),
     onFormSuccess: table.refreshTable
   });
 

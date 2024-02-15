@@ -25,6 +25,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DescriptionColumn, NoteColumn } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowActions, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -65,12 +66,24 @@ export default function StockItemTestResultTable({
   // Format the test results based on the returned data
   const formatRecords = useCallback(
     (records: any[]): any[] => {
+      // Construct a list of test templates
       let results = testTemplates.map((template: any) => {
         return {
           ...template,
           templateId: template.pk,
           results: []
         };
+      });
+
+      // If any of the tests results point to templates which we do not have, add them in
+      records.forEach((record) => {
+        if (!results.find((r: any) => r.templateId == record.template)) {
+          results.push({
+            ...record.template_detail,
+            templateId: record.template,
+            results: []
+          });
+        }
       });
 
       // Iterate through the returned records
@@ -250,6 +263,11 @@ export default function StockItemTestResultTable({
 
   const rowActions = useCallback(
     (record: any) => {
+      if (record.stock_item != undefined && record.stock_item != itemId) {
+        // Test results for other stock items cannot be edited
+        return [];
+      }
+
       return [
         {
           title: t`Pass Test`,
@@ -293,8 +311,28 @@ export default function StockItemTestResultTable({
         })
       ];
     },
-    [user]
+    [user, itemId]
   );
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'required',
+        label: t`Required`,
+        description: t`Show results for required tests`
+      },
+      {
+        name: 'include_installed',
+        label: t`Include Installed`,
+        description: t`Show results for installed stock items`
+      },
+      {
+        name: 'result',
+        label: t`Passed`,
+        description: t`Show only passed tests`
+      }
+    ];
+  }, []);
 
   const tableActions = useMemo(() => {
     return [
@@ -359,6 +397,7 @@ export default function StockItemTestResultTable({
           dataFormatter: formatRecords,
           enablePagination: false,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           rowActions: rowActions,
           rowExpansion: rowExpansion,
           params: {
