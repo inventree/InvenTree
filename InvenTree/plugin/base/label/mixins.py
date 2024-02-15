@@ -87,7 +87,7 @@ class LabelPrintingMixin:
             use_cairo (bool): Whether to use the pdftocairo backend for rendering which provides better results in tests,
                 see [#6488](https://github.com/inventree/InvenTree/pull/6488) for details. If False, pdftoppm is used (default: True)
             pdf2image_kwargs (dict): Additional keyword arguments to pass to the
-                [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes) method
+                [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes) method (optional)
         """
         # Check if pdf data is provided
         pdf_data = kwargs.get('pdf_data', None)
