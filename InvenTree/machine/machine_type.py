@@ -1,6 +1,6 @@
 """Base machine type/base driver."""
 
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Tuple, Type, Union
+from typing import TYPE_CHECKING, Any, Literal, Union
 
 from generic.states import StatusCode
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
@@ -59,7 +59,7 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
     NAME: str
     DESCRIPTION: str
 
-    MACHINE_SETTINGS: Dict[str, SettingsKeyType]
+    MACHINE_SETTINGS: dict[str, SettingsKeyType]
 
     machine_type: str
 
@@ -89,7 +89,7 @@ class BaseDriver(ClassValidationMixin, ClassProviderMixin):
         """
 
     def update_machine(
-        self, old_machine_state: Dict[str, Any], machine: 'BaseMachineType'
+        self, old_machine_state: dict[str, Any], machine: 'BaseMachineType'
     ):
         """This method gets called for each update of a machine.
 
@@ -156,11 +156,11 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
     NAME: str
     DESCRIPTION: str
 
-    base_driver: Type[BaseDriver]
+    base_driver: type[BaseDriver]
 
-    MACHINE_SETTINGS: Dict[str, SettingsKeyType]
+    MACHINE_SETTINGS: dict[str, SettingsKeyType]
 
-    MACHINE_STATUS: Type[MachineStatus]
+    MACHINE_STATUS: type[MachineStatus]
     default_machine_status: MachineStatus
 
     # used by the ClassValidationMixin
@@ -194,15 +194,15 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
                 f"'{self.driver.NAME}' is incompatible with machine type '{self.NAME}'"
             )
 
-        self.machine_settings: Dict[str, SettingsKeyType] = getattr(
+        self.machine_settings: dict[str, SettingsKeyType] = getattr(
             self, 'MACHINE_SETTINGS', {}
         )
-        self.driver_settings: Dict[str, SettingsKeyType] = getattr(
+        self.driver_settings: dict[str, SettingsKeyType] = getattr(
             self.driver, 'MACHINE_SETTINGS', {}
         )
 
-        self.setting_types: List[
-            Tuple[Dict[str, SettingsKeyType], MachineSetting.ConfigType]
+        self.setting_types: list[
+            tuple[dict[str, SettingsKeyType], MachineSetting.ConfigType]
         ] = [
             (self.machine_settings, MachineSetting.ConfigType.MACHINE),
             (self.driver_settings, MachineSetting.ConfigType.DRIVER),
@@ -339,11 +339,11 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
         Returns:
             is_valid: Are all required settings defined
-            missing_settings: Dict[ConfigType, List[str]] of all settings that are missing (empty if is_valid is 'True')
+            missing_settings: dict[ConfigType, list[str]] of all settings that are missing (empty if is_valid is 'True')
         """
         from machine.models import MachineSetting
 
-        missing_settings: Dict[MachineSetting.ConfigType, List[str]] = {}
+        missing_settings: dict[MachineSetting.ConfigType, list[str]] = {}
         for settings, config_type in self.setting_types:
             is_valid, missing = MachineSetting.check_all_settings(
                 settings_definition=settings,

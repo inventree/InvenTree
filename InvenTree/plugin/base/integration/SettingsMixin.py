@@ -1,7 +1,7 @@
 """Plugin mixin class for SettingsMixin."""
 
 import logging
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING
 
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -21,7 +21,7 @@ else:
 class SettingsMixin:
     """Mixin that enables global settings for the plugin."""
 
-    SETTINGS: Dict[str, SettingsKeyType] = {}
+    SETTINGS: dict[str, SettingsKeyType] = {}
 
     class MixinMeta:
         """Meta for mixin."""
