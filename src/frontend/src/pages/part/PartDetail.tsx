@@ -4,11 +4,10 @@ import {
   Group,
   LoadingOverlay,
   Skeleton,
-  Space,
   Stack,
+  Table,
   Text
 } from '@mantine/core';
-import { parseHotkey } from '@mantine/hooks/lib/use-hotkeys/parse-hotkey';
 import {
   IconBookmarks,
   IconBuilding,
@@ -37,7 +36,14 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
-import { DetailsImage } from '../../components/images/DetailsImage';
+import { DetailsField } from '../../components/details/DetailsField';
+import { DetailsImage } from '../../components/details/DetailsImage';
+import { DetailsTable } from '../../components/details/DetailsTable';
+import {
+  DetailsImageType,
+  ItemDetailFields,
+  ItemDetails
+} from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -61,12 +67,6 @@ import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { DetailsField } from '../../tables/Details';
-import {
-  DetailsImageType,
-  ItemDetailFields,
-  ItemDetails
-} from '../../tables/ItemDetails';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';

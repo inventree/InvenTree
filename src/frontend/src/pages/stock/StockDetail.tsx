@@ -27,7 +27,7 @@ import {
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { DetailsImage } from '../../components/images/DetailsImage';
+import { DetailsImage } from '../../components/details/DetailsImage';
 import {
   ActionDropdown,
   BarcodeActionDropdown,

@@ -1,11 +1,10 @@
 import { Paper } from '@mantine/core';
 
-import {
-  DetailImageButtonProps,
-  DetailsImage
-} from '../components/images/DetailsImage';
-import { UserRoles } from '../enums/Roles';
-import { DetailsField, DetailsTable } from './Details';
+import { UserRoles } from '../../enums/Roles';
+import { DetailsField } from './DetailsField';
+import { DetailImageProps, DetailsImage } from './DetailsImage';
+import { DetailsTable } from './DetailsTable';
+import { DetailsValue } from './DetailsValue';
 
 /**
  * Type for defining field arrays
@@ -15,15 +14,7 @@ export type ItemDetailFields = {
   right?: DetailsField[][];
   bottom_left?: DetailsField[][];
   bottom_right?: DetailsField[][];
-  image?: DetailsImageType;
-};
-
-/**
- * Type for defining details image
- */
-export type DetailsImageType = {
-  name: string;
-  imageActions: DetailImageButtonProps;
+  image?: DetailImageProps;
 };
 
 /**
@@ -58,10 +49,8 @@ export function ItemDetails({
         {fields.image && (
           <div style={{ flexGrow: '0' }}>
             <DetailsImage
-              appRole={appRole}
-              imageActions={fields.image.imageActions}
               src={params.image}
-              apiPath={apiPath}
+              endpoint={apiPath}
               refresh={refresh}
               pk={params.pk}
             />

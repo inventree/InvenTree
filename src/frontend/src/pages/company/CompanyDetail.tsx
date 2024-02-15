@@ -18,7 +18,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { DetailsImage } from '../../components/images/DetailsImage';
+import { DetailsImage } from '../../components/details/DetailsImage';
 import {
   ActionDropdown,
   DeleteItemAction,

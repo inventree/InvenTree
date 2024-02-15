@@ -20,7 +20,7 @@ import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 import { apiUrl } from '../../states/ApiState';
 import { ActionButton } from '../buttons/ActionButton';
-import { ApiImage } from './ApiImage';
+import { ApiImage } from '../images/ApiImage';
 
 /**
  * Props for detail image
