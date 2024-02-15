@@ -1,7 +1,13 @@
+import { faRecordVinyl } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/macro';
 import { Badge, Group, Text, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { IconCircleCheck, IconCirclePlus } from '@tabler/icons-react';
+import {
+  IconCircleCheck,
+  IconCirclePlus,
+  IconExclamationCircle,
+  IconInfoCircle
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -121,19 +127,30 @@ export default function StockItemTestResultTable({
         switchable: false,
         sortable: true,
         render: (record: any) => {
+          let required = record.required ?? record.template_detail?.required;
+          let installed =
+            record.stock_item != undefined && record.stock_item != itemId;
+
           return (
             <Group position="apart">
-              <Text italic={!record.templateId}>
+              <Text italic={installed} fw={required && 700}>
                 {!record.templateId && '- '}
                 {record.test_name ?? record.template_detail?.test_name}
               </Text>
-              {record.results && record.results.length > 1 && (
-                <Tooltip label={t`Test Results`}>
-                  <Badge color="lightblue" variant="filled">
-                    {record.results.length}
-                  </Badge>
-                </Tooltip>
-              )}
+              <Group position="right">
+                {record.results && record.results.length > 1 && (
+                  <Tooltip label={t`Test Results`}>
+                    <Badge color="lightblue" variant="filled">
+                      {record.results.length}
+                    </Badge>
+                  </Tooltip>
+                )}
+                {installed && (
+                  <Tooltip label={t`Test result for installed stock item`}>
+                    <IconInfoCircle size={16} color="blue" />
+                  </Tooltip>
+                )}
+              </Group>
             </Group>
           );
         }
@@ -183,7 +200,7 @@ export default function StockItemTestResultTable({
         }
       }
     ];
-  }, []);
+  }, [itemId]);
 
   const resultFields: ApiFormFieldSet = useMemo(() => {
     return {
