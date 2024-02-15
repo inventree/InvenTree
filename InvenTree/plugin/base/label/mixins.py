@@ -84,7 +84,10 @@ class LabelPrintingMixin:
         Keyword Arguments:
             pdf_data: The raw PDF data of the rendered label (if already rendered)
             dpi: The DPI to use for the PNG rendering
+            use_cairo: Whether to use the pdftocairo backend for rendering which provides better results
+                see #6488. If False, pdftoppm is used (default: True)
             pdf2image_kwargs: Additional keyword arguments to pass to the pdf2image.convert_from_bytes method
+                see https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes
         """
         # Check if pdf data is provided
         pdf_data = kwargs.get('pdf_data', None)
@@ -94,14 +97,15 @@ class LabelPrintingMixin:
                 self.render_to_pdf(label, request, **kwargs).get_document().write_pdf()
             )
 
-        dpi = kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300))
-        pdf2image_kwargs = kwargs.get('pdf2image_kwargs', {})
+        pdf2image_kwargs = {
+            'dpi': kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300)),
+            'use_pdftocairo': kwargs.get('use_cairo', True),
+            **kwargs.get('pdf2image_kwargs', {}),
+        }
 
         # Convert to png data
         try:
-            return pdf2image.convert_from_bytes(pdf_data, dpi=dpi, **pdf2image_kwargs)[
-                0
-            ]
+            return pdf2image.convert_from_bytes(pdf_data, **pdf2image_kwargs)[0]
         except Exception as e:
             log_error('label.render_to_png')
             raise ValidationError(_('Error rendering label to PNG'))
