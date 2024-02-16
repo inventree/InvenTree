@@ -222,14 +222,6 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | False |
 | INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | True |
 
-!!! info "Configuration File"
-    Allowed hosts and CORS options must be changed in the configuration file, and cannot be set via environment variables
-
-For further information, refer to the following documentation:
-
-* [Django ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts)
-* [Django CORS headers](https://github.com/OttoYiu/django-cors-headers)
-
 ## File Storage Locations
 
 InvenTree requires some external directories for storing files:
