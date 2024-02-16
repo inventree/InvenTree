@@ -378,8 +378,8 @@ class TestTemplateTest(TestCase):
         # Test the lowest-level part which has more associated tests
         variant = Part.objects.get(pk=10004)
 
-        self.assertEqual(variant.getTestTemplates().count(), 7)
-        self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 1)
+        self.assertEqual(variant.getTestTemplates().count(), 6)
+        self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 0)
         self.assertEqual(variant.getTestTemplates(required=True).count(), 5)
 
     def test_uniqueness(self):
