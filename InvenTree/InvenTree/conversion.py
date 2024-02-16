@@ -45,11 +45,6 @@ def reload_unit_registry():
     reg.define('hundred = 100')
     reg.define('thousand = 1000')
 
-    # Temperature units
-    reg.define('degreeC = °C = degC = celsius = Celsius')
-    reg.define('degreeF = °F = degF = fahrenheit = Fahrenheit')
-    reg.define('degreeK = °K = degK = kelvin = Kelvin')
-
     # Allow for custom units to be defined in the database
     try:
         from common.models import CustomUnit
