@@ -9,9 +9,10 @@ import importlib
 import logging
 import os
 import time
+from collections import OrderedDict
 from pathlib import Path
 from threading import Lock
-from typing import Any, Dict, List, OrderedDict
+from typing import Any
 
 from django.apps import apps
 from django.conf import settings
@@ -52,19 +53,19 @@ class PluginsRegistry:
         Set up all needed references for internal and external states.
         """
         # plugin registry
-        self.plugins: Dict[str, InvenTreePlugin] = {}  # List of active instances
-        self.plugins_inactive: Dict[
+        self.plugins: dict[str, InvenTreePlugin] = {}  # List of active instances
+        self.plugins_inactive: dict[
             str, InvenTreePlugin
         ] = {}  # List of inactive instances
-        self.plugins_full: Dict[
+        self.plugins_full: dict[
             str, InvenTreePlugin
         ] = {}  # List of all plugin instances
 
         # Keep an internal hash of the plugin registry state
         self.registry_hash = None
 
-        self.plugin_modules: List[InvenTreePlugin] = []  # Holds all discovered plugins
-        self.mixin_modules: Dict[str, Any] = {}  # Holds all discovered mixins
+        self.plugin_modules: list[InvenTreePlugin] = []  # Holds all discovered plugins
+        self.mixin_modules: dict[str, Any] = {}  # Holds all discovered mixins
 
         self.errors = {}  # Holds discovering errors
 
@@ -682,9 +683,9 @@ class PluginsRegistry:
 
     def _clean_registry(self):
         """Remove all plugins from registry."""
-        self.plugins: Dict[str, InvenTreePlugin] = {}
-        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}
-        self.plugins_full: Dict[str, InvenTreePlugin] = {}
+        self.plugins: dict[str, InvenTreePlugin] = {}
+        self.plugins_inactive: dict[str, InvenTreePlugin] = {}
+        self.plugins_full: dict[str, InvenTreePlugin] = {}
 
     def _update_urls(self):
         """Due to the order in which plugins are loaded, the patterns in urls.py may be out of date.
