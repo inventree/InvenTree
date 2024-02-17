@@ -1981,7 +1981,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
-
         'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
             'name': _('Block Until Tests Pass'),
             'description': _(
