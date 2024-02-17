@@ -107,12 +107,13 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Check Config
         run: |
-          pip install pyyaml
-          pip install -r docs/requirements.txt
+          pip install uv
+          uv pip install pyyaml
+          uv pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         run: |
-          pip install linkcheckmd requests
+          uv pip install linkcheckmd requests
           python -m linkcheckmd docs --recurse
 
   schema:
