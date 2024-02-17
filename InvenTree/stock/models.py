@@ -1670,7 +1670,7 @@ class StockItem(
             return
 
         # Keep track of the tree IDs that are being merged
-        tree_ids = set(self.tree_id)
+        tree_ids = {self.tree_id}
 
         user = kwargs.get('user', None)
         location = kwargs.get('location', None)
