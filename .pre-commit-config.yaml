@@ -26,7 +26,7 @@ repos:
         --preview
       ]
 -   repo: https://github.com/matmair/ruff-pre-commit
-    rev: main
+    rev: 6e66426a9b785e340cf60128ab71428060cf62a8
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
@@ -60,7 +60,7 @@ repos:
       - "prettier@^2.4.1"
       - "@trivago/prettier-plugin-sort-imports"
 - repo: https://github.com/pre-commit/mirrors-eslint
-  rev: "v9.0.0-alpha.2"
+  rev: "v9.0.0-beta.0"
   hooks:
   - id: eslint
     additional_dependencies:
