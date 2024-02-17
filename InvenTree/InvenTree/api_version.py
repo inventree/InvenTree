@@ -1,11 +1,47 @@
 """InvenTree API version information."""
 
-
 # InvenTree API version
-INVENTREE_API_VERSION = 158
+INVENTREE_API_VERSION = 168
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v168 -> 2024-02-07 : https://github.com/inventree/InvenTree/pull/4824
+    - Adds machine CRUD API endpoints
+    - Adds machine settings API endpoints
+    - Adds machine restart API endpoint
+    - Adds machine types/drivers list API endpoints
+    - Adds machine registry status API endpoint
+    - Adds 'required' field to the global Settings API
+    - Discover sub-sub classes of the StatusCode API
+
+v167 -> 2024-02-07: https://github.com/inventree/InvenTree/pull/6440
+    - Fixes for OpenAPI schema generation
+
+v166 -> 2024-02-04 : https://github.com/inventree/InvenTree/pull/6400
+    - Adds package_name to plugin API
+    - Adds mechanism for uninstalling plugins via the API
+
+v165 -> 2024-01-28 : https://github.com/inventree/InvenTree/pull/6040
+    - Adds supplier_part.name, part.creation_user, part.required_for_sales_order
+
+v164 -> 2024-01-24 : https://github.com/inventree/InvenTree/pull/6343
+    - Adds "building" quantity to BuildLine API serializer
+
+v163 -> 2024-01-22 : https://github.com/inventree/InvenTree/pull/6314
+    - Extends API endpoint to expose auth configuration information for signin pages
+
+v162 -> 2024-01-14 : https://github.com/inventree/InvenTree/pull/6230
+    - Adds API endpoints to provide information on background tasks
+
+v161 -> 2024-01-13 : https://github.com/inventree/InvenTree/pull/6222
+    - Adds API endpoint for system error information
+
+v160 -> 2023-12-11 : https://github.com/inventree/InvenTree/pull/6072
+    - Adds API endpoint for allocating stock items against a sales order via barcode scan
+
+v159 -> 2023-12-08 : https://github.com/inventree/InvenTree/pull/6056
+    - Adds API endpoint for reloading plugin registry
 
 v158 -> 2023-11-21 : https://github.com/inventree/InvenTree/pull/5953
     - Adds API endpoint for listing all settings of a particular plugin

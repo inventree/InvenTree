@@ -1,8 +1,8 @@
-"""Mixin class for making calls to an external API"""
-
+"""Mixin class for making calls to an external API."""
 
 import json as json_pkg
 import logging
+from collections.abc import Iterable
 
 import requests
 
@@ -56,6 +56,7 @@ class APICallMixin:
             return self.api_call('api/users/2')
     ```
     """
+
     API_METHOD = 'https'
     API_URL_SETTING = None
     API_TOKEN_SETTING = None
@@ -64,6 +65,7 @@ class APICallMixin:
 
     class MixinMeta:
         """Meta options for this mixin."""
+
         MIXIN_NAME = 'API calls'
 
     def __init__(self):
@@ -75,9 +77,9 @@ class APICallMixin:
     def has_api_call(self):
         """Is the mixin ready to call external APIs?"""
         if not bool(self.API_URL_SETTING):
-            raise MixinNotImplementedError("API_URL_SETTING must be defined")
+            raise MixinNotImplementedError('API_URL_SETTING must be defined')
         if not bool(self.API_TOKEN_SETTING):
-            raise MixinNotImplementedError("API_TOKEN_SETTING must be defined")
+            raise MixinNotImplementedError('API_TOKEN_SETTING must be defined')
         return True
 
     @property
@@ -93,12 +95,12 @@ class APICallMixin:
         Check the mixin class docstring for a full example.
         """
         headers = {'Content-Type': 'application/json'}
-        if getattr(self, 'API_TOKEN_SETTING'):
+        if getattr(self, 'API_TOKEN_SETTING', None):
             token = self.get_setting(self.API_TOKEN_SETTING)
 
             if token:
                 headers[self.API_TOKEN] = token
-                headers['Authorization'] = f"{self.API_TOKEN} {token}"
+                headers['Authorization'] = f'{self.API_TOKEN} {token}'
 
         return headers
 
@@ -106,10 +108,22 @@ class APICallMixin:
         """Returns an encoded path for the provided dict."""
         groups = []
         for key, val in arguments.items():
-            groups.append(f'{key}={",".join([str(a) for a in val])}')
+            if isinstance(val, Iterable) and not isinstance(val, str):
+                val = ','.join([str(a) for a in val])
+            groups.append(f'{key}={val}')
         return f'?{"&".join(groups)}'
 
-    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, data=None, json=None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False):
+    def api_call(
+        self,
+        endpoint: str,
+        method: str = 'GET',
+        url_args: dict = None,
+        data=None,
+        json=None,
+        headers: dict = None,
+        simple_response: bool = True,
+        endpoint_is_url: bool = False,
+    ):
         """Do an API call.
 
         Simplest call example:
@@ -140,17 +154,13 @@ class APICallMixin:
         if endpoint_is_url:
             url = endpoint
         else:
-
             if endpoint.startswith('/'):
                 endpoint = endpoint[1:]
 
             url = f'{self.api_url}/{endpoint}'
 
         # build kwargs for call
-        kwargs = {
-            'url': url,
-            'headers': headers,
-        }
+        kwargs = {'url': url, 'headers': headers}
 
         if data and json:
             raise ValueError('You can either pass `data` or `json` to this function.')

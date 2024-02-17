@@ -12,10 +12,10 @@ import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
-import { PartCategoryTable } from '../../components/tables/part/PartCategoryTable';
-import { PartListTable } from '../../components/tables/part/PartTable';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
+import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
+import { PartListTable } from '../../tables/part/PartTable';
 
 /**
  * Detail view for a single PartCategory instance.
@@ -23,7 +23,11 @@ import { useInstance } from '../../hooks/UseInstance';
  * Note: If no category ID is supplied, this acts as the top-level part category page
  */
 export default function CategoryDetail({}: {}) {
-  const { id } = useParams();
+  const { id: _id } = useParams();
+  const id = useMemo(
+    () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
+    [_id]
+  );
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -32,7 +36,8 @@ export default function CategoryDetail({}: {}) {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.category_list,
+    endpoint: ApiEndpoints.category_list,
+    hasPrimaryKey: true,
     pk: id,
     params: {
       path_detail: true
@@ -59,13 +64,7 @@ export default function CategoryDetail({}: {}) {
         name: 'subcategories',
         label: t`Part Categories`,
         icon: <IconSitemap />,
-        content: (
-          <PartCategoryTable
-            params={{
-              parent: id
-            }}
-          />
-        )
+        content: <PartCategoryTable parentId={id} />
       },
       {
         name: 'parameters',

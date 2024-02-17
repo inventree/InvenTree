@@ -28,11 +28,10 @@ class TestRefIntMigrations(MigratorTestCase):
 
         # Create some orders
         for ii in range(10):
-
             order = PurchaseOrder.objects.create(
                 supplier=supplier,
-                reference=f"{ii}-abcde",
-                description="Just a test order"
+                reference=f'{ii}-abcde',
+                description='Just a test order',
             )
 
             # Initially, the 'reference_int' field is unavailable
@@ -41,8 +40,8 @@ class TestRefIntMigrations(MigratorTestCase):
 
             sales_order = SalesOrder.objects.create(
                 customer=supplier,
-                reference=f"{ii}-xyz",
-                description="A test sales order",
+                reference=f'{ii}-xyz',
+                description='A test sales order',
             )
 
             # Initially, the 'reference_int' field is unavailable
@@ -68,9 +67,8 @@ class TestRefIntMigrations(MigratorTestCase):
         SalesOrder = self.new_state.apps.get_model('order', 'salesorder')
 
         for ii in range(10):
-
-            po = PurchaseOrder.objects.get(reference=f"{ii}-abcde")
-            so = SalesOrder.objects.get(reference=f"{ii}-xyz")
+            po = PurchaseOrder.objects.get(reference=f'{ii}-abcde')
+            so = SalesOrder.objects.get(reference=f'{ii}-xyz')
 
             # The integer reference field must have been correctly updated
             self.assertEqual(po.reference_int, ii)
@@ -79,11 +77,11 @@ class TestRefIntMigrations(MigratorTestCase):
         # Tests for orders with overly large reference values
         po = PurchaseOrder.objects.get(pk=self.po_pk)
         self.assertEqual(po.reference, '999999999999999999999999999999999')
-        self.assertEqual(po.reference_int, 0x7fffffff)
+        self.assertEqual(po.reference_int, 0x7FFFFFFF)
 
         so = SalesOrder.objects.get(pk=self.so_pk)
         self.assertEqual(so.reference, '999999999999999999999999999999999')
-        self.assertEqual(so.reference_int, 0x7fffffff)
+        self.assertEqual(so.reference_int, 0x7FFFFFFF)
 
 
 class TestShipmentMigration(MigratorTestCase):
@@ -99,7 +97,7 @@ class TestShipmentMigration(MigratorTestCase):
         customer = Company.objects.create(
             name='My customer',
             description='A customer we sell stuff too',
-            is_customer=True
+            is_customer=True,
         )
 
         SalesOrder = self.old_state.apps.get_model('order', 'salesorder')
@@ -162,28 +160,17 @@ class TestAdditionalLineMigration(MigratorTestCase):
             lft=0,
             rght=0,
         )
-        supplierpart = Supplierpart.objects.create(
-            part=part,
-            supplier=supplier
-        )
+        supplierpart = Supplierpart.objects.create(part=part, supplier=supplier)
 
         # Create some orders
         for ii in range(10):
-
             order = PurchaseOrder.objects.create(
                 supplier=supplier,
-                reference=f"{ii}-abcde",
-                description="Just a test order"
+                reference=f'{ii}-abcde',
+                description='Just a test order',
             )
-            order.lines.create(
-                part=supplierpart,
-                quantity=12,
-                received=1
-            )
-            order.lines.create(
-                quantity=12,
-                received=1
-            )
+            order.lines.create(part=supplierpart, quantity=12, received=1)
+            order.lines.create(quantity=12, received=1)
 
             # TODO @matmair fix this test!!!
             # sales_order = SalesOrder.objects.create(
@@ -201,14 +188,13 @@ class TestAdditionalLineMigration(MigratorTestCase):
         """Test that the the PO lines where converted correctly."""
         PurchaseOrder = self.new_state.apps.get_model('order', 'purchaseorder')
         for ii in range(10):
-
-            po = PurchaseOrder.objects.get(reference=f"{ii}-abcde")
+            po = PurchaseOrder.objects.get(reference=f'{ii}-abcde')
             self.assertEqual(po.extra_lines.count(), 1)
             self.assertEqual(po.lines.count(), 1)
 
         # TODO @matmair fix this test!!!
         # SalesOrder = self.new_state.apps.get_model('order', 'salesorder')
         # for ii in range(10):
-            # so = SalesOrder.objects.get(reference=f"{ii}-xyz")
-            # self.assertEqual(so.extra_lines, 1)
-            # self.assertEqual(so.lines.count(), 1)
+        # so = SalesOrder.objects.get(reference=f"{ii}-xyz")
+        # self.assertEqual(so.extra_lines, 1)
+        # self.assertEqual(so.lines.count(), 1)

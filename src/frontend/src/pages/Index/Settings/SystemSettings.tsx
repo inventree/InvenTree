@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Divider, Stack } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
@@ -14,7 +14,8 @@ import {
   IconSitemap,
   IconTag,
   IconTools,
-  IconTruckDelivery
+  IconTruckDelivery,
+  IconTruckReturn
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
@@ -22,7 +23,6 @@ import { StylishText } from '../../../components/items/StylishText';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
-import { CurrencyTable } from '../../../components/tables/settings/CurrencyTable';
 import { useServerApiState } from '../../../states/ApiState';
 
 /**
@@ -133,8 +133,6 @@ export default function SystemSettings() {
               keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
             />
             <StylishText size="xl">{t`Exchange Rates`}</StylishText>
-            <Divider />
-            <CurrencyTable />
           </>
         )
       },
@@ -244,7 +242,8 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
-              'PURCHASEORDER_EDIT_COMPLETED_ORDERS'
+              'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
+              'PURCHASEORDER_AUTO_COMPLETE'
             ]}
           />
         )
@@ -259,6 +258,20 @@ export default function SystemSettings() {
               'SALESORDER_REFERENCE_PATTERN',
               'SALESORDER_DEFAULT_SHIPMENT',
               'SALESORDER_EDIT_COMPLETED_ORDERS'
+            ]}
+          />
+        )
+      },
+      {
+        name: 'returnorders',
+        label: t`Return Orders`,
+        icon: <IconTruckReturn />,
+        content: (
+          <GlobalSettingList
+            keys={[
+              'RETURNORDER_ENABLED',
+              'RETURNORDER_REFERENCE_PATTERN',
+              'RETURNORDER_EDIT_COMPLETED_ORDERS'
             ]}
           />
         )

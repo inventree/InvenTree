@@ -4,8 +4,8 @@ import ReactDOM from 'react-dom/client';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import App from './App';
 import { HostList } from './states/states';
+import MainView from './views/MainView';
 
 // define settings
 declare global {
@@ -42,6 +42,14 @@ window.INVENTREE_SETTINGS = {
       host: `${window.location.origin}/`,
       name: 'Current Server'
     },
+    ...(IS_DEV
+      ? {
+          'mantine-2j5j5j5j5': {
+            host: 'http://localhost:8000',
+            name: 'Localhost'
+          }
+        }
+      : {}),
     ...(IS_DEV_OR_DEMO
       ? {
           'mantine-u56l5jt85': {
@@ -51,7 +59,11 @@ window.INVENTREE_SETTINGS = {
         }
       : {})
   },
-  default_server: IS_DEMO ? 'mantine-u56l5jt85' : 'mantine-cqj63coxn',
+  default_server: IS_DEV
+    ? 'mantine-2j5j5j5j5'
+    : IS_DEMO
+    ? 'mantine-u56l5jt85'
+    : 'mantine-cqj63coxn',
   show_server_selector: IS_DEV_OR_DEMO,
 
   // merge in settings that are already set via django's spa_view or for development
@@ -71,7 +83,7 @@ export const base_url = window.INVENTREE_SETTINGS.base_url || 'platform';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <MainView />
   </React.StrictMode>
 );
 

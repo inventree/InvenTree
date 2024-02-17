@@ -17,18 +17,17 @@ class MetadataSerializer(serializers.ModelSerializer):
     class Meta:
         """Metaclass options."""
 
-        fields = [
-            'metadata',
-        ]
+        fields = ['metadata']
 
     def __init__(self, model_type, *args, **kwargs):
-        """Initialize the metadata serializer with information on the model type"""
+        """Initialize the metadata serializer with information on the model type."""
         self.Meta.model = model_type
         super().__init__(*args, **kwargs)
 
     def update(self, instance, data):
-        """Perform update on the metadata field:
+        """Perform update on the metadata field.
 
+        Rules:
         - If this is a partial (PATCH) update, try to 'merge' data in
         - Else, if it is a PUT update, overwrite any existing metadata
         """
@@ -46,25 +45,23 @@ class PluginConfigSerializer(serializers.ModelSerializer):
 
     class Meta:
         """Meta for serializer."""
+
         model = PluginConfig
         fields = [
             'pk',
             'key',
             'name',
+            'package_name',
             'active',
             'meta',
             'mixins',
             'is_builtin',
             'is_sample',
             'is_installed',
+            'is_package',
         ]
 
-        read_only_fields = [
-            'key',
-            'is_builtin',
-            'is_sample',
-            'is_installed',
-        ]
+        read_only_fields = ['key', 'is_builtin', 'is_sample', 'is_installed']
 
     meta = serializers.DictField(read_only=True)
     mixins = serializers.DictField(read_only=True)
@@ -75,27 +72,41 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
     class Meta:
         """Meta for serializer."""
-        fields = [
-            'url',
-            'packagename',
-            'confirm',
-        ]
+
+        fields = ['url', 'packagename', 'confirm']
 
     url = serializers.CharField(
         required=False,
         allow_blank=True,
         label=_('Source URL'),
-        help_text=_('Source for the package - this can be a custom registry or a VCS path')
+        help_text=_(
+            'Source for the package - this can be a custom registry or a VCS path'
+        ),
     )
+
     packagename = serializers.CharField(
         required=False,
         allow_blank=True,
         label=_('Package Name'),
-        help_text=_('Name for the Plugin Package - can also contain a version indicator'),
+        help_text=_(
+            'Name for the Plugin Package - can also contain a version indicator'
+        ),
     )
+
+    version = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Version'),
+        help_text=_(
+            'Version specifier for the plugin. Leave blank for latest version.'
+        ),
+    )
+
     confirm = serializers.BooleanField(
         label=_('Confirm plugin installation'),
-        help_text=_('This will install this plugin now into the current instance. The instance will go into maintenance.')
+        help_text=_(
+            'This will install this plugin now into the current instance. The instance will go into maintenance.'
+        ),
     )
 
     def validate(self, data):
@@ -122,28 +133,71 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
         packagename = data.get('packagename', '')
         url = data.get('url', '')
+        version = data.get('version', None)
+        user = self.context['request'].user
 
-        return install_plugin(url=url, packagename=packagename)
+        return install_plugin(
+            url=url, packagename=packagename, version=version, user=user
+        )
 
 
 class PluginConfigEmptySerializer(serializers.Serializer):
     """Serializer for a PluginConfig."""
+
     ...
 
 
+class PluginReloadSerializer(serializers.Serializer):
+    """Serializer for remotely forcing plugin registry reload."""
+
+    full_reload = serializers.BooleanField(
+        required=False,
+        default=False,
+        label=_('Full reload'),
+        help_text=_('Perform a full reload of the plugin registry'),
+    )
+
+    force_reload = serializers.BooleanField(
+        required=False,
+        default=False,
+        label=_('Force reload'),
+        help_text=_(
+            'Force a reload of the plugin registry, even if it is already loaded'
+        ),
+    )
+
+    collect_plugins = serializers.BooleanField(
+        required=False,
+        default=False,
+        label=_('Collect plugins'),
+        help_text=_('Collect plugins and add them to the registry'),
+    )
+
+    def save(self):
+        """Reload the plugin registry."""
+        from plugin.registry import registry
+
+        registry.reload_plugins(
+            full_reload=self.validated_data.get('full_reload', False),
+            force_reload=self.validated_data.get('force_reload', False),
+            collect=self.validated_data.get('collect_plugins', False),
+        )
+
+
 class PluginActivateSerializer(serializers.Serializer):
-    """Serializer for activating or deactivating a plugin"""
+    """Serializer for activating or deactivating a plugin."""
 
     model = PluginConfig
 
     active = serializers.BooleanField(
-        required=False, default=True,
+        required=False,
+        default=True,
         label=_('Activate Plugin'),
-        help_text=_('Activate this plugin')
+        help_text=_('Activate this plugin'),
     )
 
     def update(self, instance, validated_data):
-        """Apply the new 'active' value to the plugin instance"""
+        """Apply the new 'active' value to the plugin instance."""
         from InvenTree.tasks import check_for_migrations, offload_task
 
         instance.active = validated_data.get('active', True)
@@ -156,13 +210,32 @@ class PluginActivateSerializer(serializers.Serializer):
         return instance
 
 
+class PluginUninstallSerializer(serializers.Serializer):
+    """Serializer for uninstalling a plugin."""
+
+    delete_config = serializers.BooleanField(
+        required=False,
+        default=True,
+        label=_('Delete configuration'),
+        help_text=_('Delete the plugin configuration from the database'),
+    )
+
+    def update(self, instance, validated_data):
+        """Uninstall the specified plugin."""
+        from plugin.installer import uninstall_plugin
+
+        return uninstall_plugin(
+            instance,
+            user=self.context['request'].user,
+            delete_config=validated_data.get('delete_config', True),
+        )
+
+
 class PluginSettingSerializer(GenericReferencedSettingSerializer):
     """Serializer for the PluginSetting model."""
 
     MODEL = PluginSetting
-    EXTRA_FIELDS = [
-        'plugin',
-    ]
+    EXTRA_FIELDS = ['plugin']
 
     plugin = serializers.CharField(source='plugin.key', read_only=True)
 
@@ -171,9 +244,10 @@ class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
     """Serializer for the PluginSetting model."""
 
     MODEL = NotificationUserSetting
-    EXTRA_FIELDS = ['method', ]
+    EXTRA_FIELDS = ['method']
 
     method = serializers.CharField(read_only=True)
+    typ = serializers.CharField(read_only=True)
 
 
 class PluginRegistryErrorSerializer(serializers.Serializer):

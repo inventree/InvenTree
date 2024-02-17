@@ -4,6 +4,13 @@ from InvenTree.unit_test import InvenTreeTestCase
 
 from .transition import StateTransitionMixin, TransitionMethod, storage
 
+# Global variables to determine which transition classes raises an exception
+global raise_storage
+global raise_function
+
+raise_storage = False
+raise_function = False
+
 
 class MyPrivateError(NotImplementedError):
     """Error for testing purposes."""
@@ -27,8 +34,7 @@ class TransitionTests(InvenTreeTestCase):
     def test_class(self):
         """Ensure that the class itself works."""
 
-        class ErrorImplementation(TransitionMethod):
-            ...
+        class ErrorImplementation(TransitionMethod): ...
 
         with self.assertRaises(NotImplementedError):
             ErrorImplementation()
@@ -37,10 +43,19 @@ class TransitionTests(InvenTreeTestCase):
 
     def test_storage(self):
         """Ensure that the storage collection mechanism works."""
+        global raise_storage
+        global raise_function
+
+        raise_storage = True
+        raise_function = False
 
         class RaisingImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
-                raise MyPrivateError('RaisingImplementation')
+                """Custom transition method."""
+                global raise_storage
+
+                if raise_storage:
+                    raise MyPrivateError('RaisingImplementation')
 
         # Ensure registering works
         storage.collect()
@@ -57,6 +72,11 @@ class TransitionTests(InvenTreeTestCase):
 
     def test_function(self):
         """Ensure that a TransitionMethod's function is called."""
+        global raise_storage
+        global raise_function
+
+        raise_storage = False
+        raise_function = True
 
         # Setup
         class ValidImplementationNoEffect(TransitionMethod):
@@ -65,14 +85,21 @@ class TransitionTests(InvenTreeTestCase):
 
         class ValidImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
-                return 1234
+                global raise_function
+
+                if raise_function:
+                    return 1234
+                else:
+                    return False
 
         storage.collect()
         self.assertIn(ValidImplementationNoEffect, storage.list)
         self.assertIn(ValidImplementation, storage.list)
 
         # Ensure that the function is called
-        self.assertEqual(StateTransitionMixin.handle_transition(0, 1, self, self, dflt), 1234)
+        self.assertEqual(
+            StateTransitionMixin.handle_transition(0, 1, self, self, dflt), 1234
+        )
 
         _clean_storage([ValidImplementationNoEffect, ValidImplementation])
 

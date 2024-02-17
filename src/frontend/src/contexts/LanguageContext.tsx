@@ -5,10 +5,14 @@ import { LoadingOverlay, Text } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 
 import { api } from '../App';
+import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
+import { fetchGlobalStates } from '../states/states';
 
 // Definitions
 export type Locales = keyof typeof languages | 'pseudo-LOCALE';
+
+export const defaultLocale = 'en';
 
 export const languages: Record<string, string> = {
   bg: t`Bulgarian`,
@@ -34,6 +38,7 @@ export const languages: Record<string, string> = {
   pt: t`Portuguese`,
   'pt-br': t`Portuguese (Brazilian)`,
   ru: t`Russian`,
+  sk: t`Slovak`,
   sl: t`Slovenian`,
   sv: t`Swedish`,
   th: t`Thai`,
@@ -45,6 +50,11 @@ export const languages: Record<string, string> = {
 
 export function LanguageContext({ children }: { children: JSX.Element }) {
   const [language] = useLocalState((state) => [state.language]);
+  const [server] = useServerApiState((state) => [state.server]);
+
+  useEffect(() => {
+    activateLocale(defaultLocale);
+  }, []);
 
   const [loadedState, setLoadedState] = useState<
     'loading' | 'loaded' | 'error'
@@ -57,6 +67,35 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
     activateLocale(language)
       .then(() => {
         if (isMounted.current) setLoadedState('loaded');
+
+        /*
+         * Configure the default Accept-Language header for all requests.
+         * - Locally selected locale
+         * - Server default locale
+         * - en-us (backup)
+         */
+        let locales: (string | undefined)[] = [];
+
+        if (language != 'pseudo-LOCALE') {
+          locales.push(language);
+        }
+
+        if (!!server.default_locale) {
+          locales.push(server.default_locale);
+        }
+
+        if (locales.indexOf('en-us') < 0) {
+          locales.push('en-us');
+        }
+
+        // Update default Accept-Language headers
+        api.defaults.headers.common['Accept-Language'] = locales.join(', ');
+
+        // Reload server state (and refresh status codes)
+        fetchGlobalStates();
+
+        // Clear out cached table column names
+        useLocalState.getState().clearTableColumnNames();
       })
       .catch((err) => {
         console.error('Failed loading translations', err);
@@ -90,7 +129,4 @@ export async function activateLocale(locale: Locales) {
   const { messages } = await import(`../locales/${locale}/messages.ts`);
   i18n.load(locale, messages);
   i18n.activate(locale);
-
-  // Set api header
-  api.defaults.headers.common['Accept-Language'] = locale;
 }

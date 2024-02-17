@@ -1,3 +1,9 @@
+import { setApiDefaults } from '../App';
+import { useSessionState } from './SessionState';
+import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
+import { useGlobalStatusState } from './StatusState';
+import { useUserState } from './UserState';
+
 export interface Host {
   host: string;
   name: string;
@@ -37,6 +43,25 @@ export interface ServerAPIProps {
   platform: null | string;
   installer: null | string;
   target: null | string;
+  default_locale: null | string;
+}
+
+export interface AuthProps {
+  sso_enabled: boolean;
+  sso_registration: boolean;
+  mfa_required: boolean;
+  providers: Provider[];
+  registration_enabled: boolean;
+  password_forgotten_enabled: boolean;
+}
+
+export interface Provider {
+  id: string;
+  name: string;
+  configured: boolean;
+  login: string;
+  connect: string;
+  display_name: string;
 }
 
 // Type interface defining a single 'setting' object
@@ -54,6 +79,7 @@ export interface Setting {
   typ: SettingTyp;
   plugin?: string;
   method?: string;
+  required?: boolean;
 }
 
 export interface SettingChoice {
@@ -92,3 +118,20 @@ export type ErrorResponse = {
 export type SettingsLookup = {
   [key: string]: string;
 };
+
+/*
+ * Refetch all global state information.
+ * Necessary on login, or if locale is changed.
+ */
+export function fetchGlobalStates() {
+  if (!useSessionState.getState().hasToken()) {
+    return;
+  }
+
+  setApiDefaults();
+
+  useUserState.getState().fetchUserState();
+  useUserSettingsState.getState().fetchSettings();
+  useGlobalSettingsState.getState().fetchSettings();
+  useGlobalStatusState.getState().fetchStatus();
+}

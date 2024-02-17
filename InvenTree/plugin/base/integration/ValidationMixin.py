@@ -1,14 +1,18 @@
-"""Validation mixin class definition"""
+"""Validation mixin class definition."""
 
+from django.core.exceptions import ValidationError
 
 import part.models
 import stock.models
 
 
 class ValidationMixin:
-    """Mixin class that allows custom validation for various parts of InvenTree
+    """Mixin class that allows custom validation for various parts of InvenTree.
 
-    Custom generation and validation functionality can be provided for:
+    Any model which inherits from the PluginValidationMixin class is exposed here,
+    via the 'validate_model_instance' method (see below).
+
+    Additionally, custom generation and validation functionality is provided for:
 
     - Part names
     - Part IPN (internal part number) values
@@ -32,16 +36,39 @@ class ValidationMixin:
     """
 
     class MixinMeta:
-        """Metaclass for this mixin"""
-        MIXIN_NAME = "Validation"
+        """Metaclass for this mixin."""
+
+        MIXIN_NAME = 'Validation'
 
     def __init__(self):
-        """Register the mixin"""
+        """Register the mixin."""
         super().__init__()
         self.add_mixin('validation', True, __class__)
 
+    def raise_error(self, message):
+        """Raise a ValidationError with the given message."""
+        raise ValidationError(message)
+
+    def validate_model_instance(self, instance, deltas=None):
+        """Run custom validation on a database model instance.
+
+        This method is called when a model instance is being validated.
+        It allows the plugin to raise a ValidationError on any field in the model.
+
+        Arguments:
+            instance: The model instance to validate
+            deltas: A dictionary of field names and updated values (if the instance is being updated)
+
+        Returns:
+            None or True (refer to class docstring)
+
+        Raises:
+            ValidationError if the instance is invalid
+        """
+        return None
+
     def validate_part_name(self, name: str, part: part.models.Part):
-        """Perform validation on a proposed Part name
+        """Perform validation on a proposed Part name.
 
         Arguments:
             name: The proposed part name
@@ -56,7 +83,7 @@ class ValidationMixin:
         return None
 
     def validate_part_ipn(self, ipn: str, part: part.models.Part):
-        """Perform validation on a proposed Part IPN (internal part number)
+        """Perform validation on a proposed Part IPN (internal part number).
 
         Arguments:
             ipn: The proposed part IPN
@@ -71,7 +98,7 @@ class ValidationMixin:
         return None
 
     def validate_batch_code(self, batch_code: str, item: stock.models.StockItem):
-        """Validate the supplied batch code
+        """Validate the supplied batch code.
 
         Arguments:
             batch_code: The proposed batch code (string)
@@ -86,7 +113,7 @@ class ValidationMixin:
         return None
 
     def generate_batch_code(self):
-        """Generate a new batch code
+        """Generate a new batch code.
 
         Returns:
             A new batch code (string) or None

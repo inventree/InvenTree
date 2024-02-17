@@ -1,6 +1,10 @@
 import { Trans, t } from '@lingui/macro';
 import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
+  IconCoins,
+  IconCpu,
+  IconDevicesPc,
+  IconExclamationCircle,
   IconList,
   IconListDetails,
   IconPlugConnected,
@@ -19,23 +23,36 @@ const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
 );
 
+const TaskManagementPanel = Loadable(
+  lazy(() => import('./TaskManagementPanel'))
+);
+
 const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
 );
 
+const MachineManagementPanel = Loadable(
+  lazy(() => import('./MachineManagementPanel'))
+);
+
+const ErrorReportTable = Loadable(
+  lazy(() => import('../../../../tables/settings/ErrorTable'))
+);
+
 const ProjectCodeTable = Loadable(
-  lazy(() => import('../../../../components/tables/settings/ProjectCodeTable'))
+  lazy(() => import('../../../../tables/settings/ProjectCodeTable'))
 );
 
 const CustomUnitsTable = Loadable(
-  lazy(() => import('../../../../components/tables/settings/CustomUnitsTable'))
+  lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
 );
 
 const PartParameterTemplateTable = Loadable(
-  lazy(
-    () =>
-      import('../../../../components/tables/part/PartParameterTemplateTable')
-  )
+  lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
+);
+
+const CurrencyTable = Loadable(
+  lazy(() => import('../../../../tables/settings/CurrencyTable'))
 );
 
 export default function AdminCenter() {
@@ -46,6 +63,24 @@ export default function AdminCenter() {
         label: t`Users`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />
+      },
+      {
+        name: 'background',
+        label: t`Background Tasks`,
+        icon: <IconCpu />,
+        content: <TaskManagementPanel />
+      },
+      {
+        name: 'errors',
+        label: t`Error Reports`,
+        icon: <IconExclamationCircle />,
+        content: <ErrorReportTable />
+      },
+      {
+        name: 'currencies',
+        label: t`Currencies`,
+        icon: <IconCoins />,
+        content: <CurrencyTable />
       },
       {
         name: 'projectcodes',
@@ -76,6 +111,12 @@ export default function AdminCenter() {
         label: t`Plugins`,
         icon: <IconPlugConnected />,
         content: <PluginManagementPanel />
+      },
+      {
+        name: 'machine',
+        label: t`Machines`,
+        icon: <IconDevicesPc />,
+        content: <MachineManagementPanel />
       }
     ];
   }, []);
@@ -115,7 +156,7 @@ export default function AdminCenter() {
       <PanelGroup
         pageKey="admin-center"
         panels={adminCenterPanels}
-        collapsible={false}
+        collapsible={true}
       />
     </Stack>
   );

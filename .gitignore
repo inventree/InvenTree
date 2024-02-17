@@ -26,6 +26,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.DS_Store
 
 # Django stuff:
 *.log
@@ -47,6 +48,7 @@ label.pdf
 label.png
 InvenTree/my_special*
 _tests*.txt
+schema.yml
 
 # Local static and media file storage (only when running in development mode)
 inventree_media
@@ -69,6 +71,7 @@ secret_key.txt
 .idea/
 *.code-workspace
 .bash_history
+.DS_Store
 
 # https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
 .vscode/*
@@ -104,6 +107,10 @@ InvenTree/plugins/
 
 # Compiled translation files
 *.mo
+messages.ts
+
+# Generated API schema file
+api.yaml
 
 # web frontend (static files)
 InvenTree/web/static

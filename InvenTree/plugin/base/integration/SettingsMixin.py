@@ -1,6 +1,7 @@
 """Plugin mixin class for SettingsMixin."""
+
 import logging
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING
 
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -10,18 +11,21 @@ logger = logging.getLogger('inventree')
 if TYPE_CHECKING:
     from common.models import SettingsKeyType
 else:
+
     class SettingsKeyType:
-        """Dummy class, so that python throws no error"""
+        """Dummy class, so that python throws no error."""
+
         pass
 
 
 class SettingsMixin:
     """Mixin that enables global settings for the plugin."""
 
-    SETTINGS: Dict[str, SettingsKeyType] = {}
+    SETTINGS: dict[str, SettingsKeyType] = {}
 
     class MixinMeta:
         """Meta for mixin."""
+
         MIXIN_NAME = 'Settings'
 
     def __init__(self):
@@ -71,10 +75,11 @@ class SettingsMixin:
 
     def set_setting(self, key, value, user=None):
         """Set plugin setting value by key."""
-        from plugin.models import PluginConfig, PluginSetting
+        from plugin.models import PluginSetting
+        from plugin.registry import registry
 
         try:
-            plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
+            plugin = registry.get_plugin_config(self.plugin_slug(), self.plugin_name())
         except (OperationalError, ProgrammingError):  # pragma: no cover
             plugin = None
 
@@ -96,4 +101,6 @@ class SettingsMixin:
         """
         from plugin.models import PluginSetting
 
-        return PluginSetting.check_all_settings(settings_definition=self.settings, plugin=self.plugin_config())
+        return PluginSetting.check_all_settings(
+            settings_definition=self.settings, plugin=self.plugin_config()
+        )

@@ -17,7 +17,6 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
 
     def filter(self, qs, value):
         """Override the filter method to handle timezones correctly."""
-
         if settings.USE_TZ:
             if value is not None:
                 tz = timezone.get_current_timezone()
@@ -28,7 +27,7 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
 
 
 class InvenTreeSearchFilter(filters.SearchFilter):
-    """Custom search filter which allows adjusting of search terms dynamically"""
+    """Custom search filter which allows adjusting of search terms dynamically."""
 
     def get_search_fields(self, view, request):
         """Return a set of search fields for the request, adjusted based on request params.
@@ -36,7 +35,9 @@ class InvenTreeSearchFilter(filters.SearchFilter):
         The following query params are available to 'augment' the search (in decreasing order of priority)
         - search_regex: If True, search is performed on 'regex' comparison
         """
-        regex = InvenTree.helpers.str2bool(request.query_params.get('search_regex', False))
+        regex = InvenTree.helpers.str2bool(
+            request.query_params.get('search_regex', False)
+        )
 
         search_fields = super().get_search_fields(view, request)
 
@@ -56,7 +57,9 @@ class InvenTreeSearchFilter(filters.SearchFilter):
 
         Depending on the request parameters, we may "augment" these somewhat
         """
-        whole = InvenTree.helpers.str2bool(request.query_params.get('search_whole', False))
+        whole = InvenTree.helpers.str2bool(
+            request.query_params.get('search_whole', False)
+        )
 
         terms = []
 
@@ -72,7 +75,7 @@ class InvenTreeSearchFilter(filters.SearchFilter):
 
                 if whole:
                     # Wrap the search term to enable word-boundary matching
-                    term = r"\y" + term + r"\y"
+                    term = r'\y' + term + r'\y'
 
                 terms.append(term)
 
@@ -110,7 +113,6 @@ class InvenTreeOrderingFilter(filters.OrderingFilter):
             ordering = []
 
             for field in ordering_initial:
-
                 reverse = field.startswith('-')
 
                 if reverse:
@@ -164,7 +166,4 @@ SEARCH_ORDER_FILTER_ALIAS = [
     InvenTreeOrderingFilter,
 ]
 
-ORDER_FILTER = [
-    rest_filters.DjangoFilterBackend,
-    filters.OrderingFilter,
-]
+ORDER_FILTER = [rest_filters.DjangoFilterBackend, filters.OrderingFilter]

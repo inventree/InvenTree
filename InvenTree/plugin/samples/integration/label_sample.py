@@ -12,15 +12,16 @@ from plugin.mixins import LabelPrintingMixin
 class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
     """Sample plugin which provides a 'fake' label printer endpoint."""
 
-    NAME = "Sample Label Printer"
-    SLUG = "samplelabelprinter"
-    TITLE = "Sample Label Printer"
-    DESCRIPTION = "A sample plugin which provides a (fake) label printer interface"
-    AUTHOR = "InvenTree contributors"
-    VERSION = "0.3.0"
+    NAME = 'Sample Label Printer'
+    SLUG = 'samplelabelprinter'
+    TITLE = 'Sample Label Printer'
+    DESCRIPTION = 'A sample plugin which provides a (fake) label printer interface'
+    AUTHOR = 'InvenTree contributors'
+    VERSION = '0.3.0'
 
     class PrintingOptionsSerializer(serializers.Serializer):
         """Serializer to return printing options."""
+
         amount = serializers.IntegerField(required=False, default=1)
 
     def print_label(self, **kwargs):

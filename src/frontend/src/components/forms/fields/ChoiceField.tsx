@@ -58,6 +58,12 @@ export function ChoiceField({
       onChange={onChange}
       data={choices}
       value={field.value}
+      label={definition.label}
+      description={definition.description}
+      placeholder={definition.placeholder}
+      required={definition.required}
+      disabled={definition.disabled}
+      icon={definition.icon}
       withinPortal={true}
     />
   );

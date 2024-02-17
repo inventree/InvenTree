@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 
 import { api } from '../App';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { UserPermissions, UserRoles } from '../enums/Roles';
-import { doClassicLogout } from '../functions/auth';
 import { apiUrl } from './ApiState';
+import { useSessionState } from './SessionState';
 import { UserProps } from './states';
 
 interface UserStateProps {
@@ -35,9 +35,13 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
+    if (!useSessionState.getState().hasToken()) {
+      return;
+    }
+
     // Fetch user data
     await api
-      .get(apiUrl(ApiPaths.user_me), {
+      .get(apiUrl(ApiEndpoints.user_me), {
         timeout: 2000
       })
       .then((response) => {
@@ -50,26 +54,26 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         };
         set({ user: user });
       })
-      .catch((error) => {
-        console.error('Error fetching user data:', error);
-        // Redirect to login page
-        doClassicLogout();
+      .catch((_error) => {
+        console.error('Error fetching user data');
       });
 
     // Fetch role data
     await api
-      .get(apiUrl(ApiPaths.user_roles))
+      .get(apiUrl(ApiEndpoints.user_roles))
       .then((response) => {
         const user: UserProps = get().user as UserProps;
 
         // Update user with role data
-        user.roles = response.data?.roles ?? {};
-        user.is_staff = response.data?.is_staff ?? false;
-        user.is_superuser = response.data?.is_superuser ?? false;
-        set({ user: user });
+        if (user) {
+          user.roles = response.data?.roles ?? {};
+          user.is_staff = response.data?.is_staff ?? false;
+          user.is_superuser = response.data?.is_superuser ?? false;
+          set({ user: user });
+        }
       })
-      .catch((error) => {
-        console.error('Error fetching user roles:', error);
+      .catch((_error) => {
+        console.error('Error fetching user roles');
       });
   },
   checkUserRole: (role: UserRoles, permission: UserPermissions) => {

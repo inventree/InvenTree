@@ -13,9 +13,9 @@ ARG base_image=python:3.10-alpine3.18
 FROM ${base_image} as inventree_base
 
 # Build arguments for this image
+ARG commit_tag=""
 ARG commit_hash=""
 ARG commit_date=""
-ARG commit_tag=""
 
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
@@ -60,13 +60,7 @@ RUN apk add --no-cache \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
-    # SQLite support
-    sqlite \
-    # PostgreSQL support
-    postgresql-libs postgresql-client \
-    # MySQL / MariaDB support
-    mariadb-connector-c-dev mariadb-client && \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
 
@@ -90,12 +84,13 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
 COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
 RUN chmod +x init.sh
 
-ENTRYPOINT ["/bin/sh", "./init.sh"]
+ENTRYPOINT ["/bin/ash", "./init.sh"]
 
 FROM inventree_base as prebuild
 
+ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install -r base_requirements.txt -r requirements.txt --no-cache-dir && \
+    pip install --user -r base_requirements.txt -r requirements.txt --no-cache-dir && \
     apk --purge del .build-deps
 
 # Frontend builder image:
@@ -111,13 +106,17 @@ RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
-FROM prebuild as production
+FROM inventree_base as production
 
 ENV INVENTREE_DEBUG=False
 
 # As .git directory is not available in production image, we pass the commit information via ENV
 ENV INVENTREE_COMMIT_HASH="${commit_hash}"
 ENV INVENTREE_COMMIT_DATE="${commit_date}"
+
+# use dependencies and compiled wheels from the prebuild image
+ENV PATH=/root/.local/bin:$PATH
+COPY --from=prebuild /root/.local /root/.local
 
 # Copy source code
 COPY InvenTree ./InvenTree

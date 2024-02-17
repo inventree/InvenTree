@@ -1,0 +1,81 @@
+
+[tool.ruff]
+exclude = [
+    ".git",
+    "__pycache__",
+    "dist",
+    "build",
+    "test.py",
+    "tests",
+    "venv",
+    "env",
+    ".venv",
+    ".env",
+]
+src = ["InvenTree"]
+# line-length = 120
+
+[tool.ruff.extend-per-file-ignores]
+"__init__.py" = ["D104"]
+
+[tool.ruff.lint]
+select = ["A", "B", "C4", "D", "I", "N"]
+# Things that should be enabled in the future:
+# - LOG
+# - DJ # for Django stuff
+# - S # for security stuff (bandit)
+
+ignore = [
+    "N999",
+    # - N802 - function name should be lowercase
+	"N802",
+	# - N806 - variable should be lowercase
+	"N806",
+	# - N812 - lowercase imported as non-lowercase
+	"N812",
+    # - D417 Missing argument descriptions in the docstring
+    "D417",
+
+    # TODO These should be followed up and fixed
+    # - B904 Within an `except` clause, raise exceptions
+    "B904",
+
+    # Remove fast
+    "A001", "A002","A003","B018"
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+combine-as-imports = false
+section-order = [
+    "future",
+    "standard-library",
+    "django",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+"django" = ["django"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = true
+line-ending = "auto"
+
+[tool.coverage.run]
+source = ["InvenTree", ]
+
+[tool.djlint]
+ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
+
+[tool.isort]
+src_paths=["InvenTree", "../InvenTree"]
+skip_glob ="*/migrations/*.py"
+known_django="django"
+sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]

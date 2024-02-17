@@ -174,6 +174,7 @@ nav:
     - Parts: app/part.md
     - Stock: app/stock.md
     - Purchase Orders: app/po.md
+    - Sales Orders: app/so.md
     - Settings: app/settings.md
     - Privacy: app/privacy.md
     - Translation: app/translation.md
@@ -216,6 +217,9 @@ nav:
       - Settings Mixin: extend/plugins/settings.md
       - URL Mixin: extend/plugins/urls.md
       - Validation Mixin: extend/plugins/validation.md
+    - Machines:
+      - Overview: extend/machines/overview.md
+      - Label Printer: extend/machines/label_printer.md
     - Themes: extend/themes.md
     - Third-Party: extend/integrate.md
 
@@ -231,6 +235,15 @@ plugins:
         on_config: "docs.docs.hooks:on_config"
   - macros:
       include_dir: docs/_includes
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths:
+            - ../InvenTree
+          options:
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
 
 # Extensions
 markdown_extensions:
@@ -239,7 +252,11 @@ markdown_extensions:
   - meta
   - pymdownx.details
   - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          # format: !!python/name:pymdownx.superfences.fence_code_format
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
   #     emoji_generator: !!python/name:materialx.emoji.to_svg

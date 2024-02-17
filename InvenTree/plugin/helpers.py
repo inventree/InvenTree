@@ -12,7 +12,7 @@ from importlib.metadata import entry_points
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 logger = logging.getLogger('inventree')
 
@@ -41,11 +41,13 @@ class MixinImplementationError(ValueError):
 
     Mostly raised if constant is missing
     """
+
     pass
 
 
 class MixinNotImplementedError(NotImplementedError):
     """Error if necessary mixin function was not overwritten."""
+
     pass
 
 
@@ -64,7 +66,7 @@ def log_error(error, reference: str = 'general'):
 def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: str = ''):
     """Handles an error and casts it as an IntegrationPluginError."""
     package_path = traceback.extract_tb(error.__traceback__)[-1].filename
-    install_path = sysconfig.get_paths()["purelib"]
+    install_path = sysconfig.get_paths()['purelib']
 
     try:
         package_name = pathlib.Path(package_path).relative_to(install_path).parts[0]
@@ -73,7 +75,9 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
         try:
             path_obj = pathlib.Path(package_path).relative_to(settings.BASE_DIR)
             path_parts = [*path_obj.parts]
-            path_parts[-1] = path_parts[-1].replace(path_obj.suffix, '')  # remove suffix
+            path_parts[-1] = path_parts[-1].replace(
+                path_obj.suffix, ''
+            )  # remove suffix
 
             # remove path prefixes
             if path_parts[0] == 'plugin':
@@ -94,7 +98,11 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
     if do_raise:
         # do a straight raise if we are playing with environment variables at execution time, ignore the broken sample
-        if settings.TESTING_ENV and package_name != 'integration.broken_sample' and isinstance(error, IntegrityError):
+        if (
+            settings.TESTING_ENV
+            and package_name != 'integration.broken_sample'
+            and isinstance(error, IntegrityError)
+        ):
             raise error  # pragma: no cover
 
         raise IntegrationPluginError(package_name, str(error))
@@ -103,6 +111,8 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 def get_entrypoints():
     """Returns list for entrypoints for InvenTree plugins."""
     return entry_points().get('inventree_plugins', [])
+
+
 # endregion
 
 
@@ -123,7 +133,6 @@ def get_git_log(path):
 
     # only do this if we are not in test mode
     if not isInTestMode():  # pragma: no cover
-
         try:
             repo = Repo(path)
             head = repo.head()
@@ -133,16 +142,26 @@ def get_git_log(path):
                 head.decode(),
                 commit.author.decode().split('<')[0][:-1],
                 commit.author.decode().split('<')[1][:-1],
-                datetime.datetime.fromtimestamp(commit.author_time, ).isoformat(),
+                datetime.datetime.fromtimestamp(commit.author_time).isoformat(),
                 commit.message.decode().split('\n')[0],
             ]
+        except KeyError as err:
+            logger.debug('No HEAD tag found in git repo at path %s', path)
         except NotGitRepository:
             pass
 
     if not output:
         output = 5 * ['']  # pragma: no cover
 
-    return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4]}
+    return {
+        'hash': output[0],
+        'author': output[1],
+        'mail': output[2],
+        'date': output[3],
+        'message': output[4],
+    }
+
+
 # endregion
 
 
@@ -199,6 +218,8 @@ def get_plugins(pkg, baseclass, path=None):
                 plugins.append(plugin)
 
     return plugins
+
+
 # endregion
 
 
@@ -208,7 +229,9 @@ def render_template(plugin, template_file, context=None):
     try:
         tmp = template.loader.get_template(template_file)
     except template.TemplateDoesNotExist:
-        logger.exception("Plugin %s could not locate template '%s'", plugin.slug, template_file)
+        logger.exception(
+            "Plugin %s could not locate template '%s'", plugin.slug, template_file
+        )
 
         return f"""
         <div class='alert alert-block alert-danger'>
@@ -227,5 +250,6 @@ def render_text(text, context=None):
     ctx = template.Context(context)
 
     return template.Template(text).render(ctx)
+
 
 # endregion

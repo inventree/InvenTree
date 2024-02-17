@@ -14,12 +14,11 @@ from InvenTree.unit_test import InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part
 
-from .models import (StockItem, StockItemTestResult, StockItemTracking,
-                     StockLocation)
+from .models import StockItem, StockItemTestResult, StockItemTracking, StockLocation
 
 
 class StockTestBase(InvenTreeTestCase):
-    """Base class for running Stock tests"""
+    """Base class for running Stock tests."""
 
     fixtures = [
         'category',
@@ -54,11 +53,11 @@ class StockTest(StockTestBase):
     """Tests to ensure that the stock location tree functions correctly."""
 
     def test_pathstring(self):
-        """Check that pathstring updates occur as expected"""
-        a = StockLocation.objects.create(name="A")
-        b = StockLocation.objects.create(name="B", parent=a)
-        c = StockLocation.objects.create(name="C", parent=b)
-        d = StockLocation.objects.create(name="D", parent=c)
+        """Check that pathstring updates occur as expected."""
+        a = StockLocation.objects.create(name='A')
+        b = StockLocation.objects.create(name='B', parent=a)
+        c = StockLocation.objects.create(name='C', parent=b)
+        d = StockLocation.objects.create(name='D', parent=c)
 
         def refresh():
             a.refresh_from_db()
@@ -67,56 +66,56 @@ class StockTest(StockTestBase):
             d.refresh_from_db()
 
         # Initial checks
-        self.assertEqual(a.pathstring, "A")
-        self.assertEqual(b.pathstring, "A/B")
-        self.assertEqual(c.pathstring, "A/B/C")
-        self.assertEqual(d.pathstring, "A/B/C/D")
+        self.assertEqual(a.pathstring, 'A')
+        self.assertEqual(b.pathstring, 'A/B')
+        self.assertEqual(c.pathstring, 'A/B/C')
+        self.assertEqual(d.pathstring, 'A/B/C/D')
 
-        c.name = "Cc"
+        c.name = 'Cc'
         c.save()
 
         refresh()
-        self.assertEqual(a.pathstring, "A")
-        self.assertEqual(b.pathstring, "A/B")
-        self.assertEqual(c.pathstring, "A/B/Cc")
-        self.assertEqual(d.pathstring, "A/B/Cc/D")
+        self.assertEqual(a.pathstring, 'A')
+        self.assertEqual(b.pathstring, 'A/B')
+        self.assertEqual(c.pathstring, 'A/B/Cc')
+        self.assertEqual(d.pathstring, 'A/B/Cc/D')
 
-        b.name = "Bb"
+        b.name = 'Bb'
         b.save()
 
         refresh()
-        self.assertEqual(a.pathstring, "A")
-        self.assertEqual(b.pathstring, "A/Bb")
-        self.assertEqual(c.pathstring, "A/Bb/Cc")
-        self.assertEqual(d.pathstring, "A/Bb/Cc/D")
+        self.assertEqual(a.pathstring, 'A')
+        self.assertEqual(b.pathstring, 'A/Bb')
+        self.assertEqual(c.pathstring, 'A/Bb/Cc')
+        self.assertEqual(d.pathstring, 'A/Bb/Cc/D')
 
-        a.name = "Aa"
+        a.name = 'Aa'
         a.save()
 
         refresh()
-        self.assertEqual(a.pathstring, "Aa")
-        self.assertEqual(b.pathstring, "Aa/Bb")
-        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
-        self.assertEqual(d.pathstring, "Aa/Bb/Cc/D")
+        self.assertEqual(a.pathstring, 'Aa')
+        self.assertEqual(b.pathstring, 'Aa/Bb')
+        self.assertEqual(c.pathstring, 'Aa/Bb/Cc')
+        self.assertEqual(d.pathstring, 'Aa/Bb/Cc/D')
 
-        d.name = "Dd"
+        d.name = 'Dd'
         d.save()
 
         refresh()
-        self.assertEqual(a.pathstring, "Aa")
-        self.assertEqual(b.pathstring, "Aa/Bb")
-        self.assertEqual(c.pathstring, "Aa/Bb/Cc")
-        self.assertEqual(d.pathstring, "Aa/Bb/Cc/Dd")
+        self.assertEqual(a.pathstring, 'Aa')
+        self.assertEqual(b.pathstring, 'Aa/Bb')
+        self.assertEqual(c.pathstring, 'Aa/Bb/Cc')
+        self.assertEqual(d.pathstring, 'Aa/Bb/Cc/Dd')
 
         # Test a really long name
         # (it will be clipped to < 250 characters)
-        a.name = "A" * 100
+        a.name = 'A' * 100
         a.save()
-        b.name = "B" * 100
+        b.name = 'B' * 100
         b.save()
-        c.name = "C" * 100
+        c.name = 'C' * 100
         c.save()
-        d.name = "D" * 100
+        d.name = 'D' * 100
         d.save()
 
         refresh()
@@ -125,19 +124,15 @@ class StockTest(StockTestBase):
         self.assertEqual(len(c.pathstring), 249)
         self.assertEqual(len(d.pathstring), 249)
 
-        self.assertTrue(d.pathstring.startswith("AAAAAAAA"))
-        self.assertTrue(d.pathstring.endswith("DDDDDDDD"))
+        self.assertTrue(d.pathstring.startswith('AAAAAAAA'))
+        self.assertTrue(d.pathstring.endswith('DDDDDDDD'))
 
     def test_link(self):
-        """Test the link URL field validation"""
+        """Test the link URL field validation."""
         item = StockItem.objects.get(pk=1)
 
         # Check that invalid URLs fail
-        for bad_url in [
-            'test.com',
-            'httpx://abc.xyz',
-            'https:google.com',
-        ]:
+        for bad_url in ['test.com', 'httpx://abc.xyz', 'https:google.com']:
             with self.assertRaises(ValidationError):
                 item.link = bad_url
                 item.save()
@@ -168,52 +163,42 @@ class StockTest(StockTestBase):
 
     @override_settings(EXTRA_URL_SCHEMES=['ssh'])
     def test_exteneded_schema(self):
-        """Test that extended URL schemes are allowed"""
+        """Test that extended URL schemes are allowed."""
         item = StockItem.objects.get(pk=1)
         item.link = 'ssh://user:pwd@deb.org:223'
         item.save()
         item.full_clean()
 
     def test_serial_numbers(self):
-        """Test serial number uniqueness"""
+        """Test serial number uniqueness."""
         # Ensure that 'global uniqueness' setting is enabled
         InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', True, self.user)
 
-        part_a = Part.objects.create(name='A', description='A part with a description', trackable=True)
-        part_b = Part.objects.create(name='B', description='B part with a description', trackable=True)
+        part_a = Part.objects.create(
+            name='A', description='A part with a description', trackable=True
+        )
+        part_b = Part.objects.create(
+            name='B', description='B part with a description', trackable=True
+        )
 
         # Create a StockItem for part_a
-        StockItem.objects.create(
-            part=part_a,
-            quantity=1,
-            serial='ABCDE',
-        )
+        StockItem.objects.create(part=part_a, quantity=1, serial='ABCDE')
 
         # Create a StockItem for part_a (but, will error due to identical serial)
         with self.assertRaises(ValidationError):
-            StockItem.objects.create(
-                part=part_b,
-                quantity=1,
-                serial='ABCDE',
-            )
+            StockItem.objects.create(part=part_b, quantity=1, serial='ABCDE')
 
         # Now, allow serial numbers to be duplicated between different parts
         InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, self.user)
 
-        StockItem.objects.create(
-            part=part_b,
-            quantity=1,
-            serial='ABCDE',
-        )
+        StockItem.objects.create(part=part_b, quantity=1, serial='ABCDE')
 
     def test_expiry(self):
         """Test expiry date functionality for StockItem model."""
         today = datetime.datetime.now().date()
 
         item = StockItem.objects.create(
-            location=self.office,
-            part=Part.objects.get(pk=1),
-            quantity=10,
+            location=self.office, part=Part.objects.get(pk=1), quantity=10
         )
 
         # Without an expiry_date set, item should not be "expired"
@@ -249,13 +234,14 @@ class StockTest(StockTestBase):
         # And there should be *no* items being build
         self.assertEqual(part.quantity_being_built, 0)
 
-        build = Build.objects.create(reference='BO-4444', part=part, title='A test build', quantity=1)
+        build = Build.objects.create(
+            reference='BO-4444', part=part, title='A test build', quantity=1
+        )
 
         # Add some stock items which are "building"
         for _ in range(10):
             StockItem.objects.create(
-                part=part, build=build,
-                quantity=10, is_building=True
+                part=part, build=build, quantity=10, is_building=True
             )
 
         # The "is_building" quantity should not be counted here
@@ -330,7 +316,10 @@ class StockTest(StockTestBase):
 
         # There should be 16 widgets "in stock"
         self.assertEqual(
-            StockItem.objects.filter(part=25).aggregate(Sum('quantity'))['quantity__sum'], 16
+            StockItem.objects.filter(part=25).aggregate(Sum('quantity'))[
+                'quantity__sum'
+            ],
+            16,
         )
 
     def test_delete_location(self):
@@ -339,7 +328,9 @@ class StockTest(StockTestBase):
         n_stock = StockItem.objects.count()
 
         # What parts are in drawer 3?
-        stock_ids = [part.id for part in StockItem.objects.filter(location=self.drawer3.id)]
+        stock_ids = [
+            part.id for part in StockItem.objects.filter(location=self.drawer3.id)
+        ]
 
         # Delete location - parts should move to parent location
         self.drawer3.delete()
@@ -361,7 +352,9 @@ class StockTest(StockTestBase):
         self.assertEqual(it.location, self.bathroom)
 
         # There now should be 2 lots of screws in the bathroom
-        self.assertEqual(StockItem.objects.filter(part=1, location=self.bathroom).count(), 2)
+        self.assertEqual(
+            StockItem.objects.filter(part=1, location=self.bathroom).count(), 2
+        )
 
         # Check that a tracking item was added
         track = StockItemTracking.objects.filter(item=it).latest('id')
@@ -463,13 +456,15 @@ class StockTest(StockTestBase):
         self.assertFalse(it.add_stock(-10, None))
 
     def test_allocate_to_customer(self):
-        """Test allocating stock to a customer"""
+        """Test allocating stock to a customer."""
         it = StockItem.objects.get(pk=2)
         n = it.quantity
         an = n - 10
-        customer = Company.objects.create(name="MyTestCompany")
-        order = SalesOrder.objects.create(description="Test order")
-        ait = it.allocateToCustomer(customer, quantity=an, order=order, user=None, notes='Allocated some stock')
+        customer = Company.objects.create(name='MyTestCompany')
+        order = SalesOrder.objects.create(description='Test order')
+        ait = it.allocateToCustomer(
+            customer, quantity=an, order=order, user=None, notes='Allocated some stock'
+        )
 
         # Check if new stockitem is created
         self.assertTrue(ait)
@@ -485,29 +480,48 @@ class StockTest(StockTestBase):
         # Check that a tracking item was added
         track = StockItemTracking.objects.filter(item=ait).latest('id')
 
-        self.assertEqual(track.tracking_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER)
+        self.assertEqual(
+            track.tracking_type, StockHistoryCode.SHIPPED_AGAINST_SALES_ORDER
+        )
         self.assertIn('Allocated some stock', track.notes)
 
     def test_return_from_customer(self):
-        """Test removing previous allocated stock from customer"""
+        """Test removing previous allocated stock from customer."""
         it = StockItem.objects.get(pk=2)
 
         # First establish total stock for this part
-        allstock_before = StockItem.objects.filter(part=it.part).aggregate(Sum("quantity"))["quantity__sum"]
+        allstock_before = StockItem.objects.filter(part=it.part).aggregate(
+            Sum('quantity')
+        )['quantity__sum']
 
         n = it.quantity
         an = n - 10
-        customer = Company.objects.create(name="MyTestCompany")
-        order = SalesOrder.objects.create(description="Test order")
+        customer = Company.objects.create(name='MyTestCompany')
+        order = SalesOrder.objects.create(description='Test order')
 
-        ait = it.allocateToCustomer(customer, quantity=an, order=order, user=None, notes='Allocated some stock')
-        ait.return_from_customer(it.location, None, notes="Stock removed from customer")
+        ait = it.allocateToCustomer(
+            customer, quantity=an, order=order, user=None, notes='Allocated some stock'
+        )
+
+        self.assertEqual(ait.quantity, an)
+        self.assertTrue(ait.parent, it)
+
+        # There should be only quantity 10x remaining
+        it.refresh_from_db()
+        self.assertEqual(it.quantity, 10)
+
+        ait.return_from_customer(it.location, None, notes='Stock removed from customer')
 
         # When returned stock is returned to its original (parent) location, check that the parent has correct quantity
+        it.refresh_from_db()
         self.assertEqual(it.quantity, n)
 
-        ait = it.allocateToCustomer(customer, quantity=an, order=order, user=None, notes='Allocated some stock')
-        ait.return_from_customer(self.drawer3, None, notes="Stock removed from customer")
+        ait = it.allocateToCustomer(
+            customer, quantity=an, order=order, user=None, notes='Allocated some stock'
+        )
+        ait.return_from_customer(
+            self.drawer3, None, notes='Stock removed from customer'
+        )
 
         # Check correct assignment of the new location
         self.assertEqual(ait.location, self.drawer3)
@@ -527,7 +541,9 @@ class StockTest(StockTestBase):
         self.assertIn('Stock removed from customer', track.notes)
 
         # Establish total stock for the part after remove from customer to check that we still have the correct quantity in stock
-        allstock_after = StockItem.objects.filter(part=it.part).aggregate(Sum("quantity"))["quantity__sum"]
+        allstock_after = StockItem.objects.filter(part=it.part).aggregate(
+            Sum('quantity')
+        )['quantity__sum']
         self.assertEqual(allstock_before, allstock_after)
 
     def test_take_stock(self):
@@ -578,10 +594,7 @@ class StockTest(StockTestBase):
         # Ensure we do not have unique serials enabled
         InvenTreeSetting.set_setting('SERIAL_NUMBER_GLOBALLY_UNIQUE', False, None)
 
-        item = StockItem.objects.create(
-            part=p,
-            quantity=1,
-        )
+        item = StockItem.objects.create(part=p, quantity=1)
 
         self.assertFalse(item.serialized)
 
@@ -609,10 +622,7 @@ class StockTest(StockTestBase):
             trackable=True,
         )
 
-        item = StockItem.objects.create(
-            part=p,
-            quantity=1,
-        )
+        item = StockItem.objects.create(part=p, quantity=1)
 
         for sn in [12345, '12345', ' 12345 ']:
             item.serial = sn
@@ -620,7 +630,7 @@ class StockTest(StockTestBase):
 
             self.assertEqual(item.serial_int, 12345)
 
-        item.serial = "-123"
+        item.serial = '-123'
         item.save()
 
         # Negative number should map to positive value
@@ -631,7 +641,7 @@ class StockTest(StockTestBase):
         item.save()
 
         # The 'integer' portion has been clipped to a maximum value
-        self.assertEqual(item.serial_int, 0x7fffffff)
+        self.assertEqual(item.serial_int, 0x7FFFFFFF)
 
         # Non-numeric values should encode to zero
         for sn in ['apple', 'banana', 'carrot']:
@@ -644,30 +654,18 @@ class StockTest(StockTestBase):
         item.serial = 100
         item.save()
 
-        item_next = StockItem.objects.create(
-            part=p,
-            serial=150,
-            quantity=1
-        )
+        item_next = StockItem.objects.create(part=p, serial=150, quantity=1)
 
         self.assertEqual(item.get_next_serialized_item(), item_next)
 
-        item_prev = StockItem.objects.create(
-            part=p,
-            serial=' 57',
-            quantity=1,
-        )
+        item_prev = StockItem.objects.create(part=p, serial=' 57', quantity=1)
 
         self.assertEqual(item.get_next_serialized_item(reverse=True), item_prev)
 
         # Create a number of serialized stock items around the current item
         for i in range(75, 125):
             try:
-                StockItem.objects.create(
-                    part=p,
-                    serial=i,
-                    quantity=1,
-                )
+                StockItem.objects.create(part=p, serial=i, quantity=1)
             except Exception:
                 pass
 
@@ -696,14 +694,14 @@ class StockTest(StockTestBase):
 
         # Try an invalid quantity
         with self.assertRaises(ValidationError):
-            item.serializeStock("k", [], self.user)
+            item.serializeStock('k', [], self.user)
 
         with self.assertRaises(ValidationError):
             item.serializeStock(-1, [], self.user)
 
         # Not enough serial numbers for all stock items.
         with self.assertRaises(ValidationError):
-            item.serializeStock(3, "hello", self.user)
+            item.serializeStock(3, 'hello', self.user)
 
     def test_serialize_stock_valid(self):
         """Perform valid stock serializations."""
@@ -755,55 +753,25 @@ class StockTest(StockTestBase):
         """
         # First, we will create a stock location structure
 
-        A = StockLocation.objects.create(
-            name='A',
-            description='Top level location'
-        )
+        A = StockLocation.objects.create(name='A', description='Top level location')
 
-        B1 = StockLocation.objects.create(
-            name='B1',
-            parent=A
-        )
+        B1 = StockLocation.objects.create(name='B1', parent=A)
 
-        B2 = StockLocation.objects.create(
-            name='B2',
-            parent=A
-        )
+        B2 = StockLocation.objects.create(name='B2', parent=A)
 
-        B3 = StockLocation.objects.create(
-            name='B3',
-            parent=A
-        )
+        B3 = StockLocation.objects.create(name='B3', parent=A)
 
-        C11 = StockLocation.objects.create(
-            name='C11',
-            parent=B1,
-        )
+        C11 = StockLocation.objects.create(name='C11', parent=B1)
 
-        C12 = StockLocation.objects.create(
-            name='C12',
-            parent=B1,
-        )
+        C12 = StockLocation.objects.create(name='C12', parent=B1)
 
-        C21 = StockLocation.objects.create(
-            name='C21',
-            parent=B2,
-        )
+        C21 = StockLocation.objects.create(name='C21', parent=B2)
 
-        C22 = StockLocation.objects.create(
-            name='C22',
-            parent=B2,
-        )
+        C22 = StockLocation.objects.create(name='C22', parent=B2)
 
-        C31 = StockLocation.objects.create(
-            name='C31',
-            parent=B3,
-        )
+        C31 = StockLocation.objects.create(name='C31', parent=B3)
 
-        C32 = StockLocation.objects.create(
-            name='C32',
-            parent=B3
-        )
+        C32 = StockLocation.objects.create(name='C32', parent=B3)
 
         # Check that the tree_id is correct for each sublocation
         for loc in [B1, B2, B3, C11, C12, C21, C22, C31, C32]:
@@ -850,9 +818,7 @@ class StockTest(StockTestBase):
         # Add some stock items to B3
         for _ in range(10):
             StockItem.objects.create(
-                part=Part.objects.get(pk=1),
-                quantity=10,
-                location=B3
+                part=Part.objects.get(pk=1), quantity=10, location=B3
             )
 
         self.assertEqual(StockItem.objects.filter(location=B3).count(), 10)
@@ -930,10 +896,10 @@ class StockTest(StockTestBase):
 
 
 class StockBarcodeTest(StockTestBase):
-    """Run barcode tests for the stock app"""
+    """Run barcode tests for the stock app."""
 
     def test_stock_item_barcode_basics(self):
-        """Simple tests for the StockItem barcode integration"""
+        """Simple tests for the StockItem barcode integration."""
         item = StockItem.objects.get(pk=1)
 
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
@@ -949,7 +915,7 @@ class StockBarcodeTest(StockTestBase):
         self.assertEqual(barcode, '{"stockitem": 1}')
 
     def test_location_barcode_basics(self):
-        """Simple tests for the StockLocation barcode integration"""
+        """Simple tests for the StockLocation barcode integration."""
         self.assertEqual(StockLocation.barcode_model_type(), 'stocklocation')
 
         loc = StockLocation.objects.get(pk=1)
@@ -982,7 +948,10 @@ class VariantTest(StockTestBase):
         chair = Part.objects.get(pk=10000)
 
         # Operations on the top-level object
-        [self.assertFalse(chair.validate_serial_number(i)) for i in [1, 2, 3, 4, 5, 20, 21, 22]]
+        [
+            self.assertFalse(chair.validate_serial_number(i))
+            for i in [1, 2, 3, 4, 5, 20, 21, 22]
+        ]
 
         self.assertFalse(chair.validate_serial_number(20))
         self.assertFalse(chair.validate_serial_number(21))
@@ -1006,11 +975,7 @@ class VariantTest(StockTestBase):
         # Create a new serial number
         n = variant.get_latest_serial_number()
 
-        item = StockItem(
-            part=variant,
-            quantity=1,
-            serial=n
-        )
+        item = StockItem(part=variant, quantity=1, serial=n)
 
         # This should fail
         with self.assertRaises(ValidationError):
@@ -1031,6 +996,63 @@ class VariantTest(StockTestBase):
         item.save()
 
 
+class StockTreeTest(StockTestBase):
+    """Unit test for StockItem tree structure."""
+
+    def test_stock_split(self):
+        """Test that stock splitting works correctly."""
+        StockItem.objects.rebuild()
+
+        part = Part.objects.create(name='My part', description='My part description')
+        location = StockLocation.objects.create(name='Test Location')
+
+        # Create an initial stock item
+        item = StockItem.objects.create(part=part, quantity=1000, location=location)
+
+        # Test that the initial MPTT values are correct
+        self.assertEqual(item.level, 0)
+        self.assertEqual(item.lft, 1)
+        self.assertEqual(item.rght, 2)
+
+        children = []
+
+        self.assertEqual(item.get_descendants(include_self=False).count(), 0)
+        self.assertEqual(item.get_descendants(include_self=True).count(), 1)
+
+        # Create child items by splitting stock
+        for idx in range(10):
+            child = item.splitStock(50, None, None)
+            children.append(child)
+
+            # Check that the child item has been correctly created
+            self.assertEqual(child.parent.pk, item.pk)
+            self.assertEqual(child.tree_id, item.tree_id)
+            self.assertEqual(child.level, 1)
+
+            item.refresh_from_db()
+            self.assertEqual(item.get_children().count(), idx + 1)
+            self.assertEqual(item.get_descendants(include_self=True).count(), idx + 2)
+
+        item.refresh_from_db()
+        n = item.get_descendants(include_self=True).count()
+
+        for child in children:
+            # Create multiple sub-childs
+            for _idx in range(3):
+                sub_child = child.splitStock(10, None, None)
+                self.assertEqual(sub_child.parent.pk, child.pk)
+                self.assertEqual(sub_child.tree_id, child.tree_id)
+                self.assertEqual(sub_child.level, 2)
+
+                self.assertEqual(sub_child.get_ancestors(include_self=True).count(), 3)
+
+            child.refresh_from_db()
+            self.assertEqual(child.get_descendants(include_self=True).count(), 4)
+
+        item.refresh_from_db()
+        self.assertEqual(item.get_descendants(include_self=True).count(), n + 30)
+
+
 class TestResultTest(StockTestBase):
     """Tests for the StockItemTestResult model."""
 
@@ -1040,7 +1062,7 @@ class TestResultTest(StockTestBase):
         tests = item.test_results
         self.assertEqual(tests.count(), 4)
 
-        results = item.getTestResults(test="Temperature Test")
+        results = item.getTestResults(test='Temperature Test')
         self.assertEqual(results.count(), 2)
 
         # Passing tests
@@ -1074,9 +1096,7 @@ class TestResultTest(StockTestBase):
         test.save()
 
         StockItemTestResult.objects.create(
-            stock_item=item,
-            test='sew cushion',
-            result=True
+            stock_item=item, test='sew cushion', result=True
         )
 
         # Still should be failing at this point,
@@ -1088,7 +1108,7 @@ class TestResultTest(StockTestBase):
             stock_item=item,
             test='apply paint',
             date=datetime.datetime(2022, 12, 12),
-            result=True
+            result=True,
         )
 
         self.assertTrue(item.passedAllRequiredTests())
@@ -1096,39 +1116,40 @@ class TestResultTest(StockTestBase):
     def test_duplicate_item_tests(self):
         """Test duplicate item behaviour."""
         # Create an example stock item by copying one from the database (because we are lazy)
+
+        from plugin.registry import registry
+
+        StockItem.objects.rebuild()
+
         item = StockItem.objects.get(pk=522)
 
         item.pk = None
         item.serial = None
         item.quantity = 50
 
-        # Try with an invalid batch code (according to sample validatoin plugin)
-        item.batch = "X234"
+        # Try with an invalid batch code (according to sample validation plugin)
+        item.batch = 'X234'
+
+        # Ensure that the sample validation plugin is activated
+        registry.set_plugin_state('validator', True)
 
         with self.assertRaises(ValidationError):
             item.save()
 
-        item.batch = "B123"
+        item.batch = 'B123'
         item.save()
 
         # Do some tests!
         StockItemTestResult.objects.create(
-            stock_item=item,
-            test="Firmware",
-            result=True
+            stock_item=item, test='Firmware', result=True
         )
 
         StockItemTestResult.objects.create(
-            stock_item=item,
-            test="Paint Color",
-            result=True,
-            value="Red"
+            stock_item=item, test='Paint Color', result=True, value='Red'
         )
 
         StockItemTestResult.objects.create(
-            stock_item=item,
-            test="Applied Sticker",
-            result=False
+            stock_item=item, test='Applied Sticker', result=False
         )
 
         self.assertEqual(item.test_results.count(), 3)
@@ -1142,10 +1163,7 @@ class TestResultTest(StockTestBase):
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item2.test_results.count(), 3)
 
-        StockItemTestResult.objects.create(
-            stock_item=item2,
-            test='A new test'
-        )
+        StockItemTestResult.objects.create(stock_item=item2, test='A new test')
 
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item2.test_results.count(), 4)
@@ -1154,10 +1172,7 @@ class TestResultTest(StockTestBase):
         item2.serializeStock(1, [100], self.user)
 
         # Add a test result to the parent *after* serialization
-        StockItemTestResult.objects.create(
-            stock_item=item2,
-            test='abcde'
-        )
+        StockItemTestResult.objects.create(stock_item=item2, test='abcde')
 
         self.assertEqual(item2.test_results.count(), 5)
 
@@ -1182,10 +1197,7 @@ class TestResultTest(StockTestBase):
 
         # Create a stock item which is installed *inside* the master item
         sub_item = StockItem.objects.create(
-            part=item.part,
-            quantity=1,
-            belongs_to=item,
-            location=None
+            part=item.part, quantity=1, belongs_to=item, location=None
         )
 
         # Now, create some test results against the sub item
@@ -1195,7 +1207,7 @@ class TestResultTest(StockTestBase):
             stock_item=sub_item,
             test='firmware version',
             date=datetime.datetime.now().date(),
-            result=True
+            result=True,
         )
 
         # Should return the same number of tests as before
