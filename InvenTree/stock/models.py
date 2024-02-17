@@ -1550,6 +1550,52 @@ class StockItem(
             result.stock_item = self
             result.save()
 
+    def add_test_result(self, create_template=True, **kwargs):
+        """Helper function to add a new StockItemTestResult.
+
+        The main purpose of this function is to allow lookup of the template,
+        based on the provided test name.
+
+        If no template is found, a new one is created (if create_template=True).
+
+        Args:
+            create_template: If True, create a new template if it does not exist
+
+        kwargs:
+            template: The ID of the associated PartTestTemplate
+            test_name: The name of the test (if the template is not provided)
+            result: The result of the test
+            value: The value of the test
+            user: The user who performed the test
+            notes: Any notes associated with the test
+        """
+        template = kwargs.get('template', None)
+        test_name = kwargs.pop('test_name', None)
+
+        test_key = InvenTree.helpers.generateTestKey(test_name)
+
+        if template is None and test_name is not None:
+            # Attempt to find a matching template
+
+            template = PartModels.PartTestTemplate.objects.filter(
+                part__tree_id=self.part.tree_id, key=test_key
+            ).first()
+
+            if template is None:
+                if create_template:
+                    template = PartModels.PartTestTemplate.objects.create(
+                        part=self.part, test_name=test_name
+                    )
+                else:
+                    raise ValidationError({
+                        'template': _('Test template does not exist')
+                    })
+
+        kwargs['template'] = template
+        kwargs['stock_item'] = self
+
+        return StockItemTestResult.objects.create(**kwargs)
+
     def can_merge(self, other=None, raise_error=False, **kwargs):
         """Check if this stock item can be merged into another stock item."""
         allow_mismatched_suppliers = kwargs.get('allow_mismatched_suppliers', False)

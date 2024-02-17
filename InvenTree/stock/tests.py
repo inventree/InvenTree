@@ -1160,17 +1160,9 @@ class TestResultTest(StockTestBase):
         item.save()
 
         # Do some tests!
-        StockItemTestResult.objects.create(
-            stock_item=item, test='Firmware', result=True
-        )
-
-        StockItemTestResult.objects.create(
-            stock_item=item, test='Paint Color', result=True, value='Red'
-        )
-
-        StockItemTestResult.objects.create(
-            stock_item=item, test='Applied Sticker', result=False
-        )
+        item.add_test_result(test_name='Firmware', result=True)
+        item.add_test_result(test_name='Paint Color', result=True, value='Red')
+        item.add_test_result(test_name='Applied Sticker', result=False)
 
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item.quantity, 50)
@@ -1183,7 +1175,7 @@ class TestResultTest(StockTestBase):
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item2.test_results.count(), 3)
 
-        StockItemTestResult.objects.create(stock_item=item2, test='A new test')
+        item2.add_test_result(test_name='A new test')
 
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item2.test_results.count(), 4)
@@ -1192,7 +1184,7 @@ class TestResultTest(StockTestBase):
         item2.serializeStock(1, [100], self.user)
 
         # Add a test result to the parent *after* serialization
-        StockItemTestResult.objects.create(stock_item=item2, test='abcde')
+        item2.add_test_result(test_name='abcde')
 
         self.assertEqual(item2.test_results.count(), 5)
 
