@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-16 07:34+0000\n"
-"PO-Revision-Date: 2024-02-15 02:42\n"
+"POT-Creation-Date: 2024-02-16 01:23+0000\n"
+"PO-Revision-Date: 2024-02-17 03:22\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -292,7 +292,7 @@ msgstr "Russisch"
 
 #: InvenTree/locales.py:39
 msgid "Slovak"
-msgstr ""
+msgstr "Slowakisch"
 
 #: InvenTree/locales.py:40
 msgid "Slovenian"
@@ -340,7 +340,7 @@ msgstr "Email"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Fehler beim Ausführen der Plugin Validierung"
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
@@ -605,11 +605,11 @@ msgstr "Ihr Konto wurde erstellt."
 
 #: InvenTree/serializers.py:468
 msgid "Please use the password reset function to login"
-msgstr ""
+msgstr "Bitte benutzen Sie die Passwort-zurücksetzen-Funktion, um sich anzumelden"
 
 #: InvenTree/serializers.py:475
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Willkommen bei InvenTree"
 
 #: InvenTree/serializers.py:536
 msgid "Filename"
@@ -1656,7 +1656,7 @@ msgstr "Stücklisten-Position"
 
 #: build/serializers.py:1087 templates/js/translated/index.js:130
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Zugewiesener Bestand"
 
 #: build/serializers.py:1092 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:1411 part/templates/part/part_base.html:210
@@ -1670,7 +1670,7 @@ msgstr "Bestellt"
 #: templates/js/translated/build.js:2616
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr ""
+msgstr "In Produktion"
 
 #: build/serializers.py:1102 part/bom.py:172 part/serializers.py:1424
 #: part/templates/part/part_base.html:192
@@ -1870,15 +1870,15 @@ msgstr "Priorität"
 
 #: build/templates/build/build_base.html:273
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Bauauftrag löschen"
 
 #: build/templates/build/build_base.html:283
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "Bauftrags-QR-Code"
 
 #: build/templates/build/build_base.html:295
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Barcode mit Bauauftrag verknüpfen"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -2022,11 +2022,11 @@ msgstr "Bauauftrags-Notizen"
 
 #: build/templates/build/detail.html:426
 msgid "Allocation Complete"
-msgstr ""
+msgstr "Zuordnung abgeschlossen"
 
 #: build/templates/build/detail.html:427
 msgid "All lines have been fully allocated"
-msgstr ""
+msgstr "Alle Zeilen wurden vollständig zugewiesen"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
@@ -2088,7 +2088,7 @@ msgstr "Zeitstempel der letzten Aktualisierung"
 
 #: common/models.py:105
 msgid "Site URL is locked by configuration"
-msgstr ""
+msgstr "Seiten-URL ist durch die Konfiguration gesperrt"
 
 #: common/models.py:130
 msgid "Unique project code"
@@ -2950,11 +2950,11 @@ msgstr "Beim Start überprüfen, ob alle Plugins installiert sind - Für Contain
 
 #: common/models.py:1898
 msgid "Check for plugin updates"
-msgstr ""
+msgstr "Nach Plugin-Aktualisierungen suchen"
 
 #: common/models.py:1899
 msgid "Enable periodic checks for updates to installed plugins"
-msgstr ""
+msgstr "Periodische Überprüfungen auf Updates für installierte Plugins aktivieren"
 
 #: common/models.py:1905
 msgid "Enable URL integration"
@@ -3466,11 +3466,11 @@ msgstr "Benachrichtigungen bei Systemfehlern erhalten"
 
 #: common/models.py:2379
 msgid "Last used printing machines"
-msgstr ""
+msgstr "Zuletzt verwendete Druckmaschinen"
 
 #: common/models.py:2380
 msgid "Save the last used printing machines for a user"
-msgstr ""
+msgstr "Die zuletzt benutzten Druckmaschinen für einen Benutzer speichern"
 
 #: common/models.py:2423
 msgid "Price break quantity"
@@ -4228,11 +4228,11 @@ msgstr "Telefon"
 #: company/templates/company/company_base.html:205
 #: part/templates/part/part_base.html:528
 msgid "Remove Image"
-msgstr ""
+msgstr "Bild entfernen"
 
 #: company/templates/company/company_base.html:206
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Verknüpftes Bild von dieser Firma entfernen"
 
 #: company/templates/company/company_base.html:208
 #: part/templates/part/part_base.html:531
@@ -4244,12 +4244,12 @@ msgstr "Entfernen"
 #: company/templates/company/company_base.html:237
 #: part/templates/part/part_base.html:560
 msgid "Upload Image"
-msgstr ""
+msgstr "Bild hochladen"
 
 #: company/templates/company/company_base.html:252
 #: part/templates/part/part_base.html:614
 msgid "Download Image"
-msgstr ""
+msgstr "Bild herunterladen"
 
 #: company/templates/company/detail.html:15
 #: company/templates/company/manufacturer_part_sidebar.html:7
@@ -4432,7 +4432,7 @@ msgstr "Neuer Parameter"
 #: company/templates/company/manufacturer_part.html:206
 #: templates/js/translated/part.js:1422
 msgid "Add Parameter"
-msgstr ""
+msgstr "Parameter hinzufügen"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
@@ -4548,15 +4548,15 @@ msgstr "Preisstaffel hinzufügen"
 
 #: company/templates/company/supplier_part.html:276
 msgid "Supplier Part QR Code"
-msgstr ""
+msgstr "Zulieferteil QR-Code"
 
 #: company/templates/company/supplier_part.html:287
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Barcode mit Zulieferteil verknüpfen"
 
 #: company/templates/company/supplier_part.html:359
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Verfügbarkeit der Teile aktualisieren"
 
 #: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:223
 #: part/templates/part/category.html:183
@@ -4602,7 +4602,7 @@ msgstr "Neue Firma"
 
 #: label/api.py:247
 msgid "Error printing label"
-msgstr ""
+msgstr "Fehler beim Drucken des Labels"
 
 #: label/models.py:115
 msgid "Label name"
@@ -4678,15 +4678,15 @@ msgstr "QR-Code"
 
 #: machine/machine_types/label_printer.py:217
 msgid "Copies"
-msgstr ""
+msgstr "Kopien"
 
 #: machine/machine_types/label_printer.py:218
 msgid "Number of copies to print for each label"
-msgstr ""
+msgstr "Anzahl der zu druckenden Kopien für jedes Label"
 
 #: machine/machine_types/label_printer.py:233
 msgid "Connected"
-msgstr ""
+msgstr "Verbunden"
 
 #: machine/machine_types/label_printer.py:234 order/api.py:1412
 #: templates/js/translated/sales_order.js:1042
@@ -4695,87 +4695,87 @@ msgstr "Unbekannt"
 
 #: machine/machine_types/label_printer.py:235
 msgid "Printing"
-msgstr ""
+msgstr "Drucken"
 
 #: machine/machine_types/label_printer.py:236
 msgid "No media"
-msgstr ""
+msgstr "Keine Medien"
 
 #: machine/machine_types/label_printer.py:237
 msgid "Disconnected"
-msgstr ""
+msgstr "Verbindung getrennt"
 
 #: machine/machine_types/label_printer.py:244
 msgid "Label Printer"
-msgstr ""
+msgstr "Etikettendrucker"
 
 #: machine/machine_types/label_printer.py:245
 msgid "Directly print labels for various items."
-msgstr ""
+msgstr "Drucken Sie Etiketten direkt für verschiedene Artikel."
 
 #: machine/machine_types/label_printer.py:251
 msgid "Printer Location"
-msgstr ""
+msgstr "Druckerstandort"
 
 #: machine/machine_types/label_printer.py:252
 msgid "Scope the printer to a specific location"
-msgstr ""
+msgstr "Den Drucker an einen bestimmten Ort aufstellen"
 
 #: machine/models.py:25
 msgid "Name of machine"
-msgstr ""
+msgstr "Name des Geräts"
 
 #: machine/models.py:29
 msgid "Machine Type"
-msgstr ""
+msgstr "Gerätetyp"
 
 #: machine/models.py:29
 msgid "Type of machine"
-msgstr ""
+msgstr "Typ der Maschine"
 
 #: machine/models.py:34 machine/models.py:146
 msgid "Driver"
-msgstr ""
+msgstr "Treiber"
 
 #: machine/models.py:35
 msgid "Driver used for the machine"
-msgstr ""
+msgstr "Verwendeter Treiber für die Maschine"
 
 #: machine/models.py:39
 msgid "Machines can be disabled"
-msgstr ""
+msgstr "Maschinen können deaktiviert werden"
 
 #: machine/models.py:95
 msgid "Driver available"
-msgstr ""
+msgstr "Treiber verfügbar"
 
 #: machine/models.py:100
 msgid "No errors"
-msgstr ""
+msgstr "Keine Fehler"
 
 #: machine/models.py:105
 msgid "Initialized"
-msgstr ""
+msgstr "Initialisiert"
 
 #: machine/models.py:110
 msgid "Errors"
-msgstr ""
+msgstr "Fehler"
 
 #: machine/models.py:117
 msgid "Machine status"
-msgstr ""
+msgstr "Status der Maschine"
 
 #: machine/models.py:145
 msgid "Machine"
-msgstr ""
+msgstr "Maschine"
 
 #: machine/models.py:151
 msgid "Machine Config"
-msgstr ""
+msgstr "Maschinenkonfiguration"
 
 #: machine/models.py:156
 msgid "Config type"
-msgstr ""
+msgstr "Konfigurationstyp"
 
 #: order/admin.py:30 order/models.py:88
 #: report/templates/report/inventree_po_report_base.html:31
@@ -5451,7 +5451,7 @@ msgstr "Gesamtkosten konnten nicht berechnet werden"
 
 #: order/templates/order/order_base.html:318
 msgid "Purchase Order QR Code"
-msgstr ""
+msgstr "Bestellung QR-Code"
 
 #: order/templates/order/order_base.html:330
 msgid "Link Barcode to Purchase Order"
@@ -7862,15 +7862,15 @@ msgstr ""
 
 #: plugin/builtin/labels/inventree_machine.py:62
 msgid "Provides support for printing using a machine"
-msgstr ""
+msgstr "Unterstützt das Drucken mit einer Maschine"
 
 #: plugin/builtin/labels/inventree_machine.py:150
 msgid "last used"
-msgstr ""
+msgstr "Zuletzt benutzt"
 
 #: plugin/builtin/labels/inventree_machine.py:167
 msgid "Options"
-msgstr ""
+msgstr "Optionen"
 
 #: plugin/builtin/labels/label_sheet.py:29
 msgid "Page size for the label sheet"
@@ -7878,11 +7878,11 @@ msgstr "Seitengröße für das Labelblatt"
 
 #: plugin/builtin/labels/label_sheet.py:34
 msgid "Skip Labels"
-msgstr ""
+msgstr "Etiketten überspringen"
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Skip this number of labels when printing label sheets"
-msgstr ""
+msgstr "Diese Anzahl der Etiketten beim Drucken von Etiketten überspringen"
 
 #: plugin/builtin/labels/label_sheet.py:41
 msgid "Border"
@@ -13731,8 +13731,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13912,3 +13911,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
