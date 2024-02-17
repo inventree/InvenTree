@@ -1981,6 +1981,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
+            'name': _('Block Until Tests Pass'),
+            'description': _(
+                'Prevent build outputs from being completed until all required tests pass'
+            ),
+            'default': False,
+            'validator': bool,
+        },
     }
 
     typ = 'inventree'
