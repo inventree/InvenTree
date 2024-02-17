@@ -1623,6 +1623,9 @@ class StockItem(
         if len(other_items) == 0:
             return
 
+        # Keep track of the tree IDs that are being merged
+        tree_ids = set(self.tree_id)
+
         user = kwargs.get('user', None)
         location = kwargs.get('location', None)
         notes = kwargs.get('notes', None)
@@ -1633,6 +1636,8 @@ class StockItem(
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
                 return
+
+            tree_ids.add(other.tree_id)
 
         for other in other_items:
             self.quantity += other.quantity
@@ -1664,6 +1669,14 @@ class StockItem(
 
         self.location = location
         self.save()
+
+        # Rebuild stock trees as required
+        try:
+            for tree_id in tree_ids:
+                StockItem.objects.partial_rebuild(tree_id=tree_id)
+        except Exception:
+            logger.warning('Rebuilding entire StockItem tree')
+            StockItem.objects.rebuild()
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
