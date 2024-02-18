@@ -509,6 +509,20 @@ class TestHelpers(TestCase):
         self.assertNotIn(PartCategory, models)
         self.assertNotIn(InvenTreeSetting, models)
 
+    def test_test_key(self):
+        """Test for the generateTestKey function."""
+        tests = {
+            ' Hello World ': 'helloworld',
+            ' MY NEW TEST KEY ': 'mynewtestkey',
+            ' 1234 5678': '_12345678',
+            ' 100 percenT': '_100percent',
+            ' MY_NEW_TEST': 'my_new_test',
+            ' 100_new_tests': '_100_new_tests',
+        }
+
+        for name, key in tests.items():
+            self.assertEqual(helpers.generateTestKey(name), key)
+
 
 class TestQuoteWrap(TestCase):
     """Tests for string wrapping."""
