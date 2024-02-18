@@ -655,9 +655,10 @@ class BuildTest(BuildTestBase):
         # let's complete the required test and see if it could be saved
         StockItemTestResult.objects.create(
             stock_item=self.stockitem_with_required_test,
-            test=self.test_template_required.test_name,
+            template=self.test_template_required,
             result=True
         )
+
         self.build_w_tests_trackable.complete_build_output(self.stockitem_with_required_test, None)
 
         # let's see if a non required test could be saved
