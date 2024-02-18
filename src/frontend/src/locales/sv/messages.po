@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-18 03:53\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -181,7 +181,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:197
 msgid "Please confirm your email address to complete the registration"
-msgstr ""
+msgstr "Bekräfta din e-postadress för att slutföra registreringen"
 
 #: src/components/forms/AuthenticationForm.tsx:240
 msgid "This will be used for a confirmation"
@@ -702,7 +702,7 @@ msgstr "Kontoinställningar"
 
 #: src/components/nav/MainMenu.tsx:50
 #: src/defaults/menuItems.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:280
+#: src/pages/Index/Settings/SystemSettings.tsx:287
 msgid "System Settings"
 msgstr ""
 
@@ -942,7 +942,7 @@ msgid "Purchase Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:105
-#: src/pages/Index/Settings/SystemSettings.tsx:232
+#: src/pages/Index/Settings/SystemSettings.tsx:239
 #: src/pages/company/CompanyDetail.tsx:99
 #: src/pages/company/SupplierPartDetail.tsx:45
 #: src/pages/part/PartDetail.tsx:547
@@ -964,7 +964,7 @@ msgid "Sales Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:118
-#: src/pages/Index/Settings/SystemSettings.tsx:246
+#: src/pages/Index/Settings/SystemSettings.tsx:253
 #: src/pages/company/CompanyDetail.tsx:115
 #: src/pages/part/PartDetail.tsx:553
 #: src/pages/sales/SalesIndex.tsx:21
@@ -985,7 +985,7 @@ msgid "Return Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:133
-#: src/pages/Index/Settings/SystemSettings.tsx:260
+#: src/pages/Index/Settings/SystemSettings.tsx:267
 #: src/pages/company/CompanyDetail.tsx:122
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
@@ -2117,7 +2117,7 @@ msgstr "Utloggningen lyckad"
 
 #: src/functions/auth.tsx:71
 msgid "You have been logged out"
-msgstr ""
+msgstr "Du har blivit utloggad"
 
 #: src/functions/auth.tsx:108
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
@@ -2691,7 +2691,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:81
 msgid "Currencies"
-msgstr ""
+msgstr "Valutor"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:99
 msgid "Custom Units"
@@ -2828,7 +2828,7 @@ msgstr ""
 msgid "Build Orders"
 msgstr "Byggordrar"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:283
+#: src/pages/Index/Settings/SystemSettings.tsx:290
 msgid "Switch to User Setting"
 msgstr ""
 
@@ -5054,3 +5054,4 @@ msgstr "Plattform UI är optimerad för surfplattor och stationära datorer, kan
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Läs dokumenten"
+
