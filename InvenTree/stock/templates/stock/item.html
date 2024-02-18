@@ -196,6 +196,7 @@
             stock_item: {{ item.pk }},
             part: {{ item.part.pk }},
             quantity: {{ item.quantity|unlocalize }},
+            can_edit: {% js_bool roles.stock.change %},
         }
     );
 

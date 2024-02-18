@@ -3091,11 +3091,14 @@ function loadInstalledInTable(table, options) {
                 field: 'buttons',
                 title: '',
                 switchable: false,
+                visible: options.can_edit,
                 formatter: function(value, row) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeIconButton('fa-unlink', 'button-uninstall', pk, '{% trans "Uninstall Stock Item" %}');
+                    if (options.can_edit) {
+                        html += makeIconButton('fa-unlink', 'button-uninstall', pk, '{% trans "Uninstall Stock Item" %}');
+                    }
 
                     return wrapButtons(html);
                 }

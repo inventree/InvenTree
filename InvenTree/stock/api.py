@@ -124,6 +124,8 @@ class StockDetail(RetrieveUpdateDestroyAPI):
 class StockItemContextMixin:
     """Mixin class for adding StockItem object to serializer context."""
 
+    role_required = 'stock.change'
+
     queryset = StockItem.objects.none()
 
     def get_serializer_context(self):

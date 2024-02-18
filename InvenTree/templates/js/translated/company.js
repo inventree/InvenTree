@@ -226,7 +226,7 @@ function createSupplierPart(options={}) {
     var header = '';
     if (options.part) {
         var part_model = {};
-        inventreeGet(`{% url "api-part-list" %}${options.part}/.*`, {}, {
+        inventreeGet(`{% url "api-part-list" %}${options.part}/`, {}, {
             async: false,
             success: function(response) {
                 part_model = response;

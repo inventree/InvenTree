@@ -41,8 +41,8 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
             lookup: generate_lookup(response.data)
           });
         })
-        .catch((error) => {
-          console.error('Error fetching global settings:', error);
+        .catch((_error) => {
+          console.error('Error fetching global settings');
         });
     },
     getSetting: (key: string, default_value?: string) => {
@@ -75,8 +75,8 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
           lookup: generate_lookup(response.data)
         });
       })
-      .catch((error) => {
-        console.error('Error fetching user settings:', error);
+      .catch((_error) => {
+        console.error('Error fetching user settings');
       });
   },
   getSetting: (key: string, default_value?: string) => {
@@ -115,11 +115,8 @@ export const createPluginSettingsState = ({
             lookup: generate_lookup(settings)
           });
         })
-        .catch((error) => {
-          console.error(
-            `Error fetching plugin settings for plugin ${plugin}:`,
-            error
-          );
+        .catch((_error) => {
+          console.error(`Error fetching plugin settings for plugin ${plugin}`);
         });
     },
     getSetting: (key: string, default_value?: string) => {
