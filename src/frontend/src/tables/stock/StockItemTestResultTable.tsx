@@ -1,11 +1,9 @@
-import { faRecordVinyl } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/macro';
 import { Badge, Group, Text, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconCirclePlus,
-  IconExclamationCircle,
   IconInfoCircle
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';

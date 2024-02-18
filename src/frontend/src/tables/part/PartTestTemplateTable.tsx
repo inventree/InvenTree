@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Alert, Badge, Group, Text, Tooltip } from '@mantine/core';
+import { Alert, Badge, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

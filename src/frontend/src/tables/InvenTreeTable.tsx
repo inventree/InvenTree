@@ -491,20 +491,6 @@ export function InvenTreeTable<T = any>({
     });
   }, [tableState.selectedRecords]);
 
-  const rowExpansion: any = useMemo(() => {
-    if (props.rowExpansion) {
-      return {
-        ...props.rowExpansion,
-        expanded: {
-          recordIds: tableState.expandedRecords,
-          onRecordIdsChange: tableState.setExpandedRecords
-        }
-      };
-    } else {
-      return undefined;
-    }
-  }, [props.rowExpansion]);
-
   return (
     <>
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
