@@ -378,8 +378,8 @@ class TestTemplateTest(TestCase):
         # Test the lowest-level part which has more associated tests
         variant = Part.objects.get(pk=10004)
 
-        self.assertEqual(variant.getTestTemplates().count(), 7)
-        self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 1)
+        self.assertEqual(variant.getTestTemplates().count(), 6)
+        self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 0)
         self.assertEqual(variant.getTestTemplates(required=True).count(), 5)
 
     def test_uniqueness(self):
@@ -389,21 +389,29 @@ class TestTemplateTest(TestCase):
         with self.assertRaises(ValidationError):
             PartTestTemplate.objects.create(part=variant, test_name='Record weight')
 
+        # Test that error is raised if we try to create a duplicate test name
         with self.assertRaises(ValidationError):
             PartTestTemplate.objects.create(
-                part=variant, test_name='Check that chair is especially green'
+                part=variant, test_name='Check chair is green'
             )
 
         # Also should fail if we attempt to create a test that would generate the same key
         with self.assertRaises(ValidationError):
-            PartTestTemplate.objects.create(
+            template = PartTestTemplate.objects.create(
                 part=variant, test_name='ReCoRD       weiGHT  '
             )
+
+            template.clean()
 
         # But we should be able to create a new one!
         n = variant.getTestTemplates().count()
 
-        PartTestTemplate.objects.create(part=variant, test_name='A Sample Test')
+        template = PartTestTemplate.objects.create(
+            part=variant, test_name='A Sample Test'
+        )
+
+        # Test key should have been saved
+        self.assertEqual(template.key, 'asampletest')
 
         self.assertEqual(variant.getTestTemplates().count(), n + 1)
 

@@ -38,6 +38,7 @@ from InvenTree.filters import (
 from InvenTree.helpers import (
     DownloadFile,
     extract_serial_numbers,
+    generateTestKey,
     is_ajax,
     isNull,
     str2bool,
@@ -1188,22 +1189,87 @@ class StockAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
 
-class StockItemTestResultDetail(RetrieveUpdateDestroyAPI):
+class StockItemTestResultMixin:
+    """Mixin class for the StockItemTestResult API endpoints."""
+
+    queryset = StockItemTestResult.objects.all()
+    serializer_class = StockSerializers.StockItemTestResultSerializer
+
+    def get_serializer_context(self):
+        """Extend serializer context."""
+        ctx = super().get_serializer_context()
+        ctx['request'] = self.request
+        return ctx
+
+    def get_serializer(self, *args, **kwargs):
+        """Set context before returning serializer."""
+        try:
+            kwargs['user_detail'] = str2bool(
+                self.request.query_params.get('user_detail', False)
+            )
+            kwargs['template_detail'] = str2bool(
+                self.request.query_params.get('template_detail', False)
+            )
+        except Exception:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+
+class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for StockItemTestResult."""
 
-    queryset = StockItemTestResult.objects.all()
-    serializer_class = StockSerializers.StockItemTestResultSerializer
+    pass
 
 
-class StockItemTestResultList(ListCreateDestroyAPIView):
+class StockItemTestResultFilter(rest_filters.FilterSet):
+    """API filter for the StockItemTestResult list."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemTestResult
+
+        # Simple filter fields
+        fields = ['user', 'template', 'result', 'value']
+
+    build = rest_filters.ModelChoiceFilter(
+        label='Build', queryset=Build.objects.all(), field_name='stock_item__build'
+    )
+
+    part = rest_filters.ModelChoiceFilter(
+        label='Part', queryset=Part.objects.all(), field_name='stock_item__part'
+    )
+
+    required = rest_filters.BooleanFilter(
+        label='Required', field_name='template__required'
+    )
+
+    test = rest_filters.CharFilter(
+        label='Test name (case insensitive)', method='filter_test_name'
+    )
+
+    def filter_test_name(self, queryset, name, value):
+        """Filter by test name.
+
+        This method is provided for legacy support,
+        where the StockItemTestResult model had a "test" field.
+        Now the "test" name is stored against the PartTestTemplate model
+        """
+        key = generateTestKey(value)
+        return queryset.filter(template__key=key)
+
+
+class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
-    queryset = StockItemTestResult.objects.all()
-    serializer_class = StockSerializers.StockItemTestResultSerializer
-
+    filterset_class = StockItemTestResultFilter
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['test', 'user', 'result', 'value']
+    filterset_fields = ['user', 'template', 'result', 'value']
+    ordering_fields = ['date', 'result']
 
     ordering = 'date'
 
@@ -1212,18 +1278,6 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
-
-        # Filter by 'build'
-        build = params.get('build', None)
-
-        if build is not None:
-            try:
-                build = Build.objects.get(pk=build)
-
-                queryset = queryset.filter(stock_item__build=build)
-
-            except (ValueError, Build.DoesNotExist):
-                pass
 
         # Filter by stock item
         item = params.get('stock_item', None)
@@ -1250,19 +1304,6 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
                 pass
 
         return queryset
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        try:
-            kwargs['user_detail'] = str2bool(
-                self.request.query_params.get('user_detail', False)
-            )
-        except Exception:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
 
     def perform_create(self, serializer):
         """Create a new test result object.

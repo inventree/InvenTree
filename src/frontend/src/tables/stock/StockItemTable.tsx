@@ -338,7 +338,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
       columns={tableColumns}
       props={{
         enableDownload: true,
-        enableSelection: true,
+        enableSelection: false,
         tableFilters: tableFilters,
         onRowClick: (record) =>
           navigate(getDetailUrl(ModelType.stockitem, record.pk)),
