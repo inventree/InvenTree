@@ -105,12 +105,7 @@ def content_excludes(
         excludes.append('socialaccount.socialapp')
         excludes.append('socialaccount.socialtoken')
 
-    output = ''
-
-    for e in excludes:
-        output += f'--exclude {e} '
-
-    return output
+    return ' '.join([f'--exclude {e}' for e in excludes])
 
 
 def localDir() -> Path:
