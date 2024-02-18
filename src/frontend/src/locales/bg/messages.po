@@ -8,7 +8,7 @@ msgstr ""
 "Language: bg\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-10 14:55\n"
+"PO-Revision-Date: 2024-02-15 02:43\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -49,7 +49,7 @@ msgid "Update"
 msgstr ""
 
 #: src/components/forms/ApiForm.tsx:507
-#: src/components/items/ActionDropdown.tsx:173
+#: src/components/items/ActionDropdown.tsx:191
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:120
 #: src/pages/Index/Scan.tsx:332
@@ -85,7 +85,7 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:59
 #: src/components/forms/AuthenticationForm.tsx:79
 #: src/components/forms/AuthenticationForm.tsx:216
-#: src/functions/auth.tsx:112
+#: src/functions/auth.tsx:116
 msgid "Check your input and try again."
 msgstr ""
 
@@ -95,7 +95,7 @@ msgstr ""
 #~ msgstr "Mail delivery successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:70
-#: src/functions/auth.tsx:103
+#: src/functions/auth.tsx:107
 msgid "Mail delivery successful"
 msgstr ""
 
@@ -219,6 +219,10 @@ msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
+#: src/tables/machine/MachineTypeTable.tsx:65
+#: src/tables/machine/MachineTypeTable.tsx:106
+#: src/tables/machine/MachineTypeTable.tsx:209
+#: src/tables/machine/MachineTypeTable.tsx:310
 #: src/tables/plugin/PluginErrorTable.tsx:33
 #: src/tables/plugin/PluginListTable.tsx:167
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:27
@@ -355,51 +359,51 @@ msgstr ""
 msgid "Thumbnail"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:84
+#: src/components/items/ActionDropdown.tsx:102
 #: src/pages/build/BuildDetail.tsx:203
 msgid "Barcode Actions"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:101
+#: src/components/items/ActionDropdown.tsx:119
 msgid "View"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:102
+#: src/components/items/ActionDropdown.tsx:120
 msgid "View barcode"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:118
+#: src/components/items/ActionDropdown.tsx:136
 msgid "Link Barcode"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:119
+#: src/components/items/ActionDropdown.tsx:137
 msgid "Link custom barcode"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:135
+#: src/components/items/ActionDropdown.tsx:153
 msgid "Unlink Barcode"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:136
+#: src/components/items/ActionDropdown.tsx:154
 msgid "Unlink custom barcode"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:154
+#: src/components/items/ActionDropdown.tsx:172
 #: src/tables/RowActions.tsx:50
 msgid "Edit"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:174
+#: src/components/items/ActionDropdown.tsx:192
 msgid "Delete item"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:192
+#: src/components/items/ActionDropdown.tsx:210
 #: src/pages/stock/StockDetail.tsx:200
 #: src/tables/RowActions.tsx:30
 msgid "Duplicate"
 msgstr ""
 
-#: src/components/items/ActionDropdown.tsx:193
+#: src/components/items/ActionDropdown.tsx:211
 msgid "Duplicate item"
 msgstr ""
 
@@ -424,7 +428,7 @@ msgstr ""
 msgid "Read more"
 msgstr ""
 
-#: src/components/items/InfoItem.tsx:25
+#: src/components/items/InfoItem.tsx:24
 msgid "None"
 msgstr ""
 
@@ -599,7 +603,7 @@ msgid "Close modal"
 msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:26
-#: src/pages/Index/Settings/SystemSettings.tsx:37
+#: src/pages/Index/Settings/SystemSettings.tsx:36
 msgid "Server"
 msgstr ""
 
@@ -698,13 +702,13 @@ msgstr ""
 
 #: src/components/nav/MainMenu.tsx:50
 #: src/defaults/menuItems.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:283
+#: src/pages/Index/Settings/SystemSettings.tsx:280
 msgid "System Settings"
 msgstr ""
 
 #: src/components/nav/MainMenu.tsx:60
 #: src/defaults/menuItems.tsx:63
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:128
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:150
 msgid "Admin Center"
 msgstr ""
 
@@ -746,7 +750,7 @@ msgid "Pages"
 msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:67
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:95
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:111
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
 msgstr ""
@@ -760,7 +764,7 @@ msgid "About"
 msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:70
-#: src/pages/Index/Settings/SystemSettings.tsx:102
+#: src/pages/Index/Settings/SystemSettings.tsx:101
 #: src/pages/Index/Settings/UserSettings.tsx:94
 #: src/pages/Notifications.tsx:28
 #: src/pages/Notifications.tsx:100
@@ -784,7 +788,7 @@ msgstr ""
 
 #: src/components/nav/PartCategoryTree.tsx:80
 #: src/components/render/ModelType.tsx:53
-#: src/pages/Index/Settings/SystemSettings.tsx:166
+#: src/pages/Index/Settings/SystemSettings.tsx:163
 #: src/pages/part/CategoryDetail.tsx:65
 msgid "Part Categories"
 msgstr ""
@@ -841,7 +845,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:22
 #: src/defaults/links.tsx:28
 #: src/defaults/menuItems.tsx:33
-#: src/pages/Index/Settings/SystemSettings.tsx:171
+#: src/pages/Index/Settings/SystemSettings.tsx:168
 #: src/pages/part/CategoryDetail.tsx:51
 #: src/pages/part/CategoryDetail.tsx:81
 #: src/pages/part/PartDetail.tsx:614
@@ -928,7 +932,7 @@ msgid "Project Code"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:98
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:71
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:87
 msgid "Project Codes"
 msgstr ""
 
@@ -938,7 +942,7 @@ msgid "Purchase Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:105
-#: src/pages/Index/Settings/SystemSettings.tsx:235
+#: src/pages/Index/Settings/SystemSettings.tsx:232
 #: src/pages/company/CompanyDetail.tsx:99
 #: src/pages/company/SupplierPartDetail.tsx:45
 #: src/pages/part/PartDetail.tsx:547
@@ -960,7 +964,7 @@ msgid "Sales Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:118
-#: src/pages/Index/Settings/SystemSettings.tsx:249
+#: src/pages/Index/Settings/SystemSettings.tsx:246
 #: src/pages/company/CompanyDetail.tsx:115
 #: src/pages/part/PartDetail.tsx:553
 #: src/pages/sales/SalesIndex.tsx:21
@@ -981,7 +985,7 @@ msgid "Return Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:133
-#: src/pages/Index/Settings/SystemSettings.tsx:263
+#: src/pages/Index/Settings/SystemSettings.tsx:260
 #: src/pages/company/CompanyDetail.tsx:122
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
@@ -1019,7 +1023,7 @@ msgid "User"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:162
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:53
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:63
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
 msgstr ""
@@ -1031,7 +1035,7 @@ msgstr ""
 #: src/components/render/Part.tsx:10
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
-#: src/pages/Index/Settings/SystemSettings.tsx:202
+#: src/pages/Index/Settings/SystemSettings.tsx:199
 #: src/pages/part/PartDetail.tsx:470
 #: src/pages/stock/LocationDetail.tsx:63
 #: src/pages/stock/StockDetail.tsx:140
@@ -1050,22 +1054,26 @@ msgstr ""
 msgid "Quantity"
 msgstr ""
 
-#: src/components/settings/SettingItem.tsx:43
-#: src/components/settings/SettingItem.tsx:95
+#: src/components/settings/SettingItem.tsx:45
+#: src/components/settings/SettingItem.tsx:98
 msgid "Setting updated"
 msgstr ""
 
-#: src/components/settings/SettingItem.tsx:44
-#: src/components/settings/SettingItem.tsx:96
+#: src/components/settings/SettingItem.tsx:46
+#: src/components/settings/SettingItem.tsx:99
 msgid "{0} updated successfully"
 msgstr ""
 
-#: src/components/settings/SettingItem.tsx:51
+#: src/components/settings/SettingItem.tsx:54
 msgid "Error editing setting"
 msgstr ""
 
-#: src/components/settings/SettingItem.tsx:88
+#: src/components/settings/SettingItem.tsx:91
 msgid "Edit Setting"
+msgstr ""
+
+#: src/components/settings/SettingList.tsx:63
+msgid "No settings specified"
 msgstr ""
 
 #: src/components/tables/ColumnRenderers.tsx:134
@@ -2103,29 +2111,21 @@ msgstr ""
 #~ msgid "See you soon."
 #~ msgstr "See you soon."
 
-#: src/functions/auth.tsx:66
+#: src/functions/auth.tsx:70
 msgid "Logout successful"
 msgstr ""
 
-#: src/functions/auth.tsx:67
+#: src/functions/auth.tsx:71
 msgid "You have been logged out"
 msgstr ""
 
-#: src/functions/auth.tsx:104
+#: src/functions/auth.tsx:108
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr ""
 
-#: src/functions/auth.tsx:111
+#: src/functions/auth.tsx:115
 #: src/pages/Auth/Set-Password.tsx:39
 msgid "Reset failed"
-msgstr ""
-
-#: src/functions/auth.tsx:138
-msgid "Logged In"
-msgstr ""
-
-#: src/functions/auth.tsx:139
-msgid "Found an existing login - welcome back!"
 msgstr ""
 
 #: src/functions/auth.tsx:141
@@ -2133,8 +2133,16 @@ msgstr ""
 #~ msgstr "Already logged in"
 
 #: src/functions/auth.tsx:142
+msgid "Logged In"
+msgstr ""
+
+#: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
 #~ msgstr "Found an existing login - using it to log you in."
+
+#: src/functions/auth.tsx:143
+msgid "Found an existing login - welcome back!"
+msgstr ""
 
 #: src/functions/forms.tsx:50
 #~ msgid "Form method not provided"
@@ -2673,32 +2681,53 @@ msgstr ""
 #~ msgid "Advanced Amininistrative Options for InvenTree"
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:59
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:69
 msgid "Background Tasks"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:65
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:75
 msgid "Error Reports"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:83
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:81
+msgid "Currencies"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:99
 msgid "Custom Units"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:89
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:105
 msgid "Part Parameters"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:105
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:117
+#: src/tables/machine/MachineTypeTable.tsx:278
+msgid "Machines"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 msgid "Quick Actions"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:110
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:132
 msgid "Add a new user"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:129
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:151
 msgid "Advanced Options"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:43
+msgid "Machine types"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:53
+msgid "Machine Error Stack"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:62
+msgid "There are no machine registry errors."
 msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:28
@@ -2755,15 +2784,15 @@ msgstr ""
 msgid "System settings"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:66
+#: src/pages/Index/Settings/SystemSettings.tsx:65
 msgid "Login"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:88
+#: src/pages/Index/Settings/SystemSettings.tsx:87
 msgid "Barcodes"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:107
+#: src/pages/Index/Settings/SystemSettings.tsx:106
 #: src/pages/company/SupplierPartDetail.tsx:55
 #: src/pages/part/PartDetail.tsx:516
 msgid "Pricing"
@@ -2773,25 +2802,25 @@ msgstr ""
 #~ msgid "Physical Units"
 #~ msgstr "Physical Units"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:136
+#: src/pages/Index/Settings/SystemSettings.tsx:135
 msgid "Exchange Rates"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:144
+#: src/pages/Index/Settings/SystemSettings.tsx:141
 msgid "Labels"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:150
+#: src/pages/Index/Settings/SystemSettings.tsx:147
 #: src/pages/Index/Settings/UserSettings.tsx:99
 msgid "Reporting"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:224
+#: src/pages/Index/Settings/SystemSettings.tsx:221
 #: src/pages/part/PartDetail.tsx:565
 msgid "Stocktake"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:229
+#: src/pages/Index/Settings/SystemSettings.tsx:226
 #: src/pages/build/BuildDetail.tsx:264
 #: src/pages/build/BuildIndex.tsx:14
 #: src/pages/part/PartDetail.tsx:502
@@ -2799,7 +2828,7 @@ msgstr ""
 msgid "Build Orders"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:286
+#: src/pages/Index/Settings/SystemSettings.tsx:283
 msgid "Switch to User Setting"
 msgstr ""
 
@@ -3046,6 +3075,10 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:115
 #: src/tables/ColumnRenderers.tsx:52
+#: src/tables/machine/MachineTypeTable.tsx:69
+#: src/tables/machine/MachineTypeTable.tsx:109
+#: src/tables/machine/MachineTypeTable.tsx:212
+#: src/tables/machine/MachineTypeTable.tsx:314
 #: src/tables/part/RelatedPartTable.tsx:64
 #: src/tables/plugin/PluginListTable.tsx:170
 #: src/tables/plugin/PluginListTable.tsx:297
@@ -3656,6 +3689,7 @@ msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:66
 #: src/tables/build/BuildOrderTable.tsx:102
+#: src/tables/machine/MachineListTable.tsx:316
 #: src/tables/part/PartTable.tsx:170
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:188
@@ -3795,36 +3829,191 @@ msgstr ""
 msgid "Add contact"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:157
+#: src/tables/general/AttachmentTable.tsx:161
 msgid "File uploaded"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:158
+#: src/tables/general/AttachmentTable.tsx:162
 msgid "File {0} uploaded successfully"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:169
+#: src/tables/general/AttachmentTable.tsx:173
 msgid "Upload Error"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:170
+#: src/tables/general/AttachmentTable.tsx:174
 msgid "File could not be uploaded"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:183
+#: src/tables/general/AttachmentTable.tsx:187
 msgid "Add attachment"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:202
+#: src/tables/general/AttachmentTable.tsx:206
 msgid "Add external link"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:233
+#: src/tables/general/AttachmentTable.tsx:237
 msgid "No attachments found"
 msgstr ""
 
-#: src/tables/general/AttachmentTable.tsx:248
+#: src/tables/general/AttachmentTable.tsx:252
 msgid "Upload attachment"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:197
+msgid "Machine restarted"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:219
+#: src/tables/machine/MachineListTable.tsx:416
+msgid "Restart required"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:223
+msgid "Machine Actions"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:227
+#: src/tables/machine/MachineListTable.tsx:230
+msgid "Edit machine"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:242
+#: src/tables/machine/MachineListTable.tsx:245
+msgid "Delete machine"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:246
+msgid "Machine successfully deleted."
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:250
+msgid "Are you sure you want to remove the machine \"{0}\"?"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:261
+msgid "Restart"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:263
+msgid "Restart machine"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:265
+msgid "manual restart required"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:281
+msgid "Machine information"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:289
+msgid "Machine Type"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:301
+msgid "Machine Driver"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:313
+msgid "Initialized"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:319
+#: src/tables/purchasing/PurchaseOrderTable.tsx:55
+#: src/tables/sales/ReturnOrderTable.tsx:45
+#: src/tables/sales/SalesOrderTable.tsx:52
+#: src/tables/stock/StockItemTable.tsx:233
+msgid "Status"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:334
+#: src/tables/machine/MachineTypeTable.tsx:252
+msgid "Errors"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:342
+#: src/tables/machine/MachineTypeTable.tsx:260
+msgid "No errors reported"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:362
+msgid "Machine Settings"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:373
+msgid "Driver Settings"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:490
+msgid "Create machine"
+msgstr ""
+
+#: src/tables/machine/MachineListTable.tsx:545
+msgid "Machine detail"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:73
+msgid "Builtin driver"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:89
+msgid "Machine type not found."
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:97
+msgid "Machine type information"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:107
+#: src/tables/machine/MachineTypeTable.tsx:210
+msgid "Slug"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:115
+#: src/tables/machine/MachineTypeTable.tsx:230
+msgid "Provider plugin"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:126
+#: src/tables/machine/MachineTypeTable.tsx:241
+msgid "Provider file"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:131
+#: src/tables/machine/MachineTypeTable.tsx:246
+#: src/tables/plugin/PluginListTable.tsx:213
+#: src/tables/plugin/PluginListTable.tsx:632
+msgid "Builtin"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:142
+msgid "Available drivers"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:192
+msgid "Machine driver not found."
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:200
+msgid "Machine driver information"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:217
+msgid "Machine type"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:318
+msgid "Builtin type"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:327
+msgid "Machine type detail"
+msgstr ""
+
+#: src/tables/machine/MachineTypeTable.tsx:337
+msgid "Machine driver detail"
 msgstr ""
 
 #: src/tables/notifications/NotificationsTable.tsx:24
@@ -4133,11 +4322,6 @@ msgstr ""
 msgid "Installation Path"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:213
-#: src/tables/plugin/PluginListTable.tsx:632
-msgid "Builtin"
-msgstr ""
-
 #: src/tables/plugin/PluginListTable.tsx:218
 msgid "Package"
 msgstr ""
@@ -4407,13 +4591,6 @@ msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:251
 msgid "Receive items"
-msgstr ""
-
-#: src/tables/purchasing/PurchaseOrderTable.tsx:55
-#: src/tables/sales/ReturnOrderTable.tsx:45
-#: src/tables/sales/SalesOrderTable.tsx:52
-#: src/tables/stock/StockItemTable.tsx:233
-msgid "Status"
 msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderTable.tsx:102

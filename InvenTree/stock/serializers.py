@@ -1,5 +1,6 @@
 """JSON serializers for Stock app."""
 
+import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
 
@@ -23,7 +24,7 @@ import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
-from part.serializers import PartBriefSerializer
+from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
 from .models import (
     StockItem,
@@ -33,6 +34,8 @@ from .models import (
     StockLocation,
     StockLocationType,
 )
+
+logger = logging.getLogger('inventree')
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -56,8 +59,6 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
         fields = [
             'pk',
             'stock_item',
-            'key',
-            'test',
             'result',
             'value',
             'attachment',
@@ -65,6 +66,8 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
             'user',
             'user_detail',
             'date',
+            'template',
+            'template_detail',
         ]
 
         read_only_fields = ['pk', 'user', 'date']
@@ -72,19 +75,66 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
         user_detail = kwargs.pop('user_detail', False)
+        template_detail = kwargs.pop('template_detail', False)
 
         super().__init__(*args, **kwargs)
 
         if user_detail is not True:
             self.fields.pop('user_detail')
 
+        if template_detail is not True:
+            self.fields.pop('template_detail')
+
     user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
 
-    key = serializers.CharField(read_only=True)
+    template = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.PartTestTemplate.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        help_text=_('Template'),
+        label=_('Test template for this result'),
+    )
+
+    template_detail = PartTestTemplateSerializer(source='template', read_only=True)
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
         required=False
     )
+
+    def validate(self, data):
+        """Validate the test result data."""
+        stock_item = data['stock_item']
+        template = data.get('template', None)
+
+        # To support legacy API, we can accept a test name instead of a template
+        # In such a case, we use the test name to lookup the appropriate template
+        test_name = self.context['request'].data.get('test', None)
+
+        if not template and not test_name:
+            raise ValidationError(_('Template ID or test name must be provided'))
+
+        if not template:
+            test_key = InvenTree.helpers.generateTestKey(test_name)
+
+            # Find a template based on name
+            if template := part_models.PartTestTemplate.objects.filter(
+                part__tree_id=stock_item.part.tree_id, key=test_key
+            ).first():
+                data['template'] = template
+
+            else:
+                logger.info(
+                    "No matching test template found for '%s' - creating a new template",
+                    test_name,
+                )
+
+                # Create a new test template based on the provided dasta
+                data['template'] = part_models.PartTestTemplate.objects.create(
+                    part=stock_item.part, test_name=test_name
+                )
+
+        return super().validate(data)
 
 
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
