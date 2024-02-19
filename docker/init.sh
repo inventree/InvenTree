@@ -52,5 +52,11 @@ fi
 
 cd ${INVENTREE_HOME}
 
+# Check for database updates
+if($2 == 'server') then
+    echo "Running database update checks"
+    source ./execute.sh
+fi
+
 # Launch the CMD *after* the ENTRYPOINT completes
 exec "$@"
