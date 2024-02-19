@@ -21,6 +21,7 @@ SPECIAL_PATHS = {
     'build': 'Build Order Management',
     'company': 'Company Management',
     'label': 'Label Printing',
+    'machine': 'External Machine Management',
     'order': 'External Order Management',
     'part': 'Parts and Part Categories',
     'plugins': 'Plugin Functionality',
