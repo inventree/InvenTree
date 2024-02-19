@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import {
+  Button,
   NumberInput,
   Paper,
   Skeleton,
@@ -9,7 +10,7 @@ import {
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -21,7 +22,6 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
-import { useModal } from '../hooks/UseModal';
 import { apiUrl } from '../states/ApiState';
 
 /**
@@ -154,19 +154,21 @@ export function useEditStockItem({
 }
 
 function StockOperationsRow({
-  item,
+  input,
   refresh
 }: {
-  item: any;
+  input: any;
   refresh: () => void;
 }) {
+  const item = input.item;
+
   const [value, setValue] = useState<number | ''>(item.quantity);
   const { data } = useSuspenseQuery({
-    queryKey: ['location', item.part_detail.default_location],
+    queryKey: ['location', item.obj.part_detail.default_location],
     queryFn: async () => {
       const url = apiUrl(
         ApiEndpoints.stock_location_list,
-        item.part_detail.default_location
+        item.obj.part_detail.default_location
       );
 
       return api
@@ -207,10 +209,10 @@ function StockOperationsRow({
             }}
           >
             <Text>
-              {value} x {item.part_detail.name}
+              {value} x {item.obj.part_detail.name}
             </Text>
             <Thumbnail
-              src={item.part_detail.thumbnail}
+              src={item.obj.part_detail.thumbnail}
               size={80}
               align="center"
             />
@@ -223,7 +225,7 @@ function StockOperationsRow({
               alignItems: 'center'
             }}
           >
-            <Text>{item.location_detail.pathstring}</Text>
+            <Text>{item.obj.location_detail.pathstring}</Text>
             <InvenTreeIcon icon="arrow_down" />
             <Suspense fallback={<Skeleton width="150px" />}>
               <Text>{data.pathstring}</Text>
@@ -236,13 +238,13 @@ function StockOperationsRow({
           .post(apiUrl(ApiEndpoints.stock_transfer), {
             items: [
               {
-                pk: item.pk,
+                pk: item.obj.pk,
                 quantity: value,
-                batch: item.batch,
-                status: item.status
+                batch: item.obj.batch,
+                status: item.obj.status
               }
             ],
-            location: item.part_detail.default_location
+            location: item.obj.part_detail.default_location
           })
           .then((response) => {
             console.log(response);
@@ -257,7 +259,14 @@ function StockOperationsRow({
     });
   }
 
-  console.log(item);
+  const onChange = useCallback(
+    (value: any) => {
+      setValue(value);
+      input.changeFn(input.idx, 'quantity', value);
+    },
+    [item]
+  );
+
   return (
     <tr>
       <td>
@@ -270,24 +279,24 @@ function StockOperationsRow({
         >
           <Thumbnail
             size={40}
-            src={item.part_detail.thumbnail}
+            src={item.obj.part_detail.thumbnail}
             align="center"
           />
-          <div>{item.part_detail.name}</div>
+          <div>{item.obj.part_detail.name}</div>
         </div>
       </td>
-      <td>{item.location_detail.pathstring}</td>
+      <td>{item.obj.location_detail.pathstring}</td>
       <td>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {item.quantity}
-          <StatusRenderer status={item.status} type={ModelType.stockitem} />
+          {item.obj.quantity}
+          <StatusRenderer status={item.obj.status} type={ModelType.stockitem} />
         </div>
       </td>
       <td>
         <NumberInput
           value={value}
-          onChange={setValue}
-          max={item.quantity}
+          onChange={onChange}
+          max={item.obj.quantity}
           min={0}
           style={{ maxWidth: '100px' }}
         />
@@ -301,6 +310,7 @@ function StockOperationsRow({
             tooltipAlignment="top"
           />
           <ActionButton
+            onClick={() => input.removeFn(input.idx)}
             icon={<InvenTreeIcon icon="square_x" />}
             tooltip="Remove from list"
             tooltipAlignment="top"
@@ -312,29 +322,45 @@ function StockOperationsRow({
   );
 }
 
-function StockItemOperationsTable({
-  items,
-  refresh
-}: {
-  items: any;
-  refresh: () => void;
-}) {
-  return (
-    <Table highlightOnHover striped>
-      <thead>
-        <tr>
-          <th>{t`Part`}</th>
-          <th>{t`Location`}</th>
-          <th>{t`In Stock`}</th>
-          <th>{t`Move`}</th>
-          <th>{t`Actions`}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <StockOperationsRow item={items} refresh={refresh} />
-      </tbody>
-    </Table>
-  );
+function stockTransferFields(item: any): ApiFormFieldSet {
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      items: {
+        field_type: 'table',
+        value: [
+          {
+            pk: item.pk,
+            quantity: item.quantity,
+            batch: item.batch,
+            status: item.status,
+            packaging: item.packaging,
+            obj: item
+          }
+        ],
+        modelRenderer: (val) => {
+          console.log('Key:', val);
+          return (
+            <StockOperationsRow
+              input={val}
+              refresh={() => {
+                return;
+              }}
+              key={val.item.pk}
+            />
+          );
+        },
+        headers: [t`Part`, t`Location`, t`In Stock`, t`Move`, t`Actions`]
+      },
+      location: {
+        filters: {
+          structural: false
+        }
+        // TODO: icon
+      },
+      notes: {}
+    };
+    return fields;
+  }, [item]);
 }
 
 export function useTransferStockItem({
@@ -344,9 +370,12 @@ export function useTransferStockItem({
   itemId: any;
   refresh: () => void;
 }) {
-  return useModal({
-    title: t`Transfer Stock`,
-    children: <StockItemOperationsTable items={itemId} refresh={refresh} />
+  const fields = stockTransferFields(itemId);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.stock_transfer,
+    fields: fields,
+    title: 'Transfer Stock'
   });
 }
 
