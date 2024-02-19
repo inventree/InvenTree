@@ -278,9 +278,11 @@ export function InvenTreeTable<T = any>({
     };
 
     // Add custom filters
-    tableState.activeFilters.forEach(
-      (flt) => (queryParams[flt.name] = flt.value)
-    );
+    if (tableState.activeFilters) {
+      tableState.activeFilters.forEach(
+        (flt) => (queryParams[flt.name] = flt.value)
+      );
+    }
 
     // Add custom search term
     if (tableState.searchTerm) {
@@ -560,8 +562,8 @@ export function InvenTreeTable<T = any>({
             {tableProps.enableFilters && filters.length > 0 && (
               <Indicator
                 size="xs"
-                label={tableState.activeFilters.length}
-                disabled={tableState.activeFilters.length == 0}
+                label={tableState.activeFilters?.length ?? 0}
+                disabled={tableState.activeFilters?.length == 0}
               >
                 <ActionIcon>
                   <Tooltip label={t`Table filters`}>
