@@ -36,7 +36,6 @@ export enum ApiEndpoints {
   api_search = 'search/',
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
-  notifications_list = 'notifications/',
   barcode = 'barcode/',
   news = 'news/',
   global_status = 'generic/status/',
@@ -44,6 +43,10 @@ export enum ApiEndpoints {
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+
+  // Notification endpoints
+  notifications_list = 'notifications/',
+  notifications_readall = 'notifications/readall/',
 
   // Build API endpoints
   build_order_list = 'build/',

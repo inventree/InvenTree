@@ -1,14 +1,16 @@
 import { t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import {
   IconBellCheck,
   IconBellExclamation,
   IconCircleCheck,
   IconCircleX,
+  IconExclamationCircle,
   IconMailOpened,
   IconTrash
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -22,6 +24,40 @@ import { NotificationTable } from '../tables/notifications/NotificationsTable';
 export default function NotificationsPage() {
   const unreadTable = useTable('unreadnotifications');
   const readTable = useTable('readnotifications');
+
+  const markAllAsRead = useCallback(() => {
+    api
+      .get(apiUrl(ApiEndpoints.notifications_readall), {
+        params: {
+          read: false
+        }
+      })
+      .then((_response) => {
+        unreadTable.refreshTable();
+        readTable.refreshTable();
+      })
+      .catch((_error) => {});
+  }, []);
+
+  const deleteNotifications = useCallback(() => {
+    modals.openConfirmModal({
+      title: t`Delete Notifications`,
+      onConfirm: () => {
+        api
+          .delete(apiUrl(ApiEndpoints.notifications_list), {
+            data: {
+              filters: {
+                read: true
+              }
+            }
+          })
+          .then((_response) => {
+            readTable.refreshTable();
+          })
+          .catch((_error) => {});
+      }
+    });
+  }, []);
 
   const notificationPanels = useMemo(() => {
     return [
@@ -52,9 +88,9 @@ export default function NotificationsPage() {
             ]}
             tableActions={[
               <ActionButton
-                key="read-all"
                 icon={<IconMailOpened />}
                 tooltip={`Mark all as read`}
+                onClick={markAllAsRead}
               />
             ]}
           />
@@ -99,10 +135,10 @@ export default function NotificationsPage() {
             ]}
             tableActions={[
               <ActionButton
-                key="delete-all"
                 color="red"
                 icon={<IconTrash />}
                 tooltip={`Delete notifications`}
+                onClick={deleteNotifications}
               />
             ]}
           />
