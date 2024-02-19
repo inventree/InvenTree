@@ -1,10 +1,14 @@
-import { t } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
+import { Alert, Badge, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -22,13 +26,28 @@ import { RowDeleteAction, RowEditAction } from '../RowActions';
 export default function PartTestTemplateTable({ partId }: { partId: number }) {
   const table = useTable('part-test-template');
   const user = useUserState();
+  const navigate = useNavigate();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'test_name',
         switchable: false,
-        sortable: true
+        sortable: true,
+        render: (record: any) => {
+          return (
+            <Text weight={record.required && 700}>{record.test_name}</Text>
+          );
+        }
+      },
+      {
+        accessor: 'results',
+        switchable: true,
+        sortable: true,
+        title: t`Results`,
+        render: (record: any) => {
+          return record.results || <Badge color="blue">{t`No Results`}</Badge>;
+        }
       },
       DescriptionColumn({
         switchable: false
@@ -43,7 +62,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         accessor: 'requires_attachment'
       })
     ];
-  }, []);
+  }, [partId]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -58,6 +77,16 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       {
         name: 'requires_attachment',
         description: t`Show tests that require an attachment`
+      },
+      {
+        name: 'include_inherited',
+        label: t`Include Inherited`,
+        description: t`Show tests from inherited templates`
+      },
+      {
+        name: 'has_results',
+        label: t`Has Results`,
+        description: t`Show tests which have recorded results`
       }
     ];
   }, []);
@@ -65,7 +94,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
   const partTestTemplateFields: ApiFormFieldSet = useMemo(() => {
     return {
       part: {
-        hidden: true
+        hidden: !user.isStaff()
       },
       test_name: {},
       description: {},
@@ -73,7 +102,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       requires_value: {},
       requires_attachment: {}
     };
-  }, []);
+  }, [user]);
 
   const newTestTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_test_template_list,
@@ -99,13 +128,27 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
     title: t`Delete Test Template`,
+    preFormContent: (
+      <Alert color="red" title={t`This action cannot be reversed`}>
+        <Text>
+          <Trans>
+            Any tests results associated with this template will be deleted
+          </Trans>
+        </Text>
+      </Alert>
+    ),
     onFormSuccess: table.refreshTable
   });
 
   const rowActions = useCallback(
     (record: any) => {
-      let can_edit = user.hasChangeRole(UserRoles.part);
-      let can_delete = user.hasDeleteRole(UserRoles.part);
+      const can_edit = user.hasChangeRole(UserRoles.part);
+      const can_delete = user.hasDeleteRole(UserRoles.part);
+
+      if (record.part != partId) {
+        // No actions, as this test is defined for a parent part
+        return [];
+      }
 
       return [
         RowEditAction({
@@ -124,7 +167,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         })
       ];
     },
-    [user]
+    [user, partId]
   );
 
   const tableActions = useMemo(() => {
@@ -150,11 +193,18 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         columns={tableColumns}
         props={{
           params: {
-            part: partId
+            part: partId,
+            part_detail: true
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
-          rowActions: rowActions
+          rowActions: rowActions,
+          onRowClick: (row) => {
+            if (row.part && row.part != partId) {
+              // This test is defined for a different part
+              navigate(getDetailUrl(ModelType.part, row.part));
+            }
+          }
         }}
       />
     </>

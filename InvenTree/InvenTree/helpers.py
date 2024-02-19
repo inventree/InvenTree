@@ -76,16 +76,23 @@ def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
     return ref_int
 
 
-def generateTestKey(test_name):
+def generateTestKey(test_name: str) -> str:
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.
     """
+    if test_name is None:
+        test_name = ''
+
     key = test_name.strip().lower()
     key = key.replace(' ', '')
 
     # Remove any characters that cannot be used to represent a variable
-    key = re.sub(r'[^a-zA-Z0-9]', '', key)
+    key = re.sub(r'[^a-zA-Z0-9_]', '', key)
+
+    # If the key starts with a digit, prefix with an underscore
+    if key[0].isdigit():
+        key = '_' + key
 
     return key
 

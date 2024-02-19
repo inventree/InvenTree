@@ -806,14 +806,14 @@ class PartAPITest(PartAPITestBase):
         response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 7)
+        self.assertEqual(len(response.data), 9)
 
         # Request for a particular part
         response = self.get(url, data={'part': 10000})
         self.assertEqual(len(response.data), 5)
 
         response = self.get(url, data={'part': 10004})
-        self.assertEqual(len(response.data), 7)
+        self.assertEqual(len(response.data), 6)
 
         # Try to post a new object (missing description)
         response = self.post(
