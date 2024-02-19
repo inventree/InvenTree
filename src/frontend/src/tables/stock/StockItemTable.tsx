@@ -34,6 +34,7 @@ function stockItemTableColumns(): TableColumn[] {
     }),
     {
       accessor: 'quantity',
+      ordering: 'stock',
       sortable: true,
       title: t`Stock`,
       render: (record) => {

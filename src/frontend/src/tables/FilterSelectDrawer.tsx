@@ -83,7 +83,8 @@ function FilterAddGroup({
   availableFilters: TableFilter[];
 }) {
   const filterOptions = useMemo(() => {
-    let activeFilterNames = tableState.activeFilters.map((flt) => flt.name);
+    let activeFilterNames =
+      tableState.activeFilters?.map((flt) => flt.name) ?? [];
 
     return availableFilters
       .filter((flt) => !activeFilterNames.includes(flt.name))
@@ -120,9 +121,10 @@ function FilterAddGroup({
         return;
       }
 
-      let filters = tableState.activeFilters.filter(
-        (flt) => flt.name !== selectedFilter
-      );
+      let filters =
+        tableState.activeFilters?.filter(
+          (flt) => flt.name !== selectedFilter
+        ) ?? [];
 
       let newFilter: TableFilter = {
         ...filter,
@@ -188,10 +190,13 @@ export function FilterSelectDrawer({
       title={<StylishText size="lg">{t`Table Filters`}</StylishText>}
     >
       <Stack spacing="xs">
-        {tableState.activeFilters.map((f) => (
-          <FilterItem key={f.name} flt={f} tableState={tableState} />
-        ))}
-        {tableState.activeFilters.length > 0 && <Divider />}
+        {tableState.activeFilters &&
+          tableState.activeFilters.map((f) => (
+            <FilterItem key={f.name} flt={f} tableState={tableState} />
+          ))}
+        {tableState.activeFilters && tableState.activeFilters.length > 0 && (
+          <Divider />
+        )}
         {addFilter && (
           <Stack spacing="xs">
             <FilterAddGroup

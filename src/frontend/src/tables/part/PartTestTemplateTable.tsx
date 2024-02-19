@@ -33,7 +33,12 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       {
         accessor: 'test_name',
         switchable: false,
-        sortable: true
+        sortable: true,
+        render: (record: any) => {
+          return (
+            <Text weight={record.required && 700}>{record.test_name}</Text>
+          );
+        }
       },
       {
         accessor: 'results',
@@ -77,6 +82,11 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         name: 'include_inherited',
         label: t`Include Inherited`,
         description: t`Show tests from inherited templates`
+      },
+      {
+        name: 'has_results',
+        label: t`Has Results`,
+        description: t`Show tests which have recorded results`
       }
     ];
   }, []);
