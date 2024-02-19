@@ -162,7 +162,7 @@ WORKDIR ${INVENTREE_HOME}
 ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
 
 # Launch the development server
-CMD ${INVENTREE_HOME}/execute.sh
+CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
 
 # Image target for devcontainer
 FROM dev as devcontainer

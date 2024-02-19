@@ -38,21 +38,4 @@ if [ "$(awk -v num1=$old_version -v num2=$new_version 'BEGIN { print (num1 < num
     cp  "$db_version_new" "$db_version_old"
 fi
 
-
-# Run invoke server in the background
-invoke server -a "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}" | sed "s/^/server: /" &
-
-# Store the PID of the last background process (invoke server)
-server_pid=$!
-
-# Run invoke worker in the background
-invoke worker | sed "s/^/worker: /" &
-
-# Store the PID of the last background process (invoke worker)
-worker_pid=$!
-
-# Wait for both processes to finish
-wait $server_pid
-wait $worker_pid
-
-echo "Both processes have completed."
+echo "Database migration/update checks completed."
