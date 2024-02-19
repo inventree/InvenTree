@@ -219,6 +219,9 @@ nav:
       - Settings Mixin: extend/plugins/settings.md
       - URL Mixin: extend/plugins/urls.md
       - Validation Mixin: extend/plugins/validation.md
+    - Machines:
+      - Overview: extend/machines/overview.md
+      - Label Printer: extend/machines/label_printer.md
     - Themes: extend/themes.md
     - Third-Party: extend/integrate.md
 
@@ -236,6 +239,15 @@ plugins:
         on_config: "docs.docs.hooks:on_config"
   - macros:
       include_dir: docs/_includes
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths:
+            - ../InvenTree
+          options:
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
 
 # Extensions
 markdown_extensions:

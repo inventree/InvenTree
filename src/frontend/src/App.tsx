@@ -21,7 +21,7 @@ export function setApiDefaults() {
   const token = useSessionState.getState().token;
 
   api.defaults.baseURL = host;
-  api.defaults.timeout = 1000;
+  api.defaults.timeout = 2500;
 
   if (!!token) {
     api.defaults.headers.common['Authorization'] = `Token ${token}`;

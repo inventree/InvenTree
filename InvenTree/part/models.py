@@ -3393,6 +3393,10 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     run on the model (refer to the validate_unique function).
     """
 
+    def __str__(self):
+        """Format a string representation of this PartTestTemplate."""
+        return ' | '.join([self.part.name, self.test_name])
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the PartTestTemplate model."""
@@ -3408,6 +3412,8 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         """Clean fields for the PartTestTemplate model."""
         self.test_name = self.test_name.strip()
 
+        self.key = helpers.generateTestKey(self.test_name)
+
         self.validate_unique()
         super().clean()
 
@@ -3418,29 +3424,17 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
                 'part': _('Test templates can only be created for trackable parts')
             })
 
-        # Get a list of all tests "above" this one
+        # Check that this test is unique within the part tree
         tests = PartTestTemplate.objects.filter(
-            part__in=self.part.get_ancestors(include_self=True)
-        )
+            key=self.key, part__tree_id=self.part.tree_id
+        ).exclude(pk=self.pk)
 
-        # If this item is already in the database, exclude it from comparison!
-        if self.pk is not None:
-            tests = tests.exclude(pk=self.pk)
-
-        key = self.key
-
-        for test in tests:
-            if test.key == key:
-                raise ValidationError({
-                    'test_name': _('Test with this name already exists for this part')
-                })
+        if tests.exists():
+            raise ValidationError({
+                'test_name': _('Test with this name already exists for this part')
+            })
 
         super().validate_unique(exclude)
-
-    @property
-    def key(self):
-        """Generate a key for this test."""
-        return helpers.generateTestKey(self.test_name)
 
     part = models.ForeignKey(
         Part,
@@ -3455,6 +3449,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         max_length=100,
         verbose_name=_('Test Name'),
         help_text=_('Enter a name for the test'),
+    )
+
+    key = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_('Test Key'),
+        help_text=_('Simplified key for the test'),
     )
 
     description = models.CharField(

@@ -59,6 +59,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     units = serializers.CharField(read_only=True)
 
+    required = serializers.BooleanField(read_only=True)
+
     typ = serializers.CharField(read_only=True)
 
     def get_choices(self, obj):
@@ -150,6 +152,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'model_name',
                 'api_url',
                 'typ',
+                'required',
             ]
 
         # set Meta class

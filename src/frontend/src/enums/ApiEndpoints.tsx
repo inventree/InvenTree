@@ -36,7 +36,6 @@ export enum ApiEndpoints {
   api_search = 'search/',
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
-  notifications_list = 'notifications/',
   barcode = 'barcode/',
   news = 'news/',
   global_status = 'generic/status/',
@@ -44,6 +43,10 @@ export enum ApiEndpoints {
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+
+  // Notification endpoints
+  notifications_list = 'notifications/',
+  notifications_readall = 'notifications/readall/',
 
   // Build API endpoints
   build_order_list = 'build/',
@@ -80,6 +83,7 @@ export enum ApiEndpoints {
   stock_location_list = 'stock/location/',
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
+  stock_test_result_list = 'stock/test/',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',
@@ -99,6 +103,15 @@ export enum ApiEndpoints {
   plugin_reload = 'plugins/reload/',
   plugin_activate = 'plugins/:id/activate/',
   plugin_uninstall = 'plugins/:id/uninstall/',
+
+  // Machine API endpoints
+  machine_types_list = 'machine/types/',
+  machine_driver_list = 'machine/drivers/',
+  machine_registry_status = 'machine/status/',
+  machine_list = 'machine/',
+  machine_restart = 'machine/:machine/restart/',
+  machine_setting_list = 'machine/:machine/settings/',
+  machine_setting_detail = 'machine/:machine/settings/:config_type/',
 
   // Miscellaneous API endpoints
   error_report_list = 'error-report/',

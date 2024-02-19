@@ -17,6 +17,8 @@ interface UserStateProps {
   hasChangeRole: (role: UserRoles) => boolean;
   hasAddRole: (role: UserRoles) => boolean;
   hasViewRole: (role: UserRoles) => boolean;
+  isStaff: () => boolean;
+  isSuperuser: () => boolean;
 }
 
 /**
@@ -54,8 +56,8 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         };
         set({ user: user });
       })
-      .catch((error) => {
-        console.error('Error fetching user data:', error);
+      .catch((_error) => {
+        console.error('Error fetching user data');
       });
 
     // Fetch role data
@@ -65,13 +67,15 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         const user: UserProps = get().user as UserProps;
 
         // Update user with role data
-        user.roles = response.data?.roles ?? {};
-        user.is_staff = response.data?.is_staff ?? false;
-        user.is_superuser = response.data?.is_superuser ?? false;
-        set({ user: user });
+        if (user) {
+          user.roles = response.data?.roles ?? {};
+          user.is_staff = response.data?.is_staff ?? false;
+          user.is_superuser = response.data?.is_superuser ?? false;
+          set({ user: user });
+        }
       })
-      .catch((error) => {
-        console.error('Error fetching user roles:', error);
+      .catch((_error) => {
+        console.error('Error fetching user roles');
       });
   },
   checkUserRole: (role: UserRoles, permission: UserPermissions) => {
@@ -88,6 +92,14 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     if (user?.roles[role] === null) return false;
 
     return user?.roles[role]?.includes(permission) ?? false;
+  },
+  isStaff: () => {
+    const user: UserProps = get().user as UserProps;
+    return user?.is_staff ?? false;
+  },
+  isSuperuser: () => {
+    const user: UserProps = get().user as UserProps;
+    return user?.is_superuser ?? false;
   },
   hasDeleteRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.delete);
