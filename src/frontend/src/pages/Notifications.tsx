@@ -5,11 +5,13 @@ import {
   IconBellExclamation,
   IconCircleCheck,
   IconCircleX,
+  IconMailOpened,
   IconTrash
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { api } from '../App';
+import { ActionButton } from '../components/buttons/ActionButton';
 import { PageDetail } from '../components/nav/PageDetail';
 import { PanelGroup } from '../components/nav/PanelGroup';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -47,6 +49,13 @@ export default function NotificationsPage() {
                     });
                 }
               }
+            ]}
+            tableActions={[
+              <ActionButton
+                key="read-all"
+                icon={<IconMailOpened />}
+                tooltip={`Mark all as read`}
+              />
             ]}
           />
         )
@@ -87,6 +96,14 @@ export default function NotificationsPage() {
                     });
                 }
               }
+            ]}
+            tableActions={[
+              <ActionButton
+                key="delete-all"
+                color="red"
+                icon={<IconTrash />}
+                tooltip={`Delete notifications`}
+              />
             ]}
           />
         )
