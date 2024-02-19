@@ -22,9 +22,7 @@ backoff==2.2.1
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
 bleach[css]==6.1.0
-    # via
-    #   bleach
-    #   django-markdownify
+    # via django-markdownify
 brotli==1.1.0
     # via fonttools
 certifi==2024.2.2
@@ -175,9 +173,7 @@ et-xmlfile==1.1.0
 feedparser==6.0.11
     # via -r requirements.in
 fonttools[woff]==4.47.2
-    # via
-    #   fonttools
-    #   weasyprint
+    # via weasyprint
 googleapis-common-protos==1.62.0
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -304,7 +300,6 @@ pyjwt[crypto]==2.8.0
     # via
     #   django-allauth
     #   djangorestframework-simplejwt
-    #   pyjwt
 pyphen==0.14.0
     # via weasyprint
 pypng==0.20220715.0
