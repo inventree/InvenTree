@@ -33,11 +33,13 @@ def update_templates(apps, schema_editor):
         stock_item__part__rght__lte=F('template__part__rght'),
     )
 
-    if bad_results == 0:
+    n = bad_results.count()
+
+    if n == 0:
         # Escape early - no bad results!
         return
     
-    print(f"Found {bad_results.count()} StockItemTestResult objects with bad templates...")
+    print(f"Found {n} StockItemTestResult objects with bad templates...")
 
     # For each bad result, attempt to find a matching template
     # Here, a matching template must point to a part *above* the part in the tree
