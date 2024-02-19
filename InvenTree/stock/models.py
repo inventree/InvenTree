@@ -1577,8 +1577,10 @@ class StockItem(
         if template is None and test_name is not None:
             # Attempt to find a matching template
 
+            ancestors = self.part.get_ancestors(include_self=True)
+
             template = PartModels.PartTestTemplate.objects.filter(
-                part__tree_id=self.part.tree_id, key=test_key
+                part__tree_id=self.part.tree_id, part__in=ancestors, key=test_key
             ).first()
 
             if template is None:
