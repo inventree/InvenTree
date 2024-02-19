@@ -49,11 +49,11 @@ runs:
         shell: bash
         run: |
           python3 -m pip install -U pip
-          pip3 install invoke wheel uv
+          pip3 install invoke wheel
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: uv pip install ${{ inputs.pip-dependency }}
+        run: pip3 install ${{ inputs.pip-dependency }}
 
       # NPM installs
       - name: Install node.js ${{ env.node_version }}

@@ -70,7 +70,8 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Version Check
         run: |
-          pip install requests pyyaml
+          pip install requests
+          pip install pyyaml
           python3 ci/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
