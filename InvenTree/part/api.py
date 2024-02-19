@@ -375,7 +375,7 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
         """Metaclass options for this filterset."""
 
         model = PartTestTemplate
-        fields = ['required', 'requires_value', 'requires_attachment']
+        fields = ['required', 'requires_value', 'requires_attachment', 'key']
 
     part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.filter(trackable=True),
