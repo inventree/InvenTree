@@ -35,7 +35,7 @@ services:
 
     # InvenTree web server service
     # Runs the django built-in webserver application
-    inventree-dev:
+    inventree-dev-server:
         depends_on:
           - inventree-dev-db
         build: &build_config
@@ -53,3 +53,16 @@ services:
             - docker.dev.env
         restart: unless-stopped
 
+    # Background worker process handles long-running or periodic tasks
+    inventree-dev-worker:
+        image: inventree-dev-image
+        build: *build_config
+        command: invoke worker
+        depends_on:
+            - inventree-dev-server
+        volumes:
+            # Mount local source directory to /home/inventree
+            - ./:/home/inventree:z
+        env_file:
+            - docker.dev.env
+        restart: unless-stopped
