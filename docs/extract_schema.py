@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import re
 import textwrap
 
 import yaml
@@ -64,6 +65,9 @@ def generate_index_file(version: str):
 
     This documentation is for API version: `{version}`
 
+    !!! tip "API Schema History"
+        We track API schema changes, and provide a snapshot of each API schema version in the [API schema repository](https://github.com/inventree/schema/).
+
     ## API Schema File
 
     The API schema file is available for download, and can be used for generating client libraries, or for testing API endpoints.
@@ -91,6 +95,49 @@ def generate_index_file(version: str):
 
     with open(output_file, 'w') as f:
         f.write(output)
+
+
+def extract_refs(data: dict, components: dict) -> list:
+    """Extract a list of refs from the provided paths dict.
+
+    The refs are located like so:
+    <path>:<method>:responses:<status>:content:application/json:schema:$ref
+
+    Also, the referenced components might reference *sub* components,
+    so we need to do this step recursively.
+
+    """
+    pattern = r"'?\$ref'?: '#\/components\/schemas\/(\S+)'"
+
+    # First, extract the results from the paths data dict
+    matches = re.findall(pattern, str(data))
+
+    refs = list(matches)
+
+    # Next, extract additional refs from the components dict
+    # Note that the components dict may reference other components
+
+    idx = 0
+
+    while idx < len(refs):
+        ref = refs[idx]
+
+        schema = components.get('schemas', {}).get(ref, None)
+
+        if schema:
+            # Search for additional refs
+            matches = re.findall(pattern, str(schema))
+
+            for match in matches:
+                if match not in refs:
+                    refs.append(match)
+
+        idx += 1
+
+    # Return a dict only of the extracted refs
+    schemas = {ref: components['schemas'][ref] for ref in refs}
+
+    return schemas
 
 
 def parse_api_file(filename: str):
@@ -121,7 +168,16 @@ def parse_api_file(filename: str):
 
         output['paths'] = value
 
+        components = data.get('components', {})
+
+        # Extract only the schemas relating to the provided paths
+        path_schemas = extract_refs(value, components)
+
         for k, v in data.items():
+            if k == 'components':
+                v = v.copy()
+                v['schemas'] = path_schemas
+
             if k != 'paths':
                 output[k] = v
 
