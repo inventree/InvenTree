@@ -97,6 +97,9 @@ def update_templates(apps, schema_editor):
         print("Updating", len(results_to_update), "missing templates...")
         StockItemTestResult.objects.bulk_update(results_to_update, ['template'])  
 
+    # Finall, check that there are no longer any "bad" results
+    assert(bad_results.order_by('pk').count() == 0)
+
 
 class Migration(migrations.Migration):
 
