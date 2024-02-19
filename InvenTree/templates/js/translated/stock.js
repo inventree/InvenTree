@@ -1433,7 +1433,8 @@ function loadStockTestResultsTable(table, options) {
 
         let html = '';
 
-        if (row.parent != parent_node && row.requires_attachment == false && row.requires_value == false && !row.result) {
+
+        if (row.requires_attachment == false && row.requires_value == false && !row.result) {
             // Enable a "quick tick" option for this test result
             html += makeIconButton('fa-check-circle icon-green', 'button-test-tick', row.test_name, '{% trans "Pass test" %}');
         }
