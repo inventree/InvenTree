@@ -94,7 +94,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
   const partTestTemplateFields: ApiFormFieldSet = useMemo(() => {
     return {
       part: {
-        hidden: true
+        hidden: false
       },
       test_name: {},
       description: {},
