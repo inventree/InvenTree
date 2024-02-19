@@ -65,7 +65,7 @@ def set_template(apps, schema_editor):
                 part__tree_id=part.tree_id,
                 part__lft__lte=part.lft,
                 part__rght__gte=part.rght,
-                test_name__iexact=name).first():
+                key=key).first():
                 # We have found an existing template for this test
                 pass
 
