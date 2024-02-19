@@ -17,6 +17,8 @@ interface UserStateProps {
   hasChangeRole: (role: UserRoles) => boolean;
   hasAddRole: (role: UserRoles) => boolean;
   hasViewRole: (role: UserRoles) => boolean;
+  isStaff: () => boolean;
+  isSuperuser: () => boolean;
 }
 
 /**
@@ -90,6 +92,14 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     if (user?.roles[role] === null) return false;
 
     return user?.roles[role]?.includes(permission) ?? false;
+  },
+  isStaff: () => {
+    const user: UserProps = get().user as UserProps;
+    return user?.is_staff ?? false;
+  },
+  isSuperuser: () => {
+    const user: UserProps = get().user as UserProps;
+    return user?.is_superuser ?? false;
   },
   hasDeleteRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.delete);
