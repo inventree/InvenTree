@@ -11,10 +11,12 @@ import { RowAction } from '../RowActions';
 export function NotificationTable({
   params,
   tableState,
+  tableActions,
   actions
 }: {
   params: any;
   tableState: TableState;
+  tableActions: any[];
   actions: (record: any) => RowAction[];
 }) {
   const columns: TableColumn[] = useMemo(() => {
@@ -47,6 +49,7 @@ export function NotificationTable({
       columns={columns}
       props={{
         rowActions: actions,
+        tableActions: tableActions,
         enableSelection: true,
         params: params
       }}
