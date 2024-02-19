@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { api } from '../App';
 import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
+import { fetchGlobalStates } from '../states/states';
 
 // Definitions
 export type Locales = keyof typeof languages | 'pseudo-LOCALE';
@@ -37,6 +38,7 @@ export const languages: Record<string, string> = {
   pt: t`Portuguese`,
   'pt-br': t`Portuguese (Brazilian)`,
   ru: t`Russian`,
+  sk: t`Slovak`,
   sl: t`Slovenian`,
   sv: t`Swedish`,
   th: t`Thai`,
@@ -89,8 +91,11 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
         // Update default Accept-Language headers
         api.defaults.headers.common['Accept-Language'] = locales.join(', ');
 
-        // Reload server state (refresh status codes)
-        useServerApiState.getState().fetchServerApiState();
+        // Reload server state (and refresh status codes)
+        fetchGlobalStates();
+
+        // Clear out cached table column names
+        useLocalState.getState().clearTableColumnNames();
       })
       .catch((err) => {
         console.error('Failed loading translations', err);

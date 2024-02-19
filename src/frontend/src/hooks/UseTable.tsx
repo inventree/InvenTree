@@ -1,7 +1,7 @@
 import { randomId, useLocalStorage } from '@mantine/hooks';
 import { useCallback, useState } from 'react';
 
-import { TableFilter } from '../components/tables/Filter';
+import { TableFilter } from '../tables/Filter';
 
 /*
  * Type definition for representing the state of a table:
@@ -19,6 +19,8 @@ export type TableState = {
   activeFilters: TableFilter[];
   setActiveFilters: (filters: TableFilter[]) => void;
   clearActiveFilters: () => void;
+  expandedRecords: any[];
+  setExpandedRecords: (records: any[]) => void;
   selectedRecords: any[];
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
@@ -59,6 +61,9 @@ export function useTable(tableName: string): TableState {
     setActiveFilters([]);
   }, []);
 
+  // Array of expanded records
+  const [expandedRecords, setExpandedRecords] = useState<any[]>([]);
+
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
@@ -81,6 +86,8 @@ export function useTable(tableName: string): TableState {
     activeFilters,
     setActiveFilters,
     clearActiveFilters,
+    expandedRecords,
+    setExpandedRecords,
     selectedRecords,
     setSelectedRecords,
     clearSelectedRecords,

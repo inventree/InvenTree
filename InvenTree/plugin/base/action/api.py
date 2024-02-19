@@ -2,17 +2,25 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from rest_framework import permissions
+from rest_framework import permissions, serializers
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from plugin import registry
 
 
-class ActionPluginView(APIView):
+class ActionPluginSerializer(serializers.Serializer):
+    """Serializer for the ActionPluginView responses."""
+
+    action = serializers.CharField()
+    data = serializers.DictField()
+
+
+class ActionPluginView(GenericAPIView):
     """Endpoint for running custom action plugins."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ActionPluginSerializer
 
     def post(self, request, *args, **kwargs):
         """This function checks if all required info was submitted and then performs a plugin_action or returns an error."""

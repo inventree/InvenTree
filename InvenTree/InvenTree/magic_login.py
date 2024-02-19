@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -10,21 +9,23 @@ from django.utils.translation import gettext_lazy as _
 
 import sesame.utils
 from rest_framework import serializers
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
+
+import InvenTree.version
 
 
 def send_simple_login_email(user, link):
     """Send an email with the login link to this user."""
-    site = Site.objects.get_current()
+    site_name = InvenTree.version.inventreeInstanceName()
 
-    context = {'username': user.username, 'site_name': site.name, 'link': link}
+    context = {'username': user.username, 'site_name': site_name, 'link': link}
     email_plaintext_message = render_to_string(
         'InvenTree/user_simple_login.txt', context
     )
 
     send_mail(
-        _(f'[{site.name}] Log in to the app'),
+        _(f'[{site_name}] Log in to the app'),
         email_plaintext_message,
         settings.DEFAULT_FROM_EMAIL,
         [user.email],
@@ -37,7 +38,7 @@ class GetSimpleLoginSerializer(serializers.Serializer):
     email = serializers.CharField(label=_('Email'))
 
 
-class GetSimpleLoginView(APIView):
+class GetSimpleLoginView(GenericAPIView):
     """View to send a simple login link."""
 
     permission_classes = ()

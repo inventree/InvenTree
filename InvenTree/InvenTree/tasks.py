@@ -9,7 +9,7 @@ import time
 import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Callable, List
+from typing import Callable
 
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
@@ -291,7 +291,7 @@ class ScheduledTask:
 class TaskRegister:
     """Registry for periodic tasks."""
 
-    task_list: List[ScheduledTask] = []
+    task_list: list[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
         """Register a task with the que."""
@@ -644,7 +644,7 @@ def get_migration_plan():
 
 
 @scheduled_task(ScheduledTask.DAILY)
-def check_for_migrations():
+def check_for_migrations(force: bool = False, reload_registry: bool = True):
     """Checks if migrations are needed.
 
     If the setting auto_update is enabled we will start updating.
@@ -659,8 +659,9 @@ def check_for_migrations():
 
     logger.info('Checking for pending database migrations')
 
-    # Force plugin registry reload
-    registry.check_reload()
+    if reload_registry:
+        # Force plugin registry reload
+        registry.check_reload()
 
     plan = get_migration_plan()
 
@@ -674,7 +675,7 @@ def check_for_migrations():
     set_pending_migrations(n)
 
     # Test if auto-updates are enabled
-    if not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
+    if not force and not get_setting('INVENTREE_AUTO_UPDATE', 'auto_update'):
         logger.info('Auto-update is disabled - skipping migrations')
         return
 
@@ -706,6 +707,7 @@ def check_for_migrations():
         set_maintenance_mode(False)
         logger.info('Manually released maintenance mode')
 
-    # We should be current now - triggering full reload to make sure all models
-    # are loaded fully in their new state.
-    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+    if reload_registry:
+        # We should be current now - triggering full reload to make sure all models
+        # are loaded fully in their new state.
+        registry.reload_plugins(full_reload=True, force_reload=True, collect=True)

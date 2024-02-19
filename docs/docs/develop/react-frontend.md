@@ -39,6 +39,13 @@ This command does not run as a background daemon, and will occupy the window it'
 When the frontend server is running, it will be available on port 5173.
 i.e: https://localhost:5173/
 
+### Debugging
+
+You can attach the vscode debugger to the frontend server to debug the frontend code. With the frontend server running, open the `Run and Debug` view in vscode and select `InvenTree Frontend - Vite` from the dropdown. Click the play button to start debugging. This will attach the debugger to the running vite server, and allow you to place breakpoints in the frontend code.
+
+!!! info "Backend Server"
+    To debug the frontend code, the backend server must be running (in a separate process). Note that you cannot debug the backend server and the frontend server in the same vscode instance.
+
 ### Information
 
 On Windows, any Docker interaction is run via WSL. Naturally, all containers and devcontainers run through WSL.

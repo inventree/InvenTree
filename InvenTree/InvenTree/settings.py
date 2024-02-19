@@ -26,7 +26,6 @@ from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.sentry import default_sentry_dsn, init_sentry
-from InvenTree.tracing import setup_instruments, setup_tracing
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
 from . import config, locales
@@ -121,31 +120,6 @@ STATIC_ROOT = config.get_static_dir()
 # The filesystem location for uploaded meadia files
 MEDIA_ROOT = config.get_media_dir()
 
-# List of allowed hosts (default = allow all)
-ALLOWED_HOSTS = get_setting(
-    'INVENTREE_ALLOWED_HOSTS',
-    config_key='allowed_hosts',
-    default_value=['*'],
-    typecast=list,
-)
-
-# Cross Origin Resource Sharing (CORS) options
-
-# Only allow CORS access to API and media endpoints
-CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
-
-# Extract CORS options from configuration file
-CORS_ORIGIN_ALLOW_ALL = get_boolean_setting(
-    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=False
-)
-
-CORS_ORIGIN_WHITELIST = get_setting(
-    'INVENTREE_CORS_ORIGIN_WHITELIST',
-    config_key='cors.whitelist',
-    default_value=[],
-    typecast=list,
-)
-
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
@@ -214,6 +188,7 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
+    'machine.apps.MachineConfig',
     'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',  # InvenTree app runs last
@@ -263,9 +238,9 @@ MIDDLEWARE = CONFIG.get(
         'x_forwarded_for.middleware.XForwardedForMiddleware',
         'user_sessions.middleware.SessionMiddleware',  # db user sessions
         'django.middleware.locale.LocaleMiddleware',
-        'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
+        'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
         'django_otp.middleware.OTPMiddleware',  # MFA support
@@ -444,9 +419,9 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'users.authentication.ApiTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'users.authentication.ApiTokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
@@ -488,12 +463,15 @@ if USE_JWT:
 SPECTACULAR_SETTINGS = {
     'TITLE': 'InvenTree API',
     'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
-    'LICENSE': {'MIT': 'https://github.com/inventree/InvenTree/blob/master/LICENSE'},
-    'EXTERNAL_DOCS': {
-        'docs': 'https://docs.inventree.org',
-        'web': 'https://inventree.org',
+    'LICENSE': {
+        'name': 'MIT',
+        'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE',
     },
-    'VERSION': inventreeApiVersion(),
+    'EXTERNAL_DOCS': {
+        'description': 'More information about InvenTree in the official docs',
+        'url': 'https://docs.inventree.org',
+    },
+    'VERSION': str(inventreeApiVersion()),
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
@@ -590,11 +568,6 @@ db_options = db_config.get('OPTIONS', db_config.get('options', {}))
 
 # Specific options for postgres backend
 if 'postgres' in db_engine:  # pragma: no cover
-    from psycopg2.extensions import (
-        ISOLATION_LEVEL_READ_COMMITTED,
-        ISOLATION_LEVEL_SERIALIZABLE,
-    )
-
     # Connection timeout
     if 'connect_timeout' not in db_options:
         # The DB server is in the same data center, it should not take very
@@ -658,11 +631,7 @@ if 'postgres' in db_engine:  # pragma: no cover
         serializable = get_boolean_setting(
             'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
         )
-        db_options['isolation_level'] = (
-            ISOLATION_LEVEL_SERIALIZABLE
-            if serializable
-            else ISOLATION_LEVEL_READ_COMMITTED
-        )
+        db_options['isolation_level'] = 4 if serializable else 2
 
 # Specific options for MySql / MariaDB backend
 elif 'mysql' in db_engine:  # pragma: no cover
@@ -738,7 +707,10 @@ if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
 TRACING_ENABLED = get_boolean_setting(
     'INVENTREE_TRACING_ENABLED', 'tracing.enabled', False
 )
+
 if TRACING_ENABLED:  # pragma: no cover
+    from InvenTree.tracing import setup_instruments, setup_tracing
+
     _t_endpoint = get_setting('INVENTREE_TRACING_ENDPOINT', 'tracing.endpoint', None)
     _t_headers = get_setting('INVENTREE_TRACING_HEADERS', 'tracing.headers', None, dict)
 
@@ -820,7 +792,7 @@ Q_CLUSTER = {
         get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)
     ),
     'timeout': _q_worker_timeout,
-    'retry': min(120, _q_worker_timeout + 30),
+    'retry': max(120, _q_worker_timeout + 30),
     'max_attempts': int(
         get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
     ),
@@ -959,7 +931,6 @@ TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
 USE_I18N = True
 
-USE_L10N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
@@ -974,12 +945,92 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-SITE_ID = 1
+# Site URL can be specified statically, or via a run-time setting
+SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
+
+if SITE_URL:
+    logger.info('Using Site URL: %s', SITE_URL)
+
+    # Check that the site URL is valid
+    validator = URLValidator()
+    validator(SITE_URL)
+
+# Enable or disable multi-site framework
+SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
+
+# If a SITE_ID is specified
+SITE_ID = get_setting('INVENTREE_SITE_ID', 'site_id', 1 if SITE_MULTI else None)
 
 # Load the allauth social backends
 SOCIAL_BACKENDS = get_setting(
     'INVENTREE_SOCIAL_BACKENDS', 'social_backends', [], typecast=list
 )
+
+if not SITE_MULTI:
+    INSTALLED_APPS.remove('django.contrib.sites')
+
+# List of allowed hosts (default = allow all)
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = get_setting(
+    'INVENTREE_ALLOWED_HOSTS',
+    config_key='allowed_hosts',
+    default_value=['*'],
+    typecast=list,
+)
+
+# List of trusted origins for unsafe requests
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
+CSRF_TRUSTED_ORIGINS = get_setting(
+    'INVENTREE_TRUSTED_ORIGINS',
+    config_key='trusted_origins',
+    default_value=[],
+    typecast=list,
+)
+
+# If a list of trusted is not specified, but a site URL has been specified, use that
+if SITE_URL and len(CSRF_TRUSTED_ORIGINS) == 0:
+    CSRF_TRUSTED_ORIGINS.append(SITE_URL)
+
+USE_X_FORWARDED_HOST = get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_HOST',
+    config_key='use_x_forwarded_host',
+    default_value=False,
+)
+
+USE_X_FORWARDED_PORT = get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_PORT',
+    config_key='use_x_forwarded_port',
+    default_value=False,
+)
+
+# Cross Origin Resource Sharing (CORS) options
+# Refer to the django-cors-headers documentation for more information
+# Ref: https://github.com/adamchainz/django-cors-headers
+
+# Extract CORS options from configuration file
+CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
+    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
+)
+
+CORS_ALLOW_CREDENTIALS = get_boolean_setting(
+    'INVENTREE_CORS_ALLOW_CREDENTIALS',
+    config_key='cors.allow_credentials',
+    default_value=True,
+)
+
+# Only allow CORS access to API and media endpoints
+CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
+
+CORS_ALLOWED_ORIGINS = get_setting(
+    'INVENTREE_CORS_ORIGIN_WHITELIST',
+    config_key='cors.whitelist',
+    default_value=[],
+    typecast=list,
+)
+
+# If no CORS origins are specified, but a site URL has been specified, use that
+if SITE_URL and len(CORS_ALLOWED_ORIGINS) == 0:
+    CORS_ALLOWED_ORIGINS.append(SITE_URL)
 
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
@@ -995,6 +1046,11 @@ SOCIALACCOUNT_PROVIDERS = get_setting(
 )
 
 SOCIALACCOUNT_STORE_TOKENS = True
+
+# Explicitly set empty URL prefix for OIDC
+# The SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX setting was introduced in v0.60.0
+# Ref: https://github.com/pennersr/django-allauth/blob/0.60.0/ChangeLog.rst#backwards-incompatible-changes
+SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
@@ -1064,8 +1120,8 @@ MARKDOWNIFY = {
 IGNORED_ERRORS = [Http404, django.core.exceptions.PermissionDenied]
 
 # Maintenance mode
-MAINTENANCE_MODE_RETRY_AFTER = 60
-MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.StaticStorageBackend'
+MAINTENANCE_MODE_RETRY_AFTER = 10
+MAINTENANCE_MODE_STATE_BACKEND = 'InvenTree.backends.InvenTreeMaintenanceModeBackend'
 
 # Are plugins enabled?
 PLUGINS_ENABLED = get_boolean_setting(
@@ -1086,16 +1142,6 @@ PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5
 )  # How often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
-
-# Site URL can be specified statically, or via a run-time setting
-SITE_URL = get_setting('INVENTREE_SITE_URL', 'site_url', None)
-
-if SITE_URL:
-    logger.info('Site URL: %s', SITE_URL)
-
-    # Check that the site URL is valid
-    validator = URLValidator()
-    validator(SITE_URL)
 
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
@@ -1139,5 +1185,4 @@ if CUSTOM_FLAGS:
 
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
-# LOGIN_REDIRECT_URL = f"/{FRONTEND_URL_BASE}/logged-in/"
-LOGIN_REDIRECT_URL = '/index/'
+LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'

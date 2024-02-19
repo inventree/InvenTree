@@ -12,7 +12,7 @@ from company.models import Company
 from InvenTree.status_codes import StockHistoryCode
 from InvenTree.unit_test import InvenTreeTestCase
 from order.models import SalesOrder
-from part.models import Part
+from part.models import Part, PartTestTemplate
 
 from .models import StockItem, StockItemTestResult, StockItemTracking, StockLocation
 
@@ -502,9 +502,18 @@ class StockTest(StockTestBase):
         ait = it.allocateToCustomer(
             customer, quantity=an, order=order, user=None, notes='Allocated some stock'
         )
+
+        self.assertEqual(ait.quantity, an)
+        self.assertTrue(ait.parent, it)
+
+        # There should be only quantity 10x remaining
+        it.refresh_from_db()
+        self.assertEqual(it.quantity, 10)
+
         ait.return_from_customer(it.location, None, notes='Stock removed from customer')
 
         # When returned stock is returned to its original (parent) location, check that the parent has correct quantity
+        it.refresh_from_db()
         self.assertEqual(it.quantity, n)
 
         ait = it.allocateToCustomer(
@@ -987,6 +996,63 @@ class VariantTest(StockTestBase):
         item.save()
 
 
+class StockTreeTest(StockTestBase):
+    """Unit test for StockItem tree structure."""
+
+    def test_stock_split(self):
+        """Test that stock splitting works correctly."""
+        StockItem.objects.rebuild()
+
+        part = Part.objects.create(name='My part', description='My part description')
+        location = StockLocation.objects.create(name='Test Location')
+
+        # Create an initial stock item
+        item = StockItem.objects.create(part=part, quantity=1000, location=location)
+
+        # Test that the initial MPTT values are correct
+        self.assertEqual(item.level, 0)
+        self.assertEqual(item.lft, 1)
+        self.assertEqual(item.rght, 2)
+
+        children = []
+
+        self.assertEqual(item.get_descendants(include_self=False).count(), 0)
+        self.assertEqual(item.get_descendants(include_self=True).count(), 1)
+
+        # Create child items by splitting stock
+        for idx in range(10):
+            child = item.splitStock(50, None, None)
+            children.append(child)
+
+            # Check that the child item has been correctly created
+            self.assertEqual(child.parent.pk, item.pk)
+            self.assertEqual(child.tree_id, item.tree_id)
+            self.assertEqual(child.level, 1)
+
+            item.refresh_from_db()
+            self.assertEqual(item.get_children().count(), idx + 1)
+            self.assertEqual(item.get_descendants(include_self=True).count(), idx + 2)
+
+        item.refresh_from_db()
+        n = item.get_descendants(include_self=True).count()
+
+        for child in children:
+            # Create multiple sub-childs
+            for _idx in range(3):
+                sub_child = child.splitStock(10, None, None)
+                self.assertEqual(sub_child.parent.pk, child.pk)
+                self.assertEqual(sub_child.tree_id, child.tree_id)
+                self.assertEqual(sub_child.level, 2)
+
+                self.assertEqual(sub_child.get_ancestors(include_self=True).count(), 3)
+
+            child.refresh_from_db()
+            self.assertEqual(child.get_descendants(include_self=True).count(), 4)
+
+        item.refresh_from_db()
+        self.assertEqual(item.get_descendants(include_self=True).count(), n + 30)
+
+
 class TestResultTest(StockTestBase):
     """Tests for the StockItemTestResult model."""
 
@@ -1020,44 +1086,72 @@ class TestResultTest(StockTestBase):
 
         self.assertEqual(status['total'], 5)
         self.assertEqual(status['passed'], 2)
-        self.assertEqual(status['failed'], 2)
+        self.assertEqual(status['failed'], 1)
 
         self.assertFalse(item.passedAllRequiredTests())
 
         # Add some new test results to make it pass!
-        test = StockItemTestResult.objects.get(pk=12345)
-        test.result = True
+        test = StockItemTestResult.objects.get(pk=8)
+        test.result = False
         test.save()
 
+        status = item.requiredTestStatus()
+        self.assertEqual(status['total'], 5)
+        self.assertEqual(status['passed'], 1)
+        self.assertEqual(status['failed'], 2)
+
+        template = PartTestTemplate.objects.get(pk=3)
+
         StockItemTestResult.objects.create(
-            stock_item=item, test='sew cushion', result=True
+            stock_item=item, template=template, result=True
         )
 
         # Still should be failing at this point,
         # as the most recent "apply paint" test was False
         self.assertFalse(item.passedAllRequiredTests())
 
+        template = PartTestTemplate.objects.get(pk=2)
+
         # Add a new test result against this required test
         StockItemTestResult.objects.create(
             stock_item=item,
-            test='apply paint',
+            template=template,
             date=datetime.datetime(2022, 12, 12),
             result=True,
         )
+
+        self.assertFalse(item.passedAllRequiredTests())
+
+        # Generate a passing result for all required tests
+        for template in item.part.getRequiredTests():
+            StockItemTestResult.objects.create(
+                stock_item=item,
+                template=template,
+                result=True,
+                date=datetime.datetime(2025, 12, 12),
+            )
 
         self.assertTrue(item.passedAllRequiredTests())
 
     def test_duplicate_item_tests(self):
         """Test duplicate item behaviour."""
         # Create an example stock item by copying one from the database (because we are lazy)
+
+        from plugin.registry import registry
+
+        StockItem.objects.rebuild()
+
         item = StockItem.objects.get(pk=522)
 
         item.pk = None
         item.serial = None
         item.quantity = 50
 
-        # Try with an invalid batch code (according to sample validatoin plugin)
+        # Try with an invalid batch code (according to sample validation plugin)
         item.batch = 'X234'
+
+        # Ensure that the sample validation plugin is activated
+        registry.set_plugin_state('validator', True)
 
         with self.assertRaises(ValidationError):
             item.save()
@@ -1066,17 +1160,9 @@ class TestResultTest(StockTestBase):
         item.save()
 
         # Do some tests!
-        StockItemTestResult.objects.create(
-            stock_item=item, test='Firmware', result=True
-        )
-
-        StockItemTestResult.objects.create(
-            stock_item=item, test='Paint Color', result=True, value='Red'
-        )
-
-        StockItemTestResult.objects.create(
-            stock_item=item, test='Applied Sticker', result=False
-        )
+        item.add_test_result(test_name='Firmware', result=True)
+        item.add_test_result(test_name='Paint Color', result=True, value='Red')
+        item.add_test_result(test_name='Applied Sticker', result=False)
 
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item.quantity, 50)
@@ -1089,7 +1175,7 @@ class TestResultTest(StockTestBase):
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item2.test_results.count(), 3)
 
-        StockItemTestResult.objects.create(stock_item=item2, test='A new test')
+        item2.add_test_result(test_name='A new test')
 
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item2.test_results.count(), 4)
@@ -1098,7 +1184,7 @@ class TestResultTest(StockTestBase):
         item2.serializeStock(1, [100], self.user)
 
         # Add a test result to the parent *after* serialization
-        StockItemTestResult.objects.create(stock_item=item2, test='abcde')
+        item2.add_test_result(test_name='abcde')
 
         self.assertEqual(item2.test_results.count(), 5)
 
@@ -1127,11 +1213,20 @@ class TestResultTest(StockTestBase):
         )
 
         # Now, create some test results against the sub item
+        # Ensure there is a matching PartTestTemplate
+        if template := PartTestTemplate.objects.filter(
+            part=item.part, key='firmwareversion'
+        ).first():
+            pass
+        else:
+            template = PartTestTemplate.objects.create(
+                part=item.part, test_name='Firmware Version', required=True
+            )
 
         # First test is overshadowed by the same test for the parent part
         StockItemTestResult.objects.create(
             stock_item=sub_item,
-            test='firmware version',
+            template=template,
             date=datetime.datetime.now().date(),
             result=True,
         )
@@ -1140,10 +1235,19 @@ class TestResultTest(StockTestBase):
         tests = item.testResultMap(include_installed=True)
         self.assertEqual(len(tests), 3)
 
+        if template := PartTestTemplate.objects.filter(
+            part=item.part, key='somenewtest'
+        ).first():
+            pass
+        else:
+            template = PartTestTemplate.objects.create(
+                part=item.part, test_name='Some New Test', required=True
+            )
+
         # Now, add a *unique* test result for the sub item
         StockItemTestResult.objects.create(
             stock_item=sub_item,
-            test='some new test',
+            template=template,
             date=datetime.datetime.now().date(),
             result=False,
             value='abcde',

@@ -1362,8 +1362,8 @@ class OrderCalendarExport(ICalFeed):
             return super().__call__(request, *args, **kwargs)
 
         # No login yet - check in headers
-        if 'HTTP_AUTHORIZATION' in request.META:
-            auth = request.META['HTTP_AUTHORIZATION'].split()
+        if 'authorization' in request.headers:
+            auth = request.headers['authorization'].split()
             if len(auth) == 2:
                 # NOTE: We are only support basic authentication for now.
                 #

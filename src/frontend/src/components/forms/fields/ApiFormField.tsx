@@ -7,7 +7,6 @@ import {
   Switch,
   TextInput
 } from '@mantine/core';
-import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
@@ -17,10 +16,16 @@ import { Control, FieldValues, useController } from 'react-hook-form';
 
 import { ModelType } from '../../../enums/ModelType';
 import { ChoiceField } from './ChoiceField';
+import DateField from './DateField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
+
+export type ApiFormAdjustFilterType = {
+  filters: any;
+  data: FieldValues;
+};
 
 /** Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
@@ -80,7 +85,7 @@ export type ApiFormFieldType = {
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
   onValueChange?: (value: any) => void;
-  adjustFilters?: (filters: any) => any;
+  adjustFilters?: (value: ApiFormAdjustFilterType) => any;
 };
 
 /**
@@ -187,7 +192,7 @@ export function ApiFormField({
             radius="sm"
             onChange={(event) => onChange(event.currentTarget.value)}
             rightSection={
-              definition.value && !definition.required ? (
+              value && !definition.required ? (
                 <IconX size="1rem" color="red" onClick={() => onChange('')} />
               ) : null
             }
@@ -207,20 +212,7 @@ export function ApiFormField({
           />
         );
       case 'date':
-        return (
-          <DateInput
-            {...reducedDefinition}
-            ref={ref}
-            id={fieldId}
-            radius="sm"
-            type={undefined}
-            error={error?.message}
-            value={value}
-            clearable={!definition.required}
-            onChange={(value) => onChange(value)}
-            valueFormat="YYYY-MM-DD"
-          />
-        );
+        return <DateField controller={controller} definition={definition} />;
       case 'integer':
       case 'decimal':
       case 'float':

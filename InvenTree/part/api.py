@@ -49,6 +49,7 @@ from InvenTree.mixins import (
     UpdateAPI,
 )
 from InvenTree.permissions import RolePermission
+from InvenTree.serializers import EmptySerializer
 from InvenTree.status_codes import (
     BuildStatusGroups,
     PurchaseOrderStatusGroups,
@@ -367,52 +368,86 @@ class PartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartAttachmentSerializer
 
 
-class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
-    """Detail endpoint for PartTestTemplate model."""
+class PartTestTemplateFilter(rest_filters.FilterSet):
+    """Custom filterset class for the PartTestTemplateList endpoint."""
 
-    queryset = PartTestTemplate.objects.all()
-    serializer_class = part_serializers.PartTestTemplateSerializer
+    class Meta:
+        """Metaclass options for this filterset."""
 
+        model = PartTestTemplate
+        fields = ['required', 'requires_value', 'requires_attachment', 'key']
 
-class PartTestTemplateList(ListCreateAPI):
-    """API endpoint for listing (and creating) a PartTestTemplate.
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.filter(trackable=True),
+        label='Part',
+        field_name='part',
+        method='filter_part',
+    )
 
-    TODO: Add filterset class for this view
-    """
+    def filter_part(self, queryset, name, part):
+        """Filter by the 'part' field.
 
-    queryset = PartTestTemplate.objects.all()
-    serializer_class = part_serializers.PartTestTemplateSerializer
-
-    def filter_queryset(self, queryset):
-        """Filter the test list queryset.
-
-        If filtering by 'part', we include results for any parts "above" the specified part.
+        Note that for the 'part' field, we also include any parts "above" the specified part.
         """
-        queryset = super().filter_queryset(queryset)
+        include_inherited = str2bool(
+            self.request.query_params.get('include_inherited', True)
+        )
 
-        params = self.request.query_params
+        if include_inherited:
+            return queryset.filter(part__in=part.get_ancestors(include_self=True))
+        else:
+            return queryset.filter(part=part)
 
-        part = params.get('part', None)
+    has_results = rest_filters.BooleanFilter(
+        label=_('Has Results'), method='filter_has_results'
+    )
 
-        # Filter by part
-        if part:
-            try:
-                part = Part.objects.get(pk=part)
-                queryset = queryset.filter(
-                    part__in=part.get_ancestors(include_self=True)
-                )
-            except (ValueError, Part.DoesNotExist):
-                pass
+    def filter_has_results(self, queryset, name, value):
+        """Filter by whether the PartTestTemplate has any associated test results."""
+        if str2bool(value):
+            return queryset.exclude(results=0)
+        return queryset.filter(results=0)
 
-        # Filter by 'required' status
-        required = params.get('required', None)
 
-        if required is not None:
-            queryset = queryset.filter(required=str2bool(required))
+class PartTestTemplateMixin:
+    """Mixin class for the PartTestTemplate API endpoints."""
 
+    queryset = PartTestTemplate.objects.all()
+    serializer_class = part_serializers.PartTestTemplateSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the PartTestTemplateDetail endpoints."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.PartTestTemplateSerializer.annotate_queryset(
+            queryset
+        )
         return queryset
 
+
+class PartTestTemplateDetail(PartTestTemplateMixin, RetrieveUpdateDestroyAPI):
+    """Detail endpoint for PartTestTemplate model."""
+
+    pass
+
+
+class PartTestTemplateList(PartTestTemplateMixin, ListCreateAPI):
+    """API endpoint for listing (and creating) a PartTestTemplate."""
+
+    filterset_class = PartTestTemplateFilter
+
     filter_backends = SEARCH_ORDER_FILTER
+
+    search_fields = ['test_name', 'description']
+
+    ordering_fields = [
+        'test_name',
+        'required',
+        'requires_value',
+        'requires_attachment',
+        'results',
+    ]
+
+    ordering = 'test_name'
 
 
 class PartThumbs(ListAPI):
@@ -441,6 +476,15 @@ class PartThumbs(ListAPI):
         data = (
             queryset.values('image').annotate(count=Count('image')).order_by('-count')
         )
+
+        page = self.paginate_queryset(data)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(data, many=True)
+
+        data = serializer.data
 
         return Response(data)
 
@@ -478,6 +522,7 @@ class PartScheduling(RetrieveAPI):
     """
 
     queryset = Part.objects.all()
+    serializer_class = EmptySerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Return scheduling information for the referenced Part instance."""
@@ -678,6 +723,7 @@ class PartRequirements(RetrieveAPI):
     """
 
     queryset = Part.objects.all()
+    serializer_class = EmptySerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Construct a response detailing Part requirements."""
@@ -729,6 +775,7 @@ class PartSerialNumberDetail(RetrieveAPI):
     """API endpoint for returning extra serial number information about a particular part."""
 
     queryset = Part.objects.all()
+    serializer_class = EmptySerializer
 
     def retrieve(self, request, *args, **kwargs):
         """Return serial number information for the referenced Part instance."""
@@ -1059,7 +1106,11 @@ class PartMixin:
 
         # Pass a list of "starred" parts to the current user to the serializer
         # We do this to reduce the number of database queries required!
-        if self.starred_parts is None and self.request is not None:
+        if (
+            self.starred_parts is None
+            and self.request is not None
+            and hasattr(self.request.user, 'starred_parts')
+        ):
             self.starred_parts = [
                 star.part for star in self.request.user.starred_parts.all()
             ]
@@ -1554,7 +1605,9 @@ class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'name': 'template__name',
+        'units': 'template__units',
         'data': ['data_numeric', 'data'],
+        'part': 'part__name',
     }
 
     search_fields = [

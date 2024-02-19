@@ -20,7 +20,22 @@ Test templates "cascade" down to variant parts: this means that if a master part
 
 The name of the test is a simple string value which defines the name of the test. This test must be unique for a given part (or across a set of part variants).
 
-The test name is used to generate a test "key" which is then used to match against test results associated with individual stock items.
+#### Test Key
+
+The test name is used to generate a test "key" which is then used to match against test results associated with individual stock items. The *key* is a simplified string representation of the test name, which consists only of lowercase alphanumeric characters. This key value is automatically generated (based on the test name) whenever the test template is saved.
+
+The generated test key is intended to be a valid python variable name, and can be used to reference the test in the report generation system.
+
+##### Examples
+
+Some examples of generated test key values are provided below:
+
+| Test Name | Test Key |
+| --- | --- |
+| "Firmware Version" | "firmwareversion" |
+| " My NEW T E sT " | "mynewtest" |
+| "100 Percent Test"| "_100percenttest" *(note that the leading underscore is added to ensure the key is a valid python variable name)* |
+| "Test 123" | "test123" |
 
 #### Test Description
 

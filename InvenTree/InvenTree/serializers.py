@@ -7,7 +7,6 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -26,7 +25,10 @@ from taggit.serializers import TaggitSerializer
 import common.models as common_models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
-from InvenTree.helpers_model import download_image_from_url
+
+
+class EmptySerializer(serializers.Serializer):
+    """Empty serializer for use in testing."""
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -155,8 +157,15 @@ class DependentField(serializers.Field):
 
         # check if the request data contains the dependent fields, otherwise skip getting the child
         for f in self.depends_on:
-            if not data.get(f, None):
-                return
+            if data.get(f, None) is None:
+                if (
+                    self.parent
+                    and (v := getattr(self.parent.fields[f], 'default', None))
+                    is not None
+                ):
+                    data[f] = v
+                else:
+                    return
 
         # partially validate the data for options requests that set raise_exception while calling .get_child(...)
         if raise_exception:
@@ -445,19 +454,27 @@ class UserCreateSerializer(ExendedUserSerializer):
 
     def create(self, validated_data):
         """Send an e email to the user after creation."""
+        from InvenTree.helpers_model import get_base_url
+
+        base_url = get_base_url()
+
         instance = super().create(validated_data)
 
         # Make sure the user cannot login until they have set a password
         instance.set_unusable_password()
-        # Send the user an onboarding email (from current site)
-        current_site = Site.objects.get_current()
-        domain = current_site.domain
-        instance.email_user(
-            subject=_(f'Welcome to {current_site.name}'),
-            message=_(
-                f'Your account has been created.\n\nPlease use the password reset function to get access (at https://{domain}).'
-            ),
+
+        message = (
+            _('Your account has been created.')
+            + '\n\n'
+            + _('Please use the password reset function to login')
         )
+
+        if base_url:
+            message += f'\n\nURL: {base_url}'
+
+        # Send the user an onboarding email (from current site)
+        instance.email_user(subject=_('Welcome to InvenTree'), message=message)
+
         return instance
 
 
@@ -844,6 +861,8 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         - Attempt to download the image and store it against this object instance
         - Catches and re-throws any errors
         """
+        from InvenTree.helpers_model import download_image_from_url
+
         if not url:
             return
 
