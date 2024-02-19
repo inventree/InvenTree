@@ -114,3 +114,7 @@ api.yaml
 
 # web frontend (static files)
 InvenTree/web/static
+
+# Generated docs files
+docs/docs/api/*.yml
+docs/docs/api/schema/*.yml
