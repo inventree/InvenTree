@@ -1595,7 +1595,9 @@ class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'name': 'template__name',
+        'units': 'template__units',
         'data': ['data_numeric', 'data'],
+        'part': 'part__name',
     }
 
     search_fields = [
