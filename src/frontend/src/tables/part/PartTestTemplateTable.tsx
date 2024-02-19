@@ -33,7 +33,12 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       {
         accessor: 'test_name',
         switchable: false,
-        sortable: true
+        sortable: true,
+        render: (record: any) => {
+          return (
+            <Text weight={record.required && 700}>{record.test_name}</Text>
+          );
+        }
       },
       {
         accessor: 'results',
