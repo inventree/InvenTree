@@ -398,6 +398,16 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
         else:
             return queryset.filter(part=part)
 
+    has_results = rest_filters.BooleanFilter(
+        label=_('Has Results'), method='filter_has_results'
+    )
+
+    def filter_has_results(self, queryset, name, value):
+        """Filter by whether the PartTestTemplate has any associated test results."""
+        if str2bool(value):
+            return queryset.exclude(results=0)
+        return queryset.filter(results=0)
+
 
 class PartTestTemplateMixin:
     """Mixin class for the PartTestTemplate API endpoints."""

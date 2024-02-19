@@ -82,6 +82,11 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         name: 'include_inherited',
         label: t`Include Inherited`,
         description: t`Show tests from inherited templates`
+      },
+      {
+        name: 'has_results',
+        label: t`Has Results`,
+        description: t`Show tests which have recorded results`
       }
     ];
   }, []);
