@@ -47,6 +47,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partFields } from '../../forms/PartForms';
+import { useTransferStockItem } from '../../forms/StockForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -637,7 +638,13 @@ export default function PartDetail() {
     fields: partFields({ editing: true }),
     onFormSuccess: refreshInstance
   });
-
+  /*
+  const transferStockItems = useTransferStockItem({
+    itemId: part.pk,
+    model: ModelType.part,
+    refresh: () => refreshInstance()
+  })
+*/
   const partActions = useMemo(() => {
     // TODO: Disable actions based on user permissions
     return [
@@ -666,6 +673,9 @@ export default function PartDetail() {
             icon: <IconTransfer color="blue" />,
             name: t`Transfer Stock`,
             tooltip: t`Transfer part stock`
+            /*            onClick: () => {
+              part.pk && transferStockItems.open()
+            }*/
           }
         ]}
       />,

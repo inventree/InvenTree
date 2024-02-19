@@ -35,6 +35,7 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { useEditStockItem, useTransferStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -153,6 +154,7 @@ export default function StockDetail() {
 
   const transferStockItem = useTransferStockItem({
     itemId: stockitem,
+    model: ModelType.stockitem,
     refresh: () => refreshInstance()
   });
 

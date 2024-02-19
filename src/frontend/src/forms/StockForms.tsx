@@ -365,11 +365,26 @@ function stockTransferFields(item: any): ApiFormFieldSet {
 
 export function useTransferStockItem({
   itemId,
+  model,
   refresh
 }: {
   itemId: any;
+  model: ModelType;
   refresh: () => void;
 }) {
+  console.log('Stockie', model);
+
+  let item = itemId;
+  /*
+  if (model !== ModelType.stockitem) {
+    const { data } = useSuspenseQuery({
+      queryKey: ['stockitems', model],
+      queryFn: async () => {
+        const url = "abc"
+      }
+    })
+  }
+  */
   const fields = stockTransferFields(itemId);
 
   return useCreateApiFormModal({
