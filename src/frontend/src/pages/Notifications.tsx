@@ -6,7 +6,6 @@ import {
   IconBellExclamation,
   IconCircleCheck,
   IconCircleX,
-  IconExclamationCircle,
   IconMailOpened,
   IconTrash
 } from '@tabler/icons-react';
