@@ -153,6 +153,7 @@ class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer)
             'part',
             'test_name',
             'description',
+            'enabled',
             'required',
             'requires_value',
             'requires_attachment',

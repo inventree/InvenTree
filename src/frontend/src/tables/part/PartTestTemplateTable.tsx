@@ -36,7 +36,12 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         sortable: true,
         render: (record: any) => {
           return (
-            <Text weight={record.required && 700}>{record.test_name}</Text>
+            <Text
+              weight={record.required && 700}
+              color={record.enabled ? undefined : 'red'}
+            >
+              {record.test_name}
+            </Text>
           );
         }
       },
@@ -51,6 +56,9 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       },
       DescriptionColumn({
         switchable: false
+      }),
+      BooleanColumn({
+        accessor: 'enabled'
       }),
       BooleanColumn({
         accessor: 'required'
@@ -69,6 +77,10 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       {
         name: 'required',
         description: t`Show required tests`
+      },
+      {
+        name: 'enabled',
+        description: t`Show enabled tests`
       },
       {
         name: 'requires_value',
@@ -100,7 +112,8 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       description: {},
       required: {},
       requires_value: {},
-      requires_attachment: {}
+      requires_attachment: {},
+      enabled: {}
     };
   }, [user]);
 

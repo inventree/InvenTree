@@ -1,10 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 171
+INVENTREE_API_VERSION = 172
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v172 - 2024-02-20 : https://github.com/inventree/InvenTree/pull/6526
+    - Adds "enabled" field to the PartTestTemplate API endpoint
+    - Adds "enabled" filter to the PartTestTemplate list
+    - Adds "enabled" filter to the StockItemTestResult list
 
 v171 - 2024-02-19 : https://github.com/inventree/InvenTree/pull/6516
     - Adds "key" as a filterable parameter to PartTestTemplate list endpoint

@@ -375,7 +375,7 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
         """Metaclass options for this filterset."""
 
         model = PartTestTemplate
-        fields = ['required', 'requires_value', 'requires_attachment', 'key']
+        fields = ['enabled', 'key', 'required', 'requires_attachment', 'requires_value']
 
     part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.filter(trackable=True),
@@ -440,11 +440,12 @@ class PartTestTemplateList(PartTestTemplateMixin, ListCreateAPI):
     search_fields = ['test_name', 'description']
 
     ordering_fields = [
-        'test_name',
+        'enabled',
         'required',
         'requires_value',
         'requires_attachment',
         'results',
+        'test_name',
     ]
 
     ordering = 'test_name'
