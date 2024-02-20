@@ -9,43 +9,46 @@ import { useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { fetchGlobalStates } from '../states/states';
 
-// Definitions
-export type Locales = keyof typeof languages | 'pseudo-LOCALE';
-
 export const defaultLocale = 'en';
 
-export const languages: Record<string, string> = {
-  bg: t`Bulgarian`,
-  cs: t`Czech`,
-  da: t`Danish`,
-  de: t`German`,
-  el: t`Greek`,
-  en: t`English`,
-  es: t`Spanish`,
-  'es-mx': t`Spanish (Mexican)`,
-  fa: t`Farsi / Persian`,
-  fi: t`Finnish`,
-  fr: t`French`,
-  he: t`Hebrew`,
-  hi: t`Hindi`,
-  hu: t`Hungarian`,
-  it: t`Italian`,
-  ja: t`Japanese`,
-  ko: t`Korean`,
-  nl: t`Dutch`,
-  no: t`Norwegian`,
-  pl: t`Polish`,
-  pt: t`Portuguese`,
-  'pt-br': t`Portuguese (Brazilian)`,
-  ru: t`Russian`,
-  sk: t`Slovak`,
-  sl: t`Slovenian`,
-  sv: t`Swedish`,
-  th: t`Thai`,
-  tr: t`Turkish`,
-  vi: t`Vietnamese`,
-  'zh-hans': t`Chinese (Simplified)`,
-  'zh-hant': t`Chinese (Traditional)`
+/*
+ * Function which returns a record of supported languages.
+ * Note that this is not a constant, as it is used in the LanguageSelect component
+ */
+export const getSupportedLanguages = (): Record<string, string> => {
+  return {
+    bg: t`Bulgarian`,
+    cs: t`Czech`,
+    da: t`Danish`,
+    de: t`German`,
+    el: t`Greek`,
+    en: t`English`,
+    es: t`Spanish`,
+    'es-mx': t`Spanish (Mexican)`,
+    fa: t`Farsi / Persian`,
+    fi: t`Finnish`,
+    fr: t`French`,
+    he: t`Hebrew`,
+    hi: t`Hindi`,
+    hu: t`Hungarian`,
+    it: t`Italian`,
+    ja: t`Japanese`,
+    ko: t`Korean`,
+    nl: t`Dutch`,
+    no: t`Norwegian`,
+    pl: t`Polish`,
+    pt: t`Portuguese`,
+    'pt-br': t`Portuguese (Brazilian)`,
+    ru: t`Russian`,
+    sk: t`Slovak`,
+    sl: t`Slovenian`,
+    sv: t`Swedish`,
+    th: t`Thai`,
+    tr: t`Turkish`,
+    vi: t`Vietnamese`,
+    'zh-hans': t`Chinese (Simplified)`,
+    'zh-hant': t`Chinese (Traditional)`
+  };
 };
 
 export function LanguageContext({ children }: { children: JSX.Element }) {
@@ -125,7 +128,7 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
   return <I18nProvider i18n={i18n}>{children}</I18nProvider>;
 }
 
-export async function activateLocale(locale: Locales) {
+export async function activateLocale(locale: string) {
   const { messages } = await import(`../locales/${locale}/messages.ts`);
   i18n.load(locale, messages);
   i18n.activate(locale);
