@@ -2124,7 +2124,7 @@ class Part(
 
             parameter.save()
 
-    def getTestTemplates(self, required=None, include_parent=True):
+    def getTestTemplates(self, required=None, include_parent=True, enabled=None):
         """Return a list of all test templates associated with this Part.
 
         These are used for validation of a StockItem.
@@ -2143,6 +2143,9 @@ class Part(
         if required is not None:
             tests = tests.filter(required=required)
 
+        if enabled is not None:
+            tests = tests.filter(enabled=enabled)
+
         return tests
 
     def getTestTemplateMap(self, **kwargs):
@@ -2154,9 +2157,16 @@ class Part(
 
         return templates
 
-    def getRequiredTests(self):
-        """Return the tests which are required by this part."""
-        return self.getTestTemplates(required=True)
+    def getRequiredTests(self, include_parent=True, enabled=True):
+        """Return the tests which are required by this part.
+
+        Arguments:
+            include_parent: If True, include tests which are defined for parent parts
+            enabled: If set (either True or False), filter by template "enabled" status
+        """
+        return self.getTestTemplates(
+            required=True, enabled=enabled, include_parent=include_parent
+        )
 
     @property
     def attachment_count(self):
