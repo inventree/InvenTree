@@ -196,6 +196,7 @@
             stock_item: {{ item.pk }},
             part: {{ item.part.pk }},
             quantity: {{ item.quantity|unlocalize }},
+            can_edit: {% js_bool roles.stock.change %},
         }
     );
 
@@ -291,6 +292,7 @@
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
             fields: stockItemTestResultFields({
+                part: {{ item.part.pk }},
                 stock_item: {{ item.pk }},
             }),
             title: '{% trans "Add Test Result" escape %}',

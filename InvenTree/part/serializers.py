@@ -153,12 +153,24 @@ class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer)
             'part',
             'test_name',
             'description',
+            'enabled',
             'required',
             'requires_value',
             'requires_attachment',
+            'results',
         ]
 
     key = serializers.CharField(read_only=True)
+    results = serializers.IntegerField(
+        label=_('Results'),
+        help_text=_('Number of results recorded against this template'),
+        read_only=True,
+    )
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Custom query annotations for the PartTestTemplate serializer."""
+        return queryset.annotate(results=SubqueryCount('test_results'))
 
 
 class PartSalePriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):

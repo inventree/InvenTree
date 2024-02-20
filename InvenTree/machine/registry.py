@@ -1,7 +1,7 @@
 """Machine registry."""
 
 import logging
-from typing import Dict, List, Set, Type, Union
+from typing import Union
 from uuid import UUID
 
 from machine.machine_type import BaseDriver, BaseMachineType
@@ -17,12 +17,12 @@ class MachineRegistry:
 
         Set up all needed references for internal and external states.
         """
-        self.machine_types: Dict[str, Type[BaseMachineType]] = {}
-        self.drivers: Dict[str, Type[BaseDriver]] = {}
-        self.driver_instances: Dict[str, BaseDriver] = {}
-        self.machines: Dict[str, BaseMachineType] = {}
+        self.machine_types: dict[str, type[BaseMachineType]] = {}
+        self.drivers: dict[str, type[BaseDriver]] = {}
+        self.driver_instances: dict[str, BaseDriver] = {}
+        self.machines: dict[str, BaseMachineType] = {}
 
-        self.base_drivers: List[Type[BaseDriver]] = []
+        self.base_drivers: list[type[BaseDriver]] = []
         self.errors: list[Union[str, Exception]] = []
 
     def handle_error(self, error: Union[Exception, str]):
@@ -41,10 +41,10 @@ class MachineRegistry:
 
         logger.debug('Collecting machine types')
 
-        machine_types: Dict[str, Type[BaseMachineType]] = {}
-        base_drivers: List[Type[BaseDriver]] = []
+        machine_types: dict[str, type[BaseMachineType]] = {}
+        base_drivers: list[type[BaseDriver]] = []
 
-        discovered_machine_types: Set[Type[BaseMachineType]] = (
+        discovered_machine_types: set[type[BaseMachineType]] = (
             InvenTree.helpers.inheritors(BaseMachineType)
         )
         for machine_type in discovered_machine_types:
@@ -74,9 +74,9 @@ class MachineRegistry:
 
         logger.debug('Collecting machine drivers')
 
-        drivers: Dict[str, Type[BaseDriver]] = {}
+        drivers: dict[str, type[BaseDriver]] = {}
 
-        discovered_drivers: Set[Type[BaseDriver]] = InvenTree.helpers.inheritors(
+        discovered_drivers: set[type[BaseDriver]] = InvenTree.helpers.inheritors(
             BaseDriver
         )
         for driver in discovered_drivers:

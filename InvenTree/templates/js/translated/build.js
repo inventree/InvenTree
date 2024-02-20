@@ -1127,6 +1127,8 @@ function loadBuildOutputTable(build_info, options={}) {
         '{% url "api-part-test-template-list" %}',
         {
             part: build_info.part,
+            required: true,
+            enabled: true,
         },
         {
             async: false,

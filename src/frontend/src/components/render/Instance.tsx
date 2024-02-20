@@ -23,7 +23,8 @@ import {
 import {
   RenderPart,
   RenderPartCategory,
-  RenderPartParameterTemplate
+  RenderPartParameterTemplate,
+  RenderPartTestTemplate
 } from './Part';
 import { RenderStockItem, RenderStockLocation } from './Stock';
 import { RenderOwner, RenderUser } from './User';
@@ -48,6 +49,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.part]: RenderPart,
   [ModelType.partcategory]: RenderPartCategory,
   [ModelType.partparametertemplate]: RenderPartParameterTemplate,
+  [ModelType.parttesttemplate]: RenderPartTestTemplate,
   [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
   [ModelType.purchaseorderline]: RenderPurchaseOrder,

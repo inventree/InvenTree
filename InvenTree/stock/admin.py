@@ -317,6 +317,6 @@ class StockTrackingAdmin(ImportExportModelAdmin):
 class StockItemTestResultAdmin(admin.ModelAdmin):
     """Admin class for StockItemTestResult."""
 
-    list_display = ('stock_item', 'test', 'result', 'value')
+    list_display = ('stock_item', 'test_name', 'result', 'value')
 
     autocomplete_fields = ['stock_item']

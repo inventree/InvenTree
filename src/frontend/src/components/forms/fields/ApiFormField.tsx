@@ -192,7 +192,7 @@ export function ApiFormField({
             radius="sm"
             onChange={(event) => onChange(event.currentTarget.value)}
             rightSection={
-              definition.value && !definition.required ? (
+              value && !definition.required ? (
                 <IconX size="1rem" color="red" onClick={() => onChange('')} />
               ) : null
             }

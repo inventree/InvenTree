@@ -161,7 +161,7 @@ jobs:
         if: needs.paths-filter.outputs.api == 'false'
         run: |
           diff --color -u InvenTree/schema.yml api.yaml
-          diff -u InvenTree/schema.yml api.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
+          diff -u InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
         run: invoke schema
         continue-on-error: true
@@ -443,6 +443,13 @@ jobs:
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.13.5 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 

@@ -67,8 +67,8 @@ export default function CurrencyTable() {
       columns={columns}
       props={{
         tableActions: tableActions,
-        dataFormatter: (data) => {
-          let rates = data?.exchange_rates ?? {};
+        dataFormatter: (data: any) => {
+          let rates = data.exchange_rates ?? {};
 
           return Object.entries(rates).map(([currency, rate]) => {
             return {

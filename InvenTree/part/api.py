@@ -375,7 +375,7 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
         """Metaclass options for this filterset."""
 
         model = PartTestTemplate
-        fields = ['required', 'requires_value', 'requires_attachment']
+        fields = ['enabled', 'key', 'required', 'requires_attachment', 'requires_value']
 
     part = rest_filters.ModelChoiceFilter(
         queryset=Part.objects.filter(trackable=True),
@@ -389,29 +389,64 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
 
         Note that for the 'part' field, we also include any parts "above" the specified part.
         """
-        variants = part.get_ancestors(include_self=True)
-        return queryset.filter(part__in=variants)
+        include_inherited = str2bool(
+            self.request.query_params.get('include_inherited', True)
+        )
+
+        if include_inherited:
+            return queryset.filter(part__in=part.get_ancestors(include_self=True))
+        else:
+            return queryset.filter(part=part)
+
+    has_results = rest_filters.BooleanFilter(
+        label=_('Has Results'), method='filter_has_results'
+    )
+
+    def filter_has_results(self, queryset, name, value):
+        """Filter by whether the PartTestTemplate has any associated test results."""
+        if str2bool(value):
+            return queryset.exclude(results=0)
+        return queryset.filter(results=0)
 
 
-class PartTestTemplateDetail(RetrieveUpdateDestroyAPI):
+class PartTestTemplateMixin:
+    """Mixin class for the PartTestTemplate API endpoints."""
+
+    queryset = PartTestTemplate.objects.all()
+    serializer_class = part_serializers.PartTestTemplateSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the PartTestTemplateDetail endpoints."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.PartTestTemplateSerializer.annotate_queryset(
+            queryset
+        )
+        return queryset
+
+
+class PartTestTemplateDetail(PartTestTemplateMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for PartTestTemplate model."""
 
-    queryset = PartTestTemplate.objects.all()
-    serializer_class = part_serializers.PartTestTemplateSerializer
+    pass
 
 
-class PartTestTemplateList(ListCreateAPI):
+class PartTestTemplateList(PartTestTemplateMixin, ListCreateAPI):
     """API endpoint for listing (and creating) a PartTestTemplate."""
 
-    queryset = PartTestTemplate.objects.all()
-    serializer_class = part_serializers.PartTestTemplateSerializer
     filterset_class = PartTestTemplateFilter
 
     filter_backends = SEARCH_ORDER_FILTER
 
     search_fields = ['test_name', 'description']
 
-    ordering_fields = ['test_name', 'required', 'requires_value', 'requires_attachment']
+    ordering_fields = [
+        'enabled',
+        'required',
+        'requires_value',
+        'requires_attachment',
+        'results',
+        'test_name',
+    ]
 
     ordering = 'test_name'
 
@@ -1571,7 +1606,9 @@ class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
 
     ordering_field_aliases = {
         'name': 'template__name',
+        'units': 'template__units',
         'data': ['data_numeric', 'data'],
+        'part': 'part__name',
     }
 
     search_fields = [

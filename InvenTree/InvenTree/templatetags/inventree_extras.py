@@ -421,7 +421,7 @@ def progress_bar(val, max_val, *args, **kwargs):
         style_tags.append(f'max-width: {max_width};')
 
     html = f"""
-    <div id='{item_id}' class='progress' style='{" ".join(style_tags)}'>
+    <div id='{item_id}' class='progress' style='{' '.join(style_tags)}'>
         <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
         <div class='progress-value'>{val} / {max_val}</div>
     </div>
