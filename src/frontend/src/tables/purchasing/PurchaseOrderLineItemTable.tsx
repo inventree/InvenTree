@@ -12,7 +12,7 @@ import { RenderStockLocation } from '../../components/render/Stock';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { purchaseOrderLineItemFields } from '../../forms/PurchaseOrderForms';
+import { usePurchaseOrderLineItemFields } from '../../forms/PurchaseOrderForms';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -178,7 +178,7 @@ export function PurchaseOrderLineItemTable({
   const newLine = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     title: t`Add Line Item`,
-    fields: purchaseOrderLineItemFields(),
+    fields: usePurchaseOrderLineItemFields({ create: true }),
     initialData: {
       order: orderId
     },
@@ -193,7 +193,7 @@ export function PurchaseOrderLineItemTable({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Edit Line Item`,
-    fields: purchaseOrderLineItemFields(),
+    fields: usePurchaseOrderLineItemFields({}),
     onFormSuccess: table.refreshTable
   });
 
