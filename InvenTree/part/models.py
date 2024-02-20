@@ -3466,6 +3466,10 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Enter description for this test'),
     )
 
+    enabled = models.BooleanField(
+        default=True, verbose_name=_('Enabled'), help_text=_('Is this test enabled?')
+    )
+
     required = models.BooleanField(
         default=True,
         verbose_name=_('Required'),
