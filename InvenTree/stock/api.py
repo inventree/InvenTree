@@ -1247,6 +1247,10 @@ class StockItemTestResultFilter(rest_filters.FilterSet):
         label='Required', field_name='template__required'
     )
 
+    enabled = rest_filters.BooleanFilter(
+        label='Enabled', field_name='template__enabled'
+    )
+
     test = rest_filters.CharFilter(
         label='Test name (case insensitive)', method='filter_test_name'
     )
