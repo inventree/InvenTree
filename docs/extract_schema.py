@@ -52,6 +52,33 @@ def top_level_path(path: str) -> str:
     return GENERAL_PATH
 
 
+def generate_schema_file(key: str) -> None:
+    """Generate a schema file for the provided key."""
+    description = (
+        SPECIAL_PATHS[key] if key in SPECIAL_PATHS else 'General API Endpoints'
+    )
+
+    output = f"""
+    ---
+    title: {description}
+    ---
+
+    The *{description}* section of the InvenTree API schema is documented below.
+
+    [OAD(./docs/docs/api/schema/{key}.yml)]
+    """
+
+    output = textwrap.dedent(output).strip() + '\n'
+
+    output_file = os.path.join(os.path.dirname(__file__), OUTPUT_DIR, f'{key}.md')
+    output_file = os.path.abspath(output_file)
+
+    print('Writing schema file to:', output_file)
+
+    with open(output_file, 'w') as f:
+        f.write(output)
+
+
 def generate_index_file(version: str):
     """Generate the index file for the API schema."""
     output = f"""
@@ -188,6 +215,9 @@ def parse_api_file(filename: str):
 
         with open(output_file, 'w') as f:
             yaml.dump(output, f)
+
+        # Generate a markdown file for the schema
+        generate_schema_file(key)
 
     # Finally, generate an index file for the API schema
     generate_index_file(data['info']['version'])
