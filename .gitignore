@@ -116,6 +116,5 @@ api.yaml
 InvenTree/web/static
 
 # Generated docs files
-docs/docs/api/schema.md
 docs/docs/api/*.yml
 docs/docs/api/schema/*.yml
