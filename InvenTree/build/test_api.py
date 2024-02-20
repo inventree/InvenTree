@@ -870,11 +870,9 @@ class BuildAllocationTest(BuildAPITest):
                         "quantity": 0.1616,
                     }
                 ]
-            }
+            },
+            expected_code=201,
         )
-
-        print("Response:", response.status_code)
-        print(response.data)
 
 
 class BuildOverallocationTest(BuildAPITest):
