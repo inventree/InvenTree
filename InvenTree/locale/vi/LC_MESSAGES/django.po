@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-20 23:36+0000\n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-21 04:34\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -1270,10 +1270,9 @@ msgid "Quantity cannot be greater than the output quantity"
 msgstr "Số lượng không thể lớn hơn số lượng đầu ra"
 
 #: build/models.py:921 build/serializers.py:533
-#, fuzzy, python-brace-format
-#| msgid "This stock item has not passed all required tests"
+#, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr "Mặt hàng không đạt toàn bộ yêu cầu thử nghiệm"
+msgstr ""
 
 #: build/models.py:1283
 msgid "Build object"
@@ -5220,10 +5219,8 @@ msgid "Order is not open"
 msgstr "Đơn đặt là không được mở"
 
 #: order/serializers.py:429
-#, fuzzy
-#| msgid "Part Pricing"
 msgid "Auto Pricing"
-msgstr "Định giá sản phẩm"
+msgstr ""
 
 #: order/serializers.py:431
 msgid "Automatically calculate purchase price based on supplier part data"
@@ -5234,10 +5231,8 @@ msgid "Purchase price currency"
 msgstr "Tiền tệ giá mua"
 
 #: order/serializers.py:447
-#, fuzzy
-#| msgid "Merged stock items"
 msgid "Merge Items"
-msgstr "Kho hàng đã được gộp"
+msgstr ""
 
 #: order/serializers.py:449
 msgid "Merge items with the same part, destination and target date into one line item"
@@ -5901,10 +5896,8 @@ msgid "Maximum Price"
 msgstr "Giá cao nhất"
 
 #: part/api.py:402
-#, fuzzy
-#| msgid "Test Results"
 msgid "Has Results"
-msgstr "Kết quả kiểm tra"
+msgstr ""
 
 #: part/api.py:569
 msgid "Incoming Purchase Order"
@@ -6388,16 +6381,12 @@ msgid "Enter a name for the test"
 msgstr "Nhập tên cho kiểm thử"
 
 #: part/models.py:3467
-#, fuzzy
-#| msgid "Test Name"
 msgid "Test Key"
-msgstr "Tên kiểm thử"
+msgstr ""
 
 #: part/models.py:3468
-#, fuzzy
-#| msgid "Enter a name for the test"
 msgid "Simplified key for the test"
-msgstr "Nhập tên cho kiểm thử"
+msgstr ""
 
 #: part/models.py:3475
 msgid "Test Description"
@@ -6408,10 +6397,8 @@ msgid "Enter description for this test"
 msgstr "Nhập mô tả cho kiểm thử này"
 
 #: part/models.py:3480
-#, fuzzy
-#| msgid "Is this test required to pass?"
 msgid "Is this test enabled?"
-msgstr "Kiểm thử này bắt buộc phải đạt?"
+msgstr ""
 
 #: part/models.py:3485 templates/js/translated/part.js:2899
 #: templates/js/translated/table_filters.js:477
@@ -6653,10 +6640,8 @@ msgid "Duplicate relationship already exists"
 msgstr "Đã tồn tại mối quan hệ trùng lặp"
 
 #: part/serializers.py:165
-#, fuzzy
-#| msgid "Result"
 msgid "Results"
-msgstr "Kết quả"
+msgstr ""
 
 #: part/serializers.py:166
 msgid "Number of results recorded against this template"
@@ -8818,10 +8803,8 @@ msgid "Serial numbers already exist"
 msgstr "Số sêri đã tồn tại"
 
 #: stock/models.py:1593
-#, fuzzy
-#| msgid "Asset file does not exist"
 msgid "Test template does not exist"
-msgstr "Tệp tin tài sản không tồn tại"
+msgstr ""
 
 #: stock/models.py:1611
 msgid "Stock item has been assigned to a sales order"
@@ -8896,16 +8879,12 @@ msgid "Test notes"
 msgstr "Ghi chú kiểm thử"
 
 #: stock/serializers.py:96
-#, fuzzy
-#| msgid "Attachment must be uploaded for this test"
 msgid "Test template for this result"
-msgstr "Phải tải liên đính kèm cho kiểm thử này"
+msgstr ""
 
 #: stock/serializers.py:115
-#, fuzzy
-#| msgid "Allocation items must be provided"
 msgid "Template ID or test name must be provided"
-msgstr "Hàng hóa phân bổ phải được cung cấp"
+msgstr ""
 
 #: stock/serializers.py:169
 msgid "Serial number is too large"
@@ -13820,8 +13799,7 @@ msgstr "Nhà cung cấp SSO đã chọn không hợp lệ hoặc đã không đ�
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -14002,5 +13980,3 @@ msgstr "Quyển để sửa mục"
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
 
-#~ msgid "Test name"
-#~ msgstr "Tên kiểm thử"
