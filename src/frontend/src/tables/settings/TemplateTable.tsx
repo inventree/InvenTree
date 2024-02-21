@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { TemplateEditor } from '../../components/editors/TemplateEditor';
 import { CodeEditor } from '../../components/editors/TemplateEditor/CodeEditor';
-import { PreviewArea } from '../../components/editors/TemplateEditor/PDFPreview';
+import { PreviewArea } from '../../components/editors/TemplateEditor/PdfPreview';
 import {
   ActionDropdown,
   DeleteItemAction,
