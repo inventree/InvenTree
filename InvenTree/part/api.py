@@ -114,6 +114,120 @@ class CategoryFilter(rest_filters.FilterSet):
         model = PartCategory
         fields = ['name', 'structural']
 
+    starred = rest_filters.BooleanFilter(
+        label=_('Starred'),
+        method='filter_starred',
+        help_text=_('Filter by starred categories'),
+    )
+
+    def filter_starred(self, queryset, name, value):
+        """Filter by whether the PartCategory is starred by the current user."""
+        user = self.request.user
+
+        starred_categories = [
+            star.category.pk for star in user.starred_categories.all()
+        ]
+
+        if str2bool(value):
+            return queryset.filter(pk__in=starred_categories)
+
+        return queryset.exclude(pk__in=starred_categories)
+
+    top_level = rest_filters.BooleanFilter(
+        label=_('Top Level'),
+        method='filter_top_level',
+        help_text=_('Filter by top-level categories'),
+    )
+
+    def filter_top_level(self, queryset, name, value):
+        """Filter by top-level categories."""
+        if str2bool(value):
+            return queryset.filter(parent__isnull=True, level=0)
+        return queryset.filter(parent__isnull=False)
+
+    depth = rest_filters.NumberFilter(
+        label=_('Depth'), method='filter_depth', help_text=_('Filter by category depth')
+    )
+
+    def filter_depth(self, queryset, name, value):
+        """Filter by the "depth" of the PartCategory.
+
+        - This filter is used to limit the depth of the category tree
+        - If the "parent" filter is also provided, the depth is calculated from the parent category
+        """
+        parent = self.data.get('parent', None)
+
+        # Only filter if the parent filter is *not* provided
+        if not parent:
+            queryset = queryset.filter(level__lte=value)
+
+        return queryset
+
+    cascade = rest_filters.BooleanFilter(
+        label=_('Cascade'),
+        method='filter_cascade',
+        help_text=_('Include sub-categories in filtered results'),
+    )
+
+    def filter_cascade(self, queryset, name, value):
+        """Filter by whether to include sub-categories in the filtered results.
+
+        Note: This filter does *nothing* - but the value is checked by the "filter_parent" method.
+        """
+        return queryset
+
+    parent = rest_filters.ModelChoiceFilter(
+        queryset=PartCategory.objects.all(),
+        label=_('Parent'),
+        method='filter_parent',
+        help_text=_('Filter by parent category'),
+    )
+
+    def filter_parent(self, queryset, name, value):
+        """Filter by parent category.
+
+        Note that the filtering behaviour here varies,
+        depending on whether the 'cascade' value is set.
+
+        So, we have to check the "cascade" value here.
+        """
+        parent = value
+        depth = self.data.get('depth', None)
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if cascade:
+            # Return recursive subcategories
+            queryset = queryset.filter(
+                parent__in=parent.get_descendants(include_self=True)
+            )
+        else:
+            # Return only direct children
+            queryset = queryset.filter(parent=parent)
+
+        if depth is not None:
+            # Filter by depth from parent
+            depth = int(depth)
+            queryset = queryset.filter(level__lte=parent.level + depth)
+
+        return queryset
+
+    exclude_tree = rest_filters.ModelChoiceFilter(
+        queryset=PartCategory.objects.all(),
+        label=_('Exclude Tree'),
+        method='filter_exclude_tree',
+        help_text=_('Exclude sub-categories under the specified category'),
+    )
+
+    def filter_exclude_tree(self, queryset, name, value):
+        """Exclude all sub-categories under the specified category."""
+        # Exclude the specified category
+        queryset = queryset.exclude(pk=value.pk)
+
+        # Exclude any sub-categories also
+        queryset = queryset.exclude(parent__in=value.get_descendants(include_self=True))
+
+        return queryset
+
 
 class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
@@ -131,81 +245,6 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
         filename = f'InvenTree_Categories.{export_format}'
 
         return DownloadFile(filedata, filename)
-
-    def filter_queryset(self, queryset):
-        """Custom filtering.
-
-        Rules:
-        - Allow filtering by "null" parent to retrieve top-level part categories
-        """
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        cat_id = params.get('parent', None)
-
-        cascade = str2bool(params.get('cascade', False))
-
-        depth = str2int(params.get('depth', None))
-
-        # Do not filter by category
-        if cat_id is None:
-            pass
-        # Look for top-level categories
-        elif isNull(cat_id):
-            if not cascade:
-                queryset = queryset.filter(parent=None)
-
-            if cascade and depth is not None:
-                queryset = queryset.filter(level__lte=depth)
-
-        else:
-            try:
-                category = PartCategory.objects.get(pk=cat_id)
-
-                if cascade:
-                    parents = category.get_descendants(include_self=True)
-                    if depth is not None:
-                        parents = parents.filter(level__lte=category.level + depth)
-
-                    parent_ids = [p.id for p in parents]
-
-                    queryset = queryset.filter(parent__in=parent_ids)
-                else:
-                    queryset = queryset.filter(parent=category)
-
-            except (ValueError, PartCategory.DoesNotExist):
-                pass
-
-        # Exclude PartCategory tree
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                cat = PartCategory.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[c.pk for c in cat.get_descendants(include_self=True)]
-                )
-
-            except (ValueError, PartCategory.DoesNotExist):
-                pass
-
-        # Filter by "starred" status
-        starred = params.get('starred', None)
-
-        if starred is not None:
-            starred = str2bool(starred)
-            starred_categories = [
-                star.category.pk for star in self.request.user.starred_categories.all()
-            ]
-
-            if starred:
-                queryset = queryset.filter(pk__in=starred_categories)
-            else:
-                queryset = queryset.exclude(pk__in=starred_categories)
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER
 
