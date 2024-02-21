@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-20 23:36+0000\n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-21 04:34\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1270,10 +1270,9 @@ msgid "Quantity cannot be greater than the output quantity"
 msgstr "Количество не может быть больше количества продукции"
 
 #: build/models.py:921 build/serializers.py:533
-#, fuzzy, python-brace-format
-#| msgid "This stock item has not passed all required tests"
+#, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr "Эта складская позиция не прошла требуемое тестирование"
+msgstr ""
 
 #: build/models.py:1283
 msgid "Build object"
@@ -5220,10 +5219,8 @@ msgid "Order is not open"
 msgstr "Заказ не открыт"
 
 #: order/serializers.py:429
-#, fuzzy
-#| msgid "Part Pricing"
 msgid "Auto Pricing"
-msgstr "Цена Детали"
+msgstr ""
 
 #: order/serializers.py:431
 msgid "Automatically calculate purchase price based on supplier part data"
@@ -5234,10 +5231,8 @@ msgid "Purchase price currency"
 msgstr "Валюта цены закупки"
 
 #: order/serializers.py:447
-#, fuzzy
-#| msgid "Merge Stock Items"
 msgid "Merge Items"
-msgstr "Объединить складские позиции"
+msgstr ""
 
 #: order/serializers.py:449
 msgid "Merge items with the same part, destination and target date into one line item"
@@ -5901,10 +5896,8 @@ msgid "Maximum Price"
 msgstr "Максимальная цена"
 
 #: part/api.py:402
-#, fuzzy
-#| msgid "Test Results"
 msgid "Has Results"
-msgstr "Результаты тестирования"
+msgstr ""
 
 #: part/api.py:569
 msgid "Incoming Purchase Order"
@@ -6388,16 +6381,12 @@ msgid "Enter a name for the test"
 msgstr "Введите имя для теста"
 
 #: part/models.py:3467
-#, fuzzy
-#| msgid "Test Name"
 msgid "Test Key"
-msgstr "Название теста"
+msgstr ""
 
 #: part/models.py:3468
-#, fuzzy
-#| msgid "Enter a name for the test"
 msgid "Simplified key for the test"
-msgstr "Введите имя для теста"
+msgstr ""
 
 #: part/models.py:3475
 msgid "Test Description"
@@ -6408,10 +6397,8 @@ msgid "Enter description for this test"
 msgstr "Введите описание для этого теста"
 
 #: part/models.py:3480
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this test enabled?"
-msgstr "Эта деталь активна?"
+msgstr ""
 
 #: part/models.py:3485 templates/js/translated/part.js:2899
 #: templates/js/translated/table_filters.js:477
@@ -6653,10 +6640,8 @@ msgid "Duplicate relationship already exists"
 msgstr ""
 
 #: part/serializers.py:165
-#, fuzzy
-#| msgid "Result"
 msgid "Results"
-msgstr "Результат"
+msgstr ""
 
 #: part/serializers.py:166
 msgid "Number of results recorded against this template"
@@ -8818,10 +8803,8 @@ msgid "Serial numbers already exist"
 msgstr "Серийные номера уже существуют"
 
 #: stock/models.py:1593
-#, fuzzy
-#| msgid "Test Templates"
 msgid "Test template does not exist"
-msgstr "Шаблоны тестирования"
+msgstr ""
 
 #: stock/models.py:1611
 msgid "Stock item has been assigned to a sales order"
@@ -8849,7 +8832,7 @@ msgstr ""
 
 #: stock/models.py:1634 stock/serializers.py:1200
 msgid "Duplicate stock items"
-msgstr "Дублировать складские позиции"
+msgstr "Дублировать складские позиции\n"
 
 #: stock/models.py:1638
 msgid "Stock items must refer to the same part"
@@ -8896,16 +8879,12 @@ msgid "Test notes"
 msgstr "Записи Тестирования"
 
 #: stock/serializers.py:96
-#, fuzzy
-#| msgid "Report template file"
 msgid "Test template for this result"
-msgstr "Файл шаблона отчёта"
+msgstr ""
 
 #: stock/serializers.py:115
-#, fuzzy
-#| msgid "Allocation items must be provided"
 msgid "Template ID or test name must be provided"
-msgstr "Необходимо указать резервируемые элементы"
+msgstr ""
 
 #: stock/serializers.py:169
 msgid "Serial number is too large"
@@ -9306,7 +9285,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1915
 msgid "stock item"
-msgstr "складская позиция"
+msgstr "складская позиция\n"
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -9342,7 +9321,7 @@ msgstr "Вернуть на склад"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr "Создать сериализированные позиции из этой складской позиции"
+msgstr "Создать сериализированные позиции из этой складской позиции\n"
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
@@ -10810,7 +10789,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Складская позиция уже просканирована"
+msgstr "Складская позиция уже просканирована\n"
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
@@ -12501,10 +12480,8 @@ msgid "Add to purchase order"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:755
-#, fuzzy
-#| msgid "Merge stock"
 msgid "Merge"
-msgstr "Объединить Запасы"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:859
 msgid "No matching supplier parts"
@@ -13011,11 +12988,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Создана новая складская позиция"
+msgstr "Создана новая складская позиция\n"
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Создано несколько складских позиций"
+msgstr "Создано несколько складских позиций\n"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
@@ -13822,8 +13799,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -14004,5 +13980,3 @@ msgstr "Разрешение на редактирование элементо�
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
 
-#~ msgid "Test name"
-#~ msgstr "Название теста"
