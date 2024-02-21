@@ -7,7 +7,7 @@ import os
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
@@ -887,7 +887,7 @@ class StockItem(
     stocktake_date = models.DateField(blank=True, null=True)
 
     stocktake_user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -2329,7 +2329,9 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
         help_text=_('Entry notes'),
     )
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True
+    )
 
     deltas = models.JSONField(null=True, blank=True)
 
@@ -2444,6 +2446,8 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         blank=True, max_length=500, verbose_name=_('Notes'), help_text=_('Test notes')
     )
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True
+    )
 
     date = models.DateTimeField(auto_now_add=True, editable=False)

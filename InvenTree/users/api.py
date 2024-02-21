@@ -4,7 +4,7 @@ import datetime
 import logging
 
 from django.contrib.auth import get_user, login
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
@@ -25,6 +25,7 @@ from InvenTree.mixins import (
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from InvenTree.settings import FRONTEND_URL_BASE
+from users.CustomUser import CustomUser
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
@@ -62,9 +63,9 @@ class OwnerList(ListAPI):
         # Get a list of all matching users, depending on the *is_active* flag
         if is_active is not None:
             is_active = InvenTree.helpers.str2bool(is_active)
-            matching_user_ids = User.objects.filter(is_active=is_active).values_list(
-                'pk', flat=True
-            )
+            matching_user_ids = CustomUser.objects.filter(
+                is_active=is_active
+            ).values_list('pk', flat=True)
 
         for result in queryset.all():
             name = str(result.name()).lower().strip()
@@ -147,7 +148,7 @@ class RoleDetails(APIView):
 class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = ExendedUserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -163,7 +164,7 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
 class UserList(ListCreateAPI):
     """List endpoint for detail on all users."""
 
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserCreateSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = SEARCH_ORDER_FILTER

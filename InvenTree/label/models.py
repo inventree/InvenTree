@@ -6,7 +6,6 @@ import os
 import sys
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
@@ -289,7 +288,9 @@ class LabelOutput(models.Model):
     created = models.DateField(auto_now_add=True, editable=False)
 
     # User who generated the label
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True
+    )
 
 
 class StockItemLabel(LabelTemplate):

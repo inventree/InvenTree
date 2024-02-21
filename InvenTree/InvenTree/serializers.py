@@ -25,6 +25,7 @@ from taggit.serializers import TaggitSerializer
 import common.models as common_models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
+from users.CustomUser import CustomUser
 
 
 class EmptySerializer(serializers.Serializer):
@@ -448,7 +449,7 @@ class UserCreateSerializer(ExendedUserSerializer):
             raise serializers.ValidationError(_('Only superusers can create new users'))
 
         # Generate a random password
-        password = User.objects.make_random_password(length=14)
+        password = CustomUser.objects.make_random_password(length=14)
         attrs.update({'password': password})
         return super().validate(attrs)
 

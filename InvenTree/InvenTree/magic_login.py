@@ -1,7 +1,6 @@
 """Functions for magic login."""
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -13,6 +12,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 import InvenTree.version
+from users.CustomUser import CustomUser
 
 
 def send_simple_login_email(user, link):
@@ -63,8 +63,8 @@ class GetSimpleLoginView(GenericAPIView):
     def get_user(self, email):
         """Find the user with this email address."""
         try:
-            return User.objects.get(email=email)
-        except User.DoesNotExist:
+            return CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
             return None
 
     def create_link(self, user):
