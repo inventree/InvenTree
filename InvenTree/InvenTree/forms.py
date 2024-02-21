@@ -6,7 +6,6 @@ from urllib.parse import urlencode
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import Group, User
-from django.contrib.sites.models import Site
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -23,6 +22,7 @@ from crispy_forms.layout import Field, Layout
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 
+import InvenTree.helpers_model
 import InvenTree.sso
 from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
@@ -293,7 +293,8 @@ class CustomUrlMixin:
     def get_email_confirmation_url(self, request, emailconfirmation):
         """Custom email confirmation (activation) url."""
         url = reverse('account_confirm_email', args=[emailconfirmation.key])
-        return Site.objects.get_current().domain + url
+
+        return InvenTree.helpers_model.construct_absolute_url(url)
 
 
 class CustomAccountAdapter(
@@ -363,8 +364,16 @@ class CustomSocialAccountAdapter(
         self, request, provider_id, error=None, exception=None, extra_context=None
     ):
         """Callback method for authentication errors."""
+        if not error:
+            error = request.GET.get('error', None)
+
+        if not exception:
+            exception = request.GET.get('error_description', None)
+
+        path = request.path or 'sso'
+
         # Log the error to the database
-        log_error(request.path if request else 'sso')
+        log_error(path, error_name=error, error_data=exception)
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
 
 

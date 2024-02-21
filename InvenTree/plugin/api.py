@@ -1,7 +1,10 @@
 """API for the plugin app."""
 
+from django.core.exceptions import ValidationError
 from django.urls import include, path, re_path
+from django.utils.translation import gettext_lazy as _
 
+from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
@@ -13,7 +16,6 @@ import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
 from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
-from InvenTree.helpers import str2bool
 from InvenTree.mixins import (
     CreateAPI,
     ListAPI,
@@ -30,6 +32,87 @@ from plugin.models import PluginConfig, PluginSetting
 from plugin.plugin import InvenTreePlugin
 
 
+class PluginFilter(rest_filters.FilterSet):
+    """Filter for the PluginConfig model.
+
+    Provides custom filtering options for the FilterList API endpoint.
+    """
+
+    class Meta:
+        """Meta for the filter."""
+
+        model = PluginConfig
+        fields = ['active']
+
+    mixin = rest_filters.CharFilter(
+        field_name='mixin', method='filter_mixin', label='Mixin'
+    )
+
+    def filter_mixin(self, queryset, name, value):
+        """Filter by implement mixin.
+
+        - A comma-separated list of mixin names can be provided.
+        - Only plugins which implement all of the provided mixins will be returned.
+        """
+        matches = []
+        mixins = [x.strip().lower() for x in value.split(',') if x]
+
+        for result in queryset:
+            match = True
+
+            for mixin in mixins:
+                if mixin not in result.mixins().keys():
+                    match = False
+                    break
+
+            if match:
+                matches.append(result.pk)
+
+        return queryset.filter(pk__in=matches)
+
+    builtin = rest_filters.BooleanFilter(
+        field_name='builtin', label='Builtin', method='filter_builtin'
+    )
+
+    def filter_builtin(self, queryset, name, value):
+        """Filter by 'builtin' flag."""
+        matches = []
+
+        for result in queryset:
+            if result.is_builtin() == value:
+                matches.append(result.pk)
+
+        return queryset.filter(pk__in=matches)
+
+    sample = rest_filters.BooleanFilter(
+        field_name='sample', label='Sample', method='filter_sample'
+    )
+
+    def filter_sample(self, queryset, name, value):
+        """Filter by 'sample' flag."""
+        matches = []
+
+        for result in queryset:
+            if result.is_sample() == value:
+                matches.append(result.pk)
+
+        return queryset.filter(pk__in=matches)
+
+    installed = rest_filters.BooleanFilter(
+        field_name='installed', label='Installed', method='filter_installed'
+    )
+
+    def filter_installed(self, queryset, name, value):
+        """Filter by 'installed' flag."""
+        matches = []
+
+        for result in queryset:
+            if result.is_installed() == value:
+                matches.append(result.pk)
+
+        return queryset.filter(pk__in=matches)
+
+
 class PluginList(ListAPI):
     """API endpoint for list of PluginConfig objects.
 
@@ -41,69 +124,10 @@ class PluginList(ListAPI):
     # e.g. determining which label printing plugins are available
     permission_classes = [permissions.IsAuthenticated]
 
+    filterset_class = PluginFilter
+
     serializer_class = PluginSerializers.PluginConfigSerializer
     queryset = PluginConfig.objects.all()
-
-    def filter_queryset(self, queryset):
-        """Filter for API requests.
-
-        Filter by mixin with the `mixin` flag
-        """
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter plugins which support a given mixin
-        mixin = params.get('mixin', None)
-
-        if mixin:
-            matches = []
-
-            for result in queryset:
-                if mixin in result.mixins().keys():
-                    matches.append(result.pk)
-
-            queryset = queryset.filter(pk__in=matches)
-
-        # Filter queryset by 'builtin' flag
-        # We cannot do this using normal filters as it is not a database field
-        if 'builtin' in params:
-            builtin = str2bool(params['builtin'])
-
-            matches = []
-
-            for result in queryset:
-                if result.is_builtin() == builtin:
-                    matches.append(result.pk)
-
-            queryset = queryset.filter(pk__in=matches)
-
-        # Filter queryset by 'sample' flag
-        # We cannot do this using normal filters as it is not a database field
-        if 'sample' in params:
-            sample = str2bool(params['sample'])
-
-            matches = []
-
-            for result in queryset:
-                if result.is_sample() == sample:
-                    matches.append(result.pk)
-
-            queryset = queryset.filter(pk__in=matches)
-
-        # Filter queryset by 'installed' flag
-        if 'installed' in params:
-            installed = str2bool(params['installed'])
-
-            matches = []
-
-            for result in queryset:
-                if result.is_installed() == installed:
-                    matches.append(result.pk)
-
-            queryset = queryset.filter(pk__in=matches)
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -132,6 +156,20 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
 
+    def delete(self, request, *args, **kwargs):
+        """Handle DELETE request for a PluginConfig instance.
+
+        We only allow plugin deletion if the plugin is not active.
+        """
+        cfg = self.get_object()
+
+        if cfg.active:
+            raise ValidationError({
+                'detail': _('Plugin cannot be deleted as it is currently active')
+            })
+
+        return super().delete(request, *args, **kwargs)
+
 
 class PluginInstall(CreateAPI):
     """Endpoint for installing a new plugin."""
@@ -154,6 +192,18 @@ class PluginInstall(CreateAPI):
     def perform_create(self, serializer):
         """Saving the serializer instance performs plugin installation."""
         return serializer.save()
+
+
+class PluginUninstall(UpdateAPI):
+    """Endpoint for uninstalling a single plugin."""
+
+    queryset = PluginConfig.objects.all()
+    serializer_class = PluginSerializers.PluginUninstallSerializer
+    permission_classes = [IsSuperuser]
+
+    def perform_update(self, serializer):
+        """Uninstall the plugin."""
+        serializer.save()
 
 
 class PluginActivate(UpdateAPI):
@@ -354,76 +404,77 @@ class RegistryStatusView(APIView):
 
 
 plugin_api_urls = [
-    re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
-    re_path(r'^barcode/', include(barcode_api_urls)),
-    re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
-    re_path(
-        r'^plugins/',
+    path('action/', ActionPluginView.as_view(), name='api-action-plugin'),
+    path('barcode/', include(barcode_api_urls)),
+    path('locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
+    path(
+        'plugins/',
         include([
             # Plugin settings URLs
-            re_path(
-                r'^settings/',
+            path(
+                'settings/',
                 include([
                     re_path(
                         r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/',
                         PluginSettingDetail.as_view(),
                         name='api-plugin-setting-detail',
                     ),  # Used for admin interface
-                    re_path(
-                        r'^.*$',
-                        PluginSettingList.as_view(),
-                        name='api-plugin-setting-list',
+                    path(
+                        '', PluginSettingList.as_view(), name='api-plugin-setting-list'
                     ),
                 ]),
             ),
             # Detail views for a single PluginConfig item
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
-                    re_path(
-                        r'^settings/',
+                    path(
+                        'settings/',
                         include([
                             re_path(
                                 r'^(?P<key>\w+)/',
                                 PluginSettingDetail.as_view(),
                                 name='api-plugin-setting-detail-pk',
                             ),
-                            re_path(
-                                r'^.*$',
+                            path(
+                                '',
                                 PluginAllSettingList.as_view(),
                                 name='api-plugin-settings',
                             ),
                         ]),
                     ),
-                    re_path(
-                        r'^activate/',
+                    path(
+                        'activate/',
                         PluginActivate.as_view(),
                         name='api-plugin-detail-activate',
                     ),
-                    re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
+                    path(
+                        'uninstall/',
+                        PluginUninstall.as_view(),
+                        name='api-plugin-uninstall',
+                    ),
+                    path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),
             ),
             # Metadata
-            re_path(
-                '^metadata/',
+            path(
+                'metadata/',
                 MetadataView.as_view(),
                 {'model': PluginConfig},
                 name='api-plugin-metadata',
             ),
             # Plugin management
-            re_path(r'^reload/', PluginReload.as_view(), name='api-plugin-reload'),
-            re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
-            re_path(
-                r'^activate/', PluginActivate.as_view(), name='api-plugin-activate'
-            ),
+            path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
+            path('install/', PluginInstall.as_view(), name='api-plugin-install'),
+            path('activate/', PluginActivate.as_view(), name='api-plugin-activate'),
             # Registry status
-            re_path(
-                r'^status/',
+            path(
+                'status/',
                 RegistryStatusView.as_view(),
                 name='api-plugin-registry-status',
             ),
             # Anything else
-            re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
+            path('', PluginList.as_view(), name='api-plugin-list'),
         ]),
     ),
 ]

@@ -3,7 +3,6 @@ import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { Locales } from '../contexts/LanguageContext';
 import { HostList } from './states';
 
 interface LocalStateProps {
@@ -14,8 +13,8 @@ interface LocalStateProps {
   hostKey: string;
   hostList: HostList;
   setHostList: (newHostList: HostList) => void;
-  language: Locales;
-  setLanguage: (newLanguage: Locales) => void;
+  language: string;
+  setLanguage: (newLanguage: string) => void;
   // theme
   primaryColor: string;
   whiteColor: string;
@@ -24,6 +23,12 @@ interface LocalStateProps {
   loader: LoaderType;
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
+  tableColumnNames: Record<string, Record<string, string>>;
+  getTableColumnNames: (tableKey: string) => Record<string, string>;
+  setTableColumnNames: (
+    tableKey: string
+  ) => (names: Record<string, string>) => void;
+  clearTableColumnNames: () => void;
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -55,6 +60,22 @@ export const useLocalState = create<LocalStateProps>()(
             lastUsedPanels: { ...get().lastUsedPanels, [panelKey]: value }
           });
         }
+      },
+      tableColumnNames: {},
+      getTableColumnNames: (tableKey) => {
+        return get().tableColumnNames[tableKey] || {};
+      },
+      setTableColumnNames: (tableKey) => (names) => {
+        // Update the table column names for the given table
+        set({
+          tableColumnNames: {
+            ...get().tableColumnNames,
+            [tableKey]: names
+          }
+        });
+      },
+      clearTableColumnNames: () => {
+        set({ tableColumnNames: {} });
       }
     }),
     {

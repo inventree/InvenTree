@@ -14,7 +14,7 @@ class MyUrlsPlugin(UrlsMixin, InvenTreePlugin):
     NAME = "UrlsMixin"
 
     URLS = [
-        url(r'increase/(?P<location>\d+)/(?P<pk>\d+)/', self.view_increase, name='increase-level'),
+        re_path(r'increase/(?P<location>\d+)/(?P<pk>\d+)/', self.view_increase, name='increase-level'),
     ]
 ```
 
@@ -39,7 +39,7 @@ def view_test(self, request):
 
 def setup_urls(self):
     return [
-        re_path(r'^test/', self.view_test, name='test')
+        path('test/', self.view_test, name='test')
     ]
 ```
 

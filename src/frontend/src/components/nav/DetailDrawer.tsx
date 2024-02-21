@@ -1,4 +1,13 @@
-import { Divider, Drawer, MantineNumberSize, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Divider,
+  Drawer,
+  Group,
+  MantineNumberSize,
+  Stack,
+  Text
+} from '@mantine/core';
+import { IconChevronLeft } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 
@@ -35,11 +44,15 @@ function DetailDrawerComponent({
       position={position}
       size={size}
       title={
-        <Text size="xl" fw={600} variant="gradient">
-          {title}
-        </Text>
+        <Group>
+          <ActionIcon variant="outline" onClick={() => navigate(-1)}>
+            <IconChevronLeft />
+          </ActionIcon>
+          <Text size="xl" fw={600} variant="gradient">
+            {title}
+          </Text>
+        </Group>
       }
-      overlayProps={{ opacity: 0.5, blur: 4 }}
     >
       <Stack spacing={'xs'}>
         <Divider />

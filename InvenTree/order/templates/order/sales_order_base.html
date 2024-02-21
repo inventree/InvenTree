@@ -309,7 +309,7 @@ $('#print-order-report').click(function() {
 <!-- Barcode functionality callbacks -->
 $('#show-qr-code').click(function() {
     showQRDialog(
-        '{% trans "Sales Order QR Code" %}',
+        '{% trans "Sales Order QR Code" escape %}',
         '{"salesorder": {{ order.pk }} }'
     );
 });
@@ -321,7 +321,7 @@ $("#barcode-link").click(function() {
             salesorder: {{ order.pk }},
         },
         {
-            title: '{% trans "Link Barcode to Sales Order" %}',
+            title: '{% trans "Link Barcode to Sales Order" escape %}',
         }
     );
 });

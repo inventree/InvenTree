@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
 import { api } from '../App';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { PathParams, apiUrl } from '../states/ApiState';
 
 /**
@@ -25,7 +25,7 @@ export function useInstance<T = any>({
   refetchOnWindowFocus = false,
   throwError = false
 }: {
-  endpoint: ApiPaths;
+  endpoint: ApiEndpoints;
   pk?: string | undefined;
   hasPrimaryKey?: boolean;
   params?: any;
@@ -51,6 +51,7 @@ export function useInstance<T = any>({
 
       return api
         .get(url, {
+          timeout: 10000,
           params: params
         })
         .then((response) => {

@@ -10,7 +10,6 @@ from unittest import mock
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import Site
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
@@ -20,6 +19,7 @@ import pint.errors
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
+from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 from sesame.utils import get_user
 
 import InvenTree.conversion
@@ -29,6 +29,7 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 from common.models import CustomUnit, InvenTreeSetting
 from common.settings import currency_codes
+from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartCategory
@@ -372,7 +373,7 @@ class TestHelpers(TestCase):
         for url, expected in tests.items():
             # Test with supplied base URL
             self.assertEqual(
-                InvenTree.helpers_model.construct_absolute_url(url, site_url=base),
+                InvenTree.helpers_model.construct_absolute_url(url, base_url=base),
                 expected,
             )
 
@@ -507,6 +508,20 @@ class TestHelpers(TestCase):
 
         self.assertNotIn(PartCategory, models)
         self.assertNotIn(InvenTreeSetting, models)
+
+    def test_test_key(self):
+        """Test for the generateTestKey function."""
+        tests = {
+            ' Hello World ': 'helloworld',
+            ' MY NEW TEST KEY ': 'mynewtestkey',
+            ' 1234 5678': '_12345678',
+            ' 100 percenT': '_100percent',
+            ' MY_NEW_TEST': 'my_new_test',
+            ' 100_new_tests': '_100_new_tests',
+        }
+
+        for name, key in tests.items():
+            self.assertEqual(helpers.generateTestKey(name), key)
 
 
 class TestQuoteWrap(TestCase):
@@ -1049,6 +1064,12 @@ class TestInstanceName(InvenTreeTestCase):
 
         self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')
 
+        try:
+            from django.contrib.sites.models import Site
+        except (ImportError, RuntimeError):
+            # Multi-site support not enabled
+            return
+
         # The site should also be changed
         site_obj = Site.objects.all().order_by('id').first()
         self.assertEqual(site_obj.name, 'Testing title')
@@ -1060,9 +1081,18 @@ class TestInstanceName(InvenTreeTestCase):
             'INVENTREE_BASE_URL', 'http://127.1.2.3', self.user
         )
 
+        # No further tests if multi-site support is not enabled
+        if not settings.SITE_MULTI:
+            return
+
         # The site should also be changed
-        site_obj = Site.objects.all().order_by('id').first()
-        self.assertEqual(site_obj.domain, 'http://127.1.2.3')
+        try:
+            from django.contrib.sites.models import Site
+
+            site_obj = Site.objects.all().order_by('id').first()
+            self.assertEqual(site_obj.domain, 'http://127.1.2.3')
+        except Exception:
+            pass
 
 
 class TestOffloadTask(InvenTreeTestCase):
@@ -1234,7 +1264,7 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.data, {'status': 'ok'})
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, '[example.com] Log in to the app')
+        self.assertEqual(mail.outbox[0].subject, '[InvenTree] Log in to the app')
 
         # Check that the token is in the email
         self.assertTrue('http://testserver/api/email/login/' in mail.outbox[0].body)
@@ -1247,9 +1277,153 @@ class MagicLoginTest(InvenTreeTestCase):
         # Check that the login works
         resp = self.client.get(reverse('sesame-login') + '?sesame=' + token)
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, '/index/')
-        # Note: 2023-08-08 - This test has been changed because "platform UI" is not generally available yet
-        # TODO: In the future, the URL comparison will need to be reverted
-        # self.assertEqual(resp.url, f'/{settings.FRONTEND_URL_BASE}/logged-in/')
+        self.assertEqual(resp.url, '/api/auth/login-redirect/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)
+
+
+class MaintenanceModeTest(InvenTreeTestCase):
+    """Unit tests for maintenance mode."""
+
+    def test_basic(self):
+        """Test basic maintenance mode operation."""
+        for value in [False, True, False]:
+            set_maintenance_mode(value)
+            self.assertEqual(get_maintenance_mode(), value)
+
+        # API request is blocked in maintenance mode
+        set_maintenance_mode(True)
+
+        response = self.client.get('/api/')
+        self.assertEqual(response.status_code, 503)
+
+        set_maintenance_mode(False)
+
+        response = self.client.get('/api/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_timestamp(self):
+        """Test that the timestamp value is interpreted correctly."""
+        KEY = '_MAINTENANCE_MODE'
+
+        # Deleting the setting means maintenance mode is off
+        InvenTreeSetting.objects.filter(key=KEY).delete()
+
+        self.assertFalse(get_maintenance_mode())
+
+        def set_timestamp(value):
+            InvenTreeSetting.set_setting(KEY, value, None)
+
+        # Test blank value
+        set_timestamp('')
+        self.assertFalse(get_maintenance_mode())
+
+        # Test timestamp in the past
+        ts = datetime.now() - timedelta(minutes=10)
+        set_timestamp(ts.isoformat())
+        self.assertFalse(get_maintenance_mode())
+
+        # Test timestamp in the future
+        ts = datetime.now() + timedelta(minutes=10)
+        set_timestamp(ts.isoformat())
+        self.assertTrue(get_maintenance_mode())
+
+        # Set to false, check for empty string
+        set_maintenance_mode(False)
+        self.assertFalse(get_maintenance_mode())
+        self.assertEqual(InvenTreeSetting.get_setting(KEY, None), '')
+
+
+class ClassValidationMixinTest(TestCase):
+    """Tests for the ClassValidationMixin class."""
+
+    class BaseTestClass(ClassValidationMixin):
+        """A valid class that inherits from ClassValidationMixin."""
+
+        NAME: str
+
+        def test(self):
+            """Test function."""
+            pass
+
+        def test1(self):
+            """Test function."""
+            pass
+
+        def test2(self):
+            """Test function."""
+            pass
+
+        required_attributes = ['NAME']
+        required_overrides = [test, [test1, test2]]
+
+    class InvalidClass:
+        """An invalid class that does not inherit from ClassValidationMixin."""
+
+        pass
+
+    def test_valid_class(self):
+        """Test that a valid class passes the validation."""
+
+        class TestClass(self.BaseTestClass):
+            """A valid class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test(self):
+                """Test function."""
+                pass
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        TestClass.validate()
+
+    def test_invalid_class(self):
+        """Test that an invalid class fails the validation."""
+
+        class TestClass1(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass1\'>\' did not provide the following attributes: NAME and did not override the required attributes: test, one of test1 or test2',
+        ):
+            TestClass1.validate()
+
+        class TestClass2(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass2\'>\' did not override the required attributes: test',
+        ):
+            TestClass2.validate()
+
+
+class ClassProviderMixinTest(TestCase):
+    """Tests for the ClassProviderMixin class."""
+
+    class TestClass(ClassProviderMixin):
+        """This class is a dummy class to test the ClassProviderMixin."""
+
+        pass
+
+    def test_get_provider_file(self):
+        """Test the get_provider_file function."""
+        self.assertEqual(self.TestClass.get_provider_file(), __file__)
+
+    def test_provider_plugin(self):
+        """Test the provider_plugin function."""
+        self.assertEqual(self.TestClass.get_provider_plugin(), None)
+
+    def test_get_is_builtin(self):
+        """Test the get_is_builtin function."""
+        self.assertTrue(self.TestClass.get_is_builtin())

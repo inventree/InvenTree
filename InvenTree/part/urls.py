@@ -12,13 +12,11 @@ from django.urls import include, path, re_path
 from . import views
 
 part_detail_urls = [
-    re_path(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
+    path('bom-upload/', views.BomUpload.as_view(), name='upload-bom'),
     # Normal thumbnail with form
-    re_path(
-        r'^thumb-select/?', views.PartImageSelect.as_view(), name='part-image-select'
-    ),
+    path('thumb-select/', views.PartImageSelect.as_view(), name='part-image-select'),
     # Any other URLs go to the part detail page
-    re_path(r'^.*$', views.PartDetail.as_view(), name='part-detail'),
+    path('', views.PartDetail.as_view(), name='part-detail'),
 ]
 
 category_urls = [
@@ -29,15 +27,15 @@ category_urls = [
 # URL list for part web interface
 part_urls = [
     # Upload a part
-    re_path(r'^import/$', views.PartImport.as_view(), name='part-import'),
+    path('import/', views.PartImport.as_view(), name='part-import'),
     re_path(
         r'^import/?', views.PartImportTemplate.as_view(), name='part-template-download'
     ),
-    re_path(r'^import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
+    path('import-api/', views.PartImportAjax.as_view(), name='api-part-import'),
     # Individual part using pk
-    path(r'<int:pk>/', include(part_detail_urls)),
+    path('<int:pk>/', include(part_detail_urls)),
     # Part category
-    re_path(r'^category/', include(category_urls)),
+    path('category/', include(category_urls)),
     # Individual part using IPN as slug
     re_path(
         r'^(?P<slug>[-\w]+)/',
@@ -45,5 +43,5 @@ part_urls = [
         name='part-detail-from-ipn',
     ),
     # Top level part list (display top level parts and categories)
-    re_path(r'^.*$', views.PartIndex.as_view(), name='part-index'),
+    path('', views.PartIndex.as_view(), name='part-index'),
 ]

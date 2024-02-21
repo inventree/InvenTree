@@ -13,9 +13,9 @@ ARG base_image=python:3.10-alpine3.18
 FROM ${base_image} as inventree_base
 
 # Build arguments for this image
+ARG commit_tag=""
 ARG commit_hash=""
 ARG commit_date=""
-ARG commit_tag=""
 
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
@@ -60,13 +60,7 @@ RUN apk add --no-cache \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
-    # SQLite support
-    sqlite \
-    # PostgreSQL support
-    postgresql-libs postgresql-client \
-    # MySQL / MariaDB support
-    mariadb-connector-c-dev mariadb-client && \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
 
@@ -90,7 +84,7 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
 COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
 RUN chmod +x init.sh
 
-ENTRYPOINT ["/bin/sh", "./init.sh"]
+ENTRYPOINT ["/bin/ash", "./init.sh"]
 
 FROM inventree_base as prebuild
 

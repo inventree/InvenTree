@@ -309,6 +309,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
             'manufacturer_part',
             'manufacturer_part_detail',
             'MPN',
+            'name',
             'note',
             'pk',
             'barcode_hash',
@@ -394,6 +395,8 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
     manufacturer_part_detail = ManufacturerPartSerializer(
         source='manufacturer_part', part_detail=False, read_only=True
     )
+
+    name = serializers.CharField(read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 

@@ -261,7 +261,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
                 }}
 
                 .label-sheet-cell {{
-                    border: {"1px solid #000;" if border else "0mm;"}
+                    border: {'1px solid #000;' if border else '0mm;'}
                     width: {label_width}mm;
                     height: {label_height}mm;
                     padding: 0mm;

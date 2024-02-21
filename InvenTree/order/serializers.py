@@ -97,6 +97,8 @@ class AbstractOrderSerializer(serializers.Serializer):
 
     barcode_hash = serializers.CharField(read_only=True)
 
+    creation_date = serializers.DateField(required=False, allow_null=True)
+
     def validate_reference(self, reference):
         """Custom validation for the reference field."""
         self.Meta.model.validate_reference_field(reference)
@@ -338,11 +340,13 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             'received',
             'purchase_price',
             'purchase_price_currency',
+            'auto_pricing',
             'destination',
             'destination_detail',
             'target_date',
             'total_price',
             'link',
+            'merge_items',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -359,6 +363,10 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
         if order_detail is not True:
             self.fields.pop('order_detail')
+
+    def skip_create_fields(self):
+        """Return a list of fields to skip when creating a new object."""
+        return ['auto_pricing', 'merge_items'] + super().skip_create_fields()
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -417,6 +425,14 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     purchase_price = InvenTreeMoneySerializer(allow_null=True)
 
+    auto_pricing = serializers.BooleanField(
+        label=_('Auto Pricing'),
+        help_text=_(
+            'Automatically calculate purchase price based on supplier part data'
+        ),
+        default=True,
+    )
+
     destination_detail = stock.serializers.LocationBriefSerializer(
         source='get_destination', read_only=True
     )
@@ -426,6 +442,14 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
     )
 
     order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
+
+    merge_items = serializers.BooleanField(
+        label=_('Merge Items'),
+        help_text=_(
+            'Merge items with the same part, destination and target date into one line item'
+        ),
+        default=True,
+    )
 
     def validate(self, data):
         """Custom validation for the serializer.

@@ -173,6 +173,11 @@ function newBuildOrder(options={}) {
         fields.sales_order.value = options.sales_order;
     }
 
+    // Specify a project code
+    if (options.project_code) {
+        fields.project_code.value = options.project_code;
+    }
+
     if (options.data) {
         delete options.data.pk;
     }
@@ -966,7 +971,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
                 switchable: false,
                 title: '{% trans "Build Order" %}',
                 formatter: function(value, row) {
-                    let ref = `${row.build_detail.reference}`;
+                    let ref = row.build_detail?.reference ?? row.build;
                     let html = renderLink(ref, `/build/${row.build}/`);
 
                     html += `- <small>${row.build_detail.title}</small>`;
@@ -1089,7 +1094,7 @@ function loadBuildOutputTable(build_info, options={}) {
     var params = options.params || {};
 
     // test templates for the part being assembled
-    let test_templates = null;
+    let test_templates = [];
 
     // tracked line items for this build
     let has_tracked_lines = false;
@@ -1122,6 +1127,8 @@ function loadBuildOutputTable(build_info, options={}) {
         '{% url "api-part-test-template-list" %}',
         {
             part: build_info.part,
+            required: true,
+            enabled: true,
         },
         {
             async: false,
@@ -1133,6 +1140,9 @@ function loadBuildOutputTable(build_info, options={}) {
                         test_templates.push(item);
                     }
                 });
+            },
+            error: function() {
+                test_templates = [];
             }
         }
     );
@@ -2553,6 +2563,7 @@ function loadBuildLineTable(table, build_id, options={}) {
                 sortable: true,
                 formatter: function(value, row) {
                     var url = `/part/${row.part_detail.pk}/?display=part-stock`;
+
                     // Calculate the "available" quantity
                     let available = row.available_stock + row.available_substitute_stock;
 
@@ -2601,6 +2612,10 @@ function loadBuildLineTable(table, build_id, options={}) {
 
                     if (row.on_order && row.on_order > 0) {
                         icons += makeIconBadge('fa-shopping-cart', `{% trans "On Order" %}: ${formatDecimal(row.on_order)}`);
+                    }
+
+                    if (row.in_production && row.in_production > 0) {
+                        icons += makeIconBadge('fa-tools icon-blue', `{% trans "In Production" %}: ${formatDecimal(row.in_production)}`);
                     }
 
                     return renderLink(text, url) + icons;
@@ -2695,6 +2710,7 @@ function loadBuildLineTable(table, build_id, options={}) {
             part: row.part_detail.pk,
             parent: build_id,
             quantity: Math.max(row.quantity - row.allocated, 0),
+            ...options,
         });
     });
 
