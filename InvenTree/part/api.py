@@ -1449,7 +1449,7 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         model = PartParameterTemplate
 
         # Simple filter fields
-        fields = ['units', 'checkbox']
+        fields = ['name', 'units', 'checkbox']
 
     has_choices = rest_filters.BooleanFilter(
         method='filter_has_choices', label='Has Choice'
@@ -1471,65 +1471,68 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
 
         return queryset.filter(Q(units=None) | Q(units='')).distinct()
 
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
 
-class PartParameterTemplateList(ListCreateAPI):
+    def filter_part(self, queryset, name, part):
+        """Filter queryset to include only PartParameterTemplates which are referenced by a part."""
+        parameters = PartParameter.objects.filter(part=part)
+        template_ids = parameters.values_list('template').distinct()
+        return queryset.filter(pk__in=[el[0] for el in template_ids])
+
+    # Filter against a "PartCategory" - return only parameter templates which are referenced by parts in this category
+    category = rest_filters.ModelChoiceFilter(
+        queryset=PartCategory.objects.all(),
+        method='filter_category',
+        label=_('Category'),
+    )
+
+    def filter_category(self, queryset, name, category):
+        """Filter queryset to include only PartParameterTemplates which are referenced by parts in this category."""
+        cats = category.get_descendants(include_self=True)
+        parameters = PartParameter.objects.filter(part__category__in=cats)
+        template_ids = parameters.values_list('template').distinct()
+        return queryset.filter(pk__in=[el[0] for el in template_ids])
+
+
+class PartParameterTemplateMixin:
+    """Mixin class for PartParameterTemplate API endpoints."""
+
+    queryset = PartParameterTemplate.objects.all()
+    serializer_class = part_serializers.PartParameterTemplateSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the PartParameterTemplateDetail endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = part_serializers.PartParameterTemplateSerializer.annotate_queryset(
+            queryset
+        )
+
+        return queryset
+
+
+class PartParameterTemplateList(PartParameterTemplateMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartParameterTemplate objects.
 
     - GET: Return list of PartParameterTemplate objects
     - POST: Create a new PartParameterTemplate object
     """
 
-    queryset = PartParameterTemplate.objects.all()
-    serializer_class = part_serializers.PartParameterTemplateSerializer
     filterset_class = PartParameterTemplateFilter
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['name']
-
     search_fields = ['name', 'description']
 
-    ordering_fields = ['name', 'units', 'checkbox']
-
-    def filter_queryset(self, queryset):
-        """Custom filtering for the PartParameterTemplate API."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filtering against a "Part" - return only parameter templates which are referenced by a part
-        part = params.get('part', None)
-
-        if part is not None:
-            try:
-                part = Part.objects.get(pk=part)
-                parameters = PartParameter.objects.filter(part=part)
-                template_ids = parameters.values_list('template').distinct()
-                queryset = queryset.filter(pk__in=[el[0] for el in template_ids])
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Filtering against a "PartCategory" - return only parameter templates which are referenced by parts in this category
-        category = params.get('category', None)
-
-        if category is not None:
-            try:
-                category = PartCategory.objects.get(pk=category)
-                cats = category.get_descendants(include_self=True)
-                parameters = PartParameter.objects.filter(part__category__in=cats)
-                template_ids = parameters.values_list('template').distinct()
-                queryset = queryset.filter(pk__in=[el[0] for el in template_ids])
-            except (ValueError, PartCategory.DoesNotExist):
-                pass
-
-        return queryset
+    ordering_fields = ['name', 'units', 'checkbox', 'parts']
 
 
-class PartParameterTemplateDetail(RetrieveUpdateDestroyAPI):
+class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing the detail view for a PartParameterTemplate object."""
 
-    queryset = PartParameterTemplate.objects.all()
-    serializer_class = part_serializers.PartParameterTemplateSerializer
+    pass
 
 
 class PartParameterAPIMixin:
