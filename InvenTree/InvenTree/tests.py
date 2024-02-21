@@ -82,6 +82,19 @@ class ConversionTest(TestCase):
             )
             self.assertAlmostEqual(output, expected, 12)
 
+    def test_scientific_notation(self):
+        """Test that scientific notation is handled correctly."""
+        tests = [
+            ('3E2', 300),
+            ('-12.3E-3', -0.0123),
+            ('1.23E-3', 0.00123),
+            ('99E9', 99000000000),
+        ]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(val, strip_units=True)
+            self.assertAlmostEqual(output, expected, 6)
+
     def test_base_units(self):
         """Test conversion to specified base units."""
         tests = {
