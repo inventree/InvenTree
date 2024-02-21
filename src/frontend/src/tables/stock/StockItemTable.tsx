@@ -34,6 +34,7 @@ function stockItemTableColumns(): TableColumn[] {
     }),
     {
       accessor: 'quantity',
+      ordering: 'stock',
       sortable: true,
       title: t`Stock`,
       render: (record) => {
@@ -338,7 +339,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
       columns={tableColumns}
       props={{
         enableDownload: true,
-        enableSelection: true,
+        enableSelection: false,
         tableFilters: tableFilters,
         onRowClick: (record) =>
           navigate(getDetailUrl(ModelType.stockitem, record.pk)),

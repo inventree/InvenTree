@@ -446,6 +446,13 @@ jobs:
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 
+      - name: 0.13.5 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
   platform_ui:
     name: Tests - Platform UI
     runs-on: ubuntu-20.04

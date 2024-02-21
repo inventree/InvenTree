@@ -476,6 +476,10 @@ function getPartTestTemplateFilters() {
             type: 'bool',
             title: '{% trans "Required" %}',
         },
+        enabled: {
+            type: 'bool',
+            title: '{% trans "Enabled" %}',
+        },
     };
 }
 

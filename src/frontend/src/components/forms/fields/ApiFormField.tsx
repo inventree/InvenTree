@@ -148,24 +148,24 @@ export function ApiFormField({
   );
 
   // Coerce the value to a numerical value
-  const numericalValue: number | undefined = useMemo(() => {
-    let val = 0;
+  const numericalValue: number | '' = useMemo(() => {
+    let val: number | '' = 0;
 
     switch (definition.field_type) {
       case 'integer':
-        val = parseInt(value) ?? 0;
+        val = parseInt(value) ?? '';
         break;
       case 'decimal':
       case 'float':
       case 'number':
-        val = parseFloat(value) ?? 0;
+        val = parseFloat(value) ?? '';
         break;
       default:
         break;
     }
 
     if (isNaN(val) || !isFinite(val)) {
-      val = 0;
+      val = '';
     }
 
     return val;
@@ -196,7 +196,7 @@ export function ApiFormField({
             radius="sm"
             onChange={(event) => onChange(event.currentTarget.value)}
             rightSection={
-              definition.value && !definition.required ? (
+              value && !definition.required ? (
                 <IconX size="1rem" color="red" onClick={() => onChange('')} />
               ) : null
             }

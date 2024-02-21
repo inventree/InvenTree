@@ -153,12 +153,24 @@ class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer)
             'part',
             'test_name',
             'description',
+            'enabled',
             'required',
             'requires_value',
             'requires_attachment',
+            'results',
         ]
 
     key = serializers.CharField(read_only=True)
+    results = serializers.IntegerField(
+        label=_('Results'),
+        help_text=_('Number of results recorded against this template'),
+        read_only=True,
+    )
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Custom query annotations for the PartTestTemplate serializer."""
+        return queryset.annotate(results=SubqueryCount('test_results'))
 
 
 class PartSalePriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -233,7 +245,18 @@ class PartParameterTemplateSerializer(InvenTree.serializers.InvenTreeModelSerial
         """Metaclass defining serializer fields."""
 
         model = PartParameterTemplate
-        fields = ['pk', 'name', 'units', 'description', 'checkbox', 'choices']
+        fields = ['pk', 'name', 'units', 'description', 'parts', 'checkbox', 'choices']
+
+    parts = serializers.IntegerField(
+        read_only=True,
+        label=_('Parts'),
+        help_text=_('Number of parts using this template'),
+    )
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with the number of parts which use each parameter template."""
+        return queryset.annotate(parts=SubqueryCount('instances'))
 
 
 class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):

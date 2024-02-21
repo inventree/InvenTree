@@ -27,6 +27,7 @@ from InvenTree.status_codes import BuildStatusGroups, StockStatus
 from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
+import common.models
 from common.serializers import ProjectCodeSerializer
 import part.filters
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
@@ -523,6 +524,17 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
         outputs = data.get('outputs', [])
 
+        if common.settings.prevent_build_output_complete_on_incompleted_tests():
+            errors = []
+            for output in outputs:
+                stock_item = output['output']
+                if stock_item.hasRequiredTests() and not stock_item.passedAllRequiredTests():
+                    serial = stock_item.serial
+                    errors.append(_(f"Build output {serial} has not passed all required tests"))
+
+            if errors:
+                raise ValidationError(errors)
+
         if len(outputs) == 0:
             raise ValidationError(_("A list of build outputs must be provided"))
 
@@ -908,18 +920,24 @@ class BuildAllocationSerializer(serializers.Serializer):
                 if build_line.bom_item.consumable:
                     continue
 
+                params = {
+                    "build_line": build_line,
+                    "stock_item": stock_item,
+                    "install_into": output,
+                }
+
                 try:
-                    # Create a new BuildItem to allocate stock
-                    build_item, created = BuildItem.objects.get_or_create(
-                        build_line=build_line,
-                        stock_item=stock_item,
-                        install_into=output,
-                    )
-                    if created:
-                        build_item.quantity = quantity
-                    else:
+                    if build_item := BuildItem.objects.filter(**params).first():
+                        # Find an existing BuildItem for this stock item
+                        # If it exists, increase the quantity
                         build_item.quantity += quantity
-                    build_item.save()
+                        build_item.save()
+                    else:
+                        # Create a new BuildItem to allocate stock
+                        build_item = BuildItem.objects.create(
+                            quantity=quantity,
+                            **params
+                        )
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors
                     raise ValidationError(detail=serializers.as_serializer_error(exc))

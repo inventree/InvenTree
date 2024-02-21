@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Input } from '@mantine/core';
+import { Input, useMantineTheme } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
@@ -209,8 +209,54 @@ export function RelatedModelField({
     [pk, data]
   );
 
+  // Field doesn't follow Mantine theming
+  // Define color theme to pass to field based on Mantine theme
+  const th = useMantineTheme();
+  let colors: any;
+  if (th.colorScheme === 'dark') {
+    colors = {
+      neutral0: th.colors[th.colorScheme][6],
+      neutral5: th.colors[th.colorScheme][4],
+      neutral10: th.colors[th.colorScheme][4],
+      neutral20: th.colors[th.colorScheme][4],
+      neutral30: th.colors[th.colorScheme][3],
+      neutral40: th.colors[th.colorScheme][2],
+      neutral50: th.colors[th.colorScheme][1],
+      neutral60: th.colors[th.colorScheme][0],
+      neutral70: th.colors[th.colorScheme][0],
+      neutral80: th.colors[th.colorScheme][0],
+      neutral90: th.colors[th.colorScheme][0],
+      primary: th.colors[th.primaryColor][7],
+      primary25: th.colors[th.primaryColor][6],
+      primary50: th.colors[th.primaryColor][5],
+      primary75: th.colors[th.primaryColor][4]
+    };
+  } else {
+    colors = {
+      neutral0: th.white,
+      neutral5: th.fn.darken(th.white, 0.05),
+      neutral10: th.fn.darken(th.white, 0.1),
+      neutral20: th.fn.darken(th.white, 0.2),
+      neutral30: th.fn.darken(th.white, 0.3),
+      neutral40: th.fn.darken(th.white, 0.4),
+      neutral50: th.fn.darken(th.white, 0.5),
+      neutral60: th.fn.darken(th.white, 0.6),
+      neutral70: th.fn.darken(th.white, 0.7),
+      neutral80: th.fn.darken(th.white, 0.8),
+      neutral90: th.fn.darken(th.white, 0.9),
+      primary: th.colors[th.primaryColor][7],
+      primary25: th.colors[th.primaryColor][4],
+      primary50: th.colors[th.primaryColor][5],
+      primary75: th.colors[th.primaryColor][6]
+    };
+  }
+
   return (
-    <Input.Wrapper {...fieldDefinition} error={error?.message}>
+    <Input.Wrapper
+      {...fieldDefinition}
+      error={error?.message}
+      styles={{ description: { paddingBottom: '5px' } }}
+    >
       <Select
         id={fieldId}
         value={currentValue}
@@ -246,6 +292,15 @@ export function RelatedModelField({
         menuPosition="fixed"
         styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
         formatOptionLabel={(option: any) => formatOption(option)}
+        theme={(theme) => {
+          return {
+            ...theme,
+            colors: {
+              ...theme.colors,
+              ...colors
+            }
+          };
+        }}
       />
     </Input.Wrapper>
   );
