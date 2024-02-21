@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-20 23:36+0000\n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-21 04:34\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1270,10 +1270,9 @@ msgid "Quantity cannot be greater than the output quantity"
 msgstr ""
 
 #: build/models.py:921 build/serializers.py:533
-#, fuzzy, python-brace-format
-#| msgid "This stock item has not passed all required tests"
+#, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr "Stok kalemi tüm gerekli testleri geçmedi"
+msgstr ""
 
 #: build/models.py:1283
 msgid "Build object"
@@ -5220,10 +5219,8 @@ msgid "Order is not open"
 msgstr ""
 
 #: order/serializers.py:429
-#, fuzzy
-#| msgid "Pricing"
 msgid "Auto Pricing"
-msgstr "Fiyatlandırma"
+msgstr ""
 
 #: order/serializers.py:431
 msgid "Automatically calculate purchase price based on supplier part data"
@@ -5234,10 +5231,8 @@ msgid "Purchase price currency"
 msgstr ""
 
 #: order/serializers.py:447
-#, fuzzy
-#| msgid "Merged stock items"
 msgid "Merge Items"
-msgstr "Stok parçalarını birleştir"
+msgstr ""
 
 #: order/serializers.py:449
 msgid "Merge items with the same part, destination and target date into one line item"
@@ -6386,10 +6381,8 @@ msgid "Enter a name for the test"
 msgstr ""
 
 #: part/models.py:3467
-#, fuzzy
-#| msgid "Test Name"
 msgid "Test Key"
-msgstr "Test Adı"
+msgstr ""
 
 #: part/models.py:3468
 msgid "Simplified key for the test"
@@ -6404,10 +6397,8 @@ msgid "Enter description for this test"
 msgstr ""
 
 #: part/models.py:3480
-#, fuzzy
-#| msgid "Is this test required to pass?"
 msgid "Is this test enabled?"
-msgstr "Testi geçmesi için bu gerekli mi?"
+msgstr ""
 
 #: part/models.py:3485 templates/js/translated/part.js:2899
 #: templates/js/translated/table_filters.js:477
@@ -8812,10 +8803,8 @@ msgid "Serial numbers already exist"
 msgstr "Seri numaraları zaten mevcut"
 
 #: stock/models.py:1593
-#, fuzzy
-#| msgid "Report template description"
 msgid "Test template does not exist"
-msgstr "Rapor şablon tanımı"
+msgstr ""
 
 #: stock/models.py:1611
 msgid "Stock item has been assigned to a sales order"
@@ -8890,16 +8879,12 @@ msgid "Test notes"
 msgstr ""
 
 #: stock/serializers.py:96
-#, fuzzy
-#| msgid "Report template is enabled"
 msgid "Test template for this result"
-msgstr "Rapor şablonu etkin"
+msgstr ""
 
 #: stock/serializers.py:115
-#, fuzzy
-#| msgid "Parameter template name must be unique"
 msgid "Template ID or test name must be provided"
-msgstr "Parametre şablon adı benzersiz olmalıdır"
+msgstr ""
 
 #: stock/serializers.py:169
 msgid "Serial number is too large"
@@ -13814,8 +13799,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13995,3 +13979,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
