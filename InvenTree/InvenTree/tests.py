@@ -58,6 +58,30 @@ class ConversionTest(TestCase):
             q = InvenTree.conversion.convert_physical_value(val, 'm')
             self.assertAlmostEqual(q, expected, 3)
 
+    def test_engineering_units(self):
+        """Test that conversion works with engineering notation."""
+        # Run some basic checks over the helper function
+        tests = [
+            ('3', '3'),
+            ('3k3', '3.3k'),
+            ('123R45', '123.45R'),
+            ('10n5F', '10.5nF'),
+        ]
+
+        for val, expected in tests:
+            self.assertEqual(
+                InvenTree.conversion.from_engineering_notation(val), expected
+            )
+
+        # Now test the conversion function
+        tests = [('33k3ohm', 33300), ('123kohm45', 123450), ('10n005', 0.000000010005)]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, 'ohm', strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 12)
+
     def test_base_units(self):
         """Test conversion to specified base units."""
         tests = {
