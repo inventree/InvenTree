@@ -105,12 +105,24 @@ class CategoryMixin:
         return ctx
 
 
+class CategoryFilter(rest_filters.FilterSet):
+    """Custom filterset class for the PartCategoryList endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartCategory
+        fields = ['name', 'structural']
+
+
 class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
     - POST: Create a new PartCategory object
     """
+
+    filterset_class = CategoryFilter
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a data file."""
@@ -196,8 +208,6 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
         return queryset
 
     filter_backends = SEARCH_ORDER_FILTER
-
-    filterset_fields = ['name', 'description', 'structural']
 
     ordering_fields = ['name', 'pathstring', 'level', 'tree_id', 'lft', 'part_count']
 
