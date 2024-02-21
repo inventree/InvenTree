@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-21 04:35\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -181,7 +181,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:197
 msgid "Please confirm your email address to complete the registration"
-msgstr ""
+msgstr "Bekräfta din e-postadress för att slutföra registreringen"
 
 #: src/components/forms/AuthenticationForm.tsx:240
 msgid "This will be used for a confirmation"
@@ -2124,7 +2124,7 @@ msgstr "Utloggningen lyckad"
 
 #: src/functions/auth.tsx:71
 msgid "You have been logged out"
-msgstr ""
+msgstr "Du har blivit utloggad"
 
 #: src/functions/auth.tsx:108
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
@@ -2698,7 +2698,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:81
 msgid "Currencies"
-msgstr ""
+msgstr "Valutor"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:99
 msgid "Custom Units"
@@ -5095,7 +5095,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:186
 msgid "Attachment"
-msgstr "Attachment"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:239
 #: src/tables/stock/StockItemTestResultTable.tsx:306
@@ -5139,7 +5139,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:342
 msgid "Required"
-msgstr "Required"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:343
 msgid "Show results for required tests"
@@ -5197,3 +5197,4 @@ msgstr "Plattform UI är optimerad för surfplattor och stationära datorer, kan
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Läs dokumenten"
+
