@@ -609,7 +609,7 @@ class PartAPITest(PartAPITestBase):
         self.assertEqual(len(response.data), 8)
 
         # Request top-level part categories only
-        response = self.get(url, {'parent': 'null'})
+        response = self.get(url, {'cascade': False})
 
         self.assertEqual(len(response.data), 2)
 
