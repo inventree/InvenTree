@@ -120,6 +120,19 @@ class CategoryFilter(rest_filters.FilterSet):
         help_text=_('Filter by starred categories'),
     )
 
+    def filter_starred(self, queryset, name, value):
+        """Filter by whether the PartCategory is starred by the current user."""
+        user = self.request.user
+
+        starred_categories = [
+            star.category.pk for star in user.starred_categories.all()
+        ]
+
+        if str2bool(value):
+            return queryset.filter(pk__in=starred_categories)
+
+        return queryset.exclude(pk__in=starred_categories)
+
     depth = rest_filters.NumberFilter(
         label=_('Depth'), method='filter_depth', help_text=_('Filter by category depth')
     )
