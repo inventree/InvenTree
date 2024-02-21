@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-20 23:36+0000\n"
-"PO-Revision-Date: 2024-02-15 02:42\n"
+"PO-Revision-Date: 2024-02-21 04:34\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1270,10 +1270,9 @@ msgid "Quantity cannot be greater than the output quantity"
 msgstr "La quantità non può essere maggiore della quantità in uscita"
 
 #: build/models.py:921 build/serializers.py:533
-#, fuzzy, python-brace-format
-#| msgid "This stock item has not passed all required tests"
+#, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr "Questo elemento di magazzino non ha superato i test richiesti"
+msgstr ""
 
 #: build/models.py:1283
 msgid "Build object"
@@ -5220,10 +5219,8 @@ msgid "Order is not open"
 msgstr "L'ordine non è aperto"
 
 #: order/serializers.py:429
-#, fuzzy
-#| msgid "Part Pricing"
 msgid "Auto Pricing"
-msgstr "Prezzo Articolo"
+msgstr ""
 
 #: order/serializers.py:431
 msgid "Automatically calculate purchase price based on supplier part data"
@@ -5234,10 +5231,8 @@ msgid "Purchase price currency"
 msgstr "Valuta prezzo d'acquisto"
 
 #: order/serializers.py:447
-#, fuzzy
-#| msgid "Merged stock items"
 msgid "Merge Items"
-msgstr "Elemento stock raggruppato"
+msgstr ""
 
 #: order/serializers.py:449
 msgid "Merge items with the same part, destination and target date into one line item"
@@ -5901,10 +5896,8 @@ msgid "Maximum Price"
 msgstr "Prezzo Massimo"
 
 #: part/api.py:402
-#, fuzzy
-#| msgid "Test Results"
 msgid "Has Results"
-msgstr "Risultati Test"
+msgstr ""
 
 #: part/api.py:569
 msgid "Incoming Purchase Order"
@@ -6388,16 +6381,12 @@ msgid "Enter a name for the test"
 msgstr "Inserisci un nome per la prova"
 
 #: part/models.py:3467
-#, fuzzy
-#| msgid "Test Name"
 msgid "Test Key"
-msgstr "Nome Test"
+msgstr ""
 
 #: part/models.py:3468
-#, fuzzy
-#| msgid "Enter a name for the test"
 msgid "Simplified key for the test"
-msgstr "Inserisci un nome per la prova"
+msgstr ""
 
 #: part/models.py:3475
 msgid "Test Description"
@@ -6408,10 +6397,8 @@ msgid "Enter description for this test"
 msgstr "Inserisci descrizione per questa prova"
 
 #: part/models.py:3480
-#, fuzzy
-#| msgid "Is this test required to pass?"
 msgid "Is this test enabled?"
-msgstr "Questa prova è necessaria per passare?"
+msgstr ""
 
 #: part/models.py:3485 templates/js/translated/part.js:2899
 #: templates/js/translated/table_filters.js:477
@@ -6653,10 +6640,8 @@ msgid "Duplicate relationship already exists"
 msgstr "La relazione duplicata esiste già"
 
 #: part/serializers.py:165
-#, fuzzy
-#| msgid "Result"
 msgid "Results"
-msgstr "Risultato"
+msgstr ""
 
 #: part/serializers.py:166
 msgid "Number of results recorded against this template"
@@ -8818,10 +8803,8 @@ msgid "Serial numbers already exist"
 msgstr "Numeri di serie già esistenti"
 
 #: stock/models.py:1593
-#, fuzzy
-#| msgid "The requested page does not exist"
 msgid "Test template does not exist"
-msgstr "La pagina richiesta non esiste"
+msgstr ""
 
 #: stock/models.py:1611
 msgid "Stock item has been assigned to a sales order"
@@ -8896,16 +8879,12 @@ msgid "Test notes"
 msgstr "Note del test"
 
 #: stock/serializers.py:96
-#, fuzzy
-#| msgid "Attachment must be uploaded for this test"
 msgid "Test template for this result"
-msgstr "L'allegato deve essere caricato per questo test"
+msgstr ""
 
 #: stock/serializers.py:115
-#, fuzzy
-#| msgid "Allocation items must be provided"
 msgid "Template ID or test name must be provided"
-msgstr "Deve essere indicata l'allocazione dell'articolo"
+msgstr ""
 
 #: stock/serializers.py:169
 msgid "Serial number is too large"
@@ -13820,8 +13799,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -14002,5 +13980,3 @@ msgstr "Permessi per modificare gli elementi"
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
 
-#~ msgid "Test name"
-#~ msgstr "Nome Test"
