@@ -295,6 +295,9 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     """
     from plugin.registry import registry
 
+    if settings.PLUGINS_INSTALL_DISABLED:
+        raise ValidationError(_('Plugin uninstalling is disabled'))
+
     if cfg.active:
         raise ValidationError(
             _('Plugin cannot be uninstalled as it is currently active')
