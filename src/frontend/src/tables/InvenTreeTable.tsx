@@ -125,7 +125,7 @@ export function InvenTreeTable<T = any>({
       props.tableFilters?.map((filter) => {
         return {
           ...filter,
-          label: filter.label ?? fieldNames[filter.name] ?? `? ${filter.name} ?`
+          label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
         };
       }) ?? []
     );
