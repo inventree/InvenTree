@@ -14,12 +14,12 @@ import { useParams } from 'react-router-dom';
 
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
+import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
 
 /**
  * Detail page for a single SalesOrder
@@ -28,7 +28,7 @@ export default function SalesOrderDetail() {
   const { id } = useParams();
 
   const { instance: order, instanceQuery } = useInstance({
-    endpoint: ApiPaths.sales_order_list,
+    endpoint: ApiEndpoints.sales_order_list,
     pk: id,
     params: {
       customer_detail: true
@@ -62,11 +62,7 @@ export default function SalesOrderDetail() {
         label: t`Build Orders`,
         icon: <IconTools />,
         content: order?.pk ? (
-          <BuildOrderTable
-            params={{
-              sales_order: order.pk
-            }}
-          />
+          <BuildOrderTable salesOrderId={order.pk} />
         ) : (
           <Skeleton />
         )
@@ -77,7 +73,7 @@ export default function SalesOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.sales_order_attachment_list}
+            endpoint={ApiEndpoints.sales_order_attachment_list}
             model="order"
             pk={Number(id)}
           />
@@ -89,7 +85,7 @@ export default function SalesOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.sales_order_list, id)}
+            url={apiUrl(ApiEndpoints.sales_order_list, id)}
             data={order.notes ?? ''}
             allowEdit={true}
           />

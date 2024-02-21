@@ -15,7 +15,9 @@ class MiddlewareTests(InvenTreeTestCase):
 
     def check_path(self, url, code=200, **kwargs):
         """Helper function to run a request."""
-        response = self.client.get(url, HTTP_ACCEPT='application/json', **kwargs)
+        response = self.client.get(
+            url, headers={'accept': 'application/json'}, **kwargs
+        )
         self.assertEqual(response.status_code, code)
         return response
 

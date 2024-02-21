@@ -1,22 +1,37 @@
 """API for location plugins."""
 
-from rest_framework import permissions
+from drf_spectacular.utils import OpenApiResponse, extend_schema
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotFound, ParseError
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from InvenTree.tasks import offload_task
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
 
-class LocatePluginView(APIView):
+class LocatePluginSerializer(serializers.Serializer):
+    """Serializer for the LocatePluginView API endpoint."""
+
+    plugin = serializers.CharField(
+        help_text='Plugin to use for location identification'
+    )
+    item = serializers.IntegerField(required=False, help_text='StockItem to identify')
+    location = serializers.IntegerField(
+        required=False, help_text='StockLocation to identify'
+    )
+
+
+class LocatePluginView(GenericAPIView):
     """Endpoint for using a custom plugin to identify or 'locate' a stock item or location."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = LocatePluginSerializer
 
     def post(self, request, *args, **kwargs):
-        """Check inputs and offload the task to the plugin."""
+        """Identify or 'locate' a stock item or location with a plugin."""
+        # Check inputs and offload the task to the plugin
         # Which plugin to we wish to use?
         plugin = request.data.get('plugin', None)
 

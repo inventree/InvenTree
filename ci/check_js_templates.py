@@ -35,7 +35,7 @@ def check_invalid_tag(data):
         for result in results:
             err_count += 1
 
-            print(f' - Error on line {idx+1}: %{{{result[0]}')
+            print(f' - Error on line {idx + 1}: %{{{result[0]}')
 
     return err_count
 
@@ -62,7 +62,7 @@ def check_prohibited_tags(data):
     for idx, line in enumerate(data):
         for tag in re.findall(pattern, line):
             if tag not in allowed_tags:
-                print(f" > Line {idx+1} contains prohibited template tag '{tag}'")
+                print(f" > Line {idx + 1} contains prohibited template tag '{tag}'")
                 err_count += 1
 
     return err_count
@@ -94,7 +94,7 @@ for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
             if tag in line:
                 err_count += 1
 
-                print(f" > Error on line {idx+1}: Prohibited tag '{tag}' found")
+                print(f" > Error on line {idx + 1}: Prohibited tag '{tag}' found")
 
 
 if errors > 0:

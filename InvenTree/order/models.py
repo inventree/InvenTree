@@ -24,6 +24,7 @@ from mptt.models import TreeForeignKey
 
 import common.models as common_models
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
@@ -42,13 +43,6 @@ from InvenTree.fields import (
 )
 from InvenTree.helpers import decimal2string
 from InvenTree.helpers_model import getSetting, notify_responsible
-from InvenTree.models import (
-    InvenTreeAttachment,
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    MetadataMixin,
-    ReferenceIndexingMixin,
-)
 from InvenTree.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -78,7 +72,14 @@ class TotalPriceMixin(models.Model):
         """Update the total_price field when saved."""
         # Recalculate total_price for this order
         self.update_total_price(commit=False)
-        super().save(*args, **kwargs)
+
+        if hasattr(self, '_SAVING_TOTAL_PRICE') and self._SAVING_TOTAL_PRICE:
+            # Avoid recursion on save
+            return super().save(*args, **kwargs)
+        self._SAVING_TOTAL_PRICE = True
+
+        # Save the object as we can not access foreign/m2m fields before saving
+        self.update_total_price(commit=True)
 
     total_price = InvenTreeModelMoneyField(
         null=True,
@@ -136,6 +137,10 @@ class TotalPriceMixin(models.Model):
 
         total = Money(0, target_currency)
 
+        # Check if the order has been saved (otherwise we can't calculate the total price)
+        if self.pk is None:
+            return total
+
         # order items
         for line in self.lines.all():
             if not line.price:
@@ -177,10 +182,11 @@ class TotalPriceMixin(models.Model):
 
 class Order(
     StateTransitionMixin,
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    MetadataMixin,
-    ReferenceIndexingMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.ReferenceIndexingMixin,
+    InvenTree.models.InvenTreeModel,
 ):
     """Abstract model for an order.
 
@@ -211,7 +217,6 @@ class Order(
         Ensures that the reference field is rebuilt whenever the instance is saved.
         """
         self.reference_int = self.rebuild_reference_field(self.reference)
-
         if not self.creation_date:
             self.creation_date = datetime.now().date()
 
@@ -1168,7 +1173,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
         notify_responsible(instance, sender, exclude=instance.created_by)
 
 
-class PurchaseOrderAttachment(InvenTreeAttachment):
+class PurchaseOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a PurchaseOrder object."""
 
     @staticmethod
@@ -1185,7 +1190,7 @@ class PurchaseOrderAttachment(InvenTreeAttachment):
     )
 
 
-class SalesOrderAttachment(InvenTreeAttachment):
+class SalesOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a SalesOrder object."""
 
     @staticmethod
@@ -1202,7 +1207,7 @@ class SalesOrderAttachment(InvenTreeAttachment):
     )
 
 
-class OrderLineItem(MetadataMixin, models.Model):
+class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
     """Abstract model for an order line item.
 
     Attributes:
@@ -1434,6 +1439,17 @@ class PurchaseOrderLineItem(OrderLineItem):
         r = self.quantity - self.received
         return max(r, 0)
 
+    def update_pricing(self):
+        """Update pricing information based on the supplier part data."""
+        if self.part:
+            price = self.part.get_price(self.quantity)
+
+            if price is None:
+                return
+
+            self.purchase_price = Decimal(price) / Decimal(self.quantity)
+            self.save()
+
 
 class PurchaseOrderExtraLine(OrderExtraLine):
     """Model for a single ExtraLine in a PurchaseOrder.
@@ -1577,7 +1593,11 @@ class SalesOrderLineItem(OrderLineItem):
         return self.shipped >= self.quantity
 
 
-class SalesOrderShipment(InvenTreeNotesMixin, MetadataMixin, models.Model):
+class SalesOrderShipment(
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 
     - Points to a single SalesOrder object
@@ -2218,7 +2238,7 @@ class ReturnOrderExtraLine(OrderExtraLine):
     )
 
 
-class ReturnOrderAttachment(InvenTreeAttachment):
+class ReturnOrderAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a ReturnOrder object."""
 
     @staticmethod

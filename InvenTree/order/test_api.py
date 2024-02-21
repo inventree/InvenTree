@@ -14,7 +14,7 @@ from icalendar import Calendar
 from rest_framework import status
 
 from common.settings import currency_codes
-from company.models import Company
+from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.status_codes import (
     PurchaseOrderStatus,
     ReturnOrderLineStatus,
@@ -357,6 +357,39 @@ class PurchaseOrderTest(OrderTest):
             expected_code=201,
         )
 
+    def test_po_creation_date(self):
+        """Test that we can create set the creation_date field of PurchaseOrder via the API."""
+        self.assignRole('purchase_order.add')
+
+        response = self.post(
+            reverse('api-po-list'),
+            {
+                'reference': 'PO-19881110',
+                'supplier': 1,
+                'description': 'PO created on 1988-11-10',
+                'creation_date': '1988-11-10',
+            },
+            expected_code=201,
+        )
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.creation_date, datetime(1988, 11, 10).date())
+
+        """Ensure if we do not pass the creation_date field than the current date will be saved"""
+        creation_date = datetime.now().date()
+        response = self.post(
+            reverse('api-po-list'),
+            {
+                'reference': 'PO-11111111',
+                'supplier': 1,
+                'description': 'Check that the creation date is today',
+            },
+            expected_code=201,
+        )
+
+        po = models.PurchaseOrder.objects.get(pk=response.data['pk'])
+        self.assertEqual(po.creation_date, creation_date)
+
     def test_po_duplicate(self):
         """Test that we can duplicate a PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
@@ -601,7 +634,7 @@ class PurchaseOrderTest(OrderTest):
         response = self.client.get(
             reverse('api-po-so-calendar', kwargs={'ordertype': 'purchase-order'}),
             format='json',
-            HTTP_AUTHORIZATION=f'basic {base64_token}',
+            headers={'authorization': f'basic {base64_token}'},
         )
         self.assertEqual(response.status_code, 200)
 
@@ -641,6 +674,94 @@ class PurchaseOrderLineItemTest(OrderTest):
 
         # We should have 2 less PurchaseOrderLineItems after deletign them
         self.assertEqual(models.PurchaseOrderLineItem.objects.count(), n - 2)
+
+    def test_po_line_merge_pricing(self):
+        """Test that we can create a new PurchaseOrderLineItem via the API."""
+        self.assignRole('purchase_order.add')
+        self.generate_exchange_rates()
+
+        su = Company.objects.get(pk=1)
+        sp = SupplierPart.objects.get(pk=1)
+        po = models.PurchaseOrder.objects.create(supplier=su, reference='PO-1234567890')
+        SupplierPriceBreak.objects.create(part=sp, quantity=1, price=Money(1, 'USD'))
+        SupplierPriceBreak.objects.create(part=sp, quantity=10, price=Money(0.5, 'USD'))
+
+        li1 = self.post(
+            reverse('api-po-line-list'),
+            {
+                'order': po.pk,
+                'part': sp.pk,
+                'quantity': 1,
+                'auto_pricing': True,
+                'merge_items': False,
+            },
+            expected_code=201,
+        ).json()
+        self.assertEqual(float(li1['purchase_price']), 1)
+
+        li2 = self.post(
+            reverse('api-po-line-list'),
+            {
+                'order': po.pk,
+                'part': sp.pk,
+                'quantity': 10,
+                'auto_pricing': True,
+                'merge_items': False,
+            },
+            expected_code=201,
+        ).json()
+        self.assertEqual(float(li2['purchase_price']), 0.5)
+
+        # test that items where not merged
+        self.assertNotEqual(li1['pk'], li2['pk'])
+
+        li3 = self.post(
+            reverse('api-po-line-list'),
+            {
+                'order': po.pk,
+                'part': sp.pk,
+                'quantity': 9,
+                'auto_pricing': True,
+                'merge_items': True,
+            },
+            expected_code=201,
+        ).json()
+
+        # test that items where merged
+        self.assertEqual(li1['pk'], li3['pk'])
+
+        # test that price was recalculated
+        self.assertEqual(float(li3['purchase_price']), 0.5)
+
+        # test that pricing will be not recalculated if auto_pricing is False
+        li4 = self.post(
+            reverse('api-po-line-list'),
+            {
+                'order': po.pk,
+                'part': sp.pk,
+                'quantity': 1,
+                'auto_pricing': False,
+                'purchase_price': 0.5,
+                'merge_items': False,
+            },
+            expected_code=201,
+        ).json()
+        self.assertEqual(float(li4['purchase_price']), 0.5)
+
+        # test that pricing is correctly recalculated if auto_pricing is True for update
+        li5 = self.patch(
+            reverse('api-po-line-detail', kwargs={'pk': li4['pk']}),
+            {**li4, 'quantity': 5, 'auto_pricing': False},
+            expected_code=200,
+        ).json()
+        self.assertEqual(float(li5['purchase_price']), 0.5)
+
+        li5 = self.patch(
+            reverse('api-po-line-detail', kwargs={'pk': li4['pk']}),
+            {**li4, 'quantity': 5, 'auto_pricing': True},
+            expected_code=200,
+        ).json()
+        self.assertEqual(float(li5['purchase_price']), 1)
 
 
 class PurchaseOrderDownloadTest(OrderTest):

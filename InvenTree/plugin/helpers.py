@@ -12,7 +12,7 @@ from importlib.metadata import entry_points
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 logger = logging.getLogger('inventree')
 

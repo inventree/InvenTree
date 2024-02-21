@@ -3,6 +3,7 @@ import { Button, Container, Group, Table, Title } from '@mantine/core';
 
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
+import { IS_DEV } from '../../../../main';
 import { useLocalState } from '../../../../states/LocalState';
 
 export function DisplaySettingsPanel({ height }: { height: number }) {
@@ -35,9 +36,11 @@ export function DisplaySettingsPanel({ height }: { height: number }) {
               {' '}
               <Group>
                 <LanguageSelect width={200} />
-                <Button onClick={enablePseudoLang} variant="light">
-                  <Trans>Use pseudo language</Trans>
-                </Button>
+                {IS_DEV && (
+                  <Button onClick={enablePseudoLang} variant="light">
+                    <Trans>Use pseudo language</Trans>
+                  </Button>
+                )}
               </Group>
             </td>
           </tr>

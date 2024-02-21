@@ -46,6 +46,7 @@ jobs:
               - docker.dev.env
               - Dockerfile
               - requirements.txt
+              - tasks.py
 
 
   # Build the docker image

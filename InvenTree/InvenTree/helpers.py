@@ -8,6 +8,7 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from typing import TypeVar
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
@@ -30,16 +31,68 @@ from .settings import MEDIA_URL, STATIC_URL
 logger = logging.getLogger('inventree')
 
 
-def generateTestKey(test_name):
+def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
+    """Extract an integer out of reference."""
+    # Default value if we cannot convert to an integer
+    ref_int = 0
+
+    reference = str(reference).strip()
+
+    # Ignore empty string
+    if len(reference) == 0:
+        return 0
+
+    # Look at the start of the string - can it be "integerized"?
+    result = re.match(r'^(\d+)', reference)
+
+    if result and len(result.groups()) == 1:
+        ref = result.groups()[0]
+        try:
+            ref_int = int(ref)
+        except Exception:
+            ref_int = 0
+    else:
+        # Look at the "end" of the string
+        result = re.search(r'(\d+)$', reference)
+
+        if result and len(result.groups()) == 1:
+            ref = result.groups()[0]
+            try:
+                ref_int = int(ref)
+            except Exception:
+                ref_int = 0
+
+    # Ensure that the returned values are within the range that can be stored in an IntegerField
+    # Note: This will result in large values being "clipped"
+    if clip is not None:
+        if ref_int > clip:
+            ref_int = clip
+        elif ref_int < -clip:
+            ref_int = -clip
+
+    if not allow_negative and ref_int < 0:
+        ref_int = abs(ref_int)
+
+    return ref_int
+
+
+def generateTestKey(test_name: str) -> str:
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.
     """
+    if test_name is None:
+        test_name = ''
+
     key = test_name.strip().lower()
     key = key.replace(' ', '')
 
     # Remove any characters that cannot be used to represent a variable
-    key = re.sub(r'[^a-zA-Z0-9]', '', key)
+    key = re.sub(r'[^a-zA-Z0-9_]', '', key)
+
+    # If the key starts with a digit, prefix with an underscore
+    if key[0].isdigit():
+        key = '_' + key
 
     return key
 
@@ -840,7 +893,10 @@ def get_objectreference(
     return {'name': str(item), 'model': str(model_cls._meta.verbose_name), **ret}
 
 
-def inheritors(cls):
+Inheritors_T = TypeVar('Inheritors_T')
+
+
+def inheritors(cls: type[Inheritors_T]) -> set[type[Inheritors_T]]:
     """Return all classes that are subclasses from the supplied cls."""
     subcls = set()
     work = [cls]

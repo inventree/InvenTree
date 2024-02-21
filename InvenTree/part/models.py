@@ -37,6 +37,7 @@ import common.models
 import common.settings
 import InvenTree.conversion
 import InvenTree.fields
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import part.helpers as part_helpers
@@ -49,14 +50,6 @@ from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
-from InvenTree.models import (
-    DataImportMixin,
-    InvenTreeAttachment,
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    InvenTreeTree,
-    MetadataMixin,
-)
 from InvenTree.status_codes import (
     BuildStatusGroups,
     PurchaseOrderStatus,
@@ -70,7 +63,7 @@ from stock import models as StockModels
 logger = logging.getLogger('inventree')
 
 
-class PartCategory(MetadataMixin, InvenTreeTree):
+class PartCategory(InvenTree.models.InvenTreeTree):
     """PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
@@ -341,7 +334,13 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel):
+class Part(
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PluginValidationMixin,
+    MPTTModel,
+):
     """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -452,6 +451,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         If the part image has been updated, then check if the "old" (previous) image is still used by another part.
         If not, it is considered "orphaned" and will be deleted.
         """
+        _new = False
         if self.pk:
             try:
                 previous = Part.objects.get(pk=self.pk)
@@ -470,6 +470,8 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
                         previous.image.delete(save=False)
             except Part.DoesNotExist:
                 pass
+        else:
+            _new = True
 
         self.full_clean()
 
@@ -477,6 +479,10 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             super().save(*args, **kwargs)
         except InvalidMove:
             raise ValidationError({'variant_of': _('Invalid choice for parent part')})
+
+        if _new:
+            # Only run if the check was not run previously (due to not existing in the database)
+            self.ensure_trackable()
 
     def __str__(self):
         """Return a string representation of the Part (for use in the admin interface)."""
@@ -742,7 +748,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         return stock[0].serial
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in InvenTree settings."""
         return part_helpers.render_part_full_name(self)
 
@@ -756,7 +762,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
             return helpers.getMediaUrl(self.image.url)
         return helpers.getBlankImage()
 
-    def get_thumbnail_url(self):
+    def get_thumbnail_url(self) -> str:
         """Return the URL of the image thumbnail for this part."""
         if self.image:
             return helpers.getMediaUrl(self.image.thumbnail.url)
@@ -827,6 +833,12 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         # Run custom validation for the name field
         self.validate_name()
 
+        if self.pk:
+            # Only run if the part already exists in the database
+            self.ensure_trackable()
+
+    def ensure_trackable(self):
+        """Ensure that trackable is set correctly downline."""
         if self.trackable:
             for part in self.get_used_in():
                 if not part.trackable:
@@ -2112,7 +2124,7 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
             parameter.save()
 
-    def getTestTemplates(self, required=None, include_parent=True):
+    def getTestTemplates(self, required=None, include_parent=True, enabled=None):
         """Return a list of all test templates associated with this Part.
 
         These are used for validation of a StockItem.
@@ -2131,6 +2143,9 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
         if required is not None:
             tests = tests.filter(required=required)
 
+        if enabled is not None:
+            tests = tests.filter(enabled=enabled)
+
         return tests
 
     def getTestTemplateMap(self, **kwargs):
@@ -2142,9 +2157,16 @@ class Part(InvenTreeBarcodeMixin, InvenTreeNotesMixin, MetadataMixin, MPTTModel)
 
         return templates
 
-    def getRequiredTests(self):
-        """Return the tests which are required by this part."""
-        return self.getTestTemplates(required=True)
+    def getRequiredTests(self, include_parent=True, enabled=True):
+        """Return the tests which are required by this part.
+
+        Arguments:
+            include_parent: If True, include tests which are defined for parent parts
+            enabled: If set (either True or False), filter by template "enabled" status
+        """
+        return self.getTestTemplates(
+            required=True, enabled=enabled, include_parent=include_parent
+        )
 
     @property
     def attachment_count(self):
@@ -3247,7 +3269,7 @@ class PartStocktakeReport(models.Model):
     )
 
 
-class PartAttachment(InvenTreeAttachment):
+class PartAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a Part object."""
 
     @staticmethod
@@ -3368,7 +3390,7 @@ class PartCategoryStar(models.Model):
     )
 
 
-class PartTestTemplate(MetadataMixin, models.Model):
+class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
@@ -3380,6 +3402,10 @@ class PartTestTemplate(MetadataMixin, models.Model):
     To enable generation of unique lookup-keys for each test, there are some validation tests
     run on the model (refer to the validate_unique function).
     """
+
+    def __str__(self):
+        """Format a string representation of this PartTestTemplate."""
+        return ' | '.join([self.part.name, self.test_name])
 
     @staticmethod
     def get_api_url():
@@ -3396,6 +3422,8 @@ class PartTestTemplate(MetadataMixin, models.Model):
         """Clean fields for the PartTestTemplate model."""
         self.test_name = self.test_name.strip()
 
+        self.key = helpers.generateTestKey(self.test_name)
+
         self.validate_unique()
         super().clean()
 
@@ -3406,29 +3434,17 @@ class PartTestTemplate(MetadataMixin, models.Model):
                 'part': _('Test templates can only be created for trackable parts')
             })
 
-        # Get a list of all tests "above" this one
+        # Check that this test is unique within the part tree
         tests = PartTestTemplate.objects.filter(
-            part__in=self.part.get_ancestors(include_self=True)
-        )
+            key=self.key, part__tree_id=self.part.tree_id
+        ).exclude(pk=self.pk)
 
-        # If this item is already in the database, exclude it from comparison!
-        if self.pk is not None:
-            tests = tests.exclude(pk=self.pk)
-
-        key = self.key
-
-        for test in tests:
-            if test.key == key:
-                raise ValidationError({
-                    'test_name': _('Test with this name already exists for this part')
-                })
+        if tests.exists():
+            raise ValidationError({
+                'test_name': _('Test with this name already exists for this part')
+            })
 
         super().validate_unique(exclude)
-
-    @property
-    def key(self):
-        """Generate a key for this test."""
-        return helpers.generateTestKey(self.test_name)
 
     part = models.ForeignKey(
         Part,
@@ -3445,12 +3461,23 @@ class PartTestTemplate(MetadataMixin, models.Model):
         help_text=_('Enter a name for the test'),
     )
 
+    key = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_('Test Key'),
+        help_text=_('Simplified key for the test'),
+    )
+
     description = models.CharField(
         blank=False,
         null=True,
         max_length=100,
         verbose_name=_('Test Description'),
         help_text=_('Enter description for this test'),
+    )
+
+    enabled = models.BooleanField(
+        default=True, verbose_name=_('Enabled'), help_text=_('Is this test enabled?')
     )
 
     required = models.BooleanField(
@@ -3478,7 +3505,7 @@ def validate_template_name(name):
     """Placeholder for legacy function used in migrations."""
 
 
-class PartParameterTemplate(MetadataMixin, models.Model):
+class PartParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartParameterTemplate provides a template for key:value pairs for extra parameters fields/values to be added to a Part.
 
     This allows users to arbitrarily assign data fields to a Part beyond the built-in attributes.
@@ -3623,7 +3650,7 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
             )
 
 
-class PartParameter(MetadataMixin, models.Model):
+class PartParameter(InvenTree.models.InvenTreeMetadataModel):
     """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
@@ -3765,7 +3792,7 @@ class PartParameter(MetadataMixin, models.Model):
         return part_parameter
 
 
-class PartCategoryParameterTemplate(MetadataMixin, models.Model):
+class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
     """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate.
 
     Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
@@ -3817,7 +3844,11 @@ class PartCategoryParameterTemplate(MetadataMixin, models.Model):
     )
 
 
-class BomItem(DataImportMixin, MetadataMixin, models.Model):
+class BomItem(
+    InvenTree.models.DataImportMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.InvenTreeModel,
+):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -4249,7 +4280,7 @@ def update_pricing_after_delete(sender, instance, **kwargs):
         instance.part.schedule_pricing_update(create=False)
 
 
-class BomItemSubstitute(MetadataMixin, models.Model):
+class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
     """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
@@ -4307,7 +4338,7 @@ class BomItemSubstitute(MetadataMixin, models.Model):
     )
 
 
-class PartRelated(MetadataMixin, models.Model):
+class PartRelated(InvenTree.models.InvenTreeMetadataModel):
     """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
     class Meta:

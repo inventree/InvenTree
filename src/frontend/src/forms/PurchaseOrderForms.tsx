@@ -1,68 +1,145 @@
 import {
+  IconAddressBook,
   IconCalendar,
   IconCoins,
   IconCurrencyDollar,
+  IconHash,
   IconLink,
+  IconList,
   IconNotes,
-  IconSitemap
+  IconSitemap,
+  IconUser,
+  IconUsers
 } from '@tabler/icons-react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '../components/forms/fields/ApiFormField';
 
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
-export function purchaseOrderLineItemFields({
-  supplierId,
-  orderId,
-  create = false
+export function usePurchaseOrderLineItemFields({
+  create
 }: {
-  supplierId?: number;
-  orderId?: number;
   create?: boolean;
 }) {
-  let fields: ApiFormFieldSet = {
-    order: {
-      filters: {
-        supplier_detail: true
+  const [purchasePrice, setPurchasePrice] = useState<string>('');
+  const [autoPricing, setAutoPricing] = useState(true);
+
+  useEffect(() => {
+    if (autoPricing) {
+      setPurchasePrice('');
+    }
+  }, [autoPricing]);
+
+  useEffect(() => {
+    setAutoPricing(purchasePrice === '');
+  }, [purchasePrice]);
+
+  const fields = useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      order: {
+        filters: {
+          supplier_detail: true
+        },
+        hidden: true
       },
-      value: orderId,
-      hidden: create != true || orderId != undefined
-    },
-    part: {
-      filters: {
-        part_detail: true,
-        supplier_detail: true,
-        supplier: supplierId
+      part: {
+        filters: {
+          part_detail: true,
+          supplier_detail: true
+        },
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          // TODO: Adjust part based on the supplier associated with the supplier
+          return value.filters;
+        }
       },
-      adjustFilters: (filters: any) => {
-        // TODO: Filter by the supplier associated with the order
-        return filters;
+      quantity: {},
+      reference: {},
+      purchase_price: {
+        icon: <IconCurrencyDollar />,
+        value: purchasePrice,
+        onValueChange: setPurchasePrice
+      },
+      purchase_price_currency: {
+        icon: <IconCoins />
+      },
+      auto_pricing: {
+        value: autoPricing,
+        onValueChange: setAutoPricing
+      },
+      target_date: {
+        icon: <IconCalendar />
+      },
+      destination: {
+        icon: <IconSitemap />
+      },
+      notes: {
+        icon: <IconNotes />
+      },
+      link: {
+        icon: <IconLink />
       }
-      // TODO: Custom onEdit callback (see purchase_order.js)
-      // TODO: secondary modal (see purchase_order.js)
+    };
+
+    if (create) {
+      fields['merge_items'] = {};
+    }
+
+    return fields;
+  }, [create, autoPricing, purchasePrice]);
+
+  return fields;
+}
+
+/**
+ * Construct a set of fields for creating / editing a PurchaseOrder instance
+ */
+export function purchaseOrderFields(): ApiFormFieldSet {
+  return {
+    reference: {
+      icon: <IconHash />
     },
-    quantity: {},
-    reference: {},
-    purchase_price: {
-      icon: <IconCurrencyDollar />
+    description: {},
+    supplier: {
+      filters: {
+        is_supplier: true
+      }
     },
-    purchase_price_currency: {
+    supplier_reference: {},
+    project_code: {
+      icon: <IconList />
+    },
+    order_currency: {
       icon: <IconCoins />
     },
     target_date: {
       icon: <IconCalendar />
     },
-    destination: {
-      icon: <IconSitemap />
+    link: {},
+    contact: {
+      icon: <IconUser />,
+      adjustFilters: (value: ApiFormAdjustFilterType) => {
+        return {
+          ...value.filters,
+          company: value.data.supplier
+        };
+      }
     },
-    notes: {
-      icon: <IconNotes />
+    address: {
+      icon: <IconAddressBook />,
+      adjustFilters: (value: ApiFormAdjustFilterType) => {
+        return {
+          ...value.filters,
+          company: value.data.supplier
+        };
+      }
     },
-    link: {
-      icon: <IconLink />
+    responsible: {
+      icon: <IconUsers />
     }
   };
-
-  return fields;
 }

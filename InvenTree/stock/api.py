@@ -38,6 +38,7 @@ from InvenTree.filters import (
 from InvenTree.helpers import (
     DownloadFile,
     extract_serial_numbers,
+    generateTestKey,
     is_ajax,
     isNull,
     str2bool,
@@ -122,6 +123,8 @@ class StockDetail(RetrieveUpdateDestroyAPI):
 
 class StockItemContextMixin:
     """Mixin class for adding StockItem object to serializer context."""
+
+    role_required = 'stock.change'
 
     queryset = StockItem.objects.none()
 
@@ -254,6 +257,12 @@ class StockMerge(CreateAPI):
 class StockLocationFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the StockLocation endpoint."""
 
+    class Meta:
+        """Meta class options for this filterset."""
+
+        model = StockLocation
+        fields = ['name', 'structural', 'external']
+
     location_type = rest_filters.ModelChoiceFilter(
         queryset=StockLocationType.objects.all(), field_name='location_type'
     )
@@ -267,6 +276,80 @@ class StockLocationFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.exclude(location_type=None)
         return queryset.filter(location_type=None)
+
+    depth = rest_filters.NumberFilter(
+        label=_('Depth'), method='filter_depth', help_text=_('Filter by location depth')
+    )
+
+    def filter_depth(self, queryset, name, value):
+        """Filter by the "depth" of the StockLocation.
+
+        - This filter is used to limit the depth of the location tree
+        - If the "parent" filter is also provided, the depth is calculated from the parent location
+        """
+        parent = self.data.get('parent', None)
+
+        # Only filter if the parent filter is *not* provided
+        if not parent:
+            queryset = queryset.filter(level__lte=value)
+
+        return queryset
+
+    cascade = rest_filters.BooleanFilter(
+        label=_('Cascade'),
+        method='filter_cascade',
+        help_text=_('Include sub-locations in filtered results'),
+    )
+
+    def filter_cascade(self, queryset, name, value):
+        """Filter by whether to include sub-locations in the filtered results.
+
+        Note: If the "parent" filter is provided, we offload the logic to that method.
+        """
+        parent = self.data.get('parent', None)
+
+        # If the parent is *not* provided, update the results based on the "cascade" value
+        if not parent:
+            if not value:
+                # If "cascade" is False, only return top-level location
+                queryset = queryset.filter(parent=None)
+
+        return queryset
+
+    parent = rest_filters.ModelChoiceFilter(
+        queryset=StockLocation.objects.all(),
+        method='filter_parent',
+        label=_('Parent Location'),
+        help_text=_('Filter by parent location'),
+    )
+
+    def filter_parent(self, queryset, name, value):
+        """Filter by parent location.
+
+        Note that the filtering behaviour here varies,
+        depending on whether the 'cascade' value is set.
+
+        So, we have to check the "cascade" value here.
+        """
+        parent = value
+        depth = self.data.get('depth', None)
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if cascade:
+            # Return recursive sub-locations
+            queryset = queryset.filter(
+                parent__in=parent.get_descendants(include_self=True)
+            )
+        else:
+            # Return only direct children
+            queryset = queryset.filter(parent=parent)
+
+        if depth is not None:
+            # Filter by depth from parent
+            depth = int(depth)
+            queryset = queryset.filter(level__lte=parent.level + depth)
+
+        return queryset
 
 
 class StockLocationList(APIDownloadMixin, ListCreateAPI):
@@ -294,70 +377,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
 
-    def filter_queryset(self, queryset):
-        """Custom filtering: - Allow filtering by "null" parent to retrieve top-level stock locations."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        loc_id = params.get('parent', None)
-
-        cascade = str2bool(params.get('cascade', False))
-
-        depth = str2int(params.get('depth', None))
-
-        # Do not filter by location
-        if loc_id is None:
-            pass
-        # Look for top-level locations
-        elif isNull(loc_id):
-            # If we allow "cascade" at the top-level, this essentially means *all* locations
-            if not cascade:
-                queryset = queryset.filter(parent=None)
-
-            if cascade and depth is not None:
-                queryset = queryset.filter(level__lte=depth)
-
-        else:
-            try:
-                location = StockLocation.objects.get(pk=loc_id)
-
-                # All sub-locations to be returned too?
-                if cascade:
-                    parents = location.get_descendants(include_self=True)
-                    if depth is not None:
-                        parents = parents.filter(level__lte=location.level + depth)
-
-                    parent_ids = [p.id for p in parents]
-                    queryset = queryset.filter(parent__in=parent_ids)
-
-                else:
-                    queryset = queryset.filter(parent=location)
-
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
-
-        # Exclude StockLocation tree
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                loc = StockLocation.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[
-                        subloc.pk for subloc in loc.get_descendants(include_self=True)
-                    ]
-                )
-
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER
-
-    filterset_fields = ['name', 'structural', 'external', 'tags__name', 'tags__slug']
 
     search_fields = ['name', 'description', 'tags__name', 'tags__slug']
 
@@ -1186,22 +1206,91 @@ class StockAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
 
-class StockItemTestResultDetail(RetrieveUpdateDestroyAPI):
+class StockItemTestResultMixin:
+    """Mixin class for the StockItemTestResult API endpoints."""
+
+    queryset = StockItemTestResult.objects.all()
+    serializer_class = StockSerializers.StockItemTestResultSerializer
+
+    def get_serializer_context(self):
+        """Extend serializer context."""
+        ctx = super().get_serializer_context()
+        ctx['request'] = self.request
+        return ctx
+
+    def get_serializer(self, *args, **kwargs):
+        """Set context before returning serializer."""
+        try:
+            kwargs['user_detail'] = str2bool(
+                self.request.query_params.get('user_detail', False)
+            )
+            kwargs['template_detail'] = str2bool(
+                self.request.query_params.get('template_detail', False)
+            )
+        except Exception:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+
+class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for StockItemTestResult."""
 
-    queryset = StockItemTestResult.objects.all()
-    serializer_class = StockSerializers.StockItemTestResultSerializer
+    pass
 
 
-class StockItemTestResultList(ListCreateDestroyAPIView):
+class StockItemTestResultFilter(rest_filters.FilterSet):
+    """API filter for the StockItemTestResult list."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemTestResult
+
+        # Simple filter fields
+        fields = ['user', 'template', 'result', 'value']
+
+    build = rest_filters.ModelChoiceFilter(
+        label='Build', queryset=Build.objects.all(), field_name='stock_item__build'
+    )
+
+    part = rest_filters.ModelChoiceFilter(
+        label='Part', queryset=Part.objects.all(), field_name='stock_item__part'
+    )
+
+    required = rest_filters.BooleanFilter(
+        label='Required', field_name='template__required'
+    )
+
+    enabled = rest_filters.BooleanFilter(
+        label='Enabled', field_name='template__enabled'
+    )
+
+    test = rest_filters.CharFilter(
+        label='Test name (case insensitive)', method='filter_test_name'
+    )
+
+    def filter_test_name(self, queryset, name, value):
+        """Filter by test name.
+
+        This method is provided for legacy support,
+        where the StockItemTestResult model had a "test" field.
+        Now the "test" name is stored against the PartTestTemplate model
+        """
+        key = generateTestKey(value)
+        return queryset.filter(template__key=key)
+
+
+class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
-    queryset = StockItemTestResult.objects.all()
-    serializer_class = StockSerializers.StockItemTestResultSerializer
-
+    filterset_class = StockItemTestResultFilter
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['test', 'user', 'result', 'value']
+    filterset_fields = ['user', 'template', 'result', 'value']
+    ordering_fields = ['date', 'result']
 
     ordering = 'date'
 
@@ -1210,18 +1299,6 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
-
-        # Filter by 'build'
-        build = params.get('build', None)
-
-        if build is not None:
-            try:
-                build = Build.objects.get(pk=build)
-
-                queryset = queryset.filter(stock_item__build=build)
-
-            except (ValueError, Build.DoesNotExist):
-                pass
 
         # Filter by stock item
         item = params.get('stock_item', None)
@@ -1248,19 +1325,6 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
                 pass
 
         return queryset
-
-    def get_serializer(self, *args, **kwargs):
-        """Set context before returning serializer."""
-        try:
-            kwargs['user_detail'] = str2bool(
-                self.request.query_params.get('user_detail', False)
-            )
-        except Exception:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
 
     def perform_create(self, serializer):
         """Create a new test result object.
