@@ -193,6 +193,9 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
     if user and not user.is_staff:
         raise ValidationError(_('Only staff users can administer plugins'))
 
+    if settings.PLUGINS_INSTALL_DISABLED:
+        raise ValidationError(_('Plugin installation is disabled'))
+
     logger.info('install_plugin: %s, %s', url, packagename)
 
     # Check if we are running in a virtual environment

@@ -1127,6 +1127,9 @@ MAINTENANCE_MODE_STATE_BACKEND = 'InvenTree.backends.InvenTreeMaintenanceModeBac
 PLUGINS_ENABLED = get_boolean_setting(
     'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
 )
+PLUGINS_INSTALL_DISABLED = get_boolean_setting(
+    'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
+)
 
 PLUGIN_FILE = config.get_plugin_file()
 
