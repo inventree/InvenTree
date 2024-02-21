@@ -152,20 +152,18 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     if not value:
         raise ValidationError(_('No value provided'))
 
-    # Construct a set of values to "attempt" to convert
-    attempts = set()
-
-    # Original value, unmodified
-    attempts.add(value)
+    # Construct a list of values to "attempt" to convert
+    attempts = [value]
 
     # Attempt to convert from engineering notation
     eng = from_engineering_notation(value)
-    attempts.add(eng)
+    attempts.append(eng)
 
     # Append the unit, if provided
+    # These are the "final" attempts to convert the value, and *must* appear after previous attempts
     if unit:
-        attempts.add(f'{value}{unit}')
-        attempts.add(f'{eng}{unit}')
+        attempts.append(f'{value}{unit}')
+        attempts.append(f'{eng}{unit}')
 
     value = None
 
