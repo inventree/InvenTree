@@ -25,7 +25,6 @@ from taggit.serializers import TaggitSerializer
 import common.models as common_models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
-from InvenTree.helpers_model import download_image_from_url, get_base_url
 from users.CustomUser import CustomUser
 
 
