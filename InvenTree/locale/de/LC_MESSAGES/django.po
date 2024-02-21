@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-20 23:36+0000\n"
-"PO-Revision-Date: 2024-02-15 02:42\n"
+"PO-Revision-Date: 2024-02-21 04:34\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -292,7 +292,7 @@ msgstr "Russisch"
 
 #: InvenTree/locales.py:39
 msgid "Slovak"
-msgstr ""
+msgstr "Slowakisch"
 
 #: InvenTree/locales.py:40
 msgid "Slovenian"
@@ -340,7 +340,7 @@ msgstr "Email"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Fehler beim Ausführen der Plugin Validierung"
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
@@ -605,11 +605,11 @@ msgstr "Ihr Konto wurde erstellt."
 
 #: InvenTree/serializers.py:469
 msgid "Please use the password reset function to login"
-msgstr ""
+msgstr "Bitte benutzen Sie die Passwort-zurücksetzen-Funktion, um sich anzumelden"
 
 #: InvenTree/serializers.py:476
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Willkommen bei InvenTree"
 
 #: InvenTree/serializers.py:537
 msgid "Filename"
@@ -1270,10 +1270,9 @@ msgid "Quantity cannot be greater than the output quantity"
 msgstr "Menge kann nicht größer als die Ausgangsmenge sein"
 
 #: build/models.py:921 build/serializers.py:533
-#, fuzzy, python-brace-format
-#| msgid "This stock item has not passed all required tests"
+#, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr "Dieser Lagerartikel hat nicht alle Tests bestanden"
+msgstr "Build Ausgabe {serial} hat nicht alle erforderlichen Tests bestanden"
 
 #: build/models.py:1283
 msgid "Build object"
@@ -1662,7 +1661,7 @@ msgstr "Stücklisten-Position"
 
 #: build/serializers.py:1105 templates/js/translated/index.js:130
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Zugewiesener Bestand"
 
 #: build/serializers.py:1110 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:1423 part/templates/part/part_base.html:210
@@ -1676,7 +1675,7 @@ msgstr "Bestellt"
 #: templates/js/translated/build.js:2618
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr ""
+msgstr "In Produktion"
 
 #: build/serializers.py:1120 part/bom.py:172 part/serializers.py:1436
 #: part/templates/part/part_base.html:192
@@ -1876,15 +1875,15 @@ msgstr "Priorität"
 
 #: build/templates/build/build_base.html:273
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Bauauftrag löschen"
 
 #: build/templates/build/build_base.html:283
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "Bauftrags-QR-Code"
 
 #: build/templates/build/build_base.html:295
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Barcode mit Bauauftrag verknüpfen"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -2028,11 +2027,11 @@ msgstr "Bauauftrags-Notizen"
 
 #: build/templates/build/detail.html:426
 msgid "Allocation Complete"
-msgstr ""
+msgstr "Zuordnung abgeschlossen"
 
 #: build/templates/build/detail.html:427
 msgid "All lines have been fully allocated"
-msgstr ""
+msgstr "Alle Zeilen wurden vollständig zugewiesen"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
@@ -2094,7 +2093,7 @@ msgstr "Zeitstempel der letzten Aktualisierung"
 
 #: common/models.py:105
 msgid "Site URL is locked by configuration"
-msgstr ""
+msgstr "Seiten-URL ist durch die Konfiguration gesperrt"
 
 #: common/models.py:130
 msgid "Unique project code"
@@ -2957,11 +2956,11 @@ msgstr "Beim Start überprüfen, ob alle Plugins installiert sind - Für Contain
 
 #: common/models.py:1898
 msgid "Check for plugin updates"
-msgstr ""
+msgstr "Nach Plugin-Aktualisierungen suchen"
 
 #: common/models.py:1899
 msgid "Enable periodic checks for updates to installed plugins"
-msgstr ""
+msgstr "Periodische Überprüfungen auf Updates für installierte Plugins aktivieren"
 
 #: common/models.py:1905
 msgid "Enable URL integration"
@@ -3053,11 +3052,11 @@ msgstr "Vollständigen Namen von Benutzern anstatt Benutzername anzeigen"
 
 #: common/models.py:1985
 msgid "Block Until Tests Pass"
-msgstr ""
+msgstr "Blockieren bis Test bestanden"
 
 #: common/models.py:1987
 msgid "Prevent build outputs from being completed until all required tests pass"
-msgstr ""
+msgstr "Verhindert die Fertigstellung bis alle erforderlichen Tests bestanden sind"
 
 #: common/models.py:2000 common/models.py:2400
 msgid "Settings key (must be unique - case insensitive"
@@ -3481,11 +3480,11 @@ msgstr "Benachrichtigungen bei Systemfehlern erhalten"
 
 #: common/models.py:2387
 msgid "Last used printing machines"
-msgstr ""
+msgstr "Zuletzt verwendete Druckmaschinen"
 
 #: common/models.py:2388
 msgid "Save the last used printing machines for a user"
-msgstr ""
+msgstr "Die zuletzt benutzten Druckmaschinen für einen Benutzer speichern"
 
 #: common/models.py:2431
 msgid "Price break quantity"
@@ -4243,11 +4242,11 @@ msgstr "Telefon"
 #: company/templates/company/company_base.html:205
 #: part/templates/part/part_base.html:528
 msgid "Remove Image"
-msgstr ""
+msgstr "Bild entfernen"
 
 #: company/templates/company/company_base.html:206
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Verknüpftes Bild von dieser Firma entfernen"
 
 #: company/templates/company/company_base.html:208
 #: part/templates/part/part_base.html:531
@@ -4259,12 +4258,12 @@ msgstr "Entfernen"
 #: company/templates/company/company_base.html:237
 #: part/templates/part/part_base.html:560
 msgid "Upload Image"
-msgstr ""
+msgstr "Bild hochladen"
 
 #: company/templates/company/company_base.html:252
 #: part/templates/part/part_base.html:614
 msgid "Download Image"
-msgstr ""
+msgstr "Bild herunterladen"
 
 #: company/templates/company/detail.html:15
 #: company/templates/company/manufacturer_part_sidebar.html:7
@@ -4447,7 +4446,7 @@ msgstr "Neuer Parameter"
 #: company/templates/company/manufacturer_part.html:206
 #: templates/js/translated/part.js:1422
 msgid "Add Parameter"
-msgstr ""
+msgstr "Parameter hinzufügen"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
@@ -4563,15 +4562,15 @@ msgstr "Preisstaffel hinzufügen"
 
 #: company/templates/company/supplier_part.html:276
 msgid "Supplier Part QR Code"
-msgstr ""
+msgstr "Zulieferteil QR-Code"
 
 #: company/templates/company/supplier_part.html:287
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Barcode mit Zulieferteil verknüpfen"
 
 #: company/templates/company/supplier_part.html:359
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Verfügbarkeit der Teile aktualisieren"
 
 #: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:223
 #: part/templates/part/category.html:183
@@ -4617,7 +4616,7 @@ msgstr "Neue Firma"
 
 #: label/api.py:247
 msgid "Error printing label"
-msgstr ""
+msgstr "Fehler beim Drucken des Labels"
 
 #: label/models.py:115
 msgid "Label name"
@@ -4695,15 +4694,15 @@ msgstr "QR-Code"
 
 #: machine/machine_types/label_printer.py:217
 msgid "Copies"
-msgstr ""
+msgstr "Kopien"
 
 #: machine/machine_types/label_printer.py:218
 msgid "Number of copies to print for each label"
-msgstr ""
+msgstr "Anzahl der zu druckenden Kopien für jedes Label"
 
 #: machine/machine_types/label_printer.py:233
 msgid "Connected"
-msgstr ""
+msgstr "Verbunden"
 
 #: machine/machine_types/label_printer.py:234 order/api.py:1461
 #: templates/js/translated/sales_order.js:1042
@@ -4712,87 +4711,87 @@ msgstr "Unbekannt"
 
 #: machine/machine_types/label_printer.py:235
 msgid "Printing"
-msgstr ""
+msgstr "Drucken"
 
 #: machine/machine_types/label_printer.py:236
 msgid "No media"
-msgstr ""
+msgstr "Keine Medien"
 
 #: machine/machine_types/label_printer.py:237
 msgid "Disconnected"
-msgstr ""
+msgstr "Verbindung getrennt"
 
 #: machine/machine_types/label_printer.py:244
 msgid "Label Printer"
-msgstr ""
+msgstr "Etikettendrucker"
 
 #: machine/machine_types/label_printer.py:245
 msgid "Directly print labels for various items."
-msgstr ""
+msgstr "Drucken Sie Etiketten direkt für verschiedene Artikel."
 
 #: machine/machine_types/label_printer.py:251
 msgid "Printer Location"
-msgstr ""
+msgstr "Druckerstandort"
 
 #: machine/machine_types/label_printer.py:252
 msgid "Scope the printer to a specific location"
-msgstr ""
+msgstr "Den Drucker an einen bestimmten Ort aufstellen"
 
 #: machine/models.py:25
 msgid "Name of machine"
-msgstr ""
+msgstr "Name des Geräts"
 
 #: machine/models.py:29
 msgid "Machine Type"
-msgstr ""
+msgstr "Gerätetyp"
 
 #: machine/models.py:29
 msgid "Type of machine"
-msgstr ""
+msgstr "Typ der Maschine"
 
 #: machine/models.py:34 machine/models.py:146
 msgid "Driver"
-msgstr ""
+msgstr "Treiber"
 
 #: machine/models.py:35
 msgid "Driver used for the machine"
-msgstr ""
+msgstr "Verwendeter Treiber für die Maschine"
 
 #: machine/models.py:39
 msgid "Machines can be disabled"
-msgstr ""
+msgstr "Maschinen können deaktiviert werden"
 
 #: machine/models.py:95
 msgid "Driver available"
-msgstr ""
+msgstr "Treiber verfügbar"
 
 #: machine/models.py:100
 msgid "No errors"
-msgstr ""
+msgstr "Keine Fehler"
 
 #: machine/models.py:105
 msgid "Initialized"
-msgstr ""
+msgstr "Initialisiert"
 
 #: machine/models.py:110
 msgid "Errors"
-msgstr ""
+msgstr "Fehler"
 
 #: machine/models.py:117
 msgid "Machine status"
-msgstr ""
+msgstr "Status der Maschine"
 
 #: machine/models.py:145
 msgid "Machine"
-msgstr ""
+msgstr "Maschine"
 
 #: machine/models.py:151
 msgid "Machine Config"
-msgstr ""
+msgstr "Maschinenkonfiguration"
 
 #: machine/models.py:156
 msgid "Config type"
-msgstr ""
+msgstr "Konfigurationstyp"
 
 #: order/admin.py:30 order/models.py:88
 #: report/templates/report/inventree_po_report_base.html:31
@@ -5220,10 +5219,8 @@ msgid "Order is not open"
 msgstr "Der Auftrag ist nicht offen"
 
 #: order/serializers.py:429
-#, fuzzy
-#| msgid "Part Pricing"
 msgid "Auto Pricing"
-msgstr "Teilbepreisung"
+msgstr ""
 
 #: order/serializers.py:431
 msgid "Automatically calculate purchase price based on supplier part data"
@@ -5234,10 +5231,8 @@ msgid "Purchase price currency"
 msgstr "Kaufpreiswährung"
 
 #: order/serializers.py:447
-#, fuzzy
-#| msgid "Merged stock items"
 msgid "Merge Items"
-msgstr "Lagerartikel zusammengeführt"
+msgstr ""
 
 #: order/serializers.py:449
 msgid "Merge items with the same part, destination and target date into one line item"
@@ -5488,11 +5483,11 @@ msgstr "Gesamtkosten konnten nicht berechnet werden"
 
 #: order/templates/order/order_base.html:318
 msgid "Purchase Order QR Code"
-msgstr ""
+msgstr "Bestellung QR-Code"
 
 #: order/templates/order/order_base.html:330
 msgid "Link Barcode to Purchase Order"
-msgstr ""
+msgstr "Barcode mit Bestellung verknüpfen"
 
 #: order/templates/order/order_wizard/match_fields.html:9
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
@@ -5681,11 +5676,11 @@ msgstr "Gesamtkosten"
 
 #: order/templates/order/return_order_base.html:263
 msgid "Return Order QR Code"
-msgstr ""
+msgstr "QR-Code Bestellung zurückgeben"
 
 #: order/templates/order/return_order_base.html:275
 msgid "Link Barcode to Return Order"
-msgstr ""
+msgstr "Barcode mit Rücksendung verknüpfen"
 
 #: order/templates/order/return_order_sidebar.html:5
 msgid "Order Details"
@@ -5717,11 +5712,11 @@ msgstr "Abgeschlossene Sendungen"
 
 #: order/templates/order/sales_order_base.html:312
 msgid "Sales Order QR Code"
-msgstr ""
+msgstr "Verkaufsauftrag QR-Code"
 
 #: order/templates/order/sales_order_base.html:324
 msgid "Link Barcode to Sales Order"
-msgstr ""
+msgstr "Barcode mit Verkaufsauftrag verknüpfen"
 
 #: order/templates/order/sales_order_detail.html:18
 msgid "Sales Order Items"
@@ -5901,10 +5896,8 @@ msgid "Maximum Price"
 msgstr "Höchster Preis"
 
 #: part/api.py:402
-#, fuzzy
-#| msgid "Test Results"
 msgid "Has Results"
-msgstr "Testergebnisse"
+msgstr "Ergebnisse"
 
 #: part/api.py:569
 msgid "Incoming Purchase Order"
@@ -6388,16 +6381,12 @@ msgid "Enter a name for the test"
 msgstr "Namen für diesen Test eingeben"
 
 #: part/models.py:3467
-#, fuzzy
-#| msgid "Test Name"
 msgid "Test Key"
-msgstr "Test-Name"
+msgstr "Testschlüssel"
 
 #: part/models.py:3468
-#, fuzzy
-#| msgid "Enter a name for the test"
 msgid "Simplified key for the test"
-msgstr "Namen für diesen Test eingeben"
+msgstr "Vereinfachter Schlüssel zum Test"
 
 #: part/models.py:3475
 msgid "Test Description"
@@ -6408,10 +6397,8 @@ msgid "Enter description for this test"
 msgstr "Beschreibung für diesen Test eingeben"
 
 #: part/models.py:3480
-#, fuzzy
-#| msgid "Is this test required to pass?"
 msgid "Is this test enabled?"
-msgstr "Muss dieser Test erfolgreich sein?"
+msgstr "Ist dieser Test aktiviert?"
 
 #: part/models.py:3485 templates/js/translated/part.js:2899
 #: templates/js/translated/table_filters.js:477
@@ -6653,14 +6640,12 @@ msgid "Duplicate relationship already exists"
 msgstr "Doppelte Beziehung existiert bereits"
 
 #: part/serializers.py:165
-#, fuzzy
-#| msgid "Result"
 msgid "Results"
-msgstr "Ergebnis"
+msgstr "Ergebnisse"
 
 #: part/serializers.py:166
 msgid "Number of results recorded against this template"
-msgstr ""
+msgstr "Anzahl der Ergebnisse, die in dieser Vorlage aufgezeichnet wurden"
 
 #: part/serializers.py:190 part/serializers.py:208 stock/serializers.py:384
 msgid "Purchase currency of this stock item"
@@ -7211,15 +7196,15 @@ msgstr "Teil-Hersteller"
 
 #: part/templates/part/detail.html:659
 msgid "Related Part"
-msgstr ""
+msgstr "Verknüpftes Teil"
 
 #: part/templates/part/detail.html:667
 msgid "Add Related Part"
-msgstr ""
+msgstr "Verknüpftes Teil hinzufügen"
 
 #: part/templates/part/detail.html:752
 msgid "Add Test Result Template"
-msgstr ""
+msgstr "Testergebnis-Vorlage hinzufügen"
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:14
@@ -7395,27 +7380,27 @@ msgstr "Nach Seriennummer suchen"
 
 #: part/templates/part/part_base.html:444
 msgid "Part QR Code"
-msgstr ""
+msgstr "QR-Code Teil"
 
 #: part/templates/part/part_base.html:461
 msgid "Link Barcode to Part"
-msgstr ""
+msgstr "Barcode mit Teil verknüpfen"
 
 #: part/templates/part/part_base.html:512
 msgid "Calculate"
-msgstr ""
+msgstr "Berechnen"
 
 #: part/templates/part/part_base.html:529
 msgid "Remove associated image from this part"
-msgstr ""
+msgstr "Verknüpftes Bild von diesem Teil entfernen"
 
 #: part/templates/part/part_base.html:580
 msgid "No matching images found"
-msgstr ""
+msgstr "Keine passenden Bilder gefunden"
 
 #: part/templates/part/part_base.html:676
 msgid "Hide Part Details"
-msgstr ""
+msgstr "Teildetails ausblenden"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:76
 #: part/templates/part/prices.html:227 templates/js/translated/pricing.js:485
@@ -7588,7 +7573,7 @@ msgstr "Verkaufspreisstaffel hinzufügen"
 
 #: part/templates/part/pricing_javascript.html:24
 msgid "Update Pricing"
-msgstr ""
+msgstr "Preise aktualisieren"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
 #: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
@@ -7671,7 +7656,7 @@ msgstr "Teilbepreisung"
 
 #: plugin/api.py:168
 msgid "Plugin cannot be deleted as it is currently active"
-msgstr ""
+msgstr "Das Plugin kann nicht gelöscht werden, da es derzeit aktiv ist"
 
 #: plugin/base/action/api.py:32
 msgid "No action specified"
@@ -7725,15 +7710,15 @@ msgstr "Mehrere passende Elemente gefunden"
 
 #: plugin/base/barcodes/api.py:470
 msgid "No matching line item found"
-msgstr ""
+msgstr "Kein passendes Element gefunden"
 
 #: plugin/base/barcodes/api.py:508 plugin/base/barcodes/api.py:515
 msgid "Barcode does not match an existing stock item"
-msgstr ""
+msgstr "Barcode stimmt nicht mit einem vorhandenen Lagerartikel überein"
 
 #: plugin/base/barcodes/api.py:526
 msgid "Stock item does not match line item"
-msgstr ""
+msgstr "Lagerartikel stimmt nicht mit dem Element überein"
 
 #: plugin/base/barcodes/api.py:550 templates/js/translated/build.js:2590
 #: templates/js/translated/sales_order.js:1917
@@ -7742,69 +7727,69 @@ msgstr "Unzureichender Bestand verfügbar"
 
 #: plugin/base/barcodes/api.py:559
 msgid "Stock item allocated to sales order"
-msgstr ""
+msgstr "Lagerartikel der Bestellung zugeordnet"
 
 #: plugin/base/barcodes/api.py:563
 msgid "Not enough information"
-msgstr ""
+msgstr "Nicht genügend Informationen"
 
 #: plugin/base/barcodes/mixins.py:147 plugin/base/barcodes/mixins.py:179
 msgid "Found multiple matching supplier parts for barcode"
-msgstr ""
+msgstr "Mehrere passende Lieferantenteile für Barcode gefunden"
 
 #: plugin/base/barcodes/mixins.py:197
 #, python-brace-format
 msgid "Found multiple purchase orders matching '{order}'"
-msgstr ""
+msgstr "Mehrere Einkaufsaufträge gefunden mit '{order}'"
 
 #: plugin/base/barcodes/mixins.py:201
 #, python-brace-format
 msgid "No matching purchase order for '{order}'"
-msgstr ""
+msgstr "Keine passende Bestellung für '{order}'"
 
 #: plugin/base/barcodes/mixins.py:207
 msgid "Purchase order does not match supplier"
-msgstr ""
+msgstr "Bestellung entspricht nicht dem Lieferanten"
 
 #: plugin/base/barcodes/mixins.py:441
 msgid "Failed to find pending line item for supplier part"
-msgstr ""
+msgstr "Ausstehender Artikel für Lieferantenteil konnte nicht gefunden werden"
 
 #: plugin/base/barcodes/mixins.py:472
 msgid "Further information required to receive line item"
-msgstr ""
+msgstr "Weitere Informationen zum Empfang des Zeilenelements erforderlich"
 
 #: plugin/base/barcodes/mixins.py:480
 msgid "Received purchase order line item"
-msgstr ""
+msgstr "Erhaltene Bestellartikel"
 
 #: plugin/base/barcodes/serializers.py:21
 msgid "Scanned barcode data"
-msgstr ""
+msgstr "Gescannte Barcode Daten"
 
 #: plugin/base/barcodes/serializers.py:81
 msgid "Purchase Order to allocate items against"
-msgstr ""
+msgstr "Ordne Artikel Bestellung zu"
 
 #: plugin/base/barcodes/serializers.py:87
 msgid "Purchase order is not pending"
-msgstr ""
+msgstr "Bestellung ist nicht ausstehend"
 
 #: plugin/base/barcodes/serializers.py:105
 msgid "PurchaseOrder to receive items against"
-msgstr ""
+msgstr "Ordne erhaltene Artikel Bestellung zu"
 
 #: plugin/base/barcodes/serializers.py:111
 msgid "Purchase order has not been placed"
-msgstr ""
+msgstr "Bestellung wurde nicht aufgegeben"
 
 #: plugin/base/barcodes/serializers.py:119
 msgid "Location to receive items into"
-msgstr ""
+msgstr "Ort für den Empfang von Artikeln"
 
 #: plugin/base/barcodes/serializers.py:125
 msgid "Cannot select a structural location"
-msgstr ""
+msgstr "Kann keinen strukturellen Standort auswählen"
 
 #: plugin/base/barcodes/serializers.py:139
 msgid "Sales Order to allocate items against"
@@ -7812,11 +7797,11 @@ msgstr ""
 
 #: plugin/base/barcodes/serializers.py:145
 msgid "Sales order is not pending"
-msgstr ""
+msgstr "Bestellung ist nicht ausstehend"
 
 #: plugin/base/barcodes/serializers.py:153
 msgid "Sales order line item to allocate items against"
-msgstr ""
+msgstr "Artikel der Verkaufsbestellung zuweisen"
 
 #: plugin/base/barcodes/serializers.py:160
 msgid "Sales order shipment to allocate items against"
@@ -7824,11 +7809,11 @@ msgstr ""
 
 #: plugin/base/barcodes/serializers.py:166
 msgid "Shipment has already been delivered"
-msgstr ""
+msgstr "Sendung wurde bereits geliefert"
 
 #: plugin/base/barcodes/serializers.py:171
 msgid "Quantity to allocate"
-msgstr ""
+msgstr "Zugewiesene Menge"
 
 #: plugin/base/label/label.py:39
 msgid "Label printing failed"
@@ -7836,15 +7821,15 @@ msgstr "Labeldruck fehlgeschlagen"
 
 #: plugin/base/label/mixins.py:63
 msgid "Error rendering label to PDF"
-msgstr ""
+msgstr "Fehler beim Rendern des Labels als PDF"
 
 #: plugin/base/label/mixins.py:76
 msgid "Error rendering label to HTML"
-msgstr ""
+msgstr "Fehler beim Rendern des Labels als HTML"
 
 #: plugin/base/label/mixins.py:111
 msgid "Error rendering label to PNG"
-msgstr ""
+msgstr "Fehler beim Rendern des Labels als PNG"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:25
 msgid "InvenTree Barcodes"
@@ -7871,7 +7856,7 @@ msgstr "InvenTree Benachrichtigungen"
 
 #: plugin/builtin/integration/core_notifications.py:36
 msgid "Integrated outgoing notification methods"
-msgstr ""
+msgstr "Integrierte ausgehende Benachrichtigungsmethoden"
 
 #: plugin/builtin/integration/core_notifications.py:41
 #: plugin/builtin/integration/core_notifications.py:80
@@ -7905,11 +7890,11 @@ msgstr "Link öffnen"
 
 #: plugin/builtin/integration/currency_exchange.py:22
 msgid "InvenTree Currency Exchange"
-msgstr ""
+msgstr "InvenTree Währungsumstellung"
 
 #: plugin/builtin/integration/currency_exchange.py:23
 msgid "Default currency exchange integration"
-msgstr ""
+msgstr "Standard-Wechselkursintegration"
 
 #: plugin/builtin/labels/inventree_label.py:20
 msgid "InvenTree PDF label printer"
@@ -7917,7 +7902,7 @@ msgstr "InvenTree PDF-Etikettendrucker"
 
 #: plugin/builtin/labels/inventree_label.py:21
 msgid "Provides native support for printing PDF labels"
-msgstr ""
+msgstr "Bietet native Unterstützung für das Drucken von PDF-Etiketten"
 
 #: plugin/builtin/labels/inventree_label.py:29
 msgid "Debug mode"
@@ -7925,23 +7910,23 @@ msgstr "Debug-Modus"
 
 #: plugin/builtin/labels/inventree_label.py:30
 msgid "Enable debug mode - returns raw HTML instead of PDF"
-msgstr ""
+msgstr "Debug-Modus aktivieren - gibt Roh-HTML statt PDF zurück"
 
 #: plugin/builtin/labels/inventree_machine.py:61
 msgid "InvenTree machine label printer"
-msgstr ""
+msgstr "InvenTree Maschinen-Etikettendrucker"
 
 #: plugin/builtin/labels/inventree_machine.py:62
 msgid "Provides support for printing using a machine"
-msgstr ""
+msgstr "Unterstützt das Drucken mit einer Maschine"
 
 #: plugin/builtin/labels/inventree_machine.py:150
 msgid "last used"
-msgstr ""
+msgstr "Zuletzt benutzt"
 
 #: plugin/builtin/labels/inventree_machine.py:167
 msgid "Options"
-msgstr ""
+msgstr "Optionen"
 
 #: plugin/builtin/labels/label_sheet.py:29
 msgid "Page size for the label sheet"
@@ -7949,15 +7934,15 @@ msgstr "Seitengröße für das Labelblatt"
 
 #: plugin/builtin/labels/label_sheet.py:34
 msgid "Skip Labels"
-msgstr ""
+msgstr "Etiketten überspringen"
 
 #: plugin/builtin/labels/label_sheet.py:35
 msgid "Skip this number of labels when printing label sheets"
-msgstr ""
+msgstr "Diese Anzahl der Etiketten beim Drucken von Etiketten überspringen"
 
 #: plugin/builtin/labels/label_sheet.py:41
 msgid "Border"
-msgstr ""
+msgstr "Rand"
 
 #: plugin/builtin/labels/label_sheet.py:42
 msgid "Print a border around each label"
@@ -7989,7 +7974,7 @@ msgstr "Es wurden keine Etiketten generiert"
 
 #: plugin/builtin/suppliers/digikey.py:16
 msgid "Supplier Integration - DigiKey"
-msgstr ""
+msgstr "Lieferantenintegration - DigiKey"
 
 #: plugin/builtin/suppliers/digikey.py:17
 msgid "Provides support for scanning DigiKey barcodes"
@@ -7997,11 +7982,11 @@ msgstr "Unterstützt das Scannen von DigiKey-Barcodes"
 
 #: plugin/builtin/suppliers/digikey.py:26
 msgid "The Supplier which acts as 'DigiKey'"
-msgstr ""
+msgstr "Der Lieferant, der als 'DigiKey' fungiert"
 
 #: plugin/builtin/suppliers/lcsc.py:18
 msgid "Supplier Integration - LCSC"
-msgstr ""
+msgstr "Lieferantenintegration - LCSC"
 
 #: plugin/builtin/suppliers/lcsc.py:19
 msgid "Provides support for scanning LCSC barcodes"
@@ -8009,7 +7994,7 @@ msgstr "Unterstützt das Scannen von LCSC-Barcodes"
 
 #: plugin/builtin/suppliers/lcsc.py:27
 msgid "The Supplier which acts as 'LCSC'"
-msgstr ""
+msgstr "Der Lieferant, der als \"LCSC\" fungiert"
 
 #: plugin/builtin/suppliers/mouser.py:16
 msgid "Supplier Integration - Mouser"
@@ -8021,7 +8006,7 @@ msgstr "Unterstützt das Scannen von Mouser-Barcodes"
 
 #: plugin/builtin/suppliers/mouser.py:25
 msgid "The Supplier which acts as 'Mouser'"
-msgstr ""
+msgstr "Der Lieferant, der als 'Mouser' fungiert"
 
 #: plugin/builtin/suppliers/tme.py:18
 msgid "Supplier Integration - TME"
@@ -8033,7 +8018,7 @@ msgstr "Unterstützt das Scannen von TME-Barcodes"
 
 #: plugin/builtin/suppliers/tme.py:27
 msgid "The Supplier which acts as 'TME'"
-msgstr ""
+msgstr "Der Lieferant, der als 'TME' fungiert"
 
 #: plugin/installer.py:194 plugin/installer.py:279
 msgid "Only staff users can administer plugins"
@@ -8041,32 +8026,32 @@ msgstr ""
 
 #: plugin/installer.py:245
 msgid "Installed plugin successfully"
-msgstr ""
+msgstr "Plugin wurde erfolgreich installiert"
 
 #: plugin/installer.py:251
 #, python-brace-format
 msgid "Installed plugin into {path}"
-msgstr ""
+msgstr "Plugin installiert in {path}"
 
 #: plugin/installer.py:270
 msgid "Plugin was not found in registry"
-msgstr ""
+msgstr "Plugin wurde nicht in der Registry gefunden"
 
 #: plugin/installer.py:273
 msgid "Plugin is not a packaged plugin"
-msgstr ""
+msgstr "Plugin ist kein gepacktes Plugin"
 
 #: plugin/installer.py:276
 msgid "Plugin package name not found"
-msgstr ""
+msgstr "Plugin-Paketname nicht gefunden"
 
 #: plugin/installer.py:297
 msgid "Plugin cannot be uninstalled as it is currently active"
-msgstr ""
+msgstr "Plugin kann nicht deinstalliert werden, da es momentan aktiv ist"
 
 #: plugin/installer.py:310
 msgid "Uninstalled plugin successfully"
-msgstr ""
+msgstr "Plugin erfolgreich deinstallieren"
 
 #: plugin/models.py:30
 msgid "Plugin Configuration"
@@ -8094,7 +8079,7 @@ msgstr "Paket-Name"
 
 #: plugin/models.py:51
 msgid "Name of the installed package, if the plugin was installed via PIP"
-msgstr ""
+msgstr "Name des installierten Paketes, wenn das Plugin über PIP installiert wurde"
 
 #: plugin/models.py:56
 msgid "Is the plugin active"
@@ -8133,17 +8118,17 @@ msgstr "Kein Autor gefunden"
 #: plugin/registry.py:585
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
-msgstr ""
+msgstr "Plugin '{p}' ist nicht kompatibel mit der aktuellen InvenTree Version {v}"
 
 #: plugin/registry.py:588
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
-msgstr ""
+msgstr "Plugin benötigt mindestens Version {v}"
 
 #: plugin/registry.py:590
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
-msgstr ""
+msgstr "Plugin benötigt maximal Version {v}"
 
 #: plugin/samples/integration/sample.py:52
 msgid "Enable PO"
@@ -8179,7 +8164,7 @@ msgstr "Eine Einstellung mit mehreren Optionen"
 
 #: plugin/samples/integration/sample_currency_exchange.py:15
 msgid "Sample currency exchange plugin"
-msgstr ""
+msgstr "Beispiel-Währungswechsel-Plugin"
 
 #: plugin/samples/integration/sample_currency_exchange.py:18
 msgid "InvenTree Contributors"
@@ -8205,7 +8190,7 @@ msgstr "Version"
 
 #: plugin/serializers.py:101
 msgid "Version specifier for the plugin. Leave blank for latest version."
-msgstr ""
+msgstr "Versionsangabe für das Plugin. Leer lassen für die neueste Version."
 
 #: plugin/serializers.py:106
 msgid "Confirm plugin installation"
@@ -8225,11 +8210,11 @@ msgstr "Entweder Paketname oder URL muss angegeben werden"
 
 #: plugin/serializers.py:156
 msgid "Full reload"
-msgstr ""
+msgstr "Komplett neu laden"
 
 #: plugin/serializers.py:157
 msgid "Perform a full reload of the plugin registry"
-msgstr ""
+msgstr "Führe ein vollständiges Nachladen der Plugin-Registrierung durch"
 
 #: plugin/serializers.py:163
 msgid "Force reload"
@@ -8241,11 +8226,11 @@ msgstr "Erzwinge ein erneutes Laden der Plugin-Registrierung, auch wenn sie bere
 
 #: plugin/serializers.py:172
 msgid "Collect plugins"
-msgstr ""
+msgstr "Plugins sammeln"
 
 #: plugin/serializers.py:173
 msgid "Collect plugins and add them to the registry"
-msgstr ""
+msgstr "Plugins sammeln und zur Registrierung hinzufügen"
 
 #: plugin/serializers.py:195
 msgid "Activate Plugin"
@@ -8257,11 +8242,11 @@ msgstr "Dieses Plugin aktivieren"
 
 #: plugin/serializers.py:219
 msgid "Delete configuration"
-msgstr ""
+msgstr "Konfiguration löschen"
 
 #: plugin/serializers.py:220
 msgid "Delete the plugin configuration from the database"
-msgstr ""
+msgstr "Plugin-Konfiguration aus der Datenbank löschen"
 
 #: report/api.py:175
 msgid "No valid objects provided to template"
@@ -8314,7 +8299,7 @@ msgstr "Seitengröße für PDF-Berichte"
 
 #: report/models.py:208
 msgid "Render report in landscape orientation"
-msgstr ""
+msgstr "Bericht in Querformat anzeigen"
 
 #: report/models.py:316
 msgid "Pattern for generating report filenames"
@@ -8818,10 +8803,8 @@ msgid "Serial numbers already exist"
 msgstr "Seriennummern existieren bereits"
 
 #: stock/models.py:1593
-#, fuzzy
-#| msgid "The requested page does not exist"
 msgid "Test template does not exist"
-msgstr "Seite existiert nicht"
+msgstr ""
 
 #: stock/models.py:1611
 msgid "Stock item has been assigned to a sales order"
@@ -8896,16 +8879,12 @@ msgid "Test notes"
 msgstr "Test Notizen"
 
 #: stock/serializers.py:96
-#, fuzzy
-#| msgid "Attachment must be uploaded for this test"
 msgid "Test template for this result"
-msgstr "Anhang muss für diesen Test hochgeladen werden"
+msgstr ""
 
 #: stock/serializers.py:115
-#, fuzzy
-#| msgid "Allocation items must be provided"
 msgid "Template ID or test name must be provided"
-msgstr "Zuweisungen müssen angegeben werden"
+msgstr ""
 
 #: stock/serializers.py:169
 msgid "Serial number is too large"
@@ -13820,8 +13799,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -14002,5 +13980,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Test name"
-#~ msgstr "Name des Tests"
