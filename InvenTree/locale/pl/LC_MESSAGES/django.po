@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-20 23:36+0000\n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-21 04:34\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -292,7 +292,7 @@ msgstr "Rosyjski"
 
 #: InvenTree/locales.py:39
 msgid "Slovak"
-msgstr ""
+msgstr "Słowacki"
 
 #: InvenTree/locales.py:40
 msgid "Slovenian"
@@ -329,7 +329,7 @@ msgstr "chiński (tradycyjny)"
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr ""
+msgstr "[{site_name}] Logowanie do aplikacji"
 
 #: InvenTree/magic_login.py:38 company/models.py:131
 #: company/templates/company/company_base.html:132
@@ -340,7 +340,7 @@ msgstr "Adres E-Mail"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Błąd podczas walidacji wtyczki"
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
@@ -468,7 +468,7 @@ msgstr "Błąd zmiany nazwy pliku"
 
 #: InvenTree/models.py:847
 msgid "Duplicate names cannot exist under the same parent"
-msgstr ""
+msgstr "Duplikaty nazw nie mogą istnieć pod tym samym rodzicem"
 
 #: InvenTree/models.py:864
 msgid "Invalid choice"
@@ -601,15 +601,15 @@ msgstr "Tylko superużytkownicy mogą tworzyć nowych użytkowników"
 
 #: InvenTree/serializers.py:467
 msgid "Your account has been created."
-msgstr ""
+msgstr "Twoje konto zostało utworzone."
 
 #: InvenTree/serializers.py:469
 msgid "Please use the password reset function to login"
-msgstr ""
+msgstr "Zresetuj hasło"
 
 #: InvenTree/serializers.py:476
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Witamy w InvenTree"
 
 #: InvenTree/serializers.py:537
 msgid "Filename"
@@ -1001,7 +1001,7 @@ msgstr "Nieprawidłowy wybór kompilacji nadrzędnej"
 
 #: build/models.py:126
 msgid "Build order part cannot be changed"
-msgstr ""
+msgstr "Nie można zmienić elementu kompletacji"
 
 #: build/models.py:170
 msgid "Build Order Reference"
@@ -5219,10 +5219,8 @@ msgid "Order is not open"
 msgstr ""
 
 #: order/serializers.py:429
-#, fuzzy
-#| msgid "Part Pricing"
 msgid "Auto Pricing"
-msgstr "Cennik części"
+msgstr ""
 
 #: order/serializers.py:431
 msgid "Automatically calculate purchase price based on supplier part data"
@@ -5233,10 +5231,8 @@ msgid "Purchase price currency"
 msgstr ""
 
 #: order/serializers.py:447
-#, fuzzy
-#| msgid "Merged stock items"
 msgid "Merge Items"
-msgstr "Scalone przedmioty magazynowe"
+msgstr ""
 
 #: order/serializers.py:449
 msgid "Merge items with the same part, destination and target date into one line item"
@@ -5900,10 +5896,8 @@ msgid "Maximum Price"
 msgstr ""
 
 #: part/api.py:402
-#, fuzzy
-#| msgid "Search Results"
 msgid "Has Results"
-msgstr "Wyniki wyszukiwania"
+msgstr ""
 
 #: part/api.py:569
 msgid "Incoming Purchase Order"
@@ -6387,10 +6381,8 @@ msgid "Enter a name for the test"
 msgstr ""
 
 #: part/models.py:3467
-#, fuzzy
-#| msgid "Test Name"
 msgid "Test Key"
-msgstr "Nazwa testu"
+msgstr ""
 
 #: part/models.py:3468
 msgid "Simplified key for the test"
@@ -6405,10 +6397,8 @@ msgid "Enter description for this test"
 msgstr "Wprowadź opis do tego testu"
 
 #: part/models.py:3480
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this test enabled?"
-msgstr "Czy ta część jest aktywna?"
+msgstr ""
 
 #: part/models.py:3485 templates/js/translated/part.js:2899
 #: templates/js/translated/table_filters.js:477
@@ -6650,10 +6640,8 @@ msgid "Duplicate relationship already exists"
 msgstr ""
 
 #: part/serializers.py:165
-#, fuzzy
-#| msgid "Result"
 msgid "Results"
-msgstr "Wynik"
+msgstr ""
 
 #: part/serializers.py:166
 msgid "Number of results recorded against this template"
@@ -8815,10 +8803,8 @@ msgid "Serial numbers already exist"
 msgstr "Numer seryjny już istnieje"
 
 #: stock/models.py:1593
-#, fuzzy
-#| msgid "Template file '{template}' is missing or does not exist"
 msgid "Test template does not exist"
-msgstr "Plik szablonu '{template}' jest brakujący lub nie istnieje"
+msgstr ""
 
 #: stock/models.py:1611
 msgid "Stock item has been assigned to a sales order"
@@ -8893,10 +8879,8 @@ msgid "Test notes"
 msgstr ""
 
 #: stock/serializers.py:96
-#, fuzzy
-#| msgid "Report template is enabled"
 msgid "Test template for this result"
-msgstr "Szablon raportu jest włączony"
+msgstr ""
 
 #: stock/serializers.py:115
 msgid "Template ID or test name must be provided"
@@ -13815,8 +13799,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13997,5 +13980,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#~ msgid "Test name"
-#~ msgstr "Nazwa testu"
