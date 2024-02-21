@@ -135,6 +135,7 @@ export function InvenTreeTable<T = any>({
   const tableOptionQuery = useQuery({
     enabled: false,
     queryKey: ['options', url, tableState.tableKey],
+    retry: 3,
     queryFn: async () => {
       return api
         .options(url, {
