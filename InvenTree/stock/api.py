@@ -257,6 +257,12 @@ class StockMerge(CreateAPI):
 class StockLocationFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the StockLocation endpoint."""
 
+    class Meta:
+        """Meta class options for this filterset."""
+
+        model = StockLocation
+        fields = ['name', 'structural', 'external']
+
     location_type = rest_filters.ModelChoiceFilter(
         queryset=StockLocationType.objects.all(), field_name='location_type'
     )
@@ -270,6 +276,80 @@ class StockLocationFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.exclude(location_type=None)
         return queryset.filter(location_type=None)
+
+    depth = rest_filters.NumberFilter(
+        label=_('Depth'), method='filter_depth', help_text=_('Filter by location depth')
+    )
+
+    def filter_depth(self, queryset, name, value):
+        """Filter by the "depth" of the StockLocation.
+
+        - This filter is used to limit the depth of the location tree
+        - If the "parent" filter is also provided, the depth is calculated from the parent location
+        """
+        parent = self.data.get('parent', None)
+
+        # Only filter if the parent filter is *not* provided
+        if not parent:
+            queryset = queryset.filter(level__lte=value)
+
+        return queryset
+
+    cascade = rest_filters.BooleanFilter(
+        label=_('Cascade'),
+        method='filter_cascade',
+        help_text=_('Include sub-locations in filtered results'),
+    )
+
+    def filter_cascade(self, queryset, name, value):
+        """Filter by whether to include sub-locations in the filtered results.
+
+        Note: If the "parent" filter is provided, we offload the logic to that method.
+        """
+        parent = self.data.get('parent', None)
+
+        # If the parent is *not* provided, update the results based on the "cascade" value
+        if not parent:
+            if not value:
+                # If "cascade" is False, only return top-level location
+                queryset = queryset.filter(parent=None)
+
+        return queryset
+
+    parent = rest_filters.ModelChoiceFilter(
+        queryset=StockLocation.objects.all(),
+        method='filter_parent',
+        label=_('Parent Location'),
+        help_text=_('Filter by parent location'),
+    )
+
+    def filter_parent(self, queryset, name, value):
+        """Filter by parent location.
+
+        Note that the filtering behaviour here varies,
+        depending on whether the 'cascade' value is set.
+
+        So, we have to check the "cascade" value here.
+        """
+        parent = value
+        depth = self.data.get('depth', None)
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if cascade:
+            # Return recursive sub-locations
+            queryset = queryset.filter(
+                parent__in=parent.get_descendants(include_self=True)
+            )
+        else:
+            # Return only direct children
+            queryset = queryset.filter(parent=parent)
+
+        if depth is not None:
+            # Filter by depth from parent
+            depth = int(depth)
+            queryset = queryset.filter(level__lte=parent.level + depth)
+
+        return queryset
 
 
 class StockLocationList(APIDownloadMixin, ListCreateAPI):
@@ -297,70 +377,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
 
-    def filter_queryset(self, queryset):
-        """Custom filtering: - Allow filtering by "null" parent to retrieve top-level stock locations."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        loc_id = params.get('parent', None)
-
-        cascade = str2bool(params.get('cascade', False))
-
-        depth = str2int(params.get('depth', None))
-
-        # Do not filter by location
-        if loc_id is None:
-            pass
-        # Look for top-level locations
-        elif isNull(loc_id):
-            # If we allow "cascade" at the top-level, this essentially means *all* locations
-            if not cascade:
-                queryset = queryset.filter(parent=None)
-
-            if cascade and depth is not None:
-                queryset = queryset.filter(level__lte=depth)
-
-        else:
-            try:
-                location = StockLocation.objects.get(pk=loc_id)
-
-                # All sub-locations to be returned too?
-                if cascade:
-                    parents = location.get_descendants(include_self=True)
-                    if depth is not None:
-                        parents = parents.filter(level__lte=location.level + depth)
-
-                    parent_ids = [p.id for p in parents]
-                    queryset = queryset.filter(parent__in=parent_ids)
-
-                else:
-                    queryset = queryset.filter(parent=location)
-
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
-
-        # Exclude StockLocation tree
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                loc = StockLocation.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[
-                        subloc.pk for subloc in loc.get_descendants(include_self=True)
-                    ]
-                )
-
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER
-
-    filterset_fields = ['name', 'structural', 'external', 'tags__name', 'tags__slug']
 
     search_fields = ['name', 'description', 'tags__name', 'tags__slug']
 

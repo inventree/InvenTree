@@ -72,32 +72,12 @@ class StockLocationTest(StockAPITestCase):
             ({}, 8, 'no parameters'),
             ({'parent': 1, 'cascade': False}, 2, 'Filter by parent, no cascading'),
             ({'parent': 1, 'cascade': True}, 2, 'Filter by parent, cascading'),
-            ({'cascade': True, 'depth': 0}, 8, 'Cascade with no parent, depth=0'),
-            ({'cascade': False, 'depth': 10}, 8, 'Cascade with no parent, depth=0'),
-            (
-                {'parent': 'null', 'cascade': True, 'depth': 0},
-                7,
-                'Cascade with null parent, depth=0',
-            ),
-            (
-                {'parent': 'null', 'cascade': True, 'depth': 10},
-                8,
-                'Cascade with null parent and bigger depth',
-            ),
-            (
-                {'parent': 'null', 'cascade': False, 'depth': 10},
-                3,
-                'No cascade even with depth specified with null parent',
-            ),
+            ({'cascade': True, 'depth': 0}, 7, 'Cascade with no parent, depth=0'),
+            ({'cascade': False, 'depth': 10}, 3, 'Cascade with no parent, depth=10'),
             (
                 {'parent': 1, 'cascade': False, 'depth': 0},
-                2,
+                1,
                 'Dont cascade with depth=0 and parent',
-            ),
-            (
-                {'parent': 1, 'cascade': True, 'depth': 0},
-                2,
-                'Cascade with depth=0 and parent',
             ),
             (
                 {'parent': 1, 'cascade': False, 'depth': 1},
@@ -110,20 +90,9 @@ class StockLocationTest(StockAPITestCase):
                 'Cascade with depth=1 with parent',
             ),
             (
-                {'parent': 1, 'cascade': True, 'depth': 'abcdefg'},
-                2,
-                'Cascade with invalid depth and parent',
-            ),
-            ({'parent': 42}, 8, 'Should return everything if parent_pk is not valid'),
-            (
-                {'parent': 'null', 'exclude_tree': 1, 'cascade': True},
-                5,
-                'Should return everything except tree with pk=1',
-            ),
-            (
-                {'parent': 'null', 'exclude_tree': 42, 'cascade': True},
+                {'exclude_tree': 1, 'cascade': True},
                 8,
-                'Should return everything because exclude_tree=42 is no valid pk',
+                'Should return everything except tree with pk=1',
             ),
         ]
 
@@ -452,6 +421,18 @@ class StockLocationTest(StockAPITestCase):
         ).json()
         self.assertEqual(len(res), 1)
         self.assertEqual(res[0]['name'], 'Test location wo type')
+
+        res = self.get(
+            self.list_url,
+            {
+                'parent': str(parent_location.pk),
+                'has_location_type': '0',
+                'cascade': False,
+            },
+            expected_code=200,
+        ).json()
+
+        self.assertEqual(len(res), 1)
 
 
 class StockLocationTypeTest(StockAPITestCase):

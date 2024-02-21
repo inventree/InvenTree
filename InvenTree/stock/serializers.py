@@ -126,7 +126,7 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
                 data['template'] = template
 
             else:
-                logger.info(
+                logger.debug(
                     "No matching test template found for '%s' - creating a new template",
                     test_name,
                 )
