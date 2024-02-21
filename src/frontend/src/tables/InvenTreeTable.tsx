@@ -213,7 +213,7 @@ export function InvenTreeTable<T = any>({
       return {
         ...col,
         hidden: hidden,
-        title: col.title ?? fieldNames[col.accessor] ?? `? ${col.accessor} ?`
+        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
       };
     });
 
