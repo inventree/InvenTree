@@ -1,7 +1,9 @@
 """Tests for general API tests for the plugin app."""
 
+from django.conf import settings
 from django.urls import reverse
 
+from regex import F
 from rest_framework.exceptions import NotFound
 
 from InvenTree.unit_test import InvenTreeAPITestCase, PluginMixin
@@ -80,6 +82,11 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         self.assertEqual(
             data['confirm'][0].title().upper(), 'Installation not confirmed'.upper()
         )
+
+        # install disabled
+        settings.PLUGINS_INSTALL_DISABLED = True
+        self.post(url, {}, expected_code=400)
+        settings.PLUGINS_INSTALL_DISABLED = F
 
     def test_plugin_activate(self):
         """Test the plugin activate."""
