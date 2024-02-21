@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-20 23:36+0000\n"
-"PO-Revision-Date: 2024-02-15 02:42\n"
+"PO-Revision-Date: 2024-02-21 04:34\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1270,10 +1270,9 @@ msgid "Quantity cannot be greater than the output quantity"
 msgstr "A mennyiség nem lehet több mint a gyártási mennyiség"
 
 #: build/models.py:921 build/serializers.py:533
-#, fuzzy, python-brace-format
-#| msgid "This stock item has not passed all required tests"
+#, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr "Ez a készlet tétel nem felelt meg az összes szükséges teszten"
+msgstr ""
 
 #: build/models.py:1283
 msgid "Build object"
@@ -1508,8 +1507,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:512
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:592
@@ -5222,10 +5220,8 @@ msgid "Order is not open"
 msgstr "A rendelés nem nyitott"
 
 #: order/serializers.py:429
-#, fuzzy
-#| msgid "Part Pricing"
 msgid "Auto Pricing"
-msgstr "Alkatrész árak"
+msgstr ""
 
 #: order/serializers.py:431
 msgid "Automatically calculate purchase price based on supplier part data"
@@ -5236,10 +5232,8 @@ msgid "Purchase price currency"
 msgstr "Beszérzési ár pénzneme"
 
 #: order/serializers.py:447
-#, fuzzy
-#| msgid "Merge Stock Items"
 msgid "Merge Items"
-msgstr "Készlet tételek összevonása"
+msgstr ""
 
 #: order/serializers.py:449
 msgid "Merge items with the same part, destination and target date into one line item"
@@ -5903,10 +5897,8 @@ msgid "Maximum Price"
 msgstr "Maximum ár"
 
 #: part/api.py:402
-#, fuzzy
-#| msgid "Test Results"
 msgid "Has Results"
-msgstr "Teszt eredmények"
+msgstr ""
 
 #: part/api.py:569
 msgid "Incoming Purchase Order"
@@ -6390,16 +6382,12 @@ msgid "Enter a name for the test"
 msgstr "Add meg a teszt nevét"
 
 #: part/models.py:3467
-#, fuzzy
-#| msgid "Test Name"
 msgid "Test Key"
-msgstr "Teszt név"
+msgstr ""
 
 #: part/models.py:3468
-#, fuzzy
-#| msgid "Enter a name for the test"
 msgid "Simplified key for the test"
-msgstr "Add meg a teszt nevét"
+msgstr ""
 
 #: part/models.py:3475
 msgid "Test Description"
@@ -6410,10 +6398,8 @@ msgid "Enter description for this test"
 msgstr "Adj hozzá egy leírást ehhez a teszthez"
 
 #: part/models.py:3480
-#, fuzzy
-#| msgid "Is this test required to pass?"
 msgid "Is this test enabled?"
-msgstr "Szükséges-e hogy ez a teszt sikeres legyen?"
+msgstr ""
 
 #: part/models.py:3485 templates/js/translated/part.js:2899
 #: templates/js/translated/table_filters.js:477
@@ -6655,10 +6641,8 @@ msgid "Duplicate relationship already exists"
 msgstr "Már létezik duplikált alkatrész kapcsolat"
 
 #: part/serializers.py:165
-#, fuzzy
-#| msgid "Result"
 msgid "Results"
-msgstr "Eredmény"
+msgstr ""
 
 #: part/serializers.py:166
 msgid "Number of results recorded against this template"
@@ -8820,10 +8804,8 @@ msgid "Serial numbers already exist"
 msgstr "A sorozatszámok már léteznek"
 
 #: stock/models.py:1593
-#, fuzzy
-#| msgid "Asset file does not exist"
 msgid "Test template does not exist"
-msgstr "A fájl nem létezik"
+msgstr ""
 
 #: stock/models.py:1611
 msgid "Stock item has been assigned to a sales order"
@@ -8898,16 +8880,12 @@ msgid "Test notes"
 msgstr "Tesztek megjegyzései"
 
 #: stock/serializers.py:96
-#, fuzzy
-#| msgid "Attachment must be uploaded for this test"
 msgid "Test template for this result"
-msgstr "Ehhez a teszthez fel kell tölteni mellékletet"
+msgstr ""
 
 #: stock/serializers.py:115
-#, fuzzy
-#| msgid "Allocation items must be provided"
 msgid "Template ID or test name must be provided"
-msgstr "A lefoglalandó tételeket meg kell adni"
+msgstr ""
 
 #: stock/serializers.py:169
 msgid "Serial number is too large"
@@ -12503,10 +12481,8 @@ msgid "Add to purchase order"
 msgstr "Hozzáadás beszerzési rendeléshez"
 
 #: templates/js/translated/purchase_order.js:755
-#, fuzzy
-#| msgid "Merge stock"
 msgid "Merge"
-msgstr "Készlet összevonása"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:859
 msgid "No matching supplier parts"
@@ -13824,8 +13800,7 @@ msgstr "A kiválasztott SSO kiszolgáló érvénytelen, vagy nincs megfelelően 
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -14006,5 +13981,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "Test name"
-#~ msgstr "Teszt neve"
