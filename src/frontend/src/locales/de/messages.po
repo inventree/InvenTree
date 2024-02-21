@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-21 04:35\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -110,7 +110,7 @@ msgstr "Eingabefehler"
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Or continue with other methods"
-msgstr ""
+msgstr "Oder mit anderen Methoden fortfahren"
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/components/forms/AuthenticationForm.tsx:233
@@ -165,7 +165,7 @@ msgstr "Mail erhalten"
 
 #: src/components/forms/AuthenticationForm.tsx:156
 msgid "Use username and password"
-msgstr ""
+msgstr "Benutzername und Passwort benutzen"
 
 #: src/components/forms/AuthenticationForm.tsx:165
 msgid "Log In"
@@ -177,40 +177,40 @@ msgstr "E-Mail senden"
 
 #: src/components/forms/AuthenticationForm.tsx:196
 msgid "Registration successful"
-msgstr ""
+msgstr "Registrierung erfolgreich"
 
 #: src/components/forms/AuthenticationForm.tsx:197
 msgid "Please confirm your email address to complete the registration"
-msgstr ""
+msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse um die Registrierung abzuschließen"
 
 #: src/components/forms/AuthenticationForm.tsx:240
 msgid "This will be used for a confirmation"
-msgstr ""
+msgstr "Dies wird zur Bestätigung verwendet"
 
 #: src/components/forms/AuthenticationForm.tsx:252
 msgid "Password repeat"
-msgstr ""
+msgstr "Passwort wiederholen"
 
 #: src/components/forms/AuthenticationForm.tsx:253
 msgid "Repeat password"
-msgstr ""
+msgstr "Passwort erneut eingeben"
 
 #: src/components/forms/AuthenticationForm.tsx:265
 #: src/components/forms/AuthenticationForm.tsx:310
 msgid "Register"
-msgstr ""
+msgstr "Registrieren"
 
 #: src/components/forms/AuthenticationForm.tsx:271
 msgid "Or use SSO"
-msgstr ""
+msgstr "Oder SSO verwenden"
 
 #: src/components/forms/AuthenticationForm.tsx:302
 msgid "Don't have an account?"
-msgstr ""
+msgstr "Nicht registriert?"
 
 #: src/components/forms/AuthenticationForm.tsx:321
 msgid "Go back to login"
-msgstr ""
+msgstr "Zurück zur Anmeldung"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
@@ -299,11 +299,11 @@ msgstr "Keine Ergebnisse gefunden"
 
 #: src/components/images/DetailsImage.tsx:61
 msgid "Remove Image"
-msgstr ""
+msgstr "Bild entfernen"
 
 #: src/components/images/DetailsImage.tsx:64
 msgid "Remove the associated image from this item?"
-msgstr ""
+msgstr "Verknüpftes Bild von diesem Teil entfernen?"
 
 #: src/components/images/DetailsImage.tsx:67
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:192
@@ -324,35 +324,35 @@ msgstr "Abbrechen"
 
 #: src/components/images/DetailsImage.tsx:95
 msgid "Drag and drop to upload"
-msgstr ""
+msgstr "Ziehen und Ablegen zum Hochladen"
 
 #: src/components/images/DetailsImage.tsx:98
 msgid "Click to select file(s)"
-msgstr ""
+msgstr "Klicken, um Datei(en) auszuwählen"
 
 #: src/components/images/DetailsImage.tsx:220
 msgid "Clear"
-msgstr ""
+msgstr "Leeren"
 
 #: src/components/images/DetailsImage.tsx:252
 msgid "Select image"
-msgstr ""
+msgstr "Bild auswählen"
 
 #: src/components/images/DetailsImage.tsx:263
 msgid "Select from existing images"
-msgstr ""
+msgstr "Aus vorhandenen Bildern auswählen"
 
 #: src/components/images/DetailsImage.tsx:273
 msgid "Upload new image"
-msgstr ""
+msgstr "Neues Bild hochladen"
 
 #: src/components/images/DetailsImage.tsx:279
 msgid "Upload Image"
-msgstr ""
+msgstr "Bild hochladen"
 
 #: src/components/images/DetailsImage.tsx:292
 msgid "Delete image"
-msgstr ""
+msgstr "Bild löschen"
 
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:51
@@ -459,11 +459,11 @@ msgstr "QR-Code scannen"
 
 #: src/components/items/YesNoButton.tsx:16
 msgid "Pass"
-msgstr ""
+msgstr "Bestanden"
 
 #: src/components/items/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Fehler"
 
 #: src/components/items/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:51
@@ -542,7 +542,7 @@ msgstr "Mitwirkende"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Mobile App"
-msgstr ""
+msgstr "Mobile App"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:172
 msgid "Submit Bug Report"
@@ -555,7 +555,7 @@ msgstr "Versionsinformationen kopieren"
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
-msgstr ""
+msgstr "Verwerfen"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
@@ -870,11 +870,11 @@ msgstr "Teil Parametervorlagen"
 
 #: src/components/render/ModelType.tsx:36
 msgid "Part Test Template"
-msgstr ""
+msgstr "Testvorlage für Teil"
 
 #: src/components/render/ModelType.tsx:37
 msgid "Part Test Templates"
-msgstr ""
+msgstr "Testvorlagen für Teil"
 
 #: src/components/render/ModelType.tsx:43
 #: src/pages/company/SupplierPartDetail.tsx:78
@@ -989,11 +989,11 @@ msgstr "Verkaufsaufträge"
 
 #: src/components/render/ModelType.tsx:132
 msgid "Sales Order Shipment"
-msgstr ""
+msgstr "Versand der Bestellung"
 
 #: src/components/render/ModelType.tsx:133
 msgid "Sales Order Shipments"
-msgstr ""
+msgstr "Versand der Bestellungen"
 
 #: src/components/render/ModelType.tsx:139
 #: src/pages/sales/ReturnOrderDetail.tsx:68
@@ -1078,11 +1078,11 @@ msgstr "Einstellung aktualisiert"
 #: src/components/settings/SettingItem.tsx:46
 #: src/components/settings/SettingItem.tsx:99
 msgid "{0} updated successfully"
-msgstr ""
+msgstr "{0} erfolgreich aktualisiert"
 
 #: src/components/settings/SettingItem.tsx:54
 msgid "Error editing setting"
-msgstr ""
+msgstr "Fehler beim Bearbeiten der Einstellung"
 
 #: src/components/settings/SettingItem.tsx:91
 msgid "Edit Setting"
@@ -1090,7 +1090,7 @@ msgstr "Einstellungen bearbeiten"
 
 #: src/components/settings/SettingList.tsx:63
 msgid "No settings specified"
-msgstr ""
+msgstr "Keine Einstellungen angegeben"
 
 #: src/components/tables/ColumnRenderers.tsx:134
 #~ msgid "Shipment Date"
@@ -1563,11 +1563,11 @@ msgstr "Sprache"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
-msgstr ""
+msgstr "Etwas ist neu: Plattform-UI"
 
 #: src/components/widgets/FeedbackWidget.tsx:20
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr ""
+msgstr "Wir bauen eine neue Oberfläche mit einem modernen Stapel. Was Sie derzeit sehen, ist nicht repariert und wird neu gestaltet, aber es zeigt die UI/UX-Möglichkeiten auf, die wir weiter verfolgen werden."
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
@@ -1579,19 +1579,19 @@ msgstr "Erste Schritte"
 
 #: src/components/widgets/MarkdownEditor.tsx:109
 msgid "Failed to upload image"
-msgstr ""
+msgstr "Fehler beim Hochladen des Bildes"
 
 #: src/components/widgets/MarkdownEditor.tsx:147
 msgid "Notes saved"
-msgstr ""
+msgstr "Notizen gespeichert"
 
 #: src/components/widgets/MarkdownEditor.tsx:155
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Notiz konnte nicht gespeichert werden"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
-msgstr ""
+msgstr "Darstellung"
 
 #: src/components/widgets/WidgetLayout.tsx:186
 msgid "Reset Layout"
@@ -1599,7 +1599,7 @@ msgstr "Layout zurücksetzen"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
-msgstr ""
+msgstr "Bearbeiten beenden"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
@@ -1611,7 +1611,7 @@ msgstr "Aussehen"
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
-msgstr ""
+msgstr "Boxen anzeigen"
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Bulgarian"
@@ -1643,11 +1643,11 @@ msgstr "Spanisch"
 
 #: src/contexts/LanguageContext.tsx:27
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spanisch (Mexikanisch)"
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persisch"
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Finnish"
@@ -1699,7 +1699,7 @@ msgstr "Portugiesisch"
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugiesisch (Brasilien)"
 
 #: src/contexts/LanguageContext.tsx:42
 msgid "Russian"
@@ -1707,7 +1707,7 @@ msgstr "Russisch"
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Slovak"
-msgstr ""
+msgstr "Slowakisch"
 
 #: src/contexts/LanguageContext.tsx:44
 msgid "Slovenian"
@@ -1739,19 +1739,19 @@ msgstr "Chinesisch (Traditionell)"
 
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Abonnierte Teile"
 
 #: src/defaults/dashboardItems.tsx:22
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Abonnierte Kategorien"
 
 #: src/defaults/dashboardItems.tsx:29
 msgid "Latest Parts"
-msgstr ""
+msgstr "Neueste Teile"
 
 #: src/defaults/dashboardItems.tsx:36
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "Stückliste Wartende Validierung"
 
 #: src/defaults/dashboardItems.tsx:43
 msgid "Recently Updated"
@@ -1764,27 +1764,27 @@ msgstr "Geringer Bestand"
 
 #: src/defaults/dashboardItems.tsx:57
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Verbrauchter Bestand"
 
 #: src/defaults/dashboardItems.tsx:64
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Für Bauaufträge benötigt"
 
 #: src/defaults/dashboardItems.tsx:71
 msgid "Expired Stock"
-msgstr ""
+msgstr "Abgelaufener Bestand"
 
 #: src/defaults/dashboardItems.tsx:78
 msgid "Stale Stock"
-msgstr ""
+msgstr "Bestand überfällig"
 
 #: src/defaults/dashboardItems.tsx:85
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Bauaufträge in Arbeit"
 
 #: src/defaults/dashboardItems.tsx:92
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Überfällige Bauaufträge"
 
 #: src/defaults/dashboardItems.tsx:99
 msgid "Outstanding Purchase Orders"
@@ -1792,15 +1792,15 @@ msgstr "Ausstehende Bestellungen"
 
 #: src/defaults/dashboardItems.tsx:106
 msgid "Overdue Purchase Orders"
-msgstr ""
+msgstr "Überfällige Bestellungen"
 
 #: src/defaults/dashboardItems.tsx:113
 msgid "Outstanding Sales Orders"
-msgstr ""
+msgstr "Ausstehende Aufträge"
 
 #: src/defaults/dashboardItems.tsx:120
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Überfällige Bestellungen"
 
 #: src/defaults/dashboardItems.tsx:127
 msgid "Current News"
@@ -1820,11 +1820,11 @@ msgstr "Webseite"
 
 #: src/defaults/links.tsx:16
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: src/defaults/links.tsx:21
 msgid "Demo"
-msgstr ""
+msgstr "Demo"
 
 #: src/defaults/links.tsx:26
 #: src/defaults/menuItems.tsx:9
@@ -1836,7 +1836,7 @@ msgstr "Startseite"
 #: src/pages/Index/Dashboard.tsx:19
 #: src/pages/Index/Settings/UserSettings.tsx:41
 msgid "Dashboard"
-msgstr ""
+msgstr "Dashboard"
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
@@ -1912,15 +1912,15 @@ msgstr "Systeminformationen"
 #: src/defaults/links.tsx:92
 #: src/defaults/links.tsx:110
 msgid "About InvenTree"
-msgstr ""
+msgstr "Über InvenTree"
 
 #: src/defaults/links.tsx:105
 msgid "About this Inventree instance"
-msgstr ""
+msgstr "Über diese InvenTree Instanz"
 
 #: src/defaults/links.tsx:111
 msgid "About the InvenTree org"
-msgstr ""
+msgstr "Über die InvenTree Organisation"
 
 #: src/defaults/links.tsx:116
 msgid "Licenses"
@@ -5095,7 +5095,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:186
 msgid "Attachment"
-msgstr "Attachment"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:239
 #: src/tables/stock/StockItemTestResultTable.tsx:306
@@ -5139,7 +5139,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:342
 msgid "Required"
-msgstr "Required"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:343
 msgid "Show results for required tests"
@@ -5197,3 +5197,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
