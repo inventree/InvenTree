@@ -17,6 +17,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -44,7 +45,7 @@ export interface TemplateProps<T> {
   templateTypeTranslation: string;
   variant: string;
   templateKey: T;
-  preview: { itemKey: string };
+  preview: { itemKey: string; model: ModelType; apiUrl: ApiEndpoints };
 }
 
 export function TemplateDrawer<T extends string>({
@@ -153,6 +154,7 @@ export function TemplateDrawer<T extends string>({
         uploadUrl={apiUrl(apiEndpoint, id, { variant })}
         uploadKey={templateProps.templateKey}
         preview={templateProps.preview}
+        templateType={templateType}
         codeEditors={[
           {
             key: 'code',
@@ -162,8 +164,8 @@ export function TemplateDrawer<T extends string>({
         ]}
         previewAreas={[
           {
-            key: 'preview',
-            name: t`Preview`,
+            key: 'pdf-preview',
+            name: t`PDF Preview`,
             component: PreviewArea
           }
         ]}

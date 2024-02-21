@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { PanelGroup } from '../../../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
+import { ModelType } from '../../../../enums/ModelType';
 import { InvenTreeIcon } from '../../../../functions/icons';
 import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 
@@ -22,28 +23,44 @@ export default function TemplateManagementPanel() {
             name: t`Part`,
             key: 'part',
             icon: 'part',
-            itemKey: 'part'
+            preview: {
+              itemKey: 'part',
+              model: ModelType.part,
+              apiUrl: ApiEndpoints.part_list
+            }
           },
           {
             type: 'label',
             name: t`Location`,
             key: 'location',
             icon: 'default_location',
-            itemKey: 'location'
+            preview: {
+              itemKey: 'location',
+              model: ModelType.stocklocation,
+              apiUrl: ApiEndpoints.stock_location_list
+            }
           },
           {
             type: 'label',
             name: t`Stock item`,
             key: 'stock',
             icon: 'stock',
-            itemKey: 'item'
+            preview: {
+              itemKey: 'item',
+              model: ModelType.stockitem,
+              apiUrl: ApiEndpoints.stock_item_list
+            }
           },
           {
             type: 'label',
             name: t`Build line`,
             key: 'buildline',
             icon: 'buildline',
-            itemKey: 'line'
+            preview: {
+              itemKey: 'line',
+              model: ModelType.build,
+              apiUrl: ApiEndpoints.build_line_list
+            }
           }
         ]
       },
@@ -58,38 +75,71 @@ export default function TemplateManagementPanel() {
             name: t`Purchase order`,
             key: 'po',
             icon: 'purchase_orders',
-            itemKey: 'order'
+            preview: {
+              itemKey: 'order',
+              model: ModelType.purchaseorder,
+              apiUrl: ApiEndpoints.purchase_order_list
+            }
           },
           {
             name: t`Sales order`,
             key: 'so',
             icon: 'sales_orders',
-            itemKey: 'order'
+            preview: {
+              itemKey: 'order',
+              model: ModelType.salesorder,
+              apiUrl: ApiEndpoints.sales_order_list
+            }
           },
           {
             name: t`Return order`,
             key: 'ro',
             icon: 'return_orders',
-            itemKey: 'order'
+            preview: {
+              itemKey: 'order',
+              model: ModelType.returnorder,
+              apiUrl: ApiEndpoints.return_order_list
+            }
           },
           {
             name: t`Build`,
             key: 'build',
             icon: 'build_reports',
-            itemKey: 'build'
+            preview: {
+              itemKey: 'build',
+              model: ModelType.build,
+              apiUrl: ApiEndpoints.build_line_list
+            }
           },
           {
             name: t`Bill of Materials`,
             key: 'bom',
             icon: 'bom',
-            itemKey: 'part'
+            preview: {
+              itemKey: 'part',
+              model: ModelType.part,
+              apiUrl: ApiEndpoints.part_list
+            }
           },
-          { name: t`Tests`, key: 'test', icon: 'test', itemKey: 'item' },
+          {
+            name: t`Tests`,
+            key: 'test',
+            icon: 'test',
+            preview: {
+              itemKey: 'item',
+              model: ModelType.stockitem,
+              apiUrl: ApiEndpoints.stock_item_list
+            }
+          },
           {
             name: t`Stock location`,
             key: 'slr',
             icon: 'default_location',
-            itemKey: 'location'
+            preview: {
+              itemKey: 'location',
+              model: ModelType.stocklocation,
+              apiUrl: ApiEndpoints.stock_location_list
+            }
           }
         ]
       }
@@ -115,7 +165,7 @@ export default function TemplateManagementPanel() {
                   templateTypeTranslation: templateType.singularName,
                   variant: variant.key,
                   templateKey: templateType.templateKey,
-                  preview: { itemKey: variant.itemKey }
+                  preview: variant.preview
                 }}
               />
             ),

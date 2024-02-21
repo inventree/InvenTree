@@ -1,5 +1,5 @@
-import { Trans } from '@lingui/macro';
-import { Button, Code, Group, Stack, Tabs } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import { Button, Code, Container, Group, Stack, Tabs } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { langs } from '@uiw/codemirror-extensions-langs';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
@@ -14,7 +14,10 @@ import React, {
 } from 'react';
 
 import { api } from '../../../App';
+import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { apiUrl } from '../../../states/ApiState';
+import { StandaloneField } from '../../forms/StandaloneField';
 
 type CodeEditorProps = (props: {
   ref: React.RefObject<CodeEditorRef>;
@@ -38,6 +41,7 @@ type PreviewAreaProps = (props: {
 type PreviewAreaRef = {
   updatePreview: (
     code: string,
+    previewItem: string,
     templateEditorProps: TemplateEditorProps
   ) => void;
 };
@@ -54,15 +58,18 @@ type TemplateEditorProps = {
   downloadUrl: string;
   uploadUrl: string;
   uploadKey: string;
-  preview: { itemKey: string };
+  preview: { itemKey: string; model: ModelType; apiUrl: ApiEndpoints };
+  templateType: 'label' | 'report';
   codeEditors: CodeEditor[];
   previewAreas: PreviewArea[];
 };
 
 export function TemplateEditor(props: TemplateEditorProps) {
-  const { downloadUrl, codeEditors, previewAreas } = props;
+  const { downloadUrl, codeEditors, previewAreas, preview } = props;
   const editorRef = useRef<CodeEditorRef>();
   const previewRef = useRef<PreviewAreaRef>();
+
+  const [previewItem, setPreviewItem] = useState<string>('');
 
   useEffect(() => {
     if (!downloadUrl) return;
@@ -74,8 +81,8 @@ export function TemplateEditor(props: TemplateEditorProps) {
     const code = editorRef.current?.getCode();
     if (!code) return;
 
-    previewRef.current?.updatePreview(code, props);
-  }, []);
+    previewRef.current?.updatePreview(code, previewItem, props);
+  }, [previewItem]);
 
   return (
     <Stack>
@@ -115,6 +122,26 @@ export function TemplateEditor(props: TemplateEditorProps) {
               </Button>
             </Group>
           </Tabs.List>
+
+          <div
+            style={{
+              minWidth: '100%',
+              paddingBottom: '10px',
+              paddingTop: '10px'
+            }}
+          >
+            <StandaloneField
+              fieldDefinition={{
+                field_type: 'related field',
+                api_url: apiUrl(preview.apiUrl),
+                description: '',
+                label: t`Select` + ' ' + preview.model + ' ' + t`to preview`,
+                model: preview.model,
+                value: previewItem,
+                onValueChange: (value) => setPreviewItem(value)
+              }}
+            />
+          </div>
 
           {previewAreas.map((PreviewArea) => (
             <Tabs.Panel key={PreviewArea.key} value={PreviewArea.key}>
@@ -162,7 +189,8 @@ export const PreviewArea: PreviewAreaComponent = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     updatePreview: async (
       code,
-      { uploadKey, uploadUrl, preview: { itemKey } }
+      previewItem,
+      { uploadKey, uploadUrl, preview: { itemKey }, templateType }
     ) => {
       const formData = new FormData();
       formData.append(uploadKey, new File([code], 'template.html'));
@@ -172,32 +200,36 @@ export const PreviewArea: PreviewAreaComponent = forwardRef((props, ref) => {
         return console.log('An error occurred while uploading the template');
       }
 
-      const preview = await api.get(
-        uploadUrl + `print/?plugin=inventreelabel&${itemKey}=1064`
+      let preview = await api.get(
+        uploadUrl + `print/?plugin=inventreelabel&${itemKey}=${previewItem}`
       );
-      if (preview.status !== 200 || !preview.data.success) {
+
+      if (preview.status !== 200) {
         return console.log(
           'An error occurred while fetching the preview',
           preview.data
         );
       }
 
-      const pdfData = await api.get(preview.data.file, {
-        responseType: 'blob'
-      });
-      let pdf = new Blob([pdfData.data], {
-        type: pdfData.headers['content-type']
+      if (templateType === 'label') {
+        preview = await api.get(preview.data.file, {
+          responseType: 'blob'
+        });
+      }
+
+      let pdf = new Blob([preview.data], {
+        type: preview.headers['content-type']
       });
       let srcUrl = URL.createObjectURL(pdf);
 
-      setPdfUrl(srcUrl + '#zoom=500');
+      setPdfUrl(srcUrl + '#toolbar=0&zoom=500');
     }
   }));
 
   if (!pdfUrl) return <div>Preview not available.</div>;
 
   return (
-    <div style={{ height: '70vh' }}>
+    <div style={{ height: '60vh' }}>
       <iframe src={pdfUrl} width="100%" height="100%" />
     </div>
   );
