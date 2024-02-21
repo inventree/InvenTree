@@ -436,6 +436,15 @@ if settings.ENABLE_CLASSIC_FRONTEND:
     frontendpatterns += classic_frontendpatterns
 if settings.ENABLE_PLATFORM_FRONTEND:
     frontendpatterns += platform_urls
+    if not settings.ENABLE_CLASSIC_FRONTEND:
+        # Add a redirect for login views
+        frontendpatterns += [
+            path(
+                'accounts/login/',
+                RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+                name='account_login',
+            )
+        ]
 
 urlpatterns += frontendpatterns
 
@@ -461,5 +470,14 @@ urlpatterns.append(
 
 # Send any unknown URLs to the parts page
 urlpatterns += [
-    re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')
+    re_path(
+        r'^.*$',
+        RedirectView.as_view(
+            url='/index/'
+            if settings.ENABLE_CLASSIC_FRONTEND
+            else settings.FRONTEND_URL_BASE,
+            permanent=False,
+        ),
+        name='index',
+    )
 ]

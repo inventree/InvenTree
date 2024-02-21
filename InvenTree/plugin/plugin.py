@@ -364,7 +364,9 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @property
     def settings_url(self):
         """URL to the settings panel for this plugin."""
-        return f'{reverse("settings")}#select-plugin-{self.slug}'
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return f'{reverse("settings")}#select-plugin-{self.slug}'
+        return 'TOBEREFACTORED'
 
     # region package info
     def _get_package_commit(self):

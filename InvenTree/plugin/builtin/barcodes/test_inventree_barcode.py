@@ -270,9 +270,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertEqual(
             response.data['stocklocation']['api_url'], '/api/stock/location/5/'
         )
-        self.assertEqual(
-            response.data['stocklocation']['web_url'], '/stock/location/5/'
-        )
+        self.assertEqual(response.data['stocklocation']['web_url'], 'TOBEREFACTORED')
         self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 
         # Scan a Part object

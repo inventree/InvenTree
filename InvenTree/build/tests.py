@@ -1,5 +1,6 @@
 """Basic unit tests for the BuildOrder app"""
 
+from django.test import tag
 from django.urls import reverse
 
 from datetime import datetime, timedelta
@@ -40,7 +41,7 @@ class BuildTestSimple(InvenTreeTestCase):
     def test_url(self):
         """Test URL lookup"""
         b1 = Build.objects.get(pk=1)
-        self.assertEqual(b1.get_absolute_url(), '/build/1/')
+        self.assertEqual(b1.get_absolute_url(), 'TOBEREFACTORED')
 
     def test_is_complete(self):
         """Test build completion status"""
@@ -116,11 +117,13 @@ class TestBuildViews(InvenTreeTestCase):
             is_building=True,
         )
 
+    @tag('cui')
     def test_build_index(self):
         """Test build index view."""
         response = self.client.get(reverse('build-index'))
         self.assertEqual(response.status_code, 200)
 
+    @tag('cui')
     def test_build_detail(self):
         """Test the detail view for a Build object."""
         pk = 1

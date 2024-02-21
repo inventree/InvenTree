@@ -3,7 +3,7 @@
 import os
 
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import include, path, re_path, reverse
 
 from error_report.models import Error
@@ -363,6 +363,7 @@ class PanelMixinTests(InvenTreeTestCase):
         plugins = registry.with_mixin('panel', active=False)
         self.assertEqual(len(plugins), 0)
 
+    @tag('cui')
     def test_disabled(self):
         """Test that the panels *do not load* if the plugin is not enabled."""
         plugin = registry.get_plugin('samplepanel')
@@ -390,6 +391,7 @@ class PanelMixinTests(InvenTreeTestCase):
             self.assertNotIn('Hello world', str(response.content))
             self.assertNotIn('Custom Part Panel', str(response.content))
 
+    @tag('cui')
     def test_enabled(self):
         """Test that the panels *do* load if the plugin is enabled."""
         plugin = registry.get_plugin('samplepanel')

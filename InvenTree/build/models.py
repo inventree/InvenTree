@@ -4,6 +4,7 @@ import decimal
 import logging
 import os
 from datetime import datetime
+from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -161,7 +162,9 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
 
     def get_absolute_url(self):
         """Return the web URL associated with this BuildOrder"""
-        return reverse('build-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('build-detail', kwargs={'pk': self.id})
+        return 'TOBEREFACTORED'
 
     reference = models.CharField(
         unique=True,

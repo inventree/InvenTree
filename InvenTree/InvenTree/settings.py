@@ -80,6 +80,9 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
     'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
 )
+# Disable CUI parts if CUI tests are disabled
+if TESTING and '--exclude-tag=cui' in sys.argv:
+    ENABLE_CLASSIC_FRONTEND = False
 ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
     'INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True
 )
