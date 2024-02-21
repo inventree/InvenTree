@@ -837,7 +837,7 @@ class BuildAllocationTest(BuildAPITest):
         si.quantity = 100
         si.save()
 
-        response = self.post(
+        self.post(
             self.url,
             {
                 "items": [
@@ -860,7 +860,7 @@ class BuildAllocationTest(BuildAPITest):
             lft=0, rght=0
         )
 
-        response = self.post(
+        self.post(
             self.url,
             {
                 "items": [
