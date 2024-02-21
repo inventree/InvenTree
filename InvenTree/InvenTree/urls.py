@@ -368,6 +368,13 @@ backendpatterns = [
     path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
 
+if settings.ENABLE_CLASSIC_FRONTEND:
+    # "Dynamic" javascript files which are rendered using InvenTree templating.
+    backendpatterns += [
+        re_path(r'^js/dynamic/', include(dynamic_javascript_urls)),
+        re_path(r'^js/i18n/', include(translated_javascript_urls)),
+    ]
+
 classic_frontendpatterns = [
     # "Dynamic" javascript files which are rendered using InvenTree templating.
     re_path(r'^js/dynamic/', include(dynamic_javascript_urls)),
