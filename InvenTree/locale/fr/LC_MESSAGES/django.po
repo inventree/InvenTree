@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-20 23:36+0000\n"
-"PO-Revision-Date: 2024-02-15 02:42\n"
+"PO-Revision-Date: 2024-02-21 04:34\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -5219,10 +5219,8 @@ msgid "Order is not open"
 msgstr "La commande n'est pas ouverte"
 
 #: order/serializers.py:429
-#, fuzzy
-#| msgid "Pricing"
 msgid "Auto Pricing"
-msgstr "Tarif"
+msgstr ""
 
 #: order/serializers.py:431
 msgid "Automatically calculate purchase price based on supplier part data"
@@ -5233,10 +5231,8 @@ msgid "Purchase price currency"
 msgstr "Devise du prix d'achat"
 
 #: order/serializers.py:447
-#, fuzzy
-#| msgid "Merged stock items"
 msgid "Merge Items"
-msgstr "Articles de stock fusionnés"
+msgstr ""
 
 #: order/serializers.py:449
 msgid "Merge items with the same part, destination and target date into one line item"
@@ -5900,10 +5896,8 @@ msgid "Maximum Price"
 msgstr "Prix Maximum"
 
 #: part/api.py:402
-#, fuzzy
-#| msgid "Result"
 msgid "Has Results"
-msgstr "Résultat"
+msgstr ""
 
 #: part/api.py:569
 msgid "Incoming Purchase Order"
@@ -6387,10 +6381,8 @@ msgid "Enter a name for the test"
 msgstr ""
 
 #: part/models.py:3467
-#, fuzzy
-#| msgid "Test Name"
 msgid "Test Key"
-msgstr "Nom de test"
+msgstr ""
 
 #: part/models.py:3468
 msgid "Simplified key for the test"
@@ -6405,10 +6397,8 @@ msgid "Enter description for this test"
 msgstr ""
 
 #: part/models.py:3480
-#, fuzzy
-#| msgid "Was this news item read?"
 msgid "Is this test enabled?"
-msgstr "Cette nouvelle a-t-elle été lue ?"
+msgstr ""
 
 #: part/models.py:3485 templates/js/translated/part.js:2899
 #: templates/js/translated/table_filters.js:477
@@ -6650,10 +6640,8 @@ msgid "Duplicate relationship already exists"
 msgstr ""
 
 #: part/serializers.py:165
-#, fuzzy
-#| msgid "Result"
 msgid "Results"
-msgstr "Résultat"
+msgstr ""
 
 #: part/serializers.py:166
 msgid "Number of results recorded against this template"
@@ -8815,10 +8803,8 @@ msgid "Serial numbers already exist"
 msgstr "Les numéros de série existent déjà"
 
 #: stock/models.py:1593
-#, fuzzy
-#| msgid "Test Templates"
 msgid "Test template does not exist"
-msgstr "Tester le modèle"
+msgstr ""
 
 #: stock/models.py:1611
 msgid "Stock item has been assigned to a sales order"
@@ -8893,16 +8879,12 @@ msgid "Test notes"
 msgstr ""
 
 #: stock/serializers.py:96
-#, fuzzy
-#| msgid "Total price for this order"
 msgid "Test template for this result"
-msgstr "Prix total pour cette commande"
+msgstr ""
 
 #: stock/serializers.py:115
-#, fuzzy
-#| msgid "Allocation items must be provided"
 msgid "Template ID or test name must be provided"
-msgstr "Les articles d'allocation doivent être fournis"
+msgstr ""
 
 #: stock/serializers.py:169
 msgid "Serial number is too large"
@@ -13817,8 +13799,7 @@ msgstr ""
 
 #: templates/socialaccount/signup.html:11
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    You are about to use your %(provider_name)s account to login to %(site_name)s.\n"
 "  "
 msgstr ""
@@ -13998,3 +13979,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
