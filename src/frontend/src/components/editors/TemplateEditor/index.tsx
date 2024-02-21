@@ -1,17 +1,6 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Code, Container, Group, Stack, Tabs } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
-import { langs } from '@uiw/codemirror-extensions-langs';
-import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-import CodeMirror, { EditorState, useCodeMirror } from '@uiw/react-codemirror';
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState
-} from 'react';
+import { Button, Group, Stack, Tabs } from '@mantine/core';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { api } from '../../../App';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
@@ -26,7 +15,7 @@ type CodeEditorRef = {
   setCode: (code: string) => void;
   getCode: () => string;
 };
-type CodeEditorComponent = React.ForwardRefExoticComponent<
+export type CodeEditorComponent = React.ForwardRefExoticComponent<
   CodeEditorProps & React.RefAttributes<CodeEditorRef>
 >;
 type CodeEditor = {
@@ -45,7 +34,7 @@ type PreviewAreaRef = {
     templateEditorProps: TemplateEditorProps
   ) => void;
 };
-type PreviewAreaComponent = React.ForwardRefExoticComponent<
+export type PreviewAreaComponent = React.ForwardRefExoticComponent<
   PreviewAreaProps & React.RefAttributes<PreviewAreaRef>
 >;
 type PreviewArea = {
@@ -79,7 +68,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
 
   const updatePreview = useCallback(async () => {
     const code = editorRef.current?.getCode();
-    if (!code) return;
+    if (!code || !previewItem) return;
 
     previewRef.current?.updatePreview(code, previewItem, props);
   }, [previewItem]);
@@ -117,7 +106,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
             ))}
 
             <Group position="right" style={{ flex: 1 }}>
-              <Button onClick={updatePreview}>
+              <Button onClick={updatePreview} disabled={!previewItem}>
                 <Trans>Reload preview</Trans>
               </Button>
             </Group>
@@ -154,83 +143,3 @@ export function TemplateEditor(props: TemplateEditorProps) {
     </Stack>
   );
 }
-
-const extensions = [langs.html()];
-
-export const CodeEditor: CodeEditorComponent = forwardRef((props, ref) => {
-  const editor = useRef<HTMLDivElement | null>(null);
-  const [code, setCode] = useState('');
-  const { setContainer } = useCodeMirror({
-    container: editor.current,
-    extensions,
-    value: code,
-    onChange: (value) => setCode(value),
-    height: '70vh',
-    theme: vscodeDark
-  });
-
-  useImperativeHandle(ref, () => ({
-    setCode: (code) => setCode(code),
-    getCode: () => code
-  }));
-
-  useEffect(() => {
-    if (editor.current) {
-      setContainer(editor.current);
-    }
-  }, [editor.current]);
-
-  return <div ref={editor}></div>;
-});
-
-export const PreviewArea: PreviewAreaComponent = forwardRef((props, ref) => {
-  const [pdfUrl, setPdfUrl] = useState('');
-
-  useImperativeHandle(ref, () => ({
-    updatePreview: async (
-      code,
-      previewItem,
-      { uploadKey, uploadUrl, preview: { itemKey }, templateType }
-    ) => {
-      const formData = new FormData();
-      formData.append(uploadKey, new File([code], 'template.html'));
-
-      const res = await api.patch(uploadUrl, formData);
-      if (res.status !== 200) {
-        return console.log('An error occurred while uploading the template');
-      }
-
-      let preview = await api.get(
-        uploadUrl + `print/?plugin=inventreelabel&${itemKey}=${previewItem}`
-      );
-
-      if (preview.status !== 200) {
-        return console.log(
-          'An error occurred while fetching the preview',
-          preview.data
-        );
-      }
-
-      if (templateType === 'label') {
-        preview = await api.get(preview.data.file, {
-          responseType: 'blob'
-        });
-      }
-
-      let pdf = new Blob([preview.data], {
-        type: preview.headers['content-type']
-      });
-      let srcUrl = URL.createObjectURL(pdf);
-
-      setPdfUrl(srcUrl + '#toolbar=0&zoom=500');
-    }
-  }));
-
-  if (!pdfUrl) return <div>Preview not available.</div>;
-
-  return (
-    <div style={{ height: '60vh' }}>
-      <iframe src={pdfUrl} width="100%" height="100%" />
-    </div>
-  );
-});
