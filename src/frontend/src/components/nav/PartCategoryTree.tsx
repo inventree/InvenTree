@@ -10,6 +10,7 @@ import {
 import { ReactTree, ThemeSettings } from '@naisutech/react-tree';
 import { IconSitemap } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -67,54 +68,56 @@ export function PartCategoryTree({
   }
 
   const mantineTheme = useMantineTheme();
-  const currentTheme =
-    mantineTheme.colorScheme === 'dark'
-      ? mantineTheme.colorScheme
-      : mantineTheme.primaryColor;
 
-  const themes: ThemeSettings = {
-    dark: {
-      text: {
-        ...mantineTheme.fn.fontStyles()
+  const themes: ThemeSettings = useMemo(() => {
+    const currentTheme =
+      mantineTheme.colorScheme === 'dark'
+        ? mantineTheme.colorScheme
+        : mantineTheme.primaryColor;
+
+    return {
+      dark: {
+        text: {
+          ...mantineTheme.fn.fontStyles()
+        },
+        nodes: {
+          height: '2.5rem',
+          folder: {
+            selectedBgColor: mantineTheme.colors[currentTheme][4],
+            hoverBgColor: mantineTheme.colors[currentTheme][6]
+          },
+          leaf: {
+            selectedBgColor: mantineTheme.colors[currentTheme][4],
+            hoverBgColor: mantineTheme.colors[currentTheme][6]
+          },
+          icons: {
+            folderColor: mantineTheme.colors[currentTheme][3],
+            leafColor: mantineTheme.colors[currentTheme][3]
+          }
+        }
       },
-      nodes: {
-        height: '2.5rem',
-        folder: {
-          selectedBgColor: mantineTheme.colors[currentTheme][4],
-          hoverBgColor: mantineTheme.colors[currentTheme][6]
+      light: {
+        text: {
+          ...mantineTheme.fn.fontStyles()
         },
-        leaf: {
-          selectedBgColor: mantineTheme.colors[currentTheme][4],
-          hoverBgColor: mantineTheme.colors[currentTheme][6]
-        },
-        icons: {
-          folderColor: mantineTheme.colors[currentTheme][3],
-          leafColor: mantineTheme.colors[currentTheme][3]
+        nodes: {
+          height: '2.5rem',
+          folder: {
+            selectedBgColor: mantineTheme.colors[currentTheme][4],
+            hoverBgColor: mantineTheme.colors[currentTheme][2]
+          },
+          leaf: {
+            selectedBgColor: mantineTheme.colors[currentTheme][4],
+            hoverBgColor: mantineTheme.colors[currentTheme][2]
+          },
+          icons: {
+            folderColor: mantineTheme.colors[currentTheme][8],
+            leafColor: mantineTheme.colors[currentTheme][6]
+          }
         }
       }
-    },
-    light: {
-      text: {
-        ...mantineTheme.fn.fontStyles()
-      },
-      nodes: {
-        height: '2.5rem',
-        folder: {
-          selectedBgColor: mantineTheme.colors[currentTheme][4],
-          hoverBgColor: mantineTheme.colors[currentTheme][2]
-        },
-        leaf: {
-          bgColor: 'initial',
-          selectedBgColor: mantineTheme.colors[currentTheme][4],
-          hoverBgColor: mantineTheme.colors[currentTheme][2]
-        },
-        icons: {
-          folderColor: mantineTheme.colors[currentTheme][8],
-          leafColor: mantineTheme.colors[currentTheme][6]
-        }
-      }
-    }
-  };
+    };
+  }, [mantineTheme]);
 
   return (
     <Drawer
