@@ -787,7 +787,6 @@ class TestSerialNumberExtraction(TestCase):
             self.assertIn(str(v), sn)
 
 
-@tag('cui')
 class TestVersionNumber(TestCase):
     """Unit tests for version number functions."""
 
@@ -978,7 +977,6 @@ class TestSettings(InvenTreeTestCase):
         # make sure to clean up
         settings.TESTING_ENV = False
 
-    @tag('cui')
     def test_initial_install(self):
         """Test if install of plugins on startup works."""
         from plugin import registry
