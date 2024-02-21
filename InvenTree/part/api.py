@@ -120,31 +120,6 @@ class CategoryFilter(rest_filters.FilterSet):
         help_text=_('Filter by starred categories'),
     )
 
-    def filter_starred(self, queryset, name, value):
-        """Filter by whether the PartCategory is starred by the current user."""
-        user = self.request.user
-
-        starred_categories = [
-            star.category.pk for star in user.starred_categories.all()
-        ]
-
-        if str2bool(value):
-            return queryset.filter(pk__in=starred_categories)
-
-        return queryset.exclude(pk__in=starred_categories)
-
-    top_level = rest_filters.BooleanFilter(
-        label=_('Top Level'),
-        method='filter_top_level',
-        help_text=_('Filter by top-level categories'),
-    )
-
-    def filter_top_level(self, queryset, name, value):
-        """Filter by top-level categories."""
-        if str2bool(value):
-            return queryset.filter(parent__isnull=True, level=0)
-        return queryset.filter(parent__isnull=False)
-
     depth = rest_filters.NumberFilter(
         label=_('Depth'), method='filter_depth', help_text=_('Filter by category depth')
     )
@@ -172,8 +147,16 @@ class CategoryFilter(rest_filters.FilterSet):
     def filter_cascade(self, queryset, name, value):
         """Filter by whether to include sub-categories in the filtered results.
 
-        Note: This filter does *nothing* - but the value is checked by the "filter_parent" method.
+        Note: If the "parent" filter is provided, we offload the logic to that method.
         """
+        parent = self.data.get('parent', None)
+
+        # If the parent is *not* provided, update the results based on the "cascade" value
+        if not parent:
+            if not value:
+                # If "cascade" is False, only return top-level categories
+                queryset = queryset.filter(parent=None)
+
         return queryset
 
     parent = rest_filters.ModelChoiceFilter(
