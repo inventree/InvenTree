@@ -74,8 +74,9 @@ export type InvenTreeTableProps<T = any> = {
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   printingActions?: any[];
+  rowExpansion?: any;
   idAccessor?: string;
-  dataFormatter?: (data: T) => any;
+  dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
 };
@@ -124,7 +125,7 @@ export function InvenTreeTable<T = any>({
       props.tableFilters?.map((filter) => {
         return {
           ...filter,
-          label: filter.label ?? fieldNames[filter.name] ?? `? ${filter.name} ?`
+          label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
         };
       }) ?? []
     );
@@ -134,6 +135,7 @@ export function InvenTreeTable<T = any>({
   const tableOptionQuery = useQuery({
     enabled: false,
     queryKey: ['options', url, tableState.tableKey],
+    retry: 3,
     queryFn: async () => {
       return api
         .options(url, {
@@ -211,7 +213,7 @@ export function InvenTreeTable<T = any>({
       return {
         ...col,
         hidden: hidden,
-        title: col.title ?? fieldNames[col.accessor] ?? `? ${col.accessor} ?`
+        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
       };
     });
 
@@ -223,14 +225,12 @@ export function InvenTreeTable<T = any>({
         hidden: false,
         switchable: false,
         width: 50,
-        render: function (record: any) {
-          return (
-            <RowActions
-              actions={tableProps.rowActions?.(record) ?? []}
-              disabled={tableState.selectedRecords.length > 0}
-            />
-          );
-        }
+        render: (record: any) => (
+          <RowActions
+            actions={tableProps.rowActions?.(record) ?? []}
+            disabled={tableState.selectedRecords.length > 0}
+          />
+        )
       });
     }
 
@@ -279,9 +279,11 @@ export function InvenTreeTable<T = any>({
     };
 
     // Add custom filters
-    tableState.activeFilters.forEach(
-      (flt) => (queryParams[flt.name] = flt.value)
-    );
+    if (tableState.activeFilters) {
+      tableState.activeFilters.forEach(
+        (flt) => (queryParams[flt.name] = flt.value)
+      );
+    }
 
     // Add custom search term
     if (tableState.searchTerm) {
@@ -373,14 +375,11 @@ export function InvenTreeTable<T = any>({
               tableProps.noRecordsText ?? t`No records found`
             );
 
-            let results = [];
+            let results = response.data?.results ?? response.data ?? [];
 
             if (props.dataFormatter) {
               // Custom data formatter provided
-              results = props.dataFormatter(response.data);
-            } else {
-              // Extract returned data (accounting for pagination) and ensure it is a list
-              results = response.data?.results ?? response.data ?? [];
+              results = props.dataFormatter(results);
             }
 
             if (!Array.isArray(results)) {
@@ -564,8 +563,8 @@ export function InvenTreeTable<T = any>({
             {tableProps.enableFilters && filters.length > 0 && (
               <Indicator
                 size="xs"
-                label={tableState.activeFilters.length}
-                disabled={tableState.activeFilters.length == 0}
+                label={tableState.activeFilters?.length ?? 0}
+                disabled={tableState.activeFilters?.length == 0}
               >
                 <ActionIcon>
                   <Tooltip label={t`Table filters`}>
@@ -611,6 +610,7 @@ export function InvenTreeTable<T = any>({
             onSelectedRecordsChange={
               tableProps.enableSelection ? onSelectedRecordsChange : undefined
             }
+            rowExpansion={tableProps.rowExpansion}
             fetching={isFetching}
             noRecordsText={missingRecordsText}
             records={data}

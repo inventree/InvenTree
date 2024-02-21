@@ -138,7 +138,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         props={{
           enableDownload: true,
           params: {
-            parent: parentId ?? 'null'
+            parent: parentId
           },
           tableFilters: tableFilters,
           tableActions: tableActions,

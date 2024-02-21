@@ -1439,6 +1439,17 @@ class PurchaseOrderLineItem(OrderLineItem):
         r = self.quantity - self.received
         return max(r, 0)
 
+    def update_pricing(self):
+        """Update pricing information based on the supplier part data."""
+        if self.part:
+            price = self.part.get_price(self.quantity)
+
+            if price is None:
+                return
+
+            self.purchase_price = Decimal(price) / Decimal(self.quantity)
+            self.save()
+
 
 class PurchaseOrderExtraLine(OrderExtraLine):
     """Model for a single ExtraLine in a PurchaseOrder.

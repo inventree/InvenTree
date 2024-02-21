@@ -120,61 +120,6 @@ STATIC_ROOT = config.get_static_dir()
 # The filesystem location for uploaded meadia files
 MEDIA_ROOT = config.get_media_dir()
 
-# List of allowed hosts (default = allow all)
-# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = get_setting(
-    'INVENTREE_ALLOWED_HOSTS',
-    config_key='allowed_hosts',
-    default_value=['*'],
-    typecast=list,
-)
-
-# List of trusted origins for unsafe requests
-# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
-CSRF_TRUSTED_ORIGINS = get_setting(
-    'INVENTREE_TRUSTED_ORIGINS',
-    config_key='trusted_origins',
-    default_value=[],
-    typecast=list,
-)
-
-USE_X_FORWARDED_HOST = get_boolean_setting(
-    'INVENTREE_USE_X_FORWARDED_HOST',
-    config_key='use_x_forwarded_host',
-    default_value=False,
-)
-
-USE_X_FORWARDED_PORT = get_boolean_setting(
-    'INVENTREE_USE_X_FORWARDED_PORT',
-    config_key='use_x_forwarded_port',
-    default_value=False,
-)
-
-# Cross Origin Resource Sharing (CORS) options
-# Refer to the django-cors-headers documentation for more information
-# Ref: https://github.com/adamchainz/django-cors-headers
-
-# Extract CORS options from configuration file
-CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
-    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
-)
-
-CORS_ALLOW_CREDENTIALS = get_boolean_setting(
-    'INVENTREE_CORS_ALLOW_CREDENTIALS',
-    config_key='cors.allow_credentials',
-    default_value=True,
-)
-
-# Only allow CORS access to API and media endpoints
-CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
-
-CORS_ALLOWED_ORIGINS = get_setting(
-    'INVENTREE_CORS_ORIGIN_WHITELIST',
-    config_key='cors.whitelist',
-    default_value=[],
-    typecast=list,
-)
-
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
@@ -243,6 +188,7 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
+    'machine.apps.MachineConfig',
     'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',  # InvenTree app runs last
@@ -846,7 +792,7 @@ Q_CLUSTER = {
         get_setting('INVENTREE_BACKGROUND_WORKERS', 'background.workers', 4)
     ),
     'timeout': _q_worker_timeout,
-    'retry': min(120, _q_worker_timeout + 30),
+    'retry': max(120, _q_worker_timeout + 30),
     'max_attempts': int(
         get_setting('INVENTREE_BACKGROUND_MAX_ATTEMPTS', 'background.max_attempts', 5)
     ),
@@ -1022,6 +968,69 @@ SOCIAL_BACKENDS = get_setting(
 
 if not SITE_MULTI:
     INSTALLED_APPS.remove('django.contrib.sites')
+
+# List of allowed hosts (default = allow all)
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = get_setting(
+    'INVENTREE_ALLOWED_HOSTS',
+    config_key='allowed_hosts',
+    default_value=['*'],
+    typecast=list,
+)
+
+# List of trusted origins for unsafe requests
+# Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
+CSRF_TRUSTED_ORIGINS = get_setting(
+    'INVENTREE_TRUSTED_ORIGINS',
+    config_key='trusted_origins',
+    default_value=[],
+    typecast=list,
+)
+
+# If a list of trusted is not specified, but a site URL has been specified, use that
+if SITE_URL and len(CSRF_TRUSTED_ORIGINS) == 0:
+    CSRF_TRUSTED_ORIGINS.append(SITE_URL)
+
+USE_X_FORWARDED_HOST = get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_HOST',
+    config_key='use_x_forwarded_host',
+    default_value=False,
+)
+
+USE_X_FORWARDED_PORT = get_boolean_setting(
+    'INVENTREE_USE_X_FORWARDED_PORT',
+    config_key='use_x_forwarded_port',
+    default_value=False,
+)
+
+# Cross Origin Resource Sharing (CORS) options
+# Refer to the django-cors-headers documentation for more information
+# Ref: https://github.com/adamchainz/django-cors-headers
+
+# Extract CORS options from configuration file
+CORS_ALLOW_ALL_ORIGINS = get_boolean_setting(
+    'INVENTREE_CORS_ORIGIN_ALLOW_ALL', config_key='cors.allow_all', default_value=DEBUG
+)
+
+CORS_ALLOW_CREDENTIALS = get_boolean_setting(
+    'INVENTREE_CORS_ALLOW_CREDENTIALS',
+    config_key='cors.allow_credentials',
+    default_value=True,
+)
+
+# Only allow CORS access to API and media endpoints
+CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
+
+CORS_ALLOWED_ORIGINS = get_setting(
+    'INVENTREE_CORS_ORIGIN_WHITELIST',
+    config_key='cors.whitelist',
+    default_value=[],
+    typecast=list,
+)
+
+# If no CORS origins are specified, but a site URL has been specified, use that
+if SITE_URL and len(CORS_ALLOWED_ORIGINS) == 0:
+    CORS_ALLOWED_ORIGINS.append(SITE_URL)
 
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'

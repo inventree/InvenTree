@@ -44,6 +44,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
         accessor: 'template_detail.name',
         switchable: false,
         sortable: true,
+        ordering: 'name',
         render: (record) => {
           let variant = String(partId) != String(record.part);
 
@@ -75,7 +76,8 @@ export function PartParameterTable({ partId }: { partId: any }) {
       },
       {
         accessor: 'template_detail.units',
-        sortable: false
+        ordering: 'units',
+        sortable: true
       }
     ];
   }, [partId]);

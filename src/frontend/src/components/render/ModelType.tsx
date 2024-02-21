@@ -32,6 +32,13 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/partparametertemplate/:pk/',
     api_endpoint: ApiEndpoints.part_parameter_template_list
   },
+  parttesttemplate: {
+    label: t`Part Test Template`,
+    label_multiple: t`Part Test Templates`,
+    url_overview: '/parttesttemplate',
+    url_detail: '/parttesttemplate/:pk/',
+    api_endpoint: ApiEndpoints.part_test_template_list
+  },
   supplierpart: {
     label: t`Supplier Part`,
     label_multiple: t`Supplier Parts`,

@@ -1,10 +1,49 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 166
+INVENTREE_API_VERSION = 175
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v175 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6538
+    - Adds "parts" count to PartParameterTemplate serializer
+
+v174 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6536
+    - Expose PartCategory filters to the API documentation
+    - Expose StockLocation filters to the API documentation
+
+v173 - 2024-02-20 : https://github.com/inventree/InvenTree/pull/6483
+    - Adds "merge_items" to the PurchaseOrderLine create API endpoint
+    - Adds "auto_pricing" to the PurchaseOrderLine create/update API endpoint
+
+v172 - 2024-02-20 : https://github.com/inventree/InvenTree/pull/6526
+    - Adds "enabled" field to the PartTestTemplate API endpoint
+    - Adds "enabled" filter to the PartTestTemplate list
+    - Adds "enabled" filter to the StockItemTestResult list
+
+v171 - 2024-02-19 : https://github.com/inventree/InvenTree/pull/6516
+    - Adds "key" as a filterable parameter to PartTestTemplate list endpoint
+
+v170 -> 2024-02-19 : https://github.com/inventree/InvenTree/pull/6514
+    - Adds "has_results" filter to the PartTestTemplate list endpoint
+
+v169 -> 2024-02-14 : https://github.com/inventree/InvenTree/pull/6430
+    - Adds 'key' field to PartTestTemplate API endpoint
+    - Adds annotated 'results' field to PartTestTemplate API endpoint
+    - Adds 'template' field to StockItemTestResult API endpoint
+
+v168 -> 2024-02-14 : https://github.com/inventree/InvenTree/pull/4824
+    - Adds machine CRUD API endpoints
+    - Adds machine settings API endpoints
+    - Adds machine restart API endpoint
+    - Adds machine types/drivers list API endpoints
+    - Adds machine registry status API endpoint
+    - Adds 'required' field to the global Settings API
+    - Discover sub-sub classes of the StatusCode API
+
+v167 -> 2024-02-07: https://github.com/inventree/InvenTree/pull/6440
+    - Fixes for OpenAPI schema generation
 
 v166 -> 2024-02-04 : https://github.com/inventree/InvenTree/pull/6400
     - Adds package_name to plugin API

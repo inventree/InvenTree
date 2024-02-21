@@ -232,6 +232,8 @@ class RuleSet(models.Model):
                 'taggit_tag',
                 'taggit_taggeditem',
                 'flags_flagstate',
+                'machine_machineconfig',
+                'machine_machinesetting',
             ],
             'part_category': [
                 'part_partcategory',

@@ -9,9 +9,10 @@ import importlib
 import logging
 import os
 import time
+from collections import OrderedDict
 from pathlib import Path
 from threading import Lock
-from typing import Any, Dict, List, OrderedDict
+from typing import Any
 
 from django.apps import apps
 from django.conf import settings
@@ -20,12 +21,6 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-
-from maintenance_mode.core import (
-    get_maintenance_mode,
-    maintenance_mode_on,
-    set_maintenance_mode,
-)
 
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
@@ -58,19 +53,19 @@ class PluginsRegistry:
         Set up all needed references for internal and external states.
         """
         # plugin registry
-        self.plugins: Dict[str, InvenTreePlugin] = {}  # List of active instances
-        self.plugins_inactive: Dict[
+        self.plugins: dict[str, InvenTreePlugin] = {}  # List of active instances
+        self.plugins_inactive: dict[
             str, InvenTreePlugin
         ] = {}  # List of inactive instances
-        self.plugins_full: Dict[
+        self.plugins_full: dict[
             str, InvenTreePlugin
         ] = {}  # List of all plugin instances
 
         # Keep an internal hash of the plugin registry state
         self.registry_hash = None
 
-        self.plugin_modules: List[InvenTreePlugin] = []  # Holds all discovered plugins
-        self.mixin_modules: Dict[str, Any] = {}  # Holds all discovered mixins
+        self.plugin_modules: list[InvenTreePlugin] = []  # Holds all discovered plugins
+        self.mixin_modules: dict[str, Any] = {}  # Holds all discovered mixins
 
         self.errors = {}  # Holds discovering errors
 
@@ -218,11 +213,6 @@ class PluginsRegistry:
         """
         logger.info('Loading plugins')
 
-        # Set maintenance mode
-        _maintenance = bool(get_maintenance_mode())
-        if not _maintenance:
-            set_maintenance_mode(True)
-
         registered_successful = False
         blocked_plugin = None
         retry_counter = settings.PLUGIN_RETRY
@@ -272,10 +262,6 @@ class PluginsRegistry:
         # ensure plugins_loaded is True
         self.plugins_loaded = True
 
-        # Remove maintenance mode
-        if not _maintenance:
-            set_maintenance_mode(False)
-
         logger.debug('Finished loading plugins')
 
         # Trigger plugins_loaded event
@@ -292,20 +278,11 @@ class PluginsRegistry:
         """
         logger.info('Start unloading plugins')
 
-        # Set maintenance mode
-        _maintenance = bool(get_maintenance_mode())
-        if not _maintenance:
-            set_maintenance_mode(True)  # pragma: no cover
-
         # remove all plugins from registry
         self._clean_registry()
 
         # deactivate all integrations
         self._deactivate_plugins(force_reload=force_reload)
-
-        # remove maintenance
-        if not _maintenance:
-            set_maintenance_mode(False)  # pragma: no cover
 
         logger.info('Finished unloading plugins')
 
@@ -337,15 +314,14 @@ class PluginsRegistry:
                 collect,
             )
 
-            with maintenance_mode_on():
-                if collect:
-                    logger.info('Collecting plugins')
-                    self.plugin_modules = self.collect_plugins()
+            if collect:
+                logger.info('Collecting plugins')
+                self.plugin_modules = self.collect_plugins()
 
-                self.plugins_loaded = False
-                self._unload_plugins(force_reload=force_reload)
-                self.plugins_loaded = True
-                self._load_plugins(full_reload=full_reload)
+            self.plugins_loaded = False
+            self._unload_plugins(force_reload=force_reload)
+            self.plugins_loaded = True
+            self._load_plugins(full_reload=full_reload)
 
             self.update_plugin_hash()
 
@@ -707,9 +683,9 @@ class PluginsRegistry:
 
     def _clean_registry(self):
         """Remove all plugins from registry."""
-        self.plugins: Dict[str, InvenTreePlugin] = {}
-        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}
-        self.plugins_full: Dict[str, InvenTreePlugin] = {}
+        self.plugins: dict[str, InvenTreePlugin] = {}
+        self.plugins_inactive: dict[str, InvenTreePlugin] = {}
+        self.plugins_full: dict[str, InvenTreePlugin] = {}
 
     def _update_urls(self):
         """Due to the order in which plugins are loaded, the patterns in urls.py may be out of date.

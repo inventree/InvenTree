@@ -22,6 +22,7 @@ import build.api
 import common.api
 import company.api
 import label.api
+import machine.api
 import order.api
 import part.api
 import plugin.api
@@ -83,6 +84,7 @@ apipatterns = [
     path('order/', include(order.api.order_api_urls)),
     path('label/', include(label.api.label_api_urls)),
     path('report/', include(report.api.report_api_urls)),
+    path('machine/', include(machine.api.machine_api_urls)),
     path('user/', include(users.api.user_urls)),
     path('admin/', include(common.api.admin_api_urls)),
     path('web/', include(web_api_urls)),

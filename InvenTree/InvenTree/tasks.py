@@ -9,7 +9,7 @@ import time
 import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Callable, List
+from typing import Callable
 
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
@@ -291,7 +291,7 @@ class ScheduledTask:
 class TaskRegister:
     """Registry for periodic tasks."""
 
-    task_list: List[ScheduledTask] = []
+    task_list: list[ScheduledTask] = []
 
     def register(self, task, schedule, minutes: int = None):
         """Register a task with the que."""

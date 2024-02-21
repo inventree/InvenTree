@@ -105,12 +105,7 @@ def content_excludes(
         excludes.append('socialaccount.socialapp')
         excludes.append('socialaccount.socialtoken')
 
-    output = ''
-
-    for e in excludes:
-        output += f'--exclude {e} '
-
-    return output
+    return ' '.join([f'--exclude {e}' for e in excludes])
 
 
 def localDir() -> Path:
@@ -370,6 +365,7 @@ def migrate(c):
     print('========================================')
 
     # Run custom management command which wraps migrations in "maintenance mode"
+    manage(c, 'makemigrations')
     manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
 
@@ -1169,7 +1165,7 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
             print('[ERROR] Cannot find frontend-build.zip attachment for current sha')
             return
         print(
-            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes']/1e6:.2f}MB)."
+            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes'] / 1e6:.2f}MB)."
         )
 
         print(
