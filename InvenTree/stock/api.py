@@ -316,6 +316,13 @@ class StockLocationFilter(rest_filters.FilterSet):
 
         return queryset
 
+    parent = rest_filters.ModelChoiceFilter(
+        queryset=StockLocation.objects.all(),
+        method='filter_parent',
+        label=_('Parent Location'),
+        help_text=_('Filter by parent location'),
+    )
+
     def filter_parent(self, queryset, name, value):
         """Filter by parent location.
 
