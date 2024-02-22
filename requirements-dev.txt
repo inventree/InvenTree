@@ -31,7 +31,7 @@ docopt==0.6.2
     # via coveralls
 filelock==3.13.1
     # via virtualenv
-identify==2.5.33
+identify==2.5.35
     # via pre-commit
 idna==3.6
     # via requests
@@ -45,14 +45,16 @@ packaging==23.2
 pdfminer-six==20231228
 pip==24.0
     # via pip-tools
-pip-tools==7.3.0
+pip-tools==7.4.0
 platformdirs==4.2.0
     # via virtualenv
-pre-commit==3.6.0
+pre-commit==3.6.2
 pycparser==2.21
     # via cffi
 pyproject-hooks==1.0.0
-    # via build
+    # via
+    #   build
+    #   pip-tools
 pyyaml==6.0.1
     # via pre-commit
 requests==2.31.0
@@ -74,9 +76,9 @@ typing-extensions==4.9.0
     # via
     #   asgiref
     #   django-test-migrations
-urllib3==2.2.0
+urllib3==2.2.1
     # via requests
-virtualenv==20.25.0
+virtualenv==20.25.1
     # via pre-commit
 wheel==0.42.0
     # via pip-tools
