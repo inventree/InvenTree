@@ -1,6 +1,5 @@
 """Unit tests for Order views (see views.py)."""
 
-from django.conf.locale import ta
 from django.test import tag
 from django.urls import reverse
 

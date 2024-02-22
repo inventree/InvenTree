@@ -2311,7 +2311,7 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
         """Return url for instance."""
         if settings.ENABLE_CLASSIC_FRONTEND:
             return f'/stock/track/{self.id}'
-        return InvenTree.helpers.pui_url(f'/stock/id/{self.item.id}')
+        return InvenTree.helpers.pui_url(f'/stock/item/{self.item.id}')
 
     def label(self):
         """Return label."""
