@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-21 04:35\n"
+"PO-Revision-Date: 2024-02-22 04:51\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -54,7 +54,7 @@ msgstr "Aktualisieren"
 #: src/hooks/UseForm.tsx:120
 #: src/pages/Index/Scan.tsx:332
 #: src/pages/Notifications.tsx:123
-#: src/tables/InvenTreeTable.tsx:454
+#: src/tables/InvenTreeTable.tsx:455
 #: src/tables/RowActions.tsx:70
 #: src/tables/plugin/PluginListTable.tsx:467
 msgid "Delete"
@@ -274,26 +274,26 @@ msgstr "Status: <0>worker</0> ({0}), <1>Plugins</1>{1}"
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
-#: src/tables/InvenTreeTable.tsx:414
-#: src/tables/InvenTreeTable.tsx:487
+#: src/tables/InvenTreeTable.tsx:415
+#: src/tables/InvenTreeTable.tsx:488
 #: src/tables/plugin/PluginListTable.tsx:393
 msgid "Error"
 msgstr "Fehler"
 
-#: src/components/forms/fields/RelatedModelField.tsx:288
+#: src/components/forms/fields/RelatedModelField.tsx:292
 #: src/pages/Index/Settings/UserSettings.tsx:64
 #: src/tables/Search.tsx:23
 msgid "Search"
 msgstr "Suche"
 
-#: src/components/forms/fields/RelatedModelField.tsx:289
+#: src/components/forms/fields/RelatedModelField.tsx:293
 #: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
 msgstr "Wird geladen"
 
-#: src/components/forms/fields/RelatedModelField.tsx:291
+#: src/components/forms/fields/RelatedModelField.tsx:295
 msgid "No results found"
 msgstr "Keine Ergebnisse gefunden"
 
@@ -317,7 +317,7 @@ msgstr "Entfernen"
 #: src/functions/forms.tsx:196
 #: src/hooks/UseForm.tsx:38
 #: src/tables/FilterSelectDrawer.tsx:214
-#: src/tables/InvenTreeTable.tsx:455
+#: src/tables/InvenTreeTable.tsx:456
 #: src/tables/plugin/PluginListTable.tsx:356
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -416,7 +416,7 @@ msgid "Read More"
 msgstr "Mehr lesen"
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/tables/InvenTreeTable.tsx:406
+#: src/tables/InvenTreeTable.tsx:407
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
@@ -794,7 +794,7 @@ msgstr "Benachrichtigung"
 msgid "Mark as read"
 msgstr "Als gelesen markieren"
 
-#: src/components/nav/PartCategoryTree.tsx:137
+#: src/components/nav/PartCategoryTree.tsx:140
 #: src/components/render/ModelType.tsx:60
 #: src/pages/Index/Settings/SystemSettings.tsx:163
 #: src/pages/part/CategoryDetail.tsx:65
@@ -1870,27 +1870,27 @@ msgstr "Erste Schritte"
 
 #: src/defaults/links.tsx:50
 msgid "Getting started with InvenTree"
-msgstr ""
+msgstr "Erste Schritte mit InvenTree"
 
 #: src/defaults/links.tsx:56
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/defaults/links.tsx:57
 msgid "InvenTree API documentation"
-msgstr ""
+msgstr "InvenTree API Dokumentation"
 
 #: src/defaults/links.tsx:62
 msgid "Developer Manual"
-msgstr ""
+msgstr "Entwicklerhandbuch"
 
 #: src/defaults/links.tsx:63
 msgid "InvenTree developer manual"
-msgstr ""
+msgstr "InvenTree Entwicklerhandbuch"
 
 #: src/defaults/links.tsx:68
 msgid "FAQ"
-msgstr ""
+msgstr "FAQ"
 
 #: src/defaults/links.tsx:69
 msgid "Frequently asked questions"
@@ -1968,7 +1968,7 @@ msgstr "Benutzerattribute und Designeinstellungen."
 
 #: src/defaults/menuItems.tsx:23
 msgid "View for interactive scanning and multiple actions."
-msgstr ""
+msgstr "Ansicht für interaktives Scannen und mehrere Aktionen."
 
 #: src/defaults/menuItems.tsx:24
 #~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
@@ -2032,7 +2032,7 @@ msgstr "Link bearbeiten"
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "File updated"
-msgstr ""
+msgstr "Datei aktualisiert"
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "Link updated"
@@ -2141,7 +2141,7 @@ msgstr "Zurücksetzen fehlgeschlagen"
 
 #: src/functions/auth.tsx:142
 msgid "Logged In"
-msgstr ""
+msgstr "Angemeldet"
 
 #: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
@@ -2149,7 +2149,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:143
 msgid "Found an existing login - welcome back!"
-msgstr ""
+msgstr "Bestehende Anmeldung gefunden - Willkommen zurück!"
 
 #: src/functions/forms.tsx:50
 #~ msgid "Form method not provided"
@@ -2165,7 +2165,7 @@ msgstr "Ungültiges Formular"
 
 #: src/functions/forms.tsx:183
 msgid "method parameter not supplied"
-msgstr ""
+msgstr "methodenparameter nicht angegeben"
 
 #: src/functions/notifications.tsx:9
 msgid "Not implemented"
@@ -2173,7 +2173,7 @@ msgstr "Nicht implementiert"
 
 #: src/functions/notifications.tsx:10
 msgid "This feature is not yet implemented"
-msgstr ""
+msgstr "Diese Funktion wurde noch nicht implementiert"
 
 #: src/functions/notifications.tsx:20
 msgid "Permission denied"
@@ -2185,7 +2185,7 @@ msgstr "Du hast keine Berechtigung, diese Aktion durchzuführen"
 
 #: src/functions/notifications.tsx:32
 msgid "Invalid Return Code"
-msgstr ""
+msgstr "Ungültiger Rückgabecode"
 
 #: src/functions/notifications.tsx:33
 msgid "Server returned status {returnCode}"
@@ -3522,71 +3522,71 @@ msgid "Clear Filters"
 msgstr "Filter zurücksetzen"
 
 #: src/tables/InvenTreeTable.tsx:89
-#: src/tables/InvenTreeTable.tsx:353
-#: src/tables/InvenTreeTable.tsx:374
+#: src/tables/InvenTreeTable.tsx:354
+#: src/tables/InvenTreeTable.tsx:375
 msgid "No records found"
 msgstr "Keine Einträge gefunden"
 
-#: src/tables/InvenTreeTable.tsx:385
+#: src/tables/InvenTreeTable.tsx:386
 msgid "Server returned incorrect data type"
 msgstr "Der Server hat einen falschen Datentyp zurückgegeben"
 
-#: src/tables/InvenTreeTable.tsx:393
+#: src/tables/InvenTreeTable.tsx:394
 msgid "Bad request"
 msgstr "Ungültige Anfrage"
 
-#: src/tables/InvenTreeTable.tsx:396
+#: src/tables/InvenTreeTable.tsx:397
 msgid "Unauthorized"
 msgstr "Nicht autorisiert"
 
-#: src/tables/InvenTreeTable.tsx:399
+#: src/tables/InvenTreeTable.tsx:400
 msgid "Forbidden"
 msgstr "Verweigert"
 
-#: src/tables/InvenTreeTable.tsx:402
+#: src/tables/InvenTreeTable.tsx:403
 msgid "Not found"
 msgstr "Nicht gefunden"
 
-#: src/tables/InvenTreeTable.tsx:444
-#: src/tables/InvenTreeTable.tsx:535
+#: src/tables/InvenTreeTable.tsx:445
+#: src/tables/InvenTreeTable.tsx:536
 msgid "Delete selected records"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:448
+#: src/tables/InvenTreeTable.tsx:449
 msgid "Are you sure you want to delete the selected records?"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:450
+#: src/tables/InvenTreeTable.tsx:451
 msgid "This action cannot be undone!"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:478
+#: src/tables/InvenTreeTable.tsx:479
 msgid "Deleted records"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:479
+#: src/tables/InvenTreeTable.tsx:480
 msgid "Records were deleted successfully"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:488
+#: src/tables/InvenTreeTable.tsx:489
 msgid "Failed to delete records"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:516
 #: src/tables/InvenTreeTable.tsx:517
+#: src/tables/InvenTreeTable.tsx:518
 msgid "Barcode actions"
 msgstr "Barcode-Aktionen"
 
-#: src/tables/InvenTreeTable.tsx:525
 #: src/tables/InvenTreeTable.tsx:526
+#: src/tables/InvenTreeTable.tsx:527
 msgid "Print actions"
 msgstr "Druck-Aktionen"
 
-#: src/tables/InvenTreeTable.tsx:551
+#: src/tables/InvenTreeTable.tsx:552
 msgid "Refresh data"
 msgstr "Daten aktualisieren"
 
-#: src/tables/InvenTreeTable.tsx:569
+#: src/tables/InvenTreeTable.tsx:570
 msgid "Table filters"
 msgstr "Tabellenfilter"
 
@@ -4125,19 +4125,19 @@ msgstr ""
 msgid "Show templates with units"
 msgstr ""
 
-#: src/tables/part/PartParameterTemplateTable.tsx:80
+#: src/tables/part/PartParameterTemplateTable.tsx:85
 msgid "Add Parameter Template"
 msgstr ""
 
-#: src/tables/part/PartParameterTemplateTable.tsx:92
+#: src/tables/part/PartParameterTemplateTable.tsx:97
 msgid "Edit Parameter Template"
 msgstr ""
 
-#: src/tables/part/PartParameterTemplateTable.tsx:100
+#: src/tables/part/PartParameterTemplateTable.tsx:105
 msgid "Delete Parameter Template"
 msgstr ""
 
-#: src/tables/part/PartParameterTemplateTable.tsx:130
+#: src/tables/part/PartParameterTemplateTable.tsx:135
 msgid "Add parameter template"
 msgstr ""
 
