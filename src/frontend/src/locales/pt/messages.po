@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-21 04:35\n"
+"PO-Revision-Date: 2024-02-22 04:51\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -54,7 +54,7 @@ msgstr "Atualizar"
 #: src/hooks/UseForm.tsx:120
 #: src/pages/Index/Scan.tsx:332
 #: src/pages/Notifications.tsx:123
-#: src/tables/InvenTreeTable.tsx:454
+#: src/tables/InvenTreeTable.tsx:455
 #: src/tables/RowActions.tsx:70
 #: src/tables/plugin/PluginListTable.tsx:467
 msgid "Delete"
@@ -274,26 +274,26 @@ msgstr "Estado: <0>funcionário</0> ({0}), <1>extensões</1>{1}"
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
-#: src/tables/InvenTreeTable.tsx:414
-#: src/tables/InvenTreeTable.tsx:487
+#: src/tables/InvenTreeTable.tsx:415
+#: src/tables/InvenTreeTable.tsx:488
 #: src/tables/plugin/PluginListTable.tsx:393
 msgid "Error"
 msgstr "Erro"
 
-#: src/components/forms/fields/RelatedModelField.tsx:288
+#: src/components/forms/fields/RelatedModelField.tsx:292
 #: src/pages/Index/Settings/UserSettings.tsx:64
 #: src/tables/Search.tsx:23
 msgid "Search"
 msgstr "Buscar"
 
-#: src/components/forms/fields/RelatedModelField.tsx:289
+#: src/components/forms/fields/RelatedModelField.tsx:293
 #: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
 msgstr "Carregando"
 
-#: src/components/forms/fields/RelatedModelField.tsx:291
+#: src/components/forms/fields/RelatedModelField.tsx:295
 msgid "No results found"
 msgstr "Nenhum resultado encontrado"
 
@@ -317,7 +317,7 @@ msgstr "Remover"
 #: src/functions/forms.tsx:196
 #: src/hooks/UseForm.tsx:38
 #: src/tables/FilterSelectDrawer.tsx:214
-#: src/tables/InvenTreeTable.tsx:455
+#: src/tables/InvenTreeTable.tsx:456
 #: src/tables/plugin/PluginListTable.tsx:356
 msgid "Cancel"
 msgstr "Cancelar"
@@ -416,7 +416,7 @@ msgid "Read More"
 msgstr "Leia Mais"
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/tables/InvenTreeTable.tsx:406
+#: src/tables/InvenTreeTable.tsx:407
 msgid "Unknown error"
 msgstr "Erro desconhecido"
 
@@ -794,7 +794,7 @@ msgstr "Notificação"
 msgid "Mark as read"
 msgstr "Marcar como lido"
 
-#: src/components/nav/PartCategoryTree.tsx:137
+#: src/components/nav/PartCategoryTree.tsx:140
 #: src/components/render/ModelType.tsx:60
 #: src/pages/Index/Settings/SystemSettings.tsx:163
 #: src/pages/part/CategoryDetail.tsx:65
@@ -3522,71 +3522,71 @@ msgid "Clear Filters"
 msgstr "Limpar Filtros"
 
 #: src/tables/InvenTreeTable.tsx:89
-#: src/tables/InvenTreeTable.tsx:353
-#: src/tables/InvenTreeTable.tsx:374
+#: src/tables/InvenTreeTable.tsx:354
+#: src/tables/InvenTreeTable.tsx:375
 msgid "No records found"
 msgstr "Nenhum registro encontrado"
 
-#: src/tables/InvenTreeTable.tsx:385
+#: src/tables/InvenTreeTable.tsx:386
 msgid "Server returned incorrect data type"
 msgstr "O servidor retornou um tipo de dado incorreto"
 
-#: src/tables/InvenTreeTable.tsx:393
+#: src/tables/InvenTreeTable.tsx:394
 msgid "Bad request"
 msgstr "Requisição inválida"
 
-#: src/tables/InvenTreeTable.tsx:396
+#: src/tables/InvenTreeTable.tsx:397
 msgid "Unauthorized"
 msgstr "Não autorizado"
 
-#: src/tables/InvenTreeTable.tsx:399
+#: src/tables/InvenTreeTable.tsx:400
 msgid "Forbidden"
 msgstr "Proibido"
 
-#: src/tables/InvenTreeTable.tsx:402
+#: src/tables/InvenTreeTable.tsx:403
 msgid "Not found"
 msgstr "Não encontrado"
 
-#: src/tables/InvenTreeTable.tsx:444
-#: src/tables/InvenTreeTable.tsx:535
+#: src/tables/InvenTreeTable.tsx:445
+#: src/tables/InvenTreeTable.tsx:536
 msgid "Delete selected records"
 msgstr "Remover registros selecionados"
 
-#: src/tables/InvenTreeTable.tsx:448
+#: src/tables/InvenTreeTable.tsx:449
 msgid "Are you sure you want to delete the selected records?"
 msgstr "Tem certeza que deseja apagar os registros selecionados?"
 
-#: src/tables/InvenTreeTable.tsx:450
+#: src/tables/InvenTreeTable.tsx:451
 msgid "This action cannot be undone!"
 msgstr "Essa ação não pode ser desfeita!"
 
-#: src/tables/InvenTreeTable.tsx:478
+#: src/tables/InvenTreeTable.tsx:479
 msgid "Deleted records"
 msgstr "Registos removidos"
 
-#: src/tables/InvenTreeTable.tsx:479
+#: src/tables/InvenTreeTable.tsx:480
 msgid "Records were deleted successfully"
 msgstr "Registros foram removidos com sucesso"
 
-#: src/tables/InvenTreeTable.tsx:488
+#: src/tables/InvenTreeTable.tsx:489
 msgid "Failed to delete records"
 msgstr "Falha ao remover registros"
 
-#: src/tables/InvenTreeTable.tsx:516
 #: src/tables/InvenTreeTable.tsx:517
+#: src/tables/InvenTreeTable.tsx:518
 msgid "Barcode actions"
 msgstr "Ações de código de barras"
 
-#: src/tables/InvenTreeTable.tsx:525
 #: src/tables/InvenTreeTable.tsx:526
+#: src/tables/InvenTreeTable.tsx:527
 msgid "Print actions"
 msgstr "Ações de impressão"
 
-#: src/tables/InvenTreeTable.tsx:551
+#: src/tables/InvenTreeTable.tsx:552
 msgid "Refresh data"
 msgstr "Atualizar dados"
 
-#: src/tables/InvenTreeTable.tsx:569
+#: src/tables/InvenTreeTable.tsx:570
 msgid "Table filters"
 msgstr "Filtros da Tabela"
 
@@ -4125,19 +4125,19 @@ msgstr "Possui unidades"
 msgid "Show templates with units"
 msgstr "Mostrar modelos com unidades"
 
-#: src/tables/part/PartParameterTemplateTable.tsx:80
+#: src/tables/part/PartParameterTemplateTable.tsx:85
 msgid "Add Parameter Template"
 msgstr "Adicionar Modelo de Parâmetro"
 
-#: src/tables/part/PartParameterTemplateTable.tsx:92
+#: src/tables/part/PartParameterTemplateTable.tsx:97
 msgid "Edit Parameter Template"
 msgstr "Edital Modelo de Parâmetro"
 
-#: src/tables/part/PartParameterTemplateTable.tsx:100
+#: src/tables/part/PartParameterTemplateTable.tsx:105
 msgid "Delete Parameter Template"
 msgstr "Excluir Modelo de Parâmetro"
 
-#: src/tables/part/PartParameterTemplateTable.tsx:130
+#: src/tables/part/PartParameterTemplateTable.tsx:135
 msgid "Add parameter template"
 msgstr "Adicionar modelo de parâmetro"
 
