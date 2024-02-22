@@ -1,0 +1,32 @@
+
+(log_common) {
+    log {
+        output file /var/log/caddy/{args.0}.access.log
+    }
+}
+
+# Change the host to your domain (this will serve at localhost on port 80
+inventree.localhost {
+    import log_common inventree
+
+    encode gzip
+
+    handle_path /static/* {
+        root * /var/www/static
+        file_server
+    }
+
+    handle_path /media/* {
+        forward_auth "http://inventree-server:8000" {
+            uri /auth
+        }
+        root * /var/www/media
+        file_server
+    }
+
+    handle /api/* {
+        reverse_proxy "http://inventree-server:8000"
+    }
+
+    reverse_proxy "http://inventree-server:8000"
+}
