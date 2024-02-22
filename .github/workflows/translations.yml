@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+env:
+  python_version: 3.9
+  node_version: 16
+
 jobs:
   build:
 
