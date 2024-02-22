@@ -99,27 +99,21 @@ services:
             - inventree_data:/home/inventree/data:z
         restart: unless-stopped
 
-    # nginx acts as a reverse proxy
-    # static files are served directly by nginx
-    # media files are served by nginx, although authentication is redirected to inventree-server
-    # web requests are redirected to gunicorn
-    # NOTE: You will need to provide a working nginx.conf file!
+    # caddy acts as reverse proxy and static file server
+    # https://hub.docker.com/_/caddy
     inventree-proxy:
-        image: nginx:stable
+        container_name: inventree-proxy
+        image: caddy:alpine
+        restart: always
         depends_on:
             - inventree-server
-        env_file:
-            - .env
         ports:
-            # Default web port is 1337 (can be changed in the .env file)
-            - ${INVENTREE_WEB_PORT:-1337}:80
+            - 80:80
+            - 443:443
         volumes:
-            # Provide nginx configuration file to the container
-            # Refer to the provided example file as a starting point
-            - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro,z
-            # nginx proxy needs access to static and media files
+            - ./Caddyfile:/etc/caddy/Caddyfile:ro
             - inventree_data:/var/www:z
-        restart: unless-stopped
+            - inventree_data:/var/log:z
 
 volumes:
     # Persistent data, stored external to the container(s)
