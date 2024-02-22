@@ -5,9 +5,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { TemplateEditor } from '../../components/editors/TemplateEditor';
-import { CodeEditor } from '../../components/editors/TemplateEditor/CodeEditor';
-import { PreviewArea } from '../../components/editors/TemplateEditor/PdfPreview';
+import {
+  CodeEditor,
+  PdfPreview,
+  TemplateEditor
+} from '../../components/editors/TemplateEditor';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -164,7 +166,7 @@ export function TemplateDrawer<T extends string>({
           {
             key: 'pdf-preview',
             name: t`PDF Preview`,
-            component: PreviewArea
+            component: PdfPreview
           }
         ]}
       />

@@ -11,6 +11,7 @@
         "compile": "lingui compile --typescript"
     },
     "dependencies": {
+        "@codemirror/lang-liquid": "^6.2.1",
         "@emotion/react": "^11.11.1",
         "@fortawesome/fontawesome-svg-core": "^6.4.2",
         "@fortawesome/free-regular-svg-icons": "^6.4.2",
@@ -30,7 +31,6 @@
         "@sentry/react": "^7.74.1",
         "@tabler/icons-react": "^2.39.0",
         "@tanstack/react-query": "^5.0.0",
-        "@uiw/codemirror-extensions-langs": "^4.21.22",
         "@uiw/codemirror-theme-vscode": "^4.21.22",
         "@uiw/react-codemirror": "^4.21.22",
         "axios": "^1.6.0",

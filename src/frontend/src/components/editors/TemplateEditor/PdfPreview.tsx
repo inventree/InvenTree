@@ -1,10 +1,10 @@
 import { Trans } from '@lingui/macro';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { PreviewAreaComponent } from '.';
 import { api } from '../../../App';
+import { PreviewAreaComponent } from './TemplateEditor';
 
-export const PreviewArea: PreviewAreaComponent = forwardRef((props, ref) => {
+export const PdfPreview: PreviewAreaComponent = forwardRef((props, ref) => {
   const [pdfUrl, setPdfUrl] = useState('');
 
   useImperativeHandle(ref, () => ({
@@ -45,7 +45,7 @@ export const PreviewArea: PreviewAreaComponent = forwardRef((props, ref) => {
       });
       let srcUrl = URL.createObjectURL(pdf);
 
-      setPdfUrl(srcUrl + '#view=fitv');
+      setPdfUrl(srcUrl + '#view=fitH');
     }
   }));
 
