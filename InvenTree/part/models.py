@@ -132,7 +132,9 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     def get_absolute_url(self):
         """Return the web URL associated with the detail view for this PartCategory instance."""
-        return reverse('category-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('category-detail', kwargs={'pk': self.id})
+        return helpers.pui_url(f'/part/category/{self.id}')
 
     def clean(self):
         """Custom clean action for the PartCategory model.
@@ -754,7 +756,9 @@ class Part(
 
     def get_absolute_url(self):
         """Return the web URL for viewing this part."""
-        return reverse('part-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('part-detail', kwargs={'pk': self.id})
+        return helpers.pui_url(f'/part/{self.id}')
 
     def get_image_url(self):
         """Return the URL of the image for this part."""

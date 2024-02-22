@@ -804,10 +804,17 @@ def test_translations(c):
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
+        'cui': 'Do not run CUI tests',
     }
 )
 def test(
-    c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False
+    c,
+    disable_pty=False,
+    runtest='',
+    migrations=False,
+    report=False,
+    coverage=False,
+    cui=False,
 ):
     """Run unit-tests for InvenTree codebase.
 
@@ -842,6 +849,9 @@ def test(
         cmd += ' --tag migration_test'
     else:
         cmd += ' --exclude-tag migration_test'
+
+    if cui:
+        cmd += ' --exclude-tag=cui'
 
     if coverage:
         # Run tests within coverage environment, and generate report

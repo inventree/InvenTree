@@ -12,7 +12,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, tag
 from django.urls import reverse
 
 import pint.errors
@@ -1319,6 +1319,8 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.wsgi_request.user, self.user)
 
 
+# TODO - refactor to not use CUI
+@tag('cui')
 class MaintenanceModeTest(InvenTreeTestCase):
     """Unit tests for maintenance mode."""
 
