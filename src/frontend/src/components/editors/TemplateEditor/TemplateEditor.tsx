@@ -2,6 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import { Alert, Button, Group, Stack, Tabs } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
+import { IconDeviceFloppy, IconDots, IconRefresh } from '@tabler/icons-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { api } from '../../../App';
@@ -9,6 +10,7 @@ import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { apiUrl } from '../../../states/ApiState';
 import { StandaloneField } from '../../forms/StandaloneField';
+import { ActionDropdown } from '../../items/ActionDropdown';
 
 type EditorProps = (props: {
   ref: React.RefObject<EditorRef>;
@@ -33,6 +35,7 @@ type PreviewAreaRef = {
   updatePreview: (
     code: string,
     previewItem: string,
+    saveTemplate: boolean,
     templateEditorProps: TemplateEditorProps
   ) => void | Promise<void>;
 };
@@ -68,6 +71,9 @@ export function TemplateEditor(props: TemplateEditorProps) {
   const previewRef = useRef<PreviewAreaRef>();
 
   const [hasSaveConfirmed, setHasSaveConfirmed] = useState(false);
+  const [lastUsedAction, setLastUsedAction] = useState<
+    'preview' | 'preview_save'
+  >('preview_save');
 
   const [previewItem, setPreviewItem] = useState<string>('');
 
@@ -78,7 +84,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
   }, [downloadUrl]);
 
   const updatePreview = useCallback(
-    async (confirmed: boolean) => {
+    async (confirmed: boolean, saveTemplate: boolean = true) => {
       if (!confirmed) {
         openConfirmModal({
           title: t`Save & Reload preview?`,
@@ -109,7 +115,12 @@ export function TemplateEditor(props: TemplateEditorProps) {
       if (!code || !previewItem) return;
 
       Promise.resolve(
-        previewRef.current?.updatePreview(code, previewItem, props)
+        previewRef.current?.updatePreview(
+          code,
+          previewItem,
+          saveTemplate,
+          props
+        )
       )
         .then(() => {
           showNotification({
@@ -155,11 +166,47 @@ export function TemplateEditor(props: TemplateEditorProps) {
 
             <Group position="right" style={{ flex: 1 }}>
               <Button
-                onClick={() => updatePreview(hasSaveConfirmed)}
+                style={{ marginRight: '-10px' }}
+                onClick={() =>
+                  updatePreview(
+                    lastUsedAction === 'preview' ? true : hasSaveConfirmed,
+                    lastUsedAction === 'preview_save'
+                  )
+                }
                 disabled={!previewItem}
               >
-                <Trans>Save & Reload preview</Trans>
+                {lastUsedAction === 'preview_save' ? (
+                  <Trans>Save & Reload preview</Trans>
+                ) : (
+                  <Trans>Reload preview</Trans>
+                )}
               </Button>
+              <ActionDropdown
+                tooltip={t`Preview&Save Actions`}
+                icon={<IconDots />}
+                actions={[
+                  {
+                    name: t`Reload preview`,
+                    tooltip: t`Use the currently stored template from the server`,
+                    icon: <IconRefresh />,
+                    onClick: () => {
+                      setLastUsedAction('preview');
+                      updatePreview(true, false);
+                    },
+                    disabled: !previewItem
+                  },
+                  {
+                    name: t`Save & Reload preview`,
+                    tooltip: t`Save the current template and reload the preview`,
+                    icon: <IconDeviceFloppy />,
+                    onClick: () => {
+                      updatePreview(hasSaveConfirmed);
+                      setLastUsedAction('preview_save');
+                    },
+                    disabled: !previewItem
+                  }
+                ]}
+              />
             </Group>
           </Tabs.List>
 

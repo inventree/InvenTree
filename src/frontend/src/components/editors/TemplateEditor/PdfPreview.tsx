@@ -11,14 +11,17 @@ export const PdfPreview: PreviewAreaComponent = forwardRef((props, ref) => {
     updatePreview: async (
       code,
       previewItem,
+      saveTemplate,
       { uploadKey, uploadUrl, preview: { itemKey }, templateType }
     ) => {
-      const formData = new FormData();
-      formData.append(uploadKey, new File([code], 'template.html'));
+      if (saveTemplate) {
+        const formData = new FormData();
+        formData.append(uploadKey, new File([code], 'template.html'));
 
-      const res = await api.patch(uploadUrl, formData);
-      if (res.status !== 200) {
-        throw new Error(res.data);
+        const res = await api.patch(uploadUrl, formData);
+        if (res.status !== 200) {
+          throw new Error(res.data);
+        }
       }
 
       // ---- Fix this when implementing the new API ----
