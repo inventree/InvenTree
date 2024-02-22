@@ -9,7 +9,7 @@ import {
   useState
 } from 'react';
 
-import { CodeEditorComponent } from './TemplateEditor';
+import { EditorComponent } from './TemplateEditor';
 
 type Tag = {
   label: string;
@@ -70,6 +70,7 @@ Returns: ${tag.returns}`;
 };
 
 const tooltips = hoverTooltip((view, pos, side) => {
+  // extract the word at the current hover position into the variable text
   let { from, to, text } = view.state.doc.lineAt(pos);
   let start = pos,
     end = pos;
@@ -77,6 +78,7 @@ const tooltips = hoverTooltip((view, pos, side) => {
   while (end < to && /\w/.test(text[end - from])) end++;
   if ((start == pos && side < 0) || (end == pos && side > 0)) return null;
   text = text.slice(start - from, end - from);
+
   if (!(text in tagsMap)) return null;
   return {
     pos: start,
@@ -102,7 +104,7 @@ const extensions = [
   tooltips
 ];
 
-export const CodeEditor: CodeEditorComponent = forwardRef((props, ref) => {
+export const CodeEditor: EditorComponent = forwardRef((props, ref) => {
   const editor = useRef<HTMLDivElement | null>(null);
   const [code, setCode] = useState('');
   const { setContainer } = useCodeMirror({

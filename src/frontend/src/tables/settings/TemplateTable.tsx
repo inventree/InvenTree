@@ -156,7 +156,7 @@ export function TemplateDrawer<T extends string>({
         uploadKey={templateProps.templateKey}
         preview={templateProps.preview}
         templateType={templateType}
-        codeEditors={[
+        editors={[
           {
             key: 'code',
             name: t`Code`,

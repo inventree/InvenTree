@@ -1,5 +1,7 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Group, Stack, Tabs } from '@mantine/core';
+import { Alert, Button, Group, Stack, Tabs } from '@mantine/core';
+import { openConfirmModal } from '@mantine/modals';
+import { showNotification } from '@mantine/notifications';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { api } from '../../../App';
@@ -8,31 +10,31 @@ import { ModelType } from '../../../enums/ModelType';
 import { apiUrl } from '../../../states/ApiState';
 import { StandaloneField } from '../../forms/StandaloneField';
 
-type CodeEditorProps = (props: {
-  ref: React.RefObject<CodeEditorRef>;
+type EditorProps = (props: {
+  ref: React.RefObject<EditorRef>;
 }) => React.ReactNode;
-type CodeEditorRef = {
+type EditorRef = {
   setCode: (code: string) => void;
   getCode: () => string;
 };
-export type CodeEditorComponent = React.ForwardRefExoticComponent<
-  CodeEditorProps & React.RefAttributes<CodeEditorRef>
+export type EditorComponent = React.ForwardRefExoticComponent<
+  EditorProps & React.RefAttributes<EditorRef>
 >;
-type CodeEditor = {
+type Editor = {
   key: string;
   name: string;
-  component: CodeEditorComponent;
+  component: EditorComponent;
 };
 
 type PreviewAreaProps = (props: {
-  ref: React.RefObject<CodeEditorRef>;
+  ref: React.RefObject<EditorRef>;
 }) => React.ReactNode;
 type PreviewAreaRef = {
   updatePreview: (
     code: string,
     previewItem: string,
     templateEditorProps: TemplateEditorProps
-  ) => void;
+  ) => void | Promise<void>;
 };
 export type PreviewAreaComponent = React.ForwardRefExoticComponent<
   PreviewAreaProps & React.RefAttributes<PreviewAreaRef>
@@ -56,14 +58,16 @@ type TemplateEditorProps = {
   uploadKey: string;
   preview: TemplatePreviewProps;
   templateType: 'label' | 'report';
-  codeEditors: CodeEditor[];
+  editors: Editor[];
   previewAreas: PreviewArea[];
 };
 
 export function TemplateEditor(props: TemplateEditorProps) {
-  const { downloadUrl, codeEditors, previewAreas, preview } = props;
-  const editorRef = useRef<CodeEditorRef>();
+  const { downloadUrl, editors, previewAreas, preview } = props;
+  const editorRef = useRef<EditorRef>();
   const previewRef = useRef<PreviewAreaRef>();
+
+  const [hasSaveConfirmed, setHasSaveConfirmed] = useState(false);
 
   const [previewItem, setPreviewItem] = useState<string>('');
 
@@ -73,12 +77,57 @@ export function TemplateEditor(props: TemplateEditorProps) {
     api.get(downloadUrl).then((res) => editorRef.current?.setCode(res.data));
   }, [downloadUrl]);
 
-  const updatePreview = useCallback(async () => {
-    const code = editorRef.current?.getCode();
-    if (!code || !previewItem) return;
+  const updatePreview = useCallback(
+    async (confirmed: boolean) => {
+      if (!confirmed) {
+        openConfirmModal({
+          title: t`Save & Reload preview?`,
+          children: (
+            <Alert
+              color="yellow"
+              title={t`Are you sure you want to Save & Reload the preview?`}
+            >
+              {t`To render the preview the current template will be replaced with your modifications and the preview will be reloaded. Do you want to proceed?`}
+            </Alert>
+          ),
+          labels: {
+            confirm: t`Save & Reload`,
+            cancel: t`Cancel`
+          },
+          confirmProps: {
+            color: 'yellow'
+          },
+          onConfirm: () => {
+            setHasSaveConfirmed(true);
+            updatePreview(true);
+          }
+        });
+        return;
+      }
 
-    previewRef.current?.updatePreview(code, previewItem, props);
-  }, [previewItem]);
+      const code = editorRef.current?.getCode();
+      if (!code || !previewItem) return;
+
+      Promise.resolve(
+        previewRef.current?.updatePreview(code, previewItem, props)
+      )
+        .then(() => {
+          showNotification({
+            title: t`Preview updated`,
+            message: t`The preview has been updated successfully.`,
+            color: 'green'
+          });
+        })
+        .catch((error) => {
+          showNotification({
+            title: t`An error occurred while updating the preview.`,
+            message: error.message,
+            color: 'red'
+          });
+        });
+    },
+    [previewItem]
+  );
 
   useEffect(() => {
     api
@@ -94,21 +143,30 @@ export function TemplateEditor(props: TemplateEditorProps) {
       <Group align="start">
         <Tabs
           style={{ width: '49%' }}
-          defaultValue={codeEditors[0].key}
+          defaultValue={editors[0].key}
           keepMounted={false}
         >
           <Tabs.List>
-            {codeEditors.map((CodeEditor) => (
-              <Tabs.Tab key={CodeEditor.key} value={CodeEditor.key}>
-                {CodeEditor.name}
+            {editors.map((Editor) => (
+              <Tabs.Tab key={Editor.key} value={Editor.key}>
+                {Editor.name}
               </Tabs.Tab>
             ))}
+
+            <Group position="right" style={{ flex: 1 }}>
+              <Button
+                onClick={() => updatePreview(hasSaveConfirmed)}
+                disabled={!previewItem}
+              >
+                <Trans>Save & Reload preview</Trans>
+              </Button>
+            </Group>
           </Tabs.List>
 
-          {codeEditors.map((CodeEditor) => (
-            <Tabs.Panel key={CodeEditor.key} value={CodeEditor.key}>
+          {editors.map((Editor) => (
+            <Tabs.Panel key={Editor.key} value={Editor.key}>
               {/* @ts-ignore-next-line */}
-              <CodeEditor.component ref={editorRef} />
+              <Editor.component ref={editorRef} />
             </Tabs.Panel>
           ))}
         </Tabs>
@@ -120,12 +178,6 @@ export function TemplateEditor(props: TemplateEditorProps) {
                 {PreviewArea.name}
               </Tabs.Tab>
             ))}
-
-            <Group position="right" style={{ flex: 1 }}>
-              <Button onClick={updatePreview} disabled={!previewItem}>
-                <Trans>Reload preview</Trans>
-              </Button>
-            </Group>
           </Tabs.List>
 
           <div

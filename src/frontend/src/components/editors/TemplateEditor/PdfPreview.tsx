@@ -18,7 +18,7 @@ export const PdfPreview: PreviewAreaComponent = forwardRef((props, ref) => {
 
       const res = await api.patch(uploadUrl, formData);
       if (res.status !== 200) {
-        return console.log('An error occurred while uploading the template');
+        throw new Error(res.data);
       }
 
       // ---- Fix this when implementing the new API ----
@@ -28,10 +28,7 @@ export const PdfPreview: PreviewAreaComponent = forwardRef((props, ref) => {
       );
 
       if (preview.status !== 200) {
-        return console.log(
-          'An error occurred while fetching the preview',
-          preview.data
-        );
+        throw new Error(preview.data);
       }
 
       if (templateType === 'label') {
