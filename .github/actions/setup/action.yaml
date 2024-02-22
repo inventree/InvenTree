@@ -56,7 +56,7 @@ runs:
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: pip3 install ${{ inputs.pip-dependency }}
+        run: uv pip install ${{ inputs.pip-dependency }}
 
       # NPM installs
       - name: Install node.js ${{ env.node_version }}
@@ -82,7 +82,7 @@ runs:
       - name: Install dev requirements
         if: ${{ inputs.dev-install == 'true' ||inputs.install == 'true' }}
         shell: bash
-        run: pip install -r requirements-dev.txt
+        run: uv pip install -r requirements-dev.txt
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
