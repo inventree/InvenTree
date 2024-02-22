@@ -920,18 +920,24 @@ class BuildAllocationSerializer(serializers.Serializer):
                 if build_line.bom_item.consumable:
                     continue
 
+                params = {
+                    "build_line": build_line,
+                    "stock_item": stock_item,
+                    "install_into": output,
+                }
+
                 try:
-                    # Create a new BuildItem to allocate stock
-                    build_item, created = BuildItem.objects.get_or_create(
-                        build_line=build_line,
-                        stock_item=stock_item,
-                        install_into=output,
-                    )
-                    if created:
-                        build_item.quantity = quantity
-                    else:
+                    if build_item := BuildItem.objects.filter(**params).first():
+                        # Find an existing BuildItem for this stock item
+                        # If it exists, increase the quantity
                         build_item.quantity += quantity
-                    build_item.save()
+                        build_item.save()
+                    else:
+                        # Create a new BuildItem to allocate stock
+                        build_item = BuildItem.objects.create(
+                            quantity=quantity,
+                            **params
+                        )
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors
                     raise ValidationError(detail=serializers.as_serializer_error(exc))

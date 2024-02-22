@@ -1421,6 +1421,7 @@ function loadStockTestResultsTable(table, options) {
     let params = {
         part: options.part,
         include_inherited: true,
+        enabled: true,
     };
 
     var filters = loadTableFilters(filterKey, params);
@@ -1558,6 +1559,7 @@ function loadStockTestResultsTable(table, options) {
             var query_params = {
                 stock_item: options.stock_item,
                 user_detail: true,
+                enabled: true,
                 attachment_detail: true,
                 template_detail: false,
                 ordering: '-date',

@@ -77,58 +77,27 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
             ({}, 8, 'no parameters'),
             ({'parent': 1, 'cascade': False}, 3, 'Filter by parent, no cascading'),
             ({'parent': 1, 'cascade': True}, 5, 'Filter by parent, cascading'),
-            ({'cascade': True, 'depth': 0}, 8, 'Cascade with no parent, depth=0'),
-            ({'cascade': False, 'depth': 10}, 8, 'Cascade with no parent, depth=0'),
+            ({'cascade': True, 'depth': 0}, 2, 'Cascade with no parent, depth=0'),
+            ({'cascade': False, 'depth': 10}, 2, 'Cascade with no parent, depth=10'),
             (
-                {'parent': 'null', 'cascade': True, 'depth': 0},
-                2,
-                'Cascade with null parent, depth=0',
-            ),
-            (
-                {'parent': 'null', 'cascade': True, 'depth': 10},
+                {'cascade': True, 'depth': 10},
                 8,
                 'Cascade with null parent and bigger depth',
             ),
             (
-                {'parent': 'null', 'cascade': False, 'depth': 10},
-                2,
-                'No cascade even with depth specified with null parent',
-            ),
-            (
-                {'parent': 1, 'cascade': False, 'depth': 0},
+                {'parent': 1, 'cascade': False, 'depth': 1},
                 3,
                 'Dont cascade with depth=0 and parent',
             ),
             (
                 {'parent': 1, 'cascade': True, 'depth': 0},
-                3,
+                0,
                 'Cascade with depth=0 and parent',
             ),
             (
-                {'parent': 1, 'cascade': False, 'depth': 1},
-                3,
-                'Dont cascade even with depth=1 specified with parent',
-            ),
-            (
-                {'parent': 1, 'cascade': True, 'depth': 1},
+                {'parent': 1, 'cascade': True, 'depth': 2},
                 5,
                 'Cascade with depth=1 with parent',
-            ),
-            (
-                {'parent': 1, 'cascade': True, 'depth': 'abcdefg'},
-                5,
-                'Cascade with invalid depth and parent',
-            ),
-            ({'parent': 42}, 8, 'Should return everything if parent_pk is not valid'),
-            (
-                {'parent': 'null', 'exclude_tree': 1, 'cascade': True},
-                2,
-                'Should return everything from except tree with pk=1',
-            ),
-            (
-                {'parent': 'null', 'exclude_tree': 42, 'cascade': True},
-                8,
-                'Should return everything because exclude_tree=42 is no valid pk',
             ),
             (
                 {'parent': 1, 'starred': True, 'cascade': True},
@@ -145,6 +114,15 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         for params, res_len, description in test_cases:
             response = self.get(url, params, expected_code=200)
             self.assertEqual(len(response.data), res_len, description)
+
+        # The following tests should fail (return 400 code)
+        test_cases = [
+            {'parent': 1, 'cascade': True, 'depth': 'abcdefg'},  # Invalid depth value
+            {'parent': -42},  # Invalid parent
+        ]
+
+        for params in test_cases:
+            response = self.get(url, params, expected_code=400)
 
         # Check that the required fields are present
         fields = [
@@ -631,7 +609,7 @@ class PartAPITest(PartAPITestBase):
         self.assertEqual(len(response.data), 8)
 
         # Request top-level part categories only
-        response = self.get(url, {'parent': 'null'})
+        response = self.get(url, {'cascade': False})
 
         self.assertEqual(len(response.data), 2)
 

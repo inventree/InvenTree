@@ -1174,7 +1174,7 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
             print('[ERROR] Cannot find frontend-build.zip attachment for current sha')
             return
         print(
-            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes']/1e6:.2f}MB)."
+            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes'] / 1e6:.2f}MB)."
         )
 
         print(

@@ -1,7 +1,7 @@
 import { Select, SelectItem } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
-import { Locales, languages } from '../../contexts/LanguageContext';
+import { getSupportedLanguages } from '../../contexts/LanguageContext';
 import { useLocalState } from '../../states/LocalState';
 
 export function LanguageSelect({ width = 80 }: { width?: number }) {
@@ -15,14 +15,16 @@ export function LanguageSelect({ width = 80 }: { width?: number }) {
   // change global language on change
   useEffect(() => {
     if (value === null) return;
-    setLanguage(value as Locales);
+    setLanguage(value as string);
   }, [value]);
 
   // set language on component load
   useEffect(() => {
+    const languages = getSupportedLanguages();
+
     const newLangOptions = Object.keys(languages).map((key) => ({
       value: key,
-      label: languages[key as Locales]
+      label: languages[key as string]
     }));
     setLangOptions(newLangOptions);
     setValue(locale);

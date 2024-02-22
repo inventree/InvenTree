@@ -382,6 +382,17 @@ class TestTemplateTest(TestCase):
         self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 0)
         self.assertEqual(variant.getTestTemplates(required=True).count(), 5)
 
+        # Test the 'enabled' status check
+        self.assertEqual(variant.getTestTemplates(enabled=True).count(), 6)
+        self.assertEqual(variant.getTestTemplates(enabled=False).count(), 0)
+
+        template = variant.getTestTemplates().first()
+        template.enabled = False
+        template.save()
+
+        self.assertEqual(variant.getTestTemplates(enabled=True).count(), 5)
+        self.assertEqual(variant.getTestTemplates(enabled=False).count(), 1)
+
     def test_uniqueness(self):
         """Test names must be unique for this part and also parts above."""
         variant = Part.objects.get(pk=10004)

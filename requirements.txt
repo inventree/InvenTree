@@ -34,7 +34,7 @@ charset-normalizer==3.3.2
 coreapi==2.3.3
 coreschema==0.0.4
     # via coreapi
-cryptography==42.0.2
+cryptography==42.0.4
     # via
     #   djangorestframework-simplejwt
     #   pyjwt
