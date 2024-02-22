@@ -1259,7 +1259,7 @@ function loadBuildOutputTable(build_info, options={}) {
             let final_result = false;
 
             row.tests.forEach(function(result) {
-                if (result.key == test.key) {
+                if (result.template == test.pk) {
                     final_result = result.result;
                 }
             });

@@ -33,7 +33,7 @@ coverage[toml]==5.5
     #   coveralls
 coveralls==2.1.2
     # via -r requirements-dev.in
-cryptography==42.0.2
+cryptography==42.0.4
     # via
     #   -c requirements.txt
     #   pdfminer-six
