@@ -376,9 +376,6 @@ if settings.ENABLE_CLASSIC_FRONTEND:
     ]
 
 classic_frontendpatterns = [
-    # "Dynamic" javascript files which are rendered using InvenTree templating.
-    re_path(r'^js/dynamic/', include(dynamic_javascript_urls)),
-    re_path(r'^js/i18n/', include(translated_javascript_urls)),
     # Apps
     path('build/', include(build_urls)),
     path('common/', include(common_urls)),
