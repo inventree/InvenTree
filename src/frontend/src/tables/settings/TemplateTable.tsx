@@ -10,6 +10,7 @@ import {
   PdfPreview,
   TemplateEditor
 } from '../../components/editors/TemplateEditor';
+import { TemplatePreviewProps } from '../../components/editors/TemplateEditor/TemplateEditor';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -45,7 +46,7 @@ export interface TemplateProps<T> {
   templateTypeTranslation: string;
   variant: string;
   templateKey: T;
-  preview: { itemKey: string; model: ModelType; apiUrl: ApiEndpoints };
+  preview: TemplatePreviewProps;
 }
 
 export function TemplateDrawer<T extends string>({

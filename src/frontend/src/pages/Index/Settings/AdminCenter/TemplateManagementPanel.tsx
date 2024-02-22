@@ -118,7 +118,8 @@ export default function TemplateManagementPanel() {
             preview: {
               itemKey: 'part',
               model: ModelType.part,
-              apiUrl: ApiEndpoints.part_list
+              apiUrl: ApiEndpoints.part_list,
+              filters: { assembly: true }
             }
           },
           {

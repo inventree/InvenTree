@@ -43,11 +43,18 @@ type PreviewArea = {
   component: PreviewAreaComponent;
 };
 
+export type TemplatePreviewProps = {
+  itemKey: string;
+  model: ModelType;
+  apiUrl: ApiEndpoints;
+  filters?: Record<string, any>;
+};
+
 type TemplateEditorProps = {
   downloadUrl: string;
   uploadUrl: string;
   uploadKey: string;
-  preview: { itemKey: string; model: ModelType; apiUrl: ApiEndpoints };
+  preview: TemplatePreviewProps;
   templateType: 'label' | 'report';
   codeEditors: CodeEditor[];
   previewAreas: PreviewArea[];
@@ -72,6 +79,15 @@ export function TemplateEditor(props: TemplateEditorProps) {
 
     previewRef.current?.updatePreview(code, previewItem, props);
   }, [previewItem]);
+
+  useEffect(() => {
+    api
+      .get(apiUrl(preview.apiUrl), { params: { limit: 1, ...preview.filters } })
+      .then((res) => {
+        if (res.data.results.length === 0) return;
+        setPreviewItem(res.data.results[0].pk);
+      });
+  }, [preview.apiUrl]);
 
   return (
     <Stack>
@@ -127,6 +143,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
                 label: t`Select` + ' ' + preview.model + ' ' + t`to preview`,
                 model: preview.model,
                 value: previewItem,
+                filters: preview.filters,
                 onValueChange: (value) => setPreviewItem(value)
               }}
             />
