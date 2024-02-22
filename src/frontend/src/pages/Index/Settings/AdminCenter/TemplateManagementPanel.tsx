@@ -2,15 +2,30 @@ import { t } from '@lingui/macro';
 import { Stack } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { TemplatePreviewProps } from '../../../../components/editors/TemplateEditor/TemplateEditor';
 import { PanelGroup } from '../../../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { ModelType } from '../../../../enums/ModelType';
-import { InvenTreeIcon } from '../../../../functions/icons';
+import { InvenTreeIcon, InvenTreeIconType } from '../../../../functions/icons';
 import { TemplateTable } from '../../../../tables/settings/TemplateTable';
+
+type TemplateType = {
+  type: 'label' | 'report';
+  name: string;
+  singularName: string;
+  apiEndpoints: ApiEndpoints;
+  templateKey: string;
+  variants: {
+    name: string;
+    key: string;
+    icon: InvenTreeIconType;
+    preview: TemplatePreviewProps;
+  }[];
+};
 
 export default function TemplateManagementPanel() {
   const templateTypes = useMemo(() => {
-    return [
+    const templateTypes: TemplateType[] = [
       {
         type: 'label',
         name: t`Labels`,
@@ -19,47 +34,39 @@ export default function TemplateManagementPanel() {
         templateKey: 'label',
         variants: [
           {
-            type: 'label',
             name: t`Part`,
             key: 'part',
             icon: 'part',
             preview: {
               itemKey: 'part',
-              model: ModelType.part,
-              apiUrl: ApiEndpoints.part_list
+              model: ModelType.part
             }
           },
           {
-            type: 'label',
             name: t`Location`,
             key: 'location',
             icon: 'default_location',
             preview: {
               itemKey: 'location',
-              model: ModelType.stocklocation,
-              apiUrl: ApiEndpoints.stock_location_list
+              model: ModelType.stocklocation
             }
           },
           {
-            type: 'label',
             name: t`Stock item`,
             key: 'stock',
             icon: 'stock',
             preview: {
               itemKey: 'item',
-              model: ModelType.stockitem,
-              apiUrl: ApiEndpoints.stock_item_list
+              model: ModelType.stockitem
             }
           },
           {
-            type: 'label',
             name: t`Build line`,
             key: 'buildline',
-            icon: 'buildline',
+            icon: 'builds',
             preview: {
               itemKey: 'line',
-              model: ModelType.build,
-              apiUrl: ApiEndpoints.build_line_list
+              model: ModelType.build
             }
           }
         ]
@@ -77,8 +84,7 @@ export default function TemplateManagementPanel() {
             icon: 'purchase_orders',
             preview: {
               itemKey: 'order',
-              model: ModelType.purchaseorder,
-              apiUrl: ApiEndpoints.purchase_order_list
+              model: ModelType.purchaseorder
             }
           },
           {
@@ -87,8 +93,7 @@ export default function TemplateManagementPanel() {
             icon: 'sales_orders',
             preview: {
               itemKey: 'order',
-              model: ModelType.salesorder,
-              apiUrl: ApiEndpoints.sales_order_list
+              model: ModelType.salesorder
             }
           },
           {
@@ -97,18 +102,16 @@ export default function TemplateManagementPanel() {
             icon: 'return_orders',
             preview: {
               itemKey: 'order',
-              model: ModelType.returnorder,
-              apiUrl: ApiEndpoints.return_order_list
+              model: ModelType.returnorder
             }
           },
           {
             name: t`Build`,
             key: 'build',
-            icon: 'build_reports',
+            icon: 'builds',
             preview: {
               itemKey: 'build',
-              model: ModelType.build,
-              apiUrl: ApiEndpoints.build_line_list
+              model: ModelType.build
             }
           },
           {
@@ -118,18 +121,16 @@ export default function TemplateManagementPanel() {
             preview: {
               itemKey: 'part',
               model: ModelType.part,
-              apiUrl: ApiEndpoints.part_list,
               filters: { assembly: true }
             }
           },
           {
             name: t`Tests`,
             key: 'test',
-            icon: 'test',
+            icon: 'test_templates',
             preview: {
               itemKey: 'item',
-              model: ModelType.stockitem,
-              apiUrl: ApiEndpoints.stock_item_list
+              model: ModelType.stockitem
             }
           },
           {
@@ -138,13 +139,14 @@ export default function TemplateManagementPanel() {
             icon: 'default_location',
             preview: {
               itemKey: 'location',
-              model: ModelType.stocklocation,
-              apiUrl: ApiEndpoints.stock_location_list
+              model: ModelType.stocklocation
             }
           }
         ]
       }
     ];
+
+    return templateTypes;
   }, []);
 
   const panels = useMemo(() => {

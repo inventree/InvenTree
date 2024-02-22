@@ -5,6 +5,7 @@ import {
   IconBuilding,
   IconBuildingFactory2,
   IconCalendarStats,
+  IconCategory,
   IconCheck,
   IconClipboardList,
   IconCopy,
@@ -45,85 +46,89 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { IconFlag } from '@tabler/icons-react';
+import { IconTruckReturn } from '@tabler/icons-react';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { IconCalendarTime } from '@tabler/icons-react';
 import { TablerIconsProps } from '@tabler/icons-react';
 import React from 'react';
 
-const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
-  {
-    description: IconInfoCircle,
-    variant_of: IconStatusChange,
-    unallocated_stock: IconPackage,
-    total_in_stock: IconPackages,
-    minimum_stock: IconFlag,
-    allocated_to_build_orders: IconTool,
-    allocated_to_sales_orders: IconTruck,
-    can_build: IconTools,
-    ordering: IconShoppingCart,
-    building: IconTool,
-    category: IconBinaryTree2,
-    IPN: Icon123,
-    revision: IconGitBranch,
-    units: IconRulerMeasure,
-    keywords: IconTag,
-    details: IconInfoCircle,
-    parameters: IconList,
-    stock: IconPackages,
-    variants: IconVersions,
-    allocations: IconBookmarks,
-    bom: IconListTree,
-    builds: IconTools,
-    used_in: IconStack2,
-    manufacturers: IconBuildingFactory2,
-    suppliers: IconBuilding,
-    purchase_orders: IconShoppingCart,
-    sales_orders: IconTruckDelivery,
-    scheduling: IconCalendarStats,
-    test_templates: IconTestPipe,
-    related_parts: IconLayersLinked,
-    attachments: IconPaperclip,
-    notes: IconNotes,
-    photo: IconPhoto,
-    upload: IconFileUpload,
-    reject: IconX,
-    select_image: IconGridDots,
-    delete: IconTrash,
+const icons = {
+  description: IconInfoCircle,
+  variant_of: IconStatusChange,
+  unallocated_stock: IconPackage,
+  total_in_stock: IconPackages,
+  minimum_stock: IconFlag,
+  allocated_to_build_orders: IconTool,
+  allocated_to_sales_orders: IconTruck,
+  can_build: IconTools,
+  ordering: IconShoppingCart,
+  building: IconTool,
+  category: IconBinaryTree2,
+  IPN: Icon123,
+  revision: IconGitBranch,
+  units: IconRulerMeasure,
+  keywords: IconTag,
+  details: IconInfoCircle,
+  parameters: IconList,
+  stock: IconPackages,
+  variants: IconVersions,
+  allocations: IconBookmarks,
+  bom: IconListTree,
+  builds: IconTools,
+  used_in: IconStack2,
+  manufacturers: IconBuildingFactory2,
+  suppliers: IconBuilding,
+  purchase_orders: IconShoppingCart,
+  sales_orders: IconTruckDelivery,
+  return_orders: IconTruckReturn,
+  scheduling: IconCalendarStats,
+  test_templates: IconTestPipe,
+  related_parts: IconLayersLinked,
+  attachments: IconPaperclip,
+  notes: IconNotes,
+  photo: IconPhoto,
+  upload: IconFileUpload,
+  reject: IconX,
+  select_image: IconGridDots,
+  delete: IconTrash,
 
-    // Part Icons
-    template: IconCopy,
-    assembly: IconTool,
-    component: IconGridDots,
-    trackable: IconCornerUpRightDouble,
-    purchaseable: IconShoppingCart,
-    saleable: IconCurrencyDollar,
-    virtual: IconWorldCode,
-    inactive: IconX,
+  // Part Icons
+  part: IconCategory,
+  template: IconCopy,
+  assembly: IconTool,
+  component: IconGridDots,
+  trackable: IconCornerUpRightDouble,
+  purchaseable: IconShoppingCart,
+  saleable: IconCurrencyDollar,
+  virtual: IconWorldCode,
+  inactive: IconX,
 
-    external: IconExternalLink,
-    creation_date: IconCalendarTime,
-    default_location: IconMapPinHeart,
-    default_supplier: IconShoppingCartHeart,
-    link: IconLink,
-    responsible: IconUserStar,
-    pricing: IconCurrencyDollar,
-    stocktake: IconClipboardList,
-    user: IconUser,
-    group: IconUsersGroup,
-    check: IconCheck,
-    copy: IconCopy
-  };
+  external: IconExternalLink,
+  creation_date: IconCalendarTime,
+  default_location: IconMapPinHeart,
+  default_supplier: IconShoppingCartHeart,
+  link: IconLink,
+  responsible: IconUserStar,
+  pricing: IconCurrencyDollar,
+  stocktake: IconClipboardList,
+  user: IconUser,
+  group: IconUsersGroup,
+  check: IconCheck,
+  copy: IconCopy
+};
+
+export type InvenTreeIconType = keyof typeof icons;
 
 /**
  * Returns a Tabler Icon for the model field name supplied
  * @param field string defining field name
  */
-export function GetIcon(field: keyof typeof icons) {
+export function GetIcon(field: InvenTreeIconType) {
   return icons[field];
 }
 
 type IconProps = {
-  icon: string;
+  icon: InvenTreeIconType;
   iconProps?: TablerIconsProps;
 };
 

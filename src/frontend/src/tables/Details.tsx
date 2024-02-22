@@ -18,7 +18,7 @@ import { ProgressBar } from '../components/items/ProgressBar';
 import { getModelInfo } from '../components/render/ModelType';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
-import { InvenTreeIcon } from '../functions/icons';
+import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
 import { getDetailUrl } from '../functions/urls';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
@@ -82,7 +82,7 @@ type FieldProps = {
  * @param icon name of icon
  *
  */
-function PartIcon(icon: string) {
+function PartIcon(icon: InvenTreeIconType) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
       <InvenTreeIcon icon={icon} />
@@ -396,7 +396,7 @@ function TableField({
           justifyContent: 'flex-start'
         }}
       >
-        <InvenTreeIcon icon={field_data[0].name} />
+        <InvenTreeIcon icon={field_data[0].name as InvenTreeIconType} />
         <Text>{field_data[0].label}</Text>
       </td>
       <td style={{ minWidth: '40%' }}>

@@ -3,14 +3,20 @@ import { Alert, Button, Group, Stack, Tabs } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { IconDeviceFloppy, IconDots, IconRefresh } from '@tabler/icons-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 import { api } from '../../../App';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { apiUrl } from '../../../states/ApiState';
 import { StandaloneField } from '../../forms/StandaloneField';
 import { ActionDropdown } from '../../items/ActionDropdown';
+import { ModelInformationDict } from '../../render/ModelType';
 
 type EditorProps = (props: {
   ref: React.RefObject<EditorRef>;
@@ -51,7 +57,6 @@ type PreviewArea = {
 export type TemplatePreviewProps = {
   itemKey: string;
   model: ModelType;
-  apiUrl: ApiEndpoints;
   filters?: Record<string, any>;
 };
 
@@ -140,14 +145,19 @@ export function TemplateEditor(props: TemplateEditorProps) {
     [previewItem]
   );
 
+  const previewApiUrl = useMemo(
+    () => ModelInformationDict[preview.model].api_endpoint,
+    [preview.model]
+  );
+
   useEffect(() => {
     api
-      .get(apiUrl(preview.apiUrl), { params: { limit: 1, ...preview.filters } })
+      .get(apiUrl(previewApiUrl), { params: { limit: 1, ...preview.filters } })
       .then((res) => {
         if (res.data.results.length === 0) return;
         setPreviewItem(res.data.results[0].pk);
       });
-  }, [preview.apiUrl]);
+  }, [previewApiUrl, preview.filters]);
 
   return (
     <Stack>
@@ -237,7 +247,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
             <StandaloneField
               fieldDefinition={{
                 field_type: 'related field',
-                api_url: apiUrl(preview.apiUrl),
+                api_url: apiUrl(previewApiUrl),
                 description: '',
                 label: t`Select` + ' ' + preview.model + ' ' + t`to preview`,
                 model: preview.model,

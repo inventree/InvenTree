@@ -27,7 +27,10 @@ export const PdfPreview: PreviewAreaComponent = forwardRef((props, ref) => {
       // ---- Fix this when implementing the new API ----
       let preview = await api.get(
         uploadUrl + `print/?plugin=inventreelabel&${itemKey}=${previewItem}`,
-        { responseType: templateType === 'label' ? 'json' : 'blob' }
+        {
+          responseType: templateType === 'label' ? 'json' : 'blob',
+          timeout: 30000
+        }
       );
 
       if (preview.status !== 200) {

@@ -8,7 +8,7 @@ export interface ModelInformationInterface {
   label_multiple: string;
   url_overview?: string;
   url_detail?: string;
-  api_endpoint?: ApiEndpoints;
+  api_endpoint: ApiEndpoints;
   cui_detail?: string;
 }
 
