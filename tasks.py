@@ -795,7 +795,7 @@ def test_translations(c):
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
-        'cui': 'Run CUI tests too',
+        'cui': 'Do not run CUI tests',
     }
 )
 def test(
@@ -841,7 +841,7 @@ def test(
     else:
         cmd += ' --exclude-tag migration_test'
 
-    if not cui:
+    if cui:
         cmd += ' --exclude-tag=cui'
 
     if coverage:
