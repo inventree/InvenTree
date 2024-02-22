@@ -26,7 +26,7 @@ repos:
         --preview
       ]
 -   repo: https://github.com/matmair/ruff-pre-commit
-    rev: d5591e005678f9d5646f1bee8eadce267177d8a7  # uv-017
+    rev: 830893bf46db844d9c99b6c468e285199adf2de6  # uv-018
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
