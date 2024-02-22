@@ -62,27 +62,21 @@ jobs:
       python_version: '3.11'
     strategy:
       matrix:
-        plattform: ["linux/amd64","linux/arm64"]
+        platform: ["linux/amd64","linux/arm64"]
         include:
-          - plattform: linux/amd64
+          - platform: linux/amd64
             os: ubuntu-latest
-          - plattform: linux/arm64
-            os: buildjet-2vcpu-ubuntu-2204-arm
+          - platform: linux/arm64
+            os: macos-latest  # in the future we can try to use alternative runners here
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Check out repo
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Set Up Python ${{ env.python_version }}
-        if: ${{ matrix.plattform == 'linux/amd64'}}
         uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
           python-version: ${{ env.python_version }}
-      - name: Getho Set Up Python ${{ env.python_version }}
-        if: ${{ matrix.plattform != 'linux/amd64'}}
-        run: |
-          sudo add-apt-repository ppa:deadsnakes/ppa
-          sudo apt install python${{ env.python_version }} -y
       - name: Version Check
         run: |
           pip install requests
@@ -123,7 +117,7 @@ jobs:
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # pin@v5.0.0
         with:
           context: .
-          platforms: ${{ matrix.plattform }}
+          platforms: ${{ matrix.platform }}
           push: true
           sbom: true
           provenance: false
