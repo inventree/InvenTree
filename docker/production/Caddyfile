@@ -5,7 +5,7 @@
     }
 }
 
-# Change the host to your domain (this will serve at localhost on port 80
+# Change the host to your domain (this will serve at inventree.localhost)
 inventree.localhost {
     import log_common inventree
 
