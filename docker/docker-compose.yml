@@ -39,6 +39,7 @@ services:
     # Use PostgreSQL as the database backend
     inventree-db:
         image: postgres:13
+        container_name: inventree-db
         expose:
             - ${INVENTREE_DB_PORT:-5432}/tcp
         environment:
@@ -48,13 +49,14 @@ services:
             - POSTGRES_DB=${INVENTREE_DB_NAME:?You must provide the 'INVENTREE_DB_NAME' variable in the .env file}
         volumes:
             # Map 'data' volume such that postgres database is stored externally
-            - inventree_data:/var/lib/postgresql/data/:z
+            - ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}:/var/lib/postgresql/data/:z
         restart: unless-stopped
 
     # redis acts as database cache manager
     # only runs under the "redis" profile : https://docs.docker.com/compose/profiles/
     inventree-cache:
         image: redis:7.0
+        container_name: inventree-cache
         depends_on:
             - inventree-db
         profiles:
@@ -70,6 +72,7 @@ services:
     inventree-server:
         # If you wish to specify a particular InvenTree version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
+        container_name: inventree-server
         # Only change this port if you understand the stack.
         # If you change this you have to change:
         # - the proxy settings (on two lines)
@@ -82,13 +85,14 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - inventree_data:/home/inventree/data:z
+            - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
     inventree-worker:
         # If you wish to specify a particular InvenTree version, do so here
         image: inventree/inventree:${INVENTREE_TAG:-stable}
+        container_name: inventree-worker
         command: invoke worker
         depends_on:
             - inventree-server
@@ -96,7 +100,7 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - inventree_data:/home/inventree/data:z
+            - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
         restart: unless-stopped
 
     # caddy acts as reverse proxy and static file server
@@ -111,16 +115,8 @@ services:
             - 80:80
             - 443:443
         volumes:
+            - ${INVENTREE_EXT_VOLUME}:/var/www:z
+            - ${INVENTREE_EXT_VOLUME}:/var/log:z
+            - ${INVENTREE_EXT_VOLUME}/caddy/data:/data:z
+            - ${INVENTREE_EXT_VOLUME}/caddy/config:/config:z
             - ./Caddyfile:/etc/caddy/Caddyfile:ro
-            - inventree_data:/var/www:z
-            - inventree_data:/var/log:z
-
-volumes:
-    # Persistent data, stored external to the container(s)
-    inventree_data:
-        driver: local
-        driver_opts:
-            type: none
-            o: bind
-            # This directory specified where InvenTree data are stored "outside" the docker containers
-            device: ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}
