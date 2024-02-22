@@ -42,7 +42,7 @@ from InvenTree.fields import (
     InvenTreeURLField,
     RoundingDecimalField,
 )
-from InvenTree.helpers import decimal2string
+from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import getSetting, notify_responsible
 from InvenTree.status_codes import (
     PurchaseOrderStatus,
@@ -351,7 +351,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Get the 'web' URL for this order."""
         if settings.ENABLE_CLASSIC_FRONTEND:
             return reverse('po-detail', kwargs={'pk': self.pk})
-        return 'TOBEREFACTORED'
+        return pui_url(f'/purchasing/purchase-order/{self.pk}')
 
     @staticmethod
     def get_api_url():
@@ -809,7 +809,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Get the 'web' URL for this order."""
         if settings.ENABLE_CLASSIC_FRONTEND:
             return reverse('so-detail', kwargs={'pk': self.pk})
-        return 'TOBEREFACTORED'
+        return pui_url(f'/sales/sales-order/{self.pk}')
 
     @staticmethod
     def get_api_url():
@@ -1947,7 +1947,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Get the 'web' URL for this order."""
         if settings.ENABLE_CLASSIC_FRONTEND:
             return reverse('return-order-detail', kwargs={'pk': self.pk})
-        return 'TOBEREFACTORED'
+        return pui_url(f'/sales/return-order/{self.pk}')
 
     @staticmethod
     def get_api_url():
