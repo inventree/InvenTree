@@ -8,6 +8,9 @@ on:
     branches:
       - l10
 
+env:
+  python_version: 3.9
+
 jobs:
 
   check:
@@ -21,7 +24,6 @@ jobs:
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
       INVENTREE_BACKUP_DIR: ./backup
-      python_version: 3.9
 
     steps:
       - name: Checkout Code
