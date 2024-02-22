@@ -9,7 +9,6 @@ on:
       - l10
 
 jobs:
-
   check:
     runs-on: ubuntu-latest
 
