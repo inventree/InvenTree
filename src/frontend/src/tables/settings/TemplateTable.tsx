@@ -11,6 +11,7 @@ import {
   TemplateEditor
 } from '../../components/editors/TemplateEditor';
 import { TemplatePreviewProps } from '../../components/editors/TemplateEditor/TemplateEditor';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -46,7 +47,9 @@ export interface TemplateProps<T> {
   templateTypeTranslation: string;
   variant: string;
   templateKey: T;
+  additionalFormFields?: ApiFormFieldSet;
   preview: TemplatePreviewProps;
+  defaultTemplate: string;
 }
 
 export function TemplateDrawer<T extends string>({
@@ -58,8 +61,13 @@ export function TemplateDrawer<T extends string>({
   refreshTable: () => void;
   templateProps: TemplateProps<T>;
 }) {
-  const { apiEndpoint, templateType, templateTypeTranslation, variant } =
-    templateProps;
+  const {
+    apiEndpoint,
+    templateType,
+    templateTypeTranslation,
+    variant,
+    additionalFormFields
+  } = templateProps;
   const navigate = useNavigate();
   const {
     instance: template,
@@ -81,7 +89,8 @@ export function TemplateDrawer<T extends string>({
       name: {},
       description: {},
       filters: {},
-      enabled: {}
+      enabled: {},
+      ...additionalFormFields
     },
     onFormSuccess: (data) => {
       refreshInstance();
@@ -185,7 +194,9 @@ export function TemplateTable<T extends string>({
     templateType,
     templateTypeTranslation,
     variant,
-    templateKey
+    templateKey,
+    additionalFormFields,
+    defaultTemplate
   } = templateProps;
   const table = useTable(`${templateType}-${variant}`);
   const navigate = useNavigate();
@@ -196,19 +207,20 @@ export function TemplateTable<T extends string>({
     return [
       {
         accessor: 'name',
-        sortable: true,
-        title: t`Name`
+        sortable: true
       },
       {
         accessor: 'description',
-        sortable: false,
-        title: t`Description`
+        sortable: false
       },
       {
         accessor: 'filters',
-        sortable: false,
-        title: t`Filters`
+        sortable: false
       },
+      ...Object.entries(additionalFormFields || {})?.map(([key, field]) => ({
+        accessor: key,
+        sortable: false
+      })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
     ];
   }, []);
@@ -247,8 +259,9 @@ export function TemplateTable<T extends string>({
       enabled: {},
       [templateKey]: {
         hidden: true,
-        value: new File(['<html></html>'], 'template.html')
-      }
+        value: new File([defaultTemplate], 'template.html')
+      },
+      ...additionalFormFields
     },
     onFormSuccess: (data) => {
       table.refreshTable();
