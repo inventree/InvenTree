@@ -11,6 +11,10 @@ inventree.localhost {
 
     encode gzip
 
+    request_body {
+        max_size 100MB
+    }
+
     handle_path /static/* {
         root * /var/www/static
         file_server
