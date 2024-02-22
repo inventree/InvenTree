@@ -12,7 +12,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, tag
 from django.urls import reverse
 
 import pint.errors
@@ -57,6 +57,43 @@ class ConversionTest(TestCase):
         for val, expected in tests.items():
             q = InvenTree.conversion.convert_physical_value(val, 'm')
             self.assertAlmostEqual(q, expected, 3)
+
+    def test_engineering_units(self):
+        """Test that conversion works with engineering notation."""
+        # Run some basic checks over the helper function
+        tests = [
+            ('3', '3'),
+            ('3k3', '3.3k'),
+            ('123R45', '123.45R'),
+            ('10n5F', '10.5nF'),
+        ]
+
+        for val, expected in tests:
+            self.assertEqual(
+                InvenTree.conversion.from_engineering_notation(val), expected
+            )
+
+        # Now test the conversion function
+        tests = [('33k3ohm', 33300), ('123kohm45', 123450), ('10n005', 0.000000010005)]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, 'ohm', strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 12)
+
+    def test_scientific_notation(self):
+        """Test that scientific notation is handled correctly."""
+        tests = [
+            ('3E2', 300),
+            ('-12.3E-3', -0.0123),
+            ('1.23E-3', 0.00123),
+            ('99E9', 99000000000),
+        ]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(val, strip_units=True)
+            self.assertAlmostEqual(output, expected, 6)
 
     def test_base_units(self):
         """Test conversion to specified base units."""
@@ -1282,6 +1319,8 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.wsgi_request.user, self.user)
 
 
+# TODO - refactor to not use CUI
+@tag('cui')
 class MaintenanceModeTest(InvenTreeTestCase):
     """Unit tests for maintenance mode."""
 

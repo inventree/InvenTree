@@ -7,6 +7,7 @@ import os
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import MinValueValidator
@@ -258,7 +259,9 @@ class StockLocation(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return reverse('stock-location-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('stock-location-detail', kwargs={'pk': self.id})
+        return InvenTree.helpers.pui_url(f'/stock/location/{self.id}')
 
     def get_stock_items(self, cascade=True):
         """Return a queryset for all stock items under this category.
@@ -727,7 +730,9 @@ class StockItem(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return reverse('stock-item-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('stock-item-detail', kwargs={'pk': self.id})
+        return InvenTree.helpers.pui_url(f'/stock/item/{self.id}')
 
     def get_part_name(self):
         """Returns part name."""
@@ -2304,7 +2309,9 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return f'/stock/track/{self.id}'
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return f'/stock/track/{self.id}'
+        return InvenTree.helpers.pui_url(f'/stock/item/{self.item.id}')
 
     def label(self):
         """Return label."""
