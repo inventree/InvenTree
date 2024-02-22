@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 
 import django.core.exceptions as django_exceptions
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -41,7 +42,10 @@ class OrderTest(TestCase):
         for pk in range(1, 8):
             order = PurchaseOrder.objects.get(pk=pk)
 
-            self.assertEqual(order.get_absolute_url(), 'TOBEREFACTORED')
+            if settings.ENABLE_CLASSIC_FRONTEND:
+                self.assertEqual(
+                    order.get_absolute_url(), f'/order/purchase-order/{pk}/'
+                )
 
             self.assertEqual(order.reference, f'PO-{pk:04d}')
 
