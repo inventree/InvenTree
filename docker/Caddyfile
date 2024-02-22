@@ -6,7 +6,7 @@
 }
 
 # Change the host to your domain (this will serve at inventree.localhost)
-inventree.localhost {
+{$INVENTREE_SITE_URL:inventree.localhost} {
     import log_common inventree
 
     encode gzip
