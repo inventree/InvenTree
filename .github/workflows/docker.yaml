@@ -86,7 +86,7 @@ jobs:
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Install Docker
         if: ${{ matrix.os == 'macos-latest' }}
-        run: brew install docker
+        run: brew install docker docker-compose
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: |
