@@ -90,7 +90,7 @@ FROM inventree_base as prebuild
 
 ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install --user -r base_requirements.txt -r requirements.txt --no-cache-dir && \
+    pip install --user uv --no-cache-dir && uv pip install -r base_requirements.txt -r requirements.txt && \
     apk --purge del .build-deps
 
 # Frontend builder image:
@@ -135,7 +135,7 @@ EXPOSE 5173
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
-RUN pip install -r base_requirements.txt --no-cache-dir
+RUN pip install uv --no-cache-dir && uv pip install -r base_requirements.txt
 
 # Install nodejs / npm / yarn
 
