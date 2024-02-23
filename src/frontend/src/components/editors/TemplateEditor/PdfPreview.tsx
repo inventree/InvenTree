@@ -24,16 +24,21 @@ export const PdfPreview: PreviewAreaComponent = forwardRef((props, ref) => {
         }
       }
 
-      // ---- Fix this when implementing the new API ----
+      // ---- TODO: Fix this when implementing the new API ----
       let preview = await api.get(
         uploadUrl + `print/?plugin=inventreelabel&${itemKey}=${previewItem}`,
         {
           responseType: templateType === 'label' ? 'json' : 'blob',
-          timeout: 30000
+          timeout: 30000,
+          validateStatus: () => true
         }
       );
 
       if (preview.status !== 200) {
+        if (preview.data?.non_field_errors) {
+          throw new Error(preview.data?.non_field_errors.join(', '));
+        }
+
         throw new Error(preview.data);
       }
 
@@ -52,16 +57,21 @@ export const PdfPreview: PreviewAreaComponent = forwardRef((props, ref) => {
     }
   }));
 
-  if (!pdfUrl)
-    return (
-      <div>
-        <Trans>Preview not available, click "Reload Preview".</Trans>
-      </div>
-    );
-
   return (
-    <div style={{ height: '60vh' }}>
-      <iframe src={pdfUrl} width="100%" height="100%" />
-    </div>
+    <>
+      {!pdfUrl && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%'
+          }}
+        >
+          <Trans>Preview not available, click "Reload Preview".</Trans>
+        </div>
+      )}
+      {pdfUrl && <iframe src={pdfUrl} width="100%" height="100%" />}
+    </>
   );
 });

@@ -1,8 +1,22 @@
 import { Trans, t } from '@lingui/macro';
-import { Alert, Button, Group, Stack, Tabs } from '@mantine/core';
+import {
+  Alert,
+  Button,
+  CloseButton,
+  Code,
+  Group,
+  Overlay,
+  Stack,
+  Tabs
+} from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
-import { IconDeviceFloppy, IconDots, IconRefresh } from '@tabler/icons-react';
+import {
+  IconDeviceFloppy,
+  IconDots,
+  IconExclamationCircle,
+  IconRefresh
+} from '@tabler/icons-react';
 import React, {
   useCallback,
   useEffect,
@@ -84,6 +98,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
   >('preview_save');
 
   const [previewItem, setPreviewItem] = useState<string>('');
+  const [errorOverlay, setErrorOverlay] = useState(null);
 
   useEffect(() => {
     if (!downloadUrl) return;
@@ -131,6 +146,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
         )
       )
         .then(() => {
+          setErrorOverlay(null);
           showNotification({
             title: t`Preview updated`,
             message: t`The preview has been updated successfully.`,
@@ -138,11 +154,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
           });
         })
         .catch((error) => {
-          showNotification({
-            title: t`An error occurred while updating the preview.`,
-            message: error.message,
-            color: 'red'
-          });
+          setErrorOverlay(error.message);
         });
     },
     [previewItem]
@@ -263,8 +275,33 @@ export function TemplateEditor(props: TemplateEditorProps) {
 
           {previewAreas.map((PreviewArea) => (
             <Tabs.Panel key={PreviewArea.key} value={PreviewArea.key}>
-              {/* @ts-ignore-next-line */}
-              <PreviewArea.component ref={previewRef} />
+              <div style={{ height: '60vh', position: 'relative' }}>
+                {/* @ts-ignore-next-line */}
+                <PreviewArea.component ref={previewRef} />
+
+                {errorOverlay && (
+                  <Overlay color="red" center blur={0.2}>
+                    <CloseButton
+                      onClick={() => setErrorOverlay(null)}
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        color: '#fff'
+                      }}
+                      variant="filled"
+                    />
+                    <Alert
+                      color="red"
+                      icon={<IconExclamationCircle />}
+                      title={t`Error rendering template`}
+                      mx="10px"
+                    >
+                      <Code>{errorOverlay}</Code>
+                    </Alert>
+                  </Overlay>
+                )}
+              </div>
             </Tabs.Panel>
           ))}
         </Tabs>
