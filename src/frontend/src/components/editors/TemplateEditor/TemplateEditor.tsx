@@ -14,12 +14,14 @@ import React, {
 import { api } from '../../../App';
 import { ModelType } from '../../../enums/ModelType';
 import { apiUrl } from '../../../states/ApiState';
+import { TemplateI } from '../../../tables/settings/TemplateTable';
 import { StandaloneField } from '../../forms/StandaloneField';
 import { ActionDropdown } from '../../items/ActionDropdown';
 import { ModelInformationDict } from '../../render/ModelType';
 
 type EditorProps = (props: {
   ref: React.RefObject<EditorRef>;
+  template: TemplateI;
 }) => React.ReactNode;
 type EditorRef = {
   setCode: (code: string) => void;
@@ -68,6 +70,7 @@ type TemplateEditorProps = {
   templateType: 'label' | 'report';
   editors: Editor[];
   previewAreas: PreviewArea[];
+  template: TemplateI;
 };
 
 export function TemplateEditor(props: TemplateEditorProps) {
@@ -223,7 +226,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
           {editors.map((Editor) => (
             <Tabs.Panel key={Editor.key} value={Editor.key}>
               {/* @ts-ignore-next-line */}
-              <Editor.component ref={editorRef} />
+              <Editor.component ref={editorRef} template={props.template} />
             </Tabs.Panel>
           ))}
         </Tabs>

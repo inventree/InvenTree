@@ -19,7 +19,6 @@ import {
 } from '../../components/items/ActionDropdown';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -33,20 +32,20 @@ import { BooleanColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
-export type TemplateI<T extends string> = {
+export type TemplateI = {
   pk: number;
   name: string;
   description: string;
   filters: string;
   enabled: boolean;
-} & { [templateKey in T]: string };
+};
 
-export interface TemplateProps<T> {
+export interface TemplateProps {
   apiEndpoint: ApiEndpoints;
   templateType: 'label' | 'report';
   templateTypeTranslation: string;
   variant: string;
-  templateKey: T;
+  templateKey: string;
   additionalFormFields?: ApiFormFieldSet;
   preview: TemplatePreviewProps;
   defaultTemplate: string;
@@ -59,7 +58,7 @@ export function TemplateDrawer<T extends string>({
 }: {
   id: string;
   refreshTable: () => void;
-  templateProps: TemplateProps<T>;
+  templateProps: TemplateProps;
 }) {
   const {
     apiEndpoint,
@@ -73,7 +72,7 @@ export function TemplateDrawer<T extends string>({
     instance: template,
     refreshInstance,
     instanceQuery: { isFetching, error }
-  } = useInstance<TemplateI<T>>({
+  } = useInstance<TemplateI>({
     endpoint: apiEndpoint,
     pathParams: { variant },
     pk: id,
@@ -160,11 +159,12 @@ export function TemplateDrawer<T extends string>({
       </Group>
 
       <TemplateEditor
-        downloadUrl={template[templateProps.templateKey as keyof TemplateI<T>]}
+        downloadUrl={(template as any)[templateProps.templateKey]}
         uploadUrl={apiUrl(apiEndpoint, id, { variant })}
         uploadKey={templateProps.templateKey}
         preview={templateProps.preview}
         templateType={templateType}
+        template={template}
         editors={[
           {
             key: 'code',
@@ -187,7 +187,7 @@ export function TemplateDrawer<T extends string>({
 export function TemplateTable<T extends string>({
   templateProps
 }: {
-  templateProps: TemplateProps<T>;
+  templateProps: TemplateProps;
 }) {
   const {
     apiEndpoint,
@@ -203,7 +203,7 @@ export function TemplateTable<T extends string>({
 
   const openDetailDrawer = useCallback((pk: number) => navigate(`${pk}/`), []);
 
-  const columns: TableColumn<TemplateI<T>>[] = useMemo(() => {
+  const columns: TableColumn<TemplateI>[] = useMemo(() => {
     return [
       {
         accessor: 'name',
@@ -227,7 +227,7 @@ export function TemplateTable<T extends string>({
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(-1);
 
-  const rowActions = useCallback((record: TemplateI<T>): RowAction[] => {
+  const rowActions = useCallback((record: TemplateI): RowAction[] => {
     return [
       RowEditAction({
         onClick: () => openDetailDrawer(record.pk)
