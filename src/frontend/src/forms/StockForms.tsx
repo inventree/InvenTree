@@ -1,15 +1,7 @@
 import { t } from '@lingui/macro';
-import {
-  Button,
-  NumberInput,
-  Paper,
-  Skeleton,
-  Table,
-  Text,
-  Tooltip
-} from '@mantine/core';
+import { Flex, NumberInput, Skeleton, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
@@ -153,22 +145,19 @@ export function useEditStockItem({
   });
 }
 
-function StockOperationsRow({
-  input,
-  refresh
+function StockItemDefaultMove({
+  stockItem,
+  value
 }: {
-  input: any;
-  refresh: () => void;
+  stockItem: any;
+  value: any;
 }) {
-  const item = input.item;
-
-  const [value, setValue] = useState<number | ''>(item.quantity);
   const { data } = useSuspenseQuery({
-    queryKey: ['location', item.obj.part_detail.default_location],
+    queryKey: ['location', stockItem.part_detail.default_location],
     queryFn: async () => {
       const url = apiUrl(
         ApiEndpoints.stock_location_list,
-        item.obj.part_detail.default_location
+        stockItem.part_detail.default_location
       );
 
       return api
@@ -187,77 +176,84 @@ function StockOperationsRow({
     }
   });
 
-  function _moveToDefault() {
-    modals.openConfirmModal({
-      title: <StylishText>Confirm Stock Transfer</StylishText>,
-      children: (
-        <div
-          style={{
-            display: 'flex',
-            gap: '10px',
-            alignItems: 'center',
-            justifyContent: 'space-evenly'
-          }}
-        >
-          <Paper
-            style={{
-              display: 'flex',
-              gap: '10px',
-              flexDirection: 'column',
-              alignItems: 'center',
-              alignContent: 'space-between'
-            }}
-          >
-            <Text>
-              {value} x {item.obj.part_detail.name}
-            </Text>
-            <Thumbnail
-              src={item.obj.part_detail.thumbnail}
-              size={80}
-              align="center"
-            />
-          </Paper>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-              alignItems: 'center'
-            }}
-          >
-            <Text>{item.obj.location_detail.pathstring}</Text>
-            <InvenTreeIcon icon="arrow_down" />
-            <Suspense fallback={<Skeleton width="150px" />}>
-              <Text>{data.pathstring}</Text>
-            </Suspense>
-          </div>
-        </div>
-      ),
-      onConfirm: () => {
-        api
-          .post(apiUrl(ApiEndpoints.stock_transfer), {
-            items: [
-              {
-                pk: item.obj.pk,
-                quantity: value,
-                batch: item.obj.batch,
-                status: item.obj.status
-              }
-            ],
-            location: item.obj.part_detail.default_location
-          })
-          .then((response) => {
-            console.log(response);
-            refresh();
-            return response.data;
-          })
-          .catch((e) => {
-            console.log(e);
-            return null;
-          });
+  return (
+    <Flex gap="sm" justify="space-evenly" align="center">
+      <Flex gap="sm" direction="column" align="center">
+        <Text>
+          {value} x {stockItem.part_detail.name}
+        </Text>
+        <Thumbnail
+          src={stockItem.part_detail.thumbnail}
+          size={80}
+          align="center"
+        />
+      </Flex>
+      <Flex direction="column" gap="sm" align="center">
+        <Text>{stockItem.location_detail.pathstring}</Text>
+        <InvenTreeIcon icon="arrow_down" />
+        <Suspense fallback={<Skeleton width="150px" />}>
+          <Text>{data?.pathstring}</Text>
+        </Suspense>
+      </Flex>
+    </Flex>
+  );
+}
+
+function moveToDefault(stockItem: any, value: any, refresh: any) {
+  modals.openConfirmModal({
+    title: <StylishText>Confirm Stock Transfer</StylishText>,
+    children: <StockItemDefaultMove stockItem={stockItem} value={value} />,
+    onConfirm: () => {
+      if (stockItem.location === stockItem.part_detail.default_location) {
+        return;
       }
-    });
-  }
+      api
+        .post(apiUrl(ApiEndpoints.stock_transfer), {
+          items: [
+            {
+              pk: stockItem.pk,
+              quantity: value,
+              batch: stockItem.batch,
+              status: stockItem.status
+            }
+          ],
+          location: stockItem.part_detail.default_location
+        })
+        .then((response) => {
+          refresh();
+          return response.data;
+        })
+        .catch((e) => {
+          return null;
+        });
+    }
+  });
+}
+
+type StockAdjustmentItemWithRecord = {
+  obj: any;
+} & StockAdjustmentItem;
+
+type TableFieldRefreshFn = (idx: number) => void;
+type TableFieldChangeFn = (idx: number, key: string, value: any) => void;
+
+type StockRow = {
+  item: StockAdjustmentItemWithRecord;
+  idx: number;
+  changeFn: TableFieldChangeFn;
+  removeFn: TableFieldRefreshFn;
+};
+
+function StockOperationsRow({
+  input,
+  refresh
+}: {
+  input: StockRow;
+  refresh: () => void;
+}) {
+  const item = input.item;
+
+  const [value, setValue] = useState<StockItemQuantity>(item.quantity);
 
   const onChange = useCallback(
     (value: any) => {
@@ -267,30 +263,29 @@ function StockOperationsRow({
     [item]
   );
 
+  const removeAndRefresh = () => {
+    input.removeFn(input.idx);
+    refresh();
+  };
+
   return (
     <tr>
       <td>
-        <div
-          style={{
-            display: 'flex',
-            gap: '5px',
-            alignItems: 'center'
-          }}
-        >
+        <Flex gap="sm" align="center">
           <Thumbnail
             size={40}
             src={item.obj.part_detail.thumbnail}
             align="center"
           />
           <div>{item.obj.part_detail.name}</div>
-        </div>
+        </Flex>
       </td>
-      <td>{item.obj.location_detail.pathstring}</td>
+      <td>{item.obj.location ? item.obj.location_detail.pathstring : '-'}</td>
       <td>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {item.obj.quantity}
+        <Flex align="center" gap="xs">
+          <Text>{item.obj.quantity}</Text>
           <StatusRenderer status={item.obj.status} type={ModelType.stockitem} />
-        </div>
+        </Flex>
       </td>
       <td>
         <NumberInput
@@ -302,12 +297,13 @@ function StockOperationsRow({
         />
       </td>
       <td>
-        <div style={{ display: 'flex', gap: '3px' }}>
+        <Flex gap="3px">
           <ActionButton
-            onClick={() => _moveToDefault()}
+            onClick={() => moveToDefault(item.obj, value, removeAndRefresh)}
             icon={<InvenTreeIcon icon="default_location" />}
             tooltip="Move to default location"
             tooltipAlignment="top"
+            disabled={!item.obj.part_detail.default_location}
           />
           <ActionButton
             onClick={() => input.removeFn(input.idx)}
@@ -316,81 +312,144 @@ function StockOperationsRow({
             tooltipAlignment="top"
             color="red"
           />
-        </div>
+        </Flex>
       </td>
     </tr>
   );
 }
 
-function stockTransferFields(item: any): ApiFormFieldSet {
-  return useMemo(() => {
-    const fields: ApiFormFieldSet = {
-      items: {
-        field_type: 'table',
-        value: [
-          {
-            pk: item.pk,
-            quantity: item.quantity,
-            batch: item.batch,
-            status: item.status,
-            packaging: item.packaging,
-            obj: item
-          }
-        ],
-        modelRenderer: (val) => {
-          console.log('Key:', val);
-          return (
-            <StockOperationsRow
-              input={val}
-              refresh={() => {
-                return;
-              }}
-              key={val.item.pk}
-            />
-          );
-        },
-        headers: [t`Part`, t`Location`, t`In Stock`, t`Move`, t`Actions`]
-      },
-      location: {
-        filters: {
-          structural: false
-        }
-        // TODO: icon
-      },
-      notes: {}
+type StockItemQuantity = number | '' | undefined;
+
+type StockAdjustmentItem = {
+  pk: number;
+  quantity: StockItemQuantity;
+  batch?: string;
+  status?: number | '' | null;
+  packaging?: string;
+};
+
+function stockTransferFields(item: any[]): ApiFormFieldSet {
+  if (!item) {
+    return {};
+  }
+
+  const mappedItems: StockAdjustmentItemWithRecord[] = item.map((elem) => {
+    return {
+      pk: elem.pk,
+      quantity: elem.quantity,
+      batch: elem.batch,
+      status: elem.status,
+      packaging: elem.packaging,
+      obj: elem
     };
-    return fields;
-  }, [item]);
+  });
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: mappedItems,
+      modelRenderer: (val) => {
+        return (
+          <StockOperationsRow
+            input={val}
+            refresh={() => {
+              return;
+            }}
+            key={val.item.pk}
+          />
+        );
+      },
+      headers: [t`Part`, t`Location`, t`In Stock`, t`Move`, t`Actions`]
+    },
+    location: {
+      filters: {
+        structural: false
+      }
+      // TODO: icon
+    },
+    notes: {}
+  };
+  return fields;
+}
+
+function stockRemoveFields(item: any[]): ApiFormFieldSet {
+  if (!item) {
+    return {};
+  }
+
+  const mappedItems: StockAdjustmentItem[] = item.map((elem) => {
+    return {
+      pk: elem.pk,
+      quantity: elem.quantity,
+      batch: elem.batch,
+      status: elem.status,
+      packaging: elem.packaging,
+      obj: elem
+    };
+  });
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: mappedItems,
+      modelRenderer: (val) => {
+        return <></>;
+      },
+      headers: [t`Part`, t`Location`, t`In Stock`, t`Remove`, t`Actions`]
+    },
+    notes: {}
+  };
+
+  return fields;
 }
 
 export function useTransferStockItem({
-  itemId,
+  item,
   model,
   refresh
 }: {
-  itemId: any;
-  model: ModelType;
+  item: any;
+  model: ModelType | string;
   refresh: () => void;
 }) {
-  console.log('Stockie', model);
-
-  let item = itemId;
-  /*
-  if (model !== ModelType.stockitem) {
-    const { data } = useSuspenseQuery({
-      queryKey: ['stockitems', model],
-      queryFn: async () => {
-        const url = "abc"
+  const params: any = {
+    part_detail: true,
+    location_detail: true,
+    cascade: false
+  };
+  params[model] = item;
+  const { data } = useQuery({
+    queryKey: ['stockitems', model, item],
+    queryFn: async () => {
+      if (model === ModelType.stockitem) {
+        return Array.isArray(item) ? item : [item];
       }
-    })
-  }
-  */
-  const fields = stockTransferFields(itemId);
+      const url = apiUrl(ApiEndpoints.stock_item_list);
+
+      return api
+        .get(url, {
+          params: params
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            return response.data;
+          }
+        })
+        .catch(() => {
+          return null;
+        });
+    }
+  });
+
+  const fields = useMemo(() => {
+    return stockTransferFields(data);
+  }, [data]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.stock_transfer,
     fields: fields,
-    title: 'Transfer Stock'
+    title: 'Transfer Stock',
+    onFormSuccess: () => refresh()
   });
 }
 

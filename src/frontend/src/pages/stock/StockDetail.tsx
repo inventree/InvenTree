@@ -150,7 +150,7 @@ export default function StockDetail() {
       { name: t`Stock`, url: '/stock' },
       ...(stockitem.location_path ?? []).map((l: any) => ({
         name: l.name,
-        url: `/stock/location/${l.pk}`
+        url: apiUrl(ApiEndpoints.stock_location_list, l.pk)
       }))
     ],
     [stockitem]
@@ -162,7 +162,7 @@ export default function StockDetail() {
   });
 
   const transferStockItem = useTransferStockItem({
-    itemId: stockitem,
+    item: stockitem,
     model: ModelType.stockitem,
     refresh: () => refreshInstance()
   });
@@ -220,11 +220,7 @@ export default function StockDetail() {
             tooltip: t`Duplicate stock item`,
             icon: <IconCopy />
           },
-          EditItemAction({
-            onClick: () => {
-              stockitem.pk && editStockItem.open();
-            }
-          }),
+          EditItemAction({}),
           DeleteItemAction({})
         ]}
       />

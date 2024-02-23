@@ -470,10 +470,10 @@ export default function PartDetail() {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
-        content: (
+        content: part.pk && (
           <StockItemTable
             params={{
-              part: part.pk ?? -1
+              part: part.pk
             }}
           />
         )
@@ -638,13 +638,13 @@ export default function PartDetail() {
     fields: partFields({ editing: true }),
     onFormSuccess: refreshInstance
   });
-  /*
+
   const transferStockItems = useTransferStockItem({
-    itemId: part.pk,
+    item: part.pk,
     model: ModelType.part,
     refresh: () => refreshInstance()
-  })
-*/
+  });
+
   const partActions = useMemo(() => {
     // TODO: Disable actions based on user permissions
     return [
@@ -672,10 +672,10 @@ export default function PartDetail() {
           {
             icon: <IconTransfer color="blue" />,
             name: t`Transfer Stock`,
-            tooltip: t`Transfer part stock`
-            /*            onClick: () => {
-              part.pk && transferStockItems.open()
-            }*/
+            tooltip: t`Transfer part stock`,
+            onClick: () => {
+              part.pk && transferStockItems.open();
+            }
           }
         ]}
       />,
@@ -721,6 +721,7 @@ export default function PartDetail() {
           actions={partActions}
         />
         <PanelGroup pageKey="part" panels={partPanels} />
+        {transferStockItems.modal}
       </Stack>
     </>
   );

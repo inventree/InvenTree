@@ -3,12 +3,17 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { formatCurrency, renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { useTransferStockItem } from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
   DescriptionColumn,
@@ -329,27 +334,116 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
   const table = useTable('stockitems');
+  const user = useUserState();
 
   const navigate = useNavigate();
 
+  const transferStock = useTransferStockItem({
+    item: table.selectedRecords,
+    model: ModelType.stockitem,
+    refresh: table.refreshTable
+  });
+
+  const tableActions = useMemo(() => {
+    let can_change_stock = user.hasChangeRole(UserRoles.stock);
+    let can_delete_stock = user.hasDeleteRole(UserRoles.stock);
+    let can_add_stock = user.hasAddRole(UserRoles.stock);
+    let can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
+    let can_add_order = user.hasAddRole(UserRoles.purchase_order);
+    let can_change_order = user.hasChangeRole(UserRoles.purchase_order);
+    return [
+      <ActionDropdown
+        key="stockoperations"
+        icon={<InvenTreeIcon icon="stock" />}
+        actions={[
+          {
+            name: t`Add stock`,
+            icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
+            tooltip: t`Add a new stock item`,
+            disabled: !can_add_stock
+          },
+          {
+            name: t`Remove stock`,
+            icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
+            tooltip: t`Remove some quantity from a stock item`,
+            disabled: !can_change_stock
+          },
+          {
+            name: 'Count Stock',
+            icon: (
+              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: 'Count Stock',
+            disabled: !can_add_stocktake
+          },
+          {
+            name: t`Transfer stock`,
+            icon: (
+              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: t`Move Stock items to new locations`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              transferStock.open();
+            }
+          },
+          {
+            name: t`Change stock status`,
+            icon: <InvenTreeIcon icon="info" iconProps={{ color: 'blue' }} />,
+            tooltip: t`Change the status of stock items`,
+            disabled: !can_change_stock
+          },
+          {
+            name: t`Merge stock`,
+            icon: <InvenTreeIcon icon="merge" />,
+            tooltip: t`Merge stock items`,
+            disabled: !can_change_stock
+          },
+          {
+            name: t`Order stock`,
+            icon: <InvenTreeIcon icon="buy" />,
+            tooltip: t`Order new stock`,
+            disabled: !can_add_order || !can_change_order
+          },
+          {
+            name: t`Assign to customer`,
+            icon: <InvenTreeIcon icon="customer" />,
+            tooltip: t`Order new stock`,
+            disabled: !can_change_stock
+          },
+          {
+            name: t`Delete stock`,
+            icon: <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />,
+            tooltip: t`Delete stock items`,
+            disabled: !can_delete_stock
+          }
+        ]}
+      />
+    ];
+  }, [user]);
+
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.stock_item_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        enableDownload: true,
-        enableSelection: false,
-        tableFilters: tableFilters,
-        onRowClick: (record) =>
-          navigate(getDetailUrl(ModelType.stockitem, record.pk)),
-        params: {
-          ...params,
-          part_detail: true,
-          location_detail: true,
-          supplier_part_detail: true
-        }
-      }}
-    />
+    <>
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.stock_item_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          enableDownload: true,
+          enableSelection: true,
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          onRowClick: (record) =>
+            navigate(getDetailUrl(ModelType.stockitem, record.pk)),
+          params: {
+            ...params,
+            part_detail: true,
+            location_detail: true,
+            supplier_part_detail: true
+          }
+        }}
+      />
+      {transferStock.modal}
+    </>
   );
 }

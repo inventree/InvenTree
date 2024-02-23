@@ -1,15 +1,19 @@
 import {
   Icon123,
+  IconArrowMerge,
   IconBinaryTree2,
   IconBookmarks,
   IconBuilding,
   IconBuildingFactory2,
   IconCalendarStats,
   IconCheck,
+  IconCircleMinus,
+  IconCirclePlus,
   IconClipboardList,
   IconCopy,
   IconCornerUpRightDouble,
   IconCurrencyDollar,
+  IconDots,
   IconExternalLink,
   IconFileUpload,
   IconGitBranch,
@@ -24,6 +28,7 @@ import {
   IconPackages,
   IconPaperclip,
   IconPhoto,
+  IconPrinter,
   IconQuestionMark,
   IconRulerMeasure,
   IconShoppingCart,
@@ -34,6 +39,7 @@ import {
   IconTestPipe,
   IconTool,
   IconTools,
+  IconTransfer,
   IconTrash,
   IconTruck,
   IconTruckDelivery,
@@ -46,6 +52,7 @@ import {
 } from '@tabler/icons-react';
 import { IconFlag } from '@tabler/icons-react';
 import { IconSquareXFilled } from '@tabler/icons-react';
+import { IconShoppingCartPlus } from '@tabler/icons-react';
 import { IconArrowBigDownLineFilled } from '@tabler/icons-react';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { IconCalendarTime } from '@tabler/icons-react';
@@ -115,7 +122,16 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     check: IconCheck,
     copy: IconCopy,
     square_x: IconSquareXFilled,
-    arrow_down: IconArrowBigDownLineFilled
+    arrow_down: IconArrowBigDownLineFilled,
+    transfer: IconTransfer,
+    actions: IconDots,
+    reports: IconPrinter,
+    buy: IconShoppingCartPlus,
+    add: IconCirclePlus,
+    remove: IconCircleMinus,
+    info: IconInfoCircle,
+    merge: IconArrowMerge,
+    customer: IconUser
   };
 
 /**
@@ -137,6 +153,9 @@ export function InvenTreeIcon(props: IconProps) {
   if (props.icon in icons) {
     Icon = GetIcon(props.icon);
   } else {
+    console.warn(
+      `Icon name '${props.icon}' is not registered with the Icon manager`
+    );
     Icon = IconQuestionMark;
   }
 
