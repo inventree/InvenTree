@@ -25,7 +25,6 @@ on:
       - 'master'
 
 jobs:
-
   paths-filter:
     name: Filter
     runs-on: ubuntu-latest
@@ -48,7 +47,6 @@ jobs:
               - requirements.txt
               - tasks.py
 
-
   # Build the docker image
   build:
     needs: paths-filter
@@ -59,15 +57,15 @@ jobs:
       id-token: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      python_version: '3.11'
+      python_version: "3.11"
     strategy:
       matrix:
-        platform: ["linux/amd64","linux/arm64"]
+        platform: ["linux/amd64", "linux/arm64"]
         include:
           - platform: linux/amd64
             os: ubuntu-latest
           - platform: linux/arm64
-            os: ubuntu-latest  # in the future we can try to use alternative runners here
+            os: ubuntu-latest # in the future we can try to use alternative runners here
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -86,8 +84,31 @@ jobs:
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
+        run: docker-compose build --no-cache
+      - name: Update Docker Image
         run: |
-          docker-compose build --no-cache
+          docker-compose run inventree-dev-server invoke update
+          docker-compose run inventree-dev-server invoke setup-dev
+          docker-compose up -d
+          docker-compose run inventree-dev-server invoke wait
+      - name: Check Data Directory
+        # The following file structure should have been created by the docker image
+        run: |
+          test -d data
+          test -d data/env
+          test -d data/pgdb
+          test -d data/media
+          test -d data/static
+          test -d data/plugins
+          test -f data/config.yaml
+          test -f data/plugins.txt
+          test -f data/secret_key.txt
+      - name: Run Unit Tests
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
+          docker-compose run inventree-dev-server invoke test --disable-pty
+          docker-compose run inventree-dev-server invoke test --migrations --disable-pty
+          docker-compose down
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # pin@v3.0.0
