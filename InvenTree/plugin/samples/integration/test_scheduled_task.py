@@ -88,7 +88,7 @@ class ScheduledTaskPluginTests(TestCase):
             pass
 
         with self.assertRaises(MixinImplementationError):
-            NoSchedules()
+            NoSchedules().register_tasks()
 
         class WrongFuncSchedules(Base):
             """Plugin with broken functions.
@@ -102,7 +102,7 @@ class ScheduledTaskPluginTests(TestCase):
                 pass  # pragma: no cover
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules()
+            WrongFuncSchedules().register_tasks()
 
         class WrongFuncSchedules1(WrongFuncSchedules):
             """Plugin with broken functions.
@@ -113,7 +113,7 @@ class ScheduledTaskPluginTests(TestCase):
             SCHEDULED_TASKS = {'test': {'func': 'test', 'minutes': 30}}
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules1()
+            WrongFuncSchedules1().register_tasks()
 
         class WrongFuncSchedules2(WrongFuncSchedules):
             """Plugin with broken functions.
@@ -124,7 +124,7 @@ class ScheduledTaskPluginTests(TestCase):
             SCHEDULED_TASKS = {'test': {'func': 'test', 'minutes': 30}}
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules2()
+            WrongFuncSchedules2().register_tasks()
 
         class WrongFuncSchedules3(WrongFuncSchedules):
             """Plugin with broken functions.
@@ -137,7 +137,7 @@ class ScheduledTaskPluginTests(TestCase):
             }
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules3()
+            WrongFuncSchedules3().register_tasks()
 
         class WrongFuncSchedules4(WrongFuncSchedules):
             """Plugin with broken functions.
@@ -148,4 +148,4 @@ class ScheduledTaskPluginTests(TestCase):
             SCHEDULED_TASKS = {'test': {'func': 'test', 'schedule': 'I'}}
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules4()
+            WrongFuncSchedules4().register_tasks()
