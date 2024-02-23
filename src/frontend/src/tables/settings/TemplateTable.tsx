@@ -51,7 +51,7 @@ export interface TemplateProps {
   defaultTemplate: string;
 }
 
-export function TemplateDrawer<T extends string>({
+export function TemplateDrawer({
   id,
   refreshTable,
   templateProps
@@ -184,7 +184,7 @@ export function TemplateDrawer<T extends string>({
   );
 }
 
-export function TemplateTable<T extends string>({
+export function TemplateTable({
   templateProps
 }: {
   templateProps: TemplateProps;

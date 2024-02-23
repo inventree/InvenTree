@@ -205,10 +205,10 @@ export default function BuildDetail() {
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            disabled: build?.barcode_hash
+            hidden: build?.barcode_hash
           }),
           UnlinkBarcodeAction({
-            disabled: !build?.barcode_hash
+            hidden: !build?.barcode_hash
           })
         ]}
       />,
@@ -231,7 +231,7 @@ export default function BuildDetail() {
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),
-            disabled: !user.hasChangeRole(UserRoles.build)
+            hidden: !user.hasChangeRole(UserRoles.build)
           }),
           DuplicateItemAction({})
         ]}

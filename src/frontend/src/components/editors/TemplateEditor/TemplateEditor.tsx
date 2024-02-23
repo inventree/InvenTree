@@ -99,6 +99,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
 
   const [previewItem, setPreviewItem] = useState<string>('');
   const [errorOverlay, setErrorOverlay] = useState(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
   useEffect(() => {
     if (!downloadUrl) return;
@@ -137,6 +138,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
       const code = editorRef.current?.getCode();
       if (!code || !previewItem) return;
 
+      setIsPreviewLoading(true);
       Promise.resolve(
         previewRef.current?.updatePreview(
           code,
@@ -155,6 +157,9 @@ export function TemplateEditor(props: TemplateEditorProps) {
         })
         .catch((error) => {
           setErrorOverlay(error.message);
+        })
+        .finally(() => {
+          setIsPreviewLoading(false);
         });
     },
     [previewItem]
@@ -192,6 +197,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
             <Group position="right" style={{ flex: 1 }}>
               <Button
                 style={{ marginRight: '-10px' }}
+                loading={isPreviewLoading}
                 onClick={() =>
                   updatePreview(
                     lastUsedAction === 'preview' ? true : hasSaveConfirmed,
@@ -218,7 +224,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
                       setLastUsedAction('preview');
                       updatePreview(true, false);
                     },
-                    disabled: !previewItem
+                    disabled: !previewItem || isPreviewLoading
                   },
                   {
                     name: t`Save & Reload preview`,
@@ -228,7 +234,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
                       updatePreview(hasSaveConfirmed);
                       setLastUsedAction('preview_save');
                     },
-                    disabled: !previewItem
+                    disabled: !previewItem || isPreviewLoading
                   }
                 ]}
               />
