@@ -120,6 +120,7 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
                     ? `../../plugin/${machineType?.provider_plugin?.pk}/`
                     : undefined
                 }
+                detailDrawerLink
               />
             )}
             <InfoItem
@@ -224,6 +225,7 @@ function MachineDriverDrawer({
                   ? `../type-${machineDriver?.machine_type}`
                   : undefined
               }
+              detailDrawerLink
             />
             {!machineDriver?.is_builtin && (
               <InfoItem
@@ -235,6 +237,7 @@ function MachineDriverDrawer({
                     ? `../../plugin/${machineDriver?.provider_plugin?.pk}/`
                     : undefined
                 }
+                detailDrawerLink
               />
             )}
             <InfoItem
