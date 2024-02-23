@@ -296,7 +296,7 @@ def static(c, frontend=False):
         frontend_build(c)
 
     print('Collecting static files...')
-    manage(c, 'collectstatic --no-input --clear')
+    manage(c, 'collectstatic --no-input --clear --verbosity 0')
 
 
 @task
