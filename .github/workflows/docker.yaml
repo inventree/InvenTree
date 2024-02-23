@@ -67,7 +67,7 @@ jobs:
           - platform: linux/amd64
             os: ubuntu-latest
           - platform: linux/arm64
-            os: macos-latest  # in the future we can try to use alternative runners here
+            os: ubuntu-latest  # in the future we can try to use alternative runners here
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -84,13 +84,13 @@ jobs:
           python3 ci/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
-      - name: Install Docker
-        if: ${{ matrix.os == 'macos-latest' }}
-        run: brew install docker docker-compose
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: |
           docker-compose build --no-cache
+      - name: Set up QEMU
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # pin@v3.0.0
       - name: Set up Docker Buildx
         if: github.event_name != 'pull_request'
         uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # pin@v3.0.0
