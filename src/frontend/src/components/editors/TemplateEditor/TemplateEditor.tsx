@@ -33,10 +33,9 @@ import { StandaloneField } from '../../forms/StandaloneField';
 import { ActionDropdown } from '../../items/ActionDropdown';
 import { ModelInformationDict } from '../../render/ModelType';
 
-type EditorProps = (props: {
-  ref: React.RefObject<EditorRef>;
+type EditorProps = {
   template: TemplateI;
-}) => React.ReactNode;
+};
 type EditorRef = {
   setCode: (code: string) => void;
   getCode: () => string;
@@ -50,9 +49,7 @@ type Editor = {
   component: EditorComponent;
 };
 
-type PreviewAreaProps = (props: {
-  ref: React.RefObject<EditorRef>;
-}) => React.ReactNode;
+type PreviewAreaProps = {};
 type PreviewAreaRef = {
   updatePreview: (
     code: string,
