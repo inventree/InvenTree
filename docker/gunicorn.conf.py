@@ -6,23 +6,10 @@ import os
 
 data_dir = os.environ.get('INVENTREE_DATA_DIR', None)
 
-# By default, log to stdout
-log_file = '-'
-error_log_file = '-'
-
-if data_dir:
-    log_dir = os.path.join(data_dir, 'gunicorn')
-    log_dir = os.path.abspath(log_dir)
-    os.makedirs(log_dir, exist_ok=True)
-
-    if os.path.exists(log_dir) and os.path.isdir(log_dir):
-        log_file = os.path.join(log_dir, 'gunicorn.log')
-        error_log_file = os.path.join(log_dir, 'gunicorn.error.log')
-
 # Logger configuration
 logger = logging.getLogger('inventree')
-accesslog = log_file
-errorlog = error_log_file
+accesslog = '-'
+errorlog = '-'
 loglevel = os.environ.get('INVENTREE_LOG_LEVEL', 'warning').lower()
 capture_output = True
 
