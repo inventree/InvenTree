@@ -21,6 +21,11 @@ class ExampleScheduledTaskPluginTests(TestCase):
         # check that the built-in function is running
         self.assertEqual(plg.member_func(), False)
 
+        # register
+        plg.register_tasks()
+        # check that schedule was registers
+        from django_q.models import Schedule
+
         # check that the tasks are defined
         self.assertEqual(
             plg.get_task_names(),
@@ -30,11 +35,6 @@ class ExampleScheduledTaskPluginTests(TestCase):
                 'plugin.schedule.world',
             ],
         )
-
-        # register
-        plg.register_tasks()
-        # check that schedule was registers
-        from django_q.models import Schedule
 
         scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith='plugin.')
         self.assertEqual(len(scheduled_plugin_tasks), 3)

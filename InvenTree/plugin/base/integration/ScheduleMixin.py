@@ -51,6 +51,8 @@ class ScheduleMixin:
         """Register mixin."""
         super().__init__()
 
+        self.scheduled_tasks = []
+
         self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
 
     @classmethod
