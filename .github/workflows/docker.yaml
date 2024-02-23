@@ -84,6 +84,9 @@ jobs:
           python3 ci/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
+      - name: Install Docker
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: brew install docker
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: |
