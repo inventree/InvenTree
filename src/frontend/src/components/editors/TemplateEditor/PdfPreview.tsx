@@ -1,10 +1,11 @@
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
+import { IconFileTypePdf } from '@tabler/icons-react';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { api } from '../../../App';
-import { PreviewAreaComponent } from './TemplateEditor';
+import { PreviewArea, PreviewAreaComponent } from './TemplateEditor';
 
-export const PdfPreview: PreviewAreaComponent = forwardRef((props, ref) => {
+const PdfPreviewComponent: PreviewAreaComponent = forwardRef((props, ref) => {
   const [pdfUrl, setPdfUrl] = useState('');
 
   useImperativeHandle(ref, () => ({
@@ -75,3 +76,10 @@ export const PdfPreview: PreviewAreaComponent = forwardRef((props, ref) => {
     </>
   );
 });
+
+export const PdfPreview: PreviewArea = {
+  key: 'pdf-preview',
+  name: t`PDF Preview`,
+  icon: IconFileTypePdf,
+  component: PdfPreviewComponent
+};

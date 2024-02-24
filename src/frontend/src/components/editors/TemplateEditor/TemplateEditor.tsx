@@ -15,7 +15,8 @@ import {
   IconDeviceFloppy,
   IconDots,
   IconExclamationCircle,
-  IconRefresh
+  IconRefresh,
+  TablerIconsProps
 } from '@tabler/icons-react';
 import React, {
   useCallback,
@@ -43,9 +44,10 @@ type EditorRef = {
 export type EditorComponent = React.ForwardRefExoticComponent<
   EditorProps & React.RefAttributes<EditorRef>
 >;
-type Editor = {
+export type Editor = {
   key: string;
   name: string;
+  icon: (props: TablerIconsProps) => React.JSX.Element;
   component: EditorComponent;
 };
 
@@ -61,9 +63,10 @@ type PreviewAreaRef = {
 export type PreviewAreaComponent = React.ForwardRefExoticComponent<
   PreviewAreaProps & React.RefAttributes<PreviewAreaRef>
 >;
-type PreviewArea = {
+export type PreviewArea = {
   key: string;
   name: string;
+  icon: (props: TablerIconsProps) => React.JSX.Element;
   component: PreviewAreaComponent;
 };
 
@@ -186,7 +189,11 @@ export function TemplateEditor(props: TemplateEditorProps) {
         >
           <Tabs.List>
             {editors.map((Editor) => (
-              <Tabs.Tab key={Editor.key} value={Editor.key}>
+              <Tabs.Tab
+                key={Editor.key}
+                value={Editor.key}
+                icon={<Editor.icon size="0.8rem" />}
+              >
                 {Editor.name}
               </Tabs.Tab>
             ))}
@@ -249,7 +256,11 @@ export function TemplateEditor(props: TemplateEditorProps) {
         <Tabs style={{ width: '49%' }} defaultValue={previewAreas[0].key}>
           <Tabs.List>
             {previewAreas.map((PreviewArea) => (
-              <Tabs.Tab key={PreviewArea.key} value={PreviewArea.key}>
+              <Tabs.Tab
+                key={PreviewArea.key}
+                value={PreviewArea.key}
+                icon={<PreviewArea.icon size="0.8rem" />}
+              >
                 {PreviewArea.name}
               </Tabs.Tab>
             ))}

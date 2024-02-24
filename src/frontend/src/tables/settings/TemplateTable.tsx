@@ -165,20 +165,8 @@ export function TemplateDrawer({
         preview={templateProps.preview}
         templateType={templateType}
         template={template}
-        editors={[
-          {
-            key: 'code',
-            name: t`Code`,
-            component: CodeEditor
-          }
-        ]}
-        previewAreas={[
-          {
-            key: 'pdf-preview',
-            name: t`PDF Preview`,
-            component: PdfPreview
-          }
-        ]}
+        editors={[CodeEditor]}
+        previewAreas={[PdfPreview]}
       />
     </Stack>
   );
