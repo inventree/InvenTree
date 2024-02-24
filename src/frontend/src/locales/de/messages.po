@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-24 06:19\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -110,7 +110,7 @@ msgstr "Eingabefehler"
 
 #: src/components/forms/AuthenticationForm.tsx:98
 msgid "Or continue with other methods"
-msgstr ""
+msgstr "Oder mit anderen Methoden fortfahren"
 
 #: src/components/forms/AuthenticationForm.tsx:109
 #: src/components/forms/AuthenticationForm.tsx:233
@@ -165,7 +165,7 @@ msgstr "Mail erhalten"
 
 #: src/components/forms/AuthenticationForm.tsx:156
 msgid "Use username and password"
-msgstr ""
+msgstr "Benutzername und Passwort benutzen"
 
 #: src/components/forms/AuthenticationForm.tsx:165
 msgid "Log In"
@@ -177,40 +177,40 @@ msgstr "E-Mail senden"
 
 #: src/components/forms/AuthenticationForm.tsx:196
 msgid "Registration successful"
-msgstr ""
+msgstr "Registrierung erfolgreich"
 
 #: src/components/forms/AuthenticationForm.tsx:197
 msgid "Please confirm your email address to complete the registration"
-msgstr ""
+msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse um die Registrierung abzuschließen"
 
 #: src/components/forms/AuthenticationForm.tsx:240
 msgid "This will be used for a confirmation"
-msgstr ""
+msgstr "Dies wird zur Bestätigung verwendet"
 
 #: src/components/forms/AuthenticationForm.tsx:252
 msgid "Password repeat"
-msgstr ""
+msgstr "Passwort wiederholen"
 
 #: src/components/forms/AuthenticationForm.tsx:253
 msgid "Repeat password"
-msgstr ""
+msgstr "Passwort erneut eingeben"
 
 #: src/components/forms/AuthenticationForm.tsx:265
 #: src/components/forms/AuthenticationForm.tsx:310
 msgid "Register"
-msgstr ""
+msgstr "Registrieren"
 
 #: src/components/forms/AuthenticationForm.tsx:271
 msgid "Or use SSO"
-msgstr ""
+msgstr "Oder SSO verwenden"
 
 #: src/components/forms/AuthenticationForm.tsx:302
 msgid "Don't have an account?"
-msgstr ""
+msgstr "Nicht registriert?"
 
 #: src/components/forms/AuthenticationForm.tsx:321
 msgid "Go back to login"
-msgstr ""
+msgstr "Zurück zur Anmeldung"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
@@ -299,11 +299,11 @@ msgstr "Keine Ergebnisse gefunden"
 
 #: src/components/images/DetailsImage.tsx:61
 msgid "Remove Image"
-msgstr ""
+msgstr "Bild entfernen"
 
 #: src/components/images/DetailsImage.tsx:64
 msgid "Remove the associated image from this item?"
-msgstr ""
+msgstr "Verknüpftes Bild von diesem Teil entfernen?"
 
 #: src/components/images/DetailsImage.tsx:67
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:192
@@ -324,35 +324,35 @@ msgstr "Abbrechen"
 
 #: src/components/images/DetailsImage.tsx:95
 msgid "Drag and drop to upload"
-msgstr ""
+msgstr "Ziehen und Ablegen zum Hochladen"
 
 #: src/components/images/DetailsImage.tsx:98
 msgid "Click to select file(s)"
-msgstr ""
+msgstr "Klicken, um Datei(en) auszuwählen"
 
 #: src/components/images/DetailsImage.tsx:220
 msgid "Clear"
-msgstr ""
+msgstr "Leeren"
 
 #: src/components/images/DetailsImage.tsx:252
 msgid "Select image"
-msgstr ""
+msgstr "Bild auswählen"
 
 #: src/components/images/DetailsImage.tsx:263
 msgid "Select from existing images"
-msgstr ""
+msgstr "Aus vorhandenen Bildern auswählen"
 
 #: src/components/images/DetailsImage.tsx:273
 msgid "Upload new image"
-msgstr ""
+msgstr "Neues Bild hochladen"
 
 #: src/components/images/DetailsImage.tsx:279
 msgid "Upload Image"
-msgstr ""
+msgstr "Bild hochladen"
 
 #: src/components/images/DetailsImage.tsx:292
 msgid "Delete image"
-msgstr ""
+msgstr "Bild löschen"
 
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:51
@@ -459,11 +459,11 @@ msgstr "QR-Code scannen"
 
 #: src/components/items/YesNoButton.tsx:16
 msgid "Pass"
-msgstr ""
+msgstr "Bestanden"
 
 #: src/components/items/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Fehler"
 
 #: src/components/items/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:51
@@ -542,7 +542,7 @@ msgstr "Mitwirkende"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Mobile App"
-msgstr ""
+msgstr "Mobile App"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:172
 msgid "Submit Bug Report"
@@ -555,7 +555,7 @@ msgstr "Versionsinformationen kopieren"
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
-msgstr ""
+msgstr "Verwerfen"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
@@ -870,11 +870,11 @@ msgstr "Teil Parametervorlagen"
 
 #: src/components/render/ModelType.tsx:36
 msgid "Part Test Template"
-msgstr ""
+msgstr "Testvorlage für Teil"
 
 #: src/components/render/ModelType.tsx:37
 msgid "Part Test Templates"
-msgstr ""
+msgstr "Testvorlagen für Teil"
 
 #: src/components/render/ModelType.tsx:43
 #: src/pages/company/SupplierPartDetail.tsx:78
@@ -989,11 +989,11 @@ msgstr "Verkaufsaufträge"
 
 #: src/components/render/ModelType.tsx:132
 msgid "Sales Order Shipment"
-msgstr ""
+msgstr "Versand der Bestellung"
 
 #: src/components/render/ModelType.tsx:133
 msgid "Sales Order Shipments"
-msgstr ""
+msgstr "Versand der Bestellungen"
 
 #: src/components/render/ModelType.tsx:139
 #: src/pages/sales/ReturnOrderDetail.tsx:68
@@ -1078,11 +1078,11 @@ msgstr "Einstellung aktualisiert"
 #: src/components/settings/SettingItem.tsx:46
 #: src/components/settings/SettingItem.tsx:99
 msgid "{0} updated successfully"
-msgstr ""
+msgstr "{0} erfolgreich aktualisiert"
 
 #: src/components/settings/SettingItem.tsx:54
 msgid "Error editing setting"
-msgstr ""
+msgstr "Fehler beim Bearbeiten der Einstellung"
 
 #: src/components/settings/SettingItem.tsx:91
 msgid "Edit Setting"
@@ -1090,7 +1090,7 @@ msgstr "Einstellungen bearbeiten"
 
 #: src/components/settings/SettingList.tsx:63
 msgid "No settings specified"
-msgstr ""
+msgstr "Keine Einstellungen angegeben"
 
 #: src/components/tables/ColumnRenderers.tsx:134
 #~ msgid "Shipment Date"
@@ -1563,11 +1563,11 @@ msgstr "Sprache"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
-msgstr ""
+msgstr "Etwas ist neu: Plattform-UI"
 
 #: src/components/widgets/FeedbackWidget.tsx:20
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr ""
+msgstr "Wir bauen eine neue Oberfläche mit einem modernen Stapel. Was Sie derzeit sehen, ist nicht repariert und wird neu gestaltet, aber es zeigt die UI/UX-Möglichkeiten auf, die wir weiter verfolgen werden."
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
@@ -1579,19 +1579,19 @@ msgstr "Erste Schritte"
 
 #: src/components/widgets/MarkdownEditor.tsx:109
 msgid "Failed to upload image"
-msgstr ""
+msgstr "Fehler beim Hochladen des Bildes"
 
 #: src/components/widgets/MarkdownEditor.tsx:147
 msgid "Notes saved"
-msgstr ""
+msgstr "Notizen gespeichert"
 
 #: src/components/widgets/MarkdownEditor.tsx:155
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Notiz konnte nicht gespeichert werden"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
-msgstr ""
+msgstr "Darstellung"
 
 #: src/components/widgets/WidgetLayout.tsx:186
 msgid "Reset Layout"
@@ -1599,7 +1599,7 @@ msgstr "Layout zurücksetzen"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
-msgstr ""
+msgstr "Bearbeiten beenden"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
@@ -1611,7 +1611,7 @@ msgstr "Aussehen"
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
-msgstr ""
+msgstr "Boxen anzeigen"
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Bulgarian"
@@ -1643,11 +1643,11 @@ msgstr "Spanisch"
 
 #: src/contexts/LanguageContext.tsx:27
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spanisch (Mexikanisch)"
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persisch"
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Finnish"
@@ -1699,7 +1699,7 @@ msgstr "Portugiesisch"
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugiesisch (Brasilien)"
 
 #: src/contexts/LanguageContext.tsx:42
 msgid "Russian"
@@ -1707,7 +1707,7 @@ msgstr "Russisch"
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Slovak"
-msgstr ""
+msgstr "Slowakisch"
 
 #: src/contexts/LanguageContext.tsx:44
 msgid "Slovenian"
@@ -1739,19 +1739,19 @@ msgstr "Chinesisch (Traditionell)"
 
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Abonnierte Teile"
 
 #: src/defaults/dashboardItems.tsx:22
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Abonnierte Kategorien"
 
 #: src/defaults/dashboardItems.tsx:29
 msgid "Latest Parts"
-msgstr ""
+msgstr "Neueste Teile"
 
 #: src/defaults/dashboardItems.tsx:36
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "Stückliste Wartende Validierung"
 
 #: src/defaults/dashboardItems.tsx:43
 msgid "Recently Updated"
@@ -1764,27 +1764,27 @@ msgstr "Geringer Bestand"
 
 #: src/defaults/dashboardItems.tsx:57
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Verbrauchter Bestand"
 
 #: src/defaults/dashboardItems.tsx:64
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Für Bauaufträge benötigt"
 
 #: src/defaults/dashboardItems.tsx:71
 msgid "Expired Stock"
-msgstr ""
+msgstr "Abgelaufener Bestand"
 
 #: src/defaults/dashboardItems.tsx:78
 msgid "Stale Stock"
-msgstr ""
+msgstr "Bestand überfällig"
 
 #: src/defaults/dashboardItems.tsx:85
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Bauaufträge in Arbeit"
 
 #: src/defaults/dashboardItems.tsx:92
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Überfällige Bauaufträge"
 
 #: src/defaults/dashboardItems.tsx:99
 msgid "Outstanding Purchase Orders"
@@ -1792,15 +1792,15 @@ msgstr "Ausstehende Bestellungen"
 
 #: src/defaults/dashboardItems.tsx:106
 msgid "Overdue Purchase Orders"
-msgstr ""
+msgstr "Überfällige Bestellungen"
 
 #: src/defaults/dashboardItems.tsx:113
 msgid "Outstanding Sales Orders"
-msgstr ""
+msgstr "Ausstehende Aufträge"
 
 #: src/defaults/dashboardItems.tsx:120
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Überfällige Bestellungen"
 
 #: src/defaults/dashboardItems.tsx:127
 msgid "Current News"
@@ -1820,11 +1820,11 @@ msgstr "Webseite"
 
 #: src/defaults/links.tsx:16
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: src/defaults/links.tsx:21
 msgid "Demo"
-msgstr ""
+msgstr "Demo"
 
 #: src/defaults/links.tsx:26
 #: src/defaults/menuItems.tsx:9
@@ -1836,7 +1836,7 @@ msgstr "Startseite"
 #: src/pages/Index/Dashboard.tsx:19
 #: src/pages/Index/Settings/UserSettings.tsx:41
 msgid "Dashboard"
-msgstr ""
+msgstr "Dashboard"
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
@@ -1870,27 +1870,27 @@ msgstr "Erste Schritte"
 
 #: src/defaults/links.tsx:50
 msgid "Getting started with InvenTree"
-msgstr ""
+msgstr "Erste Schritte mit InvenTree"
 
 #: src/defaults/links.tsx:56
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/defaults/links.tsx:57
 msgid "InvenTree API documentation"
-msgstr ""
+msgstr "InvenTree API Dokumentation"
 
 #: src/defaults/links.tsx:62
 msgid "Developer Manual"
-msgstr ""
+msgstr "Entwicklerhandbuch"
 
 #: src/defaults/links.tsx:63
 msgid "InvenTree developer manual"
-msgstr ""
+msgstr "InvenTree Entwicklerhandbuch"
 
 #: src/defaults/links.tsx:68
 msgid "FAQ"
-msgstr ""
+msgstr "FAQ"
 
 #: src/defaults/links.tsx:69
 msgid "Frequently asked questions"
@@ -1912,15 +1912,15 @@ msgstr "Systeminformationen"
 #: src/defaults/links.tsx:92
 #: src/defaults/links.tsx:110
 msgid "About InvenTree"
-msgstr ""
+msgstr "Über InvenTree"
 
 #: src/defaults/links.tsx:105
 msgid "About this Inventree instance"
-msgstr ""
+msgstr "Über diese InvenTree Instanz"
 
 #: src/defaults/links.tsx:111
 msgid "About the InvenTree org"
-msgstr ""
+msgstr "Über die InvenTree Organisation"
 
 #: src/defaults/links.tsx:116
 msgid "Licenses"
@@ -1968,7 +1968,7 @@ msgstr "Benutzerattribute und Designeinstellungen."
 
 #: src/defaults/menuItems.tsx:23
 msgid "View for interactive scanning and multiple actions."
-msgstr ""
+msgstr "Ansicht für interaktives Scannen und mehrere Aktionen."
 
 #: src/defaults/menuItems.tsx:24
 #~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
@@ -2032,7 +2032,7 @@ msgstr "Link bearbeiten"
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "File updated"
-msgstr ""
+msgstr "Datei aktualisiert"
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "Link updated"
@@ -2056,7 +2056,7 @@ msgstr "Sind Sie sicher, dass Sie diesen Anhang löschen möchten?"
 
 #: src/forms/PartForms.tsx:105
 msgid "Parent part category"
-msgstr ""
+msgstr "Übergeordnete Teilkategorie"
 
 #: src/forms/PartForms.tsx:106
 #~ msgid "Create Part"
@@ -2072,7 +2072,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:44
 msgid "Add given quantity as packs instead of individual items"
-msgstr ""
+msgstr "Angegebene Menge als Packungen anstatt einzelner Artikel hinzufügen"
 
 #: src/forms/StockForms.tsx:55
 msgid "Enter initial quantity for this stock item"
@@ -2088,7 +2088,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:110
 msgid "Add Stock Item"
-msgstr ""
+msgstr "Lagerartikel hinzufügen"
 
 #: src/forms/StockForms.tsx:110
 #~ msgid "Create Stock Item"
@@ -2096,15 +2096,15 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:131
 msgid "Edit Stock Item"
-msgstr ""
+msgstr "Lagerartikel bearbeiten"
 
 #: src/forms/StockForms.tsx:132
 msgid "Stock item updated"
-msgstr ""
+msgstr "Lagerartikel aktualisiert"
 
 #: src/forms/StockForms.tsx:140
 msgid "Parent stock location"
-msgstr ""
+msgstr "Übergeordneter Lagerort"
 
 #: src/functions/auth.tsx:34
 #~ msgid "Error fetching token from server."
@@ -2124,7 +2124,7 @@ msgstr "Abmeldung erfolgreich"
 
 #: src/functions/auth.tsx:71
 msgid "You have been logged out"
-msgstr ""
+msgstr "Sie wurden abgemeldet"
 
 #: src/functions/auth.tsx:108
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
@@ -2141,7 +2141,7 @@ msgstr "Zurücksetzen fehlgeschlagen"
 
 #: src/functions/auth.tsx:142
 msgid "Logged In"
-msgstr ""
+msgstr "Angemeldet"
 
 #: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
@@ -2149,7 +2149,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:143
 msgid "Found an existing login - welcome back!"
-msgstr ""
+msgstr "Bestehende Anmeldung gefunden - Willkommen zurück!"
 
 #: src/functions/forms.tsx:50
 #~ msgid "Form method not provided"
@@ -2165,7 +2165,7 @@ msgstr "Ungültiges Formular"
 
 #: src/functions/forms.tsx:183
 msgid "method parameter not supplied"
-msgstr ""
+msgstr "methodenparameter nicht angegeben"
 
 #: src/functions/notifications.tsx:9
 msgid "Not implemented"
@@ -2173,7 +2173,7 @@ msgstr "Nicht implementiert"
 
 #: src/functions/notifications.tsx:10
 msgid "This feature is not yet implemented"
-msgstr ""
+msgstr "Diese Funktion wurde noch nicht implementiert"
 
 #: src/functions/notifications.tsx:20
 msgid "Permission denied"
@@ -2185,7 +2185,7 @@ msgstr "Du hast keine Berechtigung, diese Aktion durchzuführen"
 
 #: src/functions/notifications.tsx:32
 msgid "Invalid Return Code"
-msgstr ""
+msgstr "Ungültiger Rückgabecode"
 
 #: src/functions/notifications.tsx:33
 msgid "Server returned status {returnCode}"
@@ -2193,19 +2193,19 @@ msgstr ""
 
 #: src/hooks/UseForm.tsx:86
 msgid "Item Created"
-msgstr ""
+msgstr "Element angelegt"
 
 #: src/hooks/UseForm.tsx:103
 msgid "Item Updated"
-msgstr ""
+msgstr "Eintrag aktualisiert"
 
 #: src/hooks/UseForm.tsx:122
 msgid "Item Deleted"
-msgstr ""
+msgstr "Element gelöscht"
 
 #: src/hooks/UseForm.tsx:126
 msgid "Are you sure you want to delete this item?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie dieses Element löschen möchten?"
 
 #: src/pages/Auth/Logged-In.tsx:22
 msgid "Checking if you are already logged in"
@@ -2222,7 +2222,7 @@ msgstr "Willkommen, unten anmelden"
 
 #: src/pages/Auth/Login.tsx:77
 msgid "Register below"
-msgstr ""
+msgstr "Registrieren"
 
 #: src/pages/Auth/Login.tsx:121
 #~ msgid "Edit host options"
@@ -2271,19 +2271,19 @@ msgstr "Es ist ein unerwarteter Fehler aufgetreten."
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
-msgstr ""
+msgstr "Autom. aktualisieren"
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
-msgstr ""
+msgstr "Diese Seite ist ein Ersatz für die alte Startseite mit den gleichen Informationen."
 
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
-msgstr ""
+msgstr "Willkommen zu deinem Dashboard{0}"
 
 #: src/pages/Index/Playground.tsx:197
 msgid "This page is a showcase for the possibilities of Platform UI."
-msgstr ""
+msgstr "Diese Seite ist ein Schaufenster für die Möglichkeiten der Plattform-Oberfläche."
 
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
@@ -2423,11 +2423,11 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:214
 msgid "Manual input"
-msgstr ""
+msgstr "Manuelle Eingabe"
 
 #: src/pages/Index/Scan.tsx:215
 msgid "Image Barcode"
-msgstr ""
+msgstr "Bild Barcode"
 
 #: src/pages/Index/Scan.tsx:245
 msgid "Selected elements are not known"
@@ -2435,11 +2435,11 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:252
 msgid "Multiple object types selected"
-msgstr ""
+msgstr "Mehrere Objekttypen ausgewählt"
 
 #: src/pages/Index/Scan.tsx:259
 msgid "Actions for {0}"
-msgstr ""
+msgstr "Aktionen für {0}"
 
 #: src/pages/Index/Scan.tsx:262
 #: src/pages/stock/StockDetail.tsx:182
@@ -2452,11 +2452,11 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:279
 msgid "This page can be used for continuously scanning items and taking actions on them."
-msgstr ""
+msgstr "Diese Seite kann benutzt werden, um kontinuierlich Artikel zu scannen und Aktionen durchzuführen."
 
 #: src/pages/Index/Scan.tsx:294
 msgid "Select the input method you want to use to scan items."
-msgstr ""
+msgstr "Wählen Sie die Eingabemethode, die Sie verwenden möchten, um Elemente zu scannen."
 
 #: src/pages/Index/Scan.tsx:296
 msgid "Input"
@@ -2464,7 +2464,7 @@ msgstr "Eingabe"
 
 #: src/pages/Index/Scan.tsx:303
 msgid "Select input method"
-msgstr ""
+msgstr "Eingabemethode auswählen"
 
 #: src/pages/Index/Scan.tsx:304
 msgid "Nothing found"
@@ -2472,7 +2472,7 @@ msgstr "Nichts gefunden"
 
 #: src/pages/Index/Scan.tsx:312
 msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
-msgstr ""
+msgstr "Abhängig von den ausgewählten Bauteilen werden hier Aktionen angezeigt. Derzeit werden nicht alle Barcode-Typen unterstützt."
 
 #: src/pages/Index/Scan.tsx:314
 msgid "Action"
@@ -2480,15 +2480,15 @@ msgstr "Aktion"
 
 #: src/pages/Index/Scan.tsx:323
 msgid "{0} items selected"
-msgstr ""
+msgstr "{0} Element(e) ausgewählt"
 
 #: src/pages/Index/Scan.tsx:326
 msgid "General Actions"
-msgstr ""
+msgstr "Allgemeine Aktionen"
 
 #: src/pages/Index/Scan.tsx:339
 msgid "Lookup part"
-msgstr ""
+msgstr "Teil suchen"
 
 #: src/pages/Index/Scan.tsx:346
 msgid "Open Link"
@@ -2496,7 +2496,7 @@ msgstr "Link öffnen"
 
 #: src/pages/Index/Scan.tsx:361
 msgid "History is locally kept in this browser."
-msgstr ""
+msgstr "Die Historie wird lokal in diesem Browser gespeichert."
 
 #: src/pages/Index/Scan.tsx:362
 msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
@@ -2529,11 +2529,11 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:510
 msgid "Enter item serial or data"
-msgstr ""
+msgstr "Seriennummer oder Daten des Artikels eingeben"
 
 #: src/pages/Index/Scan.tsx:522
 msgid "Add dummy item"
-msgstr ""
+msgstr "Dummy Element hinzufügen"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:32
 msgid "Account Details"
@@ -2541,15 +2541,15 @@ msgstr "Kontodetails"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
 msgid "First name"
-msgstr ""
+msgstr "Vorname"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 msgid "Last name"
-msgstr ""
+msgstr "Nachname"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 msgid "First name:"
-msgstr ""
+msgstr "Vorname:"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
@@ -2561,15 +2561,15 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
 msgid "Last name:"
-msgstr ""
+msgstr "Nachname:"
 
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:41
 msgid "Use pseudo language"
-msgstr ""
+msgstr "Pseudosprache verwenden"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:53
 msgid "Single Sign On Accounts"
-msgstr ""
+msgstr "Single Sign On Konten"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:78
@@ -2578,19 +2578,19 @@ msgstr "Nicht aktiviert"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:63
 msgid "Single Sign On is not enabled for this server"
-msgstr ""
+msgstr "Single Sign On ist für diesen Server nicht aktiviert"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:67
 msgid "Multifactor"
-msgstr ""
+msgstr "Multifaktor"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:81
 msgid "Multifactor authentication is not configured for your account"
-msgstr ""
+msgstr "Multifaktor-Authentifizierung ist nicht für Ihr Konto eingerichtet"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:132
 msgid "The following email addresses are associated with your account:"
-msgstr ""
+msgstr "Die folgenden E-Mail-Adressen sind mit deinem Konto verknüpft:"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:144
 msgid "Primary"
@@ -2610,7 +2610,7 @@ msgstr "Emailadresse hinzufügen"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:169
 msgid "E-Mail"
-msgstr ""
+msgstr "E-Mail"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:170
 msgid "E-Mail address"
@@ -2630,7 +2630,7 @@ msgstr "E-Mail hinzufügen"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:263
 msgid "Provider has not been configured"
-msgstr ""
+msgstr "Anbieter wurde nicht konfiguriert"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:273
 msgid "Not configured"
@@ -2638,7 +2638,7 @@ msgstr "Nicht konfiguriert"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:276
 msgid "There are no social network accounts connected to this account."
-msgstr ""
+msgstr "Es sind keine sozialen Netzwerke mit diesem Konto verbunden."
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:286
 msgid "You can sign in to your account using any of the following third party accounts"
@@ -3103,7 +3103,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:136
 #: src/tables/build/BuildLineTable.tsx:106
 msgid "Available Stock"
-msgstr ""
+msgstr "Verfügbarer Bestand"
 
 #: src/pages/part/PartDetail.tsx:145
 #: src/tables/stock/StockItemTable.tsx:265
@@ -3112,7 +3112,7 @@ msgstr "Auf Lager"
 
 #: src/pages/part/PartDetail.tsx:155
 msgid "Minimum Stock"
-msgstr ""
+msgstr "Minimaler Bestand"
 
 #: src/pages/part/PartDetail.tsx:165
 #: src/tables/bom/BomTable.tsx:180
@@ -5095,7 +5095,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:186
 msgid "Attachment"
-msgstr "Attachment"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:239
 #: src/tables/stock/StockItemTestResultTable.tsx:306
@@ -5139,7 +5139,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:342
 msgid "Required"
-msgstr "Required"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:343
 msgid "Show results for required tests"
@@ -5197,3 +5197,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
