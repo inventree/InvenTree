@@ -1,7 +1,6 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import {
   Alert,
-  Button,
   CloseButton,
   Code,
   Group,
@@ -12,8 +11,8 @@ import {
 import { openConfirmModal } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import {
+  IconAlertTriangle,
   IconDeviceFloppy,
-  IconDots,
   IconExclamationCircle,
   IconRefresh,
   TablerIconsProps
@@ -31,8 +30,8 @@ import { api } from '../../../App';
 import { ModelType } from '../../../enums/ModelType';
 import { apiUrl } from '../../../states/ApiState';
 import { TemplateI } from '../../../tables/settings/TemplateTable';
+import { SplitButton } from '../../buttons/SplitButton';
 import { StandaloneField } from '../../forms/StandaloneField';
-import { ActionDropdown } from '../../items/ActionDropdown';
 import { ModelInformationDict } from '../../render/ModelType';
 
 type EditorProps = {
@@ -94,9 +93,6 @@ export function TemplateEditor(props: TemplateEditorProps) {
   const previewRef = useRef<PreviewAreaRef>();
 
   const [hasSaveConfirmed, setHasSaveConfirmed] = useState(false);
-  const [lastUsedAction, setLastUsedAction] = useState<
-    'preview' | 'preview_save'
-  >('preview_save');
 
   const [previewItem, setPreviewItem] = useState<string>('');
   const [errorOverlay, setErrorOverlay] = useState(null);
@@ -116,9 +112,10 @@ export function TemplateEditor(props: TemplateEditorProps) {
           children: (
             <Alert
               color="yellow"
+              icon={<IconAlertTriangle />}
               title={t`Are you sure you want to Save & Reload the preview?`}
             >
-              {t`To render the preview the current template will be replaced with your modifications and the preview will be reloaded. Do you want to proceed?`}
+              {t`To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?`}
             </Alert>
           ),
           labels: {
@@ -214,45 +211,24 @@ export function TemplateEditor(props: TemplateEditorProps) {
             ))}
 
             <Group position="right" style={{ flex: '1' }} noWrap>
-              <Button
-                style={{ marginRight: '-10px' }}
+              <SplitButton
                 loading={isPreviewLoading}
-                onClick={() =>
-                  updatePreview(
-                    lastUsedAction === 'preview' ? true : hasSaveConfirmed,
-                    lastUsedAction === 'preview_save'
-                  )
-                }
-                disabled={!previewItem}
-              >
-                {lastUsedAction === 'preview_save' ? (
-                  <Trans>Save & Reload preview</Trans>
-                ) : (
-                  <Trans>Reload preview</Trans>
-                )}
-              </Button>
-              <ActionDropdown
-                tooltip={t`Preview&Save Actions`}
-                icon={<IconDots />}
-                actions={[
+                defaultSelected="preview_save"
+                options={[
                   {
+                    key: 'preview',
                     name: t`Reload preview`,
                     tooltip: t`Use the currently stored template from the server`,
-                    icon: <IconRefresh />,
-                    onClick: () => {
-                      setLastUsedAction('preview');
-                      updatePreview(true, false);
-                    },
+                    icon: IconRefresh,
+                    onClick: () => updatePreview(true, false),
                     disabled: !previewItem || isPreviewLoading
                   },
                   {
+                    key: 'preview_save',
                     name: t`Save & Reload preview`,
                     tooltip: t`Save the current template and reload the preview`,
-                    icon: <IconDeviceFloppy />,
-                    onClick: () => {
-                      updatePreview(hasSaveConfirmed);
-                      setLastUsedAction('preview_save');
-                    },
+                    icon: IconDeviceFloppy,
+                    onClick: () => updatePreview(hasSaveConfirmed),
                     disabled: !previewItem || isPreviewLoading
                   }
                 ]}
