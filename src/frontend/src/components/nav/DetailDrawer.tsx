@@ -5,7 +5,8 @@ import {
   Group,
   MantineNumberSize,
   Stack,
-  Text
+  Text,
+  createStyles
 } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
@@ -28,6 +29,13 @@ export interface DrawerProps {
   size?: MantineNumberSize;
 }
 
+const useStyles = createStyles(() => ({
+  flex: {
+    display: 'flex',
+    flex: 1
+  }
+}));
+
 function DetailDrawerComponent({
   title,
   position = 'right',
@@ -36,6 +44,7 @@ function DetailDrawerComponent({
 }: DrawerProps) {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { classes } = useStyles();
 
   const content = renderContent(id);
   const opened = useMemo(() => !!id && !!content, [id, content]);
@@ -54,6 +63,8 @@ function DetailDrawerComponent({
       }}
       position={position}
       size={size}
+      classNames={{ root: classes.flex, body: classes.flex }}
+      scrollAreaComponent={Stack}
       title={
         <Group>
           {detailDrawerStack > 0 && (
@@ -73,7 +84,7 @@ function DetailDrawerComponent({
         </Group>
       }
     >
-      <Stack spacing={'xs'}>
+      <Stack spacing={'xs'} className={classes.flex}>
         <Divider />
         {content}
       </Stack>

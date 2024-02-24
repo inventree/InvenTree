@@ -129,7 +129,7 @@ export function TemplateDrawer({
   }
 
   return (
-    <Stack spacing="xs">
+    <Stack spacing="xs" style={{ display: 'flex', flex: '1' }}>
       {editTemplate.modal}
       {deleteTemplate.modal}
 

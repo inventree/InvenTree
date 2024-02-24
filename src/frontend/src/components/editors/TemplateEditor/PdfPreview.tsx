@@ -66,7 +66,8 @@ const PdfPreviewComponent: PreviewAreaComponent = forwardRef((props, ref) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100%'
+            height: '100%',
+            width: '100%'
           }}
         >
           <Trans>Preview not available, click "Reload Preview".</Trans>

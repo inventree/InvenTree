@@ -18,6 +18,7 @@ import {
   IconRefresh,
   TablerIconsProps
 } from '@tabler/icons-react';
+import Split from '@uiw/react-split';
 import React, {
   useCallback,
   useEffect,
@@ -179,13 +180,27 @@ export function TemplateEditor(props: TemplateEditorProps) {
       });
   }, [previewApiUrl, preview.filters]);
 
+  const [editorValue, setEditorValue] = useState<null | string>(editors[0].key);
+  const [previewValue, setPreviewValue] = useState<null | string>(
+    previewAreas[0].key
+  );
+
   return (
-    <Stack>
-      <Group align="start">
+    <Stack style={{ height: '100%', flex: '1' }}>
+      <Split
+        style={{ gap: '10px' }}
+        onDragging={(...args) => console.log(args)}
+      >
         <Tabs
-          style={{ width: '49%' }}
-          defaultValue={editors[0].key}
+          value={editorValue}
+          onTabChange={setEditorValue}
           keepMounted={false}
+          style={{
+            minWidth: '300px',
+            flex: '1',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
         >
           <Tabs.List>
             {editors.map((Editor) => (
@@ -198,7 +213,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
               </Tabs.Tab>
             ))}
 
-            <Group position="right" style={{ flex: 1 }}>
+            <Group position="right" style={{ flex: '1' }} noWrap>
               <Button
                 style={{ marginRight: '-10px' }}
                 loading={isPreviewLoading}
@@ -246,14 +261,29 @@ export function TemplateEditor(props: TemplateEditorProps) {
           </Tabs.List>
 
           {editors.map((Editor) => (
-            <Tabs.Panel key={Editor.key} value={Editor.key}>
+            <Tabs.Panel
+              key={Editor.key}
+              value={Editor.key}
+              style={{
+                display: 'flex',
+                flex: editorValue === Editor.key ? 1 : 0
+              }}
+            >
               {/* @ts-ignore-next-line */}
               <Editor.component ref={editorRef} template={props.template} />
             </Tabs.Panel>
           ))}
         </Tabs>
 
-        <Tabs style={{ width: '49%' }} defaultValue={previewAreas[0].key}>
+        <Tabs
+          value={previewValue}
+          onTabChange={setPreviewValue}
+          style={{
+            minWidth: '200px',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
           <Tabs.List>
             {previewAreas.map((PreviewArea) => (
               <Tabs.Tab
@@ -288,8 +318,22 @@ export function TemplateEditor(props: TemplateEditorProps) {
           </div>
 
           {previewAreas.map((PreviewArea) => (
-            <Tabs.Panel key={PreviewArea.key} value={PreviewArea.key}>
-              <div style={{ height: '60vh', position: 'relative' }}>
+            <Tabs.Panel
+              key={PreviewArea.key}
+              value={PreviewArea.key}
+              style={{
+                display: 'flex',
+                flex: previewValue === PreviewArea.key ? 1 : 0
+              }}
+            >
+              <div
+                style={{
+                  height: '100%',
+                  position: 'relative',
+                  display: 'flex',
+                  flex: '1'
+                }}
+              >
                 {/* @ts-ignore-next-line */}
                 <PreviewArea.component ref={previewRef} />
 
@@ -319,7 +363,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
             </Tabs.Panel>
           ))}
         </Tabs>
-      </Group>
+      </Split>
     </Stack>
   );
 }

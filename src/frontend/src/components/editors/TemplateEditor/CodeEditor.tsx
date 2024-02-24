@@ -2,7 +2,7 @@ import { liquid } from '@codemirror/lang-liquid';
 import { t } from '@lingui/macro';
 import { IconCode } from '@tabler/icons-react';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-import { hoverTooltip, useCodeMirror } from '@uiw/react-codemirror';
+import { EditorView, hoverTooltip, useCodeMirror } from '@uiw/react-codemirror';
 import {
   forwardRef,
   useEffect,
@@ -103,7 +103,12 @@ const extensions = [
       };
     })
   }),
-  tooltips
+  tooltips,
+  EditorView.theme({
+    '&.cm-editor': {
+      height: '100%'
+    }
+  })
 ];
 
 const CodeEditorComponent: EditorComponent = forwardRef((props, ref) => {
@@ -114,7 +119,6 @@ const CodeEditorComponent: EditorComponent = forwardRef((props, ref) => {
     extensions,
     value: code,
     onChange: (value) => setCode(value),
-    height: '70vh',
     theme: vscodeDark
   });
 
@@ -129,7 +133,14 @@ const CodeEditorComponent: EditorComponent = forwardRef((props, ref) => {
     }
   }, [editor.current]);
 
-  return <div ref={editor}></div>;
+  return (
+    <div style={{ display: 'flex', flex: '1', position: 'relative' }}>
+      <div
+        style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}
+        ref={editor}
+      ></div>
+    </div>
+  );
 });
 
 export const CodeEditor: Editor = {

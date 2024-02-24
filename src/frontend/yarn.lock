@@ -1563,6 +1563,11 @@
     "@uiw/codemirror-extensions-basic-setup" "4.21.22"
     codemirror "^6.0.0"
 
+"@uiw/react-split@^5.9.3":
+  version "5.9.3"
+  resolved "https://registry.yarnpkg.com/@uiw/react-split/-/react-split-5.9.3.tgz#3d99f2b62288d4a6eb716b0fd6b37a2c5dc7f82e"
+  integrity sha512-HgwETU+kRhzZAp+YiE4Yu8bNJm3jxxnGgGPfkadUl8jA1wsMD3aMMskuhQF5akiUUUadiLUvAc8e1RH9Y/SKDw==
+
 "@vitejs/plugin-react@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-react/-/plugin-react-4.1.0.tgz#e4f56f46fd737c5d386bb1f1ade86ba275fe09bd"
