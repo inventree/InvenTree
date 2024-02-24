@@ -21,13 +21,14 @@ class ExampleScheduledTaskPluginTests(TestCase):
         # check that the built-in function is running
         self.assertEqual(plg.member_func(), False)
 
-        # check that the tasks are defined
-        self.assertEqual(plg.get_task_names(), ['plugin.schedule.member', 'plugin.schedule.hello', 'plugin.schedule.world'])
-
         # register
         plg.register_tasks()
         # check that schedule was registers
         from django_q.models import Schedule
+
+        # check that the tasks are defined
+        self.assertEqual(plg.get_task_names(), ['plugin.schedule.member', 'plugin.schedule.hello', 'plugin.schedule.world'])
+
         scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
         self.assertEqual(len(scheduled_plugin_tasks), 3)
 
@@ -78,7 +79,7 @@ class ScheduledTaskPluginTests(TestCase):
             pass
 
         with self.assertRaises(MixinImplementationError):
-            NoSchedules()
+            NoSchedules().register_tasks()
 
         class WrongFuncSchedules(Base):
             """Plugin with broken functions.
@@ -97,7 +98,7 @@ class ScheduledTaskPluginTests(TestCase):
                 pass  # pragma: no cover
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules()
+            WrongFuncSchedules().register_tasks()
 
         class WrongFuncSchedules1(WrongFuncSchedules):
             """Plugin with broken functions.
@@ -113,7 +114,7 @@ class ScheduledTaskPluginTests(TestCase):
             }
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules1()
+            WrongFuncSchedules1().register_tasks()
 
         class WrongFuncSchedules2(WrongFuncSchedules):
             """Plugin with broken functions.
@@ -129,7 +130,7 @@ class ScheduledTaskPluginTests(TestCase):
             }
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules2()
+            WrongFuncSchedules2().register_tasks()
 
         class WrongFuncSchedules3(WrongFuncSchedules):
             """Plugin with broken functions.
@@ -146,7 +147,7 @@ class ScheduledTaskPluginTests(TestCase):
             }
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules3()
+            WrongFuncSchedules3().register_tasks()
 
         class WrongFuncSchedules4(WrongFuncSchedules):
             """Plugin with broken functions.
@@ -162,4 +163,4 @@ class ScheduledTaskPluginTests(TestCase):
             }
 
         with self.assertRaises(MixinImplementationError):
-            WrongFuncSchedules4()
+            WrongFuncSchedules4().register_tasks()
