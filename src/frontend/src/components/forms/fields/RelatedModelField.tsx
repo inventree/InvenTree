@@ -53,7 +53,11 @@ export function RelatedModelField({
     // If the value is unchanged, do nothing
     if (field.value === pk) return;
 
-    if (field.value !== null && field.value !== undefined) {
+    if (
+      field.value !== null &&
+      field.value !== undefined &&
+      field.value !== ''
+    ) {
       const url = `${definition.api_url}${field.value}/`;
 
       api.get(url).then((response) => {
