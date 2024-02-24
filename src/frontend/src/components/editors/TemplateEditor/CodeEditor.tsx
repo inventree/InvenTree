@@ -15,6 +15,7 @@ import { Editor, EditorComponent } from './TemplateEditor';
 
 type Tag = {
   label: string;
+  description: string;
   args: string[];
   kwargs: { [name: string]: string };
   returns: string;
@@ -23,6 +24,7 @@ type Tag = {
 const tags: Tag[] = [
   {
     label: 'qrcode',
+    description: 'Generate a QR code image',
     args: ['data'],
     kwargs: {
       fill_color: 'Fill color (default = black)',
@@ -36,6 +38,7 @@ const tags: Tag[] = [
   },
   {
     label: 'barcode',
+    description: 'Generate a barcode image',
     args: ['data'],
     kwargs: {
       barcode_class: 'Barcode code',
@@ -55,19 +58,26 @@ const renderHelp = (tag: Tag) => {
   dom.style.height = '200px';
   dom.style.overflowY = 'scroll';
   dom.style.border = '1px solid #000';
+
+  const argsStr = tag.args
+    .map((arg) => `  - <code style="color: #9cdcfe;">${arg}</code>`)
+    .join('\n');
+
+  const kwargsStr = Object.entries(tag.kwargs)
+    .map(
+      ([name, description]) =>
+        `  - <code style="color: #9cdcfe;">${name}</code>: <small>${description}</small>`
+    )
+    .join('\n');
+
   dom.innerHTML = `Name: <code style="color: #4ec9b0;">${tag.label}</code>
+<small>${tag.description}</small>
 Arguments:
-${tag.args
-  .map((arg) => `  - <code style="color: #9cdcfe;">${arg}</code>`)
-  .join('\n')}
+${argsStr}
 Keyword arguments:
-${Object.entries(tag.kwargs)
-  .map(
-    ([name, description]) =>
-      `  - <code style="color: #9cdcfe;">${name}</code>: ${description}`
-  )
-  .join('\n')}
-Returns: ${tag.returns}`;
+${kwargsStr}
+Returns: <small>${tag.returns}</small>`;
+
   return dom;
 };
 
