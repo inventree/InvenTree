@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-24 06:19\n"
+"PO-Revision-Date: 2024-02-25 06:44\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2448,7 +2448,7 @@ msgstr "Anzahl"
 
 #: src/pages/Index/Scan.tsx:276
 msgid "Scan Page"
-msgstr ""
+msgstr "Seite scannen"
 
 #: src/pages/Index/Scan.tsx:279
 msgid "This page can be used for continuously scanning items and taking actions on them."
@@ -2642,7 +2642,7 @@ msgstr "Es sind keine sozialen Netzwerke mit diesem Konto verbunden."
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:286
 msgid "You can sign in to your account using any of the following third party accounts"
-msgstr ""
+msgstr "Sie können sich mit einem der folgenden Drittanbieterkonten bei Ihrem Konto anmelden"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:68
 msgid "bars"
@@ -2658,7 +2658,7 @@ msgstr "Punkte"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:81
 msgid "Theme"
-msgstr ""
+msgstr "Theme"
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:87
 msgid "Primary color"
@@ -2690,15 +2690,15 @@ msgstr "Lader"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:69
 msgid "Background Tasks"
-msgstr ""
+msgstr "Hintergrundprozesse"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:75
 msgid "Error Reports"
-msgstr ""
+msgstr "Fehlerberichte"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:81
 msgid "Currencies"
-msgstr ""
+msgstr "Währungen"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:99
 msgid "Custom Units"
@@ -2711,7 +2711,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:117
 #: src/tables/machine/MachineTypeTable.tsx:278
 msgid "Machines"
-msgstr ""
+msgstr "Maschinen"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 msgid "Quick Actions"
@@ -2727,7 +2727,7 @@ msgstr "Erweiterte Optionen"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:43
 msgid "Machine types"
-msgstr ""
+msgstr "Maschinentypen"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:53
 msgid "Machine Error Stack"
@@ -2740,11 +2740,11 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:28
 #: src/tables/settings/UserTable.tsx:103
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
 msgid "External plugins are not enabled for this InvenTree installation."
-msgstr ""
+msgstr "Externe Plugins sind für diese InvenTree-Installation nicht aktiviert."
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
 #~ msgid "Plugin Error Stack"
@@ -2760,7 +2760,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:50
 msgid "Plugin Errors"
-msgstr ""
+msgstr "Plugin-Fehler"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:59
 msgid "Plugin Settings"
@@ -2768,15 +2768,15 @@ msgstr "Plugin Einstellungen"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:25
 msgid "Pending Tasks"
-msgstr ""
+msgstr "Anstehende Aufgaben"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:33
 msgid "Scheduled Tasks"
-msgstr ""
+msgstr "Geplante Aufgaben"
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:41
 msgid "Failed Tasks"
-msgstr ""
+msgstr "Fehlgeschlagene Aufgaben"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:18
 #: src/tables/settings/UserTable.tsx:121
@@ -2825,7 +2825,7 @@ msgstr "Berichte"
 #: src/pages/Index/Settings/SystemSettings.tsx:221
 #: src/pages/part/PartDetail.tsx:565
 msgid "Stocktake"
-msgstr ""
+msgstr "Inventur"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:226
 #: src/pages/build/BuildDetail.tsx:264
@@ -2837,7 +2837,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:290
 msgid "Switch to User Setting"
-msgstr ""
+msgstr "Zu Benutzereinstellungen wechseln"
 
 #: src/pages/Index/Settings/UserSettings.tsx:29
 msgid "Account"
@@ -2857,7 +2857,7 @@ msgstr "Kontoeinstellungen"
 
 #: src/pages/Index/Settings/UserSettings.tsx:119
 msgid "Switch to System Setting"
-msgstr ""
+msgstr "Zu Systemeinstellungen wechseln"
 
 #: src/pages/Index/UserSettings.tsx:103
 #~ msgid "User Settings"
@@ -2881,7 +2881,7 @@ msgstr "Zur Startseite"
 
 #: src/pages/Notifications.tsx:43
 msgid "Delete Notifications"
-msgstr ""
+msgstr "Benachrichtigungen löschen"
 
 #: src/pages/Notifications.tsx:108
 msgid "Mark as unread"
@@ -2889,7 +2889,7 @@ msgstr "Als ungelesen markieren"
 
 #: src/pages/build/BuildDetail.tsx:72
 msgid "Base Part"
-msgstr ""
+msgstr "Basisteil"
 
 #: src/pages/build/BuildDetail.tsx:80
 msgid "Build Status"
@@ -2906,11 +2906,11 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:122
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Unvollständige Endprodukte"
 
 #: src/pages/build/BuildDetail.tsx:128
 msgid "Completed Outputs"
-msgstr ""
+msgstr "Fertiggestellte Endprodukte"
 
 #: src/pages/build/BuildDetail.tsx:141
 msgid "Consumed Stock"
@@ -3012,11 +3012,11 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:449
 #: src/pages/stock/StockDetail.tsx:71
 msgid "Details"
-msgstr ""
+msgstr "Details"
 
 #: src/pages/company/CompanyDetail.tsx:81
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Hergestellte Teile"
 
 #: src/pages/company/CompanyDetail.tsx:90
 msgid "Supplied Parts"
@@ -3024,7 +3024,7 @@ msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:131
 msgid "Assigned Stock"
-msgstr ""
+msgstr "Zugeordneter Bestand"
 
 #: src/pages/company/CompanyDetail.tsx:175
 #~ msgid "Edit company"
@@ -3046,7 +3046,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:64
 #: src/tables/sales/SalesOrderTable.tsx:95
 msgid "Customer"
-msgstr ""
+msgstr "Kunde"
 
 #: src/pages/company/ManufacturerDetail.tsx:8
 #: src/pages/company/ManufacturerPartDetail.tsx:88
@@ -3150,7 +3150,7 @@ msgstr "﻿IPN"
 
 #: src/pages/part/PartDetail.tsx:250
 msgid "Revision"
-msgstr ""
+msgstr "Version"
 
 #: src/pages/part/PartDetail.tsx:261
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:39
@@ -3160,7 +3160,7 @@ msgstr "Einheiten"
 #: src/pages/part/PartDetail.tsx:271
 #: src/tables/settings/PendingTasksTable.tsx:40
 msgid "Keywords"
-msgstr ""
+msgstr "Schlüsselwörter"
 
 #: src/pages/part/PartDetail.tsx:281
 msgid "Creation Date"
@@ -3186,15 +3186,15 @@ msgstr "Preisspanne"
 
 #: src/pages/part/PartDetail.tsx:332
 msgid "Last Stocktake"
-msgstr ""
+msgstr "Letzte Inventur"
 
 #: src/pages/part/PartDetail.tsx:393
 msgid "Default Location"
-msgstr ""
+msgstr "Standard Lagerort"
 
 #: src/pages/part/PartDetail.tsx:404
 msgid "Default Supplier"
-msgstr ""
+msgstr "Standard Zulieferer"
 
 #: src/pages/part/PartDetail.tsx:415
 msgid "Link"
@@ -3219,7 +3219,7 @@ msgstr "Stückliste"
 
 #: src/pages/part/PartDetail.tsx:509
 msgid "Used In"
-msgstr ""
+msgstr "Verwendet in"
 
 #: src/pages/part/PartDetail.tsx:521
 #: src/pages/purchasing/PurchasingIndex.tsx:37
@@ -3232,7 +3232,7 @@ msgstr "Terminierung"
 
 #: src/pages/part/PartDetail.tsx:570
 msgid "Test Templates"
-msgstr ""
+msgstr "Testvorlagen"
 
 #: src/pages/part/PartDetail.tsx:581
 msgid "Related Parts"
@@ -3248,7 +3248,7 @@ msgstr "Lager-Aktionen"
 
 #: src/pages/part/PartDetail.tsx:662
 msgid "Count Stock"
-msgstr ""
+msgstr "Bestand zählen"
 
 #: src/pages/part/PartDetail.tsx:663
 msgid "Count part stock"
@@ -3566,11 +3566,11 @@ msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:480
 msgid "Records were deleted successfully"
-msgstr ""
+msgstr "Datensätze erfolgreich gelöscht"
 
 #: src/tables/InvenTreeTable.tsx:489
 msgid "Failed to delete records"
-msgstr ""
+msgstr "Löschen der Datensätze fehlgeschlagen"
 
 #: src/tables/InvenTreeTable.tsx:517
 #: src/tables/InvenTreeTable.tsx:518
@@ -3646,7 +3646,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:237
 msgid "Show items with available stock"
-msgstr ""
+msgstr "Artikel mit verfügbarem Lagerbestand anzeigen"
 
 #: src/tables/bom/BomTable.tsx:241
 msgid "Show items on order"
@@ -3680,7 +3680,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:273
 msgid "View BOM"
-msgstr ""
+msgstr "Stückliste anzeigen"
 
 #: src/tables/bom/BomTable.tsx:284
 msgid "Validate BOM line"
@@ -3688,7 +3688,7 @@ msgstr "Stücklisten-Position bestätigen"
 
 #: src/tables/bom/BomTable.tsx:292
 msgid "Edit Substitutes"
-msgstr ""
+msgstr "Ersatzteil bearbeiten"
 
 #: src/tables/bom/BomTable.tsx:306
 msgid "Edit Bom Item"
