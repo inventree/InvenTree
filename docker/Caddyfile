@@ -22,7 +22,7 @@
 
     handle_path /media/* {
         forward_auth "http://inventree-server:8000" {
-            uri /auth
+            uri /auth/
         }
         root * /var/www/media
         file_server
