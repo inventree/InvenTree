@@ -1,6 +1,4 @@
 import { liquid } from '@codemirror/lang-liquid';
-import { t } from '@lingui/macro';
-import { IconCode } from '@tabler/icons-react';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
 import { EditorView, hoverTooltip, useCodeMirror } from '@uiw/react-codemirror';
 import {
@@ -11,7 +9,7 @@ import {
   useState
 } from 'react';
 
-import { Editor, EditorComponent } from './TemplateEditor';
+import { EditorComponent } from '../TemplateEditor';
 
 type Tag = {
   label: string;
@@ -121,7 +119,7 @@ const extensions = [
   })
 ];
 
-const CodeEditorComponent: EditorComponent = forwardRef((props, ref) => {
+export const CodeEditorComponent: EditorComponent = forwardRef((props, ref) => {
   const editor = useRef<HTMLDivElement | null>(null);
   const [code, setCode] = useState('');
   const { setContainer } = useCodeMirror({
@@ -152,10 +150,3 @@ const CodeEditorComponent: EditorComponent = forwardRef((props, ref) => {
     </div>
   );
 });
-
-export const CodeEditor: Editor = {
-  key: 'code',
-  name: t`Code`,
-  icon: IconCode,
-  component: CodeEditorComponent
-};
