@@ -571,6 +571,11 @@ db_options = db_config.get('OPTIONS', db_config.get('options', {}))
 
 # Specific options for postgres backend
 if 'postgres' in db_engine:  # pragma: no cover
+    from psycopg2.extensions import (
+        ISOLATION_LEVEL_READ_COMMITTED,
+        ISOLATION_LEVEL_SERIALIZABLE,
+    )
+
     # Connection timeout
     if 'connect_timeout' not in db_options:
         # The DB server is in the same data center, it should not take very
@@ -634,7 +639,11 @@ if 'postgres' in db_engine:  # pragma: no cover
         serializable = get_boolean_setting(
             'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
         )
-        db_options['isolation_level'] = 4 if serializable else 2
+        db_options['isolation_level'] = (
+            ISOLATION_LEVEL_SERIALIZABLE
+            if serializable
+            else ISOLATION_LEVEL_READ_COMMITTED
+        )
 
 # Specific options for MySql / MariaDB backend
 elif 'mysql' in db_engine:  # pragma: no cover
