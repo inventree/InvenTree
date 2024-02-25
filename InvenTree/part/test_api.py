@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
+from pathlib import Path
 from random import randint
 
 from django.core.exceptions import ValidationError
@@ -20,6 +21,7 @@ import company.models
 import order.models
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
+from InvenTree.settings import BASE_DIR
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatusGroups, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import (
@@ -1478,10 +1480,11 @@ class PartDetailTests(PartAPITestBase):
             print(p.image.file)
 
         # Try to upload a non-image file
-        with open('_testfolder/dummy_image.txt', 'w') as dummy_image:
+        test_path = BASE_DIR / '_testfolder' / 'dummy_image'
+        with open(f'{test_path}.txt', 'w') as dummy_image:
             dummy_image.write('hello world')
 
-        with open('_testfolder/dummy_image.txt', 'rb') as dummy_image:
+        with open(f'{test_path}.txt', 'rb') as dummy_image:
             response = self.upload_client.patch(
                 url, {'image': dummy_image}, format='multipart'
             )
@@ -1491,7 +1494,7 @@ class PartDetailTests(PartAPITestBase):
 
         # Now try to upload a valid image file, in multiple formats
         for fmt in ['jpg', 'j2k', 'png', 'bmp', 'webp']:
-            fn = f'_testfolder/dummy_image.{fmt}'
+            fn = f'{test_path}.{fmt}'
 
             img = PIL.Image.new('RGB', (128, 128), color='red')
             img.save(fn)
@@ -1512,7 +1515,7 @@ class PartDetailTests(PartAPITestBase):
         # First, upload an image for an existing part
         p = Part.objects.first()
 
-        fn = '_testfolder/part_image_123abc.png'
+        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
 
         img = PIL.Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
@@ -1557,7 +1560,7 @@ class PartDetailTests(PartAPITestBase):
         # First, upload an image for an existing part
         p = Part.objects.first()
 
-        fn = '_testfolder/part_image_123abc.png'
+        fn = BASE_DIR / '_testfolder' / 'part_image_123abc.png'
 
         img = PIL.Image.new('RGB', (128, 128), color='blue')
         img.save(fn)

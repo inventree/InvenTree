@@ -10,6 +10,7 @@ from django.urls import reverse
 from pdfminer.high_level import extract_text
 from PIL import Image
 
+from InvenTree.settings import BASE_DIR
 from InvenTree.unit_test import InvenTreeAPITestCase
 from label.models import PartLabel, StockItemLabel, StockLocationLabel
 from part.models import Part
@@ -165,18 +166,19 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Test that the labels have been printed
         # The sample labelling plugin simply prints to file
-        self.assertTrue(os.path.exists('_testfolder/label.pdf'))
+        test_path = BASE_DIR / '_testfolder' / 'label'
+        self.assertTrue(os.path.exists(f'{test_path}.pdf'))
 
         # Read the raw .pdf data - ensure it contains some sensible information
-        filetext = extract_text('_testfolder/label.pdf')
+        filetext = extract_text(f'{test_path}.pdf')
         matched = [part.name in filetext for part in parts]
         self.assertIn(True, matched)
 
         # Check that the .png file has already been created
-        self.assertTrue(os.path.exists('_testfolder/label.png'))
+        self.assertTrue(os.path.exists(f'{test_path}.png'))
 
         # And that it is a valid image file
-        Image.open('_testfolder/label.png')
+        Image.open(f'{test_path}.png')
 
     def test_printing_options(self):
         """Test printing options."""
