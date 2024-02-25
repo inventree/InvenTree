@@ -184,10 +184,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
 
   return (
     <Stack style={{ height: '100%', flex: '1' }}>
-      <Split
-        style={{ gap: '10px' }}
-        onDragging={(...args) => console.log(args)}
-      >
+      <Split style={{ gap: '10px' }}>
         <Tabs
           value={editorValue}
           onTabChange={setEditorValue}
