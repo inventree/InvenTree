@@ -1478,10 +1478,10 @@ class PartDetailTests(PartAPITestBase):
             print(p.image.file)
 
         # Try to upload a non-image file
-        with open('dummy_image.txt', 'w') as dummy_image:
+        with open('_testfolder/dummy_image.txt', 'w') as dummy_image:
             dummy_image.write('hello world')
 
-        with open('dummy_image.txt', 'rb') as dummy_image:
+        with open('_testfolder/dummy_image.txt', 'rb') as dummy_image:
             response = self.upload_client.patch(
                 url, {'image': dummy_image}, format='multipart'
             )
@@ -1491,7 +1491,7 @@ class PartDetailTests(PartAPITestBase):
 
         # Now try to upload a valid image file, in multiple formats
         for fmt in ['jpg', 'j2k', 'png', 'bmp', 'webp']:
-            fn = f'dummy_image.{fmt}'
+            fn = f'_testfolder/dummy_image.{fmt}'
 
             img = PIL.Image.new('RGB', (128, 128), color='red')
             img.save(fn)
@@ -1512,7 +1512,7 @@ class PartDetailTests(PartAPITestBase):
         # First, upload an image for an existing part
         p = Part.objects.first()
 
-        fn = 'part_image_123abc.png'
+        fn = '_testfolder/part_image_123abc.png'
 
         img = PIL.Image.new('RGB', (128, 128), color='blue')
         img.save(fn)
@@ -1557,7 +1557,7 @@ class PartDetailTests(PartAPITestBase):
         # First, upload an image for an existing part
         p = Part.objects.first()
 
-        fn = 'part_image_123abc.png'
+        fn = '_testfolder/part_image_123abc.png'
 
         img = PIL.Image.new('RGB', (128, 128), color='blue')
         img.save(fn)

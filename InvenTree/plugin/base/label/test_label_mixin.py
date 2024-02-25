@@ -165,18 +165,18 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Test that the labels have been printed
         # The sample labelling plugin simply prints to file
-        self.assertTrue(os.path.exists('label.pdf'))
+        self.assertTrue(os.path.exists('_testfolder/label.pdf'))
 
         # Read the raw .pdf data - ensure it contains some sensible information
-        filetext = extract_text('label.pdf')
+        filetext = extract_text('_testfolder/label.pdf')
         matched = [part.name in filetext for part in parts]
         self.assertIn(True, matched)
 
         # Check that the .png file has already been created
-        self.assertTrue(os.path.exists('label.png'))
+        self.assertTrue(os.path.exists('_testfolder/label.png'))
 
         # And that it is a valid image file
-        Image.open('label.png')
+        Image.open('_testfolder/label.png')
 
     def test_printing_options(self):
         """Test printing options."""

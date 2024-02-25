@@ -43,7 +43,7 @@ class BomExportTest(InvenTreeTestCase):
             'attachment; filename="InvenTree_BOM_Template.csv"',
         )
 
-        filename = '_tmp.csv'
+        filename = '_testfolder/_tmp.csv'
 
         with open(filename, 'wb') as f:
             f.write(response.getvalue())
@@ -89,7 +89,7 @@ class BomExportTest(InvenTreeTestCase):
         content = response.headers['Content-Disposition']
         self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.csv"')
 
-        filename = '_tmp.csv'
+        filename = '_testfolder/_tmp.csv'
 
         with open(filename, 'wb') as f:
             f.write(response.getvalue())

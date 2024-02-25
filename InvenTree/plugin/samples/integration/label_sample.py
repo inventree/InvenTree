@@ -35,7 +35,7 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
         pdf_data = kwargs['pdf_data']
         png_file = self.render_to_png(label=None, pdf_data=pdf_data)
 
-        filename = 'label.pdf'
+        filename = '_testfolder/label.pdf'
 
         # Dump the PDF to a local file
         with open(filename, 'wb') as pdf_out:
