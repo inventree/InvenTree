@@ -324,6 +324,7 @@ The following [plugin](../extend/plugins.md) configuration options are available
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_PLUGINS_ENABLED | plugins_enabled | Enable plugin support | False |
+| INVENTREE_PLUGIN_NOINSTALL | plugin_noinstall | Plugin installation via API disabled | False |
 | INVENTREE_PLUGIN_FILE | plugins_plugin_file | Location of plugin installation file | *Not specified* |
 | INVENTREE_PLUGIN_DIR | plugins_plugin_dir | Location of external plugin directory | *Not specified* |
 
