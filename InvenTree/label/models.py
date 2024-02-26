@@ -20,7 +20,7 @@ import part.models
 import stock.models
 from InvenTree.helpers import normalize, validateFilterString
 from InvenTree.helpers_model import get_base_url
-from InvenTree.storage_backends import PrivateMediaStorage
+from InvenTree.storage_backends import private_storage
 from plugin.registry import registry
 
 try:
@@ -125,7 +125,7 @@ class LabelTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
     label = models.FileField(
-        storage=PrivateMediaStorage,
+        storage=private_storage,
         upload_to=rename_label,
         unique=True,
         blank=False,
@@ -284,7 +284,7 @@ class LabelOutput(models.Model):
 
     # File will be stored in a subdirectory
     label = models.FileField(
-        storage=PrivateMediaStorage,
+        storage=private_storage,
         upload_to=rename_label_output,
         unique=True,
         blank=False,

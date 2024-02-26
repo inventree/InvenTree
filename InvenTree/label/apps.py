@@ -18,7 +18,7 @@ import InvenTree.helpers
 import InvenTree.ready
 from InvenTree.config import ensure_dir
 from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
-from InvenTree.storage_backends import PrivateMediaStorage
+from InvenTree.storage_backends import private_storage
 
 logger = logging.getLogger('inventree')
 
@@ -139,7 +139,7 @@ class LabelConfig(AppConfig):
         # Create root dir for templates
         src_dir = TEMPLATES_DIR.joinpath('label', 'templates', 'label', ref_name)
         dst_dir = MEDIA_STORAGE_DIR.joinpath('label', 'inventree', ref_name)
-        ensure_dir(dst_dir, PrivateMediaStorage if settings.USE_S3 else None)
+        ensure_dir(dst_dir, private_storage if settings.USE_S3 else None)
 
         # Create labels
         for label in labels:
@@ -174,7 +174,7 @@ class LabelConfig(AppConfig):
 
             # Copy file
             if settings.USE_S3:
-                PrivateMediaStorage.save(filename, src_file.open('rb'))
+                private_storage.save(filename, src_file.open('rb'))
             else:
                 shutil.copyfile(src_file, dst_file)
 

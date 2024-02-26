@@ -1192,31 +1192,35 @@ if USE_S3:
     AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
     AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-    # s3 static settings
+
+    # urls and storage clsses
     STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/{STATIC_LOCATION}/'
-    STATICFILES_STORAGE = 'InvenTree.storage_backends.StaticStorage'
-    # s3 public media settings
     MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{PUBLIC_MEDIA_LOCATION}/'
-    DEFAULT_FILE_STORAGE = 'InvenTree.storage_backends.PublicMediaStorage'
-    # s3 private media settings
-    PRIVATE_FILE_STORAGE = 'InvenTree.storage_backends.PrivateMediaStorage'
+    STATICFILES_STORAGE = 'InvenTree.storage_backends.S3StaticStorage'
+    DEFAULT_FILE_STORAGE = 'InvenTree.storage_backends.S3PublicMediaStorage'
+    PRIVATE_FILE_STORAGE = 'InvenTree.storage_backends.S3PrivateMediaStorage'
 
     logger.info("MEDIA_ROOT: '%s'", MEDIA_URL)
     logger.info("STATIC_ROOT: '%s'", STATIC_URL)
 else:
-    STATIC_URL = '/static/'
     STATIC_ROOT = config.get_static_dir()
-    MEDIA_URL = '/media/'
     MEDIA_ROOT = config.get_media_dir()
-
-    logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
-    logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
 
     # Allow templates in the reporting directory to be accessed
     TEMPLATES[0]['DIRS'] += [
         MEDIA_ROOT.joinpath('report'),
         MEDIA_ROOT.joinpath('label'),
     ]
+
+    # urls and storage clsses
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/media/'
+    STATICFILES_STORAGE = 'django.files.storage.FileSystemStorage'
+    DEFAULT_FILE_STORAGE = 'django.files.storage.FileSystemStorage'
+    PRIVATE_FILE_STORAGE = 'django.files.storage.FileSystemStorage'
+
+    logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
+    logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
 
 # Color Themes Directory
 STATIC_COLOR_THEMES_DIR = BASE_DIR.joinpath('css', 'color-themes').resolve()
