@@ -12,7 +12,7 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.helpers
-from InvenTree.config import ensure_dir
+from generic.templating.apps import TemplatingMixin
 from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
 
 logger = logging.getLogger('inventree')
@@ -20,7 +20,7 @@ ref = 'report'
 db_ref = 'template'
 
 
-class ReportConfig(AppConfig):
+class ReportConfig(TemplatingMixin, AppConfig):
     """Configuration class for the "report" app."""
 
     name = ref
@@ -150,19 +150,6 @@ class ReportConfig(AppConfig):
     def get_src_dir(self, ref, ref_name):
         """Get the source directory."""
         return TEMPLATES_DIR.joinpath(ref, 'templates', ref)
-
-    def create_template_dir(self, model, data):
-        """Create folder and database entries for the default templates, if they do not already exist."""
-        ref_name = model.getSubdir()
-
-        # Create root dir for templates
-        src_dir = self.get_src_dir(ref, ref_name)
-        dst_dir = MEDIA_STORAGE_DIR.joinpath(ref, 'inventree', ref_name)
-        ensure_dir(dst_dir, default_storage)
-
-        # Copy each template across (if required)
-        for entry in data:
-            self.create_template_file(model, src_dir, entry, ref_name)
 
     def create_template_file(self, model, src_dir, data, ref_name):
         """Ensure a label template is in place."""
