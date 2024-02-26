@@ -7,7 +7,7 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 16
+  node_version: 18
 
 jobs:
   build:
