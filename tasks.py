@@ -389,6 +389,7 @@ def migrate(c):
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
+        'nouv': 'Do not use UV (use pip instead)',
     },
 )
 def update(
@@ -397,6 +398,7 @@ def update(
     frontend: bool = False,
     no_frontend: bool = False,
     skip_static: bool = False,
+    nouv: bool = False,
 ):
     """Update InvenTree installation.
 
@@ -414,7 +416,7 @@ def update(
     - translate_stats
     """
     # Ensure required components are installed
-    install(c)
+    install(c, nouv=nouv)
 
     if not skip_backup:
         backup(c)
