@@ -32,9 +32,5 @@
         file_server
     }
 
-    handle /api/* {
-        reverse_proxy {$INVENTREE_SERVER:"http://inventree-server:8000"}
-    }
-
     reverse_proxy {$INVENTREE_SERVER:"http://inventree-server:8000"}
 }
