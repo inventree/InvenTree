@@ -169,7 +169,10 @@ class LabelConfig(AppConfig):
         if to_copy:
             logger.info("Copying label template '%s'", dst_file)
             # Ensure destination dir exists
-            dst_file.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                dst_file.parent.mkdir(parents=True, exist_ok=True)
+            except FileExistsError:
+                pass
 
             # Copy file
             default_storage.save(filename, src_file.open('rb'))
