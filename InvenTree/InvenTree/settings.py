@@ -218,7 +218,6 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
-    'storages',  # Cloud storage
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -1176,50 +1175,20 @@ SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 
 # File storage settings
-USE_S3 = os.getenv('USE_S3') == 'TRUE'
-USE_S3 = False
+STATIC_ROOT = config.get_static_dir()
+MEDIA_ROOT = config.get_media_dir()
 
-# Settings for served static files
-if USE_S3:
-    STATIC_LOCATION = 'static'
-    PUBLIC_MEDIA_LOCATION = 'media'
-    PRIVATE_MEDIA_LOCATION = 'private'
+# Allow templates in the reporting directory to be accessed
+TEMPLATES[0]['DIRS'] += [MEDIA_ROOT.joinpath('report'), MEDIA_ROOT.joinpath('label')]
 
-    # aws settings
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-    AWS_DEFAULT_ACL = None
-    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
-    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
-    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+# URLs and storage classes
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
-    # urls and storage classes
-    STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/{STATIC_LOCATION}/'
-    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{PUBLIC_MEDIA_LOCATION}/'
-    STATICFILES_STORAGE = 'InvenTree.storage_backends.S3StaticStorage'
-    DEFAULT_FILE_STORAGE = 'InvenTree.storage_backends.S3PrivateMediaStorage'
-
-    logger.info("MEDIA_ROOT: '%s'", MEDIA_URL)
-    logger.info("STATIC_ROOT: '%s'", STATIC_URL)
-else:
-    STATIC_ROOT = config.get_static_dir()
-    MEDIA_ROOT = config.get_media_dir()
-
-    # Allow templates in the reporting directory to be accessed
-    TEMPLATES[0]['DIRS'] += [
-        MEDIA_ROOT.joinpath('report'),
-        MEDIA_ROOT.joinpath('label'),
-    ]
-
-    # urls and storage classes
-    STATIC_URL = '/static/'
-    MEDIA_URL = '/media/'
-    STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-
-    logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
-    logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
+logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
+logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
 
 # Color Themes Directory
 STATIC_COLOR_THEMES_DIR = BASE_DIR.joinpath('css', 'color-themes').resolve()
