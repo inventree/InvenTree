@@ -88,8 +88,7 @@ nav:
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
-        - Production: start/docker_prod.md
-        - Development: start/docker_dev.md
+        - Installation: start/docker_install.md
     - Bare Metal:
         - Introduction: start/install.md
         - Installer: start/installer.md

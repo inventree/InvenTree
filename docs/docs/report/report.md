@@ -278,7 +278,7 @@ Asset files can be rendered directly into the template as follows
     If the requested asset name does not match the name of an uploaded asset, the template will continue without loading the image.
 
 !!! info "Assets location"
-    You need to ensure your asset images to the report/assets directory in the [data directory](../start/docker_dev.md/#data-directory). Upload new assets via the [admin interface](../settings/admin.md) to ensure they are uploaded to the correct location on the server.
+    You need to ensure your asset images to the report/assets directory in the [data directory](../start/intro.md#file-storage). Upload new assets via the [admin interface](../settings/admin.md) to ensure they are uploaded to the correct location on the server.
 
 
 ## Report Snippets

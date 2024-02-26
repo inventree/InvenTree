@@ -17,7 +17,7 @@ InvenTree follows the best practies for Django so most of the contents should be
 
 The recommended way to set up a development environment is to use VSCode devcontainers. The required files are provided with the repo, the docs are on a [dedicated page](./devcontainer.md).
 
-It is also possible to use [docker development](../start/docker_dev.md) or [bare metal development](../start/bare_dev.md). With these you need to install the required dependencies manually with a dedicated task.
+It is also possible to use [docker](../start/docker.md) or [bare metal development](../start/bare_dev.md). With these you need to install the required dependencies manually with a dedicated task.
 ```bash
 invoke setup-dev
 ```
