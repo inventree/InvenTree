@@ -17,8 +17,7 @@ from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 import InvenTree.helpers
 import InvenTree.ready
 from InvenTree.config import ensure_dir
-from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
-from InvenTree.storage_backends import private_storage
+from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR, default_storage
 
 logger = logging.getLogger('inventree')
 
@@ -139,7 +138,7 @@ class LabelConfig(AppConfig):
         # Create root dir for templates
         src_dir = TEMPLATES_DIR.joinpath('label', 'templates', 'label', ref_name)
         dst_dir = MEDIA_STORAGE_DIR.joinpath('label', 'inventree', ref_name)
-        ensure_dir(dst_dir, private_storage)
+        ensure_dir(dst_dir, default_storage)
 
         # Create labels
         for label in labels:
@@ -173,7 +172,7 @@ class LabelConfig(AppConfig):
             dst_file.parent.mkdir(parents=True, exist_ok=True)
 
             # Copy file
-            private_storage.save(filename, src_file.open('rb'))
+            default_storage.save(filename, src_file.open('rb'))
 
         # Check if a label matching the template already exists
         try:

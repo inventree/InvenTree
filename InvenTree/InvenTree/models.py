@@ -24,8 +24,8 @@ import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
+from InvenTree.files import default_storage
 from InvenTree.sanitizer import sanitize_svg
-from InvenTree.storage_backends import private_storage
 
 logger = logging.getLogger('inventree')
 
@@ -556,7 +556,7 @@ class InvenTreeAttachment(InvenTreeModel):
         return str(self.link)
 
     attachment = models.FileField(
-        storage=private_storage,
+        storage=default_storage,
         upload_to=rename_attachment,
         verbose_name=_('Attachment'),
         help_text=_('Select file to attach'),

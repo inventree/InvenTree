@@ -49,6 +49,7 @@ from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
+from InvenTree.files import default_storage
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
 from InvenTree.status_codes import (
     BuildStatusGroups,
@@ -57,7 +58,6 @@ from InvenTree.status_codes import (
     SalesOrderStatus,
     SalesOrderStatusGroups,
 )
-from InvenTree.storage_backends import private_storage
 from order import models as OrderModels
 from stock import models as StockModels
 
@@ -3250,7 +3250,7 @@ class PartStocktakeReport(models.Model):
     date = models.DateField(verbose_name=_('Date'), auto_now_add=True)
 
     report = models.FileField(
-        storage=private_storage,
+        storage=default_storage,
         upload_to=save_stocktake_report,
         unique=False,
         blank=False,

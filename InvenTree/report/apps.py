@@ -14,8 +14,7 @@ from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.helpers
 from InvenTree.config import ensure_dir
-from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
-from InvenTree.storage_backends import private_storage
+from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR, default_storage
 
 logger = logging.getLogger('inventree')
 
@@ -74,7 +73,7 @@ class ReportConfig(AppConfig):
 
         # Destination directory
         dst_dir = MEDIA_STORAGE_DIR.joinpath('report', 'inventree', model.getSubdir())
-        ensure_dir(dst_dir, private_storage)
+        ensure_dir(dst_dir, default_storage)
 
         # Copy each report template across (if required)
         for report in reports:
@@ -102,7 +101,7 @@ class ReportConfig(AppConfig):
 
             if do_copy:
                 logger.info("Copying test report template '%s'", dst_file)
-                private_storage.save(filename, src_file.open('rb'))
+                default_storage.save(filename, src_file.open('rb'))
 
             try:
                 # Check if a report matching the template already exists

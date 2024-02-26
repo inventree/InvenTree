@@ -1197,8 +1197,7 @@ if USE_S3:
     STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/{STATIC_LOCATION}/'
     MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{PUBLIC_MEDIA_LOCATION}/'
     STATICFILES_STORAGE = 'InvenTree.storage_backends.S3StaticStorage'
-    DEFAULT_FILE_STORAGE = 'InvenTree.storage_backends.S3PublicMediaStorage'
-    PRIVATE_FILE_STORAGE = 'InvenTree.storage_backends.S3PrivateMediaStorage'
+    DEFAULT_FILE_STORAGE = 'InvenTree.storage_backends.S3PrivateMediaStorage'
 
     logger.info("MEDIA_ROOT: '%s'", MEDIA_URL)
     logger.info("STATIC_ROOT: '%s'", STATIC_URL)
@@ -1217,7 +1216,6 @@ else:
     MEDIA_URL = '/media/'
     STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    PRIVATE_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
     logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
     logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)

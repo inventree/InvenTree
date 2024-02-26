@@ -35,13 +35,13 @@ import label.models
 import report.models
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.files import default_storage
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockHistoryCode,
     StockStatus,
     StockStatusGroups,
 )
-from InvenTree.storage_backends import private_storage
 from part import models as PartModels
 from plugin.events import trigger_event
 from users.models import Owner
@@ -2441,7 +2441,7 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     )
 
     attachment = models.FileField(
-        storage=private_storage,
+        storage=default_storage,
         null=True,
         blank=True,
         upload_to=rename_stock_item_test_result_attachment,
