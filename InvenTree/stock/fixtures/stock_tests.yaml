@@ -2,7 +2,7 @@
   pk: 1
   fields:
     stock_item: 105
-    test: "Firmware Version"
+    template: 10
     value: "0xA1B2C3D4"
     result: True
     date: 2020-02-02
@@ -11,7 +11,7 @@
   pk: 2
   fields:
     stock_item: 105
-    test: "Settings Checksum"
+    template: 9
     value: "0xAABBCCDD"
     result: True
     date: 2020-02-02
@@ -20,7 +20,7 @@
   pk: 3
   fields:
     stock_item: 105
-    test: "Temperature Test"
+    template: 8
     result: False
     date: 2020-05-16
     notes: 'Got too hot or something'
@@ -29,7 +29,7 @@
   pk: 4
   fields:
     stock_item: 105
-    test: "Temperature Test"
+    template: 8
     result: True
     date: 2020-05-17
     notes: 'Passed temperature test by making it cooler'
@@ -38,7 +38,7 @@
   pk: 5
   fields:
     stock_item: 522
-    test: 'applypaint'
+    template: 2
     result: True
     date: 2020-05-17
 
@@ -46,7 +46,7 @@
   pk: 6
   fields:
     stock_item: 522
-    test: 'applypaint'
+    template: 2
     result: False
     date: 2020-05-18
 
@@ -54,7 +54,7 @@
   pk: 7
   fields:
     stock_item: 522
-    test: 'Attach Legs'
+    template: 4
     result: True
     date: 2020-05-17
 
@@ -62,15 +62,6 @@
   pk: 8
   fields:
     stock_item: 522
-    test: 'Check that chair is GreEn'
+    template: 3
     result: True
-    date: 2020-05-17
-
-- model: stock.stockitemtestresult
-  pk: 12345
-  fields:
-    stock_item: 522
-    test: 'test strength of chair'
-    result: False
-    value: 100kg
-    date: 2020-05-17
+    date: 2024-02-15

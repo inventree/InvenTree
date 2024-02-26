@@ -421,7 +421,7 @@ def progress_bar(val, max_val, *args, **kwargs):
         style_tags.append(f'max-width: {max_width};')
 
     html = f"""
-    <div id='{item_id}' class='progress' style='{" ".join(style_tags)}'>
+    <div id='{item_id}' class='progress' style='{' '.join(style_tags)}'>
         <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
         <div class='progress-value'>{val} / {max_val}</div>
     </div>
@@ -504,17 +504,6 @@ def keyvalue(dict, key):
     {% mydict|keyvalue:mykey %}
     """
     return dict.get(key)
-
-
-@register.simple_tag()
-def call_method(obj, method_name, *args):
-    """Enables calling model methods / functions from templates with arguments.
-
-    Usage:
-    {% call_method model_object 'fnc_name' argument1 %}
-    """
-    method = getattr(obj, method_name)
-    return method(*args)
 
 
 @register.simple_tag()

@@ -52,6 +52,11 @@ export default function PartParameterTemplateTable() {
         switchable: false
       },
       {
+        accessor: 'parts',
+        sortable: true,
+        switchable: true
+      },
+      {
         accessor: 'units',
         sortable: true
       },

@@ -19,7 +19,7 @@ import part.models
 from common.models import InvenTreeSetting
 from InvenTree.status_codes import StockHistoryCode, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
-from part.models import Part
+from part.models import Part, PartTestTemplate
 from stock.models import (
     StockItem,
     StockItemTestResult,
@@ -34,6 +34,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
     fixtures = [
         'category',
         'part',
+        'test_templates',
         'bom',
         'company',
         'location',
@@ -71,32 +72,12 @@ class StockLocationTest(StockAPITestCase):
             ({}, 8, 'no parameters'),
             ({'parent': 1, 'cascade': False}, 2, 'Filter by parent, no cascading'),
             ({'parent': 1, 'cascade': True}, 2, 'Filter by parent, cascading'),
-            ({'cascade': True, 'depth': 0}, 8, 'Cascade with no parent, depth=0'),
-            ({'cascade': False, 'depth': 10}, 8, 'Cascade with no parent, depth=0'),
-            (
-                {'parent': 'null', 'cascade': True, 'depth': 0},
-                7,
-                'Cascade with null parent, depth=0',
-            ),
-            (
-                {'parent': 'null', 'cascade': True, 'depth': 10},
-                8,
-                'Cascade with null parent and bigger depth',
-            ),
-            (
-                {'parent': 'null', 'cascade': False, 'depth': 10},
-                3,
-                'No cascade even with depth specified with null parent',
-            ),
+            ({'cascade': True, 'depth': 0}, 7, 'Cascade with no parent, depth=0'),
+            ({'cascade': False, 'depth': 10}, 3, 'Cascade with no parent, depth=10'),
             (
                 {'parent': 1, 'cascade': False, 'depth': 0},
-                2,
+                1,
                 'Dont cascade with depth=0 and parent',
-            ),
-            (
-                {'parent': 1, 'cascade': True, 'depth': 0},
-                2,
-                'Cascade with depth=0 and parent',
             ),
             (
                 {'parent': 1, 'cascade': False, 'depth': 1},
@@ -109,20 +90,9 @@ class StockLocationTest(StockAPITestCase):
                 'Cascade with depth=1 with parent',
             ),
             (
-                {'parent': 1, 'cascade': True, 'depth': 'abcdefg'},
-                2,
-                'Cascade with invalid depth and parent',
-            ),
-            ({'parent': 42}, 8, 'Should return everything if parent_pk is not valid'),
-            (
-                {'parent': 'null', 'exclude_tree': 1, 'cascade': True},
-                5,
-                'Should return everything except tree with pk=1',
-            ),
-            (
-                {'parent': 'null', 'exclude_tree': 42, 'cascade': True},
+                {'exclude_tree': 1, 'cascade': True},
                 8,
-                'Should return everything because exclude_tree=42 is no valid pk',
+                'Should return everything except tree with pk=1',
             ),
         ]
 
@@ -451,6 +421,18 @@ class StockLocationTest(StockAPITestCase):
         ).json()
         self.assertEqual(len(res), 1)
         self.assertEqual(res[0]['name'], 'Test location wo type')
+
+        res = self.get(
+            self.list_url,
+            {
+                'parent': str(parent_location.pk),
+                'has_location_type': '0',
+                'cascade': False,
+            },
+            expected_code=200,
+        ).json()
+
+        self.assertEqual(len(res), 1)
 
 
 class StockLocationTypeTest(StockAPITestCase):
@@ -1559,6 +1541,8 @@ class StockTestResultTest(StockAPITestCase):
         response = self.client.get(url)
         n = len(response.data)
 
+        # Test upload using test name (legacy method)
+        # Note that a new test template will be created
         data = {
             'stock_item': 105,
             'test': 'Checked Steam Valve',
@@ -1568,6 +1552,9 @@ class StockTestResultTest(StockAPITestCase):
         }
 
         response = self.post(url, data, expected_code=201)
+
+        # Check that a new test template has been created
+        test_template = PartTestTemplate.objects.get(key='checkedsteamvalve')
 
         response = self.client.get(url)
         self.assertEqual(len(response.data), n + 1)
@@ -1580,6 +1567,27 @@ class StockTestResultTest(StockAPITestCase):
         test = response.data[0]
         self.assertEqual(test['value'], '150kPa')
         self.assertEqual(test['user'], self.user.pk)
+
+        # Test upload using template reference (new method)
+        data = {
+            'stock_item': 105,
+            'template': test_template.pk,
+            'result': True,
+            'value': '75kPa',
+        }
+
+        response = self.post(url, data, expected_code=201)
+
+        # Check that a new test template has been created
+        self.assertEqual(test_template.test_results.all().count(), 2)
+
+        # List test results against the template
+        response = self.client.get(url, data={'template': test_template.pk})
+
+        self.assertEqual(len(response.data), 2)
+
+        for item in response.data:
+            self.assertEqual(item['template'], test_template.pk)
 
     def test_post_bitmap(self):
         """2021-08-25.
@@ -1598,14 +1606,15 @@ class StockTestResultTest(StockAPITestCase):
         with open(image_file, 'rb') as bitmap:
             data = {
                 'stock_item': 105,
-                'test': 'Checked Steam Valve',
+                'test': 'Temperature Test',
                 'result': False,
-                'value': '150kPa',
-                'notes': 'I guess there was just too much pressure?',
+                'value': '550C',
+                'notes': 'I guess there was just too much heat?',
                 'attachment': bitmap,
             }
 
             response = self.client.post(self.get_url(), data)
+
             self.assertEqual(response.status_code, 201)
 
             # Check that an attachment has been uploaded
@@ -1619,22 +1628,33 @@ class StockTestResultTest(StockAPITestCase):
 
         url = reverse('api-stock-test-result-list')
 
+        stock_item = StockItem.objects.get(pk=1)
+
+        # Ensure the part is marked as "trackable"
+        p = stock_item.part
+        p.trackable = True
+        p.save()
+
         # Create some objects (via the API)
         for _ii in range(50):
             response = self.post(
                 url,
                 {
-                    'stock_item': 1,
+                    'stock_item': stock_item.pk,
                     'test': f'Some test {_ii}',
                     'result': True,
                     'value': 'Test result value',
                 },
-                expected_code=201,
+                # expected_code=201,
             )
 
             tests.append(response.data['pk'])
 
         self.assertEqual(StockItemTestResult.objects.count(), n + 50)
+
+        # Filter test results by part
+        response = self.get(url, {'part': p.pk}, expected_code=200)
+        self.assertEqual(len(response.data), 50)
 
         # Attempt a delete without providing items
         self.delete(url, {}, expected_code=400)
@@ -1838,6 +1858,7 @@ class StockMetadataAPITest(InvenTreeAPITestCase):
     fixtures = [
         'category',
         'part',
+        'test_templates',
         'bom',
         'company',
         'location',

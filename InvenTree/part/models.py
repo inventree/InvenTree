@@ -133,7 +133,9 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     def get_absolute_url(self):
         """Return the web URL associated with the detail view for this PartCategory instance."""
-        return reverse('category-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('category-detail', kwargs={'pk': self.id})
+        return helpers.pui_url(f'/part/category/{self.id}')
 
     def clean(self):
         """Custom clean action for the PartCategory model.
@@ -755,7 +757,9 @@ class Part(
 
     def get_absolute_url(self):
         """Return the web URL for viewing this part."""
-        return reverse('part-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('part-detail', kwargs={'pk': self.id})
+        return helpers.pui_url(f'/part/{self.id}')
 
     def get_image_url(self):
         """Return the URL of the image for this part."""
@@ -2125,7 +2129,7 @@ class Part(
 
             parameter.save()
 
-    def getTestTemplates(self, required=None, include_parent=True):
+    def getTestTemplates(self, required=None, include_parent=True, enabled=None):
         """Return a list of all test templates associated with this Part.
 
         These are used for validation of a StockItem.
@@ -2144,6 +2148,9 @@ class Part(
         if required is not None:
             tests = tests.filter(required=required)
 
+        if enabled is not None:
+            tests = tests.filter(enabled=enabled)
+
         return tests
 
     def getTestTemplateMap(self, **kwargs):
@@ -2155,9 +2162,16 @@ class Part(
 
         return templates
 
-    def getRequiredTests(self):
-        """Return the tests which are required by this part."""
-        return self.getTestTemplates(required=True)
+    def getRequiredTests(self, include_parent=True, enabled=True):
+        """Return the tests which are required by this part.
+
+        Arguments:
+            include_parent: If True, include tests which are defined for parent parts
+            enabled: If set (either True or False), filter by template "enabled" status
+        """
+        return self.getTestTemplates(
+            required=True, enabled=enabled, include_parent=include_parent
+        )
 
     @property
     def attachment_count(self):
@@ -3395,6 +3409,10 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     run on the model (refer to the validate_unique function).
     """
 
+    def __str__(self):
+        """Format a string representation of this PartTestTemplate."""
+        return ' | '.join([self.part.name, self.test_name])
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the PartTestTemplate model."""
@@ -3410,6 +3428,8 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         """Clean fields for the PartTestTemplate model."""
         self.test_name = self.test_name.strip()
 
+        self.key = helpers.generateTestKey(self.test_name)
+
         self.validate_unique()
         super().clean()
 
@@ -3420,29 +3440,17 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
                 'part': _('Test templates can only be created for trackable parts')
             })
 
-        # Get a list of all tests "above" this one
+        # Check that this test is unique within the part tree
         tests = PartTestTemplate.objects.filter(
-            part__in=self.part.get_ancestors(include_self=True)
-        )
+            key=self.key, part__tree_id=self.part.tree_id
+        ).exclude(pk=self.pk)
 
-        # If this item is already in the database, exclude it from comparison!
-        if self.pk is not None:
-            tests = tests.exclude(pk=self.pk)
-
-        key = self.key
-
-        for test in tests:
-            if test.key == key:
-                raise ValidationError({
-                    'test_name': _('Test with this name already exists for this part')
-                })
+        if tests.exists():
+            raise ValidationError({
+                'test_name': _('Test with this name already exists for this part')
+            })
 
         super().validate_unique(exclude)
-
-    @property
-    def key(self):
-        """Generate a key for this test."""
-        return helpers.generateTestKey(self.test_name)
 
     part = models.ForeignKey(
         Part,
@@ -3459,12 +3467,23 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('Enter a name for the test'),
     )
 
+    key = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_('Test Key'),
+        help_text=_('Simplified key for the test'),
+    )
+
     description = models.CharField(
         blank=False,
         null=True,
         max_length=100,
         verbose_name=_('Test Description'),
         help_text=_('Enter description for this test'),
+    )
+
+    enabled = models.BooleanField(
+        default=True, verbose_name=_('Enabled'), help_text=_('Is this test enabled?')
     )
 
     required = models.BooleanField(

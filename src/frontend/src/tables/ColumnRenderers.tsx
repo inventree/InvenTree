@@ -74,7 +74,9 @@ export function ReferenceColumn(): TableColumn {
 export function NoteColumn(): TableColumn {
   return {
     accessor: 'note',
-    sortable: false
+    sortable: false,
+    title: t`Note`,
+    render: (record: any) => record.note ?? record.notes
   };
 }
 
@@ -116,6 +118,15 @@ export function ResponsibleColumn(): TableColumn {
     sortable: true,
     render: (record: any) =>
       record.responsible && RenderOwner({ instance: record.responsible_detail })
+  };
+}
+
+export function DateColumn(): TableColumn {
+  return {
+    accessor: 'date',
+    sortable: true,
+    title: t`Date`,
+    render: (record: any) => renderDate(record.date)
   };
 }
 

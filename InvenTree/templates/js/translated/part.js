@@ -2818,6 +2818,7 @@ function partTestTemplateFields(options={}) {
         required: {},
         requires_value: {},
         requires_attachment: {},
+        enabled: {},
         part: {
             hidden: true,
         }
@@ -2862,15 +2863,36 @@ function loadPartTestTemplateTable(table, options) {
                 field: 'pk',
                 title: 'ID',
                 visible: false,
+                switchable: false,
             },
             {
                 field: 'test_name',
                 title: '{% trans "Test Name" %}',
                 sortable: true,
+                formatter: function(value, row) {
+                    let html = value;
+
+                    if (row.results && row.results > 0) {
+                        html += `
+                        <span class='badge bg-dark rounded-pill float-right' title='${row.results} {% trans "results" %}'>
+                            ${row.results}
+                        </span>`;
+                    }
+
+                    return html;
+                }
             },
             {
                 field: 'description',
                 title: '{% trans "Description" %}',
+            },
+            {
+                field: 'enabled',
+                title: '{% trans "Enabled" %}',
+                sortable: true,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
             },
             {
                 field: 'required',
@@ -2909,7 +2931,7 @@ function loadPartTestTemplateTable(table, options) {
                     } else {
                         var text = '{% trans "This test is defined for a parent part" %}';
 
-                        return renderLink(text, `/part/${row.part}/tests/`);
+                        return renderLink(text, `/part/${row.part}/?display=test-templates`);
                     }
                 }
             }

@@ -271,8 +271,6 @@
             params: {
                 {% if location %}
                 parent: {{ location.pk }},
-                {% else %}
-                parent: 'null',
                 {% endif %}
             },
             allowTreeView: true,

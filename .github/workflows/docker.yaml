@@ -103,6 +103,9 @@ jobs:
           docker-compose run inventree-dev-server invoke test --disable-pty
           docker-compose run inventree-dev-server invoke test --migrations --disable-pty
           docker-compose down
+      - name: Clean up test folder
+        run: |
+          rm -rf InvenTree/_testfolder
       - name: Set up QEMU
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # pin@v3.0.0

@@ -7,6 +7,7 @@ from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.utils import model_meta
 
+import common.models
 import InvenTree.permissions
 import users.models
 from InvenTree.helpers import str2bool
@@ -208,7 +209,10 @@ class InvenTreeMetadata(SimpleMetadata):
                         pk = kwargs[field]
                         break
 
-                if pk is not None:
+                if issubclass(model_class, common.models.BaseInvenTreeSetting):
+                    instance = model_class.get_setting_object(**kwargs, create=False)
+
+                elif pk is not None:
                     try:
                         instance = model_class.objects.get(pk=pk)
                     except (ValueError, model_class.DoesNotExist):

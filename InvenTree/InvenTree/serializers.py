@@ -25,7 +25,6 @@ from taggit.serializers import TaggitSerializer
 import common.models as common_models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
-from InvenTree.helpers_model import download_image_from_url, get_base_url
 
 
 class EmptySerializer(serializers.Serializer):
@@ -158,8 +157,15 @@ class DependentField(serializers.Field):
 
         # check if the request data contains the dependent fields, otherwise skip getting the child
         for f in self.depends_on:
-            if not data.get(f, None):
-                return
+            if data.get(f, None) is None:
+                if (
+                    self.parent
+                    and (v := getattr(self.parent.fields[f], 'default', None))
+                    is not None
+                ):
+                    data[f] = v
+                else:
+                    return
 
         # partially validate the data for options requests that set raise_exception while calling .get_child(...)
         if raise_exception:
@@ -448,6 +454,8 @@ class UserCreateSerializer(ExendedUserSerializer):
 
     def create(self, validated_data):
         """Send an e email to the user after creation."""
+        from InvenTree.helpers_model import get_base_url
+
         base_url = get_base_url()
 
         instance = super().create(validated_data)
@@ -855,6 +863,8 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
         - Attempt to download the image and store it against this object instance
         - Catches and re-throws any errors
         """
+        from InvenTree.helpers_model import download_image_from_url
+
         if not url:
             return
 

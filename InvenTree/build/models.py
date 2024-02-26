@@ -4,6 +4,7 @@ import decimal
 import logging
 import os
 from datetime import datetime
+from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -161,7 +162,9 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
 
     def get_absolute_url(self):
         """Return the web URL associated with this BuildOrder"""
-        return reverse('build-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('build-detail', kwargs={'pk': self.id})
+        return InvenTree.helpers.pui_url(f'/build/{self.id}')
 
     reference = models.CharField(
         unique=True,
@@ -914,6 +917,11 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
 
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
+
+        if (common.settings.prevent_build_output_complete_on_incompleted_tests() and output.hasRequiredTests() and not output.passedAllRequiredTests()):
+            serial = output.serial
+            raise ValidationError(
+                _(f"Build output {serial} has not passed all required tests"))
 
         for build_item in allocated_items:
             # Complete the allocation of stock for that item
