@@ -8,6 +8,7 @@ site_author: InvenTree
 repo_url: https://github.com/inventree/inventree
 repo_name: inventree/inventree
 
+
 # Theme
 theme:
   name: material
@@ -273,6 +274,8 @@ extra:
   # analytics:
   #  provider: google
   #  property: UA-143467500-1
+
+  django_version: 4.2
 
   version:
     default: stable

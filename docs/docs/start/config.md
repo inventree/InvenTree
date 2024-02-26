@@ -56,7 +56,7 @@ The following basic options are available:
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
 | INVENTREE_SITE_URL | site_url | Specify a fixed site URL | *Not specified* |
-| INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface](https://docs.djangoproject.com/en/4.2/ref/contrib/admin/) | True |
+| INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) | True |
 | INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
 | INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
@@ -64,7 +64,7 @@ The following basic options are available:
 
 ### Admin Site
 
-Django provides a powerful [administrator interface](https://docs.djangoproject.com/en/4.2/ref/contrib/admin/) which can be used to manage the InvenTree database. This interface is enabled by default, but can be disabled by setting `INVENTREE_ADMIN_ENABLED` to `False`.
+Django provides a powerful [administrator interface]({% include "django.html" %}/ref/contrib/admin/) which can be used to manage the InvenTree database. This interface is enabled by default, but can be disabled by setting `INVENTREE_ADMIN_ENABLED` to `False`.
 
 #### Custom Admin URL
 
@@ -201,7 +201,7 @@ A list of currency codes (e.g. *AUD*, *CAD*, *JPY*, *USD*) can be specified usin
 Depending on how your InvenTree installation is configured, you will need to pay careful attention to the following settings. If you are running your server behind a proxy, or want to adjust support for CORS requests, one or more of the following settings may need to be adjusted.
 
 !!! warning "Advanced Users"
-    The following settings require a certain assumed level of knowledge. You should also refer to the [django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/) for more information.
+    The following settings require a certain assumed level of knowledge. You should also refer to the [django documentation]({% include "django.html" %}/ref/settings/) for more information.
 
 !!! danger "Not Secure"
     Allowing access from any host is not secure, and should be adjusted for your installation.
@@ -215,7 +215,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
 | INVENTREE_ALLOWED_HOSTS | allowed_hosts | List of allowed hosts | `*` |
-| INVENTREE_TRUSTED_ORIGINS | trusted_origins | List of trusted origins. Refer to the [django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
+| INVENTREE_TRUSTED_ORIGINS | trusted_origins | List of trusted origins. Refer to the [django documentation]({% include "django.html" %}/ref/settings/#csrf-trusted-origins) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
 | INVENTREE_CORS_ORIGIN_ALLOW_ALL | cors.allow_all | Allow all remote URLS for CORS checks | False |
 | INVENTREE_CORS_ORIGIN_WHITELIST | cors.whitelist | List of whitelisted CORS URLs. Refer to the [django-cors-headers documentation](https://github.com/adamchainz/django-cors-headers#cors_allowed_origins-sequencestr) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | False |

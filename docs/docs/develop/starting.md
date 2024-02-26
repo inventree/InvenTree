@@ -8,9 +8,9 @@ As part of the larger project other languages/techniques are used, such as docke
 ### Getting started
 #### Getting to know the basics
 
-The Django framework is a powerful tool for creating web applications. It is well documented and has a large community. The [Django documentation](https://docs.djangoproject.com/en/stable/) is a good place to start.
+The Django framework is a powerful tool for creating web applications. It is well documented and has a large community. The [Django documentation]({% include "django.html" %}) is a good place to start.
 
-In particular the [tutorial](https://docs.djangoproject.com/en/stable/intro/tutorial01/) is a good way to get to know the basics of Django.
+In particular the [tutorial]({% include "django.html" %}/intro/tutorial01/) is a good way to get to know the basics of Django.
 InvenTree follows the best practies for Django so most of the contents should be applicable to InvenTree as well. The REST API is based on the [Django REST framework](https://www.django-rest-framework.org/).
 
 #### Setting up a development environment

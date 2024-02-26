@@ -9,7 +9,7 @@ title: Bare Metal Production Server
 
 The following instructions provide a reasonably performant server, using [gunicorn](https://gunicorn.org/) as a webserver, and [supervisor](http://supervisord.org/) as a process manager.
 
-For alternative deployment methods, django apps provide multiple deployment methods - see the [Django documentation](https://docs.djangoproject.com/en/2.2/howto/deployment/).
+For alternative deployment methods, django apps provide multiple deployment methods - see the [Django documentation]({% include "django.html" %}/howto/deployment/).
 
 There are also numerous online tutorials describing how to deploy a Django application either locally or on an online platform.
 

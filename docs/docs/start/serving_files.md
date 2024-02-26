@@ -9,7 +9,7 @@ In production, the InvenTree web server software *does not* provide hosting of s
 When running in [production mode](./bare_prod.md) (i.e. the `INVENTREE_DEBUG` flag is disabled), a separate web server is required for serving *static* and *media* files. In `DEBUG` mode, the django webserver facilitates delivery of *static* and *media* files, but this is explicitly not suitable for a production environment.
 
 !!! into "Read More"
-    You can find further information in the [django documentation](https://docs.djangoproject.com/en/dev/howto/static-files/deployment/).
+    You can find further information in the [django documentation]({% include "django.html" %}/howto/static-files/deployment/).
 
 There are *many* different ways that a sysadmin might wish to handle this - and it depends on your particular installation requirements.
 
