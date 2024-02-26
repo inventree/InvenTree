@@ -71,10 +71,7 @@ services:
     # Uses gunicorn as the web server
     inventree-server:
         # If you wish to specify a particular InvenTree version, do so here
-        # image: inventree/inventree:${INVENTREE_TAG:-stable}
-        build:
-            context: ..
-            target: production
+        image: inventree/inventree:${INVENTREE_TAG:-stable}
         container_name: inventree-server
         # Only change this port if you understand the stack.
         # If you change this you have to change:
