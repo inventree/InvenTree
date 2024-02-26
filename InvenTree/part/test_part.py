@@ -55,6 +55,10 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test the plugins_enabled tag."""
         self.assertEqual(inventree_extras.plugins_enabled(), True)
 
+    def test_plugins_install_disabled(self):
+        """Test the plugins_install_disabled tag."""
+        self.assertEqual(inventree_extras.plugins_install_disabled(), False)
+
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
