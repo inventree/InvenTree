@@ -13,6 +13,7 @@ from decimal import Decimal, InvalidOperation
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
@@ -49,7 +50,6 @@ from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
-from InvenTree.files import default_storage
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
 from InvenTree.status_codes import (
     BuildStatusGroups,

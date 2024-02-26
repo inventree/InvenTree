@@ -7,6 +7,7 @@ import sys
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
@@ -18,7 +19,6 @@ import build.models
 import InvenTree.models
 import part.models
 import stock.models
-from InvenTree.files import default_storage
 from InvenTree.helpers import normalize, validateFilterString
 from InvenTree.helpers_model import get_base_url
 from plugin.registry import registry

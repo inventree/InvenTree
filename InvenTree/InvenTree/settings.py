@@ -1182,9 +1182,10 @@ MEDIA_ROOT = config.get_media_dir()
 TEMPLATES[0]['DIRS'] += [MEDIA_ROOT.joinpath('report'), MEDIA_ROOT.joinpath('label')]
 
 # URLs and storage classes
+# Replace these to use custom storage like S3
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)

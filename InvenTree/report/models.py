@@ -7,6 +7,7 @@ import sys
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template import Context, Template
@@ -22,7 +23,6 @@ import order.models
 import part.models
 import report.helpers
 import stock.models
-from InvenTree.files import default_storage
 from InvenTree.helpers import validateFilterString
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
