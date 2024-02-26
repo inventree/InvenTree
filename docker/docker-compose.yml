@@ -49,7 +49,7 @@ services:
             - POSTGRES_DB=${INVENTREE_DB_NAME:?You must provide the 'INVENTREE_DB_NAME' variable in the .env file}
         volumes:
             # Map 'data' volume such that postgres database is stored externally
-            - ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}:/var/lib/postgresql/data/:z
+            - inventree_data:/var/lib/postgresql/data/:z
         restart: unless-stopped
 
     # redis acts as database cache manager
@@ -71,7 +71,10 @@ services:
     # Uses gunicorn as the web server
     inventree-server:
         # If you wish to specify a particular InvenTree version, do so here
-        image: inventree/inventree:${INVENTREE_TAG:-stable}
+        # image: inventree/inventree:${INVENTREE_TAG:-stable}
+        build:
+            context: ..
+            target: production
         container_name: inventree-server
         # Only change this port if you understand the stack.
         # If you change this you have to change:
@@ -85,7 +88,7 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
+            - inventree_data:/home/inventree/data:z
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -100,7 +103,7 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
+            - inventree_data:/home/inventree/data:z
         restart: unless-stopped
 
     # caddy acts as reverse proxy and static file server
@@ -117,8 +120,25 @@ services:
         env_file:
             - .env
         volumes:
-            - ${INVENTREE_EXT_VOLUME}:/var/www:z
-            - ${INVENTREE_EXT_VOLUME}:/var/log:z
-            - ${INVENTREE_EXT_VOLUME}/caddy/data:/data:z
-            - ${INVENTREE_EXT_VOLUME}/caddy/config:/config:z
+            - inventree_data:/var/www:z
+            - inventree_data:/var/log:z
+            - caddy:/:z
             - ./Caddyfile:/etc/caddy/Caddyfile:ro
+
+# Persistent data, stored external to the container(s)
+volumes:
+    inventree_data:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            # This directory specified where InvenTree data are stored "outside" the docker containers
+            device: ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}
+
+    caddy:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            # This directory specified where Caddy data are stored "outside" the docker containers
+            device: ${INVENTREE_EXT_VOLUME}/caddy
