@@ -194,6 +194,7 @@ class ReportTest(InvenTreeAPITestCase):
         'part',
         'company',
         'location',
+        'test_templates',
         'supplier_part',
         'stock',
         'stock_tests',

@@ -57,7 +57,7 @@ class PartResource(InvenTreeResource):
         attribute='units', column_name=_('Units'), widget=widgets.CharWidget()
     )
     notes = Field(attribute='notes', column_name=_('Notes'))
-    image = Field(attribute='image', column_name=_('Part Image'), readonly=True)
+    image = Field(attribute='image', column_name=_('Part Image'))
     category = Field(
         attribute='category',
         column_name=_('Category ID'),
@@ -363,6 +363,7 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
     """Admin class for the PartTestTemplate model."""
 
     list_display = ('part', 'test_name', 'required')
+    readonly_fields = ['key']
 
     autocomplete_fields = ('part',)
 

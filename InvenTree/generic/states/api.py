@@ -75,10 +75,16 @@ class AllStatusViews(StatusView):
         """Perform a GET request to learn information about status codes."""
         data = {}
 
-        for status_class in StatusCode.__subclasses__():
-            data[status_class.__name__] = {
-                'class': status_class.__name__,
-                'values': status_class.dict(),
-            }
+        def discover_status_codes(parent_status_class, prefix=None):
+            """Recursively discover status classes."""
+            for status_class in parent_status_class.__subclasses__():
+                name = '__'.join([*(prefix or []), status_class.__name__])
+                data[name] = {
+                    'class': status_class.__name__,
+                    'values': status_class.dict(),
+                }
+                discover_status_codes(status_class, [name])
+
+        discover_status_codes(StatusCode)
 
         return Response(data)

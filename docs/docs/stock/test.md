@@ -14,9 +14,9 @@ The master "Part" record for the stock item can define multiple [test templates]
 
 ### Test Result Fields
 
-#### Test Name
+#### Test Template
 
-The name of the test data is used to associate the test with a test template object.
+The *template* field links to a [Part Test Template](../part/test.md#part-test-templates) object. Each test result instance must link to a test template.
 
 #### Result
 

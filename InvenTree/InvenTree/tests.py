@@ -12,7 +12,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, tag
 from django.urls import reverse
 
 import pint.errors
@@ -29,6 +29,7 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 from common.models import CustomUnit, InvenTreeSetting
 from common.settings import currency_codes
+from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartCategory
@@ -56,6 +57,43 @@ class ConversionTest(TestCase):
         for val, expected in tests.items():
             q = InvenTree.conversion.convert_physical_value(val, 'm')
             self.assertAlmostEqual(q, expected, 3)
+
+    def test_engineering_units(self):
+        """Test that conversion works with engineering notation."""
+        # Run some basic checks over the helper function
+        tests = [
+            ('3', '3'),
+            ('3k3', '3.3k'),
+            ('123R45', '123.45R'),
+            ('10n5F', '10.5nF'),
+        ]
+
+        for val, expected in tests:
+            self.assertEqual(
+                InvenTree.conversion.from_engineering_notation(val), expected
+            )
+
+        # Now test the conversion function
+        tests = [('33k3ohm', 33300), ('123kohm45', 123450), ('10n005', 0.000000010005)]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, 'ohm', strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 12)
+
+    def test_scientific_notation(self):
+        """Test that scientific notation is handled correctly."""
+        tests = [
+            ('3E2', 300),
+            ('-12.3E-3', -0.0123),
+            ('1.23E-3', 0.00123),
+            ('99E9', 99000000000),
+        ]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(val, strip_units=True)
+            self.assertAlmostEqual(output, expected, 6)
 
     def test_base_units(self):
         """Test conversion to specified base units."""
@@ -507,6 +545,20 @@ class TestHelpers(TestCase):
 
         self.assertNotIn(PartCategory, models)
         self.assertNotIn(InvenTreeSetting, models)
+
+    def test_test_key(self):
+        """Test for the generateTestKey function."""
+        tests = {
+            ' Hello World ': 'helloworld',
+            ' MY NEW TEST KEY ': 'mynewtestkey',
+            ' 1234 5678': '_12345678',
+            ' 100 percenT': '_100percent',
+            ' MY_NEW_TEST': 'my_new_test',
+            ' 100_new_tests': '_100_new_tests',
+        }
+
+        for name, key in tests.items():
+            self.assertEqual(helpers.generateTestKey(name), key)
 
 
 class TestQuoteWrap(TestCase):
@@ -990,9 +1042,12 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
+        with self.in_env_context({
+            'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
+        }):
             self.assertIn(
-                'inventree/my_special_conf.yaml', str(config.get_config_file()).lower()
+                'inventree/_testfolder/my_special_conf.yaml',
+                str(config.get_config_file()).lower(),
             )
 
     def test_helpers_plugin_file(self):
@@ -1006,8 +1061,12 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
-            self.assertIn('my_special_plugins.txt', str(config.get_plugin_file()))
+        with self.in_env_context({
+            'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
+        }):
+            self.assertIn(
+                '_testfolder/my_special_plugins.txt', str(config.get_plugin_file())
+            )
 
     def test_helpers_setting(self):
         """Test get_setting."""
@@ -1267,6 +1326,8 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.wsgi_request.user, self.user)
 
 
+# TODO - refactor to not use CUI
+@tag('cui')
 class MaintenanceModeTest(InvenTreeTestCase):
     """Unit tests for maintenance mode."""
 
@@ -1317,3 +1378,98 @@ class MaintenanceModeTest(InvenTreeTestCase):
         set_maintenance_mode(False)
         self.assertFalse(get_maintenance_mode())
         self.assertEqual(InvenTreeSetting.get_setting(KEY, None), '')
+
+
+class ClassValidationMixinTest(TestCase):
+    """Tests for the ClassValidationMixin class."""
+
+    class BaseTestClass(ClassValidationMixin):
+        """A valid class that inherits from ClassValidationMixin."""
+
+        NAME: str
+
+        def test(self):
+            """Test function."""
+            pass
+
+        def test1(self):
+            """Test function."""
+            pass
+
+        def test2(self):
+            """Test function."""
+            pass
+
+        required_attributes = ['NAME']
+        required_overrides = [test, [test1, test2]]
+
+    class InvalidClass:
+        """An invalid class that does not inherit from ClassValidationMixin."""
+
+        pass
+
+    def test_valid_class(self):
+        """Test that a valid class passes the validation."""
+
+        class TestClass(self.BaseTestClass):
+            """A valid class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test(self):
+                """Test function."""
+                pass
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        TestClass.validate()
+
+    def test_invalid_class(self):
+        """Test that an invalid class fails the validation."""
+
+        class TestClass1(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass1\'>\' did not provide the following attributes: NAME and did not override the required attributes: test, one of test1 or test2',
+        ):
+            TestClass1.validate()
+
+        class TestClass2(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass2\'>\' did not override the required attributes: test',
+        ):
+            TestClass2.validate()
+
+
+class ClassProviderMixinTest(TestCase):
+    """Tests for the ClassProviderMixin class."""
+
+    class TestClass(ClassProviderMixin):
+        """This class is a dummy class to test the ClassProviderMixin."""
+
+        pass
+
+    def test_get_provider_file(self):
+        """Test the get_provider_file function."""
+        self.assertEqual(self.TestClass.get_provider_file(), __file__)
+
+    def test_provider_plugin(self):
+        """Test the provider_plugin function."""
+        self.assertEqual(self.TestClass.get_provider_plugin(), None)
+
+    def test_get_is_builtin(self):
+        """Test the get_is_builtin function."""
+        self.assertTrue(self.TestClass.get_is_builtin())

@@ -66,12 +66,6 @@ debug: True
 # Or, use the environment variable INVENTREE_ADMIN_URL
 #admin_url: 'admin'
 
-# Set enabled frontends
-# Use the environment variable INVENTREE_CLASSIC_FRONTEND
-# classic_frontend: True
-# Use the environment variable INVENTREE_PLATFORM_FRONTEND
-# platform_frontend: True
-
 # Configure the system logging level
 # Use environment variable INVENTREE_LOG_LEVEL
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
@@ -213,14 +207,6 @@ background:
   timeout: 90
   max_attempts: 5
 
-# Optional URL schemes to allow in URL fields
-# By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']
-# Uncomment the lines below to allow extra schemes
-#extra_url_schemes:
-#  - mailto
-#  - git
-#  - ssh
-
 # Login configuration
 login_confirm_days: 3
 login_attempts: 5
@@ -244,23 +230,6 @@ remote_login_header: HTTP_REMOTE_USER
 # during the logout process (default is 'index'). Please read the docs for more details
 # https://docs.djangoproject.com/en/stable/ref/settings/#logout-redirect-url
 #logout_redirect_url: 'index'
-
-# Permit custom authentication backends
-#authentication_backends:
-#  - 'django.contrib.auth.backends.ModelBackend'
-
-#  Custom middleware, sometimes needed alongside an authentication backend change.
-#middleware:
-#  - 'django.middleware.security.SecurityMiddleware'
-#  - 'django.contrib.sessions.middleware.SessionMiddleware'
-#  - 'django.middleware.locale.LocaleMiddleware'
-#  - 'django.middleware.common.CommonMiddleware'
-#  - 'django.middleware.csrf.CsrfViewMiddleware'
-#  - 'corsheaders.middleware.CorsMiddleware'
-#  - 'django.contrib.auth.middleware.AuthenticationMiddleware'
-#  - 'django.contrib.messages.middleware.MessageMiddleware'
-#  - 'django.middleware.clickjacking.XFrameOptionsMiddleware'
-#  - 'InvenTree.middleware.AuthRequiredMiddleware'
 
 # Add SSO login-backends (see examples below)
 # social_backends:
@@ -332,22 +301,8 @@ remote_login_header: HTTP_REMOTE_USER
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
 
-# Frontend UI settings
-# frontend_settings:
-#   base_url: 'frontend'
-#   server_list:
-#     my_server1:
-#       host: https://demo.inventree.org/
-#       name: InvenTree Demo
-#   default_server: my_server1
-#   show_server_selector: false
-#   sentry_dsn: https://84f0c3ea90c64e5092e2bf5dfe325725@o1047628.ingest.sentry.io/4504160008273920
-#   environment: development
-
-# Custom flags
-# InvenTree uses django-flags; read more in their docs at https://cfpb.github.io/django-flags/conditions/
-# Use environment variable INVENTREE_FLAGS or the settings below
-# flags:
-#  MY_FLAG:
-#     - condition: 'parameter'
-#       value: 'my_flag_param1'
+# Set enabled frontends
+# Use the environment variable INVENTREE_CLASSIC_FRONTEND
+# classic_frontend: True
+# Use the environment variable INVENTREE_PLATFORM_FRONTEND
+# platform_frontend: True
