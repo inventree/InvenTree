@@ -1,14 +1,10 @@
 """label app specification."""
 
-import hashlib
 import logging
 import os
-import shutil
 import warnings
-from pathlib import Path
 
 from django.apps import AppConfig
-from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
@@ -16,7 +12,6 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.helpers
-import InvenTree.ready
 from InvenTree.config import ensure_dir
 from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
 
@@ -24,12 +19,14 @@ logger = logging.getLogger('inventree')
 
 
 class LabelConfig(AppConfig):
-    """App configuration class for the 'label' app."""
+    """Configuration class for the 'label' app."""
 
     name = 'label'
 
     def ready(self):
-        """This function is called whenever the label app is loaded."""
+        """This function is called whenever the app is loaded."""
+        import InvenTree.ready
+
         # skip loading if plugin registry is not loaded or we run in a background thread
         if (
             not InvenTree.ready.isPluginRegistryLoaded()
@@ -42,7 +39,7 @@ class LabelConfig(AppConfig):
 
         with maintenance_mode_on():
             try:
-                self.create_labels()  # pragma: no cover
+                self.create_defaults()
             except (
                 AppRegistryNotReady,
                 IntegrityError,
@@ -56,11 +53,14 @@ class LabelConfig(AppConfig):
 
         set_maintenance_mode(False)
 
-    def create_labels(self):
+    def create_defaults(self):
         """Create all default templates."""
         # Test if models are ready
-        import label.models
-
+        try:
+            import label.models
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
         assert bool(label.models.StockLocationLabel is not None)
 
         # Create the categories

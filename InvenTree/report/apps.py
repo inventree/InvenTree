@@ -2,11 +2,9 @@
 
 import logging
 import os
-import shutil
 import warnings
 
 from django.apps import AppConfig
-from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
@@ -26,7 +24,7 @@ class ReportConfig(AppConfig):
     name = 'report'
 
     def ready(self):
-        """This function is called whenever the report app is loaded."""
+        """This function is called whenever the app is loaded."""
         import InvenTree.ready
 
         # skip loading if plugin registry is not loaded or we run in a background thread
@@ -44,28 +42,39 @@ class ReportConfig(AppConfig):
         logging.getLogger('weasyprint').setLevel(logging.WARNING)
 
         with maintenance_mode_on():
-            self.create_reports()
+            try:
+                self.create_defaults()
+            except (
+                AppRegistryNotReady,
+                IntegrityError,
+                OperationalError,
+                ProgrammingError,
+            ):
+                # Database might not yet be ready
+                warnings.warn(
+                    'Database was not ready for creating reports', stacklevel=2
+                )
 
         set_maintenance_mode(False)
 
-    def create_reports(self):
-        """Create default report templates."""
+    def create_defaults(self):
+        """Create all default templates."""
+        # Test if models are ready
         try:
-            self.create_default_test_reports()
-            self.create_default_build_reports()
-            self.create_default_bill_of_materials_reports()
-            self.create_default_purchase_order_reports()
-            self.create_default_sales_order_reports()
-            self.create_default_return_order_reports()
-            self.create_default_stock_location_reports()
-        except (
-            AppRegistryNotReady,
-            IntegrityError,
-            OperationalError,
-            ProgrammingError,
-        ):
-            # Database might not yet be ready
-            warnings.warn('Database was not ready for creating reports', stacklevel=2)
+            import report.models
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
+        assert bool(report.models.TestReport is not None)
+
+        # Create the categories
+        self.create_default_test_reports()
+        self.create_default_build_reports()
+        self.create_default_bill_of_materials_reports()
+        self.create_default_purchase_order_reports()
+        self.create_default_sales_order_reports()
+        self.create_default_return_order_reports()
+        self.create_default_stock_location_reports()
 
     def create_default_reports(self, model, reports):
         """Copy default report files across to the media directory."""
