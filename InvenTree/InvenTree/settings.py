@@ -1179,11 +1179,12 @@ LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
 USE_S3 = os.getenv('USE_S3') == 'TRUE'
 USE_S3 = False
 
-STATIC_LOCATION = 'static'
-PUBLIC_MEDIA_LOCATION = 'media'
-PRIVATE_MEDIA_LOCATION = 'private'
 # Settings for served static files
 if USE_S3:
+    STATIC_LOCATION = 'static'
+    PUBLIC_MEDIA_LOCATION = 'media'
+    PRIVATE_MEDIA_LOCATION = 'private'
+
     # aws settings
     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -1193,7 +1194,7 @@ if USE_S3:
     AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 
-    # urls and storage clsses
+    # urls and storage classes
     STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/{STATIC_LOCATION}/'
     MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{PUBLIC_MEDIA_LOCATION}/'
     STATICFILES_STORAGE = 'InvenTree.storage_backends.S3StaticStorage'
@@ -1211,7 +1212,7 @@ else:
         MEDIA_ROOT.joinpath('label'),
     ]
 
-    # urls and storage clsses
+    # urls and storage classes
     STATIC_URL = '/static/'
     MEDIA_URL = '/media/'
     STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
