@@ -139,7 +139,7 @@ class LabelConfig(AppConfig):
         # Create root dir for templates
         src_dir = TEMPLATES_DIR.joinpath('label', 'templates', 'label', ref_name)
         dst_dir = MEDIA_STORAGE_DIR.joinpath('label', 'inventree', ref_name)
-        ensure_dir(dst_dir, private_storage if settings.USE_S3 else None)
+        ensure_dir(dst_dir, private_storage)
 
         # Create labels
         for label in labels:
@@ -173,10 +173,7 @@ class LabelConfig(AppConfig):
             dst_file.parent.mkdir(parents=True, exist_ok=True)
 
             # Copy file
-            if settings.USE_S3:
-                private_storage.save(filename, src_file.open('rb'))
-            else:
-                shutil.copyfile(src_file, dst_file)
+            private_storage.save(filename, src_file.open('rb'))
 
         # Check if a label matching the template already exists
         try:
