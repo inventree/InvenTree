@@ -49,7 +49,7 @@ services:
             - POSTGRES_DB=${INVENTREE_DB_NAME:?You must provide the 'INVENTREE_DB_NAME' variable in the .env file}
         volumes:
             # Map 'data' volume such that postgres database is stored externally
-            - inventree_data:/var/lib/postgresql/data/:z
+            - ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}:/var/lib/postgresql/data/:z
         restart: unless-stopped
 
     # redis acts as database cache manager
@@ -74,9 +74,6 @@ services:
         image: inventree/inventree:${INVENTREE_TAG:-stable}
         container_name: inventree-server
         # Only change this port if you understand the stack.
-        # If you change this you have to change:
-        # - the proxy settings (on two lines)
-        # - only change the exposed port - eg `1338:8000` if you want to expose the server on port 1338
         expose:
             - 8000
         depends_on:
@@ -85,7 +82,7 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - inventree_data:/home/inventree/data:z
+            - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -100,7 +97,7 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - inventree_data:/home/inventree/data:z
+            - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
         restart: unless-stopped
 
     # caddy acts as reverse proxy and static file server
@@ -117,18 +114,9 @@ services:
         env_file:
             - .env
         volumes:
-            - inventree_data:/var/www:z
-            - inventree_data:/var/log:z
-            - ${INVENTREE_EXT_VOLUME}/caddy/data:/data:z
-            - ${INVENTREE_EXT_VOLUME}/caddy/config:/config:z
             - ./Caddyfile:/etc/caddy/Caddyfile:ro
-
-# Persistent data, stored external to the container(s)
-volumes:
-    inventree_data:
-        driver: local
-        driver_opts:
-            type: none
-            o: bind
-            # This directory specified where InvenTree data are stored "outside" the docker containers
-            device: ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}
+            - ${INVENTREE_EXT_VOLUME}/static:/var/www/static:z
+            - ${INVENTREE_EXT_VOLUME}/media:/var/www/media:z
+            - ${INVENTREE_EXT_VOLUME}:/var/log:z
+            - ${INVENTREE_EXT_VOLUME}:/data:z
+            - ${INVENTREE_EXT_VOLUME}:/config:z
