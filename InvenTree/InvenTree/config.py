@@ -11,7 +11,7 @@ import warnings
 from pathlib import Path
 
 from django.core.files.base import ContentFile
-from django.core.files.storage import Storage, default_storage
+from django.core.files.storage import Storage
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
