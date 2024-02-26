@@ -175,7 +175,10 @@ class LabelConfig(AppConfig):
                 pass
 
             # Copy file
-            default_storage.save(filename, src_file.open('rb'))
+            try:
+                default_storage.save(filename, src_file.open('rb'))
+            except FileExistsError:
+                pass
 
         # Check if a label matching the template already exists
         try:

@@ -101,7 +101,10 @@ class ReportConfig(AppConfig):
 
             if do_copy:
                 logger.info("Copying test report template '%s'", dst_file)
-                default_storage.save(filename, src_file.open('rb'))
+                try:
+                    default_storage.save(filename, src_file.open('rb'))
+                except FileExistsError:
+                    pass
 
             try:
                 # Check if a report matching the template already exists
