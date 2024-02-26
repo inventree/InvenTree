@@ -7,7 +7,6 @@ import sys
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template import Context, Template
@@ -177,7 +176,6 @@ class ReportBase(InvenTree.models.InvenTreeModel):
     )
 
     template = models.FileField(
-        storage=default_storage,
         upload_to=rename_template,
         verbose_name=_('Template'),
         help_text=_('Report template file'),
@@ -613,7 +611,6 @@ class ReportSnippet(models.Model):
     """
 
     snippet = models.FileField(
-        storage=default_storage,
         upload_to=rename_snippet,
         verbose_name=_('Snippet'),
         help_text=_('Report snippet file'),
@@ -659,7 +656,6 @@ class ReportAsset(models.Model):
 
     # Asset file
     asset = models.FileField(
-        storage=default_storage,
         upload_to=rename_asset,
         verbose_name=_('Asset'),
         help_text=_('Report asset file'),

@@ -10,7 +10,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.core.files.storage import default_storage
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -556,7 +555,6 @@ class InvenTreeAttachment(InvenTreeModel):
         return str(self.link)
 
     attachment = models.FileField(
-        storage=default_storage,
         upload_to=rename_attachment,
         verbose_name=_('Attachment'),
         help_text=_('Select file to attach'),

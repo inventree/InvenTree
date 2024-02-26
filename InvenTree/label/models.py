@@ -7,7 +7,6 @@ import sys
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
@@ -125,7 +124,6 @@ class LabelTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
     label = models.FileField(
-        storage=default_storage,
         upload_to=rename_label,
         unique=True,
         blank=False,
@@ -284,11 +282,7 @@ class LabelOutput(models.Model):
 
     # File will be stored in a subdirectory
     label = models.FileField(
-        storage=default_storage,
-        upload_to=rename_label_output,
-        unique=True,
-        blank=False,
-        null=False,
+        upload_to=rename_label_output, unique=True, blank=False, null=False
     )
 
     # Creation date of label output

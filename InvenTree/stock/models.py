@@ -10,7 +10,6 @@ from decimal import Decimal, InvalidOperation
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import FieldError, ValidationError
-from django.core.files.storage import default_storage
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q, Sum
@@ -2441,7 +2440,6 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     )
 
     attachment = models.FileField(
-        storage=default_storage,
         null=True,
         blank=True,
         upload_to=rename_stock_item_test_result_attachment,
