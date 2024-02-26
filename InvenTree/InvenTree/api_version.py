@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 173
+INVENTREE_API_VERSION = 174
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v174 - 2024-02-26 : https://github.com/inventree/InvenTree/pull/6535
+    - Adds the field "plugins_install_disabled" to the Server info API endpoint
 
 v173 - 2024-02-20 : https://github.com/inventree/InvenTree/pull/6483
     - Adds "merge_items" to the PurchaseOrderLine create API endpoint
