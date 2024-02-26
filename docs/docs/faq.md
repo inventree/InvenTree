@@ -29,7 +29,7 @@ If the installed version of invoke is too old, users may see error messages duri
 - *'update' did not receive all required positional arguments!*
 - *Function has keyword-only arguments or annotations*
 
-As per the [invoke guide](./start/intro.md#invoke), the minimum required version of Invoke is `2.0.0`.
+As per the [invoke guide](./start/intro.md#invoke), the minimum required version of Invoke is `{{ config.extra.min_invoke_version }}`.
 
 To determine the version of invoke you have installed, run either:
 
