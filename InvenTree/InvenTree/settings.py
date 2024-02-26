@@ -1215,9 +1215,9 @@ else:
     # urls and storage clsses
     STATIC_URL = '/static/'
     MEDIA_URL = '/media/'
-    STATICFILES_STORAGE = 'django.files.storage.FileSystemStorage'
-    DEFAULT_FILE_STORAGE = 'django.files.storage.FileSystemStorage'
-    PRIVATE_FILE_STORAGE = 'django.files.storage.FileSystemStorage'
+    STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    PRIVATE_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
     logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
     logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
