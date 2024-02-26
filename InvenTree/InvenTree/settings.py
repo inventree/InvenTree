@@ -80,6 +80,9 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
     'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
 )
+# Disable CUI parts if CUI tests are disabled
+if TESTING and '--exclude-tag=cui' in sys.argv:
+    ENABLE_CLASSIC_FRONTEND = False
 ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
     'INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True
 )
@@ -573,6 +576,8 @@ db_options = db_config.get('OPTIONS', db_config.get('options', {}))
 
 # Specific options for postgres backend
 if 'postgres' in db_engine:  # pragma: no cover
+    from django.db.backends.postgresql.psycopg_any import IsolationLevel
+
     # Connection timeout
     if 'connect_timeout' not in db_options:
         # The DB server is in the same data center, it should not take very
@@ -636,7 +641,11 @@ if 'postgres' in db_engine:  # pragma: no cover
         serializable = get_boolean_setting(
             'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
         )
-        db_options['isolation_level'] = 4 if serializable else 2
+        db_options['isolation_level'] = (
+            IsolationLevel.SERIALIZABLE
+            if serializable
+            else IsolationLevel.READ_COMMITTED
+        )
 
 # Specific options for MySql / MariaDB backend
 elif 'mysql' in db_engine:  # pragma: no cover
