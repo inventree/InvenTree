@@ -74,7 +74,7 @@ typing-extensions==4.9.0
     # via
     #   asgiref
     #   django-test-migrations
-urllib3==2.2.0
+urllib3==1.26.18
     # via requests
 virtualenv==20.25.0
     # via pre-commit
