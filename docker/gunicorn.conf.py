@@ -4,8 +4,6 @@ import logging
 import multiprocessing
 import os
 
-data_dir = os.environ.get('INVENTREE_DATA_DIR', None)
-
 # Logger configuration
 logger = logging.getLogger('inventree')
 accesslog = '-'
