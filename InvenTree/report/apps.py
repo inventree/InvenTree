@@ -1,4 +1,4 @@
-"""Config options for the 'report' app."""
+"""Config options for the report app."""
 
 import logging
 import os
@@ -16,12 +16,13 @@ from InvenTree.config import ensure_dir
 from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
 
 logger = logging.getLogger('inventree')
+ref = 'report'
 
 
 class ReportConfig(AppConfig):
-    """Configuration class for the 'report' app."""
+    """Configuration class for the "report" app."""
 
-    name = 'report'
+    name = ref
 
     def ready(self):
         """This function is called whenever the app is loaded."""
@@ -52,7 +53,7 @@ class ReportConfig(AppConfig):
             ):
                 # Database might not yet be ready
                 warnings.warn(
-                    'Database was not ready for creating reports', stacklevel=2
+                    f'Database was not ready for creating {ref}s', stacklevel=2
                 )
 
         set_maintenance_mode(False)
@@ -68,7 +69,7 @@ class ReportConfig(AppConfig):
         assert bool(report.models.TestReport is not None)
 
         # Create the categories
-        self.create_default_reports(
+        self.create_template_dir(
             report.models.TestReport,
             [
                 {
@@ -79,7 +80,7 @@ class ReportConfig(AppConfig):
             ],
         )
 
-        self.create_default_reports(
+        self.create_template_dir(
             report.models.BuildReport,
             [
                 {
@@ -90,7 +91,7 @@ class ReportConfig(AppConfig):
             ],
         )
 
-        self.create_default_reports(
+        self.create_template_dir(
             report.models.BillOfMaterialsReport,
             [
                 {
@@ -101,7 +102,7 @@ class ReportConfig(AppConfig):
             ],
         )
 
-        self.create_default_reports(
+        self.create_template_dir(
             report.models.PurchaseOrderReport,
             [
                 {
@@ -112,7 +113,7 @@ class ReportConfig(AppConfig):
             ],
         )
 
-        self.create_default_reports(
+        self.create_template_dir(
             report.models.SalesOrderReport,
             [
                 {
@@ -123,7 +124,7 @@ class ReportConfig(AppConfig):
             ],
         )
 
-        self.create_default_reports(
+        self.create_template_dir(
             report.models.ReturnOrderReport,
             [
                 {
@@ -134,7 +135,7 @@ class ReportConfig(AppConfig):
             ],
         )
 
-        self.create_default_reports(
+        self.create_template_dir(
             report.models.StockLocationReport,
             [
                 {
@@ -145,59 +146,75 @@ class ReportConfig(AppConfig):
             ],
         )
 
-    def create_default_reports(self, model, reports):
-        """Copy default report files across to the media directory."""
-        # Source directory for report templates
-        src_dir = TEMPLATES_DIR.joinpath('report', 'templates', 'report')
+    def create_template_dir(self, model, data):
+        """Create folder and database entries for the default templates, if they do not already exist."""
+        ref_name = model.getSubdir()
 
-        # Destination directory
-        dst_dir = MEDIA_STORAGE_DIR.joinpath('report', 'inventree', model.getSubdir())
+        # Create root dir for templates
+        src_dir = TEMPLATES_DIR.joinpath(ref, 'templates', ref)
+        dst_dir = MEDIA_STORAGE_DIR.joinpath(ref, 'inventree', ref_name)
         ensure_dir(dst_dir, default_storage)
 
-        # Copy each report template across (if required)
-        for report in reports:
-            # Destination filename
-            filename = os.path.join(
-                'report', 'inventree', model.getSubdir(), report['file']
+        # Copy each template across (if required)
+        for entry in data:
+            self.create_template_file(model, src_dir, entry, ref_name)
+
+    def create_template_file(self, model, src_dir, data, ref_name):
+        """Ensure a label template is in place."""
+        # Destination filename
+        filename = os.path.join(ref, 'inventree', ref_name, data['file'])
+
+        src_file = src_dir.joinpath(data['file'])
+        dst_file = MEDIA_STORAGE_DIR.joinpath(filename)
+
+        do_copy = False
+
+        if not dst_file.exists():
+            logger.info("Report template '%s' is not present", filename)
+            do_copy = True
+        else:
+            # Check if the file contents are different
+            src_hash = InvenTree.helpers.hash_file(src_file)
+            dst_hash = InvenTree.helpers.hash_file(dst_file)
+
+            if src_hash != dst_hash:
+                logger.info("Hash differs for '%s'", filename)
+                do_copy = True
+
+        if do_copy:
+            logger.info("Copying %s template '%s'", ref, dst_file)
+            # Ensure destination dir exists
+            try:
+                dst_file.parent.mkdir(parents=True, exist_ok=True)
+            except FileExistsError:
+                pass
+
+            # Copy file
+            try:
+                default_storage.save(filename, src_file.open('rb'))
+            except FileExistsError:
+                pass
+
+        # Check if a file matching the template already exists
+        try:
+            if model.objects.filter(template=filename).exists():
+                return  # pragma: no cover
+        except Exception:
+            logger.exception(
+                "Failed to query %s for '%s' - you should run 'invoke update' first!",
+                ref,
+                filename,
             )
 
-            src_file = src_dir.joinpath(report['file'])
-            dst_file = MEDIA_STORAGE_DIR.joinpath(filename)
+        logger.info("Creating entry for %s '%s'", model, data.get('name'))
 
-            do_copy = False
+        try:
+            model.objects.create(
+                name=data['name'],
+                description=data['description'],
+                template=filename,
+                enabled=True,
+            )
 
-            if not dst_file.exists():
-                logger.info("Report template '%s' is not present", filename)
-                do_copy = True
-            else:
-                # Check if the file contents are different
-                src_hash = InvenTree.helpers.hash_file(src_file)
-                dst_hash = InvenTree.helpers.hash_file(dst_file)
-
-                if src_hash != dst_hash:
-                    logger.info("Hash differs for '%s'", filename)
-                    do_copy = True
-
-            if do_copy:
-                logger.info("Copying test report template '%s'", dst_file)
-                try:
-                    default_storage.save(filename, src_file.open('rb'))
-                except FileExistsError:
-                    pass
-
-            try:
-                # Check if a report matching the template already exists
-                if model.objects.filter(template=filename).exists():
-                    continue
-
-                logger.info("Creating new TestReport for '%s'", report.get('name'))
-
-                model.objects.create(
-                    name=report['name'],
-                    description=report['description'],
-                    template=filename,
-                    enabled=True,
-                )
-
-            except Exception:
-                pass
+        except Exception:
+            logger.warning("Failed to create %s '%s'", ref, data['name'])

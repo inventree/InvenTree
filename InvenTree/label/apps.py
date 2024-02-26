@@ -1,4 +1,4 @@
-"""label app specification."""
+"""Config options for the label app."""
 
 import logging
 import os
@@ -16,12 +16,13 @@ from InvenTree.config import ensure_dir
 from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
 
 logger = logging.getLogger('inventree')
+ref = 'label'
 
 
 class LabelConfig(AppConfig):
-    """Configuration class for the 'label' app."""
+    """Configuration class for the "label" app."""
 
-    name = 'label'
+    name = ref
 
     def ready(self):
         """This function is called whenever the app is loaded."""
@@ -48,7 +49,7 @@ class LabelConfig(AppConfig):
             ):
                 # Database might not yet be ready
                 warnings.warn(
-                    'Database was not ready for creating labels', stacklevel=2
+                    f'Database was not ready for creating {ref}s', stacklevel=2
                 )
 
         set_maintenance_mode(False)
@@ -64,9 +65,8 @@ class LabelConfig(AppConfig):
         assert bool(label.models.StockLocationLabel is not None)
 
         # Create the categories
-        self.create_labels_category(
+        self.create_template_dir(
             label.models.StockItemLabel,
-            'stockitem',
             [
                 {
                     'file': 'qr.html',
@@ -78,9 +78,8 @@ class LabelConfig(AppConfig):
             ],
         )
 
-        self.create_labels_category(
+        self.create_template_dir(
             label.models.StockLocationLabel,
-            'stocklocation',
             [
                 {
                     'file': 'qr.html',
@@ -99,9 +98,8 @@ class LabelConfig(AppConfig):
             ],
         )
 
-        self.create_labels_category(
+        self.create_template_dir(
             label.models.PartLabel,
-            'part',
             [
                 {
                     'file': 'part_label.html',
@@ -120,9 +118,8 @@ class LabelConfig(AppConfig):
             ],
         )
 
-        self.create_labels_category(
+        self.create_template_dir(
             label.models.BuildLineLabel,
-            'buildline',
             [
                 {
                     'file': 'buildline_label.html',
@@ -134,25 +131,28 @@ class LabelConfig(AppConfig):
             ],
         )
 
-    def create_labels_category(self, model, ref_name, labels):
+    def create_template_dir(self, model, data):
         """Create folder and database entries for the default templates, if they do not already exist."""
+        ref_name = model.getSubdir()
+
         # Create root dir for templates
-        src_dir = TEMPLATES_DIR.joinpath('label', 'templates', 'label', ref_name)
-        dst_dir = MEDIA_STORAGE_DIR.joinpath('label', 'inventree', ref_name)
+        src_dir = TEMPLATES_DIR.joinpath(ref, 'templates', ref, ref_name)
+        dst_dir = MEDIA_STORAGE_DIR.joinpath(ref, 'inventree', ref_name)
         ensure_dir(dst_dir, default_storage)
 
-        # Create labels
-        for label in labels:
-            self.create_template_label(model, src_dir, ref_name, label)
+        # Copy each template across (if required)
+        for entry in data:
+            self.create_template_file(model, src_dir, entry, ref_name)
 
-    def create_template_label(self, model, src_dir, ref_name, label):
+    def create_template_file(self, model, src_dir, data, ref_name):
         """Ensure a label template is in place."""
-        filename = os.path.join('label', 'inventree', ref_name, label['file'])
+        # Destination filename
+        filename = os.path.join(ref, 'inventree', ref_name, data['file'])
 
-        src_file = src_dir.joinpath(label['file'])
+        src_file = src_dir.joinpath(data['file'])
         dst_file = MEDIA_STORAGE_DIR.joinpath(filename)
 
-        to_copy = False
+        do_copy = False
 
         if dst_file.exists():
             # File already exists - let's see if it is the "same"
@@ -161,14 +161,14 @@ class LabelConfig(AppConfig):
                 src_file
             ):  # pragma: no cover
                 logger.info("Hash differs for '%s'", filename)
-                to_copy = True
+                do_copy = True
 
         else:
             logger.info("Label template '%s' is not present", filename)
-            to_copy = True
+            do_copy = True
 
-        if to_copy:
-            logger.info("Copying label template '%s'", dst_file)
+        if do_copy:
+            logger.info("Copying %s template '%s'", ref, dst_file)
             # Ensure destination dir exists
             try:
                 dst_file.parent.mkdir(parents=True, exist_ok=True)
@@ -181,27 +181,28 @@ class LabelConfig(AppConfig):
             except FileExistsError:
                 pass
 
-        # Check if a label matching the template already exists
+        # Check if a file matching the template already exists
         try:
             if model.objects.filter(label=filename).exists():
                 return  # pragma: no cover
         except Exception:
             logger.exception(
-                "Failed to query label for '%s' - you should run 'invoke update' first!",
+                "Failed to query %s for '%s' - you should run 'invoke update' first!",
+                ref,
                 filename,
             )
 
-        logger.info("Creating entry for %s '%s'", model, label['name'])
+        logger.info("Creating entry for %s '%s'", model, data.get('name'))
 
         try:
             model.objects.create(
-                name=label['name'],
-                description=label['description'],
+                name=data['name'],
+                description=data['description'],
                 label=filename,
                 filters='',
                 enabled=True,
-                width=label['width'],
-                height=label['height'],
+                width=data['width'],
+                height=data['height'],
             )
         except Exception:
-            logger.warning("Failed to create label '%s'", label['name'])
+            logger.warning("Failed to create %s '%s'", ref, data['name'])
