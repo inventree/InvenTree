@@ -28,9 +28,9 @@ if settings.USE_S3:
         file_overwrite = False
         custom_domain = False
 
-    StaticStorage = S3StaticStorage
-    PublicMediaStorage = S3PublicMediaStorage
-    PrivateMediaStorage = S3PrivateMediaStorage
+    StaticStorage = S3StaticStorage()
+    PublicMediaStorage = S3PublicMediaStorage()
+    PrivateMediaStorage = S3PrivateMediaStorage()
 else:
     StaticStorage = default_storage
     PublicMediaStorage = default_storage

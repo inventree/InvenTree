@@ -2441,7 +2441,7 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     )
 
     attachment = models.FileField(
-        storage=PrivateMediaStorage(),
+        storage=PrivateMediaStorage,
         null=True,
         blank=True,
         upload_to=rename_stock_item_test_result_attachment,

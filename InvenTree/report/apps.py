@@ -74,7 +74,7 @@ class ReportConfig(AppConfig):
 
         # Destination directory
         dst_dir = MEDIA_STORAGE_DIR.joinpath('report', 'inventree', model.getSubdir())
-        ensure_dir(dst_dir, PrivateMediaStorage() if settings.USE_S3 else None)
+        ensure_dir(dst_dir, PrivateMediaStorage if settings.USE_S3 else None)
 
         # Copy each report template across (if required)
         for report in reports:
@@ -103,7 +103,7 @@ class ReportConfig(AppConfig):
             if do_copy:
                 logger.info("Copying test report template '%s'", dst_file)
                 if settings.USE_S3:
-                    PrivateMediaStorage().save(filename, src_file.open('rb'))
+                    PrivateMediaStorage.save(filename, src_file.open('rb'))
                 else:
                     shutil.copyfile(src_file, dst_file)
 

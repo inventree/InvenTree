@@ -3250,7 +3250,7 @@ class PartStocktakeReport(models.Model):
     date = models.DateField(verbose_name=_('Date'), auto_now_add=True)
 
     report = models.FileField(
-        storage=PrivateMediaStorage(),
+        storage=PrivateMediaStorage,
         upload_to=save_stocktake_report,
         unique=False,
         blank=False,

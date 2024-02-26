@@ -556,7 +556,7 @@ class InvenTreeAttachment(InvenTreeModel):
         return str(self.link)
 
     attachment = models.FileField(
-        storage=PrivateMediaStorage(),
+        storage=PrivateMediaStorage,
         upload_to=rename_attachment,
         verbose_name=_('Attachment'),
         help_text=_('Select file to attach'),

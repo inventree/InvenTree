@@ -125,7 +125,7 @@ class LabelTemplate(InvenTree.models.InvenTreeMetadataModel):
     )
 
     label = models.FileField(
-        storage=PrivateMediaStorage(),
+        storage=PrivateMediaStorage,
         upload_to=rename_label,
         unique=True,
         blank=False,
@@ -284,7 +284,7 @@ class LabelOutput(models.Model):
 
     # File will be stored in a subdirectory
     label = models.FileField(
-        storage=PrivateMediaStorage(),
+        storage=PrivateMediaStorage,
         upload_to=rename_label_output,
         unique=True,
         blank=False,
