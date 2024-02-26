@@ -105,12 +105,134 @@ class CategoryMixin:
         return ctx
 
 
+class CategoryFilter(rest_filters.FilterSet):
+    """Custom filterset class for the PartCategoryList endpoint."""
+
+    class Meta:
+        """Metaclass options for this filterset."""
+
+        model = PartCategory
+        fields = ['name', 'structural']
+
+    starred = rest_filters.BooleanFilter(
+        label=_('Starred'),
+        method='filter_starred',
+        help_text=_('Filter by starred categories'),
+    )
+
+    def filter_starred(self, queryset, name, value):
+        """Filter by whether the PartCategory is starred by the current user."""
+        user = self.request.user
+
+        starred_categories = [
+            star.category.pk for star in user.starred_categories.all()
+        ]
+
+        if str2bool(value):
+            return queryset.filter(pk__in=starred_categories)
+
+        return queryset.exclude(pk__in=starred_categories)
+
+    depth = rest_filters.NumberFilter(
+        label=_('Depth'), method='filter_depth', help_text=_('Filter by category depth')
+    )
+
+    def filter_depth(self, queryset, name, value):
+        """Filter by the "depth" of the PartCategory.
+
+        - This filter is used to limit the depth of the category tree
+        - If the "parent" filter is also provided, the depth is calculated from the parent category
+        """
+        parent = self.data.get('parent', None)
+
+        # Only filter if the parent filter is *not* provided
+        if not parent:
+            queryset = queryset.filter(level__lte=value)
+
+        return queryset
+
+    cascade = rest_filters.BooleanFilter(
+        label=_('Cascade'),
+        method='filter_cascade',
+        help_text=_('Include sub-categories in filtered results'),
+    )
+
+    def filter_cascade(self, queryset, name, value):
+        """Filter by whether to include sub-categories in the filtered results.
+
+        Note: If the "parent" filter is provided, we offload the logic to that method.
+        """
+        parent = self.data.get('parent', None)
+
+        # If the parent is *not* provided, update the results based on the "cascade" value
+        if not parent:
+            if not value:
+                # If "cascade" is False, only return top-level categories
+                queryset = queryset.filter(parent=None)
+
+        return queryset
+
+    parent = rest_filters.ModelChoiceFilter(
+        queryset=PartCategory.objects.all(),
+        label=_('Parent'),
+        method='filter_parent',
+        help_text=_('Filter by parent category'),
+    )
+
+    def filter_parent(self, queryset, name, value):
+        """Filter by parent category.
+
+        Note that the filtering behaviour here varies,
+        depending on whether the 'cascade' value is set.
+
+        So, we have to check the "cascade" value here.
+        """
+        parent = value
+        depth = self.data.get('depth', None)
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if cascade:
+            # Return recursive subcategories
+            queryset = queryset.filter(
+                parent__in=parent.get_descendants(include_self=True)
+            )
+        else:
+            # Return only direct children
+            queryset = queryset.filter(parent=parent)
+
+        if depth is not None:
+            # Filter by depth from parent
+            depth = int(depth)
+            queryset = queryset.filter(level__lte=parent.level + depth)
+
+        return queryset
+
+    exclude_tree = rest_filters.ModelChoiceFilter(
+        queryset=PartCategory.objects.all(),
+        label=_('Exclude Tree'),
+        method='filter_exclude_tree',
+        help_text=_('Exclude sub-categories under the specified category'),
+    )
+
+    def filter_exclude_tree(self, queryset, name, value):
+        """Exclude all sub-categories under the specified category."""
+        # Exclude the specified category
+        queryset = queryset.exclude(pk=value.pk)
+
+        # Exclude any sub-categories also
+        queryset = queryset.exclude(parent__in=value.get_descendants(include_self=True))
+
+        return queryset
+
+
 class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
     - POST: Create a new PartCategory object
     """
+
+    filterset_class = CategoryFilter
 
     def download_queryset(self, queryset, export_format):
         """Download the filtered queryset as a data file."""
@@ -120,84 +242,7 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
 
         return DownloadFile(filedata, filename)
 
-    def filter_queryset(self, queryset):
-        """Custom filtering.
-
-        Rules:
-        - Allow filtering by "null" parent to retrieve top-level part categories
-        """
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        cat_id = params.get('parent', None)
-
-        cascade = str2bool(params.get('cascade', False))
-
-        depth = str2int(params.get('depth', None))
-
-        # Do not filter by category
-        if cat_id is None:
-            pass
-        # Look for top-level categories
-        elif isNull(cat_id):
-            if not cascade:
-                queryset = queryset.filter(parent=None)
-
-            if cascade and depth is not None:
-                queryset = queryset.filter(level__lte=depth)
-
-        else:
-            try:
-                category = PartCategory.objects.get(pk=cat_id)
-
-                if cascade:
-                    parents = category.get_descendants(include_self=True)
-                    if depth is not None:
-                        parents = parents.filter(level__lte=category.level + depth)
-
-                    parent_ids = [p.id for p in parents]
-
-                    queryset = queryset.filter(parent__in=parent_ids)
-                else:
-                    queryset = queryset.filter(parent=category)
-
-            except (ValueError, PartCategory.DoesNotExist):
-                pass
-
-        # Exclude PartCategory tree
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                cat = PartCategory.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[c.pk for c in cat.get_descendants(include_self=True)]
-                )
-
-            except (ValueError, PartCategory.DoesNotExist):
-                pass
-
-        # Filter by "starred" status
-        starred = params.get('starred', None)
-
-        if starred is not None:
-            starred = str2bool(starred)
-            starred_categories = [
-                star.category.pk for star in self.request.user.starred_categories.all()
-            ]
-
-            if starred:
-                queryset = queryset.filter(pk__in=starred_categories)
-            else:
-                queryset = queryset.exclude(pk__in=starred_categories)
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER
-
-    filterset_fields = ['name', 'description', 'structural']
 
     ordering_fields = ['name', 'pathstring', 'level', 'tree_id', 'lft', 'part_count']
 
@@ -1449,7 +1494,7 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         model = PartParameterTemplate
 
         # Simple filter fields
-        fields = ['units', 'checkbox']
+        fields = ['name', 'units', 'checkbox']
 
     has_choices = rest_filters.BooleanFilter(
         method='filter_has_choices', label='Has Choice'
@@ -1471,65 +1516,68 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
 
         return queryset.filter(Q(units=None) | Q(units='')).distinct()
 
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
 
-class PartParameterTemplateList(ListCreateAPI):
+    def filter_part(self, queryset, name, part):
+        """Filter queryset to include only PartParameterTemplates which are referenced by a part."""
+        parameters = PartParameter.objects.filter(part=part)
+        template_ids = parameters.values_list('template').distinct()
+        return queryset.filter(pk__in=[el[0] for el in template_ids])
+
+    # Filter against a "PartCategory" - return only parameter templates which are referenced by parts in this category
+    category = rest_filters.ModelChoiceFilter(
+        queryset=PartCategory.objects.all(),
+        method='filter_category',
+        label=_('Category'),
+    )
+
+    def filter_category(self, queryset, name, category):
+        """Filter queryset to include only PartParameterTemplates which are referenced by parts in this category."""
+        cats = category.get_descendants(include_self=True)
+        parameters = PartParameter.objects.filter(part__category__in=cats)
+        template_ids = parameters.values_list('template').distinct()
+        return queryset.filter(pk__in=[el[0] for el in template_ids])
+
+
+class PartParameterTemplateMixin:
+    """Mixin class for PartParameterTemplate API endpoints."""
+
+    queryset = PartParameterTemplate.objects.all()
+    serializer_class = part_serializers.PartParameterTemplateSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the PartParameterTemplateDetail endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = part_serializers.PartParameterTemplateSerializer.annotate_queryset(
+            queryset
+        )
+
+        return queryset
+
+
+class PartParameterTemplateList(PartParameterTemplateMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartParameterTemplate objects.
 
     - GET: Return list of PartParameterTemplate objects
     - POST: Create a new PartParameterTemplate object
     """
 
-    queryset = PartParameterTemplate.objects.all()
-    serializer_class = part_serializers.PartParameterTemplateSerializer
     filterset_class = PartParameterTemplateFilter
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['name']
-
     search_fields = ['name', 'description']
 
-    ordering_fields = ['name', 'units', 'checkbox']
-
-    def filter_queryset(self, queryset):
-        """Custom filtering for the PartParameterTemplate API."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filtering against a "Part" - return only parameter templates which are referenced by a part
-        part = params.get('part', None)
-
-        if part is not None:
-            try:
-                part = Part.objects.get(pk=part)
-                parameters = PartParameter.objects.filter(part=part)
-                template_ids = parameters.values_list('template').distinct()
-                queryset = queryset.filter(pk__in=[el[0] for el in template_ids])
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Filtering against a "PartCategory" - return only parameter templates which are referenced by parts in this category
-        category = params.get('category', None)
-
-        if category is not None:
-            try:
-                category = PartCategory.objects.get(pk=category)
-                cats = category.get_descendants(include_self=True)
-                parameters = PartParameter.objects.filter(part__category__in=cats)
-                template_ids = parameters.values_list('template').distinct()
-                queryset = queryset.filter(pk__in=[el[0] for el in template_ids])
-            except (ValueError, PartCategory.DoesNotExist):
-                pass
-
-        return queryset
+    ordering_fields = ['name', 'units', 'checkbox', 'parts']
 
 
-class PartParameterTemplateDetail(RetrieveUpdateDestroyAPI):
+class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing the detail view for a PartParameterTemplate object."""
 
-    queryset = PartParameterTemplate.objects.all()
-    serializer_class = part_serializers.PartParameterTemplateSerializer
+    pass
 
 
 class PartParameterAPIMixin:

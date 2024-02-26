@@ -1,5 +1,6 @@
 """Unit tests for Part Views (see views.py)."""
 
+from django.test import tag
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeTestCase
@@ -16,6 +17,7 @@ class PartViewTestCase(InvenTreeTestCase):
     superuser = True
 
 
+@tag('cui')
 class PartListTest(PartViewTestCase):
     """Unit tests for the PartList view."""
 
@@ -33,6 +35,7 @@ class PartListTest(PartViewTestCase):
 class PartDetailTest(PartViewTestCase):
     """Unit tests for the PartDetail view."""
 
+    @tag('cui')
     def test_part_detail(self):
         """Test that we can retrieve a part detail page."""
         pk = 1
@@ -50,6 +53,7 @@ class PartDetailTest(PartViewTestCase):
         self.assertEqual(response.context['part'].pk, pk)
         self.assertEqual(response.context['category'], part.category)
 
+    @tag('cui')
     def test_part_detail_from_ipn(self):
         """Test that we can retrieve a part detail page from part IPN.
 

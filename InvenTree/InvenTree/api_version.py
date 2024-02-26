@@ -1,13 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 174
+INVENTREE_API_VERSION = 176
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v174 - 2024-02-26 : https://github.com/inventree/InvenTree/pull/6535
+v176 - 2024-02-26 : https://github.com/inventree/InvenTree/pull/6535
     - Adds the field "plugins_install_disabled" to the Server info API endpoint
+
+v175 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6538
+    - Adds "parts" count to PartParameterTemplate serializer
+
+v174 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6536
+    - Expose PartCategory filters to the API documentation
+    - Expose StockLocation filters to the API documentation
 
 v173 - 2024-02-20 : https://github.com/inventree/InvenTree/pull/6483
     - Adds "merge_items" to the PurchaseOrderLine create API endpoint

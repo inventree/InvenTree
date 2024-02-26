@@ -241,7 +241,8 @@ class PartTest(TestCase):
     def test_attributes(self):
         """Test Part attributes."""
         self.assertEqual(self.r1.name, 'R_2K2_0805')
-        self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
 
     def test_category(self):
         """Test PartCategory path."""
