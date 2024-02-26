@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-26 06:39\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -459,11 +459,11 @@ msgstr "Escanear código QR"
 
 #: src/components/items/YesNoButton.tsx:16
 msgid "Pass"
-msgstr ""
+msgstr "Aprovado"
 
 #: src/components/items/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Reprovado"
 
 #: src/components/items/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:51
@@ -870,7 +870,7 @@ msgstr "Modelos de Parâmetro de Peça"
 
 #: src/components/render/ModelType.tsx:36
 msgid "Part Test Template"
-msgstr ""
+msgstr "Modelo de Teste de Peça"
 
 #: src/components/render/ModelType.tsx:37
 msgid "Part Test Templates"
@@ -5095,7 +5095,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:186
 msgid "Attachment"
-msgstr "Attachment"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:239
 #: src/tables/stock/StockItemTestResultTable.tsx:306
@@ -5139,7 +5139,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:342
 msgid "Required"
-msgstr "Required"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:343
 msgid "Show results for required tests"
@@ -5197,3 +5197,4 @@ msgstr "A interface de usuário da plataforma é otimizada para Tablets e Deskto
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Leia a documentação"
+
