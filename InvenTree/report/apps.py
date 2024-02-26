@@ -8,13 +8,14 @@ import warnings
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
+from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
 
 import InvenTree.helpers
 from InvenTree.config import ensure_dir
-from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR, default_storage
+from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
 
 logger = logging.getLogger('inventree')
 
