@@ -17,6 +17,7 @@ from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
 
 logger = logging.getLogger('inventree')
 ref = 'report'
+db_ref = 'template'
 
 
 class ReportConfig(AppConfig):
@@ -146,12 +147,16 @@ class ReportConfig(AppConfig):
             ],
         )
 
+    def get_src_dir(self, ref, ref_name):
+        """Get the source directory."""
+        return TEMPLATES_DIR.joinpath(ref, 'templates', ref)
+
     def create_template_dir(self, model, data):
         """Create folder and database entries for the default templates, if they do not already exist."""
         ref_name = model.getSubdir()
 
         # Create root dir for templates
-        src_dir = TEMPLATES_DIR.joinpath(ref, 'templates', ref)
+        src_dir = self.get_src_dir(ref, ref_name)
         dst_dir = MEDIA_STORAGE_DIR.joinpath(ref, 'inventree', ref_name)
         ensure_dir(dst_dir, default_storage)
 
@@ -197,7 +202,7 @@ class ReportConfig(AppConfig):
 
         # Check if a file matching the template already exists
         try:
-            if model.objects.filter(template=filename).exists():
+            if model.objects.filter(**{db_ref: filename}).exists():
                 return  # pragma: no cover
         except Exception:
             logger.exception(
