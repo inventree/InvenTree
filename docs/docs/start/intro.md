@@ -23,6 +23,10 @@ To quickly jump to a specific installation method, refer to the following links:
 !!! info "Further Reading"
     For more information on the InvenTree tech stack, continue reading below!
 
+### Configuration Options
+
+Independent of the preferred installation method, InvenTree provides a number of [configuration options](./config.md) which can be used to customize the server environment.
+
 ## System Components
 
 The InvenTree server ecosystem consists of the following components:
