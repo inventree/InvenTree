@@ -63,5 +63,6 @@
         "typescript": "^5.2.2",
         "vite": "^4.5.2",
         "vite-plugin-babel-macros": "^1.0.6"
-    }
+    },
+    "packageManager": "yarn@4.1.0"
 }
