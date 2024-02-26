@@ -170,7 +170,7 @@ class ReportConfig(AppConfig):
         do_copy = False
 
         if not dst_file.exists():
-            logger.info("Report template '%s' is not present", filename)
+            logger.info("%s template '%s' is not present", ref, filename)
             do_copy = True
         else:
             # Check if the file contents are different
@@ -215,6 +215,5 @@ class ReportConfig(AppConfig):
                 template=filename,
                 enabled=True,
             )
-
         except Exception:
             logger.warning("Failed to create %s '%s'", ref, data['name'])

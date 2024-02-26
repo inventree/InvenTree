@@ -154,18 +154,17 @@ class LabelConfig(AppConfig):
 
         do_copy = False
 
-        if dst_file.exists():
-            # File already exists - let's see if it is the "same"
+        if not dst_file.exists():
+            logger.info("%s template '%s' is not present", ref, filename)
+            do_copy = True
+        else:
+            # Check if the file contents are different
+            src_hash = InvenTree.helpers.hash_file(src_file)
+            dst_hash = InvenTree.helpers.hash_file(dst_file)
 
-            if InvenTree.helpers.hash_file(dst_file) != InvenTree.helpers.hash_file(
-                src_file
-            ):  # pragma: no cover
+            if src_hash != dst_hash:
                 logger.info("Hash differs for '%s'", filename)
                 do_copy = True
-
-        else:
-            logger.info("Label template '%s' is not present", filename)
-            do_copy = True
 
         if do_copy:
             logger.info("Copying %s template '%s'", ref, dst_file)
