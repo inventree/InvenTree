@@ -119,7 +119,8 @@ services:
         volumes:
             - inventree_data:/var/www:z
             - inventree_data:/var/log:z
-            - caddy:/:z
+            - ${INVENTREE_EXT_VOLUME}/caddy/data:/data:z
+            - ${INVENTREE_EXT_VOLUME}/caddy/config:/config:z
             - ./Caddyfile:/etc/caddy/Caddyfile:ro
 
 # Persistent data, stored external to the container(s)
@@ -131,11 +132,3 @@ volumes:
             o: bind
             # This directory specified where InvenTree data are stored "outside" the docker containers
             device: ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}
-
-    caddy:
-        driver: local
-        driver_opts:
-            type: none
-            o: bind
-            # This directory specified where Caddy data are stored "outside" the docker containers
-            device: ${INVENTREE_EXT_VOLUME}/caddy
