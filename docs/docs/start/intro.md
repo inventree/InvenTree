@@ -62,7 +62,7 @@ The InvenTree documentation *assumes* that the operating system is a debian base
     To install on a Windows system, you should [install WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10#manual-installation-steps), and then follow installation procedure from within the WSL environment.
 
 !!! success "Docker"
-    Installation on any OS is simplified by following the [docker setup guide](../docker).
+    Installation on any OS is simplified by following the [docker setup guide](./docker.md).
 
 ## Python Requirements
 
