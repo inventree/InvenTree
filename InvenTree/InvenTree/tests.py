@@ -358,30 +358,31 @@ class FormatTest(TestCase):
     def test_currency_formatting(self):
         """Test that currency formatting works correctly for multiple currencies."""
         test_data = (
-            (Money(3651.285718, 'USD'), 4, '$3,651.2857'),  # noqa: E201,E202
-            (Money(487587.849178, 'CAD'), 5, 'CA$487,587.84918'),  # noqa: E201,E202
-            (Money(0.348102, 'EUR'), 1, '€0.3'),  # noqa: E201,E202
-            (Money(0.916530, 'GBP'), 1, '£0.9'),  # noqa: E201,E202
-            (Money(61.031024, 'JPY'), 3, '¥61.031'),  # noqa: E201,E202
-            (Money(49609.694602, 'JPY'), 1, '¥49,609.7'),  # noqa: E201,E202
-            (Money(155565.264777, 'AUD'), 2, 'A$155,565.26'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 4, 'CN¥0.8204'),  # noqa: E201,E202
-            (Money(7587.849178, 'EUR'), 0, '€7,588'),  # noqa: E201,E202
-            (Money(0.348102, 'GBP'), 3, '£0.348'),  # noqa: E201,E202
-            (Money(0.652923, 'CHF'), 0, 'CHF1'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 1, 'CN¥0.8'),  # noqa: E201,E202
-            (Money(98789.5295680, 'CHF'), 0, 'CHF98,790'),  # noqa: E201,E202
-            (Money(0.585787, 'USD'), 1, '$0.6'),  # noqa: E201,E202
-            (Money(0.690541, 'CAD'), 3, 'CA$0.691'),  # noqa: E201,E202
-            (Money(427.814104, 'AUD'), 5, 'A$427.81410'),  # noqa: E201,E202
+            (Money(3651.285718, 'USD'), 4, True, '$3,651.2857'),  # noqa: E201,E202
+            (Money(487587.849178, 'CAD'), 5, True, 'CA$487,587.84918'),  # noqa: E201,E202
+            (Money(0.348102, 'EUR'), 1, False, '0.3'),  # noqa: E201,E202
+            (Money(0.916530, 'GBP'), 1, True, '£0.9'),  # noqa: E201,E202
+            (Money(61.031024, 'JPY'), 3, False, '61.031'),  # noqa: E201,E202
+            (Money(49609.694602, 'JPY'), 1, True, '¥49,609.7'),  # noqa: E201,E202
+            (Money(155565.264777, 'AUD'), 2, False, '155,565.26'),  # noqa: E201,E202
+            (Money(0.820437, 'CNY'), 4, True, 'CN¥0.8204'),  # noqa: E201,E202
+            (Money(7587.849178, 'EUR'), 0, True, '€7,588'),  # noqa: E201,E202
+            (Money(0.348102, 'GBP'), 3, False, '0.348'),  # noqa: E201,E202
+            (Money(0.652923, 'CHF'), 0, True, 'CHF1'),  # noqa: E201,E202
+            (Money(0.820437, 'CNY'), 1, True, 'CN¥0.8'),  # noqa: E201,E202
+            (Money(98789.5295680, 'CHF'), 0, False, '98,790'),  # noqa: E201,E202
+            (Money(0.585787, 'USD'), 1, True, '$0.6'),  # noqa: E201,E202
+            (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),  # noqa: E201,E202
+            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),  # noqa: E201,E202
         )
 
         with self.settings(LANGUAGE_CODE='en-us'):
-            for value, decimal_places, expected_result in test_data:
+            for value, decimal_places, include_symbol, expected_result in test_data:
                 result = InvenTree.format.format_money(
-                    value, decimal_places=decimal_places
+                    value, decimal_places=decimal_places, include_symbol=include_symbol
                 )
-                assert result == expected_result
+
+                self.assertEqual(result, expected_result)
 
 
 class TestHelpers(TestCase):
