@@ -244,6 +244,7 @@ def install(c, uv=False):
     # Run plugins install
     plugins(c, uv=uv)
 
+
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
     """Sets up everything needed for the dev environment."""
