@@ -1042,9 +1042,12 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
+        with self.in_env_context({
+            'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
+        }):
             self.assertIn(
-                'inventree/my_special_conf.yaml', str(config.get_config_file()).lower()
+                'inventree/_testfolder/my_special_conf.yaml',
+                str(config.get_config_file()).lower(),
             )
 
     def test_helpers_plugin_file(self):
@@ -1058,8 +1061,12 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
-            self.assertIn('my_special_plugins.txt', str(config.get_plugin_file()))
+        with self.in_env_context({
+            'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
+        }):
+            self.assertIn(
+                '_testfolder/my_special_plugins.txt', str(config.get_plugin_file())
+            )
 
     def test_helpers_setting(self):
         """Test get_setting."""
