@@ -274,7 +274,7 @@ pyyaml==6.0.1
     #   tablib
 qrcode==7.4.2
     # via django-allauth-2fa
-rapidfuzz==0.7.6
+rapidfuzz==3.6.1
 redis==5.0.1
     # via django-redis
 referencing==0.33.0
