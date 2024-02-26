@@ -9,7 +9,7 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-ARG base_image=python:3.10-alpine3.18
+ARG base_image=python:3.11-alpine3.18
 FROM ${base_image} as inventree_base
 
 # Build arguments for this image
@@ -45,6 +45,8 @@ ENV INVENTREE_BACKGROUND_WORKERS="4"
 # Default web server address:port
 ENV INVENTREE_WEB_ADDR=0.0.0.0
 ENV INVENTREE_WEB_PORT=8000
+
+ENV VIRTUAL_ENV=/usr/local
 
 LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.build-date=${DATE} \
@@ -90,7 +92,7 @@ FROM inventree_base as prebuild
 
 ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install --user -r base_requirements.txt -r requirements.txt --no-cache-dir && \
+    pip install --user uv --no-cache-dir && uv pip install -r base_requirements.txt -r requirements.txt --no-cache && \
     apk --purge del .build-deps
 
 # Frontend builder image:
@@ -135,7 +137,7 @@ EXPOSE 5173
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
-RUN pip install -r base_requirements.txt --no-cache-dir
+RUN pip install uv --no-cache-dir && uv pip install -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
