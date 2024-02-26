@@ -68,13 +68,82 @@ class ReportConfig(AppConfig):
         assert bool(report.models.TestReport is not None)
 
         # Create the categories
-        self.create_default_test_reports()
-        self.create_default_build_reports()
-        self.create_default_bill_of_materials_reports()
-        self.create_default_purchase_order_reports()
-        self.create_default_sales_order_reports()
-        self.create_default_return_order_reports()
-        self.create_default_stock_location_reports()
+        self.create_default_reports(
+            report.models.TestReport,
+            [
+                {
+                    'file': 'inventree_test_report.html',
+                    'name': 'InvenTree Test Report',
+                    'description': 'Stock item test report',
+                }
+            ],
+        )
+
+        self.create_default_reports(
+            report.models.BuildReport,
+            [
+                {
+                    'file': 'inventree_build_order.html',
+                    'name': 'InvenTree Build Order',
+                    'description': 'Build Order job sheet',
+                }
+            ],
+        )
+
+        self.create_default_reports(
+            report.models.BillOfMaterialsReport,
+            [
+                {
+                    'file': 'inventree_bill_of_materials_report.html',
+                    'name': 'Bill of Materials',
+                    'description': 'Bill of Materials report',
+                }
+            ],
+        )
+
+        self.create_default_reports(
+            report.models.PurchaseOrderReport,
+            [
+                {
+                    'file': 'inventree_po_report.html',
+                    'name': 'InvenTree Purchase Order',
+                    'description': 'Purchase Order example report',
+                }
+            ],
+        )
+
+        self.create_default_reports(
+            report.models.SalesOrderReport,
+            [
+                {
+                    'file': 'inventree_so_report.html',
+                    'name': 'InvenTree Sales Order',
+                    'description': 'Sales Order example report',
+                }
+            ],
+        )
+
+        self.create_default_reports(
+            report.models.ReturnOrderReport,
+            [
+                {
+                    'file': 'inventree_return_order_report.html',
+                    'name': 'InvenTree Return Order',
+                    'description': 'Return Order example report',
+                }
+            ],
+        )
+
+        self.create_default_reports(
+            report.models.StockLocationReport,
+            [
+                {
+                    'file': 'inventree_slr_report.html',
+                    'name': 'InvenTree Stock Location',
+                    'description': 'Stock Location example report',
+                }
+            ],
+        )
 
     def create_default_reports(self, model, reports):
         """Copy default report files across to the media directory."""
@@ -132,136 +201,3 @@ class ReportConfig(AppConfig):
 
             except Exception:
                 pass
-
-    def create_default_test_reports(self):
-        """Create database entries for the default TestReport templates, if they do not already exist."""
-        try:
-            from .models import TestReport
-        except Exception:  # pragma: no cover
-            # Database is not ready yet
-            return
-
-        # List of test reports to copy across
-        reports = [
-            {
-                'file': 'inventree_test_report.html',
-                'name': 'InvenTree Test Report',
-                'description': 'Stock item test report',
-            }
-        ]
-
-        self.create_default_reports(TestReport, reports)
-
-    def create_default_bill_of_materials_reports(self):
-        """Create database entries for the default Bill of Material templates (if they do not already exist)."""
-        try:
-            from .models import BillOfMaterialsReport
-        except Exception:  # pragma: no cover
-            # Database is not ready yet
-            return
-
-        # List of Build reports to copy across
-        reports = [
-            {
-                'file': 'inventree_bill_of_materials_report.html',
-                'name': 'Bill of Materials',
-                'description': 'Bill of Materials report',
-            }
-        ]
-
-        self.create_default_reports(BillOfMaterialsReport, reports)
-
-    def create_default_build_reports(self):
-        """Create database entries for the default BuildReport templates (if they do not already exist)."""
-        try:
-            from .models import BuildReport
-        except Exception:  # pragma: no cover
-            # Database is not ready yet
-            return
-
-        # List of Build reports to copy across
-        reports = [
-            {
-                'file': 'inventree_build_order.html',
-                'name': 'InvenTree Build Order',
-                'description': 'Build Order job sheet',
-            }
-        ]
-
-        self.create_default_reports(BuildReport, reports)
-
-    def create_default_purchase_order_reports(self):
-        """Create database entries for the default SalesOrderReport templates (if they do not already exist)."""
-        try:
-            from .models import PurchaseOrderReport
-        except Exception:  # pragma: no cover
-            # Database is not ready yet
-            return
-
-        # List of Build reports to copy across
-        reports = [
-            {
-                'file': 'inventree_po_report.html',
-                'name': 'InvenTree Purchase Order',
-                'description': 'Purchase Order example report',
-            }
-        ]
-
-        self.create_default_reports(PurchaseOrderReport, reports)
-
-    def create_default_sales_order_reports(self):
-        """Create database entries for the default Sales Order report templates (if they do not already exist)."""
-        try:
-            from .models import SalesOrderReport
-        except Exception:  # pragma: no cover
-            # Database is not ready yet
-            return
-
-        # List of Build reports to copy across
-        reports = [
-            {
-                'file': 'inventree_so_report.html',
-                'name': 'InvenTree Sales Order',
-                'description': 'Sales Order example report',
-            }
-        ]
-
-        self.create_default_reports(SalesOrderReport, reports)
-
-    def create_default_return_order_reports(self):
-        """Create database entries for the default ReturnOrderReport templates."""
-        try:
-            from report.models import ReturnOrderReport
-        except Exception:  # pragma: no cover
-            # Database not yet ready
-            return
-
-        # List of templates to copy across
-        reports = [
-            {
-                'file': 'inventree_return_order_report.html',
-                'name': 'InvenTree Return Order',
-                'description': 'Return Order example report',
-            }
-        ]
-
-        self.create_default_reports(ReturnOrderReport, reports)
-
-    def create_default_stock_location_reports(self):
-        """Create database entries for the default StockLocationReport templates."""
-        try:
-            from report.models import StockLocationReport
-        except Exception:  # pragma: no cover
-            # Database not yet ready
-            return
-
-        # List of templates to copy across
-        reports = [
-            {
-                'file': 'inventree_slr_report.html',
-                'name': 'InvenTree Stock Location',
-                'description': 'Stock Location example report',
-            }
-        ]
-
-        self.create_default_reports(StockLocationReport, reports)
