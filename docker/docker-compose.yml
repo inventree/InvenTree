@@ -112,7 +112,7 @@ services:
         depends_on:
             - inventree-server
         ports:
-            - 80:80
+            - ${INVENTREE_WEB_PORT:-80}:80
             - 443:443
         env_file:
             - .env
