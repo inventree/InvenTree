@@ -117,10 +117,18 @@ logger = logging.getLogger('inventree')
 # Load SECRET_KEY
 SECRET_KEY = config.get_secret_key()
 
+# The filesystem location for served static files
+STATIC_ROOT = config.get_static_dir()
+
+# The filesystem location for uploaded meadia files
+MEDIA_ROOT = config.get_media_dir()
+
 # Needed for the parts importer, directly impacts the maximum parts that can be uploaded
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
-# Loccal static files (CSS, JavaScript, Images) discovery
+# Web URL endpoint for served static files
+STATIC_URL = '/static/'
+
 STATICFILES_DIRS = []
 
 # Translated Template settings
@@ -137,6 +145,12 @@ if DEBUG and 'collectstatic' not in sys.argv:
         STATICFILES_DIRS.append(web_dir)
 
 STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
+
+# Color Themes Directory
+STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
+
+# Web URL endpoint for served media files
+MEDIA_URL = '/media/'
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -372,7 +386,12 @@ ROOT_URLCONF = 'InvenTree.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR.joinpath('templates'), BASE_DIR.joinpath('templates')],
+        'DIRS': [
+            BASE_DIR.joinpath('templates'),
+            # Allow templates in the reporting directory to be accessed
+            MEDIA_ROOT.joinpath('report'),
+            MEDIA_ROOT.joinpath('label'),
+        ],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -1117,6 +1136,9 @@ MAINTENANCE_MODE_STATE_BACKEND = 'InvenTree.backends.InvenTreeMaintenanceModeBac
 PLUGINS_ENABLED = get_boolean_setting(
     'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
 )
+PLUGINS_INSTALL_DISABLED = get_boolean_setting(
+    'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
+)
 
 PLUGIN_FILE = config.get_plugin_file()
 
@@ -1150,6 +1172,9 @@ FRONTEND_URL_BASE = FRONTEND_SETTINGS.get('base_url', 'platform')
 if DEBUG:
     logger.info('InvenTree running with DEBUG enabled')
 
+logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
+logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
+
 # Flags
 FLAGS = {
     'EXPERIMENTAL': [
@@ -1173,23 +1198,3 @@ if CUSTOM_FLAGS:
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
-
-# File storage settings
-STATIC_ROOT = config.get_static_dir()
-MEDIA_ROOT = config.get_media_dir()
-
-# Allow templates in the reporting directory to be accessed
-TEMPLATES[0]['DIRS'] += [MEDIA_ROOT.joinpath('report'), MEDIA_ROOT.joinpath('label')]
-
-# URLs and storage classes
-# Replace these to use custom storage like S3
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-
-logger.info("MEDIA_ROOT: '%s'", MEDIA_ROOT)
-logger.info("STATIC_ROOT: '%s'", STATIC_ROOT)
-
-# Color Themes Directory
-STATIC_COLOR_THEMES_DIR = BASE_DIR.joinpath('css', 'color-themes').resolve()
