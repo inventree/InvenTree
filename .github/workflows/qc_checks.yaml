@@ -114,7 +114,7 @@ jobs:
         uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           folder-path: docs
-          config: docs/mlc_config.json
+          config-file: docs/mlc_config.json
           check-modified-files-only: 'yes'
           use-quiet-mode: 'yes'
 
