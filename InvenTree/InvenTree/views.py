@@ -7,7 +7,6 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 from django.contrib.auth import password_validation
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import ValidationError
-from django.core.files.storage import default_storage
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string

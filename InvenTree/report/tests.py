@@ -3,6 +3,7 @@
 import os
 import shutil
 from io import StringIO
+from pathlib import Path
 
 from django.conf import settings
 from django.core.cache import cache
@@ -16,7 +17,6 @@ from PIL import Image
 import report.models as report_models
 from build.models import Build
 from common.models import InvenTreeSetting, InvenTreeUserSetting
-from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
 from InvenTree.unit_test import InvenTreeAPITestCase
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
@@ -216,9 +216,9 @@ class ReportTest(InvenTreeAPITestCase):
 
     def copyReportTemplate(self, filename, description):
         """Copy the provided report template into the required media directory."""
-        src_dir = TEMPLATES_DIR.joinpath('report', 'templates', 'report')
+        src_dir = Path(__file__).parent.joinpath('templates', 'report')
         template_dir = os.path.join('report', 'inventree', self.model.getSubdir())
-        dst_dir = MEDIA_STORAGE_DIR.joinpath(template_dir)
+        dst_dir = settings.MEDIA_ROOT.joinpath(template_dir)
 
         if not dst_dir.exists():  # pragma: no cover
             dst_dir.mkdir(parents=True, exist_ok=True)

@@ -329,7 +329,7 @@ uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-spectacular
-urllib3==1.26.18
+urllib3==2.2.0
     # via
     #   dulwich
     #   requests

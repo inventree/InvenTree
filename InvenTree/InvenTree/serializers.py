@@ -500,7 +500,7 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         if not value:
             return None
 
-        return value.url
+        return os.path.join(str(settings.MEDIA_URL), str(value))
 
 
 class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):

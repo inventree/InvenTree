@@ -1,11 +1,11 @@
 """Config options for the report app."""
 
 import logging
+from pathlib import Path
 
 from django.apps import AppConfig
 
 from generic.templating.apps import TemplatingMixin
-from InvenTree.files import TEMPLATES_DIR
 
 
 class ReportConfig(TemplatingMixin, AppConfig):
@@ -112,7 +112,7 @@ class ReportConfig(TemplatingMixin, AppConfig):
 
     def get_src_dir(self, ref_name):
         """Get the source directory."""
-        return TEMPLATES_DIR.joinpath(self.name, 'templates', self.name)
+        return Path(__file__).parent.joinpath('templates', self.name)
 
     def get_new_obj_data(self, data, filename):
         """Get the data for a new template db object."""
