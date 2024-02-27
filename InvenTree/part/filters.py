@@ -281,6 +281,28 @@ def annotate_category_parts():
     )
 
 
+def annotate_sub_categories():
+    """Construct a queryset annotation which returns the number of subcategories for each provided category."""
+    subquery = part.models.PartCategory.objects.filter(
+        tree_id=OuterRef('tree_id'),
+        lft__gt=OuterRef('lft'),
+        rght__lt=OuterRef('rght'),
+        level__gt=OuterRef('level'),
+    )
+
+    return Coalesce(
+        Subquery(
+            subquery.annotate(
+                total=Func(F('pk'), function='COUNT', output_field=IntegerField())
+            )
+            .values('total')
+            .order_by()
+        ),
+        0,
+        output_field=IntegerField(),
+    )
+
+
 def filter_by_parameter(queryset, template_id: int, value: str, func: str = ''):
     """Filter the given queryset by a given template parameter.
 

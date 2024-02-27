@@ -8,7 +8,11 @@ import {
   useMantineTheme
 } from '@mantine/core';
 import { ReactTree, ThemeSettings } from '@naisutech/react-tree';
-import { IconSitemap } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  IconSitemap
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +44,8 @@ export function PartCategoryTree({
             return {
               id: category.pk,
               label: category.name,
-              parentId: category.parent
+              parentId: category.parent,
+              children: category.subcategories
             };
           })
         )
@@ -65,6 +70,14 @@ export function PartCategoryTree({
         <Text>{node.label}</Text>
       </Group>
     );
+  }
+
+  function renderIcon({ node, open }: { node: any; open?: boolean }) {
+    if (node.children == 0) {
+      return undefined;
+    }
+
+    return open ? <IconChevronDown /> : <IconChevronRight />;
   }
 
   const mantineTheme = useMantineTheme();
@@ -146,6 +159,7 @@ export function PartCategoryTree({
         <ReactTree
           nodes={treeQuery.data ?? []}
           RenderNode={renderNode}
+          RenderIcon={renderIcon}
           defaultSelectedNodes={selectedCategory ? [selectedCategory] : []}
           showEmptyItems={false}
           theme={mantineTheme.colorScheme}
