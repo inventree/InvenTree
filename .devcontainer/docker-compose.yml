@@ -23,8 +23,7 @@ services:
         data_dir: "dev"
     volumes:
       - ../:/home/inventree:z
-    ports:
-      - 8000:8000
+
     environment:
       INVENTREE_DEBUG: True
       INVENTREE_DB_ENGINE: postgresql
@@ -33,6 +32,7 @@ services:
       INVENTREE_DB_USER: inventree_user
       INVENTREE_DB_PASSWORD: inventree_password
       INVENTREE_PLUGINS_ENABLED: True
+      INVENTREE_PY_ENV: /home/inventree/dev/venv
 
     depends_on:
       - db

@@ -40,16 +40,16 @@
   "forwardPorts": [5173, 8000],
   "portsAttributes": {
     "5173": {
-      "label": "Vite server"
+      "label": "Vite Server"
     },
     "8000": {
-      "label": "InvenTree server"
+      "label": "InvenTree Server"
     }
   },
 
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": ".devcontainer/postCreateCommand.sh",
-  
+
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
   "containerUser": "vscode",
