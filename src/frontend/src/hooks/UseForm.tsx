@@ -125,7 +125,7 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
           color={'red'}
         >{t`Are you sure you want to delete this item?`}</Alert>
       ),
-      fields: {}
+      fields: props.fields ?? {}
     }),
     [props]
   );

@@ -85,6 +85,12 @@ export enum ApiEndpoints {
   stock_attachment_list = 'stock/attachment/',
   stock_test_result_list = 'stock/test/',
   stock_transfer = 'stock/transfer/',
+  stock_remove = 'stock/remove/',
+  stock_add = 'stock/add/',
+  stock_count = 'stock/count/',
+  stock_change_status = 'stock/change_status/',
+  stock_merge = 'stock/merge/',
+  stock_assign = 'stock/assign/',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',

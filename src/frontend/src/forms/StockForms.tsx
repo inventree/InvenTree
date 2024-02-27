@@ -13,7 +13,12 @@ import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
-import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
+import {
+  ApiFormModalProps,
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
 
 /**
@@ -246,14 +251,24 @@ type StockRow = {
 
 function StockOperationsRow({
   input,
-  refresh
+  transfer = false,
+  add = false,
+  setMax = false,
+  merge = false,
+  record
 }: {
   input: StockRow;
-  refresh: () => void;
+  transfer?: boolean;
+  add?: boolean;
+  setMax?: boolean;
+  merge?: boolean;
+  record?: any;
 }) {
   const item = input.item;
 
-  const [value, setValue] = useState<StockItemQuantity>(item.quantity);
+  const [value, setValue] = useState<StockItemQuantity>(
+    add ? 0 : item.quantity ?? 0
+  );
 
   const onChange = useCallback(
     (value: any) => {
@@ -265,7 +280,6 @@ function StockOperationsRow({
 
   const removeAndRefresh = () => {
     input.removeFn(input.idx);
-    refresh();
   };
 
   return (
@@ -274,41 +288,45 @@ function StockOperationsRow({
         <Flex gap="sm" align="center">
           <Thumbnail
             size={40}
-            src={item.obj.part_detail.thumbnail}
+            src={record.part_detail.thumbnail}
             align="center"
           />
-          <div>{item.obj.part_detail.name}</div>
+          <div>{record.part_detail.name}</div>
         </Flex>
       </td>
-      <td>{item.obj.location ? item.obj.location_detail.pathstring : '-'}</td>
+      <td>{record.location ? record.location_detail.pathstring : '-'}</td>
       <td>
         <Flex align="center" gap="xs">
-          <Text>{item.obj.quantity}</Text>
-          <StatusRenderer status={item.obj.status} type={ModelType.stockitem} />
+          <Text>{record.quantity}</Text>
+          <StatusRenderer status={record.status} type={ModelType.stockitem} />
         </Flex>
       </td>
-      <td>
-        <NumberInput
-          value={value}
-          onChange={onChange}
-          max={item.obj.quantity}
-          min={0}
-          style={{ maxWidth: '100px' }}
-        />
-      </td>
+      {!merge && (
+        <td>
+          <NumberInput
+            value={value}
+            onChange={onChange}
+            max={setMax ? record.quantity : undefined}
+            min={0}
+            style={{ maxWidth: '100px' }}
+          />
+        </td>
+      )}
       <td>
         <Flex gap="3px">
-          <ActionButton
-            onClick={() => moveToDefault(item.obj, value, removeAndRefresh)}
-            icon={<InvenTreeIcon icon="default_location" />}
-            tooltip="Move to default location"
-            tooltipAlignment="top"
-            disabled={!item.obj.part_detail.default_location}
-          />
+          {transfer && (
+            <ActionButton
+              onClick={() => moveToDefault(record, value, removeAndRefresh)}
+              icon={<InvenTreeIcon icon="default_location" />}
+              tooltip={t`Move to default location`}
+              tooltipAlignment="top"
+              disabled={!record.part_detail.default_location}
+            />
+          )}
           <ActionButton
             onClick={() => input.removeFn(input.idx)}
             icon={<InvenTreeIcon icon="square_x" />}
-            tooltip="Remove from list"
+            tooltip={t`Remove item from list`}
             tooltipAlignment="top"
             color="red"
           />
@@ -328,12 +346,8 @@ type StockAdjustmentItem = {
   packaging?: string;
 };
 
-function stockTransferFields(item: any[]): ApiFormFieldSet {
-  if (!item) {
-    return {};
-  }
-
-  const mappedItems: StockAdjustmentItemWithRecord[] = item.map((elem) => {
+function mapAdjustmentItems(items: any[]) {
+  const mappedItems: StockAdjustmentItemWithRecord[] = items.map((elem) => {
     return {
       pk: elem.pk,
       quantity: elem.quantity,
@@ -344,18 +358,28 @@ function stockTransferFields(item: any[]): ApiFormFieldSet {
     };
   });
 
+  return mappedItems;
+}
+
+function stockTransferFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mappedItems,
+      value: mapAdjustmentItems(items),
       modelRenderer: (val) => {
         return (
           <StockOperationsRow
             input={val}
-            refresh={() => {
-              return;
-            }}
+            transfer
+            setMax
             key={val.item.pk}
+            record={records[val.item.pk]}
           />
         );
       },
@@ -372,28 +396,26 @@ function stockTransferFields(item: any[]): ApiFormFieldSet {
   return fields;
 }
 
-function stockRemoveFields(item: any[]): ApiFormFieldSet {
-  if (!item) {
+function stockRemoveFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
     return {};
   }
 
-  const mappedItems: StockAdjustmentItem[] = item.map((elem) => {
-    return {
-      pk: elem.pk,
-      quantity: elem.quantity,
-      batch: elem.batch,
-      status: elem.status,
-      packaging: elem.packaging,
-      obj: elem
-    };
-  });
+  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
 
   const fields: ApiFormFieldSet = {
     items: {
       field_type: 'table',
-      value: mappedItems,
+      value: mapAdjustmentItems(items),
       modelRenderer: (val) => {
-        return <></>;
+        return (
+          <StockOperationsRow
+            input={val}
+            setMax
+            key={val.item.pk}
+            record={records[val.item.pk]}
+          />
+        );
       },
       headers: [t`Part`, t`Location`, t`In Stock`, t`Remove`, t`Actions`]
     },
@@ -403,26 +425,246 @@ function stockRemoveFields(item: any[]): ApiFormFieldSet {
   return fields;
 }
 
-export function useTransferStockItem({
-  item,
+function stockAddFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: mapAdjustmentItems(items),
+      modelRenderer: (val) => {
+        return (
+          <StockOperationsRow
+            input={val}
+            add
+            key={val.item.pk}
+            record={records[val.item.pk]}
+          />
+        );
+      },
+      headers: [t`Part`, t`Location`, t`In Stock`, t`Add`, t`Actions`]
+    },
+    notes: {}
+  };
+
+  return fields;
+}
+
+function stockCountFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: mapAdjustmentItems(items),
+      modelRenderer: (val) => {
+        return (
+          <StockOperationsRow
+            input={val}
+            key={val.item.pk}
+            record={records[val.item.pk]}
+          />
+        );
+      },
+      headers: [t`Part`, t`Location`, t`In Stock`, t`Count`, t`Actions`]
+    },
+    notes: {}
+  };
+
+  return fields;
+}
+
+function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: items.map((elem) => {
+        return elem.pk;
+      }),
+      modelRenderer: (val) => {
+        return (
+          <StockOperationsRow
+            input={val}
+            key={val.item}
+            merge
+            record={records[val.item]}
+          />
+        );
+      },
+      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+    },
+    status: {},
+    note: {}
+  };
+
+  return fields;
+}
+
+function stockMergeFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: items.map((elem) => {
+        return {
+          item: elem.pk,
+          obj: elem
+        };
+      }),
+      modelRenderer: (val) => {
+        return (
+          <StockOperationsRow
+            input={val}
+            key={val.item.item}
+            merge
+            record={records[val.item.item]}
+          />
+        );
+      },
+      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+    },
+    location: {
+      default: items[0]?.part_detail.default_location,
+      filters: {
+        structural: false
+      }
+    },
+    notes: {},
+    allow_mismatched_suppliers: {},
+    allow_mismatched_status: {}
+  };
+
+  return fields;
+}
+
+function stockAssignFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: items.map((elem) => {
+        return {
+          item: elem.pk,
+          obj: elem
+        };
+      }),
+      modelRenderer: (val) => {
+        return (
+          <StockOperationsRow
+            input={val}
+            key={val.item.item}
+            merge
+            record={records[val.item.item]}
+          />
+        );
+      },
+      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+    },
+    customer: {
+      filters: {
+        is_customer: true
+      }
+    },
+    notes: {}
+  };
+
+  return fields;
+}
+
+function stockDeleteFields(items: any[]): ApiFormFieldSet {
+  if (!items) {
+    return {};
+  }
+
+  const records = Object.fromEntries(items.map((item) => [item.pk, item]));
+
+  const fields: ApiFormFieldSet = {
+    items: {
+      field_type: 'table',
+      value: items.map((elem) => {
+        return elem.pk;
+      }),
+      modelRenderer: (val) => {
+        return (
+          <StockOperationsRow
+            input={val}
+            key={val.item}
+            merge
+            record={records[val.item]}
+          />
+        );
+      },
+      headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
+    }
+  };
+
+  return fields;
+}
+
+type apiModalFunc = (props: ApiFormModalProps) => {
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+  modal: JSX.Element;
+};
+
+function stockOperationModal({
+  items,
+  pk,
   model,
-  refresh
+  refresh,
+  fieldGenerator,
+  endpoint,
+  title,
+  modalFunc = useCreateApiFormModal
 }: {
-  item: any;
+  items?: object;
+  pk?: number;
   model: ModelType | string;
   refresh: () => void;
+  fieldGenerator: (items: any[]) => ApiFormFieldSet;
+  endpoint: ApiEndpoints;
+  title: string;
+  modalFunc?: apiModalFunc;
 }) {
   const params: any = {
     part_detail: true,
     location_detail: true,
     cascade: false
   };
-  params[model] = item;
+
+  // A Stock item can have location=null, but not part=null
+  params[model] = pk === undefined && model === 'location' ? 'null' : pk;
+
   const { data } = useQuery({
-    queryKey: ['stockitems', model, item],
+    queryKey: ['stockitems', model, pk, items],
     queryFn: async () => {
-      if (model === ModelType.stockitem) {
-        return Array.isArray(item) ? item : [item];
+      if (items) {
+        return Array.isArray(items) ? items : [items];
       }
       const url = apiUrl(ApiEndpoints.stock_item_list);
 
@@ -442,14 +684,94 @@ export function useTransferStockItem({
   });
 
   const fields = useMemo(() => {
-    return stockTransferFields(data);
+    return fieldGenerator(data);
   }, [data]);
 
-  return useCreateApiFormModal({
-    url: ApiEndpoints.stock_transfer,
+  return modalFunc({
+    url: endpoint,
     fields: fields,
-    title: 'Transfer Stock',
+    title: title,
     onFormSuccess: () => refresh()
+  });
+}
+
+export type StockOperationProps = {
+  items?: object;
+  pk?: number;
+  model: ModelType.stockitem | 'location' | ModelType.part;
+  refresh: () => void;
+};
+
+export function useAddStockItem(props: StockOperationProps) {
+  return stockOperationModal({
+    ...props,
+    fieldGenerator: stockAddFields,
+    endpoint: ApiEndpoints.stock_add,
+    title: t`Add Stock`
+  });
+}
+
+export function useRemoveStockItem(props: StockOperationProps) {
+  return stockOperationModal({
+    ...props,
+    fieldGenerator: stockRemoveFields,
+    endpoint: ApiEndpoints.stock_remove,
+    title: t`Remove Stock`
+  });
+}
+
+export function useTransferStockItem(props: StockOperationProps) {
+  return stockOperationModal({
+    ...props,
+    fieldGenerator: stockTransferFields,
+    endpoint: ApiEndpoints.stock_transfer,
+    title: t`Transfer Stock`
+  });
+}
+
+export function useCountStockItem(props: StockOperationProps) {
+  return stockOperationModal({
+    ...props,
+    fieldGenerator: stockCountFields,
+    endpoint: ApiEndpoints.stock_count,
+    title: t`Count Stock`
+  });
+}
+
+export function useChangeStockStatus(props: StockOperationProps) {
+  return stockOperationModal({
+    ...props,
+    fieldGenerator: stockChangeStatusFields,
+    endpoint: ApiEndpoints.stock_change_status,
+    title: t`Change Stock Status`
+  });
+}
+
+export function useMergeStockItem(props: StockOperationProps) {
+  return stockOperationModal({
+    ...props,
+    fieldGenerator: stockMergeFields,
+    endpoint: ApiEndpoints.stock_merge,
+    title: t`Merge Stock`
+  });
+}
+
+export function useAssignStockItem(props: StockOperationProps) {
+  return stockOperationModal({
+    ...props,
+    fieldGenerator: stockAssignFields,
+    endpoint: ApiEndpoints.stock_assign,
+    title: `Assign Stock to Customer`
+  });
+}
+
+export function useDeleteStockItem(props: StockOperationProps) {
+  return stockOperationModal({
+    ...props,
+    fieldGenerator: stockDeleteFields,
+    endpoint: ApiEndpoints.stock_item_list,
+    modalFunc: useDeleteApiFormModal,
+    title: t`Delete Stock Items`
   });
 }
 

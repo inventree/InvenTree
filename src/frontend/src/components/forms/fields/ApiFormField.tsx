@@ -5,7 +5,6 @@ import {
   NumberInput,
   Stack,
   Switch,
-  Table,
   TextInput
 } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';

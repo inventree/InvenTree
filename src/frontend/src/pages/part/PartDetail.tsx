@@ -19,7 +19,6 @@ import {
   IconStack2,
   IconTestPipe,
   IconTools,
-  IconTransfer,
   IconTruckDelivery,
   IconVersions
 } from '@tabler/icons-react';
@@ -47,7 +46,12 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partFields } from '../../forms/PartForms';
-import { useTransferStockItem } from '../../forms/StockForms';
+import {
+  StockOperationProps,
+  useCountStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -639,11 +643,16 @@ export default function PartDetail() {
     onFormSuccess: refreshInstance
   });
 
-  const transferStockItems = useTransferStockItem({
-    item: part.pk,
-    model: ModelType.part,
-    refresh: () => refreshInstance()
-  });
+  const stockActionProps: StockOperationProps = useMemo(() => {
+    return {
+      pk: part.pk,
+      model: ModelType.part,
+      refresh: refreshInstance
+    };
+  }, [part]);
+
+  const countStockItems = useCountStockItem(stockActionProps);
+  const transferStockItems = useTransferStockItem(stockActionProps);
 
   const partActions = useMemo(() => {
     // TODO: Disable actions based on user permissions
@@ -665,12 +674,19 @@ export default function PartDetail() {
         icon={<IconPackages />}
         actions={[
           {
-            icon: <IconClipboardList color="blue" />,
+            icon: (
+              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+            ),
             name: t`Count Stock`,
-            tooltip: t`Count part stock`
+            tooltip: t`Count part stock`,
+            onClick: () => {
+              part.pk && countStockItems.open();
+            }
           },
           {
-            icon: <IconTransfer color="blue" />,
+            icon: (
+              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+            ),
             name: t`Transfer Stock`,
             tooltip: t`Transfer part stock`,
             onClick: () => {
@@ -722,6 +738,7 @@ export default function PartDetail() {
         />
         <PanelGroup pageKey="part" panels={partPanels} />
         {transferStockItems.modal}
+        {countStockItems.modal}
       </Stack>
     </>
   );

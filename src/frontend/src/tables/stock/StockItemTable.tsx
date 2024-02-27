@@ -8,7 +8,17 @@ import { formatCurrency, renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useTransferStockItem } from '../../forms/StockForms';
+import {
+  StockOperationProps,
+  useAddStockItem,
+  useAssignStockItem,
+  useChangeStockStatus,
+  useCountStockItem,
+  useDeleteStockItem,
+  useMergeStockItem,
+  useRemoveStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
@@ -338,14 +348,24 @@ export function StockItemTable({ params = {} }: { params?: any }) {
 
   const navigate = useNavigate();
 
-  const transferStock = useTransferStockItem({
-    item: table.selectedRecords,
-    model: ModelType.stockitem,
-    refresh: table.refreshTable
-  });
+  const tableActionParams: StockOperationProps = useMemo(() => {
+    return {
+      items: table.selectedRecords,
+      model: ModelType.stockitem,
+      refresh: table.refreshTable
+    };
+  }, [table]);
+
+  const transferStock = useTransferStockItem(tableActionParams);
+  const addStock = useAddStockItem(tableActionParams);
+  const removeStock = useRemoveStockItem(tableActionParams);
+  const countStock = useCountStockItem(tableActionParams);
+  const changeStockStatus = useChangeStockStatus(tableActionParams);
+  const mergeStock = useMergeStockItem(tableActionParams);
+  const assignStock = useAssignStockItem(tableActionParams);
+  const deleteStock = useDeleteStockItem(tableActionParams);
 
   const tableActions = useMemo(() => {
-    let can_change_stock = user.hasChangeRole(UserRoles.stock);
     let can_delete_stock = user.hasDeleteRole(UserRoles.stock);
     let can_add_stock = user.hasAddRole(UserRoles.stock);
     let can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
@@ -360,13 +380,19 @@ export function StockItemTable({ params = {} }: { params?: any }) {
             name: t`Add stock`,
             icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
             tooltip: t`Add a new stock item`,
-            disabled: !can_add_stock
+            disabled: !can_add_stock,
+            onClick: () => {
+              addStock.open();
+            }
           },
           {
             name: t`Remove stock`,
             icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
             tooltip: t`Remove some quantity from a stock item`,
-            disabled: !can_change_stock
+            disabled: !can_add_stock,
+            onClick: () => {
+              removeStock.open();
+            }
           },
           {
             name: 'Count Stock',
@@ -374,7 +400,10 @@ export function StockItemTable({ params = {} }: { params?: any }) {
               <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
             ),
             tooltip: 'Count Stock',
-            disabled: !can_add_stocktake
+            disabled: !can_add_stocktake,
+            onClick: () => {
+              countStock.open();
+            }
           },
           {
             name: t`Transfer stock`,
@@ -391,13 +420,19 @@ export function StockItemTable({ params = {} }: { params?: any }) {
             name: t`Change stock status`,
             icon: <InvenTreeIcon icon="info" iconProps={{ color: 'blue' }} />,
             tooltip: t`Change the status of stock items`,
-            disabled: !can_change_stock
+            disabled: !can_add_stock,
+            onClick: () => {
+              changeStockStatus.open();
+            }
           },
           {
             name: t`Merge stock`,
             icon: <InvenTreeIcon icon="merge" />,
             tooltip: t`Merge stock items`,
-            disabled: !can_change_stock
+            disabled: !can_add_stock,
+            onClick: () => {
+              mergeStock.open();
+            }
           },
           {
             name: t`Order stock`,
@@ -409,13 +444,19 @@ export function StockItemTable({ params = {} }: { params?: any }) {
             name: t`Assign to customer`,
             icon: <InvenTreeIcon icon="customer" />,
             tooltip: t`Order new stock`,
-            disabled: !can_change_stock
+            disabled: !can_add_stock,
+            onClick: () => {
+              assignStock.open();
+            }
           },
           {
             name: t`Delete stock`,
             icon: <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />,
             tooltip: t`Delete stock items`,
-            disabled: !can_delete_stock
+            disabled: !can_delete_stock,
+            onClick: () => {
+              deleteStock.open();
+            }
           }
         ]}
       />
@@ -444,6 +485,13 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         }}
       />
       {transferStock.modal}
+      {removeStock.modal}
+      {addStock.modal}
+      {countStock.modal}
+      {changeStockStatus.modal}
+      {mergeStock.modal}
+      {assignStock.modal}
+      {deleteStock.modal}
     </>
   );
 }

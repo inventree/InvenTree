@@ -18,8 +18,11 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { useTransferStockItem } from '../../forms/StockForms';
+import {
+  StockOperationProps,
+  useCountStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useInstance } from '../../hooks/UseInstance';
 import { PartListTable } from '../../tables/part/PartTable';
@@ -86,11 +89,16 @@ export default function Stock() {
     ];
   }, [location, id]);
 
-  const transferStockItems = useTransferStockItem({
-    item: location.pk,
-    model: 'location',
-    refresh: () => refreshInstance()
-  });
+  const stockItemActionProps: StockOperationProps = useMemo(() => {
+    return {
+      pk: location.pk,
+      model: 'location',
+      refresh: refreshInstance
+    };
+  }, [location]);
+
+  const transferStockItems = useTransferStockItem(stockItemActionProps);
+  const countStockItems = useCountStockItem(stockItemActionProps);
 
   const locationActions = useMemo(
     () => [
@@ -142,14 +150,19 @@ export default function Stock() {
         actions={[
           {
             name: 'Count Stock',
-            icon: <InvenTreeIcon icon="stocktake" />,
-            tooltip: 'Count Stock'
+            icon: (
+              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: 'Count Stock',
+            onClick: () => countStockItems.open()
           },
           {
             name: 'Transfer Stock',
-            icon: <InvenTreeIcon icon="transfer" />,
+            icon: (
+              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+            ),
             tooltip: 'Transfer Stock',
-            onClick: () => location.pk && transferStockItems.open()
+            onClick: () => transferStockItems.open()
           }
         ]}
       />,
@@ -200,6 +213,7 @@ export default function Stock() {
         />
         <PanelGroup pageKey="stocklocation" panels={locationPanels} />
         {transferStockItems.modal}
+        {countStockItems.modal}
       </Stack>
     </>
   );
