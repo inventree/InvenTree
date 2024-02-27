@@ -152,6 +152,7 @@ sentry_enabled: False
 # Set this variable to True to enable InvenTree Plugins
 # Alternatively, use the environment variable INVENTREE_PLUGINS_ENABLED
 plugins_enabled: False
+#plugin_noinstall: True
 #plugin_file: '/path/to/plugins.txt'
 #plugin_dir: '/path/to/plugins/'
 
@@ -214,7 +215,7 @@ login_default_protocol: http
 
 # Remote / proxy login
 # These settings can introduce security problems if configured incorrectly. Please read
-# https://docs.djangoproject.com/en/4.0/howto/auth-remote-user/ for more details
+# https://docs.djangoproject.com/en/4.2/howto/auth-remote-user/ for more details
 # The header name should be prefixed by `HTTP`. Please read the docs for more details
 # https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.HttpRequest.META
 remote_login_enabled: False

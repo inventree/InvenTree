@@ -11,7 +11,7 @@ import warnings
 from pathlib import Path
 
 from django.core.files.base import ContentFile
-from django.core.files.storage import Storage, default_storage
+from django.core.files.storage import Storage
 
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
@@ -79,7 +79,7 @@ def ensure_dir(path: Path, storage=None) -> None:
     """
     if storage and isinstance(storage, Storage):
         if not storage.exists(str(path)):
-            storage.save(str(path), ContentFile(''))
+            storage.save(str(path / '.empty'), ContentFile(''))
         return
 
     if not path.exists():

@@ -156,6 +156,12 @@ def plugins_enabled(*args, **kwargs):
 
 
 @register.simple_tag()
+def plugins_install_disabled(*args, **kwargs):
+    """Return True if plugin install is disabled for the server instance."""
+    return djangosettings.PLUGINS_INSTALL_DISABLED
+
+
+@register.simple_tag()
 def plugins_info(*args, **kwargs):
     """Return information about activated plugins."""
     # Check if plugins are even enabled
