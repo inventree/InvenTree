@@ -1,4 +1,4 @@
-"""ABC."""
+"""Shared templating code."""
 
 import warnings
 
@@ -13,8 +13,17 @@ from InvenTree.files import MEDIA_STORAGE_DIR
 
 
 class TemplatingMixin:
-    """ABC."""
+    """Mixin that contains shared templating code."""
 
+    def create_defaults(self):
+        """Function that creates all default templates for the app."""
+        raise NotImplementedError('create_defaults must be implemented')
+
+    def get_src_dir(self, ref, ref_name):
+        """Get the source directory for the default templates."""
+        raise NotImplementedError('get_src_dir must be implemented')
+
+    # Standardized code
     def ready(self):
         """This function is called whenever the app is loaded."""
         import InvenTree.ready
