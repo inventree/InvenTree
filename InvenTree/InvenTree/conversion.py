@@ -36,7 +36,12 @@ def reload_unit_registry():
 
     _unit_registry = None
 
-    reg = pint.UnitRegistry()
+    reg = pint.UnitRegistry(autoconvert_offset_to_baseunit=True)
+
+    # Aliases for temperature units
+    reg.define('@alias degC = celsius = Celsius')
+    reg.define('@alias degF = fahrenheit = Fahrenheit')
+    reg.define('@alias degK = kelvin = Kelvin')
 
     # Define some "standard" additional units
     reg.define('piece = 1')
@@ -142,6 +147,12 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     Returns:
         The converted quantity, in the specified units
     """
+    ureg = get_unit_registry()
+
+    # Check that the provided unit is available in the unit registry
+    if unit and unit not in ureg:
+        raise ValidationError(_(f'Invalid unit provided ({unit})'))
+
     original = str(value).strip()
 
     # Ensure that the value is a string
@@ -181,8 +192,6 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
             raise ValidationError(_(f'Could not convert {original} to {unit}'))
         else:
             raise ValidationError(_('Invalid quantity supplied'))
-
-    ureg = get_unit_registry()
 
     # Calculate the "magnitude" of the value, as a float
     # If the value is specified strangely (e.g. as a fraction or a dozen), this can cause issues
