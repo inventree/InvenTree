@@ -26,12 +26,14 @@ services:
     environment:
       INVENTREE_DEBUG: True
       INVENTREE_DB_ENGINE: postgresql
+      INVENTREE_DB_NAME: inventree
       INVENTREE_DB_HOST: db
       INVENTREE_DB_USER: inventree_user
       INVENTREE_DB_PASSWORD: inventree_password
       INVENTREE_PLUGINS_ENABLED: True
 
-    depends_on: db
+    depends_on: 
+      - db
 
 volumes:
   postgresql:
