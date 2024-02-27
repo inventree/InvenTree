@@ -8,10 +8,8 @@ git config --global --add safe.directory $1
 python3 -m venv /home/inventree/dev/venv
 . /home/inventree/dev/venv/bin/activate
 
-pip install -Ur docker/requirements.txt
-
 # setup InvenTree server
-invoke update
+invoke update -s
 invoke setup-dev
 invoke frontend-install
 
