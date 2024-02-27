@@ -80,6 +80,10 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
     'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
 )
+
+# Disable CUI parts if CUI tests are disabled
+if TESTING and '--exclude-tag=cui' in sys.argv:
+    ENABLE_CLASSIC_FRONTEND = False
 ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
     'INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True
 )
@@ -553,6 +557,8 @@ db_options = db_config.get('OPTIONS', db_config.get('options', {}))
 
 # Specific options for postgres backend
 if 'postgres' in db_engine:  # pragma: no cover
+    from django.db.backends.postgresql.psycopg_any import IsolationLevel
+
     # Connection timeout
     if 'connect_timeout' not in db_options:
         # The DB server is in the same data center, it should not take very
@@ -616,7 +622,11 @@ if 'postgres' in db_engine:  # pragma: no cover
         serializable = get_boolean_setting(
             'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
         )
-        db_options['isolation_level'] = 4 if serializable else 2
+        db_options['isolation_level'] = (
+            IsolationLevel.SERIALIZABLE
+            if serializable
+            else IsolationLevel.READ_COMMITTED
+        )
 
 # Specific options for MySql / MariaDB backend
 elif 'mysql' in db_engine:  # pragma: no cover
@@ -804,7 +814,8 @@ SESSION_ENGINE = 'user_sessions.backends.db'
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
 )
-SILENCED_SYSTEM_CHECKS = ['admin.E410']
+
+SILENCED_SYSTEM_CHECKS = ['admin.E410', 'templates.E003', 'templates.W003']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -1111,6 +1122,9 @@ MAINTENANCE_MODE_STATE_BACKEND = 'InvenTree.backends.InvenTreeMaintenanceModeBac
 # Are plugins enabled?
 PLUGINS_ENABLED = get_boolean_setting(
     'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
+)
+PLUGINS_INSTALL_DISABLED = get_boolean_setting(
+    'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
 )
 
 PLUGIN_FILE = config.get_plugin_file()

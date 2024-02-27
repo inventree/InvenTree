@@ -3,7 +3,6 @@ import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { Locales } from '../contexts/LanguageContext';
 import { HostList } from './states';
 
 interface LocalStateProps {
@@ -14,8 +13,8 @@ interface LocalStateProps {
   hostKey: string;
   hostList: HostList;
   setHostList: (newHostList: HostList) => void;
-  language: Locales;
-  setLanguage: (newLanguage: Locales) => void;
+  language: string;
+  setLanguage: (newLanguage: string) => void;
   // theme
   primaryColor: string;
   whiteColor: string;

@@ -55,6 +55,10 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test the plugins_enabled tag."""
         self.assertEqual(inventree_extras.plugins_enabled(), True)
 
+    def test_plugins_install_disabled(self):
+        """Test the plugins_install_disabled tag."""
+        self.assertEqual(inventree_extras.plugins_install_disabled(), False)
+
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
@@ -237,7 +241,8 @@ class PartTest(TestCase):
     def test_attributes(self):
         """Test Part attributes."""
         self.assertEqual(self.r1.name, 'R_2K2_0805')
-        self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
 
     def test_category(self):
         """Test PartCategory path."""
@@ -381,6 +386,17 @@ class TestTemplateTest(TestCase):
         self.assertEqual(variant.getTestTemplates().count(), 6)
         self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 0)
         self.assertEqual(variant.getTestTemplates(required=True).count(), 5)
+
+        # Test the 'enabled' status check
+        self.assertEqual(variant.getTestTemplates(enabled=True).count(), 6)
+        self.assertEqual(variant.getTestTemplates(enabled=False).count(), 0)
+
+        template = variant.getTestTemplates().first()
+        template.enabled = False
+        template.save()
+
+        self.assertEqual(variant.getTestTemplates(enabled=True).count(), 5)
+        self.assertEqual(variant.getTestTemplates(enabled=False).count(), 1)
 
     def test_uniqueness(self):
         """Test names must be unique for this part and also parts above."""

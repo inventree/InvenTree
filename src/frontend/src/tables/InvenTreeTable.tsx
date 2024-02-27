@@ -125,7 +125,7 @@ export function InvenTreeTable<T = any>({
       props.tableFilters?.map((filter) => {
         return {
           ...filter,
-          label: filter.label ?? fieldNames[filter.name] ?? `? ${filter.name} ?`
+          label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
         };
       }) ?? []
     );
@@ -135,6 +135,7 @@ export function InvenTreeTable<T = any>({
   const tableOptionQuery = useQuery({
     enabled: false,
     queryKey: ['options', url, tableState.tableKey],
+    retry: 3,
     queryFn: async () => {
       return api
         .options(url, {
@@ -212,7 +213,7 @@ export function InvenTreeTable<T = any>({
       return {
         ...col,
         hidden: hidden,
-        title: col.title ?? fieldNames[col.accessor] ?? `? ${col.accessor} ?`
+        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
       };
     });
 

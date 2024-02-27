@@ -55,7 +55,8 @@ export default function StockItemTestResultTable({
         .get(apiUrl(ApiEndpoints.part_test_template_list), {
           params: {
             part: partId,
-            include_inherited: true
+            include_inherited: true,
+            enabled: true
           }
         })
         .then((response) => response.data)
@@ -126,12 +127,17 @@ export default function StockItemTestResultTable({
         sortable: true,
         render: (record: any) => {
           let required = record.required ?? record.template_detail?.required;
+          let enabled = record.enabled ?? record.template_detail?.enabled;
           let installed =
             record.stock_item != undefined && record.stock_item != itemId;
 
           return (
             <Group position="apart">
-              <Text italic={installed} fw={required && 700}>
+              <Text
+                italic={installed}
+                fw={required && 700}
+                color={enabled ? undefined : 'red'}
+              >
                 {!record.templateId && '- '}
                 {record.test_name ?? record.template_detail?.test_name}
               </Text>
@@ -419,7 +425,8 @@ export default function StockItemTestResultTable({
             stock_item: itemId,
             user_detail: true,
             attachment_detail: true,
-            template_detail: true
+            template_detail: true,
+            enabled: true
           }
         }}
       />

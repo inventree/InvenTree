@@ -2818,6 +2818,7 @@ function partTestTemplateFields(options={}) {
         required: {},
         requires_value: {},
         requires_attachment: {},
+        enabled: {},
         part: {
             hidden: true,
         }
@@ -2862,6 +2863,7 @@ function loadPartTestTemplateTable(table, options) {
                 field: 'pk',
                 title: 'ID',
                 visible: false,
+                switchable: false,
             },
             {
                 field: 'test_name',
@@ -2883,6 +2885,14 @@ function loadPartTestTemplateTable(table, options) {
             {
                 field: 'description',
                 title: '{% trans "Description" %}',
+            },
+            {
+                field: 'enabled',
+                title: '{% trans "Enabled" %}',
+                sortable: true,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
             },
             {
                 field: 'required',

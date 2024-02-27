@@ -152,6 +152,7 @@ class InfoView(AjaxView):
             'worker_running': is_worker_running(),
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
+            'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
             'active_plugins': plugins_info(),
             'email_configured': is_email_configured(),
             'debug_mode': settings.DEBUG,
