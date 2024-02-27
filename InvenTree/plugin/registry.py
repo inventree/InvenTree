@@ -115,7 +115,11 @@ class PluginsRegistry:
             return None
 
         try:
-            cfg, _created = PluginConfig.objects.get_or_create(key=slug)
+            cfg = PluginConfig.objects.filter(key=slug).first()
+
+            if not cfg:
+                cfg = PluginObject.objects.create(key=slug)
+
         except PluginConfig.DoesNotExist:
             return None
         except (IntegrityError, OperationalError, ProgrammingError):  # pragma: no cover
