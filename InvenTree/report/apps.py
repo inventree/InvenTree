@@ -7,8 +7,6 @@ from django.apps import AppConfig
 from generic.templating.apps import TemplatingMixin
 from InvenTree.files import TEMPLATES_DIR
 
-logger = logging.getLogger('inventree')
-
 
 class ReportConfig(TemplatingMixin, AppConfig):
     """Configuration class for the "report" app."""

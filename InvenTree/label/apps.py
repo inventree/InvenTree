@@ -1,13 +1,9 @@
 """Config options for the label app."""
 
-import logging
-
 from django.apps import AppConfig
 
 from generic.templating.apps import TemplatingMixin
 from InvenTree.files import TEMPLATES_DIR
-
-logger = logging.getLogger('inventree')
 
 
 class LabelConfig(TemplatingMixin, AppConfig):
