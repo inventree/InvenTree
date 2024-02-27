@@ -164,10 +164,3 @@ ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
-
-# Image target for devcontainer
-FROM dev as devcontainer
-
-ARG workspace="/workspaces/InvenTree"
-
-WORKDIR ${WORKSPACE}

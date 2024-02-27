@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # Avoiding Dubious Ownership in Dev Containers for setup commands that use git
-# Note that the local workspace directory is passed through as the first argument $1
 git config --global --add safe.directory /home/inventree
 
 # create venv
-python3 -m venv /home/inventree/dev/venv
+python3 -m venv /home/inventree/dev/venv --system-site-packages --upgrade-deps
 . /home/inventree/dev/venv/bin/activate
 
 # setup InvenTree server

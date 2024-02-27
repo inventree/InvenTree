@@ -16,7 +16,7 @@ services:
   inventree:
     build:
       context: ..
-      target: devcontainer
+      target: dev
       args:
         base_image: "mcr.microsoft.com/vscode/devcontainers/base:alpine-3.18"
         workspace: "${containerWorkspaceFolder}"
@@ -34,7 +34,7 @@ services:
       INVENTREE_DB_PASSWORD: inventree_password
       INVENTREE_PLUGINS_ENABLED: True
 
-    depends_on: 
+    depends_on:
       - db
 
 volumes:
