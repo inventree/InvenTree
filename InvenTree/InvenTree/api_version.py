@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 176
+INVENTREE_API_VERSION = 177
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v177 - 2024-02-27 : https://github.com/inventree/InvenTree/pull/6581
+    - Adds "subcategoies" count to PartCategoryTree serializer
+    - Adds "sublocations" count to StockLocationTree serializer
 
 v176 - 2024-02-26 : https://github.com/inventree/InvenTree/pull/6535
     - Adds the field "plugins_install_disabled" to the Server info API endpoint
