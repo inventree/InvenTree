@@ -80,6 +80,7 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
     'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
 )
+
 # Disable CUI parts if CUI tests are disabled
 if TESTING and '--exclude-tag=cui' in sys.argv:
     ENABLE_CLASSIC_FRONTEND = False
@@ -828,7 +829,8 @@ SESSION_ENGINE = 'user_sessions.backends.db'
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
 )
-SILENCED_SYSTEM_CHECKS = ['admin.E410']
+
+SILENCED_SYSTEM_CHECKS = ['admin.E410', 'templates.E003', 'templates.W003']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
