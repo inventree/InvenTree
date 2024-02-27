@@ -293,9 +293,9 @@ def annotate_sub_categories():
     return Coalesce(
         Subquery(
             subquery.annotate(
-                count=Func(F('pk'), function='COUNT', output_field=IntegerField())
+                total=Func(F('pk'), function='COUNT', output_field=IntegerField())
             )
-            .values('count')
+            .values('total')
             .order_by()
         ),
         0,
