@@ -472,6 +472,34 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(path[1]['name'], 'IC')
         self.assertEqual(path[2]['name'], 'MCU')
 
+    def test_part_category_tree(self):
+        """Test the PartCategoryTree API endpoint."""
+        # Create a number of new part categories
+        loc = None
+
+        for idx in range(50):
+            loc = PartCategory.objects.create(
+                name=f'Test Category {idx}',
+                description=f'Test category {idx}',
+                parent=loc,
+            )
+
+        PartCategory.objects.rebuild()
+
+        with self.assertNumQueriesLessThan(10):
+            response = self.get(reverse('api-part-category-tree'), expected_code=200)
+
+        self.assertEqual(len(response.data), PartCategory.objects.count())
+
+        for item in response.data:
+            category = PartCategory.objects.get(pk=item['pk'])
+            parent = category.parent.pk if category.parent else None
+            subcategories = category.get_descendants(include_self=False).count()
+
+            self.assertEqual(item['name'], category.name)
+            self.assertEqual(item['parent'], parent)
+            self.assertEqual(item['subcategories'], subcategories)
+
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
     """Tests for the various OPTIONS endpoints in the /part/ API.
