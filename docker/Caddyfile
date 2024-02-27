@@ -1,0 +1,36 @@
+# Caddyfile for Inventree
+# The following environment variables may be used:
+# - INVENTREE_SITE_URL: The upstream URL of the Inventree site (default: inventree.localhost)
+# - INVENTREE_SERVER: The internal URL of the Inventree container (default: http://inventree-server:8000)
+
+(log_common) {
+    log {
+        output file /var/log/caddy/{args.0}.access.log
+    }
+}
+
+# Change the host to your domain (this will serve at inventree.localhost)
+{$INVENTREE_SITE_URL:inventree.localhost} {
+    import log_common inventree
+
+    encode gzip
+
+    request_body {
+        max_size 100MB
+    }
+
+    handle_path /static/* {
+        root * /var/www/static
+        file_server
+    }
+
+    handle_path /media/* {
+        forward_auth {$INVENTREE_SERVER:"http://inventree-server:8000"} {
+            uri /auth/
+        }
+        root * /var/www/media
+        file_server
+    }
+
+    reverse_proxy {$INVENTREE_SERVER:"http://inventree-server:8000"}
+}

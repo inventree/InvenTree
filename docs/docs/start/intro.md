@@ -2,71 +2,78 @@
 title: Setup Introduction
 ---
 
-!!! info "Fast install"
-    A quick-and-easy install can be done done with the following one-liner.
-	```bash
-	wget -qO install.sh https://get.inventree.org && bash install.sh
-	```
-	Read more about the [installer](./installer.md).
-
 ## Introduction
 
-InvenTree can be self-hosted with minimal system requirements. Multiple database back-ends are supported, allowing for flexibility where required.
+A functional InvenTree server can be hosted with minimal setup requirements. Multiple installation methods and database back-ends are supported, allowing for flexibility where required.
+
+!!! info "Production Ready"
+	InvenTree is designed to be a production-ready application, and can be deployed in a variety of environments. The following instructions are designed to help you get started with a *production* setup. For a development setup, refer to the [development setup guide](../develop/starting.md).
+
+## Installation Methods
+
+To quickly jump to a specific installation method, refer to the following links:
+
+- [**Docker**](./docker.md)
+- [**Package Installer**](./installer.md)
+- [**Bare Metal**](./install.md)
+
+!!! success "Docker Recommended"
+    The recommended method of installing InvenTree is to follow our [docker setup guide](./docker.md). InvenTree provides out-of-the-box support for docker and docker compose, which provides a simple, reliable and repeatable pipeline for integration into your production environment.
+
+!!! info "Further Reading"
+    For more information on the InvenTree tech stack, continue reading below!
+
+### Configuration Options
+
+Independent of the preferred installation method, InvenTree provides a number of [configuration options](./config.md) which can be used to customize the server environment.
+
+## System Components
 
 The InvenTree server ecosystem consists of the following components:
 
 ### Database
 
-A persistent database is required for data storage. InvenTree can be used with any of the following database backends:
+A persistent database is required for data storage. By default, InvenTree is configured to use [PostgreSQL](https://www.postgresql.org/) - and this is the recommended database backend to use. However, InvenTree can also be configured to connect to any database backend [supported by Django]({% include "django.html" %}/ref/databases/)
 
-* PostgreSQL
-* MySQL / MariaDB
-* SQLite
-
-!!! warning "SQLite"
-    While SQLite provides a simpler setup and is useful for a development environment, we strongly recommend against using it for a production environment. Use PostgreSQL or MySQL instead
-
-Database selection should be determined by your particular installation requirements.
-
-### Media Files
-
-Uploaded media files (images, attachments, reports, etc) are stored to a persistent storage volume.
 
 ### Web Server
 
-The bulk of the InvenTree code base supports the custom web server application. The web server application services user requests and facilitates database access.
+The bulk of the InvenTree code base supports the custom web server application. The web server application services user requests and facilitates database access. The webserver provides access to the [API](../api/api.md) for performing database query actions.
 
-The webserver code also provides a first-party API for performing database query actions.
-
-Once a database is setup, you need a way of accessing the data. InvenTree provides a "server" application out of the box, but this may not scale particularly well with multiple users.  Instead, InvenTree can be served using a webserver such as [Gunicorn](https://gunicorn.org/). For more information see the [deployment documentation](./bare_prod.md).
+InvenTree uses [Gunicorn](https://gunicorn.org/) as the web server - a Python WSGI HTTP server.
 
 ### Background Tasks
 
-A separate application handles management of [background tasks](../settings/tasks.md), separate to user-facing web requests.
+A separate application handles management of [background tasks](../settings/tasks.md), separate to user-facing web requests. The background task manager is required to perform asynchronous tasks, such as sending emails, generating reports, and other long-running tasks.
+
+InvenTree uses [django-q2](https://django-q2.readthedocs.io/en/master/) as the background task manager.
+
+### File Storage
+
+Uploaded *media* files (images, attachments, reports, etc) and *static* files (javascript, html) are stored to a persistent storage volume. A *file server* is required to serve these files to the user.
+
+InvenTree uses [Caddy](https://caddyserver.com/) as a file server, which is configured to serve both *static* and *media* files. Additionally, Caddy provides SSL termination and reverse proxy services.
 
 ## OS Requirements
 
-The InvenTree documentation assumes that the operating system is a debian based Linux OS. Some installation steps may differ for different systems.
+The InvenTree documentation *assumes* that the operating system is a debian based Linux OS. Some installation steps may differ for different systems.
 
 !!! warning "Installing on Windows"
-    Installation on Windows is *not guaranteed* to work (at all). To install on a Windows system, it is highly recommended that you [install WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10#manual-installation-steps), and then follow installation procedure from within the WSL environment.
+    To install on a Windows system, you should [install WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10#manual-installation-steps), and then follow installation procedure from within the WSL environment.
 
 !!! success "Docker"
-    Installation on any OS is simplified by following the [docker setup guide](../docker).
+    Installation on any OS is simplified by following the [docker setup guide](./docker.md).
 
 ## Python Requirements
 
-InvenTree runs on [Python](https://python.org).
-
-!!! warning "Python Version"
-    InvenTree requires Python 3.9 (or newer). If your system has an older version of Python installed, you will need to follow the update instructions for your OS.
+InvenTree requires a minimum Python version of {{ config.extra.min_python_version}}. If your system has an older version of Python installed, you will need to follow the update instructions for your OS.
 
 ### Invoke
 
 InvenTree makes use of the [invoke](https://www.pyinvoke.org/) python toolkit for performing various administrative actions.
 
 !!! warning "Invoke Version"
-	InvenTree requires invoke version 2.0.0 or newer. Some platforms may be shipped with older versions of invoke!
+	InvenTree requires invoke version {{ config.extra.min_invoke_version }} or newer. Some platforms may be shipped with older versions of invoke!
 
 !!! tip "Updating Invoke"
     To update your invoke version, run `pip install -U invoke`
@@ -102,15 +109,11 @@ To configure Inventree inside a virtual environment, ``cd`` into the inventree b
 source env/bin/activate
 ```
 
-!!! info "Activate Virtual Environment"
-	if
-	```
-	source env/bin/activate
-	```
-	is not working try
-	```
-	. env/bin/activate
-	```
+Or, if that does not work, try:
+
+```
+. env/bin/activate
+```
 
 This will place the current shell session inside a virtual environment - the terminal should display the ``(env)`` prefix.
 
@@ -127,31 +130,10 @@ Alternatively, the source can be downloaded as a [.zip archive](https://github.c
 !!! info "Updating via Git"
     Downloading the source code using Git is recommended, as it allows for simple updates when a new version of InvenTree is released.
 
-## Installation Guides
-
-There are multiple ways to get an InvenTree server up and running, of various complexity (and robustness)!
-
-### Docker
-
-The recommended method of installing InvenTree is to use [docker](https://www.docker.com). InvenTree provides out-of-the-box support for docker and docker compose, which provides a simple, reliable and repeatable pipeline for integration into your production environment.
-
-Refer to the following guides for further instructions:
-
-- [**Docker development server setup guide**](./docker_dev.md)
-- [**Docker production server setup guide**](./docker.md)
-
-### Bare Metal
-
-If you do not wish to use the docker container, you will need to manually install the required packages and follow through the installation guide.
-
-Refer to the following guides for further instructions:
-
-- [**Bare metal development server setup guide**](./bare_dev.md)
-- [**Bare metal production server setup guide**](./install.md)
 
 ## Debug Mode
 
-By default, the InvenTree web server is configured to run in [DEBUG mode](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-DEBUG).
+By default, a production InvenTree installation is configured to run with [DEBUG mode]({% include "django.html" %}/ref/settings/#std:setting-DEBUG) *disabled*.
 
 Running in DEBUG mode provides many handy development features, however it is strongly recommended *NOT* to run in DEBUG mode in a production environment. This recommendation is made because DEBUG mode leaks a lot of information about your installation and may pose a security risk.
 

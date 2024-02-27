@@ -25,16 +25,16 @@ repos:
         --fix,
         --preview
       ]
--   repo: https://github.com/jazzband/pip-tools
-    rev: 7.4.0
+-   repo: https://github.com/matmair/ruff-pre-commit
+    rev: 830893bf46db844d9c99b6c468e285199adf2de6  # uv-018
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [requirements-dev.in, -o, requirements-dev.txt]
+        args: [requirements-dev.in, -o, requirements-dev.txt, --python-version=3.9]
         files: ^requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [requirements.in, -o, requirements.txt]
+        args: [requirements.in, -o, requirements.txt,--python-version=3.9]
         files: ^requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.1

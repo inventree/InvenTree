@@ -111,9 +111,12 @@ jobs:
           pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        run: |
-          pip install linkcheckmd requests
-          python -m linkcheckmd docs --recurse
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          folder-path: docs
+          config-file: docs/mlc_config.json
+          check-modified-files-only: 'yes'
+          use-quiet-mode: 'yes'
 
   schema:
     name: Tests - API Schema Documentation
@@ -309,7 +312,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
-          pip-dependency: psycopg2 django-redis>=5.0.0
+          pip-dependency: psycopg django-redis>=5.0.0
           dev-install: true
           update: true
       - name: Run Tests
@@ -391,7 +394,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
-          pip-dependency: psycopg2
+          pip-dependency: psycopg
           dev-install: true
           update: true
       - name: Run Tests

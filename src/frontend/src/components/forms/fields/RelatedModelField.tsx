@@ -211,45 +211,49 @@ export function RelatedModelField({
 
   // Field doesn't follow Mantine theming
   // Define color theme to pass to field based on Mantine theme
-  const th = useMantineTheme();
-  let colors: any;
-  if (th.colorScheme === 'dark') {
-    colors = {
-      neutral0: th.colors[th.colorScheme][6],
-      neutral5: th.colors[th.colorScheme][4],
-      neutral10: th.colors[th.colorScheme][4],
-      neutral20: th.colors[th.colorScheme][4],
-      neutral30: th.colors[th.colorScheme][3],
-      neutral40: th.colors[th.colorScheme][2],
-      neutral50: th.colors[th.colorScheme][1],
-      neutral60: th.colors[th.colorScheme][0],
-      neutral70: th.colors[th.colorScheme][0],
-      neutral80: th.colors[th.colorScheme][0],
-      neutral90: th.colors[th.colorScheme][0],
-      primary: th.colors[th.primaryColor][7],
-      primary25: th.colors[th.primaryColor][6],
-      primary50: th.colors[th.primaryColor][5],
-      primary75: th.colors[th.primaryColor][4]
-    };
-  } else {
-    colors = {
-      neutral0: th.white,
-      neutral5: th.fn.darken(th.white, 0.05),
-      neutral10: th.fn.darken(th.white, 0.1),
-      neutral20: th.fn.darken(th.white, 0.2),
-      neutral30: th.fn.darken(th.white, 0.3),
-      neutral40: th.fn.darken(th.white, 0.4),
-      neutral50: th.fn.darken(th.white, 0.5),
-      neutral60: th.fn.darken(th.white, 0.6),
-      neutral70: th.fn.darken(th.white, 0.7),
-      neutral80: th.fn.darken(th.white, 0.8),
-      neutral90: th.fn.darken(th.white, 0.9),
-      primary: th.colors[th.primaryColor][7],
-      primary25: th.colors[th.primaryColor][4],
-      primary50: th.colors[th.primaryColor][5],
-      primary75: th.colors[th.primaryColor][6]
-    };
-  }
+  const theme = useMantineTheme();
+
+  const colors = useMemo(() => {
+    let colors: any;
+    if (theme.colorScheme === 'dark') {
+      colors = {
+        neutral0: theme.colors[theme.colorScheme][6],
+        neutral5: theme.colors[theme.colorScheme][4],
+        neutral10: theme.colors[theme.colorScheme][4],
+        neutral20: theme.colors[theme.colorScheme][4],
+        neutral30: theme.colors[theme.colorScheme][3],
+        neutral40: theme.colors[theme.colorScheme][2],
+        neutral50: theme.colors[theme.colorScheme][1],
+        neutral60: theme.colors[theme.colorScheme][0],
+        neutral70: theme.colors[theme.colorScheme][0],
+        neutral80: theme.colors[theme.colorScheme][0],
+        neutral90: theme.colors[theme.colorScheme][0],
+        primary: theme.colors[theme.primaryColor][7],
+        primary25: theme.colors[theme.primaryColor][6],
+        primary50: theme.colors[theme.primaryColor][5],
+        primary75: theme.colors[theme.primaryColor][4]
+      };
+    } else {
+      colors = {
+        neutral0: theme.white,
+        neutral5: theme.fn.darken(theme.white, 0.05),
+        neutral10: theme.fn.darken(theme.white, 0.1),
+        neutral20: theme.fn.darken(theme.white, 0.2),
+        neutral30: theme.fn.darken(theme.white, 0.3),
+        neutral40: theme.fn.darken(theme.white, 0.4),
+        neutral50: theme.fn.darken(theme.white, 0.5),
+        neutral60: theme.fn.darken(theme.white, 0.6),
+        neutral70: theme.fn.darken(theme.white, 0.7),
+        neutral80: theme.fn.darken(theme.white, 0.8),
+        neutral90: theme.fn.darken(theme.white, 0.9),
+        primary: theme.colors[theme.primaryColor][7],
+        primary25: theme.colors[theme.primaryColor][4],
+        primary50: theme.colors[theme.primaryColor][5],
+        primary75: theme.colors[theme.primaryColor][6]
+      };
+    }
+    return colors;
+  }, [theme]);
 
   return (
     <Input.Wrapper

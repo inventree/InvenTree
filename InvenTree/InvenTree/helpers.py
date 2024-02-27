@@ -913,3 +913,10 @@ def inheritors(cls: type[Inheritors_T]) -> set[type[Inheritors_T]]:
 def is_ajax(request):
     """Check if the current request is an AJAX request."""
     return request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+
+def pui_url(subpath: str) -> str:
+    """Return the URL for a PUI subpath."""
+    if not subpath.startswith('/'):
+        subpath = '/' + subpath
+    return f'/{settings.FRONTEND_URL_BASE}{subpath}'
