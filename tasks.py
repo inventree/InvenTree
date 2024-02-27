@@ -207,8 +207,8 @@ def check_file_existance(filename: str, overwrite: bool = False):
 
 
 # Install tasks
-@task(help={'nouv': 'Do not use UV'})
-def plugins(c, nouv=False):
+@task(help={'uv': 'Use UV (experimental package manager)'})
+def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from InvenTree.InvenTree.config import get_plugin_file
 
@@ -217,20 +217,20 @@ def plugins(c, nouv=False):
     print(f"Installing plugin packages from '{plugin_file}'")
 
     # Install the plugins
-    if nouv:
+    if not uv:
         c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
     else:
         c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
         c.run(f"uv pip install -r '{plugin_file}'")
 
 
-@task(post=[plugins], help={'nouv': 'Do not use UV'})
-def install(c, nouv=False):
+@task(help={'uv': 'Use UV package manager (experimental)'})
+def install(c, uv=False):
     """Installs required python packages."""
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
-    if nouv:
+    if not uv:
         c.run('pip3 install --upgrade pip')
         c.run('pip3 install --upgrade setuptools')
         c.run(
@@ -240,6 +240,9 @@ def install(c, nouv=False):
         c.run('pip3 install --upgrade uv')
         c.run('uv pip install --upgrade setuptools')
         c.run('uv pip install -U -r requirements.txt')
+
+    # Run plugins install
+    plugins(c, uv=uv)
 
 
 @task(help={'tests': 'Set up test dataset at the end'})
@@ -305,7 +308,7 @@ def static(c, frontend=False):
         frontend_build(c)
 
     print('Collecting static files...')
-    manage(c, 'collectstatic --no-input --clear')
+    manage(c, 'collectstatic --no-input --clear --verbosity 0')
 
 
 @task
@@ -389,6 +392,7 @@ def migrate(c):
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
+        'uv': 'Use UV (experimental package manager)',
     },
 )
 def update(
@@ -397,6 +401,7 @@ def update(
     frontend: bool = False,
     no_frontend: bool = False,
     skip_static: bool = False,
+    uv: bool = False,
 ):
     """Update InvenTree installation.
 
@@ -414,7 +419,7 @@ def update(
     - translate_stats
     """
     # Ensure required components are installed
-    install(c)
+    install(c, uv=uv)
 
     if not skip_backup:
         backup(c)
