@@ -308,7 +308,7 @@ class CategoryTree(ListAPI):
 
     filter_backends = ORDER_FILTER
 
-    ordering_fields = ['level', 'name', 'children']
+    ordering_fields = ['level', 'name', 'subcategories']
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']

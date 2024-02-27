@@ -72,7 +72,7 @@ export function PartCategoryTree({
     );
   }
 
-  function renderIcon({ node, open }: { node: any; open: boolean }) {
+  function renderIcon({ node, open }: { node: any; open?: boolean }) {
     if (node.children == 0) {
       return undefined;
     }

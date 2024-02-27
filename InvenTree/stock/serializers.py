@@ -858,7 +858,14 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = StockLocation
-        fields = ['pk', 'name', 'parent', 'icon', 'structural']
+        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'sublocations']
+
+    sublocations = serializers.IntegerField(label=_('Sublocations'), read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with the number of sublocations."""
+        return queryset.annotate(sublocations=Count('children'))
 
 
 class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
