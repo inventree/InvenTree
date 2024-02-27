@@ -112,16 +112,10 @@ class TemplatingMixin:
         if do_copy:
             logger.info("Copying %s template '%s'", self.name, dst_file)
             # Ensure destination dir exists
-            try:
-                dst_file.parent.mkdir(parents=True, exist_ok=True)
-            except FileExistsError:
-                pass
+            dst_file.parent.mkdir(parents=True, exist_ok=True)
 
             # Copy file
-            try:
-                default_storage.save(filename, src_file.open('rb'))
-            except FileExistsError:
-                pass
+            default_storage.save(filename, src_file.open('rb'))
 
         # Check if a file matching the template already exists
         try:
