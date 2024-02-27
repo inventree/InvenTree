@@ -1,24 +1,20 @@
 """Config options for the label app."""
 
 import logging
-import os
 
 from django.apps import AppConfig
-from django.core.files.storage import default_storage
 
-import InvenTree.helpers
 from generic.templating.apps import TemplatingMixin
-from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
+from InvenTree.files import TEMPLATES_DIR
 
 logger = logging.getLogger('inventree')
-ref = 'label'
-db_ref = 'label'
 
 
 class LabelConfig(TemplatingMixin, AppConfig):
     """Configuration class for the "label" app."""
 
-    name = ref
+    name = 'label'
+    db = 'label'
 
     def create_defaults(self):
         """Create all default templates."""
@@ -97,9 +93,9 @@ class LabelConfig(TemplatingMixin, AppConfig):
             ],
         )
 
-    def get_src_dir(self, ref, ref_name):
+    def get_src_dir(self, ref_name):
         """Get the source directory."""
-        return TEMPLATES_DIR.joinpath(ref, 'templates', ref, ref_name)
+        return TEMPLATES_DIR.joinpath(self.name, 'templates', self.name, ref_name)
 
     def get_new_obj_data(self, data, filename):
         """Get the data for a new template db object."""

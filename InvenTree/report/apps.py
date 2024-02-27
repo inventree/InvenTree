@@ -8,14 +8,13 @@ from generic.templating.apps import TemplatingMixin
 from InvenTree.files import TEMPLATES_DIR
 
 logger = logging.getLogger('inventree')
-ref = 'report'
-db_ref = 'template'
 
 
 class ReportConfig(TemplatingMixin, AppConfig):
     """Configuration class for the "report" app."""
 
-    name = ref
+    name = 'report'
+    db = 'template'
 
     def ready(self):
         """This function is called whenever the app is loaded."""
@@ -113,9 +112,9 @@ class ReportConfig(TemplatingMixin, AppConfig):
             ],
         )
 
-    def get_src_dir(self, ref, ref_name):
+    def get_src_dir(self, ref_name):
         """Get the source directory."""
-        return TEMPLATES_DIR.joinpath(ref, 'templates', ref)
+        return TEMPLATES_DIR.joinpath(self.name, 'templates', self.name)
 
     def get_new_obj_data(self, data, filename):
         """Get the data for a new template db object."""

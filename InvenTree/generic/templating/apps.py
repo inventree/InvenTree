@@ -20,11 +20,21 @@ logger = logging.getLogger('inventree')
 class TemplatingMixin:
     """Mixin that contains shared templating code."""
 
+    name: str = ''
+    db: str = ''
+
+    def __init__(self, *args, **kwargs):
+        """Ensure that the required properties are set."""
+        if self.name == '':
+            raise NotImplementedError('ref must be set')
+        if self.db == '':
+            raise NotImplementedError('db must be set')
+
     def create_defaults(self):
         """Function that creates all default templates for the app."""
         raise NotImplementedError('create_defaults must be implemented')
 
-    def get_src_dir(self, ref, ref_name):
+    def get_src_dir(self, ref_name):
         """Get the source directory for the default templates."""
         raise NotImplementedError('get_src_dir must be implemented')
 
@@ -58,7 +68,7 @@ class TemplatingMixin:
             ):
                 # Database might not yet be ready
                 warnings.warn(
-                    f'Database was not ready for creating {ref}s', stacklevel=2
+                    f'Database was not ready for creating {self.name}s', stacklevel=2
                 )
 
         set_maintenance_mode(False)
@@ -68,8 +78,8 @@ class TemplatingMixin:
         ref_name = model.getSubdir()
 
         # Create root dir for templates
-        src_dir = self.get_src_dir(ref, ref_name)
-        dst_dir = MEDIA_STORAGE_DIR.joinpath(ref, 'inventree', ref_name)
+        src_dir = self.get_src_dir(ref_name)
+        dst_dir = MEDIA_STORAGE_DIR.joinpath(self.name, 'inventree', ref_name)
         ensure_dir(dst_dir, default_storage)
 
         # Copy each template across (if required)
@@ -79,7 +89,7 @@ class TemplatingMixin:
     def create_template_file(self, model, src_dir, data, ref_name):
         """Ensure a label template is in place."""
         # Destination filename
-        filename = os.path.join(ref, 'inventree', ref_name, data['file'])
+        filename = os.path.join(self.name, 'inventree', ref_name, data['file'])
 
         src_file = src_dir.joinpath(data['file'])
         dst_file = MEDIA_STORAGE_DIR.joinpath(filename)
@@ -87,7 +97,7 @@ class TemplatingMixin:
         do_copy = False
 
         if not dst_file.exists():
-            logger.info("%s template '%s' is not present", ref, filename)
+            logger.info("%s template '%s' is not present", self.name, filename)
             do_copy = True
         else:
             # Check if the file contents are different
@@ -99,7 +109,7 @@ class TemplatingMixin:
                 do_copy = True
 
         if do_copy:
-            logger.info("Copying %s template '%s'", ref, dst_file)
+            logger.info("Copying %s template '%s'", self.name, dst_file)
             # Ensure destination dir exists
             try:
                 dst_file.parent.mkdir(parents=True, exist_ok=True)
@@ -114,12 +124,12 @@ class TemplatingMixin:
 
         # Check if a file matching the template already exists
         try:
-            if model.objects.filter(**{db_ref: filename}).exists():
+            if model.objects.filter(**{self.db: filename}).exists():
                 return  # pragma: no cover
         except Exception:
             logger.exception(
                 "Failed to query %s for '%s' - you should run 'invoke update' first!",
-                ref,
+                self.name,
                 filename,
             )
 
@@ -128,4 +138,4 @@ class TemplatingMixin:
         try:
             model.objects.create(**self.get_new_obj_data(data, filename))
         except Exception:
-            logger.warning("Failed to create %s '%s'", ref, data['name'])
+            logger.warning("Failed to create %s '%s'", self.name, data['name'])
