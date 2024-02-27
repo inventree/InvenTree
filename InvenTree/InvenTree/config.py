@@ -79,7 +79,7 @@ def ensure_dir(path: Path, storage=None) -> None:
     """
     if storage and isinstance(storage, Storage):
         if not storage.exists(str(path)):
-            storage.save(str(path), ContentFile(''))
+            storage.save(str(path / '.empty'), ContentFile(''))
         return
 
     if not path.exists():
