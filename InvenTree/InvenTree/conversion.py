@@ -150,8 +150,14 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     ureg = get_unit_registry()
 
     # Check that the provided unit is available in the unit registry
-    if unit and unit not in ureg:
-        raise ValidationError(_(f'Invalid unit provided ({unit})'))
+    if unit:
+        try:
+            valid = unit in ureg
+        except Exception as exc:
+            valid = False
+
+        if not valid:
+            raise ValidationError(_(f'Invalid unit provided ({unit})'))
 
     original = str(value).strip()
 

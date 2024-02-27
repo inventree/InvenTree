@@ -95,6 +95,31 @@ class ConversionTest(TestCase):
             output = InvenTree.conversion.convert_physical_value(val, strip_units=True)
             self.assertAlmostEqual(output, expected, 6)
 
+    def test_temperature_units(self):
+        """Test conversion of temperature units.
+
+        Ref: https://github.com/inventree/InvenTree/issues/6495
+        """
+        tests = [
+            ('3.3°F', '°C', -15.944),
+            ('273°K', '°F', 31.73),
+            ('900', '°C', 900),
+            ('900°F', 'degF', 900),
+            ('900°K', '°C', 626.85),
+            ('800', 'kelvin', 800),
+            ('-100°C', 'fahrenheit', -148),
+            ('-100 °C', 'Fahrenheit', -148),
+            ('-100 Celsius', 'fahrenheit', -148),
+            ('-123.45 fahrenheit', 'kelvin', 186.7888),
+            ('-99Fahrenheit', 'Celsius', -72.7777),
+        ]
+
+        for val, unit, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, unit, strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 3)
+
     def test_base_units(self):
         """Test conversion to specified base units."""
         tests = {
