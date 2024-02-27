@@ -2,7 +2,7 @@
 
 # Avoiding Dubious Ownership in Dev Containers for setup commands that use git
 # Note that the local workspace directory is passed through as the first argument $1
-git config --global --add safe.directory $1
+git config --global --add safe.directory /home/inventree
 
 # create venv
 python3 -m venv /home/inventree/dev/venv
