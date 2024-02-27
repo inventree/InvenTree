@@ -25,6 +25,7 @@ class TemplatingMixin:
 
     def __init__(self, *args, **kwargs):
         """Ensure that the required properties are set."""
+        super().__init__(*args, **kwargs)
         if self.name == '':
             raise NotImplementedError('ref must be set')
         if self.db == '':
@@ -75,7 +76,7 @@ class TemplatingMixin:
 
     def create_template_dir(self, model, data):
         """Create folder and database entries for the default templates, if they do not already exist."""
-        ref_name = model.getSubdir()
+        ref_name = getattr(model, 'SUBDIR', None) or model.getSubdir()
 
         # Create root dir for templates
         src_dir = self.get_src_dir(ref_name)
