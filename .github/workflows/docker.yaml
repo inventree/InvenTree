@@ -122,13 +122,13 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19 # pin@v3.1.2
       - name: Login to Dockerhub
-        if: github.event_name != 'pull_request' && ${{ env.username != '' }}
+        if: github.event_name != 'pull_request' && ${{ env.test_username != '' }}
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # pin@v3.0.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
         env:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          test_username: ${{ secrets.DOCKER_USERNAME }}
 
       - name: Log into registry ghcr.io
         if: github.event_name != 'pull_request'
