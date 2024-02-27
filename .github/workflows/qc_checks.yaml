@@ -111,9 +111,12 @@ jobs:
           pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        run: |
-          pip install linkcheckmd requests
-          python -m linkcheckmd docs --recurse
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          folder_path: docs
+          config: docs/mlc_config.json
+          check-modified-files-only: 'yes'
+          use-quiet-mode: 'yes'
 
   schema:
     name: Tests - API Schema Documentation
