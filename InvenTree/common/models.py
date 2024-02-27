@@ -101,7 +101,7 @@ class BaseURLValidator(URLValidator):
         value = str(value).strip()
 
         # If a configuration level value has been specified, prevent change
-        if settings.SITE_URL:
+        if settings.SITE_URL and value != settings.SITE_URL:
             raise ValidationError(_('Site URL is locked by configuration'))
 
         if len(value) == 0:
