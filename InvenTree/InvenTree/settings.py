@@ -80,6 +80,7 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
     'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
 )
+
 # Disable CUI parts if CUI tests are disabled
 if TESTING and '--exclude-tag=cui' in sys.argv:
     ENABLE_CLASSIC_FRONTEND = False
@@ -135,6 +136,11 @@ STATICFILES_DIRS = []
 STATICFILES_I18_PREFIX = 'i18n'
 STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
 STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
+
+# Create the target directory if it does not exist
+if not STATICFILES_I18_TRG.exists():
+    STATICFILES_I18_TRG.mkdir(parents=True)
+
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
 
@@ -828,7 +834,8 @@ SESSION_ENGINE = 'user_sessions.backends.db'
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
 )
-SILENCED_SYSTEM_CHECKS = ['admin.E410']
+
+SILENCED_SYSTEM_CHECKS = ['admin.E410', 'templates.E003', 'templates.W003']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators

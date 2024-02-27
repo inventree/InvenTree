@@ -394,8 +394,16 @@ class StockLocationTree(ListAPI):
 
     filter_backends = ORDER_FILTER
 
+    ordering_fields = ['level', 'name', 'sublocations']
+
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the StockLocationTree endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = StockSerializers.LocationTreeSerializer.annotate_queryset(queryset)
+        return queryset
 
 
 class StockLocationTypeList(ListCreateAPI):
