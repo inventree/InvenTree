@@ -96,8 +96,13 @@ class LabelTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         abstract = True
 
+    @classmethod
+    def getSubdir(cls) -> str:
+        """Return the subdirectory for this label."""
+        return cls.SUBDIR
+
     # Each class of label files will be stored in a separate subdirectory
-    SUBDIR = 'label'
+    SUBDIR: str = 'label'
 
     # Object we will be printing against (will be filled out later)
     object_to_print = None

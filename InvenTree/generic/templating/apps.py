@@ -80,7 +80,7 @@ class TemplatingMixin:
 
     def create_template_dir(self, model, data):
         """Create folder and database entries for the default templates, if they do not already exist."""
-        ref_name = getattr(model, 'SUBDIR', None) or model.getSubdir()
+        ref_name = model.getSubdir()
 
         # Create root dir for templates
         src_dir = self.get_src_dir(ref_name)
