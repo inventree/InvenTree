@@ -865,7 +865,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with the number of sublocations."""
-        return queryset.annotate(sublocations=Count('children'))
+        return queryset.annotate(sublocations=stock.filters.annotate_sub_locations())
 
 
 class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):

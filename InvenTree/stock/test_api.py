@@ -434,6 +434,32 @@ class StockLocationTest(StockAPITestCase):
 
         self.assertEqual(len(res), 1)
 
+    def test_stock_location_tree(self):
+        """Test the StockLocationTree API endpoint."""
+        # Create a number of new locations
+        loc = None
+
+        for idx in range(50):
+            loc = StockLocation.objects.create(
+                name=f'Location {idx}', description=f'Test location {idx}', parent=loc
+            )
+
+        StockLocation.objects.rebuild()
+
+        with self.assertNumQueriesLessThan(10):
+            response = self.get(reverse('api-location-tree'), expected_code=200)
+
+        self.assertEqual(len(response.data), StockLocation.objects.count())
+
+        for item in response.data:
+            location = StockLocation.objects.get(pk=item['pk'])
+            parent = location.parent.pk if location.parent else None
+            sublocations = location.get_descendants(include_self=False).count()
+
+            self.assertEqual(item['name'], location.name)
+            self.assertEqual(item['parent'], parent)
+            self.assertEqual(item['sublocations'], sublocations)
+
 
 class StockLocationTypeTest(StockAPITestCase):
     """Tests for the StockLocationType API endpoints."""
