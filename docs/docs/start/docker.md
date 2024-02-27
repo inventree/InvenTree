@@ -89,6 +89,10 @@ The production docker compose configuration outlined on this page uses [Caddy](h
 !!! info "Read More"
     Refer to the [Serving Files](./serving_files.md) section for more details
 
+### SSL Certificates
+
+The provided `Caddyfile` configuration file is setup to enable [Automatic HTTPS](https://caddyserver.com/docs/automatic-https) by default! All you have to do is specify a `https://` URL in the `INVENTREE_SITE_URL` variable.
+
 ### Containers
 
 The example docker compose file launches the following containers:
