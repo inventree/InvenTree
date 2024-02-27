@@ -145,7 +145,7 @@ jobs:
         with:
           images: |
             inventree/inventree
-            ghcr.io/inventree/inventree
+            ghcr.io/${{ github.repository }}
 
       - name: Build and Push
         id: build-and-push
