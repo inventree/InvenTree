@@ -17,7 +17,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn } from '../ColumnRenderers';
+import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -31,15 +31,7 @@ function partTableColumns(): TableColumn[] {
       accessor: 'name',
       sortable: true,
       noWrap: true,
-      render: function (record: any) {
-        return (
-          <Thumbnail
-            src={record.thumbnail || record.image}
-            alt={record.name}
-            text={record.full_name}
-          />
-        );
-      }
+      render: (record: any) => PartColumn(record)
     },
     {
       accessor: 'IPN',
