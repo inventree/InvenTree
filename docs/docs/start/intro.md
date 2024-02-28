@@ -7,7 +7,7 @@ title: Setup Introduction
 A functional InvenTree server can be hosted with minimal setup requirements. Multiple installation methods and database back-ends are supported, allowing for flexibility where required.
 
 !!! info "Production Ready"
-	InvenTree is designed to be a production-ready application, and can be deployed in a variety of environments. The following instructions are designed to help you get started with a *production* setup. For a development setup, refer to the [development setup guide](../develop/starting.md).
+	InvenTree is designed to be a production-ready application, and can be deployed in a variety of environments. The following instructions are designed to help you get started with a *production* setup. For a development setup, refer to the [devcontainer setup guide](../develop/devcontainer.md.md).
 
 ## Installation Methods
 
