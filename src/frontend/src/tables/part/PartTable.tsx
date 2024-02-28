@@ -269,8 +269,11 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
           ...props.params,
           category_detail: true
         },
-        onRowClick: (record) =>
-          navigate(getDetailUrl(ModelType.part, record.pk))
+        onRowClick: (record) => {
+          if (record.pk) {
+            navigate(getDetailUrl(ModelType.part, record.pk));
+          }
+        }
       }}
     />
   );
