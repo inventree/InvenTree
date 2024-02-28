@@ -295,7 +295,7 @@ def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
 
     if plugin_cgf is None:
         # This only occurs if the plugin mechanism broke
-        raise NotFound(detail=f"Plugin '{ref}' not found")  # pragma: no cover
+        raise NotFound(detail=f"Plugin '{ref}' not installed")  # pragma: no cover
 
     # Check that the plugin is activated
     if not plugin_cgf.active:
