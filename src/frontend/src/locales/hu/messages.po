@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-15 02:43\n"
+"PO-Revision-Date: 2024-02-28 07:24\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -5107,7 +5107,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:186
 msgid "Attachment"
-msgstr "Attachment"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:239
 #: src/tables/stock/StockItemTestResultTable.tsx:306
@@ -5151,7 +5151,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:342
 msgid "Required"
-msgstr "Required"
+msgstr ""
 
 #: src/tables/stock/StockItemTestResultTable.tsx:343
 msgid "Show results for required tests"
@@ -5209,3 +5209,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+
