@@ -20,6 +20,7 @@ import { InvenTreeIcon } from '../../functions/icons';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { ActionButton } from '../buttons/ActionButton';
+import { StylishText } from '../items/StylishText';
 import { ApiImage } from './ApiImage';
 
 /**
@@ -249,7 +250,12 @@ function ImageActionButtons({
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title={t`Select image`} size="70%">
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={<StylishText size="xl">{t`Select Image`}</StylishText>}
+        size="70%"
+      >
         <PartThumbTable pk={pk} close={close} setImage={setImage} />
       </Modal>
       {visible && (

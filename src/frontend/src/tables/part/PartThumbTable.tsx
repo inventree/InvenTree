@@ -1,5 +1,16 @@
-import { t } from '@lingui/macro';
-import { Button, Paper, Skeleton, Text, TextInput } from '@mantine/core';
+import { Trans, t } from '@lingui/macro';
+import {
+  AspectRatio,
+  Button,
+  Divider,
+  Group,
+  Paper,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  TextInput
+} from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import React, { Suspense, useEffect, useState } from 'react';
@@ -62,29 +73,18 @@ function PartThumbComponent({ selected, element, selectImage }: ThumbProps) {
   return (
     <Paper
       withBorder
-      style={{
-        backgroundColor: color,
-        padding: '5px',
-        display: 'flex',
-        flex: '0 1 150px',
-        flexFlow: 'column wrap',
-        placeContent: 'center space-between'
-      }}
+      p="sm"
       ref={ref}
       onClick={() => selectImage(element.image)}
     >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          flexGrow: 1
-        }}
-      >
-        <Thumbnail size={120} src={src} align="center"></Thumbnail>
-      </div>
-      <Text style={{ alignSelf: 'center', overflowWrap: 'anywhere' }}>
-        {element.image.split('/')[1]} ({element.count})
-      </Text>
+      <Stack justify="space-between">
+        <AspectRatio ratio={1}>
+          <Thumbnail size={120} src={src} align="center"></Thumbnail>
+        </AspectRatio>
+        <Text size="xs">
+          {element.image.split('/')[1]} ({element.count})
+        </Text>
+      </Stack>
     </Paper>
   );
 }
@@ -118,7 +118,7 @@ async function setNewImage(
  * Renders a "table" of thumbnails
  */
 export function PartThumbTable({
-  limit = 25,
+  limit = 24,
   offset = 0,
   search = '',
   pk,
@@ -155,61 +155,51 @@ export function PartThumbTable({
   return (
     <>
       <Suspense>
-        <Paper
-          style={{
-            display: 'flex',
-            alignItems: 'stretch',
-            placeContent: 'stretch center',
-            flexWrap: 'wrap',
-            gap: '10px'
-          }}
-        >
-          {!thumbQuery.isFetching
-            ? thumbQuery.data?.data.map((data: ImageElement, index: number) => (
-                <PartThumbComponent
-                  element={data}
-                  key={index}
-                  selected={img}
-                  selectImage={selectImage}
-                />
-              ))
-            : [...Array(limit)].map((elem, idx) => (
-                <Skeleton
-                  height={150}
-                  width={150}
-                  radius="sm"
-                  key={idx}
-                  style={{ padding: '5px' }}
-                />
-              ))}
+        <Divider />
+        <Paper p="sm">
+          <>
+            <SimpleGrid cols={8}>
+              {!thumbQuery.isFetching
+                ? thumbQuery.data?.data.map(
+                    (data: ImageElement, index: number) => (
+                      <PartThumbComponent
+                        element={data}
+                        key={index}
+                        selected={img}
+                        selectImage={selectImage}
+                      />
+                    )
+                  )
+                : [...Array(limit)].map((elem, idx) => (
+                    <Skeleton
+                      height={150}
+                      width={150}
+                      radius="sm"
+                      key={idx}
+                      style={{ padding: '5px' }}
+                    />
+                  ))}
+            </SimpleGrid>
+          </>
         </Paper>
       </Suspense>
-      <Paper
-        style={{
-          position: 'sticky',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '60px',
-          zIndex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'row',
-          justifyContent: 'space-between'
-        }}
-      >
-        <TextInput
-          placeholder={t`Search...`}
-          onChange={(event) => {
-            setFilterInput(event.currentTarget.value);
-          }}
-        />
-        <Button
-          disabled={!img}
-          onClick={() => setNewImage(img, pk, close, setImage)}
-        >
-          Submit
-        </Button>
+
+      <Divider />
+      <Paper p="sm">
+        <Group position="apart">
+          <TextInput
+            placeholder={t`Search...`}
+            onChange={(event) => {
+              setFilterInput(event.currentTarget.value);
+            }}
+          />
+          <Button
+            disabled={!img}
+            onClick={() => setNewImage(img, pk, close, setImage)}
+          >
+            <Trans>Select</Trans>
+          </Button>
+        </Group>
       </Paper>
     </>
   );
