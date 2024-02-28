@@ -50,8 +50,8 @@ class ScheduleMixin:
     def __init__(self):
         """Register mixin."""
         super().__init__()
-        self.scheduled_tasks = self.get_scheduled_tasks()
-        self.validate_scheduled_tasks()
+
+        self.scheduled_tasks = []
 
         self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
 
@@ -156,6 +156,9 @@ class ScheduleMixin:
 
     def register_tasks(self):
         """Register the tasks with the database."""
+        self.scheduled_tasks = self.get_scheduled_tasks()
+        self.validate_scheduled_tasks()
+
         try:
             from django_q.models import Schedule
 

@@ -10,6 +10,7 @@ from django.urls import reverse
 from pdfminer.high_level import extract_text
 from PIL import Image
 
+from InvenTree.settings import BASE_DIR
 from InvenTree.unit_test import InvenTreeAPITestCase
 from label.models import PartLabel, StockItemLabel, StockLocationLabel
 from part.models import Part
@@ -120,7 +121,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
     def test_printing_process(self):
         """Test that a label can be printed."""
         # Ensure the labels were created
-        apps.get_app_config('label').create_labels()
+        apps.get_app_config('label').create_defaults()
 
         # Lookup references
         part = Part.objects.first()
@@ -165,23 +166,24 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Test that the labels have been printed
         # The sample labelling plugin simply prints to file
-        self.assertTrue(os.path.exists('label.pdf'))
+        test_path = BASE_DIR / '_testfolder' / 'label'
+        self.assertTrue(os.path.exists(f'{test_path}.pdf'))
 
         # Read the raw .pdf data - ensure it contains some sensible information
-        filetext = extract_text('label.pdf')
+        filetext = extract_text(f'{test_path}.pdf')
         matched = [part.name in filetext for part in parts]
         self.assertIn(True, matched)
 
         # Check that the .png file has already been created
-        self.assertTrue(os.path.exists('label.png'))
+        self.assertTrue(os.path.exists(f'{test_path}.png'))
 
         # And that it is a valid image file
-        Image.open('label.png')
+        Image.open(f'{test_path}.png')
 
     def test_printing_options(self):
         """Test printing options."""
         # Ensure the labels were created
-        apps.get_app_config('label').create_labels()
+        apps.get_app_config('label').create_defaults()
 
         # Lookup references
         parts = Part.objects.all()[:2]
@@ -222,7 +224,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         plugin_ref = 'samplelabelprinter'
 
         # Activate the label components
-        apps.get_app_config('label').create_labels()
+        apps.get_app_config('label').create_defaults()
         self.do_activate_plugin()
 
         def run_print_test(label, qs, url_name, url_single):

@@ -123,7 +123,14 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass defining serializer fields."""
 
         model = PartCategory
-        fields = ['pk', 'name', 'parent', 'icon', 'structural']
+        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'subcategories']
+
+    subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with the number of subcategories."""
+        return queryset.annotate(subcategories=part.filters.annotate_sub_categories())
 
 
 class PartAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):

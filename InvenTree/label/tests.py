@@ -30,7 +30,7 @@ class LabelTest(InvenTreeAPITestCase):
     def setUpTestData(cls):
         """Ensure that some label instances exist as part of init routine."""
         super().setUpTestData()
-        apps.get_app_config('label').create_labels()
+        apps.get_app_config('label').create_defaults()
 
     def test_default_labels(self):
         """Test that the default label templates are copied across."""
@@ -142,7 +142,8 @@ class LabelTest(InvenTreeAPITestCase):
         # Test that each element has been rendered correctly
         self.assertIn(f'part: {part_pk} - {part_name}', content)
         self.assertIn(f'data: {{"part": {part_pk}}}', content)
-        self.assertIn(f'http://testserver/part/{part_pk}/', content)
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertIn(f'http://testserver/part/{part_pk}/', content)
 
         # Check that a encoded image has been generated
         self.assertIn('data:image/png;charset=utf-8;base64,', content)

@@ -6,6 +6,7 @@ import sys
 from datetime import datetime
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -41,7 +42,7 @@ from InvenTree.fields import (
     InvenTreeURLField,
     RoundingDecimalField,
 )
-from InvenTree.helpers import decimal2string
+from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import getSetting, notify_responsible
 from InvenTree.status_codes import (
     PurchaseOrderStatus,
@@ -348,7 +349,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        return reverse('po-detail', kwargs={'pk': self.pk})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('po-detail', kwargs={'pk': self.pk})
+        return pui_url(f'/purchasing/purchase-order/{self.pk}')
 
     @staticmethod
     def get_api_url():
@@ -804,7 +807,9 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        return reverse('so-detail', kwargs={'pk': self.pk})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('so-detail', kwargs={'pk': self.pk})
+        return pui_url(f'/sales/sales-order/{self.pk}')
 
     @staticmethod
     def get_api_url():
@@ -1940,7 +1945,9 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        return reverse('return-order-detail', kwargs={'pk': self.pk})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('return-order-detail', kwargs={'pk': self.pk})
+        return pui_url(f'/sales/return-order/{self.pk}')
 
     @staticmethod
     def get_api_url():

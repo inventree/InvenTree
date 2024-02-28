@@ -12,7 +12,7 @@ A much simpler and more accessible method of recording custom information agains
 
 ### MetadataMixin Class
 
-*Most* of the models in the InvenTree database inherit from the `MetadataMixin` class, which adds the `metadata` field to each inheriting model. The `metadata` field is a [JSONField](https://docs.djangoproject.com/en/3.2/ref/models/fields/#django.db.models.JSONField) which allows for storing arbitrary JSON data against the model instance.
+*Most* of the models in the InvenTree database inherit from the `MetadataMixin` class, which adds the `metadata` field to each inheriting model. The `metadata` field is a [JSONField]({% include "django.html" %}/ref/models/fields/#django.db.models.JSONField) which allows for storing arbitrary JSON data against the model instance.
 
 This field is provided to allow any plugins to store and retrieve arbitrary data against any item in the database.
 

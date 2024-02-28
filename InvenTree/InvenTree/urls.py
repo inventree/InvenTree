@@ -362,14 +362,18 @@ translated_javascript_urls = [
 ]
 
 backendpatterns = [
-    # "Dynamic" javascript files which are rendered using InvenTree templating.
-    path('js/dynamic/', include(dynamic_javascript_urls)),
-    path('js/i18n/', include(translated_javascript_urls)),
     path('auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('auth/', auth_request),
     path('api/', include(apipatterns)),
     path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
+
+if settings.ENABLE_CLASSIC_FRONTEND:
+    # "Dynamic" javascript files which are rendered using InvenTree templating.
+    backendpatterns += [
+        re_path(r'^js/dynamic/', include(dynamic_javascript_urls)),
+        re_path(r'^js/i18n/', include(translated_javascript_urls)),
+    ]
 
 classic_frontendpatterns = [
     # Apps
@@ -436,6 +440,15 @@ if settings.ENABLE_CLASSIC_FRONTEND:
     frontendpatterns += classic_frontendpatterns
 if settings.ENABLE_PLATFORM_FRONTEND:
     frontendpatterns += platform_urls
+    if not settings.ENABLE_CLASSIC_FRONTEND:
+        # Add a redirect for login views
+        frontendpatterns += [
+            path(
+                'accounts/login/',
+                RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+                name='account_login',
+            )
+        ]
 
 urlpatterns += frontendpatterns
 
@@ -461,5 +474,14 @@ urlpatterns.append(
 
 # Send any unknown URLs to the parts page
 urlpatterns += [
-    re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')
+    re_path(
+        r'^.*$',
+        RedirectView.as_view(
+            url='/index/'
+            if settings.ENABLE_CLASSIC_FRONTEND
+            else settings.FRONTEND_URL_BASE,
+            permanent=False,
+        ),
+        name='index',
+    )
 ]
