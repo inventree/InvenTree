@@ -114,6 +114,7 @@ The core software modules are targeting the following versions:
 Any other software dependencies are handled by the project package config.
 
 ### Auto creating updates
+
 The following tools can be used to auto-upgrade syntax that was depreciated in new versions:
 ```bash
 pip install pyupgrade
@@ -123,7 +124,7 @@ pip install django-upgrade
 To update the codebase run the following script.
 ```bash
 pyupgrade `find . -name "*.py"`
-django-upgrade --target-version 3.2 `find . -name "*.py"`
+django-upgrade --target-version {{ config.extra.django_version }} `find . -name "*.py"`
 ```
 
 ## Credits
