@@ -1,11 +1,9 @@
 """Shared templating code."""
 
 import logging
-import os
 import warnings
 from pathlib import Path
 
-from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.core.files.storage import default_storage
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
@@ -16,9 +14,6 @@ import InvenTree.helpers
 from InvenTree.config import ensure_dir
 
 logger = logging.getLogger('inventree')
-
-
-MEDIA_STORAGE_DIR = Path(settings.MEDIA_ROOT)
 
 
 class TemplatingMixin:
@@ -83,40 +78,37 @@ class TemplatingMixin:
         ref_name = model.getSubdir()
 
         # Create root dir for templates
-        src_dir = self.get_src_dir(ref_name)
-        dst_dir = MEDIA_STORAGE_DIR.joinpath(self.name, 'inventree', ref_name)
-        ensure_dir(dst_dir, default_storage)
+        ensure_dir(Path(self.name, 'inventree', ref_name), default_storage)
 
         # Copy each template across (if required)
+        src_dir = self.get_src_dir(ref_name)
         for entry in data:
             self.create_template_file(model, src_dir, entry, ref_name)
 
     def create_template_file(self, model, src_dir, data, ref_name):
         """Ensure a label template is in place."""
         # Destination filename
-        filename = os.path.join(self.name, 'inventree', ref_name, data['file'])
-
+        filename = Path(self.name, 'inventree', ref_name, data['file'])
         src_file = src_dir.joinpath(data['file'])
-        dst_file = MEDIA_STORAGE_DIR.joinpath(filename)
 
         do_copy = False
 
-        if not dst_file.exists():
+        if not default_storage.exists(filename):
             logger.info("%s template '%s' is not present", self.name, filename)
             do_copy = True
         else:
             # Check if the file contents are different
             src_hash = InvenTree.helpers.hash_file(src_file)
-            dst_hash = InvenTree.helpers.hash_file(dst_file)
+            dst_hash = InvenTree.helpers.hash_file(filename, default_storage)
 
             if src_hash != dst_hash:
                 logger.info("Hash differs for '%s'", filename)
                 do_copy = True
 
         if do_copy:
-            logger.info("Copying %s template '%s'", self.name, dst_file)
+            logger.info("Copying %s template '%s'", self.name, filename)
             # Ensure destination dir exists
-            dst_file.parent.mkdir(parents=True, exist_ok=True)
+            ensure_dir(filename.parent, default_storage)
 
             # Copy file
             default_storage.save(filename, src_file.open('rb'))

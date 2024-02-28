@@ -8,13 +8,14 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 from typing import TypeVar
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
-from django.core.files.storage import default_storage
+from django.core.files.storage import Storage, default_storage
 from django.http import StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _
 
@@ -845,9 +846,14 @@ def hash_barcode(barcode_data):
     return str(hash.hexdigest())
 
 
-def hash_file(filename: str):
+def hash_file(filename: str | Path, storage: Storage | None = None):
     """Return the MD5 hash of a file."""
-    return hashlib.md5(open(filename, 'rb').read()).hexdigest()
+    content = (
+        open(filename, 'rb').read()
+        if storage is None
+        else storage.open(str(filename), 'rb').read()
+    )
+    return hashlib.md5(content).hexdigest()
 
 
 def get_objectreference(
