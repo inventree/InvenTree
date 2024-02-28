@@ -3,12 +3,17 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency, renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { useStockFields } from '../../forms/StockForms';
 import { getDetailUrl } from '../../functions/urls';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
   DescriptionColumn,
@@ -34,6 +39,7 @@ function stockItemTableColumns(): TableColumn[] {
     }),
     {
       accessor: 'quantity',
+      ordering: 'stock',
       sortable: true,
       title: t`Stock`,
       render: (record) => {
@@ -328,27 +334,58 @@ export function StockItemTable({ params = {} }: { params?: any }) {
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
   const table = useTable('stockitems');
-
+  const user = useUserState();
   const navigate = useNavigate();
 
+  const stockItemFields = useStockFields({ create: true });
+
+  const newStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    title: t`Add Stock Item`,
+    fields: stockItemFields,
+    initialData: {
+      part: params.part,
+      location: params.location
+    },
+    onFormSuccess: (data: any) => {
+      if (data.pk) {
+        navigate(getDetailUrl(ModelType.stockitem, data.pk));
+      }
+    }
+  });
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        hidden={!user.hasAddRole(UserRoles.stock)}
+        tooltip={t`Add Stock Item`}
+        onClick={() => newStockItem.open()}
+      />
+    ];
+  }, [user]);
+
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.stock_item_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        enableDownload: true,
-        enableSelection: true,
-        tableFilters: tableFilters,
-        onRowClick: (record) =>
-          navigate(getDetailUrl(ModelType.stockitem, record.pk)),
-        params: {
-          ...params,
-          part_detail: true,
-          location_detail: true,
-          supplier_part_detail: true
-        }
-      }}
-    />
+    <>
+      {newStockItem.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.stock_item_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          enableDownload: true,
+          enableSelection: false,
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          onRowClick: (record) =>
+            navigate(getDetailUrl(ModelType.stockitem, record.pk)),
+          params: {
+            ...params,
+            part_detail: true,
+            location_detail: true,
+            supplier_part_detail: true
+          }
+        }}
+      />
+    </>
   );
 }

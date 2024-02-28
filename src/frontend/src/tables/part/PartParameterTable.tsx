@@ -19,6 +19,7 @@ import { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { TableHoverCard } from '../TableHoverCard';
 
 /**
  * Construct a table listing parameters for a given part
@@ -44,6 +45,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
         accessor: 'template_detail.name',
         switchable: false,
         sortable: true,
+        ordering: 'name',
         render: (record) => {
           let variant = String(partId) != String(record.part);
 
@@ -64,18 +66,29 @@ export function PartParameterTable({ partId }: { partId: any }) {
             return <YesNoButton value={record.data} />;
           }
 
-          if (record.data_numeric) {
-            // TODO: Numeric data
+          let extra: any[] = [];
+
+          if (
+            template.units &&
+            record.data_numeric &&
+            record.data_numeric != record.data
+          ) {
+            extra.push(`${record.data_numeric} [${template.units}]`);
           }
 
-          // TODO: Units
-
-          return record.data;
+          return (
+            <TableHoverCard
+              value={record.data}
+              extra={extra}
+              title={t`Internal Units`}
+            />
+          );
         }
       },
       {
         accessor: 'template_detail.units',
-        sortable: false
+        ordering: 'units',
+        sortable: true
       }
     ];
   }, [partId]);

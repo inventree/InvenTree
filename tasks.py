@@ -105,12 +105,7 @@ def content_excludes(
         excludes.append('socialaccount.socialapp')
         excludes.append('socialaccount.socialtoken')
 
-    output = ''
-
-    for e in excludes:
-        output += f'--exclude {e} '
-
-    return output
+    return ' '.join([f'--exclude {e}' for e in excludes])
 
 
 def localDir() -> Path:
@@ -212,8 +207,8 @@ def check_file_existance(filename: str, overwrite: bool = False):
 
 
 # Install tasks
-@task
-def plugins(c):
+@task(help={'uv': 'Use UV (experimental package manager)'})
+def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from src.backend.InvenTree.InvenTree.config import get_plugin_file
 
@@ -222,20 +217,32 @@ def plugins(c):
     print(f"Installing plugin packages from '{plugin_file}'")
 
     # Install the plugins
-    c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
+    if not uv:
+        c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
+    else:
+        c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
+        c.run(f"uv pip install -r '{plugin_file}'")
 
 
-@task(post=[plugins])
-def install(c):
+@task(help={'uv': 'Use UV package manager (experimental)'})
+def install(c, uv=False):
     """Installs required python packages."""
     print("Installing required python packages from 'src/backend/requirements.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install --upgrade pip')
-    c.run('pip3 install --upgrade setuptools')
-    c.run(
-        'pip3 install --no-cache-dir --disable-pip-version-check -U -r src/backend/requirements.txt'
-    )
+    if not uv:
+        c.run('pip3 install --upgrade pip')
+        c.run('pip3 install --upgrade setuptools')
+        c.run(
+            'pip3 install --no-cache-dir --disable-pip-version-check -U -r -r src/backend/requirements.txt'
+        )
+    else:
+        c.run('pip3 install --upgrade uv')
+        c.run('uv pip install --upgrade setuptools')
+        c.run('uv pip install -U -r -r src/backend/requirements.txt')
+
+    # Run plugins install
+    plugins(c, uv=uv)
 
 
 @task(help={'tests': 'Set up test dataset at the end'})
@@ -301,7 +308,7 @@ def static(c, frontend=False):
         frontend_build(c)
 
     print('Collecting static files...')
-    manage(c, 'collectstatic --no-input --clear')
+    manage(c, 'collectstatic --no-input --clear --verbosity 0')
 
 
 @task
@@ -370,6 +377,7 @@ def migrate(c):
     print('========================================')
 
     # Run custom management command which wraps migrations in "maintenance mode"
+    manage(c, 'makemigrations')
     manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
 
@@ -384,6 +392,7 @@ def migrate(c):
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
         'skip_static': 'Skip static file collection step',
+        'uv': 'Use UV (experimental package manager)',
     },
 )
 def update(
@@ -392,6 +401,7 @@ def update(
     frontend: bool = False,
     no_frontend: bool = False,
     skip_static: bool = False,
+    uv: bool = False,
 ):
     """Update InvenTree installation.
 
@@ -409,7 +419,7 @@ def update(
     - translate_stats
     """
     # Ensure required components are installed
-    install(c)
+    install(c, uv=uv)
 
     if not skip_backup:
         backup(c)
@@ -799,10 +809,17 @@ def test_translations(c):
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
+        'cui': 'Do not run CUI tests',
     }
 )
 def test(
-    c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False
+    c,
+    disable_pty=False,
+    runtest='',
+    migrations=False,
+    report=False,
+    coverage=False,
+    cui=False,
 ):
     """Run unit-tests for InvenTree codebase.
 
@@ -837,6 +854,9 @@ def test(
         cmd += ' --tag migration_test'
     else:
         cmd += ' --exclude-tag migration_test'
+
+    if cui:
+        cmd += ' --exclude-tag=cui'
 
     if coverage:
         # Run tests within coverage environment, and generate report
@@ -1169,7 +1189,7 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
             print('[ERROR] Cannot find frontend-build.zip attachment for current sha')
             return
         print(
-            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes']/1e6:.2f}MB)."
+            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes'] / 1e6:.2f}MB)."
         )
 
         print(

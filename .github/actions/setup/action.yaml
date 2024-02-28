@@ -49,11 +49,14 @@ runs:
         shell: bash
         run: |
           python3 -m pip install -U pip
-          pip3 install invoke wheel
+          pip3 install invoke wheel uv
+      - name: Set the VIRTUAL_ENV variable for uv to work
+        run: echo "VIRTUAL_ENV=${Python_ROOT_DIR}" >> $GITHUB_ENV
+        shell: bash
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: pip3 install ${{ inputs.pip-dependency }}
+        run: uv pip install ${{ inputs.pip-dependency }}
 
       # NPM installs
       - name: Install node.js ${{ env.node_version }}
@@ -75,17 +78,18 @@ runs:
         run: |
           sudo apt-get update
           sudo apt-get install ${{ inputs.apt-dependency }}
+          sudo apt-get install ${{ inputs.apt-dependency }}
 
       # Invoke commands
       - name: Install dev requirements
         if: ${{ inputs.dev-install == 'true' ||inputs.install == 'true' }}
         shell: bash
-        run: pip install -r src/backend/requirements-dev.txt
+        run: uv pip install -r src/backend/requirements-dev.txt
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
-        run: invoke install
+        run: invoke install --uv
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update
+        run: invoke update --uv

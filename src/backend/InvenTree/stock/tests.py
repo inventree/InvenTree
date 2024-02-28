@@ -2,6 +2,7 @@
 
 import datetime
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.test import override_settings
@@ -12,7 +13,7 @@ from company.models import Company
 from InvenTree.status_codes import StockHistoryCode
 from InvenTree.unit_test import InvenTreeTestCase
 from order.models import SalesOrder
-from part.models import Part
+from part.models import Part, PartTestTemplate
 
 from .models import StockItem, StockItemTestResult, StockItemTracking, StockLocation
 
@@ -256,9 +257,9 @@ class StockTest(StockTestBase):
     def test_url(self):
         """Test get_absolute_url function."""
         it = StockItem.objects.get(pk=2)
-        self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
-
-        self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
+            self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
 
     def test_strings(self):
         """Test str function."""
@@ -1086,30 +1087,50 @@ class TestResultTest(StockTestBase):
 
         self.assertEqual(status['total'], 5)
         self.assertEqual(status['passed'], 2)
-        self.assertEqual(status['failed'], 2)
+        self.assertEqual(status['failed'], 1)
 
         self.assertFalse(item.passedAllRequiredTests())
 
         # Add some new test results to make it pass!
-        test = StockItemTestResult.objects.get(pk=12345)
-        test.result = True
+        test = StockItemTestResult.objects.get(pk=8)
+        test.result = False
         test.save()
 
+        status = item.requiredTestStatus()
+        self.assertEqual(status['total'], 5)
+        self.assertEqual(status['passed'], 1)
+        self.assertEqual(status['failed'], 2)
+
+        template = PartTestTemplate.objects.get(pk=3)
+
         StockItemTestResult.objects.create(
-            stock_item=item, test='sew cushion', result=True
+            stock_item=item, template=template, result=True
         )
 
         # Still should be failing at this point,
         # as the most recent "apply paint" test was False
         self.assertFalse(item.passedAllRequiredTests())
 
+        template = PartTestTemplate.objects.get(pk=2)
+
         # Add a new test result against this required test
         StockItemTestResult.objects.create(
             stock_item=item,
-            test='apply paint',
+            template=template,
             date=datetime.datetime(2022, 12, 12),
             result=True,
         )
+
+        self.assertFalse(item.passedAllRequiredTests())
+
+        # Generate a passing result for all required tests
+        for template in item.part.getRequiredTests():
+            StockItemTestResult.objects.create(
+                stock_item=item,
+                template=template,
+                result=True,
+                date=datetime.datetime(2025, 12, 12),
+            )
 
         self.assertTrue(item.passedAllRequiredTests())
 
@@ -1140,17 +1161,9 @@ class TestResultTest(StockTestBase):
         item.save()
 
         # Do some tests!
-        StockItemTestResult.objects.create(
-            stock_item=item, test='Firmware', result=True
-        )
-
-        StockItemTestResult.objects.create(
-            stock_item=item, test='Paint Color', result=True, value='Red'
-        )
-
-        StockItemTestResult.objects.create(
-            stock_item=item, test='Applied Sticker', result=False
-        )
+        item.add_test_result(test_name='Firmware', result=True)
+        item.add_test_result(test_name='Paint Color', result=True, value='Red')
+        item.add_test_result(test_name='Applied Sticker', result=False)
 
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item.quantity, 50)
@@ -1163,7 +1176,7 @@ class TestResultTest(StockTestBase):
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item2.test_results.count(), 3)
 
-        StockItemTestResult.objects.create(stock_item=item2, test='A new test')
+        item2.add_test_result(test_name='A new test')
 
         self.assertEqual(item.test_results.count(), 3)
         self.assertEqual(item2.test_results.count(), 4)
@@ -1172,7 +1185,7 @@ class TestResultTest(StockTestBase):
         item2.serializeStock(1, [100], self.user)
 
         # Add a test result to the parent *after* serialization
-        StockItemTestResult.objects.create(stock_item=item2, test='abcde')
+        item2.add_test_result(test_name='abcde')
 
         self.assertEqual(item2.test_results.count(), 5)
 
@@ -1201,11 +1214,20 @@ class TestResultTest(StockTestBase):
         )
 
         # Now, create some test results against the sub item
+        # Ensure there is a matching PartTestTemplate
+        if template := PartTestTemplate.objects.filter(
+            part=item.part, key='firmwareversion'
+        ).first():
+            pass
+        else:
+            template = PartTestTemplate.objects.create(
+                part=item.part, test_name='Firmware Version', required=True
+            )
 
         # First test is overshadowed by the same test for the parent part
         StockItemTestResult.objects.create(
             stock_item=sub_item,
-            test='firmware version',
+            template=template,
             date=datetime.datetime.now().date(),
             result=True,
         )
@@ -1214,10 +1236,19 @@ class TestResultTest(StockTestBase):
         tests = item.testResultMap(include_installed=True)
         self.assertEqual(len(tests), 3)
 
+        if template := PartTestTemplate.objects.filter(
+            part=item.part, key='somenewtest'
+        ).first():
+            pass
+        else:
+            template = PartTestTemplate.objects.create(
+                part=item.part, test_name='Some New Test', required=True
+            )
+
         # Now, add a *unique* test result for the sub item
         StockItemTestResult.objects.create(
             stock_item=sub_item,
-            test='some new test',
+            template=template,
             date=datetime.datetime.now().date(),
             result=False,
             value='abcde',

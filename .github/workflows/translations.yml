@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+env:
+  python_version: 3.9
+  node_version: 16
+
 jobs:
   build:
 
@@ -22,21 +26,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
-      - name: Set up Python 3.9
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
+      - name: Environment Setup
+        uses: ./.github/actions/setup
         with:
-          python-version: 3.9
-      - name: Set up Node 16
-        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7  # pin to v3.8.2
-        with:
-          node-version: 16
-          cache-dependency-path: src/backend/package-lock.json
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gettext
-          pip3 install invoke
-          invoke install
+          install: true
+          npm: true
+          apt-dependency: gettext
       - name: Make Translations
         run: invoke translate
       - name: Commit files

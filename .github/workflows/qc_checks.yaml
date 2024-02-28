@@ -111,9 +111,12 @@ jobs:
           pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        run: |
-          pip install linkcheckmd requests
-          python -m linkcheckmd docs --recurse
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          folder-path: docs
+          config-file: docs/mlc_config.json
+          check-modified-files-only: 'yes'
+          use-quiet-mode: 'yes'
 
   schema:
     name: Tests - API Schema Documentation
@@ -161,7 +164,7 @@ jobs:
         if: needs.paths-filter.outputs.api == 'false'
         run: |
           diff --color -u InvenTree/schema.yml api.yaml
-          diff -u InvenTree/schema.yml api.yaml && echo "no difference in API schema " || echo "differences in API schema" && exit 2
+          diff -u InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
         run: invoke schema
         continue-on-error: true
@@ -309,7 +312,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
-          pip-dependency: psycopg2 django-redis>=5.0.0
+          pip-dependency: psycopg django-redis>=5.0.0
           dev-install: true
           update: true
       - name: Run Tests
@@ -391,7 +394,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
-          pip-dependency: psycopg2
+          pip-dependency: psycopg
           dev-install: true
           update: true
       - name: Run Tests
@@ -443,6 +446,13 @@ jobs:
         run: |
           rm /home/runner/work/InvenTree/db.sqlite3
           cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.13.5 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
           chmod +rw /home/runner/work/InvenTree/db.sqlite3
           invoke migrate
 

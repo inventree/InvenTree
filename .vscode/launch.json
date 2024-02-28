@@ -14,7 +14,7 @@
       "justMyCode": true
     },
     {
-      "name": "Python: Django - 3rd party",
+      "name": "InvenTree Server - 3rd party",
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",

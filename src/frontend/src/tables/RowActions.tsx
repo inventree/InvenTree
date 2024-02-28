@@ -14,6 +14,7 @@ export type RowAction = {
   icon: ReactNode;
   onClick?: () => void;
   hidden?: boolean;
+  disabled?: boolean;
 };
 
 // Component for duplicating a row in a table
@@ -129,6 +130,7 @@ export function RowActions({
 
             setOpened(false);
           }}
+          disabled={action.disabled || false}
         >
           {action.title}
         </Menu.Item>

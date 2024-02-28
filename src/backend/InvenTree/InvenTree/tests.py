@@ -12,7 +12,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, tag
 from django.urls import reverse
 
 import pint.errors
@@ -29,6 +29,7 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 from common.models import CustomUnit, InvenTreeSetting
 from common.settings import currency_codes
+from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartCategory
@@ -56,6 +57,68 @@ class ConversionTest(TestCase):
         for val, expected in tests.items():
             q = InvenTree.conversion.convert_physical_value(val, 'm')
             self.assertAlmostEqual(q, expected, 3)
+
+    def test_engineering_units(self):
+        """Test that conversion works with engineering notation."""
+        # Run some basic checks over the helper function
+        tests = [
+            ('3', '3'),
+            ('3k3', '3.3k'),
+            ('123R45', '123.45R'),
+            ('10n5F', '10.5nF'),
+        ]
+
+        for val, expected in tests:
+            self.assertEqual(
+                InvenTree.conversion.from_engineering_notation(val), expected
+            )
+
+        # Now test the conversion function
+        tests = [('33k3ohm', 33300), ('123kohm45', 123450), ('10n005', 0.000000010005)]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, 'ohm', strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 12)
+
+    def test_scientific_notation(self):
+        """Test that scientific notation is handled correctly."""
+        tests = [
+            ('3E2', 300),
+            ('-12.3E-3', -0.0123),
+            ('1.23E-3', 0.00123),
+            ('99E9', 99000000000),
+        ]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(val, strip_units=True)
+            self.assertAlmostEqual(output, expected, 6)
+
+    def test_temperature_units(self):
+        """Test conversion of temperature units.
+
+        Ref: https://github.com/inventree/InvenTree/issues/6495
+        """
+        tests = [
+            ('3.3°F', '°C', -15.944),
+            ('273°K', '°F', 31.73),
+            ('900', '°C', 900),
+            ('900°F', 'degF', 900),
+            ('900°K', '°C', 626.85),
+            ('800', 'kelvin', 800),
+            ('-100°C', 'fahrenheit', -148),
+            ('-100 °C', 'Fahrenheit', -148),
+            ('-100 Celsius', 'fahrenheit', -148),
+            ('-123.45 fahrenheit', 'kelvin', 186.7888),
+            ('-99Fahrenheit', 'Celsius', -72.7777),
+        ]
+
+        for val, unit, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, unit, strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 3)
 
     def test_base_units(self):
         """Test conversion to specified base units."""
@@ -320,30 +383,31 @@ class FormatTest(TestCase):
     def test_currency_formatting(self):
         """Test that currency formatting works correctly for multiple currencies."""
         test_data = (
-            (Money(3651.285718, 'USD'), 4, '$3,651.2857'),  # noqa: E201,E202
-            (Money(487587.849178, 'CAD'), 5, 'CA$487,587.84918'),  # noqa: E201,E202
-            (Money(0.348102, 'EUR'), 1, '€0.3'),  # noqa: E201,E202
-            (Money(0.916530, 'GBP'), 1, '£0.9'),  # noqa: E201,E202
-            (Money(61.031024, 'JPY'), 3, '¥61.031'),  # noqa: E201,E202
-            (Money(49609.694602, 'JPY'), 1, '¥49,609.7'),  # noqa: E201,E202
-            (Money(155565.264777, 'AUD'), 2, 'A$155,565.26'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 4, 'CN¥0.8204'),  # noqa: E201,E202
-            (Money(7587.849178, 'EUR'), 0, '€7,588'),  # noqa: E201,E202
-            (Money(0.348102, 'GBP'), 3, '£0.348'),  # noqa: E201,E202
-            (Money(0.652923, 'CHF'), 0, 'CHF1'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 1, 'CN¥0.8'),  # noqa: E201,E202
-            (Money(98789.5295680, 'CHF'), 0, 'CHF98,790'),  # noqa: E201,E202
-            (Money(0.585787, 'USD'), 1, '$0.6'),  # noqa: E201,E202
-            (Money(0.690541, 'CAD'), 3, 'CA$0.691'),  # noqa: E201,E202
-            (Money(427.814104, 'AUD'), 5, 'A$427.81410'),  # noqa: E201,E202
+            (Money(3651.285718, 'USD'), 4, True, '$3,651.2857'),  # noqa: E201,E202
+            (Money(487587.849178, 'CAD'), 5, True, 'CA$487,587.84918'),  # noqa: E201,E202
+            (Money(0.348102, 'EUR'), 1, False, '0.3'),  # noqa: E201,E202
+            (Money(0.916530, 'GBP'), 1, True, '£0.9'),  # noqa: E201,E202
+            (Money(61.031024, 'JPY'), 3, False, '61.031'),  # noqa: E201,E202
+            (Money(49609.694602, 'JPY'), 1, True, '¥49,609.7'),  # noqa: E201,E202
+            (Money(155565.264777, 'AUD'), 2, False, '155,565.26'),  # noqa: E201,E202
+            (Money(0.820437, 'CNY'), 4, True, 'CN¥0.8204'),  # noqa: E201,E202
+            (Money(7587.849178, 'EUR'), 0, True, '€7,588'),  # noqa: E201,E202
+            (Money(0.348102, 'GBP'), 3, False, '0.348'),  # noqa: E201,E202
+            (Money(0.652923, 'CHF'), 0, True, 'CHF1'),  # noqa: E201,E202
+            (Money(0.820437, 'CNY'), 1, True, 'CN¥0.8'),  # noqa: E201,E202
+            (Money(98789.5295680, 'CHF'), 0, False, '98,790'),  # noqa: E201,E202
+            (Money(0.585787, 'USD'), 1, True, '$0.6'),  # noqa: E201,E202
+            (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),  # noqa: E201,E202
+            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),  # noqa: E201,E202
         )
 
         with self.settings(LANGUAGE_CODE='en-us'):
-            for value, decimal_places, expected_result in test_data:
+            for value, decimal_places, include_symbol, expected_result in test_data:
                 result = InvenTree.format.format_money(
-                    value, decimal_places=decimal_places
+                    value, decimal_places=decimal_places, include_symbol=include_symbol
                 )
-                assert result == expected_result
+
+                self.assertEqual(result, expected_result)
 
 
 class TestHelpers(TestCase):
@@ -507,6 +571,20 @@ class TestHelpers(TestCase):
 
         self.assertNotIn(PartCategory, models)
         self.assertNotIn(InvenTreeSetting, models)
+
+    def test_test_key(self):
+        """Test for the generateTestKey function."""
+        tests = {
+            ' Hello World ': 'helloworld',
+            ' MY NEW TEST KEY ': 'mynewtestkey',
+            ' 1234 5678': '_12345678',
+            ' 100 percenT': '_100percent',
+            ' MY_NEW_TEST': 'my_new_test',
+            ' 100_new_tests': '_100_new_tests',
+        }
+
+        for name, key in tests.items():
+            self.assertEqual(helpers.generateTestKey(name), key)
 
 
 class TestQuoteWrap(TestCase):
@@ -990,9 +1068,12 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
+        with self.in_env_context({
+            'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
+        }):
             self.assertIn(
-                'inventree/my_special_conf.yaml', str(config.get_config_file()).lower()
+                'inventree/_testfolder/my_special_conf.yaml',
+                str(config.get_config_file()).lower(),
             )
 
     def test_helpers_plugin_file(self):
@@ -1006,8 +1087,12 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
-            self.assertIn('my_special_plugins.txt', str(config.get_plugin_file()))
+        with self.in_env_context({
+            'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
+        }):
+            self.assertIn(
+                '_testfolder/my_special_plugins.txt', str(config.get_plugin_file())
+            )
 
     def test_helpers_setting(self):
         """Test get_setting."""
@@ -1267,6 +1352,8 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.wsgi_request.user, self.user)
 
 
+# TODO - refactor to not use CUI
+@tag('cui')
 class MaintenanceModeTest(InvenTreeTestCase):
     """Unit tests for maintenance mode."""
 
@@ -1317,3 +1404,98 @@ class MaintenanceModeTest(InvenTreeTestCase):
         set_maintenance_mode(False)
         self.assertFalse(get_maintenance_mode())
         self.assertEqual(InvenTreeSetting.get_setting(KEY, None), '')
+
+
+class ClassValidationMixinTest(TestCase):
+    """Tests for the ClassValidationMixin class."""
+
+    class BaseTestClass(ClassValidationMixin):
+        """A valid class that inherits from ClassValidationMixin."""
+
+        NAME: str
+
+        def test(self):
+            """Test function."""
+            pass
+
+        def test1(self):
+            """Test function."""
+            pass
+
+        def test2(self):
+            """Test function."""
+            pass
+
+        required_attributes = ['NAME']
+        required_overrides = [test, [test1, test2]]
+
+    class InvalidClass:
+        """An invalid class that does not inherit from ClassValidationMixin."""
+
+        pass
+
+    def test_valid_class(self):
+        """Test that a valid class passes the validation."""
+
+        class TestClass(self.BaseTestClass):
+            """A valid class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test(self):
+                """Test function."""
+                pass
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        TestClass.validate()
+
+    def test_invalid_class(self):
+        """Test that an invalid class fails the validation."""
+
+        class TestClass1(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass1\'>\' did not provide the following attributes: NAME and did not override the required attributes: test, one of test1 or test2',
+        ):
+            TestClass1.validate()
+
+        class TestClass2(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass2\'>\' did not override the required attributes: test',
+        ):
+            TestClass2.validate()
+
+
+class ClassProviderMixinTest(TestCase):
+    """Tests for the ClassProviderMixin class."""
+
+    class TestClass(ClassProviderMixin):
+        """This class is a dummy class to test the ClassProviderMixin."""
+
+        pass
+
+    def test_get_provider_file(self):
+        """Test the get_provider_file function."""
+        self.assertEqual(self.TestClass.get_provider_file(), __file__)
+
+    def test_provider_plugin(self):
+        """Test the provider_plugin function."""
+        self.assertEqual(self.TestClass.get_provider_plugin(), None)
+
+    def test_get_is_builtin(self):
+        """Test the get_is_builtin function."""
+        self.assertTrue(self.TestClass.get_is_builtin())

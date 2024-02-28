@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Divider, Stack } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
@@ -24,7 +24,6 @@ import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
-import { CurrencyTable } from '../../../tables/settings/CurrencyTable';
 
 /**
  * System settings page
@@ -134,8 +133,6 @@ export default function SystemSettings() {
               keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
             />
             <StylishText size="xl">{t`Exchange Rates`}</StylishText>
-            <Divider />
-            <CurrencyTable />
           </>
         )
       },
@@ -228,7 +225,14 @@ export default function SystemSettings() {
         name: 'buildorders',
         label: t`Build Orders`,
         icon: <IconTools />,
-        content: <GlobalSettingList keys={['BUILDORDER_REFERENCE_PATTERN']} />
+        content: (
+          <GlobalSettingList
+            keys={[
+              'BUILDORDER_REFERENCE_PATTERN',
+              'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
+            ]}
+          />
+        )
       },
       {
         name: 'purchaseorders',

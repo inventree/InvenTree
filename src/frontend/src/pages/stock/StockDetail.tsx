@@ -29,7 +29,6 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
@@ -41,6 +40,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -68,20 +68,17 @@ export default function StockDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle />,
-        content: <PlaceholderPanel />
+        icon: <IconInfoCircle />
       },
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory />,
-        content: <PlaceholderPanel />
+        icon: <IconHistory />
       },
       {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        content: <PlaceholderPanel />,
         hidden:
           !stockitem?.part_detail?.salable && !stockitem?.part_detail?.component
       },
@@ -89,7 +86,15 @@ export default function StockDetail() {
         name: 'testdata',
         label: t`Test Data`,
         icon: <IconChecklist />,
-        hidden: !stockitem?.part_detail?.trackable
+        hidden: !stockitem?.part_detail?.trackable,
+        content: stockitem?.pk ? (
+          <StockItemTestResultTable
+            itemId={stockitem.pk}
+            partId={stockitem.part}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'installed_items',

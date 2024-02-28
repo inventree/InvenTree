@@ -1,0 +1,8 @@
+# Files used for testing
+dummy_image.*
+_tmp.csv
+part_image_123abc.png
+label.pdf
+label.png
+my_special*
+_tests*.txt

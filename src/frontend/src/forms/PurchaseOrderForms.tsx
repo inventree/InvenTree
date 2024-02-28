@@ -11,6 +11,7 @@ import {
   IconUser,
   IconUsers
 } from '@tabler/icons-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   ApiFormAdjustFilterType,
@@ -20,45 +21,76 @@ import {
 /*
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
-export function purchaseOrderLineItemFields() {
-  let fields: ApiFormFieldSet = {
-    order: {
-      filters: {
-        supplier_detail: true
-      },
-      hidden: true
-    },
-    part: {
-      filters: {
-        part_detail: true,
-        supplier_detail: true
-      },
-      adjustFilters: (value: ApiFormAdjustFilterType) => {
-        // TODO: Adjust part based on the supplier associated with the supplier
-        return value.filters;
-      }
-    },
-    quantity: {},
-    reference: {},
-    purchase_price: {
-      icon: <IconCurrencyDollar />
-    },
-    purchase_price_currency: {
-      icon: <IconCoins />
-    },
-    target_date: {
-      icon: <IconCalendar />
-    },
-    destination: {
-      icon: <IconSitemap />
-    },
-    notes: {
-      icon: <IconNotes />
-    },
-    link: {
-      icon: <IconLink />
+export function usePurchaseOrderLineItemFields({
+  create
+}: {
+  create?: boolean;
+}) {
+  const [purchasePrice, setPurchasePrice] = useState<string>('');
+  const [autoPricing, setAutoPricing] = useState(true);
+
+  useEffect(() => {
+    if (autoPricing) {
+      setPurchasePrice('');
     }
-  };
+  }, [autoPricing]);
+
+  useEffect(() => {
+    setAutoPricing(purchasePrice === '');
+  }, [purchasePrice]);
+
+  const fields = useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      order: {
+        filters: {
+          supplier_detail: true
+        },
+        hidden: true
+      },
+      part: {
+        filters: {
+          part_detail: true,
+          supplier_detail: true
+        },
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          // TODO: Adjust part based on the supplier associated with the supplier
+          return value.filters;
+        }
+      },
+      quantity: {},
+      reference: {},
+      purchase_price: {
+        icon: <IconCurrencyDollar />,
+        value: purchasePrice,
+        onValueChange: setPurchasePrice
+      },
+      purchase_price_currency: {
+        icon: <IconCoins />
+      },
+      auto_pricing: {
+        value: autoPricing,
+        onValueChange: setAutoPricing
+      },
+      target_date: {
+        icon: <IconCalendar />
+      },
+      destination: {
+        icon: <IconSitemap />
+      },
+      notes: {
+        icon: <IconNotes />
+      },
+      link: {
+        icon: <IconLink />
+      }
+    };
+
+    if (create) {
+      fields['merge_items'] = {};
+    }
+
+    return fields;
+  }, [create, autoPricing, purchasePrice]);
 
   return fields;
 }

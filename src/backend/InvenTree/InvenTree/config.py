@@ -10,6 +10,9 @@ import string
 import warnings
 from pathlib import Path
 
+from django.core.files.base import ContentFile
+from django.core.files.storage import Storage
+
 logger = logging.getLogger('inventree')
 CONFIG_DATA = None
 CONFIG_LOOKUPS = {}
@@ -69,26 +72,16 @@ def get_base_dir() -> Path:
     return Path(__file__).parent.parent.resolve()
 
 
-def get_path(relative: str, old: bool = False) -> Path:
-    """Resolve the absolute path for a given relative path.
-
-    Arguments:
-        relative: Relative path to resolve
-        old: Use the old default path (if True)
-    """
-    base_dir = get_base_dir()
-
-    if old:
-        return base_dir.joinpath('..', '..', '..', 'InvenTree', relative).resolve()
-    else:
-        return base_dir.joinpath(relative).resolve()
-
-
-def ensure_dir(path: Path) -> None:
+def ensure_dir(path: Path, storage=None) -> None:
     """Ensure that a directory exists.
 
     If it does not exist, create it.
     """
+    if storage and isinstance(storage, Storage):
+        if not storage.exists(str(path)):
+            storage.save(str(path / '.empty'), ContentFile(''))
+        return
+
     if not path.exists():
         path.mkdir(parents=True, exist_ok=True)
 
