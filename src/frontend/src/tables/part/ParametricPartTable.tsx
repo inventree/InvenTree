@@ -106,6 +106,8 @@ export default function ParametricPartTable({
       props={{
         enableDownload: false,
         params: {
+          category: categoryId,
+          cascade: true,
           category_detail: true,
           parameters: true
         },
