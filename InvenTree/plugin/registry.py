@@ -118,7 +118,7 @@ class PluginsRegistry:
             cfg = PluginConfig.objects.filter(key=slug).first()
 
             if not cfg:
-                cfg = PluginObject.objects.create(key=slug)
+                cfg = PluginConfig.objects.create(key=slug)
 
         except PluginConfig.DoesNotExist:
             return None
