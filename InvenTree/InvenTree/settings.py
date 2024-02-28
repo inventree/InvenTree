@@ -994,6 +994,9 @@ ALLOWED_HOSTS = get_setting(
     typecast=list,
 )
 
+if SITE_URL and SITE_URL not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(SITE_URL)
+
 # List of trusted origins for unsafe requests
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
 CSRF_TRUSTED_ORIGINS = get_setting(
@@ -1004,7 +1007,7 @@ CSRF_TRUSTED_ORIGINS = get_setting(
 )
 
 # If a list of trusted is not specified, but a site URL has been specified, use that
-if SITE_URL and len(CSRF_TRUSTED_ORIGINS) == 0:
+if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
@@ -1045,7 +1048,7 @@ CORS_ALLOWED_ORIGINS = get_setting(
 )
 
 # If no CORS origins are specified, but a site URL has been specified, use that
-if SITE_URL and len(CORS_ALLOWED_ORIGINS) == 0:
+if SITE_URL and SITE_URL not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append(SITE_URL)
 
 for app in SOCIAL_BACKENDS:
