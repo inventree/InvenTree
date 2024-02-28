@@ -920,6 +920,8 @@ def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
 
     filename = os.path.abspath(filename)
 
+    print(f"Exporting schema file to '{filename}'")
+
     cmd = f'spectacular --file {filename} --validate --color'
 
     if not ignore_warnings:
