@@ -6,7 +6,9 @@ exclude: |
         InvenTree/locale/.*|
         src/frontend/src/locales/.*|
         .*/migrations/.* |
-        src/frontend/.yarn/.*
+        src/frontend/.yarn/.* |
+        src/frontend/yarn.lock |
+        yarn.lock
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
