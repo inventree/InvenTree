@@ -73,6 +73,7 @@ function PartThumbComponent({ selected, element, selectImage }: ThumbProps) {
   return (
     <Paper
       withBorder
+      style={{ backgroundColor: color }}
       p="sm"
       ref={ref}
       onClick={() => selectImage(element.image)}
