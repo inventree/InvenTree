@@ -297,4 +297,4 @@ extra:
       link: https://reddit.com/r/inventree
 
 use_directory_urls: true
-strict: false
+strict: true
