@@ -60,7 +60,7 @@ Always activate the virtual environment before running server commands!
 
 ### 'str' object has no attribute 'removeSuffix'
 
-This error occurs because your installed python version is not up to date. We [require Python v3.9 or newer](./start/intro.md#python-requirements)
+This error occurs because your installed python version is not up to date. We [require Python {{ config.extra.min_python_version }} or newer](./start/intro.md#python-requirements)
 
 You (or your system administrator) needs to update python to meet the minimum requirements for InvenTree.
 
