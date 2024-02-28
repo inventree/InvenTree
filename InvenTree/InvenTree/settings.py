@@ -80,6 +80,7 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
     'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
 )
+
 # Disable CUI parts if CUI tests are disabled
 if TESTING and '--exclude-tag=cui' in sys.argv:
     ENABLE_CLASSIC_FRONTEND = False
@@ -135,6 +136,11 @@ STATICFILES_DIRS = []
 STATICFILES_I18_PREFIX = 'i18n'
 STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
 STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
+
+# Create the target directory if it does not exist
+if not STATICFILES_I18_TRG.exists():
+    STATICFILES_I18_TRG.mkdir(parents=True)
+
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
 
@@ -828,7 +834,8 @@ SESSION_ENGINE = 'user_sessions.backends.db'
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
 )
-SILENCED_SYSTEM_CHECKS = ['admin.E410']
+
+SILENCED_SYSTEM_CHECKS = ['admin.E410', 'templates.E003', 'templates.W003']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -987,6 +994,9 @@ ALLOWED_HOSTS = get_setting(
     typecast=list,
 )
 
+if SITE_URL and SITE_URL not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(SITE_URL)
+
 # List of trusted origins for unsafe requests
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
 CSRF_TRUSTED_ORIGINS = get_setting(
@@ -997,7 +1007,7 @@ CSRF_TRUSTED_ORIGINS = get_setting(
 )
 
 # If a list of trusted is not specified, but a site URL has been specified, use that
-if SITE_URL and len(CSRF_TRUSTED_ORIGINS) == 0:
+if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
@@ -1038,7 +1048,7 @@ CORS_ALLOWED_ORIGINS = get_setting(
 )
 
 # If no CORS origins are specified, but a site URL has been specified, use that
-if SITE_URL and len(CORS_ALLOWED_ORIGINS) == 0:
+if SITE_URL and SITE_URL not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append(SITE_URL)
 
 for app in SOCIAL_BACKENDS:

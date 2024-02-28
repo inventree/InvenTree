@@ -30,7 +30,7 @@ class LabelTest(InvenTreeAPITestCase):
     def setUpTestData(cls):
         """Ensure that some label instances exist as part of init routine."""
         super().setUpTestData()
-        apps.get_app_config('label').create_labels()
+        apps.get_app_config('label').create_defaults()
 
     def test_default_labels(self):
         """Test that the default label templates are copied across."""

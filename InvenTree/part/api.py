@@ -308,8 +308,16 @@ class CategoryTree(ListAPI):
 
     filter_backends = ORDER_FILTER
 
+    ordering_fields = ['level', 'name', 'subcategories']
+
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryTree endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+        return queryset
 
 
 class CategoryParameterList(ListCreateAPI):
