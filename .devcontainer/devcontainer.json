@@ -37,13 +37,16 @@
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [5173, 8000],
+  "forwardPorts": [5173, 8000, 8080],
   "portsAttributes": {
     "5173": {
       "label": "Vite Server"
     },
     "8000": {
       "label": "InvenTree Server"
+    },
+    "8080": {
+      "label": "mkdocs server"
     }
   },
 

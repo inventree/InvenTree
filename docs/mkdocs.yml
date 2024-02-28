@@ -77,7 +77,6 @@ nav:
       - Terminology: concepts/terminology.md
       - Physical Units: concepts/units.md
     - Development:
-      - Getting started: develop/starting.md
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md
@@ -298,4 +297,4 @@ extra:
       link: https://reddit.com/r/inventree
 
 use_directory_urls: true
-strict: true
+strict: false

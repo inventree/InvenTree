@@ -23,15 +23,6 @@
       "justMyCode": false
     },
     {
-      "name": "InvenTree Worker",
-      "type": "python",
-      "request": "launch",
-      "program": "${workspaceFolder}/InvenTree/manage.py",
-      "args": ["qcluster"],
-      "django": true,
-      "justMyCode": false
-    },
-    {
       "name": "InvenTree Frontend - Vite",
       "type": "chrome",
       "request": "launch",
