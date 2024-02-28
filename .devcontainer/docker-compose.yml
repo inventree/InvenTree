@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:13
+    restart: unless-stopped
+    expose:
+      - 5432/tcp
+    volumes:
+      - ../dev:/var/lib/postgresql/data:z
+    environment:
+      POSTGRES_DB: inventree
+      POSTGRES_USER: inventree_user
+      POSTGRES_PASSWORD: inventree_password
+
+  inventree:
+    build:
+      context: ..
+      target: dev
+      args:
+        base_image: "mcr.microsoft.com/vscode/devcontainers/base:alpine-3.18"
+        workspace: "${containerWorkspaceFolder}"
+        data_dir: "dev"
+    volumes:
+      - ../:/home/inventree:z
+
+    environment:
+      INVENTREE_DEBUG: True
+      INVENTREE_DB_ENGINE: postgresql
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_DB_HOST: db
+      INVENTREE_DB_USER: inventree_user
+      INVENTREE_DB_PASSWORD: inventree_password
+      INVENTREE_PLUGINS_ENABLED: True
+      INVENTREE_PY_ENV: /home/inventree/dev/venv
+
+    depends_on:
+      - db

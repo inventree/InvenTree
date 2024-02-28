@@ -675,12 +675,14 @@ class BaseInvenTreeSetting(models.Model):
         }
 
         try:
-            setting = cls.objects.get(**filters)
-        except cls.DoesNotExist:
-            if create:
-                setting = cls(key=key, **kwargs)
-            else:
-                return
+            setting = cls.objects.filter(**filters).first()
+
+            if not setting:
+                if create:
+                    setting = cls(key=key, **kwargs)
+                else:
+                    return
+
         except (OperationalError, ProgrammingError):
             if not key.startswith('_'):
                 logger.warning("Database is locked, cannot set setting '%s'", key)
