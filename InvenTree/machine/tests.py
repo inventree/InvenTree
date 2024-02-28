@@ -247,7 +247,7 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         plugin_ref = 'inventreelabelmachine'
 
         # setup the label app
-        apps.get_app_config('label').create_labels()  # type: ignore
+        apps.get_app_config('label').create_defaults()  # type: ignore
         plg_registry.reload_plugins()
         config = cast(PluginConfig, plg_registry.get_plugin(plugin_ref).plugin_config())  # type: ignore
         config.active = True

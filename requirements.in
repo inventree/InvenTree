@@ -45,7 +45,7 @@ python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
 pyyaml>=6.0.1                           # YAML parsing
 qrcode[pil]                             # QR code generator
-rapidfuzz==0.7.6                        # Fuzzy string matching
+rapidfuzz                        # Fuzzy string matching
 regex                                   # Advanced regular expressions
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
