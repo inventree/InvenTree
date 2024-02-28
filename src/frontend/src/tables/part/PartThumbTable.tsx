@@ -29,7 +29,6 @@ export type ThumbTableProps = {
   limit?: number;
   offset?: number;
   search?: string;
-  close: () => void;
   setImage: (image: string) => void;
 };
 
