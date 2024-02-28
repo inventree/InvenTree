@@ -3,16 +3,21 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { usePartFields } from '../../forms/PartForms';
 import { shortenString } from '../../functions/tables';
 import { getDetailUrl } from '../../functions/urls';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn, LinkColumn } from '../ColumnRenderers';
+import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -26,15 +31,7 @@ function partTableColumns(): TableColumn[] {
       accessor: 'name',
       sortable: true,
       noWrap: true,
-      render: function (record: any) {
-        return (
-          <Thumbnail
-            src={record.thumbnail || record.image}
-            alt={record.name}
-            text={record.full_name}
-          />
-        );
-      }
+      render: (record: any) => PartColumn(record)
     },
     {
       accessor: 'IPN',
@@ -261,25 +258,53 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
   const tableFilters = useMemo(() => partTableFilters(), []);
 
   const table = useTable('part-list');
-
   const navigate = useNavigate();
+  const user = useUserState();
+
+  const newPart = useCreateApiFormModal({
+    url: ApiEndpoints.part_list,
+    title: t`Add Part`,
+    fields: usePartFields({ create: true }),
+    initialData: {
+      ...(props.params ?? {})
+    },
+    onFormSuccess: (data: any) => {
+      if (data.pk) {
+        navigate(getDetailUrl(ModelType.part, data.pk));
+      }
+    }
+  });
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        hidden={!user.hasAddRole(UserRoles.part)}
+        tooltip={t`Add Part`}
+        onClick={() => newPart.open()}
+      />
+    ];
+  }, [user]);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.part_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        ...props,
-        enableDownload: true,
-        tableFilters: tableFilters,
-        params: {
-          ...props.params,
-          category_detail: true
-        },
-        onRowClick: (record) =>
-          navigate(getDetailUrl(ModelType.part, record.pk))
-      }}
-    />
+    <>
+      {newPart.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.part_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          ...props,
+          enableDownload: true,
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          params: {
+            ...props.params,
+            category_detail: true
+          },
+          onRowClick: (record) =>
+            navigate(getDetailUrl(ModelType.part, record.pk))
+        }}
+      />
+    </>
   );
 }

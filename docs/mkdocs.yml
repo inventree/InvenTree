@@ -77,7 +77,6 @@ nav:
       - Terminology: concepts/terminology.md
       - Physical Units: concepts/units.md
     - Development:
-      - Getting started: develop/starting.md
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
       - React Frontend: develop/react-frontend.md

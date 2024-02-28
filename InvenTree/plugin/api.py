@@ -289,13 +289,13 @@ def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
 
     # Check that the 'plugin' specified is valid
     try:
-        plugin_cgf = PluginConfig.objects.get(**filter)
+        plugin_cgf = PluginConfig.objects.filter(**filter).first()
     except PluginConfig.DoesNotExist:
         raise NotFound(detail=f"Plugin '{ref}' not installed")
 
     if plugin_cgf is None:
         # This only occurs if the plugin mechanism broke
-        raise NotFound(detail=f"Plugin '{ref}' not found")  # pragma: no cover
+        raise NotFound(detail=f"Plugin '{ref}' not installed")  # pragma: no cover
 
     # Check that the plugin is activated
     if not plugin_cgf.active:
