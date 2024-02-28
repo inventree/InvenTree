@@ -1,7 +1,10 @@
 import { t } from '@lingui/macro';
 import { useMemo, useState } from 'react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 
