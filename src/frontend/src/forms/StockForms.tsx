@@ -37,6 +37,13 @@ export function useStockFields({
           part_detail: true,
           supplier_detail: true,
           ...(part ? { part } : {})
+        },
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          if (value.data.part) {
+            value.filters['part'] = value.data.part;
+          }
+
+          return value.filters;
         }
       },
       use_pack_size: {
