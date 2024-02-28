@@ -59,9 +59,9 @@ const backup_image = '/static/img/blank_image.png';
  */
 const removeModal = (apiPath: string, setImage: (image: string) => void) =>
   modals.openConfirmModal({
-    title: t`Remove Image`,
+    title: <StylishText size="xl">{t`Remove Image`}</StylishText>,
     children: (
-      <Text size="sm">
+      <Text>
         <Trans>Remove the associated image from this item?</Trans>
       </Text>
     ),
@@ -282,7 +282,7 @@ function ImageActionButtons({
               tooltipAlignment="top"
               onClick={() => {
                 modals.open({
-                  title: t`Upload Image`,
+                  title: <StylishText size="xl">{t`Upload Image`}</StylishText>,
                   children: (
                     <UploadModal apiPath={apiPath} setImage={setImage} />
                   )
