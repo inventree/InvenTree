@@ -9,7 +9,7 @@ import os.path
 import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import TypeVar
+from typing import TypeVar, Union
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
@@ -846,7 +846,7 @@ def hash_barcode(barcode_data):
     return str(hash.hexdigest())
 
 
-def hash_file(filename: str | Path, storage: Storage | None = None):
+def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
     """Return the MD5 hash of a file."""
     content = (
         open(filename, 'rb').read()
