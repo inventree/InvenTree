@@ -12,6 +12,7 @@ import {
   TextInput
 } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import React, { Suspense, useEffect, useState } from 'react';
 
@@ -96,7 +97,6 @@ function PartThumbComponent({ selected, element, selectImage }: ThumbProps) {
 async function setNewImage(
   image: string | null,
   pk: string,
-  close: () => void,
   setImage: (image: string) => void
 ) {
   // No need to do anything if no image is selected
@@ -111,7 +111,7 @@ async function setNewImage(
   // Update image component and close modal if update was successful
   if (response.data.image.includes(image)) {
     setImage(response.data.image);
-    close();
+    modals.closeAll();
   }
 }
 
@@ -123,7 +123,6 @@ export function PartThumbTable({
   offset = 0,
   search = '',
   pk,
-  close,
   setImage
 }: ThumbTableProps) {
   const [img, selectImage] = useState<string | null>(null);
@@ -196,7 +195,7 @@ export function PartThumbTable({
           />
           <Button
             disabled={!img}
-            onClick={() => setNewImage(img, pk, close, setImage)}
+            onClick={() => setNewImage(img, pk, setImage)}
           >
             <Trans>Select</Trans>
           </Button>

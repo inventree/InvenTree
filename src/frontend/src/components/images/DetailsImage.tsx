@@ -1,9 +1,11 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  AspectRatio,
   Button,
   Group,
   Image,
   Modal,
+  Overlay,
   Paper,
   Text,
   rem,
@@ -246,18 +248,8 @@ function ImageActionButtons({
   pk: string;
   setImage: (image: string) => void;
 }) {
-  const [opened, { open, close }] = useDisclosure(false);
-
   return (
     <>
-      <Modal
-        opened={opened}
-        onClose={close}
-        title={<StylishText size="xl">{t`Select Image`}</StylishText>}
-        size="70%"
-      >
-        <PartThumbTable pk={pk} close={close} setImage={setImage} />
-      </Modal>
       {visible && (
         <Group
           spacing="xs"
@@ -265,17 +257,30 @@ function ImageActionButtons({
         >
           {actions.selectExisting && (
             <ActionButton
-              icon={<InvenTreeIcon icon="select_image" />}
+              icon={
+                <InvenTreeIcon
+                  icon="select_image"
+                  iconProps={{ color: 'white' }}
+                />
+              }
               tooltip={t`Select from existing images`}
               variant="outline"
               size="lg"
               tooltipAlignment="top"
-              onClick={open}
+              onClick={() => {
+                modals.open({
+                  title: <StylishText size="xl">{t`Select Image`}</StylishText>,
+                  size: 'xxl',
+                  children: <PartThumbTable pk={pk} setImage={setImage} />
+                });
+              }}
             />
           )}
           {actions.uploadFile && (
             <ActionButton
-              icon={<InvenTreeIcon icon="upload" />}
+              icon={
+                <InvenTreeIcon icon="upload" iconProps={{ color: 'white' }} />
+              }
               tooltip={t`Upload new image`}
               variant="outline"
               size="lg"
@@ -326,39 +331,33 @@ export function DetailsImage(props: DetailImageProps) {
 
   return (
     <>
-      <Paper
-        ref={ref}
-        style={{
-          position: 'relative',
-          width: `${IMAGE_DIMENSION}px`,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <ApiImage
-          src={img}
-          style={{ zIndex: 1 }}
-          height={IMAGE_DIMENSION}
-          width={IMAGE_DIMENSION}
-          onClick={() => {
-            modals.open({
-              children: <ApiImage src={img} />,
-              withCloseButton: false
-            });
-          }}
-        />
-        {permissions.hasChangeRole(props.appRole) && (
-          <ImageActionButtons
-            visible={hovered}
-            actions={props.imageActions}
-            apiPath={props.apiPath}
-            hasImage={props.src ? true : false}
-            pk={props.pk}
-            setImage={setAndRefresh}
+      <AspectRatio ref={ref} maw={IMAGE_DIMENSION} ratio={1}>
+        <>
+          <ApiImage
+            src={img}
+            height={IMAGE_DIMENSION}
+            width={IMAGE_DIMENSION}
+            onClick={() => {
+              modals.open({
+                children: <ApiImage src={img} />,
+                withCloseButton: false
+              });
+            }}
           />
-        )}
-      </Paper>
+          {permissions.hasChangeRole(props.appRole) && hovered && (
+            <Overlay color="black" opacity={0.8}>
+              <ImageActionButtons
+                visible={hovered}
+                actions={props.imageActions}
+                apiPath={props.apiPath}
+                hasImage={props.src ? true : false}
+                pk={props.pk}
+                setImage={setAndRefresh}
+              />
+            </Overlay>
+          )}
+        </>
+      </AspectRatio>
     </>
   );
 }
