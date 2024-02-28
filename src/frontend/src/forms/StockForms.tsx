@@ -1,7 +1,10 @@
 import { t } from '@lingui/macro';
 import { useMemo, useState } from 'react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { useCreateApiFormModal, useEditApiFormModal } from '../hooks/UseForm';
 
@@ -37,6 +40,13 @@ export function useStockFields({
           part_detail: true,
           supplier_detail: true,
           ...(part ? { part } : {})
+        },
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          if (value.data.part) {
+            value.filters['part'] = value.data.part;
+          }
+
+          return value.filters;
         }
       },
       use_pack_size: {
