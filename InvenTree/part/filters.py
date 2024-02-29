@@ -219,9 +219,7 @@ def annotate_sales_order_allocations(reference: str = ''):
     )
 
 
-def variant_stock_query(
-    reference: str = '', filter: Q = stock.models.StockItem.IN_STOCK_FILTER
-):
+def variant_stock_query(reference: str = '', filter: Q = None):
     """Create a queryset to retrieve all stock items for variant parts under the specified part.
 
     - Useful for annotating a queryset with aggregated information about variant parts
@@ -230,11 +228,16 @@ def variant_stock_query(
         reference: The relationship reference of the part from the current model
         filter: Q object which defines how to filter the returned StockItem instances
     """
+    stock_filter = stock.models.StockItem.IN_STOCK_FILTER
+
+    if filter:
+        stock_filter &= filter
+
     return stock.models.StockItem.objects.filter(
         part__tree_id=OuterRef(f'{reference}tree_id'),
         part__lft__gt=OuterRef(f'{reference}lft'),
         part__rght__lt=OuterRef(f'{reference}rght'),
-    ).filter(filter)
+    ).filter(stock_filter)
 
 
 def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
