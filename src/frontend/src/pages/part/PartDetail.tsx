@@ -243,7 +243,8 @@ export default function PartDetail() {
         type: 'string',
         name: 'creation_user',
         label: t`Created By`,
-        badge: 'user'
+        badge: 'user',
+        icon: 'user'
       },
       {
         type: 'string',
@@ -338,6 +339,7 @@ export default function PartDetail() {
         name: 'stocktake_user',
         label: t`Stocktake By`,
         badge: 'user',
+        icon: 'user',
         value_formatter: () => {
           const { data } = useSuspenseQuery({
             queryKey: ['stocktake', id],

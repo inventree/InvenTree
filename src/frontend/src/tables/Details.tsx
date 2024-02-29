@@ -38,6 +38,7 @@ export type PartIconsType = {
 export type DetailsField =
   | {
       hidden?: boolean;
+      icon?: string;
       name: string;
       label?: string;
       badge?: BadgeType;
@@ -400,7 +401,7 @@ export function DetailsTableField({
           justifyContent: 'flex-start'
         }}
       >
-        <InvenTreeIcon icon={field.name} />
+        <InvenTreeIcon icon={field.icon ?? field.name} />
       </td>
       <td>
         <Text>{field.label}</Text>
