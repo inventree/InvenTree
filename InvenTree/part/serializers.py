@@ -1387,6 +1387,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'available_stock',
             'available_substitute_stock',
             'available_variant_stock',
+            'external_stock',
             # Annotated field describing quantity on order
             'on_order',
             # Annotated field describing quantity being built
@@ -1455,6 +1456,8 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
+
+    external_stock = serializers.FloatField(read_only=True)
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -1532,6 +1535,11 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
                 - F('allocated_to_build_orders'),
                 output_field=models.DecimalField(),
             )
+        )
+
+        # Calculate 'external_stock'
+        queryset = queryset.annotate(
+            external_stock=part.filters.annotate_external_stock(reference=ref)
         )
 
         ref = 'substitutes__part__'
