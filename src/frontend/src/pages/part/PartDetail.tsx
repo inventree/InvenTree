@@ -94,354 +94,6 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
-  const detailFields = (part: any): ItemDetailFields => {
-    let left: DetailsField[][] = [];
-    let right: DetailsField[][] = [];
-    let bottom_right: DetailsField[][] = [];
-    let bottom_left: DetailsField[][] = [];
-
-    let image: DetailsImageType = {
-      name: 'image',
-      imageActions: {
-        selectExisting: true,
-        uploadFile: true,
-        deleteFile: true
-      }
-    };
-
-    left.push([
-      {
-        type: 'text',
-        name: 'description',
-        label: t`Description`,
-        copy: true
-      }
-    ]);
-
-    if (part.variant_of) {
-      left.push([
-        {
-          type: 'link',
-          name: 'variant_of',
-          label: t`Variant of`,
-          model: ModelType.part
-        }
-      ]);
-    }
-
-    right.push([
-      {
-        type: 'string',
-        name: 'unallocated_stock',
-        unit: true,
-        label: t`Available Stock`
-      }
-    ]);
-
-    right.push([
-      {
-        type: 'string',
-        name: 'total_in_stock',
-        unit: true,
-        label: t`In Stock`
-      }
-    ]);
-
-    if (part.minimum_stock) {
-      right.push([
-        {
-          type: 'string',
-          name: 'minimum_stock',
-          unit: true,
-          label: t`Minimum Stock`
-        }
-      ]);
-    }
-
-    if (part.ordering <= 0) {
-      right.push([
-        {
-          type: 'string',
-          name: 'ordering',
-          label: t`On order`,
-          unit: true
-        }
-      ]);
-    }
-
-    if (
-      part.assembly &&
-      (part.allocated_to_build_orders > 0 || part.required_for_build_orders > 0)
-    ) {
-      right.push([
-        {
-          type: 'progressbar',
-          name: 'allocated_to_build_orders',
-          total: part.required_for_build_orders,
-          progress: part.allocated_to_build_orders,
-          label: t`Allocated to Build Orders`
-        }
-      ]);
-    }
-
-    if (
-      part.salable &&
-      (part.allocated_to_sales_orders > 0 || part.required_for_sales_orders > 0)
-    ) {
-      right.push([
-        {
-          type: 'progressbar',
-          name: 'allocated_to_sales_orders',
-          total: part.required_for_sales_orders,
-          progress: part.allocated_to_sales_orders,
-          label: t`Allocated to Sales Orders`
-        }
-      ]);
-    }
-
-    if (part.assembly) {
-      right.push([
-        {
-          type: 'string',
-          name: 'can_build',
-          unit: true,
-          label: t`Can Build`
-        }
-      ]);
-    }
-
-    if (part.assembly) {
-      right.push([
-        {
-          type: 'string',
-          name: 'building',
-          unit: true,
-          label: t`Building`
-        }
-      ]);
-    }
-
-    if (part.category) {
-      bottom_left.push([
-        {
-          type: 'link',
-          name: 'category',
-          label: t`Category`,
-          model: ModelType.partcategory
-        }
-      ]);
-    }
-
-    if (part.IPN) {
-      bottom_left.push([
-        {
-          type: 'string',
-          name: 'IPN',
-          label: t`IPN`,
-          copy: true
-        }
-      ]);
-    }
-
-    if (part.revision) {
-      bottom_left.push([
-        {
-          type: 'string',
-          name: 'revision',
-          label: t`Revision`,
-          copy: true
-        }
-      ]);
-    }
-
-    if (part.units) {
-      bottom_left.push([
-        {
-          type: 'string',
-          name: 'units',
-          label: t`Units`
-        }
-      ]);
-    }
-
-    if (part.keywords) {
-      bottom_left.push([
-        {
-          type: 'string',
-          name: 'keywords',
-          label: t`Keywords`,
-          copy: true
-        }
-      ]);
-    }
-
-    bottom_right.push([
-      {
-        type: 'string',
-        name: 'creation_date',
-        label: t`Creation Date`
-      },
-      {
-        type: 'string',
-        name: 'creation_user',
-        badge: 'user'
-      }
-    ]);
-
-    id &&
-      bottom_right.push([
-        {
-          type: 'string',
-          name: 'pricing',
-          label: t`Price Range`,
-          value_formatter: () => {
-            const { data } = useSuspenseQuery({
-              queryKey: ['pricing', id],
-              queryFn: async () => {
-                const url = apiUrl(ApiEndpoints.part_pricing_get, null, {
-                  id: id
-                });
-
-                return api
-                  .get(url)
-                  .then((response) => {
-                    switch (response.status) {
-                      case 200:
-                        return response.data;
-                      default:
-                        return null;
-                    }
-                  })
-                  .catch(() => {
-                    return null;
-                  });
-              }
-            });
-            return `${formatPriceRange(data.overall_min, data.overall_max)}${
-              part.units && ' / ' + part.units
-            }`;
-          }
-        }
-      ]);
-
-    id &&
-      part.last_stocktake &&
-      bottom_right.push([
-        {
-          type: 'string',
-          name: 'stocktake',
-          label: t`Last Stocktake`,
-          unit: true,
-          value_formatter: () => {
-            const { data } = useSuspenseQuery({
-              queryKey: ['stocktake', id],
-              queryFn: async () => {
-                const url = apiUrl(ApiEndpoints.part_stocktake_list);
-
-                return api
-                  .get(url, { params: { part: id, ordering: 'date' } })
-                  .then((response) => {
-                    switch (response.status) {
-                      case 200:
-                        return response.data[response.data.length - 1];
-                      default:
-                        return null;
-                    }
-                  })
-                  .catch(() => {
-                    return null;
-                  });
-              }
-            });
-            return data?.quantity;
-          }
-        },
-        {
-          type: 'string',
-          name: 'stocktake_user',
-          badge: 'user',
-          value_formatter: () => {
-            const { data } = useSuspenseQuery({
-              queryKey: ['stocktake', id],
-              queryFn: async () => {
-                const url = apiUrl(ApiEndpoints.part_stocktake_list);
-
-                return api
-                  .get(url, { params: { part: id, ordering: 'date' } })
-                  .then((response) => {
-                    switch (response.status) {
-                      case 200:
-                        return response.data[response.data.length - 1];
-                      default:
-                        return null;
-                    }
-                  })
-                  .catch(() => {
-                    return null;
-                  });
-              }
-            });
-            return data?.user;
-          }
-        }
-      ]);
-
-    if (part.default_location) {
-      bottom_right.push([
-        {
-          type: 'link',
-          name: 'default_location',
-          label: t`Default Location`,
-          model: ModelType.stocklocation
-        }
-      ]);
-    }
-
-    if (part.default_supplier) {
-      bottom_right.push([
-        {
-          type: 'link',
-          name: 'default_supplier',
-          label: t`Default Supplier`,
-          model: ModelType.supplierpart
-        }
-      ]);
-    }
-
-    if (part.link) {
-      bottom_right.push([
-        {
-          type: 'link',
-          name: 'link',
-          label: t`Link`,
-          external: true,
-          copy: true
-        }
-      ]);
-    }
-
-    if (part.responsible) {
-      bottom_right.push([
-        {
-          type: 'string',
-          name: 'responsible',
-          label: t`Responsible`,
-          badge: 'owner'
-        }
-      ]);
-    }
-
-    let fields: ItemDetailFields = {
-      left: left,
-      right: right,
-      bottom_left: bottom_left,
-      bottom_right: bottom_right,
-      image: image
-    };
-
-    return fields;
-  };
-
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
@@ -537,6 +189,13 @@ export default function PartDetail() {
         model: ModelType.partcategory
       },
       {
+        type: 'link',
+        name: 'default_location',
+        label: t`Default Location`,
+        model: ModelType.stocklocation,
+        hidden: !part.default_location
+      },
+      {
         type: 'string',
         name: 'IPN',
         label: t`IPN`,
@@ -554,6 +213,7 @@ export default function PartDetail() {
         type: 'string',
         name: 'units',
         label: t`Units`,
+        copy: true,
         hidden: !part.units
       },
       {
@@ -564,11 +224,12 @@ export default function PartDetail() {
         hidden: !part.keywords
       },
       {
-        type: 'string',
-        name: 'responsible',
-        label: t`Responsible`,
-        badge: 'owner',
-        hidden: !part.responsible
+        type: 'link',
+        name: 'link',
+        label: t`Link`,
+        external: true,
+        copy: true,
+        hidden: !part.link
       }
     ];
 
@@ -585,11 +246,11 @@ export default function PartDetail() {
         badge: 'user'
       },
       {
-        type: 'link',
-        name: 'default_location',
-        label: t`Default Location`,
-        model: ModelType.stocklocation,
-        hidden: !part.default_location
+        type: 'string',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !part.responsible
       },
       {
         type: 'link',
@@ -597,16 +258,111 @@ export default function PartDetail() {
         label: t`Default Supplier`,
         model: ModelType.supplierpart,
         hidden: !part.default_supplier
-      },
-      {
-        type: 'link',
-        name: 'link',
-        label: t`Link`,
-        external: true,
-        copy: true,
-        hidden: !part.link
       }
     ];
+
+    // Add in price range data
+    id &&
+      br.push({
+        type: 'string',
+        name: 'pricing',
+        label: t`Price Range`,
+        value_formatter: () => {
+          const { data } = useSuspenseQuery({
+            queryKey: ['pricing', id],
+            queryFn: async () => {
+              const url = apiUrl(ApiEndpoints.part_pricing_get, null, {
+                id: id
+              });
+
+              return api
+                .get(url)
+                .then((response) => {
+                  switch (response.status) {
+                    case 200:
+                      return response.data;
+                    default:
+                      return null;
+                  }
+                })
+                .catch(() => {
+                  return null;
+                });
+            }
+          });
+          return `${formatPriceRange(data.overall_min, data.overall_max)}${
+            part.units && ' / ' + part.units
+          }`;
+        }
+      });
+
+    // Add in stocktake information
+    if (id && part.last_stocktake) {
+      br.push({
+        type: 'string',
+        name: 'stocktake',
+        label: t`Last Stocktake`,
+        unit: true,
+        value_formatter: () => {
+          const { data } = useSuspenseQuery({
+            queryKey: ['stocktake', id],
+            queryFn: async () => {
+              const url = apiUrl(ApiEndpoints.part_stocktake_list);
+
+              return api
+                .get(url, { params: { part: id, ordering: 'date' } })
+                .then((response) => {
+                  switch (response.status) {
+                    case 200:
+                      return response.data[response.data.length - 1];
+                    default:
+                      return null;
+                  }
+                })
+                .catch(() => {
+                  return null;
+                });
+            }
+          });
+
+          if (data.quantity) {
+            return `${data.quantity} (${data.date})`;
+          } else {
+            return '-';
+          }
+        }
+      });
+
+      br.push({
+        type: 'string',
+        name: 'stocktake_user',
+        label: t`Stocktake By`,
+        badge: 'user',
+        value_formatter: () => {
+          const { data } = useSuspenseQuery({
+            queryKey: ['stocktake', id],
+            queryFn: async () => {
+              const url = apiUrl(ApiEndpoints.part_stocktake_list);
+
+              return api
+                .get(url, { params: { part: id, ordering: 'date' } })
+                .then((response) => {
+                  switch (response.status) {
+                    case 200:
+                      return response.data[response.data.length - 1];
+                    default:
+                      return null;
+                  }
+                })
+                .catch(() => {
+                  return null;
+                });
+            }
+          });
+          return data?.user;
+        }
+      });
+    }
 
     return (
       <ItemDetailsGrid>
@@ -623,7 +379,7 @@ export default function PartDetail() {
     return [
       {
         name: 'details',
-        label: t`Details`,
+        label: t`Part Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
