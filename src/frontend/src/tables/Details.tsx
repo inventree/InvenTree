@@ -367,68 +367,6 @@ function CopyField({ value }: { value: string }) {
   );
 }
 
-function xTableField({
-  field_data,
-  field_value,
-  unit = null
-}: {
-  field_data: DetailsField;
-  field_value: FieldValueType[];
-  unit?: string | null;
-}) {
-  function getFieldType(type: string) {
-    switch (type) {
-      case 'text':
-      case 'string':
-        return TableStringValue;
-      case 'link':
-        return TableAnchorValue;
-      case 'progressbar':
-        return ProgressBarValue;
-    }
-  }
-
-  return (
-    <tr>
-      <td
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '20px',
-          justifyContent: 'flex-start'
-        }}
-      >
-        <InvenTreeIcon icon={field_data.name} />
-        <Text>{field_data.label}</Text>
-      </td>
-      <td style={{ minWidth: '40%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexGrow: '1'
-            }}
-          >
-            {field_data.map((data: DetailsField, index: number) => {
-              let FieldType: any = getFieldType(data.type);
-              return (
-                <FieldType
-                  field_data={data}
-                  field_value={field_value[index]}
-                  unit={unit}
-                  key={index}
-                />
-              );
-            })}
-          </div>
-          {field_data[0].copy && <CopyField value={`${field_value[0]}`} />}
-        </div>
-      </td>
-    </tr>
-  );
-}
-
 export function DetailsTableField({
   item,
   field
@@ -463,6 +401,8 @@ export function DetailsTableField({
         }}
       >
         <InvenTreeIcon icon={field.name} />
+      </td>
+      <td>
         <Text>{field.label}</Text>
       </td>
       <td style={{ minWidth: '40%' }}>
@@ -483,6 +423,10 @@ export function DetailsTable({
   return (
     <Paper p="xs" withBorder radius="xs">
       <Table striped>
+        <col width="5O" />
+        <col />
+        <col />
+        <col width="50" />
         <tbody>
           {fields
             .filter((field: DetailsField) => !field.hidden)
