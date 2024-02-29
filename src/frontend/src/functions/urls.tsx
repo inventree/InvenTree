@@ -7,7 +7,7 @@ import { ModelType } from '../enums/ModelType';
 export function getDetailUrl(model: ModelType, pk: number | string): string {
   const modelInfo = ModelInformationDict[model];
 
-  if (modelInfo && modelInfo.url_detail) {
+  if (!!pk && modelInfo && modelInfo.url_detail) {
     return modelInfo.url_detail.replace(':pk', pk.toString());
   }
 

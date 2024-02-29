@@ -31,7 +31,8 @@ import { api } from '../../App';
 import {
   DetailsImageType,
   ItemDetailFields,
-  ItemDetails
+  ItemDetails,
+  ItemDetailsGrid
 } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
@@ -56,7 +57,7 @@ import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { DetailsField } from '../../tables/Details';
+import { DetailsField, DetailsTable } from '../../tables/Details';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
@@ -441,6 +442,192 @@ export default function PartDetail() {
     return fields;
   };
 
+  const detailsPanel = useMemo(() => {
+    if (instanceQuery.isFetching) {
+      return <Skeleton />;
+    }
+
+    // Construct the details tables
+    let tl: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'description',
+        label: t`Description`,
+        copy: true
+      },
+      {
+        type: 'link',
+        name: 'variant_of',
+        label: t`Variant of`,
+        model: ModelType.part,
+        hidden: !part.variant_of
+      }
+    ];
+
+    let tr: DetailsField[] = [
+      {
+        type: 'string',
+        name: 'unallocated_stock',
+        unit: true,
+        label: t`Available Stock`
+      },
+      {
+        type: 'string',
+        name: 'total_in_stock',
+        unit: true,
+        label: t`In Stock`
+      },
+      {
+        type: 'string',
+        name: 'minimum_stock',
+        unit: true,
+        label: t`Minimum Stock`,
+        hidden: part.minimum_stock <= 0
+      },
+      {
+        type: 'string',
+        name: 'ordering',
+        label: t`On order`,
+        unit: true,
+        hidden: part.ordering <= 0
+      },
+      {
+        type: 'progressbar',
+        name: 'allocated_to_build_orders',
+        total: part.required_for_build_orders,
+        progress: part.allocated_to_build_orders,
+        label: t`Allocated to Build Orders`,
+        hidden:
+          !part.assembly ||
+          (part.allocated_to_build_orders <= 0 &&
+            part.required_for_build_orders <= 0)
+      },
+      {
+        type: 'progressbar',
+        name: 'allocated_to_sales_orders',
+        total: part.required_for_sales_orders,
+        progress: part.allocated_to_sales_orders,
+        label: t`Allocated to Sales Orders`,
+        hidden:
+          !part.salable ||
+          (part.allocated_to_sales_orders <= 0 &&
+            part.required_for_sales_orders <= 0)
+      },
+      {
+        type: 'string',
+        name: 'can_build',
+        unit: true,
+        label: t`Can Build`,
+        hidden: !part.assembly
+      },
+      {
+        type: 'string',
+        name: 'building',
+        unit: true,
+        label: t`Building`,
+        hidden: !part.assembly
+      }
+    ];
+
+    let bl: DetailsField[] = [
+      {
+        type: 'link',
+        name: 'category',
+        label: t`Category`,
+        model: ModelType.partcategory
+      },
+      {
+        type: 'string',
+        name: 'IPN',
+        label: t`IPN`,
+        copy: true,
+        hidden: !part.IPN
+      },
+      {
+        type: 'string',
+        name: 'revision',
+        label: t`Revision`,
+        copy: true,
+        hidden: !part.revision
+      },
+      {
+        type: 'string',
+        name: 'units',
+        label: t`Units`,
+        hidden: !part.units
+      },
+      {
+        type: 'string',
+        name: 'keywords',
+        label: t`Keywords`,
+        copy: true,
+        hidden: !part.keywords
+      },
+      {
+        type: 'string',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !part.responsible
+      }
+    ];
+
+    let br: DetailsField[] = [
+      {
+        type: 'string',
+        name: 'creation_date',
+        label: t`Creation Date`
+      },
+      {
+        type: 'string',
+        name: 'creation_user',
+        badge: 'user'
+      },
+      {
+        type: 'link',
+        name: 'default_location',
+        label: t`Default Location`,
+        model: ModelType.stocklocation,
+        hidden: !part.default_location
+      },
+      {
+        type: 'link',
+        name: 'default_supplier',
+        label: t`Default Supplier`,
+        model: ModelType.supplierpart,
+        hidden: !part.default_supplier
+      },
+      {
+        type: 'link',
+        name: 'link',
+        label: t`Link`,
+        external: true,
+        copy: true,
+        hidden: !part.link
+      }
+    ];
+
+    return (
+      <ItemDetailsGrid>
+        <DetailsTable fields={tl} item={part} />
+        <DetailsTable fields={tr} item={part} />
+        <DetailsTable fields={bl} item={part} />
+        <DetailsTable fields={br} item={part} />
+      </ItemDetailsGrid>
+    );
+
+    // content: !instanceQuery.isFetching && (
+    //   <ItemDetails
+    //     appRole={UserRoles.part}
+    //     params={part}
+    //     apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+    //     refresh={refreshInstance}
+    //     fields={detailFields(part)}
+    //     partModel
+    //   />
+    // )
+  }, [part, instanceQuery]);
+
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
     return [
@@ -448,16 +635,7 @@ export default function PartDetail() {
         name: 'details',
         label: t`Details`,
         icon: <IconInfoCircle />,
-        content: !instanceQuery.isFetching && (
-          <ItemDetails
-            appRole={UserRoles.part}
-            params={part}
-            apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
-            refresh={refreshInstance}
-            fields={detailFields(part)}
-            partModel
-          />
-        )
+        content: detailsPanel
       },
       {
         name: 'parameters',

@@ -1,4 +1,5 @@
 import { Grid, Group, Paper, SimpleGrid } from '@mantine/core';
+import React from 'react';
 
 import { UserRoles } from '../../enums/Roles';
 import { DetailsField, DetailsTable } from '../../tables/Details';
@@ -22,6 +23,16 @@ export type DetailsImageType = {
   name: string;
   imageActions: DetailImageButtonProps;
 };
+
+export function ItemDetailsGrid(props: React.PropsWithChildren<{}>) {
+  return (
+    <Paper p="xs">
+      <SimpleGrid cols={2} spacing="xs" verticalSpacing="xs">
+        {props.children}
+      </SimpleGrid>
+    </Paper>
+  );
+}
 
 /**
  * Render a Details panel of the given model

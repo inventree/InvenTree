@@ -37,6 +37,7 @@ export type PartIconsType = {
 
 export type DetailsField =
   | {
+      hidden?: boolean;
       name: string;
       label?: string;
       badge?: BadgeType;
@@ -299,7 +300,7 @@ function TableAnchorValue(props: FieldProps) {
     queryFn: async () => {
       const modelDef = getModelInfo(props.field_data.model);
 
-      if (!modelDef.api_endpoint) {
+      if (!modelDef?.api_endpoint) {
         return {};
       }
 
@@ -366,12 +367,12 @@ function CopyField({ value }: { value: string }) {
   );
 }
 
-function TableField({
+function xTableField({
   field_data,
   field_value,
   unit = null
 }: {
-  field_data: DetailsField[];
+  field_data: DetailsField;
   field_value: FieldValueType[];
   unit?: string | null;
 }) {
@@ -397,8 +398,8 @@ function TableField({
           justifyContent: 'flex-start'
         }}
       >
-        <InvenTreeIcon icon={field_data[0].name} />
-        <Text>{field_data[0].label}</Text>
+        <InvenTreeIcon icon={field_data.name} />
+        <Text>{field_data.label}</Text>
       </td>
       <td style={{ minWidth: '40%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -428,52 +429,64 @@ function TableField({
   );
 }
 
-export function DetailsTable({
+export function DetailsTableField({
   item,
-  fields,
-  partIcons = false
+  field
 }: {
   item: any;
-  fields: DetailsField[][];
-  partIcons?: boolean;
+  field: DetailsField;
+}) {
+  function getFieldType(type: string) {
+    switch (type) {
+      case 'text':
+      case 'string':
+        return TableStringValue;
+      case 'link':
+        return TableAnchorValue;
+      case 'progressbar':
+        return ProgressBarValue;
+      default:
+        return TableStringValue;
+    }
+  }
+
+  const FieldType: any = getFieldType(field.type);
+
+  return (
+    <tr>
+      <td
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '20px',
+          justifyContent: 'flex-start'
+        }}
+      >
+        <InvenTreeIcon icon={field.name} />
+        <Text>{field.label}</Text>
+      </td>
+      <td style={{ minWidth: '40%' }}>
+        <FieldType field_data={field} field_value={item[field.name]} />
+      </td>
+      <td>{field.copy && <CopyField value={'hello world'} />}</td>
+    </tr>
+  );
+}
+
+export function DetailsTable({
+  item,
+  fields
+}: {
+  item: any;
+  fields: DetailsField[];
 }) {
   return (
     <Paper p="xs" withBorder radius="xs">
       <Table striped>
         <tbody>
-          {partIcons && (
-            <tr>
-              <PartIcons
-                assembly={item.assembly}
-                template={item.is_template}
-                component={item.component}
-                trackable={item.trackable}
-                purchaseable={item.purchaseable}
-                saleable={item.salable}
-                virtual={item.virtual}
-                active={item.active}
-              />
-            </tr>
-          )}
-          {fields.map((data: DetailsField[], index: number) => {
-            let value: FieldValueType[] = [];
-            for (const val of data) {
-              if (val.value_formatter) {
-                value.push(undefined);
-              } else {
-                value.push(item[val.name]);
-              }
-            }
-
-            return (
-              <TableField
-                field_data={data}
-                field_value={value}
-                key={index}
-                unit={item.units}
-              />
-            );
-          })}
+          {fields.map((field: DetailsField, index: number) => (
+            <DetailsTableField field={field} item={item} key={index} />
+          ))}
         </tbody>
       </Table>
     </Paper>
