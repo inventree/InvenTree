@@ -2618,6 +2618,10 @@ function loadBuildLineTable(table, build_id, options={}) {
                         icons += makeIconBadge('fa-tools icon-blue', `{% trans "In Production" %}: ${formatDecimal(row.in_production)}`);
                     }
 
+                    if (row.external_stock > 0) {
+                        icons += makeIconBadge('fa-sitemap', `{% trans "External stock" %}: ${row.external_stock}`);
+                    }
+
                     return renderLink(text, url) + icons;
                 }
             },

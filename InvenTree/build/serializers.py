@@ -1083,6 +1083,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
             'available_substitute_stock',
             'available_variant_stock',
             'total_available_stock',
+            'external_stock',
         ]
 
         read_only_fields = [
@@ -1124,6 +1125,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
     total_available_stock = serializers.FloatField(read_only=True)
+    external_stock = serializers.FloatField(read_only=True)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1195,6 +1197,11 @@ class BuildLineSerializer(InvenTreeModelSerializer):
                 F('total_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
                 output_field=models.DecimalField(),
             )
+        )
+
+        # Add 'external stock' annotations
+        queryset = queryset.annotate(
+            external_stock=part.filters.annotate_total_stock(reference=ref, filter=Q(location__external=True))
         )
 
         ref = 'bom_item__substitutes__part__'
