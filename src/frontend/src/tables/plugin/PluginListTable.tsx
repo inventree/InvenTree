@@ -125,7 +125,7 @@ export function PluginDrawer({
 
         <Group spacing={'xs'}>
           {plugin && PluginIcon(plugin)}
-          <Title order={4}>{plugin?.meta.human_name || plugin?.name}</Title>
+          <Title order={4}>{plugin?.meta?.human_name ?? plugin?.name ?? "-"}</Title>
         </Group>
 
         <ActionDropdown
