@@ -1,14 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 178
+INVENTREE_API_VERSION = 179
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v178 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6541
+v179 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6541
     - Adds "width" and "height" fields to the LabelTemplate API endpoint
     - Adds "page_size" and "landscape" fields to the ReportTemplate API endpoint
+
+v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
+    - Adds "external_stock" field to the Part API endpoint
+    - Adds "external_stock" field to the BomItem API endpoint
+    - Adds "external_stock" field to the BuildLine API endpoint
+    - Stock quantites represented in the BuildLine API endpoint are now filtered by Build.source_location
 
 v177 - 2024-02-27 : https://github.com/inventree/InvenTree/pull/6581
     - Adds "subcategoies" count to PartCategoryTree serializer

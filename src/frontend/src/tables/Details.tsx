@@ -5,6 +5,7 @@ import {
   Badge,
   CopyButton,
   Group,
+  Paper,
   Skeleton,
   Table,
   Text,
@@ -437,7 +438,7 @@ export function DetailsTable({
   partIcons?: boolean;
 }) {
   return (
-    <Group>
+    <Paper p="xs" withBorder radius="xs">
       <Table striped>
         <tbody>
           {partIcons && (
@@ -475,6 +476,6 @@ export function DetailsTable({
           })}
         </tbody>
       </Table>
-    </Group>
+    </Paper>
   );
 }

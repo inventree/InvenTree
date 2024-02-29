@@ -1,4 +1,4 @@
-import { Paper } from '@mantine/core';
+import { Grid, Group, Paper, SimpleGrid } from '@mantine/core';
 
 import {
   DetailImageButtonProps,
@@ -50,48 +50,39 @@ export function ItemDetails({
   partModel: boolean;
 }) {
   return (
-    <Paper style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-      <Paper
-        withBorder
-        style={{ flexBasis: '49%', display: 'flex', gap: '10px' }}
-      >
-        {fields.image && (
-          <div style={{ flexGrow: '0' }}>
-            <DetailsImage
-              appRole={appRole}
-              imageActions={fields.image.imageActions}
-              src={params.image}
-              apiPath={apiPath}
-              refresh={refresh}
-              pk={params.pk}
-            />
-          </div>
-        )}
-        {fields.left && (
-          <div style={{ flexGrow: '1' }}>
-            <DetailsTable
-              item={params}
-              fields={fields.left}
-              partIcons={partModel}
-            />
-          </div>
-        )}
-      </Paper>
-      {fields.right && (
-        <Paper style={{ flexBasis: '49%' }} withBorder>
-          <DetailsTable item={params} fields={fields.right} />
-        </Paper>
-      )}
-      {fields.bottom_left && (
-        <Paper style={{ flexBasis: '49%' }} withBorder>
+    <Paper p="xs">
+      <SimpleGrid cols={2} spacing="xs" verticalSpacing="xs">
+        <Grid>
+          {fields.image && (
+            <Grid.Col span={4}>
+              <DetailsImage
+                appRole={appRole}
+                imageActions={fields.image.imageActions}
+                src={params.image}
+                apiPath={apiPath}
+                refresh={refresh}
+                pk={params.pk}
+              />
+            </Grid.Col>
+          )}
+          <Grid.Col span={8}>
+            {fields.left && (
+              <DetailsTable
+                item={params}
+                fields={fields.left}
+                partIcons={partModel}
+              />
+            )}
+          </Grid.Col>
+        </Grid>
+        {fields.right && <DetailsTable item={params} fields={fields.right} />}
+        {fields.bottom_left && (
           <DetailsTable item={params} fields={fields.bottom_left} />
-        </Paper>
-      )}
-      {fields.bottom_right && (
-        <Paper style={{ flexBasis: '49%' }} withBorder>
+        )}
+        {fields.bottom_right && (
           <DetailsTable item={params} fields={fields.bottom_right} />
-        </Paper>
-      )}
+        )}
+      </SimpleGrid>
     </Paper>
   );
 }
