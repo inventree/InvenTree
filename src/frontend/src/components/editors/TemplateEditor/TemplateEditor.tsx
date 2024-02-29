@@ -38,8 +38,8 @@ type EditorProps = {
   template: TemplateI;
 };
 type EditorRef = {
-  setCode: (code: string) => void;
-  getCode: () => string;
+  setCode: (code: string) => void | Promise<void>;
+  getCode: () => (string | undefined) | Promise<string | undefined>;
 };
 export type EditorComponent = React.ForwardRefExoticComponent<
   EditorProps & React.RefAttributes<EditorRef>
@@ -98,11 +98,47 @@ export function TemplateEditor(props: TemplateEditorProps) {
   const [errorOverlay, setErrorOverlay] = useState(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
+  const [editorValue, setEditorValue] = useState<null | string>(editors[0].key);
+  const [previewValue, setPreviewValue] = useState<null | string>(
+    previewAreas[0].key
+  );
+
+  const codeRef = useRef<string | undefined>();
+
+  const loadCodeToEditor = useCallback(async (code: string) => {
+    return Promise.resolve(editorRef.current?.setCode(code))?.catch((e) => {
+      showNotification({
+        title: t`Error loading template`,
+        message: e.message,
+        color: 'red'
+      });
+    });
+  }, []);
+
+  const getCodeFromEditor = useCallback(async () => {
+    return Promise.resolve(editorRef.current?.getCode())?.catch((e) => {
+      showNotification({
+        title: t`Error saving template`,
+        message: e.message,
+        color: 'red'
+      });
+      return undefined;
+    });
+  }, []);
+
   useEffect(() => {
     if (!downloadUrl) return;
 
-    api.get(downloadUrl).then((res) => editorRef.current?.setCode(res.data));
+    api.get(downloadUrl).then((res) => {
+      codeRef.current = res.data;
+      loadCodeToEditor(res.data);
+    });
   }, [downloadUrl]);
+
+  useEffect(() => {
+    if (codeRef.current === undefined) return;
+    loadCodeToEditor(codeRef.current);
+  }, [editorValue]);
 
   const updatePreview = useCallback(
     async (confirmed: boolean, saveTemplate: boolean = true) => {
@@ -133,8 +169,8 @@ export function TemplateEditor(props: TemplateEditorProps) {
         return;
       }
 
-      const code = editorRef.current?.getCode();
-      if (!code || !previewItem) return;
+      const code = await getCodeFromEditor();
+      if (code === undefined || !previewItem) return;
 
       setIsPreviewLoading(true);
       Promise.resolve(
@@ -177,17 +213,15 @@ export function TemplateEditor(props: TemplateEditorProps) {
       });
   }, [previewApiUrl, preview.filters]);
 
-  const [editorValue, setEditorValue] = useState<null | string>(editors[0].key);
-  const [previewValue, setPreviewValue] = useState<null | string>(
-    previewAreas[0].key
-  );
-
   return (
     <Stack style={{ height: '100%', flex: '1' }}>
       <Split style={{ gap: '10px' }}>
         <Tabs
           value={editorValue}
-          onTabChange={setEditorValue}
+          onTabChange={async (v) => {
+            codeRef.current = await getCodeFromEditor();
+            setEditorValue(v);
+          }}
           keepMounted={false}
           style={{
             minWidth: '300px',
