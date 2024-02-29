@@ -25,7 +25,6 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
@@ -74,20 +73,17 @@ export default function StockDetail() {
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle />,
-        content: <PlaceholderPanel />
+        icon: <IconInfoCircle />
       },
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory />,
-        content: <PlaceholderPanel />
+        icon: <IconHistory />
       },
       {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmark />,
-        content: <PlaceholderPanel />,
         hidden:
           !stockitem?.part_detail?.salable && !stockitem?.part_detail?.component
       },

@@ -45,7 +45,7 @@ import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { partFields } from '../../forms/PartForms';
+import { usePartFields } from '../../forms/PartForms';
 import {
   StockOperationProps,
   useCountStockItem,
@@ -635,11 +635,13 @@ export default function PartDetail() {
     );
   }, [part, id]);
 
+  const partFields = usePartFields({ create: false });
+
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
     pk: part.pk,
     title: t`Edit Part`,
-    fields: partFields({ editing: true }),
+    fields: partFields,
     onFormSuccess: refreshInstance
   });
 

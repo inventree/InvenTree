@@ -6,7 +6,10 @@ import { Suspense, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
@@ -53,6 +56,13 @@ export function useStockFields({
           part_detail: true,
           supplier_detail: true,
           ...(part ? { part } : {})
+        },
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          if (value.data.part) {
+            value.filters['part'] = value.data.part;
+          }
+
+          return value.filters;
         }
       },
       use_pack_size: {

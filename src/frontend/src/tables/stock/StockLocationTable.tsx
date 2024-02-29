@@ -115,7 +115,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
       <AddItemButton
         tooltip={t`Add Stock Location`}
         onClick={() => newLocation.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);

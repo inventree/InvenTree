@@ -10,7 +10,7 @@ import { StylishText } from '../../components/items/StylishText';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { partCategoryFields, partFields } from '../../forms/PartForms';
+import { partCategoryFields, usePartFields } from '../../forms/PartForms';
 import { useCreateStockItem } from '../../forms/StockForms';
 import {
   useCreateApiFormModal,
@@ -28,10 +28,13 @@ function ApiFormsPlayground() {
     fields: fields
   });
 
+  const createPartFields = usePartFields({ create: true });
+  const editPartFields = usePartFields({ create: false });
+
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
     title: 'Create Part',
-    fields: partFields({}),
+    fields: createPartFields,
     initialData: {
       description: 'A part created via the API'
     }
@@ -41,7 +44,7 @@ function ApiFormsPlayground() {
     url: ApiEndpoints.part_list,
     pk: 1,
     title: 'Edit Part',
-    fields: partFields({ editing: true })
+    fields: editPartFields
   });
 
   const newAttachment = useCreateApiFormModal({
@@ -62,7 +65,7 @@ function ApiFormsPlayground() {
   const [name, setName] = useState('Hello');
 
   const partFieldsState: any = useMemo<any>(() => {
-    const fields = partFields({});
+    const fields = editPartFields;
     fields.name = {
       ...fields.name,
       value: name,

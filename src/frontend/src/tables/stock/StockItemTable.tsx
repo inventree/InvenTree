@@ -3,6 +3,7 @@ import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { formatCurrency, renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -17,10 +18,12 @@ import {
   useDeleteStockItem,
   useMergeStockItem,
   useRemoveStockItem,
+  useStockFields,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -356,6 +359,23 @@ export function StockItemTable({ params = {} }: { params?: any }) {
     };
   }, [table]);
 
+  const stockItemFields = useStockFields({ create: true });
+
+  const newStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    title: t`Add Stock Item`,
+    fields: stockItemFields,
+    initialData: {
+      part: params.part,
+      location: params.location
+    },
+    onFormSuccess: (data: any) => {
+      if (data.pk) {
+        navigate(getDetailUrl(ModelType.stockitem, data.pk));
+      }
+    }
+  });
+
   const transferStock = useTransferStockItem(tableActionParams);
   const addStock = useAddStockItem(tableActionParams);
   const removeStock = useRemoveStockItem(tableActionParams);
@@ -459,19 +479,33 @@ export function StockItemTable({ params = {} }: { params?: any }) {
             }
           }
         ]}
+      />,
+      <AddItemButton
+        hidden={!user.hasAddRole(UserRoles.stock)}
+        tooltip={t`Add Stock Item`}
+        onClick={() => newStockItem.open()}
       />
     ];
   }, [user]);
 
   return (
     <>
+      {newStockItem.modal}
+      {transferStock.modal}
+      {removeStock.modal}
+      {addStock.modal}
+      {countStock.modal}
+      {changeStockStatus.modal}
+      {mergeStock.modal}
+      {assignStock.modal}
+      {deleteStock.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}
         columns={tableColumns}
         props={{
           enableDownload: true,
-          enableSelection: true,
+          enableSelection: false,
           tableFilters: tableFilters,
           tableActions: tableActions,
           onRowClick: (record) =>
@@ -484,14 +518,6 @@ export function StockItemTable({ params = {} }: { params?: any }) {
           }
         }}
       />
-      {transferStock.modal}
-      {removeStock.modal}
-      {addStock.modal}
-      {countStock.modal}
-      {changeStockStatus.modal}
-      {mergeStock.modal}
-      {assignStock.modal}
-      {deleteStock.modal}
     </>
   );
 }
