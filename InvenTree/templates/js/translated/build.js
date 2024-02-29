@@ -2730,6 +2730,7 @@ function loadBuildLineTable(table, build_id, options={}) {
 
         allocateStockToBuild(build_id, [row], {
             output: options.output,
+            source_location: options.location,
             success: function() {
                 $(table).bootstrapTable('refresh');
             }

@@ -374,6 +374,9 @@ onPanelLoad('allocate', function() {
         "#build-lines-table",
         {{ build.pk }},
         {
+            {% if build.take_from %}
+            location: {{ build.take_from.pk }},
+            {% endif %}
             {% if build.project_code %}
             project_code: {{ build.project_code.pk }},
             {% endif %}
