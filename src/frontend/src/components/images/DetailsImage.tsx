@@ -337,15 +337,18 @@ export function DetailsImage(props: DetailImageProps) {
             src={img}
             height={IMAGE_DIMENSION}
             width={IMAGE_DIMENSION}
-            onClick={() => {
-              modals.open({
-                children: <ApiImage src={img} />,
-                withCloseButton: false
-              });
-            }}
           />
           {permissions.hasChangeRole(props.appRole) && hovered && (
-            <Overlay color="black" opacity={0.8}>
+            <Overlay
+              color="black"
+              opacity={0.8}
+              onClick={() => {
+                modals.open({
+                  children: <ApiImage src={img} />,
+                  withCloseButton: false
+                });
+              }}
+            >
               <ImageActionButtons
                 visible={hovered}
                 actions={props.imageActions}
