@@ -97,6 +97,25 @@ if __name__ == '__main__':
         results = re.findall(r"""INVENTREE_API_VERSION = (.*)""", text)
         print(results[0])
         exit(0)
+
+    if 'do_release' in sys.argv:
+        target = os.getenv('TARGET')
+        highest_tupple = get_existing_release_tags()[0]
+
+        old_version = f'{highest_tupple[0]}.{highest_tupple[1]}.{highest_tupple[2]}'
+        if target == 'master':
+            tag = f'{highest_tupple[0]}.{highest_tupple[1] + 1}.0'
+        elif target == 'stable':
+            tag = f'{highest_tupple[0]}.{highest_tupple[1]}.{highest_tupple[2] + 1}'
+        else:
+            raise ValueError(f"Unknown target '{target}'")
+        new_tag = f'{tag} dev'
+
+        with open(os.getenv('GITHUB_OUTPUT'), 'a') as env_file:
+            env_file.write(f'old_version={old_version}\n')
+            env_file.write(f'tag={tag}\n')
+            env_file.write(f'new_tag={new_tag}\n')
+        exit(0)
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'
     GITHUB_REF_TYPE = os.environ['GITHUB_REF_TYPE']
 
