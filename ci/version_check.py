@@ -105,14 +105,17 @@ if __name__ == '__main__':
         old_version = f'{highest_tupple[0]}.{highest_tupple[1]}.{highest_tupple[2]}'
         if target == 'master':
             tag = f'{highest_tupple[0]}.{highest_tupple[1] + 1}.0'
+            old_branch = 'master'
         elif target == 'stable':
             tag = f'{highest_tupple[0]}.{highest_tupple[1]}.{highest_tupple[2] + 1}'
+            old_branch = f'{highest_tupple[0]}.{highest_tupple[1]}.x'
         else:
             raise ValueError(f"Unknown target '{target}'")
         new_tag = f'{tag} dev'
 
         with open(os.getenv('GITHUB_OUTPUT'), 'a') as env_file:
             env_file.write(f'old_version={old_version}\n')
+            env_file.write(f'old_branch={old_branch}\n')
             env_file.write(f'tag={tag}\n')
             env_file.write(f'new_tag={new_tag}\n')
         exit(0)
