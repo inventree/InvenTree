@@ -603,6 +603,7 @@ class PartSerializer(
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
             'building',
+            'category_default_location',
             'in_stock',
             'ordering',
             'required_for_build_orders',
@@ -751,6 +752,10 @@ class PartSerializer(
             required_for_sales_orders=part.filters.annotate_sales_order_requirements(),
         )
 
+        queryset = queryset.annotate(
+            category_default_location=part.filters.annotate_default_location()
+        )
+
         return queryset
 
     def get_starred(self, part) -> bool:
@@ -762,6 +767,12 @@ class PartSerializer(
 
     category_path = serializers.ListField(
         child=serializers.DictField(), source='category.get_path', read_only=True
+    )
+
+    default_location = serializers.PrimaryKeyRelatedField(
+        source='category_default_location',
+        queryset=stock.models.StockLocation.objects.all(),
+        allow_null=True,
     )
 
     responsible = serializers.PrimaryKeyRelatedField(
@@ -788,6 +799,7 @@ class PartSerializer(
     total_in_stock = serializers.FloatField(read_only=True)
     unallocated_stock = serializers.FloatField(read_only=True)
     variant_stock = serializers.FloatField(read_only=True)
+    category_default_location = serializers.FloatField(read_only=True)
 
     minimum_stock = serializers.FloatField()
 

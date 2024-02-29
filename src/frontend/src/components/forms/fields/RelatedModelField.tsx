@@ -30,7 +30,7 @@ export function RelatedModelField({
   limit?: number;
 }) {
   const fieldId = useId();
-
+  console.log('fieldData', controller, fieldName, definition);
   const {
     field,
     fieldState: { error }

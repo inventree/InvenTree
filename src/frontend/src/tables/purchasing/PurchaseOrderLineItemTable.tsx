@@ -12,7 +12,10 @@ import { RenderStockLocation } from '../../components/render/Stock';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { usePurchaseOrderLineItemFields } from '../../forms/PurchaseOrderForms';
+import {
+  usePurchaseOrderLineItemFields,
+  useReceiveLineItems
+} from '../../forms/PurchaseOrderForms';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -51,6 +54,11 @@ export function PurchaseOrderLineItemTable({
 
   const navigate = useNavigate();
   const user = useUserState();
+
+  const receiveLineItems = useReceiveLineItems({
+    items: table.selectedRecords,
+    orderPk: orderId
+  });
 
   const tableColumns = useMemo(() => {
     return [
@@ -250,12 +258,14 @@ export function PurchaseOrderLineItemTable({
         key="receive-items"
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
+        onClick={() => receiveLineItems.open()}
       />
     ];
   }, [orderId, user]);
 
   return (
     <>
+      {receiveLineItems.modal}
       {newLine.modal}
       {editLine.modal}
       {deleteLine.modal}
