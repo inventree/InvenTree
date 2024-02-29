@@ -780,6 +780,7 @@ class PartSerializer(
         source='category_default_location',
         queryset=stock.models.StockLocation.objects.all(),
         allow_null=True,
+        required=False,
     )
 
     responsible = serializers.PrimaryKeyRelatedField(
