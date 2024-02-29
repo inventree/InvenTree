@@ -44,7 +44,7 @@ jobs:
           {
             echo 'auto_text<<EOF'
             $auto_text
-            echo EOF
+            EOF
           } >> "$GITHUB_OUTPUT"
       - name: "Dummy: Set version"
         run: echo "Change version to ${{ steps.version.outputs.tag }}"
