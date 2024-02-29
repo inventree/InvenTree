@@ -113,7 +113,17 @@ function partTableColumns(): TableColumn[] {
 
         if (available != stock) {
           extra.push(
-            <Text key="available">{t`Available` + `: ${available}`}</Text>
+            <Text key="available">
+              {t`Available`}: {available}
+            </Text>
+          );
+        }
+
+        if (record.external_stock > 0) {
+          extra.push(
+            <Text key="external">
+              {t`External stock`}: {record.external_stock}
+            </Text>
           );
         }
 
