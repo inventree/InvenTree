@@ -119,28 +119,16 @@ def annotate_total_stock(reference: str = '', filter: Q = None):
         stock_filter: Q object which defines how to filter the stock items
     """
     # Stock filter only returns 'in stock' items
-    if filter is None:
-        filter = stock.models.StockItem.IN_STOCK_FILTER
+    stock_filter = stock.models.StockItem.IN_STOCK_FILTER
+
+    if filter is not None:
+        stock_filter &= filter
 
     return Coalesce(
-        SubquerySum(f'{reference}stock_items__quantity', filter=filter),
+        SubquerySum(f'{reference}stock_items__quantity', filter=stock_filter),
         Decimal(0),
         output_field=models.DecimalField(),
     )
-
-
-def annotate_internal_stock(reference: str = ''):
-    """Annotate "internal" stock quantity."""
-    filter = stock.models.StockItem.IN_STOCK_FILTER & Q(location__external=False)
-
-    return annotate_total_stock(reference, filter)
-
-
-def annotate_external_stock(reference: str = ''):
-    """Annotate "external" stock quantity."""
-    filter = stock.models.StockItem.IN_STOCK_FILTER & Q(location__external=True)
-
-    return annotate_total_stock(reference, filter)
 
 
 def annotate_build_order_requirements(reference: str = ''):

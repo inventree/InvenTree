@@ -1539,7 +1539,9 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         # Calculate 'external_stock'
         queryset = queryset.annotate(
-            external_stock=part.filters.annotate_external_stock(reference=ref)
+            external_stock=part.filters.annotate_total_stock(
+                reference=ref, filter=Q(location__external=True)
+            )
         )
 
         ref = 'substitutes__part__'
