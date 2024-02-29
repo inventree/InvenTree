@@ -32,7 +32,7 @@ jobs:
       - name: Gather auto-text
         id: auto_text
         run: |
-          auto_text=$(curl -L \
+          auto_text=$(curl -s -S -L \
           -X POST \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ secrets.RELEASE_PAT }}" \
