@@ -610,6 +610,7 @@ class PartSerializer(
             'stock_item_count',
             'suppliers',
             'total_in_stock',
+            'external_stock',
             'unallocated_stock',
             'variant_stock',
             # Fields only used for Part creation
@@ -734,6 +735,12 @@ class PartSerializer(
             )
         )
 
+        queryset = queryset.annotate(
+            external_stock=part.filters.annotate_total_stock(
+                filter=Q(location__external=True)
+            )
+        )
+
         # Annotate with the total 'available stock' quantity
         # This is the current stock, minus any allocations
         queryset = queryset.annotate(
@@ -780,14 +787,17 @@ class PartSerializer(
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
     building = serializers.FloatField(read_only=True)
     in_stock = serializers.FloatField(read_only=True)
-    ordering = serializers.FloatField(read_only=True)
+    ordering = serializers.FloatField(read_only=True, label=_('On Order'))
     required_for_build_orders = serializers.IntegerField(read_only=True)
     required_for_sales_orders = serializers.IntegerField(read_only=True)
-    stock_item_count = serializers.IntegerField(read_only=True)
-    suppliers = serializers.IntegerField(read_only=True)
-    total_in_stock = serializers.FloatField(read_only=True)
-    unallocated_stock = serializers.FloatField(read_only=True)
-    variant_stock = serializers.FloatField(read_only=True)
+    stock_item_count = serializers.IntegerField(read_only=True, label=_('Stock Items'))
+    suppliers = serializers.IntegerField(read_only=True, label=_('Suppliers'))
+    total_in_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
+    external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
+    unallocated_stock = serializers.FloatField(
+        read_only=True, label=_('Unallocated Stock')
+    )
+    variant_stock = serializers.FloatField(read_only=True, label=_('Variant Stock'))
 
     minimum_stock = serializers.FloatField()
 
@@ -1387,6 +1397,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'available_stock',
             'available_substitute_stock',
             'available_variant_stock',
+            'external_stock',
             # Annotated field describing quantity on order
             'on_order',
             # Annotated field describing quantity being built
@@ -1455,6 +1466,8 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
+
+    external_stock = serializers.FloatField(read_only=True)
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -1531,6 +1544,13 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
                 - F('allocated_to_sales_orders')
                 - F('allocated_to_build_orders'),
                 output_field=models.DecimalField(),
+            )
+        )
+
+        # Calculate 'external_stock'
+        queryset = queryset.annotate(
+            external_stock=part.filters.annotate_total_stock(
+                reference=ref, filter=Q(location__external=True)
             )
         )
 

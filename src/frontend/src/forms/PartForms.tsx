@@ -1,99 +1,94 @@
 import { t } from '@lingui/macro';
 import { IconPackages } from '@tabler/icons-react';
+import { useMemo } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
  */
-export function partFields({
-  editing = false,
-  category_id
+export function usePartFields({
+  create = false
 }: {
-  editing?: boolean;
-  category_id?: number;
+  create?: boolean;
 }): ApiFormFieldSet {
-  let fields: ApiFormFieldSet = {
-    category: {
-      filters: {
-        structural: false
-      }
-    },
-    name: {},
-    IPN: {},
-    revision: {},
-    description: {},
-    variant_of: {},
-    keywords: {},
-    units: {},
-    link: {},
-    default_location: {
-      filters: {
-        structural: false
-      }
-    },
-    default_expiry: {},
-    minimum_stock: {},
-    responsible: {
-      filters: {
-        is_active: true
-      }
-    },
-    component: {},
-    assembly: {},
-    is_template: {},
-    trackable: {},
-    purchaseable: {},
-    salable: {},
-    virtual: {},
-    active: {}
-  };
-
-  if (category_id != null) {
-    // TODO: Set the value of the category field
-  }
-
-  // Additional fields for creation
-  if (!editing) {
-    // TODO: Hide 'active' field
-
-    fields.copy_category_parameters = {};
-
-    fields.initial_stock = {
-      icon: <IconPackages />,
-      children: {
-        quantity: {},
-        location: {}
-      }
+  return useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      category: {
+        filters: {
+          structural: false
+        }
+      },
+      name: {},
+      IPN: {},
+      revision: {},
+      description: {},
+      variant_of: {},
+      keywords: {},
+      units: {},
+      link: {},
+      default_location: {
+        filters: {
+          structural: false
+        }
+      },
+      default_expiry: {},
+      minimum_stock: {},
+      responsible: {
+        filters: {
+          is_active: true
+        }
+      },
+      component: {},
+      assembly: {},
+      is_template: {},
+      trackable: {},
+      purchaseable: {},
+      salable: {},
+      virtual: {},
+      active: {}
     };
 
-    fields.initial_supplier = {
-      children: {
-        supplier: {
-          filters: {
-            is_supplier: true
-          }
-        },
-        sku: {},
-        manufacturer: {
-          filters: {
-            is_manufacturer: true
-          }
-        },
-        mpn: {}
-      }
-    };
-  }
+    // Additional fields for creation
+    if (create) {
+      fields.copy_category_parameters = {};
 
-  // TODO: pop 'expiry' field if expiry not enabled
-  delete fields['default_expiry'];
+      fields.initial_stock = {
+        icon: <IconPackages />,
+        children: {
+          quantity: {},
+          location: {}
+        }
+      };
 
-  // TODO: pop 'revision' field if PART_ENABLE_REVISION is False
-  delete fields['revision'];
+      fields.initial_supplier = {
+        children: {
+          supplier: {
+            filters: {
+              is_supplier: true
+            }
+          },
+          sku: {},
+          manufacturer: {
+            filters: {
+              is_manufacturer: true
+            }
+          },
+          mpn: {}
+        }
+      };
+    }
 
-  // TODO: handle part duplications
+    // TODO: pop 'expiry' field if expiry not enabled
+    delete fields['default_expiry'];
 
-  return fields;
+    // TODO: pop 'revision' field if PART_ENABLE_REVISION is False
+    delete fields['revision'];
+
+    // TODO: handle part duplications
+
+    return fields;
+  }, [create]);
 }
 
 /**

@@ -10,7 +10,7 @@ export enum UserRoles {
   return_order = 'return_order',
   sales_order = 'sales_order',
   stock = 'stock',
-  stock_location = 'stocklocation',
+  stock_location = 'stock_location',
   stocktake = 'stocktake'
 }
 

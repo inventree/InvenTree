@@ -17,6 +17,8 @@ ARG commit_tag=""
 ARG commit_hash=""
 ARG commit_date=""
 
+ARG data_dir="data"
+
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV INVOKE_RUN_SHELL="/bin/ash"
@@ -27,7 +29,7 @@ ENV INVENTREE_DOCKER="true"
 # InvenTree paths
 ENV INVENTREE_HOME="/home/inventree"
 ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
-ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
+ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/${data_dir}"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
@@ -62,7 +64,9 @@ RUN apk add --no-cache \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap && \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
+    # Core database packages
+    postgresql13-client && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
 
@@ -92,7 +96,7 @@ FROM inventree_base as prebuild
 
 ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install --user uv --no-cache-dir && uv pip install -r base_requirements.txt -r requirements.txt --no-cache && \
+    pip install --user uv --no-cache-dir && pip install -r base_requirements.txt -r requirements.txt --no-cache && \
     apk --purge del .build-deps
 
 # Frontend builder image:
@@ -137,7 +141,7 @@ EXPOSE 5173
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
-RUN pip install uv --no-cache-dir && uv pip install -r base_requirements.txt --no-cache
+RUN pip install uv --no-cache-dir && pip install -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
@@ -160,10 +164,3 @@ ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
-
-# Image target for devcontainer
-FROM dev as devcontainer
-
-ARG workspace="/workspaces/InvenTree"
-
-WORKDIR ${WORKSPACE}

@@ -25,7 +25,7 @@ Templates are rendered using standard HTML / CSS - if you are familiar with web 
 
 ### Template Language
 
-Uploaded report template files are passed through the [django template rendering framework](https://docs.djangoproject.com/en/dev/topics/templates/), and as such accept the same variable template strings as any other django template file. Different variables are passed to the report template (based on the context of the report) and can be used to customize the contents of the generated PDF.
+Uploaded report template files are passed through the [django template rendering framework]({% include "django.html" %}/topics/templates/), and as such accept the same variable template strings as any other django template file. Different variables are passed to the report template (based on the context of the report) and can be used to customize the contents of the generated PDF.
 
 ### Variables
 
@@ -77,7 +77,7 @@ Item: {{ item }}
 ```
 
 !!! info "Conditionals"
-    Refer to the [django template language documentation](https://docs.djangoproject.com/en/dev/ref/templates/language/) for more information.
+    Refer to the [django template language documentation]({% include "django.html" %}/ref/templates/language/) for more information.
 
 ### Localization Issues
 
@@ -278,7 +278,7 @@ Asset files can be rendered directly into the template as follows
     If the requested asset name does not match the name of an uploaded asset, the template will continue without loading the image.
 
 !!! info "Assets location"
-    You need to ensure your asset images to the report/assets directory in the [data directory](../start/docker_dev.md/#data-directory). Upload new assets via the [admin interface](../settings/admin.md) to ensure they are uploaded to the correct location on the server.
+    You need to ensure your asset images to the report/assets directory in the [data directory](../start/intro.md#file-storage). Upload new assets via the [admin interface](../settings/admin.md) to ensure they are uploaded to the correct location on the server.
 
 
 ## Report Snippets

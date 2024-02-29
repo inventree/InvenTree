@@ -29,7 +29,7 @@ If the installed version of invoke is too old, users may see error messages duri
 - *'update' did not receive all required positional arguments!*
 - *Function has keyword-only arguments or annotations*
 
-As per the [invoke guide](./start/intro.md#invoke), the minimum required version of Invoke is `2.0.0`.
+As per the [invoke guide](./start/intro.md#invoke), the minimum required version of Invoke is `{{ config.extra.min_invoke_version }}`.
 
 To determine the version of invoke you have installed, run either:
 
@@ -60,7 +60,7 @@ Always activate the virtual environment before running server commands!
 
 ### 'str' object has no attribute 'removeSuffix'
 
-This error occurs because your installed python version is not up to date. We [require Python v3.9 or newer](./start/intro.md#python-requirements)
+This error occurs because your installed python version is not up to date. We [require Python {{ config.extra.min_python_version }} or newer](./start/intro.md#python-requirements)
 
 You (or your system administrator) needs to update python to meet the minimum requirements for InvenTree.
 
@@ -77,7 +77,7 @@ The most common problem here is that the correct sequenct of steps has not been 
 
 For more information, refer to the installation guides:
 
-- [Docker Installation](./start/docker_prod.md#updating-inventree)
+- [Docker Installation](./start/docker_install.md#updating-inventree)
 - [Bare Metal Installation](./start/install.md#updating-inventree)
 
 !!! warning "Invoke Update"
@@ -117,7 +117,7 @@ invoke worker
 
 ### File Sync Issues - Docker
 
-When installing under [Docker](./start/docker.md), sometimes issues may arise keeping [persistent data](./start/docker.md#persistent-data) in sync. Refer to the [common issues](./start/docker_prod.md#common-issues) section in the docker setup guide for further details.
+When installing under [Docker](./start/docker.md), sometimes issues may arise keeping [persistent data](./start/docker.md#persistent-data) in sync. Refer to the [common issues](./start/docker.md#common-issues) section in the docker setup guide for further details.
 
 ### Permission denied for mkdir: /home/inventree
 

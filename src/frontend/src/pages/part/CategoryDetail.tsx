@@ -8,13 +8,14 @@ import {
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
+import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
+import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import { PartListTable } from '../../tables/part/PartTable';
 
 /**
@@ -70,7 +71,7 @@ export default function CategoryDetail({}: {}) {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconListDetails />,
-        content: <PlaceholderPanel />
+        content: <ParametricPartTable categoryId={id} />
       }
     ],
     [category, id]
