@@ -32,7 +32,7 @@ msgid "Form Errors Exist"
 msgstr "Form Errors Exist"
 
 #: src/components/forms/ApiForm.tsx:451
-#: src/components/images/DetailsImage.tsx:223
+#: src/components/images/DetailsImage.tsx:226
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
@@ -292,22 +292,22 @@ msgstr "Loading"
 msgid "No results found"
 msgstr "No results found"
 
-#: src/components/images/DetailsImage.tsx:61
+#: src/components/images/DetailsImage.tsx:64
 msgid "Remove Image"
 msgstr "Remove Image"
 
-#: src/components/images/DetailsImage.tsx:64
+#: src/components/images/DetailsImage.tsx:67
 msgid "Remove the associated image from this item?"
 msgstr "Remove the associated image from this item?"
 
-#: src/components/images/DetailsImage.tsx:67
+#: src/components/images/DetailsImage.tsx:70
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:192
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 #: src/pages/stock/StockDetail.tsx:188
 msgid "Remove"
 msgstr "Remove"
 
-#: src/components/images/DetailsImage.tsx:67
+#: src/components/images/DetailsImage.tsx:70
 #: src/contexts/ThemeContext.tsx:64
 #: src/functions/forms.tsx:196
 #: src/hooks/UseForm.tsx:38
@@ -317,35 +317,39 @@ msgstr "Remove"
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/components/images/DetailsImage.tsx:95
+#: src/components/images/DetailsImage.tsx:98
 msgid "Drag and drop to upload"
 msgstr "Drag and drop to upload"
 
-#: src/components/images/DetailsImage.tsx:98
+#: src/components/images/DetailsImage.tsx:101
 msgid "Click to select file(s)"
 msgstr "Click to select file(s)"
 
-#: src/components/images/DetailsImage.tsx:220
+#: src/components/images/DetailsImage.tsx:223
 msgid "Clear"
 msgstr "Clear"
 
 #: src/components/images/DetailsImage.tsx:252
-msgid "Select image"
-msgstr "Select image"
+#~ msgid "Select image"
+#~ msgstr "Select image"
 
-#: src/components/images/DetailsImage.tsx:263
+#: src/components/images/DetailsImage.tsx:266
 msgid "Select from existing images"
 msgstr "Select from existing images"
 
-#: src/components/images/DetailsImage.tsx:273
+#: src/components/images/DetailsImage.tsx:272
+msgid "Select Image"
+msgstr "Select Image"
+
+#: src/components/images/DetailsImage.tsx:284
 msgid "Upload new image"
 msgstr "Upload new image"
 
-#: src/components/images/DetailsImage.tsx:279
+#: src/components/images/DetailsImage.tsx:290
 msgid "Upload Image"
 msgstr "Upload Image"
 
-#: src/components/images/DetailsImage.tsx:292
+#: src/components/images/DetailsImage.tsx:303
 msgid "Delete image"
 msgstr "Delete image"
 
@@ -1753,7 +1757,7 @@ msgid "Recently Updated"
 msgstr "Recently Updated"
 
 #: src/defaults/dashboardItems.tsx:50
-#: src/tables/part/PartTable.tsx:215
+#: src/tables/part/PartTable.tsx:225
 msgid "Low Stock"
 msgstr "Low Stock"
 
@@ -2897,7 +2901,7 @@ msgid "Build Details"
 msgstr "Build Details"
 
 #: src/pages/build/BuildDetail.tsx:107
-#: src/tables/build/BuildLineTable.tsx:195
+#: src/tables/build/BuildLineTable.tsx:204
 msgid "Allocate Stock"
 msgstr "Allocate Stock"
 
@@ -3098,7 +3102,7 @@ msgid "Variant of"
 msgstr "Variant of"
 
 #: src/pages/part/PartDetail.tsx:136
-#: src/tables/build/BuildLineTable.tsx:106
+#: src/tables/build/BuildLineTable.tsx:115
 msgid "Available Stock"
 msgstr "Available Stock"
 
@@ -3112,7 +3116,7 @@ msgid "Minimum Stock"
 msgstr "Minimum Stock"
 
 #: src/pages/part/PartDetail.tsx:165
-#: src/tables/bom/BomTable.tsx:180
+#: src/tables/bom/BomTable.tsx:188
 #: src/tables/build/BuildLineTable.tsx:92
 msgid "On order"
 msgstr "On order"
@@ -3126,12 +3130,12 @@ msgid "Allocated to Sales Orders"
 msgstr "Allocated to Sales Orders"
 
 #: src/pages/part/PartDetail.tsx:207
-#: src/tables/bom/BomTable.tsx:204
+#: src/tables/bom/BomTable.tsx:212
 msgid "Can Build"
 msgstr "Can Build"
 
 #: src/pages/part/PartDetail.tsx:218
-#: src/tables/bom/BomTable.tsx:188
+#: src/tables/bom/BomTable.tsx:196
 #: src/tables/part/PartTable.tsx:92
 msgid "Building"
 msgstr "Building"
@@ -3165,7 +3169,7 @@ msgstr "Creation Date"
 
 #: src/pages/part/PartDetail.tsx:295
 #: src/tables/bom/BomTable.tsx:137
-#: src/tables/part/PartTable.tsx:151
+#: src/tables/part/PartTable.tsx:161
 msgid "Price Range"
 msgstr "Price Range"
 
@@ -3391,54 +3395,54 @@ msgstr "Total Price"
 msgid "Select Columns"
 msgstr "Select Columns"
 
-#: src/tables/Details.tsx:111
+#: src/tables/Details.tsx:112
 msgid "Part is not active"
 msgstr "Part is not active"
 
-#: src/tables/Details.tsx:117
+#: src/tables/Details.tsx:118
 msgid "Inactive"
 msgstr "Inactive"
 
-#: src/tables/Details.tsx:124
+#: src/tables/Details.tsx:125
 msgid "Part is a template part (variants can be made from this part)"
 msgstr "Part is a template part (variants can be made from this part)"
 
-#: src/tables/Details.tsx:130
+#: src/tables/Details.tsx:131
 msgid "Part can be assembled from other parts"
 msgstr "Part can be assembled from other parts"
 
-#: src/tables/Details.tsx:136
+#: src/tables/Details.tsx:137
 msgid "Part can be used in assemblies"
 msgstr "Part can be used in assemblies"
 
-#: src/tables/Details.tsx:142
+#: src/tables/Details.tsx:143
 msgid "Part stock is tracked by serial number"
 msgstr "Part stock is tracked by serial number"
 
-#: src/tables/Details.tsx:148
+#: src/tables/Details.tsx:149
 msgid "Part can be purchased from external suppliers"
 msgstr "Part can be purchased from external suppliers"
 
-#: src/tables/Details.tsx:154
+#: src/tables/Details.tsx:155
 msgid "Part can be sold to customers"
 msgstr "Part can be sold to customers"
 
-#: src/tables/Details.tsx:159
+#: src/tables/Details.tsx:160
 msgid "Part is virtual (not a physical part)"
 msgstr "Part is virtual (not a physical part)"
 
-#: src/tables/Details.tsx:165
-#: src/tables/part/PartTable.tsx:233
-#: src/tables/part/PartTable.tsx:237
+#: src/tables/Details.tsx:166
+#: src/tables/part/PartTable.tsx:243
+#: src/tables/part/PartTable.tsx:247
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Virtual"
 
-#: src/tables/Details.tsx:354
+#: src/tables/Details.tsx:355
 msgid "Copied"
 msgstr "Copied"
 
-#: src/tables/Details.tsx:354
+#: src/tables/Details.tsx:355
 msgid "Copy"
 msgstr "Copy"
 
@@ -3600,117 +3604,123 @@ msgid "Part Information"
 msgstr "Part Information"
 
 #: src/tables/bom/BomTable.tsx:155
-#: src/tables/part/PartTable.tsx:124
+#: src/tables/part/PartTable.tsx:134
 msgid "No stock"
 msgstr "No stock"
 
 #: src/tables/bom/BomTable.tsx:163
+#: src/tables/build/BuildLineTable.tsx:101
+#: src/tables/part/PartTable.tsx:125
+msgid "External stock"
+msgstr "External stock"
+
+#: src/tables/bom/BomTable.tsx:171
 #: src/tables/build/BuildLineTable.tsx:64
 msgid "Includes substitute stock"
 msgstr "Includes substitute stock"
 
-#: src/tables/bom/BomTable.tsx:172
+#: src/tables/bom/BomTable.tsx:180
 #: src/tables/build/BuildLineTable.tsx:74
 msgid "Includes variant stock"
 msgstr "Includes variant stock"
 
-#: src/tables/bom/BomTable.tsx:197
-#: src/tables/part/PartTable.tsx:143
+#: src/tables/bom/BomTable.tsx:205
+#: src/tables/part/PartTable.tsx:153
 #: src/tables/stock/StockItemTable.tsx:177
 msgid "Stock Information"
 msgstr "Stock Information"
 
-#: src/tables/bom/BomTable.tsx:208
-#: src/tables/build/BuildLineTable.tsx:170
+#: src/tables/bom/BomTable.tsx:216
+#: src/tables/build/BuildLineTable.tsx:179
 msgid "Consumable item"
 msgstr "Consumable item"
 
-#: src/tables/bom/BomTable.tsx:227
+#: src/tables/bom/BomTable.tsx:235
 msgid "Trackable Part"
 msgstr "Trackable Part"
 
-#: src/tables/bom/BomTable.tsx:228
+#: src/tables/bom/BomTable.tsx:236
 msgid "Show trackable items"
 msgstr "Show trackable items"
 
-#: src/tables/bom/BomTable.tsx:232
+#: src/tables/bom/BomTable.tsx:240
 msgid "Assembled Part"
 msgstr "Assembled Part"
 
-#: src/tables/bom/BomTable.tsx:233
+#: src/tables/bom/BomTable.tsx:241
 msgid "Show asssmbled items"
 msgstr "Show asssmbled items"
 
-#: src/tables/bom/BomTable.tsx:237
+#: src/tables/bom/BomTable.tsx:245
 msgid "Show items with available stock"
 msgstr "Show items with available stock"
 
-#: src/tables/bom/BomTable.tsx:241
+#: src/tables/bom/BomTable.tsx:249
 msgid "Show items on order"
 msgstr "Show items on order"
 
-#: src/tables/bom/BomTable.tsx:245
+#: src/tables/bom/BomTable.tsx:253
 msgid "Show validated items"
 msgstr "Show validated items"
 
-#: src/tables/bom/BomTable.tsx:249
+#: src/tables/bom/BomTable.tsx:257
 #: src/tables/bom/UsedInTable.tsx:58
 msgid "Show inherited items"
 msgstr "Show inherited items"
 
-#: src/tables/bom/BomTable.tsx:253
+#: src/tables/bom/BomTable.tsx:261
 #: src/tables/bom/UsedInTable.tsx:62
 msgid "Show optional items"
 msgstr "Show optional items"
 
-#: src/tables/bom/BomTable.tsx:257
+#: src/tables/bom/BomTable.tsx:265
 msgid "Show consumable items"
 msgstr "Show consumable items"
 
-#: src/tables/bom/BomTable.tsx:261
+#: src/tables/bom/BomTable.tsx:269
 msgid "Has Pricing"
 msgstr "Has Pricing"
 
-#: src/tables/bom/BomTable.tsx:262
+#: src/tables/bom/BomTable.tsx:270
 msgid "Show items with pricing"
 msgstr "Show items with pricing"
 
-#: src/tables/bom/BomTable.tsx:273
+#: src/tables/bom/BomTable.tsx:281
 msgid "View BOM"
 msgstr "View BOM"
 
-#: src/tables/bom/BomTable.tsx:284
+#: src/tables/bom/BomTable.tsx:292
 msgid "Validate BOM line"
 msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:292
+#: src/tables/bom/BomTable.tsx:300
 msgid "Edit Substitutes"
 msgstr "Edit Substitutes"
 
-#: src/tables/bom/BomTable.tsx:306
+#: src/tables/bom/BomTable.tsx:314
 msgid "Edit Bom Item"
 msgstr "Edit Bom Item"
 
-#: src/tables/bom/BomTable.tsx:308
+#: src/tables/bom/BomTable.tsx:316
 msgid "Bom item updated"
 msgstr "Bom item updated"
 
-#: src/tables/bom/BomTable.tsx:323
+#: src/tables/bom/BomTable.tsx:331
 msgid "Delete Bom Item"
 msgstr "Delete Bom Item"
 
-#: src/tables/bom/BomTable.tsx:324
+#: src/tables/bom/BomTable.tsx:332
 msgid "Bom item deleted"
 msgstr "Bom item deleted"
 
-#: src/tables/bom/BomTable.tsx:326
+#: src/tables/bom/BomTable.tsx:334
 msgid "Are you sure you want to remove this BOM item?"
 msgstr "Are you sure you want to remove this BOM item?"
 
 #: src/tables/bom/UsedInTable.tsx:66
 #: src/tables/build/BuildOrderTable.tsx:102
 #: src/tables/machine/MachineListTable.tsx:316
-#: src/tables/part/PartTable.tsx:167
+#: src/tables/part/PartTable.tsx:177
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:188
 #: src/tables/plugin/PluginListTable.tsx:632
@@ -3723,7 +3733,7 @@ msgid "Show active assemblies"
 msgstr "Show active assemblies"
 
 #: src/tables/bom/UsedInTable.tsx:71
-#: src/tables/part/PartTable.tsx:191
+#: src/tables/part/PartTable.tsx:201
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "Trackable"
@@ -3737,7 +3747,7 @@ msgid "Show allocated lines"
 msgstr "Show allocated lines"
 
 #: src/tables/build/BuildLineTable.tsx:38
-#: src/tables/part/PartTable.tsx:116
+#: src/tables/part/PartTable.tsx:117
 #: src/tables/stock/StockItemTable.tsx:141
 #: src/tables/stock/StockItemTable.tsx:255
 msgid "Available"
@@ -3767,20 +3777,20 @@ msgstr "Show optional lines"
 msgid "In production"
 msgstr "In production"
 
-#: src/tables/build/BuildLineTable.tsx:103
+#: src/tables/build/BuildLineTable.tsx:112
 #: src/tables/stock/StockItemTable.tsx:150
 msgid "No stock available"
 msgstr "No stock available"
 
-#: src/tables/build/BuildLineTable.tsx:132
+#: src/tables/build/BuildLineTable.tsx:141
 msgid "Unit Quantity"
 msgstr "Unit Quantity"
 
-#: src/tables/build/BuildLineTable.tsx:201
+#: src/tables/build/BuildLineTable.tsx:210
 msgid "Order Stock"
 msgstr "Order Stock"
 
-#: src/tables/build/BuildLineTable.tsx:207
+#: src/tables/build/BuildLineTable.tsx:216
 msgid "Build Stock"
 msgstr "Build Stock"
 
@@ -4051,7 +4061,7 @@ msgid "Internal Units"
 msgstr "Internal Units"
 
 #: src/tables/part/PartCategoryTable.tsx:64
-#: src/tables/part/PartTable.tsx:179
+#: src/tables/part/PartTable.tsx:189
 msgid "Include Subcategories"
 msgstr "Include Subcategories"
 
@@ -4119,7 +4129,7 @@ msgid "Show templates with choices"
 msgstr "Show templates with choices"
 
 #: src/tables/part/PartParameterTemplateTable.tsx:41
-#: src/tables/part/PartTable.tsx:197
+#: src/tables/part/PartTable.tsx:207
 msgid "Has Units"
 msgstr "Has Units"
 
@@ -4159,85 +4169,85 @@ msgstr "Build Order Allocations"
 msgid "Sales Order Allocations"
 msgstr "Sales Order Allocations"
 
-#: src/tables/part/PartTable.tsx:168
+#: src/tables/part/PartTable.tsx:178
 msgid "Filter by part active status"
 msgstr "Filter by part active status"
 
-#: src/tables/part/PartTable.tsx:173
+#: src/tables/part/PartTable.tsx:183
 #: src/tables/stock/StockItemTable.tsx:245
 msgid "Assembly"
 msgstr "Assembly"
 
-#: src/tables/part/PartTable.tsx:174
+#: src/tables/part/PartTable.tsx:184
 msgid "Filter by assembly attribute"
 msgstr "Filter by assembly attribute"
 
-#: src/tables/part/PartTable.tsx:180
+#: src/tables/part/PartTable.tsx:190
 msgid "Include parts in subcategories"
 msgstr "Include parts in subcategories"
 
-#: src/tables/part/PartTable.tsx:185
+#: src/tables/part/PartTable.tsx:195
 msgid "Component"
 msgstr "Component"
 
-#: src/tables/part/PartTable.tsx:186
+#: src/tables/part/PartTable.tsx:196
 msgid "Filter by component attribute"
 msgstr "Filter by component attribute"
 
-#: src/tables/part/PartTable.tsx:192
+#: src/tables/part/PartTable.tsx:202
 msgid "Filter by trackable attribute"
 msgstr "Filter by trackable attribute"
 
-#: src/tables/part/PartTable.tsx:198
+#: src/tables/part/PartTable.tsx:208
 msgid "Filter by parts which have units"
 msgstr "Filter by parts which have units"
 
-#: src/tables/part/PartTable.tsx:203
+#: src/tables/part/PartTable.tsx:213
 msgid "Has IPN"
 msgstr "Has IPN"
 
-#: src/tables/part/PartTable.tsx:204
+#: src/tables/part/PartTable.tsx:214
 msgid "Filter by parts which have an internal part number"
 msgstr "Filter by parts which have an internal part number"
 
-#: src/tables/part/PartTable.tsx:209
+#: src/tables/part/PartTable.tsx:219
 msgid "Has Stock"
 msgstr "Has Stock"
 
-#: src/tables/part/PartTable.tsx:210
+#: src/tables/part/PartTable.tsx:220
 msgid "Filter by parts which have stock"
 msgstr "Filter by parts which have stock"
 
-#: src/tables/part/PartTable.tsx:216
+#: src/tables/part/PartTable.tsx:226
 msgid "Filter by parts which have low stock"
 msgstr "Filter by parts which have low stock"
 
-#: src/tables/part/PartTable.tsx:221
+#: src/tables/part/PartTable.tsx:231
 msgid "Purchaseable"
 msgstr "Purchaseable"
 
-#: src/tables/part/PartTable.tsx:222
+#: src/tables/part/PartTable.tsx:232
 msgid "Filter by parts which are purchaseable"
 msgstr "Filter by parts which are purchaseable"
 
-#: src/tables/part/PartTable.tsx:227
+#: src/tables/part/PartTable.tsx:237
 msgid "Salable"
 msgstr "Salable"
 
-#: src/tables/part/PartTable.tsx:228
+#: src/tables/part/PartTable.tsx:238
 msgid "Filter by parts which are salable"
 msgstr "Filter by parts which are salable"
 
-#: src/tables/part/PartTable.tsx:234
+#: src/tables/part/PartTable.tsx:244
 msgid "Filter by parts which are virtual"
 msgstr "Filter by parts which are virtual"
 
-#: src/tables/part/PartTable.tsx:238
+#: src/tables/part/PartTable.tsx:248
 msgid "Not Virtual"
 msgstr "Not Virtual"
 
-#: src/tables/part/PartTable.tsx:266
-#: src/tables/part/PartTable.tsx:282
+#: src/tables/part/PartTable.tsx:276
+#: src/tables/part/PartTable.tsx:292
 msgid "Add Part"
 msgstr "Add Part"
 
@@ -4302,9 +4312,13 @@ msgstr "This action cannot be reversed"
 msgid "Any tests results associated with this template will be deleted"
 msgstr "Any tests results associated with this template will be deleted"
 
-#: src/tables/part/PartThumbTable.tsx:202
+#: src/tables/part/PartThumbTable.tsx:190
 msgid "Search..."
 msgstr "Search..."
+
+#: src/tables/part/PartThumbTable.tsx:199
+msgid "Select"
+msgstr "Select"
 
 #: src/tables/part/PartVariantTable.tsx:16
 msgid "Show active variants"
