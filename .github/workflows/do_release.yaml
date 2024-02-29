@@ -40,8 +40,12 @@ jobs:
           https://api.github.com/repos/inventree/InvenTree/releases/generate-notes \
           -d '{"tag_name":"${{ steps.version.outputs.tag }}","target_commitish":"${{ steps.version.outputs.old_branch }}","previous_tag_name":"${{ steps.version.outputs.old_version }}"}')
           echo $auto_text
-          echo '$auto_text' >> $GITHUB_STEP_SUMMARY
-          echo "auto_text='$auto_text'" >> $GITHUB_OUTPUT
+          echo $auto_text >> $GITHUB_STEP_SUMMARY
+          {
+            echo 'auto_text<<EOF'
+            $auto_text
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
       - name: "Dummy: Set version"
         run: echo "Change version to ${{ steps.version.outputs.tag }}"
       - name: "Dummy: Update changelog header"
