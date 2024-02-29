@@ -2804,6 +2804,15 @@ function loadPartCategoryTable(table, options) {
                 title: '{% trans "Parts" %}',
                 switchable: true,
                 sortable: true,
+            },
+            {
+                field: 'structural',
+                title: '{% trans "Structural" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value) {
+                    return yesNoLabel(value);
+                }
             }
         ]
     });
