@@ -29,6 +29,11 @@ import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import {
+  DetailsImageType,
+  ItemDetailFields,
+  ItemDetails
+} from '../../components/details/ItemDetails';
+import {
   ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
@@ -52,11 +57,6 @@ import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { DetailsField } from '../../tables/Details';
-import {
-  DetailsImageType,
-  ItemDetailFields,
-  ItemDetails
-} from '../../tables/ItemDetails';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';

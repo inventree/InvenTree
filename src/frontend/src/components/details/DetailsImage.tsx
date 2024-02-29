@@ -22,8 +22,8 @@ import { InvenTreeIcon } from '../../functions/icons';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { ActionButton } from '../buttons/ActionButton';
+import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
-import { ApiImage } from './ApiImage';
 
 /**
  * Props for detail image

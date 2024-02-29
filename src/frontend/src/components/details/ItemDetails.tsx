@@ -1,11 +1,8 @@
 import { Grid, Group, Paper, SimpleGrid } from '@mantine/core';
 
-import {
-  DetailImageButtonProps,
-  DetailsImage
-} from '../components/images/DetailsImage';
-import { UserRoles } from '../enums/Roles';
-import { DetailsField, DetailsTable } from './Details';
+import { UserRoles } from '../../enums/Roles';
+import { DetailsField, DetailsTable } from '../../tables/Details';
+import { DetailImageButtonProps, DetailsImage } from './DetailsImage';
 
 /**
  * Type for defining field arrays
