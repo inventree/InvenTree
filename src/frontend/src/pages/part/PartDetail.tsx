@@ -581,6 +581,7 @@ export default function PartDetail() {
       {
         type: 'string',
         name: 'creation_user',
+        label: t`Created By`,
         badge: 'user'
       },
       {
@@ -615,17 +616,6 @@ export default function PartDetail() {
         <DetailsTable fields={br} item={part} />
       </ItemDetailsGrid>
     );
-
-    // content: !instanceQuery.isFetching && (
-    //   <ItemDetails
-    //     appRole={UserRoles.part}
-    //     params={part}
-    //     apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
-    //     refresh={refreshInstance}
-    //     fields={detailFields(part)}
-    //     partModel
-    //   />
-    // )
   }, [part, instanceQuery]);
 
   // Part data panels (recalculate when part data changes)

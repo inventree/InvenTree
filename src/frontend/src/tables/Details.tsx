@@ -484,9 +484,11 @@ export function DetailsTable({
     <Paper p="xs" withBorder radius="xs">
       <Table striped>
         <tbody>
-          {fields.map((field: DetailsField, index: number) => (
-            <DetailsTableField field={field} item={item} key={index} />
-          ))}
+          {fields
+            .filter((field: DetailsField) => !field.hidden)
+            .map((field: DetailsField, index: number) => (
+              <DetailsTableField field={field} item={item} key={index} />
+            ))}
         </tbody>
       </Table>
     </Paper>
