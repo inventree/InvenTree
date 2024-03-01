@@ -2,8 +2,10 @@ import {
   Icon123,
   IconBinaryTree2,
   IconBookmarks,
+  IconBox,
   IconBuilding,
   IconBuildingFactory2,
+  IconCalendar,
   IconCalendarStats,
   IconCheck,
   IconClipboardList,
@@ -18,14 +20,17 @@ import {
   IconLink,
   IconList,
   IconListTree,
+  IconMapPin,
   IconMapPinHeart,
   IconNotes,
   IconPackage,
+  IconPackageImport,
   IconPackages,
   IconPaperclip,
   IconPhoto,
   IconQuestionMark,
   IconRulerMeasure,
+  IconShape,
   IconShoppingCart,
   IconShoppingCartHeart,
   IconStack2,
@@ -99,9 +104,13 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     saleable: IconCurrencyDollar,
     virtual: IconWorldCode,
     inactive: IconX,
+    part: IconBox,
+    supplier_part: IconPackageImport,
 
+    calendar: IconCalendar,
     external: IconExternalLink,
     creation_date: IconCalendarTime,
+    location: IconMapPin,
     default_location: IconMapPinHeart,
     default_supplier: IconShoppingCartHeart,
     link: IconLink,
@@ -137,4 +146,7 @@ export function InvenTreeIcon(props: IconProps) {
   }
 
   return <Icon {...props.iconProps} />;
+}
+function IconShapes(props: TablerIconsProps): Element {
+  throw new Error('Function not implemented.');
 }

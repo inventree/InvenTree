@@ -32,7 +32,7 @@ export type DetailImageProps = {
   appRole: UserRoles;
   src: string;
   apiPath: string;
-  refresh: () => void;
+  refresh?: () => void;
   imageActions?: DetailImageButtonProps;
   pk: string;
 };
@@ -335,7 +335,7 @@ export function DetailsImage(props: DetailImageProps) {
   // Sets a new image, and triggers upstream instance refresh
   const setAndRefresh = (image: string) => {
     setImg(image);
-    props.refresh();
+    props.refresh && props.refresh();
   };
 
   const permissions = useUserState();
