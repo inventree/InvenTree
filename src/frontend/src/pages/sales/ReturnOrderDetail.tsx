@@ -49,6 +49,13 @@ export default function ReturnOrderDetail() {
         copy: true
       },
       {
+        type: 'text',
+        name: 'customer_reference',
+        label: t`Customer Reference`,
+        copy: true,
+        hidden: !order.customer_reference
+      },
+      {
         type: 'link',
         name: 'customer',
         icon: 'customers',
@@ -120,6 +127,7 @@ export default function ReturnOrderDetail() {
         model: ModelType.contact,
         link: false,
         name: 'contact',
+        label: t`Contact`,
         icon: 'user',
         copy: true
       }
