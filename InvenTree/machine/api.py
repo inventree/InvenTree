@@ -144,7 +144,7 @@ class MachineRestart(APIView):
 
     permission_classes = [permissions.IsAuthenticated]
 
-    @extend_schema(responses={200: MachineSerializers.MachineRestartSerializer()})
+    @extend_schema(request=None, responses={200: MachineSerializers.MachineRestartSerializer()})
     def post(self, request, pk):
         """Restart machine by pk."""
         machine = get_machine(pk)
