@@ -929,6 +929,10 @@ def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
 
     manage(c, cmd, pty=True)
 
+    assert os.path.exists(filename)
+
+    print('Schema export completed:', filename)
+
 
 @task(default=True)
 def version(c):
