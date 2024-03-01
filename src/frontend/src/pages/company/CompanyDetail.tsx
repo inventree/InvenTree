@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -18,6 +18,8 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsImage } from '../../components/details/DetailsImage';
+import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -35,6 +37,7 @@ import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { DetailsField, DetailsTable } from '../../tables/Details';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
@@ -69,12 +72,99 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     refetchOnMount: true
   });
 
+  const detailsPanel = useMemo(() => {
+    if (instanceQuery.isFetching) {
+      return <Skeleton />;
+    }
+
+    let tl: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'description',
+        label: t`Description`
+      },
+      {
+        type: 'link',
+        name: 'website',
+        label: t`Website`,
+        external: true,
+        copy: true,
+        hidden: !company.website
+      },
+      {
+        type: 'text',
+        name: 'phone',
+        label: t`Phone Number`,
+        copy: true,
+        hidden: !company.phone
+      },
+      {
+        type: 'text',
+        name: 'email',
+        label: t`Email Address`,
+        copy: true,
+        hidden: !company.email
+      }
+    ];
+
+    let tr: DetailsField[] = [
+      {
+        type: 'string',
+        name: 'currency',
+        label: t`Default Currency`
+      },
+      {
+        type: 'boolean',
+        name: 'is_supplier',
+        label: t`Supplier`,
+        icon: 'suppliers'
+      },
+      {
+        type: 'boolean',
+        name: 'is_manufacturer',
+        label: t`Manufacturer`,
+        icon: 'manufacturers'
+      },
+      {
+        type: 'boolean',
+        name: 'is_customer',
+        label: t`Customer`,
+        icon: 'customers'
+      }
+    ];
+
+    return (
+      <ItemDetailsGrid>
+        <Grid>
+          <Grid.Col span={4}>
+            <DetailsImage
+              appRole={UserRoles.purchase_order}
+              apiPath={ApiEndpoints.company_list}
+              src={company.image}
+              pk={company.pk}
+              refresh={refreshInstance}
+              imageActions={{
+                uploadFile: true,
+                deleteFile: true
+              }}
+            />
+          </Grid.Col>
+          <Grid.Col span={8}>
+            <DetailsTable item={company} fields={tl} />
+          </Grid.Col>
+        </Grid>
+        <DetailsTable item={company} fields={tr} />
+      </ItemDetailsGrid>
+    );
+  }, [company, instanceQuery]);
+
   const companyPanels: PanelType[] = useMemo(() => {
     return [
       {
         name: 'details',
         label: t`Details`,
-        icon: <IconInfoCircle />
+        icon: <IconInfoCircle />,
+        content: detailsPanel
       },
       {
         name: 'manufactured-parts',

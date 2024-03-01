@@ -16,6 +16,7 @@ import { Suspense, useMemo } from 'react';
 
 import { api } from '../App';
 import { ProgressBar } from '../components/items/ProgressBar';
+import { YesNoButton } from '../components/items/YesNoButton';
 import { getModelInfo } from '../components/render/ModelType';
 import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -45,7 +46,13 @@ export type DetailsField =
       badge?: BadgeType;
       copy?: boolean;
       value_formatter?: () => ValueFormatterReturn;
-    } & (StringDetailField | LinkDetailField | ProgressBarfield | StatusField);
+    } & (
+      | StringDetailField
+      | BooleanField
+      | LinkDetailField
+      | ProgressBarfield
+      | StatusField
+    );
 
 type BadgeType = 'owner' | 'user' | 'group';
 type ValueFormatterReturn = string | number | null;
@@ -53,6 +60,10 @@ type ValueFormatterReturn = string | number | null;
 type StringDetailField = {
   type: 'string' | 'text';
   unit?: boolean;
+};
+
+type BooleanField = {
+  type: 'boolean';
 };
 
 type LinkDetailField = {
@@ -288,6 +299,10 @@ function TableStringValue(props: FieldProps) {
   );
 }
 
+function BooleanValue(props: FieldProps) {
+  return <YesNoButton value={props.field_value} />;
+}
+
 function TableAnchorValue(props: FieldProps) {
   if (props.field_data.external) {
     return (
@@ -404,6 +419,8 @@ export function DetailsTableField({
       case 'text':
       case 'string':
         return TableStringValue;
+      case 'boolean':
+        return BooleanValue;
       case 'link':
         return TableAnchorValue;
       case 'progressbar':

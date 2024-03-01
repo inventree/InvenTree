@@ -5,6 +5,7 @@ import {
   IconBox,
   IconBuilding,
   IconBuildingFactory2,
+  IconBuildingStore,
   IconCalendar,
   IconCalendarStats,
   IconCheck,
@@ -22,6 +23,7 @@ import {
   IconLink,
   IconList,
   IconListTree,
+  IconMail,
   IconMapPin,
   IconMapPinHeart,
   IconNotes,
@@ -30,6 +32,7 @@ import {
   IconPackageImport,
   IconPackages,
   IconPaperclip,
+  IconPhone,
   IconPhoto,
   IconProgressCheck,
   IconQuestionMark,
@@ -49,6 +52,7 @@ import {
   IconUserStar,
   IconUsersGroup,
   IconVersions,
+  IconWorld,
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
@@ -87,6 +91,7 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     used_in: IconStack2,
     manufacturers: IconBuildingFactory2,
     suppliers: IconBuilding,
+    customers: IconBuildingStore,
     purchase_orders: IconShoppingCart,
     sales_orders: IconTruckDelivery,
     scheduling: IconCalendarStats,
@@ -121,6 +126,7 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     link: IconLink,
     responsible: IconUserStar,
     pricing: IconCurrencyDollar,
+    currency: IconCurrencyDollar,
     stocktake: IconClipboardList,
     user: IconUser,
     group: IconUsersGroup,
@@ -128,7 +134,10 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     copy: IconCopy,
     quantity: IconNumbers,
     progress: IconProgressCheck,
-    reference: IconHash
+    reference: IconHash,
+    website: IconWorld,
+    email: IconMail,
+    phone: IconPhone
   };
 
 /**
