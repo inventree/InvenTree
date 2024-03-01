@@ -163,8 +163,8 @@ jobs:
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
-          diff --color -u schema.yml api.yaml
-          diff -u schema.yml api.yaml && echo "no difference in API schema " || exit 2
+          diff --color -u InvenTree/schema.yml api.yaml
+          diff -u InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
         run: invoke schema
         continue-on-error: true
