@@ -1,10 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 177
+INVENTREE_API_VERSION = 179
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v179 - 2024-03-01 : https://github.com/inventree/InvenTree/pull/6605
+    - Adds "subcategories" count to PartCategory serializer
+    - Adds "sublocations" count to StockLocation serializer
+    - Adds "image" field to PartBrief serializer
+    - Adds "image" field to CompanyBrief serializer
+
+v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
+    - Adds "external_stock" field to the Part API endpoint
+    - Adds "external_stock" field to the BomItem API endpoint
+    - Adds "external_stock" field to the BuildLine API endpoint
+    - Stock quantites represented in the BuildLine API endpoint are now filtered by Build.source_location
 
 v177 - 2024-02-27 : https://github.com/inventree/InvenTree/pull/6581
     - Adds "subcategoies" count to PartCategoryTree serializer
