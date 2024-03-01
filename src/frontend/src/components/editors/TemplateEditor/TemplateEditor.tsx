@@ -106,24 +106,28 @@ export function TemplateEditor(props: TemplateEditorProps) {
   const codeRef = useRef<string | undefined>();
 
   const loadCodeToEditor = useCallback(async (code: string) => {
-    return Promise.resolve(editorRef.current?.setCode(code))?.catch((e) => {
+    try {
+      return await Promise.resolve(editorRef.current?.setCode(code));
+    } catch (e: any) {
       showNotification({
         title: t`Error loading template`,
-        message: e.message,
+        message: e?.message ?? e,
         color: 'red'
       });
-    });
+    }
   }, []);
 
   const getCodeFromEditor = useCallback(async () => {
-    return Promise.resolve(editorRef.current?.getCode())?.catch((e) => {
+    try {
+      return await Promise.resolve(editorRef.current?.getCode());
+    } catch (e: any) {
       showNotification({
         title: t`Error saving template`,
-        message: e.message,
+        message: e?.message ?? e,
         color: 'red'
       });
       return undefined;
-    });
+    }
   }, []);
 
   useEffect(() => {
