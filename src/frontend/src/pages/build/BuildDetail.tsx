@@ -181,7 +181,7 @@ export default function BuildDetail() {
             <DetailsImage
               appRole={UserRoles.part}
               apiPath={ApiEndpoints.part_list}
-              src={build.part_detail?.thumbnail}
+              src={build.part_detail?.image ?? build.part_detail?.thumbnail}
               pk={build.part}
             />
           </Grid.Col>

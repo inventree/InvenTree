@@ -288,6 +288,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'revision',
             'full_name',
             'description',
+            'image',
             'thumbnail',
             'active',
             'assembly',
@@ -313,6 +314,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             self.fields.pop('pricing_min')
             self.fields.pop('pricing_max')
 
+    image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     # Pricing fields

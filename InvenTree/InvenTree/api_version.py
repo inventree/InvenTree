@@ -9,6 +9,8 @@ INVENTREE_API_TEXT = """
 v179 - 2024-03-01 : https://github.com/inventree/InvenTree/pull/6605
     - Adds "subcategories" count to PartCategory serializer
     - Adds "sublocations" count to StockLocation serializer
+    - Adds "image" field to PartBrief serializer
+    - Adds "image" field to CompanyBrief serializer
 
 v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
     - Adds "external_stock" field to the Part API endpoint

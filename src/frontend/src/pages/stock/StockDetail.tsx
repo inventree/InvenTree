@@ -202,7 +202,10 @@ export default function StockDetail() {
             <DetailsImage
               appRole={UserRoles.part}
               apiPath={ApiEndpoints.part_list}
-              src={stockitem.part_detail?.thumbnail}
+              src={
+                stockitem.part_detail?.image ??
+                stockitem?.part_detail?.thumbnail
+              }
               pk={stockitem.part}
             />
           </Grid.Col>
