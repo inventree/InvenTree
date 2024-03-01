@@ -17,6 +17,7 @@ import { Suspense, useMemo } from 'react';
 import { api } from '../App';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { getModelInfo } from '../components/render/ModelType';
+import { StatusRenderer } from '../components/render/StatusRenderer';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
@@ -44,7 +45,7 @@ export type DetailsField =
       badge?: BadgeType;
       copy?: boolean;
       value_formatter?: () => ValueFormatterReturn;
-    } & (StringDetailField | LinkDetailField | ProgressBarfield);
+    } & (StringDetailField | LinkDetailField | ProgressBarfield | StatusField);
 
 type BadgeType = 'owner' | 'user' | 'group';
 type ValueFormatterReturn = string | number | null;
@@ -60,6 +61,8 @@ type LinkDetailField = {
 
 type InternalLinkField = {
   model: ModelType;
+  model_field?: string;
+  model_formatter?: (value: any) => string;
 };
 
 type ExternalLinkField = {
@@ -70,6 +73,11 @@ type ProgressBarfield = {
   type: 'progressbar';
   progress: number;
   total: number;
+};
+
+type StatusField = {
+  type: 'status';
+  model: ModelType;
 };
 
 type FieldValueType = string | number | undefined;
@@ -327,6 +335,16 @@ function TableAnchorValue(props: FieldProps) {
     return getDetailUrl(props.field_data.model, props.field_value);
   }, [props.field_data.model, props.field_value]);
 
+  // Construct the "return value" for the fetched data
+  // Basic fallback value
+  let value = data?.name ?? 'No name defined';
+
+  if (props.field_data.model_formatter) {
+    value = props.field_data.model_formatter(data) ?? value;
+  } else if (props.field_data.model_field) {
+    value = data?.[props.field_data.model_field] ?? value;
+  }
+
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
       <Anchor
@@ -334,7 +352,7 @@ function TableAnchorValue(props: FieldProps) {
         target={data?.external ? '_blank' : undefined}
         rel={data?.external ? 'noreferrer noopener' : undefined}
       >
-        <Text>{data.name ?? 'No name defined'}</Text>
+        <Text>{value}</Text>
       </Anchor>
     </Suspense>
   );
@@ -347,6 +365,12 @@ function ProgressBarValue(props: FieldProps) {
       maximum={props.field_data.total}
       progressLabel
     />
+  );
+}
+
+function StatusValue(props: FieldProps) {
+  return (
+    <StatusRenderer type={props.field_data.model} status={props.field_value} />
   );
 }
 
@@ -384,6 +408,8 @@ export function DetailsTableField({
         return TableAnchorValue;
       case 'progressbar':
         return ProgressBarValue;
+      case 'status':
+        return StatusValue;
       default:
         return TableStringValue;
     }

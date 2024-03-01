@@ -68,7 +68,7 @@ export const StatusRenderer = ({
   type,
   options
 }: {
-  status: string;
+  status: string | number;
   type: ModelType | string;
   options?: renderStatusLabelOptionsInterface;
 }) => {

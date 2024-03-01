@@ -103,7 +103,8 @@ export default function StockDetail() {
       {
         type: 'text',
         name: 'tests',
-        label: `Completed Tests`
+        label: `Completed Tests`,
+        icon: 'progress'
       },
       {
         type: 'text',
@@ -136,7 +137,7 @@ export default function StockDetail() {
       {
         type: 'text',
         name: 'available_stock',
-        label: t`In Stock`
+        label: t`Available`
       }
       // TODO: allocated_to_sales_orders
       // TODO: allocated_to_build_orders
@@ -220,7 +221,7 @@ export default function StockDetail() {
     return [
       {
         name: 'details',
-        label: t`Details`,
+        label: t`Stock Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
