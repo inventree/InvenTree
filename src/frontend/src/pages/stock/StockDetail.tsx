@@ -29,10 +29,7 @@ import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
-import {
-  ItemDetails,
-  ItemDetailsGrid
-} from '../../components/details/ItemDetails';
+import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
