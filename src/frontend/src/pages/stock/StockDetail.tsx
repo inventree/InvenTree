@@ -27,6 +27,7 @@ import {
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import {
   ItemDetails,
@@ -52,7 +53,6 @@ import { useEditStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { DetailsField, DetailsTable } from '../../tables/Details';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';

@@ -2,7 +2,7 @@ import { Grid, Group, Paper, SimpleGrid } from '@mantine/core';
 import React from 'react';
 
 import { UserRoles } from '../../enums/Roles';
-import { DetailsField, DetailsTable } from '../../tables/Details';
+import { DetailsField, DetailsTable } from './Details';
 import { DetailImageButtonProps, DetailsImage } from './DetailsImage';
 
 /**

@@ -11,6 +11,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -33,7 +34,6 @@ import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { DetailsField, DetailsTable } from '../../tables/Details';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';

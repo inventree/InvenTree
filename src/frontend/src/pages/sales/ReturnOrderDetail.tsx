@@ -9,6 +9,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -19,7 +20,6 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
-import { DetailsField, DetailsTable } from '../../tables/Details';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 
 /**

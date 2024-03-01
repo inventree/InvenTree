@@ -35,8 +35,10 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
+import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import { PartIcons } from '../../components/details/PartIcons';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -60,7 +62,6 @@ import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { DetailsField, DetailsTable, PartIcons } from '../../tables/Details';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';

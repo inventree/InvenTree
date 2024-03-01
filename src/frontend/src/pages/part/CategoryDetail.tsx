@@ -9,6 +9,7 @@ import {
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -16,7 +17,6 @@ import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useInstance } from '../../hooks/UseInstance';
-import { DetailsField, DetailsTable } from '../../tables/Details';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
 import { PartListTable } from '../../tables/part/PartTable';

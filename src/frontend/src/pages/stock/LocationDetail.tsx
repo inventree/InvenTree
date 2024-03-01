@@ -4,6 +4,7 @@ import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -11,7 +12,6 @@ import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useInstance } from '../../hooks/UseInstance';
-import { DetailsField, DetailsTable } from '../../tables/Details';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
 
