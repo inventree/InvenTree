@@ -472,7 +472,7 @@ export function DetailsTableField({
         <FieldType field_data={field} field_value={item[field.name]} />
       </td>
       <td style={{ width: '50' }}>
-        {field.copy && <CopyField value={'hello world'} />}
+        {field.copy && <CopyField value={item[field.name]} />}
       </td>
     </tr>
   );
