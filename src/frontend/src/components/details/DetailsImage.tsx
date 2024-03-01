@@ -14,7 +14,7 @@ import {
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { UserRoles } from '../../enums/Roles';
@@ -340,6 +340,15 @@ export function DetailsImage(props: DetailImageProps) {
 
   const permissions = useUserState();
 
+  const hasOverlay: boolean = useMemo(() => {
+    return (
+      props.imageActions?.selectExisting ||
+      props.imageActions?.uploadFile ||
+      props.imageActions?.deleteFile ||
+      false
+    );
+  }, [props.imageActions]);
+
   const expandImage = (event: any) => {
     event?.preventDefault();
     event?.stopPropagation();
@@ -360,18 +369,20 @@ export function DetailsImage(props: DetailImageProps) {
             width={IMAGE_DIMENSION}
             onClick={expandImage}
           />
-          {permissions.hasChangeRole(props.appRole) && hovered && (
-            <Overlay color="black" opacity={0.8} onClick={expandImage}>
-              <ImageActionButtons
-                visible={hovered}
-                actions={props.imageActions}
-                apiPath={props.apiPath}
-                hasImage={props.src ? true : false}
-                pk={props.pk}
-                setImage={setAndRefresh}
-              />
-            </Overlay>
-          )}
+          {permissions.hasChangeRole(props.appRole) &&
+            hasOverlay &&
+            hovered && (
+              <Overlay color="black" opacity={0.8} onClick={expandImage}>
+                <ImageActionButtons
+                  visible={hovered}
+                  actions={props.imageActions}
+                  apiPath={props.apiPath}
+                  hasImage={props.src ? true : false}
+                  pk={props.pk}
+                  setImage={setAndRefresh}
+                />
+              </Overlay>
+            )}
         </>
       </AspectRatio>
     </>
