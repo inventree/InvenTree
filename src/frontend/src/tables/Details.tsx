@@ -75,6 +75,7 @@ type InternalLinkField = {
   model: ModelType;
   model_field?: string;
   model_formatter?: (value: any) => string;
+  backup_value?: string;
 };
 
 type ExternalLinkField = {
@@ -351,19 +352,27 @@ function TableAnchorValue(props: FieldProps) {
     return getDetailUrl(props.field_data.model, props.field_value);
   }, [props.field_data.model, props.field_value]);
 
+  let make_link = props.field_data?.link ?? true;
+
   // Construct the "return value" for the fetched data
-  // Basic fallback value
-  let value = data?.name ?? 'No name defined';
+  let value = undefined;
 
   if (props.field_data.model_formatter) {
     value = props.field_data.model_formatter(data) ?? value;
   } else if (props.field_data.model_field) {
     value = data?.[props.field_data.model_field] ?? value;
+  } else {
+    value = data?.name;
+  }
+
+  if (value === undefined) {
+    value = data?.name ?? props.field_data?.backup_value ?? 'No name defined';
+    make_link = false;
   }
 
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-      {props.field_data.link ?? true ? (
+      {make_link ? (
         <Anchor
           href={`/platform${detailUrl}`}
           target={data?.external ? '_blank' : undefined}

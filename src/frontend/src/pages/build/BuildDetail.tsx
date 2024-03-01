@@ -102,6 +102,15 @@ export default function BuildDetail() {
         name: 'title',
         label: t`Description`,
         icon: 'description'
+      },
+      {
+        type: 'link',
+        name: 'parent',
+        icon: 'builds',
+        label: t`Parent Build`,
+        model_field: 'reference',
+        model: ModelType.build,
+        hidden: !build.parent
       }
     ];
 
@@ -127,13 +136,6 @@ export default function BuildDetail() {
         model: ModelType.salesorder,
         model_field: 'reference',
         hidden: !build.sales_order
-      },
-      {
-        type: 'text',
-        name: 'issued_by',
-        label: t`Issued By`,
-        badge: 'user',
-        icon: 'user'
       }
     ];
 
@@ -141,12 +143,34 @@ export default function BuildDetail() {
       {
         type: 'text',
         name: 'issued_by',
-        label: t`Issued By`
+        label: t`Issued By`,
+        badge: 'user'
       },
       {
         type: 'text',
         name: 'responsible',
-        label: t`Responsible`
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !build.responsible
+      }
+    ];
+
+    let br: DetailsField[] = [
+      {
+        type: 'link',
+        name: 'take_from',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Source Location`,
+        backup_value: t`Any location`
+      },
+      {
+        type: 'link',
+        name: 'destination',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Destination Location`,
+        hidden: !build.destination
       }
     ];
 
@@ -167,6 +191,7 @@ export default function BuildDetail() {
         </Grid>
         <DetailsTable fields={tr} item={build} />
         <DetailsTable fields={bl} item={build} />
+        <DetailsTable fields={br} item={build} />
       </ItemDetailsGrid>
     );
   }, [build, instanceQuery]);
