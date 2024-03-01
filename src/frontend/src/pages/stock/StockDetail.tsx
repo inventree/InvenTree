@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Alert, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Alert,
+  Grid,
+  LoadingOverlay,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
@@ -20,6 +27,9 @@ import {
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsField, DetailsTable } from '../../components/details/Details';
+import { DetailsImage } from '../../components/details/DetailsImage';
+import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -34,6 +44,8 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { useEditStockItem } from '../../forms/StockForms';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -63,12 +75,155 @@ export default function StockDetail() {
     }
   });
 
+  const detailsPanel = useMemo(() => {
+    let data = stockitem;
+
+    data.available_stock = Math.max(0, data.quantity - data.allocated);
+
+    if (instanceQuery.isFetching) {
+      return <Skeleton />;
+    }
+
+    // Top left - core part information
+    let tl: DetailsField[] = [
+      {
+        name: 'part',
+        label: t`Base Part`,
+        type: 'link',
+        model: ModelType.part
+      },
+      {
+        name: 'status',
+        type: 'text',
+        label: t`Stock Status`
+      },
+      {
+        type: 'text',
+        name: 'tests',
+        label: `Completed Tests`,
+        icon: 'progress'
+      },
+      {
+        type: 'text',
+        name: 'updated',
+        icon: 'calendar',
+        label: t`Last Updated`
+      },
+      {
+        type: 'text',
+        name: 'stocktake',
+        icon: 'calendar',
+        label: t`Last Stocktake`,
+        hidden: !stockitem.stocktake
+      }
+    ];
+
+    // Top right - available stock information
+    let tr: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'quantity',
+        label: t`Quantity`
+      },
+      {
+        type: 'text',
+        name: 'serial',
+        label: t`Serial Number`,
+        hidden: !stockitem.serial
+      },
+      {
+        type: 'text',
+        name: 'available_stock',
+        label: t`Available`
+      }
+      // TODO: allocated_to_sales_orders
+      // TODO: allocated_to_build_orders
+    ];
+
+    // Bottom left: location information
+    let bl: DetailsField[] = [
+      {
+        name: 'supplier_part',
+        label: t`Supplier Part`,
+        type: 'link',
+        model: ModelType.supplierpart,
+        hidden: !stockitem.supplier_part
+      },
+      {
+        type: 'link',
+        name: 'location',
+        label: t`Location`,
+        model: ModelType.stocklocation,
+        hidden: !stockitem.location
+      },
+      {
+        type: 'link',
+        name: 'belongs_to',
+        label: t`Installed In`,
+        model: ModelType.stockitem,
+        hidden: !stockitem.belongs_to
+      },
+      {
+        type: 'link',
+        name: 'consumed_by',
+        label: t`Consumed By`,
+        model: ModelType.build,
+        hidden: !stockitem.consumed_by
+      },
+      {
+        type: 'link',
+        name: 'sales_order',
+        label: t`Sales Order`,
+        model: ModelType.salesorder,
+        hidden: !stockitem.sales_order
+      }
+    ];
+
+    // Bottom right - any other information
+    let br: DetailsField[] = [
+      // TODO: Expiry date
+      // TODO: Ownership
+      {
+        type: 'text',
+        name: 'packaging',
+        icon: 'part',
+        label: t`Packaging`,
+        hidden: !stockitem.packaging
+      }
+    ];
+
+    return (
+      <ItemDetailsGrid>
+        <Grid>
+          <Grid.Col span={4}>
+            <DetailsImage
+              appRole={UserRoles.part}
+              apiPath={ApiEndpoints.part_list}
+              src={
+                stockitem.part_detail?.image ??
+                stockitem?.part_detail?.thumbnail
+              }
+              pk={stockitem.part}
+            />
+          </Grid.Col>
+          <Grid.Col span={8}>
+            <DetailsTable fields={tl} item={stockitem} />
+          </Grid.Col>
+        </Grid>
+        <DetailsTable fields={tr} item={stockitem} />
+        <DetailsTable fields={bl} item={stockitem} />
+        <DetailsTable fields={br} item={stockitem} />
+      </ItemDetailsGrid>
+    );
+  }, [stockitem, instanceQuery]);
+
   const stockPanels: PanelType[] = useMemo(() => {
     return [
       {
         name: 'details',
-        label: t`Details`,
-        icon: <IconInfoCircle />
+        label: t`Stock Details`,
+        icon: <IconInfoCircle />,
+        content: detailsPanel
       },
       {
         name: 'tracking',

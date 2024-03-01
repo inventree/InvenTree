@@ -14,15 +14,17 @@ import {
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useMemo } from 'react';
 
-import { api } from '../App';
-import { ProgressBar } from '../components/items/ProgressBar';
-import { getModelInfo } from '../components/render/ModelType';
-import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { ModelType } from '../enums/ModelType';
-import { InvenTreeIcon } from '../functions/icons';
-import { getDetailUrl } from '../functions/urls';
-import { apiUrl } from '../states/ApiState';
-import { useGlobalSettingsState } from '../states/SettingsState';
+import { api } from '../../App';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { InvenTreeIcon } from '../../functions/icons';
+import { getDetailUrl } from '../../functions/urls';
+import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
+import { ProgressBar } from '../items/ProgressBar';
+import { YesNoButton } from '../items/YesNoButton';
+import { getModelInfo } from '../render/ModelType';
+import { StatusRenderer } from '../render/StatusRenderer';
 
 export type PartIconsType = {
   assembly: boolean;
@@ -37,12 +39,20 @@ export type PartIconsType = {
 
 export type DetailsField =
   | {
+      hidden?: boolean;
+      icon?: string;
       name: string;
       label?: string;
       badge?: BadgeType;
       copy?: boolean;
       value_formatter?: () => ValueFormatterReturn;
-    } & (StringDetailField | LinkDetailField | ProgressBarfield);
+    } & (
+      | StringDetailField
+      | BooleanField
+      | LinkDetailField
+      | ProgressBarfield
+      | StatusField
+    );
 
 type BadgeType = 'owner' | 'user' | 'group';
 type ValueFormatterReturn = string | number | null;
@@ -52,12 +62,20 @@ type StringDetailField = {
   unit?: boolean;
 };
 
+type BooleanField = {
+  type: 'boolean';
+};
+
 type LinkDetailField = {
   type: 'link';
+  link?: boolean;
 } & (InternalLinkField | ExternalLinkField);
 
 type InternalLinkField = {
   model: ModelType;
+  model_field?: string;
+  model_formatter?: (value: any) => string;
+  backup_value?: string;
 };
 
 type ExternalLinkField = {
@@ -70,6 +88,11 @@ type ProgressBarfield = {
   total: number;
 };
 
+type StatusField = {
+  type: 'status';
+  model: ModelType;
+};
+
 type FieldValueType = string | number | undefined;
 
 type FieldProps = {
@@ -77,101 +100,6 @@ type FieldProps = {
   field_value: string | number;
   unit?: string | null;
 };
-
-/**
- * Fetches and wraps an InvenTreeIcon in a flex div
- * @param icon name of icon
- *
- */
-function PartIcon(icon: string) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-      <InvenTreeIcon icon={icon} />
-    </div>
-  );
-}
-
-/**
- * Generates a table cell with Part icons.
- * Only used for Part Model Details
- */
-function PartIcons({
-  assembly,
-  template,
-  component,
-  trackable,
-  purchaseable,
-  saleable,
-  virtual,
-  active
-}: PartIconsType) {
-  return (
-    <td colSpan={2}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {!active && (
-          <Tooltip label={t`Part is not active`}>
-            <Badge color="red" variant="filled">
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
-              >
-                <InvenTreeIcon icon="inactive" iconProps={{ size: 19 }} />{' '}
-                <Trans>Inactive</Trans>
-              </div>
-            </Badge>
-          </Tooltip>
-        )}
-        {template && (
-          <Tooltip
-            label={t`Part is a template part (variants can be made from this part)`}
-            children={PartIcon('template')}
-          />
-        )}
-        {assembly && (
-          <Tooltip
-            label={t`Part can be assembled from other parts`}
-            children={PartIcon('assembly')}
-          />
-        )}
-        {component && (
-          <Tooltip
-            label={t`Part can be used in assemblies`}
-            children={PartIcon('component')}
-          />
-        )}
-        {trackable && (
-          <Tooltip
-            label={t`Part stock is tracked by serial number`}
-            children={PartIcon('trackable')}
-          />
-        )}
-        {purchaseable && (
-          <Tooltip
-            label={t`Part can be purchased from external suppliers`}
-            children={PartIcon('purchaseable')}
-          />
-        )}
-        {saleable && (
-          <Tooltip
-            label={t`Part can be sold to customers`}
-            children={PartIcon('saleable')}
-          />
-        )}
-        {virtual && (
-          <Tooltip label={t`Part is virtual (not a physical part)`}>
-            <Badge color="yellow" variant="filled">
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
-              >
-                <InvenTreeIcon icon="virtual" iconProps={{ size: 18 }} />{' '}
-                <Trans>Virtual</Trans>
-              </div>
-            </Badge>
-          </Tooltip>
-        )}
-      </div>
-    </td>
-  );
-}
 
 /**
  * Fetches user or group info from backend and formats into a badge.
@@ -253,13 +181,17 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
  * If user is defined, a badge is rendered in addition to main value
  */
 function TableStringValue(props: FieldProps) {
-  let value = props.field_value;
+  let value = props?.field_value;
 
-  if (props.field_data.value_formatter) {
+  if (value === undefined) {
+    return '---';
+  }
+
+  if (props.field_data?.value_formatter) {
     value = props.field_data.value_formatter();
   }
 
-  if (props.field_data.badge) {
+  if (props.field_data?.badge) {
     return <NameBadge pk={value} type={props.field_data.badge} />;
   }
 
@@ -267,15 +199,19 @@ function TableStringValue(props: FieldProps) {
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
         <span>
-          {value ? value : props.field_data.unit && '0'}{' '}
+          {value ? value : props.field_data?.unit && '0'}{' '}
           {props.field_data.unit == true && props.unit}
         </span>
       </Suspense>
       {props.field_data.user && (
-        <NameBadge pk={props.field_data.user} type="user" />
+        <NameBadge pk={props.field_data?.user} type="user" />
       )}
     </div>
   );
+}
+
+function BooleanValue(props: FieldProps) {
+  return <YesNoButton value={props.field_value} />;
 }
 
 function TableAnchorValue(props: FieldProps) {
@@ -299,7 +235,7 @@ function TableAnchorValue(props: FieldProps) {
     queryFn: async () => {
       const modelDef = getModelInfo(props.field_data.model);
 
-      if (!modelDef.api_endpoint) {
+      if (!modelDef?.api_endpoint) {
         return {};
       }
 
@@ -325,15 +261,37 @@ function TableAnchorValue(props: FieldProps) {
     return getDetailUrl(props.field_data.model, props.field_value);
   }, [props.field_data.model, props.field_value]);
 
+  let make_link = props.field_data?.link ?? true;
+
+  // Construct the "return value" for the fetched data
+  let value = undefined;
+
+  if (props.field_data.model_formatter) {
+    value = props.field_data.model_formatter(data) ?? value;
+  } else if (props.field_data.model_field) {
+    value = data?.[props.field_data.model_field] ?? value;
+  } else {
+    value = data?.name;
+  }
+
+  if (value === undefined) {
+    value = data?.name ?? props.field_data?.backup_value ?? 'No name defined';
+    make_link = false;
+  }
+
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-      <Anchor
-        href={`/platform${detailUrl}`}
-        target={data?.external ? '_blank' : undefined}
-        rel={data?.external ? 'noreferrer noopener' : undefined}
-      >
-        <Text>{data.name ?? 'No name defined'}</Text>
-      </Anchor>
+      {make_link ? (
+        <Anchor
+          href={`/platform${detailUrl}`}
+          target={data?.external ? '_blank' : undefined}
+          rel={data?.external ? 'noreferrer noopener' : undefined}
+        >
+          <Text>{value}</Text>
+        </Anchor>
+      ) : (
+        <Text>{value}</Text>
+      )}
     </Suspense>
   );
 }
@@ -345,6 +303,12 @@ function ProgressBarValue(props: FieldProps) {
       maximum={props.field_data.total}
       progressLabel
     />
+  );
+}
+
+function StatusValue(props: FieldProps) {
+  return (
+    <StatusRenderer type={props.field_data.model} status={props.field_value} />
   );
 }
 
@@ -366,26 +330,32 @@ function CopyField({ value }: { value: string }) {
   );
 }
 
-function TableField({
-  field_data,
-  field_value,
-  unit = null
+export function DetailsTableField({
+  item,
+  field
 }: {
-  field_data: DetailsField[];
-  field_value: FieldValueType[];
-  unit?: string | null;
+  item: any;
+  field: DetailsField;
 }) {
   function getFieldType(type: string) {
     switch (type) {
       case 'text':
       case 'string':
         return TableStringValue;
+      case 'boolean':
+        return BooleanValue;
       case 'link':
         return TableAnchorValue;
       case 'progressbar':
         return ProgressBarValue;
+      case 'status':
+        return StatusValue;
+      default:
+        return TableStringValue;
     }
   }
+
+  const FieldType: any = getFieldType(field.type);
 
   return (
     <tr>
@@ -394,35 +364,20 @@ function TableField({
           display: 'flex',
           alignItems: 'center',
           gap: '20px',
+          width: '50',
           justifyContent: 'flex-start'
         }}
       >
-        <InvenTreeIcon icon={field_data[0].name} />
-        <Text>{field_data[0].label}</Text>
+        <InvenTreeIcon icon={field.icon ?? field.name} />
+      </td>
+      <td>
+        <Text>{field.label}</Text>
       </td>
       <td style={{ minWidth: '40%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexGrow: '1'
-            }}
-          >
-            {field_data.map((data: DetailsField, index: number) => {
-              let FieldType: any = getFieldType(data.type);
-              return (
-                <FieldType
-                  field_data={data}
-                  field_value={field_value[index]}
-                  unit={unit}
-                  key={index}
-                />
-              );
-            })}
-          </div>
-          {field_data[0].copy && <CopyField value={`${field_value[0]}`} />}
-        </div>
+        <FieldType field_data={field} field_value={item[field.name]} />
+      </td>
+      <td style={{ width: '50' }}>
+        {field.copy && <CopyField value={item[field.name]} />}
       </td>
     </tr>
   );
@@ -430,50 +385,20 @@ function TableField({
 
 export function DetailsTable({
   item,
-  fields,
-  partIcons = false
+  fields
 }: {
   item: any;
-  fields: DetailsField[][];
-  partIcons?: boolean;
+  fields: DetailsField[];
 }) {
   return (
     <Paper p="xs" withBorder radius="xs">
       <Table striped>
         <tbody>
-          {partIcons && (
-            <tr>
-              <PartIcons
-                assembly={item.assembly}
-                template={item.is_template}
-                component={item.component}
-                trackable={item.trackable}
-                purchaseable={item.purchaseable}
-                saleable={item.salable}
-                virtual={item.virtual}
-                active={item.active}
-              />
-            </tr>
-          )}
-          {fields.map((data: DetailsField[], index: number) => {
-            let value: FieldValueType[] = [];
-            for (const val of data) {
-              if (val.value_formatter) {
-                value.push(undefined);
-              } else {
-                value.push(item[val.name]);
-              }
-            }
-
-            return (
-              <TableField
-                field_data={data}
-                field_value={value}
-                key={index}
-                unit={item.units}
-              />
-            );
-          })}
+          {fields
+            .filter((field: DetailsField) => !field.hidden)
+            .map((field: DetailsField, index: number) => (
+              <DetailsTableField field={field} item={item} key={index} />
+            ))}
         </tbody>
       </Table>
     </Paper>
