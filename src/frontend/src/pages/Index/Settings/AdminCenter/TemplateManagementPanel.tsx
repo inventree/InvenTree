@@ -57,7 +57,7 @@ export default function TemplateManagementPanel() {
           {
             name: t`Location`,
             key: 'location',
-            icon: 'default_location',
+            icon: 'location',
             preview: {
               itemKey: 'location',
               model: ModelType.stocklocation

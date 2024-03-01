@@ -886,6 +886,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'pathstring',
             'path',
             'items',
+            'sublocations',
             'owner',
             'icon',
             'custom_icon',
@@ -911,13 +912,18 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
-        queryset = queryset.annotate(items=stock.filters.annotate_location_items())
+        queryset = queryset.annotate(
+            items=stock.filters.annotate_location_items(),
+            sublocations=stock.filters.annotate_sub_locations(),
+        )
 
         return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    items = serializers.IntegerField(read_only=True)
+    items = serializers.IntegerField(read_only=True, label=_('Stock Items'))
+
+    sublocations = serializers.IntegerField(read_only=True, label=_('Sublocations'))
 
     level = serializers.IntegerField(read_only=True)
 

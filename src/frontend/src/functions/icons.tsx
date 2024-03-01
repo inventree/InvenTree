@@ -2,8 +2,11 @@ import {
   Icon123,
   IconBinaryTree2,
   IconBookmarks,
+  IconBox,
   IconBuilding,
   IconBuildingFactory2,
+  IconBuildingStore,
+  IconCalendar,
   IconCalendarStats,
   IconCategory,
   IconCheck,
@@ -11,24 +14,33 @@ import {
   IconCopy,
   IconCornerUpRightDouble,
   IconCurrencyDollar,
+  IconDotsCircleHorizontal,
   IconExternalLink,
   IconFileUpload,
   IconGitBranch,
   IconGridDots,
+  IconHash,
   IconLayersLinked,
   IconLink,
   IconList,
   IconListTree,
+  IconMail,
+  IconMapPin,
   IconMapPinHeart,
   IconNotes,
+  IconNumbers,
   IconPackage,
+  IconPackageImport,
   IconPackages,
   IconPaperclip,
+  IconPhone,
   IconPhoto,
+  IconProgressCheck,
   IconQuestionMark,
   IconRulerMeasure,
   IconShoppingCart,
   IconShoppingCartHeart,
+  IconSitemap,
   IconStack2,
   IconStatusChange,
   IconTag,
@@ -42,6 +54,7 @@ import {
   IconUserStar,
   IconUsersGroup,
   IconVersions,
+  IconWorld,
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
@@ -68,6 +81,8 @@ const icons = {
   revision: IconGitBranch,
   units: IconRulerMeasure,
   keywords: IconTag,
+  status: IconInfoCircle,
+  info: IconInfoCircle,
   details: IconInfoCircle,
   parameters: IconList,
   stock: IconPackages,
@@ -78,9 +93,11 @@ const icons = {
   used_in: IconStack2,
   manufacturers: IconBuildingFactory2,
   suppliers: IconBuilding,
+  customers: IconBuildingStore,
   purchase_orders: IconShoppingCart,
   sales_orders: IconTruckDelivery,
   return_orders: IconTruckReturn,
+  shipment: IconTruckDelivery,
   scheduling: IconCalendarStats,
   test_templates: IconTestPipe,
   related_parts: IconLayersLinked,
@@ -93,7 +110,7 @@ const icons = {
   delete: IconTrash,
 
   // Part Icons
-  part: IconCategory,
+  active: IconCheck,
   template: IconCopy,
   assembly: IconTool,
   component: IconGridDots,
@@ -102,19 +119,31 @@ const icons = {
   saleable: IconCurrencyDollar,
   virtual: IconWorldCode,
   inactive: IconX,
+  part: IconBox,
+  supplier_part: IconPackageImport,
 
+  calendar: IconCalendar,
   external: IconExternalLink,
   creation_date: IconCalendarTime,
+  location: IconMapPin,
   default_location: IconMapPinHeart,
   default_supplier: IconShoppingCartHeart,
   link: IconLink,
   responsible: IconUserStar,
   pricing: IconCurrencyDollar,
+  currency: IconCurrencyDollar,
   stocktake: IconClipboardList,
   user: IconUser,
   group: IconUsersGroup,
   check: IconCheck,
-  copy: IconCopy
+  copy: IconCopy,
+  quantity: IconNumbers,
+  progress: IconProgressCheck,
+  reference: IconHash,
+  website: IconWorld,
+  email: IconMail,
+  phone: IconPhone,
+  sitemap: IconSitemap
 };
 
 export type InvenTreeIconType = keyof typeof icons;
@@ -142,4 +171,7 @@ export function InvenTreeIcon(props: IconProps) {
   }
 
   return <Icon {...props.iconProps} />;
+}
+function IconShapes(props: TablerIconsProps): Element {
+  throw new Error('Function not implemented.');
 }
