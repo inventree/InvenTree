@@ -108,6 +108,7 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     delete: IconTrash,
 
     // Part Icons
+    active: IconCheck,
     template: IconCopy,
     assembly: IconTool,
     component: IconGridDots,

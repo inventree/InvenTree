@@ -60,7 +60,7 @@ import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { DetailsField, DetailsTable } from '../../tables/Details';
+import { DetailsField, DetailsTable, PartIcons } from '../../tables/Details';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
@@ -116,6 +116,55 @@ export default function PartDetail() {
         label: t`Variant of`,
         model: ModelType.part,
         hidden: !part.variant_of
+      },
+      {
+        type: 'link',
+        name: 'category',
+        label: t`Category`,
+        model: ModelType.partcategory
+      },
+      {
+        type: 'link',
+        name: 'default_location',
+        label: t`Default Location`,
+        model: ModelType.stocklocation,
+        hidden: !part.default_location
+      },
+      {
+        type: 'string',
+        name: 'IPN',
+        label: t`IPN`,
+        copy: true,
+        hidden: !part.IPN
+      },
+      {
+        type: 'string',
+        name: 'revision',
+        label: t`Revision`,
+        copy: true,
+        hidden: !part.revision
+      },
+      {
+        type: 'string',
+        name: 'units',
+        label: t`Units`,
+        copy: true,
+        hidden: !part.units
+      },
+      {
+        type: 'string',
+        name: 'keywords',
+        label: t`Keywords`,
+        copy: true,
+        hidden: !part.keywords
+      },
+      {
+        type: 'link',
+        name: 'link',
+        label: t`Link`,
+        external: true,
+        copy: true,
+        hidden: !part.link
       }
     ];
 
@@ -186,53 +235,44 @@ export default function PartDetail() {
 
     let bl: DetailsField[] = [
       {
-        type: 'link',
-        name: 'category',
-        label: t`Category`,
-        model: ModelType.partcategory
+        type: 'boolean',
+        name: 'active',
+        label: t`Active`
       },
       {
-        type: 'link',
-        name: 'default_location',
-        label: t`Default Location`,
-        model: ModelType.stocklocation,
-        hidden: !part.default_location
+        type: 'boolean',
+        name: 'template',
+        label: t`Template Part`
       },
       {
-        type: 'string',
-        name: 'IPN',
-        label: t`IPN`,
-        copy: true,
-        hidden: !part.IPN
+        type: 'boolean',
+        name: 'assembly',
+        label: t`Assembled Part`
       },
       {
-        type: 'string',
-        name: 'revision',
-        label: t`Revision`,
-        copy: true,
-        hidden: !part.revision
+        type: 'boolean',
+        name: 'component',
+        label: t`Component Part`
       },
       {
-        type: 'string',
-        name: 'units',
-        label: t`Units`,
-        copy: true,
-        hidden: !part.units
+        type: 'boolean',
+        name: 'trackable',
+        label: t`Trackable Part`
       },
       {
-        type: 'string',
-        name: 'keywords',
-        label: t`Keywords`,
-        copy: true,
-        hidden: !part.keywords
+        type: 'boolean',
+        name: 'purchaseable',
+        label: t`Purchaseable Part`
       },
       {
-        type: 'link',
-        name: 'link',
-        label: t`Link`,
-        external: true,
-        copy: true,
-        hidden: !part.link
+        type: 'boolean',
+        name: 'saleable',
+        label: t`Saleable Part`
+      },
+      {
+        type: 'boolean',
+        name: 'virtual',
+        label: t`Virtual Part`
       }
     ];
 
@@ -387,7 +427,10 @@ export default function PartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <DetailsTable fields={tl} item={part} />
+            <Stack spacing="xs">
+              <PartIcons part={part} />
+              <DetailsTable fields={tl} item={part} />
+            </Stack>
           </Grid.Col>
         </Grid>
         <DetailsTable fields={tr} item={part} />
