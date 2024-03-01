@@ -94,6 +94,7 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     customers: IconBuildingStore,
     purchase_orders: IconShoppingCart,
     sales_orders: IconTruckDelivery,
+    shipment: IconTruckDelivery,
     scheduling: IconCalendarStats,
     test_templates: IconTestPipe,
     related_parts: IconLayersLinked,
