@@ -104,12 +104,12 @@ export default function Stock() {
 
     return (
       <ItemDetailsGrid>
-        {id && location ? (
+        {id && location?.pk ? (
           <DetailsTable item={location} fields={left} />
         ) : (
           <Text>{t`Top level stock location`}</Text>
         )}
-        {id && location && <DetailsTable item={location} fields={right} />}
+        {id && location?.pk && <DetailsTable item={location} fields={right} />}
       </ItemDetailsGrid>
     );
   }, [location, instanceQuery]);

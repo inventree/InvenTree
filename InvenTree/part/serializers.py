@@ -74,6 +74,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'level',
             'parent',
             'part_count',
+            'subcategories',
             'pathstring',
             'path',
             'starred',
@@ -99,13 +100,18 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
         # Annotate the number of 'parts' which exist in each category (including subcategories!)
-        queryset = queryset.annotate(part_count=part.filters.annotate_category_parts())
+        queryset = queryset.annotate(
+            part_count=part.filters.annotate_category_parts(),
+            subcategories=part.filters.annotate_sub_categories(),
+        )
 
         return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    part_count = serializers.IntegerField(read_only=True)
+    part_count = serializers.IntegerField(read_only=True, label=_('Parts'))
+
+    subcategories = serializers.IntegerField(read_only=True, label=_('Subcategories'))
 
     level = serializers.IntegerField(read_only=True)
 

@@ -1,21 +1,24 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Stack, Text } from '@mantine/core';
+import { LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconCategory,
+  IconInfoCircle,
   IconListDetails,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { useInstance } from '../../hooks/UseInstance';
+import { DetailsField, DetailsTable } from '../../tables/Details';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
-import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import { PartListTable } from '../../tables/part/PartTable';
 
 /**
@@ -45,8 +48,86 @@ export default function CategoryDetail({}: {}) {
     }
   });
 
+  const detailsPanel = useMemo(() => {
+    if (id && instanceQuery.isFetching) {
+      return <Skeleton />;
+    }
+
+    let left: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'name',
+        label: t`Name`,
+        copy: true
+      },
+      {
+        type: 'text',
+        name: 'pathstring',
+        label: t`Path`,
+        icon: 'sitemap',
+        copy: true,
+        hidden: !id
+      },
+      {
+        type: 'text',
+        name: 'description',
+        label: t`Description`,
+        copy: true
+      },
+      {
+        type: 'link',
+        name: 'parent',
+        model_field: 'name',
+        icon: 'location',
+        label: t`Parent Category`,
+        model: ModelType.partcategory,
+        hidden: !category?.parent
+      }
+    ];
+
+    let right: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'part_count',
+        label: t`Parts`,
+        icon: 'part'
+      },
+      {
+        type: 'text',
+        name: 'subcategories',
+        label: t`Subcategories`,
+        icon: 'sitemap',
+        hidden: !category?.subcategories
+      },
+      {
+        type: 'boolean',
+        name: 'structural',
+        label: t`Structural`,
+        icon: 'sitemap'
+      }
+    ];
+
+    return (
+      <ItemDetailsGrid>
+        {id && category?.pk ? (
+          <DetailsTable item={category} fields={left} />
+        ) : (
+          <Text>{t`Top level part category`}</Text>
+        )}
+        {id && category?.pk && <DetailsTable item={category} fields={right} />}
+      </ItemDetailsGrid>
+    );
+  }, [category, instanceQuery]);
+
   const categoryPanels: PanelType[] = useMemo(
     () => [
+      {
+        name: 'details',
+        label: t`Details`,
+        icon: <IconInfoCircle />,
+        content: detailsPanel
+        // hidden: !category?.pk,
+      },
       {
         name: 'parts',
         label: t`Parts`,
