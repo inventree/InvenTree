@@ -4,7 +4,6 @@ import {
   Button,
   Group,
   Image,
-  Modal,
   Overlay,
   Paper,
   Text,
@@ -12,7 +11,7 @@ import {
   useMantineTheme
 } from '@mantine/core';
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { useDisclosure, useHover } from '@mantine/hooks';
+import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 

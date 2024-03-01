@@ -22,7 +22,7 @@ interface renderStatusLabelOptionsInterface {
  * Generic function to render a status label
  */
 function renderStatusLabel(
-  key: string,
+  key: string | number,
   codes: StatusCodeListInterface,
   options: renderStatusLabelOptionsInterface = {}
 ) {
