@@ -58,15 +58,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       python_version: "3.11"
-    strategy:
-      matrix:
-        platform: ["linux/amd64", "linux/arm64"]
-        include:
-          - platform: linux/amd64
-            os: ubuntu-latest
-          - platform: linux/arm64
-            os: ubuntu-latest # in the future we can try to use alternative runners here
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest  # in the future we can try to use alternative runners here
 
     steps:
       - name: Check out repo
