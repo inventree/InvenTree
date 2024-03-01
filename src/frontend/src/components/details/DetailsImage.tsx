@@ -267,7 +267,10 @@ function ImageActionButtons({
               variant="outline"
               size="lg"
               tooltipAlignment="top"
-              onClick={() => {
+              onClick={(event: any) => {
+                event?.preventDefault();
+                event?.stopPropagation();
+                event?.nativeEvent?.stopImmediatePropagation();
                 modals.open({
                   title: <StylishText size="xl">{t`Select Image`}</StylishText>,
                   size: 'xxl',
@@ -285,7 +288,10 @@ function ImageActionButtons({
               variant="outline"
               size="lg"
               tooltipAlignment="top"
-              onClick={() => {
+              onClick={(event: any) => {
+                event?.preventDefault();
+                event?.stopPropagation();
+                event?.nativeEvent?.stopImmediatePropagation();
                 modals.open({
                   title: <StylishText size="xl">{t`Upload Image`}</StylishText>,
                   children: (
@@ -304,7 +310,12 @@ function ImageActionButtons({
               variant="outline"
               size="lg"
               tooltipAlignment="top"
-              onClick={() => removeModal(apiPath, setImage)}
+              onClick={(event: any) => {
+                event?.preventDefault();
+                event?.stopPropagation();
+                event?.nativeEvent?.stopImmediatePropagation();
+                removeModal(apiPath, setImage);
+              }}
             />
           )}
         </Group>
@@ -329,6 +340,16 @@ export function DetailsImage(props: DetailImageProps) {
 
   const permissions = useUserState();
 
+  const expandImage = (event: any) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    event?.nativeEvent?.stopImmediatePropagation();
+    modals.open({
+      children: <ApiImage src={img} />,
+      withCloseButton: false
+    });
+  };
+
   return (
     <>
       <AspectRatio ref={ref} maw={IMAGE_DIMENSION} ratio={1}>
@@ -337,18 +358,10 @@ export function DetailsImage(props: DetailImageProps) {
             src={img}
             height={IMAGE_DIMENSION}
             width={IMAGE_DIMENSION}
+            onClick={expandImage}
           />
           {permissions.hasChangeRole(props.appRole) && hovered && (
-            <Overlay
-              color="black"
-              opacity={0.8}
-              onClick={() => {
-                modals.open({
-                  children: <ApiImage src={img} />,
-                  withCloseButton: false
-                });
-              }}
-            >
+            <Overlay color="black" opacity={0.8} onClick={expandImage}>
               <ImageActionButtons
                 visible={hovered}
                 actions={props.imageActions}

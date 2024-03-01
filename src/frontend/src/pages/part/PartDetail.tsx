@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
+import {
+  Grid,
+  Group,
+  LoadingOverlay,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -28,12 +35,8 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
-import {
-  DetailsImageType,
-  ItemDetailFields,
-  ItemDetails,
-  ItemDetailsGrid
-} from '../../components/details/ItemDetails';
+import { DetailsImage } from '../../components/details/DetailsImage';
+import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -368,7 +371,25 @@ export default function PartDetail() {
 
     return (
       <ItemDetailsGrid>
-        <DetailsTable fields={tl} item={part} />
+        <Grid>
+          <Grid.Col span={4}>
+            <DetailsImage
+              appRole={UserRoles.part}
+              imageActions={{
+                selectExisting: true,
+                uploadFile: true,
+                deleteFile: true
+              }}
+              src={part.image}
+              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+              refresh={refreshInstance}
+              pk={part.pk}
+            />
+          </Grid.Col>
+          <Grid.Col span={8}>
+            <DetailsTable fields={tl} item={part} />
+          </Grid.Col>
+        </Grid>
         <DetailsTable fields={tr} item={part} />
         <DetailsTable fields={bl} item={part} />
         <DetailsTable fields={br} item={part} />
