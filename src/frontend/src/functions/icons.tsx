@@ -39,6 +39,7 @@ import {
   IconRulerMeasure,
   IconShoppingCart,
   IconShoppingCartHeart,
+  IconSitemap,
   IconStack2,
   IconStatusChange,
   IconTag,
@@ -138,7 +139,8 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     reference: IconHash,
     website: IconWorld,
     email: IconMail,
-    phone: IconPhone
+    phone: IconPhone,
+    sitemap: IconSitemap
   };
 
 /**

@@ -276,13 +276,13 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
  * If user is defined, a badge is rendered in addition to main value
  */
 function TableStringValue(props: FieldProps) {
-  let value = props.field_value;
+  let value = props?.field_value ?? {};
 
-  if (props.field_data.value_formatter) {
+  if (props.field_data?.value_formatter) {
     value = props.field_data.value_formatter();
   }
 
-  if (props.field_data.badge) {
+  if (props.field_data?.badge) {
     return <NameBadge pk={value} type={props.field_data.badge} />;
   }
 
@@ -290,12 +290,12 @@ function TableStringValue(props: FieldProps) {
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
         <span>
-          {value ? value : props.field_data.unit && '0'}{' '}
+          {value ? value : props.field_data?.unit && '0'}{' '}
           {props.field_data.unit == true && props.unit}
         </span>
       </Suspense>
       {props.field_data.user && (
-        <NameBadge pk={props.field_data.user} type="user" />
+        <NameBadge pk={props.field_data?.user} type="user" />
       )}
     </div>
   );
