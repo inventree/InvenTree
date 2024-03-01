@@ -49,7 +49,8 @@ export default function SalesOrderDetail() {
       {
         type: 'text',
         name: 'reference',
-        label: t`Reference`
+        label: t`Reference`,
+        copy: true
       },
       {
         type: 'link',
@@ -61,26 +62,14 @@ export default function SalesOrderDetail() {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`
+        label: t`Description`,
+        copy: true
       },
       {
         type: 'status',
         name: 'status',
         label: t`Status`,
         model: ModelType.salesorder
-      },
-      {
-        type: 'text',
-        name: 'creation_date',
-        label: t`Created On`,
-        icon: 'calendar'
-      },
-      {
-        type: 'text',
-        name: 'target_date',
-        label: t`Target Date`,
-        icon: 'calendar',
-        hidden: !order.target_date
       }
     ];
 
@@ -121,6 +110,49 @@ export default function SalesOrderDetail() {
       }
     ];
 
+    let bl: DetailsField[] = [
+      {
+        type: 'link',
+        external: true,
+        name: 'link',
+        label: t`Link`,
+        copy: true,
+        hidden: !order.link
+      },
+      {
+        type: 'link',
+        model: ModelType.contact,
+        link: false,
+        name: 'contact',
+        icon: 'user',
+        copy: true
+      }
+      // TODO : Address
+    ];
+
+    let br: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'creation_date',
+        label: t`Created On`,
+        icon: 'calendar'
+      },
+      {
+        type: 'text',
+        name: 'target_date',
+        label: t`Target Date`,
+        icon: 'calendar',
+        hidden: !order.target_date
+      },
+      {
+        type: 'text',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !order.responsible
+      }
+    ];
+
     return (
       <ItemDetailsGrid>
         <Grid>
@@ -137,6 +169,8 @@ export default function SalesOrderDetail() {
           </Grid.Col>
         </Grid>
         <DetailsTable fields={tr} item={order} />
+        <DetailsTable fields={bl} item={order} />
+        <DetailsTable fields={br} item={order} />
       </ItemDetailsGrid>
     );
   }, [order, instanceQuery]);

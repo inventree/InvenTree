@@ -68,6 +68,7 @@ type BooleanField = {
 
 type LinkDetailField = {
   type: 'link';
+  link?: boolean;
 } & (InternalLinkField | ExternalLinkField);
 
 type InternalLinkField = {
@@ -362,13 +363,17 @@ function TableAnchorValue(props: FieldProps) {
 
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-      <Anchor
-        href={`/platform${detailUrl}`}
-        target={data?.external ? '_blank' : undefined}
-        rel={data?.external ? 'noreferrer noopener' : undefined}
-      >
+      {props.field_data.link ?? true ? (
+        <Anchor
+          href={`/platform${detailUrl}`}
+          target={data?.external ? '_blank' : undefined}
+          rel={data?.external ? 'noreferrer noopener' : undefined}
+        >
+          <Text>{value}</Text>
+        </Anchor>
+      ) : (
         <Text>{value}</Text>
-      </Anchor>
+      )}
     </Suspense>
   );
 }
