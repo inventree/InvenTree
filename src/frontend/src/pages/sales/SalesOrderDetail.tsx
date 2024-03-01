@@ -127,7 +127,7 @@ export default function SalesOrderDetail() {
         icon: 'user',
         copy: true
       }
-      // TODO : Address
+      // TODO: Project code
     ];
 
     let br: DetailsField[] = [
