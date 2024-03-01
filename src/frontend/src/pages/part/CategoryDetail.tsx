@@ -123,7 +123,7 @@ export default function CategoryDetail({}: {}) {
     () => [
       {
         name: 'details',
-        label: t`Details`,
+        label: t`Category Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
         // hidden: !category?.pk,

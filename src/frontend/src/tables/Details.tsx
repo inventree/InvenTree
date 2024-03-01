@@ -276,7 +276,11 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
  * If user is defined, a badge is rendered in addition to main value
  */
 function TableStringValue(props: FieldProps) {
-  let value = props?.field_value ?? {};
+  let value = props?.field_value;
+
+  if (value === undefined) {
+    return '---';
+  }
 
   if (props.field_data?.value_formatter) {
     value = props.field_data.value_formatter();
@@ -455,6 +459,7 @@ export function DetailsTableField({
           display: 'flex',
           alignItems: 'center',
           gap: '20px',
+          width: '50',
           justifyContent: 'flex-start'
         }}
       >
@@ -466,7 +471,9 @@ export function DetailsTableField({
       <td style={{ minWidth: '40%' }}>
         <FieldType field_data={field} field_value={item[field.name]} />
       </td>
-      <td>{field.copy && <CopyField value={'hello world'} />}</td>
+      <td style={{ width: '50' }}>
+        {field.copy && <CopyField value={'hello world'} />}
+      </td>
     </tr>
   );
 }
@@ -481,10 +488,6 @@ export function DetailsTable({
   return (
     <Paper p="xs" withBorder radius="xs">
       <Table striped>
-        <col width="5O" />
-        <col />
-        <col />
-        <col width="50" />
         <tbody>
           {fields
             .filter((field: DetailsField) => !field.hidden)
