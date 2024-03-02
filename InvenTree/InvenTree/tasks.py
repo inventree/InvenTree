@@ -27,6 +27,7 @@ from maintenance_mode.core import (
 )
 
 from InvenTree.config import get_setting
+from InvenTree.exceptions import log_error
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -213,6 +214,7 @@ def offload_task(
             return False
         except Exception as exc:
             raise_warning(f"WARNING: '{taskname}' not offloaded due to {str(exc)}")
+            log_error('InvenTree.offload_task')
             return False
     else:
         if callable(taskname):
@@ -233,6 +235,7 @@ def offload_task(
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
+                log_error('InvenTree.offload_task')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No module named '{app_mod}'"
                 )
@@ -249,6 +252,7 @@ def offload_task(
                 if not _func:
                     _func = eval(func)  # pragma: no cover
             except NameError:
+                log_error('InvenTree.offload_task')
                 raise_warning(
                     f"WARNING: '{taskname}' not started - No function named '{func}'"
                 )
@@ -258,6 +262,7 @@ def offload_task(
         try:
             _func(*args, **kwargs)
         except Exception as exc:
+            log_error('InvenTree.offload_task')
             raise_warning(f"WARNING: '{taskname}' not started due to {str(exc)}")
             return False
 
