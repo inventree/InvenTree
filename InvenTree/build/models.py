@@ -519,8 +519,24 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         return True
 
     @transaction.atomic
+    def complete_allocations(self, user):
+        """Complete all stock allocations for this build order.
+
+        - This function is called when a build order is completed
+        """
+        # Remove untracked allocated stock
+        self.subtract_allocated_stock(user)
+
+        # Ensure that there are no longer any BuildItem objects
+        # which point to this Build Order
+        self.allocated_stock.delete()
+
+    @transaction.atomic
     def complete_build(self, user):
         """Mark this build as complete."""
+
+        import build.tasks
+
         if self.incomplete_count > 0:
             return
 
@@ -529,12 +545,12 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         self.status = BuildStatus.COMPLETE.value
         self.save()
 
-        # Remove untracked allocated stock
-        self.subtract_allocated_stock(user)
-
-        # Ensure that there are no longer any BuildItem objects
-        # which point to this Build Order
-        self.allocated_stock.delete()
+        # Offload task to complete build allocations
+        InvenTree.tasks.offload_task(
+            build.tasks.complete_build_allocations,
+            self.pk,
+            user.pk
+        )
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
