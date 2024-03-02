@@ -123,6 +123,7 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 # use dependencies and compiled wheels from the prebuild image
 ENV PATH=/root/.local/bin:$PATH
 COPY --from=prebuild /root/.local /root/.local
+COPY --from=prebuild ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 # Copy source code
 COPY InvenTree ./InvenTree
