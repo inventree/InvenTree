@@ -135,6 +135,7 @@ nav:
     - Project Codes: order/project_codes.md
   - Report:
     - Templates: report/report.md
+    - Template Editor: report/template_editor.md
     - Report Types:
       - Test Reports: report/test.md
       - Build Order: report/build.md
