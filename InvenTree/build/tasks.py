@@ -30,11 +30,14 @@ def complete_build_allocations(build_id: int, user_id: int):
 
     build_order = build.models.Build.objects.filter(pk=build_id).first()
 
-    try:
-        user = User.objects.get(pk=user_id)
-    except User.DoesNotExist:
-        logger.warning("Could not complete build allocations for BuildOrder <%s> - User does not exist", build_id)
-        return
+    if user_id:
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            logger.warning("Could not complete build allocations for BuildOrder <%s> - User does not exist", build_id)
+            return
+    else:
+        user = None
 
     if not build_order:
         logger.warning("Could not complete build allocations for BuildOrder <%s> - BuildOrder does not exist", build_id)

@@ -549,7 +549,7 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         InvenTree.tasks.offload_task(
             build.tasks.complete_build_allocations,
             self.pk,
-            user.pk
+            user.pk if user else None
         )
 
         # Register an event
