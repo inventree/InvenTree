@@ -71,10 +71,7 @@ services:
     # Uses gunicorn as the web server
     inventree-server:
         # If you wish to specify a particular InvenTree version, do so here
-        # image: inventree/inventree:${INVENTREE_TAG:-stable}
-        build:
-            context: ..
-            target: production
+        image: inventree/inventree:${INVENTREE_TAG:-stable}
         container_name: inventree-server
         # Only change this port if you understand the stack.
         expose:
@@ -89,19 +86,19 @@ services:
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
-    # inventree-worker:
-    #     # If you wish to specify a particular InvenTree version, do so here
-    #     image: inventree/inventree:${INVENTREE_TAG:-stable}
-    #     container_name: inventree-worker
-    #     command: invoke worker
-    #     depends_on:
-    #         - inventree-server
-    #     env_file:
-    #         - .env
-    #     volumes:
-    #         # Data volume must map to /home/inventree/data
-    #         - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
-    #     restart: unless-stopped
+    inventree-worker:
+        # If you wish to specify a particular InvenTree version, do so here
+        image: inventree/inventree:${INVENTREE_TAG:-stable}
+        container_name: inventree-worker
+        command: invoke worker
+        depends_on:
+            - inventree-server
+        env_file:
+            - .env
+        volumes:
+            # Data volume must map to /home/inventree/data
+            - ${INVENTREE_EXT_VOLUME}:/home/inventree/data:z
+        restart: unless-stopped
 
     # caddy acts as reverse proxy and static file server
     # https://hub.docker.com/_/caddy
