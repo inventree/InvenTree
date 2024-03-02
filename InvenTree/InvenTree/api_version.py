@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 179
+INVENTREE_API_VERSION = 180
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v180 - 2024-3-02 : https://github.com/inventree/InvenTree/pull/6463
+    - Tweaks to API documentation to allow automatic documentation generation
 
 v179 - 2024-03-01 : https://github.com/inventree/InvenTree/pull/6605
     - Adds "subcategories" count to PartCategory serializer
