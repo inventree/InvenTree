@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-01 06:13+0000\n"
-"PO-Revision-Date: 2024-03-01 08:21\n"
+"POT-Creation-Date: 2024-03-02 07:22+0000\n"
+"PO-Revision-Date: 2024-03-02 08:33\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -1242,48 +1242,48 @@ msgstr "Projektkod"
 msgid "Project code for this build order"
 msgstr ""
 
-#: build/models.py:559
+#: build/models.py:575
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "Byggorder {build} har slutförts"
 
-#: build/models.py:565
+#: build/models.py:581
 msgid "A build order has been completed"
 msgstr "En byggorder har slutförts"
 
-#: build/models.py:783 build/models.py:858
+#: build/models.py:799 build/models.py:874
 msgid "No build output specified"
 msgstr "Ingen byggutgång angiven"
 
-#: build/models.py:786
+#: build/models.py:802
 msgid "Build output is already completed"
 msgstr "Byggutgång är redan slutförd"
 
-#: build/models.py:789
+#: build/models.py:805
 msgid "Build output does not match Build Order"
 msgstr "Byggutgång matchar inte bygg order"
 
-#: build/models.py:862 build/serializers.py:223 build/serializers.py:262
+#: build/models.py:878 build/serializers.py:223 build/serializers.py:262
 #: build/serializers.py:831 order/models.py:526 order/serializers.py:401
 #: order/serializers.py:544 part/serializers.py:1442 part/serializers.py:1817
 #: stock/models.py:665 stock/models.py:1477 stock/serializers.py:450
 msgid "Quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:867 build/serializers.py:228
+#: build/models.py:883 build/serializers.py:228
 msgid "Quantity cannot be greater than the output quantity"
 msgstr ""
 
-#: build/models.py:924 build/serializers.py:533
+#: build/models.py:940 build/serializers.py:533
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr ""
 
-#: build/models.py:1286
+#: build/models.py:1302
 msgid "Build object"
 msgstr ""
 
-#: build/models.py:1300 build/models.py:1558 build/serializers.py:210
+#: build/models.py:1316 build/models.py:1574 build/serializers.py:210
 #: build/serializers.py:247 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2432
 #: order/models.py:1247 order/models.py:1902 order/serializers.py:1306
@@ -1330,36 +1330,36 @@ msgstr ""
 msgid "Quantity"
 msgstr "Antal"
 
-#: build/models.py:1301
+#: build/models.py:1317
 msgid "Required quantity for build order"
 msgstr ""
 
-#: build/models.py:1381
+#: build/models.py:1397
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Byggobjekt måste ange en byggutgång, eftersom huvuddelen är markerad som spårbar"
 
-#: build/models.py:1390
+#: build/models.py:1406
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Tilldelad kvantitet ({q}) får inte överstiga tillgängligt lagersaldo ({a})"
 
-#: build/models.py:1400 order/models.py:1853
+#: build/models.py:1416 order/models.py:1853
 msgid "Stock item is over-allocated"
 msgstr "Lagerposten är överallokerad"
 
-#: build/models.py:1406 order/models.py:1856
+#: build/models.py:1422 order/models.py:1856
 msgid "Allocation quantity must be greater than zero"
 msgstr "Allokeringsmängden måste vara större än noll"
 
-#: build/models.py:1412
+#: build/models.py:1428
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Antal måste vara 1 för serialiserat lager"
 
-#: build/models.py:1473
+#: build/models.py:1489
 msgid "Selected stock item does not match BOM line"
 msgstr ""
 
-#: build/models.py:1545 build/serializers.py:811 order/serializers.py:1150
+#: build/models.py:1561 build/serializers.py:811 order/serializers.py:1150
 #: order/serializers.py:1171 stock/serializers.py:544 stock/serializers.py:1025
 #: stock/serializers.py:1137 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1376,19 +1376,19 @@ msgstr ""
 msgid "Stock Item"
 msgstr "Artikel i lager"
 
-#: build/models.py:1546
+#: build/models.py:1562
 msgid "Source stock item"
 msgstr "Källa lagervara"
 
-#: build/models.py:1559
+#: build/models.py:1575
 msgid "Stock quantity to allocate to build"
 msgstr "Lagersaldo att allokera för att bygga"
 
-#: build/models.py:1567
+#: build/models.py:1583
 msgid "Install into"
 msgstr "Installera till"
 
-#: build/models.py:1568
+#: build/models.py:1584
 msgid "Destination stock item"
 msgstr "Destination lagervara"
 
@@ -1689,15 +1689,15 @@ msgstr ""
 msgid "Available Stock"
 msgstr ""
 
-#: build/tasks.py:149
+#: build/tasks.py:171
 msgid "Stock required for build order"
 msgstr ""
 
-#: build/tasks.py:166
+#: build/tasks.py:188
 msgid "Overdue Build Order"
 msgstr ""
 
-#: build/tasks.py:171
+#: build/tasks.py:193
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr ""
@@ -11048,7 +11048,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:826
 msgid "Delete items"
-msgstr ""
+msgstr "Radera objekt"
 
 #: templates/js/translated/bom.js:936
 msgid "Load BOM for subassembly"
@@ -13797,7 +13797,7 @@ msgstr "Kolumner"
 
 #: templates/js/translated/tables.js:561
 msgid "All"
-msgstr ""
+msgstr "Alla"
 
 #: templates/navbar.html:45
 msgid "Buy"
