@@ -144,7 +144,7 @@ jobs:
           dev-install: true
           update: true
       - name: Export API Documentation
-        run: invoke schema --ignore-warnings
+        run: invoke schema --ignore-warnings --filename InvenTree/schema.yml
       - name: Upload schema
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # pin@v3.1.3
         with:
@@ -160,7 +160,7 @@ jobs:
           echo "URL: $url"
           curl -s -o api.yaml $url
           echo "Downloaded api.yaml"
-      - name: Check for differences in schemas
+      - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
           diff --color -u InvenTree/schema.yml api.yaml

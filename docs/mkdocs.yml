@@ -57,6 +57,7 @@ extra_css:
   - stylesheets/bootstrap.css
   - stylesheets/splide.min.css
   - stylesheets/extra.css
+  - stylesheets/neoteroi-mkdocs.css
 extra_javascript:
   - javascripts/extra.js
   - javascripts/fontawesome.js
@@ -182,6 +183,7 @@ nav:
   - Extend:
     - InvenTree API:
       - Overview: api/api.md
+      - API Schema: api/schema.md
       - Model Metadata: api/metadata.md
       - Download Data: api/download.md
       - Bulk Delete: api/bulk_delete.md
@@ -225,6 +227,8 @@ nav:
 
 # Plugins
 plugins:
+  - neoteroi.mkdocsoad:
+      use_pymdownx: true
   - include-markdown:
       opening_tag: "{!"
       closing_tag: "!}"
@@ -252,6 +256,8 @@ markdown_extensions:
   - meta
   - pymdownx.details
   - pymdownx.highlight
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
