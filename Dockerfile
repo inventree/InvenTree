@@ -66,6 +66,9 @@ RUN apk add --no-cache \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
     # Core database packages
+    sqlite \
+    mariadb-connector-c \
+    mariadb-client \
     postgresql13-client && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
