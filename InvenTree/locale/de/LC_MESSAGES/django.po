@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-01 06:13+0000\n"
-"PO-Revision-Date: 2024-03-01 08:21\n"
+"POT-Creation-Date: 2024-03-02 07:22+0000\n"
+"PO-Revision-Date: 2024-03-02 08:33\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1242,48 +1242,48 @@ msgstr "Projektcode"
 msgid "Project code for this build order"
 msgstr "Projektcode für diesen Auftrag"
 
-#: build/models.py:559
+#: build/models.py:575
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "Bauauftrag {build} wurde fertiggestellt"
 
-#: build/models.py:565
+#: build/models.py:581
 msgid "A build order has been completed"
 msgstr "Ein Bauauftrag wurde fertiggestellt"
 
-#: build/models.py:783 build/models.py:858
+#: build/models.py:799 build/models.py:874
 msgid "No build output specified"
 msgstr "kein Endprodukt angegeben"
 
-#: build/models.py:786
+#: build/models.py:802
 msgid "Build output is already completed"
 msgstr "Endprodukt bereits hergstellt"
 
-#: build/models.py:789
+#: build/models.py:805
 msgid "Build output does not match Build Order"
 msgstr "Endprodukt stimmt nicht mit dem Bauauftrag überein"
 
-#: build/models.py:862 build/serializers.py:223 build/serializers.py:262
+#: build/models.py:878 build/serializers.py:223 build/serializers.py:262
 #: build/serializers.py:831 order/models.py:526 order/serializers.py:401
 #: order/serializers.py:544 part/serializers.py:1442 part/serializers.py:1817
 #: stock/models.py:665 stock/models.py:1477 stock/serializers.py:450
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
 
-#: build/models.py:867 build/serializers.py:228
+#: build/models.py:883 build/serializers.py:228
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Menge kann nicht größer als die Ausgangsmenge sein"
 
-#: build/models.py:924 build/serializers.py:533
+#: build/models.py:940 build/serializers.py:533
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "Build Ausgabe {serial} hat nicht alle erforderlichen Tests bestanden"
 
-#: build/models.py:1286
+#: build/models.py:1302
 msgid "Build object"
 msgstr "Objekt bauen"
 
-#: build/models.py:1300 build/models.py:1558 build/serializers.py:210
+#: build/models.py:1316 build/models.py:1574 build/serializers.py:210
 #: build/serializers.py:247 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2432
 #: order/models.py:1247 order/models.py:1902 order/serializers.py:1306
@@ -1330,36 +1330,36 @@ msgstr "Objekt bauen"
 msgid "Quantity"
 msgstr "Anzahl"
 
-#: build/models.py:1301
+#: build/models.py:1317
 msgid "Required quantity for build order"
 msgstr "Erforderliche Menge für Auftrag"
 
-#: build/models.py:1381
+#: build/models.py:1397
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Bauauftragsposition muss ein Endprodukt festlegen, da der übergeordnete Teil verfolgbar ist"
 
-#: build/models.py:1390
+#: build/models.py:1406
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Zugewiesene Menge ({q}) darf nicht verfügbare Menge ({a}) übersteigen"
 
-#: build/models.py:1400 order/models.py:1853
+#: build/models.py:1416 order/models.py:1853
 msgid "Stock item is over-allocated"
 msgstr "BestandObjekt ist zu oft zugewiesen"
 
-#: build/models.py:1406 order/models.py:1856
+#: build/models.py:1422 order/models.py:1856
 msgid "Allocation quantity must be greater than zero"
 msgstr "Reserviermenge muss größer null sein"
 
-#: build/models.py:1412
+#: build/models.py:1428
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Anzahl muss 1 für Objekte mit Seriennummer sein"
 
-#: build/models.py:1473
+#: build/models.py:1489
 msgid "Selected stock item does not match BOM line"
 msgstr "Ausgewählter Lagerbestand stimmt nicht mit BOM-Linie überein"
 
-#: build/models.py:1545 build/serializers.py:811 order/serializers.py:1150
+#: build/models.py:1561 build/serializers.py:811 order/serializers.py:1150
 #: order/serializers.py:1171 stock/serializers.py:544 stock/serializers.py:1025
 #: stock/serializers.py:1137 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1376,19 +1376,19 @@ msgstr "Ausgewählter Lagerbestand stimmt nicht mit BOM-Linie überein"
 msgid "Stock Item"
 msgstr "Lagerartikel"
 
-#: build/models.py:1546
+#: build/models.py:1562
 msgid "Source stock item"
 msgstr "Quell-Lagerartikel"
 
-#: build/models.py:1559
+#: build/models.py:1575
 msgid "Stock quantity to allocate to build"
 msgstr "Anzahl an Lagerartikel dem Bauauftrag zuweisen"
 
-#: build/models.py:1567
+#: build/models.py:1583
 msgid "Install into"
 msgstr "Installiere in"
 
-#: build/models.py:1568
+#: build/models.py:1584
 msgid "Destination stock item"
 msgstr "Ziel-Lagerartikel"
 
@@ -1689,15 +1689,15 @@ msgstr "In Produktion"
 msgid "Available Stock"
 msgstr "Verfügbarer Bestand"
 
-#: build/tasks.py:149
+#: build/tasks.py:171
 msgid "Stock required for build order"
 msgstr "Bestand für Bauauftrag erforderlich"
 
-#: build/tasks.py:166
+#: build/tasks.py:188
 msgid "Overdue Build Order"
 msgstr "Überfälliger Bauauftrag"
 
-#: build/tasks.py:171
+#: build/tasks.py:193
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "Bauauftrag {bo} ist jetzt überfällig"
@@ -1993,7 +1993,7 @@ msgstr "Teile bestellen"
 
 #: build/templates/build/detail.html:205
 msgid "Available stock has been filtered based on specified source location for this build order"
-msgstr ""
+msgstr "Der verfügbare Bestand wurde auf der Grundlage des angegebenen Quellenstandortes für diesen Bauauftrag gefiltert"
 
 #: build/templates/build/detail.html:215
 msgid "Incomplete Build Outputs"
@@ -5992,7 +5992,7 @@ msgstr "Kategorie"
 
 #: part/api.py:1828
 msgid "Uses"
-msgstr ""
+msgstr "Verwendet"
 
 #: part/bom.py:170 part/models.py:100 part/models.py:938
 #: part/templates/part/category.html:116 part/templates/part/part_base.html:367
@@ -6815,11 +6815,11 @@ msgstr "Lieferantenteil mit dieser SKU existiert bereits"
 
 #: part/serializers.py:804
 msgid "External Stock"
-msgstr ""
+msgstr "Externes Lager"
 
 #: part/serializers.py:806
 msgid "Unallocated Stock"
-msgstr ""
+msgstr "Nicht zugewiesenes Lager"
 
 #: part/serializers.py:808
 msgid "Variant Stock"
@@ -9034,7 +9034,7 @@ msgstr "Zu installierende Menge"
 
 #: stock/serializers.py:553
 msgid "Enter the quantity of items to install"
-msgstr ""
+msgstr "Anzahl der zu verwendenden Artikel eingeben"
 
 #: stock/serializers.py:558 stock/serializers.py:633 stock/serializers.py:729
 #: stock/serializers.py:779
@@ -9043,7 +9043,7 @@ msgstr " Transaktionsnotizen hinzufügen (optional)"
 
 #: stock/serializers.py:566
 msgid "Quantity to install must be at least 1"
-msgstr ""
+msgstr "Die zu verwendende Menge muss mindestens 1 sein"
 
 #: stock/serializers.py:574
 msgid "Stock item is unavailable"
@@ -9055,7 +9055,7 @@ msgstr "Ausgewähltes Teil ist nicht in der Stückliste"
 
 #: stock/serializers.py:593
 msgid "Quantity to install must not exceed available quantity"
-msgstr ""
+msgstr "Die zu verwendende Menge darf die verfügbare Menge nicht überschreiten"
 
 #: stock/serializers.py:628
 msgid "Destination location for uninstalled item"
@@ -9071,7 +9071,7 @@ msgstr "Das ausgewählte Teil ist keine gültige Option für die Umwandlung"
 
 #: stock/serializers.py:693
 msgid "Cannot convert stock item with assigned SupplierPart"
-msgstr ""
+msgstr "Lagerartikel konnte nicht mit Zulieferteil zugewiesen werden"
 
 #: stock/serializers.py:724
 msgid "Destination location for returned item"
@@ -9154,7 +9154,7 @@ msgstr "Primärschlüssel Lagerelement"
 
 #: stock/serializers.py:1314
 msgid "Stock item status code"
-msgstr ""
+msgstr "Lagerartikel Status-Code"
 
 #: stock/serializers.py:1342
 msgid "Stock transaction notes"
@@ -9604,7 +9604,7 @@ msgstr "Kürzlich aktualisiert"
 
 #: templates/InvenTree/index.html:134
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Verbrauchter Bestand"
 
 #: templates/InvenTree/index.html:148
 msgid "Required for Build Orders"
@@ -9616,7 +9616,7 @@ msgstr "Abgelaufener Bestand"
 
 #: templates/InvenTree/index.html:172
 msgid "Stale Stock"
-msgstr ""
+msgstr "Veralteter Bestand"
 
 #: templates/InvenTree/index.html:199
 msgid "Build Orders In Progress"
@@ -10729,7 +10729,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:238 templates/js/translated/modals.js:1141
 msgid "Authentication credentials not supplied"
-msgstr ""
+msgstr "Anmeldeinformationen nicht angegeben"
 
 #: templates/js/translated/api.js:242 templates/js/translated/modals.js:1145
 msgid "Error 403: Permission Denied"
