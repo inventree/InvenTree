@@ -27,7 +27,6 @@ from maintenance_mode.core import (
 )
 
 from InvenTree.config import get_setting
-from InvenTree.exceptions import log_error
 from plugin import registry
 
 from .version import isInvenTreeUpToDate
@@ -181,6 +180,8 @@ def offload_task(
     Returns:
         bool: True if the task was offloaded (or ran), False otherwise
     """
+    from InvenTree.exceptions import log_error
+
     try:
         import importlib
 
