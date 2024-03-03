@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-02 07:22+0000\n"
-"PO-Revision-Date: 2024-03-02 08:33\n"
+"PO-Revision-Date: 2024-03-03 08:48\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -10895,15 +10895,15 @@ msgstr "Lagerartikel bereits gescannt"
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
-msgstr ""
+msgstr "Lagerartikel bereits an diesem Standort vorhanden"
 
 #: templates/js/translated/barcode.js:698
 msgid "Added stock item"
-msgstr ""
+msgstr "Lagerartikel hinzugefügt"
 
 #: templates/js/translated/barcode.js:707
 msgid "Barcode does not match valid stock item"
-msgstr ""
+msgstr "Barcode entspricht keinem Lagerartikel"
 
 #: templates/js/translated/barcode.js:726
 msgid "Scan Stock Container Into Location"
@@ -10915,7 +10915,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:762
 msgid "Barcode does not match valid stock location"
-msgstr ""
+msgstr "Barcode entspricht keinem gültigen Lagerort"
 
 #: templates/js/translated/barcode.js:806
 msgid "Check Into Location"
@@ -10928,15 +10928,15 @@ msgstr "Barcode entspricht keinem Lagerort"
 
 #: templates/js/translated/bom.js:78
 msgid "Create BOM Item"
-msgstr ""
+msgstr "Stücklisten-Position anlegen"
 
 #: templates/js/translated/bom.js:132
 msgid "Display row data"
-msgstr ""
+msgstr "Zeilendaten anzeigen"
 
 #: templates/js/translated/bom.js:188
 msgid "Row Data"
-msgstr ""
+msgstr "Zeilendaten"
 
 #: templates/js/translated/bom.js:189 templates/js/translated/bom.js:700
 #: templates/js/translated/modals.js:74 templates/js/translated/modals.js:628
@@ -10952,11 +10952,11 @@ msgstr "Vorlage einer Stückliste herunterladen"
 
 #: templates/js/translated/bom.js:351
 msgid "Multi Level BOM"
-msgstr ""
+msgstr "Mehrstufige Stückliste"
 
 #: templates/js/translated/bom.js:352
 msgid "Include BOM data for subassemblies"
-msgstr ""
+msgstr "Stücklistendaten für Untergruppen einbeziehen"
 
 #: templates/js/translated/bom.js:357
 msgid "Levels"
