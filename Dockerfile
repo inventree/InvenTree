@@ -63,8 +63,11 @@ RUN apk add --no-cache \
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
-    # Core database packages
-    postgresql13-client && \
+    # Postgres client
+    postgresql13-client \
+    # MySQL / MariaDB client
+    mariadb-client mariadb-connector-c \
+    && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
 
