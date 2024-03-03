@@ -137,17 +137,10 @@ jobs:
             inventree/inventree
             ghcr.io/inventree/inventree
 
-      - name: Build Dockerfile
-        id: build-docker
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # pin@v5.0.0
-        with:
-          context: .
-          load: true
-          tags: inventree-test
-
       - name: Test Docker Image
         id: test-docker
         run: |
+          docker build . --target production --tag inventree-test
           docker run --rm inventree-test invoke --version
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
