@@ -143,12 +143,15 @@ jobs:
         with:
           context: .
           load: true
-          tags: inventree/inventree:test
+          tags: inventree-test
 
       - name: Test Docker Image
         id: test-docker
         run: |
-          docker run --rm inventree/inventree:test invoke --list
+          docker run --rm inventree-test invoke --version
+          docker run --rm inventree-test invoke --list
+          docker run --rm inventree-test gunicorn --version
+          docker run --rm inventree-test pg_dump --version
 
       - name: Push Docker Images
         id: push-docker
