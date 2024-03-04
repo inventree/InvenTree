@@ -17,7 +17,7 @@ import { Suspense, useMemo } from 'react';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { InvenTreeIcon } from '../../functions/icons';
+import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
@@ -368,7 +368,7 @@ export function DetailsTableField({
           justifyContent: 'flex-start'
         }}
       >
-        <InvenTreeIcon icon={field.icon ?? field.name} />
+        <InvenTreeIcon icon={(field.icon ?? field.name) as InvenTreeIconType} />
       </td>
       <td>
         <Text>{field.label}</Text>

@@ -1,10 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 180
+INVENTREE_API_VERSION = 181
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v181 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6541
+    - Adds "width" and "height" fields to the LabelTemplate API endpoint
+    - Adds "page_size" and "landscape" fields to the ReportTemplate API endpoint
 
 v180 - 2024-3-02 : https://github.com/inventree/InvenTree/pull/6463
     - Tweaks to API documentation to allow automatic documentation generation

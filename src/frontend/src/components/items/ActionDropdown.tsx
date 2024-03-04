@@ -23,6 +23,7 @@ export type ActionDropdownItem = {
   name: string;
   tooltip?: string;
   disabled?: boolean;
+  hidden?: boolean;
   onClick?: () => void;
   indicator?: Omit<IndicatorProps, 'children'>;
 };
@@ -42,7 +43,7 @@ export function ActionDropdown({
   actions: ActionDropdownItem[];
 }) {
   const hasActions = useMemo(() => {
-    return actions.some((action) => !action.disabled);
+    return actions.some((action) => !action.hidden);
   }, [actions]);
   const indicatorProps = useMemo(() => {
     return actions.find((action) => action.indicator);
@@ -61,7 +62,7 @@ export function ActionDropdown({
       </Indicator>
       <Menu.Dropdown>
         {actions.map((action) =>
-          action.disabled ? null : (
+          action.hidden ? null : (
             <Indicator
               disabled={!action.indicator}
               {...action.indicator}
@@ -108,10 +109,10 @@ export function BarcodeActionDropdown({
 
 // Common action button for viewing a barcode
 export function ViewBarcodeAction({
-  disabled = false,
+  hidden = false,
   onClick
 }: {
-  disabled?: boolean;
+  hidden?: boolean;
   onClick?: () => void;
 }): ActionDropdownItem {
   return {
@@ -119,16 +120,16 @@ export function ViewBarcodeAction({
     name: t`View`,
     tooltip: t`View barcode`,
     onClick: onClick,
-    disabled: disabled
+    hidden: hidden
   };
 }
 
 // Common action button for linking a custom barcode
 export function LinkBarcodeAction({
-  disabled = false,
+  hidden = false,
   onClick
 }: {
-  disabled?: boolean;
+  hidden?: boolean;
   onClick?: () => void;
 }): ActionDropdownItem {
   return {
@@ -136,16 +137,16 @@ export function LinkBarcodeAction({
     name: t`Link Barcode`,
     tooltip: t`Link custom barcode`,
     onClick: onClick,
-    disabled: disabled
+    hidden: hidden
   };
 }
 
 // Common action button for un-linking a custom barcode
 export function UnlinkBarcodeAction({
-  disabled = false,
+  hidden = false,
   onClick
 }: {
-  disabled?: boolean;
+  hidden?: boolean;
   onClick?: () => void;
 }): ActionDropdownItem {
   return {
@@ -153,17 +154,17 @@ export function UnlinkBarcodeAction({
     name: t`Unlink Barcode`,
     tooltip: t`Unlink custom barcode`,
     onClick: onClick,
-    disabled: disabled
+    hidden: hidden
   };
 }
 
 // Common action button for editing an item
 export function EditItemAction({
-  disabled = false,
+  hidden = false,
   tooltip,
   onClick
 }: {
-  disabled?: boolean;
+  hidden?: boolean;
   tooltip?: string;
   onClick?: () => void;
 }): ActionDropdownItem {
@@ -172,17 +173,17 @@ export function EditItemAction({
     name: t`Edit`,
     tooltip: tooltip ?? `Edit item`,
     onClick: onClick,
-    disabled: disabled
+    hidden: hidden
   };
 }
 
 // Common action button for deleting an item
 export function DeleteItemAction({
-  disabled = false,
+  hidden = false,
   tooltip,
   onClick
 }: {
-  disabled?: boolean;
+  hidden?: boolean;
   tooltip?: string;
   onClick?: () => void;
 }): ActionDropdownItem {
@@ -191,17 +192,17 @@ export function DeleteItemAction({
     name: t`Delete`,
     tooltip: tooltip ?? t`Delete item`,
     onClick: onClick,
-    disabled: disabled
+    hidden: hidden
   };
 }
 
 // Common action button for duplicating an item
 export function DuplicateItemAction({
-  disabled = false,
+  hidden = false,
   tooltip,
   onClick
 }: {
-  disabled?: boolean;
+  hidden?: boolean;
   tooltip?: string;
   onClick?: () => void;
 }): ActionDropdownItem {
@@ -210,6 +211,6 @@ export function DuplicateItemAction({
     name: t`Duplicate`,
     tooltip: tooltip ?? t`Duplicate item`,
     onClick: onClick,
-    disabled: disabled
+    hidden: hidden
   };
 }

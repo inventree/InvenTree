@@ -282,11 +282,11 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon={<IconDots />}
         actions={[
           EditItemAction({
-            disabled: !user.hasChangeRole(UserRoles.purchase_order),
+            hidden: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => editCompany.open()
           }),
           DeleteItemAction({
-            disabled: !user.hasDeleteRole(UserRoles.purchase_order)
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
           })
         ]}
       />

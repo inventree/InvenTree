@@ -1,14 +1,14 @@
 import { Trans, t } from '@lingui/macro';
 import { Badge, Tooltip } from '@mantine/core';
 
-import { InvenTreeIcon } from '../../functions/icons';
+import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
 
 /**
  * Fetches and wraps an InvenTreeIcon in a flex div
  * @param icon name of icon
  *
  */
-function PartIcon(icon: string) {
+function PartIcon(icon: InvenTreeIconType) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
       <InvenTreeIcon icon={icon} />
