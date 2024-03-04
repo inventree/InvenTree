@@ -48,8 +48,6 @@ ENV INVENTREE_BACKGROUND_WORKERS="4"
 ENV INVENTREE_WEB_ADDR=0.0.0.0
 ENV INVENTREE_WEB_PORT=8000
 
-ENV VIRTUAL_ENV=/usr/local
-
 LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.build-date=${DATE} \
       org.label-schema.vendor="inventree" \
@@ -99,7 +97,7 @@ FROM inventree_base as prebuild
 
 ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install --user -r base_requirements.txt -r requirements.txt --no-cache && \
+    pip install -r base_requirements.txt -r requirements.txt --no-cache && \
     apk --purge del .build-deps
 
 # Frontend builder image:
