@@ -3,8 +3,11 @@ import {
   IconArrowMerge,
   IconBinaryTree2,
   IconBookmarks,
+  IconBox,
   IconBuilding,
   IconBuildingFactory2,
+  IconBuildingStore,
+  IconCalendar,
   IconCalendarStats,
   IconCheck,
   IconCircleMinus,
@@ -14,25 +17,34 @@ import {
   IconCornerUpRightDouble,
   IconCurrencyDollar,
   IconDots,
+  IconDotsCircleHorizontal,
   IconExternalLink,
   IconFileUpload,
   IconGitBranch,
   IconGridDots,
+  IconHash,
   IconLayersLinked,
   IconLink,
   IconList,
   IconListTree,
+  IconMail,
+  IconMapPin,
   IconMapPinHeart,
   IconNotes,
+  IconNumbers,
   IconPackage,
+  IconPackageImport,
   IconPackages,
   IconPaperclip,
+  IconPhone,
   IconPhoto,
   IconPrinter,
+  IconProgressCheck,
   IconQuestionMark,
   IconRulerMeasure,
   IconShoppingCart,
   IconShoppingCartHeart,
+  IconSitemap,
   IconStack2,
   IconStatusChange,
   IconTag,
@@ -47,6 +59,7 @@ import {
   IconUserStar,
   IconUsersGroup,
   IconVersions,
+  IconWorld,
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
@@ -76,6 +89,8 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     revision: IconGitBranch,
     units: IconRulerMeasure,
     keywords: IconTag,
+    status: IconInfoCircle,
+    info: IconInfoCircle,
     details: IconInfoCircle,
     parameters: IconList,
     stock: IconPackages,
@@ -86,8 +101,10 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     used_in: IconStack2,
     manufacturers: IconBuildingFactory2,
     suppliers: IconBuilding,
+    customers: IconBuildingStore,
     purchase_orders: IconShoppingCart,
     sales_orders: IconTruckDelivery,
+    shipment: IconTruckDelivery,
     scheduling: IconCalendarStats,
     test_templates: IconTestPipe,
     related_parts: IconLayersLinked,
@@ -100,6 +117,7 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     delete: IconTrash,
 
     // Part Icons
+    active: IconCheck,
     template: IconCopy,
     assembly: IconTool,
     component: IconGridDots,
@@ -108,14 +126,19 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     saleable: IconCurrencyDollar,
     virtual: IconWorldCode,
     inactive: IconX,
+    part: IconBox,
+    supplier_part: IconPackageImport,
 
+    calendar: IconCalendar,
     external: IconExternalLink,
     creation_date: IconCalendarTime,
+    location: IconMapPin,
     default_location: IconMapPinHeart,
     default_supplier: IconShoppingCartHeart,
     link: IconLink,
     responsible: IconUserStar,
     pricing: IconCurrencyDollar,
+    currency: IconCurrencyDollar,
     stocktake: IconClipboardList,
     user: IconUser,
     group: IconUsersGroup,
@@ -129,9 +152,15 @@ const icons: { [key: string]: (props: TablerIconsProps) => React.JSX.Element } =
     buy: IconShoppingCartPlus,
     add: IconCirclePlus,
     remove: IconCircleMinus,
-    info: IconInfoCircle,
     merge: IconArrowMerge,
-    customer: IconUser
+    customer: IconUser,
+    quantity: IconNumbers,
+    progress: IconProgressCheck,
+    reference: IconHash,
+    website: IconWorld,
+    email: IconMail,
+    phone: IconPhone,
+    sitemap: IconSitemap
   };
 
 /**
@@ -160,4 +189,7 @@ export function InvenTreeIcon(props: IconProps) {
   }
 
   return <Icon {...props.iconProps} />;
+}
+function IconShapes(props: TablerIconsProps): Element {
+  throw new Error('Function not implemented.');
 }

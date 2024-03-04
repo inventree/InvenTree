@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Skeleton, Stack, Table } from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
@@ -17,6 +17,9 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsField, DetailsTable } from '../../components/details/Details';
+import { DetailsImage } from '../../components/details/DetailsImage';
+import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   DuplicateItemAction,
@@ -33,6 +36,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { buildOrderFields } from '../../forms/BuildForms';
+import { partCategoryFields } from '../../forms/PartForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -63,36 +67,127 @@ export default function BuildDetail() {
     refetchOnMount: true
   });
 
-  const buildDetailsPanel = useMemo(() => {
+  const detailsPanel = useMemo(() => {
+    if (instanceQuery.isFetching) {
+      return <Skeleton />;
+    }
+
+    let tl: DetailsField[] = [
+      {
+        type: 'link',
+        name: 'part',
+        label: t`Part`,
+        model: ModelType.part
+      },
+      {
+        type: 'status',
+        name: 'status',
+        label: t`Status`,
+        model: ModelType.build
+      },
+      {
+        type: 'text',
+        name: 'reference',
+        label: t`Reference`
+      },
+      {
+        type: 'text',
+        name: 'title',
+        label: t`Description`,
+        icon: 'description'
+      },
+      {
+        type: 'link',
+        name: 'parent',
+        icon: 'builds',
+        label: t`Parent Build`,
+        model_field: 'reference',
+        model: ModelType.build,
+        hidden: !build.parent
+      }
+    ];
+
+    let tr: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'quantity',
+        label: t`Build Quantity`
+      },
+      {
+        type: 'progressbar',
+        name: 'completed',
+        icon: 'progress',
+        total: build.quantity,
+        progress: build.completed,
+        label: t`Completed Outputs`
+      },
+      {
+        type: 'link',
+        name: 'sales_order',
+        label: t`Sales Order`,
+        icon: 'sales_orders',
+        model: ModelType.salesorder,
+        model_field: 'reference',
+        hidden: !build.sales_order
+      }
+    ];
+
+    let bl: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'issued_by',
+        label: t`Issued By`,
+        badge: 'user'
+      },
+      {
+        type: 'text',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !build.responsible
+      }
+    ];
+
+    let br: DetailsField[] = [
+      {
+        type: 'link',
+        name: 'take_from',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Source Location`,
+        backup_value: t`Any location`
+      },
+      {
+        type: 'link',
+        name: 'destination',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Destination Location`,
+        hidden: !build.destination
+      }
+    ];
+
     return (
-      <Group position="apart" grow>
-        <Table striped>
-          <tbody>
-            <tr>
-              <td>{t`Base Part`}</td>
-              <td>{build.part_detail?.name}</td>
-            </tr>
-            <tr>
-              <td>{t`Quantity`}</td>
-              <td>{build.quantity}</td>
-            </tr>
-            <tr>
-              <td>{t`Build Status`}</td>
-              <td>
-                {build?.status && (
-                  <StatusRenderer
-                    status={build.status}
-                    type={ModelType.build}
-                  />
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </Table>
-        <Table></Table>
-      </Group>
+      <ItemDetailsGrid>
+        <Grid>
+          <Grid.Col span={4}>
+            <DetailsImage
+              appRole={UserRoles.part}
+              apiPath={ApiEndpoints.part_list}
+              src={build.part_detail?.image ?? build.part_detail?.thumbnail}
+              pk={build.part}
+            />
+          </Grid.Col>
+          <Grid.Col span={8}>
+            <DetailsTable fields={tl} item={build} />
+          </Grid.Col>
+        </Grid>
+        <DetailsTable fields={tr} item={build} />
+        <DetailsTable fields={bl} item={build} />
+        <DetailsTable fields={br} item={build} />
+      </ItemDetailsGrid>
     );
-  }, [build]);
+  }, [build, instanceQuery]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
@@ -100,7 +195,7 @@ export default function BuildDetail() {
         name: 'details',
         label: t`Build Details`,
         icon: <IconInfoCircle />,
-        content: buildDetailsPanel
+        content: detailsPanel
       },
       {
         name: 'allocate-stock',
@@ -259,7 +354,7 @@ export default function BuildDetail() {
           title={build.reference}
           subtitle={build.title}
           detail={buildDetail}
-          imageUrl={build.part_detail?.thumbnail}
+          imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
           breadcrumbs={[
             { name: t`Build Orders`, url: '/build' },
             { name: build.reference, url: `/build/${build.pk}` }
