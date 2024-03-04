@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-01 08:21\n"
+"PO-Revision-Date: 2024-03-04 08:56\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -51,7 +51,7 @@ msgstr "Entfernen"
 #: src/hooks/UseForm.tsx:38
 #: src/tables/FilterSelectDrawer.tsx:214
 #: src/tables/InvenTreeTable.tsx:456
-#: src/tables/plugin/PluginListTable.tsx:359
+#: src/tables/plugin/PluginListTable.tsx:361
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -152,7 +152,7 @@ msgid "Form Errors Exist"
 msgstr "Formularfehler vorhanden"
 
 #: src/components/forms/ApiForm.tsx:487
-#: src/tables/plugin/PluginListTable.tsx:439
+#: src/tables/plugin/PluginListTable.tsx:441
 msgid "Update"
 msgstr "Aktualisieren"
 
@@ -164,7 +164,7 @@ msgstr "Aktualisieren"
 #: src/pages/Notifications.tsx:123
 #: src/tables/InvenTreeTable.tsx:455
 #: src/tables/RowActions.tsx:71
-#: src/tables/plugin/PluginListTable.tsx:471
+#: src/tables/plugin/PluginListTable.tsx:473
 msgid "Delete"
 msgstr "Löschen"
 
@@ -334,7 +334,7 @@ msgstr "Adresse"
 #: src/tables/machine/MachineTypeTable.tsx:209
 #: src/tables/machine/MachineTypeTable.tsx:310
 #: src/tables/plugin/PluginErrorTable.tsx:33
-#: src/tables/plugin/PluginListTable.tsx:167
+#: src/tables/plugin/PluginListTable.tsx:169
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:27
 #: src/tables/settings/GroupTable.tsx:103
 #: src/tables/settings/PendingTasksTable.tsx:26
@@ -386,7 +386,7 @@ msgstr "Status: <0>worker</0> ({0}), <1>Plugins</1>{1}"
 #: src/pages/ErrorPage.tsx:25
 #: src/tables/InvenTreeTable.tsx:415
 #: src/tables/InvenTreeTable.tsx:488
-#: src/tables/plugin/PluginListTable.tsx:396
+#: src/tables/plugin/PluginListTable.tsx:398
 msgid "Error"
 msgstr "Fehler"
 
@@ -741,8 +741,8 @@ msgid "Email settings not configured"
 msgstr "E-Mail-Einstellungen nicht konfiguriert"
 
 #: src/components/modals/ServerInfoModal.tsx:121
-#: src/tables/plugin/PluginListTable.tsx:185
-#: src/tables/plugin/PluginListTable.tsx:313
+#: src/tables/plugin/PluginListTable.tsx:187
+#: src/tables/plugin/PluginListTable.tsx:315
 msgid "Version"
 msgstr "Version"
 
@@ -1048,7 +1048,7 @@ msgstr "Verkaufsauftrag"
 #: src/pages/part/PartDetail.tsx:544
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
-msgstr "Verkaufsaufträge"
+msgstr "Aufträge"
 
 #: src/components/render/ModelType.tsx:132
 msgid "Sales Order Shipment"
@@ -2956,8 +2956,8 @@ msgstr ""
 #: src/tables/machine/MachineTypeTable.tsx:212
 #: src/tables/machine/MachineTypeTable.tsx:314
 #: src/tables/part/RelatedPartTable.tsx:64
-#: src/tables/plugin/PluginListTable.tsx:170
-#: src/tables/plugin/PluginListTable.tsx:300
+#: src/tables/plugin/PluginListTable.tsx:172
+#: src/tables/plugin/PluginListTable.tsx:302
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -3306,8 +3306,8 @@ msgstr "Gebäude"
 #: src/tables/machine/MachineListTable.tsx:316
 #: src/tables/part/PartTable.tsx:177
 #: src/tables/part/PartVariantTable.tsx:15
-#: src/tables/plugin/PluginListTable.tsx:188
-#: src/tables/plugin/PluginListTable.tsx:632
+#: src/tables/plugin/PluginListTable.tsx:190
+#: src/tables/plugin/PluginListTable.tsx:634
 #: src/tables/stock/StockItemTable.tsx:234
 msgid "Active"
 msgstr "Aktiv"
@@ -3660,7 +3660,7 @@ msgid "Note"
 msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:128
-#: src/tables/plugin/PluginListTable.tsx:180
+#: src/tables/plugin/PluginListTable.tsx:182
 #: src/tables/stock/StockItemTestResultTable.tsx:194
 msgid "Date"
 msgstr "Datum"
@@ -3855,7 +3855,7 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:180
 #: src/tables/build/BuildLineTable.tsx:74
 msgid "Includes variant stock"
-msgstr ""
+msgstr "Alternatives Lager einschließen"
 
 #: src/tables/bom/BomTable.tsx:205
 #: src/tables/part/PartTable.tsx:153
@@ -4212,8 +4212,8 @@ msgstr ""
 
 #: src/tables/machine/MachineTypeTable.tsx:131
 #: src/tables/machine/MachineTypeTable.tsx:246
-#: src/tables/plugin/PluginListTable.tsx:213
-#: src/tables/plugin/PluginListTable.tsx:637
+#: src/tables/plugin/PluginListTable.tsx:215
+#: src/tables/plugin/PluginListTable.tsx:639
 msgid "Builtin"
 msgstr "Integriert"
 
@@ -4305,7 +4305,7 @@ msgstr ""
 #: src/tables/part/PartParameterTable.tsx:189
 #: src/tables/stock/StockItemTable.tsx:280
 msgid "Include Variants"
-msgstr ""
+msgstr "Alternativen einschließen"
 
 #: src/tables/part/PartParameterTemplateTable.tsx:31
 msgid "Checkbox"
@@ -4559,197 +4559,197 @@ msgstr ""
 msgid "An error occurred while fetching plugin details"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:132
+#: src/tables/plugin/PluginListTable.tsx:134
 msgid "Plugin Actions"
 msgstr "Plugin Aktionen"
 
-#: src/tables/plugin/PluginListTable.tsx:136
-#: src/tables/plugin/PluginListTable.tsx:139
+#: src/tables/plugin/PluginListTable.tsx:138
+#: src/tables/plugin/PluginListTable.tsx:141
 msgid "Edit plugin"
 msgstr "Plugin bearbeiten"
 
-#: src/tables/plugin/PluginListTable.tsx:150
-#: src/tables/plugin/PluginListTable.tsx:151
+#: src/tables/plugin/PluginListTable.tsx:152
+#: src/tables/plugin/PluginListTable.tsx:153
 msgid "Reload"
 msgstr "Neu laden"
 
-#: src/tables/plugin/PluginListTable.tsx:164
+#: src/tables/plugin/PluginListTable.tsx:166
 msgid "Plugin information"
 msgstr "Plugin-Informationen"
 
-#: src/tables/plugin/PluginListTable.tsx:175
+#: src/tables/plugin/PluginListTable.tsx:177
 msgid "Author"
 msgstr "Autor"
 
-#: src/tables/plugin/PluginListTable.tsx:196
+#: src/tables/plugin/PluginListTable.tsx:198
 msgid "Package information"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:202
+#: src/tables/plugin/PluginListTable.tsx:204
 msgid "Package Name"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:208
+#: src/tables/plugin/PluginListTable.tsx:210
 msgid "Installation Path"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:218
+#: src/tables/plugin/PluginListTable.tsx:220
 msgid "Package"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:229
+#: src/tables/plugin/PluginListTable.tsx:231
 msgid "Plugin settings"
 msgstr "Plugin-Einstellungen"
 
-#: src/tables/plugin/PluginListTable.tsx:246
+#: src/tables/plugin/PluginListTable.tsx:248
 msgid "Plugin is active"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:252
+#: src/tables/plugin/PluginListTable.tsx:254
 msgid "Plugin is inactive"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:259
+#: src/tables/plugin/PluginListTable.tsx:261
 msgid "Plugin is not installed"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:285
+#: src/tables/plugin/PluginListTable.tsx:287
 msgid "Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:307
+#: src/tables/plugin/PluginListTable.tsx:309
 msgid "Description not available"
 msgstr "描述不可用"
 
-#: src/tables/plugin/PluginListTable.tsx:332
+#: src/tables/plugin/PluginListTable.tsx:334
 msgid "Activate Plugin"
 msgstr "Plugin aktivieren"
 
-#: src/tables/plugin/PluginListTable.tsx:332
+#: src/tables/plugin/PluginListTable.tsx:334
 msgid "Deactivate Plugin"
 msgstr "Plugin deaktivieren"
 
-#: src/tables/plugin/PluginListTable.tsx:341
+#: src/tables/plugin/PluginListTable.tsx:343
 msgid "Confirm plugin activation"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:342
+#: src/tables/plugin/PluginListTable.tsx:344
 msgid "Confirm plugin deactivation"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:348
+#: src/tables/plugin/PluginListTable.tsx:350
 msgid "The following plugin will be activated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:349
+#: src/tables/plugin/PluginListTable.tsx:351
 msgid "The following plugin will be deactivated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:360
+#: src/tables/plugin/PluginListTable.tsx:362
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: src/tables/plugin/PluginListTable.tsx:370
+#: src/tables/plugin/PluginListTable.tsx:372
 msgid "Activating plugin"
 msgstr "Plugin aktivieren"
 
-#: src/tables/plugin/PluginListTable.tsx:370
+#: src/tables/plugin/PluginListTable.tsx:372
 msgid "Deactivating plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:386
+#: src/tables/plugin/PluginListTable.tsx:388
 msgid "Plugin updated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:388
+#: src/tables/plugin/PluginListTable.tsx:390
 msgid "The plugin was activated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:389
+#: src/tables/plugin/PluginListTable.tsx:391
 msgid "The plugin was deactivated"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:397
+#: src/tables/plugin/PluginListTable.tsx:399
 msgid "Error updating plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:417
+#: src/tables/plugin/PluginListTable.tsx:419
 msgid "Deactivate"
 msgstr "Deaktivieren"
 
-#: src/tables/plugin/PluginListTable.tsx:426
+#: src/tables/plugin/PluginListTable.tsx:428
 msgid "Activate"
 msgstr "Aktivieren"
 
-#: src/tables/plugin/PluginListTable.tsx:457
+#: src/tables/plugin/PluginListTable.tsx:459
 msgid "Uninstall"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:489
+#: src/tables/plugin/PluginListTable.tsx:491
 msgid "Install plugin"
 msgstr "Plugin installieren"
 
-#: src/tables/plugin/PluginListTable.tsx:502
+#: src/tables/plugin/PluginListTable.tsx:504
 msgid "Install"
 msgstr "Installieren"
 
-#: src/tables/plugin/PluginListTable.tsx:506
+#: src/tables/plugin/PluginListTable.tsx:508
 msgid "Plugin installed successfully"
 msgstr "Plugin erfolgreich installiert"
 
-#: src/tables/plugin/PluginListTable.tsx:519
+#: src/tables/plugin/PluginListTable.tsx:521
 msgid "Uninstall Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:531
+#: src/tables/plugin/PluginListTable.tsx:533
 msgid "Confirm plugin uninstall"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:534
+#: src/tables/plugin/PluginListTable.tsx:536
 msgid "The selected plugin will be uninstalled."
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:535
+#: src/tables/plugin/PluginListTable.tsx:537
 msgid "This action cannot be undone."
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:541
+#: src/tables/plugin/PluginListTable.tsx:543
 msgid "Plugin uninstalled successfully"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:554
+#: src/tables/plugin/PluginListTable.tsx:556
 msgid "Delete Plugin"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:556
+#: src/tables/plugin/PluginListTable.tsx:558
 msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:568
+#: src/tables/plugin/PluginListTable.tsx:570
 msgid "Plugins reloaded"
 msgstr "Erweiterungen neu geladen"
 
-#: src/tables/plugin/PluginListTable.tsx:569
+#: src/tables/plugin/PluginListTable.tsx:571
 msgid "Plugins were reloaded successfully"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:585
+#: src/tables/plugin/PluginListTable.tsx:587
 msgid "Reload Plugins"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:594
+#: src/tables/plugin/PluginListTable.tsx:596
 msgid "Install Plugin"
 msgstr "Plugin installieren"
 
-#: src/tables/plugin/PluginListTable.tsx:613
+#: src/tables/plugin/PluginListTable.tsx:615
 msgid "Plugin detail"
 msgstr ""
 
-#: src/tables/plugin/PluginListTable.tsx:642
+#: src/tables/plugin/PluginListTable.tsx:644
 msgid "Sample"
 msgstr "Beispiel"
 
-#: src/tables/plugin/PluginListTable.tsx:647
+#: src/tables/plugin/PluginListTable.tsx:649
 #: src/tables/stock/StockItemTable.tsx:285
 msgid "Installed"
 msgstr "Installiert"
@@ -5227,7 +5227,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:281
 msgid "Include stock items for variant parts"
-msgstr ""
+msgstr "Lagerartikel für Teile-Varianten einschließen"
 
 #: src/tables/stock/StockItemTable.tsx:286
 msgid "Show stock items which are installed in other items"
