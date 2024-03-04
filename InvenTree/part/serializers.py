@@ -784,13 +784,6 @@ class PartSerializer(
         child=serializers.DictField(), source='category.get_path', read_only=True
     )
 
-    default_location = serializers.PrimaryKeyRelatedField(
-        source='category_default_location',
-        queryset=stock.models.StockLocation.objects.all(),
-        allow_null=True,
-        required=False,
-    )
-
     responsible = serializers.PrimaryKeyRelatedField(
         queryset=users.models.Owner.objects.all(),
         required=False,

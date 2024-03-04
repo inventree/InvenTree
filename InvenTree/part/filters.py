@@ -307,7 +307,7 @@ def annotate_default_location():
             .filter(default_location__isnull=False)
             .values('default_location')
         ),
-        Value(2),
+        Value(None),
         output_field=IntegerField(),
     )
 
