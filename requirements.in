@@ -53,7 +53,7 @@ tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 weasyprint                              # PDF generation
 
 # OpenTelemetry dependencies
-grpcio==1.54.2                          # Pinned to ensure docker image builds correctly
+grpcio
 opentelemetry-api
 opentelemetry-sdk
 opentelemetry-exporter-otlp
