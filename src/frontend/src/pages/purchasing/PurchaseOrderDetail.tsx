@@ -273,10 +273,10 @@ export default function PurchaseOrderDetail() {
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            disabled: order?.barcode_hash
+            hidden: order?.barcode_hash
           }),
           UnlinkBarcodeAction({
-            disabled: !order?.barcode_hash
+            hidden: !order?.barcode_hash
           })
         ]}
       />,

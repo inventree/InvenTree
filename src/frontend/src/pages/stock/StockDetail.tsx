@@ -317,10 +317,10 @@ export default function StockDetail() {
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            disabled: stockitem?.barcode_hash
+            hidden: stockitem?.barcode_hash
           }),
           UnlinkBarcodeAction({
-            disabled: !stockitem?.barcode_hash
+            hidden: !stockitem?.barcode_hash
           })
         ]}
       />,

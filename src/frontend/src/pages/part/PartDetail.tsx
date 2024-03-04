@@ -638,10 +638,10 @@ export default function PartDetail() {
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            disabled: part?.barcode_hash
+            hidden: part?.barcode_hash
           }),
           UnlinkBarcodeAction({
-            disabled: !part?.barcode_hash
+            hidden: !part?.barcode_hash
           })
         ]}
       />,
@@ -669,11 +669,11 @@ export default function PartDetail() {
         actions={[
           DuplicateItemAction({}),
           EditItemAction({
-            disabled: !user.hasChangeRole(UserRoles.part),
+            hidden: !user.hasChangeRole(UserRoles.part),
             onClick: () => editPart.open()
           }),
           DeleteItemAction({
-            disabled: part?.active
+            hidden: part?.active
           })
         ]}
       />
