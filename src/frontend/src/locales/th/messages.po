@@ -8,7 +8,7 @@ msgstr ""
 "Language: th\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-02-28 07:24\n"
+"PO-Revision-Date: 2024-03-05 09:03\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -486,7 +486,7 @@ msgstr ""
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
-#~ msgstr ""
+#~ msgstr "Select image"
 
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:51
@@ -2908,7 +2908,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:58
 #: src/pages/stock/StockDetail.tsx:155
 msgid "Location"
-msgstr "Location"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:67
 msgid "Stock item"
@@ -3059,7 +3059,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:80
 #~ msgid "Build Status"
-#~ msgstr ""
+#~ msgstr "Build Status"
 
 #: src/pages/build/BuildDetail.tsx:85
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:108
@@ -3078,7 +3078,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:48
 #: src/pages/sales/SalesOrderDetail.tsx:52
 msgid "Reference"
-msgstr "Reference"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:96
 #: src/pages/company/CompanyDetail.tsx:84
@@ -3114,7 +3114,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:139
 msgid "Issued By"
-msgstr "Issued By"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:145
 #: src/pages/part/PartDetail.tsx:296
@@ -3341,7 +3341,7 @@ msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:98
 msgid "Subcategories"
-msgstr "Subcategories"
+msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:105
 #: src/pages/stock/LocationDetail.tsx:95
@@ -3587,7 +3587,7 @@ msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:87
 msgid "Supplier Reference"
-msgstr "Supplier Reference"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:117
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:226
@@ -3621,7 +3621,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:111
 #: src/pages/sales/SalesOrderDetail.tsx:115
 msgid "Total Cost"
-msgstr "Total Cost"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:175
 #: src/pages/sales/ReturnOrderDetail.tsx:141
@@ -3666,11 +3666,11 @@ msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:89
 msgid "Sublocations"
-msgstr "Sublocations"
+msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:101
 msgid "External"
-msgstr "External"
+msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:110
 msgid "Top level stock location"
@@ -3690,7 +3690,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:110
 msgid "Last Updated"
-msgstr "Last Updated"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:137
 #: src/tables/build/BuildLineTable.tsx:38
@@ -3718,7 +3718,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:190
 msgid "Packaging"
-msgstr "Packaging"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:205
 #~ msgid "Edit stock item"
@@ -5548,3 +5548,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
