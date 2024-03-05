@@ -1,16 +1,17 @@
 {% extends "panel.html" %}
 
 {% load i18n %}
+{% load sso %}
 {% load inventree_extras %}
 {% load socialaccount %}
 {% load crispy_forms_tags %}
 {% load user_sessions i18n %}
 
-{% block label %}account{% endblock %}
+{% block label %}account{% endblock label %}
 
 {% block heading %}
 {% trans "Account Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% inventree_customize 'hide_password_reset' as hide_password_reset %}
@@ -22,7 +23,7 @@
 <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
     <span class='fas fa-user-cog'></span> {% trans "Edit" %}
 </div>
-{% endblock %}
+{% endblock actions %}
 
 {% block content %}
 {% mail_configured as mail_conf %}
@@ -60,9 +61,9 @@
             {% for emailaddress in user.emailaddress_set.all %}
             <div>
             <div class="ctrlHolder">
-                <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
+                <label for="email_radio_{{ forloop.counter }}" class="{% if emailaddress.primary %}primary_email{% endif %}">
 
-                    <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked" {%endif %} value="{{emailaddress.email}}" />
+                    <input id="email_radio_{{ forloop.counter }}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked" {% endif %} value="{{ emailaddress.email }}" />
 
                     {% if emailaddress.primary %}
                     <strong>{{ emailaddress.email }}</strong>
@@ -92,7 +93,7 @@
 
     {% else %}
     <div class='alert alert-block alert-danger'>
-        <strong>{% trans 'Warning:'%}</strong>
+        <strong>{% trans 'Warning:' %}</strong>
         {% trans "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc." %}
     </div>
 
@@ -112,62 +113,7 @@
     {% endif %}
 </div>
 
-<div class="row">
-    <div class='panel-heading'>
-        <h4>{% trans "Social Accounts" %}</h4>
-    </div>
-
-    <div class="col-md-6">
-        {% if social_form.accounts %}
-        <p>{% blocktrans %}You can sign in to your account using any of the following third party accounts:{% endblocktrans %}</p>
-
-
-        <form method="post" action="{% url 'socialaccount_connections' %}">
-            {% csrf_token %}
-
-            <fieldset>
-                {% if social_form.non_field_errors %}
-                <div id="errorMsg">{{ social_form.non_field_errors }}</div>
-                {% endif %}
-
-                {% for base_account in social_form.accounts %}
-                {% with base_account.get_provider_account as account %}
-                <div>
-                    <label for="id_account_{{ base_account.id }}">
-                        <input id="id_account_{{ base_account.id }}" type="radio" name="account"
-                            value="{{ base_account.id }}" />
-                        <span class="socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}">
-                            <span class='brand-icon'
-                                brand_name='{{account.get_brand.id}}'></span>{{account.get_brand.name}}</span>
-                        {{ account }}
-                    </label>
-                </div>
-                {% endwith %}
-                {% endfor %}
-
-                <div>
-                    <button class="btn btn-primary" type="submit">{% trans 'Remove' %}</button>
-                </div>
-
-            </fieldset>
-
-        </form>
-
-        {% else %}
-        <div class='alert alert-block alert-warning'>
-            {% trans 'There are no social network accounts connected to this account.' %}
-        </div>
-        {% endif %}
-    </div>
-
-    <div class="col-md-6">
-        <h5>{% trans 'Add a 3rd Party Account' %}</h5>
-        <div>
-            {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
-        </div>
-        {% include "socialaccount/snippets/login_extra.html" %}
-    </div>
-</div>
+{% include "InvenTree/settings/user_sso.html" %}
 
 <div class="row">
     <div class='panel-heading'>
@@ -265,11 +211,11 @@
         </table>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 (function() {
-var message = "{% trans 'Do you really want to remove the selected email address?' %}";
+var message = '{% trans "Do you really want to remove the selected email address?" escape %}';
 var actions = document.getElementsByName('action_remove');
 if (actions.length) {
 actions[0].addEventListener("click", function(e) {
@@ -279,4 +225,4 @@ e.preventDefault();
 });
 }
 })();
-{% endblock %}
+{% endblock js_ready %}

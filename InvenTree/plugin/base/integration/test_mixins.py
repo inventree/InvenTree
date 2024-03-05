@@ -1,17 +1,24 @@
 """Unit tests for base mixins for plugins."""
 
+import os
+
 from django.conf import settings
-from django.test import TestCase
-from django.urls import include, re_path, reverse
+from django.test import TestCase, tag
+from django.urls import include, path, re_path, reverse
 
 from error_report.models import Error
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 from plugin import InvenTreePlugin
 from plugin.base.integration.mixins import PanelMixin
 from plugin.helpers import MixinNotImplementedError
-from plugin.mixins import (APICallMixin, AppMixin, NavigationMixin,
-                           SettingsMixin, UrlsMixin)
+from plugin.mixins import (
+    APICallMixin,
+    AppMixin,
+    NavigationMixin,
+    SettingsMixin,
+    UrlsMixin,
+)
 from plugin.registry import registry
 from plugin.urls import PLUGIN_BASE
 
@@ -22,9 +29,15 @@ class BaseMixinDefinition:
     def test_mixin_name(self):
         """Test that the mixin registers itseld correctly."""
         # mixin name
-        self.assertIn(self.MIXIN_NAME, [item['key'] for item in self.mixin.registered_mixins])
+        self.assertIn(
+            self.MIXIN_NAME,
+            {item['key'] for item in self.mixin.registered_mixins.values()},
+        )
         # human name
-        self.assertIn(self.MIXIN_HUMAN_NAME, [item['human_name'] for item in self.mixin.registered_mixins])
+        self.assertIn(
+            self.MIXIN_HUMAN_NAME,
+            {item['human_name'] for item in self.mixin.registered_mixins.values()},
+        )
 
 
 class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
@@ -34,16 +47,19 @@ class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
     MIXIN_NAME = 'settings'
     MIXIN_ENABLE_CHECK = 'has_settings'
 
-    TEST_SETTINGS = {'SETTING1': {'default': '123', }}
+    TEST_SETTINGS = {'SETTING1': {'default': '123'}}
 
     def setUp(self):
         """Setup for all tests."""
+
         class SettingsCls(SettingsMixin, InvenTreePlugin):
             SETTINGS = self.TEST_SETTINGS
+
         self.mixin = SettingsCls()
 
         class NoSettingsCls(SettingsMixin, InvenTreePlugin):
             pass
+
         self.mixin_nothing = NoSettingsCls()
 
         super().setUp()
@@ -75,14 +91,18 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
 
     def setUp(self):
         """Setup for all tests."""
+
         class UrlsCls(UrlsMixin, InvenTreePlugin):
             def test():
                 return 'ccc'
-            URLS = [re_path('testpath', test, name='test'), ]
+
+            URLS = [path('testpath', test, name='test')]
+
         self.mixin = UrlsCls()
 
         class NoUrlsCls(UrlsMixin, InvenTreePlugin):
             pass
+
         self.mixin_nothing = NoUrlsCls()
 
     def test_function(self):
@@ -94,8 +114,12 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.base_url, target_url)
 
         # urlpattern
-        target_pattern = re_path(f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name)
-        self.assertEqual(self.mixin.urlpatterns.reverse_dict, target_pattern.reverse_dict)
+        target_pattern = re_path(
+            f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name
+        )
+        self.assertEqual(
+            self.mixin.urlpatterns.reverse_dict, target_pattern.reverse_dict
+        )
 
         # resolve the view
         self.assertEqual(self.mixin.urlpatterns.resolve('/testpath').func(), 'ccc')
@@ -118,8 +142,10 @@ class AppMixinTest(BaseMixinDefinition, TestCase):
 
     def setUp(self):
         """Setup for all tests."""
+
         class TestCls(AppMixin, InvenTreePlugin):
             pass
+
         self.mixin = TestCls()
 
     def test_function(self):
@@ -136,21 +162,24 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
 
     def setUp(self):
         """Setup for all tests."""
+
         class NavigationCls(NavigationMixin, InvenTreePlugin):
-            NAVIGATION = [
-                {'name': 'aa', 'link': 'plugin:test:test_view'},
-            ]
+            NAVIGATION = [{'name': 'aa', 'link': 'plugin:test:test_view'}]
             NAVIGATION_TAB_NAME = 'abcd1'
+
         self.mixin = NavigationCls()
 
         class NothingNavigationCls(NavigationMixin, InvenTreePlugin):
             pass
+
         self.nothing_mixin = NothingNavigationCls()
 
     def test_function(self):
         """Test that a correct configuration functions."""
         # check right configuration
-        self.assertEqual(self.mixin.navigation, [{'name': 'aa', 'link': 'plugin:test:test_view'}, ])
+        self.assertEqual(
+            self.mixin.navigation, [{'name': 'aa', 'link': 'plugin:test:test_view'}]
+        )
 
         # navigation name
         self.assertEqual(self.mixin.navigation_name, 'abcd1')
@@ -159,8 +188,10 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
     def test_fail(self):
         """Test that wrong links fail."""
         with self.assertRaises(NotImplementedError):
+
             class NavigationCls(NavigationMixin, InvenTreePlugin):
                 NAVIGATION = ['aa', 'aa']
+
             NavigationCls()
 
 
@@ -175,13 +206,10 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         """Setup for all tests."""
 
         class MixinCls(APICallMixin, SettingsMixin, InvenTreePlugin):
-            NAME = "Sample API Caller"
+            NAME = 'Sample API Caller'
 
             SETTINGS = {
-                'API_TOKEN': {
-                    'name': 'API Token',
-                    'protected': True,
-                },
+                'API_TOKEN': {'name': 'API Token', 'protected': True},
                 'API_URL': {
                     'name': 'External URL',
                     'description': 'Where is your API located?',
@@ -194,14 +222,21 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
             @property
             def api_url(self):
-                """Override API URL for this test"""
-                return "https://api.github.com"
+                """Override API URL for this test."""
+                return 'https://api.github.com'
 
             def get_external_url(self, simple: bool = True):
                 """Returns data from the sample endpoint."""
                 return self.api_call('orgs/inventree', simple_response=simple)
 
         self.mixin = MixinCls()
+
+        # If running in github workflow, make use of GITHUB_TOKEN
+        if settings.TESTING:
+            token = os.getenv('GITHUB_TOKEN', None)
+
+            if token:
+                self.mixin.set_setting('API_TOKEN', token)
 
         class WrongCLS(APICallMixin, InvenTreePlugin):
             pass
@@ -222,20 +257,23 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
         # api_headers
         headers = self.mixin.api_headers
-        self.assertEqual(headers, {'Bearer': '', 'Content-Type': 'application/json'})
+        self.assertEqual(headers['Content-Type'], 'application/json')
 
     def test_args(self):
         """Test that building up args work."""
         # api_build_url_args
         # 1 arg
-        result = self.mixin.api_build_url_args({'a': 'b'})
-        self.assertEqual(result, '?a=b')
+        result = self.mixin.api_build_url_args({'a': 'abc123'})
+        self.assertEqual(result, '?a=abc123')
+        # non string arg
+        result = self.mixin.api_build_url_args({'a': 1})
+        self.assertEqual(result, '?a=1')
         # more args
-        result = self.mixin.api_build_url_args({'a': 'b', 'c': 'd'})
-        self.assertEqual(result, '?a=b&c=d')
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': 42})
+        self.assertEqual(result, '?a=b&c=42')
         # list args
-        result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'e', 'f', ]})
-        self.assertEqual(result, '?a=b&c=d,e,f')
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'efgh', 1337]})
+        self.assertEqual(result, '?a=b&c=d,efgh,1337')
 
     def test_api_call(self):
         """Test that api calls work."""
@@ -251,14 +289,10 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertEqual(result.reason, 'OK')
 
-        # api_call with full url
-        result = self.mixin.api_call('orgs/inventree')
-        self.assertTrue(result)
-
         # api_call with post and data
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
-            json={"name": "morpheus", "job": "leader"},
+            json={'name': 'morpheus', 'job': 'leader'},
             method='POST',
             endpoint_is_url=True,
         )
@@ -266,8 +300,15 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertEqual(result['name'], 'morpheus')
 
+        # api_call with endpoint with leading slash
+        result = self.mixin.api_call('/orgs/inventree', simple_response=False)
+        self.assertTrue(result)
+        self.assertEqual(result.reason, 'OK')
+
         # api_call with filter
-        result = self.mixin.api_call('repos/inventree/InvenTree/stargazers', url_args={'page': '2'})
+        result = self.mixin.api_call(
+            'repos/inventree/InvenTree/stargazers', url_args={'page': '2'}
+        )
         self.assertTrue(result)
 
     def test_function_errors(self):
@@ -283,17 +324,16 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # Too many data arguments
         with self.assertRaises(ValueError):
             self.mixin.api_call(
-                'https://reqres.in/api/users/',
-                json={"a": 1, }, data={"a": 1},
+                'https://reqres.in/api/users/', json={'a': 1}, data={'a': 1}
             )
 
         # Sending a request with a wrong data format should result in 40
         result = self.mixin.api_call(
             'https://reqres.in/api/users/',
-            data={"name": "morpheus", "job": "leader"},
+            data={'name': 'morpheus', 'job': 'leader'},
             method='POST',
             endpoint_is_url=True,
-            simple_response=False
+            simple_response=False,
         )
 
         self.assertEqual(result.status_code, 400)
@@ -303,12 +343,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 class PanelMixinTests(InvenTreeTestCase):
     """Test that the PanelMixin plugin operates correctly."""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'stock',
-    ]
+    fixtures = ['category', 'part', 'location', 'stock']
 
     roles = 'all'
 
@@ -316,14 +351,19 @@ class PanelMixinTests(InvenTreeTestCase):
         """Test that the sample panel plugin is installed."""
         plugins = registry.with_mixin('panel')
 
-        self.assertTrue(len(plugins) > 0)
+        self.assertTrue(len(plugins) == 0)
+
+        # Now enable the plugin
+        registry.set_plugin_state('samplepanel', True)
+        plugins = registry.with_mixin('panel')
 
         self.assertIn('samplepanel', [p.slug for p in plugins])
 
-        plugins = registry.with_mixin('panel', active=True)
-
+        # Find 'inactive' plugins (should be None)
+        plugins = registry.with_mixin('panel', active=False)
         self.assertEqual(len(plugins), 0)
 
+    @tag('cui')
     def test_disabled(self):
         """Test that the panels *do not load* if the plugin is not enabled."""
         plugin = registry.get_plugin('samplepanel')
@@ -342,9 +382,7 @@ class PanelMixinTests(InvenTreeTestCase):
             reverse('stock-item-detail', kwargs={'pk': 2}),
             reverse('stock-location-detail', kwargs={'pk': 1}),
         ]:
-            response = self.client.get(
-                url
-            )
+            response = self.client.get(url)
 
             self.assertEqual(response.status_code, 200)
 
@@ -353,6 +391,7 @@ class PanelMixinTests(InvenTreeTestCase):
             self.assertNotIn('Hello world', str(response.content))
             self.assertNotIn('Custom Part Panel', str(response.content))
 
+    @tag('cui')
     def test_enabled(self):
         """Test that the panels *do* load if the plugin is enabled."""
         plugin = registry.get_plugin('samplepanel')
@@ -430,6 +469,7 @@ class PanelMixinTests(InvenTreeTestCase):
     def test_mixin(self):
         """Test that ImplementationError is raised."""
         with self.assertRaises(MixinNotImplementedError):
+
             class Wrong(PanelMixin, InvenTreePlugin):
                 pass
 

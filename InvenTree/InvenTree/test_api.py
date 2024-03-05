@@ -6,9 +6,8 @@ from django.urls import reverse
 
 from rest_framework import status
 
-from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.helpers import InvenTreeTestCase
-from users.models import RuleSet
+from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
+from users.models import RuleSet, update_group_roles
 
 
 class HTMLAPITests(InvenTreeTestCase):
@@ -18,6 +17,7 @@ class HTMLAPITests(InvenTreeTestCase):
     which raised an AssertionError when using the HTML API interface,
     while the regular JSON interface continued to work as expected.
     """
+
     roles = 'all'
 
     def test_part_api(self):
@@ -25,7 +25,7 @@ class HTMLAPITests(InvenTreeTestCase):
         url = reverse('api-part-list')
 
         # Check JSON response
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get(url, headers={'accept': 'application/json'})
         self.assertEqual(response.status_code, 200)
 
     def test_build_api(self):
@@ -33,7 +33,7 @@ class HTMLAPITests(InvenTreeTestCase):
         url = reverse('api-build-list')
 
         # Check JSON response
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get(url, headers={'accept': 'application/json'})
         self.assertEqual(response.status_code, 200)
 
     def test_stock_api(self):
@@ -41,7 +41,7 @@ class HTMLAPITests(InvenTreeTestCase):
         url = reverse('api-stock-list')
 
         # Check JSON response
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get(url, headers={'accept': 'application/json'})
         self.assertEqual(response.status_code, 200)
 
     def test_company_list(self):
@@ -49,7 +49,7 @@ class HTMLAPITests(InvenTreeTestCase):
         url = reverse('api-company-list')
 
         # Check JSON response
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get(url, headers={'accept': 'application/json'})
         self.assertEqual(response.status_code, 200)
 
     def test_not_found(self):
@@ -61,12 +61,7 @@ class HTMLAPITests(InvenTreeTestCase):
 class APITests(InvenTreeAPITestCase):
     """Tests for the InvenTree API."""
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-        'stock'
-    ]
+    fixtures = ['location', 'category', 'part', 'stock']
     token = None
     auto_login = False
 
@@ -74,11 +69,11 @@ class APITests(InvenTreeAPITestCase):
         """Helper function to use basic auth."""
         # Use basic authentication
 
-        authstring = bytes("{u}:{p}".format(u=self.username, p=self.password), "ascii")
+        authstring = bytes('{u}:{p}'.format(u=self.username, p=self.password), 'ascii')
 
         # Use "basic" auth by default
-        auth = b64encode(authstring).decode("ascii")
-        self.client.credentials(HTTP_AUTHORIZATION="Basic {auth}".format(auth=auth))
+        auth = b64encode(authstring).decode('ascii')
+        self.client.credentials(HTTP_AUTHORIZATION='Basic {auth}'.format(auth=auth))
 
     def tokenAuth(self):
         """Helper function to use token auth."""
@@ -125,6 +120,10 @@ class APITests(InvenTreeAPITestCase):
         Also tests that it is *not* accessible if the client is not logged in.
         """
         url = reverse('api-user-roles')
+
+        # Delete all rules
+        self.group.rule_sets.all().delete()
+        update_group_roles(self.group)
 
         response = self.client.get(url, format='json')
 
@@ -258,42 +257,148 @@ class APITests(InvenTreeAPITestCase):
 
 
 class BulkDeleteTests(InvenTreeAPITestCase):
-    """Unit tests for the BulkDelete endpoints"""
+    """Unit tests for the BulkDelete endpoints."""
 
     superuser = True
 
     def test_errors(self):
-        """Test that the correct errors are thrown"""
-
+        """Test that the correct errors are thrown."""
         url = reverse('api-stock-test-result-list')
 
         # DELETE without any of the required fields
-        response = self.delete(
-            url,
-            {},
-            expected_code=400
-        )
+        response = self.delete(url, {}, expected_code=400)
 
-        self.assertIn('List of items or filters must be provided for bulk deletion', str(response.data))
+        self.assertIn(
+            'List of items or filters must be provided for bulk deletion',
+            str(response.data),
+        )
 
         # DELETE with invalid 'items'
-        response = self.delete(
-            url,
-            {
-                'items': {"hello": "world"},
-            },
-            expected_code=400,
-        )
+        response = self.delete(url, {'items': {'hello': 'world'}}, expected_code=400)
 
         self.assertIn("'items' must be supplied as a list object", str(response.data))
 
         # DELETE with invalid 'filters'
-        response = self.delete(
-            url,
-            {
-                'filters': [1, 2, 3],
-            },
-            expected_code=400,
-        )
+        response = self.delete(url, {'filters': [1, 2, 3]}, expected_code=400)
 
         self.assertIn("'filters' must be supplied as a dict object", str(response.data))
+
+
+class SearchTests(InvenTreeAPITestCase):
+    """Unit tests for global search endpoint."""
+
+    fixtures = [
+        'category',
+        'part',
+        'company',
+        'location',
+        'supplier_part',
+        'stock',
+        'order',
+        'sales_order',
+    ]
+
+    def test_empty(self):
+        """Test empty request."""
+        data = ['', None, {}]
+
+        for d in data:
+            response = self.post(reverse('api-search'), d, expected_code=400)
+            self.assertIn('Search term must be provided', str(response.data))
+
+    def test_results(self):
+        """Test individual result types."""
+        response = self.post(
+            reverse('api-search'),
+            {'search': 'chair', 'limit': 3, 'part': {}, 'build': {}},
+            expected_code=200,
+        )
+
+        # No build results
+        self.assertEqual(response.data['build']['count'], 0)
+
+        # 3 (of 5) part results
+        self.assertEqual(response.data['part']['count'], 5)
+        self.assertEqual(len(response.data['part']['results']), 3)
+
+        # Other results not included
+        self.assertNotIn('purchaseorder', response.data)
+        self.assertNotIn('salesorder', response.data)
+
+        # Search for orders
+        response = self.post(
+            reverse('api-search'),
+            {'search': '01', 'limit': 2, 'purchaseorder': {}, 'salesorder': {}},
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['purchaseorder']['count'], 1)
+        self.assertEqual(response.data['salesorder']['count'], 0)
+
+        self.assertNotIn('stockitem', response.data)
+        self.assertNotIn('build', response.data)
+
+    def test_permissions(self):
+        """Test that users with insufficient permissions are handled correctly."""
+        # First, remove all roles
+        for ruleset in self.group.rule_sets.all():
+            ruleset.can_view = False
+            ruleset.can_change = False
+            ruleset.can_delete = False
+            ruleset.can_add = False
+            ruleset.save()
+
+        models = [
+            'build',
+            'company',
+            'manufacturerpart',
+            'supplierpart',
+            'part',
+            'partcategory',
+            'purchaseorder',
+            'stockitem',
+            'stocklocation',
+            'salesorder',
+        ]
+
+        query = {'search': 'c', 'limit': 3}
+
+        for mdl in models:
+            query[mdl] = {}
+
+        response = self.post(reverse('api-search'), query, expected_code=200)
+
+        # Check for 'permission denied' error
+        for mdl in models:
+            self.assertEqual(
+                response.data[mdl]['error'],
+                'User does not have permission to view this model',
+            )
+
+        # Assign view roles for some parts
+        self.assignRole('build.view')
+        self.assignRole('part.view')
+
+        response = self.post(reverse('api-search'), query, expected_code=200)
+
+        # Check for expected results, based on permissions
+        # We expect results to be returned for the following model types
+        has_permission = [
+            'build',
+            'manufacturerpart',
+            'supplierpart',
+            'part',
+            'partcategory',
+            'stocklocation',
+            'stockitem',
+        ]
+
+        for mdl in models:
+            result = response.data[mdl]
+            if mdl in has_permission:
+                self.assertIn('count', result)
+            else:
+                self.assertIn('error', result)
+                self.assertEqual(
+                    result['error'], 'User does not have permission to view this model'
+                )

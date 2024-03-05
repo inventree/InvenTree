@@ -6,7 +6,7 @@
 
 {% block sidebar %}
 {% include 'part/part_sidebar.html' %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block breadcrumb_tree %}
 <div id="breadcrumb-tree"></div>
@@ -53,6 +53,30 @@
 </div>
 {% endif %}
 
+{% settings_value 'STOCKTAKE_ENABLE' as stocktake_enable %}
+{% settings_value 'DISPLAY_STOCKTAKE_TAB' user=request.user as show_stocktake %}
+{% if stocktake_enable and show_stocktake %}
+<div class='panel panel-hidden' id='panel-stocktake'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Stocktake" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.stocktake.add %}
+                <button class='btn btn-success' type='button' id='btn-stocktake' title='{% trans "Add stocktake information" %}'>
+                    <span class='fas fa-clipboard-check'></span> {% trans "Stocktake" %}
+                </button>
+                {% endif %}
+                <!-- TODO: Buttons -->
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "part/part_stocktake.html" %}
+    </div>
+</div>
+{% endif %}
+
 <div class='panel panel-hidden' id='panel-test-templates'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -69,9 +93,7 @@
     </div>
     <div class='panel-content'>
         <div id='test-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="parttests" %}
-            </div>
+            {% include "filter_list.html" with id="parttests" %}
         </div>
 
         <table class='table table-striped table-condensed' data-toolbar='#test-button-toolbar' id='test-template-table'></table>
@@ -92,9 +114,7 @@
     </div>
     <div class='panel-content'>
         <div id='po-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                {% include "filter_list.html" with id="partpurchaseorders" %}
-            </div>
+            {% include "filter_list.html" with id="partpurchaseorders" %}
         </div>
 
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#po-button-bar'>
@@ -108,9 +128,7 @@
     </div>
     <div class='panel-content'>
         <div id='so-button-bar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="salesorder" %}
-            </div>
+            {% include "filter_list.html" with id="salesorder" %}
         </div>
 
         <table class='table table-striped table-condensed po-table' id='sales-order-table' data-toolbar='#so-button-bar'>
@@ -121,11 +139,8 @@
         <h4>{% trans "Sales Order Allocations" %}</h4>
     </div>
     <div class='panel-content'>
-
         <div id='sales-order-allocation-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="salesorderallocation" %}
-            </div>
+            {% include "filter_list.html" with id="salesorderallocation" %}
         </div>
         <table class='table table-striped table-condensed' id='sales-order-allocation-table' data-toolbar='#sales-order-allocation-button-toolbar'></table>
     </div>
@@ -166,11 +181,7 @@
     </div>
     <div class='panel-content'>
         <div id='variant-button-toolbar'>
-            <div class='button-toolbar container-fluid'>
-                <div class='btn-group' role='group'>
-                </div>
-                {% include "filter_list.html" with id="variants" %}
-            </div>
+            {% include "filter_list.html" with id="variants" %}
         </div>
 
         <table class='table table-striped table-condensed' id='variants-table' data-toolbar='#variant-button-toolbar'>
@@ -194,11 +205,7 @@
     </div>
     <div class='panel-content'>
         <div id='param-button-toolbar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                <div class='btn-group' role='group'>
-                    {% include "filter_list.html" with id="parameters" %}
-                </div>
-            </div>
+            {% include "filter_list.html" with id="parameters" %}
         </div>
         <table id='parameter-table' class='table table-condensed table-striped' data-toolbar="#param-button-toolbar"></table>
     </div>
@@ -235,9 +242,7 @@
     </div>
     <div class='panel-content'>
         <div id='related-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="related" %}
-            </div>
+            {% include "filter_list.html" with id="related" %}
         </div>
 
         <table id='related-parts-table' class='table table-striped table-condensed' data-toolbar='#related-button-toolbar'></table>
@@ -293,9 +298,7 @@
     </div>
     <div class='panel-content'>
         <div id='assembly-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="usedin" %}
-            </div>
+            {% include "filter_list.html" with id="usedin" %}
         </div>
 
         <table class="table table-striped table-condensed" id='used-table' data-toolbar='#assembly-button-toolbar'>
@@ -322,9 +325,7 @@
     </div>
     <div class='panel-content'>
         <div id='build-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="build" %}
-            </div>
+            {% include "filter_list.html" with id="build" %}
         </div>
 
         <table class='table table-striped table-condensed' data-toolbar='#build-button-toolbar' id='build-table'>
@@ -338,9 +339,7 @@
     </div>
     <div class='panel-content'>
         <div id='build-allocation-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="buildorderallocation" %}
-            </div>
+            {% include "filter_list.html" with id="buildorderallocation" %}
         </div>
         <table class='table table-striped table-condensed' id='build-order-allocation-table' data-toolbar='#build-allocation-button-toolbar'></table>
     </div>
@@ -361,17 +360,7 @@
     </div>
     <div class='panel-content'>
         <div id='supplier-button-toolbar'>
-            <div class='btn-group'>
-                <div id='opt-dropdown' class="btn-group">
-                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                        <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>
-                            <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}
-                        </a></li>
-                    </ul>
-                </div>
-                {% include "filter_list.html" with id="supplier-part" %}
-            </div>
+            {% include "filter_list.html" with id="supplier-part" %}
         </div>
 
         <table class="table table-striped table-condensed" id='supplier-part-table' data-toolbar='#supplier-button-toolbar'>
@@ -392,26 +381,18 @@
     <div class='panel-content'>
         <div class='panel-content'>
             <div id='manufacturer-button-toolbar'>
-                <div class='btn-group'>
-                    <div id='opt-dropdown' class="btn-group">
-                        <button id='manufacturer-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a class='dropdown-item' href='#' id='manufacturer-part-delete' title='{% trans "Delete manufacturer parts" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
-                        </ul>
-                        {% include "filter_list.html" with id="manufacturer-part" %}
-                    </div>
-                </div>
+                {% include "filter_list.html" with id="manufacturer-part" %}
             </div>
             <table class='table table-condensed table-striped' id='manufacturer-part-table' data-toolbar='#manufacturer-button-toolbar'></table>
         </div>
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_load %}
 {{ block.super }}
-{% endblock %}
+{% endblock js_load %}
 
 {% block js_ready %}
     {{ block.super }}
@@ -423,7 +404,7 @@
             'part-notes',
             '{% url "api-part-detail" part.pk %}',
             {
-                editable: {% if roles.part.change %}true{% else %}false{% endif %},
+                editable: {% js_bool roles.part.change %},
             }
         );
     });
@@ -440,6 +421,34 @@
 
             chart = loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
         });
+    });
+
+    // Load the "stocktake" tab
+    onPanelLoad('stocktake', function() {
+        loadPartStocktakeTable({{ part.pk }}, {
+            allow_edit: {% js_bool roles.stocktake.change %},
+            allow_delete: {% js_bool roles.stocktake.delete %},
+        });
+
+        {% if roles.stocktake.add %}
+        $('#btn-stocktake').click(function() {
+            generateStocktakeReport({
+                part: {
+                    value: {{ part.pk }}
+                },
+                location: {
+                    tree_picker: {
+                        url: '{% url "api-location-tree" %}',
+                        default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                    },
+                },
+                generate_report: {
+                    value: false,
+                },
+                update_parts: {},
+            });
+        });
+        {% endif %}
     });
 
     // Load the "suppliers" tab
@@ -479,8 +488,6 @@
             }
         );
 
-        linkButtonsToSelection($("#supplier-part-table"), ['#supplier-part-options']);
-
         loadManufacturerPartTable(
             '#manufacturer-part-table',
             "{% url 'api-manufacturer-part-list' %}",
@@ -493,15 +500,13 @@
             }
         );
 
-        linkButtonsToSelection($("#manufacturer-part-table"), ['#manufacturer-part-options']);
-
         $("#manufacturer-part-delete").click(function() {
 
             var selectionss = getTableData('#manufacturer-part-table');
 
             deleteManufacturerParts(selections, {
                 success: function() {
-                    $("#manufacturer-part-table").bootstrapTable("refresh");
+                    $("#manufacturer-part-table").bootstrapTable('refresh');
                 }
             });
         });
@@ -511,7 +516,7 @@
             createManufacturerPart({
                 part: {{ part.pk }},
                 onSuccess: function() {
-                    $("#manufacturer-part-table").bootstrapTable("refresh");
+                    $("#manufacturer-part-table").bootstrapTable('refresh');
                 }
             });
         });
@@ -578,12 +583,6 @@
             sub_part_detail: true,
         });
 
-        linkButtonsToSelection($("#bom-table"),
-            [
-                "#bom-item-delete",
-            ]
-        );
-
         $('#bom-item-delete').click(function() {
 
             // Get a list of the selected BOM items
@@ -630,7 +629,11 @@
 
         {% if report_enabled %}
         $("#print-bom-report").click(function() {
-            printBomReports([{{ part.pk }}]);
+            printReports({
+                items: [{{ part.pk }}],
+                key: 'part',
+                url: '{% url "api-bom-report-list" %}'
+            });
         });
         {% endif %}
     });
@@ -653,7 +656,7 @@
                         value: {{ part.pk }},
                     },
                     part_2: {
-                        label: '{% trans "Related Part" %}',
+                        label: '{% trans "Related Part" escape %}',
                         filters: {
                             exclude_id: {{ part.pk }},
                             exclude_related: {{ part.pk }},
@@ -661,10 +664,8 @@
                     }
                 },
                 focus: 'part_2',
-                title: '{% trans "Add Related Part" %}',
-                onSuccess: function() {
-                    $('#related-parts-table').bootstrapTable('refresh');
-                }
+                title: '{% trans "Add Related Part" escape %}',
+                refreshTable: '#related-parts-table',
             });
         });
 
@@ -684,7 +685,7 @@
         $('#new-variant').click(function() {
 
             duplicatePart(
-                {{ part.pk}},
+                {{ part.pk }},
                 {
                     variant: true,
                 }
@@ -708,7 +709,6 @@
         });
     });
 
-
     $("#part-order2").click(function() {
         inventreeGet(
             '{% url "api-part-detail" part.pk %}',
@@ -717,7 +717,11 @@
                 success: function(part) {
                     orderParts(
                         [part],
-                        {}
+                        {
+                            onSuccess: function() {
+                                $("#purchase-order-table").bootstrapTable('refresh');
+                            }
+                        }
                     );
                 }
             }
@@ -742,21 +746,11 @@
 
             constructForm('{% url "api-part-test-template-list" %}', {
                 method: 'POST',
-                fields: {
-                    test_name: {},
-                    description: {},
-                    required: {},
-                    requires_value: {},
-                    requires_attachment: {},
-                    part: {
-                        value: {{ part.pk }},
-                        hidden: true,
-                    }
-                },
-                title: '{% trans "Add Test Result Template" %}',
-                onSuccess: function() {
-                    $("#test-template-table").bootstrapTable("refresh");
-                }
+                fields: partTestTemplateFields({
+                    part: {{ part.pk }}
+                }),
+                title: '{% trans "Add Test Result Template" escape %}',
+                refreshTable: '#test-template-table',
             });
         });
     });
@@ -780,11 +774,6 @@
                 part_detail: true,
                 supplier_part_detail: true,
             },
-            groupByField: 'location',
-            buttons: [
-                '#stock-options',
-            ],
-            url: "{% url 'api-stock-list' %}",
         });
 
         $('#item-create').click(function () {
@@ -806,45 +795,13 @@
             }
         );
 
-        $('#param-table').inventreeTable({
-        });
-
         {% if roles.part.add %}
         $('#param-create').click(function() {
-
-            constructForm('{% url "api-part-parameter-list" %}', {
-                method: 'POST',
-                fields: {
-                    part: {
-                        value: {{ part.pk }},
-                        hidden: true,
-                    },
-                    template: {},
-                    data: {},
-                },
-                title: '{% trans "Add Parameter" %}',
-                onSuccess: function() {
-                    $('#parameter-table').bootstrapTable('refresh');
-                }
+            createPartParameter({{ part.pk }}, {
+                refreshTable: '#parameter-table'
             });
         });
         {% endif %}
-
-        $('.param-edit').click(function() {
-            var button = $(this);
-
-            launchModalForm(button.attr('url'), {
-                reload: true,
-            });
-        });
-
-        $('.param-delete').click(function() {
-            var button = $(this);
-
-            launchModalForm(button.attr('url'), {
-                reload: true,
-            });
-        });
     });
 
     onPanelLoad("part-attachments", function() {
@@ -859,20 +816,6 @@
                 }
             }
         });
-
-        enableDragAndDrop(
-            '#attachment-dropzone',
-            '{% url "api-part-attachment-list" %}',
-            {
-                data: {
-                    part: {{ part.id }},
-                },
-                label: 'attachment',
-                success: function(data, status, xhr) {
-                    reloadAttachmentTable();
-                }
-            }
-        );
     });
 
     onPanelLoad('pricing', function() {
@@ -895,4 +838,4 @@
         }
     });
 
-{% endblock %}
+{% endblock js_ready %}

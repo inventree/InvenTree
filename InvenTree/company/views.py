@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from InvenTree.views import InvenTreeRoleMixin, QRCodeView
+from InvenTree.views import InvenTreeRoleMixin
 from plugin.views import InvenTreePluginViewMixin
 
 from .models import Company, ManufacturerPart, SupplierPart
@@ -20,8 +20,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
     permission_required = 'company.view_company'
 
     def get_context_data(self, **kwargs):
-        """Add extra context data to the company index page"""
-
+        """Add extra context data to the company index page."""
         ctx = super().get_context_data(**kwargs)
 
         # Provide custom context data to the template,
@@ -45,14 +44,14 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
                 'button_text': _('New Customer'),
                 'filters': {'is_customer': 'true'},
                 'pagetype': 'customers',
-            }
+            },
         }
 
         default = {
             'title': _('Companies'),
             'button_text': _('New Company'),
             'filters': {},
-            'pagetype': 'companies'
+            'pagetype': 'companies',
         }
 
         context = None
@@ -89,6 +88,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
 
 class CompanyDetail(InvenTreePluginViewMixin, DetailView):
     """Detail view for Company object."""
+
     context_obect_name = 'company'
     template_name = 'company/detail.html'
     queryset = Company.objects.all()
@@ -98,6 +98,7 @@ class CompanyDetail(InvenTreePluginViewMixin, DetailView):
 
 class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):
     """Detail view for ManufacturerPart."""
+
     model = ManufacturerPart
     template_name = 'company/manufacturer_part_detail.html'
     context_object_name = 'part'
@@ -107,23 +108,9 @@ class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):
 
 class SupplierPartDetail(InvenTreePluginViewMixin, DetailView):
     """Detail view for SupplierPart."""
+
     model = SupplierPart
     template_name = 'company/supplier_part_detail.html'
     context_object_name = 'part'
     queryset = SupplierPart.objects.all()
     permission_required = 'purchase_order.view'
-
-
-class SupplierPartQRCode(QRCodeView):
-    """View for displaying a QR code for a StockItem object."""
-
-    ajax_form_title = _("Stock Item QR Code")
-    role_required = 'stock.view'
-
-    def get_qr_data(self):
-        """Generate QR code data for the StockItem."""
-        try:
-            part = SupplierPart.objects.get(id=self.pk)
-            return part.format_barcode()
-        except SupplierPart.DoesNotExist:
-            return None

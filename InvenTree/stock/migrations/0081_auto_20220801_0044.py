@@ -34,13 +34,6 @@ def update_pathstring(apps, schema_editor):
         print(f"\n--- Updated 'pathstring' for {n} StockLocation objects ---\n")
 
 
-def nupdate_pathstring(apps, schema_editor):
-    """Empty function for reverse migration compatibility"""
-
-    pass
-
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -50,6 +43,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             update_pathstring,
-            reverse_code=nupdate_pathstring
+            reverse_code=migrations.RunPython.noop
         )
     ]

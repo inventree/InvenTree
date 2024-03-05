@@ -26,10 +26,9 @@
 {% endblock heading %}
 
 {% block actions %}
-{% if user.is_staff and perms.company.change_company %}
-{% url 'admin:company_supplierpart_change' part.pk as url %}
+{% admin_url user "company.supplierpart" part.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
+
 {% if barcodes %}
 <!-- Barcode actions menu -->
 <div class='btn-group' role='group'>
@@ -81,13 +80,13 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb'
+<img class='part-thumb' alt="{% trans 'Part image' %}"
 {% if part.part.image %}
 src='{{ part.part.image.preview.url }}'
 {% else %}
 src="{% static 'img/blank_image.png' %}"
 {% endif %}/>
-{% endblock %}
+{% endblock thumbnail %}
 
 {% block details %}
 
@@ -98,7 +97,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Internal Part" %}</td>
         <td>
             {% if part.part %}
-            <a href="{% url 'part-detail' part.part.id %}?display=part-suppliers">{{ part.part.full_name }}</a>{% include "clip.html"%}
+            <a href="{% url 'part-detail' part.part.id %}?display=part-suppliers">{{ part.part.full_name }}</a>{% include "clip.html" %}
             {% endif %}
         </td>
     </tr>
@@ -106,7 +105,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td></td>
         <td>{% trans "Description" %}</td>
-        <td>{{ part.description }}{% include "clip.html"%}</td>
+        <td>{{ part.description }}{% include "clip.html" %}</td>
     </tr>
     {% endif %}
     {% if part.availability_updated %}
@@ -116,13 +115,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% decimal part.available %}<span class='badge bg-dark rounded-pill float-right'>{% render_date part.availability_updated %}</span></td>
     </tr>
     {% endif %}
-    {% if part.barcode_hash %}
-    <tr>
-        <td><span class='fas fa-barcode'></span></td>
-        <td>{% trans "Barcode Identifier" %}</td>
-        <td {% if part.barcode_data %}title='{{ part.barcode_data }}'{% endif %}>{{ part.barcode_hash }}</td>
-    </tr>
-    {% endif %}
+    {% include "barcode_data.html" with instance=part %}
 </table>
 
 {% endblock details %}
@@ -135,7 +128,7 @@ src="{% static 'img/blank_image.png' %}"
             <td><span class='fas fa-building'></span></td>
             <td>{% trans "Supplier" %}</td>
             <td>{% if part.supplier %}
-                <a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a>{% include "clip.html"%}
+                <a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a>{% include "clip.html" %}
                 {% else %}
                 <em>{% trans "No supplier information available" %}</em>
                 {% endif %}
@@ -144,53 +137,66 @@ src="{% static 'img/blank_image.png' %}"
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "SKU" %}</td>
-            <td>{{ part.SKU }}{% include "clip.html"%}</tr>
+            <td>{{ part.SKU }}{% include "clip.html" %}</tr>
         </tr>
         {% if part.manufacturer_part.manufacturer %}
         <tr>
             <td><span class='fas fa-industry'></span></td>
             <td>{% trans "Manufacturer" %}</td>
             <td><a href="{% url 'company-detail' part.manufacturer_part.manufacturer.id %}">
-            {{ part.manufacturer_part.manufacturer.name }}</a>{% include "clip.html"%}</td>
+            {{ part.manufacturer_part.manufacturer.name }}</a>{% include "clip.html" %}</td>
         </tr>
         {% endif %}
         {% if part.manufacturer_part.MPN %}
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "MPN" %}</td>
-            <td><a href="{% url 'manufacturer-part-detail' part.manufacturer_part.id %}">{{ part.manufacturer_part.MPN }}</a>{% include "clip.html"%}</td>
+            <td><a href="{% url 'manufacturer-part-detail' part.manufacturer_part.id %}">{{ part.manufacturer_part.MPN }}</a>{% include "clip.html" %}</td>
         </tr>
         {% endif %}
         {% if part.packaging %}
         <tr>
             <td><span class='fas fa-cube'></span></td>
             <td>{% trans "Packaging" %}</td>
-            <td>{{ part.packaging }}{% include "clip.html"%}</td>
+            <td>{{ part.packaging }}{% include "clip.html" %}</td>
         </tr>
         {% endif %}
-        {% if part.pack_size != 1.0 %}
+        {% if part.pack_quantity %}
         <tr>
             <td><span class='fas fa-box'></span></td>
-            <td>{% trans "Pack Quantity" %}</td>
-            <td>{% decimal part.pack_size %} {% include "part/part_units.html" with part=part.part %}</td>
+            <td>
+                {% trans "Units" %}
+                {% if part.part.units %}
+                <span class='float-right'>
+                    <em>[ {% include "part/part_units.html" with part=part.part %}]</em>
+                </span>
+                {% endif %}
+            </td>
+            <td>
+                {{ part.pack_quantity }}
+                {% include "clip.html" %}
+                {% if part.part.units and part.pack_quantity_native %}
+                <span class='fas fa-info-circle float-right' title='{% decimal part.pack_quantity_native %} {{ part.part.units }}'></span>
+                {% endif %}
+            </td>
         </tr>
         {% endif %}
         {% if part.note %}
         <tr>
             <td><span class='fas fa-sticky-note'></span></td>
             <td>{% trans "Note" %}</td>
-            <td>{{ part.note }}{% include "clip.html"%}</td>
+            <td>{{ part.note }}{% include "clip.html" %}</td>
         </tr>
         {% endif %}
         {% if part.link %}
         <tr>
             <td><span class='fas fa-link'></span></td>
             <td>{% trans "External Link" %}</td>
-            <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
+            <td>{% include 'clip_link.html' with link=part.link new_window=True %}</td>
         </tr>
         {% endif %}
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 {% block page_content %}
 
@@ -227,9 +233,7 @@ src="{% static 'img/blank_image.png' %}"
     </div>
     <div class='panel-content'>
         <div id='button-bar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id='purchaseorder' %}
-            </div>
+            {% include "filter_list.html" with id='purchaseorder' %}
         </div>
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
         </table>
@@ -251,10 +255,8 @@ src="{% static 'img/blank_image.png' %}"
         </div>
     </div>
     <div class='panel-content'>
-        <div id='price-break-toolbar' class='btn-group'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id='supplierpricebreak' %}
-            </div>
+        <div id='price-break-toolbar'>
+            {% include "filter_list.html" with id='supplierpricebreak' %}
         </div>
 
         <table class='table table-striped table-condensed' id='price-break-table' data-toolbar='#price-break-toolbar'>
@@ -262,7 +264,7 @@ src="{% static 'img/blank_image.png' %}"
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -270,10 +272,10 @@ src="{% static 'img/blank_image.png' %}"
 {% if barcodes %}
 
 $("#show-qr-code").click(function() {
-    launchModalForm("{% url 'supplier-part-qr' part.pk %}",
-    {
-        no_post: true,
-    });
+    showQRDialog(
+        '{% trans "Supplier Part QR Code" escape %}',
+        '{"supplierpart": {{ part.pk }} }'
+    );
 });
 
 $("#barcode-link").click(function() {
@@ -282,7 +284,7 @@ $("#barcode-link").click(function() {
             supplierpart: {{ part.pk }},
         },
         {
-            title: '{% trans "Link Barcode to Supplier Part" %}',
+            title: '{% trans "Link Barcode to Supplier Part" escape %}',
         }
     );
 });
@@ -299,27 +301,12 @@ loadSupplierPriceBreakTable({
 });
 
 $('#new-price-break').click(function() {
-
-    constructForm(
-        '{% url "api-part-supplier-price-list" %}',
-        {
-            method: 'POST',
-            fields: {
-                quantity: {},
-                part: {
-                    value: {{ part.pk }},
-                    hidden: true,
-                },
-                price: {},
-                price_currency: {
-                },
-            },
-            title: '{% trans "Add Price Break" %}',
-            onSuccess: function() {
-                $("#price-break-table").bootstrapTable("refresh");
-            }
+    createSupplierPartPriceBreak({{ part.pk }}, {
+        onSuccess: function() {
+            $("#price-break-table").bootstrapTable('refresh');
         }
-    );
+    });
+
 });
 
 loadPurchaseOrderTable($("#purchase-order-table"), {
@@ -334,9 +321,6 @@ loadStockTable($("#stock-table"), {
         location_detail: true,
         part_detail: false,
     },
-    groupByField: 'location',
-    buttons: ['#stock-options'],
-    url: "{% url 'api-stock-list' %}",
 });
 
 $("#item-create").click(function() {
@@ -372,7 +356,7 @@ $('#update-part-availability').click(function() {
         fields: {
             available: {},
         },
-        title: '{% trans "Update Part Availability" %}',
+        title: '{% trans "Update Part Availability" escape %}',
         onSuccess: function() {
             location.reload();
         }
@@ -418,4 +402,4 @@ $('#delete-part').click(function() {
 
 enableSidebar('supplierpart');
 
-{% endblock %}
+{% endblock js_ready %}

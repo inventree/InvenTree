@@ -9,7 +9,7 @@ body:
       label: "Please verify that this feature request has NOT been suggested before."
       description: "Search in the issues sections by clicking [HERE](https://github.com/inventree/inventree/issues?q=)"
       options:
-        - label: "I checked and didn't find similar feature request"
+        - label: "I checked and didn't find a similar feature request"
           required: true
   - type: textarea
     id: problem
@@ -17,7 +17,7 @@ body:
       required: true
     attributes:
       label: "Problem statement"
-      description: "A clear and concise description of what the solved problem or feature request is."
+      description: "A clear and concise description of the problem or missing feature."
       placeholder: "I am always struggling with ..."
   - type: textarea
     id: solution
@@ -25,7 +25,7 @@ body:
       required: true
     attributes:
       label: "Suggested solution"
-      description: "A clear and concise description of what you want to happen."
+      description: "A clear and concise description of what you want to happen to solve the problem statement."
       placeholder: "In my use-case, ..."
   - type: textarea
     id: alternatives
@@ -47,7 +47,7 @@ body:
     id: self-develop
     attributes:
       label: "Do you want to develop this?"
-      description: "you do not need to be a pro - this is just as a information for us"
+      description: "This is not required, and you do not need to be a pro - this is just as information for us."
       options:
         - label: "I want to develop this."
           required: false

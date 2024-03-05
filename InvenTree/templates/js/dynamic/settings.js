@@ -44,7 +44,7 @@ function editSetting(key, options={}) {
     var url = '';
 
     if (plugin) {
-        url = `/api/plugin/settings/${plugin}/${key}/`;
+        url = `/api/plugins/settings/${plugin}/${key}/`;
     } else if (notification) {
         url = `/api/settings/notification/${pk}/`;
     } else if (global) {
@@ -111,8 +111,13 @@ function editSetting(key, options={}) {
                     return data;
                 },
                 processBeforeUpload: function(data) {
-                    // Convert value to string
-                    data.value = data.value.toString();
+                    if(response.type === 'related field' && data.value === null) {
+                        // related fields throw an error because they are set to null on delete
+                        data.value = "";
+                    } else {
+                        // Convert value to string
+                        data.value = data.value.toString();
+                    }
 
                     return data;
                 },

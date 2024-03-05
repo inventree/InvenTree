@@ -8,8 +8,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
+import common.models
 import InvenTree.helpers
-from common.models import NotificationEntry, NotificationMessage
 from InvenTree.ready import isImportingData
 from plugin import registry
 from plugin.models import NotificationUserSetting, PluginConfig
@@ -24,7 +24,7 @@ class NotificationMethod:
 
     METHOD_NAME = ''
     METHOD_ICON = None
-    CONTEXT_BUILTIN = ['name', 'message', ]
+    CONTEXT_BUILTIN = ['name', 'message']
     CONTEXT_EXTRA = []
     GLOBAL_SETTING = None
     USER_SETTING = None
@@ -35,15 +35,19 @@ class NotificationMethod:
         This checks that:
         - All needed functions are implemented
         - The method is not disabled via plugin
-        - All needed contaxt values were provided
+        - All needed context values were provided
         """
         # Check if a sending fnc is defined
         if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
-            raise NotImplementedError('A NotificationMethod must either define a `send` or a `send_bulk` method')
+            raise NotImplementedError(
+                'A NotificationMethod must either define a `send` or a `send_bulk` method'
+            )
 
         # No method name is no good
         if self.METHOD_NAME in ('', None):
-            raise NotImplementedError(f'The NotificationMethod {self.__class__} did not provide a METHOD_NAME')
+            raise NotImplementedError(
+                f'The NotificationMethod {self.__class__} did not provide a METHOD_NAME'
+            )
 
         # Check if plugin is disabled - if so do not gather targets etc.
         if self.global_setting_disable():
@@ -61,12 +65,13 @@ class NotificationMethod:
 
     def check_context(self, context):
         """Check that all values defined in the methods CONTEXT were provided in the current context."""
+
         def check(ref, obj):
-            # the obj is not accesible so we are on the end
-            if not isinstance(obj, (list, dict, tuple, )):
+            # the obj is not accessible so we are on the end
+            if not isinstance(obj, (list, dict, tuple)):
                 return ref
 
-            # check if the ref exsists
+            # check if the ref exists
             if isinstance(ref, str):
                 if not obj.get(ref):
                     return ref
@@ -82,7 +87,9 @@ class NotificationMethod:
                 return check(ref[1:], obj[ref[0]])
 
             # other cases -> raise
-            raise NotImplementedError('This type can not be used as a context reference')
+            raise NotImplementedError(
+                'This type can not be used as a context reference'
+            )
 
         missing = []
         for item in (*self.CONTEXT_BUILTIN, *self.CONTEXT_EXTRA):
@@ -91,7 +98,9 @@ class NotificationMethod:
                 missing.append(ret)
 
         if missing:
-            raise NotImplementedError(f'The `context` is missing the following items:\n{missing}')
+            raise NotImplementedError(
+                f'The `context` is missing the following items:\n{missing}'
+            )
 
         return context
 
@@ -133,7 +142,7 @@ class NotificationMethod:
             return False
 
         # Check if method globally enabled
-        plg_instance = registry.plugins.get(plg_cls.NAME.lower())
+        plg_instance = registry.get_plugin(plg_cls.NAME.lower())
         if plg_instance and not plg_instance.get_setting(self.GLOBAL_SETTING):
             return True
 
@@ -142,7 +151,12 @@ class NotificationMethod:
 
     def usersetting(self, target):
         """Returns setting for this method for a given user."""
-        return NotificationUserSetting.get_setting(f'NOTIFICATION_METHOD_{self.METHOD_NAME.upper()}', user=target, method=self.METHOD_NAME)
+        return NotificationUserSetting.get_setting(
+            f'NOTIFICATION_METHOD_{self.METHOD_NAME.upper()}',
+            user=target,
+            method=self.METHOD_NAME,
+        )
+
     # endregion
 
 
@@ -150,16 +164,18 @@ class SingleNotificationMethod(NotificationMethod):
     """NotificationMethod that sends notifications one by one."""
 
     def send(self, target):
-        """This function must be overriden."""
-        raise NotImplementedError('The `send` method must be overriden!')
+        """This function must be overridden."""
+        raise NotImplementedError('The `send` method must be overridden!')
 
 
 class BulkNotificationMethod(NotificationMethod):
     """NotificationMethod that sends all notifications in bulk."""
 
     def send_bulk(self):
-        """This function must be overriden."""
-        raise NotImplementedError('The `send` method must be overriden!')
+        """This function must be overridden."""
+        raise NotImplementedError('The `send` method must be overridden!')
+
+
 # endregion
 
 
@@ -180,22 +196,31 @@ class MethodStorageClass:
         Args:
             selected_classes (class, optional): References to the classes that should be registered. Defaults to None.
         """
-        logger.info('collecting notification methods')
-        current_method = InvenTree.helpers.inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
+        logger.debug('Collecting notification methods')
+        current_method = (
+            InvenTree.helpers.inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
+        )
 
         # for testing selective loading is made available
         if selected_classes:
-            current_method = [item for item in current_method if item is selected_classes]
+            current_method = [
+                item for item in current_method if item is selected_classes
+            ]
 
         # make sure only one of each method is added
         filtered_list = {}
         for item in current_method:
             plugin = item.get_plugin(item)
-            ref = f'{plugin.package_path}_{item.METHOD_NAME}' if plugin else item.METHOD_NAME
+            ref = (
+                f'{plugin.package_path}_{item.METHOD_NAME}'
+                if plugin
+                else item.METHOD_NAME
+            )
+            item.plugin = plugin() if plugin else None
             filtered_list[ref] = item
 
         storage.liste = list(filtered_list.values())
-        logger.info(f'found {len(storage.liste)} notification methods')
+        logger.info('Found %s notification methods', len(storage.liste))
 
     def get_usersettings(self, user) -> list:
         """Returns all user settings for a specific user.
@@ -216,9 +241,7 @@ class MethodStorageClass:
                 # make sure the setting exists
                 self.user_settings[new_key] = item.USER_SETTING
                 NotificationUserSetting.get_setting(
-                    key=new_key,
-                    user=user,
-                    method=item.METHOD_NAME,
+                    key=new_key, user=user, method=item.METHOD_NAME
                 )
 
                 # save definition
@@ -230,10 +253,7 @@ class MethodStorageClass:
         return methods
 
 
-IGNORED_NOTIFICATION_CLS = set([
-    SingleNotificationMethod,
-    BulkNotificationMethod,
-])
+IGNORED_NOTIFICATION_CLS = {SingleNotificationMethod, BulkNotificationMethod}
 storage = MethodStorageClass()
 
 
@@ -243,13 +263,12 @@ class UIMessageNotification(SingleNotificationMethod):
     METHOD_NAME = 'ui_message'
 
     def get_targets(self):
-        """Only send notifications for active users"""
-
+        """Only send notifications for active users."""
         return [target for target in self.targets if target.is_active]
 
     def send(self, target):
         """Send a UI notification to a user."""
-        NotificationMessage.objects.create(
+        common.models.NotificationMessage.objects.create(
             target_object=self.obj,
             source_object=target,
             user=target,
@@ -270,7 +289,7 @@ class NotificationBody:
         message (str): Notification message as text. Should not be longer than 120 chars.
         template (str): Reference to the html template for the notification.
 
-    The strings support f-string sytle fomratting with context variables parsed at runtime.
+    The strings support f-string style formatting with context variables parsed at runtime.
 
     Context variables:
         instance: Text representing the instance
@@ -278,10 +297,11 @@ class NotificationBody:
         app_label: App label (slugified) of the model
         model_name': Name (slugified) of the model
     """
+
     name: str
     slug: str
     message: str
-    template: str
+    template: str = None
 
 
 class InvenTreeNotificationBodies:
@@ -289,19 +309,35 @@ class InvenTreeNotificationBodies:
 
     Contains regularly used notification bodies.
     """
+
     NewOrder = NotificationBody(
-        name=_("New {verbose_name}"),
+        name=_('New {verbose_name}'),
         slug='{app_label}.new_{model_name}',
-        message=_("A new order has been created and assigned to you"),
+        message=_('A new order has been created and assigned to you'),
         template='email/new_order_assigned.html',
     )
     """Send when a new order (build, sale or purchase) was created."""
 
+    OrderCanceled = NotificationBody(
+        name=_('{verbose_name} canceled'),
+        slug='{app_label}.canceled_{model_name}',
+        message=_('A order that is assigned to you was canceled'),
+        template='email/canceled_order_assigned.html',
+    )
+    """Send when a order (sale, return or purchase) was canceled."""
+
     ItemsReceived = NotificationBody(
-        name=_("Items Received"),
+        name=_('Items Received'),
         slug='purchase_order.items_received',
         message=_('Items have been received against a purchase order'),
         template='email/purchase_order_received.html',
+    )
+
+    ReturnOrderItemsReceived = NotificationBody(
+        name=_('Items Received'),
+        slug='return_order.items_received',
+        message=_('Items have been received against a return order'),
+        template='email/return_order_received.html',
     )
 
 
@@ -324,20 +360,26 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
 
     # Try with some defaults
     if not obj_ref_value:
-        obj_ref_value = getattr(obj, 'pk')
+        obj_ref_value = getattr(obj, 'pk', None)
     if not obj_ref_value:
-        obj_ref_value = getattr(obj, 'id')
+        obj_ref_value = getattr(obj, 'id', None)
     if not obj_ref_value:
-        raise KeyError(f"Could not resolve an object reference for '{str(obj)}' with {obj_ref}, pk, id")
+        raise KeyError(
+            f"Could not resolve an object reference for '{str(obj)}' with {obj_ref}, pk, id"
+        )
 
     # Check if we have notified recently...
     delta = timedelta(days=1)
 
-    if NotificationEntry.check_recent(category, obj_ref_value, delta):
-        logger.info(f"Notification '{category}' has recently been sent for '{str(obj)}' - SKIPPING")
+    if common.models.NotificationEntry.check_recent(category, obj_ref_value, delta):
+        logger.info(
+            "Notification '%s' has recently been sent for '%s' - SKIPPING",
+            category,
+            str(obj),
+        )
         return
 
-    logger.info(f"Gathering users for notification '{category}'")
+    logger.info("Gathering users for notification '%s'", category)
 
     if target_exclude is None:
         target_exclude = set()
@@ -371,31 +413,33 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
                         target_users.add(user)
             # Unhandled type
             else:
-                logger.error(f"Unknown target passed to trigger_notification method: {target}")
+                logger.error(
+                    'Unknown target passed to trigger_notification method: %s', target
+                )
 
     if target_users:
-        logger.info(f"Sending notification '{category}' for '{str(obj)}'")
+        logger.info("Sending notification '%s' for '%s'", category, str(obj))
 
         # Collect possible methods
         if delivery_methods is None:
-            delivery_methods = storage.liste
+            delivery_methods = storage.liste or []
         else:
-            delivery_methods = (delivery_methods - IGNORED_NOTIFICATION_CLS)
+            delivery_methods = delivery_methods - IGNORED_NOTIFICATION_CLS
 
         for method in delivery_methods:
-            logger.info(f"Triggering notification method '{method.METHOD_NAME}'")
+            logger.info("Triggering notification method '%s'", method.METHOD_NAME)
             try:
                 deliver_notification(method, obj, category, target_users, context)
             except NotImplementedError as error:
                 # Allow any single notification method to fail, without failing the others
-                logger.error(error)
+                logger.error(error)  # noqa: LOG005
             except Exception as error:
-                logger.error(error)
+                logger.error(error)  # noqa: LOG005
 
         # Set delivery flag
-        NotificationEntry.notify(category, obj_ref_value)
+        common.models.NotificationEntry.notify(category, obj_ref_value)
     else:
-        logger.info(f"No possible users for notification '{category}'")
+        logger.debug("No possible users for notification '%s'", category)
 
 
 def trigger_superuser_notification(plugin: PluginConfig, msg: str):
@@ -410,17 +454,15 @@ def trigger_superuser_notification(plugin: PluginConfig, msg: str):
     trigger_notification(
         plugin,
         'inventree.plugin',
-        context={
-            'error': plugin,
-            'name': _('Error raised by plugin'),
-            'message': msg,
-        },
+        context={'error': plugin, 'name': _('Error raised by plugin'), 'message': msg},
         targets=users,
-        delivery_methods=set([UIMessageNotification]),
+        delivery_methods={UIMessageNotification},
     )
 
 
-def deliver_notification(cls: NotificationMethod, obj, category: str, targets, context: dict):
+def deliver_notification(
+    cls: NotificationMethod, obj, category: str, targets, context: dict
+):
     """Send notification with the provided class.
 
     This:
@@ -435,7 +477,12 @@ def deliver_notification(cls: NotificationMethod, obj, category: str, targets, c
 
     if method.targets and len(method.targets) > 0:
         # Log start
-        logger.info(f"Notify users via '{method.METHOD_NAME}' for notification '{category}' for '{str(obj)}'")
+        logger.info(
+            "Notify users via '%s' for notification '%s' for '%s'",
+            method.METHOD_NAME,
+            category,
+            str(obj),
+        )
 
         # Run setup for delivery method
         method.setup()
@@ -460,6 +507,12 @@ def deliver_notification(cls: NotificationMethod, obj, category: str, targets, c
         method.cleanup()
 
         # Log results
-        logger.info(f"Notified {success_count} users via '{method.METHOD_NAME}' for notification '{category}' for '{str(obj)}' successfully")
+        logger.info(
+            "Notified %s users via '%s' for notification '%s' for '%s' successfully",
+            success_count,
+            method.METHOD_NAME,
+            category,
+            str(obj),
+        )
         if not success:
-            logger.info("There were some problems")
+            logger.info('There were some problems')

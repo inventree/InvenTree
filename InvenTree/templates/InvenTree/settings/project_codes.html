@@ -1,0 +1,33 @@
+{% extends "panel.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block label %}project-codes{% endblock label %}
+
+{% block heading %}{% trans "Project Code Settings" %}{% endblock heading %}
+
+{% block content %}
+
+<!-- Project code settings -->
+<table class='table table-striped table-condensed'>
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="PROJECT_CODES_ENABLED" icon='fa-toggle-on' %}
+    </tbody>
+</table>
+
+<div class='panel-heading'>
+    <div class='d-flex flex-span'>
+        <h4>{% trans "Project Codes" %}</h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            <button class='btn btn-success' id='new-project-code'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Project Code" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<table class='table table-striped table-condensed' id='project-code-table'>
+</table>
+{% endblock content %}

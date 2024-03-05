@@ -8,6 +8,9 @@ on:
     branches:
       - l10
 
+env:
+  python_version: 3.9
+
 jobs:
 
   check:
@@ -21,22 +24,15 @@ jobs:
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
       INVENTREE_BACKUP_DIR: ./backup
-      python_version: 3.9
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Set Up Python ${{ env.python_version }}
-        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
+        uses: ./.github/actions/setup
         with:
-          python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gettext
-          pip3 install invoke
-          invoke install
+          install: true
+          apt-dependency: gettext
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files

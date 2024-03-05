@@ -1,15 +1,17 @@
-"""Admin functionality for the 'label' app"""
+"""Admin functionality for the 'label' app."""
 
 from django.contrib import admin
 
-from .models import PartLabel, StockItemLabel, StockLocationLabel
+import label.models
 
 
 class LabelAdmin(admin.ModelAdmin):
-    """Admin class for the various label models"""
+    """Admin class for the various label models."""
+
     list_display = ('name', 'description', 'label', 'filters', 'enabled')
 
 
-admin.site.register(StockItemLabel, LabelAdmin)
-admin.site.register(StockLocationLabel, LabelAdmin)
-admin.site.register(PartLabel, LabelAdmin)
+admin.site.register(label.models.StockItemLabel, LabelAdmin)
+admin.site.register(label.models.StockLocationLabel, LabelAdmin)
+admin.site.register(label.models.PartLabel, LabelAdmin)
+admin.site.register(label.models.BuildLineLabel, LabelAdmin)

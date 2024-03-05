@@ -1,0 +1,205 @@
+{% extends "order/return_order_base.html" %}
+
+{% load inventree_extras %}
+{% load generic %}
+{% load i18n %}
+{% load static %}
+
+{% block sidebar %}
+{% include "order/return_order_sidebar.html" %}
+{% endblock sidebar %}
+
+{% block page_content %}
+{% settings_value "RETURNORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
+
+<div class='panel panel-hidden' id='panel-order-details'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Line Items" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.return_order.add %}
+                {% if order.is_open or allow_extra_editing %}
+                <button type='button' class='btn btn-success' id='new-return-order-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
+                </button>
+                {% endif %}
+                {% if order.status == ReturnOrderStatus.IN_PROGRESS %}
+                <button type='button' class='btn btn-primary' id='receive-line-items' title='{% trans "Receive Line Items" %}'>
+                    <span class='fas fa-sign-in-alt'></span> {% trans "Receive Line Items" %}
+                </button>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='order-toolbar-buttons'>
+            {% include "filter_list.html" with id="returnorderlines" %}
+        </div>
+        <table class='table table-striped table-condensed' id='return-order-lines-table' data-toolbar='#order-toolbar-buttons'>
+        </table>
+    </div>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Extra Lines" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.return_order.add %}
+                {% if order.is_open or allow_extra_editing %}
+                <button type='button' class='btn btn-success' id='new-return-order-extra-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
+                </button>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='order-extra-toolbar-buttons'>
+            {% include "filter_list.html" with id="return-order-extra-lines" %}
+        </div>
+        <table class='table table-striped table-condensed' id='return-order-extra-lines-table' data-toolbar='#order-extra-toolbar-buttons'>
+        </table>
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-order-attachments'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "attachment_table.html" %}
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-order-notes'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Order Notes" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "notes_buttons.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <textarea id='order-notes'></textarea>
+    </div>
+</div>
+
+{% endblock page_content %}
+
+{% block js_ready %}
+{{ block.super }}
+
+// Callback function when the 'details' panel is loaded
+onPanelLoad('order-details', function() {
+
+    {% if roles.return_order.add %}
+
+    $('#receive-line-items').click(function() {
+        let items = getTableData('#return-order-lines-table');
+
+        receiveReturnOrderItems(
+            {{ order.pk }},
+            items,
+            {
+                onSuccess: function() {
+                    reloadBootstrapTable('#return-order-lines-table');
+                }
+            }
+        );
+    });
+
+    $('#new-return-order-line').click(function() {
+        createReturnOrderLineItem({
+            order: {{ order.pk }},
+            customer: {{ order.customer.pk }},
+            onSuccess: function() {
+                reloadBootstrapTable('#return-order-lines-table');
+            }
+        });
+    });
+
+    $('#new-return-order-extra-line').click(function() {
+
+        createExtraLineItem({
+            order: {{ order.pk }},
+            table: '#return-order-extra-lines-table',
+            url: '{% url "api-return-order-extra-line-list" %}',
+            {% if order.customer.currency %}
+            currency: '{{ order.customer.currency }}',
+            {% endif %}
+        });
+    });
+
+    {% endif %}
+
+    {% settings_value "RETURNORDER_EDIT_COMPLETED_ORDERS" as allow_extra_editing %}
+
+    loadReturnOrderLineItemTable({
+        table: '#return-order-lines-table',
+        order: {{ order.pk }},
+        {% if order.status == ReturnOrderStatus.IN_PROGRESS %}
+        allow_receive: true,
+        {% endif %}
+        {% if order.is_open or allow_extra_editing %}
+        allow_edit: {% js_bool roles.return_order.change %},
+        allow_delete: {% js_bool roles.return_order.delete %},
+        {% endif %}
+    });
+
+    loadExtraLineTable({
+        order: {{ order.pk }},
+        url: '{% url "api-return-order-extra-line-list" %}',
+        table: "#return-order-extra-lines-table",
+        name: 'returnorderextralines',
+        filtertarget: '#filter-list-return-order-extra-lines',
+        {% if order.is_open or allow_extra_editing %}
+        allow_edit: {% js_bool roles.return_order.change %},
+        allow_delete: {% js_bool roles.return_order.delete %},
+        {% endif %}
+    });
+});
+
+// Callback function when the 'notes' panel is loaded
+onPanelLoad('order-notes', function() {
+    setupNotesField(
+        'order-notes',
+        '{% url "api-return-order-detail" order.pk %}',
+        {
+            {% if roles.purchase_order.change %}
+            editable: true,
+            {% else %}
+            editable: false,
+            {% endif %}
+        }
+    );
+});
+
+// Callback function when the 'attachments' panel is loaded
+onPanelLoad('order-attachments', function() {
+
+    loadAttachmentTable('{% url "api-return-order-attachment-list" %}', {
+        filters: {
+            order: {{ order.pk }},
+        },
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
+            },
+        }
+    });
+});
+
+enableSidebar('returnorder');
+
+{% endblock js_ready %}

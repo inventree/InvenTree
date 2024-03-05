@@ -49,17 +49,18 @@ class FileManager:
         ext = os.path.splitext(file.name)[-1].lower().replace('.', '')
 
         try:
-            if ext in ['csv', 'tsv', ]:
+            if ext in ['csv', 'tsv']:
                 # These file formats need string decoding
                 raw_data = file.read().decode('utf-8')
                 # Reset stream position to beginning of file
                 file.seek(0)
-            elif ext in ['xls', 'xlsx', 'json', 'yaml', ]:
+            elif ext in ['xls', 'xlsx', 'json', 'yaml']:
                 raw_data = file.read()
                 # Reset stream position to beginning of file
                 file.seek(0)
             else:
-                raise ValidationError(_(f'Unsupported file format: {ext.upper()}'))
+                fmt = ext.upper()
+                raise ValidationError(_(f'Unsupported file format: {fmt}'))
         except UnicodeEncodeError:
             raise ValidationError(_('Error reading file (invalid encoding)'))
 
@@ -80,10 +81,15 @@ class FileManager:
 
     def update_headers(self):
         """Update headers."""
-        self.HEADERS = self.REQUIRED_HEADERS + self.ITEM_MATCH_HEADERS + self.OPTIONAL_MATCH_HEADERS + self.OPTIONAL_HEADERS
+        self.HEADERS = (
+            self.REQUIRED_HEADERS
+            + self.ITEM_MATCH_HEADERS
+            + self.OPTIONAL_MATCH_HEADERS
+            + self.OPTIONAL_HEADERS
+        )
 
     def setup(self):
-        """Setup headers should be overriden in usage to set the Different Headers."""
+        """Setup headers should be overridden in usage to set the Different Headers."""
         if not self.name:
             return
 
@@ -148,15 +154,9 @@ class FileManager:
                     break
 
             if not guess_exists:
-                headers.append({
-                    'name': header,
-                    'guess': guess
-                })
+                headers.append({'name': header, 'guess': guess})
             else:
-                headers.append({
-                    'name': header,
-                    'guess': None
-                })
+                headers.append({'name': header, 'guess': None})
 
         return headers
 
@@ -179,8 +179,7 @@ class FileManager:
         rows = []
 
         for i in range(self.row_count()):
-
-            data = [item for item in self.get_row_data(i)]
+            data = list(self.get_row_data(i))
 
             # Is the row completely empty? Skip!
             empty = True
@@ -202,10 +201,7 @@ class FileManager:
             if empty:
                 continue
 
-            row = {
-                'data': data,
-                'index': i
-            }
+            row = {'data': data, 'index': i}
 
             rows.append(row)
 

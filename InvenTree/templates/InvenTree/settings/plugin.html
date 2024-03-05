@@ -3,12 +3,11 @@
 {% load inventree_extras %}
 {% load plugin_extras %}
 
-{% block label %}plugin{% endblock %}
-
+{% block label %}plugin{% endblock label %}
 
 {% block heading %}
 {% trans "Plugin Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -25,23 +24,28 @@
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_NAVIGATION" icon="fa-sitemap" %}
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP" icon="fa-rocket" %}
         {% include "InvenTree/settings/setting.html" with key="PLUGIN_ON_STARTUP" %}
-        <tr><td colspan='5'></td></tr>
-        {% include "InvenTree/settings/setting.html" with key="PLUGIN_CHECK_SIGNATURES" %}
     </tbody>
 </table>
 </div>
 
 {% plugins_enabled as plug %}
+{% plugins_install_disabled as plug_disabled %}
 
 <div class='panel-heading'>
     <div class='d-flex flex-wrap'>
         <h4>{% trans "Plugins" %}</h4>
         {% include "spacer.html" %}
         <div class='btn-group' role='group'>
-            {% url 'admin:plugin_pluginconfig_changelist' as url %}
+            {% admin_url user "plugin.pluginconfig" None as url %}
             {% include "admin_button.html" with url=url %}
             {% if plug %}
-            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>
+            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"{% if plug_disabled %}disabled{% endif %}>
+                <span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}
+            </button>
+            <button class='btn btn-success' id='reload-plugins' title='{% trans "Reload Plugins" %}'>
+                <span class='fas fa-redo-alt'></span> {% trans "Reload Plugins" %}
+            </button>
+            </button>
             {% endif %}
         </div>
     </div>
@@ -53,39 +57,12 @@
 </div>
 {% endif %}
 
-<div class='table-responsive'>
-<table class='table table-striped table-condensed'>
-    <thead>
-        <tr>
-            <th>{% trans "Name" %}</th>
-            <th>{% trans "Key" %}</th>
-            <th>{% trans "Author" %}</th>
-            <th>{% trans "Date" %}</th>
-            <th>{% trans "Version" %}</th>
-            <th></th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {% plugin_list as pl_list %}
-        {% if pl_list %}
-        <tr><td colspan="6"><h6>{% trans 'Active plugins' %}</h6></td></tr>
-        {% for plugin_key, plugin in pl_list.items %}
-            {% include "InvenTree/settings/plugin_details.html" with plugin=plugin plugin_key=plugin_key %}
-        {% endfor %}
-        {% endif %}
-
-        {% inactive_plugin_list as in_pl_list %}
-        {% if in_pl_list %}
-        <tr><td colspan="6"><h6>{% trans 'Inactive plugins' %}</h6></td></tr>
-        {% for plugin_key, plugin in in_pl_list.items %}
-            {% include "InvenTree/settings/plugin_details.html" with plugin=plugin plugin_key=plugin_key %}
-        {% endfor %}
-        {% endif %}
-    </tbody>
-</table>
+<div id='plugin-button-toolbar'>
+    {% include "filter_list.html" with id="plugins" %}
 </div>
-
+<div class='table-responsive'>
+    <table class='table table-striped table-condensed' id='plugin-table' data-toolbar='#plugin-button-toolbar'></table>
+</div>
 
 {% plugin_errors as pl_errors %}
 {% if pl_errors %}
@@ -123,4 +100,4 @@
     </div>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}

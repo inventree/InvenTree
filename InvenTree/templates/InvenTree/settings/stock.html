@@ -1,17 +1,19 @@
 {% extends "panel.html" %}
 {% load i18n %}
 
-{% block label %}stock{% endblock %}
+{% block label %}stock{% endblock label %}
 
 {% block heading %}
 {% trans "Stock Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
 <table class='table table-striped table-condensed'>
     <tbody>
         {% include "InvenTree/settings/setting.html" with key="SERIAL_NUMBER_GLOBALLY_UNIQUE" icon="fa-hashtag" %}
+        {% include "InvenTree/settings/setting.html" with key="SERIAL_NUMBER_AUTOFILL" icon="fa-magic" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_DELETE_DEPLETED_DEFAULT" icon="fa-trash-alt" %}
         {% include "InvenTree/settings/setting.html" with key="STOCK_BATCH_CODE_TEMPLATE" icon="fa-layer-group" %}
         {% include "InvenTree/settings/setting.html" with key="STOCK_ENABLE_EXPIRY" icon="fa-stopwatch" %}
         {% include "InvenTree/settings/setting.html" with key="STOCK_STALE_DAYS" icon="fa-calendar" %}
@@ -19,6 +21,23 @@
         {% include "InvenTree/settings/setting.html" with key="STOCK_ALLOW_EXPIRED_BUILD" icon="fa-tools" %}
         {% include "InvenTree/settings/setting.html" with key="STOCK_OWNERSHIP_CONTROL" icon="fa-users" %}
         {% include "InvenTree/settings/setting.html" with key="STOCK_LOCATION_DEFAULT_ICON" icon="fa-icons" %}
+        {% include "InvenTree/settings/setting.html" with key="STOCK_SHOW_INSTALLED_ITEMS" icon="fa-sitemap" %}
+
     </tbody>
 </table>
-{% endblock %}
+
+<div class='panel-heading'>
+    <div class='d-flex flex-span'>
+        <h4>{% trans "Stock Location Types" %}</h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            <button class='btn btn-success' id='new-location-type'>
+                <span class='fas fa-plus-circle'></span> {% trans "New Location Type" %}
+            </button>
+        </div>
+    </div>
+</div>
+
+<table class='table table-striped table-condensed' id='location-type-table'></table>
+
+{% endblock content %}

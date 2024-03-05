@@ -13,13 +13,11 @@
             {% if allow_download %}
             <button type='button' class='btn btn-outline-secondary' title="{% trans 'Download image from URL' %}" id='part-image-url'><span class='fas fa-cloud-download-alt'></span></button>
             {% endif %}
-            {% if part.image %}
             <button type='button' class='btn btn-outline-secondary' title='{% trans "Delete image" %}' id='part-image-delete'><span class='fas fa-trash-alt icon-red'></span></button>
-            {% endif %}
         </div>
     </div>
     {% endif %}
-    <img class="part-thumb" id='part-image'
+    <img class="part-thumb" id='part-image' alt="{% trans 'Part image' %}"
         {% if part.image %}
         src="{{ part.image.preview.url }}"
         {% else %}

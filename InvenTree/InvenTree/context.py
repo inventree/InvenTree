@@ -2,10 +2,10 @@
 
 """Provides extra global data to all templates."""
 
+import InvenTree.email
 import InvenTree.status
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus, StockHistoryCode,
-                                    StockStatus)
+from generic.states import StatusCode
+from InvenTree.helpers import inheritors
 from users.models import RuleSet, check_user_role
 
 
@@ -27,13 +27,11 @@ def health_status(request):
 
     status = {
         'django_q_running': InvenTree.status.is_worker_running(),
-        'email_configured': InvenTree.status.is_email_configured(),
+        'email_configured': InvenTree.email.is_email_configured(),
     }
 
     # The following keys are required to denote system health
-    health_keys = [
-        'django_q_running',
-    ]
+    health_keys = ['django_q_running']
 
     all_healthy = True
 
@@ -55,15 +53,7 @@ def status_codes(request):
         return {}
 
     request._inventree_status_codes = True
-
-    return {
-        # Expose the StatusCode classes to the templates
-        'SalesOrderStatus': SalesOrderStatus,
-        'PurchaseOrderStatus': PurchaseOrderStatus,
-        'BuildStatus': BuildStatus,
-        'StockStatus': StockStatus,
-        'StockHistoryCode': StockHistoryCode,
-    }
+    return {cls.__name__: cls.template_context() for cls in inheritors(StatusCode)}
 
 
 def user_roles(request):
@@ -80,11 +70,9 @@ def user_roles(request):
     """
     user = request.user
 
-    roles = {
-    }
+    roles = {}
 
-    for role in RuleSet.RULESET_MODELS.keys():
-
+    for role in RuleSet.get_ruleset_models().keys():
         permissions = {}
 
         for perm in ['view', 'add', 'change', 'delete']:

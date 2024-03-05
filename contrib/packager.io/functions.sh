@@ -130,7 +130,7 @@ function detect_envs() {
     export INVENTREE_DB_USER=${INVENTREE_DB_USER:-sampleuser}
     export INVENTREE_DB_PASSWORD=${INVENTREE_DB_PASSWORD:-samplepassword}
     export INVENTREE_DB_HOST=${INVENTREE_DB_HOST:-samplehost}
-    export INVENTREE_DB_PORT=${INVENTREE_DB_PORT:-sampleport}
+    export INVENTREE_DB_PORT=${INVENTREE_DB_PORT:-123456}
 
     export SETUP_CONF_LOADED=true
   fi
@@ -155,11 +155,11 @@ function detect_envs() {
 
 function create_initscripts() {
 
-  # Make sure python env exsists
+  # Make sure python env exists
   if test -f "${APP_HOME}/env"; then
-    echo "# python enviroment already present - skipping"
+    echo "# python environment already present - skipping"
   else
-    echo "# Setting up python enviroment"
+    echo "# Setting up python environment"
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && ${SETUP_PYTHON} -m venv env"
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install invoke wheel"
 
@@ -183,7 +183,7 @@ function create_initscripts() {
   ${INIT_CMD} stop nginx
   echo "# Setting up nginx to ${SETUP_NGINX_FILE}"
   # Always use the latest nginx config; important if new headers are added / needed for security
-  cp ${APP_HOME}/docker/production/nginx.prod.conf ${SETUP_NGINX_FILE}
+  cp ${APP_HOME}/contrib/packager.io/nginx.prod.conf ${SETUP_NGINX_FILE}
   sed -i s/inventree-server:8000/localhost:6000/g ${SETUP_NGINX_FILE}
   sed -i s=var/www=opt/inventree/data=g ${SETUP_NGINX_FILE}
   # Start nginx
@@ -191,7 +191,7 @@ function create_initscripts() {
   ${INIT_CMD} start nginx
 
   echo "# (Re)creating init scripts"
-  # This reset scale parameters to a known state
+  # This resets scale parameters to a known state
   inventree scale web="1" worker="1"
 
   echo "# Enabling InvenTree on boot"
@@ -235,6 +235,7 @@ function update_or_install() {
 
   # Run update as app user
   echo "# Updating InvenTree"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && pip install wheel"
   sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke update | sed -e 's/^/# inv update| /;'"
 
   # Make sure permissions are correct again
@@ -276,7 +277,7 @@ function set_env() {
   # Database host
   sed -i s=#HOST:\ samplehost=HOST:\ ${INVENTREE_DB_HOST}=g ${INVENTREE_CONFIG_FILE}
   # Database port
-  sed -i s=#PORT:\ sampleport=PORT:\ ${INVENTREE_DB_PORT}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#PORT:\ 123456=PORT:\ ${INVENTREE_DB_PORT}=g ${INVENTREE_CONFIG_FILE}
 
   # Fixing the permissions
   chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} ${INVENTREE_CONFIG_FILE}

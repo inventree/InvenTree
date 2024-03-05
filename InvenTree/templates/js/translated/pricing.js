@@ -4,9 +4,28 @@
 /* Functions for retrieving and displaying pricing data */
 
 /* globals
+    constructForm,
+    global_settings,
+    imageHoverIcon,
+    inventreeGet,
+    loadBarChart,
+    loadDoughnutChart,
+    makeEditButton,
+    makeDeleteButton,
+    randomColor,
+    renderDate,
+    renderLink,
+    shortenString,
+    withTitle,
+    wrapButtons,
 */
 
 /* exported
+    baseCurrency,
+    calculateTotalPrice,
+    convertCurrency,
+    formatCurrency,
+    formatPriceRange,
     loadBomPricingChart,
     loadPartSupplierPricingTable,
     initPriceBreakSet,
@@ -18,6 +37,254 @@
 
 
 /*
+ * Returns the base currency used for conversion operations
+ */
+function baseCurrency() {
+    return global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
+}
+
+
+
+/*
+ * format currency (money) value based on current settings
+ *
+ * Options:
+ * - currency: Currency code (uses default value if none provided)
+ * - locale: Locale specified (uses default value if none provided)
+ * - digits: Maximum number of significant digits (default = 10)
+ */
+function formatCurrency(value, options={}) {
+
+    if (value == null) {
+        return null;
+    }
+
+    let maxDigits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
+    let minDigits = options.minDigits || global_settings.PRICING_DECIMAL_PLACES_MIN || 0;
+
+    // Extract default currency information
+    let currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
+
+    // Extract locale information
+    let locale = options.locale || navigator.language || 'en-US';
+
+    let formatter = new Intl.NumberFormat(
+        locale,
+        {
+            style: 'currency',
+            currency: currency,
+            maximumFractionDigits: maxDigits,
+            minimumFractionDigits: minDigits,
+        }
+    );
+
+    return formatter.format(value);
+}
+
+
+/*
+ * Format a range of prices
+ */
+function formatPriceRange(price_min, price_max, options={}) {
+
+    var p_min = price_min || price_max;
+    var p_max = price_max || price_min;
+
+    var quantity = 1;
+
+    if ('quantity' in options) {
+        quantity = options.quantity;
+    }
+
+    if (p_min == null && p_max == null) {
+        return null;
+    }
+
+    p_min = parseFloat(p_min) * quantity;
+    p_max = parseFloat(p_max) * quantity;
+
+    var output = '';
+
+    output += formatCurrency(p_min, options);
+
+    if (p_min != p_max) {
+        output += ' - ';
+        output += formatCurrency(p_max, options);
+    }
+
+    return output;
+}
+
+
+// TODO: Implement a better version of caching here
+var cached_exchange_rates = null;
+
+/*
+ * Retrieve currency conversion rate information from the server
+ */
+function getCurrencyConversionRates(cache=true) {
+
+    if (cache && cached_exchange_rates != null) {
+        return cached_exchange_rates;
+    }
+
+    inventreeGet('{% url "api-currency-exchange" %}', {}, {
+        async: false,
+        success: function(response) {
+            cached_exchange_rates = response;
+        }
+    });
+
+    return cached_exchange_rates;
+}
+
+
+/*
+ * Calculate the total price for a given dataset.
+ * Within each 'row' in the dataset, the 'price' attribute is denoted by 'key' variable
+ *
+ * The target currency is determined as follows:
+ * 1. Provided as options.currency
+ * 2. All rows use the same currency (defaults to this)
+ * 3. Use the result of baseCurrency function
+ */
+function calculateTotalPrice(dataset, value_func, currency_func, options={}) {
+
+    var currency = options.currency;
+
+    var rates = options.rates || getCurrencyConversionRates();
+
+    if (!rates) {
+        console.error('Could not retrieve currency conversion information from the server');
+        return `<span class='icon-red fas fa-exclamation-circle' title='{% trans "Error fetching currency data" %}'></span>`;
+    }
+
+    if (!currency) {
+        // Try to determine currency from the dataset
+        var common_currency = true;
+
+        for (var idx = 0; idx < dataset.length; idx++) {
+            let row = dataset[idx];
+
+            var row_currency = currency_func(row);
+
+            if (row_currency == null) {
+                continue;
+            }
+
+            if (currency == null) {
+                currency = row_currency;
+            }
+
+            if (currency != row_currency) {
+                common_currency = false;
+                break;
+            }
+        }
+
+        // Inconsistent currencies between rows - revert to base currency
+        if (!common_currency) {
+            currency = baseCurrency();
+        }
+    }
+
+    var total = null;
+
+    for (var ii = 0; ii < dataset.length; ii++) {
+        let row = dataset[ii];
+
+        // Pass the row back to the decoder
+        var value = value_func(row);
+
+        // Ignore null values
+        if (value == null) {
+            continue;
+        }
+
+        // Convert to the desired currency
+        value = convertCurrency(
+            value,
+            currency_func(row) || baseCurrency(),
+            currency,
+            rates
+        );
+
+        if (value == null) {
+            continue;
+        }
+
+        // Total is null until we get a good value
+        if (total == null) {
+            total = 0;
+        }
+
+        total += value;
+    }
+
+    // Return raw total instead of formatted value
+    if (options.raw) {
+        return total;
+    }
+
+    return formatCurrency(total, {
+        currency: currency,
+    });
+}
+
+
+/*
+ * Convert from one specified currency into another
+ *
+ * @param {number} value - numerical value
+ * @param {string} source_currency - The source currency code e.g. 'AUD'
+ * @param {string} target_currency - The target currency code e.g. 'USD'
+ * @param {object} rate_data - Currency exchange rate data received from the server
+ */
+function convertCurrency(value, source_currency, target_currency, rate_data) {
+
+    if (value == null) {
+        console.warn('Null value passed to convertCurrency function');
+        return null;
+    }
+
+    // Short circuit the case where the currencies are the same
+    if (source_currency == target_currency) {
+        return value;
+    }
+
+    if (rate_data == null) {
+        console.error('convertCurrency() called without rate_data');
+        return null;
+    }
+
+    if (!('base_currency' in rate_data)) {
+        console.error('Currency data missing base_currency parameter');
+        return null;
+    }
+
+    if (!('exchange_rates' in rate_data)) {
+        console.error('Currency data missing exchange_rates parameter');
+        return null;
+    }
+
+    var rates = rate_data['exchange_rates'];
+
+    if (!(source_currency in rates)) {
+        console.error(`Source currency '${source_currency}' not found in exchange rate data`);
+        return null;
+    }
+
+    if (!(target_currency in rates)) {
+        console.error(`Target currency '${target_currency}' not found in exchange rate date`);
+        return null;
+    }
+
+    // We assume that the 'base exchange rate' is 1:1
+    return value / rates[source_currency] * rates[target_currency];
+}
+
+
+/*
  * Load BOM pricing chart
  */
 function loadBomPricingChart(options={}) {
@@ -25,7 +292,7 @@ function loadBomPricingChart(options={}) {
     var part = options.part;
 
     if (!part) {
-        console.error('No part provided to loadPurchasePriceHistoryTable');
+        console.error('No part provided to loadBomPricingChart');
         return;
     }
 
@@ -167,7 +434,7 @@ function loadPartSupplierPricingTable(options={}) {
     var part = options.part;
 
     if (!part) {
-        console.error('No part provided to loadPurchasePriceHistoryTable');
+        console.error('No part provided to loadPartSupplierPricingTable');
         return;
     }
 
@@ -205,7 +472,7 @@ function loadPartSupplierPricingTable(options={}) {
             data = data.sort((a, b) => (a.quantity - b.quantity));
 
             var graphLabels = Array.from(data, (x) => (`${x.part_detail.SKU} - {% trans "Quantity" %} ${x.quantity}`));
-            var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_size));
+            var graphValues = Array.from(data, (x) => (x.price / x.part_detail.pack_quantity_native));
 
             if (chart) {
                 chart.destroy();
@@ -265,7 +532,7 @@ function loadPartSupplierPricingTable(options={}) {
                     }
 
                     // Convert to unit pricing
-                    var unit_price = row.price / row.part_detail.pack_size;
+                    var unit_price = row.price / row.part_detail.pack_quantity_native;
 
                     var html = formatCurrency(unit_price, {
                         currency: row.price_currency
@@ -354,14 +621,14 @@ function loadPriceBreakTable(table, options={}) {
                 title: '{% trans "Price" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var html = formatCurrency(value, {currency: row.price_currency});
+                    let html = formatCurrency(value, {currency: row.price_currency});
 
-                    html += `<div class='btn-group float-right' role='group'>`;
+                    let buttons = '';
 
-                    html += makeIconButton('fa-edit icon-blue', `button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
-                    html += makeIconButton('fa-trash-alt icon-red', `button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
+                    buttons += makeEditButton(`button-${name}-edit`, row.pk, `{% trans "Edit" %} ${human_name}`);
+                    buttons += makeDeleteButton(`button-${name}-delete`, row.pk, `{% trans "Delete" %} ${human_name}"`);
 
-                    html += `</div>`;
+                    html += wrapButtons(buttons);
 
                     return html;
                 }
@@ -406,8 +673,12 @@ function initPriceBreakSet(table, options) {
                     value: part_id,
                 },
                 quantity: {},
-                price: {},
-                price_currency: {},
+                price: {
+                    icon: 'fa-dollar-sign',
+                },
+                price_currency: {
+                    icon: 'fa-coins',
+                },
             },
             method: 'POST',
             title: '{% trans "Add Price Break" %}',
@@ -431,8 +702,12 @@ function initPriceBreakSet(table, options) {
         constructForm(`${pb_url}${pk}/`, {
             fields: {
                 quantity: {},
-                price: {},
-                price_currency: {},
+                price: {
+                    icon: 'fa-dollar-sign',
+                },
+                price_currency: {
+                    icon: 'fa-coins',
+                },
             },
             title: '{% trans "Edit Price Break" %}',
             onSuccess: reloadPriceBreakTable,
@@ -489,7 +764,21 @@ function loadPurchasePriceHistoryTable(options={}) {
             data = data.sort((a, b) => (a.order_detail.complete_date - b.order_detail.complete_date));
 
             var graphLabels = Array.from(data, (x) => (`${x.order_detail.reference} - ${x.order_detail.complete_date}`));
-            var graphValues = Array.from(data, (x) => (x.purchase_price / x.supplier_part_detail.pack_size));
+            var graphValues = Array.from(data, (x) => {
+                let pp = x.purchase_price;
+
+                let div = 1.0;
+
+                if (x.supplier_part_detail) {
+                    div = parseFloat(x.supplier_part_detail.pack_quantity_native);
+
+                    if (isNaN(div) || !isFinite(div)) {
+                        div = 1.0;
+                    }
+                }
+
+                return pp / div;
+            });
 
             if (chart) {
                 chart.destroy();
@@ -550,9 +839,12 @@ function loadPurchasePriceHistoryTable(options={}) {
                         return '-';
                     }
 
-                    return formatCurrency(row.purchase_price / row.supplier_part_detail.pack_size, {
-                        currency: row.purchase_price_currency
-                    });
+                    return formatCurrency(
+                        row.purchase_price / row.supplier_part_detail.pack_quantity_native,
+                        {
+                            currency: row.purchase_price_currency
+                        }
+                    );
                 }
             },
         ]

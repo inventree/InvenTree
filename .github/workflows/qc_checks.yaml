@@ -1,15 +1,12 @@
 # Checks for each PR / push
 
-name: QC checks
+name: QC
 
 on:
   push:
-    branches-ignore:
-      - l10*
-
+    branches-ignore: [ 'l10*' ]
   pull_request:
-    branches-ignore:
-      - l10*
+    branches-ignore: [ 'l10*' ]
 
 env:
   python_version: 3.9
@@ -25,28 +22,43 @@ env:
   INVENTREE_BACKUP_DIR: ../test_inventree_backup
 
 jobs:
-  pep_style:
-    name: Style [Python]
-    runs-on: ubuntu-20.04
+  paths-filter:
+    name: Filter
+    runs-on: ubuntu-latest
+
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+      migrations: ${{ steps.filter.outputs.migrations }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      api: ${{ steps.filter.outputs.api }}
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
-        uses: ./.github/actions/setup
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # pin@v2.11.1
+        id: filter
         with:
-          dev-install: true
-      - name: Run flake8
-        run: flake8 InvenTree --extend-ignore=D
+          filters: |
+            server:
+              - 'InvenTree/**'
+              - 'requirements.txt'
+              - 'requirements-dev.txt'
+            migrations:
+              - '**/migrations/**'
+              - '.github/workflows**'
+            api:
+              - 'InvenTree/InvenTree/api_version.py'
+            frontend:
+              - 'src/frontend/**'
 
   javascript:
-    name: Style [JS]
+    name: Style - Classic UI [JS]
     runs-on: ubuntu-20.04
 
-    needs: pep_style
+    needs: [ 'pre-commit' ]
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           npm: true
@@ -60,32 +72,16 @@ jobs:
           python InvenTree/manage.py prerender
           npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
-  html:
-    name: Style [HTML]
-    runs-on: ubuntu-20.04
-
-    needs: pep_style
-
-    steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
-        uses: ./.github/actions/setup
-        with:
-          npm: true
-          install: true
-      - name: Check HTML Files
-        run: npx markuplint **/templates/*.html
-
   pre-commit:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
-
-    needs: pep_style
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
           python-version: ${{ env.python_version }}
           cache: 'pip'
@@ -95,6 +91,117 @@ jobs:
         run: |
           pip install requests
           python3 ci/version_check.py
+
+  mkdocs:
+    name: Style [Documentation]
+    runs-on: ubuntu-20.04
+
+    needs: paths-filter
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Set up Python ${{ env.python_version }}
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
+        with:
+          python-version: ${{ env.python_version }}
+      - name: Check Config
+        run: |
+          pip install pyyaml
+          pip install -r docs/requirements.txt
+          python docs/ci/check_mkdocs_config.py
+      - name: Check Links
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          folder-path: docs
+          config-file: docs/mlc_config.json
+          check-modified-files-only: 'yes'
+          use-quiet-mode: 'yes'
+
+  schema:
+    name: Tests - API Schema Documentation
+    runs-on: ubuntu-20.04
+    needs: paths-filter
+    if: needs.paths-filter.outputs.server == 'true'
+    env:
+      INVENTREE_DB_ENGINE: django.db.backends.sqlite3
+      INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
+      INVENTREE_ADMIN_USER: testuser
+      INVENTREE_ADMIN_PASSWORD: testpassword
+      INVENTREE_ADMIN_EMAIL: test@test.com
+      INVENTREE_PYTHON_TEST_SERVER: http://localhost:12345
+      INVENTREE_PYTHON_TEST_USERNAME: testuser
+      INVENTREE_PYTHON_TEST_PASSWORD: testpassword
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils
+          dev-install: true
+          update: true
+      - name: Export API Documentation
+        run: invoke schema --ignore-warnings --filename InvenTree/schema.yml
+      - name: Upload schema
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # pin@v3.1.3
+        with:
+          name: schema.yml
+          path: InvenTree/schema.yml
+      - name: Download public schema
+        if: needs.paths-filter.outputs.api == 'false'
+        run: |
+          pip install requests >/dev/null 2>&1
+          version="$(python3 ci/version_check.py only_version 2>&1)"
+          echo "Version: $version"
+          url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
+          echo "URL: $url"
+          curl -s -o api.yaml $url
+          echo "Downloaded api.yaml"
+      - name: Check for differences in API Schema
+        if: needs.paths-filter.outputs.api == 'false'
+        run: |
+          diff --color -u InvenTree/schema.yml api.yaml
+          diff -u InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
+      - name: Check schema - including warnings
+        run: invoke schema
+        continue-on-error: true
+      - name: Extract version for publishing
+        id: version
+        if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+        run: |
+          pip install requests >/dev/null 2>&1
+          version="$(python3 ci/version_check.py only_version 2>&1)"
+          echo "Version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  schema-push:
+            name: Push new schema
+            runs-on: ubuntu-20.04
+            needs: [paths-filter, schema]
+            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+            env:
+              version: ${{ needs.schema.outputs.version }}
+
+            steps:
+              - uses: actions/checkout@v4
+                with:
+                    repository: inventree/schema
+                    token: ${{ secrets.SCHEMA_PAT }}
+              - name: Download schema artifact
+                uses: actions/download-artifact@v3
+                with:
+                  name: schema.yml
+              - name: Move schema to correct location
+                run: |
+                  echo "Version: $version"
+                  mkdir export/${version}
+                  mv schema.yml export/${version}/api.yaml
+              - uses: stefanzweifel/git-auto-commit-action@v5
+                with:
+                  commit_message: "Update API schema for ${version}"
 
   python:
     name: Tests - inventree-python
@@ -114,16 +221,16 @@ jobs:
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
+          npm: true
       - name: Download Python Code For `${{ env.wrapper_name }}`
-        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }}
-          ./${{ env.wrapper_name }}
+        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start InvenTree Server
         run: |
           invoke delete-data -f
@@ -136,57 +243,44 @@ jobs:
           invoke check-server
           coverage run -m unittest discover -s test/
 
-  docstyle:
-    name: Style [Python Docstrings]
-    runs-on: ubuntu-20.04
-
-    needs: pre-commit
-    continue-on-error: true
-
-    steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
-        uses: ./.github/actions/setup
-        with:
-          install: true
-      - name: Run flake8
-        run: flake8 InvenTree --statistics
-
   coverage:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'javascript', 'html', 'pre-commit' ]
+    needs: [ 'pre-commit' ]
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_PLUGINS_ENABLED: true
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
           dev-install: true
           update: true
-      - name: Coverage Tests
-        run: invoke coverage
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py
+      - name: Coverage Tests
+        run: invoke test --coverage
       - name: Upload Coverage Report
-        run: coveralls
+        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'javascript', 'html', 'pre-commit' ]
+    needs: [ 'pre-commit' ]
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -213,12 +307,12 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libpq-dev
-          pip-dependency: psycopg2 django-redis>=5.0.0
+          pip-dependency: psycopg django-redis>=5.0.0
           dev-install: true
           update: true
       - name: Run Tests
@@ -230,8 +324,7 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'javascript', 'html', 'pre-commit' ]
-    if: github.event_name == 'push'
+    needs: [ 'pre-commit' ]
 
     env:
       # Database backend configuration
@@ -252,14 +345,13 @@ jobs:
           MYSQL_USER: inventree
           MYSQL_PASSWORD: password
           MYSQL_ROOT_PASSWORD: password
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s
-          --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         ports:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
-      - name: Enviroment Setup
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils libmysqlclient-dev
@@ -270,3 +362,155 @@ jobs:
         run: invoke test
       - name: Data Export Test
         uses: ./.github/actions/migration
+
+  migration-tests:
+    name: Tests - Migrations [PostgreSQL]
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
+
+    env:
+      INVENTREE_DB_ENGINE: django.db.backends.postgresql
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_DB_USER: inventree
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_PORT: 5432
+      INVENTREE_DEBUG: info
+      INVENTREE_PLUGINS_ENABLED: false
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg
+          dev-install: true
+          update: true
+      - name: Run Tests
+        run: invoke test --migrations --report
+
+  migrations-checks:
+    name: Tests - Full Migration [SQLite]
+    runs-on: ubuntu-latest
+    needs: paths-filter
+    if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
+
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
+      INVENTREE_DEBUG: info
+      INVENTREE_PLUGINS_ENABLED: false
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+        name: Checkout Code
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          install: true
+      - name: Fetch Database
+        run: git clone --depth 1 https://github.com/inventree/test-db ./test-db
+
+      - name: Latest Database
+        run: |
+          cp test-db/latest.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.10.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.10.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.11.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.11.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.12.0 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.12.0.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+      - name: 0.13.5 Database
+        run: |
+          rm /home/runner/work/InvenTree/db.sqlite3
+          cp test-db/stable_0.13.5.sqlite3 /home/runner/work/InvenTree/db.sqlite3
+          chmod +rw /home/runner/work/InvenTree/db.sqlite3
+          invoke migrate
+
+  platform_ui:
+    name: Tests - Platform UI
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+    needs: [ 'pre-commit', 'paths-filter' ]
+    if: needs.paths-filter.outputs.frontend == 'true'
+    env:
+      INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
+      INVENTREE_DEBUG: True
+      INVENTREE_PLUGINS_ENABLED: false
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+          install: true
+          update: true
+      - name: Set up test data
+        run: invoke setup-test -i
+      - name: Install dependencies
+        run: inv frontend-compile
+      - name: Install Playwright Browsers
+        run: cd src/frontend && npx playwright install --with-deps
+      - name: Run Playwright tests
+        run: cd src/frontend &&  npx playwright test
+      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # pin@v3.1.3
+        if: always()
+        with:
+          name: playwright-report
+          path: src/frontend/playwright-report/
+          retention-days: 30
+
+  platform_ui_build:
+    name: Build - UI Platform
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - name: Environment Setup
+        uses: ./.github/actions/setup
+        with:
+          npm: true
+      - name: Install dependencies
+        run: cd src/frontend && yarn install
+      - name: Build frontend
+        run: cd src/frontend && npm run build
+      - name: Zip frontend
+        run: |
+          cd InvenTree/web/static
+          zip -r frontend-build.zip web/
+      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # pin@v3.1.3
+        with:
+          name: frontend-build
+          path: InvenTree/web/static/web

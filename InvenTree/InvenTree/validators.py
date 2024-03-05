@@ -8,10 +8,29 @@ from django.core import validators
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import pint
 from jinja2 import Template
 from moneyed import CURRENCIES
 
-import common.models
+import InvenTree.conversion
+
+
+def validate_physical_units(unit):
+    """Ensure that a given unit is a valid physical unit."""
+    unit = unit.strip()
+
+    # Ignore blank units
+    if not unit:
+        return
+
+    ureg = InvenTree.conversion.get_unit_registry()
+
+    try:
+        ureg(unit)
+    except AttributeError:
+        raise ValidationError(_('Invalid physical unit'))
+    except pint.errors.UndefinedUnitError:
+        raise ValidationError(_('Invalid physical unit'))
 
 
 def validate_currency_code(code):
@@ -41,59 +60,29 @@ def allowable_url_schemes():
 
 class AllowedURLValidator(validators.URLValidator):
     """Custom URL validator to allow for custom schemes."""
+
     def __call__(self, value):
         """Validate the URL."""
+        import common.models
+
         self.schemes = allowable_url_schemes()
+
+        # Determine if 'strict' URL validation is required (i.e. if the URL must have a schema prefix)
+        strict_urls = common.models.InvenTreeSetting.get_setting(
+            'INVENTREE_STRICT_URLS', True, cache=False
+        )
+
+        if not strict_urls:
+            # Allow URLs which do not have a provided schema
+            if '://' not in value:
+                # Validate as if it were http
+                value = 'http://' + value
+
         super().__call__(value)
-
-
-def validate_part_name(value):
-    """Validate the name field for a Part instance
-
-    This function is exposed to any Validation plugins, and thus can be customized.
-    """
-
-    from plugin.registry import registry
-
-    for plugin in registry.with_mixin('validation'):
-        # Run the name through each custom validator
-        # If the plugin returns 'True' we will skip any subsequent validation
-        if plugin.validate_part_name(value):
-            return
-
-
-def validate_part_ipn(value):
-    """Validate the IPN field for a Part instance.
-
-    This function is exposed to any Validation plugins, and thus can be customized.
-
-    If no validation errors are raised, the IPN is also validated against a configurable regex pattern.
-    """
-
-    from plugin.registry import registry
-
-    plugins = registry.with_mixin('validation')
-
-    for plugin in plugins:
-        # Run the IPN through each custom validator
-        # If the plugin returns 'True' we will skip any subsequent validation
-        if plugin.validate_part_ipn(value):
-            return
-
-    # If we get to here, none of the plugins have raised an error
-
-    pattern = common.models.InvenTreeSetting.get_setting('PART_IPN_REGEX')
-
-    if pattern:
-        match = re.search(pattern, value)
-
-        if match is None:
-            raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
 
 
 def validate_purchase_order_reference(value):
     """Validate the 'reference' field of a PurchaseOrder."""
-
     from order.models import PurchaseOrder
 
     # If we get to here, run the "default" validation routine
@@ -102,7 +91,6 @@ def validate_purchase_order_reference(value):
 
 def validate_sales_order_reference(value):
     """Validate the 'reference' field of a SalesOrder."""
-
     from order.models import SalesOrder
 
     # If we get to here, run the "default" validation routine
@@ -130,7 +118,7 @@ def validate_overage(value):
         i = Decimal(value)
 
         if i < 0:
-            raise ValidationError(_("Overage value must not be negative"))
+            raise ValidationError(_('Overage value must not be negative'))
 
         # Looks like a number
         return True
@@ -146,17 +134,15 @@ def validate_overage(value):
             f = float(v)
 
             if f < 0:
-                raise ValidationError(_("Overage value must not be negative"))
+                raise ValidationError(_('Overage value must not be negative'))
             elif f > 100:
-                raise ValidationError(_("Overage must not exceed 100%"))
+                raise ValidationError(_('Overage must not exceed 100%'))
 
             return True
         except ValueError:
             pass
 
-    raise ValidationError(
-        _("Invalid value for overage")
-    )
+    raise ValidationError(_('Invalid value for overage'))
 
 
 def validate_part_name_format(value):
@@ -164,7 +150,6 @@ def validate_part_name_format(value):
 
     Make sure that each template container has a field of Part Model
     """
-
     # Make sure that the field_name exists in Part model
     from part.models import Part
 
@@ -193,8 +178,6 @@ def validate_part_name_format(value):
     try:
         Template(value).render({'part': p})
     except Exception as exc:
-        raise ValidationError({
-            'value': str(exc)
-        })
+        raise ValidationError({'value': str(exc)})
 
     return True

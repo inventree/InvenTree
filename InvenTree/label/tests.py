@@ -1,36 +1,36 @@
-"""Tests for labels"""
+"""Tests for labels."""
 
 import io
+import json
 
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.http import JsonResponse
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
-from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import validateFilterString
+from InvenTree.unit_test import InvenTreeAPITestCase
+from label.models import LabelOutput
 from part.models import Part
+from plugin.registry import registry
 from stock.models import StockItem
 
 from .models import PartLabel, StockItemLabel, StockLocationLabel
 
 
 class LabelTest(InvenTreeAPITestCase):
-    """Unit test class for label models"""
+    """Unit test class for label models."""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'stock'
-    ]
+    fixtures = ['category', 'part', 'location', 'stock']
 
-    def setUp(self) -> None:
-        """Ensure that some label instances exist as part of init routine"""
-        super().setUp()
-        apps.get_app_config('label').create_labels()
+    @classmethod
+    def setUpTestData(cls):
+        """Ensure that some label instances exist as part of init routine."""
+        super().setUpTestData()
+        apps.get_app_config('label').create_defaults()
 
     def test_default_labels(self):
         """Test that the default label templates are copied across."""
@@ -44,12 +44,9 @@ class LabelTest(InvenTreeAPITestCase):
 
     def test_default_files(self):
         """Test that label files exist in the MEDIA directory."""
+
         def test_subdir(ref_name):
-            item_dir = settings.MEDIA_ROOT.joinpath(
-                'label',
-                'inventree',
-                ref_name,
-            )
+            item_dir = settings.MEDIA_ROOT.joinpath('label', 'inventree', ref_name)
             self.assertTrue(len([item_dir.iterdir()]) > 0)
 
         test_subdir('stockitem')
@@ -58,13 +55,13 @@ class LabelTest(InvenTreeAPITestCase):
 
     def test_filters(self):
         """Test the label filters."""
-        filter_string = "part__pk=10"
+        filter_string = 'part__pk=10'
 
         filters = validateFilterString(filter_string, model=StockItem)
 
         self.assertEqual(type(filters), dict)
 
-        bad_filter_string = "part_pk=10"
+        bad_filter_string = 'part_pk=10'
 
         with self.assertRaises(ValidationError):
             validateFilterString(bad_filter_string, model=StockItem)
@@ -76,11 +73,19 @@ class LabelTest(InvenTreeAPITestCase):
 
         for label in labels:
             url = reverse('api-part-label-print', kwargs={'pk': label.pk})
-            self.get(f'{url}?parts={part.pk}', expected_code=200)
+
+            # Check that label printing returns the correct response type
+            response = self.get(f'{url}?parts={part.pk}', expected_code=200)
+            self.assertIsInstance(response, JsonResponse)
+            data = json.loads(response.content)
+
+            self.assertIn('message', data)
+            self.assertIn('file', data)
+            label_file = data['file']
+            self.assertIn('/media/label/output/', label_file)
 
     def test_print_part_label(self):
         """Actually 'print' a label, and ensure that the correct information is contained."""
-
         label_data = """
         {% load barcode %}
         {% load report %}
@@ -93,7 +98,7 @@ class LabelTest(InvenTreeAPITestCase):
         <!-- Test InvenTree URL -->
         url: {{ qr_url|safe }}
         <!-- Test image URL generation -->
-        image: {% part_image part %}
+        image: {% part_image part width=128 %}
         <!-- Test InvenTree logo -->
         logo: {% logo_image %}
         </html>
@@ -102,30 +107,60 @@ class LabelTest(InvenTreeAPITestCase):
         buffer = io.StringIO()
         buffer.write(label_data)
 
-        template = ContentFile(buffer.getvalue(), "label.html")
+        template = ContentFile(buffer.getvalue(), 'label.html')
 
         # Construct a label template
         label = PartLabel.objects.create(
-            name='test',
-            description='Test label',
-            enabled=True,
-            label=template,
+            name='test', description='Test label', enabled=True, label=template
         )
 
         # Ensure we are in "debug" mode (so the report is generated as HTML)
         InvenTreeSetting.set_setting('REPORT_ENABLE', True, None)
-        InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', True, None)
 
-        # Print via the API
+        # Set the 'debug' setting for the plugin
+        plugin = registry.get_plugin('inventreelabel')
+        plugin.set_setting('DEBUG', True)
+
+        # Print via the API (Note: will default to the builtin plugin if no plugin supplied)
         url = reverse('api-part-label-print', kwargs={'pk': label.pk})
 
-        response = self.get(f'{url}?parts=1', expected_code=200)
+        prt = Part.objects.first()
+        part_pk = prt.pk
+        part_name = prt.name
 
-        content = str(response.content)
+        response = self.get(f'{url}?parts={part_pk}', expected_code=200)
+        data = json.loads(response.content)
+        self.assertIn('file', data)
+
+        # Find the generated file
+        output = LabelOutput.objects.last()
+
+        # Open the file and read data
+        with open(output.label.path, 'r') as f:
+            content = f.read()
 
         # Test that each element has been rendered correctly
-        self.assertIn("part: 1 - M2x4 LPHS", content)
-        self.assertIn('data: {"part": 1}', content)
-        self.assertIn("http://testserver/part/1/", content)
-        self.assertIn("image: /static/img/blank_image.png", content)
-        self.assertIn("logo: /static/img/inventree.png", content)
+        self.assertIn(f'part: {part_pk} - {part_name}', content)
+        self.assertIn(f'data: {{"part": {part_pk}}}', content)
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertIn(f'http://testserver/part/{part_pk}/', content)
+
+        # Check that a encoded image has been generated
+        self.assertIn('data:image/png;charset=utf-8;base64,', content)
+
+    def test_metadata(self):
+        """Unit tests for the metadata field."""
+        for model in [StockItemLabel, StockLocationLabel, PartLabel]:
+            p = model.objects.first()
+
+            self.assertIsNone(p.get_metadata('test'))
+            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+            # Test update via the set_metadata() method
+            p.set_metadata('test', 3)
+            self.assertEqual(p.get_metadata('test'), 3)
+
+            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+                p.set_metadata(k, k)
+
+            self.assertEqual(len(p.metadata.keys()), 4)

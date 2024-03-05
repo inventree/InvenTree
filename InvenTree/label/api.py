@@ -1,48 +1,179 @@
-"""API functionality for the 'label' app"""
+"""API functionality for the 'label' app."""
 
-from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
-from django.http import HttpResponse, JsonResponse
-from django.urls import include, re_path
+from django.http import JsonResponse
+from django.urls import include, path, re_path
+from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework import serializers
 from rest_framework.exceptions import NotFound
+from rest_framework.request import clone_request
 
+import build.models
 import common.models
+import InvenTree.exceptions
 import InvenTree.helpers
-from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
-from InvenTree.tasks import offload_task
+import label.models
+import label.serializers
+from InvenTree.api import MetadataView
+from InvenTree.filters import InvenTreeSearchFilter
+from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from part.models import Part
-from plugin.base.label import label as plugin_label
+from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
-from .models import PartLabel, StockItemLabel, StockLocationLabel
-from .serializers import (PartLabelSerializer, StockItemLabelSerializer,
-                          StockLocationLabelSerializer)
+
+class LabelFilterMixin:
+    """Mixin for filtering a queryset by a list of object ID values.
+
+    Each implementing class defines a database model to lookup,
+    and a "key" (query parameter) for providing a list of ID (PK) values.
+
+    This mixin defines a 'get_items' method which provides a generic
+    implementation to return a list of matching database model instances.
+    """
+
+    # Database model for instances to actually be "printed" against this label template
+    ITEM_MODEL = None
+
+    # Default key for looking up database model instances
+    ITEM_KEY = 'item'
+
+    def get_items(self):
+        """Return a list of database objects from query parameter."""
+        ids = []
+
+        # Construct a list of possible query parameter value options
+        # e.g. if self.ITEM_KEY = 'part' -> ['part', 'part[]', 'parts', parts[]']
+        for k in [self.ITEM_KEY + x for x in ['', '[]', 's', 's[]']]:
+            if ids := self.request.query_params.getlist(k, []):
+                # Return the first list of matches
+                break
+
+        # Next we must validate each provided object ID
+        valid_ids = []
+
+        for id in ids:
+            try:
+                valid_ids.append(int(id))
+            except ValueError:
+                pass
+
+        # Filter queryset by matching ID values
+        return self.ITEM_MODEL.objects.filter(pk__in=valid_ids)
 
 
-class LabelListView(ListAPI):
+class LabelListView(LabelFilterMixin, ListCreateAPI):
     """Generic API class for label templates."""
 
-    filter_backends = [
-        DjangoFilterBackend,
-        filters.SearchFilter
-    ]
+    def filter_queryset(self, queryset):
+        """Filter the queryset based on the provided label ID values.
 
-    filterset_fields = [
-        'enabled',
-    ]
+        As each 'label' instance may optionally define its own filters,
+        the resulting queryset is the 'union' of the two.
+        """
+        queryset = super().filter_queryset(queryset)
 
-    search_fields = [
-        'name',
-        'description',
-    ]
+        items = self.get_items()
+
+        if len(items) > 0:
+            """
+            At this point, we are basically forced to be inefficient,
+            as we need to compare the 'filters' string of each label,
+            and see if it matches against each of the requested items.
+
+            TODO: In the future, if this becomes excessively slow, it
+                  will need to be readdressed.
+            """
+            valid_label_ids = set()
+
+            for lbl in queryset.all():
+                matches = True
+
+                try:
+                    filters = InvenTree.helpers.validateFilterString(lbl.filters)
+                except ValidationError:
+                    continue
+
+                for item in items:
+                    item_query = self.ITEM_MODEL.objects.filter(pk=item.pk)
+
+                    try:
+                        if not item_query.filter(**filters).exists():
+                            matches = False
+                            break
+                    except FieldError:
+                        matches = False
+                        break
+
+                # Matched all items
+                if matches:
+                    valid_label_ids.add(lbl.pk)
+                else:
+                    continue
+
+            # Reduce queryset to only valid matches
+            queryset = queryset.filter(pk__in=list(valid_label_ids))
+
+        return queryset
+
+    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+
+    filterset_fields = ['enabled']
+
+    search_fields = ['name', 'description']
 
 
-class LabelPrintMixin:
+@method_decorator(cache_page(5), name='dispatch')
+class LabelPrintMixin(LabelFilterMixin):
     """Mixin for printing labels."""
+
+    rolemap = {'GET': 'view', 'POST': 'view'}
+
+    def check_permissions(self, request):
+        """Override request method to GET so that also non superusers can print using a post request."""
+        if request.method == 'POST':
+            request = clone_request(request, 'GET')
+        return super().check_permissions(request)
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        """Prevent caching when printing report templates."""
+        return super().dispatch(*args, **kwargs)
+
+    def get_serializer(self, *args, **kwargs):
+        """Define a get_serializer method to be discoverable by the OPTIONS request."""
+        # Check the request to determine if the user has selected a label printing plugin
+        plugin = self.get_plugin(self.request)
+
+        kwargs.setdefault('context', self.get_serializer_context())
+        serializer = plugin.get_printing_options_serializer(
+            self.request, *args, **kwargs
+        )
+
+        # if no serializer is defined, return an empty serializer
+        if not serializer:
+            return serializers.Serializer()
+
+        return serializer
+
+    def get(self, request, *args, **kwargs):
+        """Perform a GET request against this endpoint to print labels."""
+        common.models.InvenTreeUserSetting.set_setting(
+            'DEFAULT_' + self.ITEM_KEY.upper() + '_LABEL_TEMPLATE',
+            self.get_object().pk,
+            None,
+            user=request.user,
+        )
+        return self.print(request, self.get_items())
+
+    def post(self, request, *args, **kwargs):
+        """Perform a GET request against this endpoint to print labels."""
+        return self.get(request, *args, **kwargs)
 
     def get_plugin(self, request):
         """Return the label printing plugin associated with this request.
@@ -55,25 +186,28 @@ class LabelPrintMixin:
         - matching plugin implements the 'labels' mixin
         - matching plugin is enabled
         """
-        if not settings.PLUGINS_ENABLED:
-            return None  # pragma: no cover
-
         plugin_key = request.query_params.get('plugin', None)
 
-        # No plugin provided, and that's OK
+        # No plugin provided!
         if plugin_key is None:
-            return None
+            # Default to the builtin label printing plugin
+            plugin_key = InvenTreeLabelPlugin.NAME.lower()
 
         plugin = registry.get_plugin(plugin_key)
 
-        if plugin:
-            if plugin.is_active():
-                # Only return the plugin if it is enabled!
-                return plugin
-            else:
-                raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
-        else:
+        if not plugin:
             raise NotFound(f"Plugin '{plugin_key}' not found")
+
+        if not plugin.is_active():
+            raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
+
+        if not plugin.mixin_enabled('labels'):
+            raise ValidationError(
+                f"Plugin '{plugin_key}' is not a label printing plugin"
+            )
+
+        # Only return the plugin if it is enabled and has the label printing mixin
+        return plugin
 
     def print(self, request, items_to_print):
         """Print this label template against a number of pre-validated items."""
@@ -82,126 +216,55 @@ class LabelPrintMixin:
 
         if len(items_to_print) == 0:
             # No valid items provided, return an error message
-
             raise ValidationError('No valid objects provided to label template')
 
-        outputs = []
+        # Label template
+        label = self.get_object()
 
-        # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+        # Check the label dimensions
+        if label.width <= 0 or label.height <= 0:
+            raise ValidationError('Label has invalid dimensions')
 
-        label_name = "label.pdf"
+        # if the plugin returns a serializer, validate the data
+        if serializer := plugin.get_printing_options_serializer(
+            request, data=request.data, context=self.get_serializer_context()
+        ):
+            serializer.is_valid(raise_exception=True)
 
-        label_names = []
-        label_instances = []
+        # At this point, we offload the label(s) to the selected plugin.
+        # The plugin is responsible for handling the request and returning a response.
 
-        # Merge one or more PDF files into a single download
-        for item in items_to_print:
-            label = self.get_object()
-            label.object_to_print = item
-
-            label_name = label.generate_filename(request)
-
-            label_names.append(label_name)
-            label_instances.append(label)
-
-            if debug_mode:
-                outputs.append(label.render_as_string(request))
-            else:
-                outputs.append(label.render(request))
-
-        if not label_name.endswith(".pdf"):
-            label_name += ".pdf"
-
-        if plugin is not None:
-            """Label printing is to be handled by a plugin, rather than being exported to PDF.
-
-            In this case, we do the following:
-
-            - Individually generate each label, exporting as an image file
-            - Pass all the images through to the label printing plugin
-            - Return a JSON response indicating that the printing has been offloaded
-            """
-
-            for idx, output in enumerate(outputs):
-                """For each output, we generate a temporary image file, which will then get sent to the printer."""
-
-                # Generate PDF data for the label
-                pdf = output.get_document().write_pdf()
-
-                # Offload a background task to print the provided label
-                offload_task(
-                    plugin_label.print_label,
-                    plugin.plugin_slug(),
-                    pdf,
-                    filename=label_names[idx],
-                    label_instance=label_instances[idx],
-                    user=request.user,
-                )
-
-            return JsonResponse({
-                'plugin': plugin.plugin_slug(),
-                'labels': label_names,
-            })
-
-        elif debug_mode:
-            """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
-
-            html = "\n".join(outputs)
-
-            return HttpResponse(html)
-
-        else:
-            """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
-
-            pages = []
-
-            for output in outputs:
-                doc = output.get_document()
-                for page in doc.pages:
-                    pages.append(page)
-
-            pdf = outputs[0].get_document().copy(pages).write_pdf()
-
-            inline = common.models.InvenTreeUserSetting.get_setting('LABEL_INLINE', user=request.user)
-
-            return InvenTree.helpers.DownloadFile(
-                pdf,
-                label_name,
-                content_type='application/pdf',
-                inline=inline
+        try:
+            result = plugin.print_labels(
+                label,
+                items_to_print,
+                request,
+                printing_options=(serializer.data if serializer else {}),
             )
+        except ValidationError as e:
+            raise (e)
+        except Exception as e:
+            raise ValidationError([_('Error printing label'), str(e)])
+
+        if isinstance(result, JsonResponse):
+            result['plugin'] = plugin.plugin_slug()
+            return result
+        raise ValidationError(
+            f"Plugin '{plugin.plugin_slug()}' returned invalid response type '{type(result)}'"
+        )
 
 
 class StockItemLabelMixin:
-    """Mixin for extracting stock items from query params."""
+    """Mixin for StockItemLabel endpoints."""
 
-    def get_items(self):
-        """Return a list of requested stock items."""
-        items = []
+    queryset = label.models.StockItemLabel.objects.all()
+    serializer_class = label.serializers.StockItemLabelSerializer
 
-        params = self.request.query_params
-
-        for key in ['item', 'item[]', 'items', 'items[]']:
-            if key in params:
-                items = params.getlist(key, [])
-                break
-
-        valid_ids = []
-
-        for item in items:
-            try:
-                valid_ids.append(int(item))
-            except (ValueError):
-                pass
-
-        # List of StockItems which match provided values
-        valid_items = StockItem.objects.filter(pk__in=valid_ids)
-
-        return valid_items
+    ITEM_MODEL = StockItem
+    ITEM_KEY = 'item'
 
 
-class StockItemLabelList(LabelListView, StockItemLabelMixin):
+class StockItemLabelList(StockItemLabelMixin, LabelListView):
     """API endpoint for viewing list of StockItemLabel objects.
 
     Filterable by:
@@ -211,113 +274,32 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
     - items: Filter by list of stock items
     """
 
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
-
-    def filter_queryset(self, queryset):
-        """Filter the StockItem label queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        # List of StockItem objects to match against
-        items = self.get_items()
-
-        # We wish to filter by stock items
-        if len(items) > 0:
-            """
-            At this point, we are basically forced to be inefficient,
-            as we need to compare the 'filters' string of each label,
-            and see if it matches against each of the requested items.
-
-            TODO: In the future, if this becomes excessively slow, it
-                  will need to be readdressed.
-            """
-
-            # Keep track of which labels match every specified stockitem
-            valid_label_ids = set()
-
-            for label in queryset.all():
-
-                matches = True
-
-                # Filter string defined for the StockItemLabel object
-                try:
-                    filters = InvenTree.helpers.validateFilterString(label.filters)
-                except ValidationError:  # pragma: no cover
-                    continue
-
-                for item in items:
-
-                    item_query = StockItem.objects.filter(pk=item.pk)
-
-                    try:
-                        if not item_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                # Matched all items
-                if matches:
-                    valid_label_ids.add(label.pk)
-                else:
-                    continue  # pragma: no cover
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
-
-        return queryset
+    pass
 
 
-class StockItemLabelDetail(RetrieveUpdateDestroyAPI):
+class StockItemLabelDetail(StockItemLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single StockItemLabel object."""
 
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
+    pass
 
 
-class StockItemLabelPrint(RetrieveAPI, StockItemLabelMixin, LabelPrintMixin):
+class StockItemLabelPrint(StockItemLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockItemLabel object."""
 
-    queryset = StockItemLabel.objects.all()
-    serializer_class = StockItemLabelSerializer
-
-    def get(self, request, *args, **kwargs):
-        """Check if valid stock item(s) have been provided."""
-        items = self.get_items()
-
-        return self.print(request, items)
+    pass
 
 
 class StockLocationLabelMixin:
-    """Mixin for extracting stock locations from query params."""
+    """Mixin for StockLocationLabel endpoints."""
 
-    def get_locations(self):
-        """Return a list of requested stock locations."""
-        locations = []
+    queryset = label.models.StockLocationLabel.objects.all()
+    serializer_class = label.serializers.StockLocationLabelSerializer
 
-        params = self.request.query_params
-
-        for key in ['location', 'location[]', 'locations', 'locations[]']:
-
-            if key in params:
-                locations = params.getlist(key, [])
-
-        valid_ids = []
-
-        for loc in locations:
-            try:
-                valid_ids.append(int(loc))
-            except (ValueError):
-                pass
-
-        # List of StockLocation objects which match provided values
-        valid_locations = StockLocation.objects.filter(pk__in=valid_ids)
-
-        return valid_locations
+    ITEM_MODEL = StockLocation
+    ITEM_KEY = 'location'
 
 
-class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
+class StockLocationLabelList(StockLocationLabelMixin, LabelListView):
     """API endpoint for viewiing list of StockLocationLabel objects.
 
     Filterable by:
@@ -327,211 +309,196 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
     - locations: Filter by list of stock locations
     """
 
-    queryset = StockLocationLabel.objects.all()
-    serializer_class = StockLocationLabelSerializer
-
-    def filter_queryset(self, queryset):
-        """Filter the StockLocationLabel queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        # List of StockLocation objects to match against
-        locations = self.get_locations()
-
-        # We wish to filter by stock location(s)
-        if len(locations) > 0:
-            """
-            At this point, we are basically forced to be inefficient,
-            as we need to compare the 'filters' string of each label,
-            and see if it matches against each of the requested items.
-
-            TODO: In the future, if this becomes excessively slow, it
-                  will need to be readdressed.
-            """
-
-            valid_label_ids = set()
-
-            for label in queryset.all():
-
-                matches = True
-
-                # Filter string defined for the StockLocationLabel object
-                try:
-                    filters = InvenTree.helpers.validateFilterString(label.filters)
-                except Exception:  # pragma: no cover
-                    # Skip if there was an error validating the filters...
-                    continue
-
-                for loc in locations:
-
-                    loc_query = StockLocation.objects.filter(pk=loc.pk)
-
-                    try:
-                        if not loc_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                # Matched all items
-                if matches:
-                    valid_label_ids.add(label.pk)
-                else:
-                    continue  # pragma: no cover
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
-
-        return queryset
+    pass
 
 
-class StockLocationLabelDetail(RetrieveUpdateDestroyAPI):
+class StockLocationLabelDetail(StockLocationLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single StockLocationLabel object."""
 
-    queryset = StockLocationLabel.objects.all()
-    serializer_class = StockLocationLabelSerializer
+    pass
 
 
-class StockLocationLabelPrint(RetrieveAPI, StockLocationLabelMixin, LabelPrintMixin):
+class StockLocationLabelPrint(StockLocationLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a StockLocationLabel object."""
 
-    queryset = StockLocationLabel.objects.all()
-    seiralizer_class = StockLocationLabelSerializer
-
-    def get(self, request, *args, **kwargs):
-        """Print labels based on the request parameters"""
-        locations = self.get_locations()
-
-        return self.print(request, locations)
+    pass
 
 
 class PartLabelMixin:
-    """Mixin for extracting Part objects from query parameters."""
+    """Mixin for PartLabel endpoints."""
 
-    def get_parts(self):
-        """Return a list of requested Part objects."""
-        parts = []
+    queryset = label.models.PartLabel.objects.all()
+    serializer_class = label.serializers.PartLabelSerializer
 
-        params = self.request.query_params
-
-        for key in ['part', 'part[]', 'parts', 'parts[]']:
-            if key in params:
-                parts = params.getlist(key, [])
-                break
-
-        valid_ids = []
-
-        for part in parts:
-            try:
-                valid_ids.append(int(part))
-            except (ValueError):
-                pass
-
-        # List of Part objects which match provided values
-        return Part.objects.filter(pk__in=valid_ids)
+    ITEM_MODEL = Part
+    ITEM_KEY = 'part'
 
 
-class PartLabelList(LabelListView, PartLabelMixin):
+class PartLabelList(PartLabelMixin, LabelListView):
     """API endpoint for viewing list of PartLabel objects."""
 
-    queryset = PartLabel.objects.all()
-    serializer_class = PartLabelSerializer
-
-    def filter_queryset(self, queryset):
-        """Custom queryset filtering for the PartLabel list"""
-        queryset = super().filter_queryset(queryset)
-
-        parts = self.get_parts()
-
-        if len(parts) > 0:
-
-            valid_label_ids = set()
-
-            for label in queryset.all():
-
-                matches = True
-
-                try:
-                    filters = InvenTree.helpers.validateFilterString(label.filters)
-                except ValidationError:  # pragma: no cover
-                    continue
-
-                for part in parts:
-
-                    part_query = Part.objects.filter(pk=part.pk)
-
-                    try:
-                        if not part_query.filter(**filters).exists():
-                            matches = False
-                            break
-                    except FieldError:
-                        matches = False
-                        break
-
-                if matches:
-                    valid_label_ids.add(label.pk)
-
-            # Reduce queryset to only valid matches
-            queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
-
-        return queryset
+    pass
 
 
-class PartLabelDetail(RetrieveUpdateDestroyAPI):
+class PartLabelDetail(PartLabelMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single PartLabel object."""
 
-    queryset = PartLabel.objects.all()
-    serializer_class = PartLabelSerializer
+    pass
 
 
-class PartLabelPrint(RetrieveAPI, PartLabelMixin, LabelPrintMixin):
+class PartLabelPrint(PartLabelMixin, LabelPrintMixin, RetrieveAPI):
     """API endpoint for printing a PartLabel object."""
 
-    queryset = PartLabel.objects.all()
-    serializer_class = PartLabelSerializer
+    pass
 
-    def get(self, request, *args, **kwargs):
-        """Check if valid part(s) have been provided."""
-        parts = self.get_parts()
 
-        return self.print(request, parts)
+class BuildLineLabelMixin:
+    """Mixin class for BuildLineLabel endpoints."""
+
+    queryset = label.models.BuildLineLabel.objects.all()
+    serializer_class = label.serializers.BuildLineLabelSerializer
+
+    ITEM_MODEL = build.models.BuildLine
+    ITEM_KEY = 'line'
+
+
+class BuildLineLabelList(BuildLineLabelMixin, LabelListView):
+    """API endpoint for viewing a list of BuildLineLabel objects."""
+
+    pass
+
+
+class BuildLineLabelDetail(BuildLineLabelMixin, RetrieveUpdateDestroyAPI):
+    """API endpoint for a single BuildLineLabel object."""
+
+    pass
+
+
+class BuildLineLabelPrint(BuildLineLabelMixin, LabelPrintMixin, RetrieveAPI):
+    """API endpoint for printing a BuildLineLabel object."""
+
+    pass
 
 
 label_api_urls = [
-
     # Stock item labels
-    re_path(r'stock/', include([
-        # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
-            re_path(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
-        ])),
-
-        # List view
-        re_path(r'^.*$', StockItemLabelList.as_view(), name='api-stockitem-label-list'),
-    ])),
-
+    path(
+        'stock/',
+        include([
+            # Detail views
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'print/?',
+                        StockItemLabelPrint.as_view(),
+                        name='api-stockitem-label-print',
+                    ),
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': label.models.StockItemLabel},
+                        name='api-stockitem-label-metadata',
+                    ),
+                    path(
+                        '',
+                        StockItemLabelDetail.as_view(),
+                        name='api-stockitem-label-detail',
+                    ),
+                ]),
+            ),
+            # List view
+            path('', StockItemLabelList.as_view(), name='api-stockitem-label-list'),
+        ]),
+    ),
     # Stock location labels
-    re_path(r'location/', include([
-        # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
-            re_path(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
-        ])),
-
-        # List view
-        re_path(r'^.*$', StockLocationLabelList.as_view(), name='api-stocklocation-label-list'),
-    ])),
-
+    path(
+        'location/',
+        include([
+            # Detail views
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'print/?',
+                        StockLocationLabelPrint.as_view(),
+                        name='api-stocklocation-label-print',
+                    ),
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': label.models.StockLocationLabel},
+                        name='api-stocklocation-label-metadata',
+                    ),
+                    path(
+                        '',
+                        StockLocationLabelDetail.as_view(),
+                        name='api-stocklocation-label-detail',
+                    ),
+                ]),
+            ),
+            # List view
+            path(
+                '',
+                StockLocationLabelList.as_view(),
+                name='api-stocklocation-label-list',
+            ),
+        ]),
+    ),
     # Part labels
-    re_path(r'^part/', include([
-        # Detail views
-        re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^print/', PartLabelPrint.as_view(), name='api-part-label-print'),
-            re_path(r'^.*$', PartLabelDetail.as_view(), name='api-part-label-detail'),
-        ])),
-
-        # List view
-        re_path(r'^.*$', PartLabelList.as_view(), name='api-part-label-list'),
-    ])),
+    path(
+        'part/',
+        include([
+            # Detail views
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'print/?',
+                        PartLabelPrint.as_view(),
+                        name='api-part-label-print',
+                    ),
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': label.models.PartLabel},
+                        name='api-part-label-metadata',
+                    ),
+                    path('', PartLabelDetail.as_view(), name='api-part-label-detail'),
+                ]),
+            ),
+            # List view
+            path('', PartLabelList.as_view(), name='api-part-label-list'),
+        ]),
+    ),
+    # BuildLine labels
+    path(
+        'buildline/',
+        include([
+            # Detail views
+            path(
+                '<int:pk>/',
+                include([
+                    re_path(
+                        r'print/?',
+                        BuildLineLabelPrint.as_view(),
+                        name='api-buildline-label-print',
+                    ),
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': label.models.BuildLineLabel},
+                        name='api-buildline-label-metadata',
+                    ),
+                    path(
+                        '',
+                        BuildLineLabelDetail.as_view(),
+                        name='api-buildline-label-detail',
+                    ),
+                ]),
+            ),
+            # List view
+            path('', BuildLineLabelList.as_view(), name='api-buildline-label-list'),
+        ]),
+    ),
 ]

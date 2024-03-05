@@ -2,12 +2,12 @@
 
 {% load static %}
 {% load i18n %}
-{% load status_codes %}
+{% load generic %}
 {% load inventree_extras %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Build Order" %} - {{ build }}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumbs %}
 <li class='breadcrumb-item'><a href='{% url "build-index" %}'>{% trans "Build Orders" %}</a></li>
@@ -15,7 +15,7 @@
 {% endblock breadcrumbs %}
 
 {% block thumbnail %}
-<img class="part-thumb"
+<img alt="{% trans "Part thumbnail" %}" class="part-thumb"
 {% if build.part.image %}
 src="{{ build.part.image.preview.url }}"
 {% else %}
@@ -25,13 +25,30 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block heading %}
 {% trans "Build Order" %} {{ build }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 <!-- Admin Display -->
-{% if user.is_staff and roles.build.change %}
-{% url 'admin:build_build_change' build.pk as url %}
+{% admin_url user "build.build" build.pk as url %}
 {% include "admin_button.html" with url=url %}
+
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group' role='group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-qrcode'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if roles.build.change %}
+        {% if order.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
+        {% endif %}
+    </ul>
+</div>
 {% endif %}
 <!-- Printing options -->
 {% if report_enabled %}
@@ -90,25 +107,14 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Build Description" %}</td>
         <td>{{ build.title }}</td>
     </tr>
+    {% include "project_code_data.html" with instance=build %}
+    {% include "barcode_data.html" with instance=build %}
 </table>
 
 <div class='info-messages'>
     {% if not build.has_build_outputs %}
     <div class='alert alert-block alert-danger'>
         {% trans "No build outputs have been created for this build order" %}<br>
-    </div>
-    {% endif %}
-    {% if build.sales_order %}
-    <div class='alert alert-block alert-info'>
-        {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
-        {% blocktrans %}This Build Order is allocated to Sales Order {{link}}{% endblocktrans %}
-    </div>
-    {% endif %}
-
-    {% if build.parent %}
-    <div class='alert alert-block alert-info'>
-        {% object_link 'build-detail' build.parent.id build.parent as link %}
-        {% blocktrans %}This Build Order is a child of Build Order {{link}}{% endblocktrans %}
     </div>
     {% endif %}
 
@@ -135,7 +141,7 @@ src="{% static 'img/blank_image.png' %}"
     {% endif %}
     {% endif %}
 </div>
-{% endblock %}
+{% endblock details %}
 
 {% block details_right %}
 <table class='table table-striped table-condensed'>
@@ -144,7 +150,7 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
         <td>
-            {% build_status_label build.status %}
+            {% status_label 'build' build.status %}
         </td>
     </tr>
     {% if build.target_date %}
@@ -162,8 +168,13 @@ src="{% static 'img/blank_image.png' %}"
     </tr>
     {% endif %}
     <tr>
-        <td><span class='fas fa-check-circle'></span></td>
-        <td>{% trans "Completed" %}</td>
+        <td>
+            {% if build.completed >= build.quantity %}
+            <span class='fas fa-check-circle icon-green'></span>
+            {% else %}
+            <span class='fa fa-times-circle icon-red'></span>
+            {% endif %}
+        <td>{% trans "Completed Outputs" %}</td>
         <td>{% progress_bar build.completed build.quantity id='build-completed' max_width='150px' %}</td>
     </tr>
     {% if build.parent %}
@@ -194,12 +205,19 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ build.responsible }}</td>
     </tr>
     {% endif %}
+    {% if build.priority != 0 %}
+    <tr>
+        <td><span class="fa-solid fa-arrow-up-9-1"></span></td>
+        <td>{% trans "Priority" %}</td>
+        <td>{{ build.priority }}</td>
+    </tr>
+    {% endif %}
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 {% block page_data %}
 <h3>
-    {% build_status_label build.status large=True %}
+    {% status_label 'build' build.status large=True %}
     {% if build.is_overdue %}
     <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
     {% endif %}
@@ -207,8 +225,7 @@ src="{% static 'img/blank_image.png' %}"
 <hr>
 <p>{{ build.title }}</p>
 
-
-{% endblock %}
+{% endblock page_data %}
 
 {% block js_ready %}
 
@@ -240,7 +257,11 @@ src="{% static 'img/blank_image.png' %}"
 
     {% if report_enabled %}
     $('#print-build-report').click(function() {
-        printBuildReports([{{ build.pk }}]);
+        printReports({
+            items: [{{ build.pk }}],
+            key: 'build',
+            url: '{% url "api-build-report-list" %}',
+        });
     });
     {% endif %}
 
@@ -249,10 +270,39 @@ src="{% static 'img/blank_image.png' %}"
             '{% url "api-build-detail" build.pk %}',
             {
                 method: 'DELETE',
-                title: '{% trans "Delete Build Order" %}',
+                title: '{% trans "Delete Build Order" escape %}',
                 redirect: "{% url 'build-index' %}",
             }
         );
     });
 
-{% endblock %}
+    {% if barcodes %}
+    <!-- Barcode functionality callbacks -->
+    $('#show-qr-code').click(function() {
+        showQRDialog(
+            '{% trans "Build Order QR Code" escape %}',
+            '{"build": {{ build.pk }} }'
+        );
+    });
+
+    {% if roles.purchase_order.change %}
+    $("#barcode-link").click(function() {
+        linkBarcodeDialog(
+            {
+                build: {{ build.pk }},
+            },
+            {
+                title: '{% trans "Link Barcode to Build Order" escape %}',
+            }
+        );
+    });
+
+    $("#barcode-unlink").click(function() {
+        unlinkBarcode({
+            build: {{ build.pk }},
+        });
+    });
+    {% endif %}
+    {% endif %}
+
+{% endblock js_ready %}

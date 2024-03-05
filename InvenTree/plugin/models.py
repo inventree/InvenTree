@@ -1,72 +1,21 @@
 """Plugin model definitions."""
 
+import inspect
 import warnings
 
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.utils import IntegrityError
 from django.utils.translation import gettext_lazy as _
 
 import common.models
+import InvenTree.models
 from plugin import InvenTreePlugin, registry
 
 
-class MetadataMixin(models.Model):
-    """Model mixin class which adds a JSON metadata field to a model, for use by any (and all) plugins.
-
-    The intent of this mixin is to provide a metadata field on a model instance,
-    for plugins to read / modify as required, to store any extra information.
-
-    The assumptions for models implementing this mixin are:
-
-    - The internal InvenTree business logic will make no use of this field
-    - Multiple plugins may read / write to this metadata field, and not assume they have sole rights
-    """
-
-    class Meta:
-        """Meta for MetadataMixin."""
-        abstract = True
-
-    metadata = models.JSONField(
-        blank=True, null=True,
-        verbose_name=_('Plugin Metadata'),
-        help_text=_('JSON metadata field, for use by external plugins'),
-    )
-
-    def get_metadata(self, key: str, backup_value=None):
-        """Finds metadata for this model instance, using the provided key for lookup.
-
-        Args:
-            key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
-
-        Returns:
-            Python dict object containing requested metadata. If no matching metadata is found, returns None
-        """
-        if self.metadata is None:
-            return backup_value
-
-        return self.metadata.get(key, backup_value)
-
-    def set_metadata(self, key: str, data, commit: bool = True):
-        """Save the provided metadata under the provided key.
-
-        Args:
-            key (str): Key for saving metadata
-            data (Any): Data object to save - must be able to be rendered as a JSON string
-            commit (bool, optional): If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted. Defaults to True.
-        """
-        if self.metadata is None:
-            # Handle a null field value
-            self.metadata = {}
-
-        self.metadata[key] = data
-
-        if commit:
-            self.save()
-
-
-class PluginConfig(models.Model):
+class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
     """A PluginConfig object holds settings for plugins.
 
     Attributes:
@@ -77,14 +26,12 @@ class PluginConfig(models.Model):
 
     class Meta:
         """Meta for PluginConfig."""
-        verbose_name = _("Plugin Configuration")
-        verbose_name_plural = _("Plugin Configurations")
+
+        verbose_name = _('Plugin Configuration')
+        verbose_name_plural = _('Plugin Configurations')
 
     key = models.CharField(
-        unique=True,
-        max_length=255,
-        verbose_name=_('Key'),
-        help_text=_('Key of plugin'),
+        unique=True, max_length=255, verbose_name=_('Key'), help_text=_('Key of plugin')
     )
 
     name = models.CharField(
@@ -95,10 +42,18 @@ class PluginConfig(models.Model):
         help_text=_('PluginName of the plugin'),
     )
 
+    package_name = models.CharField(
+        null=True,
+        blank=True,
+        max_length=255,
+        verbose_name=_('Package Name'),
+        help_text=_(
+            'Name of the installed package, if the plugin was installed via PIP'
+        ),
+    )
+
     active = models.BooleanField(
-        default=False,
-        verbose_name=_('Active'),
-        help_text=_('Is the plugin active'),
+        default=False, verbose_name=_('Active'), help_text=_('Is the plugin active')
     )
 
     def __str__(self) -> str:
@@ -112,7 +67,11 @@ class PluginConfig(models.Model):
     def mixins(self):
         """Returns all registered mixins."""
         try:
-            return self.plugin._mixinreg
+            if inspect.isclass(self.plugin):
+                return self.plugin.get_registered_mixins(
+                    self, with_base=True, with_cls=False
+                )
+            return self.plugin.get_registered_mixins(with_base=True, with_cls=False)
         except (AttributeError, ValueError):  # pragma: no cover
             return {}
 
@@ -123,42 +82,81 @@ class PluginConfig(models.Model):
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
-        # append settings from registry
+        # Append settings from registry
         plugin = registry.plugins_full.get(self.key, None)
 
         def get_plugin_meta(name):
-            if plugin:
-                return str(getattr(plugin, name, None))
-            return None
+            """Return a meta-value associated with this plugin."""
+            # Ignore if the plugin config is not defined
+            if not plugin:
+                return None
+
+            # Ignore if the plugin is not active
+            if not self.active:
+                return None
+
+            result = getattr(plugin, name, None)
+
+            if result is not None:
+                result = str(result)
+
+            return result
 
         self.meta = {
-            key: get_plugin_meta(key) for key in ['slug', 'human_name', 'description', 'author',
-                                                  'pub_date', 'version', 'website', 'license',
-                                                  'package_path', 'settings_url', ]
+            key: get_plugin_meta(key)
+            for key in [
+                'slug',
+                'human_name',
+                'description',
+                'author',
+                'pub_date',
+                'version',
+                'website',
+                'license',
+                'package_path',
+                'settings_url',
+            ]
         }
 
         # Save plugin
         self.plugin: InvenTreePlugin = plugin
 
+    def __getstate__(self):
+        """Customize pickling behavior."""
+        state = super().__getstate__()
+        state.pop(
+            'plugin', None
+        )  # plugin cannot be pickled in some circumstances when used with drf views, remove it (#5408)
+        return state
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         """Extend save method to reload plugins if the 'active' status changes."""
         reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
-        ret = super().save(force_insert, force_update, *args, **kwargs)
+        super().save(force_insert, force_update, *args, **kwargs)
+
+        if self.is_builtin():
+            # Force active if builtin
+            self.active = True
 
         if not reload:
-            if (self.active is False and self.__org_active is True) or \
-               (self.active is True and self.__org_active is False):
+            if self.active != self.__org_active:
                 if settings.PLUGIN_TESTING:
-                    warnings.warn('A reload was triggered')
+                    warnings.warn('A reload was triggered', stacklevel=2)
                 registry.reload_plugins()
 
-        return ret
+    @admin.display(boolean=True, description=_('Installed'))
+    def is_installed(self) -> bool:
+        """Simple check to determine if this plugin is installed.
+
+        A plugin might not be installed if it has been removed from the system,
+        but the PluginConfig associated with it still exists.
+        """
+        return self.plugin is not None
 
     @admin.display(boolean=True, description=_('Sample plugin'))
     def is_sample(self) -> bool:
         """Is this plugin a sample app?"""
-
         if not self.plugin:
             return False
 
@@ -166,24 +164,31 @@ class PluginConfig(models.Model):
 
     @admin.display(boolean=True, description=_('Builtin Plugin'))
     def is_builtin(self) -> bool:
-        """Return True if this is a 'builtin' plugin"""
-
+        """Return True if this is a 'builtin' plugin."""
         if not self.plugin:
             return False
 
         return self.plugin.check_is_builtin()
+
+    @admin.display(boolean=True, description=_('Package Plugin'))
+    def is_package(self) -> bool:
+        """Return True if this is a 'package' plugin."""
+        if not self.plugin:
+            return False
+
+        return getattr(self.plugin, 'is_package', False)
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):
     """This model represents settings for individual plugins."""
 
     typ = 'plugin'
+    extra_unique_fields = ['plugin']
 
     class Meta:
         """Meta for PluginSetting."""
-        unique_together = [
-            ('plugin', 'key'),
-        ]
+
+        unique_together = [('plugin', 'key')]
 
     plugin = models.ForeignKey(
         PluginConfig,
@@ -206,35 +211,26 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         (if the plugin is specified!)
         """
         if 'settings' not in kwargs:
-
             plugin = kwargs.pop('plugin', None)
 
             if plugin:
-
-                if issubclass(plugin.__class__, InvenTreePlugin):
-                    plugin = plugin.plugin_config()
-
-                kwargs['settings'] = registry.mixins_settings.get(plugin.key, {})
+                mixin_settings = getattr(registry, 'mixins_settings', None)
+                if mixin_settings:
+                    kwargs['settings'] = mixin_settings.get(plugin.key, {})
 
         return super().get_setting_definition(key, **kwargs)
-
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'plugin': self.plugin,
-        }
 
 
 class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     """This model represents notification settings for a user."""
 
     typ = 'notification'
+    extra_unique_fields = ['method', 'user']
 
     class Meta:
         """Meta for NotificationUserSetting."""
-        unique_together = [
-            ('method', 'user', 'key'),
-        ]
+
+        unique_together = [('method', 'user', 'key')]
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -245,22 +241,13 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
 
         return super().get_setting_definition(key, **kwargs)
 
-    def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
-        return {
-            'method': self.method,
-            'user': self.user,
-        }
-
-    method = models.CharField(
-        max_length=255,
-        verbose_name=_('Method'),
-    )
+    method = models.CharField(max_length=255, verbose_name=_('Method'))
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        blank=True, null=True,
+        blank=True,
+        null=True,
         verbose_name=_('User'),
         help_text=_('User'),
     )

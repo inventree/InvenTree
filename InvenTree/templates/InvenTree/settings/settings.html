@@ -6,41 +6,46 @@
 {% load plugin_extras %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Settings" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block sidebar %}
 {% include "InvenTree/settings/sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
 
 {% include "InvenTree/settings/user.html" %}
 {% include "InvenTree/settings/user_settings.html" %}
+{% include "InvenTree/settings/user_display.html" %}
 {% include "InvenTree/settings/user_homepage.html" %}
 {% include "InvenTree/settings/user_search.html" %}
 {% include "InvenTree/settings/user_notifications.html" %}
-{% include "InvenTree/settings/user_labels.html" %}
-{% include "InvenTree/settings/user_reports.html" %}
-{% include "InvenTree/settings/user_display.html" %}
+{% include "InvenTree/settings/user_reporting.html" %}
 
 {% if user.is_staff %}
 
 {% include "InvenTree/settings/global.html" %}
 {% include "InvenTree/settings/login.html" %}
 {% include "InvenTree/settings/barcode.html" %}
+{% include "InvenTree/settings/project_codes.html" %}
+{% include "InvenTree/settings/physical_units.html" %}
+{% include "InvenTree/settings/notifications.html" %}
 {% include "InvenTree/settings/label.html" %}
 {% include "InvenTree/settings/report.html" %}
 {% include "InvenTree/settings/part.html" %}
-{% include "InvenTree/settings/pricing.html" %}
+{% include "InvenTree/settings/part_parameters.html" %}
+{% include "InvenTree/settings/part_stocktake.html" %}
 {% include "InvenTree/settings/category.html" %}
+{% include "InvenTree/settings/pricing.html" %}
 {% include "InvenTree/settings/stock.html" %}
 {% include "InvenTree/settings/build.html" %}
 {% include "InvenTree/settings/po.html" %}
 {% include "InvenTree/settings/so.html" %}
+{% include "InvenTree/settings/returns.html" %}
 
 {% include "InvenTree/settings/plugin.html" %}
 {% plugin_list as pl_list %}
@@ -52,391 +57,21 @@
 
 {% endif %}
 
-{% endblock %}
+{% endblock content %}
 
 {% block js_load %}
 {{ block.super }}
-{% endblock %}
+{% endblock js_load %}
 
 {% block js_ready %}
 {{ block.super }}
 
-// Callback for when boolean settings are edited
-$('table').find('.boolean-setting').change(function() {
+{% include "InvenTree/settings/settings_js.html" %}
 
-    var pk = $(this).attr('pk');
-    var setting = $(this).attr('setting');
-    var plugin = $(this).attr('plugin');
-    var user = $(this).attr('user');
-    var notification = $(this).attr('notification');
-
-    var checked = this.checked;
-
-    // Global setting by default
-    var url = `/api/settings/global/${setting}/`;
-
-    if (notification) {
-        url = `/api/settings/notification/${pk}/`;
-    } else if (plugin) {
-        url = `/api/plugin/settings/${plugin}/${setting}/`;
-    } else if (user) {
-        url = `/api/settings/user/${setting}/`;
-    }
-
-    inventreePut(
-        url,
-        {
-            value: checked.toString(),
-        },
-        {
-            method: 'PATCH',
-            success: function(data) {
-            },
-            error: function(xhr) {
-                showApiError(xhr, url);
-            }
-        }
-    );
-
-});
-
-// Callback for when non-boolean settings are edited
-$('table').find('.btn-edit-setting').click(function() {
-    var setting = $(this).attr('setting');
-    var plugin = $(this).attr('plugin');
-    var is_global = true;
-    var notification = $(this).attr('notification');
-
-    if ($(this).attr('user')){
-        is_global = false;
-    }
-
-    var title = '';
-
-    if (plugin != null) {
-        title = '{% trans "Edit Plugin Setting" %}';
-    } else if (notification) {
-        title = '{% trans "Edit Notification Setting" %}';
-        setting = $(this).attr('pk');
-    } else if (is_global) {
-        title = '{% trans "Edit Global Setting" %}';
-    } else {
-        title = '{% trans "Edit User Setting" %}';
-    }
-
-    editSetting(setting, {
-        plugin: plugin,
-        global: is_global,
-        notification: notification,
-        title: title,
-    });
-});
-
-$("#edit-user").on('click', function() {
-    launchModalForm(
-        "{% url 'edit-user' %}",
-        {
-            reload: true,
-        }
-    );
-});
-
-$("#edit-password").on('click', function() {
-    launchModalForm(
-        "{% url 'set-password' %}",
-        {
-            reload: true,
-        }
-    );
-});
-
-
-$('#category-select').select2({
-    placeholder: '',
-    width: '100%',
-    ajax: {
-        url: '{% url "api-part-category-list" %}',
-        dataType: 'json',
-        delay: 250,
-        cache: false,
-        data: function(params) {
-            if (!params.page) {
-                offset = 0;
-            } else {
-                offset = (params.page - 1) * 25;
-            }
-
-            return {
-                search: params.term,
-                offset: offset,
-                limit: 25,
-            };
-        },
-        processResults: function(response) {
-            var data = [];
-
-            var more = false;
-
-            if ('count' in response && 'results' in response) {
-                // Response is paginated
-                data = response.results;
-
-                // Any more data available?
-                if (response.next) {
-                    more = true;
-                }
-
-            } else {
-                // Non-paginated response
-                data = response;
-            }
-
-            // Each 'row' must have the 'id' attribute
-            for (var idx = 0; idx < data.length; idx++) {
-                data[idx].id = data[idx].pk;
-                data[idx].text = data[idx].pathstring;
-            }
-
-            // Ref: https://select2.org/data-sources/formats
-            var results = {
-                results: data,
-                pagination: {
-                    more: more,
-                }
-            };
-
-            return results;
-        }
-    },
-});
-
-$('#cat-param-table').inventreeTable({
-    formatNoMatches: function() { return '{% trans "No category parameter templates found" %}'; },
-    columns: [
-        {
-            field: 'pk',
-            title: 'ID',
-            visible: false,
-            switchable: false,
-        },
-        {
-            field: 'parameter_template_detail.name',
-            title: '{% trans "Parameter Template" %}',
-            sortable: 'true',
-        },
-        {
-            field: 'category_detail.pathstring',
-            title: '{% trans "Category" %}',
-        },
-        {
-            field: 'default_value',
-            title: '{% trans "Default Value" %}',
-            sortable: 'true',
-            formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
-
-                var html = value
-                html += "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
-
-                return html;
-            }
-        }
-    ]
-});
-
-function loadTemplateTable(pk) {
-
-    var query = {};
-
-    if (pk) {
-        query['category'] = pk;
-    }
-
-    // Load the parameter table
-    $("#cat-param-table").bootstrapTable('refresh', {
-        query: query,
-        url: '{% url "api-part-category-parameter-list" %}',
-    });
-}
-
-
-// Initially load table with *all* categories
-loadTemplateTable();
-
-$('body').on('change', '#category-select', function() {
-    var pk = $(this).val();
-    loadTemplateTable(pk);
-});
-
-$("#new-cat-param").click(function() {
-
-    var pk = $('#category-select').val();
-
-    constructForm('{% url "api-part-category-parameter-list" %}', {
-        title: '{% trans "Create Category Parameter Template" %}',
-        method: 'POST',
-        fields: {
-            parameter_template: {},
-            category: {
-                icon: 'fa-sitemap',
-                value: pk,
-            },
-            default_value: {},
-        },
-        onSuccess: function() {
-            loadTemplateTable(pk);
-        }
-    });
-});
-
-$("#cat-param-table").on('click', '.template-edit', function() {
-
-    var category = $('#category-select').val();
-    var pk = $(this).attr('pk');
-
-    constructForm(`/api/part/category/parameters/${pk}/`, {
-        fields: {
-            parameter_template: {},
-            category: {
-                icon: 'fa-sitemap',
-            },
-            default_value: {},
-        },
-        onSuccess: function() {
-            loadTemplateTable(pk);
-        }
-    });
-});
-
-
-$("#cat-param-table").on('click', '.template-delete', function() {
-
-    var category = $('#category-select').val();
-    var pk = $(this).attr('pk');
-
-    var url = `/part/category/${category}/parameters/${pk}/delete/`;
-
-    constructForm(`/api/part/category/parameters/${pk}/`, {
-        method: 'DELETE',
-        title: '{% trans "Delete Category Parameter Template" %}',
-        onSuccess: function() {
-            loadTemplateTable(pk);
-        }
-    });
-});
-
-$("#param-table").inventreeTable({
-    url: "{% url 'api-part-parameter-template-list' %}",
-    queryParams: {
-        ordering: 'name',
-    },
-    formatNoMatches: function() { return '{% trans "No part parameter templates found" %}'; },
-    columns: [
-        {
-            field: 'pk',
-            title: '{% trans "ID" %}',
-            visible: false,
-            switchable: false,
-        },
-        {
-            field: 'name',
-            title: '{% trans "Name" %}',
-            sortable: true,
-        },
-        {
-            field: 'units',
-            title: '{% trans "Units" %}',
-            sortable: true,
-            switchable: true,
-        },
-        {
-            field: 'description',
-            title: '{% trans "Description" %}',
-            sortable: false,
-            switchable: true,
-        },
-        {
-            formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit icon-green'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
-
-                var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
-
-                return html;
-            }
-        }
-    ]
-});
-
-$("#new-param").click(function() {
-    constructForm('{% url "api-part-parameter-template-list" %}', {
-        fields: {
-            name: {},
-            units: {},
-            description: {},
-        },
-        method: 'POST',
-        title: '{% trans "Create Part Parameter Template" %}',
-        onSuccess: function() {
-            $("#param-table").bootstrapTable('refresh');
-        },
-    });
-});
-
-$("#param-table").on('click', '.template-edit', function() {
-    var button = $(this);
-    var pk = button.attr('pk');
-
-    constructForm(
-        `/api/part/parameter/template/${pk}/`,
-        {
-            fields: {
-                name: {},
-                units: {},
-                description: {},
-            },
-            title: '{% trans "Edit Part Parameter Template" %}',
-            onSuccess: function() {
-                $("#param-table").bootstrapTable('refresh');
-            },
-        }
-    );
-});
-
-$("#param-table").on('click', '.template-delete', function() {
-    var button = $(this);
-    var pk = button.attr('pk');
-
-    var html = `
-    <div class='alert alert-block alert-danger'>
-        {% trans "Any parameters which reference this template will also be deleted" %}
-    </div>`;
-
-    constructForm(
-        `/api/part/parameter/template/${pk}/`,
-        {
-            method: 'DELETE',
-            preFormContent: html,
-            title: '{% trans "Delete Part Parameter Template" %}',
-            onSuccess: function() {
-                $("#param-table").bootstrapTable('refresh');
-            },
-        }
-    );
-});
-
-$("#import-part").click(function() {
-    launchModalForm("{% url 'api-part-import' %}?reset", {});
-});
-
-{% plugins_enabled as plug %}
-{% if plug %}
-$("#install-plugin").click(function() {
-    installPlugin();
-});
+{% if user.is_staff %}
+    {% include "InvenTree/settings/settings_staff_js.html" %}
 {% endif %}
 
 enableSidebar('settings');
 
-{% endblock %}
+{% endblock js_ready %}

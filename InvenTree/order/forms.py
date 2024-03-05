@@ -17,14 +17,16 @@ class OrderMatchItemForm(MatchItemForm):
         if 'quantity' in col_guess.lower():
             return forms.CharField(
                 required=False,
-                widget=forms.NumberInput(attrs={
-                    'name': 'quantity' + str(row['index']),
-                    'class': 'numberinput',
-                    'type': 'number',
-                    'min': '0',
-                    'step': 'any',
-                    'value': clean_decimal(row.get('quantity', '')),
-                })
+                widget=forms.NumberInput(
+                    attrs={
+                        'name': 'quantity' + str(row['index']),
+                        'class': 'numberinput',
+                        'type': 'number',
+                        'min': '0',
+                        'step': 'any',
+                        'value': clean_decimal(row.get('quantity', '')),
+                    }
+                ),
             )
         # set price field
         elif 'price' in col_guess.lower():

@@ -4,6 +4,7 @@
 """
 
 import logging
+import os
 
 from django.core.management.base import BaseCommand
 from django.db.utils import OperationalError, ProgrammingError
@@ -26,31 +27,43 @@ class Command(BaseCommand):
 
         img = model.image
 
-        logger.info(f"Generating thumbnail image for '{img}'")
+        # Check for image paths
+        img_paths = []
+
+        for x in [model.image, model.image.thumbnail, model.image.preview]:
+            if x and x.path:
+                img_paths.append(x.path)
+
+        if len(img_paths) > 0:
+            if all((os.path.exists(path) for path in img_paths)):
+                # All images exist - skip further work
+                return
+
+        logger.info("Generating thumbnail image for '%s'", img)
 
         try:
             model.image.render_variations(replace=False)
         except FileNotFoundError:
-            logger.warning(f"Warning: Image file '{img}' is missing")
+            logger.warning("Warning: Image file '%s' is missing", img)
         except UnidentifiedImageError:
-            logger.warning(f"Warning: Image file '{img}' is not a valid image")
+            logger.warning("Warning: Image file '%s' is not a valid image", img)
 
     def handle(self, *args, **kwargs):
         """Rebuild all thumbnail images."""
-        logger.info("Rebuilding Part thumbnails")
+        logger.info('Rebuilding Part thumbnails')
 
         for part in Part.objects.exclude(image=None):
             try:
                 self.rebuild_thumbnail(part)
             except (OperationalError, ProgrammingError):
-                logger.error("ERROR: Database read error.")
+                logger.exception('ERROR: Database read error.')
                 break
 
-        logger.info("Rebuilding Company thumbnails")
+        logger.info('Rebuilding Company thumbnails')
 
         for company in Company.objects.exclude(image=None):
             try:
                 self.rebuild_thumbnail(company)
             except (OperationalError, ProgrammingError):
-                logger.error("ERROR: abase read error.")
+                logger.exception('ERROR: abase read error.')
                 break

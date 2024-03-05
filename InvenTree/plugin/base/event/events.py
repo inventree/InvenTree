@@ -7,6 +7,7 @@ from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 
+import InvenTree.exceptions
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
 from plugin.registry import registry
@@ -20,23 +21,31 @@ def trigger_event(event, *args, **kwargs):
     This event will be stored in the database,
     and the worker will respond to it later on.
     """
+    from common.models import InvenTreeSetting
+
     if not settings.PLUGINS_ENABLED:
         # Do nothing if plugins are not enabled
         return  # pragma: no cover
 
-    # Make sure the database can be accessed and is not beeing tested rn
-    if not canAppAccessDatabase() and not settings.PLUGIN_TESTING_EVENTS:
-        logger.debug(f"Ignoring triggered event '{event}' - database not ready")
+    if not InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS', False):
+        # Do nothing if plugin events are not enabled
         return
 
-    logger.debug(f"Event triggered: '{event}'")
+    # Make sure the database can be accessed and is not being tested rn
+    if (
+        not canAppAccessDatabase(allow_shell=True)
+        and not settings.PLUGIN_TESTING_EVENTS
+    ):
+        logger.debug("Ignoring triggered event '%s' - database not ready", event)
+        return
 
-    offload_task(
-        register_event,
-        event,
-        *args,
-        **kwargs
-    )
+    logger.debug("Event triggered: '%s'", event)
+
+    # By default, force the event to be processed asynchronously
+    if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
+        kwargs['force_async'] = True
+
+    offload_task(register_event, event, *args, **kwargs)
 
 
 def register_event(event, *args, **kwargs):
@@ -47,30 +56,32 @@ def register_event(event, *args, **kwargs):
     """
     from common.models import InvenTreeSetting
 
-    logger.debug(f"Registering triggered event: '{event}'")
+    logger.debug("Registering triggered event: '%s'", event)
 
     # Determine if there are any plugins which are interested in responding
     if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS'):
-
         with transaction.atomic():
-
             for slug, plugin in registry.plugins.items():
+                if not plugin.mixin_enabled('events'):
+                    continue
 
-                if plugin.mixin_enabled('events'):
+                # Only allow event registering for 'active' plugins
+                if not plugin.is_active():
+                    continue
 
-                    if plugin.is_active():
-                        # Only allow event registering for 'active' plugins
+                # Let the plugin decide if it wants to process this event
+                if not plugin.wants_process_event(event):
+                    continue
 
-                        logger.debug(f"Registering callback for plugin '{slug}'")
+                logger.debug("Registering callback for plugin '%s'", slug)
 
-                        # Offload a separate task for each plugin
-                        offload_task(
-                            process_event,
-                            slug,
-                            event,
-                            *args,
-                            **kwargs
-                        )
+                # This task *must* be processed by the background worker,
+                # unless we are running CI tests
+                if 'force_async' not in kwargs and not settings.PLUGIN_TESTING_EVENTS:
+                    kwargs['force_async'] = True
+
+                # Offload a separate task for each plugin
+                offload_task(process_event, slug, event, *args, **kwargs)
 
 
 def process_event(plugin_slug, event, *args, **kwargs):
@@ -79,15 +90,21 @@ def process_event(plugin_slug, event, *args, **kwargs):
     This function is run by the background worker process.
     This function may queue multiple functions to be handled by the background worker.
     """
-    logger.info(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
-
-    plugin = registry.plugins.get(plugin_slug, None)
+    plugin = registry.get_plugin(plugin_slug)
 
     if plugin is None:  # pragma: no cover
-        logger.error(f"Could not find matching plugin for '{plugin_slug}'")
+        logger.error("Could not find matching plugin for '%s'", plugin_slug)
         return
 
-    plugin.process_event(event, *args, **kwargs)
+    logger.debug("Plugin '%s' is processing triggered event '%s'", plugin_slug, event)
+
+    try:
+        plugin.process_event(event, *args, **kwargs)
+    except Exception as e:
+        # Log the exception to the database
+        InvenTree.exceptions.log_error(f'plugins.{plugin_slug}.process_event')
+        # Re-throw the exception so that the background worker tries again
+        raise Exception
 
 
 def allow_table_event(table_name):
@@ -95,9 +112,13 @@ def allow_table_event(table_name):
 
     We *do not* want events to be fired for some tables!
     """
+    # Prevent table events during the data import process
     if isImportingData():
-        # Prevent table events during the data import process
         return False  # pragma: no cover
+
+    # Prevent table events when in testing mode (saves a lot of time)
+    if settings.TESTING:
+        return False
 
     table_name = table_name.lower().strip()
 
@@ -116,7 +137,7 @@ def allow_table_event(table_name):
         'users_',
     ]
 
-    if any([table_name.startswith(prefix) for prefix in ignore_prefixes]):
+    if any(table_name.startswith(prefix) for prefix in ignore_prefixes):
         return False
 
     ignore_tables = [
@@ -125,6 +146,8 @@ def allow_table_event(table_name):
         'common_webhookendpoint',
         'common_webhookmessage',
         'part_partpricing',
+        'part_partstocktake',
+        'part_partstocktakereport',
     ]
 
     if table_name in ignore_tables:
@@ -147,17 +170,9 @@ def after_save(sender, instance, created, **kwargs):
         return
 
     if created:
-        trigger_event(
-            f'{table}.created',
-            id=instance.id,
-            model=sender.__name__,
-        )
+        trigger_event(f'{table}.created', id=instance.id, model=sender.__name__)
     else:
-        trigger_event(
-            f'{table}.saved',
-            id=instance.id,
-            model=sender.__name__,
-        )
+        trigger_event(f'{table}.saved', id=instance.id, model=sender.__name__)
 
 
 @receiver(post_delete)
@@ -168,7 +183,4 @@ def after_delete(sender, instance, **kwargs):
     if not allow_table_event(table):
         return
 
-    trigger_event(
-        f'{table}.deleted',
-        model=sender.__name__,
-    )
+    trigger_event(f'{table}.deleted', model=sender.__name__)

@@ -11,13 +11,13 @@
             <h4>
                 {% block heading %}
                 <i>-- page header goes here --</i>
-                {% endblock %}
+                {% endblock heading %}
             </h4>
             {% include "spacer.html" %}
             <div id='page-actions' class='btn-group' role='group'>
                 {% block actions %}
                 <i>-- actions go here --</i>
-                {% endblock %}
+                {% endblock actions %}
             </div>
         </div>
     </div>
@@ -56,13 +56,13 @@
             </div>
         </div>
     </div>
-    {% endblock %}
+    {% endblock page_info %}
 
 </div>
 
 {% block page_content %}
 <!-- Custom page content goes here-->
-{% endblock %}
+{% endblock page_content %}
 {% include "plugin/panel_content.html" %}
 
-{% endblock %}
+{% endblock content %}

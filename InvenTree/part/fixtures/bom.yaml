@@ -50,3 +50,9 @@
     part: 101
     sub_part: 100
     quantity: 10
+
+- model: part.bomitemsubstitute
+  pk: 1
+  fields:
+    part: 5
+    bom_item: 6

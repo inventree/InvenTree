@@ -3,25 +3,43 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Purchase Order" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumbs %}
-<li class='breadcrumb-item'><a href='{% url "po-index" %}'>{% trans "Purchase Orders" %}</a></li>
+<li class='breadcrumb-item'><a href='{% url "purchase-order-index" %}'>{% trans "Purchase Orders" %}</a></li>
 <li class="breadcrumb-item active" aria-current="page"><a href='{% url "po-detail" order.id %}'>{{ order }}</a></li>
-{% endblock %}
+{% endblock breadcrumbs %}
 
 {% block heading %}
 {% trans "Purchase Order" %}: {{ order.reference }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
-{% if user.is_staff and roles.purchase_order.change %}
-{% url 'admin:order_purchaseorder_change' order.pk as url %}
+
+{% admin_url user "order.purchaseorder" order.pk as url %}
 {% include "admin_button.html" with url=url %}
+
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group' role='group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-qrcode'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if roles.purchase_order.change %}
+        {% if order.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
+        {% endif %}
+    </ul>
+</div>
 {% endif %}
 <!-- Printing options -->
 <div class='btn-group' role='group'>
@@ -57,32 +75,27 @@
         {% endif %}
     </ul>
 </div>
-{% if order.status == PurchaseOrderStatus.PENDING %}
-<button type='button' class='btn btn-primary' id='place-order' title='{% trans "Submit Order" %}'>
-    <span class='fas fa-paper-plane'></span> {% trans "Submit Order" %}
+{% if order.is_pending %}
+<button type='button' class='btn btn-primary' id='place-order' title='{% trans "Issue Order" %}'>
+    <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
 </button>
-{% elif order.status == PurchaseOrderStatus.PLACED %}
-<button type='button' class='btn btn-primary' id='receive-order' title='{% trans "Receive items" %}'>
-    <span class='fas fa-sign-in-alt'></span>
-    {% trans "Receive Items" %}
-</button>
+{% elif order.is_open %}
 <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
-    <span class='fas fa-check-circle'></span>
-    {% trans "Complete Order" %}
+    <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
 {% endif %}
 {% endif %}
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb'
+<img alt="{% trans "Supplier part thumbnail" %}"  class='part-thumb'
 {% if order.supplier and order.supplier.image %}
 src="{{ order.supplier.image.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
 {% endif %}
 />
-{% endblock %}
+{% endblock thumbnail %}
 
 {% block details %}
 
@@ -91,18 +104,20 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
-        <td>{{ order.reference }}{% include "clip.html"%}</td>
+        <td>{{ order.reference }}{% include "clip.html" %}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
         <td>{% trans "Order Description" %}</td>
         <td>{{ order.description }}{% include "clip.html" %}</td>
     </tr>
+    {% include "project_code_data.html" with instance=order %}
+    {% include "barcode_data.html" with instance=order %}
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Order Status" %}</td>
         <td>
-            {% purchase_order_status_label order.status %}
+            {% status_label 'purchase_order' order.status %}
             {% if order.is_overdue %}
             <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
@@ -111,7 +126,7 @@ src="{% static 'img/blank_image.png' %}"
 
 </table>
 
-{% endblock %}
+{% endblock details %}
 
 {% block details_right %}
 <table class='table table-condensed table-striped'>
@@ -121,7 +136,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Supplier" %}</td>
         <td>
             {% if order.supplier %}
-            <a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html"%}
+            <a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html" %}
             {% else %}
             <em>{% trans "No suppplier information available" %}</em>
             {% endif %}
@@ -131,7 +146,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Supplier Reference" %}</td>
-        <td>{{ order.supplier_reference }}{% include "clip.html"%}</td>
+        <td>{{ order.supplier_reference }}{% include "clip.html" %}</td>
     </tr>
     {% endif %}
     <tr>
@@ -149,8 +164,8 @@ src="{% static 'img/blank_image.png' %}"
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
-        <td>External Link</td>
-        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html"%}</td>
+        <td>{% trans "External Link" %}</td>
+        <td>{% include 'clip_link.html' with link=order.link new_window=True %}</td>
     </tr>
     {% endif %}
     <tr>
@@ -169,7 +184,10 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Target Date" %}</td>
-        <td>{% render_date order.target_date %}</td>
+        <td>
+            {% render_date order.target_date %}
+            {% if order.is_overdue %}<span class='fas fa-calendar-times icon-red float-right'></span>{% endif %}
+        </td>
     </tr>
     {% endif %}
     {% if order.status == PurchaseOrderStatus.COMPLETE %}
@@ -179,6 +197,20 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% render_date order.complete_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
+    {% if order.contact %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Contact" %}</td>
+        <td>{{ order.contact.name }}</td>
+    </tr>
+    {% endif %}
+    {% if order.address %}
+    <tr>
+        <td><span class='fas fa-map'></span></td>
+        <td>{% trans "Address" %}</td>
+        <td><b>{{ order.address.title }}</b>: {{ order.address }}</td>
+    </tr>
+    {% endif %}
     {% if order.responsible %}
     <tr>
         <td><span class='fas fa-users'></span></td>
@@ -186,26 +218,25 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
-
+    {% include "currency_data.html" with instance=order %}
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Total cost" %}</td>
         <td id="poTotalPrice">
-            {% with order.get_total_price as tp %}
+            {% with order.total_price as tp %}
             {% if tp == None %}
             <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
             {% else %}
-            {{ tp }}
+            {% render_currency tp currency=order.currency %}
             {% endif %}
             {% endwith %}
         </td>
     </tr>
 </table>
-{% endblock %}
+{% endblock details_right %}
 
 {% block js_ready %}
 {{ block.super }}
-
 
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $("#place-order").click(function() {
@@ -222,7 +253,11 @@ $("#place-order").click(function() {
 
 {% if report_enabled %}
 $('#print-order-report').click(function() {
-    printPurchaseOrderReports([{{ order.pk }}]);
+    printReports({
+        items: [{{ order.pk }}],
+        key: 'order',
+        url: '{% url "api-po-report-list" %}',
+    });
 });
 {% endif %}
 
@@ -236,22 +271,6 @@ $("#edit-order").click(function() {
         {% endif %}
         reload: true,
     });
-});
-
-$("#receive-order").click(function() {
-
-    // Auto select items which have not been fully allocated
-    var items = getTableData('#po-line-table');
-
-    receivePurchaseOrderItems(
-        {{ order.id }},
-        items,
-        {
-            success: function() {
-                $("#po-line-table").bootstrapTable('refresh');
-            }
-        }
-    );
 });
 
 $("#complete-order").click(function() {
@@ -292,5 +311,33 @@ $("#export-order").click(function() {
     exportOrder('{% url "po-export" order.id %}');
 });
 
+{% if barcodes %}
+<!-- Barcode functionality callbacks -->
+$('#show-qr-code').click(function() {
+    showQRDialog(
+        '{% trans "Purchase Order QR Code" escape %}',
+        '{"purchaseorder": {{ order.pk }} }'
+    );
+});
 
-{% endblock %}
+{% if roles.purchase_order.change %}
+$("#barcode-link").click(function() {
+    linkBarcodeDialog(
+        {
+            purchaseorder: {{ order.pk }},
+        },
+        {
+            title: '{% trans "Link Barcode to Purchase Order" escape %}',
+        }
+    );
+});
+
+$("#barcode-unlink").click(function() {
+    unlinkBarcode({
+        purchaseorder: {{ order.pk }},
+    });
+});
+{% endif %}
+{% endif %}
+
+{% endblock js_ready %}

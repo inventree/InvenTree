@@ -6,6 +6,7 @@
     addSidebarHeader,
     addSidebarItem,
     addSidebarLink,
+    generateTreeStructure,
     enableBreadcrumbTree,
     enableSidebar,
     onPanelLoad,
@@ -147,6 +148,59 @@ function enableSidebar(label, options={}) {
 }
 
 /**
+ * Generate nested tree structure for jquery treeview from flattened list of
+ * tree nodes with refs to their parents
+ * @param {Array} data flat tree data as list of objects
+ * @param {Object} options custom options
+ * @param {Function} options.processNode Function that can change the treeview node obj
+ * @param {Number} options.selected pk of the node that should be preselected
+ */
+function generateTreeStructure(data, options) {
+    const nodes = {};
+    const roots = [];
+    let node = null;
+
+    for (var i = 0; i < data.length; i++) {
+        node = data[i];
+        nodes[node.pk] = node;
+        node.selectable = false;
+
+        node.state = {
+            expanded: node.pk == options.selected,
+            selected: node.pk == options.selected,
+        };
+
+        if (options.processNode) {
+            node = options.processNode(node);
+        }
+    }
+
+    for (var i = 0; i < data.length; i++) {
+        node = data[i];
+
+        if (node.parent != null) {
+            if (nodes[node.parent].nodes) {
+                nodes[node.parent].nodes.push(node);
+            } else {
+                nodes[node.parent].nodes = [node];
+            }
+
+            if (node.state.expanded) {
+                while (node.parent != null) {
+                    nodes[node.parent].state.expanded = true;
+                    node = nodes[node.parent];
+                }
+            }
+
+        } else {
+            roots.push(node);
+        }
+    }
+
+    return roots;
+}
+
+/**
  * Enable support for breadcrumb tree navigation on this page
  */
 function enableBreadcrumbTree(options) {
@@ -168,47 +222,7 @@ function enableBreadcrumbTree(options) {
 
                 // Data are returned from the InvenTree server as a flattened list;
                 // We need to convert this into a tree structure
-
-                var nodes = {};
-                var roots = [];
-                var node = null;
-
-                for (var i = 0; i < data.length; i++) {
-                    node = data[i];
-                    nodes[node.pk] = node;
-                    node.selectable = false;
-
-                    if (options.processNode) {
-                        node = options.processNode(node);
-                    }
-
-                    node.state = {
-                        expanded: node.pk == options.selected,
-                        selected: node.pk == options.selected,
-                    };
-                }
-
-                for (var i = 0; i < data.length; i++) {
-                    node = data[i];
-
-                    if (node.parent != null) {
-                        if (nodes[node.parent].nodes) {
-                            nodes[node.parent].nodes.push(node);
-                        } else {
-                            nodes[node.parent].nodes = [node];
-                        }
-
-                        if (node.state.expanded) {
-                            while (node.parent != null) {
-                                nodes[node.parent].state.expanded = true;
-                                node = nodes[node.parent];
-                            }
-                        }
-
-                    } else {
-                        roots.push(node);
-                    }
-                }
+                const roots = generateTreeStructure(data, options);
 
                 $('#breadcrumb-tree').treeview({
                     data: roots,
@@ -226,7 +240,7 @@ function enableBreadcrumbTree(options) {
     $('#breadcrumb-tree-toggle').click(function() {
         // Add callback to "collapse" and "expand" the sidebar
 
-        // Toggle treeview visibilty
+        // Toggle treeview visibility
         $('#breadcrumb-tree-collapse').toggle();
 
     });

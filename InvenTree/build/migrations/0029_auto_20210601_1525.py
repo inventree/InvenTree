@@ -51,20 +51,10 @@ def assign_bom_items(apps, schema_editor):
         logger.info(f"Assigned BomItem for {count_valid}/{count_total} entries")
 
 
-def unassign_bom_items(apps, schema_editor):  # pragma: no cover
-    """
-    Reverse migration does not do anything.
-    Function here to preserve ability to reverse migration
-    """
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
         ('build', '0028_builditem_bom_item'),
     ]
 
-    operations = [
-        migrations.RunPython(assign_bom_items, reverse_code=unassign_bom_items),
-    ]
+    operations = []

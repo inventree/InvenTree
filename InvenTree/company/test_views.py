@@ -1,10 +1,12 @@
-"""Unit tests for Company views (see views.py)"""
+"""Unit tests for Company views (see views.py)."""
 
+from django.test import tag
 from django.urls import reverse
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 
 
+@tag('cui')
 class CompanyViewTest(InvenTreeTestCase):
     """Tests for various 'Company' views."""
 
@@ -36,7 +38,9 @@ class CompanyViewTest(InvenTreeTestCase):
 
     def test_manufacturer_part_detail_view(self):
         """Test the manufacturer part detail view."""
-        response = self.client.get(reverse('manufacturer-part-detail', kwargs={'pk': 1}))
+        response = self.client.get(
+            reverse('manufacturer-part-detail', kwargs={'pk': 1})
+        )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'MPN123')
 

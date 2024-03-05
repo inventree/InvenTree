@@ -1,0 +1,21 @@
+{% extends "panel.html" %}
+
+{% load i18n %}
+{% load inventree_extras %}
+
+{% block label %}units{% endblock label %}
+
+{% block heading %}{% trans "Physical Units" %}{% endblock heading %}
+{% block actions %}
+<button class='btn btn-success' id='custom-unit-create'>
+    <span class='fas fa-plus-circle'></span>
+    {% trans "Add Unit" %}
+</button>
+{% endblock actions %}
+
+{% block content %}
+
+<table class='table table-striped table-condensed' id='physical-units-table'>
+</table>
+
+{% endblock content %}

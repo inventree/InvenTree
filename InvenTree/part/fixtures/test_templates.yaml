@@ -4,30 +4,35 @@
   fields:
     part: 10000
     test_name: Test strength of chair
+    key: 'teststrengthofchair'
 
 - model: part.parttesttemplate
   pk: 2
   fields:
     part: 10000
     test_name: Apply paint
+    key: 'applypaint'
 
 - model: part.parttesttemplate
   pk: 3
   fields:
     part: 10000
     test_name: Sew cushion
+    key: 'sewcushion'
 
 - model: part.parttesttemplate
   pk: 4
   fields:
     part: 10000
     test_name: Attach legs
+    key: 'attachlegs'
 
 - model: part.parttesttemplate
   pk: 5
   fields:
     part: 10000
     test_name: Record weight
+    key: 'recordweight'
     required: false
 
 # Add some tests for one of the variants
@@ -35,12 +40,30 @@
   pk: 6
   fields:
     part: 10003
-    test_name: Check that chair is green
+    test_name: Check chair is green
+    key: 'checkchairisgreen'
     required: true
 
 - model: part.parttesttemplate
-  pk: 7
+  pk: 8
   fields:
-    part: 10004
-    test_name: Check that chair is especially green
+    part: 25
+    test_name: 'Temperature Test'
+    key: 'temperaturetest'
+    required: False
+
+- model: part.parttesttemplate
+  pk: 9
+  fields:
+    part: 25
+    test_name: 'Settings Checksum'
+    key: 'settingschecksum'
+    required: False
+
+- model: part.parttesttemplate
+  pk: 10
+  fields:
+    part: 25
+    test_name: 'Firmware Version'
+    key: 'firmwareversion'
     required: False

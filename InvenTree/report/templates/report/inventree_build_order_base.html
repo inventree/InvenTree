@@ -9,7 +9,7 @@
 {% block page_margin %}
 margin: 2cm;
 margin-top: 4cm;
-{% endblock %}
+{% endblock page_margin %}
 
 {% block style %}
 
@@ -71,11 +71,11 @@ margin-top: 4cm;
     border-bottom: 1px solid #555;
 }
 
-{% endblock %}
+{% endblock style %}
 
 {% block bottom_left %}
-content: "v{{report_revision}} - {{ date.isoformat }}";
-{% endblock %}
+content: "v{{ report_revision }} - {{ date.isoformat }}";
+{% endblock bottom_left %}
 
 {% block header_content %}
     <img class='logo' src="{% logo_image %}" alt="logo" width="150">
@@ -89,13 +89,13 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
     </div>
 
     <hr>
-{% endblock %}
+{% endblock header_content %}
 
 {% block page_content %}
 
 <div class='details'>
     <div class='details-image'>
-        <img class='part-image' src="{% part_image part %}">
+        <img class='part-image' alt="{% trans 'Part image' %}" src="{% part_image part height=480 %}">
     </div>
 
     <div class='details-container'>
@@ -175,4 +175,4 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
 {{ build.notes|markdownify }}
 {% endif %}
 
-{% endblock %}
+{% endblock page_content %}

@@ -11,70 +11,36 @@ import json
 
 from django.utils.translation import gettext_lazy as _
 
-from company.models import SupplierPart
 from InvenTree.helpers import hash_barcode
-from part.models import Part
+from InvenTree.helpers_model import getModelsWithMixin
+from InvenTree.models import InvenTreeBarcodeMixin
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
-from stock.models import StockItem, StockLocation
 
 
 class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
     """Builtin BarcodePlugin for matching and generating internal barcodes."""
 
-    NAME = "InvenTreeBarcode"
-    TITLE = _("Inventree Barcodes")
-    DESCRIPTION = _("Provides native support for barcodes")
-    VERSION = "2.0.0"
-    AUTHOR = _("InvenTree contributors")
+    NAME = 'InvenTreeBarcode'
+    TITLE = _('InvenTree Barcodes')
+    DESCRIPTION = _('Provides native support for barcodes')
+    VERSION = '2.0.0'
+    AUTHOR = _('InvenTree contributors')
 
     @staticmethod
     def get_supported_barcode_models():
-        """Returns a list of database models which support barcode functionality"""
-
-        return [
-            Part,
-            StockItem,
-            StockLocation,
-            SupplierPart,
-        ]
+        """Returns a list of database models which support barcode functionality."""
+        return getModelsWithMixin(InvenTreeBarcodeMixin)
 
     def format_matched_response(self, label, model, instance):
-        """Format a response for the scanned data"""
-
-        data = {
-            'pk': instance.pk
-        }
-
-        # Add in the API URL if available
-        if hasattr(model, 'get_api_url'):
-            data['api_url'] = f"{model.get_api_url()}{instance.pk}/"
-
-        # Add in the web URL if available
-        if hasattr(instance, 'get_absolute_url'):
-            url = instance.get_absolute_url()
-            data['web_url'] = url
-        else:
-            url = None
-
-        response = {
-            label: data
-        }
-
-        if url is not None:
-            response['url'] = url
-
-        return response
+        """Format a response for the scanned data."""
+        return {label: instance.format_matched_response()}
 
     def scan(self, barcode_data):
         """Scan a barcode against this plugin.
 
         Here we are looking for a dict object which contains a reference to a particular InvenTree database object
         """
-
-        # Create hash from raw barcode data
-        barcode_hash = hash_barcode(barcode_data)
-
         # Attempt to coerce the barcode data into a dict object
         # This is the internal barcode representation that InvenTree uses
         barcode_dict = None
@@ -87,20 +53,26 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             except json.JSONDecodeError:
                 pass
 
+        supported_models = self.get_supported_barcode_models()
+
         if barcode_dict is not None and type(barcode_dict) is dict:
             # Look for various matches. First good match will be returned
-            for model in self.get_supported_barcode_models():
+            for model in supported_models:
                 label = model.barcode_model_type()
 
                 if label in barcode_dict:
                     try:
-                        instance = model.objects.get(pk=barcode_dict[label])
+                        pk = int(barcode_dict[label])
+                        instance = model.objects.get(pk=pk)
                         return self.format_matched_response(label, model, instance)
                     except (ValueError, model.DoesNotExist):
                         pass
 
+        # Create hash from raw barcode data
+        barcode_hash = hash_barcode(barcode_data)
+
         # If no "direct" hits are found, look for assigned third-party barcodes
-        for model in self.get_supported_barcode_models():
+        for model in supported_models:
             label = model.barcode_model_type()
 
             instance = model.lookup_barcode(barcode_hash)

@@ -1,99 +1,106 @@
-"""API serializers for the reporting models"""
+"""API serializers for the reporting models."""
 
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
-                                   InvenTreeModelSerializer)
+from InvenTree.serializers import (
+    InvenTreeAttachmentSerializerField,
+    InvenTreeModelSerializer,
+)
 
-from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
-                     SalesOrderReport, TestReport)
+from .models import (
+    BillOfMaterialsReport,
+    BuildReport,
+    PurchaseOrderReport,
+    ReturnOrderReport,
+    SalesOrderReport,
+    StockLocationReport,
+    TestReport,
+)
 
 
-class TestReportSerializer(InvenTreeModelSerializer):
-    """Serializer class for the TestReport model"""
+class ReportSerializerBase(InvenTreeModelSerializer):
+    """Base class for report serializer."""
 
     template = InvenTreeAttachmentSerializerField(required=True)
+
+    @staticmethod
+    def report_fields():
+        """Generic serializer fields for a report template."""
+        return [
+            'pk',
+            'name',
+            'description',
+            'template',
+            'filters',
+            'page_size',
+            'landscape',
+            'enabled',
+        ]
+
+
+class TestReportSerializer(ReportSerializerBase):
+    """Serializer class for the TestReport model."""
 
     class Meta:
         """Metaclass options."""
 
         model = TestReport
-        fields = [
-            'pk',
-            'name',
-            'description',
-            'template',
-            'filters',
-            'enabled',
-        ]
+        fields = ReportSerializerBase.report_fields()
 
 
-class BuildReportSerializer(InvenTreeModelSerializer):
-    """Serializer class for the BuildReport model"""
-
-    template = InvenTreeAttachmentSerializerField(required=True)
+class BuildReportSerializer(ReportSerializerBase):
+    """Serializer class for the BuildReport model."""
 
     class Meta:
         """Metaclass options."""
 
         model = BuildReport
-        fields = [
-            'pk',
-            'name',
-            'description',
-            'template',
-            'filters',
-            'enabled',
-        ]
+        fields = ReportSerializerBase.report_fields()
 
 
-class BOMReportSerializer(InvenTreeModelSerializer):
-    """Serializer class for the BillOfMaterialsReport model"""
-    template = InvenTreeAttachmentSerializerField(required=True)
+class BOMReportSerializer(ReportSerializerBase):
+    """Serializer class for the BillOfMaterialsReport model."""
 
     class Meta:
         """Metaclass options."""
 
         model = BillOfMaterialsReport
-        fields = [
-            'pk',
-            'name',
-            'description',
-            'template',
-            'filters',
-            'enabled',
-        ]
+        fields = ReportSerializerBase.report_fields()
 
 
-class PurchaseOrderReportSerializer(InvenTreeModelSerializer):
-    """Serializer class for the PurchaseOrdeReport model"""
-    template = InvenTreeAttachmentSerializerField(required=True)
+class PurchaseOrderReportSerializer(ReportSerializerBase):
+    """Serializer class for the PurchaseOrdeReport model."""
 
     class Meta:
         """Metaclass options."""
 
         model = PurchaseOrderReport
-        fields = [
-            'pk',
-            'name',
-            'description',
-            'template',
-            'filters',
-            'enabled',
-        ]
+        fields = ReportSerializerBase.report_fields()
 
 
-class SalesOrderReportSerializer(InvenTreeModelSerializer):
-    """Serializer class for the SalesOrderReport model"""
-    template = InvenTreeAttachmentSerializerField(required=True)
+class SalesOrderReportSerializer(ReportSerializerBase):
+    """Serializer class for the SalesOrderReport model."""
 
     class Meta:
         """Metaclass options."""
 
         model = SalesOrderReport
-        fields = [
-            'pk',
-            'name',
-            'description',
-            'template',
-            'filters',
-            'enabled',
-        ]
+        fields = ReportSerializerBase.report_fields()
+
+
+class ReturnOrderReportSerializer(ReportSerializerBase):
+    """Serializer class for the ReturnOrderReport model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = ReturnOrderReport
+        fields = ReportSerializerBase.report_fields()
+
+
+class StockLocationReportSerializer(ReportSerializerBase):
+    """Serializer class for the StockLocationReport model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockLocationReport
+        fields = ReportSerializerBase.report_fields()

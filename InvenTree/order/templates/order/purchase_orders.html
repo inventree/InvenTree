@@ -6,11 +6,11 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Purchase Orders" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block heading %}
 {% trans "Purchase Orders" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if roles.purchase_order.add %}
@@ -18,22 +18,13 @@
     <span class='fas fa-plus-circle'></span> {% trans "New Purchase Order" %}
 </button>
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block page_info %}
 
 <div class='panel-content'>
     <div id='table-buttons'>
-        <div class='button-toolbar container-fluid' style='float: right;'>
-            <div class='btn-group' role='group'>
-                {% if report_enabled %}
-                <button id='order-print' class='btn btn-outline-secondary' title='{% trans "Print Order Reports" %}'>
-                    <span class='fas fa-print'></span>
-                </button>
-                {% endif %}
-                {% include "filter_list.html" with id="purchaseorder" %}
-            </div>
-        </div>
+        {% include "filter_list.html" with id="purchaseorder" %}
     </div>
 
     <table class='table table-striped table-condensed po-table' data-toolbar='#table-buttons' id='purchase-order-table'>
@@ -43,29 +34,15 @@
 
 </div>
 
-{% endblock %}
+{% endblock page_info %}
 
 {% block js_load %}
 {{ block.super }}
 
-{% endblock %}
+{% endblock js_load %}
 
 {% block js_ready %}
 {{ block.super }}
-
-{% if report_enabled %}
-$("#order-print").click(function() {
-    var rows = getTableData('#purchase-order-table');
-
-    var orders = [];
-
-    rows.forEach(function(row) {
-        orders.push(row.pk);
-    });
-
-    printPurchaseOrderReports(orders);
-})
-{% endif %}
 
 $("#po-create").click(function() {
     createPurchaseOrder();
@@ -75,4 +52,4 @@ loadPurchaseOrderTable("#purchase-order-table", {
     url: "{% url 'api-po-list' %}",
 });
 
-{% endblock %}
+{% endblock js_ready %}

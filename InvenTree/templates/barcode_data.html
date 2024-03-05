@@ -1,0 +1,10 @@
+{% load i18n %}
+{% if instance and instance.barcode_hash %}
+<tr>
+    <td><span class='fas fa-barcode'></span></td>
+    <td>{% trans "Barcode Identifier" %}</td>
+    <td {% if instance.barcode_data %}title='{{ instance.barcode_data }}'{% endif %}>
+        {{ instance.barcode_hash }}
+    </td>
+</tr>
+{% endif %}

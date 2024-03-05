@@ -2,12 +2,11 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}server{% endblock %}
-
+{% block label %}server{% endblock label %}
 
 {% block heading %}
 {% trans "Server Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -18,12 +17,17 @@
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_INSTANCE" icon="fa-info-circle" %}
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_INSTANCE_TITLE" icon="fa-info-circle" %}
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_RESTRICT_ABOUT" icon="fa-info-circle" %}
+        {% include "InvenTree/settings/setting.html" with key="DISPLAY_FULL_NAMES" icon="fa-font" %}
         <tr><td colspan='5'></td></tr>
+        {% include "InvenTree/settings/setting.html" with key="INVENTREE_UPDATE_CHECK_INTERVAL" icon="fa-calendar-alt" %}
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_DOWNLOAD_FROM_URL" icon="fa-cloud-download-alt" %}
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE" icon="fa-server" %}
+        {% include "InvenTree/settings/setting.html" with key="INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT" icon="fa-server" %}
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_REQUIRE_CONFIRM" icon="fa-check" %}
+        {% include "InvenTree/settings/setting.html" with key="INVENTREE_STRICT_URLS" icon="fa-link" %}
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_TREE_DEPTH" icon="fa-sitemap" %}
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_BACKUP_ENABLE" icon="fa-hdd" %}
+        {% include "InvenTree/settings/setting.html" with key="INVENTREE_BACKUP_DAYS" icon="fa-calendar-alt" %}
         <tr><td colspan='5'></td></tr>
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_DELETE_TASKS_DAYS" icon="fa-calendar-alt" %}
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_DELETE_ERRORS_DAYS" icon="fa-calendar-alt" %}
@@ -31,4 +35,4 @@
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}

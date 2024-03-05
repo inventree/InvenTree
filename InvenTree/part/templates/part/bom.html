@@ -12,31 +12,18 @@
 <div class='alert alert-block alert-info'>
 {% else %}
 <div class='alert alert-block alert-danger'>
-    {% blocktrans with part=part.full_name %}The BOM for <em>{{ part }}</em> has changed, and must be validated.<br>{% endblocktrans %}
+    {% trans "The BOM this part has been changed, and must be validated" %}
 {% endif %}
-    {% blocktrans with part=part.full_name checker=part.bom_checked_by check_date=part.bom_checked_date %}The BOM for <em>{{ part }}</em> was last checked by {{ checker }} on {{ check_date }}{% endblocktrans %}
+    {% blocktrans with part=part.full_name checker=part.bom_checked_by check_date=part.bom_checked_date %}This BOM was last checked by {{ checker }} on {{ check_date }}{% endblocktrans %}
 </div>
 {% else %}
 <div class='alert alert-danger alert-block'>
-    <strong>{% blocktrans with part=part.full_name %}The BOM for <em>{{ part }}</em> has not been validated.{% endblocktrans %}</strong>
+    <strong>{% trans "This BOM has not been validated." %}</strong>
 </div>
 {% endif %}
 
 <div id='bom-button-toolbar'>
-    <div class="btn-group" role="group" aria-label="...">
-        {% if roles.part.change %}
-        <!-- Action menu -->
-        <div class='btn-group'>
-            <button id='bom-actions' title='{% trans "BOM actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
-                <span class='fas fa-tools'></span> <span class='caret'></span>
-            </button>
-            <ul class='dropdown-menu' role='menu'>
-                <li><a class='dropdown-item' href='#' id='bom-item-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Items" %}</a></li>
-            </ul>
-        </div>
-        {% endif %}
-        {% include "filter_list.html" with id="bom" %}
-    </div>
+    {% include "filter_list.html" with id="bom" %}
 </div>
 
 <table class='table table-bom table-condensed' data-toolbar="#bom-button-toolbar" id='bom-table'>

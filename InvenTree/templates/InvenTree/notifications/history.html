@@ -3,24 +3,22 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}history{% endblock %}
+{% block label %}history{% endblock label %}
 
 {% block heading %}
 {% trans "Notification History" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 <div class='btn btn-danger' type='button' id='history-delete' title='{% trans "Delete Notifications" %}'>
     <span class='fas fa-trash-alt'></span> {% trans "Delete Notifications" %}
 </div>
-{% endblock %}
+{% endblock actions %}
 
 {% block content %}
 
 <div id='history-buttons'>
-    <div class='btn-group' role='group'>
-        {% include "filter_list.html" with id="notifications-history" %}
-    </div>
+    {% include "filter_list.html" with id="notifications-history" %}
 </div>
 
 <div class='row'>
@@ -29,4 +27,4 @@
     </table>
 </div>
 
-{% endblock %}
+{% endblock content %}

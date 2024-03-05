@@ -4,37 +4,36 @@ import csv
 
 from django.urls import reverse
 
-from InvenTree.helpers import InvenTreeTestCase
+import part.models
+from InvenTree.settings import BASE_DIR
+from InvenTree.unit_test import InvenTreeTestCase
 
 
 class BomExportTest(InvenTreeTestCase):
-    """Class for performing unit testing of BOM export functionality"""
+    """Class for performing unit testing of BOM export functionality."""
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'bom',
-    ]
+    fixtures = ['category', 'part', 'location', 'bom']
 
     roles = 'all'
 
     def setUp(self):
-        """Perform test setup functions"""
+        """Perform test setup functions."""
         super().setUp()
 
-        self.url = reverse('bom-download', kwargs={'pk': 100})
+        part.models.Part.objects.rebuild()
+
+        self.url = reverse('api-bom-download', kwargs={'pk': 100})
 
     def test_bom_template(self):
         """Test that the BOM template can be downloaded from the server."""
-        url = reverse('bom-upload-template')
+        url = reverse('api-bom-upload-template')
 
         # Download an XLS template
         response = self.client.get(url, data={'format': 'xls'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.headers['Content-Disposition'],
-            'attachment; filename="InvenTree_BOM_Template.xls"'
+            'attachment; filename="InvenTree_BOM_Template.xls"',
         )
 
         # Return a simple CSV template
@@ -42,10 +41,10 @@ class BomExportTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.headers['Content-Disposition'],
-            'attachment; filename="InvenTree_BOM_Template.csv"'
+            'attachment; filename="InvenTree_BOM_Template.csv"',
         )
 
-        filename = '_tmp.csv'
+        filename = BASE_DIR / '_testfolder' / '_tmp.csv'
 
         with open(filename, 'wb') as f:
             f.write(response.getvalue())
@@ -91,7 +90,7 @@ class BomExportTest(InvenTreeTestCase):
         content = response.headers['Content-Disposition']
         self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.csv"')
 
-        filename = '_tmp.csv'
+        filename = BASE_DIR / '_testfolder' / '_tmp.csv'
 
         with open(filename, 'wb') as f:
             f.write(response.getvalue())

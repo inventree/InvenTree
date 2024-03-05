@@ -2,11 +2,10 @@
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
 import common.settings
-from InvenTree.views import InvenTreeRoleMixin, QRCodeView
+from InvenTree.views import InvenTreeRoleMixin
 from plugin.views import InvenTreePluginViewMixin
 
 from .models import StockItem, StockLocation
@@ -35,7 +34,9 @@ class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
         # No 'ownership' checks are necessary for the top-level StockLocation view
         context['user_owns_location'] = True
         context['location_owner'] = None
-        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting(
+            'STOCK_OWNERSHIP_CONTROL'
+        )
 
         return context
 
@@ -52,9 +53,13 @@ class StockLocationDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailVi
         """Extend template context."""
         context = super().get_context_data(**kwargs)
 
-        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting(
+            'STOCK_OWNERSHIP_CONTROL'
+        )
         context['location_owner'] = context['location'].get_location_owner()
-        context['user_owns_location'] = context['location'].check_ownership(self.request.user)
+        context['user_owns_location'] = context['location'].check_ownership(
+            self.request.user
+        )
 
         return context
 
@@ -75,14 +80,18 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
             data['previous'] = self.object.get_next_serialized_item(reverse=True)
             data['next'] = self.object.get_next_serialized_item()
 
-        data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting(
+            'STOCK_OWNERSHIP_CONTROL'
+        )
         data['item_owner'] = self.object.get_item_owner()
         data['user_owns_item'] = self.object.check_ownership(self.request.user)
 
         # Allocation information
         data['allocated_to_sales_orders'] = self.object.sales_order_allocation_count()
         data['allocated_to_build_orders'] = self.object.build_allocation_count()
-        data['allocated_to_orders'] = data['allocated_to_sales_orders'] + data['allocated_to_build_orders']
+        data['allocated_to_orders'] = (
+            data['allocated_to_sales_orders'] + data['allocated_to_build_orders']
+        )
         data['available'] = max(0, self.object.quantity - data['allocated_to_orders'])
 
         return data
@@ -101,34 +110,3 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
                 return HttpResponseRedirect(reverse('stock-index'))
 
         return super().get(request, *args, **kwargs)
-
-
-class StockLocationQRCode(QRCodeView):
-    """View for displaying a QR code for a StockLocation object."""
-
-    ajax_form_title = _("Stock Location QR code")
-
-    role_required = ['stock_location.view', 'stock.view']
-
-    def get_qr_data(self):
-        """Generate QR code data for the StockLocation."""
-        try:
-            loc = StockLocation.objects.get(id=self.pk)
-            return loc.format_barcode()
-        except StockLocation.DoesNotExist:
-            return None
-
-
-class StockItemQRCode(QRCodeView):
-    """View for displaying a QR code for a StockItem object."""
-
-    ajax_form_title = _("Stock Item QR Code")
-    role_required = 'stock.view'
-
-    def get_qr_data(self):
-        """Generate QR code data for the StockItem."""
-        try:
-            item = StockItem.objects.get(id=self.pk)
-            return item.format_barcode()
-        except StockItem.DoesNotExist:
-            return None

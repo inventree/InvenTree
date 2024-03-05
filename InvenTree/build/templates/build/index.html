@@ -6,11 +6,11 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Build Orders" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block heading %}
 {% trans "Build Orders" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 {% if roles.build.add %}
@@ -18,38 +18,20 @@
     <span class='fas fa-tools'></span> {% trans "New Build Order" %}
 </button>
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block page_info %}
 
 <div class='panel-content'>
     <div id='button-toolbar'>
-        <div class='button-toolbar container-fluid' style='float: right;'>
-            <div class='btn-group' role='group'>
-
-                {% if report_enabled %}
-                <div class='btn-group' role='group'>
-                    <!-- Print actions -->
-                    <button id='build-print-options' class='btn btn-primary dropdown-toggle' data-bs-toggle='dropdown'>
-                        <span class='fas fa-print'></span> <span class='caret'></span>
-                    </button>
-                    <ul class='dropdown-menu'>
-                        <li><a class='dropdown-item' href='#' id='multi-build-print' title='{% trans "Print Build Orders" %}'>
-                            <span class='fas fa-file-pdf'></span> {% trans "Print Build Orders" %}
-                        </a></li>
-                    </ul>
-                </div>
-                {% endif %}
-                {% include "filter_list.html" with id="build" %}
-            </div>
-        </div>
+        {% include "filter_list.html" with id="build" %}
     </div>
 
     <table class='table table-striped table-condensed' id='build-table' data-toolbar='#button-toolbar'>
     </table>
 </div>
 
-{% endblock %}
+{% endblock page_info %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -62,17 +44,4 @@ loadBuildTable($("#build-table"), {
     locale: '{{ request.LANGUAGE_CODE }}',
 });
 
-{% if report_enabled %}
-$('#multi-build-print').click(function() {
-    var rows = getTableData("#build-table");
-    var build_ids = [];
-
-    rows.forEach(function(row) {
-        build_ids.push(row.pk);
-    });
-
-    printBuildReports(build_ids);
-});
-{% endif %}
-
-{% endblock %}
+{% endblock js_ready %}

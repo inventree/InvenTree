@@ -17,11 +17,11 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
     This plugin class simply prints location information to the logger.
     """
 
-    NAME = "SampleLocatePlugin"
-    SLUG = "samplelocate"
-    TITLE = "Sample plugin for locating items"
+    NAME = 'SampleLocatePlugin'
+    SLUG = 'samplelocate'
+    TITLE = 'Sample plugin for locating items'
 
-    VERSION = "0.2"
+    VERSION = '0.2'
 
     def locate_stock_item(self, item_pk):
         """Locate a StockItem.
@@ -31,17 +31,17 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
         """
         from stock.models import StockItem
 
-        logger.info(f"SampleLocatePlugin attempting to locate item ID {item_pk}")
+        logger.info('SampleLocatePlugin attempting to locate item ID %s', item_pk)
 
         try:
             item = StockItem.objects.get(pk=item_pk)
-            logger.info(f"StockItem {item_pk} located!")
+            logger.info('StockItem %s located!', item_pk)
 
             # Tag metadata
             item.set_metadata('located', True)
 
         except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-            logger.error(f"StockItem ID {item_pk} does not exist!")
+            logger.exception('StockItem ID %s does not exist!', item_pk)
 
     def locate_stock_location(self, location_pk):
         """Locate a StockLocation.
@@ -51,14 +51,16 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
         """
         from stock.models import StockLocation
 
-        logger.info(f"SampleLocatePlugin attempting to locate location ID {location_pk}")
+        logger.info(
+            'SampleLocatePlugin attempting to locate location ID %s', location_pk
+        )
 
         try:
             location = StockLocation.objects.get(pk=location_pk)
-            logger.info(f"Location exists at '{location.pathstring}'")
+            logger.info("Location exists at '%s'", location.pathstring)
 
             # Tag metadata
             location.set_metadata('located', True)
 
         except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
-            logger.error(f"Location ID {location_pk} does not exist!")
+            logger.exception('Location ID %s does not exist!', location_pk)

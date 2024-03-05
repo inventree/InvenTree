@@ -6,10 +6,10 @@
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Search Results" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block content %}
 
@@ -22,7 +22,7 @@
 <div id='detail-panels'>
 </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -79,9 +79,9 @@
     }
 
     {% if roles.part.view %}
-    addItemTitle('{% trans "Part" %}');
+    addItemTitle('{% trans "Part" escape %}');
 
-    addItem('part', '{% trans "Parts" %}', 'fa-shapes');
+    addItem('part', '{% trans "Parts" escape %}', 'fa-shapes');
 
     loadPartTable("#table-part",
         "{% url 'api-part-list' %}",
@@ -94,7 +94,7 @@
         }
     );
 
-    addItem('category', '{% trans "Part Categories" %}', 'fa-sitemap');
+    addItem('category', '{% trans "Part Categories" escape %}', 'fa-sitemap');
 
     loadPartCategoryTable($("#table-category"), {
         params: {
@@ -102,7 +102,7 @@
         }
     });
 
-    addItem('manufacturer-part', '{% trans "Manufacturer Parts" %}', 'fa-toolbox');
+    addItem('manufacturer-part', '{% trans "Manufacturer Parts" escape %}', 'fa-toolbox');
 
     loadManufacturerPartTable(
         "#table-manufacturer-part",
@@ -117,7 +117,7 @@
         }
     );
 
-    addItem('supplier-part', '{% trans "Supplier Parts" %}', 'fa-pallet');
+    addItem('supplier-part', '{% trans "Supplier Parts" escape %}', 'fa-pallet');
 
     loadSupplierPartTable(
         "#table-supplier-part",
@@ -136,9 +136,9 @@
 
     {% if roles.build.view %}
 
-    addItemTitle('{% trans "Build" %}');
+    addItemTitle('{% trans "Build" escape %}');
 
-    addItem('build-order', '{% trans "Build Orders" %}', 'fa-tools');
+    addItem('build-order', '{% trans "Build Orders" escape %}', 'fa-tools');
 
     loadBuildTable('#table-build-order', {
         locale: '{{ request.LANGUAGE_CODE }}',
@@ -150,13 +150,12 @@
     {% endif %}
 
     {% if roles.stock.view %}
-    addItemTitle('{% trans "Stock" %}');
+    addItemTitle('{% trans "Stock" escape %}');
 
-    addItem('stock', '{% trans "Stock Items" %}', 'fa-boxes');
+    addItem('stock', '{% trans "Stock Items" escape %}', 'fa-boxes');
 
     loadStockTable($('#table-stock'), {
         filterKey: 'stocksearch',
-        url: "{% url 'api-stock-list' %}",
         params: {
             original_search: search_text,
             part_detail: true,
@@ -164,7 +163,7 @@
         }
     });
 
-    addItem('location', '{% trans "Stock Locations" %}', 'fa-map-marker-alt');
+    addItem('location', '{% trans "Stock Locations" escape %}', 'fa-map-marker-alt');
 
     loadStockLocationTable($("#table-location"), {
         filterKey: 'locationsearch',
@@ -176,9 +175,9 @@
     {% endif %}
 
     {% if roles.purchase_order.view or roles.sales_order.view %}
-    addItemTitle('{% trans "Company" %}');
+    addItemTitle('{% trans "Company" escape %}');
 
-    addItem('manufacturer', '{% trans "Manufacturers" %}', 'fa-industry');
+    addItem('manufacturer', '{% trans "Manufacturers" escape %}', 'fa-industry');
 
     loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
         params: {
@@ -188,7 +187,7 @@
     });
 
     {% if roles.purchase_order.view %}
-    addItem('supplier', '{% trans "Suppliers" %}', 'fa-building');
+    addItem('supplier', '{% trans "Suppliers" escape %}', 'fa-building');
 
     loadCompanyTable('#table-supplier', "{% url 'api-company-list' %}", {
         params: {
@@ -197,7 +196,7 @@
         }
     });
 
-    addItem('purchase-order', '{% trans "Purchase Orders" %}', 'fa-shopping-cart');
+    addItem('purchase-order', '{% trans "Purchase Orders" escape %}', 'fa-shopping-cart');
 
     loadPurchaseOrderTable('#table-purchase-order', {
         params: {
@@ -208,7 +207,7 @@
     {% endif %}
 
     {% if roles.sales_order.view %}
-    addItem('customer', '{% trans "Customers" %}', 'fa-user-tie');
+    addItem('customer', '{% trans "Customers" escape %}', 'fa-user-tie');
 
     loadCompanyTable('#table-customer', "{% url 'api-company-list' %}", {
         params: {
@@ -217,7 +216,7 @@
         }
     });
 
-    addItem('sales-orders', '{% trans "Sales Orders" %}', 'fa-truck');
+    addItem('sales-orders', '{% trans "Sales Orders" escape %}', 'fa-truck');
 
     loadSalesOrderTable('#table-sales-orders', {
         params: {
@@ -236,4 +235,4 @@
         }
     );
 
-{% endblock %}
+{% endblock js_ready %}

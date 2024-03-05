@@ -1,0 +1,44 @@
+{% extends "panel.html" %}
+{% load i18n %}
+
+{% block label %}stocktake{% endblock label %}
+
+{% block heading %}
+{% trans "Stocktake Settings" %}
+{% endblock heading %}
+
+{% block panel_content %}
+
+<div class='panel-content'>
+    <table class='table table-striped table-condensed'>
+        <tbody>
+            {% include "InvenTree/settings/setting.html" with key="STOCKTAKE_ENABLE" icon="fa-clipboard-check" %}
+            {% include "InvenTree/settings/setting.html" with key="STOCKTAKE_EXCLUDE_EXTERNAL" icon="fa-sitemap" %}
+            {% include "InvenTree/settings/setting.html" with key="STOCKTAKE_AUTO_DAYS" icon="fa-calendar-alt" %}
+            {% include "InvenTree/settings/setting.html" with key="STOCKTAKE_DELETE_REPORT_DAYS" icon="fa-trash-alt" %}
+        </tbody>
+    </table>
+</div>
+
+<div class='panel-heading'>
+    <div class='d-flex flex-wrap'>
+        <h4>{% trans "Stocktake Reports" %}</h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            {% if roles.stocktake.add %}
+            <button type='button' id='btn-generate-stocktake' class='btn btn-primary float-right'>
+                <span class='fas fa-clipboard-check'></span> {% trans "Stocktake" %}
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class='panel-content'>
+    <div id='part-stocktake-report-toolbar'>
+        {% include "filter_list.html" with id="stocktakereport" %}
+    </div>
+    <table class='table table-striped table-condensed' id='stocktake-report-table' data-toolbar='#part-stocktake-report-toolbar'></table>
+</div>
+
+{% endblock panel_content %}

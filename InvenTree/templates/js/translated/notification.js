@@ -1,5 +1,14 @@
 {% load i18n %}
 
+
+/* globals
+    inventreeGet,
+    inventreePut,
+    renderLink,
+    setupFilterList,
+*/
+
+
 /* exported
     loadNotificationTable,
     startNotificationWatcher,
@@ -28,6 +37,7 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
             ordering: 'age',
             read: read,
         },
+        sidePagination: 'server',
         paginationVAlign: 'bottom',
         formatNoMatches: options.no_matches,
         columns: [
@@ -51,24 +61,15 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
                 sortable: 'true',
             },
             {
-                field: 'target',
-                title: '{% trans "Item" %}',
-                sortable: 'true',
-                formatter: function(value, row, index, field) {
-                    if (value == null) {
-                        return '';
-                    }
-
-                    var html = `${value.model}: ${value.name}`;
-                    if (value.link ) {
-                        html = `<a href='${value.link}'>${html}</a>`;
-                    }
-                    return html;
-                }
-            },
-            {
                 field: 'name',
-                title: '{% trans "Name" %}',
+                title: '{% trans "Notification" %}',
+                formatter: function(value, row) {
+                    if (row.target && row.target.link) {
+                        return renderLink(value, row.target.link);
+                    } else {
+                        return value;
+                    }
+                }
             },
             {
                 field: 'message',
@@ -78,10 +79,10 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
                 formatter: function(value, row, index, field) {
                     var bRead = getReadEditButton(row.pk, row.read);
 
+                    let bDel = '';
+
                     if (enableDelete) {
-                        var bDel = `<button title='{% trans "Delete Notification" %}' class='notification-delete btn btn-outline-secondary' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
-                    } else {
-                        var bDel = '';
+                        bDel = `<button title='{% trans "Delete Notification" %}' class='notification-delete btn btn-outline-secondary' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
                     }
 
                     var html = `<div class='btn-group float-right' role='group'>${bRead}${bDel}</div>`;
@@ -99,12 +100,13 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
 
 
 var notificationWatcher = null; // reference for the notificationWatcher
+
 /**
  * start the regular notification checks
  **/
 function startNotificationWatcher() {
-    notificationCheck(force=true);
-    notificationWatcher = setInterval(notificationCheck, 1000);
+    notificationCheck(true);
+    notificationWatcher = setInterval(notificationCheck, 5000);
 }
 
 /**
@@ -201,7 +203,8 @@ function updateNotificationReadState(btn, panel_caller=false) {
             }
         }
     );
-};
+}
+
 
 /**
  * Returns the html for a read / unread button
@@ -212,17 +215,23 @@ function updateNotificationReadState(btn, panel_caller=false) {
  * - small: should the button be small
  **/
 function getReadEditButton(pk, state, small=false) {
+
+    let bReadText = '';
+    let bReadIcon = '';
+    let bReadTarget = '';
+
     if (state) {
-        var bReadText = '{% trans "Mark as unread" %}';
-        var bReadIcon = 'fas fa-bookmark icon-red';
-        var bReadTarget = 'unread';
+        bReadText = '{% trans "Mark as unread" %}';
+        bReadIcon = 'fas fa-bookmark icon-red';
+        bReadTarget = 'unread';
     } else {
-        var bReadText = '{% trans "Mark as read" %}';
-        var bReadIcon = 'far fa-bookmark icon-green';
-        var bReadTarget = 'read';
+        bReadText = '{% trans "Mark as read" %}';
+        bReadIcon = 'far fa-bookmark icon-green';
+        bReadTarget = 'read';
     }
 
-    var style = (small) ? 'btn-sm ' : '';
+    let style = (small) ? 'btn-sm ' : '';
+
     return `<button title='${bReadText}' class='notification-read btn ${style}btn-outline-secondary float-right' type='button' pk='${pk}' target='${bReadTarget}'><span class='${bReadIcon}'></span></button>`;
 }
 

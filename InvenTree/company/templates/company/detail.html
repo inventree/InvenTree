@@ -1,10 +1,11 @@
 {% extends "company/company_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block sidebar %}
 {% include 'company/sidebar.html' %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block page_content %}
 
@@ -25,28 +26,7 @@
     <div class='panel-content'>
         {% if roles.purchase_order.change %}
         <div id='supplier-part-button-toolbar'>
-            <div class='button-toolbar container-fluid'>
-                <div class='btn-group' role='group'>
-                    <div class='btn-group'>
-                        <button class="btn btn-primary dropdown-toggle" id='supplier-table-options' type="button" data-bs-toggle="dropdown">
-                            <span class='fas fa-tools'></span> <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            {% if roles.purchase_order.add %}
-                            <li><a class='dropdown-item' href='#' id='multi-supplier-part-order' title='{% trans "Order parts" %}'>
-                                <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
-                            </a></li>
-                            {% endif %}
-                            {% if roles.purchase_order.delete %}
-                            <li><a class='dropdown-item' href='#' id='multi-supplier-part-delete' title='{% trans "Delete parts" %}'>
-                                <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Parts" %}
-                            </a></li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                    {% include "filter_list.html" with id="supplier-part" %}
-                </div>
-            </div>
+            {% include "filter_list.html" with id="supplier-part" %}
         </div>
         {% endif %}
 
@@ -72,29 +52,7 @@
     <div class='panel-content'>
         {% if roles.purchase_order.change %}
         <div id='manufacturer-part-button-toolbar'>
-            <div class='button-toolbar container-fluid'>
-                <div class='btn-group' role='group'>
-                    <div class='btn-group' role='group'>
-                        <button class="btn btn-primary dropdown-toggle" id='manufacturer-table-options' type="button" data-bs-toggle="dropdown">
-                            <span class='fas fa-tools'></span>
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            {% if roles.purchase_order.add %}
-                            <li><a class='dropdown-item' href='#' id='multi-manufacturer-part-order' title='{% trans "Order parts" %}'>
-                                <span class='fas fa-shopping-cart'></span> {% trans "Order Parts" %}
-                            </a></li>
-                            {% endif %}
-                            {% if roles.purchase_order.delete %}
-                            <li><a class='dropdown-item' href='#' id='multi-manufacturer-part-delete' title='{% trans "Delete parts" %}'>
-                                <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Parts" %}
-                            </a></li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                    {% include "filter_list.html" with id="manufacturer-part" %}
-                </div>
-            </div>
+            {% include "filter_list.html" with id="manufacturer-part" %}
         </div>
         {% endif %}
         <table class='table table-striped table-condensed' id='manufacturer-part-table' data-toolbar='#manufacturer-part-button-toolbar'>
@@ -127,9 +85,7 @@
     </div>
     <div class='panel-content'>
         <div id='po-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                {% include "filter_list.html" with id="purchaseorder" %}
-            </div>
+            {% include "filter_list.html" with id="purchaseorder" %}
         </div>
 
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#po-button-bar'>
@@ -137,6 +93,8 @@
     </div>
 </div>
 
+{% if company.is_customer %}
+{% if roles.sales_order.view %}
 <div class='panel panel-hidden' id='panel-sales-orders'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -153,31 +111,56 @@
     </div>
     <div class='panel-content'>
         <div id='so-button-bar'>
-            <div class='button-toolbar container-fluid' style='float: right;'>
-                {% include "filter_list.html" with id="salesorder" %}
-            </div>
+            {% include "filter_list.html" with id="salesorder" %}
         </div>
 
         <table class='table table-striped table-condensed po-table' id='sales-order-table' data-toolbar='#so-button-bar'>
         </table>
     </div>
 </div>
+{% endif %}
 
+{% if roles.stock.view %}
 <div class='panel panel-hidden' id='panel-assigned-stock'>
     <div class='panel-heading'>
         <h4>{% trans "Assigned Stock" %}</h4>
     </div>
     <div class='panel-content'>
         <div id='assigned-stock-button-toolbar'>
-            <div class='btn-group' role='group'>
-                {% include "filter_list.html" with id="customerstock" %}
-            </div>
+            {% include "filter_list.html" with id="customerstock" %}
         </div>
 
         <table class='table table-striped table-condensed' id='assigned-stock-table' data-toolbar='#assigned-stock-button-toolbar'></table>
-
     </div>
 </div>
+{% endif %}
+
+{% if roles.return_order.view and return_order_enabled %}
+<div class='panel panel-hidden' id='panel-return-orders'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Return Orders" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.return_order.add %}
+                <button class='btn btn-success' type='button' id='new-return-order' title='{% trans "Create new return order" %}'>
+                    <div class='fas fa-plus-circle'></div> {% trans "New Return Order" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='table-buttons'>
+            {% include "filter_list.html" with id="returnorder" %}
+        </div>
+        <table class='table table-striped table-condensed' data-toolbar='#table-buttons' id='return-order-table'>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endif %}
 
 <div class='panel panel-hidden' id='panel-company-notes'>
     <div class='panel-heading'>
@@ -194,11 +177,127 @@
     </div>
 </div>
 
-{% endblock %}
+<div class='panel panel-hidden' id='panel-company-contacts'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Company Contacts" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add or roles.sales_order.add %}
+                <button class='btn btn-success' type='button' id='new-contact' title='{% trans "Add Contact" %}'>
+                    <div class='fas fa-plus-circle'></div> {% trans "Add Contact" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='contacts-button-toolbar'>
+            {% include "filter_list.html" with id="contacts" %}
+        </div>
+
+        <table class='table table-striped table-condensed' id='contacts-table' data-toolbar='#contacts-button-toolbar'></table>
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-company-addresses'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Company addresses" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.purchase_order.add or roles.sales_order.add %}
+                <button class='btn btn-success' type='button' id='new-address' title='{% trans "Add Address" %}'>
+                    <div class='fas fa-plus-circle'></div> {% trans "Add Address" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='addresses-button-toolbar'>
+            {% include "filter_list.html" with id="addresses" %}
+        </div>
+
+        <table class='table table-striped table-condensed' id='addresses-table' data-toolbar='#addresses-button-toolbar'></table>
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-attachments'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "attachment_table.html" %}
+    </div>
+</div>
+
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
 
+    onPanelLoad("attachments", function() {
+        loadAttachmentTable('{% url "api-company-attachment-list" %}', {
+            filters: {
+                company: {{ company.pk }},
+            },
+            fields: {
+                company: {
+                    value: {{ company.pk }},
+                    hidden: true
+                }
+            }
+        });
+    });
+
+    // Callback function when the 'contacts' panel is loaded
+    onPanelLoad('company-contacts', function() {
+        loadContactTable('#contacts-table', {
+            params: {
+                company: {{ company.pk }},
+            },
+            allow_edit: {% js_bool roles.purchase_order.change %} || {% js_bool roles.sales_order.change %},
+            allow_delete: {% js_bool roles.purchase_order.delete %} || {% js_bool roles.sales_order.delete %},
+        });
+
+        $('#new-contact').click(function() {
+            createContact({
+                company: {{ company.pk }},
+                onSuccess: function() {
+                    $('#contacts-table').bootstrapTable('refresh');
+                }
+            });
+        });
+    });
+
+    // Callback function for when the 'addresses' panel is loaded
+    onPanelLoad('company-addresses', function(){
+        loadAddressTable('#addresses-table', {
+            params: {
+                company: {{ company.pk }},
+            },
+            allow_edit: {% js_bool roles.purchase_order.change %} || {% js_bool roles.sales_order.change %},
+            allow_delete: {% js_bool roles.purchase_order.delete %} || {% js_bool roles.sales_order.delete %},
+        });
+
+        $('#new-address').click(function() {
+            createAddress({
+                company: {{ company.pk }},
+                onSuccess: function() {
+                    $('#addresses-table').bootstrapTable('refresh');
+                }
+            })
+        })
+    })
+
+    // Callback function when the 'notes' panel is loaded
     onPanelLoad('company-notes', function() {
 
         setupNotesField(
@@ -207,18 +306,7 @@
             {
                 editable: true,
             }
-        )
-    });
-
-    loadStockTable($("#assigned-stock-table"), {
-        params: {
-            customer: {{ company.id }},
-            part_detail: true,
-            location_detail: true,
-        },
-        url: "{% url 'api-stock-list' %}",
-        filterKey: "customerstock",
-        filterTarget: '#filter-list-customerstock',
+        );
     });
 
     onPanelLoad('company-stock', function() {
@@ -231,28 +319,70 @@
                 supplier_part_detail: true,
                 location_detail: true,
             },
-            buttons: [
-                '#stock-options',
-            ],
             filterKey: "companystock",
         });
     });
 
     {% if company.is_customer %}
+
+    {% if return_order_enabled %}
+    // Callback function when the 'return orders' panel is loaded
+    onPanelLoad('return-orders', function() {
+
+        {% if roles.return_order.view %}
+        loadReturnOrderTable('#return-order-table', {
+            params: {
+                customer: {{ company.pk }},
+            }
+        });
+        {% endif %}
+
+        {% if roles.return_order.add %}
+        $('#new-return-order').click(function() {
+            createReturnOrder({
+                customer: {{ company.pk }},
+            });
+        });
+        {% endif %}
+    });
+    {% endif %}
+
+    // Callback function when the 'assigned stock' panel is loaded
+    onPanelLoad('assigned-stock', function() {
+
+        {% if roles.stock.view %}
+        loadStockTable($("#assigned-stock-table"), {
+            params: {
+                customer: {{ company.id }},
+                part_detail: true,
+                location_detail: true,
+            },
+            url: "{% url 'api-stock-list' %}",
+            filterKey: "customerstock",
+            filterTarget: '#filter-list-customerstock',
+        });
+        {% endif %}
+    });
+
+    // Callback function when the 'sales orders' panel is loaded
     onPanelLoad('sales-orders', function() {
+        {% if roles.sales_order.view %}
         loadSalesOrderTable("#sales-order-table", {
             url: "{% url 'api-so-list' %}",
             params: {
                 customer: {{ company.id }},
             }
         });
+        {% endif %}
 
+        {% if roles.sales_order.add %}
         $("#new-sales-order").click(function() {
 
             createSalesOrder({
                 customer: {{ company.pk }},
             });
         });
+        {% endif %}
     });
     {% endif %}
 
@@ -291,7 +421,7 @@
         createManufacturerPart({
             manufacturer: {{ company.pk }},
             onSuccess: function() {
-                $("#part-table").bootstrapTable("refresh");
+                $("#part-table").bootstrapTable('refresh');
             }
         });
     });
@@ -307,32 +437,6 @@
             },
         }
     );
-
-    $("#multi-manufacturer-part-delete").click(function() {
-        var selections = getTableData('#manufacturer-part-table');
-
-        deleteManufacturerParts(selections, {
-            success: function() {
-                $("#manufacturer-part-table").bootstrapTable("refresh");
-            }
-        });
-    });
-
-    $("#multi-manufacturer-part-order").click(function() {
-        var selections = getTableData('#manufacturer-part-table');
-
-        var parts = [];
-
-        selections.forEach(function(item) {
-            var part = item.part_detail;
-            part.manufacturer_part = item.pk;
-            parts.push(part);
-        });
-
-        orderParts(
-            parts,
-        );
-    });
 
     {% endif %}
 
@@ -362,39 +466,8 @@
             },
         }
     );
-
-    $("#multi-supplier-part-delete").click(function() {
-
-        var selections = getTableData("#supplier-part-table");
-
-        deleteSupplierParts(selections, {
-            success: function() {
-                $('#supplier-part-table').bootstrapTable('refresh');
-            }
-        });
-    });
-
-    $("#multi-supplier-part-order").click(function() {
-
-        var selections = getTableData('#supplier-part-table');
-
-        var parts = [];
-
-        selections.forEach(function(item) {
-            var part = item.part_detail;
-            parts.push(part);
-        });
-
-        orderParts(
-            parts,
-            {
-                supplier: {{ company.pk }},
-            }
-        );
-    });
-
     {% endif %}
 
     enableSidebar('company');
 
-{% endblock %}
+{% endblock js_ready %}

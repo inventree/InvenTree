@@ -45,7 +45,7 @@ echo "### Installer for InvenTree - source: $publisher/$source_url"
 # Check if os and version is supported
 get_distribution
 echo "### Detected distribution: $OS $VER"
-SUPPORTED=true          # is thos OS supported?
+SUPPORTED=true          # is this OS supported?
 NEEDS_LIBSSL1_1=false   # does this OS need libssl1.1?
 
 DIST_OS=${OS,,}
@@ -63,11 +63,17 @@ case "$OS" in
             SUPPORTED=false
         fi
         ;;
-    "Debian GNU/Linux" | Raspbian)
-        if [[ $VER != "11" ]]; then
+    "Debian GNU/Linux" | "debian gnu/linux" | Raspbian)
+        if [[ $VER == "12" ]]; then
+            SUPPORTED=true
+        elif [[ $VER == "11" ]]; then
+            SUPPORTED=true
+        elif [[ $VER == "10" ]]; then
+            SUPPORTED=true
+        else
             SUPPORTED=false
         fi
-        OS=Debian
+        DIST_OS=debian
         ;;
     *)
         echo "### Distribution not supported"
@@ -76,8 +82,8 @@ case "$OS" in
 esac
 
 if [[ $SUPPORTED != "true" ]]; then
-    echo "This OS is currently not supported"
-    echo "please install manually using https://inventree.readthedocs.io/en/stable/start/install/"
+    echo "This OS is currently not supported."
+    echo "Please install manually using https://docs.inventree.org/en/stable/start/install/"
     echo "or check https://github.com/inventree/InvenTree/issues/3836 for packaging for your OS."
     echo "If you think this is a bug please file an issue at"
     echo "https://github.com/inventree/InvenTree/issues/new?template=install.yaml"
@@ -95,7 +101,7 @@ for pkg in $REQS; do
 done
 
 if [[ $NEEDS_LIBSSL1_1 == "true" ]]; then
-    echo "### Pathching for libssl1.1"
+    echo "### Installing libssl1.1"
 
     echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
     do_call "sudo apt-get update"
@@ -104,11 +110,11 @@ if [[ $NEEDS_LIBSSL1_1 == "true" ]]; then
 fi
 
 echo "### Getting and adding key"
-wget -qO- https://dl.packager.io/srv/$publisher/InvenTree/key | sudo apt-key add -
+curl -fsSL https://dl.packager.io/srv/$publisher/InvenTree/key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/pkgr-inventree.gpg > /dev/null
 echo "### Adding package source"
-do_call "sudo wget -O /etc/apt/sources.list.d/inventree.list https://dl.packager.io/srv/$publisher/InvenTree/$source_url/installer/$DIST_OS/$DIST_VER.repo"
-
-echo "### Updateing package lists"
+SOURCE_URL="deb [signed-by=/etc/apt/trusted.gpg.d/pkgr-inventree.gpg] https://dl.packager.io/srv/deb/$publisher/InvenTree/$source_url/$DIST_OS $DIST_VER main"
+echo "$SOURCE_URL" | tee /etc/apt/sources.list.d/inventree.list > /dev/null
+echo "### Updating package lists"
 do_call "sudo apt-get update"
 
 # Set up environment for install

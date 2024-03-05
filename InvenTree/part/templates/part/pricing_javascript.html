@@ -19,10 +19,29 @@ $('#part-pricing-refresh').click(function() {
     );
 });
 
+$('#part-pricing-edit').click(function() {
+    constructForm('{% url "api-part-pricing" part.pk %}', {
+        title: '{% trans "Update Pricing" escape %}',
+        fields: {
+            override_min: {},
+            override_min_currency: {},
+            override_max: {},
+            override_max_currency: {},
+            update: {
+                hidden: true,
+                value: true,
+            }
+        },
+        onSuccess: function(response) {
+            location.reload();
+        }
+    });
+});
+
 // Internal Pricebreaks
 {% if show_internal_price and roles.sales_order.view %}
 initPriceBreakSet($('#internal-price-break-table'), {
-    part_id: {{part.id}},
+    part_id: {{ part.id }},
     pb_human_name: 'internal price break',
     pb_url_slug: 'internal-price',
     pb_url: '{% url 'api-part-internal-price-list' %}',
@@ -63,7 +82,7 @@ loadVariantPricingChart({
     initPriceBreakSet(
         $('#price-break-table'),
         {
-            part_id: {{part.id}},
+            part_id: {{ part.id }},
             pb_human_name: 'sale price break',
             pb_url_slug: 'sale-price',
             pb_url: "{% url 'api-part-sale-price-list' %}",

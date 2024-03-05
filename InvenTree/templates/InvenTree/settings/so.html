@@ -1,11 +1,11 @@
 {% extends "panel.html" %}
 {% load i18n %}
 
-{% block label %}sales-order{% endblock %}
+{% block label %}sales-order{% endblock label %}
 
 {% block heading %}
 {% trans "Sales Order Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -17,4 +17,4 @@
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}

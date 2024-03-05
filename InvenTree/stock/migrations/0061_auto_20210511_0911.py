@@ -190,7 +190,7 @@ def update_history(apps, schema_editor):
                 tracking_type = StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER
 
             if tracking_type is not None:
-                entry.tracking_type = tracking_type
+                entry.tracking_type = tracking_type.value
                 updated = True
 
             if updated:
@@ -203,12 +203,6 @@ def update_history(apps, schema_editor):
         print(f"\n==========================\nUpdated {update_count} StockItemHistory entries")  # pragma: no cover
 
 
-def reverse_update(apps, schema_editor):
-    """
-    """
-    pass  # pragma: no cover
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -216,5 +210,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(update_history, reverse_code=reverse_update)
+        migrations.RunPython(update_history, reverse_code=migrations.RunPython.noop)
     ]

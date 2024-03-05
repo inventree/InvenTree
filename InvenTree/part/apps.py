@@ -1,22 +1,33 @@
-"""part app specification"""
+"""part app specification."""
 
 import logging
 
 from django.apps import AppConfig
 from django.db.utils import OperationalError, ProgrammingError
 
-from InvenTree.ready import canAppAccessDatabase, isImportingData
+import InvenTree.ready
 
-logger = logging.getLogger("inventree")
+logger = logging.getLogger('inventree')
 
 
 class PartConfig(AppConfig):
-    """Config class for the 'part' app"""
+    """Config class for the 'part' app."""
+
     name = 'part'
 
     def ready(self):
         """This function is called whenever the Part app is loaded."""
-        if canAppAccessDatabase():
+        # skip loading if plugin registry is not loaded or we run in a background thread
+        if (
+            not InvenTree.ready.isPluginRegistryLoaded()
+            or not InvenTree.ready.isInMainThread()
+        ):
+            return
+
+        if InvenTree.ready.isRunningMigrations():
+            return
+
+        if InvenTree.ready.canAppAccessDatabase():
             self.update_trackable_status()
             self.reset_part_pricing_flags()
 
@@ -28,10 +39,12 @@ class PartConfig(AppConfig):
         from .models import BomItem
 
         try:
-            items = BomItem.objects.filter(part__trackable=False, sub_part__trackable=True)
+            items = BomItem.objects.filter(
+                part__trackable=False, sub_part__trackable=True
+            )
 
             for item in items:
-                logger.info(f"Marking part '{item.part.name}' as trackable")
+                logger.info("Marking part '%s' as trackable", item.part.name)
                 item.part.trackable = True
                 item.part.clean()
                 item.part.save()
@@ -44,18 +57,22 @@ class PartConfig(AppConfig):
 
         Prevents issues with state machine if the server is restarted mid-update
         """
-
         from .models import PartPricing
 
-        if isImportingData():
+        if InvenTree.ready.isImportingData():
             return
 
-        items = PartPricing.objects.filter(scheduled_for_update=True)
+        try:
+            items = PartPricing.objects.filter(scheduled_for_update=True)
 
-        if items.count() > 0:
-            # Find any pricing objects which have the 'scheduled_for_update' flag set
-            print(f"Resetting update flags for {items.count()} pricing objects...")
+            if items.count() > 0:
+                # Find any pricing objects which have the 'scheduled_for_update' flag set
+                logger.info(
+                    'Resetting update flags for %s pricing objects...', items.count()
+                )
 
-            for pricing in items:
-                pricing.scheduled_for_update = False
-                pricing.save()
+                for pricing in items:
+                    pricing.scheduled_for_update = False
+                    pricing.save()
+        except Exception:
+            logger.exception('Failed to reset pricing flags - database not ready')

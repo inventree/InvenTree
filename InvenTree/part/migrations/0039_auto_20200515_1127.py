@@ -2,17 +2,6 @@
 
 from django.db import migrations, models
 
-from part.models import Part
-
-
-def update_tree(apps, schema_editor):
-    # Update the MPTT for Part model
-    Part.objects.rebuild()
-
-
-def nupdate_tree(apps, schema_editor):  # pragma: no cover
-    pass
-
 
 class Migration(migrations.Migration):
 
@@ -47,6 +36,4 @@ class Migration(migrations.Migration):
             field=models.PositiveIntegerField(db_index=True, default=0, editable=False),
             preserve_default=False,
         ),
-
-        migrations.RunPython(update_tree, reverse_code=nupdate_tree)
     ]

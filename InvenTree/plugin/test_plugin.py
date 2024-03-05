@@ -12,8 +12,10 @@ from django.test import TestCase, override_settings
 
 import plugin.templatetags.plugin_extras as plugin_tags
 from plugin import InvenTreePlugin, registry
-from plugin.samples.integration.another_sample import (NoIntegrationPlugin,
-                                                       WrongIntegrationPlugin)
+from plugin.samples.integration.another_sample import (
+    NoIntegrationPlugin,
+    WrongIntegrationPlugin,
+)
 from plugin.samples.integration.sample import SampleIntegrationPlugin
 
 
@@ -30,7 +32,7 @@ class PluginTagTests(TestCase):
         """Test that all plugins are listed."""
         self.assertEqual(plugin_tags.plugin_list(), registry.plugins)
 
-    def test_tag_incative_plugin_list(self):
+    def test_tag_inactive_plugin_list(self):
         """Test that all inactive plugins are listed."""
         self.assertEqual(plugin_tags.inactive_plugin_list(), registry.plugins_inactive)
 
@@ -38,7 +40,7 @@ class PluginTagTests(TestCase):
         """Check all plugins are listed."""
         self.assertEqual(
             plugin_tags.plugin_settings(self.sample),
-            registry.mixins_settings.get(self.sample)
+            registry.mixins_settings.get(self.sample),
         )
 
     def test_tag_mixin_enabled(self):
@@ -48,13 +50,15 @@ class PluginTagTests(TestCase):
         self.assertEqual(plugin_tags.mixin_enabled(self.sample, key), True)
         # mixin not enabled
         self.assertEqual(plugin_tags.mixin_enabled(self.plugin_wrong, key), False)
-        # mxixn not existing
+        # mixin not existing
         self.assertEqual(plugin_tags.mixin_enabled(self.plugin_no, key), False)
 
     def test_tag_safe_url(self):
         """Test that the safe url tag works expected."""
         # right url
-        self.assertEqual(plugin_tags.safe_url('api-plugin-install'), '/api/plugin/install/')
+        self.assertEqual(
+            plugin_tags.safe_url('api-plugin-install'), '/api/plugins/install/'
+        )
         # wrong url
         self.assertEqual(plugin_tags.safe_url('indexas'), None)
 
@@ -66,47 +70,51 @@ class PluginTagTests(TestCase):
 class InvenTreePluginTests(TestCase):
     """Tests for InvenTreePlugin."""
 
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Setup for all tests."""
-        self.plugin = InvenTreePlugin()
+        super().setUpTestData()
+
+        cls.plugin = InvenTreePlugin()
 
         class NamedPlugin(InvenTreePlugin):
             """a named plugin."""
+
             NAME = 'abc123'
 
-        self.named_plugin = NamedPlugin()
+        cls.named_plugin = NamedPlugin()
 
         class SimpleInvenTreePlugin(InvenTreePlugin):
             NAME = 'SimplePlugin'
 
-        self.plugin_simple = SimpleInvenTreePlugin()
+        cls.plugin_simple = SimpleInvenTreePlugin()
 
         class OldInvenTreePlugin(InvenTreePlugin):
             PLUGIN_SLUG = 'old'
 
-        self.plugin_old = OldInvenTreePlugin()
+        cls.plugin_old = OldInvenTreePlugin()
 
         class NameInvenTreePlugin(InvenTreePlugin):
             NAME = 'Aplugin'
             SLUG = 'a'
-            TITLE = 'a titel'
-            PUBLISH_DATE = "1111-11-11"
+            TITLE = 'a title'
+            PUBLISH_DATE = '1111-11-11'
             AUTHOR = 'AA BB'
             DESCRIPTION = 'A description'
             VERSION = '1.2.3a'
             WEBSITE = 'https://aa.bb/cc'
             LICENSE = 'MIT'
 
-        self.plugin_name = NameInvenTreePlugin()
-        self.plugin_sample = SampleIntegrationPlugin()
+        cls.plugin_name = NameInvenTreePlugin()
 
         class VersionInvenTreePlugin(InvenTreePlugin):
             NAME = 'Version'
+            SLUG = 'testversion'
 
             MIN_VERSION = '0.1.0'
             MAX_VERSION = '0.1.3'
 
-        self.plugin_version = VersionInvenTreePlugin()
+        cls.plugin_version = VersionInvenTreePlugin()
 
     def test_basic_plugin_init(self):
         """Check if a basic plugin intis."""
@@ -129,9 +137,9 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(self.plugin_simple.plugin_name(), 'SimplePlugin')
         self.assertEqual(self.plugin_name.plugin_name(), 'Aplugin')
 
-        # is_sampe
+        # is_sample
         self.assertEqual(self.plugin.is_sample, False)
-        self.assertEqual(self.plugin_sample.is_sample, True)
+        self.assertEqual(SampleIntegrationPlugin().is_sample, True)
 
         # slug
         self.assertEqual(self.plugin.slug, '')
@@ -141,7 +149,7 @@ class InvenTreePluginTests(TestCase):
         # human_name
         self.assertEqual(self.plugin.human_name, '')
         self.assertEqual(self.plugin_simple.human_name, 'SimplePlugin')
-        self.assertEqual(self.plugin_name.human_name, 'a titel')
+        self.assertEqual(self.plugin_name.human_name, 'a title')
 
         # description
         self.assertEqual(self.plugin.description, '')
@@ -175,34 +183,34 @@ class InvenTreePluginTests(TestCase):
         with self.assertWarns(DeprecationWarning):
             self.assertEqual(self.plugin_old.slug, 'old')
             # check default value is used
-            self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
+            self.assertEqual(
+                self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123'
+            )
 
     def test_version(self):
-        """Test Version checks"""
-
+        """Test Version checks."""
         self.assertFalse(self.plugin_version.check_version([0, 0, 3]))
         self.assertTrue(self.plugin_version.check_version([0, 1, 0]))
         self.assertFalse(self.plugin_version.check_version([0, 1, 4]))
 
-        plug = registry.plugins_full.get('version')
+        plug = registry.plugins_full.get('sampleversion')
         self.assertEqual(plug.is_active(), False)
 
 
 class RegistryTests(TestCase):
     """Tests for registry loading methods."""
 
-    def mockDir(self) -> None:
-        """Returns path to mock dir"""
+    def mockDir(self) -> str:
+        """Returns path to mock dir."""
         return str(Path(__file__).parent.joinpath('mock').absolute())
 
     def run_package_test(self, directory):
         """General runner for testing package based installs."""
-
-        # Patch environment varible to add dir
+        # Patch environment variable to add dir
         envs = {'INVENTREE_PLUGIN_TEST_DIR': directory}
         with mock.patch.dict(os.environ, envs):
-            # Reload to redicsover plugins
-            registry.reload_plugins(full_reload=True)
+            # Reload to rediscover plugins
+            registry.reload_plugins(full_reload=True, collect=True)
 
             # Depends on the meta set in InvenTree/plugin/mock/simple:SimplePlugin
             plg = registry.get_plugin('simple')
@@ -231,7 +239,6 @@ class RegistryTests(TestCase):
 
     def test_folder_loading(self):
         """Test that plugins in folders outside of BASE_DIR get loaded."""
-
         # Run in temporary directory -> always a new random name
         with tempfile.TemporaryDirectory() as tmp:
             # Fill directory with sample data
@@ -248,9 +255,33 @@ class RegistryTests(TestCase):
         subprocess.check_output('pip install inventree-zapier'.split())
 
         # Reload to discover plugin
-        registry.reload_plugins(full_reload=True)
+        registry.reload_plugins(full_reload=True, collect=True)
 
         # Test that plugin was installed
         plg = registry.get_plugin('zapier')
         self.assertEqual(plg.slug, 'zapier')
         self.assertEqual(plg.name, 'inventree_zapier')
+
+    def test_broken_samples(self):
+        """Test that the broken samples trigger reloads."""
+        # In the base setup there are no errors
+        self.assertEqual(len(registry.errors), 0)
+
+        # Reload the registry with the broken samples dir
+        brokenDir = str(Path(__file__).parent.joinpath('broken').absolute())
+        with mock.patch.dict(os.environ, {'INVENTREE_PLUGIN_TEST_DIR': brokenDir}):
+            # Reload to rediscover plugins
+            registry.reload_plugins(full_reload=True, collect=True)
+
+        self.assertEqual(len(registry.errors), 3)
+        # There should be at least one discovery error in the module `broken_file`
+        self.assertTrue(len(registry.errors.get('discovery')) > 0)
+        self.assertEqual(
+            registry.errors.get('discovery')[0]['broken_file'],
+            "name 'bb' is not defined",
+        )
+        # There should be at least one load error with an intentional KeyError
+        self.assertTrue(len(registry.errors.get('load')) > 0)
+        self.assertEqual(
+            registry.errors.get('load')[0]['broken_sample'], "'This is a dummy error'"
+        )

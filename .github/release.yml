@@ -4,6 +4,7 @@ changelog:
   exclude:
     labels:
       - translation
+      - documentation
   categories:
     - title: Breaking Changes
       labels:
@@ -15,7 +16,11 @@ changelog:
     - title: New Features
       labels:
         - Semver-Minor
+        - feature
         - enhancement
+    - title: Experimental Features
+      labels:
+        - experimental
     - title: Bug Fixes
       labels:
         - Semver-Patch

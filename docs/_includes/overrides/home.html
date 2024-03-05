@@ -1,0 +1,47 @@
+{% extends "main.html" %}
+
+{% block tabs %}
+{{ super() }}
+
+{% endblock tabs %}
+
+{% block content %}
+
+{{ page.content }}
+
+<style>
+    h1 {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+</style>
+
+<!-- Hero for landing page -->
+<section class="mdx-container">
+    <div class="md-grid md-typeset">
+      <div class="mdx-hero">
+
+        <!-- Hero content -->
+        <div class="mdx-hero__content">
+
+          <a href="https://inventree.org" title="InvenTree Website" class="md-button">
+            <span class='fas fa-globe'></span> Website
+          </a>
+
+          <a href="start/intro" title="Install InvenTree" class="md-button">
+            <span class='fas fa-server'></span> Install
+          </a>
+          <a href="app/app" title="InvenTree mobile app" class="md-button">
+            <span class='fas fa-mobile-alt'></span> Mobile App
+          </a>
+          <a href="https://crowdin.com/project/inventree" title="Help translate InvenTree" class="md-button">
+            <span class='fas fa-language'></span> Translate
+          </a>
+          <a href="https://github.com/inventree/inventree" title="Explore InvenTree source code" class="md-button md-button">
+            <span class='fab fa-github'></span> Source Code
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock content %}

@@ -1,47 +1,47 @@
-"""Unit tests for the 'users' app"""
+"""Unit tests for the 'users' app."""
 
 from django.apps import apps
 from django.contrib.auth.models import Group
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import reverse
 
-from rest_framework.authtoken.models import Token
-
-from InvenTree.helpers import InvenTreeTestCase
-from users.models import Owner, RuleSet
+from InvenTree.unit_test import InvenTreeTestCase
+from users.models import ApiToken, Owner, RuleSet
 
 
 class RuleSetModelTest(TestCase):
     """Some simplistic tests to ensure the RuleSet model is setup correctly."""
 
     def test_ruleset_models(self):
-        """Test that the role rulesets work as intended"""
-        keys = RuleSet.RULESET_MODELS.keys()
+        """Test that the role rulesets work as intended."""
+        keys = RuleSet.get_ruleset_models().keys()
 
         # Check if there are any rulesets which do not have models defined
 
         missing = [name for name in RuleSet.RULESET_NAMES if name not in keys]
 
         if len(missing) > 0:  # pragma: no cover
-            print("The following rulesets do not have models assigned:")
+            print('The following rulesets do not have models assigned:')
             for m in missing:
-                print("-", m)
+                print('-', m)
 
         # Check if models have been defined for a ruleset which is incorrect
         extra = [name for name in keys if name not in RuleSet.RULESET_NAMES]
 
         if len(extra) > 0:  # pragma: no cover
-            print("The following rulesets have been improperly added to RULESET_MODELS:")
+            print(
+                'The following rulesets have been improperly added to get_ruleset_models():'
+            )
             for e in extra:
-                print("-", e)
+                print('-', e)
 
         # Check that each ruleset has models assigned
-        empty = [key for key in keys if len(RuleSet.RULESET_MODELS[key]) == 0]
+        empty = [key for key in keys if len(RuleSet.get_ruleset_models()[key]) == 0]
 
         if len(empty) > 0:  # pragma: no cover
-            print("The following rulesets have empty entries in RULESET_MODELS:")
+            print('The following rulesets have empty entries in get_ruleset_models():')
             for e in empty:
-                print("-", e)
+                print('-', e)
 
         self.assertEqual(len(missing), 0)
         self.assertEqual(len(extra), 0)
@@ -62,24 +62,27 @@ class RuleSetModelTest(TestCase):
         assigned_models = set()
 
         # Now check that each defined model is a valid table name
-        for key in RuleSet.RULESET_MODELS.keys():
-
-            models = RuleSet.RULESET_MODELS[key]
+        for key in RuleSet.get_ruleset_models().keys():
+            models = RuleSet.get_ruleset_models()[key]
 
             for m in models:
-
                 assigned_models.add(m)
 
         missing_models = set()
 
         for model in available_tables:
-            if model not in assigned_models and model not in RuleSet.RULESET_IGNORE:  # pragma: no cover
+            if (
+                model not in assigned_models
+                and model not in RuleSet.get_ruleset_ignore()
+            ):  # pragma: no cover
                 missing_models.add(model)
 
         if len(missing_models) > 0:  # pragma: no cover
-            print("The following database models are not covered by the defined RuleSet permissions:")
+            print(
+                'The following database models are not covered by the defined RuleSet permissions:'
+            )
             for m in missing_models:
-                print("-", m)
+                print('-', m)
 
         extra_models = set()
 
@@ -88,7 +91,7 @@ class RuleSetModelTest(TestCase):
         for model in assigned_models:
             defined_models.add(model)
 
-        for model in RuleSet.RULESET_IGNORE:
+        for model in RuleSet.get_ruleset_ignore():
             defined_models.add(model)
 
         for model in defined_models:  # pragma: no cover
@@ -96,9 +99,9 @@ class RuleSetModelTest(TestCase):
                 extra_models.add(model)
 
         if len(extra_models) > 0:  # pragma: no cover
-            print("The following RuleSet permissions do not match a database model:")
+            print('The following RuleSet permissions do not match a database model:')
             for m in extra_models:
-                print("-", m)
+                print('-', m)
 
         self.assertEqual(len(missing_models), 0)
         self.assertEqual(len(extra_models), 0)
@@ -106,7 +109,7 @@ class RuleSetModelTest(TestCase):
     def test_permission_assign(self):
         """Test that the permission assigning works!"""
         # Create a new group
-        group = Group.objects.create(name="Test group")
+        group = Group.objects.create(name='Test group')
 
         rulesets = group.rule_sets.all()
 
@@ -116,8 +119,7 @@ class RuleSetModelTest(TestCase):
         # Check that all permissions have been assigned permissions?
         permission_set = set()
 
-        for models in RuleSet.RULESET_MODELS.values():
-
+        for models in RuleSet.get_ruleset_models().values():
             for model in models:
                 permission_set.add(model)
 
@@ -126,6 +128,7 @@ class RuleSetModelTest(TestCase):
 
         # Add some more rules
         for rule in rulesets:
+            rule.can_view = True
             rule.can_add = True
             rule.can_change = True
 
@@ -157,13 +160,15 @@ class OwnerModelTest(InvenTreeTestCase):
     """Some simplistic tests to ensure the Owner model is setup correctly."""
 
     def do_request(self, endpoint, filters, status_code=200):
-        """Perform an API request"""
+        """Perform an API request."""
         response = self.client.get(endpoint, filters, format='json')
         self.assertEqual(response.status_code, status_code)
         return response.data
 
+    # TODO: Find out why this depends on CUI
+    @tag('cui')
     def test_owner(self):
-        """Tests for the 'owner' model"""
+        """Tests for the 'owner' model."""
         # Check that owner was created for user
         user_as_owner = Owner.get_owner(self.user)
         self.assertEqual(type(user_as_owner), Owner)
@@ -209,22 +214,43 @@ class OwnerModelTest(InvenTreeTestCase):
 
         # not authed
         self.do_request(reverse('api-owner-list'), {}, 401)
-        self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 401)
+        self.do_request(
+            reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 401
+        )
 
         self.client.login(username=self.username, password=self.password)
         # user list
         self.do_request(reverse('api-owner-list'), {})
         # user list with search
         self.do_request(reverse('api-owner-list'), {'search': 'user'})
-        # user detail
-        # TODO fix this test
-        # self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
+
+        # # owner detail - user
+        # response = self.do_request(reverse('api-owner-detail', kwargs={'pk': 1}), {})
+        # self.assertEqual(response['name'], self.username)
+        # self.assertEqual(response['label'], 'user')
+        # self.assertEqual(response['owner_id'], self.user.id)
+
+        # # owner detail - group
+        # group = self.user.groups.first()
+        # response = self.do_request(reverse('api-owner-detail', kwargs={'pk': 2}), {})
+        # self.assertEqual(response['name'], group.name)
+        # self.assertEqual(response['label'], 'group')
+        # self.assertEqual(response['owner_id'], group.pk)
+
+        # own user detail
+        response_detail = self.do_request(
+            reverse('api-user-detail', kwargs={'pk': self.user.id}), {}, 200
+        )
+        self.assertEqual(response_detail['username'], self.username)
+
+        response_me = self.do_request(reverse('api-user-me'), {}, 200)
+        self.assertEqual(response_detail, response_me)
 
     def test_token(self):
         """Test token mechanisms."""
         self.client.logout()
 
-        token = Token.objects.filter(user=self.user)
+        token = ApiToken.objects.filter(user=self.user)
 
         # not authed
         self.do_request(reverse('api-token'), {}, 401)
@@ -234,11 +260,8 @@ class OwnerModelTest(InvenTreeTestCase):
         response = self.do_request(reverse('api-token'), {})
         self.assertEqual(response['token'], token.first().key)
 
-        # token delete
-        response = self.client.delete(reverse('api-token'), {}, format='json')
-        self.assertEqual(response.status_code, 202)
-        self.assertEqual(len(token), 0)
-
-        # token second delete
-        response = self.client.delete(reverse('api-token'), {}, format='json')
-        self.assertEqual(response.status_code, 400)
+        # test user is associated with token
+        response = self.do_request(
+            reverse('api-user-me'), {'name': 'another-token'}, 200
+        )
+        self.assertEqual(response['username'], self.username)

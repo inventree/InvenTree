@@ -1,7 +1,11 @@
 """Unit tests for task management."""
 
+import os
 from datetime import timedelta
 
+from django.conf import settings
+from django.core.management import call_command
+from django.db.utils import NotSupportedError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -63,16 +67,24 @@ class InvenTreeTaskTests(TestCase):
 
         # Error runs
         # Malformed taskname
-        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree' not started - Malformed function path"):
+        with self.assertWarnsMessage(
+            UserWarning, "WARNING: 'InvenTree' not started - Malformed function path"
+        ):
             InvenTree.tasks.offload_task('InvenTree')
 
-        # Non exsistent app
-        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTreeABC.test_tasks.doesnotmatter' not started - No module named 'InvenTreeABC.test_tasks'"):
+        # Non existent app
+        with self.assertWarnsMessage(
+            UserWarning,
+            "WARNING: 'InvenTreeABC.test_tasks.doesnotmatter' not started - No module named 'InvenTreeABC.test_tasks'",
+        ):
             InvenTree.tasks.offload_task('InvenTreeABC.test_tasks.doesnotmatter')
 
-        # Non exsistent function
-        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree.test_tasks.doesnotexsist' not started - No function named 'doesnotexsist'"):
-            InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexsist')
+        # Non existent function
+        with self.assertWarnsMessage(
+            UserWarning,
+            "WARNING: 'InvenTree.test_tasks.doesnotexist' not started - No function named 'doesnotexist'",
+        ):
+            InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexist')
 
     def test_task_hearbeat(self):
         """Test the task heartbeat."""
@@ -82,7 +94,9 @@ class InvenTreeTaskTests(TestCase):
         """Test the task delete_successful_tasks."""
         from django_q.models import Success
 
-        Success.objects.create(name='abc', func='abc', stopped=threshold, started=threshold_low)
+        Success.objects.create(
+            name='abc', func='abc', stopped=threshold, started=threshold_low
+        )
         InvenTree.tasks.offload_task(InvenTree.tasks.delete_successful_tasks)
         results = Success.objects.filter(started__lte=threshold)
         self.assertEqual(len(results), 0)
@@ -95,25 +109,56 @@ class InvenTreeTaskTests(TestCase):
         error_obj.save()
 
         # Check that it is not empty
-        errors = Error.objects.filter(when__lte=threshold,)
+        errors = Error.objects.filter(when__lte=threshold)
         self.assertNotEqual(len(errors), 0)
 
         # Run action
         InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_error_logs)
 
         # Check that it is empty again
-        errors = Error.objects.filter(when__lte=threshold,)
+        errors = Error.objects.filter(when__lte=threshold)
         self.assertEqual(len(errors), 0)
 
     def test_task_check_for_updates(self):
         """Test the task check_for_updates."""
         # Check that setting should be empty
-        self.assertEqual(InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION'), '')
+        self.assertEqual(InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION'), '')
 
         # Get new version
         InvenTree.tasks.offload_task(InvenTree.tasks.check_for_updates)
 
         # Check that setting is not empty
-        response = InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION')
+        response = InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION')
         self.assertNotEqual(response, '')
         self.assertTrue(bool(response))
+
+    def test_task_check_for_migrations(self):
+        """Test the task check_for_migrations."""
+        # Update disabled
+        InvenTree.tasks.check_for_migrations()
+
+        # Update enabled - no migrations
+        os.environ['INVENTREE_AUTO_UPDATE'] = 'True'
+        InvenTree.tasks.check_for_migrations()
+
+        # Create migration
+        self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 0)
+        call_command('makemigrations', ['InvenTree', '--empty'], interactive=False)
+        self.assertEqual(len(InvenTree.tasks.get_migration_plan()), 1)
+
+        # Run with migrations - catch no foreigner error
+        try:
+            InvenTree.tasks.check_for_migrations()
+        except NotSupportedError as e:  # pragma: no cover
+            if settings.DATABASES['default']['ENGINE'] != 'django.db.backends.sqlite3':
+                raise e
+
+        # Cleanup
+        try:
+            migration_name = InvenTree.tasks.get_migration_plan()[0][0].name + '.py'
+            migration_path = (
+                settings.BASE_DIR / 'InvenTree' / 'migrations' / migration_name
+            )
+            migration_path.unlink()
+        except IndexError:  # pragma: no cover
+            pass

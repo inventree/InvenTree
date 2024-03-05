@@ -3,12 +3,11 @@
 {% load inventree_extras %}
 {% load plugin_extras %}
 
-{% block label %}plugin-{{plugin_key}}{% endblock %}
-
+{% block label %}plugin-{{ plugin_key }}{% endblock label %}
 
 {% block heading %}
 {% trans "Plugin" %}: <em>{{ plugin.human_name }}</em>
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
@@ -102,6 +101,13 @@
                 <td>{% trans "This is a builtin plugin which cannot be disabled" %}</td>
             </tr>
             {% else %}
+            {% if plugin.is_sample %}
+            <tr>
+                <td><span class='fas fa-check-circle icon-blue'></span></td>
+                <td>{% trans "Sample" %}</td>
+                <td>{% trans "This is a sample plugin" %}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <td><span class='fas fa-user'></span></td>
                 <td>{% trans "Commit Author" %}</td><td>{{ plugin.package.author }} - {{ plugin.package.mail }}{% include "clip.html" %}</td>
@@ -119,20 +125,6 @@
                 <td>{% trans "Commit Message" %}</td><td>{{ plugin.package.message }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
-
-            {% settings_value "PLUGIN_CHECK_SIGNATURES" as signatures %}
-            {% if signatures %}
-            <tr>
-                <td><span class='text-{{plugin.sign_color}} fas fa-check'></span></td>
-                <td>{% trans "Sign Status" %}</td>
-                <td class="bg-{{plugin.sign_color}}">{% if plugin.package.verified %}{{ plugin.package.verified }}: {% endif%}{{ plugin.sign_state.msg }}</td>
-            </tr>
-            <tr>
-                <td><span class='text-{{plugin.sign_color}} fas fa-key'></span></td>
-                <td>{% trans "Sign Key" %}</td>
-                <td class="bg-{{plugin.sign_color}}">{{ plugin.package.key }}{% include "clip.html" %}</td>
-            </tr>
-            {% endif %}
         </table>
         </div>
     </div>
@@ -148,4 +140,6 @@
     {% include 'InvenTree/settings/mixins/urls.html' %}
 {% endif %}
 
-{% endblock %}
+{% include 'InvenTree/settings/mixins/settings_content.html' %}
+
+{% endblock content %}

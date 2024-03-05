@@ -2,6 +2,7 @@
 {% load inventree_extras %}
 
 /* globals
+    showMessage,
 */
 
 /* exported
@@ -40,7 +41,16 @@ function getCookie(name) {
     return cookieValue;
 }
 
+
+/*
+ * Perform a GET request to the InvenTree server
+ */
 function inventreeGet(url, filters={}, options={}) {
+
+    if (!url) {
+        console.error('inventreeGet called without url');
+        return;
+    }
 
     // Middleware token required for data update
     var csrftoken = getCookie('csrftoken');
@@ -52,12 +62,12 @@ function inventreeGet(url, filters={}, options={}) {
         url: url,
         type: 'GET',
         data: filters,
-        dataType: 'json',
-        contentType: 'application/json',
+        dataType: options.dataType || 'json',
+        contentType: options.contentType || 'application/json',
         async: (options.async == false) ? false : true,
-        success: function(response) {
+        success: function(response, status, xhr) {
             if (options.success) {
-                options.success(response);
+                options.success(response, status, xhr);
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
@@ -78,14 +88,20 @@ function inventreeGet(url, filters={}, options={}) {
     });
 }
 
+
+/* Upload via AJAX using the FormData approach.
+ *
+ * Note that the following AJAX parameters are required for FormData upload
+ *
+ * processData: false
+ * contentType: false
+ */
 function inventreeFormDataUpload(url, data, options={}) {
-    /* Upload via AJAX using the FormData approach.
-     *
-     * Note that the following AJAX parameters are required for FormData upload
-     *
-     * processData: false
-     * contentType: false
-     */
+
+    if (!url) {
+        console.error('inventreeFormDataUpload called without url');
+        return;
+    }
 
     // CSRF cookie token
     var csrftoken = getCookie('csrftoken');
@@ -116,7 +132,16 @@ function inventreeFormDataUpload(url, data, options={}) {
     });
 }
 
+
+/*
+ * Perform a PUT or PATCH request to the InvenTree server
+ */
 function inventreePut(url, data={}, options={}) {
+
+    if (!url) {
+        console.error('inventreePut called without url');
+        return;
+    }
 
     var method = options.method || 'PUT';
 
@@ -163,6 +188,11 @@ function inventreePut(url, data={}, options={}) {
  * Performs a DELETE API call to the server
  */
 function inventreeDelete(url, options={}) {
+
+    if (!url) {
+        console.error('inventreeDelete called without url');
+        return;
+    }
 
     options = options || {};
 
@@ -226,6 +256,10 @@ function showApiError(xhr, url) {
     case 408:
         title = '{% trans "Error 408: Timeout" %}';
         message = '{% trans "Connection timeout while requesting data from server" %}';
+        break;
+    case 503:
+        title = '{% trans "Error 503: Service Unavailable" %}';
+        message = '{% trans "The server is currently unavailable" %}';
         break;
     default:
         title = '{% trans "Unhandled Error Code" %}';

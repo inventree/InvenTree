@@ -6,22 +6,20 @@
 
 {% block sidebar %}
 {% include "part/part_sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block thumbnail %}
 {% include "part/part_thumb.html" %}
-{% endblock %}
+{% endblock thumbnail %}
 
 {% block heading %}
 {{ part.full_name }}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 <!-- Admin View -->
-{% if user.is_staff and roles.part.change %}
-{% url 'admin:part_part_change' part.pk as url %}
+{% admin_url user "part.part" part.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
 
 {% if starred_directly %}
 <button type='button' class='btn btn-outline-secondary' id='toggle-starred' title='{% trans "You are subscribed to notifications for this part" %}'>
@@ -46,7 +44,7 @@
         <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
         {% endif %}
         {% if part.barcode_hash %}
-        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unink Barcode" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
         {% else %}
         <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
         {% endif %}
@@ -104,7 +102,7 @@
     </ul>
 </div>
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block details %}
 
@@ -114,7 +112,7 @@
     <tr>
         <td colspan='3' style='padding: 3px;'>
                 <div id='part-properties-wrapper' class='d-flex flex-wrap'>
-                    <div id='part-properties' class='btn-group' role='group';'>
+                    <div id='part-properties' class='btn-group' role='group'>
                         <h5>
                         {% if part.is_template %}
                         &ensp;
@@ -144,7 +142,7 @@
                         {% if not part.active %}
                         &ensp;
                         <div class='badge rounded-pill bg-danger'>
-                            <span class='fas fa-skull-crossbones' title='{% trans "Part is virtual (not a physical part)" %}'></span>
+                            <span class='fas fa-skull-crossbones' title='{% trans "Part is not active" %}'></span>
                             {% trans 'Inactive' %}
                         </div>
                         {% endif %}
@@ -170,20 +168,19 @@
     <tr>
         <td><span class='fas fa-info-circle'></span></td>
         <td>{% trans "Description" %}</td>
-        <td>{{ part.description }}{% include "clip.html"%}</td>
+        <td>{{ part.description }}{% include "clip.html" %}</td>
     </tr>
 
-</table>
-
-<!-- Part info messages -->
-<div class='info-messages'>
     {% if part.variant_of %}
-    <div class='alert alert-info alert-block' style='padding: 10px;'>
-        {% object_link 'part-detail' part.variant_of.id part.variant_of.full_name as link %}
-        {% blocktrans %}This part is a variant of {{link}}{% endblocktrans %}
-    </div>
+    <tr>
+        <td><span class='fas fa-sitemap'></span></td>
+        <td>{% trans "Variant Of" %}</td>
+        <td>
+            <a href='{% url "part-detail" part.variant_of.pk %}'>{{ part.variant_of.full_name }}</a>
+        </td>
+    </tr>
     {% endif %}
-</div>
+</table>
 
 {% endblock details %}
 
@@ -204,7 +201,7 @@
         <tr>
             <td><span class='fas fa-flag'></span></td>
             <td>{% trans "Minimum Stock" %}</td>
-            <td>{{ part.minimum_stock }} {% include "part/part_units.html" %}</td>
+            <td>{% decimal part.minimum_stock %} {% include "part/part_units.html" %}</td>
         </tr>
         {% endif %}
         {% if on_order > 0 %}
@@ -215,7 +212,7 @@
         </tr>
         {% endif %}
         {% if part.component %}
-        {% if required_build_order_quantity > 0 %}
+        {% if required_build_order_quantity > 0 or allocated_build_order_quantity > 0 %}
         <tr>
             <td><span class='fas fa-tools'></span></td>
             <td>{% trans "Allocated to Build Orders" %}</td>
@@ -224,7 +221,7 @@
         {% endif %}
         {% endif %}
         {% if part.salable %}
-        {% if required_sales_order_quantity > 0 %}
+        {% if required_sales_order_quantity > 0 or allocated_sales_order_quantity > 0 %}
         <tr>
             <td><span class='fas fa-truck'></span></td>
             <td>{% trans "Allocated to Sales Orders" %}</td>
@@ -270,14 +267,15 @@
             <tr>
                 <td><span class='fas fa-tag'></span></td>
                 <td>{% trans "IPN" %}</td>
-                <td>{{ part.IPN }}{% include "clip.html"%}</td>
+                <td>{{ part.IPN }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
-            {% if part.revision %}
+            {% settings_value "PART_ENABLE_REVISION" as show_revision %}
+            {% if show_revision and part.revision %}
             <tr>
                 <td><span class='fas fa-code-branch'></span></td>
                 <td>{% trans "Revision" %}</td>
-                <td>{{ part.revision }}{% include "clip.html"%}</td>
+                <td>{{ part.revision }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
             {% if part.units %}
@@ -291,23 +289,17 @@
             <tr>
                 <td><span class='fas fa-flag'></span></td>
                 <td>{% trans "Minimum stock level" %}</td>
-                <td>{{ part.minimum_stock }}</td>
+                <td>{% decimal part.minimum_stock %}</td>
             </tr>
             {% endif %}
             {% if part.keywords %}
             <tr>
                 <td><span class='fas fa-key'></span></td>
                 <td>{% trans "Keywords" %}</td>
-                <td>{{ part.keywords }}{% include "clip.html"%}</td>
+                <td>{{ part.keywords }}{% include "clip.html" %}</td>
             </tr>
             {% endif %}
-            {% if part.barcode_hash %}
-            <tr>
-                <td><span class='fas fa-barcode'></span></td>
-                <td>{% trans "Barcode Identifier" %}</td>
-                <td {% if part.barcode_data %}title='{{ part.barcode_data }}'{% endif %}>{{ part.barcode_hash }}</td>
-            </tr>
-            {% endif %}
+            {% include "barcode_data.html" with instance=part %}
         </table>
         </div>
         <div class='col-sm-6'>
@@ -334,6 +326,21 @@
                         {% else %}
                         {% render_currency pricing.overall_min %} - {% render_currency pricing.overall_max %}
                         {% endif %}
+                        {% if part.units %}&nbsp / {{ part.units }}{% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endwith %}
+                {% with part.latest_stocktake as stocktake %}
+                {% if stocktake %}
+                <tr>
+                    <td><span class='fas fa-clipboard-check'></span></td>
+                    <td>
+                        {% trans "Last Stocktake" %}
+                    </td>
+                    <td>
+                        {% decimal stocktake.quantity %}
+                        <span class='badge bg-dark rounded-pill float-right'>{{ stocktake.user.username }}</span>
                     </td>
                 </tr>
                 {% endif %}
@@ -374,7 +381,14 @@
                 <tr>
                     <td><span class='fas fa-link'></span></td>
                     <td>{% trans "External Link" %}</td>
-                    <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
+                    <td>{% include 'clip_link.html' with link=part.link new_window=True %}</td>
+                </tr>
+                {% endif %}
+                {% if part.responsible_owner %}
+                <tr>
+                    <td><span class='fas fa-user'></span></td>
+                    <td>{% trans "Responsible" %}</td>
+                    <td> <span class='badge badge-right rounded-pill bg-dark'>{{ part.responsible_owner }}</span></td>
                 </tr>
                 {% endif %}
             </table>
@@ -391,6 +405,8 @@
     $('#part-thumb').click(function() {
         showModalImage('{{ part.image.url }}');
     });
+    {% else %}
+    $('#part-image-delete').hide();
     {% endif %}
 
     function reloadImage(data) {
@@ -403,6 +419,7 @@
                 showModalImage(data.image);
             });
 
+            $("#part-image-delete").show();
         } else {
             // Otherwise, reload the page
             location.reload();
@@ -423,11 +440,9 @@
 
     {% if barcodes %}
     $("#show-qr-code").click(function() {
-        launchModalForm(
-            "{% url 'part-qr' part.id %}",
-            {
-                no_post: true,
-            }
+        showQRDialog(
+            '{% trans "Part QR Code" escape %}',
+            '{"part": {{ part.pk }} }',
         );
     });
 
@@ -443,7 +458,7 @@
                 part: {{ part.pk }},
             },
             {
-                title: '{% trans "Link Barcode to Part" %}',
+                title: '{% trans "Link Barcode to Part" escape %}',
             }
         );
     });
@@ -451,7 +466,12 @@
 
     {% if labels_enabled %}
     $('#print-label').click(function() {
-        printPartLabels([{{ part.pk }}]);
+        printLabels({
+            items: [{{ part.pk }}],
+            key: 'part',
+            singular_name: 'part',
+            url: '{% url "api-part-label-list" %}',
+        });
     });
     {% endif %}
 
@@ -489,7 +509,7 @@
         launchModalForm(
             "{% url 'part-pricing' part.id %}",
             {
-                submit_text: '{% trans "Calculate" %}',
+                submit_text: '{% trans "Calculate" escape %}',
                 hideErrorMessage: true,
             }
         );
@@ -505,10 +525,10 @@
     $('#part-image-delete').click(function(event) {
         event.stopPropagation();
         showQuestionDialog(
-            '{% trans "Remove Image" %}',
-            '{% trans "Remove associated image from this part" %}',
+            '{% trans "Remove Image" escape %}',
+            '{% trans "Remove associated image from this part" escape %}',
             {
-                accept_text: '{% trans "Remove" %}',
+                accept_text: '{% trans "Remove" escape %}',
                 submitClass: 'danger',
                 accept: function() {
                     inventreePut(
@@ -537,14 +557,13 @@
                 fields: {
                     image: {},
                 },
-                title: '{% trans "Upload Image" %}',
+                title: '{% trans "Upload Image" escape %}',
                 onSuccess: function(data) {
                     reloadImage(data);
                 }
             }
         )
     });
-
 
     function onSelectImage(response) {
         // Callback when the image-selection modal form is displayed
@@ -558,7 +577,7 @@
             sidePagination: 'server',
             singleSelect: true,
             formatNoMatches: function() {
-                return '{% trans "No matching images found" %}';
+                return '{% trans "No matching images found" escape %}';
             },
             columns: [
                 {
@@ -569,7 +588,7 @@
                     title: 'Image',
                     searchable: true,
                     formatter: function(value, row, index, field) {
-                        return "<img src='/media/" + value + "' class='grid-image'/>"
+                        return "<img src='/media/" + value + "' alt='image' class='grid-image'/>"
                     }
                 }
             ],
@@ -586,17 +605,19 @@
     {% if roles.part.change %}
 
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
-
         $("#part-image-url").click(function() {
+            event.stopPropagation();
             constructForm(
                 '{% url "api-part-detail" part.pk %}',
                 {
                     method: 'PATCH',
-                    title: '{% trans "Download Image" %}',
+                    title: '{% trans "Download Image" escape %}',
                     fields: {
                         remote_image: {},
                     },
-                    onSuccess: onSelectImage,
+                    onSuccess: function(data) {
+                        reloadImage(data);
+                    },
                 }
             );
         });
@@ -652,13 +673,13 @@
 
     // Callback function when the "part details" panel is shown
     $('#collapse-part-details').on('show.bs.collapse', function() {
-        $('#toggle-details-button').html('{% trans "Hide Part Details" %}');
+        $('#toggle-details-button').html('{% trans "Hide Part Details" escape %}');
         inventreeSave('show-part-details', true);
     });
 
     // Callback function when the "part details" panel is hidden
     $('#collapse-part-details').on('hide.bs.collapse', function() {
-        $('#toggle-details-button').html('{% trans "Show Part Details" %}');
+        $('#toggle-details-button').html('{% trans "Show Part Details" escape %}');
         inventreeSave('show-part-details', false);
     });
 
@@ -670,4 +691,4 @@
         findStockItemBySerialNumber({{ part.pk }});
     });
 
-{% endblock %}
+{% endblock js_ready %}

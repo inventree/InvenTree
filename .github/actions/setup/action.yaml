@@ -1,6 +1,6 @@
 name: 'Setup Enviroment'
-description: 'Setup the enviroment for general InvenTree tests'
-author: 'inventree'
+description: 'Setup the environment for general InvenTree tests'
+author: 'InvenTree'
 inputs:
     python:
         required: false
@@ -35,12 +35,12 @@ runs:
     using: 'composite'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
 
       # Python installs
       - name: Set up Python ${{ env.python_version }}
         if: ${{ inputs.python == 'true' }}
-        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
           python-version: ${{ env.python_version }}
           cache: pip
@@ -49,20 +49,23 @@ runs:
         shell: bash
         run: |
           python3 -m pip install -U pip
-          pip3 install invoke wheel
+          pip3 install invoke wheel uv
+      - name: Set the VIRTUAL_ENV variable for uv to work
+        run: echo "VIRTUAL_ENV=${Python_ROOT_DIR}" >> $GITHUB_ENV
+        shell: bash
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
-        run: pip3 install ${{ inputs.pip-dependency }}
+        run: uv pip install ${{ inputs.pip-dependency }}
 
       # NPM installs
       - name: Install node.js ${{ env.node_version }}
         if: ${{ inputs.npm == 'true' }}
-        uses: actions/setup-node@969bd2663942d722d85b6a8626225850c2f7be4b  # pin to v3.5.0
+        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7  # pin to v3.8.2
         with:
           node-version: ${{ env.node_version }}
           cache: 'npm'
-      - name: Intall npm packages
+      - name: Install npm packages
         if: ${{ inputs.npm == 'true' }}
         shell: bash
         run: npm install
@@ -79,12 +82,12 @@ runs:
       - name: Install dev requirements
         if: ${{ inputs.dev-install == 'true' ||inputs.install == 'true' }}
         shell: bash
-        run: pip install -r requirements-dev.txt
+        run: uv pip install -r requirements-dev.txt
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash
-        run: invoke install
+        run: invoke install --uv
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update
+        run: invoke update --uv

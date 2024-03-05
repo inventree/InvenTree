@@ -10,6 +10,8 @@ import os  # pragma: no cover
 
 from django.core.wsgi import get_wsgi_application  # pragma: no cover
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "InvenTree.settings")  # pragma: no cover
+os.environ.setdefault(
+    'DJANGO_SETTINGS_MODULE', 'InvenTree.settings'
+)  # pragma: no cover
 
 application = get_wsgi_application()  # pragma: no cover

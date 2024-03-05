@@ -1,0 +1,290 @@
+{% extends "page_base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+{% load generic %}
+
+{% block page_title %}
+{% inventree_title %} | {% trans "Return Order" %}
+{% endblock page_title %}
+
+{% block breadcrumbs %}
+<li class='breadcrumb-item'><a href='{% url "return-order-index" %}'>{% trans "Return Orders" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page"><a href='{% url "return-order-detail" order.id %}'>{{ order }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block thumbnail %}
+<img alt="{% trans "Customer logo thumbnail" %}" class='part-thumb'
+{% if order.customer and order.customer.image %}
+src="{{ order.customer.image.url }}"
+{% else %}
+src="{% static 'img/blank_image.png' %}"
+{% endif %}
+/>
+{% endblock thumbnail %}
+
+{% block heading %}
+{% trans "Return Order" %} {{ order.reference }}
+{% endblock heading %}
+
+{% block actions %}
+{% admin_url user "order.returnorder" order.pk as url %}
+{% include "admin_button.html" with url=url %}
+
+{% if barcodes %}
+<!-- Barcode actions menu -->
+<div class='btn-group' role='group'>
+    <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-qrcode'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if roles.return_order.change %}
+        {% if order.barcode_hash %}
+        <li><a class='dropdown-item' href='#' id='barcode-unlink'><span class='fas fa-unlink'></span> {% trans "Unlink Barcode" %}</a></li>
+        {% else %}
+        <li><a class='dropdown-item' href='#' id='barcode-link'><span class='fas fa-link'></span> {% trans "Link Barcode" %}</a></li>
+        {% endif %}
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+<!-- Printing actions -->
+<div class='btn-group' role='group'>
+    <button id='print-options' title='{% trans "Print actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-print'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        {% if report_enabled %}
+        <li><a class='dropdown-item' href='#' id='print-order-report'><span class='fas fa-file-pdf'></span> {% trans "Print return order report" %}</a></li>
+        {% endif %}
+        <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
+        <!--
+        <li><a class='dropdown-item' href='#' id='print-packing-list'><span class='fas fa-clipboard-list'></span>{% trans "Print packing list" %}</a></li>
+        -->
+    </ul>
+</div>
+
+{% if roles.return_order.change %}
+<!-- Order actions -->
+<div class='btn-group' role='group'>
+    <button id='order-options' title='{% trans "Order actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+        <span class='fas fa-tools'></span> <span class='caret'></span>
+    </button>
+    <ul class='dropdown-menu' role='menu'>
+        <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
+        {% if order.is_open %}
+        <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
+        {% endif %}
+    </ul>
+    {% if order.status == ReturnOrderStatus.PENDING %}
+    <button type='button' class='btn btn-primary' id='issue-order' title='{% trans "Issue Order" %}'>
+        <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
+    </button>
+    {% elif order.status == ReturnOrderStatus.IN_PROGRESS %}
+    <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
+        <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
+    </button>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock actions %}
+
+{% block details %}
+
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Order Reference" %}</td>
+        <td>{{ order.reference }}{% include "clip.html" %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-info-circle'></span></td>
+        <td>{% trans "Order Description" %}</td>
+        <td>{{ order.description }}{% include "clip.html" %}</td>
+    </tr>
+    {% include "project_code_data.html" with instance=order %}
+    {% include "barcode_data.html" with instance=order %}
+    <tr>
+        <td><span class='fas fa-info'></span></td>
+        <td>{% trans "Order Status" %}</td>
+        <td>
+            {% status_label 'return_order' order.status %}
+            {% if order.is_overdue %}
+            <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+{% endblock details %}
+
+{% block details_right %}
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    {% if order.customer %}
+    <tr>
+        <td><span class='fas fa-building'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td><a href="{% url 'company-detail' order.customer.id %}">{{ order.customer.name }}</a>{% include "clip.html" %}</td>
+    </tr>
+    {% endif %}
+    {% if order.customer_reference %}
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Customer Reference" %}</td>
+        <td>{{ order.customer_reference }}{% include "clip.html" %}</td>
+    </tr>
+    {% endif %}
+    {% if order.link %}
+    <tr>
+        <td><span class='fas fa-link'></span></td>
+        <td>{% trans "External Link" %}</td>
+        <td>{% include 'clip_link.html' with link=order.link new_window=True %}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Created" %}</td>
+        <td>{% render_date order.creation_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
+    </tr>
+    {% if order.issue_date %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Issued" %}</td>
+        <td>{% render_date order.issue_date %}</td>
+    </tr>
+    {% endif %}
+    {% if order.target_date %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Target Date" %}</td>
+        <td>
+            {% render_date order.target_date %}
+            {% if order.is_overdue %}<span class='fas fa-calendar-times icon-red float-right'></span>{% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    {% if order.contact %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Contact" %}</td>
+        <td>{{ order.contact.name }}</td>
+    </tr>
+    {% endif %}
+    {% if order.address %}
+    <tr>
+        <td><span class='fas fa-map'></span></td>
+        <td>{% trans "Address" %}</td>
+        <td><b>{{ order.address.title }}</b>: {{ order.address }}</td>
+    </tr>
+    {% endif %}
+    {% if order.responsible %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Responsible" %}</td>
+        <td>{{ order.responsible }}</td>
+    </tr>
+    {% endif %}
+    {% include "currency_data.html" with instance=order %}
+    <tr>
+        <td><span class='fas fa-dollar-sign'></span></td>
+        <td>{% trans "Total Cost" %}</td>
+        <td id='roTotalPrice'>
+            {% with order.total_price as tp %}
+            {% if tp == None %}
+            <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
+            {% else %}
+            {% render_currency tp currency=order.currency %}
+            {% endif %}
+            {% endwith %}
+        </td>
+    </tr>
+</table>
+{% endblock details_right %}
+
+{% block js_ready %}
+{{ block.super }}
+
+{% if roles.return_order.change %}
+
+{% if order.status == ReturnOrderStatus.PENDING %}
+$('#issue-order').click(function() {
+    issueReturnOrder({{ order.pk }}, {
+        reload: true,
+    });
+});
+{% elif order.status == ReturnOrderStatus.IN_PROGRESS %}
+$('#complete-order').click(function() {
+    completeReturnOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+})
+{% endif %}
+
+$('#edit-order').click(function() {
+    editReturnOrder({{ order.pk }}, {
+        reload: true,
+    });
+});
+
+{% if order.is_open %}
+$('#cancel-order').click(function() {
+    cancelReturnOrder(
+        {{ order.pk }},
+        {
+            reload: true
+        }
+    );
+});
+{% endif %}
+{% endif %}
+
+{% if report_enabled %}
+$('#print-order-report').click(function() {
+    printReports({
+        items: [{{ order.pk }}],
+        key: 'order',
+        url: '{% url "api-return-order-report-list" %}',
+    });
+});
+{% endif %}
+
+{% if barcodes %}
+<!-- Barcode functionality callbacks -->
+$('#show-qr-code').click(function() {
+    showQRDialog(
+        '{% trans "Return Order QR Code" escape %}',
+        '{"returnorder": {{ order.pk }} }'
+    );
+});
+
+{% if roles.return_order.change %}
+$("#barcode-link").click(function() {
+    linkBarcodeDialog(
+        {
+            returnorder: {{ order.pk }},
+        },
+        {
+            title: '{% trans "Link Barcode to Return Order" escape %}',
+        }
+    );
+});
+
+$("#barcode-unlink").click(function() {
+    unlinkBarcode({
+        returnorder: {{ order.pk }},
+    });
+});
+{% endif %}
+{% endif %}
+
+<!-- TODO: Export order callback -->
+
+{% endblock js_ready %}

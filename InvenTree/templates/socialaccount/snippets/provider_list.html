@@ -1,17 +1,37 @@
 {% load socialaccount %}
+{% load i18n %}
+{% load sso %}
 
 {% get_providers as socialaccount_providers %}
 
+{% if socialaccount_providers|length > 0 %}
+<ul class='sso-provider-list'>
 {% for provider in socialaccount_providers %}
-{% if provider.id == "openid" %}
-{% for brand in provider.get_brands %}
-  <a title="{{brand.name}}"
-     class="btn btn-primary socialaccount_provider {{provider.id}} {{brand.id}}"
-     href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"
-     ><span class='brand-icon' brand_name='{{provider.id}}'></span> {{brand.name}}</a>
+{% sso_check_provider provider as provider_valid %}
+<li class='sso-provider-link'>
+  {% if provider.id == "openid" %}
+  {% for brand in provider.get_brands %}
+  <a title="{{ brand.name }}" brand_name='{{ provider.id }}'
+     class="btn btn-light socialaccount_provider {{ provider.id }} {{ brand.id }}"
+     href="{% provider_login_url provider.id openid=brand.openid_url process=process %}">
+     <span class='brand-icon' brand_name='{{ provider.id }}'></span> {{ brand.name }}
+  </a>
+  {% endfor %}
+  {% endif %}
+  <a title="{{ provider.name }}" brand_name='{{ provider.id }}'
+    class="btn btn-light socialaccount_provider {{ provider.id }}"
+    href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+      <span class='brand-icon' brand_name='{{ provider.id }}'></span> {{ provider.name }}
+      {% if not provider_valid %}
+      <span class='fas fa-exclamation-circle icon-red float-right' title='{% trans "Provider has not been configured" %}'></span>
+      {% endif %}
+  </a>
+</li>
 {% endfor %}
+</ul>
+
+{% else %}
+<div class='alert alert-block alert-warning'>
+  {% trans "No SSO providers have been configured" %}
+</div>
 {% endif %}
-  <a title="{{provider.name}}" class="btn btn-primary socialaccount_provider {{provider.id}}"
-     href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
-     ><span class='brand-icon' brand_name='{{provider.id}}'></span> {{provider.name}}</a>
-{% endfor %}

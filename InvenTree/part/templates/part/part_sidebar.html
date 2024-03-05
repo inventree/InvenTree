@@ -44,6 +44,12 @@
 {% trans "Scheduling" as text %}
 {% include "sidebar_item.html" with label="scheduling" text=text icon="fa-calendar-alt" %}
 {% endif %}
+{% settings_value 'STOCKTAKE_ENABLE' as stocktake_enable %}
+{% settings_value 'DISPLAY_STOCKTAKE_TAB' user=request.user as show_stocktake %}
+{% if roles.stocktake.view and stocktake_enable and show_stocktake %}
+{% trans "Stocktake" as text %}
+{% include "sidebar_item.html" with label="stocktake" text=text icon="fa-clipboard-check" %}
+{% endif %}
 {% if part.trackable %}
 {% trans "Test Templates" as text %}
 {% include "sidebar_item.html" with label="test-templates" text=text icon="fa-vial" %}

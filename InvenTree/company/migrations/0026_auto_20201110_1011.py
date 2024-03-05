@@ -23,7 +23,7 @@ def migrate_currencies(apps, schema_editor):
     for the SupplierPriceBreak model, to a new django-money compatible currency.
     """
 
-    logger.info("Updating currency references for SupplierPriceBreak model...")
+    logger.debug("Updating currency references for SupplierPriceBreak model...")
 
     # A list of available currency codes
     currency_codes = CURRENCIES.keys()

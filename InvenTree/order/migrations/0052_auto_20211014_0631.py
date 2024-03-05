@@ -52,13 +52,6 @@ def build_refs(apps, schema_editor):
         order.save()
 
 
-def unbuild_refs(apps, schema_editor):  # pragma: no cover
-    """
-    Provided only for reverse migration compatibility
-    """
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -67,8 +60,5 @@ class Migration(migrations.Migration):
 
 
     operations = [
-        migrations.RunPython(
-            build_refs,
-            reverse_code=unbuild_refs
-        )
+        migrations.RunPython(build_refs, reverse_code=migrations.RunPython.noop)
     ]

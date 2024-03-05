@@ -50,11 +50,6 @@ def update_build_reference(apps, schema_editor):
         print(f"Updated reference field for {n} BuildOrder objects")
 
 
-def nupdate_build_reference(apps, schema_editor):
-    """Reverse migration code. Does nothing."""
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -64,6 +59,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             update_build_reference,
-            reverse_code=nupdate_build_reference,
+            reverse_code=migrations.RunPython.noop,
         )
     ]

@@ -4,3 +4,5 @@
 files:
   - source: /InvenTree/locale/en/LC_MESSAGES/django.po
     translation: /InvenTree/locale/%two_letters_code%/LC_MESSAGES/%original_file_name%
+  - source: /src/frontend/src/locales/en/messages.po
+    translation: /src/frontend/src/locales/%two_letters_code%/%original_file_name%

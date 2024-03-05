@@ -1,9 +1,15 @@
-"""Custom string formatting functions and helpers"""
+"""Custom string formatting functions and helpers."""
 
 import re
 import string
 
+from django.conf import settings
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
+
+from babel import Locale
+from babel.numbers import parse_pattern
+from djmoney.money import Money
 
 
 def parse_format_string(fmt_string: str) -> dict:
@@ -11,26 +17,32 @@ def parse_format_string(fmt_string: str) -> dict:
 
     Returns a dict object which contains structured information about the format groups
     """
-
     groups = string.Formatter().parse(fmt_string)
 
     info = {}
+
+    seen_groups = set()
 
     for group in groups:
         # Skip any group which does not have a named value
         if not group[1]:
             continue
 
-        info[group[1]] = {
-            'format': group[1],
-            'prefix': group[0],
-        }
+        name = group[1]
+
+        # Check for duplicate named groups
+        if name in seen_groups:
+            raise ValueError(f"Duplicate group '{name}'")
+        else:
+            seen_groups.add(name)
+
+        info[group[1]] = {'format': group[1], 'prefix': group[0]}
 
     return info
 
 
 def construct_format_regex(fmt_string: str) -> str:
-    r"""Construct a regular expression based on a provided format string
+    r"""Construct a regular expression based on a provided format string.
 
     This function turns a python format string into a regular expression,
     which can be used for two purposes:
@@ -52,8 +64,7 @@ def construct_format_regex(fmt_string: str) -> str:
     Raises:
         ValueError: Format string is invalid
     """
-
-    pattern = "^"
+    pattern = '^'
 
     for group in string.Formatter().parse(fmt_string):
         prefix = group[0]  # Prefix (literal text appearing before this group)
@@ -61,9 +72,23 @@ def construct_format_regex(fmt_string: str) -> str:
         format = group[2]  # Format specifier e.g :04d
 
         rep = [
-            '+', '-', '.',
-            '{', '}', '(', ')',
-            '^', '$', '~', '!', '@', ':', ';', '|', '\'', '"',
+            '+',
+            '-',
+            '.',
+            '{',
+            '}',
+            '(',
+            ')',
+            '^',
+            '$',
+            '~',
+            '!',
+            '@',
+            ':',
+            ';',
+            '|',
+            "'",
+            '"',
         ]
 
         # Escape any special regex characters
@@ -80,8 +105,7 @@ def construct_format_regex(fmt_string: str) -> str:
 
         # Add a named capture group for the format entry
         if name:
-
-            # Check if integer values are requried
+            # Check if integer values are required
             if format.endswith('d'):
                 chr = '\d'
             else:
@@ -91,9 +115,9 @@ def construct_format_regex(fmt_string: str) -> str:
             # TODO: Introspect required width
             w = '+'
 
-            pattern += f"(?P<{name}>{chr}{w})"
+            pattern += f'(?P<{name}>{chr}{w})'
 
-    pattern += "$"
+    pattern += '$'
 
     return pattern
 
@@ -111,7 +135,6 @@ def validate_string(value: str, fmt_string: str) -> str:
     Raises:
         ValueError: The provided format string is invalid
     """
-
     pattern = construct_format_regex(fmt_string)
 
     result = re.match(pattern, value)
@@ -120,7 +143,7 @@ def validate_string(value: str, fmt_string: str) -> str:
 
 
 def extract_named_group(name: str, value: str, fmt_string: str) -> str:
-    """Extract a named value from the provided string, given the provided format string
+    """Extract a named value from the provided string, given the provided format string.
 
     Args:
         name: Name of group to extract e.g. 'ref'
@@ -135,7 +158,6 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
         NameError: named value does not exist in the format string
         IndexError: named value could not be found in the provided entry
     """
-
     info = parse_format_string(fmt_string)
 
     if name not in info.keys():
@@ -149,8 +171,49 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
     result = re.match(pattern, value)
 
     if not result:
-        raise ValueError(_("Provided value does not match required pattern: ") + fmt_string)
+        raise ValueError(
+            _('Provided value does not match required pattern: ') + fmt_string
+        )
 
     # And return the value we are interested in
     # Note: This will raise an IndexError if the named group was not matched
     return result.group(name)
+
+
+def format_money(
+    money: Money,
+    decimal_places: int = None,
+    format: str = None,
+    include_symbol: bool = True,
+) -> str:
+    """Format money object according to the currently set local.
+
+    Args:
+        money (Money): The money object to format
+        decimal_places (int): Number of decimal places to use
+        format (str): Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
+
+    Returns:
+        str: The formatted string
+
+    Raises:
+        ValueError: format string is incorrectly specified
+    """
+    language = None and translation.get_language() or settings.LANGUAGE_CODE
+    locale = Locale.parse(translation.to_locale(language))
+    if format:
+        pattern = parse_pattern(format)
+    else:
+        pattern = locale.currency_formats['standard']
+        if decimal_places is not None:
+            pattern.frac_prec = (decimal_places, decimal_places)
+
+    result = pattern.apply(
+        money.amount,
+        locale,
+        currency=money.currency.code if include_symbol else '',
+        currency_digits=decimal_places is None,
+        decimal_quantization=decimal_places is not None,
+    )
+
+    return result

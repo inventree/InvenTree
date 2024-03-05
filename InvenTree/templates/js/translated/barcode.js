@@ -1,16 +1,26 @@
 {% load i18n %}
 
 /* globals
+    createNewModal,
+    global_settings,
+    handleFormError,
+    handleFormSuccess,
+    Html5Qrcode,
+    Html5QrcodeScannerState,
     imageHoverIcon,
+    inventreeGet,
     inventreePut,
-    makeIconButton,
+    makeIcon,
+    makeRemoveButton,
     modalEnable,
     modalSetContent,
     modalSetTitle,
     modalSetSubmitText,
     modalShowSubmitButton,
     modalSubmit,
+    showApiError,
     showQuestionDialog,
+    user_settings,
 */
 
 /* exported
@@ -35,19 +45,19 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     hintText = hintText || '{% trans "Enter barcode data" %}';
 
     var html = `
-    <div id='barcode_scan_video_container' class='text-center' style='height: 240px; display: none;'>
-        <video id='barcode_scan_video' disablepictureinpicture playsinline height='240' style='object-fit: fill;'></video>
+    <div id='barcode_scan_video_container' class="mx-auto" style='width: 100%; max-width: 240px; display: none;'>
+        <div id="barcode_scan_video"></div>
     </div>
     <div class='form-group'>
         <label class='control-label' for='barcode'>{% trans "Barcode" %}</label>
         <div class='controls'>
             <div class='input-group'>
                 <span class='input-group-text'>
-                    <span class='fas fa-qrcode'></span>
+                    ${makeIcon('fa-qrcode')}
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
                 <button title='{% trans "Scan barcode using connected webcam" %}' id='barcode_scan_btn' type='button' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'>
-                    <span class='fas fa-camera'></span>
+                    ${makeIcon('fa-camera')}
                 </button>
             </div>
             <div id='hint_barcode_data' class='help-block'>${hintText}</div>
@@ -58,15 +68,40 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     return html;
 }
 
-qrScanner = null;
+// Global variables for qrScanner
+var qrScanner = null;
+var qrScannerCallback = null;
+
 
 function startQrScanner() {
     $('#barcode_scan_video_container').show();
-    qrScanner.start();
+
+    const config = {
+        fps: 10,
+        qrbox: function(viewfinder_width, viewfinder_height) {
+            // qrbox should be 80% of shortest viewfinder edge
+            var edge_percentage = 0.8;
+            var min_edge_size = Math.min(viewfinder_width, viewfinder_height);
+            var box_size = Math.floor(min_edge_size * edge_percentage);
+
+            return {
+                width: box_size,
+                height: box_size
+            };
+        },
+        aspectRatio: 1,
+        applyVideoConstraints: {
+            focusMode: 'continuous',
+        },
+    };
+
+    qrScanner.start({facingMode: 'environment'}, config, qrScannerCallback);
 }
 
 function stopQrScanner() {
-    if (qrScanner != null) qrScanner.stop();
+    if (qrScanner != null && qrScanner.getState() != Html5QrcodeScannerState.NOT_STARTED) {
+        qrScanner.stop();
+    }
     $('#barcode_scan_video_container').hide();
 }
 
@@ -76,23 +111,23 @@ function onBarcodeScanClicked(e) {
 
 function onCameraAvailable(hasCamera, options) {
     if (hasCamera && global_settings.BARCODE_WEBCAM_SUPPORT) {
-        // Camera is only acccessible if page is served over secure connection
-        if ( window.isSecureContext == true ) {
-            qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), (result) => {
-                onBarcodeScanCompleted(result, options);
-            }, {
-                highlightScanRegion: true,
-                highlightCodeOutline: true,
+        // Camera is only accessible if page is served over secure connection
+        if (window.isSecureContext == true) {
+            qrScanner = new Html5Qrcode('barcode_scan_video', {
+                useBarCodeDetectorIfSupported: true,
             });
+            qrScannerCallback = (decodedText, decodedResult) => {
+                onBarcodeScanCompleted(decodedResult.result, options);
+            };
             $('#barcode_scan_btn').show();
         }
     }
 }
 
 function onBarcodeScanCompleted(result, options) {
-    if (result.data == '') return;
+    if (result.text == '') return;
     stopQrScanner();
-    postBarcodeData(result.data, options);
+    postBarcodeData(result.text, options);
 }
 
 /*
@@ -109,7 +144,7 @@ function makeNotesField(options={}) {
         <div class='controls'>
             <div class='input-group'>
                 <span class='input-group-text'>
-                    <span class='fas fa-sticky-note'></span>
+                    ${makeIcon('fa-sticky-note')}
                 </span>
                 <input id='notes' class='textinput textInput form-control' type='text' name='notes' placeholder='${placeholder}'>
             </div>
@@ -124,9 +159,9 @@ function makeNotesField(options={}) {
  */
 function postBarcodeData(barcode_data, options={}) {
 
-    var modal = options.modal || '#modal-form';
+    var modal = options.modal;
 
-    var url = options.url || '/api/barcode/';
+    var url = options.url || '{% url "api-barcode-scan" %}';
 
     var data = options.data || {};
 
@@ -144,11 +179,14 @@ function postBarcodeData(barcode_data, options={}) {
                 switch (xhr.status || 0) {
                 case 400:
                     // No match for barcode, most likely
-                    console.log(xhr);
 
-                    data = xhr.responseJSON || {};
-                    showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
-
+                    if (options.onError400) {
+                        options.onError400(xhr.responseJSON, options);
+                    } else {
+                        console.error(xhr);
+                        data = xhr.responseJSON || {};
+                        showBarcodeMessage(modal, data.error || '{% trans "Server error" %}');
+                    }
                     break;
                 default:
                     // Any other error code means something went wrong
@@ -165,7 +203,7 @@ function postBarcodeData(barcode_data, options={}) {
 
                     if ('success' in response) {
                         if (options.onScan) {
-                            options.onScan(response);
+                            options.onScan(response, options);
                         }
                     } else if ('error' in response) {
                         showBarcodeMessage(
@@ -236,7 +274,7 @@ function enableBarcodeInput(modal, enabled=true) {
  */
 function getBarcodeData(modal) {
 
-    modal = modal || '#modal-form';
+    modal = modal || createNewModal();
 
     var el = $(modal + ' #barcode');
 
@@ -254,7 +292,9 @@ function getBarcodeData(modal) {
  */
 function barcodeDialog(title, options={}) {
 
-    var modal = '#modal-form';
+    var modal = options.modal || createNewModal();
+
+    options.modal = modal;
 
     function sendBarcode() {
         var barcode = getBarcodeData(modal);
@@ -268,7 +308,8 @@ function barcodeDialog(title, options={}) {
         $(modal + ' .modal-form-content').scrollTop(0);
 
         // Check for qr-scanner camera
-        QrScanner.hasCamera().then( (hasCamera) => {
+        Html5Qrcode.getCameras().then( (devices) => {
+            var hasCamera = devices && devices.length;
             onCameraAvailable(hasCamera, options);
         });
 
@@ -316,8 +357,8 @@ function barcodeDialog(title, options={}) {
 
     $(modal).on('hidden.bs.modal', function() {
         stopQrScanner();
-        if (qrScanner != null) qrScanner.destroy();
         qrScanner = null;
+        qrScannerCallback = null;
     });
 
     modalSetTitle(modal, title);
@@ -373,21 +414,45 @@ function barcodeDialog(title, options={}) {
 * Perform a barcode scan,
 * and (potentially) redirect the browser
 */
-function barcodeScanDialog() {
+function barcodeScanDialog(options={}) {
 
-    var modal = '#modal-form';
+    let modal = options.modal || createNewModal();
+    let title = options.title || '{% trans "Scan Barcode" %}';
+
+    const matching_models = [
+        'build',
+        'manufacturerpart',
+        'part',
+        'purchaseorder',
+        'returnorder',
+        'salesorder',
+        'supplierpart',
+        'stockitem',
+        'stocklocation'
+    ];
 
     barcodeDialog(
-        '{% trans "Scan Barcode" %}',
+        title,
         {
             onScan: function(response) {
 
-                var url = response.url;
-
-                if (url) {
-                    $(modal).modal('hide');
-                    window.location.href = url;
+                // Pass the response to the calling function
+                if (options.onScan) {
+                    options.onScan(response);
                 } else {
+                    // Find matching model
+                    matching_models.forEach(function(model) {
+                        if (model in response) {
+                            let instance = response[model];
+                            let url = instance.web_url || instance.url;
+                            if (url) {
+                                window.location.href = url;
+                                return;
+                            }
+                        }
+                    });
+
+                    // No match
                     showBarcodeMessage(
                         modal,
                         '{% trans "No URL in response" %}',
@@ -401,11 +466,12 @@ function barcodeScanDialog() {
 
 
 /*
- * Dialog for linking a particular barcode to a database model instsance
+ * Dialog for linking a particular barcode to a database model instance
  */
 function linkBarcodeDialog(data, options={}) {
 
-    var modal = '#modal-form';
+    var modal = options.modal || createNewModal();
+    options.modal = modal;
 
     barcodeDialog(
         options.title,
@@ -438,7 +504,7 @@ function unlinkBarcode(data, options={}) {
             accept_text: '{% trans "Unlink" %}',
             accept: function() {
                 inventreePut(
-                    '/api/barcode/unlink/',
+                    '{% url "api-barcode-unlink" %}',
                     data,
                     {
                         method: 'POST',
@@ -458,7 +524,8 @@ function unlinkBarcode(data, options={}) {
  */
 function barcodeCheckInStockItems(location_id, options={}) {
 
-    var modal = '#modal-form';
+    var modal = options.modal || createNewModal();
+    options.modal = modal;
 
     // List of items we are going to checkin
     var items = [];
@@ -497,7 +564,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
                 <td>${imageHoverIcon(item.part_detail.thumbnail)} ${item.part_detail.name}</td>
                 <td>${location_info}</td>
                 <td>${item.quantity}</td>
-                <td>${makeIconButton('fa-times-circle icon-red', 'button-item-remove', item.pk, '{% trans "Remove stock item" %}')}</td>
+                <td>${makeRemoveButton('button-item-remove', item.pk, '{% trans "Remove stock item" %}')}</td>
             </tr>`;
         });
 
@@ -534,7 +601,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
         });
     }
 
-    var table = `<div class='container' id='items-table-div' style='width: 80%; float: left;'></div>`;
+    var table = `<div class='container' id='items-table-div' style='float: left;'></div>`;
 
     // Extra form fields
     var extra = makeNotesField();
@@ -552,6 +619,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
             onShow: function() {
             },
             extraFields: extra,
+            modal: modal,
             onSubmit: function() {
 
                 // Called when the 'check-in' button is pressed
@@ -649,7 +717,9 @@ function barcodeCheckInStockItems(location_id, options={}) {
  */
 function barcodeCheckInStockLocations(location_id, options={}) {
 
-    var modal = '#modal-form';
+    var modal = options.modal || createNewModal();
+    options.modal = modal;
+
     var header = '';
 
     barcodeDialog(
@@ -667,7 +737,7 @@ function barcodeCheckInStockLocations(location_id, options={}) {
                 if ('stocklocation' in response) {
                     var pk = response.stocklocation.pk;
 
-                    var url = `/api/stock/location/${pk}/`;
+                    var url = `{% url "api-location-list" %}${pk}/`;
 
                     // Move the scanned location into *this* location
                     inventreePut(
@@ -702,14 +772,15 @@ function barcodeCheckInStockLocations(location_id, options={}) {
  */
 function scanItemsIntoLocation(item_list, options={}) {
 
-    var modal = options.modal || '#modal-form';
+    var modal = options.modal || createNewModal();
+    options.modal = modal;
 
     var stock_location = null;
 
     // Extra form fields
     var extra = makeNotesField();
 
-    // Header contentfor
+    // Header content
     var header = `
     <div id='header-div'>
     </div>
@@ -736,6 +807,7 @@ function scanItemsIntoLocation(item_list, options={}) {
         {
             headerContent: header,
             extraFields: extra,
+            modal: modal,
             preShow: function() {
                 modalSetSubmitText(modal, '{% trans "Check In" %}');
                 modalEnable(modal, false);
@@ -788,7 +860,7 @@ function scanItemsIntoLocation(item_list, options={}) {
 
                     var pk = response.stocklocation.pk;
 
-                    inventreeGet(`/api/stock/location/${pk}/`, {}, {
+                    inventreeGet(`{% url "api-location-list" %}${pk}/`, {}, {
                         success: function(response) {
 
                             stock_location = response;

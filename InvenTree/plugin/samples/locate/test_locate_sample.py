@@ -2,7 +2,7 @@
 
 from django.urls import reverse
 
-from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.unit_test import InvenTreeAPITestCase
 from plugin import InvenTreePlugin, registry
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import LocateMixin
@@ -11,12 +11,7 @@ from plugin.mixins import LocateMixin
 class SampleLocatePlugintests(InvenTreeAPITestCase):
     """Tests for SampleLocatePlugin."""
 
-    fixtures = [
-        'location',
-        'category',
-        'part',
-        'stock'
-    ]
+    fixtures = ['location', 'category', 'part', 'stock']
 
     def test_run_locator(self):
         """Check if the event is issued."""
@@ -51,9 +46,15 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
 
     def test_mixin(self):
         """Test that MixinNotImplementedError is raised."""
+        # Test location locator
         with self.assertRaises(MixinNotImplementedError):
+
             class Wrong(LocateMixin, InvenTreePlugin):
                 pass
 
             plugin = Wrong()
             plugin.locate_stock_location(1)
+
+        # Test item locator
+        with self.assertRaises(MixinNotImplementedError):
+            plugin.locate_stock_item(1)

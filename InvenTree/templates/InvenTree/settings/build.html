@@ -2,18 +2,19 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-{% block label %}build-order{% endblock %}
+{% block label %}build-order{% endblock label %}
 
 {% block heading %}
 {% trans "Build Order Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
 <table class='table table-striped table-condensed'>
     <tbody>
         {% include "InvenTree/settings/setting.html" with key="BUILDORDER_REFERENCE_PATTERN" %}
+        {% include "InvenTree/settings/setting.html" with key="PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS" %}
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}

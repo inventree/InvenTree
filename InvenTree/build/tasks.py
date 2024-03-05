@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 import logging
 
+from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
@@ -12,15 +13,85 @@ from allauth.account.models import EmailAddress
 from plugin.events import trigger_event
 import common.notifications
 import build.models
-import InvenTree.helpers
+import InvenTree.email
+import InvenTree.helpers_model
 import InvenTree.tasks
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.ready import isImportingData
 
 import part.models as part_models
 
 
 logger = logging.getLogger('inventree')
+
+
+def complete_build_allocations(build_id: int, user_id: int):
+    """Complete build allocations for a specified BuildOrder."""
+
+    build_order = build.models.Build.objects.filter(pk=build_id).first()
+
+    if user_id:
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            logger.warning("Could not complete build allocations for BuildOrder <%s> - User does not exist", build_id)
+            return
+    else:
+        user = None
+
+    if not build_order:
+        logger.warning("Could not complete build allocations for BuildOrder <%s> - BuildOrder does not exist", build_id)
+        return
+
+    build_order.complete_allocations(user)
+
+
+def update_build_order_lines(bom_item_pk: int):
+    """Update all BuildOrderLineItem objects which reference a particular BomItem.
+
+    This task is triggered when a BomItem is created or updated.
+    """
+    logger.info("Updating build order lines for BomItem %s", bom_item_pk)
+
+    bom_item = part_models.BomItem.objects.filter(pk=bom_item_pk).first()
+
+    # If the BomItem has been deleted, there is nothing to do
+    if not bom_item:
+        return
+
+    assemblies = bom_item.get_assemblies()
+
+    # Find all active builds which reference any of the parts
+    builds = build.models.Build.objects.filter(
+        part__in=list(assemblies),
+        status__in=BuildStatusGroups.ACTIVE_CODES
+    )
+
+    # Iterate through each build, and update the relevant line items
+    for bo in builds:
+        # Try to find a matching build order line
+        line = build.models.BuildLine.objects.filter(
+            build=bo,
+            bom_item=bom_item,
+        ).first()
+
+        q = bom_item.get_required_quantity(bo.quantity)
+
+        if line:
+            # Ensure quantity is correct
+            if line.quantity != q:
+                line.quantity = q
+                line.save()
+        else:
+            # Create a new line item
+            build.models.BuildLine.objects.create(
+                build=bo,
+                bom_item=bom_item,
+                quantity=q,
+            )
+
+    if builds.count() > 0:
+        logger.info("Updated %s build orders for part %s", builds.count(), bom_item.part)
 
 
 def check_build_stock(build: build.models.Build):
@@ -44,7 +115,7 @@ def check_build_stock(build: build.models.Build):
         part = build.part
     except part_models.Part.DoesNotExist:
         # Note: This error may be thrown during unit testing...
-        logger.error("Invalid build.part passed to 'build.tasks.check_build_stock'")
+        logger.exception("Invalid build.part passed to 'build.tasks.check_build_stock'")
         return
 
     for bom_item in part.get_bom_items():
@@ -64,7 +135,7 @@ def check_build_stock(build: build.models.Build):
             # There is not sufficient stock for this part
 
             lines.append({
-                'link': InvenTree.helpers.construct_absolute_url(sub_part.get_absolute_url()),
+                'link': InvenTree.helpers_model.construct_absolute_url(sub_part.get_absolute_url()),
                 'part': sub_part,
                 'in_stock': in_stock,
                 'allocated': allocated,
@@ -85,10 +156,10 @@ def check_build_stock(build: build.models.Build):
 
     if len(emails) > 0:
 
-        logger.info(f"Notifying users of stock required for build {build.pk}")
+        logger.info("Notifying users of stock required for build %s", build.pk)
 
         context = {
-            'link': InvenTree.helpers.construct_absolute_url(build.get_absolute_url()),
+            'link': InvenTree.helpers_model.construct_absolute_url(build.get_absolute_url()),
             'build': build,
             'part': build.part,
             'lines': lines,
@@ -101,12 +172,11 @@ def check_build_stock(build: build.models.Build):
 
         recipients = emails.values_list('email', flat=True)
 
-        InvenTree.tasks.send_email(subject, '', recipients, html_message=html_message)
+        InvenTree.email.send_email(subject, '', recipients, html_message=html_message)
 
 
 def notify_overdue_build_order(bo: build.models.Build):
     """Notify appropriate users that a Build has just become 'overdue'"""
-
     targets = []
 
     if bo.issued_by:
@@ -121,7 +191,7 @@ def notify_overdue_build_order(bo: build.models.Build):
         'order': bo,
         'name': name,
         'message': _(f"Build order {bo} is now overdue"),
-        'link': InvenTree.helpers.construct_absolute_url(
+        'link': InvenTree.helpers_model.construct_absolute_url(
             bo.get_absolute_url(),
         ),
         'template': {
@@ -152,12 +222,11 @@ def check_overdue_build_orders():
     - Look at the 'target_date' of any outstanding BuildOrder objects
     - If the 'target_date' expired *yesterday* then the order is just out of date
     """
-
     yesterday = datetime.now().date() - timedelta(days=1)
 
     overdue_orders = build.models.Build.objects.filter(
         target_date=yesterday,
-        status__in=BuildStatus.ACTIVE_CODES
+        status__in=BuildStatusGroups.ACTIVE_CODES
     )
 
     for bo in overdue_orders:

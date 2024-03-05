@@ -4,7 +4,7 @@
 #secret_key_file: '/etc/inventree/secret_key.txt'
 
 # Database backend selection - Configure backend database settings
-# Documentation: https://inventree.readthedocs.io/en/latest/start/config/
+# Documentation: https://docs.inventree.org/en/latest/start/config/
 
 # Note: Database configuration options can also be specified from environmental variables,
 #       with the prefix INVENTREE_DB_
@@ -32,7 +32,7 @@ database:
   #USER: sampleuser
   #PASSWORD: samplepassword
   #HOST: samplehost
-  #PORT: sampleport
+  #PORT: 123456
 
   # --- Example Configuration - MySQL ---
   #ENGINE: mysql
@@ -58,10 +58,22 @@ database:
 # Use the environment variable INVENTREE_DEBUG
 debug: True
 
+# Set to False to disable the admin interface (default = True)
+# Or, use the environment variable INVENTREE_ADMIN_ENABLED
+#admin_enabled: True
+
+# Set the admin URL (default is 'admin')
+# Or, use the environment variable INVENTREE_ADMIN_URL
+#admin_url: 'admin'
+
 # Configure the system logging level
 # Use environment variable INVENTREE_LOG_LEVEL
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
+
+# Enable database-level logging
+# Use the environment variable INVENTREE_DB_LOGGING
+db_logging: False
 
 # Select default system language (default is 'en-us')
 # Use the environment variable INVENTREE_LANGUAGE
@@ -71,13 +83,18 @@ language: en-us
 # Reference: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone: UTC
 
+# Base URL for the InvenTree server
+# Use the environment variable INVENTREE_SITE_URL
+# site_url: 'http://localhost:8000'
+
 # Base currency code (or use env var INVENTREE_BASE_CURRENCY)
 base_currency: USD
 
-# Add new user on first startup
+# Add new user on first startup by either adding values here or from a file
 #admin_user: admin
 #admin_email: info@example.com
 #admin_password: inventree
+#admin_password_file: '/etc/inventree/admin_password.txt'
 
 # List of currencies supported by default. Add other currencies here to allow use in InvenTree
 currencies:
@@ -113,11 +130,35 @@ sentry_enabled: False
 #sentry_sample_rate: 0.1
 #sentry_dsn: https://custom@custom.ingest.sentry.io/custom
 
+# OpenTelemetry tracing/metrics - disabled by default
+# This can be used to send tracing data, logs and metrics to OpenTelemtry compatible backends
+# See https://opentelemetry.io/ecosystem/vendors/ for a list of supported backends
+# Alternatively, use environment variables eg. INVENTREE_TRACING_ENABLED, INVENTREE_TRACING_HEADERS, INVENTREE_TRACING_AUTH
+#tracing:
+#  enabled: true
+#  endpoint: https://otlp-gateway-prod-eu-west-0.grafana.net/otlp
+#  headers:
+#    api-key: 'sample'
+#  auth:
+#    basic:
+#      username: '******'
+#      password: 'glc_****'
+#  is_http: true
+#  append_http: true
+#  console: false
+#  resources:
+#    CUSTOM_KEY: 'CUSTOM_VALUE'
+
 # Set this variable to True to enable InvenTree Plugins
 # Alternatively, use the environment variable INVENTREE_PLUGINS_ENABLED
 plugins_enabled: False
+#plugin_noinstall: True
 #plugin_file: '/path/to/plugins.txt'
 #plugin_dir: '/path/to/plugins/'
+
+# Set this variable to True to enable auto-migrations
+# Alternatively, use the environment variable INVENTREE_AUTO_UPDATE
+auto_update: False
 
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
@@ -125,13 +166,26 @@ plugins_enabled: False
 allowed_hosts:
   - '*'
 
-# Cross Origin Resource Sharing (CORS) settings (see https://github.com/ottoyiu/django-cors-headers)
-# Following parameters are
-cors:
-  # CORS_ORIGIN_ALLOW_ALL - If True, the whitelist will not be used and all origins will be accepted.
-  allow_all: True
+# Trusted origins (see CSRF_TRUSTED_ORIGINS in Django settings documentation)
+# If you are running behind a proxy, you may need to add the proxy address here
+trusted_origins:
+  - 'http://localhost:8000'
 
-  # CORS_ORIGIN_WHITELIST - A list of origins that are authorized to make cross-site HTTP requests. Defaults to []
+
+# Proxy forwarding settings
+# If InvenTree is running behind a proxy, you may need to configure these settings
+
+# Override with the environment variable INVENTREE_USE_X_FORWARDED_HOST
+use_x_forwarded_host: false
+
+# Override with the environment variable INVENTREE_USE_X_FORWARDED_PORT
+use_x_forwarded_port: false
+
+# Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
+cors:
+  allow_all: True
+  allow_credentials: True,
+
   # whitelist:
   # - https://example.com
   # - https://sub.example.com
@@ -142,21 +196,17 @@ cors:
 # STATIC_ROOT is the local filesystem location for storing static files
 #static_root: '/home/inventree/data/static'
 
-# BACKUP_DIR is the local filesystem location for storing backups
+### Backup configuration options ###
+# INVENTREE_BACKUP_DIR is the local filesystem location for storing backups
+backup_storage: django.core.files.storage.FileSystemStorage
 #backup_dir: '/home/inventree/data/backup'
+#backup_options:
 
 # Background worker options
 background:
   workers: 4
   timeout: 90
-
-# Optional URL schemes to allow in URL fields
-# By default, only the following schemes are allowed: ['http', 'https', 'ftp', 'ftps']
-# Uncomment the lines below to allow extra schemes
-#extra_url_schemes:
-#  - mailto
-#  - git
-#  - ssh
+  max_attempts: 5
 
 # Login configuration
 login_confirm_days: 3
@@ -165,11 +215,16 @@ login_default_protocol: http
 
 # Remote / proxy login
 # These settings can introduce security problems if configured incorrectly. Please read
-# https://docs.djangoproject.com/en/4.0/howto/auth-remote-user/ for more details
+# https://docs.djangoproject.com/en/4.2/howto/auth-remote-user/ for more details
 # The header name should be prefixed by `HTTP`. Please read the docs for more details
 # https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.HttpRequest.META
 remote_login_enabled: False
 remote_login_header: HTTP_REMOTE_USER
+
+# JWT tokens
+# JWT can be used optionally to authenticate users. Turned off by default.
+# Alternatively, use the environment variable INVENTREE_USE_JWT
+# use_jwt: True
 
 # Logout redirect configuration
 # This setting may be required if using remote / proxy login to redirect requests
@@ -177,40 +232,78 @@ remote_login_header: HTTP_REMOTE_USER
 # https://docs.djangoproject.com/en/stable/ref/settings/#logout-redirect-url
 #logout_redirect_url: 'index'
 
-# Permit custom authentication backends
-#authentication_backends:
-#  - 'django.contrib.auth.backends.ModelBackend'
-
-#  Custom middleware, sometimes needed alongside an authentication backend change.
-#middleware:
-#  - 'django.middleware.security.SecurityMiddleware'
-#  - 'django.contrib.sessions.middleware.SessionMiddleware'
-#  - 'django.middleware.locale.LocaleMiddleware'
-#  - 'django.middleware.common.CommonMiddleware'
-#  - 'django.middleware.csrf.CsrfViewMiddleware'
-#  - 'corsheaders.middleware.CorsMiddleware'
-#  - 'django.contrib.auth.middleware.AuthenticationMiddleware'
-#  - 'django.contrib.messages.middleware.MessageMiddleware'
-#  - 'django.middleware.clickjacking.XFrameOptionsMiddleware'
-#  - 'InvenTree.middleware.AuthRequiredMiddleware'
-
-# Add SSO login-backends
+# Add SSO login-backends (see examples below)
 # social_backends:
-#  - 'allauth.socialaccount.providers.keycloak'
+#  - 'allauth.socialaccount.providers.google'
+#  - 'allauth.socialaccount.providers.github'
 
-# Add specific settings
+# Add specific settings for social account providers (if required)
+# Refer to the djngo-allauth documentation for more details:
+# https://docs.allauth.org/en/latest/socialaccount/provider_configuration.html
 # social_providers:
-#   keycloak:
-#     KEYCLOAK_URL: 'https://keycloak.custom/auth'
-#     KEYCLOAK_REALM: 'master'
+#   github:
+#     VERIFIED_EMAIL: true
+
+# Add LDAP support
+# ldap:
+#   enabled: false
+#   debug: false  # enable debug mode to troubleshoot ldap configuration
+#   server_uri: ldaps://example.org
+#   bind_dn: cn=admin,dc=example,dc=org
+#   bind_password: admin_password
+#   search_base_dn: cn=Users,dc=example,dc=org
+
+#   # enable TLS encryption over the standard LDAP port,
+#   # see: https://django-auth-ldap.readthedocs.io/en/latest/reference.html#auth-ldap-start-tls
+#   # start_tls: false
+
+#   # uncomment if you want to use direct bind, bind_dn and bin_password is not necessary then
+#   # user_dn_template: "uid=%(user)s,dc=example,dc=org"
+
+#   # uncomment to set advanced global options, see https://www.python-ldap.org/en/latest/reference/ldap.html#ldap-options
+#   # for all available options (keys and values starting with OPT_ get automatically converted to python-ldap keys)
+#   # global_options:
+#   #   OPT_X_TLS_REQUIRE_CERT: OPT_X_TLS_NEVER
+#   #   OPT_X_TLS_CACERTFILE: /opt/inventree/ldapca.pem
+
+#   # uncomment for advanced filter search, default: uid=%(user)s
+#   # search_filter_str:
+
+#   # uncomment for advanced user attribute mapping (in the format <InvenTree attribute>: <LDAP attribute>)
+#   # user_attr_map:
+#   #   first_name: givenName
+#   #   last_name: sn
+#   #   email: mail
+
+#   # always update the user on each login, default: true
+#   # always_update_user: true
+
+#   # cache timeout to reduce traffic with LDAP server, default: 3600 (1h)
+#   # cache_timeout: 3600
+
+#   # LDAP group support
+#   # group_search: ou=groups,dc=example,dc=com
+#   # require_group: cn=inventree_allow,ou=groups,dc=example,dc=com
+#   # deny_group: cn=inventree_deny,ou=groups,dc=example,dc=com
+#   # Set staff/superuser flag based on LDAP group membership
+#   # user_flags_by_group:
+#   #   is_staff: cn=inventree_staff,ou=groups,dc=example,dc=com
+#   #   is_superuser: cn=inventree_superuser,ou=groups,dc=example,dc=com
 
 # Customization options
 # Add custom messages to the login page or main interface navbar or exchange the logo
 # Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
+# Logo and splash paths and filenames must be relative to the static_root directory
 # customize:
-#   login_message: InvenTree demo instance - <a href='https://inventree.readthedocs.io/en/latest/demo/'> Click here for login details</a>
-#   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.readthedocs.io/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
-#   logo: logo.png
-#   splash: splash_screen.jpg
+#   login_message: InvenTree demo instance - <a href='https://inventree.org/demo.html'> Click here for login details</a>
+#   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.org/demo.html'><span class='fas fa-info-circle'></span></a></h6>
 #   hide_admin_link: true
 #   hide_password_reset: true
+#   logo: img/custom_logo.png
+#   splash: img/custom_splash.jpg
+
+# Set enabled frontends
+# Use the environment variable INVENTREE_CLASSIC_FRONTEND
+# classic_frontend: True
+# Use the environment variable INVENTREE_PLATFORM_FRONTEND
+# platform_frontend: True

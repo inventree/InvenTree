@@ -4,20 +4,20 @@
 {% load inventree_extras %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Notifications" %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block sidebar %}
     {% include "InvenTree/notifications/sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
     {% include "InvenTree/notifications/inbox.html" %}
     {% include "InvenTree/notifications/history.html" %}
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 {{ block.super }}
@@ -29,14 +29,13 @@ function updateNotificationTables() {
 // this allows the global notification panel to update the tables
 window.updateNotifications = updateNotificationTables
 
-
 loadNotificationTable("#inbox-table", {
     name: 'inbox',
     url: '{% url 'api-notifications-list' %}',
     params: {
         read: false,
     },
-    no_matches: function() { return '{% trans "No unread notifications found" %}'; },
+    no_matches: function() { return '{% trans "No unread notifications found" escape %}'; },
 });
 
 $("#mark-all").on('click', function() {
@@ -56,9 +55,8 @@ $("#mark-all").on('click', function() {
 loadNotificationTable("#history-table", {
     name: 'history',
     url: '{% url 'api-notifications-list' %}',
-    no_matches: function() { return '{% trans "No notification history found" %}'; },
+    no_matches: function() { return '{% trans "No notification history found" escape %}'; },
 }, true);
-
 
 $('#history-delete').click(function() {
 
@@ -74,10 +72,8 @@ $('#history-delete').click(function() {
             method: 'DELETE',
             multi_delete: true,
             preFormContent: html,
-            title: '{% trans "Delete Notifications" %}',
-            onSuccess: function() {
-                $('#history-table').bootstrapTable('refresh');
-            },
+            title: '{% trans "Delete Notifications" escape %}',
+            refreshTable: '#history-table',
             form_data: {
                 filters: {
                     read: true,
@@ -88,9 +84,9 @@ $('#history-delete').click(function() {
 });
 
 $("#history-table").on('click', '.notification-delete', function() {
-    constructForm(`/api/notifications/${$(this).attr('pk')}/`, {
+    constructForm(`{% url "api-notifications-list" %}${$(this).attr('pk')}/`, {
         method: 'DELETE',
-        title: '{% trans "Delete Notification" %}',
+        title: '{% trans "Delete Notification" escape %}',
         onSuccess: function(data) {
             updateNotificationTables();
         }
@@ -98,4 +94,4 @@ $("#history-table").on('click', '.notification-delete', function() {
 });
 
 enableSidebar('notifications');
-{% endblock %}
+{% endblock js_ready %}

@@ -2,33 +2,32 @@
 {% load static %}
 {% load plugin_extras %}
 {% load inventree_extras %}
-{% load status_codes %}
+{% load generic %}
 {% load i18n %}
 {% load l10n %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Stock Item" %} - {{ item }}
-{% endblock %}
+{% endblock page_title %}
 
 {% block breadcrumbs %}
 <a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><span class="fas fa-bars"></span></a>
 {% include 'stock/loc_link.html' with location=item.location %}
-{% endblock %}
+{% endblock breadcrumbs %}
 
 {% block breadcrumb_tree %}
 <div id="breadcrumb-tree"></div>
 {% endblock breadcrumb_tree %}
 
 {% block heading %}
-    {% trans "Stock Item" %}: {{ item.part.full_name}}
+    {% trans "Stock Item" %}: {{ item.part.full_name }}
 {% endblock heading %}
 
 {% block actions %}
 
-{% if user.is_staff and roles.stock.change %}
-{% url 'admin:stock_stockitem_change' item.pk as url %}
+{% admin_url user "stock.stockitem" item.pk as url %}
 {% include "admin_button.html" with url=url %}
-{% endif %}
+
 {% mixin_available "locate" as locate_available %}
 {% if plugins_enabled and locate_available %}
 <button id='locate-item-button' title='{% trans "Locate stock item" %}' class='btn btn-outline-secondary' typy='button'>
@@ -131,7 +130,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.preview.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
+<img class='part-thumb' alt='{% trans "Image" %}' {% if item.part.image %}src="{{ item.part.image.preview.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
 {% endblock thumbnail %}
 
 {% block details %}
@@ -155,13 +154,8 @@
         </td>
     </tr>
 
-    {% if item.barcode_hash %}
-    <tr>
-        <td><span class='fas fa-barcode'></span></td>
-        <td>{% trans "Barcode Identifier" %}</td>
-        <td {% if item.barcode_data %}title='{{ item.barcode_data }}'{% endif %}>{{ item.barcode_hash }}</td>
-    </tr>
-    {% endif %}
+    {% include "barcode_data.html" with instance=item %}
+
     {% if item.batch %}
     <tr>
         <td><span class='fas fa-layer-group'></span></td>
@@ -187,7 +181,10 @@
     <tr>
         <td><span class='fas fa-dollar-sign'></span></td>
         <td>{% trans "Purchase Price" %}</td>
-        <td>{{ item.purchase_price }}</td>
+        <td>
+            {% render_currency item.purchase_price %}
+            {% if item.part.units %} / {{ item.part.units }}{% endif %}
+        </td>
     </tr>
     {% endif %}
     {% if item.parent %}
@@ -201,7 +198,7 @@
     <tr>
         <td><span class='fas fa-link'></span>
         <td>{% trans "External Link" %}</td>
-        <td><a href="{{ item.link }}">{{ item.link }}</a></td>
+        <td>{% include 'clip_link.html' with link=item.link new_window=True %}</td>
     </tr>
     {% endif %}
     {% if item.supplier_part.manufacturer_part %}
@@ -263,6 +260,12 @@
 
 <div class='info-messages'>
 
+    {% if not item.in_stock %}
+    <div class='alert alert-block alert-danger'>
+        <span class='fas fa-info-circle'></span> {% trans "This stock item is unavailable" %}
+    </div>
+    {% endif %}
+
     {% if item.is_building %}
     <div class='alert alert-block alert-info'>
         {% trans "This stock item is in production and cannot be edited." %}<br>
@@ -277,13 +280,7 @@
     </div>
     {% endif %}
 
-    {% if item.hasRequiredTests and not item.passedAllRequiredTests %}
-    <div class='alert alert-block alert-danger'>
-        {% trans "This stock item has not passed all required tests" %}
-    </div>
-    {% endif %}
-
-    {% for allocation in item.sales_order_allocations.all %}
+    {% for allocation in item.get_sales_order_allocations.all %}
     <div class='alert alert-block alert-info'>
         {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
         {% decimal allocation.quantity as qty %}
@@ -298,12 +295,6 @@
         {% trans "This stock item is allocated to Build Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
     </div>
     {% endfor %}
-
-    {% if item.serialized %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
-    </div>
-    {% endif %}
 </div>
 {% endblock details %}
 
@@ -317,7 +308,7 @@
             <h5><span class='fas fa-hashtag'></span></h5>
         </td>
         <td>
-            <h5>{% trans "Serial Number" %}</h5>
+            <h5 title='{% trans "This stock item is serialized. It has a unique serial number and the quantity cannot be adjusted" %}'>{% trans "Serial Number" %}</h5>
         </td>
         <td><h5>
             {{ item.serial }}
@@ -345,7 +336,11 @@
             <h5><div class='fas fa-boxes'></div></h5>
         </td>
         <td>
+            {% if item.in_stock %}
             <h5>{% trans "Available Quantity" %}</h5>
+            {% else %}
+            <h5>{% trans "Quantity" %}</h5>
+            {% endif %}
         </td>
         <td>
             <h5>{% if item.quantity != available %}{% decimal available %} / {% endif %}{% decimal item.quantity %} {% include "part/part_units.html" with part=item.part %}</h5>
@@ -362,11 +357,22 @@
             <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
         </td>
     </tr>
+    {% elif item.consumed_by %}
+    <tr>
+        <td><span class='fas fa-tools'></span></td>
+        <td>{% trans "Consumed By" %}</td>
+        <td><a href='{% url "build-detail" item.consumed_by.pk %}'>{{ item.consumed_by }}</td>
+    </tr>
     {% elif item.sales_order %}
     <tr>
-        <td><span class='fas fa-user-tie'></span></td>
+        <td><span class='fas fa-th-list'></span></td>
         <td>{% trans "Sales Order" %}</td>
-        <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
+        <td>
+            <a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a>
+            {% if item.sales_order.customer %}
+            - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a>
+            {% endif %}
+        </td>
     </tr>
     {% else %}
     {% if allocated_to_sales_orders %}
@@ -410,7 +416,7 @@
             {% if item.passedAllRequiredTests %}
             <span class='fas fa-check-circle float-right icon-green'></span>
             {% else %}
-            <span class='fas fa-times-circle float-right icon-red'></span>
+            <span class='fas fa-times-circle float-right icon-red' title='{% trans "This stock item has not passed all required tests" %}'></span>
             {% endif %}
         </td>
     </tr>
@@ -419,7 +425,7 @@
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
-        <td>{% stock_status_label item.status %}</td>
+        <td>{% status_label 'stock' item.status %}</td>
     </tr>
     {% if item.expiry_date %}
     <tr>
@@ -450,10 +456,8 @@
         {% endif %}
     </tr>
 
-
 </table>
 {% endblock details_right %}
-
 
 {% block js_ready %}
 {{ block.super }}
@@ -490,11 +494,20 @@ $('#stock-uninstall').click(function() {
 });
 
 $("#stock-test-report").click(function() {
-    printTestReports([{{ item.pk }}]);
+    printReports({
+        items: [{{ item.pk }}],
+        key: 'item',
+        url: '{% url "api-stockitem-testreport-list" %}',
+    });
 });
 
 $("#print-label").click(function() {
-    printStockItemLabels([{{ item.pk }}]);
+    printLabels({
+        items: [{{ item.pk }}],
+        singular_name: '{% trans "stock item" escape %}',
+        url: '{% url "api-stockitem-label-list" %}',
+        key: 'item',
+    });
 });
 
 {% if roles.stock.change %}
@@ -516,27 +529,27 @@ $('#stock-edit-status').click(function () {
             status: {},
         },
         reload: true,
-        title: '{% trans "Edit Stock Status" %}',
+        title: '{% trans "Edit Stock Status" escape %}',
     });
 });
 
 {% endif %}
 
+{% if barcodes %}
 $("#show-qr-code").click(function() {
-    launchModalForm("{% url 'stock-item-qr' item.id %}",
-    {
-        no_post: true,
-    });
+    showQRDialog(
+        '{% trans "Stock Item QR Code" escape %}',
+        '{"stockitem": {{ item.pk }} }',
+    );
 });
 
-{% if barcodes %}
 $("#barcode-link").click(function() {
     linkBarcodeDialog(
         {
             stockitem: {{ item.pk }},
         },
         {
-            title: '{% trans "Link Barcode to Stock Item" %}',
+            title: '{% trans "Link Barcode to Stock Item" escape %}',
         }
     );
 });
@@ -612,7 +625,7 @@ $("#stock-convert").click(function() {
         '{% url "api-stock-item-convert" item.pk %}',
         {
             method: 'POST',
-            title: '{% trans "Convert Stock Item" %}',
+            title: '{% trans "Convert Stock Item" escape %}',
             preFormContent: html,
             reload: true,
             fields: {
@@ -636,11 +649,17 @@ $("#stock-return-from-customer").click(function() {
                 {% if item.part.default_location %}
                 value: {{ item.part.default_location.pk }},
                 {% endif %}
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
             },
-            notes: {},
+            notes: {
+                icon: 'fa-sticky-note',
+            },
         },
         method: 'POST',
-        title: '{% trans "Return to Stock" %}',
+        title: '{% trans "Return to Stock" escape %}',
         reload: true,
     });
 
@@ -697,4 +716,4 @@ enableBreadcrumbTree({
     }
 });
 
-{% endblock %}
+{% endblock js_ready %}

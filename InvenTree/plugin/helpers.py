@@ -2,9 +2,9 @@
 
 import inspect
 import logging
+import os
 import pathlib
 import pkgutil
-import subprocess
 import sysconfig
 import traceback
 from importlib.metadata import entry_points
@@ -12,7 +12,7 @@ from importlib.metadata import entry_points
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 logger = logging.getLogger('inventree')
 
@@ -25,7 +25,7 @@ class IntegrationPluginError(Exception):
         """Init a plugin error.
 
         Args:
-            path: Path on which the error occured - used to find out which plugin it was
+            path: Path on which the error occurred - used to find out which plugin it was
             message: The original error message
         """
         self.path = path
@@ -41,11 +41,13 @@ class MixinImplementationError(ValueError):
 
     Mostly raised if constant is missing
     """
+
     pass
 
 
 class MixinNotImplementedError(NotImplementedError):
     """Error if necessary mixin function was not overwritten."""
+
     pass
 
 
@@ -64,7 +66,7 @@ def log_error(error, reference: str = 'general'):
 def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: str = ''):
     """Handles an error and casts it as an IntegrationPluginError."""
     package_path = traceback.extract_tb(error.__traceback__)[-1].filename
-    install_path = sysconfig.get_paths()["purelib"]
+    install_path = sysconfig.get_paths()['purelib']
 
     try:
         package_name = pathlib.Path(package_path).relative_to(install_path).parts[0]
@@ -73,7 +75,9 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
         try:
             path_obj = pathlib.Path(package_path).relative_to(settings.BASE_DIR)
             path_parts = [*path_obj.parts]
-            path_parts[-1] = path_parts[-1].replace(path_obj.suffix, '')  # remove suffix
+            path_parts[-1] = path_parts[-1].replace(
+                path_obj.suffix, ''
+            )  # remove suffix
 
             # remove path prefixes
             if path_parts[0] == 'plugin':
@@ -94,7 +98,11 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
     if do_raise:
         # do a straight raise if we are playing with environment variables at execution time, ignore the broken sample
-        if settings.TESTING_ENV and package_name != 'integration.broken_sample' and isinstance(error, IntegrityError):
+        if (
+            settings.TESTING_ENV
+            and package_name != 'integration.broken_sample'
+            and isinstance(error, IntegrityError)
+        ):
             raise error  # pragma: no cover
 
         raise IntegrationPluginError(package_name, str(error))
@@ -103,81 +111,57 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 def get_entrypoints():
     """Returns list for entrypoints for InvenTree plugins."""
     return entry_points().get('inventree_plugins', [])
+
+
 # endregion
 
 
 # region git-helpers
 def get_git_log(path):
     """Get dict with info of the last commit to file named in path."""
-    from plugin import registry
+    import datetime
+
+    from dulwich.repo import NotGitRepository, Repo
+
+    from InvenTree.ready import isInTestMode
 
     output = None
-    if registry.git_is_modern:
-        path = path.replace(str(settings.BASE_DIR.parent), '')[1:]
-        command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
+    path = os.path.abspath(path)
+
+    if os.path.exists(path) and os.path.isfile(path):
+        path = os.path.dirname(path)
+
+    # only do this if we are not in test mode
+    if not isInTestMode():  # pragma: no cover
         try:
-            output = str(subprocess.check_output(command, cwd=settings.BASE_DIR.parent), 'utf-8')[1:-1]
-            if output:
-                output = output.split('\n')
-        except subprocess.CalledProcessError:  # pragma: no cover
-            pass
-        except FileNotFoundError:  # pragma: no cover
-            # Most likely the system does not have 'git' installed
+            repo = Repo(path)
+            head = repo.head()
+            commit = repo[head]
+
+            output = [
+                head.decode(),
+                commit.author.decode().split('<')[0][:-1],
+                commit.author.decode().split('<')[1][:-1],
+                datetime.datetime.fromtimestamp(commit.author_time).isoformat(),
+                commit.message.decode().split('\n')[0],
+            ]
+        except KeyError as err:
+            logger.debug('No HEAD tag found in git repo at path %s', path)
+        except NotGitRepository:
             pass
 
     if not output:
-        output = 7 * ['']  # pragma: no cover
+        output = 5 * ['']  # pragma: no cover
 
-    return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
-
-
-def check_git_version():
-    """Returns if the current git version supports modern features."""
-    # get version string
-    try:
-        output = str(subprocess.check_output(['git', '--version'], cwd=settings.BASE_DIR.parent), 'utf-8')
-    except subprocess.CalledProcessError:  # pragma: no cover
-        return False
-    except FileNotFoundError:  # pragma: no cover
-        # Most likely the system does not have 'git' installed
-        return False
-
-    # process version string
-    try:
-        version = output[12:-1].split(".")
-        if len(version) > 1 and version[0] == '2':
-            if len(version) > 2 and int(version[1]) >= 22:
-                return True
-    except ValueError:  # pragma: no cover
-        pass
-
-    return False  # pragma: no cover
+    return {
+        'hash': output[0],
+        'author': output[1],
+        'mail': output[2],
+        'date': output[3],
+        'message': output[4],
+    }
 
 
-class GitStatus:
-    """Class for resolving git gpg singing state."""
-
-    class Definition:
-        """Definition of a git gpg sing state."""
-
-        key: str = 'N'
-        status: int = 2
-        msg: str = ''
-
-        def __init__(self, key: str = 'N', status: int = 2, msg: str = '') -> None:
-            """Define a git Status -> needed for lookup."""
-            self.key = key
-            self.status = status
-            self.msg = msg
-
-    N = Definition(key='N', status=2, msg='no signature',)
-    G = Definition(key='G', status=0, msg='valid signature',)
-    B = Definition(key='B', status=2, msg='bad signature',)
-    U = Definition(key='U', status=1, msg='good signature, unknown validity',)
-    X = Definition(key='X', status=1, msg='good signature, expired',)
-    Y = Definition(key='Y', status=1, msg='good signature, expired key',)
-    R = Definition(key='R', status=2, msg='good signature, revoked key',)
-    E = Definition(key='E', status=1, msg='cannot be checked',)
 # endregion
 
 
@@ -234,6 +218,8 @@ def get_plugins(pkg, baseclass, path=None):
                 plugins.append(plugin)
 
     return plugins
+
+
 # endregion
 
 
@@ -243,7 +229,9 @@ def render_template(plugin, template_file, context=None):
     try:
         tmp = template.loader.get_template(template_file)
     except template.TemplateDoesNotExist:
-        logger.error(f"Plugin {plugin.slug} could not locate template '{template_file}'")
+        logger.exception(
+            "Plugin %s could not locate template '%s'", plugin.slug, template_file
+        )
 
         return f"""
         <div class='alert alert-block alert-danger'>
@@ -262,5 +250,6 @@ def render_text(text, context=None):
     ctx = template.Context(context)
 
     return template.Template(text).render(ctx)
+
 
 # endregion

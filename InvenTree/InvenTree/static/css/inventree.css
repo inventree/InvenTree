@@ -12,10 +12,13 @@
     --label-yellow: #fdc82a;
 
     --bs-body-color: #68686a;
+
+    --scanner-upscale: 5;
+    --scanner-margin: 10%;
 }
 
 main {
-    overflow-x: clip;
+    overflow-x: auto;
 }
 
 .login-screen {
@@ -100,6 +103,10 @@ main {
     top: 0px;
     left: 0px;
     font-size: 110%;
+}
+
+.bg-qr-code {
+    background-color: #FFF !important;
 }
 
 .qr-code {
@@ -216,8 +223,7 @@ main {
 }
 
 .sub-table {
-    margin-left: 45px;
-    margin-right: 45px;
+    margin-left: 60px;
 }
 
 .detail-icon .glyphicon {
@@ -263,10 +269,6 @@ main {
 }
 
 /* Styles for table buttons and filtering */
-.button-toolbar .btn {
-    margin-left: 1px;
-    margin-right: 1px;
-}
 
 .filter-list {
     display: inline-block;
@@ -298,29 +300,24 @@ main {
 .filter-tag {
     display: inline-block;
     *display: inline;
-    zoom: 1;
-    padding-top: 3px;
-    padding-left: 3px;
-    padding-right: 3px;
-    border: 1px solid #aaa;
-    border-radius: 3px;
-    background: #eee;
-    margin: 1px;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin: 5px;
+    padding: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    color: var(--bs-body-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--secondary-color);
     white-space: nowrap;
 }
 
 .filter-button {
-    padding: 2px;
-    padding-left: 4px;
-    padding-right: 4px;
+    padding: 6px;
 }
 
 .filter-input {
     display: inline-block;
     *display: inline;
-    zoom: 1;
 }
 
 .filter-tag:hover {
@@ -711,6 +708,33 @@ input[type="submit"] {
     margin-bottom: 10px;
 }
 
+/* Make barcode scanner responsive and performant */
+#barcode_scan_video video {
+    width: calc(100% * var(--scanner-upscale)) !important;
+    transform: scale(calc(1 / var(--scanner-upscale)));
+    margin: calc(-100% * (var(--scanner-upscale) - 1) / 2);
+    display: inline-block !important;
+}
+
+@-moz-document url-prefix() {
+    #barcode_scan_video video {
+        margin-top: calc(-100% * (var(--scanner-upscale) - 1) / 2 + 50%);
+        margin-bottom: calc(-100% * (var(--scanner-upscale) - 1) / 2 + 50%);
+    }
+
+    @media (pointer:coarse) {
+        #barcode_scan_video video {
+            margin-top: calc(-100% * (var(--scanner-upscale)) / 2 - 20%);
+            margin-bottom: calc(-100% * (var(--scanner-upscale)) / 2 - 20%);
+        }
+    }
+}
+
+#barcode_scan_video #qr-shaded-region {
+    border: none !important;
+    margin: var(--scanner-margin);
+}
+
 .sidebar-list-group-item {
     background-color: var(--secondary-color);
     color: var(--bs-body-color);
@@ -756,6 +780,12 @@ input[type="submit"] {
 
 .alert-block {
     display: block;
+    padding: 0.75rem;
+}
+
+.alert-small {
+    padding: 0.35rem;
+    font-size: 75%;
 }
 
 .navbar .btn {
@@ -1039,4 +1069,35 @@ a {
 .treeview .node-icon {
     margin-left: 0.25rem;
     margin-right: 0.25rem;
+}
+
+.sso-header {
+    text-align: center;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.sso-provider-list {
+    width: 100%;
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+.sso-provider-link {
+    width: 100%;
+}
+
+.sso-provider-link a {
+    width:  100%;
+    text-align: left;
+}
+
+.flex-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.large-treeview-icon {
+    font-size: 1em;
 }

@@ -1,12 +1,14 @@
-"""Unit tests for Order views (see views.py)"""
+"""Unit tests for Order views (see views.py)."""
 
+from django.test import tag
 from django.urls import reverse
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeTestCase
 
 
 class OrderViewTestCase(InvenTreeTestCase):
-    """Base unit test class for order views"""
+    """Base unit test class for order views."""
+
     fixtures = [
         'category',
         'part',
@@ -16,6 +18,8 @@ class OrderViewTestCase(InvenTreeTestCase):
         'supplier_part',
         'stock',
         'order',
+        'sales_order',
+        'return_order',
     ]
 
     roles = [
@@ -25,18 +29,24 @@ class OrderViewTestCase(InvenTreeTestCase):
         'sales_order.change',
         'sales_order.add',
         'sales_order.delete',
+        'return_order.change',
+        'return_order.add',
+        'return_order.delete',
     ]
 
 
-class OrderListTest(OrderViewTestCase):
-    """Unit tests for the PurchaseOrder index page"""
+@tag('cui')
+class PurchaseOrderListTest(OrderViewTestCase):
+    """Unit tests for the PurchaseOrder index page."""
+
     def test_order_list(self):
-        """Tests for the PurchaseOrder index page"""
-        response = self.client.get(reverse('po-index'))
+        """Tests for the PurchaseOrder index page."""
+        response = self.client.get(reverse('purchase-order-index'))
 
         self.assertEqual(response.status_code, 200)
 
 
+@tag('cui')
 class PurchaseOrderTests(OrderViewTestCase):
     """Tests for PurchaseOrder views."""
 
@@ -49,7 +59,40 @@ class PurchaseOrderTests(OrderViewTestCase):
 
     def test_po_export(self):
         """Export PurchaseOrder."""
-        response = self.client.get(reverse('po-export', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(
+            reverse('po-export', args=(1,)),
+            headers={'x-requested-with': 'XMLHttpRequest'},
+        )
 
         # Response should be streaming-content (file download)
         self.assertIn('streaming_content', dir(response))
+
+
+@tag('cui')
+class SalesOrderViews(OrderViewTestCase):
+    """Unit tests for the SalesOrder pages."""
+
+    def test_index(self):
+        """Test the SalesOrder index page."""
+        response = self.client.get(reverse('sales-order-index'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_detail(self):
+        """Test SalesOrder detail view."""
+        response = self.client.get(reverse('so-detail', args=(1,)))
+        self.assertEqual(response.status_code, 200)
+
+
+@tag('cui')
+class ReturnOrderVIews(OrderViewTestCase):
+    """Unit tests for the ReturnOrder pages."""
+
+    def test_index(self):
+        """Test the ReturnOrder index page."""
+        response = self.client.get(reverse('return-order-index'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_detail(self):
+        """Test ReturnOrder detail view."""
+        response = self.client.get(reverse('return-order-detail', args=(1,)))
+        self.assertEqual(response.status_code, 200)

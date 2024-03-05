@@ -6,7 +6,7 @@
 
 {% block sidebar %}
 {% include "stock/location_sidebar.html" %}
-{% endblock %}
+{% endblock sidebar %}
 
 {% block breadcrumb_tree %}
 <div id="breadcrumb-tree"></div>
@@ -23,14 +23,21 @@
 {% else %}
 {% trans "Stock" %}
 {% endif %}
-{% endblock %}
+{% endblock heading %}
 
 {% block actions %}
 
 <!-- Admin view -->
-{% if location and user.is_staff and roles.stock_location.change %}
-{% url 'admin:stock_stocklocation_change' location.pk as url %}
+{% if location %}
+{% admin_url user "stock.stocklocation" location.pk as url %}
 {% include "admin_button.html" with url=url %}
+{% endif %}
+
+{% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+{% if stocktake_enable and roles.stocktake.add %}
+<button type='button' class='btn btn-outline-secondary' id='location-stocktake' title='{% trans "Perform stocktake for this stock location" %}'>
+    <span class='fas fa-clipboard-check'></span>
+</button>
 {% endif %}
 
 {% mixin_available "locate" as locate_available %}
@@ -64,7 +71,8 @@
         <span class='fas fa-print'></span> <span class='caret'></span>
     </button>
     <ul class='dropdown-menu'>
-        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-print'></span> {% trans "Print Label" %}</a>
+        <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+        <li><a class='dropdown-item' href='#' id='print-location-report'><span class='fas fa-tag'></span> {% trans "Print Location Report" %}</a></li>
     </ul>
 </div>
 {% endif %}
@@ -105,7 +113,7 @@
 {% endif %}
 {% endif %}
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block details_left %}
 <table class='table table-striped table-condensed'>
@@ -144,13 +152,7 @@
         </td>
     </tr>
     {% endif %}
-    {% if location and location.barcode_hash %}
-    <tr>
-        <td><span class='fas fa-barcode'></span></td>
-        <td>{% trans "Barcode Identifier" %}</td>
-        <td {% if location.barcode_data %}title='{{ location.barcode_data }}'{% endif %}>{{ location.barcode_hash }}</td>
-    </tr>
-    {% endif %}
+    {% include "barcode_data.html" with instance=location %}
 </table>
 {% endblock details_left %}
 
@@ -221,30 +223,40 @@
     </div>
     <div class='panel-content'>
         <div id='sublocation-button-toolbar'>
-            <div class='btn-group' role='group'>
-                <!-- Printing actions menu -->
-                {% if labels_enabled %}
-                <div class='btn-group' role='group'>
-                    <button id='location-print-options' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle="dropdown" title='{% trans "Printing Actions" %}'>
-                        <span class='fas fa-print'></span> <span class='caret'></span>
-                    </button>
-                    <ul class='dropdown-menu'>
-                        <li><a class='dropdown-item' href='#' id='multi-location-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
-                    </ul>
-                </div>
-                {% endif %}
-                {% include "filter_list.html" with id="location" %}
-            </div>
+            {% include "filter_list.html" with id="location" %}
         </div>
 
         <table class='table table-striped table-condensed' data-toolbar='#sublocation-button-toolbar' id='sublocation-table'></table>
     </div>
 </div>
 
-{% endblock %}
+{% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% settings_value "STOCKTAKE_ENABLE" as stocktake_enable %}
+    {% if stocktake_enable and roles.stocktake.add %}
+    $('#location-stocktake').click(function() {
+        generateStocktakeReport({
+            category: {
+                tree_picker: {
+                    url: '{% url "api-part-category-tree" %}',
+                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
+                },
+            },
+            location: {
+                {% if location %}value: {{ location.pk }},{% endif %}
+                tree_picker: {
+                    url: '{% url "api-location-tree" %}',
+                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
+                },
+            },
+            generate_report: {},
+            update_parts: {},
+        });
+    });
+    {% endif %}
 
     {% if plugins_enabled and location %}
     $('#locate-location-button').click(function() {
@@ -259,41 +271,34 @@
             params: {
                 {% if location %}
                 parent: {{ location.pk }},
-                {% else %}
-                parent: 'null',
                 {% endif %}
             },
             allowTreeView: true,
         });
     });
 
-    linkButtonsToSelection(
-        $('#sublocation-table'),
-        [
-            '#location-print-options',
-        ]
-    );
-
     {% if labels_enabled %}
     $('#print-label').click(function() {
 
         var locs = [{{ location.pk }}];
 
-        printStockLocationLabels(locs);
-
-    });
-
-    $('#multi-location-print-label').click(function() {
-
-        var selections = getTableData('#sublocation-table');
-
-        var locations = [];
-
-        selections.forEach(function(loc) {
-            locations.push(loc.pk);
+        printLabels({
+            items: locs,
+            singular_name: '{% trans "stock location" escape %}',
+            key: 'location',
+            url: '{% url "api-stocklocation-label-list" %}',
         });
+    });
+    {% endif %}
 
-        printStockLocationLabels(locations);
+    {% if report_enabled %}
+    $('#print-location-report').click(function() {
+
+        printReports({
+            items: [{{ location.pk }}],
+            key: 'location',
+            url: '{% url "api-stocklocation-report-list" %}',
+        });
     });
     {% endif %}
 
@@ -307,7 +312,7 @@
             {
                 onSuccess: function() {
                     showMessage(
-                        '{% trans "Scanned stock container into this location" %}',
+                        '{% trans "Scanned stock container into this location" escape %}',
                         {
                             style: 'success',
                         }
@@ -379,10 +384,10 @@
 
     {% if barcodes %}
     $('#show-qr-code').click(function() {
-        launchModalForm("{% url 'stock-location-qr' location.id %}",
-        {
-            no_post: true,
-        });
+        showQRDialog(
+            '{% trans "Stock Location QR Code" escape %}',
+            '{"stocklocation": {{ location.pk }} }'
+        );
     });
 
     $("#barcode-link").click(function() {
@@ -391,7 +396,7 @@
                 stocklocation: {{ location.pk }},
             },
             {
-                title: '{% trans "Link Barcode to Stock Location" %}',
+                title: '{% trans "Link Barcode to Stock Location" escape %}',
             }
         );
     });
@@ -401,7 +406,6 @@
             stocklocation: {{ location.pk }},
         });
     });
-
 
     {% endif %}
 
@@ -419,9 +423,6 @@
 
     onPanelLoad('stock', function() {
         loadStockTable($("#stock-table"), {
-            buttons: [
-                '#stock-options',
-            ],
             params: {
                 {% if location %}
                 location: {{ location.pk }},
@@ -430,7 +431,6 @@
                 location_detail: true,
                 supplier_part_detail: true,
             },
-            url: "{% url 'api-stock-list' %}",
         });
     });
 
@@ -452,4 +452,4 @@
         defaultIcon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
     });
 
-{% endblock %}
+{% endblock js_ready %}

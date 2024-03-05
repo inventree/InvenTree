@@ -9,7 +9,7 @@ from InvenTree.fields import InvenTreeNotesField
 from InvenTree.helpers import remove_non_printable_characters, strip_html_tags
 
 
-class CleanMixin():
+class CleanMixin:
     """Model mixin class which cleans inputs using the Mozilla bleach tools."""
 
     # Define a list of field names which will *not* be cleaned
@@ -21,13 +21,17 @@ class CleanMixin():
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def update(self, request, *args, **kwargs):
         """Override to clean data before processing it."""
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=self.clean_data(request.data), partial=partial)
+        serializer = self.get_serializer(
+            instance, data=self.clean_data(request.data), partial=partial
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
@@ -49,7 +53,6 @@ class CleanMixin():
         Ref: https://github.com/mozilla/bleach/issues/192
 
         """
-
         cleaned = strip_html_tags(data, field_name=field)
 
         # By default, newline characters are removed
@@ -61,9 +64,7 @@ class CleanMixin():
                 field = model._meta.get_field(field)
 
                 # The following field types allow newline characters
-                allow_newline = [
-                    InvenTreeNotesField,
-                ]
+                allow_newline = [InvenTreeNotesField]
 
                 for field_type in allow_newline:
                     if issubclass(type(field), field_type):
@@ -75,7 +76,9 @@ class CleanMixin():
         except FieldDoesNotExist:
             pass
 
-        cleaned = remove_non_printable_characters(cleaned, remove_newline=remove_newline)
+        cleaned = remove_non_printable_characters(
+            cleaned, remove_newline=remove_newline
+        )
 
         return cleaned
 
@@ -88,16 +91,14 @@ class CleanMixin():
         `ugly`. Prevents XSS on the server-level.
 
         Args:
-            data (dict): Data that should be sanatized.
+            data (dict): Data that should be Sanitized.
 
         Returns:
-            dict: Provided data sanatized; still in the same order.
+            dict: Provided data Sanitized; still in the same order.
         """
-
         clean_data = {}
 
         for k, v in data.items():
-
             if k in self.SAFE_FIELDS:
                 ret = v
             elif isinstance(v, str):
@@ -125,17 +126,20 @@ class CreateAPI(CleanMixin, generics.CreateAPIView):
 
 
 class RetrieveAPI(generics.RetrieveAPIView):
-    """View for retreive API."""
+    """View for retrieve API."""
+
     pass
 
 
 class RetrieveUpdateAPI(CleanMixin, generics.RetrieveUpdateAPIView):
     """View for retrieve and update API."""
+
     pass
 
 
 class CustomDestroyModelMixin:
     """This mixin was created pass the kwargs from the API to the models."""
+
     def destroy(self, request, *args, **kwargs):
         """Custom destroy method to pass kwargs."""
         instance = self.get_object()
@@ -147,11 +151,14 @@ class CustomDestroyModelMixin:
         instance.delete(**kwargs)
 
 
-class CustomRetrieveUpdateDestroyAPIView(mixins.RetrieveModelMixin,
-                                         mixins.UpdateModelMixin,
-                                         CustomDestroyModelMixin,
-                                         generics.GenericAPIView):
+class CustomRetrieveUpdateDestroyAPIView(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    CustomDestroyModelMixin,
+    generics.GenericAPIView,
+):
     """This APIView was created pass the kwargs from the API to the models."""
+
     def get(self, request, *args, **kwargs):
         """Custom get method to pass kwargs."""
         return self.retrieve(request, *args, **kwargs)

@@ -4,78 +4,28 @@
 {% load inventree_extras %}
 
 {% block page_title %}
-
-FablabBCN Inventory | {% trans "Index" %}
-{% endblock %}
+{% inventree_title %} | {% trans "Index" %}
+{% endblock page_title %}
 
 {% block breadcrumb_list %}
-{% endblock %}
+{% endblock breadcrumb_list %}
 
 {% block sidebar %}
 <!-- Sidebar data is filled dynamically for the index page-->
-{% endblock %}
+{% endblock sidebar %}
 
 {% block content %}
 
 <div id='detail-panels'>
 </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block js_ready %}
 
 {{ block.super }}
 
-function addHeaderTitle(title) {
-
-    addSidebarHeader({
-        text: title,
-    });
-}
-
-function addHeaderAction(label, title, icon, options) {
-
-    // Construct a "badge" to add to the sidebar item
-    var badge = `
-    <span id='sidebar-badge-${label}' class='sidebar-item-badge badge rounded-pill badge-right bg-dark'>
-        <span class='fas fa-spin fa-spinner'></span>
-    </span>
-    `;
-
-    addSidebarItem({
-        label: label,
-        text: title,
-        icon: icon,
-        content_after: badge
-    });
-
-    // Add a detail item to the detail item-panel
-    $("#detail-panels").append(
-        `<div class='panel panel-inventree panel-hidden' id='panel-${label}'>
-            <div class='panel-heading'>
-                <h4>${title}</h4>
-            </div>
-            <div class='panel-content'>
-                <table class='table table-condensed table-striped' id='table-${label}'></table>
-            </div>
-        </div>`
-    );
-
-    // Connect a callback to the table
-    $(`#table-${label}`).on('load-success.bs.table', function() {
-        var count = $(`#table-${label}`).bootstrapTable('getData').length;
-
-        var badge = $(`#sidebar-badge-${label}`);
-
-        badge.html(count);
-
-        if (count > 0) {
-            badge.removeClass('bg-dark');
-            badge.addClass('bg-primary');
-        }
-    });
-}
-
+{% settings_value 'HOMEPAGE_HIDE_INACTIVE' user=request.user as hide_inactive %}
 {% settings_value 'HOMEPAGE_PART_STARRED' user=request.user as setting_part_starred %}
 {% settings_value 'HOMEPAGE_CATEGORY_STARRED' user=request.user as setting_category_starred %}
 {% settings_value 'HOMEPAGE_PART_LATEST' user=request.user as setting_part_latest %}
@@ -83,20 +33,23 @@ function addHeaderAction(label, title, icon, options) {
 {% to_list setting_part_starred setting_part_latest setting_bom_validation as settings_list_part %}
 
 {% if roles.part.view and True in settings_list_part %}
-addHeaderTitle('{% trans "Parts" %}');
+addHeaderTitle('{% trans "Parts" escape %}');
 
 {% if setting_part_starred %}
-addHeaderAction('starred-parts', '{% trans "Subscribed Parts" %}', 'fa-bell');
+addHeaderAction('starred-parts', '{% trans "Subscribed Parts" escape %}', 'fa-bell');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
+    name: 'starred-parts',
     params: {
         starred: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
-    name: 'starred_parts',
 });
 {% endif %}
 
 {% if setting_category_starred %}
-addHeaderAction('starred-categories', '{% trans "Subscribed Categories" %}', 'fa-bell');
+addHeaderAction('starred-categories', '{% trans "Subscribed Categories" escape %}', 'fa-bell');
 loadPartCategoryTable($('#table-starred-categories'), {
     params: {
         starred: true,
@@ -106,21 +59,29 @@ loadPartCategoryTable($('#table-starred-categories'), {
 {% endif %}
 
 {% if setting_part_latest %}
-addHeaderAction('latest-parts', '{% trans "Latest Parts" %}', 'fa-newspaper');
+addHeaderAction('latest-parts', '{% trans "Latest Parts" escape %}', 'fa-newspaper');
 loadSimplePartTable("#table-latest-parts", "{% url 'api-part-list' %}", {
+    name: 'latest-parts',
     params: {
         ordering: "-creation_date",
-        max_results: {% settings_value "PART_RECENT_COUNT" user=request.user %},
+        created_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: 'latest_parts',
 });
 {% endif %}
 
 {% if setting_bom_validation %}
-addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" %}', 'fa-times-circle');
+addHeaderAction('bom-validation', '{% trans "BOM Waiting Validation" escape %}', 'fa-times-circle');
 loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
+    name: 'parts-invalid-bom',
     params: {
         "bom_valid": false,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: 'bom_invalid_parts',
 });
@@ -141,73 +102,86 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 {% endif %}
 
 {% if roles.stock.view %}
-
 {% if setting_stock_recent %}
-addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
+addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" escape %}', 'fa-clock');
 loadStockTable($('#table-recently-updated-stock'), {
+    disableFilters: true,
     params: {
+        in_stock: true,
         part_detail: true,
         ordering: "-updated",
-        max_results: {% settings_value "STOCK_RECENT_COUNT" user=request.user %},
+        updated_after: moment().subtract(1, 'months').format('YYYY-MM-DD'),
     },
     name: 'recently-updated-stock',
-    grouping: false,
 });
 {% endif %}
 
 {% if setting_stock_low %}
-addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-flag');
+addHeaderAction('low-stock', '{% trans "Low Stock" escape %}', 'fa-flag');
 loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
+    name: 'parts-low-stock',
     params: {
         low_stock: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: "low_stock_parts",
 });
 {% endif %}
 
 {% if setting_stock_depleted %}
-addHeaderAction('depleted-stock', '{% trans "Depleted Stock" %}', 'fa-times');
+addHeaderAction('depleted-stock', '{% trans "Depleted Stock" escape %}', 'fa-times');
 loadSimplePartTable("#table-depleted-stock", "{% url 'api-part-list' %}", {
+    name: 'parts-depleted-stock',
     params: {
         depleted_stock: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
     name: "depleted_stock_parts",
 });
 {% endif %}
 
 {% if setting_stock_needed %}
-addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" %}', 'fa-bullhorn');
-loadSimplePartTable("#table-stock-to-build", "{% url 'api-part-list' %}", {
-    params: {
-        stock_to_build: true,
-    },
-    name: "to_build_parts",
-});
-{% endif %}
+addHeaderAction('stock-to-build', '{% trans "Required for Build Orders" escape %}', 'fa-bullhorn');
 
+loadRequiredForBuildsPartsTable("#table-stock-to-build", {});
+{% endif %}
 
 {% if expiry %}
 
 {% if setting_stock_expired %}
-addHeaderAction('expired-stock', '{% trans "Expired Stock" %}', 'fa-calendar-times');
+addHeaderAction('expired-stock', '{% trans "Expired Stock" escape %}', 'fa-calendar-times');
 loadStockTable($("#table-expired-stock"), {
+    disableFilters: true,
     params: {
         expired: true,
         location_detail: true,
         part_detail: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
+    name: 'expired-stock',
 });
 {% endif %}
 
 {% if setting_stock_stale %}
-addHeaderAction('stale-stock', '{% trans "Stale Stock" %}', 'fa-stopwatch');
+addHeaderAction('stale-stock', '{% trans "Stale Stock" escape %}', 'fa-stopwatch');
 loadStockTable($("#table-stale-stock"), {
+    disableFilters: true,
     params: {
         stale: true,
         expired: false,
         location_detail: true,
         part_detail: true,
+        {% if hide_inactive %}
+        active: true,
+        {% endif %}
     },
+    name: 'stale-stock',
 });
 {% endif %}
 
@@ -219,10 +193,10 @@ loadStockTable($("#table-stale-stock"), {
 {% to_list setting_build_pending setting_build_overdue as settings_list_build %}
 
 {% if roles.build.view and True in settings_list_build %}
-addHeaderTitle('{% trans "Build Orders" %}');
+addHeaderTitle('{% trans "Build Orders" escape %}');
 
 {% if setting_build_pending %}
-addHeaderAction('build-pending', '{% trans "Build Orders In Progress" %}', 'fa-cogs');
+addHeaderAction('build-pending', '{% trans "Build Orders In Progress" escape %}', 'fa-cogs');
 loadBuildTable("#table-build-pending", {
     locale: '{{ request.LANGUAGE_CODE }}',
     params: {
@@ -233,7 +207,7 @@ loadBuildTable("#table-build-pending", {
 {% endif %}
 
 {% if setting_build_overdue %}
-addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" %}', 'fa-calendar-times');
+addHeaderAction('build-overdue', '{% trans "Overdue Build Orders" escape %}', 'fa-calendar-times');
 loadBuildTable("#table-build-overdue", {
     locale: '{{ request.LANGUAGE_CODE }}',
     params: {
@@ -250,10 +224,10 @@ loadBuildTable("#table-build-overdue", {
 {% to_list setting_po_outstanding setting_po_overdue as settings_list_po %}
 
 {% if roles.purchase_order.view and True in settings_list_po %}
-addHeaderTitle('{% trans "Purchase Orders" %}');
+addHeaderTitle('{% trans "Purchase Orders" escape %}');
 
 {% if setting_po_outstanding %}
-addHeaderAction('po-outstanding', '{% trans "Outstanding Purchase Orders" %}', 'fa-sign-in-alt');
+addHeaderAction('po-outstanding', '{% trans "Outstanding Purchase Orders" escape %}', 'fa-sign-in-alt');
 loadPurchaseOrderTable("#table-po-outstanding", {
     url: "{% url 'api-po-list' %}",
     params: {
@@ -264,7 +238,7 @@ loadPurchaseOrderTable("#table-po-outstanding", {
 {% endif %}
 
 {% if setting_po_overdue %}
-addHeaderAction('po-overdue', '{% trans "Overdue Purchase Orders" %}', 'fa-calendar-times');
+addHeaderAction('po-overdue', '{% trans "Overdue Purchase Orders" escape %}', 'fa-calendar-times');
 loadPurchaseOrderTable("#table-po-overdue", {
     url: "{% url 'api-po-list' %}",
     params: {
@@ -278,13 +252,14 @@ loadPurchaseOrderTable("#table-po-overdue", {
 
 {% settings_value 'HOMEPAGE_SO_OUTSTANDING' user=request.user as setting_so_outstanding %}
 {% settings_value 'HOMEPAGE_SO_OVERDUE' user=request.user as setting_so_overdue %}
-{% to_list setting_so_outstanding setting_so_overdue as settings_list_so %}
+{% settings_value 'HOMEPAGE_SO_SHIPMENTS_PENDING' user=request.user as setting_so_shipments_pending %}
+{% to_list setting_so_outstanding setting_so_overdue setting_so_shipments_pending as settings_list_so %}
 
 {% if roles.sales_order.view and True in settings_list_so %}
-addHeaderTitle('{% trans "Sales Orders" %}');
+addHeaderTitle('{% trans "Sales Orders" escape %}');
 
 {% if setting_so_outstanding %}
-addHeaderAction('so-outstanding', '{% trans "Outstanding Sales Orders" %}', 'fa-sign-out-alt');
+addHeaderAction('so-outstanding', '{% trans "Outstanding Sales Orders" escape %}', 'fa-sign-out-alt');
 loadSalesOrderTable("#table-so-outstanding", {
     url: "{% url 'api-so-list' %}",
     params: {
@@ -295,7 +270,7 @@ loadSalesOrderTable("#table-so-outstanding", {
 {% endif %}
 
 {% if setting_so_overdue %}
-addHeaderAction('so-overdue', '{% trans "Overdue Sales Orders" %}', 'fa-calendar-times');
+addHeaderAction('so-overdue', '{% trans "Overdue Sales Orders" escape %}', 'fa-calendar-times');
 loadSalesOrderTable("#table-so-overdue", {
     url: "{% url 'api-so-list' %}",
     params: {
@@ -305,14 +280,25 @@ loadSalesOrderTable("#table-so-overdue", {
 });
 {% endif %}
 
+{% if setting_so_shipments_pending %}
+addHeaderAction('so-shipments', '{% trans "Pending Shipments" escape %}', 'fa-truck-loading');
+loadSalesOrderShipmentTable("#table-so-shipments", {
+    url: "{% url 'api-so-shipment-list' %}",
+    params: {
+        shipped: false,
+    },
+    show_so_reference: true,
+});
+{% endif %}
+
 {% endif %}
 
 {% settings_value 'HOMEPAGE_NEWS' user=request.user as setting_news %}
 {% if setting_news and user.is_staff %}
 
-addHeaderTitle('{% trans "InvenTree News" %}');
+addHeaderTitle('{% trans "InvenTree News" escape %}');
 
-addHeaderAction('news', '{% trans "Current News" %}', 'fa-newspaper');
+addHeaderAction('news', '{% trans "Current News" escape %}', 'fa-newspaper');
 loadNewsFeedTable("#table-news", {
     url: "{% url 'api-news-list' %}",
 });
@@ -325,4 +311,4 @@ enableSidebar(
     }
 );
 
-{% endblock %}
+{% endblock js_ready %}

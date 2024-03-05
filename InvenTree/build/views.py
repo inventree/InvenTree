@@ -34,16 +34,10 @@ class BuildDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
         build = self.get_object()
 
-        ctx['bom_price'] = build.part.get_price_info(build.quantity, buy=False)
         ctx['BuildStatus'] = BuildStatus
-        ctx['sub_build_count'] = build.sub_build_count()
 
         part = build.part
-        bom_items = build.bom_items
 
         ctx['part'] = part
-        ctx['bom_items'] = bom_items
-        ctx['has_tracked_bom_items'] = build.has_tracked_bom_items()
-        ctx['has_untracked_bom_items'] = build.has_untracked_bom_items()
 
         return ctx

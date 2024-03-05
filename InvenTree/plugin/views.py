@@ -21,13 +21,16 @@ class InvenTreePluginViewMixin:
         panels = []
 
         for plug in registry.with_mixin('panel', active=True):
-
             try:
                 panels += plug.render_panels(self, self.request, ctx)
             except Exception:
                 # Log the error to the database
                 log_error(self.request.path)
-                logger.error(f"Plugin '{plug.slug}' could not render custom panels at '{self.request.path}'")
+                logger.exception(
+                    "Plugin '%s' could not render custom panels at '%s'",
+                    plug.slug,
+                    self.request.path,
+                )
 
         return panels
 
@@ -36,6 +39,6 @@ class InvenTreePluginViewMixin:
         ctx = super().get_context_data(**kwargs)
 
         if settings.PLUGINS_ENABLED:
-            ctx['plugin_panels'] = self.get_plugin_panels(ctx)
+            ctx['plugin_panels'] = self.get_plugin_panels(ctx.copy())
 
         return ctx

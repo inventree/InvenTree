@@ -1,0 +1,40 @@
+
+<div class='md-typeset__scrollwrap'>
+    <div class='md-typeset__table'>
+        <table>
+            <thead>
+                <tr>
+                    <th><span class='fas fa-clipboard-list'></span> Release</th>
+                    <th><span class='fas fa-calendar-alt'></span> Date</th>
+                    <th><span class='fab fa-github'></span> GitHub</th>
+                    <th><span class='fab fa-docker'></span> Docker</th>
+                </tr>
+            </thead>
+            <tbody>
+
+{% for release in config.releases %}
+<tr>
+    <td>
+        {% if release.local_path %}
+        <a href="../{{ release.tag_name }}">{{ release.tag_name }}</a>
+        {% else %}
+        {{ release.tag_name }}
+        {% endif %}
+    </td>
+    <td>{{ release.date }}</td>
+    <td>
+        <a href="https://github.com/inventree/InvenTree/releases/tag/{{ release.tag_name }}">{{ release.tag_name }}</a>
+    </td>
+    <td>
+        {% if release.docker %}
+        <a href="https://hub.docker.com/r/inventree/inventree/tags">inventree/inventree:{{ release.tag_name }}</a>
+        {% else %}
+        <em>Not available for this release</em>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>

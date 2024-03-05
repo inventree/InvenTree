@@ -4,12 +4,8 @@ In particular these views provide base functionality for rendering Django forms
 as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 
-import json
-
-from django.conf import settings
 from django.contrib.auth import password_validation
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-                                        PermissionRequiredMixin)
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
@@ -18,27 +14,24 @@ from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 from django.views.generic.base import RedirectView, TemplateView
 
 from allauth.account.forms import AddEmailForm
 from allauth.account.models import EmailAddress
-from allauth.account.views import (EmailView, LoginView,
-                                   PasswordResetFromKeyView)
+from allauth.account.views import EmailView, LoginView, PasswordResetFromKeyView
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
-from allauth_2fa.views import TwoFactorRemove
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
-from common.models import ColorTheme, InvenTreeSetting
-from common.settings import currency_code_default, currency_codes
+import common.models as common_models
+import common.settings as common_settings
 from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
 from .forms import EditUserForm, SetPasswordForm
-from .helpers import remove_non_printable_characters, strip_html_tags
+from .helpers import is_ajax, remove_non_printable_characters, strip_html_tags
 
 
 def auth_request(request):
@@ -48,8 +41,7 @@ def auth_request(request):
     """
     if request.user.is_authenticated:
         return HttpResponse(status=200)
-    else:
-        return HttpResponse(status=403)
+    return HttpResponse(status=403)
 
 
 class InvenTreeRoleMixin(PermissionRequiredMixin):
@@ -110,7 +102,6 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
             return True
 
         for required in roles_required:
-
             (role, permission) = required.split('.')
 
             if role not in RuleSet.RULESET_NAMES:
@@ -144,12 +135,14 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
             app_label = model._meta.app_label
             model_name = model._meta.model_name
 
-            table = f"{app_label}_{model_name}"
+            table = f'{app_label}_{model_name}'
 
             permission = self.get_permission_class()
 
             if not permission:
-                raise AttributeError(f"permission_class not defined for {type(self).__name__}")
+                raise AttributeError(
+                    f'permission_class not defined for {type(self).__name__}'
+                )
 
             # Check if the user has the required permission
             return RuleSet.check_table_permission(user, table, permission)
@@ -185,11 +178,9 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
             UpdateView: 'change',
             DeleteView: 'delete',
             AjaxUpdateView: 'change',
-            AjaxCreateView: 'add',
         }
 
         for view_class in permission_map.keys():
-
             if issubclass(type(self), view_class):
                 return permission_map[view_class]
 
@@ -228,8 +219,7 @@ class AjaxMixin(InvenTreeRoleMixin):
         """
         if method == 'POST':
             return self.request.POST.get(name, None)
-        else:
-            return self.request.GET.get(name, None)
+        return self.request.GET.get(name, None)
 
     def get_data(self):
         """Get extra context data (default implementation is empty dict).
@@ -266,7 +256,7 @@ class AjaxMixin(InvenTreeRoleMixin):
         if not data:
             data = {}
 
-        if not request.is_ajax():
+        if not is_ajax(request):
             return HttpResponseRedirect('/')
 
         if context is None:
@@ -290,9 +280,7 @@ class AjaxMixin(InvenTreeRoleMixin):
         data['title'] = self.get_form_title()
 
         data['html_form'] = render_to_string(
-            self.ajax_template_name,
-            context,
-            request=request
+            self.ajax_template_name, context, request=request
         )
 
         # Custom feedback`data
@@ -322,115 +310,6 @@ class AjaxView(AjaxMixin, View):
         return self.renderJsonResponse(request)
 
 
-class QRCodeView(AjaxView):
-    """An 'AJAXified' view for displaying a QR code.
-
-    Subclasses should implement the get_qr_data(self) function.
-    """
-
-    ajax_template_name = "qr_code.html"
-
-    def get(self, request, *args, **kwargs):
-        """Return json with qr-code data."""
-        self.request = request
-        self.pk = self.kwargs['pk']
-        return self.renderJsonResponse(request, None, context=self.get_context_data())
-
-    def get_qr_data(self):
-        """Returns the text object to render to a QR code.
-
-        The actual rendering will be handled by the template
-        """
-        return None
-
-    def get_context_data(self):
-        """Get context data for passing to the rendering template.
-
-        Explicity passes the parameter 'qr_data'
-        """
-        context = {}
-
-        qr = self.get_qr_data()
-
-        if qr:
-            context['qr_data'] = qr
-        else:
-            context['error_msg'] = 'Error generating QR code'
-
-        return context
-
-
-class AjaxCreateView(AjaxMixin, CreateView):
-    """An 'AJAXified' CreateView for creating a new object in the db.
-
-    - Returns a form in JSON format (for delivery to a modal window)
-    - Handles form validation via AJAX POST requests
-    """
-
-    def get(self, request, *args, **kwargs):
-        """Creates form with initial data, and renders JSON response."""
-        super(CreateView, self).get(request, *args, **kwargs)
-
-        self.request = request
-        form = self.get_form()
-        return self.renderJsonResponse(request, form)
-
-    def save(self, form):
-        """Method for actually saving the form to the database.
-
-        Default implementation is very simple, but can be overridden if required.
-        """
-        self.object = form.save()
-
-        return self.object
-
-    def post(self, request, *args, **kwargs):
-        """Responds to form POST. Validates POST data and returns status info.
-
-        - Validate POST form data
-        - If valid, save form
-        - Return status info (success / failure)
-        """
-        self.request = request
-        self.form = self.get_form()
-
-        # Perform initial form validation
-        self.form.is_valid()
-
-        # Perform custom validation (no object can be provided yet)
-        self.validate(None, self.form)
-
-        valid = self.form.is_valid()
-
-        # Extra JSON data sent alongside form
-        data = {
-            'form_valid': valid,
-            'form_errors': self.form.errors.as_json(),
-            'non_field_errors': self.form.non_field_errors().as_json(),
-        }
-
-        # Add in any extra class data
-        for value, key in enumerate(self.get_data()):
-            data[key] = value
-
-        if valid:
-
-            # Save the object to the database
-            self.object = self.save(self.form)
-
-            if self.object:
-                # Return the PK of the newly-created object
-                data['pk'] = self.object.pk
-                data['text'] = str(self.object)
-
-                try:
-                    data['url'] = self.object.get_absolute_url()
-                except AttributeError:
-                    pass
-
-        return self.renderJsonResponse(request, self.form, data)
-
-
 class AjaxUpdateView(AjaxMixin, UpdateView):
     """An 'AJAXified' UpdateView for updating an object in the db.
 
@@ -446,14 +325,16 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         """
         super(UpdateView, self).get(request, *args, **kwargs)
 
-        return self.renderJsonResponse(request, self.get_form(), context=self.get_context_data())
+        return self.renderJsonResponse(
+            request, self.get_form(), context=self.get_context_data()
+        )
 
     def save(self, object, form, **kwargs):
         """Method for updating the object in the database. Default implementation is very simple, but can be overridden if required.
 
         Args:
-            object - The current object, to be updated
-            form - The validated form
+            object: The current object, to be updated
+            form: The validated form
 
         Returns:
             object instance for supplied form
@@ -468,7 +349,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
         - Updates model with POST field data
         - Performs form and object validation
         - If errors exist, re-render the form
-        - Otherwise, return sucess status
+        - Otherwise, return success status
         """
         self.request = request
 
@@ -496,8 +377,7 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             data[key] = value
 
         if valid:
-
-            # Save the updated objec to the database
+            # Save the updated object to the database
             self.save(self.object, form)
 
             self.object = self.get_object()
@@ -516,8 +396,8 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
 class EditUserView(AjaxUpdateView):
     """View for editing user information."""
 
-    ajax_template_name = "modal_form.html"
-    ajax_form_title = _("Edit User Information")
+    ajax_template_name = 'modal_form.html'
+    ajax_form_title = _('Edit User Information')
     form_class = EditUserForm
 
     def get_object(self):
@@ -528,8 +408,8 @@ class EditUserView(AjaxUpdateView):
 class SetPasswordView(AjaxUpdateView):
     """View for setting user password."""
 
-    ajax_template_name = "InvenTree/password.html"
-    ajax_form_title = _("Set Password")
+    ajax_template_name = 'InvenTree/password.html'
+    ajax_form_title = _('Set Password')
     form_class = SetPasswordForm
 
     def get_object(self):
@@ -558,8 +438,7 @@ class SetPasswordView(AjaxUpdateView):
 
         if valid:
             # Old password must be correct
-
-            if not user.check_password(old_password):
+            if user.has_usable_password() and not user.check_password(old_password):
                 form.add_error('old_password', _('Wrong password provided'))
                 valid = False
 
@@ -612,54 +491,52 @@ class SearchView(TemplateView):
 class DynamicJsView(TemplateView):
     """View for returning javacsript files, which instead of being served dynamically, are passed through the django translation engine!"""
 
-    template_name = ""
+    template_name = ''
     content_type = 'text/javascript'
 
 
 class SettingsView(TemplateView):
     """View for configuring User settings."""
 
-    template_name = "InvenTree/settings/settings.html"
+    template_name = 'InvenTree/settings/settings.html'
 
     def get_context_data(self, **kwargs):
         """Add data for template."""
         ctx = super().get_context_data(**kwargs).copy()
 
-        ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
+        ctx['settings'] = common_models.InvenTreeSetting.objects.all().order_by('key')
 
-        ctx["base_currency"] = currency_code_default()
-        ctx["currencies"] = currency_codes
+        ctx['base_currency'] = common_settings.currency_code_default()
+        ctx['currencies'] = common_settings.currency_codes
 
-        ctx["rates"] = Rate.objects.filter(backend="InvenTreeExchange")
+        ctx['rates'] = Rate.objects.filter(backend='InvenTreeExchange')
 
-        ctx["categories"] = PartCategory.objects.all().order_by('tree_id', 'lft', 'name')
+        ctx['categories'] = PartCategory.objects.all().order_by(
+            'tree_id', 'lft', 'name'
+        )
 
         # When were the rates last updated?
         try:
-            backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
-            ctx["rates_updated"] = backend.last_update
+            backend = ExchangeBackend.objects.filter(name='InvenTreeExchange')
+            if backend.exists():
+                backend = backend.first()
+                ctx['rates_updated'] = backend.last_update
         except Exception:
-            ctx["rates_updated"] = None
-
-        # load locale stats
-        STAT_FILE = settings.BASE_DIR.joinpath('InvenTree/locale_stats.json').absolute()
-
-        try:
-            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
-        except Exception:
-            ctx["locale_stats"] = {}
+            ctx['rates_updated'] = None
 
         # Forms and context for allauth
         ctx['add_email_form'] = AddEmailForm
-        ctx["can_add_email"] = EmailAddress.objects.can_add_email(self.request.user)
+        ctx['can_add_email'] = EmailAddress.objects.can_add_email(self.request.user)
 
         # Form and context for allauth social-accounts
-        ctx["request"] = self.request
+        ctx['request'] = self.request
         ctx['social_form'] = DisconnectForm(request=self.request)
 
         # user db sessions
         ctx['session_key'] = self.request.session.session_key
-        ctx['session_list'] = self.request.user.session_set.filter(expire_date__gt=now()).order_by('-last_activity')
+        ctx['session_list'] = self.request.user.session_set.filter(
+            expire_date__gt=now()
+        ).order_by('-last_activity')
 
         return ctx
 
@@ -674,20 +551,23 @@ class AllauthOverrides(LoginRequiredMixin):
 
 class CustomEmailView(AllauthOverrides, EmailView):
     """Override of allauths EmailView to always show the settings but leave the functions allow."""
-    success_url = reverse_lazy("settings")
+
+    success_url = reverse_lazy('settings')
 
 
 class CustomConnectionsView(AllauthOverrides, ConnectionsView):
     """Override of allauths ConnectionsView to always show the settings but leave the functions allow."""
-    success_url = reverse_lazy("settings")
+
+    success_url = reverse_lazy('settings')
 
 
 class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
     """Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow."""
-    success_url = reverse_lazy("account_login")
+
+    success_url = reverse_lazy('account_login')
 
 
-class UserSessionOverride():
+class UserSessionOverride:
     """Overrides sucessurl to lead to settings."""
 
     def get_success_url(self):
@@ -697,11 +577,13 @@ class UserSessionOverride():
 
 class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
     """Revert to settings after session delete."""
+
     pass
 
 
 class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
     """Revert to settings after session delete."""
+
     pass
 
 
@@ -715,25 +597,14 @@ class CustomLoginView(LoginView):
             # Initiate form
             form = self.get_form_class()(request.GET.dict(), request=request)
 
+            # Validate form data
+            form.is_valid()
+
             # Try to login
             form.full_clean()
             return form.login(request)
 
         return super().get(request, *args, **kwargs)
-
-
-class CurrencyRefreshView(RedirectView):
-    """POST endpoint to refresh / update exchange rates."""
-
-    url = reverse_lazy("settings-currencies")
-
-    def post(self, request, *args, **kwargs):
-        """On a POST request we will attempt to refresh the exchange rates."""
-        from InvenTree.tasks import offload_task, update_exchange_rates
-
-        offload_task(update_exchange_rates, force_sync=True)
-
-        return redirect(reverse_lazy('settings'))
 
 
 class AppearanceSelectView(RedirectView):
@@ -742,8 +613,10 @@ class AppearanceSelectView(RedirectView):
     def get_user_theme(self):
         """Get current user color theme."""
         try:
-            user_theme = ColorTheme.objects.filter(user=self.request.user).get()
-        except ColorTheme.DoesNotExist:
+            user_theme = common_models.ColorTheme.objects.filter(
+                user=self.request.user
+            ).get()
+        except common_models.ColorTheme.DoesNotExist:
             user_theme = None
 
         return user_theme
@@ -757,11 +630,15 @@ class AppearanceSelectView(RedirectView):
 
         # Create theme entry if user did not select one yet
         if not user_theme:
-            user_theme = ColorTheme()
+            user_theme = common_models.ColorTheme()
             user_theme.user = request.user
 
-        user_theme.name = theme
-        user_theme.save()
+        if theme:
+            try:
+                user_theme.name = theme
+                user_theme.save()
+            except Exception:
+                pass
 
         return redirect(reverse_lazy('settings'))
 
@@ -769,24 +646,18 @@ class AppearanceSelectView(RedirectView):
 class DatabaseStatsView(AjaxView):
     """View for displaying database statistics."""
 
-    ajax_template_name = "stats.html"
-    ajax_form_title = _("System Information")
+    ajax_template_name = 'stats.html'
+    ajax_form_title = _('System Information')
 
 
 class AboutView(AjaxView):
-    """A view for displaying InvenTree version information"""
+    """A view for displaying InvenTree version information."""
 
-    ajax_template_name = "about.html"
-    ajax_form_title = _("About InvenTree")
+    ajax_template_name = 'about.html'
+    ajax_form_title = _('About InvenTree')
 
 
 class NotificationsView(TemplateView):
     """View for showing notifications."""
 
-    template_name = "InvenTree/notifications/notifications.html"
-
-
-# Custom 2FA removal form to allow custom redirect URL
-class CustomTwoFactorRemove(TwoFactorRemove):
-    """Specify custom URL redirect."""
-    success_url = reverse_lazy("settings")
+    template_name = 'InvenTree/notifications/notifications.html'

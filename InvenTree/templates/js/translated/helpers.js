@@ -1,16 +1,28 @@
 {% load i18n %}
 
+/* globals
+    EasyMDE,
+    inventreeFormDataUpload,
+    inventreeGet,
+    inventreePut,
+    showApiError,
+    user_settings,
+*/
+
 /* exported
     blankImage,
     deleteButton,
     editButton,
-    formatCurrency,
     formatDecimal,
-    formatPriceRange,
     imageHoverIcon,
+    makeCopyButton,
+    makeDeleteButton,
+    makeEditButton,
     makeIconBadge,
     makeIconButton,
+    makeInfoButton,
     makeProgressBar,
+    makeRemoveButton,
     renderLink,
     sanitizeInputString,
     select2Thumbnail,
@@ -19,14 +31,69 @@
     thumbnailImage
     yesNoLabel,
     withTitle,
+    wrapButtons,
+    renderClipboard,
 */
 
-function yesNoLabel(value) {
-    if (value) {
-        return `<span class='badge rounded-pill bg-success'>{% trans "YES" %}</span>`;
+/* exported
+    makeIcon,
+    trueFalseLabel,
+    yesNoLabel,
+*/
+
+
+/*
+ * Convert a value (which may be a string) to a boolean value
+ *
+ * @param {string} value: Input value
+ * @returns {boolean} true or false
+ */
+function toBool(value) {
+
+    if (typeof value == 'string') {
+
+        if (value.length == 0) {
+            return false;
+        }
+
+        value = value.toLowerCase();
+
+        if (['true', 't', 'yes', 'y', '1', 'on', 'ok'].includes(value)) {
+            return true;
+        } else {
+            return false;
+        }
     } else {
-        return `<span class='badge rounded-pill bg-warning'>{% trans "NO" %}</span>`;
+        return value == true;
     }
+}
+
+
+function yesNoLabel(value, options={}) {
+    let text = '';
+    let color = '';
+
+    if (toBool(value)) {
+        text = options.pass || '{% trans "YES" %}';
+        color = 'bg-success';
+    } else {
+        text = options.fail || '{% trans "NO" %}';
+        color = 'bg-warning';
+    }
+
+    if (options.muted) {
+        color = 'bg-secondary';
+    }
+
+    return `<span class='badge rounded-pill ${color}'>${text}</span>`;
+}
+
+
+function trueFalseLabel(value, options={}) {
+    options.pass = '{% trans "True" %}';
+    options.fail = '{% trans "False" %}';
+
+    return yesNoLabel(value, options);
 }
 
 
@@ -40,74 +107,6 @@ function deleteButton(url, text='{% trans "Delete" %}') {
 }
 
 
-/*
- * format currency (money) value based on current settings
- *
- * Options:
- * - currency: Currency code (uses default value if none provided)
- * - locale: Locale specified (uses default value if none provided)
- * - digits: Maximum number of significant digits (default = 10)
- */
-function formatCurrency(value, options={}) {
-
-    if (value == null) {
-        return null;
-    }
-
-    var digits = options.digits || global_settings.PRICING_DECIMAL_PLACES || 6;
-
-    // Strip out any trailing zeros, etc
-    value = formatDecimal(value, digits);
-
-    // Extract default currency information
-    var currency = options.currency || global_settings.INVENTREE_DEFAULT_CURRENCY || 'USD';
-
-    // Exctract locale information
-    var locale = options.locale || navigator.language || 'en-US';
-
-
-    var formatter = new Intl.NumberFormat(
-        locale,
-        {
-            style: 'currency',
-            currency: currency,
-            maximumSignificantDigits: digits,
-        }
-    );
-
-    return formatter.format(value);
-}
-
-
-/*
- * Format a range of prices
- */
-function formatPriceRange(price_min, price_max, options={}) {
-
-    var p_min = price_min || price_max;
-    var p_max = price_max || price_min;
-
-    var quantity = options.quantity || 1;
-
-    if (p_min == null && p_max == null) {
-        return null;
-    }
-
-    p_min = parseFloat(p_min) * quantity;
-    p_max = parseFloat(p_max) * quantity;
-
-    var output = '';
-
-    output += formatCurrency(p_min, options);
-
-    if (p_min != p_max) {
-        output += ' - ';
-        output += formatCurrency(p_max, options);
-    }
-
-    return output;
-}
-
 
 /*
  * Ensure a string does not exceed a maximum length.
@@ -117,7 +116,7 @@ function formatPriceRange(price_min, price_max, options={}) {
 function shortenString(input_string, options={}) {
 
     // Maximum length can be provided via options argument, or via a user-configurable setting
-    var max_length = options.max_length || user_settings.TABLE_STRING_MAX_LENGTH;
+    var max_length = options.max_length || user_settings.TABLE_STRING_MAX_LENGTH || 100;
 
     if (!max_length || !input_string) {
         return input_string;
@@ -207,13 +206,43 @@ function select2Thumbnail(image) {
 
 
 /*
+ * Construct a simple FontAwesome icon span
+ */
+function makeIcon(icon, title='', options={}) {
+
+    let classes = options.classes || 'fas';
+
+    return `<span class='${classes} ${icon}' title='${title}'></span>`;
+}
+
+
+/*
  * Construct an 'icon badge' which floats to the right of an object
  */
-function makeIconBadge(icon, title) {
+function makeIconBadge(icon, title='', options={}) {
 
-    var html = `<span class='icon-badge fas ${icon} float-right' title='${title}'></span>`;
+    let content = options.content || '';
+
+    let html = `
+    <span class='icon-badge fas ${icon} float-right' title='${title}'>
+        ${content}
+    </span>`;
 
     return html;
+}
+
+
+/*
+ * Wrap list of buttons in a button group <div>
+ */
+function wrapButtons(buttons) {
+
+    if (!buttons) {
+        // Return empty element if no buttons are provided
+        return '';
+    }
+
+    return `<div class='btn-group float-right' role='group'>${buttons}</div>`;
 }
 
 
@@ -228,7 +257,13 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
     var html = '';
 
-    var extraProps = '';
+    var extraProps = options.extra || '';
+
+    var style = '';
+
+    if (options.hidden) {
+        style += `display: none;`;
+    }
 
     if (options.disabled) {
         extraProps += `disabled='true' `;
@@ -238,7 +273,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
         extraProps += `data-bs-toggle='collapse' href='#${options.collapseTarget}'`;
     }
 
-    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
+    html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps} style='${style}'>`;
     html += `<span class='fas ${icon}'></span>`;
     html += `</button>`;
 
@@ -247,7 +282,47 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
 
 /*
- * Render a progessbar!
+ * Helper function for making a common 'info' button
+ */
+function makeInfoButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-info-circle', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'edit' button
+ */
+function makeEditButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-edit icon-blue', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'copy' button
+ */
+function makeCopyButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-clone', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'delete' button
+ */
+function makeDeleteButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-trash-alt icon-red', cls, pk, title, options);
+}
+
+
+/*
+ * Helper function for making a common 'remove' button
+ */
+function makeRemoveButton(cls, pk, title, options={}) {
+    return makeIconButton('fa-times-circle icon-red', cls, pk, title, options);
+}
+
+
+/*
+ * Render a progressbar!
  *
  * @param value is the current value of the progress bar
  * @param maximum is the maximum value of the progress bar
@@ -307,8 +382,6 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var id = options.id || 'progress-bar';
 
-    var style = '';
-
     if (opts.max_width) {
         style += `max-width: ${options.max_width}; `;
     }
@@ -330,7 +403,7 @@ function renderLink(text, url, options={}) {
         return text;
     }
 
-    var max_length = options.max_length || 0;
+    var max_length = options.max_length || user_settings.TABLE_STRING_MAX_LENGTH || 100;
 
     if (max_length > 0) {
         text = shortenString(text, {
@@ -344,10 +417,24 @@ function renderLink(text, url, options={}) {
         extras += ` title="${url}"`;
     }
 
-    return `<a href="${url}" ${extras}>${text}</a>`;
+    if (options.download) {
+        extras += ` download`;
+    }
+
+    let suffix = '';
+    if (options.external) {
+        extras += ` target="_blank" rel="noopener noreferrer"`;
+
+        suffix = ` <i class="fas fa-external-link-alt fa-xs d-none d-xl-inline"></i>`;
+    }
+    return `<a href="${url}" ${extras}>${text}${suffix}</a>`;
 }
 
 
+/*
+ * Configure an EasyMDE editor for the given element,
+ * allowing markdown editing of the notes field.
+ */
 function setupNotesField(element, url, options={}) {
 
     var editable = options.editable || false;
@@ -387,12 +474,24 @@ function setupNotesField(element, url, options={}) {
         element: document.getElementById(element),
         initialValue: initial,
         toolbar: toolbar_icons,
+        uploadImage: true,
+        imagePathAbsolute: true,
+        imageUploadFunction: function(imageFile, onSuccess, onError) {
+            // Attempt to upload the image to the InvenTree server
+            var form_data = new FormData();
+
+            form_data.append('image', imageFile);
+
+            inventreeFormDataUpload('{% url "api-notes-image-list" %}', form_data, {
+                success: function(response) {
+                    onSuccess(response.image);
+                },
+                error: function(xhr, status, error) {
+                    onError(error);
+                }
+            });
+        },
         shortcuts: [],
-        renderingConfig: {
-            markedOptions: {
-                sanitize: true,
-            }
-        }
     });
 
 
@@ -428,12 +527,15 @@ function setupNotesField(element, url, options={}) {
 
             data[options.notes_field || 'notes'] = mde.value();
 
+            $('#save-notes').find('#save-icon').removeClass('fa-save').addClass('fa-spin fa-spinner');
+
             inventreePut(url, data, {
                 method: 'PATCH',
                 success: function(response) {
-                    showMessage('{% trans "Notes updated" %}', {style: 'success'});
+                    $('#save-notes').find('#save-icon').removeClass('fa-spin fa-spinner').addClass('fa-check-circle');
                 },
                 error: function(xhr) {
+                    $('#save-notes').find('#save-icon').removeClass('fa-spin fa-spinner').addClass('fa-times-circle icon-red');
                     showApiError(xhr, url);
                 }
             });
@@ -456,7 +558,8 @@ function sanitizeInputString(s, options={}) {
     }
 
     // Remove ASCII control characters
-    s = s.replace(/[\x01-\x1F]+/g, '');
+    // eslint-disable-next-line no-control-regex
+    s = s.replace(/[\x00-\x1F\x7F]+/g, '');
 
     // Remove Unicode control characters
     s = s.replace(/[\p{C}]+/gu, '');
@@ -464,4 +567,26 @@ function sanitizeInputString(s, options={}) {
     s = s.trim();
 
     return s;
+}
+
+/*
+ * Inserts HTML data equal to clip.html into input string
+ * Enables insertion of clipboard icons in dynamic tables
+ *
+ * clipString relies on ClipboardJS in the same manner as clip.html
+ * Thus, this functionality will break if the call to
+ * attachClipboard('.clip-btn') in script/inventree/inventree.js is altered
+ */
+function renderClipboard(s, prepend=false) {
+    if (!s || typeof s != 'string') {
+        return s;
+    }
+
+    let clipString = `<span class="d-none d-xl-inline"><button class="btn clip-btn" type="button" data-bs-toggle='tooltip' title='{% trans "copy to clipboard" %}'><em class="fas fa-copy"></em></button></span>`;
+
+    if (prepend === true) {
+        return `<div class="flex-cell">${clipString+s}</div>`;
+    } else {
+        return `<div class="flex-cell">${s+clipString}</div>`;
+    }
 }

@@ -1,16 +1,47 @@
 {% load i18n %}
 
 /* globals
+    addFieldErrorMessage,
+    constructField,
     constructForm,
+    constructFormBody,
+    createNewModal,
+    enableSubmitButton,
     exportFormatOptions,
+    formatDecimal,
+    formatPriceRange,
+    getApiEndpointOptions,
+    getFormFieldValue,
+    handleFormErrors,
+    handleFormSuccess,
     imageHoverIcon,
+    initializeRelatedField,
     inventreeGet,
+    inventreeLoad,
     inventreePut,
+    inventreeSave,
     launchModalForm,
     loadTableFilters,
+    makeDeleteButton,
+    makeEditButton,
+    makeIcon,
+    makeIconBadge,
+    makeIconButton,
+    makeInfoButton,
     makePartIcons,
+    makeRemoveButton,
+    modalSetContent,
+    partFields,
+    partGroups,
+    reloadBootstrapTable,
     renderLink,
     setupFilterList,
+    shortenString,
+    showApiError,
+    thumbnailImage,
+    updateFieldValue,
+    withTitle,
+    wrapButtons,
     yesNoLabel,
 */
 
@@ -96,12 +127,12 @@ function constructBomUploadTable(data, options={}) {
         var optional = constructRowField('optional');
         var note = constructRowField('note');
 
-        var buttons = `<div class='btn-group float-right' role='group'>`;
+        let buttons = '';
 
-        buttons += makeIconButton('fa-info-circle', 'button-row-data', idx, '{% trans "Display row data" %}');
-        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', idx, '{% trans "Remove row" %}');
+        buttons += makeInfoButton('button-row-data', idx, '{% trans "Display row data" %}');
+        buttons += makeRemoveButton('button-row-remove', idx, '{% trans "Remove row" %}');
 
-        buttons += `</div>`;
+        buttons = wrapButtons(buttons);
 
         var html = `
         <tr id='items_${idx}' class='bom-import-row' idx='${idx}'>
@@ -226,7 +257,7 @@ function submitBomTable(part_id, options={}) {
         items: rows,
     };
 
-    var options = {
+    var opts = {
         nested: {
             items: idx_values,
         }
@@ -247,7 +278,7 @@ function submitBomTable(part_id, options={}) {
             error: function(xhr) {
                 switch (xhr.status) {
                 case 400:
-                    handleFormErrors(xhr.responseJSON, fields, options);
+                    handleFormErrors(xhr.responseJSON, fields, opts);
                     break;
                 default:
                     showApiError(xhr, url);
@@ -293,7 +324,7 @@ function downloadBomTemplate(options={}) {
             $(opts.modal).modal('hide');
 
             // Download the file
-            location.href = `{% url "bom-upload-template" %}?format=${format}`;
+            location.href = `{% url "api-bom-upload-template" %}?format=${format}`;
 
         }
     });
@@ -330,9 +361,15 @@ function exportBom(part_id, options={}) {
                 required: true,
                 min_value: 0,
             },
+            substitute_part_data: {
+                label: '{% trans "Include Alternative Parts" %}',
+                help_text: '{% trans "Include alternative parts in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-substitute_part_data', false),
+            },
             parameter_data: {
                 label: '{% trans "Include Parameter Data" %}',
-                help_text: '{% trans "Include part  parameter data in exported BOM" %}',
+                help_text: '{% trans "Include part parameter data in exported BOM" %}',
                 type: 'boolean',
                 value: inventreeLoad('bom-export-parameter_data', false),
             },
@@ -366,6 +403,7 @@ function exportBom(part_id, options={}) {
             // Extract values from the form
             var field_names = [
                 'format', 'cascade', 'levels',
+                'substitute_part_data',
                 'parameter_data',
                 'stock_data',
                 'manufacturer_data',
@@ -373,7 +411,7 @@ function exportBom(part_id, options={}) {
                 'pricing_data',
             ];
 
-            var url = `/part/${part_id}/bom-download/?`;
+            var url = `/api/part/${part_id}/bom-download/?`;
 
             field_names.forEach(function(fn) {
                 var val = getFormFieldValue(fn, fields[fn], opts);
@@ -401,6 +439,7 @@ function bomItemFields() {
             hidden: true,
         },
         sub_part: {
+            icon: 'fa-shapes',
             secondary: {
                 title: '{% trans "New Part" %}',
                 fields: function() {
@@ -417,7 +456,9 @@ function bomItemFields() {
         quantity: {},
         reference: {},
         overage: {},
-        note: {},
+        note: {
+            icon: 'fa-sticky-note',
+        },
         allow_variants: {},
         inherited: {},
         consumable: {},
@@ -547,7 +588,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
         var buttons = '';
 
-        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', pk, '{% trans "Remove substitute part" %}');
+        buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove substitute part" %}');
 
         // Render a single row
         var html = `
@@ -616,7 +657,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             </div>
             `;
 
-            constructForm(`/api/bom/substitute/${pk}/`, {
+            constructForm(`{% url "api-bom-substitute-list" %}${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Remove Substitute Part" %}',
                 preFormContent: pre,
@@ -746,17 +787,17 @@ function deleteBomItems(items, options={}) {
 }
 
 
+/* Load a BOM table with some configurable options.
+ *
+ * Following options are available:
+ * editable      - Should the BOM table be editable?
+ * bom_url       - Address to request BOM data from
+ * part_url      - Address to request Part data from
+ * parent_id     - Parent ID of the owning part
+ *
+ * BOM data are retrieved from the server via AJAX query
+ */
 function loadBomTable(table, options={}) {
-    /* Load a BOM table with some configurable options.
-     *
-     * Following options are available:
-     * editable      - Should the BOM table be editable?
-     * bom_url       - Address to request BOM data from
-     * part_url      - Address to request Part data from
-     * parent_id     - Parent ID of the owning part
-     *
-     * BOM data are retrieved from the server via AJAX query
-     */
 
     var params = {
         part: options.parent_id,
@@ -775,11 +816,26 @@ function loadBomTable(table, options={}) {
         filters = loadTableFilters('bom');
     }
 
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    Object.assign(filters, params);
 
-    setupFilterList('bom', $(table));
+    setupFilterList('bom', $(table), '#filter-list-bom', {
+        custom_actions: [{
+            label: 'actions',
+            actions: [{
+                label: 'delete',
+                title: '{% trans "Delete items" %}',
+                icon: 'fa-trash-alt icon-red',
+                permission: 'part.change',
+                callback: function(data) {
+                    deleteBomItems(data, {
+                        success: function() {
+                            reloadBootstrapTable('#bom-table');
+                        }
+                    });
+                }
+            }]
+        }]
+    });
 
     function availableQuantity(row) {
 
@@ -849,6 +905,18 @@ function loadBomTable(table, options={}) {
             title: '{% trans "Part" %}',
             sortable: true,
             switchable: false,
+            sorter: function(_valA, _valB, rowA, rowB) {
+                let name_a = rowA.sub_part_detail.full_name;
+                let name_b = rowB.sub_part_detail.full_name;
+
+                if (name_a > name_b) {
+                    return 1;
+                } else if (name_a < name_b) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            },
             formatter: function(value, row) {
                 var url = `/part/${row.sub_part}/`;
                 var html = '';
@@ -934,37 +1002,11 @@ function loadBomTable(table, options={}) {
             }
 
             if (row.overage) {
-                text += `<small> (${row.overage})    </small>`;
+                text += `<small> (+${row.overage})</small>`;
             }
 
             return text;
         },
-        footerFormatter: function(data) {
-
-            // Top-level BOM count
-            var top_total = 0;
-
-            // Total BOM count
-            var all_total = 0;
-
-            data.forEach(function(row) {
-                var q = +row['quantity'] || 0;
-
-                all_total += q;
-
-                if (row.part == options.parent_id) {
-                    top_total += q;
-                }
-            });
-
-            var total = `${formatDecimal(top_total)}`;
-
-            if (top_total != all_total) {
-                total += ` / ${formatDecimal(all_total)}`;
-            }
-
-            return total;
-        }
     });
 
     cols.push({
@@ -1009,7 +1051,7 @@ function loadBomTable(table, options={}) {
 
     cols.push({
         field: 'inherited',
-        title: '{% trans "Inherited" %}',
+        title: '{% trans "Gets inherited" %}',
         searchable: false,
         formatter: function(value, row) {
             // This BOM item *is* inheritable, but is defined for this BOM
@@ -1019,10 +1061,7 @@ function loadBomTable(table, options={}) {
                 return yesNoLabel(true);
             } else {
                 // If this BOM item is inherited from a parent part
-                return renderLink(
-                    '{% trans "View BOM" %}',
-                    `/part/${row.part}/bom/`,
-                );
+                return yesNoLabel(true, {muted: true});
             }
         }
     });
@@ -1068,6 +1107,11 @@ function loadBomTable(table, options={}) {
 
                 var row = data[idx];
 
+                // Do not include pricing for items which are associated with sub-assemblies
+                if (row.parentId != parent_id) {
+                    continue;
+                }
+
                 // No pricing data available for this row
                 if (row.pricing_min == null && row.pricing_max == null) {
                     complete_pricing = false;
@@ -1086,7 +1130,8 @@ function loadBomTable(table, options={}) {
             }
 
             if (any_pricing) {
-                var html = formatCurrency(min_price) + ' - ' + formatCurrency(max_price);
+
+                let html = formatPriceRange(min_price, max_price);
 
                 if (complete_pricing) {
                     html += makeIconBadge(
@@ -1103,7 +1148,7 @@ function loadBomTable(table, options={}) {
                 return html;
 
             } else {
-                var html = '<em>{% trans "No pricing available" %}</em>';
+                let html = '<em>{% trans "No pricing available" %}</em>';
                 html += makeIconBadge('fa-times-circle icon-red');
 
                 return html;
@@ -1127,14 +1172,20 @@ function loadBomTable(table, options={}) {
 
             var available_stock = availableQuantity(row);
 
-            var text = `${available_stock}`;
+            var external_stock = row.external_stock ?? 0;
+
+            var text = renderLink(`${available_stock}`, url);
 
             if (row.sub_part_detail && row.sub_part_detail.units) {
                 text += ` <small>${row.sub_part_detail.units}</small>`;
             }
 
+            if (external_stock > 0) {
+                text += makeIconBadge('fa-sitemap', `{% trans "External stock" %}: ${external_stock}`);
+            }
+
             if (available_stock <= 0) {
-                text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "No Stock Available" %}'></span>`;
+                text += makeIconBadge('fa-times-circle icon-red', '{% trans "No Stock Available" %}');
             } else {
                 var extra = '';
 
@@ -1152,10 +1203,13 @@ function loadBomTable(table, options={}) {
             }
 
             if (row.on_order && row.on_order > 0) {
-                text += `<span class='fas fa-shopping-cart float-right' title='{% trans "On Order" %}: ${row.on_order}'></span>`;
+                text += makeIconBadge(
+                    'fa-shopping-cart',
+                    `{% trans "On Order" %}: ${row.on_order}`,
+                );
             }
 
-            return renderLink(text, url);
+            return text;
         }
     });
 
@@ -1234,25 +1288,24 @@ function loadBomTable(table, options={}) {
 
                     var bSubs = makeIconButton('fa-exchange-alt icon-blue', 'bom-substitutes-button', row.pk, '{% trans "Edit substitute parts" %}');
 
-                    var bEdit = makeIconButton('fa-edit icon-blue', 'bom-edit-button', row.pk, '{% trans "Edit BOM Item" %}');
+                    var bEdit = makeEditButton('bom-edit-button', row.pk, '{% trans "Edit BOM Item" %}');
 
-                    var bDelt = makeIconButton('fa-trash-alt icon-red', 'bom-delete-button', row.pk, '{% trans "Delete BOM Item" %}');
+                    var bDelt = makeDeleteButton('bom-delete-button', row.pk, '{% trans "Delete BOM Item" %}');
 
-                    var html = `<div class='btn-group float-right' role='group' style='min-width: 100px;'>`;
+                    let buttons = '';
 
                     if (!row.validated) {
-                        html += bValidate;
+                        buttons += bValidate;
                     } else {
-                        html += bValid;
+                        buttons += bValid;
                     }
 
-                    html += bEdit;
-                    html += bSubs;
-                    html += bDelt;
+                    buttons += bEdit;
+                    buttons += bSubs;
+                    buttons += bDelt;
 
-                    html += `</div>`;
+                    return wrapButtons(buttons);
 
-                    return html;
                 } else {
                     // Return a link to the external BOM
 
@@ -1265,7 +1318,7 @@ function loadBomTable(table, options={}) {
             footerFormatter: function(data) {
                 return `
                 <button class='btn btn-success float-right' type='button' title='{% trans "Add BOM Item" %}' id='bom-item-new-footer'>
-                    <span class='fas fa-plus-circle'></span> {% trans "Add BOM Item" %}
+                    ${makeIcon('fa-plus-circle')} {% trans "Add BOM Item" %}
                 </button>
                 `;
             }
@@ -1428,7 +1481,7 @@ function loadBomTable(table, options={}) {
 
             var fields = bomItemFields();
 
-            constructForm(`/api/bom/${pk}/`, {
+            constructForm(`{% url "api-bom-list" %}${pk}/`, {
                 fields: fields,
                 title: '{% trans "Edit BOM Item" %}',
                 focus: 'sub_part',
@@ -1500,15 +1553,7 @@ function loadUsedInTable(table, part_id, options={}) {
     params.part_detail = true;
     params.sub_part_detail = true;
 
-    var filters = {};
-
-    if (!options.disableFilters) {
-        filters = loadTableFilters('usedin');
-    }
-
-    for (var key in params) {
-        filters[key] = params[key];
-    }
+    var filters = loadTableFilters('usedin', params);
 
     setupFilterList('usedin', $(table), options.filterTarget || '#filter-list-usedin');
 

@@ -1,26 +1,28 @@
 {% extends "panel.html" %}
 {% load i18n %}
 
-{% block label %}parts{% endblock %}
+{% block label %}parts{% endblock label %}
 
 {% block heading %}
 {% trans "Part Settings" %}
-{% endblock %}
+{% endblock heading %}
 
 {% block content %}
 
 <table class='table table-striped table-condensed'>
     <tbody>
+        {% include "InvenTree/settings/setting.html" with key="PART_ENABLE_REVISION" %}
         {% include "InvenTree/settings/setting.html" with key="PART_IPN_REGEX" %}
         {% include "InvenTree/settings/setting.html" with key="PART_ALLOW_DUPLICATE_IPN" %}
         {% include "InvenTree/settings/setting.html" with key="PART_ALLOW_EDIT_IPN" %}
         {% include "InvenTree/settings/setting.html" with key="PART_NAME_FORMAT" %}
         {% include "InvenTree/settings/setting.html" with key="PART_SHOW_RELATED" icon="fa-random" %}
         {% include "InvenTree/settings/setting.html" with key="PART_CREATE_INITIAL" icon="fa-boxes" %}
+        {% include "InvenTree/settings/setting.html" with key="PART_CREATE_SUPPLIER" icon="fa-shopping-cart" %}
         <tr><td colspan='5'></td></tr>
         {% include "InvenTree/settings/setting.html" with key="PART_TEMPLATE" icon="fa-clone" %}
         {% include "InvenTree/settings/setting.html" with key="PART_ASSEMBLY" icon="fa-tools" %}
-        {% include "InvenTree/settings/setting.html" with key="PART_COMPONENT" icon="fa-th"%}
+        {% include "InvenTree/settings/setting.html" with key="PART_COMPONENT" icon="fa-th" %}
         {% include "InvenTree/settings/setting.html" with key="PART_TRACKABLE" icon="fa-directions" %}
         {% include "InvenTree/settings/setting.html" with key="PART_PURCHASEABLE" icon="fa-shopping-cart" %}
         {% include "InvenTree/settings/setting.html" with key="PART_SALABLE" icon="fa-dollar-sign" %}
@@ -53,19 +55,4 @@
     </tbody>
 </table>
 
-<div class='panel-heading'>
-    <span class='d-flex flex-span'>
-        <h4>{% trans "Part Parameter Templates" %}</h4>
-        {% include "spacer.html" %}
-        <div class='btn-group' role='group'>
-            <button class='btn btn-success' id='new-param'>
-                <span class='fas fa-plus-circle'></span> {% trans "New Parameter" %}
-            </button>
-        </div>
-    </span>
-</div>
-
-<table class='table table-striped table-condensed' id='param-table' data-toolbar='#param-buttons'>
-</table>
-
-{% endblock %}
+{% endblock content %}

@@ -7,7 +7,7 @@
 
 <div class='alert alert-info alert-block'>
     <strong>{% trans "Create new part variant" %}</strong><br>
-    {% blocktrans with full_name=part.full_name %}Create a new variant of template <em>'{{full_name}}'</em>.{% endblocktrans %}
+    {% trans "Create a new variant part from this template" %}
 </div>
 
-{% endblock %}
+{% endblock pre_form_content %}

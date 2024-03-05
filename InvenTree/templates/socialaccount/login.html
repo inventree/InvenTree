@@ -1,0 +1,42 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+{% load sso %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock head_title %}
+
+{% block content %}
+
+{% sso_check_provider provider as provider_valid %}
+
+{% if provider_valid %}
+{% if process == "connect" %}
+<h4>{% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}</h4>
+
+<p>{% blocktrans with provider.name as provider %}You are about to connect a new third party account from {{ provider }}.{% endblocktrans %}</p>
+{% else %}
+<h4>{% blocktrans with provider.name as provider %}Sign In Via {{ provider }}{% endblocktrans %}</h4>
+
+<p>{% blocktrans with provider.name as provider %}You are about to sign in using a third party account from {{ provider }}.{% endblocktrans %}</p>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <button class='btn btn-success sso-provider-link' type="submit"><span class='fas fa-sign-in-alt'></span>&nbsp;{% trans "Continue" %}</button>
+</form>
+
+{% else %}
+<div class='alert alert-info alert-danger'>
+  <h4>{% trans "Invalid SSO Provider" %}</h4>
+  <p>
+    {% trans "The selected SSO provider is invalid, or has not been correctly configured" %}
+  </p>
+</div>
+{% endif %}
+<hr>
+<div>
+    <a href='{% url "account_login" %}'>
+        {% trans "Return to login page" %}
+    </a>
+</div>
+
+{% endblock content %}

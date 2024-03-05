@@ -9,13 +9,13 @@
 {% else %}
 {% inventree_title %} | {% trans "Stock" %}
 {% endif %}
-{% endblock %}
+{% endblock page_title %}
 
 {% block sidenav %}
 <div id='stock-tree'>
     {% trans "Loading..." %}
 </div>
-{% endblock %}
+{% endblock sidenav %}
 
 {% block breadcrumbs %}
 <a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><span class="fas fa-bars"></span></a>

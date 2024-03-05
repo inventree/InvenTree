@@ -1,0 +1,92 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+// Callback for when boolean settings are edited
+$('table').find('.boolean-setting').change(function() {
+
+    var pk = $(this).attr('pk');
+    var setting = $(this).attr('setting');
+    var plugin = $(this).attr('plugin');
+    var user = $(this).attr('user');
+    var notification = $(this).attr('notification');
+
+    var checked = this.checked;
+
+    // Global setting by default
+    var url = `/api/settings/global/${setting}/`;
+
+    if (notification) {
+        url = `/api/settings/notification/${pk}/`;
+    } else if (plugin) {
+        url = `/api/plugins/settings/${plugin}/${setting}/`;
+    } else if (user) {
+        url = `/api/settings/user/${setting}/`;
+    }
+
+    inventreePut(
+        url,
+        {
+            value: checked.toString(),
+        },
+        {
+            method: 'PATCH',
+            success: function(data) {
+            },
+            error: function(xhr) {
+                showApiError(xhr, url);
+            }
+        }
+    );
+
+});
+
+// Callback for when non-boolean settings are edited
+$('table').find('.btn-edit-setting').click(function() {
+    var setting = $(this).attr('setting');
+    var plugin = $(this).attr('plugin');
+    var is_global = true;
+    var notification = $(this).attr('notification');
+
+    if ($(this).attr('user')){
+        is_global = false;
+    }
+
+    var title = '';
+
+    if (plugin != null) {
+        title = '{% trans "Edit Plugin Setting" escape %}';
+    } else if (notification) {
+        title = '{% trans "Edit Notification Setting" escape %}';
+        setting = $(this).attr('pk');
+    } else if (is_global) {
+        title = '{% trans "Edit Global Setting" escape %}';
+    } else {
+        title = '{% trans "Edit User Setting" escape %}';
+    }
+
+    editSetting(setting, {
+        plugin: plugin,
+        global: is_global,
+        notification: notification,
+        title: title,
+    });
+});
+
+$("#edit-user").on('click', function() {
+    launchModalForm(
+        "{% url 'edit-user' %}",
+        {
+            reload: true,
+        }
+    );
+});
+
+$("#edit-password").on('click', function() {
+    launchModalForm(
+        "{% url 'set-password' %}",
+        {
+            reload: true,
+        }
+    );
+});

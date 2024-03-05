@@ -14,6 +14,9 @@
             <button type='button' class='btn btn-success' id='part-pricing-refresh' title='{% trans "Refresh Part Pricing" %}'>
                 <span class='fas fa-redo-alt'></span> {% trans "Refresh" %}
             </button>
+            <button type='button' class='btn btn-success' id='part-pricing-edit' title='{% trans "Override Part Pricing" %}'>
+                <span class='fas fa-edit'></span> {% trans "Edit" %}
+            </button>
         </div>
     </div>
 </div>
@@ -45,11 +48,9 @@
                             </a>
                             {% endif %}
                         </td>
-                        <th>
-                            {% trans "Internal Pricing" %}
-                        </th>
-                        <td>{% include "price_data.html" with price=pricing.internal_cost_min %}</td>
-                        <td>{% include "price_data.html" with price=pricing.internal_cost_max %}</td>
+                        <th>{% trans "Internal Pricing" %}</th>
+                        <td>{% render_currency pricing.internal_cost_min %}</td>
+                        <td>{% render_currency pricing.internal_cost_max %}</td>
                     </tr>
                     {% if part.purchaseable %}
                     <tr>
@@ -60,11 +61,9 @@
                             </a>
                             {% endif %}
                         </td>
-                        <th>
-                            {% trans "Purchase History" %}
-                        </th>
-                        <td>{% include "price_data.html" with price=pricing.purchase_cost_min %}</td>
-                        <td>{% include "price_data.html" with price=pricing.purchase_cost_max %}</td>
+                        <th>{% trans "Purchase History" %}</th>
+                        <td>{% render_currency pricing.purchase_cost_min %}</td>
+                        <td>{% render_currency pricing.purchase_cost_max %}</td>
                     </tr>
                     <tr>
                         <td>
@@ -74,11 +73,9 @@
                             </a>
                             {% endif %}
                         </td>
-                        <th>
-                            {% trans "Supplier Pricing" %}
-                        </th>
-                        <td>{% include "price_data.html" with price=pricing.supplier_price_min %}</td>
-                        <td>{% include "price_data.html" with price=pricing.supplier_price_max %}</td>
+                        <th>{% trans "Supplier Pricing" %}</th>
+                        <td>{% render_currency pricing.supplier_price_min %}</td>
+                        <td>{% render_currency pricing.supplier_price_max %}</td>
                     </tr>
                     {% endif %}
                     {% if part.assembly %}
@@ -90,28 +87,32 @@
                             </a>
                             {% endif %}
                         </td>
-                        <th>
-                            {% trans "BOM Pricing" %}
-                        </th>
-                        <td>{% include "price_data.html" with price=pricing.bom_cost_min %}</td>
-                        <td>{% include "price_data.html" with price=pricing.bom_cost_max %}</td>
+                        <th>{% trans "BOM Pricing" %}</th>
+                        <td>{% render_currency pricing.bom_cost_min %}</td>
+                        <td>{% render_currency pricing.bom_cost_max %}</td>
                     </tr>
                     {% endif %}
                     {% if part.is_template %}
                     <tr>
                         <td><a href='#variant-cost'><span class='fas fa-shapes'></span></a></td>
                         <th>{% trans "Variant Pricing" %}</th>
-                        <td>{% include "price_data.html" with price=pricing.variant_cost_min %}</td>
-                        <td>{% include "price_data.html" with price=pricing.variant_cost_max %}</td>
+                        <td>{% render_currency pricing.variant_cost_min %}</td>
+                        <td>{% render_currency pricing.variant_cost_max %}</td>
+                    </tr>
+                    {% endif %}
+                    {% if pricing.override_min or pricing.override_max %}
+                    <tr>
+                        <td><a href='#pricing-overrides'><span class='fas fa-exclamation-circle'></span></a></td>
+                        <th>{% trans "Pricing Overrides" %}</th>
+                        <td>{% render_currency pricing.override_min currency=pricing.override_min_currency %}</td>
+                        <td>{% render_currency pricing.override_max currency=pricing.override_max_currency %}</td>
                     </tr>
                     {% endif %}
                     <tr>
                         <td></td>
-                        <th>
-                            {% trans "Overall Pricing" %}
-                        </th>
-                        <th>{% include "price_data.html" with price=pricing.overall_min %}</th>
-                        <th>{% include "price_data.html" with price=pricing.overall_max %}</th>
+                        <th>{% trans "Overall Pricing" %}</th>
+                        <th>{% render_currency pricing.overall_min %}</th>
+                        <th>{% render_currency pricing.overall_max %}</th>
                     </tr>
                 </tbody>
             </table>
@@ -135,15 +136,9 @@
                                 <span class='fas fa-dollar-sign'></span>
                             </a>
                         </td>
-                        <th>
-                            {% trans "Sale Price" %}
-                        </th>
-                        <td>
-                            {% include "price_data.html" with price=pricing.sale_price_min %}
-                        </td>
-                        <td>
-                            {% include "price_data.html" with price=pricing.sale_price_max %}
-                        </td>
+                        <th>{% trans "Sale Price" %}</th>
+                        <td>{% render_currency pricing.sale_price_min %}</td>
+                        <td>{% render_currency pricing.sale_price_max %}</td>
                     </tr>
                     <tr>
                         <td>
@@ -151,15 +146,9 @@
                                 <span class='fas fa-chart-line'></span>
                             </a>
                         </td>
-                        <th>
-                            {% trans "Sale History" %}
-                        </th>
-                        <td>
-                            {% include "price_data.html" with price=pricing.sale_history_min %}
-                        </td>
-                        <td>
-                            {% include "price_data.html" with price=pricing.sale_history_max %}
-                        </td>
+                        <th>{% trans "Sale History" %}</th>
+                        <td>{% render_currency pricing.sale_history_min %}</td>
+                        <td>{% render_currency pricing.sale_history_max %}</td>
                     </tr>
                 </tbody>
             </table>
@@ -254,7 +243,6 @@
     </div>
 </div>
 {% endif %}
-
 
 {% if part.assembly and part.has_bom %}
 <a class="anchor" id="bom-cost"></a>

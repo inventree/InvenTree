@@ -1,17 +1,24 @@
 {% load i18n %}
 
 /* global
+    constructFormBody,
+    exportFormatOptions,
+    getFormFieldValue,
     inventreeLoad,
     inventreeSave,
+    sanitizeData,
+    sanitizeInputString,
+    user_settings,
 */
 
 /* exported
     customGroupSorter,
     downloadTableData,
     getTableData,
-    reloadtable,
+    reloadBootstrapTable,
     renderLink,
     reloadTableFilters,
+    constructExpandCollapseButtons,
     constructOrderTableButtons,
 */
 
@@ -19,8 +26,23 @@
  * Reload a named table
  * @param table
  */
-function reloadtable(table) {
-    $(table).bootstrapTable('refresh');
+function reloadBootstrapTable(table) {
+
+    let tbl = table;
+
+    if (tbl) {
+        if (typeof tbl === 'string' || tbl instanceof String) {
+            tbl = $(tbl);
+        }
+
+        if (tbl.exists()) {
+            tbl.bootstrapTable('refresh');
+        } else {
+            console.error(`Invalid table name passed to reloadBootstrapTable(): ${table}`);
+        }
+    } else {
+        console.error(`Null value passed to reloadBootstrapTable()`);
+    }
 }
 
 
@@ -42,7 +64,7 @@ function constructOrderTableButtons(options={}) {
 
     var display_mode = options.display;
 
-    var key = `${options.prefix || order}-table-display-mode`;
+    var key = `${options.prefix || 'order'}-table-display-mode`;
 
     // If display mode is not provided, look up from session
     if (!display_mode) {
@@ -98,13 +120,35 @@ function constructOrderTableButtons(options={}) {
 }
 
 
+/*
+ * Construct buttons to expand / collapse all rows in a table
+ */
+function constructExpandCollapseButtons(table, idx=0) {
+
+    return [
+        {
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Expand all rows" %}'><span class='fas fa-expand'></span></button>`,
+            event: function() {
+                $(table).bootstrapTable('expandAllRows');
+            }
+        },
+        {
+            html: `<button type='button' name='${idx++}' class='btn btn-outline-secondary' title='{% trans "Collapse all rows" %}'><span class='fas fa-compress'></span></button>`,
+            event: function() {
+                $(table).bootstrapTable('collapseAllRows');
+            }
+        }
+    ];
+}
+
+
 /* Return the 'selected' data rows from a bootstrap table.
  * If allowEmpty = false, and the returned dataset is empty,
  * then instead try to return *all* the data
  */
 function getTableData(table, allowEmpty=false) {
 
-    var data = $(table).bootstrapTable('getSelections');
+    let data = $(table).bootstrapTable('getSelections');
 
     if (data.length == 0 && !allowEmpty) {
         data = $(table).bootstrapTable('getData');
@@ -176,25 +220,6 @@ function enableButtons(elements, enabled) {
 }
 
 
-/* Link a bootstrap-table object to one or more buttons.
- * The buttons will only be enabled if there is at least one row selected
- */
-function linkButtonsToSelection(table, buttons) {
-
-    if (typeof table === 'string') {
-        table = $(table);
-    }
-
-    // Initially set the enable state of the buttons
-    enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-
-    // Add a callback
-    table.on('check.bs.table uncheck.bs.table check-some.bs.table uncheck-some.bs.table check-all.bs.table uncheck-all.bs.table', function() {
-        enableButtons(buttons, table.bootstrapTable('getSelections').length > 0);
-    });
-}
-
-
 /**
  * Returns true if the input looks like a valid number
  * @param {String} n
@@ -209,7 +234,13 @@ function isNumeric(n) {
  * Reload a table which has already been made into a bootstrap table.
  * New filters can be optionally provided, to change the query params.
  */
-function reloadTableFilters(table, filters) {
+function reloadTableFilters(table, filters, options={}) {
+
+    // If a callback is specified, let's use that
+    if (options.callback) {
+        options.callback(table, filters, options);
+        return;
+    }
 
     // Simply perform a refresh
     if (filters == null) {
@@ -218,20 +249,14 @@ function reloadTableFilters(table, filters) {
     }
 
     // More complex refresh with new filters supplied
-    var options = table.bootstrapTable('getOptions');
+    options = table.bootstrapTable('getOptions');
 
     // Construct a new list of filters to use for the query
-    var params = {};
-
-    for (var k in filters) {
-        params[k] = filters[k];
-    }
+    let params = Object.assign({}, filters);
 
     // Original query params will override
-    if (options.original != null) {
-        for (var key in options.original) {
-            params[key] = options.original[key];
-        }
+    if (options.original) {
+        params = Object.assign(params, options.original);
     }
 
     // Store the total set of query params
@@ -287,9 +312,7 @@ function convertQueryParameters(params, filters) {
 
     }
 
-    for (var key in filters) {
-        params[key] = filters[key];
-    }
+    params = Object.assign(params, filters);
 
     // Add "order" back in (if it was originally specified by InvenTree)
     // Annoyingly, "order" shadows some field names in InvenTree...
@@ -315,6 +338,16 @@ function convertQueryParameters(params, filters) {
         params['search'] = clean_search;
 
         delete params['original_search'];
+    }
+
+    // Enable regex search
+    if (user_settings.SEARCH_REGEX) {
+        params['search_regex'] = true;
+    }
+
+    // Enable whole word search
+    if (user_settings.SEARCH_WHOLE) {
+        params['search_whole'] = true;
     }
 
     return params;
@@ -414,11 +447,6 @@ $.fn.inventreeTable = function(options) {
             console.error(`Could not get list of visible columns for table '${tableName}'`);
         }
     }
-
-    // Optionally, link buttons to the table selection
-    if (options.buttons) {
-        linkButtonsToSelection(table, options.buttons);
-    }
 };
 
 
@@ -440,17 +468,17 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         var bb = sortName.split('.').reduce(extract, b);
 
         // Extract parent information
-        var aparent = a._data && a._data['parent-index'];
+        var apparent = a._data && a._data['parent-index'];
         var bparent = b._data && b._data['parent-index'];
 
         // If either of the comparisons are in a group
-        if (aparent || bparent) {
+        if (apparent || bparent) {
 
             // If the parents are different (or one item does not have a parent,
             // then we need to extract the parent value for the selected column.
 
-            if (aparent != bparent) {
-                if (aparent) {
+            if (apparent != bparent) {
+                if (apparent) {
                     aa = a._data['table'].options.groupByFormatter(sortName, 0, a._data['group-data']);
                 }
 
@@ -505,7 +533,7 @@ function customGroupSorter(sortName, sortOrder, sortData) {
         },
         formatShowingRows: function(pageFrom, pageTo, totalRows) {
 
-            if (totalRows === undefined || totalRows === NaN) {
+            if (totalRows === undefined || isNaN(totalRows)) {
                 return '{% trans "Showing all rows" %}';
             } else {
                 return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;

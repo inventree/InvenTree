@@ -6,7 +6,7 @@ version: "3.8"
 # - Runs the InvenTree background worker process
 # - Serves media and static content directly from Django webserver
 
-# IMPORANT NOTE:
+# IMPORTANT NOTE:
 # The InvenTree development image does not clone source code from git.
 # Instead, it runs from source code on your local machine.
 # The django server will auto-detect any code changes and reload the server.
@@ -20,7 +20,6 @@ services:
     # Use PostgreSQL as the database backend
     # Note: This can be changed to a different backend if required
     inventree-dev-db:
-        container_name: inventree-dev-db
         image: postgres:13
         expose:
             - 5432/tcp
@@ -31,16 +30,15 @@ services:
             - POSTGRES_DB=inventree
         volumes:
           # Map 'data' volume such that postgres database is stored externally
-          - ./data:/var/lib/postgresql/data
+          - ./data:/var/lib/postgresql/data:z
         restart: unless-stopped
 
     # InvenTree web server service
     # Runs the django built-in webserver application
     inventree-dev-server:
-        container_name: inventree-dev-server
         depends_on:
           - inventree-dev-db
-        build:
+        build: &build_config
             context: .
             target: dev
         # Cache the built image to be used by the inventree-dev-worker process
@@ -50,21 +48,21 @@ services:
             - 8000:8000
         volumes:
             # Mount local source directory to /home/inventree
-            - ./:/home/inventree
+            - ./:/home/inventree:z
         env_file:
             - docker.dev.env
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
     inventree-dev-worker:
-        container_name: inventree-dev-worker
         image: inventree-dev-image
+        build: *build_config
         command: invoke worker
         depends_on:
             - inventree-dev-server
         volumes:
             # Mount local source directory to /home/inventree
-            - ./:/home/inventree
+            - ./:/home/inventree:z
         env_file:
             - docker.dev.env
         restart: unless-stopped

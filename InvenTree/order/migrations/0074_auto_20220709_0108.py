@@ -84,11 +84,6 @@ def update_purchaseorder_reference(apps, schema_editor):
         print(f"Updated reference field for {n} PurchaseOrder objects")
 
 
-def nop(apps, schema_editor):
-    """Empty function for reverse migration"""
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -98,10 +93,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(
             update_salesorder_reference,
-            reverse_code=nop,
+            reverse_code=migrations.RunPython.noop,
         ),
         migrations.RunPython(
             update_purchaseorder_reference,
-            reverse_code=nop,
+            reverse_code=migrations.RunPython.noop,
         )
     ]
