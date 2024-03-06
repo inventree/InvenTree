@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-05 00:41+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"POT-Creation-Date: 2024-03-02 07:22+0000\n"
+"PO-Revision-Date: 2024-03-06 10:36\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -28,7 +28,7 @@ msgstr "Użytkownik nie ma uprawnień do przeglądania tego modelu"
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Nieprawidłowa jednostka ({unit})"
 
 #: InvenTree/conversion.py:170
 msgid "No value provided"
@@ -1277,11 +1277,11 @@ msgstr "Ilość nie może być większa niż ilość wyjściowa"
 #: build/models.py:940 build/serializers.py:533
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr ""
+msgstr "Wyjście budowy {serial} nie przeszło wszystkich testów"
 
 #: build/models.py:1302
 msgid "Build object"
-msgstr ""
+msgstr "Zbuduj obiekt"
 
 #: build/models.py:1316 build/models.py:1574 build/serializers.py:210
 #: build/serializers.py:247 build/templates/build/build_base.html:102
@@ -1681,7 +1681,7 @@ msgstr "W Zamówieniu"
 #: templates/js/translated/build.js:2618
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr ""
+msgstr "W produkcji"
 
 #: build/serializers.py:1121 part/bom.py:172 part/serializers.py:1473
 #: part/templates/part/part_base.html:192
@@ -6814,22 +6814,16 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:804
-#, fuzzy
-#| msgid "External Link"
 msgid "External Stock"
-msgstr "Link Zewnętrzny"
+msgstr ""
 
 #: part/serializers.py:806
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Unallocated Stock"
-msgstr "Przydziel zapasy"
+msgstr ""
 
 #: part/serializers.py:808
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Variant Stock"
-msgstr "Zapasy części"
+msgstr ""
 
 #: part/serializers.py:833 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
@@ -11085,10 +11079,8 @@ msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "External Link"
 msgid "External stock"
-msgstr "Link Zewnętrzny"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -14091,3 +14083,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
