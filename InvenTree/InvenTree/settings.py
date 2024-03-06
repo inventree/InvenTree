@@ -1036,7 +1036,12 @@ CORS_ALLOWED_ORIGINS = get_setting(
 if SITE_URL and SITE_URL not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append(SITE_URL)
 
-CORS_ALLOWED_ORIGIN_REGEXES = []
+CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
+    'INVENTREE_CORS_ORIGIN_REGEX',
+    config_key='cors.regex',
+    default_value=[],
+    typecast=list,
+)
 
 # In debug mode allow CORS requests from localhost
 # This allows connection from the frontend development server
