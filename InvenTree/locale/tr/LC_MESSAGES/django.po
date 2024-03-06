@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-05 00:41+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"POT-Creation-Date: 2024-03-02 07:22+0000\n"
+"PO-Revision-Date: 2024-03-06 10:36\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -28,7 +28,7 @@ msgstr "Kullanıcının bu modeli görüntüleme izni yok"
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Geçersiz ürün girildi ({unit})"
 
 #: InvenTree/conversion.py:170
 msgid "No value provided"
@@ -345,7 +345,7 @@ msgstr "E-posta"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Eklenti doğrulama sırasında hata oluştu"
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
@@ -377,11 +377,11 @@ msgstr "Referans alanı boş olamaz"
 
 #: InvenTree/models.py:431
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "Referans {pattern} deseniyle mutlaka eşleşmeli"
 
 #: InvenTree/models.py:463
 msgid "Reference number is too large"
-msgstr ""
+msgstr "Referans sayısı çok fazla"
 
 #: InvenTree/models.py:537
 msgid "Missing file"
@@ -473,7 +473,7 @@ msgstr "Dosya adı değiştirilirken hata"
 
 #: InvenTree/models.py:847
 msgid "Duplicate names cannot exist under the same parent"
-msgstr ""
+msgstr "Aynı kaynak altında birden fazla aynı isim kullanılamaz"
 
 #: InvenTree/models.py:864
 msgid "Invalid choice"
@@ -551,7 +551,7 @@ msgstr "Yol"
 
 #: InvenTree/models.py:1022
 msgid "Markdown notes (optional)"
-msgstr ""
+msgstr "Markdown notları (isteğe bağlı)"
 
 #: InvenTree/models.py:1051
 msgid "Barcode Data"
@@ -567,11 +567,11 @@ msgstr "Barkod Hash"
 
 #: InvenTree/models.py:1059
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Barkod verisinin benzersiz hash'i"
 
 #: InvenTree/models.py:1112
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Var olan barkod bulundu"
 
 #: InvenTree/models.py:1155
 msgid "Server Error"
@@ -579,7 +579,7 @@ msgstr "Sunucu Hatası"
 
 #: InvenTree/models.py:1156
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Bir hafta sunucu tarafından kayıt edildi."
 
 #: InvenTree/serializers.py:62 part/models.py:4134
 msgid "Must be a valid number"
@@ -594,27 +594,27 @@ msgstr "Para birimi"
 
 #: InvenTree/serializers.py:102
 msgid "Select currency from available options"
-msgstr ""
+msgstr "Var olan seçeneklerden bir döviz birimi seçin"
 
 #: InvenTree/serializers.py:436
 msgid "You do not have permission to change this user role."
-msgstr ""
+msgstr "Bu kullanıcı rolünü değiştirmek için izniniz yok."
 
 #: InvenTree/serializers.py:448
 msgid "Only superusers can create new users"
-msgstr ""
+msgstr "Sadece süper kullanıcılar yeni kullanıcı oluşturabilir"
 
 #: InvenTree/serializers.py:467
 msgid "Your account has been created."
-msgstr ""
+msgstr "Kullanıcı hesabınız oluşturulmuştur."
 
 #: InvenTree/serializers.py:469
 msgid "Please use the password reset function to login"
-msgstr ""
+msgstr "Giriş yapmak için lütfen şifre sıfırlama fonksiyonunu kullanınız"
 
 #: InvenTree/serializers.py:476
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "InvenTree'ye Hoşgeldiniz"
 
 #: InvenTree/serializers.py:537
 msgid "Filename"
@@ -668,11 +668,11 @@ msgstr "Tekrarlanan kolon ismi:'{col}'"
 
 #: InvenTree/serializers.py:854
 msgid "Remote Image"
-msgstr ""
+msgstr "Uzaktan Görüntüler"
 
 #: InvenTree/serializers.py:855
 msgid "URL of remote image file"
-msgstr ""
+msgstr "Uzaktan görüntü dosya URL'si"
 
 #: InvenTree/serializers.py:873
 msgid "Downloading images from remote URL is not enabled"
@@ -6814,22 +6814,16 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:804
-#, fuzzy
-#| msgid "External Link"
 msgid "External Stock"
-msgstr "Harici Bağlantı"
+msgstr ""
 
 #: part/serializers.py:806
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Unallocated Stock"
-msgstr "Stok Tahsis Et"
+msgstr ""
 
 #: part/serializers.py:808
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Variant Stock"
-msgstr "Parça Stoku"
+msgstr ""
 
 #: part/serializers.py:833 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
@@ -11085,10 +11079,8 @@ msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "External Link"
 msgid "External stock"
-msgstr "Harici Bağlantı"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -14091,3 +14083,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
