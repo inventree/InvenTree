@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-05 00:41+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"POT-Creation-Date: 2024-03-02 07:22+0000\n"
+"PO-Revision-Date: 2024-03-06 10:36\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -6814,22 +6814,16 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:804
-#, fuzzy
-#| msgid "External Link"
 msgid "External Stock"
-msgstr "Внешняя ссылка"
+msgstr ""
 
 #: part/serializers.py:806
-#, fuzzy
-#| msgid "Allocated Stock"
 msgid "Unallocated Stock"
-msgstr "Зарезервированные Запасы"
+msgstr ""
 
 #: part/serializers.py:808
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Variant Stock"
-msgstr "Наличие на складе"
+msgstr ""
 
 #: part/serializers.py:833 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
@@ -8939,7 +8933,7 @@ msgstr ""
 
 #: stock/models.py:1639 stock/serializers.py:1213
 msgid "Duplicate stock items"
-msgstr "Дублировать складские позиции"
+msgstr "Дублировать складские позиции\n"
 
 #: stock/models.py:1643
 msgid "Stock items must refer to the same part"
@@ -9399,7 +9393,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1915
 msgid "stock item"
-msgstr "складская позиция"
+msgstr "складская позиция\n"
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -9435,7 +9429,7 @@ msgstr "Вернуть на склад"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr "Создать сериализированные позиции из этой складской позиции"
+msgstr "Создать сериализированные позиции из этой складской позиции\n"
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
@@ -10107,7 +10101,7 @@ msgstr "Настройки пользователя"
 
 #: templates/InvenTree/settings/sidebar.html:9
 msgid "Account"
-msgstr "Аккуант"
+msgstr "Учетная запись"
 
 #: templates/InvenTree/settings/sidebar.html:11
 msgid "Display"
@@ -10897,7 +10891,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Складская позиция уже просканирована"
+msgstr "Складская позиция уже просканирована\n"
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
@@ -11085,10 +11079,8 @@ msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "External Link"
 msgid "External stock"
-msgstr "Внешняя ссылка"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -13102,11 +13094,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Создана новая складская позиция"
+msgstr "Создана новая складская позиция\n"
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Создано несколько складских позиций"
+msgstr "Создано несколько складских позиций\n"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
@@ -14091,3 +14083,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
