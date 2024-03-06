@@ -1022,7 +1022,7 @@ CORS_ALLOW_CREDENTIALS = get_boolean_setting(
     default_value=True,
 )
 
-# Only allow CORS access to API and media endpoints
+# Only allow CORS access to the following URL endpoints
 CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
 
 CORS_ALLOWED_ORIGINS = get_setting(
@@ -1035,6 +1035,18 @@ CORS_ALLOWED_ORIGINS = get_setting(
 # If no CORS origins are specified, but a site URL has been specified, use that
 if SITE_URL and SITE_URL not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append(SITE_URL)
+
+CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
+    'INVENTREE_CORS_ORIGIN_REGEX',
+    config_key='cors.regex',
+    default_value=[],
+    typecast=list,
+)
+
+# In debug mode allow CORS requests from localhost
+# This allows connection from the frontend development server
+if DEBUG:
+    CORS_ALLOWED_ORIGIN_REGEXES.append(r'^http://localhost:\d+$')
 
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
