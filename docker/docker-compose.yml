@@ -4,7 +4,7 @@ version: "3.8"
 # - PostgreSQL as the database backend
 # - gunicorn as the InvenTree web server
 # - django-q as the InvenTree background worker process
-# - nginx as a reverse proxy
+# - Caddy as a reverse proxy
 # - redis as the cache manager (optional, disabled by default)
 
 # ---------------------
