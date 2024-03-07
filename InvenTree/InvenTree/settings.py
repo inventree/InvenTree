@@ -975,12 +975,23 @@ if not SITE_MULTI:
 ALLOWED_HOSTS = get_setting(
     'INVENTREE_ALLOWED_HOSTS',
     config_key='allowed_hosts',
-    default_value=['*'],
+    default_value=[],
     typecast=list,
 )
 
+if DEBUG and not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['*']
+
 if SITE_URL and SITE_URL not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(SITE_URL)
+
+if not ALLOWED_HOSTS:
+    logger.error(
+        'No allowed hosts specified.\n\
+        Please specify a list of allowed hosts in the configuration file,\n\
+        or specify INVENTREE_SITE_URL'
+    )
+    sys.exit(1)
 
 # List of trusted origins for unsafe requests
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
