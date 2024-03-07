@@ -1062,6 +1062,15 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
 if DEBUG:
     CORS_ALLOWED_ORIGIN_REGEXES.append(r'^http://localhost:\d+$')
 
+if CORS_ALLOW_ALL_ORIGINS:
+    logger.info('CORS: All origins allowed')
+else:
+    if CORS_ALLOWED_ORIGINS:
+        logger.info('CORS: Whitelisted origins: %s', CORS_ALLOWED_ORIGINS)
+
+    if CORS_ALLOWED_ORIGIN_REGEXES:
+        logger.info('CORS: Whitelisted origin regexes: %s', CORS_ALLOWED_ORIGIN_REGEXES)
+
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
     social_prefix = 'allauth.socialaccount.providers.'

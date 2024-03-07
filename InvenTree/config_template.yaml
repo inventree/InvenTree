@@ -183,8 +183,9 @@ use_x_forwarded_port: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
-  allow_all: false
   allow_credentials: true
+
+  # allow_all: false
 
   # whitelist:
   # - https://example.com
