@@ -994,7 +994,6 @@ if not ALLOWED_HOSTS:
     logger.error(
         'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
     )
-    sys.exit(1)
 
 # List of trusted origins for unsafe requests
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins

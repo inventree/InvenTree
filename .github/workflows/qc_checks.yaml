@@ -20,7 +20,6 @@ env:
   INVENTREE_MEDIA_ROOT: ../test_inventree_media
   INVENTREE_STATIC_ROOT: ../test_inventree_static
   INVENTREE_BACKUP_DIR: ../test_inventree_backup
-  INVENTREE_SITE_URL: http://localhost:8000
 
 jobs:
   paths-filter:
