@@ -980,6 +980,9 @@ ALLOWED_HOSTS = get_setting(
 )
 
 if DEBUG and not ALLOWED_HOSTS:
+    logger.warning(
+        'No ALLOWED_HOSTS specified. Defaulting to ["*"] for debug mode. This is not recommended for production use'
+    )
     ALLOWED_HOSTS = ['*']
 
 if SITE_URL and SITE_URL not in ALLOWED_HOSTS:
@@ -987,9 +990,7 @@ if SITE_URL and SITE_URL not in ALLOWED_HOSTS:
 
 if not ALLOWED_HOSTS:
     logger.error(
-        'No allowed hosts specified.\n\
-        Please specify a list of allowed hosts in the configuration file,\n\
-        or specify INVENTREE_SITE_URL'
+        'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
     )
     sys.exit(1)
 
