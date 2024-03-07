@@ -397,11 +397,11 @@ def migrate(c):
 )
 def update(
     c,
-    skip_backup: bool = False,
-    frontend: bool = False,
-    no_frontend: bool = False,
-    skip_static: bool = False,
-    uv: bool = False,
+    skip_backup = False,
+    frontend = False,
+    no_frontend = False,
+    skip_static = False,
+    uv = False,
 ):
     """Update InvenTree installation.
 
@@ -552,7 +552,7 @@ def export_records(
     post=[rebuild_models, rebuild_thumbnails],
 )
 def import_records(
-    c, filename='data.json', clear: bool = False, retain_temp: bool = False
+    c, filename='data.json', clear = False, retain_temp = False
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
