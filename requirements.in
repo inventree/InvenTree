@@ -51,6 +51,7 @@ sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 weasyprint                              # PDF generation
+whitenoise                              # Enhanced static file serving
 
 # OpenTelemetry dependencies
 grpcio
