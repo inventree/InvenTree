@@ -56,7 +56,10 @@ export function PurchaseOrderLineItemTable({
   const user = useUserState();
 
   const receiveLineItems = useReceiveLineItems({
-    items: table.selectedRecords,
+    items:
+      table.selectedRecords.length > 0
+        ? table.selectedRecords
+        : table.expandedRecords,
     orderPk: orderId
   });
 
@@ -221,7 +224,11 @@ export function PurchaseOrderLineItemTable({
           hidden: received,
           title: t`Receive line item`,
           icon: <IconSquareArrowRight />,
-          color: 'green'
+          color: 'green',
+          onClick: () => {
+            table.setSelectedRecords([record]);
+            receiveLineItems.open();
+          }
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
@@ -249,13 +256,11 @@ export function PurchaseOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-line-item"
         tooltip={t`Add line item`}
         onClick={() => newLine.open()}
         hidden={!user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
-        key="receive-items"
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}

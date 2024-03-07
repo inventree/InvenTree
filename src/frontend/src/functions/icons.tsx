@@ -14,13 +14,16 @@ import {
   IconCircleMinus,
   IconCirclePlus,
   IconClipboardList,
+  IconClipboardText,
   IconCopy,
+  IconCornerDownLeft,
   IconCornerUpRightDouble,
   IconCurrencyDollar,
   IconDots,
   IconDotsCircleHorizontal,
   IconExternalLink,
   IconFileUpload,
+  IconFlagShare,
   IconGitBranch,
   IconGridDots,
   IconHash,
@@ -31,6 +34,7 @@ import {
   IconMail,
   IconMapPin,
   IconMapPinHeart,
+  IconMinusVertical,
   IconNotes,
   IconNumbers,
   IconPackage,
@@ -41,6 +45,7 @@ import {
   IconPhoto,
   IconPrinter,
   IconProgressCheck,
+  IconQrcode,
   IconQuestionMark,
   IconRulerMeasure,
   IconShoppingCart,
@@ -162,7 +167,13 @@ const icons = {
   website: IconWorld,
   email: IconMail,
   phone: IconPhone,
-  sitemap: IconSitemap
+  sitemap: IconSitemap,
+  downleft: IconCornerDownLeft,
+  barcode: IconQrcode,
+  barLine: IconMinusVertical,
+  batch_code: IconClipboardText,
+  destination: IconFlag,
+  repeat_destination: IconFlagShare
 };
 
 export type InvenTreeIconType = keyof typeof icons;

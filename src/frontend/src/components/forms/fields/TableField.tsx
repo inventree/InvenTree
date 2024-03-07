@@ -21,7 +21,10 @@ export function TableField({
   const { value, ref } = field;
 
   const onRowFieldChange = (idx: number, key: string, value: any) => {
+    console.log('Changing', idx, key, value);
     const val = field.value;
+    console.log('Was', val[idx][key]);
+    console.log('All:', field.value);
     val[idx][key] = value;
     field.onChange(val);
   };

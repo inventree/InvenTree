@@ -505,7 +505,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         columns={tableColumns}
         props={{
           enableDownload: true,
-          enableSelection: false,
+          enableSelection: true,
           tableFilters: tableFilters,
           tableActions: tableActions,
           onRowClick: (record) =>

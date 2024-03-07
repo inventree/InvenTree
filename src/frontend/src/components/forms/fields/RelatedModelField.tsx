@@ -30,7 +30,6 @@ export function RelatedModelField({
   limit?: number;
 }) {
   const fieldId = useId();
-  console.log('fieldData', controller, fieldName, definition);
   const {
     field,
     fieldState: { error }
@@ -59,7 +58,6 @@ export function RelatedModelField({
       field.value !== ''
     ) {
       const url = `${definition.api_url}${field.value}/`;
-
       api.get(url).then((response) => {
         const data = response.data;
 
@@ -142,7 +140,7 @@ export function RelatedModelField({
           const alreadyPresentPks = values.map((x) => x.value);
 
           const results = response.data?.results ?? response.data ?? [];
-
+          console.log('ress', results);
           results.forEach((item: any) => {
             // do not push already existing items into the values array
             if (alreadyPresentPks.includes(item.pk)) return;
@@ -158,6 +156,7 @@ export function RelatedModelField({
           return response;
         })
         .catch((error) => {
+          console.log('Hola', error);
           setData([]);
           return error;
         });

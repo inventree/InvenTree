@@ -22,5 +22,6 @@ export enum ModelType {
   address = 'address',
   contact = 'contact',
   owner = 'owner',
-  user = 'user'
+  user = 'user',
+  stockstatus = 'stockstatus'
 }
