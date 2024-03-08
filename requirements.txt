@@ -342,6 +342,7 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
+whitenoise==6.6.0
 wrapt==1.16.0
     # via
     #   deprecated

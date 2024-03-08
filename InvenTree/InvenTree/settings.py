@@ -205,6 +205,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'user_sessions',  # db user sessions
+    'whitenoise.runserver_nostatic',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
@@ -249,6 +250,7 @@ MIDDLEWARE = CONFIG.get(
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
+        'whitenoise.middleware.WhiteNoiseMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
@@ -975,12 +977,23 @@ if not SITE_MULTI:
 ALLOWED_HOSTS = get_setting(
     'INVENTREE_ALLOWED_HOSTS',
     config_key='allowed_hosts',
-    default_value=['*'],
+    default_value=[],
     typecast=list,
 )
 
+if DEBUG and not ALLOWED_HOSTS:
+    logger.warning(
+        'No ALLOWED_HOSTS specified. Defaulting to ["*"] for debug mode. This is not recommended for production use'
+    )
+    ALLOWED_HOSTS = ['*']
+
 if SITE_URL and SITE_URL not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(SITE_URL)
+
+if not ALLOWED_HOSTS:
+    logger.error(
+        'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
+    )
 
 # List of trusted origins for unsafe requests
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
@@ -1047,6 +1060,15 @@ CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
 # This allows connection from the frontend development server
 if DEBUG:
     CORS_ALLOWED_ORIGIN_REGEXES.append(r'^http://localhost:\d+$')
+
+if CORS_ALLOW_ALL_ORIGINS:
+    logger.info('CORS: All origins allowed')
+else:
+    if CORS_ALLOWED_ORIGINS:
+        logger.info('CORS: Whitelisted origins: %s', CORS_ALLOWED_ORIGINS)
+
+    if CORS_ALLOWED_ORIGIN_REGEXES:
+        logger.info('CORS: Whitelisted origin regexes: %s', CORS_ALLOWED_ORIGIN_REGEXES)
 
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'

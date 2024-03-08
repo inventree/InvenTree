@@ -163,14 +163,14 @@ auto_update: False
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
 # Default behaviour is to allow all hosts (THIS IS NOT SECURE!)
-allowed_hosts:
-  - '*'
+# allowed_hosts:
+# - '*'
 
 # Trusted origins (see CSRF_TRUSTED_ORIGINS in Django settings documentation)
 # If you are running behind a proxy, you may need to add the proxy address here
-trusted_origins:
-  - 'http://localhost:8000'
-
+# trusted_origins:
+#   - 'http://localhost'
+#   - 'http://*.localhost'
 
 # Proxy forwarding settings
 # If InvenTree is running behind a proxy, you may need to configure these settings
@@ -183,12 +183,15 @@ use_x_forwarded_port: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
-  allow_all: True
-  allow_credentials: True,
+  allow_credentials: true
+
+  # allow_all: false
 
   # whitelist:
   # - https://example.com
   # - https://sub.example.com
+
+  # regex:
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
 #media_root: '/home/inventree/data/media'
