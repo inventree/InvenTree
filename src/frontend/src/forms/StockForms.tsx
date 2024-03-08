@@ -168,11 +168,16 @@ function StockItemDefaultMove({
   value: any;
 }) {
   const { data } = useSuspenseQuery({
-    queryKey: ['location', stockItem.part_detail.default_location],
+    queryKey: [
+      'location',
+      stockItem.part_detail.default_location ??
+        stockItem.part_detail.category_default_location
+    ],
     queryFn: async () => {
       const url = apiUrl(
         ApiEndpoints.stock_location_list,
-        stockItem.part_detail.default_location
+        stockItem.part_detail.default_location ??
+          stockItem.part_detail.category_default_location
       );
 
       return api

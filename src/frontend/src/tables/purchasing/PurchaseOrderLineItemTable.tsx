@@ -55,12 +55,14 @@ export function PurchaseOrderLineItemTable({
   const navigate = useNavigate();
   const user = useUserState();
 
+  const [singleRecord, setSingeRecord] = useState(null);
   const receiveLineItems = useReceiveLineItems({
-    items:
-      table.selectedRecords.length > 0
-        ? table.selectedRecords
-        : table.expandedRecords,
-    orderPk: orderId
+    items: singleRecord ? [singleRecord] : table.selectedRecords,
+    orderPk: orderId,
+    formProps: {
+      // Timeout is a small hack to prevent function being called before re-render
+      onClose: () => setTimeout(() => setSingeRecord(null), 500)
+    }
   });
 
   const tableColumns = useMemo(() => {
@@ -226,7 +228,7 @@ export function PurchaseOrderLineItemTable({
           icon: <IconSquareArrowRight />,
           color: 'green',
           onClick: () => {
-            table.setSelectedRecords([record]);
+            setSingeRecord(record);
             receiveLineItems.open();
           }
         },

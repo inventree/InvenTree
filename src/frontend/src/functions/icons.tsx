@@ -61,6 +61,7 @@ import {
   IconTrash,
   IconTruck,
   IconTruckDelivery,
+  IconUnlink,
   IconUser,
   IconUserStar,
   IconUsersGroup,
@@ -173,7 +174,8 @@ const icons = {
   barLine: IconMinusVertical,
   batch_code: IconClipboardText,
   destination: IconFlag,
-  repeat_destination: IconFlagShare
+  repeat_destination: IconFlagShare,
+  unlink: IconUnlink
 };
 
 export type InvenTreeIconType = keyof typeof icons;
