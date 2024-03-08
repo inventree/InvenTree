@@ -8,7 +8,7 @@ msgstr ""
 "Language: el\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-05 09:02\n"
+"PO-Revision-Date: 2024-03-08 10:30\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,30 +20,30 @@ msgstr ""
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
-msgstr ""
+msgstr "Τίτλος"
 
 #: src/components/details/Details.tsx:319
 msgid "Copied"
-msgstr ""
+msgstr "Αντιγράφηκε"
 
 #: src/components/details/Details.tsx:319
 msgid "Copy"
-msgstr ""
+msgstr "Αντιγραφή"
 
 #: src/components/details/DetailsImage.tsx:63
 msgid "Remove Image"
-msgstr ""
+msgstr "Αφαίρεση εικόνας"
 
 #: src/components/details/DetailsImage.tsx:66
 msgid "Remove the associated image from this item?"
-msgstr ""
+msgstr "Αφαίρεση της σχετικής εικόνας από αυτό το στοιχείο;"
 
 #: src/components/details/DetailsImage.tsx:69
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:192
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 #: src/pages/stock/StockDetail.tsx:343
 msgid "Remove"
-msgstr ""
+msgstr "Αφαίρεση"
 
 #: src/components/details/DetailsImage.tsx:69
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:163
@@ -54,181 +54,181 @@ msgstr ""
 #: src/tables/InvenTreeTable.tsx:456
 #: src/tables/plugin/PluginListTable.tsx:361
 msgid "Cancel"
-msgstr ""
+msgstr "Ακύρωση"
 
 #: src/components/details/DetailsImage.tsx:97
 msgid "Drag and drop to upload"
-msgstr ""
+msgstr "Σύρετε και αποθέστε για μεταφόρτωση"
 
 #: src/components/details/DetailsImage.tsx:100
 msgid "Click to select file(s)"
-msgstr ""
+msgstr "Κάντε κλικ για να επιλέξετε αρχείο(α)"
 
 #: src/components/details/DetailsImage.tsx:222
 msgid "Clear"
-msgstr ""
+msgstr "Εκκαθάριση"
 
 #: src/components/details/DetailsImage.tsx:225
 #: src/components/forms/ApiForm.tsx:451
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
-msgstr ""
+msgstr "Υποβολή"
 
 #: src/components/details/DetailsImage.tsx:265
 msgid "Select from existing images"
-msgstr ""
+msgstr "Επιλέξτε από υπάρχουσες εικόνες"
 
 #: src/components/details/DetailsImage.tsx:274
 msgid "Select Image"
-msgstr ""
+msgstr "Επιλέξτε εικόνα"
 
 #: src/components/details/DetailsImage.tsx:286
 msgid "Upload new image"
-msgstr ""
+msgstr "Μεταφόρτωση νέας εικόνας"
 
 #: src/components/details/DetailsImage.tsx:295
 msgid "Upload Image"
-msgstr ""
+msgstr "Μεταφόρτωση εικόνας"
 
 #: src/components/details/DetailsImage.tsx:308
 msgid "Delete image"
-msgstr ""
+msgstr "Διαγραφή εικόνας"
 
 #: src/components/details/PartIcons.tsx:28
 msgid "Part is not active"
-msgstr ""
+msgstr "Το εξάρτημα είναι ανενεργό"
 
 #: src/components/details/PartIcons.tsx:34
 msgid "Inactive"
-msgstr ""
+msgstr "Ανενεργό"
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "Το εξάρτημα είναι πρότυπο (μπορούν να γίνουν παραλλαγές από αυτό το εξάρτημα)"
 
 #: src/components/details/PartIcons.tsx:47
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "Το εξάρτημα μπορεί να συναρμολογηθεί από άλλα εξαρτήματα"
 
 #: src/components/details/PartIcons.tsx:53
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "Το εξάρτημα αυτό μπορεί να χρησιμοποιηθεί σε συναρμολόγηση"
 
 #: src/components/details/PartIcons.tsx:59
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "Το απόθεμα του εξαρτήματος παρακολουθείται από σειριακό αριθμό"
 
 #: src/components/details/PartIcons.tsx:65
 msgid "Part can be purchased from external suppliers"
-msgstr ""
+msgstr "Το εξάρτημα μπορεί να αγοραστεί από εξωτερικούς προμηθευτές"
 
 #: src/components/details/PartIcons.tsx:71
 msgid "Part can be sold to customers"
-msgstr ""
+msgstr "Το εξάρτημα μπορεί να πωληθεί σε πελάτες"
 
 #: src/components/details/PartIcons.tsx:76
 msgid "Part is virtual (not a physical part)"
-msgstr ""
+msgstr "Το εξάρτημα είναι εικονικό (μη φυσικό εξάρτημα)"
 
 #: src/components/details/PartIcons.tsx:82
 #: src/tables/part/PartTable.tsx:243
 #: src/tables/part/PartTable.tsx:247
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
-msgstr ""
+msgstr "Εικονικό"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
-msgstr ""
+msgstr "Κωδικός"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:73
 msgid "Preview not available, click \"Reload Preview\"."
-msgstr ""
+msgstr "Η προεπισκόπηση δεν είναι διαθέσιμη, πατήστε \"Επαναφόρτωση προεπισκόπησης\"."
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr ""
+msgstr "Προεπισκόπηση PDF"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:113
 msgid "Error loading template"
-msgstr ""
+msgstr "Σφάλμα φόρτωσης προτύπου"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:125
 msgid "Error saving template"
-msgstr ""
+msgstr "Σφάλμα αποθήκευσης προτύπου"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 msgid "Save & Reload preview?"
-msgstr ""
+msgstr "Αποθήκευση & Επαναφόρτωση προεπισκόπησης;"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:156
 msgid "Are you sure you want to Save & Reload the preview?"
-msgstr ""
+msgstr "Είστε σίγουρος ότι θέλετε να αποθηκεύσετε και να επαναφορτώσετε την προεπισκόπηση;"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
-msgstr ""
+msgstr "Για να εμφανίσετε την προεπισκόπηση το τρέχον πρότυπο πρέπει να αντικατασταθεί στο διακομιστή με τις τροποποιήσεις σας, οι οποίες μπορεί να αλλοιώσουν την ετικέτα αν είναι σε χρήση. Θέλετε να προχωρήσετε;"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:162
 msgid "Save & Reload"
-msgstr ""
+msgstr "Αποθήκευση και Επαναφόρτωση"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:191
 msgid "Preview updated"
-msgstr ""
+msgstr "Προεπισκόπηση ενημερώθηκε"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:192
 msgid "The preview has been updated successfully."
-msgstr ""
+msgstr "Η προεπισκόπηση ενημερώθηκε με επιτυχία."
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:255
 msgid "Reload preview"
-msgstr ""
+msgstr "Επαναφόρτωση προεπισκόπησης"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:256
 msgid "Use the currently stored template from the server"
-msgstr ""
+msgstr "Χρήση του αποθηκευμένου προτύπου από το διακομιστή"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 msgid "Save & Reload preview"
-msgstr ""
+msgstr "Αποθήκευση & Επαναφόρτωση προεπισκόπησης"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:264
 msgid "Save the current template and reload the preview"
-msgstr ""
+msgstr "Αποθήκευση του τρέχοντος προτύπου και επαναφόρτωση της προεπισκόπησης"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:322
 #: src/tables/part/PartThumbTable.tsx:199
 msgid "Select"
-msgstr ""
+msgstr "Επιλέξτε"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:322
 msgid "to preview"
-msgstr ""
+msgstr "προς προεπισκόπηση"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:366
 msgid "Error rendering template"
-msgstr ""
+msgstr "Σφάλμα αποτύπωσης προτύπου"
 
 #: src/components/forms/ApiForm.tsx:132
 #: src/functions/forms.tsx:259
 msgid "Form Error"
-msgstr ""
+msgstr "Σφάλμα Φόρμας"
 
 #: src/components/forms/ApiForm.tsx:323
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "Επιτυχία"
 
 #: src/components/forms/ApiForm.tsx:396
 msgid "Form Errors Exist"
-msgstr ""
+msgstr "Υπάρχουν Σφάλματα Φόρμας"
 
 #: src/components/forms/ApiForm.tsx:487
 #: src/tables/plugin/PluginListTable.tsx:441
 msgid "Update"
-msgstr ""
+msgstr "Ενημέρωση"
 
 #: src/components/forms/ApiForm.tsx:507
 #: src/components/items/ActionDropdown.tsx:192
@@ -243,7 +243,7 @@ msgstr ""
 #: src/tables/settings/TemplateTable.tsx:153
 #: src/tables/settings/TemplateTable.tsx:235
 msgid "Delete"
-msgstr ""
+msgstr "Διαγραφή"
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -253,7 +253,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Login successful"
-msgstr ""
+msgstr "Επιτυχής σύνδεση"
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Welcome back!"
@@ -467,20 +467,20 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:296
+#: src/components/forms/fields/RelatedModelField.tsx:298
 #: src/pages/Index/Settings/UserSettings.tsx:64
 #: src/tables/Search.tsx:23
 msgid "Search"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:297
+#: src/components/forms/fields/RelatedModelField.tsx:299
 #: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
 msgstr ""
 
-#: src/components/forms/fields/RelatedModelField.tsx:299
+#: src/components/forms/fields/RelatedModelField.tsx:301
 msgid "No results found"
 msgstr ""
 
@@ -5548,3 +5548,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
