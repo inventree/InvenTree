@@ -195,12 +195,8 @@ export default function Stock() {
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
-          LinkBarcodeAction({
-            disabled: location?.barcode_hash
-          }),
-          UnlinkBarcodeAction({
-            disabled: !location?.barcode_hash
-          }),
+          LinkBarcodeAction({}),
+          UnlinkBarcodeAction({}),
           {
             name: 'Scan in stock items',
             icon: <InvenTreeIcon icon="stock" />,
