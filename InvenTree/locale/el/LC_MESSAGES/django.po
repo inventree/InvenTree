@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-02 07:22+0000\n"
-"PO-Revision-Date: 2024-03-08 10:30\n"
+"PO-Revision-Date: 2024-03-09 10:31\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -1504,11 +1504,11 @@ msgstr "Τοποθεσία για ολοκληρωμένα προϊόντα κα
 #: templates/js/translated/stock.js:2139 templates/js/translated/stock.js:2959
 #: templates/js/translated/stock.js:3084
 msgid "Status"
-msgstr ""
+msgstr "Κατάσταση"
 
 #: build/serializers.py:511
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Αποδοχή Ελλιπούς Κατανομής"
 
 #: build/serializers.py:512
 msgid "Complete outputs if stock has not been fully allocated"
