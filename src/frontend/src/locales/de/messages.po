@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-10 09:32\n"
+"PO-Revision-Date: 2024-03-11 09:31\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3602,7 +3602,7 @@ msgstr "Positionen"
 #: src/pages/sales/ReturnOrderDetail.tsx:90
 #: src/pages/sales/SalesOrderDetail.tsx:94
 msgid "Completed Line Items"
-msgstr ""
+msgstr "Abgeschlossene Positionen"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:132
 #: src/pages/sales/ReturnOrderDetail.tsx:98
@@ -4085,11 +4085,11 @@ msgstr "Nachverfolgbare Baugruppen anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:34
 msgid "Show allocated lines"
-msgstr ""
+msgstr "Zugewiesene Positionen anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:39
 msgid "Show lines with available stock"
-msgstr ""
+msgstr "Positionen mit verfügbarem Lagerbestand anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:43
 msgid "Consumable"
@@ -4097,7 +4097,7 @@ msgstr "Verbrauchsmaterial"
 
 #: src/tables/build/BuildLineTable.tsx:44
 msgid "Show consumable lines"
-msgstr ""
+msgstr "Verbrauchsmaterialien anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:48
 msgid "Optional"
@@ -4105,7 +4105,7 @@ msgstr "Optional"
 
 #: src/tables/build/BuildLineTable.tsx:49
 msgid "Show optional lines"
-msgstr ""
+msgstr "Optionale Positionen anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:83
 msgid "In production"
@@ -4973,7 +4973,7 @@ msgstr "Position bearbeiten"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:203
 msgid "Delete Line Item"
-msgstr ""
+msgstr "Position löschen"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:214
 msgid "Receive line item"
@@ -5406,7 +5406,7 @@ msgstr "Nachverfolgbare Freigabe"
 
 #: src/tables/stock/StockItemTable.tsx:310
 msgid "Show tracked items"
-msgstr ""
+msgstr "Verfolgbare Objekte anzeigen"
 
 #: src/tables/stock/StockItemTable.tsx:314
 msgid "Has Purchase Price"
