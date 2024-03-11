@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-02 07:22+0000\n"
-"PO-Revision-Date: 2024-03-09 10:31\n"
+"PO-Revision-Date: 2024-03-11 09:31\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -1508,95 +1508,95 @@ msgstr "Κατάσταση"
 
 #: build/serializers.py:511
 msgid "Accept Incomplete Allocation"
-msgstr "Αποδοχή Ελλιπούς Κατανομής"
+msgstr "Αποδοχή Ελλιπούς Δέσμευσης"
 
 #: build/serializers.py:512
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
+msgstr "Ολοκλήρωσε τα προϊόντα εάν το απόθεμα δεν έχει δεσμευτεί πλήρως"
 
 #: build/serializers.py:592
 msgid "Remove Allocated Stock"
-msgstr ""
+msgstr "Αφαίρεση Καταχωρημένου Αποθέματος"
 
 #: build/serializers.py:593
 msgid "Subtract any stock which has already been allocated to this build"
-msgstr ""
+msgstr "Αφαίρεσε το απόθεμα που έχει κατανεμηθεί σε αυτή την κατασκευή"
 
 #: build/serializers.py:599
 msgid "Remove Incomplete Outputs"
-msgstr ""
+msgstr "Αφαίρεση Ατελείωτων Προϊόντων"
 
 #: build/serializers.py:600
 msgid "Delete any build outputs which have not been completed"
-msgstr ""
+msgstr "Διαγράψτε τυχόν προϊόντα κατασκευής που δεν έχουν ολοκληρωθεί"
 
 #: build/serializers.py:627
 msgid "Not permitted"
-msgstr ""
+msgstr "Δεν επιτρέπεται"
 
 #: build/serializers.py:628
 msgid "Accept as consumed by this build order"
-msgstr ""
+msgstr "Αποδοχή ως κατανάλωση για αυτή την παραγγελία κατασκευής"
 
 #: build/serializers.py:629
 msgid "Deallocate before completing this build order"
-msgstr ""
+msgstr "Αποδέσμευση πριν από την ολοκλήρωση αυτής της παραγγελίας κατασκευής"
 
 #: build/serializers.py:651
 msgid "Overallocated Stock"
-msgstr ""
+msgstr "Υπερ-δεσμευμένο Απόθεμα"
 
 #: build/serializers.py:653
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr ""
+msgstr "Πώς θέλετε να χειριστείτε το επιπλέον απόθεμα που έχει δεσμευτεί στην παραγγελία κατασκευής"
 
 #: build/serializers.py:663
 msgid "Some stock items have been overallocated"
-msgstr ""
+msgstr "Μερικά στοιχεία αποθέματος έχουν υπερ-δεσμευτεί"
 
 #: build/serializers.py:668
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Αποδοχή Μη Δεσμευμένων"
 
 #: build/serializers.py:669
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "Αποδεχτείτε ότι αντικείμενα αποθέματος δεν έχουν δεσμευτεί πλήρως σε αυτή την παραγγελία κατασκευής"
 
 #: build/serializers.py:679 templates/js/translated/build.js:315
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "Το απαιτούμενο απόθεμα δεν έχει δεσμευτεί πλήρως"
 
 #: build/serializers.py:684 order/serializers.py:280 order/serializers.py:1213
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "Αποδοχή Μη Ολοκληρωμένων"
 
 #: build/serializers.py:685
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr ""
+msgstr "Αποδεχτείτε ότι ο απαιτούμενος αριθμός προϊόντων κατασκευής δεν έχει ολοκληρωθεί"
 
 #: build/serializers.py:695 templates/js/translated/build.js:319
 msgid "Required build quantity has not been completed"
-msgstr ""
+msgstr "Ο απαιτούμενος αριθμός προϊόντων δεν έχει ολοκληρωθεί"
 
 #: build/serializers.py:704 templates/js/translated/build.js:303
 msgid "Build order has incomplete outputs"
-msgstr ""
+msgstr "Η παραγγελία κατασκευής έχει ελλιπή προϊόντα"
 
 #: build/serializers.py:734
 msgid "Build Line"
-msgstr ""
+msgstr "Γραμμή Κατασκευής"
 
 #: build/serializers.py:744
 msgid "Build output"
-msgstr ""
+msgstr "Προϊόν Κατασκευής"
 
 #: build/serializers.py:752
 msgid "Build output must point to the same build"
-msgstr ""
+msgstr "Το προϊόν κατασκευής πρέπει να δείχνει στην ίδια κατασκευή"
 
 #: build/serializers.py:788
 msgid "Build Line Item"
-msgstr ""
+msgstr "Αντικείμενο Γραμμής Κατασκευής"
 
 #: build/serializers.py:802
 msgid "bom_item.part must point to the same part as the build order"
