@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-02 07:22+0000\n"
-"PO-Revision-Date: 2024-03-10 09:32\n"
+"PO-Revision-Date: 2024-03-11 09:31\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -11473,20 +11473,20 @@ msgstr "Nachverfolgbares Teil"
 
 #: templates/js/translated/build.js:2540
 msgid "Unit Quantity"
-msgstr ""
+msgstr "Menge"
 
 #: templates/js/translated/build.js:2592
 #: templates/js/translated/sales_order.js:1915
 msgid "Sufficient stock available"
-msgstr ""
+msgstr "Ausreichender Bestand vorhanden"
 
 #: templates/js/translated/build.js:2647
 msgid "Consumable Item"
-msgstr ""
+msgstr "Verbrauchsartikel"
 
 #: templates/js/translated/build.js:2652
 msgid "Tracked item"
-msgstr ""
+msgstr "Verfolgtes Objekt"
 
 #: templates/js/translated/build.js:2659
 #: templates/js/translated/sales_order.js:2016
@@ -12010,7 +12010,7 @@ msgstr "Benachrichtigungen erscheinen hier"
 
 #: templates/js/translated/order.js:89
 msgid "Add Extra Line Item"
-msgstr ""
+msgstr "Zusätzliche Position hinzufügen"
 
 #: templates/js/translated/order.js:126
 msgid "Export Order"
@@ -12018,32 +12018,32 @@ msgstr "Bestellung exportieren"
 
 #: templates/js/translated/order.js:241
 msgid "Duplicate Line"
-msgstr ""
+msgstr "Position duplizieren"
 
 #: templates/js/translated/order.js:255
 msgid "Edit Line"
-msgstr ""
+msgstr "Postion bearbeiten"
 
 #: templates/js/translated/order.js:268
 msgid "Delete Line"
-msgstr ""
+msgstr "Position löschen"
 
 #: templates/js/translated/order.js:281
 #: templates/js/translated/purchase_order.js:1991
 msgid "No line items found"
-msgstr ""
+msgstr "Keine Postionen gefunden"
 
 #: templates/js/translated/order.js:369
 msgid "Duplicate line"
-msgstr ""
+msgstr "Postionen duplizieren"
 
 #: templates/js/translated/order.js:370
 msgid "Edit line"
-msgstr ""
+msgstr "Position bearbeiten"
 
 #: templates/js/translated/order.js:374
 msgid "Delete line"
-msgstr ""
+msgstr "Position löschen"
 
 #: templates/js/translated/part.js:90
 msgid "Part Attributes"
@@ -12175,7 +12175,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:619
 msgid "Validating the BOM will mark each line item as valid"
-msgstr ""
+msgstr "Die Stückliste zu validieren markiert jede Position als gültig"
 
 #: templates/js/translated/part.js:629
 msgid "Validate Bill of Materials"
@@ -12276,12 +12276,12 @@ msgstr ""
 #: templates/js/translated/return_order.js:756
 #: templates/js/translated/sales_order.js:1875
 msgid "This line item is overdue"
-msgstr ""
+msgstr "Diese Position ist überfällig"
 
 #: templates/js/translated/part.js:1906
 #: templates/js/translated/purchase_order.js:2221
 msgid "Receive line item"
-msgstr ""
+msgstr "Position empfangen"
 
 #: templates/js/translated/part.js:1969
 msgid "Delete part relationship"
@@ -12399,7 +12399,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:3227
 msgid "Maximum Quantity"
-msgstr ""
+msgstr "Maximale Menge"
 
 #: templates/js/translated/part.js:3272
 msgid "Minimum Stock Level"
@@ -12499,19 +12499,19 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:176
 msgid "Duplicate Line Items"
-msgstr ""
+msgstr "Positionen duplizieren"
 
 #: templates/js/translated/purchase_order.js:177
 msgid "Duplicate all line items from the selected order"
-msgstr ""
+msgstr "Alle Positionen der ausgewählten Bestellung duplizieren"
 
 #: templates/js/translated/purchase_order.js:184
 msgid "Duplicate Extra Lines"
-msgstr ""
+msgstr "Zusätzliche Positionen duplizieren"
 
 #: templates/js/translated/purchase_order.js:185
 msgid "Duplicate extra line items from the selected order"
-msgstr ""
+msgstr "Zusätzliche Positionen der ausgewählten Bestellung duplizieren"
 
 #: templates/js/translated/purchase_order.js:206
 msgid "Edit Purchase Order"
@@ -12533,16 +12533,16 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:454
 msgid "All line items have been received"
-msgstr ""
+msgstr "Alle Positionen wurden erhalten"
 
 #: templates/js/translated/purchase_order.js:459
 msgid "This order has line items which have not been marked as received."
-msgstr ""
+msgstr "Diese Bestellung enthält Positionen, die nicht als empfangen markiert wurden."
 
 #: templates/js/translated/purchase_order.js:460
 #: templates/js/translated/sales_order.js:514
 msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr ""
+msgstr "Fertigstellen dieser Bestellung bedeutet, dass sie ihre Positionen nicht länger bearbeiten können."
 
 #: templates/js/translated/purchase_order.js:483
 msgid "Cancel Purchase Order"
@@ -12559,7 +12559,7 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:515
 #: templates/js/translated/return_order.js:164
 msgid "After placing this order, line items will no longer be editable."
-msgstr ""
+msgstr "Nachdem diese Bestellung platziert ist, können die Positionen nicht länger bearbeitet werden."
 
 #: templates/js/translated/purchase_order.js:520
 msgid "Issue Purchase Order"
@@ -12571,7 +12571,7 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:637
 msgid "Quantity to order"
-msgstr ""
+msgstr "Zu bestellende Menge"
 
 #: templates/js/translated/purchase_order.js:646
 msgid "New supplier part"
@@ -12599,20 +12599,20 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
 msgid "Select Line Items"
-msgstr ""
+msgstr "Positionen auswählen"
 
 #: templates/js/translated/purchase_order.js:1074
 #: templates/js/translated/return_order.js:492
 msgid "At least one line item must be selected"
-msgstr ""
+msgstr "Mindestens eine Position muss ausgewählt werden"
 
 #: templates/js/translated/purchase_order.js:1104
 msgid "Received Quantity"
-msgstr ""
+msgstr "Erhaltene Menge"
 
 #: templates/js/translated/purchase_order.js:1115
 msgid "Quantity to receive"
-msgstr ""
+msgstr "Zu erhaltende Menge"
 
 #: templates/js/translated/purchase_order.js:1191
 msgid "Stock Status"
@@ -12648,7 +12648,7 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1307
 msgid "Quantity to Receive"
-msgstr ""
+msgstr "Zu erhaltende Menge"
 
 #: templates/js/translated/purchase_order.js:1333
 #: templates/js/translated/return_order.js:561
@@ -12687,46 +12687,46 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1844
 msgid "All selected Line items will be deleted"
-msgstr ""
+msgstr "Alle ausgewählten Positionen werden gelöscht"
 
 #: templates/js/translated/purchase_order.js:1862
 msgid "Delete selected Line items?"
-msgstr ""
+msgstr "Ausgewählte Positionen löschen?"
 
 #: templates/js/translated/purchase_order.js:1917
 #: templates/js/translated/sales_order.js:2070
 msgid "Duplicate Line Item"
-msgstr ""
+msgstr "Position duplizieren"
 
 #: templates/js/translated/purchase_order.js:1932
 #: templates/js/translated/return_order.js:476
 #: templates/js/translated/return_order.js:669
 #: templates/js/translated/sales_order.js:2083
 msgid "Edit Line Item"
-msgstr ""
+msgstr "Position bearbeiten"
 
 #: templates/js/translated/purchase_order.js:1943
 #: templates/js/translated/return_order.js:682
 #: templates/js/translated/sales_order.js:2094
 msgid "Delete Line Item"
-msgstr ""
+msgstr "Position löschen"
 
 #: templates/js/translated/purchase_order.js:2225
 #: templates/js/translated/sales_order.js:2024
 msgid "Duplicate line item"
-msgstr ""
+msgstr "Position duplizieren"
 
 #: templates/js/translated/purchase_order.js:2226
 #: templates/js/translated/return_order.js:801
 #: templates/js/translated/sales_order.js:2025
 msgid "Edit line item"
-msgstr ""
+msgstr "Position bearbeiten"
 
 #: templates/js/translated/purchase_order.js:2227
 #: templates/js/translated/return_order.js:805
 #: templates/js/translated/sales_order.js:2031
 msgid "Delete line item"
-msgstr ""
+msgstr "Position löschen"
 
 #: templates/js/translated/report.js:63
 msgid "items selected"
@@ -12793,7 +12793,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:693
 #: templates/js/translated/sales_order.js:2231
 msgid "No matching line items"
-msgstr ""
+msgstr "Keine passenden Positionen gefunden"
 
 #: templates/js/translated/return_order.js:798
 msgid "Mark item as received"
@@ -12841,7 +12841,7 @@ msgstr ""
 
 #: templates/js/translated/sales_order.js:513
 msgid "This order has line items which have not been completed."
-msgstr ""
+msgstr "Dieser Auftrag enthält Positionen, die noch nicht abgeschlossen sind."
 
 #: templates/js/translated/sales_order.js:535
 msgid "Issue this Sales Order?"
