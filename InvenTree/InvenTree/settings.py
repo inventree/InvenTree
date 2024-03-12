@@ -1012,7 +1012,7 @@ if not ALLOWED_HOSTS:
             'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
         )
 
-# Ensure that the ALLOWED_HOSTS do not contain any schema info
+# Ensure that the ALLOWED_HOSTS do not contain any scheme info
 for i, host in enumerate(ALLOWED_HOSTS):
     if '://' in host:
         ALLOWED_HOSTS[i] = host.split('://')[1]
