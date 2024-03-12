@@ -748,7 +748,11 @@ def check_user_role(user, role, permission):
                     break
 
     # Save result to cache
-    cache.set(key, result, timeout=3600)
+    try:
+        cache.set(key, result, timeout=3600)
+    except Exception:
+        pass
+
     return result
 
 
