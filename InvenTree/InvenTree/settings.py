@@ -296,7 +296,10 @@ if LDAP_AUTH:
 
     # get global options from dict and use ldap.OPT_* as keys and values
     global_options_dict = get_setting(
-        'INVENTREE_LDAP_GLOBAL_OPTIONS', 'ldap.global_options', {}, dict
+        'INVENTREE_LDAP_GLOBAL_OPTIONS',
+        'ldap.global_options',
+        default_value=None,
+        typecast=dict,
     )
     global_options = {}
     for k, v in global_options_dict.items():
@@ -366,7 +369,10 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_DENY_GROUP = get_setting('INVENTREE_LDAP_DENY_GROUP', 'ldap.deny_group')
     AUTH_LDAP_USER_FLAGS_BY_GROUP = get_setting(
-        'INVENTREE_LDAP_USER_FLAGS_BY_GROUP', 'ldap.user_flags_by_group', {}, dict
+        'INVENTREE_LDAP_USER_FLAGS_BY_GROUP',
+        'ldap.user_flags_by_group',
+        default_value=None,
+        typecast=dict,
     )
     AUTH_LDAP_FIND_GROUP_PERMS = True
 
@@ -484,7 +490,7 @@ Configure the database backend based on the user-specified values.
 logger.debug('Configuring database backend:')
 
 # Extract database configuration from the config.yaml file
-db_config = CONFIG.get('database', {})
+db_config = CONFIG.get('database', None)
 
 if not db_config:
     db_config = {}
@@ -560,7 +566,10 @@ Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
 # connecting to the database server (such as a replica failover) don't sit and
 # wait for possibly an hour or more, just tell the client something went wrong
 # and let the client retry when they want to.
-db_options = db_config.get('OPTIONS', db_config.get('options', {}))
+db_options = db_config.get('OPTIONS', db_config.get('options', None))
+
+if db_options is None:
+    db_options = {}
 
 # Specific options for postgres backend
 if 'postgres' in db_engine:  # pragma: no cover
@@ -723,7 +732,10 @@ if TRACING_ENABLED:  # pragma: no cover
         logger.info('OpenTelemetry tracing enabled')
 
         _t_resources = get_setting(
-            'INVENTREE_TRACING_RESOURCES', 'tracing.resources', {}, dict
+            'INVENTREE_TRACING_RESOURCES',
+            'tracing.resources',
+            default_value={},
+            typecast=dict,
         )
         cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
         tracing_resources = {**cstm_tags, **_t_resources}
@@ -735,7 +747,12 @@ if TRACING_ENABLED:  # pragma: no cover
             console=get_boolean_setting(
                 'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
             ),
-            auth=get_setting('INVENTREE_TRACING_AUTH', 'tracing.auth', {}),
+            auth=get_setting(
+                'INVENTREE_TRACING_AUTH',
+                'tracing.auth',
+                default_value=None,
+                typecast=dict,
+            ),
             is_http=get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True),
             append_http=get_boolean_setting(
                 'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
@@ -1193,7 +1210,9 @@ CUSTOM_SPLASH = get_custom_file(
     'INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash'
 )
 
-CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
+CUSTOMIZE = get_setting(
+    'INVENTREE_CUSTOMIZE', 'customize', default_value=None, typecast=dict
+)
 
 # Load settings for the frontend interface
 FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
