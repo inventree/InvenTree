@@ -88,7 +88,7 @@ def generateTestKey(test_name: str) -> str:
     key = key.replace(' ', '')
 
     # Remove any characters that cannot be used to represent a variable
-    key = re.sub(r'[^a-zA-Z0-9_]', '', key)
+    key = ''.join([c for c in key if c.isidentifier() and c.isprintable()])
 
     # If the key starts with a digit, prefix with an underscore
     if len(key) > 0 and key[0].isdigit():

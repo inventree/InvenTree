@@ -442,6 +442,18 @@ class TestTemplateTest(TestCase):
             with self.assertRaises(ValidationError):
                 template.clean()
 
+        valid_names = [
+            'Собранный щит',
+            '!! 123 Собранный щит <><><> $$$$$ !!!',
+            '----hello world----',
+            'Olá Mundo',
+            '我不懂中文',
+        ]
+
+        for name in valid_names:
+            template = PartTestTemplate(part=variant, test_name=name)
+            template.clean()
+
 
 class PartSettingsTest(InvenTreeTestCase):
     """Tests to ensure that the user-configurable default values work as expected.
