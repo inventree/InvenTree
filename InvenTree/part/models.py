@@ -3452,7 +3452,9 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         if tests.exists():
             raise ValidationError({
-                'test_name': _('Test with this name already exists for this part')
+                'test_name': _(
+                    'Test template with the same key already exists for part'
+                )
             })
 
         super().validate_unique(exclude)

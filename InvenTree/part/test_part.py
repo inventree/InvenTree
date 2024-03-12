@@ -431,6 +431,17 @@ class TestTemplateTest(TestCase):
 
         self.assertEqual(variant.getTestTemplates().count(), n + 1)
 
+    def test_key_generation(self):
+        """Test the key generation method."""
+        variant = Part.objects.get(pk=10004)
+
+        invalid_names = ['', '+', '+++++++', '   ', '<>$&&&']
+
+        for name in invalid_names:
+            template = PartTestTemplate(part=variant, test_name=name)
+            with self.assertRaises(ValidationError):
+                template.clean()
+
 
 class PartSettingsTest(InvenTreeTestCase):
     """Tests to ensure that the user-configurable default values work as expected.
