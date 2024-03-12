@@ -998,19 +998,24 @@ ALLOWED_HOSTS = get_setting(
     typecast=list,
 )
 
-if DEBUG and not ALLOWED_HOSTS:
-    logger.warning(
-        'No ALLOWED_HOSTS specified. Defaulting to ["*"] for debug mode. This is not recommended for production use'
-    )
-    ALLOWED_HOSTS = ['*']
-
 if SITE_URL and SITE_URL not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(SITE_URL)
 
 if not ALLOWED_HOSTS:
-    logger.error(
-        'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
-    )
+    if DEBUG:
+        logger.info(
+            'No ALLOWED_HOSTS specified. Defaulting to ["*"] for debug mode. This is not recommended for production use'
+        )
+        ALLOWED_HOSTS = ['*']
+    else:
+        logger.error(
+            'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
+        )
+
+# Ensure that the ALLOWED_HOSTS do not contain any scheme info
+for i, host in enumerate(ALLOWED_HOSTS):
+    if '://' in host:
+        ALLOWED_HOSTS[i] = host.split('://')[1]
 
 # List of trusted origins for unsafe requests
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
