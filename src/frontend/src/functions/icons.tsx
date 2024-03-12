@@ -142,6 +142,7 @@ const icons = {
   creation_date: IconCalendarTime,
   location: IconMapPin,
   default_location: IconMapPinHeart,
+  category_default_location: IconMapPinHeart,
   default_supplier: IconShoppingCartHeart,
   link: IconLink,
   responsible: IconUserStar,

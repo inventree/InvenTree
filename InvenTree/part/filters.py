@@ -288,10 +288,10 @@ def annotate_category_parts():
 
 
 def annotate_default_location():
-    """Construct a queryset that finds the default location of a part.
+    """Construct a queryset that finds the closest default location in the part's category tree.
 
-    If the part has its own default_location, this is returned.
-    If default_location is null, the category tree is traversed until a value is found.
+    If the part's category has its own default_location, this is returned.
+    If not, the category tree is traversed until a value is found.
     """
     subquery = part.models.PartCategory.objects.filter(
         tree_id=OuterRef('category__tree_id'),
@@ -301,7 +301,7 @@ def annotate_default_location():
     )
 
     return Coalesce(
-        F('default_location'),
+        F('category__default_location'),
         Subquery(
             subquery.order_by('-level')
             .filter(default_location__isnull=False)

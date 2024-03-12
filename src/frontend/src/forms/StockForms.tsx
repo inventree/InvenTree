@@ -167,6 +167,7 @@ function StockItemDefaultMove({
   stockItem: any;
   value: any;
 }) {
+  console.log('item', stockItem);
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',
@@ -219,12 +220,19 @@ function StockItemDefaultMove({
   );
 }
 
-function moveToDefault(stockItem: any, value: any, refresh: any) {
+function moveToDefault(
+  stockItem: any,
+  value: StockItemQuantity,
+  refresh: () => void
+) {
   modals.openConfirmModal({
     title: <StylishText>Confirm Stock Transfer</StylishText>,
     children: <StockItemDefaultMove stockItem={stockItem} value={value} />,
     onConfirm: () => {
-      if (stockItem.location === stockItem.part_detail.default_location) {
+      if (
+        stockItem.location === stockItem.part_detail.default_location ||
+        stockItem.location === stockItem.part_detail.category_default_location
+      ) {
         return;
       }
       api
@@ -237,13 +245,15 @@ function moveToDefault(stockItem: any, value: any, refresh: any) {
               status: stockItem.status
             }
           ],
-          location: stockItem.part_detail.default_location
+          location:
+            stockItem.part_detail.default_location ??
+            stockItem.part_detail.category_default_location
         })
         .then((response) => {
           refresh();
           return response.data;
         })
-        .catch((e) => {
+        .catch(() => {
           return null;
         });
     }
@@ -280,6 +290,8 @@ function StockOperationsRow({
   record?: any;
 }) {
   const item = input.item;
+
+  console.log('rec', record);
 
   const [value, setValue] = useState<StockItemQuantity>(
     add ? 0 : item.quantity ?? 0
@@ -335,7 +347,10 @@ function StockOperationsRow({
               icon={<InvenTreeIcon icon="default_location" />}
               tooltip={t`Move to default location`}
               tooltipAlignment="top"
-              disabled={!record.part_detail.default_location}
+              disabled={
+                !record.part_detail.default_location &&
+                !record.part_detail.category_default_location
+              }
             />
           )}
           <ActionButton

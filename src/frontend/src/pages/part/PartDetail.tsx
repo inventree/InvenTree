@@ -137,6 +137,13 @@ export default function PartDetail() {
         hidden: !part.default_location
       },
       {
+        type: 'link',
+        name: 'category_default_location',
+        label: t`Category Default Location`,
+        model: ModelType.stocklocation,
+        hidden: part.default_location || !part.category_default_location
+      },
+      {
         type: 'string',
         name: 'IPN',
         label: t`IPN`,
