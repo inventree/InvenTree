@@ -291,7 +291,6 @@ class BaseInvenTreeSetting(models.Model):
         try:
             cache.set(ckey, self, timeout=3600)
         except Exception:
-            # Some characters cause issues with caching; ignore and move on
             pass
 
     @classmethod
