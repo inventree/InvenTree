@@ -165,6 +165,13 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     value = str(value).strip() if value else ''
     unit = str(unit).strip() if unit else ''
 
+    # Handle imperial length measurements
+    if value.count("'") == 1 and value.endswith("'"):
+        value = value.replace("'", ' feet')
+
+    if value.count('"') == 1 and value.endswith('"'):
+        value = value.replace('"', ' inches')
+
     # Error on blank values
     if not value:
         raise ValidationError(_('No value provided'))
