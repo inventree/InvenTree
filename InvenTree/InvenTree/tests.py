@@ -138,6 +138,24 @@ class ConversionTest(TestCase):
             q = InvenTree.conversion.convert_physical_value(val, 'W', strip_units=False)
             self.assertAlmostEqual(float(q.magnitude), expected, places=2)
 
+    def test_imperial_lengths(self):
+        """Test support of imperial length measurements."""
+        tests = [
+            ('1 inch', 'mm', 25.4),
+            ('1 "', 'mm', 25.4),
+            ('2 "', 'inches', 2),
+            ('3 feet', 'inches', 36),
+            ("3'", 'inches', 36),
+            ("7 '", 'feet', 7),
+        ]
+
+        for val, unit, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, unit, strip_units=True
+            )
+
+            self.assertAlmostEqual(output, expected, 3)
+
     def test_dimensionless_units(self):
         """Tests for 'dimensionless' unit quantities."""
         # Test some dimensionless units
