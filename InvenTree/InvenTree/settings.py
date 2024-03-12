@@ -130,6 +130,9 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
+# Web URL endpoint for served media files
+MEDIA_URL = '/media/'
+
 STATICFILES_DIRS = []
 
 # Translated Template settings
@@ -154,9 +157,6 @@ STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
 
 # Color Themes Directory
 STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
-
-# Web URL endpoint for served media files
-MEDIA_URL = '/media/'
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -1058,7 +1058,7 @@ CORS_ALLOW_CREDENTIALS = get_boolean_setting(
 )
 
 # Only allow CORS access to the following URL endpoints
-CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
+CORS_URLS_REGEX = r'^/(api|auth|media|static)/.*$'
 
 CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
