@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-12 03:53+0000\n"
-"PO-Revision-Date: 2024-03-11 09:31\n"
+"PO-Revision-Date: 2024-03-12 09:29\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -1600,7 +1600,7 @@ msgstr "Αντικείμενο Γραμμής Κατασκευής"
 
 #: build/serializers.py:802
 msgid "bom_item.part must point to the same part as the build order"
-msgstr ""
+msgstr "bom_item.part πρέπει να δείχνει στο ίδιο εξάρτημα με τη εντολή κατασκευής"
 
 #: build/serializers.py:817 stock/serializers.py:1038
 msgid "Item must be in stock"
@@ -14083,3 +14083,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
