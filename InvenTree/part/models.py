@@ -3428,6 +3428,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         self.key = helpers.generateTestKey(self.test_name)
 
+        if len(self.key) == 0:
+            raise ValidationError({
+                'test_name': _(
+                    'Invalid template name - must include at least one alphanumeric character'
+                )
+            })
+
         self.validate_unique()
         super().clean()
 
