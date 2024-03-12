@@ -467,20 +467,20 @@ msgstr "Trạng thái: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgid "Error"
 msgstr "Lỗi"
 
-#: src/components/forms/fields/RelatedModelField.tsx:296
+#: src/components/forms/fields/RelatedModelField.tsx:298
 #: src/pages/Index/Settings/UserSettings.tsx:64
 #: src/tables/Search.tsx:23
 msgid "Search"
 msgstr "Tìm kiếm"
 
-#: src/components/forms/fields/RelatedModelField.tsx:297
+#: src/components/forms/fields/RelatedModelField.tsx:299
 #: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
 msgstr "Đang tải"
 
-#: src/components/forms/fields/RelatedModelField.tsx:299
+#: src/components/forms/fields/RelatedModelField.tsx:301
 msgid "No results found"
 msgstr "Không có kết quả nào được tìm thấy"
 
