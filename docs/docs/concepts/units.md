@@ -34,6 +34,15 @@ Scientific notation is also supported, and can be used to represent very large o
 !!! tip "Case Sensitive"
     Support for scientific notation is case sensitive. For example, `1E3` is a valid value, but `1e3` is not.
 
+### Feet and Inches
+
+Shorthand notation is supported for feet and inches. For example, the following values would all be considered *valid*:
+
+- `3'`: `3 feet`
+- `6"` : `6 inches`
+
+However, note that compound measurements (e.g. `3'6"`) are not supported.
+
 ### Case Sensitivity
 
 The pint library is case sensitive, and units must be specified in the correct case. For example, `kg` is a valid unit, but `KG` is not. In particular, you need to pay close attention when using SI prefixes (e.g. `k` for kilo, `M` for mega, `n` for nano, etc).
