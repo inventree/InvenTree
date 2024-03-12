@@ -14,7 +14,10 @@ def currency_code_default():
     """Returns the default currency code (or USD if not specified)."""
     from common.models import InvenTreeSetting
 
-    cached_value = cache.get('currency_code_default', '')
+    try:
+        cached_value = cache.get('currency_code_default', '')
+    except Exception:
+        cached_value = None
 
     if cached_value:
         return cached_value

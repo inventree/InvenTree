@@ -290,8 +290,7 @@ class BaseInvenTreeSetting(models.Model):
 
         try:
             cache.set(ckey, self, timeout=3600)
-        except TypeError:
-            # Some characters cause issues with caching; ignore and move on
+        except Exception:
             pass
 
     @classmethod
@@ -554,16 +553,18 @@ class BaseInvenTreeSetting(models.Model):
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
+        # Perform cache lookup by default
+        do_cache = kwargs.pop('cache', True)
+
         # Prevent saving to the database during data import
         if InvenTree.ready.isImportingData():
             create = False
+            do_cache = False
 
         # Prevent saving to the database during migrations
         if InvenTree.ready.isRunningMigrations():
             create = False
-
-        # Perform cache lookup by default
-        do_cache = kwargs.pop('cache', True)
+            do_cache = False
 
         ckey = cls.create_cache_key(key, **kwargs)
 
@@ -575,7 +576,7 @@ class BaseInvenTreeSetting(models.Model):
                 if cached_setting is not None:
                     return cached_setting
 
-            except AppRegistryNotReady:
+            except Exception:
                 # Cache is not ready yet
                 do_cache = False
 
