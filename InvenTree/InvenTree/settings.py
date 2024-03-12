@@ -734,7 +734,7 @@ if TRACING_ENABLED:  # pragma: no cover
         _t_resources = get_setting(
             'INVENTREE_TRACING_RESOURCES',
             'tracing.resources',
-            default_value={},
+            default_value=None,
             typecast=dict,
         )
         cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
