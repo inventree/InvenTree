@@ -226,9 +226,12 @@ class BaseInvenTreeSetting(models.Model):
         """
         cache_key = f'BUILD_DEFAULT_VALUES:{str(cls.__name__)}'
 
-        if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
-            # Already built default values
-            return
+        try:
+            if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
+                # Already built default values
+                return
+        except Exception:
+            pass
 
         try:
             existing_keys = cls.objects.filter(**kwargs).values_list('key', flat=True)
@@ -251,7 +254,10 @@ class BaseInvenTreeSetting(models.Model):
             )
             pass
 
-        cache.set(cache_key, True, timeout=3600)
+        try:
+            cache.set(cache_key, True, timeout=3600)
+        except Exception:
+            pass
 
     def _call_settings_function(self, reference: str, args, kwargs):
         """Call a function associated with a particular setting.
