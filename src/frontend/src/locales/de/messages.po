@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-05 09:02\n"
+"PO-Revision-Date: 2024-03-11 09:31\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -467,20 +467,20 @@ msgstr "Status: <0>worker</0> ({0}), <1>Plugins</1>{1}"
 msgid "Error"
 msgstr "Fehler"
 
-#: src/components/forms/fields/RelatedModelField.tsx:296
+#: src/components/forms/fields/RelatedModelField.tsx:298
 #: src/pages/Index/Settings/UserSettings.tsx:64
 #: src/tables/Search.tsx:23
 msgid "Search"
 msgstr "Suche"
 
-#: src/components/forms/fields/RelatedModelField.tsx:297
+#: src/components/forms/fields/RelatedModelField.tsx:299
 #: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
 msgstr "Wird geladen"
 
-#: src/components/forms/fields/RelatedModelField.tsx:299
+#: src/components/forms/fields/RelatedModelField.tsx:301
 msgid "No results found"
 msgstr "Keine Ergebnisse gefunden"
 
@@ -3221,7 +3221,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:312
 msgid "Reporting Actions"
-msgstr ""
+msgstr "Berichte-Aktionen"
 
 #: src/pages/build/BuildDetail.tsx:318
 msgid "Print build report"
@@ -3229,7 +3229,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:324
 msgid "Build Order Actions"
-msgstr ""
+msgstr "Bauauftrag-Aktionen"
 
 #: src/pages/build/BuildIndex.tsx:23
 #~ msgid "Build order created"
@@ -3306,7 +3306,7 @@ msgstr "Unternehmen bearbeiten"
 
 #: src/pages/company/CompanyDetail.tsx:281
 msgid "Company Actions"
-msgstr ""
+msgstr "Firmen-Aktionen"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:42
 #: src/pages/part/CategoryDetail.tsx:153
@@ -3462,7 +3462,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:261
 #: src/tables/bom/BomTable.tsx:235
 msgid "Trackable Part"
-msgstr ""
+msgstr "Nachverfolgbares Teil"
 
 #: src/pages/part/PartDetail.tsx:266
 msgid "Purchaseable Part"
@@ -3575,7 +3575,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:667
 msgid "Part Actions"
-msgstr ""
+msgstr "Teile-Aktionen"
 
 #: src/pages/part/PartIndex.tsx:29
 #~ msgid "Categories"
@@ -3602,7 +3602,7 @@ msgstr "Positionen"
 #: src/pages/sales/ReturnOrderDetail.tsx:90
 #: src/pages/sales/SalesOrderDetail.tsx:94
 msgid "Completed Line Items"
-msgstr ""
+msgstr "Abgeschlossene Positionen"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:132
 #: src/pages/sales/ReturnOrderDetail.tsx:98
@@ -3997,7 +3997,7 @@ msgstr "Verbrauchsartikel"
 
 #: src/tables/bom/BomTable.tsx:236
 msgid "Show trackable items"
-msgstr ""
+msgstr "Nachverfolgbare Teile anzeigen"
 
 #: src/tables/bom/BomTable.tsx:241
 msgid "Show asssmbled items"
@@ -4077,19 +4077,19 @@ msgstr ""
 #: src/tables/part/PartTable.tsx:201
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
-msgstr ""
+msgstr "Nachverfolgbar"
 
 #: src/tables/bom/UsedInTable.tsx:72
 msgid "Show trackable assemblies"
-msgstr ""
+msgstr "Nachverfolgbare Baugruppen anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:34
 msgid "Show allocated lines"
-msgstr ""
+msgstr "Zugewiesene Positionen anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:39
 msgid "Show lines with available stock"
-msgstr ""
+msgstr "Positionen mit verfügbarem Lagerbestand anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:43
 msgid "Consumable"
@@ -4097,7 +4097,7 @@ msgstr "Verbrauchsmaterial"
 
 #: src/tables/build/BuildLineTable.tsx:44
 msgid "Show consumable lines"
-msgstr ""
+msgstr "Verbrauchsmaterialien anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:48
 msgid "Optional"
@@ -4105,7 +4105,7 @@ msgstr "Optional"
 
 #: src/tables/build/BuildLineTable.tsx:49
 msgid "Show optional lines"
-msgstr ""
+msgstr "Optionale Positionen anzeigen"
 
 #: src/tables/build/BuildLineTable.tsx:83
 msgid "In production"
@@ -4236,7 +4236,7 @@ msgstr ""
 
 #: src/tables/machine/MachineListTable.tsx:225
 msgid "Machine Actions"
-msgstr ""
+msgstr "Maschinen-Aktionen"
 
 #: src/tables/machine/MachineListTable.tsx:229
 #: src/tables/machine/MachineListTable.tsx:232
@@ -4518,7 +4518,7 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:202
 msgid "Filter by trackable attribute"
-msgstr ""
+msgstr "Filtern nach Nachverfolgbarer Eigenschaft"
 
 #: src/tables/part/PartTable.tsx:208
 msgid "Filter by parts which have units"
@@ -4656,7 +4656,7 @@ msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:31
 msgid "Show trackable variants"
-msgstr ""
+msgstr "Nachverfolgbare Varianten anzeigen"
 
 #: src/tables/part/RelatedPartTable.tsx:84
 msgid "Add Related Part"
@@ -4973,7 +4973,7 @@ msgstr "Position bearbeiten"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:203
 msgid "Delete Line Item"
-msgstr ""
+msgstr "Position löschen"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:214
 msgid "Receive line item"
@@ -5200,7 +5200,7 @@ msgstr ""
 
 #: src/tables/settings/TemplateTable.tsx:145
 msgid "actions"
-msgstr ""
+msgstr "Aktionen"
 
 #: src/tables/settings/TemplateTable.tsx:212
 msgid "Enabled"
@@ -5406,7 +5406,7 @@ msgstr "Nachverfolgbare Freigabe"
 
 #: src/tables/stock/StockItemTable.tsx:310
 msgid "Show tracked items"
-msgstr ""
+msgstr "Verfolgbare Objekte anzeigen"
 
 #: src/tables/stock/StockItemTable.tsx:314
 msgid "Has Purchase Price"
