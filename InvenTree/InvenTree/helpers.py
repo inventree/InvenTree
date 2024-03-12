@@ -91,7 +91,7 @@ def generateTestKey(test_name: str) -> str:
     key = re.sub(r'[^a-zA-Z0-9_]', '', key)
 
     # If the key starts with a digit, prefix with an underscore
-    if key[0].isdigit():
+    if len(key) > 0 and key[0].isdigit():
         key = '_' + key
 
     return key
