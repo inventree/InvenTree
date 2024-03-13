@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-12 03:53+0000\n"
-"PO-Revision-Date: 2024-03-06 10:36\n"
+"POT-Creation-Date: 2024-03-13 01:38+0000\n"
+"PO-Revision-Date: 2024-03-13 11:39\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -132,42 +132,42 @@ msgstr "Sağlanan e-posta alanı onaylanmadı."
 msgid "Registration is disabled."
 msgstr "Kayıt devre dışı."
 
-#: InvenTree/helpers.py:512 order/models.py:529 order/models.py:731
+#: InvenTree/helpers.py:525 order/models.py:529 order/models.py:731
 msgid "Invalid quantity provided"
 msgstr "Geçersiz veri sağlandı"
 
-#: InvenTree/helpers.py:520
+#: InvenTree/helpers.py:533
 msgid "Empty serial number string"
 msgstr "Boş seri numarası dizesi"
 
-#: InvenTree/helpers.py:549
+#: InvenTree/helpers.py:562
 msgid "Duplicate serial"
 msgstr "Yinelenen seri"
 
-#: InvenTree/helpers.py:581 InvenTree/helpers.py:624
+#: InvenTree/helpers.py:594 InvenTree/helpers.py:637
 #, python-brace-format
 msgid "Invalid group range: {group}"
 msgstr "Geçersiz grup aralığı: {group}"
 
-#: InvenTree/helpers.py:612
+#: InvenTree/helpers.py:625
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "Grup aralığı {group}, izin verilen miktarı aşmaktadır ({expected_quantity})"
 
-#: InvenTree/helpers.py:642 InvenTree/helpers.py:649 InvenTree/helpers.py:668
+#: InvenTree/helpers.py:655 InvenTree/helpers.py:662 InvenTree/helpers.py:681
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
 msgstr "Geçersiz grup aralığı: {group}"
 
-#: InvenTree/helpers.py:678
+#: InvenTree/helpers.py:691
 msgid "No serial numbers found"
 msgstr "Seri numarası bulunamadı"
 
-#: InvenTree/helpers.py:683
+#: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
 msgstr "Benzersiz seri numaralarının sayısı ({len(serials)}) ile miktarın ({expected_quantity}) eşleşmesi gerekmektedir"
 
-#: InvenTree/helpers.py:801
+#: InvenTree/helpers.py:814
 msgid "Remove HTML tags from this value"
 msgstr "Bu değerden HTML etiketlerini kaldır"
 
@@ -481,7 +481,7 @@ msgstr "Geçersiz seçim"
 
 #: InvenTree/models.py:894 common/models.py:2629 common/models.py:3027
 #: common/serializers.py:370 company/models.py:608 label/models.py:120
-#: machine/models.py:24 part/models.py:854 part/models.py:3606
+#: machine/models.py:24 part/models.py:854 part/models.py:3615
 #: plugin/models.py:41 report/models.py:174 stock/models.py:76
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -506,7 +506,7 @@ msgstr "Adı"
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:107 label/models.py:127
 #: order/models.py:265 order/models.py:1304 part/admin.py:303 part/admin.py:414
-#: part/models.py:877 part/models.py:3621 part/templates/part/category.html:82
+#: part/models.py:877 part/models.py:3630 part/templates/part/category.html:82
 #: part/templates/part/part_base.html:170
 #: part/templates/part/part_scheduling.html:12 report/models.py:187
 #: report/models.py:622 report/models.py:667
@@ -581,7 +581,7 @@ msgstr "Sunucu Hatası"
 msgid "An error has been logged by the server."
 msgstr "Bir hafta sunucu tarafından kayıt edildi."
 
-#: InvenTree/serializers.py:62 part/models.py:4134
+#: InvenTree/serializers.py:62 part/models.py:4143
 msgid "Must be a valid number"
 msgstr "Geçerli bir numara olmalı"
 
@@ -938,14 +938,14 @@ msgstr "InvenTree Hakkında"
 msgid "Build must be cancelled before it can be deleted"
 msgstr ""
 
-#: build/api.py:281 part/models.py:4012 templates/js/translated/bom.js:997
+#: build/api.py:281 part/models.py:4021 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2521
 #: templates/js/translated/table_filters.js:190
 #: templates/js/translated/table_filters.js:583
 msgid "Consumable"
 msgstr ""
 
-#: build/api.py:282 part/models.py:4006 part/templates/part/upload_bom.html:58
+#: build/api.py:282 part/models.py:4015 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:1001 templates/js/translated/bom.js:1028
 #: templates/js/translated/build.js:2530
 #: templates/js/translated/table_filters.js:186
@@ -1014,7 +1014,7 @@ msgstr "Yapım İşi Emri Referansı"
 
 #: build/models.py:174 order/models.py:430 order/models.py:886
 #: order/models.py:1264 order/models.py:1981 part/admin.py:417
-#: part/models.py:4027 part/templates/part/upload_bom.html:54
+#: part/models.py:4036 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:26
@@ -1046,9 +1046,9 @@ msgstr "Bu yapım işinin tahsis edildiği yapım işi emri"
 #: order/models.py:1389 order/models.py:1532 order/models.py:1533
 #: part/api.py:1528 part/api.py:1820 part/models.py:389 part/models.py:3003
 #: part/models.py:3147 part/models.py:3291 part/models.py:3314
-#: part/models.py:3335 part/models.py:3357 part/models.py:3458
-#: part/models.py:3754 part/models.py:3885 part/models.py:3978
-#: part/models.py:4339 part/serializers.py:1084 part/serializers.py:1659
+#: part/models.py:3335 part/models.py:3357 part/models.py:3467
+#: part/models.py:3763 part/models.py:3894 part/models.py:3987
+#: part/models.py:4348 part/serializers.py:1084 part/serializers.py:1659
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1288,7 +1288,7 @@ msgstr ""
 #: build/templates/build/detail.html:34 common/models.py:2439
 #: order/models.py:1247 order/models.py:1902 order/serializers.py:1306
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:416
-#: part/forms.py:48 part/models.py:3161 part/models.py:4000
+#: part/forms.py:48 part/models.py:3161 part/models.py:4009
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1659,7 +1659,7 @@ msgstr ""
 msgid "Allocate optional BOM items to build order"
 msgstr ""
 
-#: build/serializers.py:1097 part/models.py:3895 part/models.py:4331
+#: build/serializers.py:1097 part/models.py:3904 part/models.py:4340
 #: stock/api.py:745
 msgid "BOM Item"
 msgstr ""
@@ -2429,7 +2429,7 @@ msgstr "Kategori Paremetre Sablonu Kopyala"
 msgid "Copy category parameter templates when creating a part"
 msgstr "Parça oluştururken kategori parametre şablonlarını kopyala"
 
-#: common/models.py:1457 part/admin.py:108 part/models.py:3762
+#: common/models.py:1457 part/admin.py:108 part/models.py:3771
 #: report/models.py:180 stock/serializers.py:95
 #: templates/js/translated/table_filters.js:139
 #: templates/js/translated/table_filters.js:767
@@ -4038,7 +4038,7 @@ msgid "Parameter value"
 msgstr "Parametre değeri"
 
 #: company/models.py:623 company/templates/company/supplier_part.html:168
-#: part/admin.py:57 part/models.py:1008 part/models.py:3613
+#: part/admin.py:57 part/models.py:1008 part/models.py:3622
 #: part/templates/part/part_base.html:284
 #: templates/js/translated/company.js:1415 templates/js/translated/part.js:1511
 #: templates/js/translated/part.js:1615 templates/js/translated/part.js:2370
@@ -4098,7 +4098,7 @@ msgid "Supplier part description"
 msgstr ""
 
 #: company/models.py:834 company/templates/company/supplier_part.html:187
-#: part/admin.py:418 part/models.py:4035 part/templates/part/upload_bom.html:59
+#: part/admin.py:418 part/models.py:4044 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
 #: report/templates/report/inventree_return_order_report_base.html:27
@@ -4647,7 +4647,7 @@ msgstr "Etiket"
 msgid "Label template file"
 msgstr "Etiket şablon listesi"
 
-#: label/models.py:143 part/models.py:3484 report/models.py:322
+#: label/models.py:143 part/models.py:3493 report/models.py:322
 #: templates/js/translated/part.js:2900
 #: templates/js/translated/table_filters.js:481
 msgid "Enabled"
@@ -5771,12 +5771,12 @@ msgstr ""
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
-#: part/admin.py:39 part/admin.py:404 part/models.py:3886 part/stocktake.py:218
+#: part/admin.py:39 part/admin.py:404 part/models.py:3895 part/stocktake.py:218
 #: stock/admin.py:153
 msgid "Part ID"
 msgstr ""
 
-#: part/admin.py:41 part/admin.py:411 part/models.py:3887 part/stocktake.py:219
+#: part/admin.py:41 part/admin.py:411 part/models.py:3896 part/stocktake.py:219
 #: stock/admin.py:157
 msgid "Part Name"
 msgstr ""
@@ -5893,7 +5893,7 @@ msgstr ""
 msgid "Parent IPN"
 msgstr ""
 
-#: part/admin.py:408 part/models.py:3888
+#: part/admin.py:408 part/models.py:3897
 msgid "Part IPN"
 msgstr ""
 
@@ -5981,7 +5981,7 @@ msgstr ""
 msgid "This option must be selected"
 msgstr ""
 
-#: part/api.py:1541 part/models.py:895 part/models.py:3385 part/models.py:3831
+#: part/api.py:1541 part/models.py:895 part/models.py:3385 part/models.py:3840
 #: part/serializers.py:396 part/serializers.py:1094
 #: part/templates/part/part_base.html:260 stock/api.py:733
 #: templates/InvenTree/settings/settings_staff_js.html:300
@@ -6008,7 +6008,7 @@ msgstr ""
 msgid "Input quantity for price calculation"
 msgstr ""
 
-#: part/models.py:81 part/models.py:3832 part/templates/part/category.html:16
+#: part/models.py:81 part/models.py:3841 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr ""
@@ -6090,7 +6090,7 @@ msgstr ""
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr ""
 
-#: part/models.py:854 part/models.py:3887
+#: part/models.py:854 part/models.py:3896
 msgid "Part name"
 msgstr "Parça adı"
 
@@ -6424,278 +6424,282 @@ msgstr ""
 msgid "User who requested this stocktake report"
 msgstr ""
 
-#: part/models.py:3438
+#: part/models.py:3434
+msgid "Invalid template name - must include at least one alphanumeric character"
+msgstr ""
+
+#: part/models.py:3445
 msgid "Test templates can only be created for trackable parts"
 msgstr "Test şablonları sadece takip edilebilir paçalar için oluşturulabilir"
 
-#: part/models.py:3448
-msgid "Test with this name already exists for this part"
+#: part/models.py:3456
+msgid "Test template with the same key already exists for part"
 msgstr ""
 
-#: part/models.py:3464 templates/js/translated/part.js:2879
+#: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
 msgstr "Test Adı"
 
-#: part/models.py:3465
+#: part/models.py:3474
 msgid "Enter a name for the test"
 msgstr ""
 
-#: part/models.py:3471
+#: part/models.py:3480
 msgid "Test Key"
 msgstr ""
 
-#: part/models.py:3472
+#: part/models.py:3481
 msgid "Simplified key for the test"
 msgstr ""
 
-#: part/models.py:3479
+#: part/models.py:3488
 msgid "Test Description"
 msgstr "Test Açıklaması"
 
-#: part/models.py:3480
+#: part/models.py:3489
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:3484
+#: part/models.py:3493
 msgid "Is this test enabled?"
 msgstr ""
 
-#: part/models.py:3489 templates/js/translated/part.js:2908
+#: part/models.py:3498 templates/js/translated/part.js:2908
 #: templates/js/translated/table_filters.js:477
 msgid "Required"
 msgstr "Gerekli"
 
-#: part/models.py:3490
+#: part/models.py:3499
 msgid "Is this test required to pass?"
 msgstr "Testi geçmesi için bu gerekli mi?"
 
-#: part/models.py:3495 templates/js/translated/part.js:2916
+#: part/models.py:3504 templates/js/translated/part.js:2916
 msgid "Requires Value"
 msgstr ""
 
-#: part/models.py:3496
+#: part/models.py:3505
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:3501 templates/js/translated/part.js:2923
+#: part/models.py:3510 templates/js/translated/part.js:2923
 msgid "Requires Attachment"
 msgstr ""
 
-#: part/models.py:3503
+#: part/models.py:3512
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
-#: part/models.py:3550
+#: part/models.py:3559
 msgid "Checkbox parameters cannot have units"
 msgstr ""
 
-#: part/models.py:3555
+#: part/models.py:3564
 msgid "Checkbox parameters cannot have choices"
 msgstr ""
 
-#: part/models.py:3575
+#: part/models.py:3584
 msgid "Choices must be unique"
 msgstr ""
 
-#: part/models.py:3592
+#: part/models.py:3601
 msgid "Parameter template name must be unique"
 msgstr "Parametre şablon adı benzersiz olmalıdır"
 
-#: part/models.py:3607
+#: part/models.py:3616
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:3614
+#: part/models.py:3623
 msgid "Physical units for this parameter"
 msgstr ""
 
-#: part/models.py:3622
+#: part/models.py:3631
 msgid "Parameter description"
 msgstr ""
 
-#: part/models.py:3628 templates/js/translated/part.js:1627
+#: part/models.py:3637 templates/js/translated/part.js:1627
 #: templates/js/translated/table_filters.js:821
 msgid "Checkbox"
 msgstr ""
 
-#: part/models.py:3629
+#: part/models.py:3638
 msgid "Is this parameter a checkbox?"
 msgstr ""
 
-#: part/models.py:3634 templates/js/translated/part.js:1636
+#: part/models.py:3643 templates/js/translated/part.js:1636
 msgid "Choices"
 msgstr ""
 
-#: part/models.py:3635
+#: part/models.py:3644
 msgid "Valid choices for this parameter (comma-separated)"
 msgstr ""
 
-#: part/models.py:3712
+#: part/models.py:3721
 msgid "Invalid choice for parameter value"
 msgstr ""
 
-#: part/models.py:3755
+#: part/models.py:3764
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:3763 part/models.py:3839 part/models.py:3840
+#: part/models.py:3772 part/models.py:3848 part/models.py:3849
 #: templates/InvenTree/settings/settings_staff_js.html:295
 msgid "Parameter Template"
 msgstr "Parametre Şablonu"
 
-#: part/models.py:3768
+#: part/models.py:3777
 msgid "Data"
 msgstr ""
 
-#: part/models.py:3769
+#: part/models.py:3778
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:3846 templates/InvenTree/settings/settings_staff_js.html:304
+#: part/models.py:3855 templates/InvenTree/settings/settings_staff_js.html:304
 msgid "Default Value"
 msgstr ""
 
-#: part/models.py:3847
+#: part/models.py:3856
 msgid "Default Parameter Value"
 msgstr ""
 
-#: part/models.py:3885
+#: part/models.py:3894
 msgid "Part ID or part name"
 msgstr ""
 
-#: part/models.py:3886
+#: part/models.py:3895
 msgid "Unique part ID value"
 msgstr ""
 
-#: part/models.py:3888
+#: part/models.py:3897
 msgid "Part IPN value"
 msgstr ""
 
-#: part/models.py:3889
+#: part/models.py:3898
 msgid "Level"
 msgstr ""
 
-#: part/models.py:3889
+#: part/models.py:3898
 msgid "BOM level"
 msgstr ""
 
-#: part/models.py:3979
+#: part/models.py:3988
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:3989
+#: part/models.py:3998
 msgid "Sub part"
 msgstr ""
 
-#: part/models.py:3990
+#: part/models.py:3999
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:4001
+#: part/models.py:4010
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:4007
+#: part/models.py:4016
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:4013
+#: part/models.py:4022
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr ""
 
-#: part/models.py:4020 part/templates/part/upload_bom.html:55
+#: part/models.py:4029 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr ""
 
-#: part/models.py:4021
+#: part/models.py:4030
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:4028
+#: part/models.py:4037
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:4036
+#: part/models.py:4045
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:4042
+#: part/models.py:4051
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:4043
+#: part/models.py:4052
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:4048 templates/js/translated/table_filters.js:174
+#: part/models.py:4057 templates/js/translated/table_filters.js:174
 msgid "Validated"
 msgstr ""
 
-#: part/models.py:4049
+#: part/models.py:4058
 msgid "This BOM item has been validated"
 msgstr ""
 
-#: part/models.py:4054 part/templates/part/upload_bom.html:57
+#: part/models.py:4063 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1054
 #: templates/js/translated/table_filters.js:178
 #: templates/js/translated/table_filters.js:211
 msgid "Gets inherited"
 msgstr ""
 
-#: part/models.py:4055
+#: part/models.py:4064
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Bu malzeme listesi, çeşit parçalar listesini kalıtsalıdır"
 
-#: part/models.py:4060 part/templates/part/upload_bom.html:56
+#: part/models.py:4069 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1046
 msgid "Allow Variants"
 msgstr "Çeşide İzin Ver"
 
-#: part/models.py:4061
+#: part/models.py:4070
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Çeşit parçaların stok kalemleri bu malzeme listesinde kullanılabilir"
 
-#: part/models.py:4146 stock/models.py:649
+#: part/models.py:4155 stock/models.py:649
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:4156 part/models.py:4158
+#: part/models.py:4165 part/models.py:4167
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:4298
+#: part/models.py:4307
 msgid "BOM Item Substitute"
 msgstr ""
 
-#: part/models.py:4319
+#: part/models.py:4328
 msgid "Substitute part cannot be the same as the master part"
 msgstr ""
 
-#: part/models.py:4332
+#: part/models.py:4341
 msgid "Parent BOM item"
 msgstr ""
 
-#: part/models.py:4340
+#: part/models.py:4349
 msgid "Substitute part"
 msgstr ""
 
-#: part/models.py:4356
+#: part/models.py:4365
 msgid "Part 1"
 msgstr ""
 
-#: part/models.py:4364
+#: part/models.py:4373
 msgid "Part 2"
 msgstr ""
 
-#: part/models.py:4365
+#: part/models.py:4374
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:4384
+#: part/models.py:4393
 msgid "Part relationship cannot be created between a part and itself"
 msgstr ""
 
-#: part/models.py:4389
+#: part/models.py:4398
 msgid "Duplicate relationship already exists"
 msgstr ""
 
@@ -14083,3 +14087,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
