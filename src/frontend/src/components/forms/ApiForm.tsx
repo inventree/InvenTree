@@ -393,10 +393,10 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     <Stack>
       {/* Attempt at making fixed footer with scroll area */}
       {/* Has some issues at low resolutions still */}
-      <Stack h={'70vh'}>
-        <ScrollArea.Autosize h={'100%'}>
+      <Stack h={'60vh'}>
+        <ScrollArea.Autosize mah={'100%'}>
           {/* Form Fields */}
-          <Stack h={'10%'} spacing="sm">
+          <Stack spacing="sm">
             <LoadingOverlay visible={isLoading} />
             {(!isValid || nonFieldErrors.length > 0) && (
               <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
