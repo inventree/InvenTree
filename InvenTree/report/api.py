@@ -264,7 +264,12 @@ class ReportPrintMixin:
 
         except Exception as exc:
             # Log the exception to the database
-            log_error(request.path)
+            if InvenTree.helpers.str2bool(
+                common.models.InvenTreeSetting.get_setting(
+                    'REPORT_LOG_ERRORS', cache=False
+                )
+            ):
+                log_error(request.path)
 
             # Re-throw the exception to the client as a DRF exception
             raise ValidationError({
