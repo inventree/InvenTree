@@ -43,6 +43,7 @@ from .validators import validate_overage
 class HostTest(InvenTreeTestCase):
     """Test for host configuration."""
 
+    @override_settings(ALLOWED_HOSTS=['testserver'])
     def test_allowed_hosts(self):
         """Test that the ALLOWED_HOSTS functions as expected."""
         self.assertIn('testserver', settings.ALLOWED_HOSTS)
