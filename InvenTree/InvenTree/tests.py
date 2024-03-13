@@ -746,6 +746,25 @@ class TestHelpers(TestCase):
             self.assertEqual(helpers.generateTestKey(name), key)
 
 
+class TestTimeFormat(TestCase):
+    """Unit test for time formatting functionality."""
+
+    @override_settings(TIME_ZONE='UTC')
+    def test_tz_utc(self):
+        """Check UTC timezone."""
+        self.assertEqual(InvenTree.helpers.server_timezone(), 'UTC')
+
+    @override_settings(TIME_ZONE='Europe/London')
+    def test_tz_london(self):
+        """Check London timezone."""
+        self.assertEqual(InvenTree.helpers.server_timezone(), 'Europe/London')
+
+    @override_settings(TIME_ZONE='Australia/Sydney')
+    def test_to_local_time(self):
+        """Test that the local time conversion works as expected."""
+        ...
+
+
 class TestQuoteWrap(TestCase):
     """Tests for string wrapping."""
 
