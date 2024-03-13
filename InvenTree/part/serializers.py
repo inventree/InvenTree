@@ -315,15 +315,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             self.fields.pop('pricing_min')
             self.fields.pop('pricing_max')
 
-    category_default_location = serializers.SerializerMethodField()
-
-    def get_category_default_location(self, obj):
-        """Fetch the category default location via a queryset."""
-        queryset = Part.objects.filter(pk=obj.pk)
-        queryset = queryset.annotate(
-            category_default_location=part.filters.annotate_default_location()
-        )
-        return queryset.first().category_default_location
+    category_default_location = serializers.IntegerField(read_only=True)
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
@@ -779,7 +771,9 @@ class PartSerializer(
         )
 
         queryset = queryset.annotate(
-            category_default_location=part.filters.annotate_default_location()
+            category_default_location=part.filters.annotate_default_location(
+                'category__'
+            )
         )
 
         return queryset

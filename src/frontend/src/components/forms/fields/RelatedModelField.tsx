@@ -139,7 +139,7 @@ export function RelatedModelField({
           const alreadyPresentPks = values.map((x) => x.value);
 
           const results = response.data?.results ?? response.data ?? [];
-          console.log('ress', results);
+
           results.forEach((item: any) => {
             // do not push already existing items into the values array
             if (alreadyPresentPks.includes(item.pk)) return;
@@ -155,7 +155,6 @@ export function RelatedModelField({
           return response;
         })
         .catch((error) => {
-          console.log('Hola', error);
           setData([]);
           return error;
         });
