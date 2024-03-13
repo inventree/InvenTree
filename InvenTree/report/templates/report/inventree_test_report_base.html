@@ -10,7 +10,7 @@
 }
 
 {% block bottom_left %}
-content: "{{ date.isoformat }}";
+content: "{% format_date date %}";
 {% endblock bottom_left %}
 
 {% block bottom_center %}
@@ -133,7 +133,7 @@ content: "{% trans 'Stock Item Test Report' %}";
             {% endif %}
             <td>{{ test_result.value }}</td>
             <td>{{ test_result.user.username }}</td>
-            <td>{{ test_result.date.date.isoformat }}</td>
+            <td>{% format_date test_result.date.date %}</td>
             {% else %}
             {% if test_template.required %}
             <td colspan='4' class='required-test-not-found'>{% trans "No result (required)" %}</td>

@@ -8,10 +8,12 @@ from pathlib import Path
 from django.conf import settings
 from django.core.cache import cache
 from django.http.response import StreamingHttpResponse
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.safestring import SafeString
 
+import pytz
 from PIL import Image
 
 import report.models as report_models
@@ -152,6 +154,38 @@ class ReportTagTest(TestCase):
         self.assertEqual(report_tags.subtract(10, 4.2), 5.8)
         self.assertEqual(report_tags.multiply(2.3, 4), 9.2)
         self.assertEqual(report_tags.divide(100, 5), 20)
+
+    @override_settings(TIME_ZONE='America/New_York')
+    def test_date_tags(self):
+        """Test for date formatting tags.
+
+        - Source timezone is Australia/Sydney
+        - Server timezone is America/New York
+        """
+        time = timezone.datetime(
+            year=2024,
+            month=3,
+            day=13,
+            hour=12,
+            minute=30,
+            second=0,
+            tzinfo=pytz.timezone('Australia/Sydney'),
+        )
+
+        # Format a set of tests: timezone, format, expected
+        tests = [
+            (None, None, '2024-03-12T22:25:00-04:00'),
+            (None, '%d-%m-%y', '12-03-24'),
+            ('UTC', None, '2024-03-13T02:25:00+00:00'),
+            ('UTC', '%d-%B-%Y', '13-March-2024'),
+            ('Europe/Amsterdam', None, '2024-03-13T03:25:00+01:00')(
+                'Europe/Amsterdam', '%y-%m-%d %H:%M', '24-03-13 03:25'
+            ),
+        ]
+
+        for tz, fmt, expected in tests:
+            result = report_tags.format_datetime(time, tz, fmt)
+            self.assertEqual(result, expected)
 
 
 class BarcodeTagTest(TestCase):
