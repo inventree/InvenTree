@@ -376,19 +376,8 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_FIND_GROUP_PERMS = True
 
-# Internal IP addresses allowed to see the debug toolbar
-INTERNAL_IPS = ['127.0.0.1']
-
 # Internal flag to determine if we are running in docker mode
 DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
-
-if DOCKER:  # pragma: no cover
-    # Internal IP addresses are different when running under docker
-    hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips] + [
-        '127.0.0.1',
-        '10.0.2.2',
-    ]
 
 # Allow secure http developer server in debug mode
 if DEBUG:
