@@ -786,7 +786,6 @@ class TestTimeFormat(TestCase):
 
         for tz, expected in tests:
             local_time = InvenTree.helpers.to_local_time(source_time, tz)
-            print('-', tz, '->', local_time, expected)
             self.assertEqual(local_time, expected)
 
 
