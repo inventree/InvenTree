@@ -880,6 +880,12 @@ def to_local_time(time: datetime.date | datetime.datetime, timezone: str = None)
     Arguments:
         time: The time / date to convert
         timezone: The desired timezone (string) - defaults to server time
+
+    Returns:
+        A timezone aware datetime object, with the desired timezone
+
+    Raises:
+        TypeError: If the provided time object is not a datetime or date object
     """
     if isinstance(time, datetime.datetime):
         pass

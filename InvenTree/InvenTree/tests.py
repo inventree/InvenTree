@@ -14,8 +14,10 @@ from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings, tag
 from django.urls import reverse
+from django.utils import timezone
 
 import pint.errors
+import pytz
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -762,7 +764,30 @@ class TestTimeFormat(TestCase):
     @override_settings(TIME_ZONE='Australia/Sydney')
     def test_to_local_time(self):
         """Test that the local time conversion works as expected."""
-        ...
+        source_time = timezone.datetime(
+            year=2000,
+            month=1,
+            day=1,
+            hour=0,
+            minute=0,
+            second=0,
+            tzinfo=pytz.timezone('Europe/London'),
+        )
+
+        tests = [
+            ('UTC', '2000-01-01 00:01:00+00:00'),
+            ('Europe/London', '2000-01-01 00:00:00-00:01'),
+            ('America/New_York', '1999-12-31 19:01:00-05:00'),
+            # All following tests should result in the same value
+            ('Australia/Sydney', '2000-01-01 11:01:00+11:00'),
+            (None, '2000-01-01 11:01:00+11:00'),
+            ('', '2000-01-01 11:01:00+11:00'),
+        ]
+
+        for tz, expected in tests:
+            local_time = InvenTree.helpers.to_local_time(source_time, tz)
+            print('-', tz, '->', local_time, expected)
+            self.assertEqual(local_time, expected)
 
 
 class TestQuoteWrap(TestCase):
