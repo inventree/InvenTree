@@ -22,6 +22,7 @@ from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
+import pytz
 from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
@@ -938,8 +939,10 @@ LOCALE_PATHS = (BASE_DIR.joinpath('locale/'),)
 
 TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
-USE_I18N = True
+# Check that the timezone is valid
+pytz.timezone(TIME_ZONE)
 
+USE_I18N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
