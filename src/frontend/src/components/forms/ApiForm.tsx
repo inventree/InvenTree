@@ -4,13 +4,14 @@ import {
   DefaultMantineColor,
   Divider,
   LoadingOverlay,
+  ScrollArea,
   Text
 } from '@mantine/core';
 import { Button, Group, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useState } from 'react';
 import {
   FieldValues,
@@ -390,67 +391,82 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
 
   return (
     <Stack>
-      <Stack spacing="sm">
-        <LoadingOverlay visible={isLoading} />
-        {(!isValid || nonFieldErrors.length > 0) && (
-          <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
-            {nonFieldErrors.length > 0 && (
-              <Stack spacing="xs">
-                {nonFieldErrors.map((message) => (
-                  <Text key={message}>{message}</Text>
-                ))}
-              </Stack>
+      {/* Attempt at making fixed footer with scroll area */}
+      {/* Has some issues at low resolutions still */}
+      <Stack h={'70vh'}>
+        <ScrollArea.Autosize h={'100%'}>
+          {/* Form Fields */}
+          <Stack h={'10%'} spacing="sm">
+            <LoadingOverlay visible={isLoading} />
+            {(!isValid || nonFieldErrors.length > 0) && (
+              <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
+                {nonFieldErrors.length > 0 && (
+                  <Stack spacing="xs">
+                    {nonFieldErrors.map((message) => (
+                      <Text key={message}>{message}</Text>
+                    ))}
+                  </Stack>
+                )}
+              </Alert>
             )}
-          </Alert>
-        )}
-        {props.preFormContent}
-        {props.preFormSuccess && (
-          <Alert color="green" radius="sm">
-            {props.preFormSuccess}
-          </Alert>
-        )}
-        {props.preFormWarning && (
-          <Alert color="orange" radius="sm">
-            {props.preFormWarning}
-          </Alert>
-        )}
-        <FormProvider {...form}>
-          <Stack spacing="xs">
-            {Object.entries(props.fields ?? {}).map(([fieldName, field]) => (
-              <ApiFormField
-                key={fieldName}
-                fieldName={fieldName}
-                definition={field}
-                control={form.control}
-              />
-            ))}
+            {props.preFormContent}
+            {props.preFormSuccess && (
+              <Alert color="green" radius="sm">
+                {props.preFormSuccess}
+              </Alert>
+            )}
+            {props.preFormWarning && (
+              <Alert color="orange" radius="sm">
+                {props.preFormWarning}
+              </Alert>
+            )}
+            <FormProvider {...form}>
+              <Stack spacing="xs">
+                {Object.entries(props.fields ?? {}).map(
+                  ([fieldName, field]) => (
+                    <ApiFormField
+                      key={fieldName}
+                      fieldName={fieldName}
+                      definition={field}
+                      control={form.control}
+                    />
+                  )
+                )}
+              </Stack>
+            </FormProvider>
+            {props.postFormContent}
           </Stack>
-        </FormProvider>
-        {props.postFormContent}
+        </ScrollArea.Autosize>
       </Stack>
+
+      {/* Not super happy with the padding above this divider */}
       <Divider />
-      <Group position="right">
-        {props.actions?.map((action, i) => (
+
+      {/* Action Buttons */}
+      <Stack>
+        <Group position="right">
+          {props.actions?.map((action, i) => (
+            <Button
+              key={i}
+              onClick={action.onClick}
+              variant={action.variant ?? 'outline'}
+              radius="sm"
+              color={action.color}
+            >
+              {action.text}
+            </Button>
+          ))}
           <Button
-            key={i}
-            onClick={action.onClick}
-            variant={action.variant ?? 'outline'}
+            onClick={form.handleSubmit(submitForm, onFormError)}
+            variant="outline"
             radius="sm"
-            color={action.color}
+            color={props.submitColor ?? 'green'}
+            disabled={isLoading || (props.fetchInitialData && !isDirty)}
           >
-            {action.text}
+            {props.submitText ?? t`Submit`}
           </Button>
-        ))}
-        <Button
-          onClick={form.handleSubmit(submitForm, onFormError)}
-          variant="outline"
-          radius="sm"
-          color={props.submitColor ?? 'green'}
-          disabled={isLoading || (props.fetchInitialData && !isDirty)}
-        >
-          {props.submitText ?? t`Submit`}
-        </Button>
-      </Group>
+        </Group>
+      </Stack>
     </Stack>
   );
 }
