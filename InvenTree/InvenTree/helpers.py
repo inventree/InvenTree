@@ -87,11 +87,24 @@ def generateTestKey(test_name: str) -> str:
     key = test_name.strip().lower()
     key = key.replace(' ', '')
 
-    # Remove any characters that cannot be used to represent a variable
-    key = ''.join([c for c in key if c.isidentifier() and c.isprintable()])
+    def valid_char(char: str):
+        """Determine if a particular character is valid for use in a test key."""
+        if not char.isprintable():
+            return False
 
-    # If the key starts with a digit, prefix with an underscore
-    if len(key) > 0 and key[0].isdigit():
+        if char.isidentifier():
+            return True
+
+        if char.isalnum():
+            return True
+
+        return False
+
+    # Remove any characters that cannot be used to represent a variable
+    key = ''.join([c for c in key if valid_char(c)])
+
+    # If the key starts with a non-identifier character, prefix with an underscore
+    if len(key) > 0 and not key[0].isidentifier():
         key = '_' + key
 
     return key
