@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 04:12+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"POT-Creation-Date: 2024-03-14 01:10+0000\n"
+"PO-Revision-Date: 2024-03-14 11:36\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -6826,10 +6826,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:804
-#, fuzzy
-#| msgid "Total Stock"
 msgid "External Stock"
-msgstr "Цялостна наличност"
+msgstr ""
 
 #: part/serializers.py:806
 msgid "Unallocated Stock"
@@ -11093,10 +11091,8 @@ msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "Total Stock"
 msgid "External stock"
-msgstr "Цялостна наличност"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -14099,3 +14095,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
