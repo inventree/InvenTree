@@ -29,6 +29,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -271,6 +272,17 @@ export function TemplateTable({
     return actions;
   }, []);
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'enabled',
+        label: t`Enabled`,
+        description: t`Filter by enabled status`,
+        type: 'checkbox'
+      }
+    ];
+  }, []);
+
   return (
     <>
       {newTemplate.modal}
@@ -294,6 +306,7 @@ export function TemplateTable({
         columns={columns}
         props={{
           rowActions: rowActions,
+          tableFilters: tableFilters,
           tableActions: tableActions,
           onRowClick: (record) => openDetailDrawer(record.pk)
         }}
