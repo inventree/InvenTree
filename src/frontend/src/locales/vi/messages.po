@@ -404,8 +404,8 @@ msgstr "Host"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
-#: src/pages/part/CategoryDetail.tsx:60
-#: src/pages/stock/LocationDetail.tsx:50
+#: src/pages/part/CategoryDetail.tsx:71
+#: src/pages/stock/LocationDetail.tsx:65
 #: src/tables/machine/MachineTypeTable.tsx:65
 #: src/tables/machine/MachineTypeTable.tsx:106
 #: src/tables/machine/MachineTypeTable.tsx:210
@@ -467,20 +467,20 @@ msgstr "Trạng thái: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgid "Error"
 msgstr "Lỗi"
 
-#: src/components/forms/fields/RelatedModelField.tsx:296
+#: src/components/forms/fields/RelatedModelField.tsx:298
 #: src/pages/Index/Settings/UserSettings.tsx:64
 #: src/tables/Search.tsx:23
 msgid "Search"
 msgstr "Tìm kiếm"
 
-#: src/components/forms/fields/RelatedModelField.tsx:297
+#: src/components/forms/fields/RelatedModelField.tsx:299
 #: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
 msgstr "Đang tải"
 
-#: src/components/forms/fields/RelatedModelField.tsx:299
+#: src/components/forms/fields/RelatedModelField.tsx:301
 msgid "No results found"
 msgstr "Không có kết quả nào được tìm thấy"
 
@@ -847,7 +847,7 @@ msgstr "Cài đặt tài khoản"
 
 #: src/components/nav/MainMenu.tsx:50
 #: src/defaults/menuItems.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:287
+#: src/pages/Index/Settings/SystemSettings.tsx:288
 msgid "System Settings"
 msgstr "Thiết lập hệ thống"
 
@@ -933,8 +933,8 @@ msgstr "Đánh dấu đã đọc"
 
 #: src/components/nav/PartCategoryTree.tsx:153
 #: src/components/render/ModelType.tsx:60
-#: src/pages/Index/Settings/SystemSettings.tsx:163
-#: src/pages/part/CategoryDetail.tsx:147
+#: src/pages/Index/Settings/SystemSettings.tsx:164
+#: src/pages/part/CategoryDetail.tsx:183
 msgid "Part Categories"
 msgstr "Danh mục phụ kiện"
 
@@ -972,7 +972,7 @@ msgstr "Không có kết quả nào được tìm thấy với truy vấn tìm k
 
 #: src/components/nav/StockLocationTree.tsx:93
 #: src/components/render/ModelType.tsx:76
-#: src/pages/stock/LocationDetail.tsx:139
+#: src/pages/stock/LocationDetail.tsx:154
 msgid "Stock Locations"
 msgstr "Vị trí kho hàng"
 
@@ -992,10 +992,10 @@ msgstr "Phụ kiện"
 #: src/components/render/ModelType.tsx:22
 #: src/defaults/links.tsx:28
 #: src/defaults/menuItems.tsx:33
-#: src/pages/Index/Settings/SystemSettings.tsx:168
-#: src/pages/part/CategoryDetail.tsx:92
-#: src/pages/part/CategoryDetail.tsx:133
-#: src/pages/part/CategoryDetail.tsx:163
+#: src/pages/Index/Settings/SystemSettings.tsx:169
+#: src/pages/part/CategoryDetail.tsx:103
+#: src/pages/part/CategoryDetail.tsx:169
+#: src/pages/part/CategoryDetail.tsx:199
 #: src/pages/part/PartDetail.tsx:605
 msgid "Parts"
 msgstr "Phụ tùng"
@@ -1036,7 +1036,7 @@ msgid "Manufacturer Parts"
 msgstr "Nhà sản xuất phụ kiện"
 
 #: src/components/render/ModelType.tsx:59
-#: src/pages/part/CategoryDetail.tsx:183
+#: src/pages/part/CategoryDetail.tsx:221
 msgid "Part Category"
 msgstr "Danh mục phụ kiện"
 
@@ -1047,9 +1047,9 @@ msgstr "Hàng trong kho"
 
 #: src/components/render/ModelType.tsx:68
 #: src/pages/company/CompanyDetail.tsx:196
-#: src/pages/stock/LocationDetail.tsx:83
-#: src/pages/stock/LocationDetail.tsx:127
-#: src/pages/stock/LocationDetail.tsx:167
+#: src/pages/stock/LocationDetail.tsx:98
+#: src/pages/stock/LocationDetail.tsx:142
+#: src/pages/stock/LocationDetail.tsx:208
 msgid "Stock Items"
 msgstr "Hàng trong kho"
 
@@ -1101,7 +1101,7 @@ msgid "Purchase Order"
 msgstr "Đơn đặt mua"
 
 #: src/components/render/ModelType.tsx:112
-#: src/pages/Index/Settings/SystemSettings.tsx:239
+#: src/pages/Index/Settings/SystemSettings.tsx:240
 #: src/pages/company/CompanyDetail.tsx:189
 #: src/pages/company/SupplierPartDetail.tsx:45
 #: src/pages/part/PartDetail.tsx:538
@@ -1125,7 +1125,7 @@ msgid "Sales Order"
 msgstr "Đơn đặt bán"
 
 #: src/components/render/ModelType.tsx:125
-#: src/pages/Index/Settings/SystemSettings.tsx:253
+#: src/pages/Index/Settings/SystemSettings.tsx:254
 #: src/pages/company/CompanyDetail.tsx:205
 #: src/pages/part/PartDetail.tsx:544
 #: src/pages/sales/SalesIndex.tsx:21
@@ -1146,7 +1146,7 @@ msgid "Return Order"
 msgstr "Đơn hàng trả lại"
 
 #: src/components/render/ModelType.tsx:140
-#: src/pages/Index/Settings/SystemSettings.tsx:267
+#: src/pages/Index/Settings/SystemSettings.tsx:268
 #: src/pages/company/CompanyDetail.tsx:212
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
@@ -1199,9 +1199,9 @@ msgstr "Lô hàng"
 #: src/components/render/Part.tsx:10
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
-#: src/pages/Index/Settings/SystemSettings.tsx:199
+#: src/pages/Index/Settings/SystemSettings.tsx:200
 #: src/pages/part/PartDetail.tsx:461
-#: src/pages/stock/LocationDetail.tsx:148
+#: src/pages/stock/LocationDetail.tsx:188
 #: src/pages/stock/StockDetail.tsx:300
 #: src/tables/stock/StockItemTable.tsx:44
 msgid "Stock"
@@ -2992,12 +2992,12 @@ msgstr "Tỷ giá hối đoái"
 msgid "Reporting"
 msgstr "Báo cáo"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:221
+#: src/pages/Index/Settings/SystemSettings.tsx:222
 #: src/pages/part/PartDetail.tsx:556
 msgid "Stocktake"
 msgstr "Kiểm kê"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:226
+#: src/pages/Index/Settings/SystemSettings.tsx:227
 #: src/pages/build/BuildDetail.tsx:359
 #: src/pages/build/BuildIndex.tsx:14
 #: src/pages/part/PartDetail.tsx:493
@@ -3005,7 +3005,7 @@ msgstr "Kiểm kê"
 msgid "Build Orders"
 msgstr "Đơn đặt bản dựng"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:290
+#: src/pages/Index/Settings/SystemSettings.tsx:291
 msgid "Switch to User Setting"
 msgstr "Chuyển sang thiết lập người dùng"
 
@@ -3082,12 +3082,12 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:96
 #: src/pages/company/CompanyDetail.tsx:84
-#: src/pages/part/CategoryDetail.tsx:74
+#: src/pages/part/CategoryDetail.tsx:85
 #: src/pages/part/PartDetail.tsx:111
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:102
 #: src/pages/sales/ReturnOrderDetail.tsx:68
 #: src/pages/sales/SalesOrderDetail.tsx:72
-#: src/pages/stock/LocationDetail.tsx:64
+#: src/pages/stock/LocationDetail.tsx:79
 #: src/tables/ColumnRenderers.tsx:52
 #: src/tables/machine/MachineTypeTable.tsx:69
 #: src/tables/machine/MachineTypeTable.tsx:109
@@ -3309,7 +3309,7 @@ msgid "Company Actions"
 msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:42
-#: src/pages/part/CategoryDetail.tsx:153
+#: src/pages/part/CategoryDetail.tsx:189
 #: src/pages/part/PartDetail.tsx:455
 msgid "Parameters"
 msgstr "Thông số"
@@ -3329,31 +3329,41 @@ msgstr ""
 msgid "Received Stock"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:66
-#: src/pages/stock/LocationDetail.tsx:56
+#: src/pages/part/CategoryDetail.tsx:77
+#: src/pages/stock/LocationDetail.tsx:71
 #: src/tables/settings/ErrorTable.tsx:34
 msgid "Path"
 msgstr "Đường dẫn"
 
-#: src/pages/part/CategoryDetail.tsx:82
+#: src/pages/part/CategoryDetail.tsx:93
 msgid "Parent Category"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:98
+#: src/pages/part/CategoryDetail.tsx:109
 msgid "Subcategories"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:105
-#: src/pages/stock/LocationDetail.tsx:95
+#: src/pages/part/CategoryDetail.tsx:116
+#: src/pages/stock/LocationDetail.tsx:110
 #: src/tables/part/PartCategoryTable.tsx:69
 msgid "Structural"
 msgstr "Cấu trúc"
 
-#: src/pages/part/CategoryDetail.tsx:115
+#: src/pages/part/CategoryDetail.tsx:126
 msgid "Top level part category"
 msgstr ""
 
-#: src/pages/part/CategoryDetail.tsx:126
+#: src/pages/part/CategoryDetail.tsx:136
+#: src/pages/part/CategoryDetail.tsx:150
+#: src/tables/part/PartCategoryTable.tsx:96
+msgid "Edit Part Category"
+msgstr ""
+
+#: src/pages/part/CategoryDetail.tsx:145
+msgid "Category Actions"
+msgstr ""
+
+#: src/pages/part/CategoryDetail.tsx:162
 msgid "Category Details"
 msgstr ""
 
@@ -3660,24 +3670,34 @@ msgstr ""
 msgid "Pending Shipments"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:72
+#: src/pages/stock/LocationDetail.tsx:87
 msgid "Parent Location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:89
+#: src/pages/stock/LocationDetail.tsx:104
 msgid "Sublocations"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:101
+#: src/pages/stock/LocationDetail.tsx:116
 msgid "External"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:110
+#: src/pages/stock/LocationDetail.tsx:125
 msgid "Top level stock location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:121
+#: src/pages/stock/LocationDetail.tsx:136
 msgid "Location Details"
+msgstr ""
+
+#: src/pages/stock/LocationDetail.tsx:164
+#: src/pages/stock/LocationDetail.tsx:178
+#: src/tables/stock/StockLocationTable.tsx:106
+msgid "Edit Stock Location"
+msgstr ""
+
+#: src/pages/stock/LocationDetail.tsx:173
+msgid "Location Actions"
 msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:91
@@ -4381,7 +4401,7 @@ msgstr "Tuổi"
 msgid "Message"
 msgstr "Nội dụng tin nhắn"
 
-#: src/tables/part/ParametricPartTable.tsx:74
+#: src/tables/part/ParametricPartTable.tsx:80
 #: src/tables/part/PartParameterTable.tsx:83
 msgid "Internal Units"
 msgstr ""
@@ -4401,10 +4421,6 @@ msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:77
 msgid "New Part Category"
-msgstr ""
-
-#: src/tables/part/PartCategoryTable.tsx:96
-msgid "Edit Part Category"
 msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:106
@@ -5531,10 +5547,6 @@ msgstr ""
 #: src/tables/stock/StockLocationTable.tsx:87
 #: src/tables/stock/StockLocationTable.tsx:116
 msgid "Add Stock Location"
-msgstr ""
-
-#: src/tables/stock/StockLocationTable.tsx:106
-msgid "Edit Stock Location"
 msgstr ""
 
 #: src/views/MobileAppView.tsx:14
