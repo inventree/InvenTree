@@ -13,6 +13,7 @@ export enum ModelType {
   stocklocation = 'stocklocation',
   stockhistory = 'stockhistory',
   build = 'build',
+  buildline = 'buildline',
   company = 'company',
   purchaseorder = 'purchaseorder',
   purchaseorderline = 'purchaseorderline',
