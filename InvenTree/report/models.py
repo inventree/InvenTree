@@ -586,10 +586,7 @@ class ReturnOrderReport(ReportTemplateBase):
 
 def rename_snippet(instance, filename):
     """Function to rename a report snippet once uploaded."""
-    filename = os.path.basename(filename)
-
-    path = os.path.join('report', 'snippets', filename)
-
+    path = ReportSnippet.snippet_path(filename)
     fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
     # If the snippet file is the *same* filename as the one being uploaded,
@@ -624,6 +621,27 @@ class ReportSnippet(models.Model):
         else:
             return '-'
 
+    @staticmethod
+    def snippet_path(filename):
+        """Return the fully-qualified snippet path for the given filename."""
+        return os.path.join('report', 'snippets', os.path.basename(str(filename)))
+
+    def validate_unique(self, exclude=None):
+        """Validate that this report asset is unique."""
+        proposed_path = self.snippet_path(self.snippet)
+
+        if (
+            ReportSnippet.objects.filter(snippet=proposed_path)
+            .exclude(pk=self.pk)
+            .count()
+            > 0
+        ):
+            raise ValidationError({
+                'snippet': _('Snippet file with this name already exists')
+            })
+
+        return super().validate_unique(exclude)
+
     snippet = models.FileField(
         upload_to=rename_snippet,
         verbose_name=_('Snippet'),
@@ -641,16 +659,18 @@ class ReportSnippet(models.Model):
 def rename_asset(instance, filename):
     """Function to rename an asset file when uploaded."""
     path = ReportAsset.asset_path(filename)
+    fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
     # If the asset file is the *same* filename as the one being uploaded,
     # delete the original one from the media directory
     if str(filename) == str(instance.asset):
-        fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
-
         if fullpath.exists():
             # Check for existing asset file with the same name
             logger.info("Deleting existing asset file: '%s'", filename)
             os.remove(fullpath)
+
+    # Ensure the cache is deleted for this asset
+    cache.delete(fullpath)
 
     return path
 
