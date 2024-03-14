@@ -8,7 +8,7 @@ msgstr ""
 "Language: sl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-05 09:02\n"
+"PO-Revision-Date: 2024-03-14 11:37\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
@@ -5560,3 +5560,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
