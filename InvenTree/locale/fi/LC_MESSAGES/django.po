@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 04:12+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"POT-Creation-Date: 2024-03-14 01:10+0000\n"
+"PO-Revision-Date: 2024-03-14 11:36\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -6441,10 +6441,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Test template with the same key already exists for part"
-msgstr "Samanniminen liite on jo olemassa"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -6828,10 +6826,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:804
-#, fuzzy
-#| msgid "External Link"
 msgid "External Stock"
-msgstr "Ulkoinen linkki"
+msgstr ""
 
 #: part/serializers.py:806
 msgid "Unallocated Stock"
@@ -11095,10 +11091,8 @@ msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "External Link"
 msgid "External stock"
-msgstr "Ulkoinen linkki"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -14101,3 +14095,4 @@ msgstr "Oikeus muokata kohteita"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
+
