@@ -1,17 +1,30 @@
 import { t } from '@lingui/macro';
 import { LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
-import { IconInfoCircle, IconPackages, IconSitemap } from '@tabler/icons-react';
+import {
+  IconDots,
+  IconInfoCircle,
+  IconPackages,
+  IconSitemap
+} from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import {
+  ActionDropdown,
+  EditItemAction
+} from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { stockLocationFields } from '../../forms/StockForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useUserState } from '../../states/UserState';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
 
@@ -22,6 +35,8 @@ export default function Stock() {
     () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
     [_id]
   );
+
+  const user = useUserState();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -143,6 +158,31 @@ export default function Stock() {
     ];
   }, [location, id]);
 
+  const editLocation = useEditApiFormModal({
+    url: ApiEndpoints.stock_location_list,
+    pk: id,
+    title: t`Edit Stock Location`,
+    fields: stockLocationFields({}),
+    onFormSuccess: refreshInstance
+  });
+
+  const locationActions = useMemo(() => {
+    return [
+      <ActionDropdown
+        key="location"
+        tooltip={t`Location Actions`}
+        icon={<IconDots />}
+        actions={[
+          EditItemAction({
+            hidden: !id || !user.hasChangeRole(UserRoles.stock_location),
+            tooltip: t`Edit Stock Location`,
+            onClick: () => editLocation.open()
+          })
+        ]}
+      />
+    ];
+  }, [id, user]);
+
   const breadcrumbs = useMemo(
     () => [
       { name: t`Stock`, url: '/stock' },
@@ -156,6 +196,7 @@ export default function Stock() {
 
   return (
     <>
+      {editLocation.modal}
       <Stack>
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <StockLocationTree
@@ -166,6 +207,7 @@ export default function Stock() {
         <PageDetail
           title={t`Stock Items`}
           detail={<Text>{location.name ?? 'Top level'}</Text>}
+          actions={locationActions}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {
             setTreeOpen(true);
