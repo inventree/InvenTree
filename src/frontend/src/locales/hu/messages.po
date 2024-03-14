@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-05 09:02\n"
+"PO-Revision-Date: 2024-03-14 11:36\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -5560,3 +5560,4 @@ msgstr "A platform felhasználói felülete táblagépekre és asztali számít�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Olvasd el a dokumentációt"
+
