@@ -874,7 +874,7 @@ def server_timezone() -> str:
     return settings.TIME_ZONE
 
 
-def to_local_time(time: datetime.date | datetime.datetime, target_tz: str = None):
+def to_local_time(time, target_tz: str = None):
     """Convert the provided time object to the local timezone.
 
     Arguments:
