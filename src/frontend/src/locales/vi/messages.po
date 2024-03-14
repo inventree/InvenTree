@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-05 09:02\n"
+"PO-Revision-Date: 2024-03-14 11:37\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -5560,3 +5560,4 @@ msgstr "Giao diện nền tảng được tối ưu cho máy tính bảng và m�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Đọc tài liệu"
+
