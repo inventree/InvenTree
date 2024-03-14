@@ -610,6 +610,19 @@ class ReportSnippet(models.Model):
     Useful for 'common' template actions, sub-templates, etc
     """
 
+    def __str__(self) -> str:
+        """String representation of a ReportSnippet instance."""
+        return f'snippets/{self.filename}'
+
+    @property
+    def filename(self):
+        """Return the filename of the asset."""
+        path = self.snippet.name
+        if path:
+            return os.path.basename(path)
+        else:
+            return '-'
+
     snippet = models.FileField(
         upload_to=rename_snippet,
         verbose_name=_('Snippet'),
@@ -652,7 +665,16 @@ class ReportAsset(models.Model):
 
     def __str__(self):
         """String representation of a ReportAsset instance."""
-        return os.path.basename(self.asset.name)
+        return f'assets/{self.filename}'
+
+    @property
+    def filename(self):
+        """Return the filename of the asset."""
+        path = self.asset.name
+        if path:
+            return os.path.basename(path)
+        else:
+            return '-'
 
     # Asset file
     asset = models.FileField(

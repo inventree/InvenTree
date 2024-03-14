@@ -1,5 +1,7 @@
 """API serializers for the reporting models."""
 
+from rest_framework import serializers
+
 import report.models
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
@@ -106,3 +108,17 @@ class ReportSnippetSerializer(InvenTreeModelSerializer):
         model = report.models.ReportSnippet
 
         fields = ['pk', 'snippet', 'description']
+
+    snippet = InvenTreeAttachmentSerializerField()
+
+
+class ReportAssetSerializer(InvenTreeModelSerializer):
+    """Serializer class for the ReportAsset model."""
+
+    class Meta:
+        """Meta class options."""
+
+        model = report.models.ReportAsset
+        fields = ['pk', 'asset', 'description']
+
+    asset = InvenTreeAttachmentSerializerField()

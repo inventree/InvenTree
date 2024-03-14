@@ -513,7 +513,31 @@ class ReportSnippetDetail(RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.ReportSnippetSerializer
 
 
+class ReportAssetList(ListCreateAPI):
+    """API endpoint for listing ReportAsset objects."""
+
+    queryset = report.models.ReportAsset.objects.all()
+    serializer_class = report.serializers.ReportAssetSerializer
+
+
+class ReportAssetDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single ReportAsset object."""
+
+    queryset = report.models.ReportAsset.objects.all()
+    serializer_class = report.serializers.ReportAssetSerializer
+
+
 report_api_urls = [
+    # Report assets
+    path(
+        'asset/',
+        include([
+            path(
+                '<int:pk>/', ReportAssetDetail.as_view(), name='api-report-asset-detail'
+            ),
+            path('', ReportAssetList.as_view(), name='api-report-asset-list'),
+        ]),
+    ),
     # Report snippets
     path(
         'snippet/',
