@@ -81,6 +81,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'url',
             'structural',
             'icon',
+            'parent_default_location',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -105,6 +106,10 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
             subcategories=part.filters.annotate_sub_categories(),
         )
 
+        queryset = queryset.annotate(
+            parent_default_location=part.filters.annotate_default_location('parent__')
+        )
+
         return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -120,6 +125,8 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
     path = serializers.ListField(
         child=serializers.DictField(), source='get_path', read_only=True
     )
+
+    parent_default_location = serializers.IntegerField(read_only=True)
 
 
 class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):

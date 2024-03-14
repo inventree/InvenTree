@@ -161,11 +161,12 @@ export default function Stock() {
         name: 'default_parts',
         label: t`Default Parts`,
         icon: <IconPackages />,
+        hidden: !location.pk,
         content: (
           <PartListTable
             props={{
               params: {
-                default_location: location.pk ?? null
+                default_location: location.pk
               }
             }}
           />

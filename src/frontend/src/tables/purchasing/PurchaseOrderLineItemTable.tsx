@@ -266,9 +266,10 @@ export function PurchaseOrderLineItemTable({
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}
+        disabled={table.selectedRecords.length === 0}
       />
     ];
-  }, [orderId, user]);
+  }, [orderId, user, table]);
 
   return (
     <>

@@ -301,7 +301,7 @@ def annotate_default_location(reference=''):
     )
 
     return Coalesce(
-        F('category__default_location'),
+        F(f'{reference}default_location'),
         Subquery(
             subquery.order_by('-level')
             .filter(default_location__isnull=False)

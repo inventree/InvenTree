@@ -143,6 +143,7 @@ const icons = {
   location: IconMapPin,
   default_location: IconMapPinHeart,
   category_default_location: IconMapPinHeart,
+  parent_default_location: IconMapPinHeart,
   default_supplier: IconShoppingCartHeart,
   link: IconLink,
   responsible: IconUserStar,

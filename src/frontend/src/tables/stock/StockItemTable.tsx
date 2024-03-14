@@ -395,6 +395,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
       <ActionDropdown
         key="stockoperations"
         icon={<InvenTreeIcon icon="stock" />}
+        disabled={table.selectedRecords.length === 0}
         actions={[
           {
             name: t`Add stock`,
@@ -486,7 +487,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         onClick={() => newStockItem.open()}
       />
     ];
-  }, [user]);
+  }, [user, table]);
 
   return (
     <>

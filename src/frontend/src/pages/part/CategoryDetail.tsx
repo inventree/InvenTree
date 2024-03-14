@@ -104,6 +104,20 @@ export default function CategoryDetail({}: {}) {
         name: 'structural',
         label: t`Structural`,
         icon: 'sitemap'
+      },
+      {
+        type: 'link',
+        name: 'parent_default_location',
+        label: t`Parent default location`,
+        model: ModelType.stocklocation,
+        hidden: !category.parent_default_location || category.default_location
+      },
+      {
+        type: 'link',
+        name: 'default_location',
+        label: t`Default location`,
+        model: ModelType.stocklocation,
+        hidden: !category.default_location
       }
     ];
 

@@ -175,9 +175,13 @@ function LineItemFormRow({
   const [opened, { open, close }] = useDisclosure(false);
 
   // Location value
-  const [location, setLocation] = useState(input.item.location);
+  const [location, setLocation] = useState(
+    input.item.location ??
+      record.part_detail.default_location ??
+      record.part_detail.category_default_location
+  );
   const [locationOpen, locationHandlers] = useDisclosure(
-    input.item.location ? true : false,
+    location ? true : false,
     {
       onClose: () => input.changeFn(input.idx, 'location', null),
       onOpen: () => input.changeFn(input.idx, 'location', location)
@@ -237,6 +241,7 @@ function LineItemFormRow({
     return () => clearTimeout(timeoutId);
   }, [barcodeInput]);
 
+  // Info string with details about certain selected locations
   const locationDescription = useMemo(() => {
     let text = t`Choose Location`;
 
@@ -244,15 +249,33 @@ function LineItemFormRow({
       return text;
     }
 
-    if (location === record.part_detail.default_location) {
-      return t`Default location selected`;
-    } else if (location === record.destination) {
+    // Selected location is order line destination
+    if (location === record.destination) {
       return t`Item Destination selected`;
-    } else if (
+    }
+
+    // Selected location is base part's category default location
+    if (
       !record.destination &&
-      location === record.destination_detail.pk
+      !record.destination_detail &&
+      location === record.part_detail.category_default_location
+    ) {
+      return t`Part category default location selected`;
+    }
+
+    // Selected location is identical to already received stock for this line
+    if (
+      !record.destination &&
+      record.destination_detail &&
+      location === record.destination_detail.pk &&
+      record.received > 0
     ) {
       return t`Received stock location selected`;
+    }
+
+    // Selected location is base part's default location
+    if (location === record.part_detail.default_location) {
+      return t`Default location selected`;
     }
 
     return text;
@@ -293,16 +316,16 @@ function LineItemFormRow({
             progressLabel
           />
         </td>
-        <td>
+        <td style={{ width: '1%', whiteSpace: 'nowrap' }}>
           <NumberInput
             value={input.item.quantity}
-            style={{ maxWidth: '100px' }}
+            style={{ width: '100px' }}
             max={input.item.quantity}
             min={0}
             onChange={(value) => input.changeFn(input.idx, 'quantity', value)}
           />
         </td>
-        <td>
+        <td style={{ width: '1%', whiteSpace: 'nowrap' }}>
           <Flex gap="1px">
             <ActionButton
               onClick={() => locationHandlers.toggle()}
@@ -408,8 +431,8 @@ function LineItemFormRow({
                   />
                 )}
                 {!record.destination &&
-                  !record.part_detail.default_location &&
-                  record.destination_detail && (
+                  record.destination_detail &&
+                  record.received > 0 && (
                     <ActionButton
                       icon={<InvenTreeIcon icon="repeat_destination" />}
                       tooltip={t`Store with already received stock`}
@@ -625,6 +648,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
     fields: fields,
     initialData: {
       location: null
-    }
+    },
+    size: 'max(60%,800px)'
   });
 }
