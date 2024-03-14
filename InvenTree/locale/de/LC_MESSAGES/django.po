@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 04:12+0000\n"
-"PO-Revision-Date: 2024-03-11 09:31\n"
+"POT-Creation-Date: 2024-03-14 01:10+0000\n"
+"PO-Revision-Date: 2024-03-14 11:36\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2676,10 +2676,8 @@ msgid "Generate reports in debug mode (HTML output)"
 msgstr "Berichte im Entwickler-Modus generieren (als HTML)"
 
 #: common/models.py:1657
-#, fuzzy
-#| msgid "No errors"
 msgid "Log Report Errors"
-msgstr "Keine Fehler"
+msgstr ""
 
 #: common/models.py:1658
 msgid "Log errors which occur when generating reports"
@@ -6443,10 +6441,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr "Test-Vorlagen können nur für verfolgbare Teile angelegt werden"
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Test with this name already exists for this part"
 msgid "Test template with the same key already exists for part"
-msgstr "Ein Test mit diesem Namen besteht bereits für dieses Teil"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -14099,3 +14095,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
