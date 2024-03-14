@@ -1,7 +1,7 @@
 import { Trans, t } from '@lingui/macro';
 import { Box, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { IconDots } from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -258,18 +258,14 @@ export function TemplateTable({
     }
   });
 
-  const tableActions = useMemo(() => {
-    let actions = [];
-
-    actions.push(
+  const tableActions: ReactNode[] = useMemo(() => {
+    return [
       <AddItemButton
         key={`add-${templateType}`}
         onClick={() => newTemplate.open()}
         tooltip={t`Add` + ' ' + templateTypeTranslation}
       />
-    );
-
-    return actions;
+    ];
   }, []);
 
   const tableFilters: TableFilter[] = useMemo(() => {
