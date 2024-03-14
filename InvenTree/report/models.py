@@ -7,6 +7,7 @@ import sys
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template import Context, Template
@@ -639,9 +640,7 @@ class ReportSnippet(models.Model):
 
 def rename_asset(instance, filename):
     """Function to rename an asset file when uploaded."""
-    filename = os.path.basename(filename)
-
-    path = os.path.join('report', 'assets', filename)
+    path = ReportAsset.asset_path(filename)
 
     # If the asset file is the *same* filename as the one being uploaded,
     # delete the original one from the media directory
@@ -649,6 +648,7 @@ def rename_asset(instance, filename):
         fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
         if fullpath.exists():
+            # Check for existing asset file with the same name
             logger.info("Deleting existing asset file: '%s'", filename)
             os.remove(fullpath)
 
@@ -675,6 +675,25 @@ class ReportAsset(models.Model):
             return os.path.basename(path)
         else:
             return '-'
+
+    @staticmethod
+    def asset_path(filename):
+        """Return the fully-qualified asset path for the given filename."""
+        return os.path.join('report', 'assets', os.path.basename(str(filename)))
+
+    def validate_unique(self, exclude=None):
+        """Validate that this report asset is unique."""
+        proposed_path = self.asset_path(self.asset)
+
+        if (
+            ReportAsset.objects.filter(asset=proposed_path).exclude(pk=self.pk).count()
+            > 0
+        ):
+            raise ValidationError({
+                'asset': _('Asset file with this name already exists')
+            })
+
+        return super().validate_unique(exclude)
 
     # Asset file
     asset = models.FileField(
