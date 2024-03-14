@@ -874,12 +874,12 @@ def server_timezone() -> str:
     return settings.TIME_ZONE
 
 
-def to_local_time(time: datetime.date | datetime.datetime, timezone: str = None):
+def to_local_time(time: datetime.date | datetime.datetime, target_tz: str = None):
     """Convert the provided time object to the local timezone.
 
     Arguments:
         time: The time / date to convert
-        timezone: The desired timezone (string) - defaults to server time
+        target_tz: The desired timezone (string) - defaults to server time
 
     Returns:
         A timezone aware datetime object, with the desired timezone
@@ -903,14 +903,13 @@ def to_local_time(time: datetime.date | datetime.datetime, timezone: str = None)
         # Default to UTC if not provided
         source_tz = pytz.utc
 
-    if not timezone:
-        timezone = server_timezone()
+    if not target_tz:
+        target_tz = server_timezone()
 
-    if type(timezone) is str:
-        try:
-            target_tz = pytz.timezone(timezone)
-        except pytz.UnknownTimeZoneError:
-            target_tz = pytz.utc
+    try:
+        target_tz = pytz.timezone(str(target_tz))
+    except pytz.UnknownTimeZoneError:
+        target_tz = pytz.utc
 
     target_time = time.replace(tzinfo=source_tz).astimezone(target_tz)
 

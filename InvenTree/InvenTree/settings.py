@@ -940,7 +940,10 @@ LOCALE_PATHS = (BASE_DIR.joinpath('locale/'),)
 TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
 # Check that the timezone is valid
-pytz.timezone(TIME_ZONE)
+try:
+    pytz.timezone(TIME_ZONE)
+except pytz.exceptions.UnknownTimeZoneError:  # pragma: no cover
+    raise ValueError(f"Specified timezone '{TIME_ZONE}' is not valid")
 
 USE_I18N = True
 
