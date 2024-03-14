@@ -298,6 +298,7 @@ def annotate_default_location(reference=''):
         lft__lt=OuterRef(f'{reference}lft'),
         rght__gt=OuterRef(f'{reference}rght'),
         level__lte=OuterRef(f'{reference}level'),
+        parent__isnull=False,
     )
 
     return Coalesce(
