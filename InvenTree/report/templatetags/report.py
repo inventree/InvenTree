@@ -422,3 +422,37 @@ def format_number(number, **kwargs):
             pass
 
     return value
+
+
+@register.simple_tag
+def format_datetime(datetime, timezone=None, format=None):
+    """Format a datetime object for display.
+
+    Arguments:
+        datetime: The datetime object to format
+        timezone: The timezone to use for the date (defaults to the server timezone)
+        format: The format string to use (defaults to ISO formatting)
+    """
+    datetime = InvenTree.helpers.to_local_time(datetime, timezone)
+
+    if format:
+        return datetime.strftime(format)
+    else:
+        return datetime.isoformat()
+
+
+@register.simple_tag
+def format_date(date, timezone=None, format=None):
+    """Format a date object for display.
+
+    Arguments:
+        date: The date to format
+        timezone: The timezone to use for the date (defaults to the server timezone)
+        format: The format string to use (defaults to ISO formatting)
+    """
+    date = InvenTree.helpers.to_local_time(date, timezone).date()
+
+    if format:
+        return date.strftime(format)
+    else:
+        return date.isoformat()
