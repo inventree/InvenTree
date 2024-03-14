@@ -39,9 +39,9 @@ def reload_unit_registry():
     reg = pint.UnitRegistry(autoconvert_offset_to_baseunit=True)
 
     # Aliases for temperature units
-    reg.define('@alias degC = celsius = Celsius')
-    reg.define('@alias degF = fahrenheit = Fahrenheit')
-    reg.define('@alias degK = kelvin = Kelvin')
+    reg.define('@alias degC = Celsius')
+    reg.define('@alias degF = Fahrenheit')
+    reg.define('@alias degK = Kelvin')
 
     # Define some "standard" additional units
     reg.define('piece = 1')

@@ -22,6 +22,7 @@ from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
+import pytz
 from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
@@ -376,19 +377,8 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_FIND_GROUP_PERMS = True
 
-# Internal IP addresses allowed to see the debug toolbar
-INTERNAL_IPS = ['127.0.0.1']
-
 # Internal flag to determine if we are running in docker mode
 DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
-
-if DOCKER:  # pragma: no cover
-    # Internal IP addresses are different when running under docker
-    hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips] + [
-        '127.0.0.1',
-        '10.0.2.2',
-    ]
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -949,8 +939,13 @@ LOCALE_PATHS = (BASE_DIR.joinpath('locale/'),)
 
 TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
-USE_I18N = True
+# Check that the timezone is valid
+try:
+    pytz.timezone(TIME_ZONE)
+except pytz.exceptions.UnknownTimeZoneError:  # pragma: no cover
+    raise ValueError(f"Specified timezone '{TIME_ZONE}' is not valid")
 
+USE_I18N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs

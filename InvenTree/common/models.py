@@ -1653,6 +1653,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'REPORT_LOG_ERRORS': {
+            'name': _('Log Report Errors'),
+            'description': _('Log errors which occur when generating reports'),
+            'default': False,
+            'validator': bool,
+        },
         'REPORT_DEFAULT_PAGE_SIZE': {
             'name': _('Page Size'),
             'description': _('Default page size for PDF reports'),
