@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 182
 INVENTREE_API_TEXT = """
 
 v183 - 2024-03-08 : https://github.com/inventree/InvenTree/pull/5972
-    - Adds "part_detail.category_default_location" annotated field to part serializer
+    - Adds "category_default_location" annotated field to part serializer
     - Adds "part_detail.category_default_location" annotated field to stock item serializer
     - Adds "part_detail.category_default_location" annotated field to purchase order line serializer
     - Adds "parent_default_location" annotated field to category serializer
