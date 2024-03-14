@@ -10,9 +10,10 @@
 }
 
 (cors-headers) {
+	header Allow GET,HEAD,OPTIONS
 	header Access-Control-Allow-Origin *
 	header Access-Control-Allow-Methods GET,HEAD,OPTIONS
-	header Access-Control-Allow-Headers User-Agent,Content-Type
+	header Access-Control-Allow-Headers Authorization,Content-Type,User-Agent
 
 	@cors_preflight{args[0]} method OPTIONS
 
