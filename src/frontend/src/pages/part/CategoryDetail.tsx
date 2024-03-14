@@ -153,7 +153,7 @@ export default function CategoryDetail({}: {}) {
         ]}
       />
     ];
-  }, [user]);
+  }, [id, user]);
 
   const categoryPanels: PanelType[] = useMemo(
     () => [
