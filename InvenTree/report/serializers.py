@@ -1,18 +1,9 @@
 """API serializers for the reporting models."""
 
+import report.models
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
-)
-
-from .models import (
-    BillOfMaterialsReport,
-    BuildReport,
-    PurchaseOrderReport,
-    ReturnOrderReport,
-    SalesOrderReport,
-    StockLocationReport,
-    TestReport,
 )
 
 
@@ -42,7 +33,7 @@ class TestReportSerializer(ReportSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = TestReport
+        model = report.models.TestReport
         fields = ReportSerializerBase.report_fields()
 
 
@@ -52,7 +43,7 @@ class BuildReportSerializer(ReportSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = BuildReport
+        model = report.models.BuildReport
         fields = ReportSerializerBase.report_fields()
 
 
@@ -62,7 +53,7 @@ class BOMReportSerializer(ReportSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = BillOfMaterialsReport
+        model = report.models.BillOfMaterialsReport
         fields = ReportSerializerBase.report_fields()
 
 
@@ -72,7 +63,7 @@ class PurchaseOrderReportSerializer(ReportSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = PurchaseOrderReport
+        model = report.models.PurchaseOrderReport
         fields = ReportSerializerBase.report_fields()
 
 
@@ -82,7 +73,7 @@ class SalesOrderReportSerializer(ReportSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = SalesOrderReport
+        model = report.models.SalesOrderReport
         fields = ReportSerializerBase.report_fields()
 
 
@@ -92,7 +83,7 @@ class ReturnOrderReportSerializer(ReportSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = ReturnOrderReport
+        model = report.models.ReturnOrderReport
         fields = ReportSerializerBase.report_fields()
 
 
@@ -102,5 +93,16 @@ class StockLocationReportSerializer(ReportSerializerBase):
     class Meta:
         """Metaclass options."""
 
-        model = StockLocationReport
+        model = report.models.StockLocationReport
         fields = ReportSerializerBase.report_fields()
+
+
+class ReportSnippetSerializer(InvenTreeModelSerializer):
+    """Serializer class for the ReportSnippet model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = report.models.ReportSnippet
+
+        fields = ['pk', 'snippet', 'description']
