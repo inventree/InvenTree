@@ -17,30 +17,13 @@ import common.models
 import InvenTree.helpers
 import order.models
 import part.models
+import report.models
+import report.serializers
 from InvenTree.api import MetadataView
 from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment, StockLocation
-
-from .models import (
-    BillOfMaterialsReport,
-    BuildReport,
-    PurchaseOrderReport,
-    ReturnOrderReport,
-    SalesOrderReport,
-    StockLocationReport,
-    TestReport,
-)
-from .serializers import (
-    BOMReportSerializer,
-    BuildReportSerializer,
-    PurchaseOrderReportSerializer,
-    ReturnOrderReportSerializer,
-    SalesOrderReportSerializer,
-    StockLocationReportSerializer,
-    TestReportSerializer,
-)
 
 
 class ReportListView(ListCreateAPI):
@@ -292,8 +275,8 @@ class StockItemTestReportMixin(ReportFilterMixin):
 
     ITEM_MODEL = StockItem
     ITEM_KEY = 'item'
-    queryset = TestReport.objects.all()
-    serializer_class = TestReportSerializer
+    queryset = report.models.TestReport.objects.all()
+    serializer_class = report.serializers.TestReportSerializer
 
 
 class StockItemTestReportList(StockItemTestReportMixin, ReportListView):
@@ -343,8 +326,8 @@ class BOMReportMixin(ReportFilterMixin):
     ITEM_MODEL = part.models.Part
     ITEM_KEY = 'part'
 
-    queryset = BillOfMaterialsReport.objects.all()
-    serializer_class = BOMReportSerializer
+    queryset = report.models.BillOfMaterialsReport.objects.all()
+    serializer_class = report.serializers.BOMReportSerializer
 
 
 class BOMReportList(BOMReportMixin, ReportListView):
@@ -377,8 +360,8 @@ class BuildReportMixin(ReportFilterMixin):
     ITEM_MODEL = build.models.Build
     ITEM_KEY = 'build'
 
-    queryset = BuildReport.objects.all()
-    serializer_class = BuildReportSerializer
+    queryset = report.models.BuildReport.objects.all()
+    serializer_class = report.serializers.BuildReportSerializer
 
 
 class BuildReportList(BuildReportMixin, ReportListView):
@@ -411,8 +394,8 @@ class PurchaseOrderReportMixin(ReportFilterMixin):
     ITEM_MODEL = order.models.PurchaseOrder
     ITEM_KEY = 'order'
 
-    queryset = PurchaseOrderReport.objects.all()
-    serializer_class = PurchaseOrderReportSerializer
+    queryset = report.models.PurchaseOrderReport.objects.all()
+    serializer_class = report.serializers.PurchaseOrderReportSerializer
 
 
 class PurchaseOrderReportList(PurchaseOrderReportMixin, ReportListView):
@@ -439,8 +422,8 @@ class SalesOrderReportMixin(ReportFilterMixin):
     ITEM_MODEL = order.models.SalesOrder
     ITEM_KEY = 'order'
 
-    queryset = SalesOrderReport.objects.all()
-    serializer_class = SalesOrderReportSerializer
+    queryset = report.models.SalesOrderReport.objects.all()
+    serializer_class = report.serializers.SalesOrderReportSerializer
 
 
 class SalesOrderReportList(SalesOrderReportMixin, ReportListView):
@@ -467,8 +450,8 @@ class ReturnOrderReportMixin(ReportFilterMixin):
     ITEM_MODEL = order.models.ReturnOrder
     ITEM_KEY = 'order'
 
-    queryset = ReturnOrderReport.objects.all()
-    serializer_class = ReturnOrderReportSerializer
+    queryset = report.models.ReturnOrderReport.objects.all()
+    serializer_class = report.serializers.ReturnOrderReportSerializer
 
 
 class ReturnOrderReportList(ReturnOrderReportMixin, ReportListView):
@@ -494,8 +477,8 @@ class StockLocationReportMixin(ReportFilterMixin):
 
     ITEM_MODEL = StockLocation
     ITEM_KEY = 'location'
-    queryset = StockLocationReport.objects.all()
-    serializer_class = StockLocationReportSerializer
+    queryset = report.models.StockLocationReport.objects.all()
+    serializer_class = report.serializers.StockLocationReportSerializer
 
 
 class StockLocationReportList(StockLocationReportMixin, ReportListView):
@@ -516,7 +499,57 @@ class StockLocationReportPrint(StockLocationReportMixin, ReportPrintMixin, Retri
     pass
 
 
+class ReportSnippetList(ListCreateAPI):
+    """API endpoint for listing ReportSnippet objects."""
+
+    queryset = report.models.ReportSnippet.objects.all()
+    serializer_class = report.serializers.ReportSnippetSerializer
+
+
+class ReportSnippetDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single ReportSnippet object."""
+
+    queryset = report.models.ReportSnippet.objects.all()
+    serializer_class = report.serializers.ReportSnippetSerializer
+
+
+class ReportAssetList(ListCreateAPI):
+    """API endpoint for listing ReportAsset objects."""
+
+    queryset = report.models.ReportAsset.objects.all()
+    serializer_class = report.serializers.ReportAssetSerializer
+
+
+class ReportAssetDetail(RetrieveUpdateDestroyAPI):
+    """API endpoint for a single ReportAsset object."""
+
+    queryset = report.models.ReportAsset.objects.all()
+    serializer_class = report.serializers.ReportAssetSerializer
+
+
 report_api_urls = [
+    # Report assets
+    path(
+        'asset/',
+        include([
+            path(
+                '<int:pk>/', ReportAssetDetail.as_view(), name='api-report-asset-detail'
+            ),
+            path('', ReportAssetList.as_view(), name='api-report-asset-list'),
+        ]),
+    ),
+    # Report snippets
+    path(
+        'snippet/',
+        include([
+            path(
+                '<int:pk>/',
+                ReportSnippetDetail.as_view(),
+                name='api-report-snippet-detail',
+            ),
+            path('', ReportSnippetList.as_view(), name='api-report-snippet-list'),
+        ]),
+    ),
     # Purchase order reports
     path(
         'po/',
@@ -533,7 +566,7 @@ report_api_urls = [
                     path(
                         'metadata/',
                         MetadataView.as_view(),
-                        {'model': PurchaseOrderReport},
+                        {'model': report.models.PurchaseOrderReport},
                         name='api-po-report-metadata',
                     ),
                     path(
@@ -563,7 +596,7 @@ report_api_urls = [
                     path(
                         'metadata/',
                         MetadataView.as_view(),
-                        {'model': SalesOrderReport},
+                        {'model': report.models.SalesOrderReport},
                         name='api-so-report-metadata',
                     ),
                     path(
@@ -591,7 +624,7 @@ report_api_urls = [
                     path(
                         'metadata/',
                         MetadataView.as_view(),
-                        {'model': ReturnOrderReport},
+                        {'model': report.models.ReturnOrderReport},
                         name='api-so-report-metadata',
                     ),
                     path(
@@ -622,7 +655,7 @@ report_api_urls = [
                     path(
                         'metadata/',
                         MetadataView.as_view(),
-                        {'model': BuildReport},
+                        {'model': report.models.BuildReport},
                         name='api-build-report-metadata',
                     ),
                     path(
@@ -650,7 +683,7 @@ report_api_urls = [
                     path(
                         'metadata/',
                         MetadataView.as_view(),
-                        {'model': BillOfMaterialsReport},
+                        {'model': report.models.BillOfMaterialsReport},
                         name='api-bom-report-metadata',
                     ),
                     path('', BOMReportDetail.as_view(), name='api-bom-report-detail'),
@@ -676,7 +709,7 @@ report_api_urls = [
                     path(
                         'metadata/',
                         MetadataView.as_view(),
-                        {'report': TestReport},
+                        {'report': report.models.TestReport},
                         name='api-stockitem-testreport-metadata',
                     ),
                     path(
@@ -710,7 +743,7 @@ report_api_urls = [
                     path(
                         'metadata/',
                         MetadataView.as_view(),
-                        {'report': StockLocationReport},
+                        {'report': report.models.StockLocationReport},
                         name='api-stocklocation-report-metadata',
                     ),
                     path(
