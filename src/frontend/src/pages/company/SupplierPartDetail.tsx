@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
+  IconDots,
   IconInfoCircle,
   IconPackages,
   IconShoppingCart
@@ -12,18 +13,26 @@ import { useParams } from 'react-router-dom';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import {
+  ActionDropdown,
+  DeleteItemAction,
+  DuplicateItemAction,
+  EditItemAction
+} from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { InvenTreeIcon } from '../../functions/icons';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();
+
+  const user = useUserState();
 
   const { instance: supplierPart, instanceQuery } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
@@ -202,6 +211,27 @@ export default function SupplierPartDetail() {
     ];
   }, [supplierPart]);
 
+  const supplierPartActions = useMemo(() => {
+    return [
+      <ActionDropdown
+        key="part"
+        tooltip={t`Supplier Part Actions`}
+        icon={<IconDots />}
+        actions={[
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.purchase_order)
+          }),
+          EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.purchase_order)
+          }),
+          DeleteItemAction({
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+          })
+        ]}
+      />
+    ];
+  }, [user]);
+
   const breadcrumbs = useMemo(() => {
     return [
       {
@@ -222,6 +252,7 @@ export default function SupplierPartDetail() {
         title={t`Supplier Part`}
         subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
         breadcrumbs={breadcrumbs}
+        actions={supplierPartActions}
         imageUrl={supplierPart?.part_detail?.thumbnail}
       />
       <PanelGroup pageKey="supplierpart" panels={panels} />
