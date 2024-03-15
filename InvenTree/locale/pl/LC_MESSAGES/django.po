@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-15 06:54+0000\n"
-"PO-Revision-Date: 2024-03-06 10:36\n"
+"PO-Revision-Date: 2024-03-15 11:42\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1345,7 +1345,7 @@ msgstr ""
 
 #: build/models.py:1416 order/models.py:1853
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "Pozycja magazynowa jest nadmiernie przydzielona"
 
 #: build/models.py:1422 order/models.py:1856
 msgid "Allocation quantity must be greater than zero"
@@ -1353,11 +1353,11 @@ msgstr "Alokowana ilość musi być większa niż zero"
 
 #: build/models.py:1428
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "Ilość musi wynosić 1 dla serializowanych zasobów"
 
 #: build/models.py:1489
 msgid "Selected stock item does not match BOM line"
-msgstr ""
+msgstr "Wybrana pozycja magazynowa nie pasuje do pozycji w zestawieniu BOM"
 
 #: build/models.py:1561 build/serializers.py:811 order/serializers.py:1172
 #: order/serializers.py:1193 stock/serializers.py:552 stock/serializers.py:1038
@@ -1382,7 +1382,7 @@ msgstr "Lokalizacja magazynowania przedmiotu"
 
 #: build/models.py:1575
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Ilość zapasów do przydzielenia do produkcji"
 
 #: build/models.py:1583
 msgid "Install into"
@@ -1508,7 +1508,7 @@ msgstr "Status"
 
 #: build/serializers.py:511
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Zaakceptuj niekompletną alokację"
 
 #: build/serializers.py:512
 msgid "Complete outputs if stock has not been fully allocated"
@@ -1740,7 +1740,7 @@ msgstr "Pokaż Kod QR"
 #: templates/js/translated/barcode.js:496
 #: templates/js/translated/barcode.js:501
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Odłącz Kod Kreskowy"
 
 #: build/templates/build/build_base.html:47
 #: company/templates/company/supplier_part.html:43
@@ -1751,7 +1751,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:49
 #: stock/templates/stock/location.html:61
 msgid "Link Barcode"
-msgstr ""
+msgstr "Połącz Kod Kreskowy"
 
 #: build/templates/build/build_base.html:56
 #: order/templates/order/order_base.html:46
@@ -6449,10 +6449,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Test template with the same key already exists for part"
-msgstr "Załącznik o tej nazwie już istnieje"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -7777,7 +7775,7 @@ msgstr "Znaleziono wyniki dla danych kodu kreskowego"
 #: plugin/base/barcodes/api.py:154
 #: templates/js/translated/purchase_order.js:1406
 msgid "Barcode matches existing item"
-msgstr ""
+msgstr "Kod kreskowy pasuje do istniejącego elementu"
 
 #: plugin/base/barcodes/api.py:293
 msgid "No matching part data found"
@@ -7801,7 +7799,7 @@ msgstr ""
 
 #: plugin/base/barcodes/api.py:424
 msgid "No match for supplier barcode"
-msgstr ""
+msgstr "Brak dopasowania dla kodu kreskowego dostawcy"
 
 #: plugin/base/barcodes/api.py:467
 msgid "Multiple matching line items found"
@@ -7813,7 +7811,7 @@ msgstr ""
 
 #: plugin/base/barcodes/api.py:508 plugin/base/barcodes/api.py:515
 msgid "Barcode does not match an existing stock item"
-msgstr ""
+msgstr "Kod kreskowy nie pasuje do istniejących pozycji magazynowych"
 
 #: plugin/base/barcodes/api.py:526
 msgid "Stock item does not match line item"
@@ -8457,10 +8455,8 @@ msgid "Return order query filters"
 msgstr ""
 
 #: report/models.py:640
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Snippet file with this name already exists"
-msgstr "Załącznik o tej nazwie już istnieje"
+msgstr ""
 
 #: report/models.py:647
 msgid "Snippet"
@@ -8475,10 +8471,8 @@ msgid "Snippet file description"
 msgstr ""
 
 #: report/models.py:713
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Asset file with this name already exists"
-msgstr "Załącznik o tej nazwie już istnieje"
+msgstr ""
 
 #: report/models.py:721
 msgid "Asset"
@@ -14117,3 +14111,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
