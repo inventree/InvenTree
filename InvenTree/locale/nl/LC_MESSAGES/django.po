@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-15 06:54+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"PO-Revision-Date: 2024-03-15 11:41\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -2801,10 +2801,8 @@ msgid "Check BOM when installing items"
 msgstr ""
 
 #: common/models.py:1756
-#, fuzzy
-#| msgid "Cannot allocate stock item to a line with a different part"
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr "Kan het voorraadartikel niet toewijzen aan een regel met een ander onderdeel"
+msgstr ""
 
 #: common/models.py:1762
 msgid "Build Order Reference Pattern"
@@ -6451,10 +6449,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Test template with the same key already exists for part"
-msgstr "Bijlage met deze bestandsnaam bestaat al"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -6838,22 +6834,16 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:821
-#, fuzzy
-#| msgid "External Link"
 msgid "External Stock"
-msgstr "Externe Link"
+msgstr ""
 
 #: part/serializers.py:823
-#, fuzzy
-#| msgid "Deallocate Stock"
 msgid "Unallocated Stock"
-msgstr "Voorraad niet meer toewijzen"
+msgstr ""
 
 #: part/serializers.py:826
-#, fuzzy
-#| msgid "Part Stocktake"
 msgid "Variant Stock"
-msgstr "Voorraadcontrole onderdeel"
+msgstr ""
 
 #: part/serializers.py:851 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
@@ -8465,10 +8455,8 @@ msgid "Return order query filters"
 msgstr ""
 
 #: report/models.py:640
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Snippet file with this name already exists"
-msgstr "Bijlage met deze bestandsnaam bestaat al"
+msgstr ""
 
 #: report/models.py:647
 msgid "Snippet"
@@ -8483,10 +8471,8 @@ msgid "Snippet file description"
 msgstr ""
 
 #: report/models.py:713
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Asset file with this name already exists"
-msgstr "Bijlage met deze bestandsnaam bestaat al"
+msgstr ""
 
 #: report/models.py:721
 msgid "Asset"
@@ -11121,10 +11107,8 @@ msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "External Link"
 msgid "External stock"
-msgstr "Externe Link"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -14127,3 +14111,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
