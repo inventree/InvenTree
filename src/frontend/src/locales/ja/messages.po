@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-05 09:02\n"
+"PO-Revision-Date: 2024-03-15 11:41\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3084,11 +3084,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:67
 #~ msgid "Stock item"
-#~ msgstr ""
+#~ msgstr "Stock item"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:76
 #~ msgid "Build line"
-#~ msgstr ""
+#~ msgstr "Build line"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:88
 msgid "Reports"
@@ -3101,15 +3101,15 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:99
 #~ msgid "Purchase order"
-#~ msgstr ""
+#~ msgstr "Purchase order"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:108
 #~ msgid "Sales order"
-#~ msgstr ""
+#~ msgstr "Sales order"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:117
 #~ msgid "Return order"
-#~ msgstr ""
+#~ msgstr "Return order"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:135
 #: src/pages/part/PartDetail.tsx:498
@@ -3122,7 +3122,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:154
 #~ msgid "Stock location"
-#~ msgstr ""
+#~ msgstr "Stock location"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:18
 #: src/tables/settings/UserTable.tsx:124
@@ -3565,7 +3565,7 @@ msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:188
 msgid "Availability"
-msgstr "Availability"
+msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:197
 msgid "Supplier Part Details"
@@ -5844,3 +5844,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
