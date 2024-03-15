@@ -27,7 +27,7 @@ The following guide provides a streamlined production InvenTree installation, wi
 
 ### Required Files
 
-The following files required for this setup are provided with the InvenTree source, located in the `./docker/` directory of the [InvenTree source code](https://github.com/inventree/InvenTree/tree/master/docker/production):
+The following files required for this setup are provided with the InvenTree source, located in the `./docker/` directory of the [InvenTree source code](https://github.com/inventree/InvenTree/tree/master/docker/):
 
 | Filename | Description |
 | --- | --- |
