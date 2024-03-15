@@ -410,7 +410,10 @@ def format_number(number, **kwargs):
         except ValueError:
             pass
 
-    value = str(number)
+    # Re-encode, and normalize again
+    value = Decimal(number).normalize()
+    value = format(value, 'f')
+    value = str(value)
 
     leading = kwargs.get('leading', None)
 
