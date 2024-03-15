@@ -11,6 +11,7 @@ import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
 import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -61,9 +62,15 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     ];
   }, [params]);
 
-  const addManufacturerPart = useCallback(() => {
-    notYetImplemented();
-  }, []);
+  const createManufacturerPart = useCreateApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    title: t`Create Manufacturer Part`,
+    fields: useManufacturerPartFields(),
+    onFormSuccess: table.refreshTable,
+    initialData: {
+      manufacturer: params?.manufacturer
+    }
+  });
 
   const tableActions = useMemo(() => {
     let can_add =
@@ -73,7 +80,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     return [
       <AddItemButton
         tooltip={t`Add Manufacturer Part`}
-        onClick={addManufacturerPart}
+        onClick={() => createManufacturerPart.open()}
         hidden={!can_add}
       />
     ];
@@ -118,24 +125,27 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   );
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.manufacturer_part_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          part_detail: true,
-          manufacturer_detail: true
-        },
-        rowActions: rowActions,
-        tableActions: tableActions,
-        onRowClick: (record: any) => {
-          if (record?.pk) {
-            navigate(getDetailUrl(ModelType.manufacturerpart, record.pk));
+    <>
+      {createManufacturerPart.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.manufacturer_part_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            part_detail: true,
+            manufacturer_detail: true
+          },
+          rowActions: rowActions,
+          tableActions: tableActions,
+          onRowClick: (record: any) => {
+            if (record?.pk) {
+              navigate(getDetailUrl(ModelType.manufacturerpart, record.pk));
+            }
           }
-        }
-      }}
-    />
+        }}
+      />
+    </>
   );
 }
