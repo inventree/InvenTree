@@ -655,7 +655,6 @@ export default function PartDetail() {
   const transferStockItems = useTransferStockItem(stockActionProps);
 
   const partActions = useMemo(() => {
-    // TODO: Disable actions based on user permissions
     return [
       <BarcodeActionDropdown
         actions={[
@@ -679,6 +678,7 @@ export default function PartDetail() {
             ),
             name: t`Count Stock`,
             tooltip: t`Count part stock`,
+            hidden: !user.hasChangeRole(UserRoles.stock),
             onClick: () => {
               part.pk && countStockItems.open();
             }
@@ -689,6 +689,7 @@ export default function PartDetail() {
             ),
             name: t`Transfer Stock`,
             tooltip: t`Transfer part stock`,
+            hidden: !user.hasChangeRole(UserRoles.stock),
             onClick: () => {
               part.pk && transferStockItems.open();
             }
@@ -700,13 +701,15 @@ export default function PartDetail() {
         tooltip={t`Part Actions`}
         icon={<IconDots />}
         actions={[
-          DuplicateItemAction({}),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.part)
+          }),
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.part),
             onClick: () => editPart.open()
           }),
           DeleteItemAction({
-            hidden: part?.active
+            hidden: part?.active || !user.hasDeleteRole(UserRoles.part)
           })
         ]}
       />
