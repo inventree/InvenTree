@@ -1750,6 +1750,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'STOCK_ENFORCE_BOM_INSTALLATION': {
+            'name': _('Check BOM when installing items'),
+            'description': _(
+                'Installed stock items must exist in the BOM for the parent part'
+            ),
+            'default': True,
+            'validator': bool,
+        },
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _(
