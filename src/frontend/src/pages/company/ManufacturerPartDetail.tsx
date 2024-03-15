@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
+  IconDots,
   IconInfoCircle,
   IconList,
   IconPaperclip
@@ -12,11 +13,19 @@ import { useParams } from 'react-router-dom';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import {
+  ActionDropdown,
+  DeleteItemAction,
+  DuplicateItemAction,
+  EditItemAction
+} from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useManufacturerPartFields } from '../../forms/CompanyForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -169,6 +178,38 @@ export default function ManufacturerPartDetail() {
     ];
   }, [manufacturerPart]);
 
+  const editManufacturerPartFields = useManufacturerPartFields();
+
+  const editManufacturerPart = useEditApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    pk: manufacturerPart?.pk,
+    title: t`Edit Manufacturer Part`,
+    fields: editManufacturerPartFields,
+    onFormSuccess: refreshInstance
+  });
+
+  const manufacturerPartActions = useMemo(() => {
+    return [
+      <ActionDropdown
+        key="part"
+        tooltip={t`Manufacturer Part Actions`}
+        icon={<IconDots />}
+        actions={[
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.purchase_order)
+          }),
+          EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.purchase_order),
+            onClick: () => editManufacturerPart.open()
+          }),
+          DeleteItemAction({
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+          })
+        ]}
+      />
+    ];
+  }, [user]);
+
   const breadcrumbs = useMemo(() => {
     return [
       {
@@ -183,15 +224,19 @@ export default function ManufacturerPartDetail() {
   }, [manufacturerPart]);
 
   return (
-    <Stack spacing="xs">
-      <LoadingOverlay visible={instanceQuery.isFetching} />
-      <PageDetail
-        title={t`ManufacturerPart`}
-        subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
-        breadcrumbs={breadcrumbs}
-        imageUrl={manufacturerPart?.part_detail?.thumbnail}
-      />
-      <PanelGroup pageKey="manufacturerpart" panels={panels} />
-    </Stack>
+    <>
+      {editManufacturerPart.modal}
+      <Stack spacing="xs">
+        <LoadingOverlay visible={instanceQuery.isFetching} />
+        <PageDetail
+          title={t`ManufacturerPart`}
+          subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
+          breadcrumbs={breadcrumbs}
+          actions={manufacturerPartActions}
+          imageUrl={manufacturerPart?.part_detail?.thumbnail}
+        />
+        <PanelGroup pageKey="manufacturerpart" panels={panels} />
+      </Stack>
+    </>
   );
 }
