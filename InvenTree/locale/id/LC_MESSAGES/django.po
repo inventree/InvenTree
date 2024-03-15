@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-15 06:54+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"PO-Revision-Date: 2024-03-15 11:42\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -6449,10 +6449,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Test template with the same key already exists for part"
-msgstr "Lampiran dengan nama file ini sudah ada"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -6836,16 +6834,12 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:821
-#, fuzzy
-#| msgid "External Link"
 msgid "External Stock"
-msgstr "Tautan eksternal"
+msgstr ""
 
 #: part/serializers.py:823
-#, fuzzy
-#| msgid "Accept Unallocated"
 msgid "Unallocated Stock"
-msgstr "Terima Tidak Teralokasikan"
+msgstr ""
 
 #: part/serializers.py:826
 msgid "Variant Stock"
@@ -8461,10 +8455,8 @@ msgid "Return order query filters"
 msgstr ""
 
 #: report/models.py:640
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Snippet file with this name already exists"
-msgstr "Lampiran dengan nama file ini sudah ada"
+msgstr ""
 
 #: report/models.py:647
 msgid "Snippet"
@@ -8479,10 +8471,8 @@ msgid "Snippet file description"
 msgstr ""
 
 #: report/models.py:713
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Asset file with this name already exists"
-msgstr "Lampiran dengan nama file ini sudah ada"
+msgstr ""
 
 #: report/models.py:721
 msgid "Asset"
@@ -11117,10 +11107,8 @@ msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "External Link"
 msgid "External stock"
-msgstr "Tautan eksternal"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -14123,3 +14111,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
