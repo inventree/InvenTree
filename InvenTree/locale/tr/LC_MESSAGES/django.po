@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-15 06:54+0000\n"
-"PO-Revision-Date: 2024-03-06 10:36\n"
+"PO-Revision-Date: 2024-03-15 11:42\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -6449,10 +6449,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr "Test şablonları sadece takip edilebilir paçalar için oluşturulabilir"
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Test template with the same key already exists for part"
-msgstr "Aynı isimli başka bir dosya zaten var"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -8457,10 +8455,8 @@ msgid "Return order query filters"
 msgstr ""
 
 #: report/models.py:640
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Snippet file with this name already exists"
-msgstr "Aynı isimli başka bir dosya zaten var"
+msgstr ""
 
 #: report/models.py:647
 msgid "Snippet"
@@ -8475,10 +8471,8 @@ msgid "Snippet file description"
 msgstr ""
 
 #: report/models.py:713
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Asset file with this name already exists"
-msgstr "Aynı isimli başka bir dosya zaten var"
+msgstr ""
 
 #: report/models.py:721
 msgid "Asset"
@@ -14117,3 +14111,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
