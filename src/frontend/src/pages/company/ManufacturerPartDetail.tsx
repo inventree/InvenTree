@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconInfoCircle,
@@ -9,18 +9,30 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsField, DetailsTable } from '../../components/details/Details';
+import { DetailsImage } from '../../components/details/DetailsImage';
+import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { useInstance } from '../../hooks/UseInstance';
+import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
+  const user = useUserState();
 
-  const { instance: manufacturerPart, instanceQuery } = useInstance({
+  const {
+    instance: manufacturerPart,
+    instanceQuery,
+    refreshInstance
+  } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
     hasPrimaryKey: true,
@@ -30,12 +42,91 @@ export default function ManufacturerPartDetail() {
     }
   });
 
+  const detailsPanel = useMemo(() => {
+    if (instanceQuery.isFetching) {
+      return <Skeleton />;
+    }
+
+    let data = manufacturerPart ?? {};
+
+    let tl: DetailsField[] = [
+      {
+        type: 'link',
+        name: 'part',
+        label: t`Internal Part`,
+        model: ModelType.part,
+        hidden: !manufacturerPart.part
+      },
+      {
+        type: 'string',
+        name: 'description',
+        label: t`Description`,
+        copy: true,
+        hidden: !manufacturerPart.description
+      },
+      {
+        type: 'link',
+        external: true,
+        name: 'link',
+        label: t`External Link`,
+        copy: true,
+        hidden: !manufacturerPart.link
+      }
+    ];
+
+    let tr: DetailsField[] = [
+      {
+        type: 'link',
+        name: 'manufacturer',
+        label: t`Manufacturer`,
+        icon: 'manufacturers',
+        model: ModelType.company,
+        hidden: !manufacturerPart.manufacturer
+      },
+      {
+        type: 'string',
+        name: 'MPN',
+        label: t`Manufacturer Part Number`,
+        copy: true,
+        hidden: !manufacturerPart.MPN,
+        icon: 'reference'
+      }
+    ];
+
+    return (
+      <ItemDetailsGrid>
+        <Grid>
+          <Grid.Col span={4}>
+            <DetailsImage
+              appRole={UserRoles.part}
+              src={manufacturerPart?.part_detail?.image}
+              apiPath={apiUrl(
+                ApiEndpoints.part_list,
+                manufacturerPart?.part_detail?.pk
+              )}
+              pk={manufacturerPart?.part_detail?.pk}
+            />
+          </Grid.Col>
+          <Grid.Col span={8}>
+            <DetailsTable
+              title={t`Manufacturer Part`}
+              fields={tl}
+              item={data}
+            />
+          </Grid.Col>
+        </Grid>
+        <DetailsTable title={t`Manufacturer Details`} fields={tr} item={data} />
+      </ItemDetailsGrid>
+    );
+  }, [manufacturerPart, instanceQuery]);
+
   const panels: PanelType[] = useMemo(() => {
     return [
       {
         name: 'details',
-        label: t`Details`,
-        icon: <IconInfoCircle />
+        label: t`Manufacturer Part Details`,
+        icon: <IconInfoCircle />,
+        content: detailsPanel
       },
       {
         name: 'parameters',

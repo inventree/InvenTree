@@ -81,7 +81,8 @@ export default function SupplierPartDetail() {
         external: true,
         name: 'link',
         label: t`External Link`,
-        copy: true
+        copy: true,
+        hidden: !supplierPart.link
       },
       {
         type: 'string',
