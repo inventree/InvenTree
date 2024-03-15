@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-15 06:54+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"PO-Revision-Date: 2024-03-15 11:41\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1512,8 +1512,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:512
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:592
@@ -2678,10 +2677,8 @@ msgid "Generate reports in debug mode (HTML output)"
 msgstr "Riportok előállítása HTML formátumban (hibakereséshez)"
 
 #: common/models.py:1657
-#, fuzzy
-#| msgid "No Reports Found"
 msgid "Log Report Errors"
-msgstr "Nem található riport"
+msgstr ""
 
 #: common/models.py:1658
 msgid "Log errors which occur when generating reports"
@@ -2805,10 +2802,8 @@ msgid "Check BOM when installing items"
 msgstr ""
 
 #: common/models.py:1756
-#, fuzzy
-#| msgid "Cannot allocate stock item to a line with a different part"
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr "Nem foglalható készlet egy másik fajta alkatrész sortételéhez"
+msgstr ""
 
 #: common/models.py:1762
 msgid "Build Order Reference Pattern"
@@ -6455,10 +6450,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr "Teszt sablont csak követésre kötelezett alkatrészhez lehet csinálni"
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Test with this name already exists for this part"
 msgid "Test template with the same key already exists for part"
-msgstr "Erre az alkatrészre már létezik teszt ilyen névvel"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -6842,22 +6835,16 @@ msgid "Supplier part matching this SKU already exists"
 msgstr "Van már ilyen beszállítói alkatrész"
 
 #: part/serializers.py:821
-#, fuzzy
-#| msgid "Exclude External Stock"
 msgid "External Stock"
-msgstr "Külső készlet nélkül"
+msgstr ""
 
 #: part/serializers.py:823
-#, fuzzy
-#| msgid "Allocated Stock"
 msgid "Unallocated Stock"
-msgstr "Lefoglalt készlet"
+msgstr ""
 
 #: part/serializers.py:826
-#, fuzzy
-#| msgid "Allow Variant Stock"
 msgid "Variant Stock"
-msgstr "Készlet változatok engedélyezése"
+msgstr ""
 
 #: part/serializers.py:851 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
@@ -8469,10 +8456,8 @@ msgid "Return order query filters"
 msgstr "Visszavétel lekérdezés szűrők"
 
 #: report/models.py:640
-#, fuzzy
-#| msgid "Stock item with this serial number already exists"
 msgid "Snippet file with this name already exists"
-msgstr "Létezik már készlet tétel ilyen a sorozatszámmal"
+msgstr ""
 
 #: report/models.py:647
 msgid "Snippet"
@@ -8487,10 +8472,8 @@ msgid "Snippet file description"
 msgstr "Részlet fájl leírása"
 
 #: report/models.py:713
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Asset file with this name already exists"
-msgstr "Ilyen fájlnévvel már létezik melléklet"
+msgstr ""
 
 #: report/models.py:721
 msgid "Asset"
@@ -11125,10 +11108,8 @@ msgid "No pricing available"
 msgstr "Nincsenek árak"
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "External Link"
 msgid "External stock"
-msgstr "Külső link"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -14131,3 +14112,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
