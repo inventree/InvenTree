@@ -286,6 +286,7 @@ export function TemplateTable({
       <DetailDrawer
         title={t`Edit` + ' ' + templateTypeTranslation}
         size={'90%'}
+        closeOnEscape={false}
         renderContent={(id) => {
           return (
             <TemplateDrawer

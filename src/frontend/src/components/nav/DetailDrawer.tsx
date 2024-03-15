@@ -27,6 +27,7 @@ export interface DrawerProps {
   renderContent: (id?: string) => React.ReactNode;
   urlPrefix?: string;
   size?: MantineNumberSize;
+  closeOnEscape?: boolean;
 }
 
 const useStyles = createStyles(() => ({
@@ -40,6 +41,7 @@ function DetailDrawerComponent({
   title,
   position = 'right',
   size,
+  closeOnEscape = true,
   renderContent
 }: DrawerProps) {
   const navigate = useNavigate();
@@ -62,6 +64,7 @@ function DetailDrawerComponent({
         addDetailDrawer(false);
       }}
       position={position}
+      closeOnEscape={closeOnEscape}
       size={size}
       classNames={{ root: classes.flex, body: classes.flex }}
       scrollAreaComponent={Stack}

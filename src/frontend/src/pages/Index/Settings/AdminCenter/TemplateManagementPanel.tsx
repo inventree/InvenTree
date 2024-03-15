@@ -64,7 +64,7 @@ export default function TemplateManagementPanel() {
             }
           },
           {
-            name: t`Stock item`,
+            name: t`Stock Item`,
             key: 'stock',
             icon: 'stock',
             preview: {
@@ -73,12 +73,12 @@ export default function TemplateManagementPanel() {
             }
           },
           {
-            name: t`Build line`,
+            name: t`Build Line`,
             key: 'buildline',
             icon: 'builds',
             preview: {
               itemKey: 'line',
-              model: ModelType.build
+              model: ModelType.buildline
             }
           }
         ]
@@ -96,7 +96,7 @@ export default function TemplateManagementPanel() {
         defaultTemplate: defaultReportTemplate,
         variants: [
           {
-            name: t`Purchase order`,
+            name: t`Purchase Order`,
             key: 'po',
             icon: 'purchase_orders',
             preview: {
@@ -105,7 +105,7 @@ export default function TemplateManagementPanel() {
             }
           },
           {
-            name: t`Sales order`,
+            name: t`Sales Order`,
             key: 'so',
             icon: 'sales_orders',
             preview: {
@@ -114,7 +114,7 @@ export default function TemplateManagementPanel() {
             }
           },
           {
-            name: t`Return order`,
+            name: t`Return Order`,
             key: 'ro',
             icon: 'return_orders',
             preview: {
@@ -151,7 +151,7 @@ export default function TemplateManagementPanel() {
             }
           },
           {
-            name: t`Stock location`,
+            name: t`Stock Location`,
             key: 'slr',
             icon: 'default_location',
             preview: {
