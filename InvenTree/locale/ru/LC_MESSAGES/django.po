@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-15 06:54+0000\n"
-"PO-Revision-Date: 2024-03-06 10:36\n"
+"PO-Revision-Date: 2024-03-15 11:42\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -2676,10 +2676,8 @@ msgid "Generate reports in debug mode (HTML output)"
 msgstr ""
 
 #: common/models.py:1657
-#, fuzzy
-#| msgid "No Reports Found"
 msgid "Log Report Errors"
-msgstr "Отчёты не найдены"
+msgstr ""
 
 #: common/models.py:1658
 msgid "Log errors which occur when generating reports"
@@ -2803,10 +2801,8 @@ msgid "Check BOM when installing items"
 msgstr ""
 
 #: common/models.py:1756
-#, fuzzy
-#| msgid "Cannot allocate stock item to a line with a different part"
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr "Невозможно зарезервировать складскую позицию в позицию другой детали"
+msgstr ""
 
 #: common/models.py:1762
 msgid "Build Order Reference Pattern"
@@ -6453,10 +6449,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr "Шаблоны тестирования могут быть созданы только для отслеживаемых деталей"
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Stock item with this serial number already exists"
 msgid "Test template with the same key already exists for part"
-msgstr "Складская позиция с этим серийным номером уже существует"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -8461,10 +8455,8 @@ msgid "Return order query filters"
 msgstr ""
 
 #: report/models.py:640
-#, fuzzy
-#| msgid "Stock item with this serial number already exists"
 msgid "Snippet file with this name already exists"
-msgstr "Складская позиция с этим серийным номером уже существует"
+msgstr ""
 
 #: report/models.py:647
 msgid "Snippet"
@@ -8479,10 +8471,8 @@ msgid "Snippet file description"
 msgstr ""
 
 #: report/models.py:713
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Asset file with this name already exists"
-msgstr "Вложение с таким именем файла уже существует"
+msgstr ""
 
 #: report/models.py:721
 msgid "Asset"
@@ -8971,7 +8961,7 @@ msgstr ""
 
 #: stock/models.py:1639 stock/serializers.py:1226
 msgid "Duplicate stock items"
-msgstr "Дублировать складские позиции"
+msgstr "Дублировать складские позиции\n"
 
 #: stock/models.py:1643
 msgid "Stock items must refer to the same part"
@@ -9431,7 +9421,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1915
 msgid "stock item"
-msgstr "складская позиция"
+msgstr "складская позиция\n"
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -9467,7 +9457,7 @@ msgstr "Вернуть на склад"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr "Создать сериализированные позиции из этой складской позиции"
+msgstr "Создать сериализированные позиции из этой складской позиции\n"
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
@@ -10929,7 +10919,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Складская позиция уже просканирована"
+msgstr "Складская позиция уже просканирована\n"
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
@@ -13132,11 +13122,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Создана новая складская позиция"
+msgstr "Создана новая складская позиция\n"
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Создано несколько складских позиций"
+msgstr "Создано несколько складских позиций\n"
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
@@ -14121,3 +14111,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
