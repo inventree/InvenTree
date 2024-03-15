@@ -24,6 +24,8 @@ import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useSupplierPartFields } from '../../forms/CompanyForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -34,7 +36,11 @@ export default function SupplierPartDetail() {
 
   const user = useUserState();
 
-  const { instance: supplierPart, instanceQuery } = useInstance({
+  const {
+    instance: supplierPart,
+    instanceQuery,
+    refreshInstance
+  } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
     hasPrimaryKey: true,
@@ -184,7 +190,7 @@ export default function SupplierPartDetail() {
     return [
       {
         name: 'details',
-        label: t`Details`,
+        label: t`Supplier Part Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
       },
@@ -222,7 +228,8 @@ export default function SupplierPartDetail() {
             hidden: !user.hasAddRole(UserRoles.purchase_order)
           }),
           EditItemAction({
-            hidden: !user.hasChangeRole(UserRoles.purchase_order)
+            hidden: !user.hasChangeRole(UserRoles.purchase_order),
+            onClick: () => editSuppliertPart.open()
           }),
           DeleteItemAction({
             hidden: !user.hasDeleteRole(UserRoles.purchase_order)
@@ -231,6 +238,19 @@ export default function SupplierPartDetail() {
       />
     ];
   }, [user]);
+
+  const editSupplierPartFields = useSupplierPartFields({
+    hidePart: true,
+    partPk: supplierPart?.pk
+  });
+
+  const editSuppliertPart = useEditApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    pk: supplierPart?.pk,
+    title: t`Edit Supplier Part`,
+    fields: editSupplierPartFields,
+    onFormSuccess: refreshInstance
+  });
 
   const breadcrumbs = useMemo(() => {
     return [
@@ -246,16 +266,19 @@ export default function SupplierPartDetail() {
   }, [supplierPart]);
 
   return (
-    <Stack spacing="xs">
-      <LoadingOverlay visible={instanceQuery.isFetching} />
-      <PageDetail
-        title={t`Supplier Part`}
-        subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
-        breadcrumbs={breadcrumbs}
-        actions={supplierPartActions}
-        imageUrl={supplierPart?.part_detail?.thumbnail}
-      />
-      <PanelGroup pageKey="supplierpart" panels={panels} />
-    </Stack>
+    <>
+      {editSuppliertPart.modal}
+      <Stack spacing="xs">
+        <LoadingOverlay visible={instanceQuery.isFetching} />
+        <PageDetail
+          title={t`Supplier Part`}
+          subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
+          breadcrumbs={breadcrumbs}
+          actions={supplierPartActions}
+          imageUrl={supplierPart?.part_detail?.thumbnail}
+        />
+        <PanelGroup pageKey="supplierpart" panels={panels} />
+      </Stack>
+    </>
   );
 }
