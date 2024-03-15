@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-15 06:54+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"PO-Revision-Date: 2024-03-15 11:42\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -2676,10 +2676,8 @@ msgid "Generate reports in debug mode (HTML output)"
 msgstr ""
 
 #: common/models.py:1657
-#, fuzzy
-#| msgid "No Reports Found"
 msgid "Log Report Errors"
-msgstr "Inga rapporter hittades"
+msgstr ""
 
 #: common/models.py:1658
 msgid "Log errors which occur when generating reports"
@@ -6451,10 +6449,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Test template with the same key already exists for part"
-msgstr "Det finns redan en bilaga med detta filnamn"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -6838,20 +6834,16 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:821
-#, fuzzy
-#| msgid "External Link"
 msgid "External Stock"
-msgstr "Extern länk"
+msgstr ""
 
 #: part/serializers.py:823
 msgid "Unallocated Stock"
 msgstr ""
 
 #: part/serializers.py:826
-#, fuzzy
-#| msgid "In Stock"
 msgid "Variant Stock"
-msgstr "I lager"
+msgstr ""
 
 #: part/serializers.py:851 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
@@ -8463,10 +8455,8 @@ msgid "Return order query filters"
 msgstr ""
 
 #: report/models.py:640
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Snippet file with this name already exists"
-msgstr "Det finns redan en bilaga med detta filnamn"
+msgstr ""
 
 #: report/models.py:647
 msgid "Snippet"
@@ -8481,10 +8471,8 @@ msgid "Snippet file description"
 msgstr ""
 
 #: report/models.py:713
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Asset file with this name already exists"
-msgstr "Det finns redan en bilaga med detta filnamn"
+msgstr ""
 
 #: report/models.py:721
 msgid "Asset"
@@ -11088,7 +11076,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:826
 msgid "Delete items"
-msgstr ""
+msgstr "Radera objekt"
 
 #: templates/js/translated/bom.js:936
 msgid "Load BOM for subassembly"
@@ -11119,10 +11107,8 @@ msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "External Link"
 msgid "External stock"
-msgstr "Extern länk"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -13839,7 +13825,7 @@ msgstr "Kolumner"
 
 #: templates/js/translated/tables.js:561
 msgid "All"
-msgstr ""
+msgstr "Alla"
 
 #: templates/navbar.html:45
 msgid "Buy"
@@ -14125,3 +14111,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
