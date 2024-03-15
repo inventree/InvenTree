@@ -84,16 +84,29 @@ export enum ApiEndpoints {
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
   stock_test_result_list = 'stock/test/',
+  stock_transfer = 'stock/transfer/',
+  stock_remove = 'stock/remove/',
+  stock_add = 'stock/add/',
+  stock_count = 'stock/count/',
+  stock_change_status = 'stock/change_status/',
+  stock_merge = 'stock/merge/',
+  stock_assign = 'stock/assign/',
+  stock_status = 'stock/status/',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',
   purchase_order_line_list = 'order/po-line/',
   purchase_order_attachment_list = 'order/po/attachment/',
+  purchase_order_receive = 'order/po/:id/receive/',
   sales_order_list = 'order/so/',
   sales_order_attachment_list = 'order/so/attachment/',
   sales_order_shipment_list = 'order/so/shipment/',
   return_order_list = 'order/ro/',
   return_order_attachment_list = 'order/ro/attachment/',
+
+  // Template API endpoints
+  label_list = 'label/:variant/',
+  report_list = 'report/:variant/',
 
   // Plugin API endpoints
   plugin_list = 'plugins/',

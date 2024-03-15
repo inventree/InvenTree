@@ -14,8 +14,10 @@ from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings, tag
 from django.urls import reverse
+from django.utils import timezone
 
 import pint.errors
+import pytz
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
@@ -38,6 +40,147 @@ from stock.models import StockItem, StockLocation
 from . import config, helpers, ready, status, version
 from .tasks import offload_task
 from .validators import validate_overage
+
+
+class HostTest(InvenTreeTestCase):
+    """Test for host configuration."""
+
+    @override_settings(ALLOWED_HOSTS=['testserver'])
+    def test_allowed_hosts(self):
+        """Test that the ALLOWED_HOSTS functions as expected."""
+        self.assertIn('testserver', settings.ALLOWED_HOSTS)
+
+        response = self.client.get('/api/', headers={'host': 'testserver'})
+
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/api/', headers={'host': 'invalidserver'})
+
+        self.assertEqual(response.status_code, 400)
+
+    @override_settings(ALLOWED_HOSTS=['invalidserver.co.uk'])
+    def test_allowed_hosts_2(self):
+        """Another test for ALLOWED_HOSTS functionality."""
+        response = self.client.get('/api/', headers={'host': 'invalidserver.co.uk'})
+
+        self.assertEqual(response.status_code, 200)
+
+
+class CorsTest(TestCase):
+    """Unit tests for CORS functionality."""
+
+    def cors_headers(self):
+        """Return a list of CORS headers."""
+        return [
+            'access-control-allow-origin',
+            'access-control-allow-credentials',
+            'access-control-allow-methods',
+            'access-control-allow-headers',
+        ]
+
+    def preflight(self, url, origin, method='GET'):
+        """Make a CORS preflight request to the specified URL."""
+        headers = {'origin': origin, 'access-control-request-method': method}
+
+        return self.client.options(url, headers=headers)
+
+    def test_no_origin(self):
+        """Test that CORS headers are not included for regular requests.
+
+        - We use the /api/ endpoint for this test (it does not require auth)
+        - By default, in debug mode *all* CORS origins are allowed
+        """
+        # Perform an initial response without the "origin" header
+        response = self.client.get('/api/')
+        self.assertEqual(response.status_code, 200)
+
+        for header in self.cors_headers():
+            self.assertNotIn(header, response.headers)
+
+        # Now, perform a "preflight" request with the "origin" header
+        response = self.preflight('/api/', origin='http://random-external-server.com')
+        self.assertEqual(response.status_code, 200)
+
+        for header in self.cors_headers():
+            self.assertIn(header, response.headers)
+
+        self.assertEqual(response.headers['content-length'], '0')
+        self.assertEqual(
+            response.headers['access-control-allow-origin'],
+            'http://random-external-server.com',
+        )
+
+    @override_settings(
+        CORS_ALLOW_ALL_ORIGINS=False,
+        CORS_ALLOWED_ORIGINS=['http://my-external-server.com'],
+        CORS_ALLOWED_ORIGIN_REGEXES=[],
+    )
+    def test_auth_view(self):
+        """Test that CORS requests work for the /auth/ view.
+
+        Here, we are not authorized by default,
+        but the CORS headers should still be included.
+        """
+        url = '/auth/'
+
+        # First, a preflight request with a "valid" origin
+
+        response = self.preflight(url, origin='http://my-external-server.com')
+
+        self.assertEqual(response.status_code, 200)
+
+        for header in self.cors_headers():
+            self.assertIn(header, response.headers)
+
+        # Next, a preflight request with an "invalid" origin
+        response = self.preflight(url, origin='http://random-external-server.com')
+
+        self.assertEqual(response.status_code, 200)
+
+        for header in self.cors_headers():
+            self.assertNotIn(header, response.headers)
+
+        # Next, make a GET request (without a token)
+        response = self.client.get(
+            url, headers={'origin': 'http://my-external-server.com'}
+        )
+
+        # Unauthorized
+        self.assertEqual(response.status_code, 401)
+
+        self.assertIn('access-control-allow-origin', response.headers)
+        self.assertNotIn('access-control-allow-methods', response.headers)
+
+    @override_settings(
+        CORS_ALLOW_ALL_ORIGINS=False,
+        CORS_ALLOWED_ORIGINS=[],
+        CORS_ALLOWED_ORIGIN_REGEXES=['http://.*myserver.com'],
+    )
+    def test_cors_regex(self):
+        """Test that CORS regexes work as expected."""
+        valid_urls = [
+            'http://www.myserver.com',
+            'http://test.myserver.com',
+            'http://myserver.com',
+            'http://www.myserver.com:8080',
+        ]
+
+        invalid_urls = [
+            'http://myserver.org',
+            'http://www.other-server.org',
+            'http://google.com',
+            'http://myserver.co.uk:8080',
+        ]
+
+        for url in valid_urls:
+            response = self.preflight('/api/', origin=url)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('access-control-allow-origin', response.headers)
+
+        for url in invalid_urls:
+            response = self.preflight('/api/', origin=url)
+            self.assertEqual(response.status_code, 200)
+            self.assertNotIn('access-control-allow-origin', response.headers)
 
 
 class ConversionTest(TestCase):
@@ -137,6 +280,24 @@ class ConversionTest(TestCase):
             self.assertAlmostEqual(q, expected, places=2)
             q = InvenTree.conversion.convert_physical_value(val, 'W', strip_units=False)
             self.assertAlmostEqual(float(q.magnitude), expected, places=2)
+
+    def test_imperial_lengths(self):
+        """Test support of imperial length measurements."""
+        tests = [
+            ('1 inch', 'mm', 25.4),
+            ('1 "', 'mm', 25.4),
+            ('2 "', 'inches', 2),
+            ('3 feet', 'inches', 36),
+            ("3'", 'inches', 36),
+            ("7 '", 'feet', 7),
+        ]
+
+        for val, unit, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, unit, strip_units=True
+            )
+
+            self.assertAlmostEqual(output, expected, 3)
 
     def test_dimensionless_units(self):
         """Tests for 'dimensionless' unit quantities."""
@@ -587,6 +748,47 @@ class TestHelpers(TestCase):
             self.assertEqual(helpers.generateTestKey(name), key)
 
 
+class TestTimeFormat(TestCase):
+    """Unit test for time formatting functionality."""
+
+    @override_settings(TIME_ZONE='UTC')
+    def test_tz_utc(self):
+        """Check UTC timezone."""
+        self.assertEqual(InvenTree.helpers.server_timezone(), 'UTC')
+
+    @override_settings(TIME_ZONE='Europe/London')
+    def test_tz_london(self):
+        """Check London timezone."""
+        self.assertEqual(InvenTree.helpers.server_timezone(), 'Europe/London')
+
+    @override_settings(TIME_ZONE='Australia/Sydney')
+    def test_to_local_time(self):
+        """Test that the local time conversion works as expected."""
+        source_time = timezone.datetime(
+            year=2000,
+            month=1,
+            day=1,
+            hour=0,
+            minute=0,
+            second=0,
+            tzinfo=pytz.timezone('Europe/London'),
+        )
+
+        tests = [
+            ('UTC', '2000-01-01 00:01:00+00:00'),
+            ('Europe/London', '2000-01-01 00:00:00-00:01'),
+            ('America/New_York', '1999-12-31 19:01:00-05:00'),
+            # All following tests should result in the same value
+            ('Australia/Sydney', '2000-01-01 11:01:00+11:00'),
+            (None, '2000-01-01 11:01:00+11:00'),
+            ('', '2000-01-01 11:01:00+11:00'),
+        ]
+
+        for tz, expected in tests:
+            local_time = InvenTree.helpers.to_local_time(source_time, tz)
+            self.assertEqual(str(local_time), expected)
+
+
 class TestQuoteWrap(TestCase):
     """Tests for string wrapping."""
 
@@ -894,6 +1096,7 @@ class TestVersionNumber(TestCase):
         hash = str(
             subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
         ).strip()
+
         self.assertEqual(hash, version.inventreeCommitHash())
 
         d = (

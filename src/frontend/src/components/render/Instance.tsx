@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { Thumbnail } from '../images/Thumbnail';
-import { RenderBuildOrder } from './Build';
+import { RenderBuildLine, RenderBuildOrder } from './Build';
 import {
   RenderAddress,
   RenderCompany,
@@ -42,6 +42,7 @@ const RendererLookup: EnumDictionary<
 > = {
   [ModelType.address]: RenderAddress,
   [ModelType.build]: RenderBuildOrder,
+  [ModelType.buildline]: RenderBuildLine,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
   [ModelType.manufacturerpart]: RenderManufacturerPart,

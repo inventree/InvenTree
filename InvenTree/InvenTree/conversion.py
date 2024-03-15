@@ -39,9 +39,9 @@ def reload_unit_registry():
     reg = pint.UnitRegistry(autoconvert_offset_to_baseunit=True)
 
     # Aliases for temperature units
-    reg.define('@alias degC = celsius = Celsius')
-    reg.define('@alias degF = fahrenheit = Fahrenheit')
-    reg.define('@alias degK = kelvin = Kelvin')
+    reg.define('@alias degC = Celsius')
+    reg.define('@alias degF = Fahrenheit')
+    reg.define('@alias degK = Kelvin')
 
     # Define some "standard" additional units
     reg.define('piece = 1')
@@ -164,6 +164,13 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     # Ensure that the value is a string
     value = str(value).strip() if value else ''
     unit = str(unit).strip() if unit else ''
+
+    # Handle imperial length measurements
+    if value.count("'") == 1 and value.endswith("'"):
+        value = value.replace("'", ' feet')
+
+    if value.count('"') == 1 and value.endswith('"'):
+        value = value.replace('"', ' inches')
 
     # Error on blank values
     if not value:

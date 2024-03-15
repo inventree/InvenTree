@@ -74,6 +74,7 @@ class AuthRequiredMiddleware(object):
 
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
+
         if getattr(path_func, 'auth_exempt', False) is True:
             return self.get_response(request)
 
@@ -119,7 +120,13 @@ class AuthRequiredMiddleware(object):
                 ]
 
                 # Do not redirect requests to any of these paths
-                paths_ignore = ['/api/', '/js/', '/media/', '/static/']
+                paths_ignore = [
+                    '/api/',
+                    '/auth/',
+                    '/js/',
+                    settings.MEDIA_URL,
+                    settings.STATIC_URL,
+                ]
 
                 if path not in urls and not any(
                     path.startswith(p) for p in paths_ignore

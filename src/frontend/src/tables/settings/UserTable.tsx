@@ -7,7 +7,10 @@ import { Link } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
-import { DetailDrawer } from '../../components/nav/DetailDrawer';
+import {
+  DetailDrawer,
+  DetailDrawerLink
+} from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { openCreateApiForm, openDeleteApiForm } from '../../functions/forms';
 import { useInstance } from '../../hooks/UseInstance';
@@ -125,7 +128,10 @@ export function UserDrawer({
           <List>
             {userDetail?.groups?.map((group) => (
               <List.Item key={group.pk}>
-                <Link to={`../group-${group.pk}`}>{group.name}</Link>
+                <DetailDrawerLink
+                  to={`../group-${group.pk}`}
+                  text={group.name}
+                />
               </List.Item>
             ))}
           </List>

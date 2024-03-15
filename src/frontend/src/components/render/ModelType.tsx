@@ -8,7 +8,7 @@ export interface ModelInformationInterface {
   label_multiple: string;
   url_overview?: string;
   url_detail?: string;
-  api_endpoint?: ApiEndpoints;
+  api_endpoint: ApiEndpoints;
   cui_detail?: string;
 }
 
@@ -91,6 +91,14 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/build/:pk/',
     cui_detail: '/build/:pk/',
     api_endpoint: ApiEndpoints.build_order_list
+  },
+  buildline: {
+    label: t`Build Line`,
+    label_multiple: t`Build Lines`,
+    url_overview: '/build/line',
+    url_detail: '/build/line/:pk/',
+    cui_detail: '/build/line/:pk/',
+    api_endpoint: ApiEndpoints.build_line_list
   },
   company: {
     label: t`Company`,

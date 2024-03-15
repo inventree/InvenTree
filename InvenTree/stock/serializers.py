@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import BooleanField, Case, Count, Q, Value, When
+from django.db.models import BooleanField, Case, Count, Prefetch, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
@@ -20,6 +20,7 @@ import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status_codes
+import part.filters as part_filters
 import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
@@ -289,7 +290,14 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'location',
             'sales_order',
             'purchase_order',
-            'part',
+            Prefetch(
+                'part',
+                queryset=part_models.Part.objects.annotate(
+                    category_default_location=part_filters.annotate_default_location(
+                        'category__'
+                    )
+                ).prefetch_related(None),
+            ),
             'part__category',
             'part__pricing_data',
             'supplier_part',
@@ -886,6 +894,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'pathstring',
             'path',
             'items',
+            'sublocations',
             'owner',
             'icon',
             'custom_icon',
@@ -911,13 +920,18 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
-        queryset = queryset.annotate(items=stock.filters.annotate_location_items())
+        queryset = queryset.annotate(
+            items=stock.filters.annotate_location_items(),
+            sublocations=stock.filters.annotate_sub_locations(),
+        )
 
         return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    items = serializers.IntegerField(read_only=True)
+    items = serializers.IntegerField(read_only=True, label=_('Stock Items'))
+
+    sublocations = serializers.IntegerField(read_only=True, label=_('Sublocations'))
 
     level = serializers.IntegerField(read_only=True)
 

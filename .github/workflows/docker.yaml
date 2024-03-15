@@ -58,15 +58,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       python_version: "3.11"
-    strategy:
-      matrix:
-        platform: ["linux/amd64", "linux/arm64"]
-        include:
-          - platform: linux/amd64
-            os: ubuntu-latest
-          - platform: linux/arm64
-            os: ubuntu-latest # in the future we can try to use alternative runners here
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest  # in the future we can try to use alternative runners here
 
     steps:
       - name: Check out repo
@@ -82,6 +74,14 @@ jobs:
           python3 ci/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
+      - name: Test Docker Image
+        id: test-docker
+        run: |
+          docker build . --target production --tag inventree-test
+          docker run --rm inventree-test invoke --version
+          docker run --rm inventree-test invoke --list
+          docker run --rm inventree-test gunicorn --version
+          docker run --rm inventree-test pg_dump --version
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: docker-compose build --no-cache
@@ -147,24 +147,18 @@ jobs:
             inventree/inventree
             ghcr.io/${{ github.repository }}
 
-      - name: Build and Push
-        id: build-and-push
+      - name: Push Docker Images
+        id: push-docker
         if: github.event_name != 'pull_request'
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # pin@v5.0.0
         with:
           context: .
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           push: true
           sbom: true
           provenance: false
           target: production
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.docker_tags }}
           build-args: |
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
-
-      - name: Sign the published image
-        if: ${{ false }} # github.event_name != 'pull_request'
-        env:
-          COSIGN_EXPERIMENTAL: "true"
-        run: cosign sign ${{ steps.meta.outputs.tags }}@${{ steps.build-and-push.outputs.digest }}

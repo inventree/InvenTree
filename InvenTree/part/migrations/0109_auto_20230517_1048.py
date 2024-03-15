@@ -138,6 +138,8 @@ def update_parameter_values(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ('part', '0108_auto_20230516_1334'),
     ]
