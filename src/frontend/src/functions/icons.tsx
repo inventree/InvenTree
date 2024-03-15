@@ -117,12 +117,15 @@ const icons = {
   test_templates: IconTestPipe,
   related_parts: IconLayersLinked,
   attachments: IconPaperclip,
+  note: IconNotes,
   notes: IconNotes,
   photo: IconPhoto,
   upload: IconFileUpload,
   reject: IconX,
   select_image: IconGridDots,
   delete: IconTrash,
+  packaging: IconPackage,
+  packages: IconPackages,
 
   // Part Icons
   active: IconCheck,
