@@ -55,6 +55,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 
@@ -164,6 +165,14 @@ export default function StockDetail() {
         type: 'link',
         name: 'belongs_to',
         label: t`Installed In`,
+        model_formatter: (model: any) => {
+          let text = model?.part_detail?.full_name ?? model?.name;
+          if (model.serial && model.quantity == 1) {
+            text += `# ${model.serial}`;
+          }
+
+          return text;
+        },
         model: ModelType.stockitem,
         hidden: !stockitem.belongs_to
       },
@@ -259,7 +268,8 @@ export default function StockDetail() {
         name: 'installed_items',
         label: t`Installed Items`,
         icon: <IconBoxPadding />,
-        hidden: !stockitem?.part_detail?.assembly
+        hidden: !stockitem?.part_detail?.assembly,
+        content: <InstalledItemsTable parentId={stockitem.pk} />
       },
       {
         name: 'child_items',

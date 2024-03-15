@@ -92,6 +92,7 @@ export enum ApiEndpoints {
   stock_merge = 'stock/merge/',
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
+  stock_install = 'stock/:id/install',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',

@@ -212,7 +212,8 @@ export default function SystemSettings() {
               'STOCK_ALLOW_EXPIRED_BUILD',
               'STOCK_OWNERSHIP_CONTROL',
               'STOCK_LOCATION_DEFAULT_ICON',
-              'STOCK_SHOW_INSTALLED_ITEMS'
+              'STOCK_SHOW_INSTALLED_ITEMS',
+              'STOCK_ENFORCE_BOM_INSTALLATION'
             ]}
           />
         )
