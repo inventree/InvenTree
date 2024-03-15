@@ -60,6 +60,7 @@ export default function SupplierPartDetail() {
     // Access nested data
     data.manufacturer = data.manufacturer_detail?.pk;
     data.MPN = data.manufacturer_part_detail?.MPN;
+    data.manufacturer_part = data.manufacturer_part_detail?.pk;
 
     let tl: DetailsField[] = [
       {
@@ -116,12 +117,14 @@ export default function SupplierPartDetail() {
         hidden: !data.manufacturer
       },
       {
-        type: 'string',
-        name: 'MPN',
-        label: t`MPN`,
+        type: 'link',
+        name: 'manufacturer_part',
+        model_field: 'MPN',
+        label: t`Manufacturer Part Number`,
+        model: ModelType.manufacturerpart,
         copy: true,
         icon: 'reference',
-        hidden: !data.MPN
+        hidden: !data.manufacturer_part
       }
     ];
 
