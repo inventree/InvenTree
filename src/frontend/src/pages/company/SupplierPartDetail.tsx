@@ -170,12 +170,12 @@ export default function SupplierPartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <DetailsTable fields={tl} item={data} />
+            <DetailsTable title={t`Supplier Part`} fields={tl} item={data} />
           </Grid.Col>
         </Grid>
-        <DetailsTable fields={tr} item={data} />
-        <DetailsTable fields={bl} item={data} />
-        <DetailsTable fields={br} item={data} />
+        <DetailsTable title={t`Supplier`} fields={tr} item={data} />
+        <DetailsTable title={t`Packaging`} fields={bl} item={data} />
+        <DetailsTable title={t`Availability`} fields={br} item={data} />
       </ItemDetailsGrid>
     );
   }, [supplierPart, instanceQuery.isFetching]);
