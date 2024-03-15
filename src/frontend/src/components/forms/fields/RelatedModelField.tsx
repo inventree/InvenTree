@@ -30,7 +30,6 @@ export function RelatedModelField({
   limit?: number;
 }) {
   const fieldId = useId();
-
   const {
     field,
     fieldState: { error }
@@ -60,7 +59,6 @@ export function RelatedModelField({
       field.value !== ''
     ) {
       const url = `${definition.api_url}${field.value}/`;
-
       api.get(url).then((response) => {
         if (response.data && response.data.pk) {
           const value = {

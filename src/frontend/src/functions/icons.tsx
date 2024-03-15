@@ -1,5 +1,6 @@
 import {
   Icon123,
+  IconArrowMerge,
   IconBinaryTree2,
   IconBookmarks,
   IconBox,
@@ -10,13 +11,19 @@ import {
   IconCalendarStats,
   IconCategory,
   IconCheck,
+  IconCircleMinus,
+  IconCirclePlus,
   IconClipboardList,
+  IconClipboardText,
   IconCopy,
+  IconCornerDownLeft,
   IconCornerUpRightDouble,
   IconCurrencyDollar,
+  IconDots,
   IconDotsCircleHorizontal,
   IconExternalLink,
   IconFileUpload,
+  IconFlagShare,
   IconGitBranch,
   IconGridDots,
   IconHash,
@@ -27,6 +34,7 @@ import {
   IconMail,
   IconMapPin,
   IconMapPinHeart,
+  IconMinusVertical,
   IconNotes,
   IconNumbers,
   IconPackage,
@@ -35,7 +43,9 @@ import {
   IconPaperclip,
   IconPhone,
   IconPhoto,
+  IconPrinter,
   IconProgressCheck,
+  IconQrcode,
   IconQuestionMark,
   IconRulerMeasure,
   IconShoppingCart,
@@ -47,9 +57,11 @@ import {
   IconTestPipe,
   IconTool,
   IconTools,
+  IconTransfer,
   IconTrash,
   IconTruck,
   IconTruckDelivery,
+  IconUnlink,
   IconUser,
   IconUserStar,
   IconUsersGroup,
@@ -59,6 +71,9 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { IconFlag } from '@tabler/icons-react';
+import { IconSquareXFilled } from '@tabler/icons-react';
+import { IconShoppingCartPlus } from '@tabler/icons-react';
+import { IconArrowBigDownLineFilled } from '@tabler/icons-react';
 import { IconTruckReturn } from '@tabler/icons-react';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { IconCalendarTime } from '@tabler/icons-react';
@@ -127,6 +142,8 @@ const icons = {
   creation_date: IconCalendarTime,
   location: IconMapPin,
   default_location: IconMapPinHeart,
+  category_default_location: IconMapPinHeart,
+  parent_default_location: IconMapPinHeart,
   default_supplier: IconShoppingCartHeart,
   link: IconLink,
   responsible: IconUserStar,
@@ -137,13 +154,30 @@ const icons = {
   group: IconUsersGroup,
   check: IconCheck,
   copy: IconCopy,
+  square_x: IconSquareXFilled,
+  arrow_down: IconArrowBigDownLineFilled,
+  transfer: IconTransfer,
+  actions: IconDots,
+  reports: IconPrinter,
+  buy: IconShoppingCartPlus,
+  add: IconCirclePlus,
+  remove: IconCircleMinus,
+  merge: IconArrowMerge,
+  customer: IconUser,
   quantity: IconNumbers,
   progress: IconProgressCheck,
   reference: IconHash,
   website: IconWorld,
   email: IconMail,
   phone: IconPhone,
-  sitemap: IconSitemap
+  sitemap: IconSitemap,
+  downleft: IconCornerDownLeft,
+  barcode: IconQrcode,
+  barLine: IconMinusVertical,
+  batch_code: IconClipboardText,
+  destination: IconFlag,
+  repeat_destination: IconFlagShare,
+  unlink: IconUnlink
 };
 
 export type InvenTreeIconType = keyof typeof icons;
@@ -167,6 +201,9 @@ export function InvenTreeIcon(props: IconProps) {
   if (props.icon in icons) {
     Icon = GetIcon(props.icon);
   } else {
+    console.warn(
+      `Icon name '${props.icon}' is not registered with the Icon manager`
+    );
     Icon = IconQuestionMark;
   }
 

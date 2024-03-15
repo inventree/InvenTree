@@ -4,11 +4,24 @@ import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
 import { formatCurrency, renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useStockFields } from '../../forms/StockForms';
+import {
+  StockOperationProps,
+  useAddStockItem,
+  useAssignStockItem,
+  useChangeStockStatus,
+  useCountStockItem,
+  useDeleteStockItem,
+  useMergeStockItem,
+  useRemoveStockItem,
+  useStockFields,
+  useTransferStockItem
+} from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -335,7 +348,16 @@ export function StockItemTable({ params = {} }: { params?: any }) {
 
   const table = useTable('stockitems');
   const user = useUserState();
+
   const navigate = useNavigate();
+
+  const tableActionParams: StockOperationProps = useMemo(() => {
+    return {
+      items: table.selectedRecords,
+      model: ModelType.stockitem,
+      refresh: table.refreshTable
+    };
+  }, [table]);
 
   const stockItemFields = useStockFields({ create: true });
 
@@ -354,26 +376,137 @@ export function StockItemTable({ params = {} }: { params?: any }) {
     }
   });
 
+  const transferStock = useTransferStockItem(tableActionParams);
+  const addStock = useAddStockItem(tableActionParams);
+  const removeStock = useRemoveStockItem(tableActionParams);
+  const countStock = useCountStockItem(tableActionParams);
+  const changeStockStatus = useChangeStockStatus(tableActionParams);
+  const mergeStock = useMergeStockItem(tableActionParams);
+  const assignStock = useAssignStockItem(tableActionParams);
+  const deleteStock = useDeleteStockItem(tableActionParams);
+
   const tableActions = useMemo(() => {
+    let can_delete_stock = user.hasDeleteRole(UserRoles.stock);
+    let can_add_stock = user.hasAddRole(UserRoles.stock);
+    let can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
+    let can_add_order = user.hasAddRole(UserRoles.purchase_order);
+    let can_change_order = user.hasChangeRole(UserRoles.purchase_order);
     return [
+      <ActionDropdown
+        key="stockoperations"
+        icon={<InvenTreeIcon icon="stock" />}
+        disabled={table.selectedRecords.length === 0}
+        actions={[
+          {
+            name: t`Add stock`,
+            icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
+            tooltip: t`Add a new stock item`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              addStock.open();
+            }
+          },
+          {
+            name: t`Remove stock`,
+            icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
+            tooltip: t`Remove some quantity from a stock item`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              removeStock.open();
+            }
+          },
+          {
+            name: 'Count Stock',
+            icon: (
+              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: 'Count Stock',
+            disabled: !can_add_stocktake,
+            onClick: () => {
+              countStock.open();
+            }
+          },
+          {
+            name: t`Transfer stock`,
+            icon: (
+              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: t`Move Stock items to new locations`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              transferStock.open();
+            }
+          },
+          {
+            name: t`Change stock status`,
+            icon: <InvenTreeIcon icon="info" iconProps={{ color: 'blue' }} />,
+            tooltip: t`Change the status of stock items`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              changeStockStatus.open();
+            }
+          },
+          {
+            name: t`Merge stock`,
+            icon: <InvenTreeIcon icon="merge" />,
+            tooltip: t`Merge stock items`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              mergeStock.open();
+            }
+          },
+          {
+            name: t`Order stock`,
+            icon: <InvenTreeIcon icon="buy" />,
+            tooltip: t`Order new stock`,
+            disabled: !can_add_order || !can_change_order
+          },
+          {
+            name: t`Assign to customer`,
+            icon: <InvenTreeIcon icon="customer" />,
+            tooltip: t`Order new stock`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              assignStock.open();
+            }
+          },
+          {
+            name: t`Delete stock`,
+            icon: <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />,
+            tooltip: t`Delete stock items`,
+            disabled: !can_delete_stock,
+            onClick: () => {
+              deleteStock.open();
+            }
+          }
+        ]}
+      />,
       <AddItemButton
         hidden={!user.hasAddRole(UserRoles.stock)}
         tooltip={t`Add Stock Item`}
         onClick={() => newStockItem.open()}
       />
     ];
-  }, [user]);
+  }, [user, table]);
 
   return (
     <>
       {newStockItem.modal}
+      {transferStock.modal}
+      {removeStock.modal}
+      {addStock.modal}
+      {countStock.modal}
+      {changeStockStatus.modal}
+      {mergeStock.modal}
+      {assignStock.modal}
+      {deleteStock.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}
         columns={tableColumns}
         props={{
           enableDownload: true,
-          enableSelection: false,
+          enableSelection: true,
           tableFilters: tableFilters,
           tableActions: tableActions,
           onRowClick: (record) =>

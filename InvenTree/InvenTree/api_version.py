@@ -1,12 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 182
+INVENTREE_API_VERSION = 183
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v182 - 2024-03-15 : https://github.com/inventree/InvenTree/pull/6714
+v183 - 2024-03-14 : https://github.com/inventree/InvenTree/pull/5972
+    - Adds "category_default_location" annotated field to part serializer
+    - Adds "part_detail.category_default_location" annotated field to stock item serializer
+    - Adds "part_detail.category_default_location" annotated field to purchase order line serializer
+    - Adds "parent_default_location" annotated field to category serializer
+
+v182 - 2024-03-13 : https://github.com/inventree/InvenTree/pull/6714
     - Expose ReportSnippet model to the /report/snippet/ API endpoint
     - Expose ReportAsset model to the /report/asset/ API endpoint
 

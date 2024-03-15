@@ -9,11 +9,17 @@ import {
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
-  EditItemAction
+  BarcodeActionDropdown,
+  DeleteItemAction,
+  EditItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -21,10 +27,17 @@ import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { stockLocationFields } from '../../forms/StockForms';
+import {
+  StockOperationProps,
+  stockLocationFields,
+  useCountStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
+import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
 
@@ -154,6 +167,21 @@ export default function Stock() {
         label: t`Stock Locations`,
         icon: <IconSitemap />,
         content: <StockLocationTable parentId={id} />
+      },
+      {
+        name: 'default_parts',
+        label: t`Default Parts`,
+        icon: <IconPackages />,
+        hidden: !location.pk,
+        content: (
+          <PartListTable
+            props={{
+              params: {
+                default_location: location.pk
+              }
+            }}
+          />
+        )
       }
     ];
   }, [location, id]);
@@ -166,8 +194,79 @@ export default function Stock() {
     onFormSuccess: refreshInstance
   });
 
-  const locationActions = useMemo(() => {
-    return [
+  const stockItemActionProps: StockOperationProps = useMemo(() => {
+    return {
+      pk: location.pk,
+      model: 'location',
+      refresh: refreshInstance
+    };
+  }, [location]);
+
+  const transferStockItems = useTransferStockItem(stockItemActionProps);
+  const countStockItems = useCountStockItem(stockItemActionProps);
+
+  const locationActions = useMemo(
+    () => [
+      <ActionButton
+        icon={<InvenTreeIcon icon="stocktake" />}
+        variant="outline"
+        size="lg"
+      />,
+      <BarcodeActionDropdown
+        actions={[
+          ViewBarcodeAction({}),
+          LinkBarcodeAction({}),
+          UnlinkBarcodeAction({}),
+          {
+            name: 'Scan in stock items',
+            icon: <InvenTreeIcon icon="stock" />,
+            tooltip: 'Scan items'
+          },
+          {
+            name: 'Scan in container',
+            icon: <InvenTreeIcon icon="unallocated_stock" />,
+            tooltip: 'Scan container'
+          }
+        ]}
+      />,
+      <ActionDropdown
+        key="reports"
+        icon={<InvenTreeIcon icon="reports" />}
+        actions={[
+          {
+            name: 'Print Label',
+            icon: '',
+            tooltip: 'Print label'
+          },
+          {
+            name: 'Print Location Report',
+            icon: '',
+            tooltip: 'Print Report'
+          }
+        ]}
+      />,
+      <ActionDropdown
+        key="operations"
+        icon={<InvenTreeIcon icon="stock" />}
+        actions={[
+          {
+            name: 'Count Stock',
+            icon: (
+              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: 'Count Stock',
+            onClick: () => countStockItems.open()
+          },
+          {
+            name: 'Transfer Stock',
+            icon: (
+              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: 'Transfer Stock',
+            onClick: () => transferStockItems.open()
+          }
+        ]}
+      />,
       <ActionDropdown
         key="location"
         tooltip={t`Location Actions`}
@@ -180,8 +279,9 @@ export default function Stock() {
           })
         ]}
       />
-    ];
-  }, [id, user]);
+    ],
+    [location, id, user]
+  );
 
   const breadcrumbs = useMemo(
     () => [
@@ -214,6 +314,8 @@ export default function Stock() {
           }}
         />
         <PanelGroup pageKey="stocklocation" panels={locationPanels} />
+        {transferStockItems.modal}
+        {countStockItems.modal}
       </Stack>
     </>
   );
