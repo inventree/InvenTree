@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-15 06:54+0000\n"
-"PO-Revision-Date: 2024-02-28 07:23\n"
+"PO-Revision-Date: 2024-03-15 11:41\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -2801,10 +2801,8 @@ msgid "Check BOM when installing items"
 msgstr ""
 
 #: common/models.py:1756
-#, fuzzy
-#| msgid "Cannot allocate stock item to a line with a different part"
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr "Kan ikke tildele lagervare til en linje med annen del"
+msgstr ""
 
 #: common/models.py:1762
 msgid "Build Order Reference Pattern"
@@ -6451,10 +6449,8 @@ msgid "Test templates can only be created for trackable parts"
 msgstr "Testmaler kan bare bli opprettet for sporbare deler"
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Test with this name already exists for this part"
 msgid "Test template with the same key already exists for part"
-msgstr "Test med dette navnet finnes allerede for denne delen"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -6838,22 +6834,16 @@ msgid "Supplier part matching this SKU already exists"
 msgstr "Leverandørdel som matcher denne SKU-en, finnes allerede"
 
 #: part/serializers.py:821
-#, fuzzy
-#| msgid "Exclude External Stock"
 msgid "External Stock"
-msgstr "Ekskluder ekstern lagerbeholdning"
+msgstr ""
 
 #: part/serializers.py:823
-#, fuzzy
-#| msgid "Allocated Stock"
 msgid "Unallocated Stock"
-msgstr "Tildelt lagerbeholdning"
+msgstr ""
 
 #: part/serializers.py:826
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Variant Stock"
-msgstr "Dellager"
+msgstr ""
 
 #: part/serializers.py:851 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
@@ -8465,10 +8455,8 @@ msgid "Return order query filters"
 msgstr "Returordre-søkefilter"
 
 #: report/models.py:640
-#, fuzzy
-#| msgid "Stock item with this serial number already exists"
 msgid "Snippet file with this name already exists"
-msgstr "Lagervare med dette serienummeret eksisterer allerede"
+msgstr ""
 
 #: report/models.py:647
 msgid "Snippet"
@@ -8483,10 +8471,8 @@ msgid "Snippet file description"
 msgstr "Filbeskrivelse for snutt"
 
 #: report/models.py:713
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Asset file with this name already exists"
-msgstr "Vedlegg med dette filnavnet finnes allerede"
+msgstr ""
 
 #: report/models.py:721
 msgid "Asset"
@@ -11121,10 +11107,8 @@ msgid "No pricing available"
 msgstr ""
 
 #: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
-#, fuzzy
-#| msgid "External Link"
 msgid "External stock"
-msgstr "Ekstern lenke"
+msgstr ""
 
 #: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
@@ -14127,3 +14111,4 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
+
