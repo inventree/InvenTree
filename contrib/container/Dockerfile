@@ -107,7 +107,7 @@ RUN apk add --no-cache --update nodejs npm && npm install -g yarn
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
-RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
+RUN cd ${INVENTREE_HOME} && inv frontend-compile
 
 # InvenTree production image:
 # - Copies required files from local directory
