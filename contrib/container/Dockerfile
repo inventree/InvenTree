@@ -125,7 +125,7 @@ ENV PATH=/root/.local/bin:$PATH
 COPY --from=prebuild /root/.local /root/.local
 
 # Copy source code
-COPY InvenTree ./InvenTree
+COPY src/backend/InvenTree ./InvenTree
 COPY --from=frontend ${INVENTREE_HOME}/src/backend/InvenTree/web/static/web ./src/backend/InvenTree/web/static/web
 
 # Launch the production server
