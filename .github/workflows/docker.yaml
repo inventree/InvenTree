@@ -79,8 +79,7 @@ jobs:
       - name: Test Docker Image
         id: test-docker
         run: |
-          cd contrib/container/
-          docker build . --target production --tag inventree-test
+          docker build contrib/container --target production --tag inventree-test
           docker run --rm inventree-test invoke --version
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
