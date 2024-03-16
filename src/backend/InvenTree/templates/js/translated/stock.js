@@ -3204,7 +3204,7 @@ function installStockItem(stock_item_id, part_id, options={}) {
                     auto_fill: true,
                     filters: {
                         trackable: true,
-                        in_bom_for: part_id,
+                        in_bom_for: options.enforce_bom ? part_id : undefined,
                     }
                 },
                 stock_item: {

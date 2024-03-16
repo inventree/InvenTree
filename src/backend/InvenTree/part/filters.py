@@ -107,7 +107,7 @@ def annotate_on_order_quantity(reference: str = ''):
     )
 
 
-def annotate_total_stock(reference: str = ''):
+def annotate_total_stock(reference: str = '', filter: Q = None):
     """Annotate 'total stock' quantity against a queryset.
 
     - This function calculates the 'total stock' for a given part
@@ -120,6 +120,9 @@ def annotate_total_stock(reference: str = ''):
     """
     # Stock filter only returns 'in stock' items
     stock_filter = stock.models.StockItem.IN_STOCK_FILTER
+
+    if filter is not None:
+        stock_filter &= filter
 
     return Coalesce(
         SubquerySum(f'{reference}stock_items__quantity', filter=stock_filter),
@@ -216,9 +219,7 @@ def annotate_sales_order_allocations(reference: str = ''):
     )
 
 
-def variant_stock_query(
-    reference: str = '', filter: Q = stock.models.StockItem.IN_STOCK_FILTER
-):
+def variant_stock_query(reference: str = '', filter: Q = None):
     """Create a queryset to retrieve all stock items for variant parts under the specified part.
 
     - Useful for annotating a queryset with aggregated information about variant parts
@@ -227,11 +228,16 @@ def variant_stock_query(
         reference: The relationship reference of the part from the current model
         filter: Q object which defines how to filter the returned StockItem instances
     """
+    stock_filter = stock.models.StockItem.IN_STOCK_FILTER
+
+    if filter:
+        stock_filter &= filter
+
     return stock.models.StockItem.objects.filter(
         part__tree_id=OuterRef(f'{reference}tree_id'),
         part__lft__gt=OuterRef(f'{reference}lft'),
         part__rght__lt=OuterRef(f'{reference}rght'),
-    ).filter(filter)
+    ).filter(stock_filter)
 
 
 def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
@@ -277,6 +283,32 @@ def annotate_category_parts():
             .order_by()
         ),
         0,
+        output_field=IntegerField(),
+    )
+
+
+def annotate_default_location(reference=''):
+    """Construct a queryset that finds the closest default location in the part's category tree.
+
+    If the part's category has its own default_location, this is returned.
+    If not, the category tree is traversed until a value is found.
+    """
+    subquery = part.models.PartCategory.objects.filter(
+        tree_id=OuterRef(f'{reference}tree_id'),
+        lft__lt=OuterRef(f'{reference}lft'),
+        rght__gt=OuterRef(f'{reference}rght'),
+        level__lte=OuterRef(f'{reference}level'),
+        parent__isnull=False,
+    )
+
+    return Coalesce(
+        F(f'{reference}default_location'),
+        Subquery(
+            subquery.order_by('-level')
+            .filter(default_location__isnull=False)
+            .values('default_location')
+        ),
+        Value(None),
         output_field=IntegerField(),
     )
 

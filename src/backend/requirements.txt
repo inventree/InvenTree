@@ -34,7 +34,7 @@ charset-normalizer==3.3.2
 coreapi==2.3.3
 coreschema==0.0.4
     # via coreapi
-cryptography==42.0.2
+cryptography==42.0.4
     # via
     #   djangorestframework-simplejwt
     #   pyjwt
@@ -137,7 +137,7 @@ googleapis-common-protos==1.62.0
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
-grpcio==1.60.1
+grpcio==1.62.0
     # via opentelemetry-exporter-otlp-proto-grpc
 gunicorn==21.2.0
 html5lib==1.1
@@ -274,7 +274,7 @@ pyyaml==6.0.1
     #   tablib
 qrcode==7.4.2
     # via django-allauth-2fa
-rapidfuzz==0.7.6
+rapidfuzz==3.6.1
 redis==5.0.1
     # via django-redis
 referencing==0.33.0
@@ -296,7 +296,7 @@ rpds-py==0.17.1
     #   referencing
 sentry-sdk==1.40.0
     # via django-q-sentry
-setuptools==69.1.1
+setuptools==69.1.0
     # via
     #   django-money
     #   opentelemetry-instrumentation
@@ -342,6 +342,7 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
+whitenoise==6.6.0
 wrapt==1.16.0
     # via
     #   deprecated

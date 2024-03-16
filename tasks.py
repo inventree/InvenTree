@@ -918,12 +918,20 @@ def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
 
+    filename = os.path.abspath(filename)
+
+    print(f"Exporting schema file to '{filename}'")
+
     cmd = f'spectacular --file {filename} --validate --color'
 
     if not ignore_warnings:
         cmd += ' --fail-on-warn'
 
     manage(c, cmd, pty=True)
+
+    assert os.path.exists(filename)
+
+    print('Schema export completed:', filename)
 
 
 @task(default=True)

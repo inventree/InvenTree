@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 import logging
 
+from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
@@ -22,6 +23,27 @@ import part.models as part_models
 
 
 logger = logging.getLogger('inventree')
+
+
+def complete_build_allocations(build_id: int, user_id: int):
+    """Complete build allocations for a specified BuildOrder."""
+
+    build_order = build.models.Build.objects.filter(pk=build_id).first()
+
+    if user_id:
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            logger.warning("Could not complete build allocations for BuildOrder <%s> - User does not exist", build_id)
+            return
+    else:
+        user = None
+
+    if not build_order:
+        logger.warning("Could not complete build allocations for BuildOrder <%s> - BuildOrder does not exist", build_id)
+        return
+
+    build_order.complete_allocations(user)
 
 
 def update_build_order_lines(bom_item_pk: int):

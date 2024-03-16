@@ -2,6 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Code, Flex, Group, Text } from '@mantine/core';
 import { Link, To } from 'react-router-dom';
 
+import { DetailDrawerLink } from '../nav/DetailDrawer';
 import { YesNoButton } from './YesNoButton';
 
 export function InfoItem({
@@ -9,13 +10,15 @@ export function InfoItem({
   children,
   type,
   value,
-  link
+  link,
+  detailDrawerLink
 }: {
   name: string;
   children?: React.ReactNode;
   type?: 'text' | 'boolean' | 'code';
   value?: any;
   link?: To;
+  detailDrawerLink?: boolean;
 }) {
   function renderComponent() {
     if (value === undefined) return null;
@@ -46,7 +49,15 @@ export function InfoItem({
       </Text>
       <Flex>
         {children}
-        {link ? <Link to={link}>{renderComponent()}</Link> : renderComponent()}
+        {link ? (
+          detailDrawerLink ? (
+            <DetailDrawerLink to={link} text={value} />
+          ) : (
+            <Link to={link}>{renderComponent()}</Link>
+          )
+        ) : (
+          renderComponent()
+        )}
       </Flex>
     </Group>
   );

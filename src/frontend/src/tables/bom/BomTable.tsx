@@ -142,7 +142,7 @@ export function BomTable({
       },
       {
         accessor: 'available_stock',
-
+        sortable: true,
         render: (record) => {
           let extra: ReactNode[] = [];
 
@@ -156,6 +156,14 @@ export function BomTable({
             ) : (
               available_stock
             );
+
+          if (record.external_stock > 0) {
+            extra.push(
+              <Text key="external">
+                {t`External stock`}: {record.external_stock}
+              </Text>
+            );
+          }
 
           if (record.available_substitute_stock > 0) {
             extra.push(

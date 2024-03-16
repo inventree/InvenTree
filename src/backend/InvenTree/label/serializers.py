@@ -15,7 +15,16 @@ class LabelSerializerBase(InvenTreeModelSerializer):
     @staticmethod
     def label_fields():
         """Generic serializer fields for a label template."""
-        return ['pk', 'name', 'description', 'label', 'filters', 'enabled']
+        return [
+            'pk',
+            'name',
+            'description',
+            'label',
+            'filters',
+            'width',
+            'height',
+            'enabled',
+        ]
 
 
 class StockItemLabelSerializer(LabelSerializerBase):

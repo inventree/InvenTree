@@ -45,14 +45,16 @@ python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
 pyyaml>=6.0.1                           # YAML parsing
 qrcode[pil]                             # QR code generator
-rapidfuzz                        # Fuzzy string matching
+rapidfuzz                               # Fuzzy string matching
 regex                                   # Advanced regular expressions
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 weasyprint                              # PDF generation
+whitenoise                              # Enhanced static file serving
 
 # OpenTelemetry dependencies
+grpcio
 opentelemetry-api
 opentelemetry-sdk
 opentelemetry-exporter-otlp

@@ -12,7 +12,10 @@ import { RenderStockLocation } from '../../components/render/Stock';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { usePurchaseOrderLineItemFields } from '../../forms/PurchaseOrderForms';
+import {
+  usePurchaseOrderLineItemFields,
+  useReceiveLineItems
+} from '../../forms/PurchaseOrderForms';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -51,6 +54,16 @@ export function PurchaseOrderLineItemTable({
 
   const navigate = useNavigate();
   const user = useUserState();
+
+  const [singleRecord, setSingeRecord] = useState(null);
+  const receiveLineItems = useReceiveLineItems({
+    items: singleRecord ? [singleRecord] : table.selectedRecords,
+    orderPk: orderId,
+    formProps: {
+      // Timeout is a small hack to prevent function being called before re-render
+      onClose: () => setTimeout(() => setSingeRecord(null), 500)
+    }
+  });
 
   const tableColumns = useMemo(() => {
     return [
@@ -213,7 +226,11 @@ export function PurchaseOrderLineItemTable({
           hidden: received,
           title: t`Receive line item`,
           icon: <IconSquareArrowRight />,
-          color: 'green'
+          color: 'green',
+          onClick: () => {
+            setSingeRecord(record);
+            receiveLineItems.open();
+          }
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
@@ -241,21 +258,22 @@ export function PurchaseOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-line-item"
         tooltip={t`Add line item`}
         onClick={() => newLine.open()}
         hidden={!user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
-        key="receive-items"
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
+        onClick={() => receiveLineItems.open()}
+        disabled={table.selectedRecords.length === 0}
       />
     ];
-  }, [orderId, user]);
+  }, [orderId, user, table]);
 
   return (
     <>
+      {receiveLineItems.modal}
       {newLine.modal}
       {editLine.modal}
       {deleteLine.modal}

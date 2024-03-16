@@ -19,7 +19,7 @@ click==8.1.7
 coverage==5.5
     # via coveralls
 coveralls==2.1.2
-cryptography==42.0.2
+cryptography==42.0.4
     # via pdfminer-six
 distlib==0.3.8
     # via virtualenv
@@ -57,7 +57,7 @@ pyyaml==6.0.1
     # via pre-commit
 requests==2.31.0
     # via coveralls
-setuptools==69.1.1
+setuptools==69.1.0
     # via
     #   nodeenv
     #   pip-tools
