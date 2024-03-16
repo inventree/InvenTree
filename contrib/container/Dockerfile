@@ -91,7 +91,7 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
 COPY tasks.py contrib/container/gunicorn.conf.py contrib/container/init.sh ./
 RUN chmod +x init.sh
 
-ENTRYPOINT ["/bin/ash", "~/init.sh"]
+ENTRYPOINT ["/bin/ash", "./init.sh"]
 
 FROM inventree_base as prebuild
 
@@ -160,7 +160,7 @@ ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
 WORKDIR ${INVENTREE_HOME}
 
 # Entrypoint ensures that we are running in the python virtual environment
-ENTRYPOINT ["/bin/ash", "~/init.sh"]
+ENTRYPOINT ["/bin/ash", "./init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
