@@ -30,7 +30,6 @@ export function RelatedModelField({
   limit?: number;
 }) {
   const fieldId = useId();
-
   const {
     field,
     fieldState: { error }
@@ -43,6 +42,7 @@ export function RelatedModelField({
 
   const [offset, setOffset] = useState<number>(0);
 
+  const [initialData, setInitialData] = useState<{}>({});
   const [data, setData] = useState<any[]>([]);
   const dataRef = useRef<any[]>([]);
 
@@ -53,21 +53,22 @@ export function RelatedModelField({
     // If the value is unchanged, do nothing
     if (field.value === pk) return;
 
-    if (field.value !== null && field.value !== undefined) {
+    if (
+      field.value !== null &&
+      field.value !== undefined &&
+      field.value !== ''
+    ) {
       const url = `${definition.api_url}${field.value}/`;
-
       api.get(url).then((response) => {
-        const data = response.data;
-
-        if (data && data.pk) {
+        if (response.data && response.data.pk) {
           const value = {
-            value: data.pk,
-            data: data
+            value: response.data.pk,
+            data: response.data
           };
 
-          setData([value]);
+          setInitialData(value);
           dataRef.current = [value];
-          setPk(data.pk);
+          setPk(response.data.pk);
         }
       });
     } else {
@@ -204,10 +205,14 @@ export function RelatedModelField({
     };
   }, [definition]);
 
-  const currentValue = useMemo(
-    () => pk !== null && data.find((item) => item.value === pk),
-    [pk, data]
-  );
+  const currentValue = useMemo(() => {
+    if (!pk) {
+      return null;
+    }
+
+    let _data = [...data, initialData];
+    return _data.find((item) => item.value === pk);
+  }, [pk, data]);
 
   // Field doesn't follow Mantine theming
   // Define color theme to pass to field based on Mantine theme
@@ -274,7 +279,6 @@ export function RelatedModelField({
         onMenuScrollToBottom={() => setOffset(offset + limit)}
         onMenuOpen={() => {
           setIsOpen(true);
-          setValue('');
           resetSearch();
           selectQuery.refetch();
         }}

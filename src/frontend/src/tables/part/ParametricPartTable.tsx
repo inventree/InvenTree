@@ -43,9 +43,15 @@ export default function ParametricPartTable({
     let data = categoryParmeters.data ?? [];
 
     return data.map((template: any) => {
+      let title = template.name;
+
+      if (template.units) {
+        title += ` [${template.units}]`;
+      }
+
       return {
         accessor: `parameter_${template.pk}`,
-        title: template.name,
+        title: title,
         sortable: true,
         render: (record: any) => {
           // Find matching template parameter

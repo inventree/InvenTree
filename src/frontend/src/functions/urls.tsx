@@ -7,10 +7,14 @@ import { ModelType } from '../enums/ModelType';
 export function getDetailUrl(model: ModelType, pk: number | string): string {
   const modelInfo = ModelInformationDict[model];
 
-  if (modelInfo && modelInfo.url_detail) {
+  if (pk === undefined || pk === null) {
+    return '';
+  }
+
+  if (!!pk && modelInfo && modelInfo.url_detail) {
     return modelInfo.url_detail.replace(':pk', pk.toString());
   }
 
-  console.error(`No detail URL found for model ${model}!`);
+  console.error(`No detail URL found for model ${model} <${pk}>`);
   return '';
 }

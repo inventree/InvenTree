@@ -7,9 +7,13 @@ git config --global --add safe.directory /home/inventree
 python3 -m venv /home/inventree/dev/venv --system-site-packages --upgrade-deps
 . /home/inventree/dev/venv/bin/activate
 
-# setup InvenTree server
+# Run initial InvenTree server setup
 invoke update -s
+
+# Configure dev environment
 invoke setup-dev
+
+# Install required frontend packages
 invoke frontend-install
 
 # remove existing gitconfig created by "Avoiding Dubious Ownership" step

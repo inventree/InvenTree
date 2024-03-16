@@ -168,9 +168,9 @@ allowed_hosts:
 
 # Trusted origins (see CSRF_TRUSTED_ORIGINS in Django settings documentation)
 # If you are running behind a proxy, you may need to add the proxy address here
-trusted_origins:
-  - 'http://localhost:8000'
-
+# trusted_origins:
+#   - 'http://localhost'
+#   - 'http://*.localhost'
 
 # Proxy forwarding settings
 # If InvenTree is running behind a proxy, you may need to configure these settings
@@ -183,12 +183,14 @@ use_x_forwarded_port: false
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
-  allow_all: True
-  allow_credentials: True,
+  allow_all: true
+  allow_credentials: true
 
   # whitelist:
   # - https://example.com
   # - https://sub.example.com
+
+  # regex:
 
 # MEDIA_ROOT is the local filesystem location for storing uploaded files
 #media_root: '/home/inventree/data/media'
@@ -196,11 +198,8 @@ cors:
 # STATIC_ROOT is the local filesystem location for storing static files
 #static_root: '/home/inventree/data/static'
 
-### Backup configuration options ###
 # INVENTREE_BACKUP_DIR is the local filesystem location for storing backups
-backup_storage: django.core.files.storage.FileSystemStorage
 #backup_dir: '/home/inventree/data/backup'
-#backup_options:
 
 # Background worker options
 background:
