@@ -10,16 +10,18 @@ from unittest import mock
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import Site
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, tag
 from django.urls import reverse
+from django.utils import timezone
 
 import pint.errors
+import pytz
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.money import Money
+from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 from sesame.utils import get_user
 
 import InvenTree.conversion
@@ -29,6 +31,7 @@ import InvenTree.helpers_model
 import InvenTree.tasks
 from common.models import CustomUnit, InvenTreeSetting
 from common.settings import currency_codes
+from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
 from part.models import Part, PartCategory
@@ -37,6 +40,147 @@ from stock.models import StockItem, StockLocation
 from . import config, helpers, ready, status, version
 from .tasks import offload_task
 from .validators import validate_overage
+
+
+class HostTest(InvenTreeTestCase):
+    """Test for host configuration."""
+
+    @override_settings(ALLOWED_HOSTS=['testserver'])
+    def test_allowed_hosts(self):
+        """Test that the ALLOWED_HOSTS functions as expected."""
+        self.assertIn('testserver', settings.ALLOWED_HOSTS)
+
+        response = self.client.get('/api/', headers={'host': 'testserver'})
+
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/api/', headers={'host': 'invalidserver'})
+
+        self.assertEqual(response.status_code, 400)
+
+    @override_settings(ALLOWED_HOSTS=['invalidserver.co.uk'])
+    def test_allowed_hosts_2(self):
+        """Another test for ALLOWED_HOSTS functionality."""
+        response = self.client.get('/api/', headers={'host': 'invalidserver.co.uk'})
+
+        self.assertEqual(response.status_code, 200)
+
+
+class CorsTest(TestCase):
+    """Unit tests for CORS functionality."""
+
+    def cors_headers(self):
+        """Return a list of CORS headers."""
+        return [
+            'access-control-allow-origin',
+            'access-control-allow-credentials',
+            'access-control-allow-methods',
+            'access-control-allow-headers',
+        ]
+
+    def preflight(self, url, origin, method='GET'):
+        """Make a CORS preflight request to the specified URL."""
+        headers = {'origin': origin, 'access-control-request-method': method}
+
+        return self.client.options(url, headers=headers)
+
+    def test_no_origin(self):
+        """Test that CORS headers are not included for regular requests.
+
+        - We use the /api/ endpoint for this test (it does not require auth)
+        - By default, in debug mode *all* CORS origins are allowed
+        """
+        # Perform an initial response without the "origin" header
+        response = self.client.get('/api/')
+        self.assertEqual(response.status_code, 200)
+
+        for header in self.cors_headers():
+            self.assertNotIn(header, response.headers)
+
+        # Now, perform a "preflight" request with the "origin" header
+        response = self.preflight('/api/', origin='http://random-external-server.com')
+        self.assertEqual(response.status_code, 200)
+
+        for header in self.cors_headers():
+            self.assertIn(header, response.headers)
+
+        self.assertEqual(response.headers['content-length'], '0')
+        self.assertEqual(
+            response.headers['access-control-allow-origin'],
+            'http://random-external-server.com',
+        )
+
+    @override_settings(
+        CORS_ALLOW_ALL_ORIGINS=False,
+        CORS_ALLOWED_ORIGINS=['http://my-external-server.com'],
+        CORS_ALLOWED_ORIGIN_REGEXES=[],
+    )
+    def test_auth_view(self):
+        """Test that CORS requests work for the /auth/ view.
+
+        Here, we are not authorized by default,
+        but the CORS headers should still be included.
+        """
+        url = '/auth/'
+
+        # First, a preflight request with a "valid" origin
+
+        response = self.preflight(url, origin='http://my-external-server.com')
+
+        self.assertEqual(response.status_code, 200)
+
+        for header in self.cors_headers():
+            self.assertIn(header, response.headers)
+
+        # Next, a preflight request with an "invalid" origin
+        response = self.preflight(url, origin='http://random-external-server.com')
+
+        self.assertEqual(response.status_code, 200)
+
+        for header in self.cors_headers():
+            self.assertNotIn(header, response.headers)
+
+        # Next, make a GET request (without a token)
+        response = self.client.get(
+            url, headers={'origin': 'http://my-external-server.com'}
+        )
+
+        # Unauthorized
+        self.assertEqual(response.status_code, 401)
+
+        self.assertIn('access-control-allow-origin', response.headers)
+        self.assertNotIn('access-control-allow-methods', response.headers)
+
+    @override_settings(
+        CORS_ALLOW_ALL_ORIGINS=False,
+        CORS_ALLOWED_ORIGINS=[],
+        CORS_ALLOWED_ORIGIN_REGEXES=['http://.*myserver.com'],
+    )
+    def test_cors_regex(self):
+        """Test that CORS regexes work as expected."""
+        valid_urls = [
+            'http://www.myserver.com',
+            'http://test.myserver.com',
+            'http://myserver.com',
+            'http://www.myserver.com:8080',
+        ]
+
+        invalid_urls = [
+            'http://myserver.org',
+            'http://www.other-server.org',
+            'http://google.com',
+            'http://myserver.co.uk:8080',
+        ]
+
+        for url in valid_urls:
+            response = self.preflight('/api/', origin=url)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('access-control-allow-origin', response.headers)
+
+        for url in invalid_urls:
+            response = self.preflight('/api/', origin=url)
+            self.assertEqual(response.status_code, 200)
+            self.assertNotIn('access-control-allow-origin', response.headers)
 
 
 class ConversionTest(TestCase):
@@ -57,6 +201,68 @@ class ConversionTest(TestCase):
             q = InvenTree.conversion.convert_physical_value(val, 'm')
             self.assertAlmostEqual(q, expected, 3)
 
+    def test_engineering_units(self):
+        """Test that conversion works with engineering notation."""
+        # Run some basic checks over the helper function
+        tests = [
+            ('3', '3'),
+            ('3k3', '3.3k'),
+            ('123R45', '123.45R'),
+            ('10n5F', '10.5nF'),
+        ]
+
+        for val, expected in tests:
+            self.assertEqual(
+                InvenTree.conversion.from_engineering_notation(val), expected
+            )
+
+        # Now test the conversion function
+        tests = [('33k3ohm', 33300), ('123kohm45', 123450), ('10n005', 0.000000010005)]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, 'ohm', strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 12)
+
+    def test_scientific_notation(self):
+        """Test that scientific notation is handled correctly."""
+        tests = [
+            ('3E2', 300),
+            ('-12.3E-3', -0.0123),
+            ('1.23E-3', 0.00123),
+            ('99E9', 99000000000),
+        ]
+
+        for val, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(val, strip_units=True)
+            self.assertAlmostEqual(output, expected, 6)
+
+    def test_temperature_units(self):
+        """Test conversion of temperature units.
+
+        Ref: https://github.com/inventree/InvenTree/issues/6495
+        """
+        tests = [
+            ('3.3°F', '°C', -15.944),
+            ('273°K', '°F', 31.73),
+            ('900', '°C', 900),
+            ('900°F', 'degF', 900),
+            ('900°K', '°C', 626.85),
+            ('800', 'kelvin', 800),
+            ('-100°C', 'fahrenheit', -148),
+            ('-100 °C', 'Fahrenheit', -148),
+            ('-100 Celsius', 'fahrenheit', -148),
+            ('-123.45 fahrenheit', 'kelvin', 186.7888),
+            ('-99Fahrenheit', 'Celsius', -72.7777),
+        ]
+
+        for val, unit, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, unit, strip_units=True
+            )
+            self.assertAlmostEqual(output, expected, 3)
+
     def test_base_units(self):
         """Test conversion to specified base units."""
         tests = {
@@ -74,6 +280,24 @@ class ConversionTest(TestCase):
             self.assertAlmostEqual(q, expected, places=2)
             q = InvenTree.conversion.convert_physical_value(val, 'W', strip_units=False)
             self.assertAlmostEqual(float(q.magnitude), expected, places=2)
+
+    def test_imperial_lengths(self):
+        """Test support of imperial length measurements."""
+        tests = [
+            ('1 inch', 'mm', 25.4),
+            ('1 "', 'mm', 25.4),
+            ('2 "', 'inches', 2),
+            ('3 feet', 'inches', 36),
+            ("3'", 'inches', 36),
+            ("7 '", 'feet', 7),
+        ]
+
+        for val, unit, expected in tests:
+            output = InvenTree.conversion.convert_physical_value(
+                val, unit, strip_units=True
+            )
+
+            self.assertAlmostEqual(output, expected, 3)
 
     def test_dimensionless_units(self):
         """Tests for 'dimensionless' unit quantities."""
@@ -320,30 +544,31 @@ class FormatTest(TestCase):
     def test_currency_formatting(self):
         """Test that currency formatting works correctly for multiple currencies."""
         test_data = (
-            (Money(3651.285718, 'USD'), 4, '$3,651.2857'),  # noqa: E201,E202
-            (Money(487587.849178, 'CAD'), 5, 'CA$487,587.84918'),  # noqa: E201,E202
-            (Money(0.348102, 'EUR'), 1, '€0.3'),  # noqa: E201,E202
-            (Money(0.916530, 'GBP'), 1, '£0.9'),  # noqa: E201,E202
-            (Money(61.031024, 'JPY'), 3, '¥61.031'),  # noqa: E201,E202
-            (Money(49609.694602, 'JPY'), 1, '¥49,609.7'),  # noqa: E201,E202
-            (Money(155565.264777, 'AUD'), 2, 'A$155,565.26'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 4, 'CN¥0.8204'),  # noqa: E201,E202
-            (Money(7587.849178, 'EUR'), 0, '€7,588'),  # noqa: E201,E202
-            (Money(0.348102, 'GBP'), 3, '£0.348'),  # noqa: E201,E202
-            (Money(0.652923, 'CHF'), 0, 'CHF1'),  # noqa: E201,E202
-            (Money(0.820437, 'CNY'), 1, 'CN¥0.8'),  # noqa: E201,E202
-            (Money(98789.5295680, 'CHF'), 0, 'CHF98,790'),  # noqa: E201,E202
-            (Money(0.585787, 'USD'), 1, '$0.6'),  # noqa: E201,E202
-            (Money(0.690541, 'CAD'), 3, 'CA$0.691'),  # noqa: E201,E202
-            (Money(427.814104, 'AUD'), 5, 'A$427.81410'),  # noqa: E201,E202
+            (Money(3651.285718, 'USD'), 4, True, '$3,651.2857'),  # noqa: E201,E202
+            (Money(487587.849178, 'CAD'), 5, True, 'CA$487,587.84918'),  # noqa: E201,E202
+            (Money(0.348102, 'EUR'), 1, False, '0.3'),  # noqa: E201,E202
+            (Money(0.916530, 'GBP'), 1, True, '£0.9'),  # noqa: E201,E202
+            (Money(61.031024, 'JPY'), 3, False, '61.031'),  # noqa: E201,E202
+            (Money(49609.694602, 'JPY'), 1, True, '¥49,609.7'),  # noqa: E201,E202
+            (Money(155565.264777, 'AUD'), 2, False, '155,565.26'),  # noqa: E201,E202
+            (Money(0.820437, 'CNY'), 4, True, 'CN¥0.8204'),  # noqa: E201,E202
+            (Money(7587.849178, 'EUR'), 0, True, '€7,588'),  # noqa: E201,E202
+            (Money(0.348102, 'GBP'), 3, False, '0.348'),  # noqa: E201,E202
+            (Money(0.652923, 'CHF'), 0, True, 'CHF1'),  # noqa: E201,E202
+            (Money(0.820437, 'CNY'), 1, True, 'CN¥0.8'),  # noqa: E201,E202
+            (Money(98789.5295680, 'CHF'), 0, False, '98,790'),  # noqa: E201,E202
+            (Money(0.585787, 'USD'), 1, True, '$0.6'),  # noqa: E201,E202
+            (Money(0.690541, 'CAD'), 3, True, 'CA$0.691'),  # noqa: E201,E202
+            (Money(427.814104, 'AUD'), 5, True, 'A$427.81410'),  # noqa: E201,E202
         )
 
         with self.settings(LANGUAGE_CODE='en-us'):
-            for value, decimal_places, expected_result in test_data:
+            for value, decimal_places, include_symbol, expected_result in test_data:
                 result = InvenTree.format.format_money(
-                    value, decimal_places=decimal_places
+                    value, decimal_places=decimal_places, include_symbol=include_symbol
                 )
-                assert result == expected_result
+
+                self.assertEqual(result, expected_result)
 
 
 class TestHelpers(TestCase):
@@ -372,7 +597,7 @@ class TestHelpers(TestCase):
         for url, expected in tests.items():
             # Test with supplied base URL
             self.assertEqual(
-                InvenTree.helpers_model.construct_absolute_url(url, site_url=base),
+                InvenTree.helpers_model.construct_absolute_url(url, base_url=base),
                 expected,
             )
 
@@ -507,6 +732,61 @@ class TestHelpers(TestCase):
 
         self.assertNotIn(PartCategory, models)
         self.assertNotIn(InvenTreeSetting, models)
+
+    def test_test_key(self):
+        """Test for the generateTestKey function."""
+        tests = {
+            ' Hello World ': 'helloworld',
+            ' MY NEW TEST KEY ': 'mynewtestkey',
+            ' 1234 5678': '_12345678',
+            ' 100 percenT': '_100percent',
+            ' MY_NEW_TEST': 'my_new_test',
+            ' 100_new_tests': '_100_new_tests',
+        }
+
+        for name, key in tests.items():
+            self.assertEqual(helpers.generateTestKey(name), key)
+
+
+class TestTimeFormat(TestCase):
+    """Unit test for time formatting functionality."""
+
+    @override_settings(TIME_ZONE='UTC')
+    def test_tz_utc(self):
+        """Check UTC timezone."""
+        self.assertEqual(InvenTree.helpers.server_timezone(), 'UTC')
+
+    @override_settings(TIME_ZONE='Europe/London')
+    def test_tz_london(self):
+        """Check London timezone."""
+        self.assertEqual(InvenTree.helpers.server_timezone(), 'Europe/London')
+
+    @override_settings(TIME_ZONE='Australia/Sydney')
+    def test_to_local_time(self):
+        """Test that the local time conversion works as expected."""
+        source_time = timezone.datetime(
+            year=2000,
+            month=1,
+            day=1,
+            hour=0,
+            minute=0,
+            second=0,
+            tzinfo=pytz.timezone('Europe/London'),
+        )
+
+        tests = [
+            ('UTC', '2000-01-01 00:01:00+00:00'),
+            ('Europe/London', '2000-01-01 00:00:00-00:01'),
+            ('America/New_York', '1999-12-31 19:01:00-05:00'),
+            # All following tests should result in the same value
+            ('Australia/Sydney', '2000-01-01 11:01:00+11:00'),
+            (None, '2000-01-01 11:01:00+11:00'),
+            ('', '2000-01-01 11:01:00+11:00'),
+        ]
+
+        for tz, expected in tests:
+            local_time = InvenTree.helpers.to_local_time(source_time, tz)
+            self.assertEqual(str(local_time), expected)
 
 
 class TestQuoteWrap(TestCase):
@@ -816,6 +1096,7 @@ class TestVersionNumber(TestCase):
         hash = str(
             subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
         ).strip()
+
         self.assertEqual(hash, version.inventreeCommitHash())
 
         d = (
@@ -990,9 +1271,12 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
+        with self.in_env_context({
+            'INVENTREE_CONFIG_FILE': '_testfolder/my_special_conf.yaml'
+        }):
             self.assertIn(
-                'inventree/my_special_conf.yaml', str(config.get_config_file()).lower()
+                'inventree/_testfolder/my_special_conf.yaml',
+                str(config.get_config_file()).lower(),
             )
 
     def test_helpers_plugin_file(self):
@@ -1006,8 +1290,12 @@ class TestSettings(InvenTreeTestCase):
         )
 
         # with env set
-        with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
-            self.assertIn('my_special_plugins.txt', str(config.get_plugin_file()))
+        with self.in_env_context({
+            'INVENTREE_PLUGIN_FILE': '_testfolder/my_special_plugins.txt'
+        }):
+            self.assertIn(
+                '_testfolder/my_special_plugins.txt', str(config.get_plugin_file())
+            )
 
     def test_helpers_setting(self):
         """Test get_setting."""
@@ -1049,6 +1337,12 @@ class TestInstanceName(InvenTreeTestCase):
 
         self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')
 
+        try:
+            from django.contrib.sites.models import Site
+        except (ImportError, RuntimeError):
+            # Multi-site support not enabled
+            return
+
         # The site should also be changed
         site_obj = Site.objects.all().order_by('id').first()
         self.assertEqual(site_obj.name, 'Testing title')
@@ -1060,9 +1354,18 @@ class TestInstanceName(InvenTreeTestCase):
             'INVENTREE_BASE_URL', 'http://127.1.2.3', self.user
         )
 
+        # No further tests if multi-site support is not enabled
+        if not settings.SITE_MULTI:
+            return
+
         # The site should also be changed
-        site_obj = Site.objects.all().order_by('id').first()
-        self.assertEqual(site_obj.domain, 'http://127.1.2.3')
+        try:
+            from django.contrib.sites.models import Site
+
+            site_obj = Site.objects.all().order_by('id').first()
+            self.assertEqual(site_obj.domain, 'http://127.1.2.3')
+        except Exception:
+            pass
 
 
 class TestOffloadTask(InvenTreeTestCase):
@@ -1234,7 +1537,7 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.data, {'status': 'ok'})
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, '[example.com] Log in to the app')
+        self.assertEqual(mail.outbox[0].subject, '[InvenTree] Log in to the app')
 
         # Check that the token is in the email
         self.assertTrue('http://testserver/api/email/login/' in mail.outbox[0].body)
@@ -1247,9 +1550,155 @@ class MagicLoginTest(InvenTreeTestCase):
         # Check that the login works
         resp = self.client.get(reverse('sesame-login') + '?sesame=' + token)
         self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, '/index/')
-        # Note: 2023-08-08 - This test has been changed because "platform UI" is not generally available yet
-        # TODO: In the future, the URL comparison will need to be reverted
-        # self.assertEqual(resp.url, f'/{settings.FRONTEND_URL_BASE}/logged-in/')
+        self.assertEqual(resp.url, '/api/auth/login-redirect/')
         # And we should be logged in again
         self.assertEqual(resp.wsgi_request.user, self.user)
+
+
+# TODO - refactor to not use CUI
+@tag('cui')
+class MaintenanceModeTest(InvenTreeTestCase):
+    """Unit tests for maintenance mode."""
+
+    def test_basic(self):
+        """Test basic maintenance mode operation."""
+        for value in [False, True, False]:
+            set_maintenance_mode(value)
+            self.assertEqual(get_maintenance_mode(), value)
+
+        # API request is blocked in maintenance mode
+        set_maintenance_mode(True)
+
+        response = self.client.get('/api/')
+        self.assertEqual(response.status_code, 503)
+
+        set_maintenance_mode(False)
+
+        response = self.client.get('/api/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_timestamp(self):
+        """Test that the timestamp value is interpreted correctly."""
+        KEY = '_MAINTENANCE_MODE'
+
+        # Deleting the setting means maintenance mode is off
+        InvenTreeSetting.objects.filter(key=KEY).delete()
+
+        self.assertFalse(get_maintenance_mode())
+
+        def set_timestamp(value):
+            InvenTreeSetting.set_setting(KEY, value, None)
+
+        # Test blank value
+        set_timestamp('')
+        self.assertFalse(get_maintenance_mode())
+
+        # Test timestamp in the past
+        ts = datetime.now() - timedelta(minutes=10)
+        set_timestamp(ts.isoformat())
+        self.assertFalse(get_maintenance_mode())
+
+        # Test timestamp in the future
+        ts = datetime.now() + timedelta(minutes=10)
+        set_timestamp(ts.isoformat())
+        self.assertTrue(get_maintenance_mode())
+
+        # Set to false, check for empty string
+        set_maintenance_mode(False)
+        self.assertFalse(get_maintenance_mode())
+        self.assertEqual(InvenTreeSetting.get_setting(KEY, None), '')
+
+
+class ClassValidationMixinTest(TestCase):
+    """Tests for the ClassValidationMixin class."""
+
+    class BaseTestClass(ClassValidationMixin):
+        """A valid class that inherits from ClassValidationMixin."""
+
+        NAME: str
+
+        def test(self):
+            """Test function."""
+            pass
+
+        def test1(self):
+            """Test function."""
+            pass
+
+        def test2(self):
+            """Test function."""
+            pass
+
+        required_attributes = ['NAME']
+        required_overrides = [test, [test1, test2]]
+
+    class InvalidClass:
+        """An invalid class that does not inherit from ClassValidationMixin."""
+
+        pass
+
+    def test_valid_class(self):
+        """Test that a valid class passes the validation."""
+
+        class TestClass(self.BaseTestClass):
+            """A valid class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test(self):
+                """Test function."""
+                pass
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        TestClass.validate()
+
+    def test_invalid_class(self):
+        """Test that an invalid class fails the validation."""
+
+        class TestClass1(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass1\'>\' did not provide the following attributes: NAME and did not override the required attributes: test, one of test1 or test2',
+        ):
+            TestClass1.validate()
+
+        class TestClass2(self.BaseTestClass):
+            """A bad class that inherits from BaseTestClass."""
+
+            NAME = 'Test'
+
+            def test2(self):
+                """Test function."""
+                pass
+
+        with self.assertRaisesRegex(
+            NotImplementedError,
+            r'\'<.*TestClass2\'>\' did not override the required attributes: test',
+        ):
+            TestClass2.validate()
+
+
+class ClassProviderMixinTest(TestCase):
+    """Tests for the ClassProviderMixin class."""
+
+    class TestClass(ClassProviderMixin):
+        """This class is a dummy class to test the ClassProviderMixin."""
+
+        pass
+
+    def test_get_provider_file(self):
+        """Test the get_provider_file function."""
+        self.assertEqual(self.TestClass.get_provider_file(), __file__)
+
+    def test_provider_plugin(self):
+        """Test the provider_plugin function."""
+        self.assertEqual(self.TestClass.get_provider_plugin(), None)
+
+    def test_get_is_builtin(self):
+        """Test the get_is_builtin function."""
+        self.assertTrue(self.TestClass.get_is_builtin())

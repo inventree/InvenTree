@@ -1,78 +1,31 @@
-"""label app specification."""
+"""Config options for the label app."""
 
-import hashlib
-import logging
-import os
-import shutil
-import warnings
 from pathlib import Path
 
 from django.apps import AppConfig
-from django.conf import settings
-from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
-import InvenTree.ready
-
-logger = logging.getLogger('inventree')
+from generic.templating.apps import TemplatingMixin
 
 
-def hashFile(filename):
-    """Calculate the MD5 hash of a file."""
-    md5 = hashlib.md5()
-
-    with open(filename, 'rb') as f:
-        data = f.read()
-        md5.update(data)
-
-    return md5.hexdigest()
-
-
-class LabelConfig(AppConfig):
-    """App configuration class for the 'label' app."""
+class LabelConfig(TemplatingMixin, AppConfig):
+    """Configuration class for the "label" app."""
 
     name = 'label'
+    db = 'label'
 
-    def ready(self):
-        """This function is called whenever the label app is loaded."""
-        # skip loading if plugin registry is not loaded or we run in a background thread
-        if (
-            not InvenTree.ready.isPluginRegistryLoaded()
-            or not InvenTree.ready.isInMainThread()
-        ):
-            return
-
-        if InvenTree.ready.isRunningMigrations():
-            return
-
-        if (
-            InvenTree.ready.canAppAccessDatabase(allow_test=False)
-            and not InvenTree.ready.isImportingData()
-        ):
-            try:
-                self.create_labels()  # pragma: no cover
-            except (
-                AppRegistryNotReady,
-                IntegrityError,
-                OperationalError,
-                ProgrammingError,
-            ):
-                # Database might not yet be ready
-                warnings.warn(
-                    'Database was not ready for creating labels', stacklevel=2
-                )
-
-    def create_labels(self):
+    def create_defaults(self):
         """Create all default templates."""
         # Test if models are ready
-        import label.models
-
+        try:
+            import label.models
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
         assert bool(label.models.StockLocationLabel is not None)
 
         # Create the categories
-        self.create_labels_category(
+        self.create_template_dir(
             label.models.StockItemLabel,
-            'stockitem',
             [
                 {
                     'file': 'qr.html',
@@ -84,9 +37,8 @@ class LabelConfig(AppConfig):
             ],
         )
 
-        self.create_labels_category(
+        self.create_template_dir(
             label.models.StockLocationLabel,
-            'stocklocation',
             [
                 {
                     'file': 'qr.html',
@@ -105,9 +57,8 @@ class LabelConfig(AppConfig):
             ],
         )
 
-        self.create_labels_category(
+        self.create_template_dir(
             label.models.PartLabel,
-            'part',
             [
                 {
                     'file': 'part_label.html',
@@ -126,9 +77,8 @@ class LabelConfig(AppConfig):
             ],
         )
 
-        self.create_labels_category(
+        self.create_template_dir(
             label.models.BuildLineLabel,
-            'buildline',
             [
                 {
                     'file': 'buildline_label.html',
@@ -140,70 +90,18 @@ class LabelConfig(AppConfig):
             ],
         )
 
-    def create_labels_category(self, model, ref_name, labels):
-        """Create folder and database entries for the default templates, if they do not already exist."""
-        # Create root dir for templates
-        src_dir = Path(__file__).parent.joinpath('templates', 'label', ref_name)
+    def get_src_dir(self, ref_name):
+        """Get the source directory."""
+        return Path(__file__).parent.joinpath('templates', self.name, ref_name)
 
-        dst_dir = settings.MEDIA_ROOT.joinpath('label', 'inventree', ref_name)
-
-        if not dst_dir.exists():
-            logger.info("Creating required directory: '%s'", dst_dir)
-            dst_dir.mkdir(parents=True, exist_ok=True)
-
-        # Create labels
-        for label in labels:
-            self.create_template_label(model, src_dir, ref_name, label)
-
-    def create_template_label(self, model, src_dir, ref_name, label):
-        """Ensure a label template is in place."""
-        filename = os.path.join('label', 'inventree', ref_name, label['file'])
-
-        src_file = src_dir.joinpath(label['file'])
-        dst_file = settings.MEDIA_ROOT.joinpath(filename)
-
-        to_copy = False
-
-        if dst_file.exists():
-            # File already exists - let's see if it is the "same"
-
-            if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
-                logger.info("Hash differs for '%s'", filename)
-                to_copy = True
-
-        else:
-            logger.info("Label template '%s' is not present", filename)
-            to_copy = True
-
-        if to_copy:
-            logger.info("Copying label template '%s'", dst_file)
-            # Ensure destination dir exists
-            dst_file.parent.mkdir(parents=True, exist_ok=True)
-
-            # Copy file
-            shutil.copyfile(src_file, dst_file)
-
-        # Check if a label matching the template already exists
-        try:
-            if model.objects.filter(label=filename).exists():
-                return  # pragma: no cover
-        except Exception:
-            logger.exception(
-                "Failed to query label for '%s' - you should run 'invoke update' first!",
-                filename,
-            )
-
-        logger.info("Creating entry for %s '%s'", model, label['name'])
-
-        try:
-            model.objects.create(
-                name=label['name'],
-                description=label['description'],
-                label=filename,
-                filters='',
-                enabled=True,
-                width=label['width'],
-                height=label['height'],
-            )
-        except Exception:
-            logger.warning("Failed to create label '%s'", label['name'])
+    def get_new_obj_data(self, data, filename):
+        """Get the data for a new template db object."""
+        return {
+            'name': data['name'],
+            'description': data['description'],
+            'label': filename,
+            'filters': '',
+            'enabled': True,
+            'width': data['width'],
+            'height': data['height'],
+        }

@@ -13,10 +13,10 @@ import math
 import os
 import re
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from secrets import compare_digest
-from typing import Any, Callable, Dict, List, Tuple, TypedDict, Union
+from typing import Any, Callable, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -24,7 +24,6 @@ from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
@@ -101,6 +100,10 @@ class BaseURLValidator(URLValidator):
         """Make sure empty values pass."""
         value = str(value).strip()
 
+        # If a configuration level value has been specified, prevent change
+        if settings.SITE_URL and value != settings.SITE_URL:
+            raise ValidationError(_('Site URL is locked by configuration'))
+
         if len(value) == 0:
             pass
 
@@ -108,7 +111,7 @@ class BaseURLValidator(URLValidator):
             super().__call__(value)
 
 
-class ProjectCode(InvenTree.models.MetadataMixin, models.Model):
+class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
     @staticmethod
@@ -154,7 +157,7 @@ class SettingsKeyType(TypedDict, total=False):
         units: Units of the particular setting (optional)
         validator: Validation function/list of functions for the setting (optional, default: None, e.g: bool, int, str, MinValueValidator, ...)
         default: Default value or function that returns default value (optional)
-        choices: (Function that returns) Tuple[str: key, str: display value] (optional)
+        choices: Function that returns or value of list[tuple[str: key, str: display value]] (optional)
         hidden: Hide this setting from settings page (optional)
         before_save: Function that gets called after save with *args, **kwargs (optional)
         after_save: Function that gets called after save with *args, **kwargs (optional)
@@ -166,9 +169,9 @@ class SettingsKeyType(TypedDict, total=False):
     name: str
     description: str
     units: str
-    validator: Union[Callable, List[Callable], Tuple[Callable]]
+    validator: Union[Callable, list[Callable], tuple[Callable]]
     default: Union[Callable, Any]
-    choices: Union[Tuple[str, str], Callable[[], Tuple[str, str]]]
+    choices: Union[list[tuple[str, str]], Callable[[], list[tuple[str, str]]]]
     hidden: bool
     before_save: Callable[..., None]
     after_save: Callable[..., None]
@@ -185,9 +188,9 @@ class BaseInvenTreeSetting(models.Model):
         extra_unique_fields: List of extra fields used to be unique, e.g. for PluginConfig -> plugin
     """
 
-    SETTINGS: Dict[str, SettingsKeyType] = {}
+    SETTINGS: dict[str, SettingsKeyType] = {}
 
-    extra_unique_fields: List[str] = []
+    extra_unique_fields: list[str] = []
 
     class Meta:
         """Meta options for BaseInvenTreeSetting -> abstract stops creation of database entry."""
@@ -223,9 +226,12 @@ class BaseInvenTreeSetting(models.Model):
         """
         cache_key = f'BUILD_DEFAULT_VALUES:{str(cls.__name__)}'
 
-        if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
-            # Already built default values
-            return
+        try:
+            if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
+                # Already built default values
+                return
+        except Exception:
+            pass
 
         try:
             existing_keys = cls.objects.filter(**kwargs).values_list('key', flat=True)
@@ -248,7 +254,10 @@ class BaseInvenTreeSetting(models.Model):
             )
             pass
 
-        cache.set(cache_key, True, timeout=3600)
+        try:
+            cache.set(cache_key, True, timeout=3600)
+        except Exception:
+            pass
 
     def _call_settings_function(self, reference: str, args, kwargs):
         """Call a function associated with a particular setting.
@@ -287,8 +296,7 @@ class BaseInvenTreeSetting(models.Model):
 
         try:
             cache.set(ckey, self, timeout=3600)
-        except TypeError:
-            # Some characters cause issues with caching; ignore and move on
+        except Exception:
             pass
 
     @classmethod
@@ -329,7 +337,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[Dict[str, SettingsKeyType], None] = None,
+        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
         **kwargs,
     ):
         """Return a list of "all" defined settings.
@@ -349,7 +357,7 @@ class BaseInvenTreeSetting(models.Model):
         # Optionally filter by other keys
         results = results.filter(**filters)
 
-        settings: Dict[str, BaseInvenTreeSetting] = {}
+        settings: dict[str, BaseInvenTreeSetting] = {}
 
         # Query the database
         for setting in results:
@@ -391,7 +399,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[Dict[str, SettingsKeyType], None] = None,
+        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
         **kwargs,
     ):
         """Return a dict of "all" defined global settings.
@@ -406,7 +414,7 @@ class BaseInvenTreeSetting(models.Model):
             **kwargs,
         )
 
-        settings: Dict[str, Any] = {}
+        settings: dict[str, Any] = {}
 
         for key, setting in all_settings.items():
             settings[key] = setting.value
@@ -418,7 +426,7 @@ class BaseInvenTreeSetting(models.Model):
         cls,
         *,
         exclude_hidden=False,
-        settings_definition: Union[Dict[str, SettingsKeyType], None] = None,
+        settings_definition: Union[dict[str, SettingsKeyType], None] = None,
         **kwargs,
     ):
         """Check if all required settings are set by definition.
@@ -433,7 +441,7 @@ class BaseInvenTreeSetting(models.Model):
             **kwargs,
         )
 
-        missing_settings: List[str] = []
+        missing_settings: list[str] = []
 
         for setting in all_settings.values():
             if setting.required:
@@ -522,7 +530,11 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(choices):
             # Evaluate the function (we expect it will return a list of tuples...)
-            return choices()
+            try:
+                # Attempt to pass the kwargs to the function, if it doesn't expect them, ignore and call without
+                return choices(**kwargs)
+            except TypeError:
+                return choices()
 
         return choices
 
@@ -547,16 +559,18 @@ class BaseInvenTreeSetting(models.Model):
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
+        # Perform cache lookup by default
+        do_cache = kwargs.pop('cache', True)
+
         # Prevent saving to the database during data import
         if InvenTree.ready.isImportingData():
             create = False
+            do_cache = False
 
         # Prevent saving to the database during migrations
         if InvenTree.ready.isRunningMigrations():
             create = False
-
-        # Perform cache lookup by default
-        do_cache = kwargs.pop('cache', True)
+            do_cache = False
 
         ckey = cls.create_cache_key(key, **kwargs)
 
@@ -568,7 +582,7 @@ class BaseInvenTreeSetting(models.Model):
                 if cached_setting is not None:
                     return cached_setting
 
-            except AppRegistryNotReady:
+            except Exception:
                 # Cache is not ready yet
                 do_cache = False
 
@@ -647,7 +661,7 @@ class BaseInvenTreeSetting(models.Model):
         return value
 
     @classmethod
-    def set_setting(cls, key, value, change_user, create=True, **kwargs):
+    def set_setting(cls, key, value, change_user=None, create=True, **kwargs):
         """Set the value of a particular setting. If it does not exist, option to create it.
 
         Args:
@@ -668,12 +682,24 @@ class BaseInvenTreeSetting(models.Model):
         }
 
         try:
-            setting = cls.objects.get(**filters)
-        except cls.DoesNotExist:
-            if create:
-                setting = cls(key=key, **kwargs)
-            else:
-                return
+            setting = cls.objects.filter(**filters).first()
+
+            if not setting:
+                if create:
+                    setting = cls(key=key, **kwargs)
+                else:
+                    return
+
+        except (OperationalError, ProgrammingError):
+            if not key.startswith('_'):
+                logger.warning("Database is locked, cannot set setting '%s'", key)
+            # Likely the DB is locked - not much we can do here
+            return
+        except Exception as exc:
+            logger.exception(
+                "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
+            )
+            return
 
         # Enforce standard boolean representation
         if setting.is_bool():
@@ -700,6 +726,10 @@ class BaseInvenTreeSetting(models.Model):
                     attempts=attempts - 1,
                     **kwargs,
                 )
+        except (OperationalError, ProgrammingError):
+            logger.warning("Database is locked, cannot set setting '%s'", key)
+            # Likely the DB is locked - not much we can do here
+            pass
         except Exception as exc:
             # Some other error
             logger.exception(
@@ -1065,6 +1095,15 @@ def settings_group_options():
 
 def update_instance_url(setting):
     """Update the first site objects domain to url."""
+    if not settings.SITE_MULTI:
+        return
+
+    try:
+        from django.contrib.sites.models import Site
+    except (ImportError, RuntimeError):
+        # Multi-site support not enabled
+        return
+
     site_obj = Site.objects.all().order_by('id').first()
     site_obj.domain = setting.value
     site_obj.save()
@@ -1072,6 +1111,15 @@ def update_instance_url(setting):
 
 def update_instance_name(setting):
     """Update the first site objects name to instance name."""
+    if not settings.SITE_MULTI:
+        return
+
+    try:
+        from django.contrib.sites.models import Site
+    except (ImportError, RuntimeError):
+        # Multi-site support not enabled
+        return
+
     site_obj = Site.objects.all().order_by('id').first()
     site_obj.name = setting.value
     site_obj.save()
@@ -1132,12 +1180,24 @@ def reload_plugin_registry(setting):
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
 
+class InvenTreeSettingsKeyType(SettingsKeyType):
+    """InvenTreeSettingsKeyType has additional properties only global settings support.
+
+    Attributes:
+        requires_restart: If True, a server restart is required after changing the setting
+    """
+
+    requires_restart: bool
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
     even if that key does not exist.
     """
+
+    SETTINGS: dict[str, InvenTreeSettingsKeyType]
 
     class Meta:
         """Meta options for InvenTreeSetting."""
@@ -1593,6 +1653,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'REPORT_LOG_ERRORS': {
+            'name': _('Log Report Errors'),
+            'description': _('Log errors which occur when generating reports'),
+            'default': False,
+            'validator': bool,
+        },
         'REPORT_DEFAULT_PAGE_SIZE': {
             'name': _('Page Size'),
             'description': _('Default page size for PDF reports'),
@@ -1684,6 +1750,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'STOCK_ENFORCE_BOM_INSTALLATION': {
+            'name': _('Check BOM when installing items'),
+            'description': _(
+                'Installed stock items must exist in the BOM for the parent part'
+            ),
+            'default': True,
+            'validator': bool,
+        },
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _(
@@ -1750,6 +1824,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
                 'Allow editing of purchase orders after they have been shipped or completed'
             ),
             'default': False,
+            'validator': bool,
+        },
+        'PURCHASEORDER_AUTO_COMPLETE': {
+            'name': _('Auto Complete Purchase Orders'),
+            'description': _(
+                'Automatically mark purchase orders as complete when all line items are received'
+            ),
+            'default': True,
             'validator': bool,
         },
         # login / SSO
@@ -1835,6 +1917,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+        'PLUGIN_UPDATE_CHECK': {
+            'name': _('Check for plugin updates'),
+            'description': _('Enable periodic checks for updates to installed plugins'),
+            'default': True,
+            'validator': bool,
+        },
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
@@ -1913,6 +2001,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'DISPLAY_FULL_NAMES': {
             'name': _('Display Users full names'),
             'description': _('Display Users full names instead of usernames'),
+            'default': False,
+            'validator': bool,
+        },
+        'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
+            'name': _('Block Until Tests Pass'),
+            'description': _(
+                'Prevent build outputs from being completed until all required tests pass'
+            ),
             'default': False,
             'validator': bool,
         },
@@ -2309,6 +2405,11 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Receive notifications for system errors'),
             'default': True,
             'validator': bool,
+        },
+        'LAST_USED_PRINTING_MACHINES': {
+            'name': _('Last used printing machines'),
+            'description': _('Save the last used printing machines for a user'),
+            'default': '',
         },
     }
 
@@ -2819,12 +2920,17 @@ class NotificationMessage(models.Model):
         """Return API endpoint."""
         return reverse('api-notifications-list')
 
-    def age(self):
+    def age(self) -> int:
         """Age of the message in seconds."""
-        delta = now() - self.creation
+        # Add timezone information if TZ is enabled (in production mode mostly)
+        delta = now() - (
+            self.creation.replace(tzinfo=timezone.utc)
+            if settings.USE_TZ
+            else self.creation
+        )
         return delta.seconds
 
-    def age_human(self):
+    def age_human(self) -> str:
         """Humanized age."""
         return naturaltime(self.creation)
 

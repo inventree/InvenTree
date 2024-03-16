@@ -3,8 +3,8 @@
 import os
 
 from django.conf import settings
-from django.test import TestCase
-from django.urls import include, re_path, reverse
+from django.test import TestCase, tag
+from django.urls import include, path, re_path, reverse
 
 from error_report.models import Error
 
@@ -96,7 +96,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
             def test():
                 return 'ccc'
 
-            URLS = [re_path('testpath', test, name='test')]
+            URLS = [path('testpath', test, name='test')]
 
         self.mixin = UrlsCls()
 
@@ -263,14 +263,17 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         """Test that building up args work."""
         # api_build_url_args
         # 1 arg
-        result = self.mixin.api_build_url_args({'a': 'b'})
-        self.assertEqual(result, '?a=b')
+        result = self.mixin.api_build_url_args({'a': 'abc123'})
+        self.assertEqual(result, '?a=abc123')
+        # non string arg
+        result = self.mixin.api_build_url_args({'a': 1})
+        self.assertEqual(result, '?a=1')
         # more args
-        result = self.mixin.api_build_url_args({'a': 'b', 'c': 'd'})
-        self.assertEqual(result, '?a=b&c=d')
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': 42})
+        self.assertEqual(result, '?a=b&c=42')
         # list args
-        result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'e', 'f']})
-        self.assertEqual(result, '?a=b&c=d,e,f')
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'efgh', 1337]})
+        self.assertEqual(result, '?a=b&c=d,efgh,1337')
 
     def test_api_call(self):
         """Test that api calls work."""
@@ -348,14 +351,19 @@ class PanelMixinTests(InvenTreeTestCase):
         """Test that the sample panel plugin is installed."""
         plugins = registry.with_mixin('panel')
 
-        self.assertTrue(len(plugins) > 0)
+        self.assertTrue(len(plugins) == 0)
+
+        # Now enable the plugin
+        registry.set_plugin_state('samplepanel', True)
+        plugins = registry.with_mixin('panel')
 
         self.assertIn('samplepanel', [p.slug for p in plugins])
 
-        plugins = registry.with_mixin('panel', active=True)
-
+        # Find 'inactive' plugins (should be None)
+        plugins = registry.with_mixin('panel', active=False)
         self.assertEqual(len(plugins), 0)
 
+    @tag('cui')
     def test_disabled(self):
         """Test that the panels *do not load* if the plugin is not enabled."""
         plugin = registry.get_plugin('samplepanel')
@@ -383,6 +391,7 @@ class PanelMixinTests(InvenTreeTestCase):
             self.assertNotIn('Hello world', str(response.content))
             self.assertNotIn('Custom Part Panel', str(response.content))
 
+    @tag('cui')
     def test_enabled(self):
         """Test that the panels *do* load if the plugin is enabled."""
         plugin = registry.get_plugin('samplepanel')

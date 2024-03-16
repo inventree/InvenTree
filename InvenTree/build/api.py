@@ -1,7 +1,7 @@
 """JSON API for the Build app."""
 
 from django.db.models import F, Q
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
@@ -314,11 +314,21 @@ class BuildLineEndpoint:
     queryset = BuildLine.objects.all()
     serializer_class = build.serializers.BuildLineSerializer
 
+    def get_source_build(self) -> Build:
+        """Return the source Build object for the BuildLine queryset.
+
+        This source build is used to filter the available stock for each BuildLine.
+
+        - If this is a "detail" view, use the build associated with the line
+        - If this is a "list" view, use the build associated with the request
+        """
+        raise NotImplementedError("get_source_build must be implemented in the child class")
+
     def get_queryset(self):
         """Override queryset to select-related and annotate"""
         queryset = super().get_queryset()
-
-        queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset)
+        source_build = self.get_source_build()
+        queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset, build=source_build)
 
         return queryset
 
@@ -353,10 +363,26 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
         'bom_item__reference',
     ]
 
+    def get_source_build(self) -> Build:
+        """Return the target build for the BuildLine queryset."""
+
+        try:
+            build_id = self.request.query_params.get('build', None)
+            if build_id:
+                build = Build.objects.get(pk=build_id)
+                return build
+        except (Build.DoesNotExist, AttributeError, ValueError):
+            pass
+
+        return None
 
 class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
-    pass
+
+    def get_source_build(self) -> Build:
+        """Return the target source location for the BuildLine queryset."""
+
+        return None
 
 
 class BuildOrderContextMixin:
@@ -587,44 +613,44 @@ class BuildAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
 build_api_urls = [
 
     # Attachments
-    re_path(r'^attachment/', include([
-        path(r'<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
-        re_path(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+    path('attachment/', include([
+        path('<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
+        path('', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
     ])),
 
     # Build lines
-    re_path(r'^line/', include([
-        path(r'<int:pk>/', BuildLineDetail.as_view(), name='api-build-line-detail'),
-        re_path(r'^.*$', BuildLineList.as_view(), name='api-build-line-list'),
+    path('line/', include([
+        path('<int:pk>/', BuildLineDetail.as_view(), name='api-build-line-detail'),
+        path('', BuildLineList.as_view(), name='api-build-line-list'),
     ])),
 
     # Build Items
-    re_path(r'^item/', include([
-        path(r'<int:pk>/', include([
-            re_path(r'^metadata/', MetadataView.as_view(), {'model': BuildItem}, name='api-build-item-metadata'),
-            re_path(r'^.*$', BuildItemDetail.as_view(), name='api-build-item-detail'),
+    path('item/', include([
+        path('<int:pk>/', include([
+            path('metadata/', MetadataView.as_view(), {'model': BuildItem}, name='api-build-item-metadata'),
+            path('', BuildItemDetail.as_view(), name='api-build-item-detail'),
         ])),
-        re_path(r'^.*$', BuildItemList.as_view(), name='api-build-item-list'),
+        path('', BuildItemList.as_view(), name='api-build-item-list'),
     ])),
 
     # Build Detail
-    path(r'<int:pk>/', include([
-        re_path(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
-        re_path(r'^auto-allocate/', BuildAutoAllocate.as_view(), name='api-build-auto-allocate'),
-        re_path(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
-        re_path(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
-        re_path(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
-        re_path(r'^scrap-outputs/', BuildOutputScrap.as_view(), name='api-build-output-scrap'),
-        re_path(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
-        re_path(r'^cancel/', BuildCancel.as_view(), name='api-build-cancel'),
-        re_path(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-        re_path(r'^metadata/', MetadataView.as_view(), {'model': Build}, name='api-build-metadata'),
-        re_path(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
+    path('<int:pk>/', include([
+        path('allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+        path('auto-allocate/', BuildAutoAllocate.as_view(), name='api-build-auto-allocate'),
+        path('complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
+        path('create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
+        path('delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
+        path('scrap-outputs/', BuildOutputScrap.as_view(), name='api-build-output-scrap'),
+        path('finish/', BuildFinish.as_view(), name='api-build-finish'),
+        path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
+        path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
+        path('metadata/', MetadataView.as_view(), {'model': Build}, name='api-build-metadata'),
+        path('', BuildDetail.as_view(), name='api-build-detail'),
     ])),
 
     # Build order status code information
-    re_path(r'status/', StatusView.as_view(), {StatusView.MODEL_REF: BuildStatus}, name='api-build-status-codes'),
+    path('status/', StatusView.as_view(), {StatusView.MODEL_REF: BuildStatus}, name='api-build-status-codes'),
 
     # Build List
-    re_path(r'^.*$', BuildList.as_view(), name='api-build-list'),
+    path('', BuildList.as_view(), name='api-build-list'),
 ]

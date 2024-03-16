@@ -1,11 +1,12 @@
 """JSON serializers for Stock app."""
 
+import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import BooleanField, Case, Count, Q, Value, When
+from django.db.models import BooleanField, Case, Count, Prefetch, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
@@ -19,12 +20,12 @@ import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status_codes
+import part.filters as part_filters
 import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
-from InvenTree.models import extract_int
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
-from part.serializers import PartBriefSerializer
+from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
 from .models import (
     StockItem,
@@ -34,6 +35,8 @@ from .models import (
     StockLocation,
     StockLocationType,
 )
+
+logger = logging.getLogger('inventree')
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -57,8 +60,6 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
         fields = [
             'pk',
             'stock_item',
-            'key',
-            'test',
             'result',
             'value',
             'attachment',
@@ -66,6 +67,8 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
             'user',
             'user_detail',
             'date',
+            'template',
+            'template_detail',
         ]
 
         read_only_fields = ['pk', 'user', 'date']
@@ -73,19 +76,68 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
         user_detail = kwargs.pop('user_detail', False)
+        template_detail = kwargs.pop('template_detail', False)
 
         super().__init__(*args, **kwargs)
 
         if user_detail is not True:
             self.fields.pop('user_detail')
 
+        if template_detail is not True:
+            self.fields.pop('template_detail')
+
     user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
 
-    key = serializers.CharField(read_only=True)
+    template = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.PartTestTemplate.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        help_text=_('Template'),
+        label=_('Test template for this result'),
+    )
+
+    template_detail = PartTestTemplateSerializer(source='template', read_only=True)
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
         required=False
     )
+
+    def validate(self, data):
+        """Validate the test result data."""
+        stock_item = data['stock_item']
+        template = data.get('template', None)
+
+        # To support legacy API, we can accept a test name instead of a template
+        # In such a case, we use the test name to lookup the appropriate template
+        test_name = self.context['request'].data.get('test', None)
+
+        if not template and not test_name:
+            raise ValidationError(_('Template ID or test name must be provided'))
+
+        if not template:
+            test_key = InvenTree.helpers.generateTestKey(test_name)
+
+            ancestors = stock_item.part.get_ancestors(include_self=True)
+
+            # Find a template based on name
+            if template := part_models.PartTestTemplate.objects.filter(
+                part__tree_id=stock_item.part.tree_id, part__in=ancestors, key=test_key
+            ).first():
+                data['template'] = template
+
+            else:
+                logger.debug(
+                    "No matching test template found for '%s' - creating a new template",
+                    test_name,
+                )
+
+                # Create a new test template based on the provided dasta
+                data['template'] = part_models.PartTestTemplate.objects.create(
+                    part=stock_item.part, test_name=test_name
+                )
+
+        return super().validate(data)
 
 
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
@@ -114,7 +166,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
     def validate_serial(self, value):
         """Make sure serial is not to big."""
-        if abs(extract_int(value)) > 0x7FFFFFFF:
+        if abs(InvenTree.helpers.extract_int(value)) > 0x7FFFFFFF:
             raise serializers.ValidationError(_('Serial number is too large'))
         return value
 
@@ -170,6 +222,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'allocated',
             'expired',
             'installed_items',
+            'child_items',
             'stale',
             'tracking_items',
             'tags',
@@ -237,7 +290,14 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'location',
             'sales_order',
             'purchase_order',
-            'part',
+            Prefetch(
+                'part',
+                queryset=part_models.Part.objects.annotate(
+                    category_default_location=part_filters.annotate_default_location(
+                        'category__'
+                    )
+                ).prefetch_related(None),
+            ),
             'part__category',
             'part__pricing_data',
             'supplier_part',
@@ -288,6 +348,9 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         # Annotate with the total number of "installed items"
         queryset = queryset.annotate(installed_items=SubqueryCount('installed_parts'))
 
+        # Annotate with the total number of "child items" (split stock items)
+        queryset = queryset.annotate(child_items=stock.filters.annotate_child_items())
+
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
@@ -315,6 +378,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     allocated = serializers.FloatField(required=False)
     expired = serializers.BooleanField(required=False, read_only=True)
     installed_items = serializers.IntegerField(read_only=True, required=False)
+    child_items = serializers.IntegerField(read_only=True, required=False)
     stale = serializers.BooleanField(required=False, read_only=True)
     tracking_items = serializers.IntegerField(read_only=True, required=False)
 
@@ -520,9 +584,14 @@ class InstallStockItemSerializer(serializers.Serializer):
         parent_item = self.context['item']
         parent_part = parent_item.part
 
-        # Check if the selected part is in the Bill of Materials of the parent item
-        if not parent_part.check_if_part_in_bom(stock_item.part):
-            raise ValidationError(_('Selected part is not in the Bill of Materials'))
+        if common.models.InvenTreeSetting.get_setting(
+            'STOCK_ENFORCE_BOM_INSTALLATION', backup_value=True, cache=False
+        ):
+            # Check if the selected part is in the Bill of Materials of the parent item
+            if not parent_part.check_if_part_in_bom(stock_item.part):
+                raise ValidationError(
+                    _('Selected part is not in the Bill of Materials')
+                )
 
         return stock_item
 
@@ -802,7 +871,14 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = StockLocation
-        fields = ['pk', 'name', 'parent', 'icon', 'structural']
+        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'sublocations']
+
+    sublocations = serializers.IntegerField(label=_('Sublocations'), read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with the number of sublocations."""
+        return queryset.annotate(sublocations=stock.filters.annotate_sub_locations())
 
 
 class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
@@ -823,6 +899,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'pathstring',
             'path',
             'items',
+            'sublocations',
             'owner',
             'icon',
             'custom_icon',
@@ -848,13 +925,18 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
-        queryset = queryset.annotate(items=stock.filters.annotate_location_items())
+        queryset = queryset.annotate(
+            items=stock.filters.annotate_location_items(),
+            sublocations=stock.filters.annotate_sub_locations(),
+        )
 
         return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    items = serializers.IntegerField(read_only=True)
+    items = serializers.IntegerField(read_only=True, label=_('Stock Items'))
+
+    sublocations = serializers.IntegerField(read_only=True, label=_('Sublocations'))
 
     level = serializers.IntegerField(read_only=True)
 
@@ -1189,6 +1271,14 @@ class StockMergeSerializer(serializers.Serializer):
         )
 
 
+def stock_item_adjust_status_options():
+    """Return a custom set of options for the StockItem status adjustment field.
+
+    In particular, include a Null option for the status field.
+    """
+    return [(None, _('No Change'))] + InvenTree.status_codes.StockStatus.items()
+
+
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """Serializer for a single StockItem within a stock adjument request.
 
@@ -1231,8 +1321,8 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     )
 
     status = serializers.ChoiceField(
-        choices=InvenTree.status_codes.StockStatus.items(),
-        default=InvenTree.status_codes.StockStatus.OK.value,
+        choices=stock_item_adjust_status_options(),
+        default=None,
         label=_('Status'),
         help_text=_('Stock item status code'),
         required=False,
@@ -1369,8 +1459,8 @@ class StockTransferSerializer(StockAdjustmentSerializer):
                 kwargs = {}
 
                 for field_name in StockItem.optional_transfer_fields():
-                    if field_name in item:
-                        kwargs[field_name] = item[field_name]
+                    if field_value := item.get(field_name, None):
+                        kwargs[field_name] = field_value
 
                 stock_item.move(
                     location, notes, request.user, quantity=quantity, **kwargs

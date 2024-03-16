@@ -1,16 +1,11 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.241.1/containers/python-3
 {
-  "name": "InvenTree",
-  "build": {
-    "dockerfile": "../Dockerfile",
-    "context": "..",
-    "target": "devcontainer",
-    "args": {
-      "base_image": "mcr.microsoft.com/vscode/devcontainers/base:alpine-3.18",
-      "workspace": "${containerWorkspaceFolder}"
-    }
-  },
+  "name": "InvenTree devcontainer",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "inventree",
+  "overrideCommand": true,
+  "workspaceFolder": "/home/inventree/",
 
   // Configure tool-specific properties.
   "customizations": {
@@ -42,40 +37,27 @@
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [5173, 8000],
+  "forwardPorts": [5173, 8000, 8080],
   "portsAttributes": {
     "5173": {
-      "label": "Vite server"
+      "label": "Vite Server"
     },
     "8000": {
-      "label": "InvenTree server"
+      "label": "InvenTree Server"
+    },
+    "8080": {
+      "label": "mkdocs server"
     }
   },
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "./.devcontainer/postCreateCommand.sh ${containerWorkspaceFolder}",
+  "postCreateCommand": ".devcontainer/postCreateCommand.sh",
 
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode",
   "containerUser": "vscode",
-  "features": {
-    "git": "os-provided"
-  },
 
   "remoteEnv": {
-    // InvenTree config
-    "INVENTREE_DEBUG": "True",
-    "INVENTREE_LOG_LEVEL": "INFO",
-    "INVENTREE_DB_ENGINE": "sqlite3",
-    "INVENTREE_DB_NAME": "${containerWorkspaceFolder}/dev/database.sqlite3",
-    "INVENTREE_MEDIA_ROOT": "${containerWorkspaceFolder}/dev/media",
-    "INVENTREE_STATIC_ROOT": "${containerWorkspaceFolder}/dev/static",
-    "INVENTREE_BACKUP_DIR": "${containerWorkspaceFolder}/dev/backup",
-    "INVENTREE_CONFIG_FILE": "${containerWorkspaceFolder}/dev/config.yaml",
-    "INVENTREE_SECRET_KEY_FILE": "${containerWorkspaceFolder}/dev/secret_key.txt",
-    "INVENTREE_PLUGINS_ENABLED": "True",
-    "INVENTREE_PLUGIN_DIR": "${containerWorkspaceFolder}/dev/plugins",
-    "INVENTREE_PLUGIN_FILE": "${containerWorkspaceFolder}/dev/plugins.txt",
 
     // Python config
     "PIP_USER": "no",

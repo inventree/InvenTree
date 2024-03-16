@@ -14,13 +14,20 @@
       "justMyCode": true
     },
     {
-      "name": "Python: Django - 3rd party",
+      "name": "InvenTree Server - 3rd party",
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/InvenTree/manage.py",
       "args": ["runserver"],
       "django": true,
       "justMyCode": false
+    },
+    {
+      "name": "InvenTree Frontend - Vite",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/src/frontend"
     }
   ]
 }

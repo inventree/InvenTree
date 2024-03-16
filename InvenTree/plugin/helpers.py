@@ -12,7 +12,7 @@ from importlib.metadata import entry_points
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
 logger = logging.getLogger('inventree')
 
@@ -145,6 +145,8 @@ def get_git_log(path):
                 datetime.datetime.fromtimestamp(commit.author_time).isoformat(),
                 commit.message.decode().split('\n')[0],
             ]
+        except KeyError as err:
+            logger.debug('No HEAD tag found in git repo at path %s', path)
         except NotGitRepository:
             pass
 

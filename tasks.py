@@ -58,18 +58,27 @@ def apps():
     ]
 
 
-def content_excludes():
-    """Returns a list of content types to exclude from import/export."""
+def content_excludes(
+    allow_auth: bool = True,
+    allow_tokens: bool = True,
+    allow_plugins: bool = True,
+    allow_sso: bool = True,
+):
+    """Returns a list of content types to exclude from import/export.
+
+    Arguments:
+        allow_tokens (bool): Allow tokens to be exported/importe
+        allow_plugins (bool): Allow plugin information to be exported/imported
+        allow_sso (bool): Allow SSO tokens to be exported/imported
+    """
     excludes = [
         'contenttypes',
         'auth.permission',
-        'users.apitoken',
         'error_report.error',
         'admin.logentry',
         'django_q.schedule',
         'django_q.task',
         'django_q.ormq',
-        'users.owner',
         'exchange.rate',
         'exchange.exchangebackend',
         'common.notificationentry',
@@ -77,12 +86,26 @@ def content_excludes():
         'user_sessions.session',
     ]
 
-    output = ''
+    # Optionally exclude user auth data
+    if not allow_auth:
+        excludes.append('auth.group')
+        excludes.append('auth.user')
 
-    for e in excludes:
-        output += f'--exclude {e} '
+    # Optionally exclude user token information
+    if not allow_tokens:
+        excludes.append('users.apitoken')
 
-    return output
+    # Optionally exclude plugin information
+    if not allow_plugins:
+        excludes.append('plugin.pluginconfig')
+        excludes.append('plugin.pluginsetting')
+
+    # Optionally exclude SSO application information
+    if not allow_sso:
+        excludes.append('socialaccount.socialapp')
+        excludes.append('socialaccount.socialtoken')
+
+    return ' '.join([f'--exclude {e}' for e in excludes])
 
 
 def localDir() -> Path:
@@ -184,8 +207,8 @@ def check_file_existance(filename: str, overwrite: bool = False):
 
 
 # Install tasks
-@task
-def plugins(c):
+@task(help={'uv': 'Use UV (experimental package manager)'})
+def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from InvenTree.InvenTree.config import get_plugin_file
 
@@ -194,20 +217,32 @@ def plugins(c):
     print(f"Installing plugin packages from '{plugin_file}'")
 
     # Install the plugins
-    c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
+    if not uv:
+        c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
+    else:
+        c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
+        c.run(f"uv pip install -r '{plugin_file}'")
 
 
-@task(post=[plugins])
-def install(c):
+@task(help={'uv': 'Use UV package manager (experimental)'})
+def install(c, uv=False):
     """Installs required python packages."""
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install --upgrade pip')
-    c.run('pip3 install --upgrade setuptools')
-    c.run(
-        'pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt'
-    )
+    if not uv:
+        c.run('pip3 install --upgrade pip')
+        c.run('pip3 install --upgrade setuptools')
+        c.run(
+            'pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt'
+        )
+    else:
+        c.run('pip3 install --upgrade uv')
+        c.run('uv pip install --upgrade setuptools')
+        c.run('uv pip install -U -r requirements.txt')
+
+    # Run plugins install
+    plugins(c, uv=uv)
 
 
 @task(help={'tests': 'Set up test dataset at the end'})
@@ -271,7 +306,9 @@ def static(c, frontend=False):
     manage(c, 'prerender')
     if frontend and node_available():
         frontend_build(c)
-    manage(c, 'collectstatic --no-input')
+
+    print('Collecting static files...')
+    manage(c, 'collectstatic --no-input --clear --verbosity 0')
 
 
 @task
@@ -339,24 +376,33 @@ def migrate(c):
     print('Running InvenTree database migrations...')
     print('========================================')
 
+    # Run custom management command which wraps migrations in "maintenance mode"
     manage(c, 'makemigrations')
-    manage(c, 'migrate --noinput')
+    manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
-    manage(c, 'check')
 
     print('========================================')
     print('InvenTree database migrations completed!')
 
 
 @task(
-    post=[static, clean_settings, translate_stats],
+    post=[clean_settings, translate_stats],
     help={
         'skip_backup': 'Skip database backup step (advanced users)',
         'frontend': 'Force frontend compilation/download step (ignores INVENTREE_DOCKER)',
         'no_frontend': 'Skip frontend compilation/download step',
+        'skip_static': 'Skip static file collection step',
+        'uv': 'Use UV (experimental package manager)',
     },
 )
-def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = False):
+def update(
+    c,
+    skip_backup: bool = False,
+    frontend: bool = False,
+    no_frontend: bool = False,
+    skip_static: bool = False,
+    uv: bool = False,
+):
     """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
@@ -367,13 +413,13 @@ def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = Fal
     - install
     - backup (optional)
     - migrate
-    - frontend_compile or frontend_download
-    - static
+    - frontend_compile or frontend_download (optional)
+    - static (optional)
     - clean_settings
     - translate_stats
     """
     # Ensure required components are installed
-    install(c)
+    install(c, uv=uv)
 
     if not skip_backup:
         backup(c)
@@ -386,22 +432,31 @@ def update(c, skip_backup=False, frontend: bool = False, no_frontend: bool = Fal
     # - INVENTREE_DOCKER is set (by the docker image eg.) and not overridden by `--frontend` flag
     # - `--no-frontend` flag is set
     if (os.environ.get('INVENTREE_DOCKER', False) and not frontend) or no_frontend:
-        return
-
-    # Decide if we should compile the frontend or try to download it
-    if node_available(bypass_yarn=True):
-        frontend_compile(c)
+        print('Skipping frontend update!')
+        frontend = False
+        no_frontend = True
     else:
-        frontend_download(c)
+        print('Updating frontend...')
+        # Decide if we should compile the frontend or try to download it
+        if node_available(bypass_yarn=True):
+            frontend_compile(c)
+        else:
+            frontend_download(c)
+
+    if not skip_static:
+        static(c, frontend=not no_frontend)
 
 
 # Data tasks
 @task(
     help={
         'filename': "Output filename (default = 'data.json')",
-        'overwrite': 'Overwrite existing files without asking first (default = off/False)',
-        'include_permissions': 'Include user and group permissions in the output file (filename) (default = off/False)',
-        'delete_temp': 'Delete temporary files (containing permissions) at end of run. Note that this will delete temporary files from previous runs as well. (default = off/False)',
+        'overwrite': 'Overwrite existing files without asking first (default = False)',
+        'include_permissions': 'Include user and group permissions in the output file (default = False)',
+        'include_tokens': 'Include API tokens in the output file (default = False)',
+        'exclude_plugins': 'Exclude plugin data from the output file (default = False)',
+        'include_sso': 'Include SSO token data in the output file (default = False)',
+        'retain_temp': 'Retain temporary files (containing permissions) at end of process (default = False)',
     }
 )
 def export_records(
@@ -409,7 +464,10 @@ def export_records(
     filename='data.json',
     overwrite=False,
     include_permissions=False,
-    delete_temp=False,
+    include_tokens=False,
+    exclude_plugins=False,
+    include_sso=False,
+    retain_temp=False,
 ):
     """Export all database records to a file.
 
@@ -438,7 +496,13 @@ def export_records(
 
     tmpfile = f'{filename}.tmp'
 
-    cmd = f"dumpdata --indent 2 --output '{tmpfile}' {content_excludes()}"
+    excludes = content_excludes(
+        allow_tokens=include_tokens,
+        allow_plugins=not exclude_plugins,
+        allow_sso=include_sso,
+    )
+
+    cmd = f"dumpdata --natural-foreign --indent 2 --output '{tmpfile}' {excludes}"
 
     # Dump data to temporary file
     manage(c, cmd, pty=True)
@@ -449,33 +513,47 @@ def export_records(
     with open(tmpfile, 'r') as f_in:
         data = json.loads(f_in.read())
 
+    data_out = []
+
     if include_permissions is False:
         for entry in data:
-            if 'model' in entry:
-                # Clear out any permissions specified for a group
-                if entry['model'] == 'auth.group':
-                    entry['fields']['permissions'] = []
+            model_name = entry.get('model', None)
 
-                # Clear out any permissions specified for a user
-                if entry['model'] == 'auth.user':
-                    entry['fields']['user_permissions'] = []
+            # Ignore any temporary settings (start with underscore)
+            if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
+                if entry['fields'].get('key', '').startswith('_'):
+                    continue
+
+            if model_name == 'auth.group':
+                entry['fields']['permissions'] = []
+
+            if model_name == 'auth.user':
+                entry['fields']['user_permissions'] = []
+
+            data_out.append(entry)
 
     # Write the processed data to file
     with open(filename, 'w') as f_out:
-        f_out.write(json.dumps(data, indent=2))
+        f_out.write(json.dumps(data_out, indent=2))
 
     print('Data export completed')
 
-    if delete_temp is True:
-        print('Removing temporary file')
+    if not retain_temp:
+        print('Removing temporary files')
         os.remove(tmpfile)
 
 
 @task(
-    help={'filename': 'Input filename', 'clear': 'Clear existing data before import'},
+    help={
+        'filename': 'Input filename',
+        'clear': 'Clear existing data before import',
+        'retain_temp': 'Retain temporary files at end of process (default = False)',
+    },
     post=[rebuild_models, rebuild_thumbnails],
 )
-def import_records(c, filename='data.json', clear=False):
+def import_records(
+    c, filename='data.json', clear: bool = False, retain_temp: bool = False
+):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
     if not os.path.isabs(filename):
@@ -490,11 +568,22 @@ def import_records(c, filename='data.json', clear=False):
 
     print(f"Importing database records from '{filename}'")
 
+    # We need to load 'auth' data (users / groups) *first*
+    # This is due to the users.owner model, which has a ContentType foreign key
+    authfile = f'{filename}.auth.json'
+
     # Pre-process the data, to remove any "permissions" specified for a user or group
-    tmpfile = f'{filename}.tmp.json'
+    datafile = f'{filename}.data.json'
 
     with open(filename, 'r') as f_in:
-        data = json.loads(f_in.read())
+        try:
+            data = json.loads(f_in.read())
+        except json.JSONDecodeError as exc:
+            print(f'Error: Failed to decode JSON file: {exc}')
+            sys.exit(1)
+
+    auth_data = []
+    load_data = []
 
     for entry in data:
         if 'model' in entry:
@@ -506,13 +595,40 @@ def import_records(c, filename='data.json', clear=False):
             if entry['model'] == 'auth.user':
                 entry['fields']['user_permissions'] = []
 
-    # Write the processed data to the tmp file
-    with open(tmpfile, 'w') as f_out:
-        f_out.write(json.dumps(data, indent=2))
+            # Save auth data for later
+            if entry['model'].startswith('auth.'):
+                auth_data.append(entry)
+            else:
+                load_data.append(entry)
+        else:
+            print('Warning: Invalid entry in data file')
+            print(entry)
 
-    cmd = f"loaddata '{tmpfile}' -i {content_excludes()}"
+    # Write the auth file data
+    with open(authfile, 'w') as f_out:
+        f_out.write(json.dumps(auth_data, indent=2))
+
+    # Write the processed data to the tmp file
+    with open(datafile, 'w') as f_out:
+        f_out.write(json.dumps(load_data, indent=2))
+
+    excludes = content_excludes(allow_auth=False)
+
+    # Import auth models first
+    print('Importing user auth data...')
+    cmd = f"loaddata '{authfile}'"
+    manage(c, cmd, pty=True)
+
+    # Import everything else next
+    print('Importing database records...')
+    cmd = f"loaddata '{datafile}' -i {excludes}"
 
     manage(c, cmd, pty=True)
+
+    if not retain_temp:
+        print('Removing temporary files')
+        os.remove(datafile)
+        os.remove(authfile)
 
     print('Data import completed')
 
@@ -577,6 +693,20 @@ def import_fixtures(c):
 def wait(c):
     """Wait until the database connection is ready."""
     return manage(c, 'wait_for_db')
+
+
+@task(pre=[wait], help={'address': 'Server address:port (default=0.0.0.0:8000)'})
+def gunicorn(c, address='0.0.0.0:8000'):
+    """Launch a gunicorn webserver.
+
+    Note: This server will not auto-reload in response to code changes.
+    """
+    c.run(
+        'gunicorn -c ./docker/gunicorn.conf.py InvenTree.wsgi -b {address} --chdir ./InvenTree'.format(
+            address=address
+        ),
+        pty=True,
+    )
 
 
 @task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
@@ -679,10 +809,17 @@ def test_translations(c):
         'migrations': 'Run migration unit tests',
         'report': 'Display a report of slow tests',
         'coverage': 'Run code coverage analysis (requires coverage package)',
+        'cui': 'Do not run CUI tests',
     }
 )
 def test(
-    c, disable_pty=False, runtest='', migrations=False, report=False, coverage=False
+    c,
+    disable_pty=False,
+    runtest='',
+    migrations=False,
+    report=False,
+    coverage=False,
+    cui=False,
 ):
     """Run unit-tests for InvenTree codebase.
 
@@ -717,6 +854,9 @@ def test(
         cmd += ' --tag migration_test'
     else:
         cmd += ' --exclude-tag migration_test'
+
+    if cui:
+        cmd += ' --exclude-tag=cui'
 
     if coverage:
         # Run tests within coverage environment, and generate report
@@ -774,10 +914,24 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
         'overwrite': 'Overwrite existing files without asking first (default = off/False)',
     }
 )
-def schema(c, filename='schema.yml', overwrite=False):
+def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
-    manage(c, f'spectacular --file {filename}')
+
+    filename = os.path.abspath(filename)
+
+    print(f"Exporting schema file to '{filename}'")
+
+    cmd = f'spectacular --file {filename} --validate --color'
+
+    if not ignore_warnings:
+        cmd += ' --fail-on-warn'
+
+    manage(c, cmd, pty=True)
+
+    assert os.path.exists(filename)
+
+    print('Schema export completed:', filename)
 
 
 @task(default=True)
@@ -838,6 +992,8 @@ def frontend_compile(c):
     Args:
         c: Context variable
     """
+    print('Compiling frontend code...')
+
     frontend_install(c)
     frontend_trans(c)
     frontend_build(c)
@@ -885,6 +1041,7 @@ def frontend_dev(c):
         c: Context variable
     """
     print('Starting frontend development server')
+    yarn(c, 'yarn run compile')
     yarn(c, 'yarn run dev')
 
 
@@ -926,6 +1083,8 @@ def frontend_download(
     from zipfile import ZipFile
 
     import requests
+
+    print('Downloading frontend...')
 
     # globals
     default_headers = {'Accept': 'application/vnd.github.v3+json'}
@@ -1038,7 +1197,7 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
             print('[ERROR] Cannot find frontend-build.zip attachment for current sha')
             return
         print(
-            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes']/1e6:.2f}MB)."
+            f"Found artifact {frontend_artifact['name']} with id {frontend_artifact['id']} ({frontend_artifact['size_in_bytes'] / 1e6:.2f}MB)."
         )
 
         print(

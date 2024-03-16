@@ -186,7 +186,7 @@ margin-top: 4cm;
 {% endblock %}
 
 {% block bottom_left %}
-content: "v{{report_revision}} - {{ date.isoformat }}";
+content: "v{{report_revision}} - {% format_date date %}";
 {% endblock %}
 
 {% block header_content %}
@@ -230,13 +230,13 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
             </tr>
             <tr>
                 <th>{% trans "Issued" %}</th>
-                <td>{% render_date build.creation_date %}</td>
+                <td>{% format_date build.creation_date %}</td>
             </tr>
             <tr>
                 <th>{% trans "Target Date" %}</th>
                 <td>
                     {% if build.target_date %}
-                    {% render_date build.target_date %}
+                    {% format_date build.target_date %}
                     {% else %}
                     <em>Not specified</em>
                     {% endif %}

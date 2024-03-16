@@ -1,5 +1,6 @@
 """Provides helper functions used throughout the InvenTree project."""
 
+import datetime
 import hashlib
 import io
 import json
@@ -8,8 +9,10 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
+from typing import TypeVar
 from wsgiref.util import FileWrapper
 
+import django.utils.timezone as timezone
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
@@ -17,6 +20,7 @@ from django.core.files.storage import default_storage
 from django.http import StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _
 
+import pytz
 import regex
 from bleach import clean
 from djmoney.money import Money
@@ -30,16 +34,81 @@ from .settings import MEDIA_URL, STATIC_URL
 logger = logging.getLogger('inventree')
 
 
-def generateTestKey(test_name):
+def extract_int(reference, clip=0x7FFFFFFF, allow_negative=False):
+    """Extract an integer out of reference."""
+    # Default value if we cannot convert to an integer
+    ref_int = 0
+
+    reference = str(reference).strip()
+
+    # Ignore empty string
+    if len(reference) == 0:
+        return 0
+
+    # Look at the start of the string - can it be "integerized"?
+    result = re.match(r'^(\d+)', reference)
+
+    if result and len(result.groups()) == 1:
+        ref = result.groups()[0]
+        try:
+            ref_int = int(ref)
+        except Exception:
+            ref_int = 0
+    else:
+        # Look at the "end" of the string
+        result = re.search(r'(\d+)$', reference)
+
+        if result and len(result.groups()) == 1:
+            ref = result.groups()[0]
+            try:
+                ref_int = int(ref)
+            except Exception:
+                ref_int = 0
+
+    # Ensure that the returned values are within the range that can be stored in an IntegerField
+    # Note: This will result in large values being "clipped"
+    if clip is not None:
+        if ref_int > clip:
+            ref_int = clip
+        elif ref_int < -clip:
+            ref_int = -clip
+
+    if not allow_negative and ref_int < 0:
+        ref_int = abs(ref_int)
+
+    return ref_int
+
+
+def generateTestKey(test_name: str) -> str:
     """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.
     """
+    if test_name is None:
+        test_name = ''
+
     key = test_name.strip().lower()
     key = key.replace(' ', '')
 
+    def valid_char(char: str):
+        """Determine if a particular character is valid for use in a test key."""
+        if not char.isprintable():
+            return False
+
+        if char.isidentifier():
+            return True
+
+        if char.isalnum():
+            return True
+
+        return False
+
     # Remove any characters that cannot be used to represent a variable
-    key = re.sub(r'[^a-zA-Z0-9]', '', key)
+    key = ''.join([c for c in key if valid_char(c)])
+
+    # If the key starts with a non-identifier character, prefix with an underscore
+    if len(key) > 0 and not key[0].isidentifier():
+        key = '_' + key
 
     return key
 
@@ -394,10 +463,12 @@ def DownloadFile(
         length = len(bytes(data, response.charset))
     response['Content-Length'] = length
 
-    disposition = 'inline' if inline else 'attachment'
+    if inline:
+        disposition = f'inline; filename={filename}'
+    else:
+        disposition = f'attachment; filename={filename}'
 
-    response['Content-Disposition'] = f'{disposition}; filename={filename}'
-
+    response['Content-Disposition'] = disposition
     return response
 
 
@@ -790,6 +861,61 @@ def hash_barcode(barcode_data):
     return str(hash.hexdigest())
 
 
+def hash_file(filename: str):
+    """Return the MD5 hash of a file."""
+    return hashlib.md5(open(filename, 'rb').read()).hexdigest()
+
+
+def server_timezone() -> str:
+    """Return the timezone of the server as a string.
+
+    e.g. "UTC" / "Australia/Sydney" etc
+    """
+    return settings.TIME_ZONE
+
+
+def to_local_time(time, target_tz: str = None):
+    """Convert the provided time object to the local timezone.
+
+    Arguments:
+        time: The time / date to convert
+        target_tz: The desired timezone (string) - defaults to server time
+
+    Returns:
+        A timezone aware datetime object, with the desired timezone
+
+    Raises:
+        TypeError: If the provided time object is not a datetime or date object
+    """
+    if isinstance(time, datetime.datetime):
+        pass
+    elif isinstance(time, datetime.date):
+        time = timezone.datetime(year=time.year, month=time.month, day=time.day)
+    else:
+        raise TypeError(
+            f'Argument must be a datetime or date object (found {type(time)}'
+        )
+
+    # Extract timezone information from the provided time
+    source_tz = getattr(time, 'tzinfo', None)
+
+    if not source_tz:
+        # Default to UTC if not provided
+        source_tz = pytz.utc
+
+    if not target_tz:
+        target_tz = server_timezone()
+
+    try:
+        target_tz = pytz.timezone(str(target_tz))
+    except pytz.UnknownTimeZoneError:
+        target_tz = pytz.utc
+
+    target_time = time.replace(tzinfo=source_tz).astimezone(target_tz)
+
+    return target_time
+
+
 def get_objectreference(
     obj, type_ref: str = 'content_type', object_ref: str = 'object_id'
 ):
@@ -833,7 +959,10 @@ def get_objectreference(
     return {'name': str(item), 'model': str(model_cls._meta.verbose_name), **ret}
 
 
-def inheritors(cls):
+Inheritors_T = TypeVar('Inheritors_T')
+
+
+def inheritors(cls: type[Inheritors_T]) -> set[type[Inheritors_T]]:
     """Return all classes that are subclasses from the supplied cls."""
     subcls = set()
     work = [cls]
@@ -850,3 +979,10 @@ def inheritors(cls):
 def is_ajax(request):
     """Check if the current request is an AJAX request."""
     return request.headers.get('x-requested-with') == 'XMLHttpRequest'
+
+
+def pui_url(subpath: str) -> str:
+    """Return the URL for a PUI subpath."""
+    if not subpath.startswith('/'):
+        subpath = '/' + subpath
+    return f'/{settings.FRONTEND_URL_BASE}{subpath}'

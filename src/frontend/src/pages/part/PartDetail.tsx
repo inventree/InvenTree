@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Stack, Text } from '@mantine/core';
+import {
+  Grid,
+  Group,
+  LoadingOverlay,
+  Skeleton,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -19,13 +26,18 @@ import {
   IconStack2,
   IconTestPipe,
   IconTools,
-  IconTransfer,
   IconTruckDelivery,
   IconVersions
 } from '@tabler/icons-react';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { api } from '../../App';
+import { DetailsField, DetailsTable } from '../../components/details/Details';
+import { DetailsImage } from '../../components/details/DetailsImage';
+import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import { PartIcons } from '../../components/details/PartIcons';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -39,23 +51,34 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
-import { BomTable } from '../../components/tables/bom/BomTable';
-import { UsedInTable } from '../../components/tables/bom/UsedInTable';
-import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
-import { PartParameterTable } from '../../components/tables/part/PartParameterTable';
-import { PartVariantTable } from '../../components/tables/part/PartVariantTable';
-import { RelatedPartTable } from '../../components/tables/part/RelatedPartTable';
-import { ManufacturerPartTable } from '../../components/tables/purchasing/ManufacturerPartTable';
-import { SupplierPartTable } from '../../components/tables/purchasing/SupplierPartTable';
-import { SalesOrderTable } from '../../components/tables/sales/SalesOrderTable';
-import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
-import { editPart } from '../../forms/PartForms';
+import { formatPriceRange } from '../../defaults/formatters';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { usePartFields } from '../../forms/PartForms';
+import {
+  StockOperationProps,
+  useCountStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { BomTable } from '../../tables/bom/BomTable';
+import { UsedInTable } from '../../tables/bom/UsedInTable';
+import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import { PartParameterTable } from '../../tables/part/PartParameterTable';
+import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
+import { PartVariantTable } from '../../tables/part/PartVariantTable';
+import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
+import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
+import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
  * Detail view for a single Part instance
@@ -72,7 +95,7 @@ export default function PartDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.part_list,
+    endpoint: ApiEndpoints.part_list,
     pk: id,
     params: {
       path_detail: true
@@ -80,13 +103,364 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
+  const detailsPanel = useMemo(() => {
+    if (instanceQuery.isFetching) {
+      return <Skeleton />;
+    }
+
+    // Construct the details tables
+    let tl: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'description',
+        label: t`Description`,
+        copy: true
+      },
+      {
+        type: 'link',
+        name: 'variant_of',
+        label: t`Variant of`,
+        model: ModelType.part,
+        hidden: !part.variant_of
+      },
+      {
+        type: 'link',
+        name: 'category',
+        label: t`Category`,
+        model: ModelType.partcategory
+      },
+      {
+        type: 'link',
+        name: 'default_location',
+        label: t`Default Location`,
+        model: ModelType.stocklocation,
+        hidden: !part.default_location
+      },
+      {
+        type: 'link',
+        name: 'category_default_location',
+        label: t`Category Default Location`,
+        model: ModelType.stocklocation,
+        hidden: part.default_location || !part.category_default_location
+      },
+      {
+        type: 'string',
+        name: 'IPN',
+        label: t`IPN`,
+        copy: true,
+        hidden: !part.IPN
+      },
+      {
+        type: 'string',
+        name: 'revision',
+        label: t`Revision`,
+        copy: true,
+        hidden: !part.revision
+      },
+      {
+        type: 'string',
+        name: 'units',
+        label: t`Units`,
+        copy: true,
+        hidden: !part.units
+      },
+      {
+        type: 'string',
+        name: 'keywords',
+        label: t`Keywords`,
+        copy: true,
+        hidden: !part.keywords
+      },
+      {
+        type: 'link',
+        name: 'link',
+        label: t`Link`,
+        external: true,
+        copy: true,
+        hidden: !part.link
+      }
+    ];
+
+    let tr: DetailsField[] = [
+      {
+        type: 'string',
+        name: 'unallocated_stock',
+        unit: true,
+        label: t`Available Stock`
+      },
+      {
+        type: 'string',
+        name: 'total_in_stock',
+        unit: true,
+        label: t`In Stock`
+      },
+      {
+        type: 'string',
+        name: 'minimum_stock',
+        unit: true,
+        label: t`Minimum Stock`,
+        hidden: part.minimum_stock <= 0
+      },
+      {
+        type: 'string',
+        name: 'ordering',
+        label: t`On order`,
+        unit: true,
+        hidden: part.ordering <= 0
+      },
+      {
+        type: 'progressbar',
+        name: 'allocated_to_build_orders',
+        total: part.required_for_build_orders,
+        progress: part.allocated_to_build_orders,
+        label: t`Allocated to Build Orders`,
+        hidden:
+          !part.assembly ||
+          (part.allocated_to_build_orders <= 0 &&
+            part.required_for_build_orders <= 0)
+      },
+      {
+        type: 'progressbar',
+        name: 'allocated_to_sales_orders',
+        total: part.required_for_sales_orders,
+        progress: part.allocated_to_sales_orders,
+        label: t`Allocated to Sales Orders`,
+        hidden:
+          !part.salable ||
+          (part.allocated_to_sales_orders <= 0 &&
+            part.required_for_sales_orders <= 0)
+      },
+      {
+        type: 'string',
+        name: 'can_build',
+        unit: true,
+        label: t`Can Build`,
+        hidden: !part.assembly
+      },
+      {
+        type: 'string',
+        name: 'building',
+        unit: true,
+        label: t`Building`,
+        hidden: !part.assembly
+      }
+    ];
+
+    let bl: DetailsField[] = [
+      {
+        type: 'boolean',
+        name: 'active',
+        label: t`Active`
+      },
+      {
+        type: 'boolean',
+        name: 'template',
+        label: t`Template Part`
+      },
+      {
+        type: 'boolean',
+        name: 'assembly',
+        label: t`Assembled Part`
+      },
+      {
+        type: 'boolean',
+        name: 'component',
+        label: t`Component Part`
+      },
+      {
+        type: 'boolean',
+        name: 'trackable',
+        label: t`Trackable Part`
+      },
+      {
+        type: 'boolean',
+        name: 'purchaseable',
+        label: t`Purchaseable Part`
+      },
+      {
+        type: 'boolean',
+        name: 'saleable',
+        label: t`Saleable Part`
+      },
+      {
+        type: 'boolean',
+        name: 'virtual',
+        label: t`Virtual Part`
+      }
+    ];
+
+    let br: DetailsField[] = [
+      {
+        type: 'string',
+        name: 'creation_date',
+        label: t`Creation Date`
+      },
+      {
+        type: 'string',
+        name: 'creation_user',
+        label: t`Created By`,
+        badge: 'user',
+        icon: 'user'
+      },
+      {
+        type: 'string',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !part.responsible
+      },
+      {
+        type: 'link',
+        name: 'default_supplier',
+        label: t`Default Supplier`,
+        model: ModelType.supplierpart,
+        hidden: !part.default_supplier
+      }
+    ];
+
+    // Add in price range data
+    id &&
+      br.push({
+        type: 'string',
+        name: 'pricing',
+        label: t`Price Range`,
+        value_formatter: () => {
+          const { data } = useSuspenseQuery({
+            queryKey: ['pricing', id],
+            queryFn: async () => {
+              const url = apiUrl(ApiEndpoints.part_pricing_get, null, {
+                id: id
+              });
+
+              return api
+                .get(url)
+                .then((response) => {
+                  switch (response.status) {
+                    case 200:
+                      return response.data;
+                    default:
+                      return null;
+                  }
+                })
+                .catch(() => {
+                  return null;
+                });
+            }
+          });
+          return `${formatPriceRange(data.overall_min, data.overall_max)}${
+            part.units && ' / ' + part.units
+          }`;
+        }
+      });
+
+    // Add in stocktake information
+    if (id && part.last_stocktake) {
+      br.push({
+        type: 'string',
+        name: 'stocktake',
+        label: t`Last Stocktake`,
+        unit: true,
+        value_formatter: () => {
+          const { data } = useSuspenseQuery({
+            queryKey: ['stocktake', id],
+            queryFn: async () => {
+              const url = apiUrl(ApiEndpoints.part_stocktake_list);
+
+              return api
+                .get(url, { params: { part: id, ordering: 'date' } })
+                .then((response) => {
+                  switch (response.status) {
+                    case 200:
+                      return response.data[response.data.length - 1];
+                    default:
+                      return null;
+                  }
+                })
+                .catch(() => {
+                  return null;
+                });
+            }
+          });
+
+          if (data.quantity) {
+            return `${data.quantity} (${data.date})`;
+          } else {
+            return '-';
+          }
+        }
+      });
+
+      br.push({
+        type: 'string',
+        name: 'stocktake_user',
+        label: t`Stocktake By`,
+        badge: 'user',
+        icon: 'user',
+        value_formatter: () => {
+          const { data } = useSuspenseQuery({
+            queryKey: ['stocktake', id],
+            queryFn: async () => {
+              const url = apiUrl(ApiEndpoints.part_stocktake_list);
+
+              return api
+                .get(url, { params: { part: id, ordering: 'date' } })
+                .then((response) => {
+                  switch (response.status) {
+                    case 200:
+                      return response.data[response.data.length - 1];
+                    default:
+                      return null;
+                  }
+                })
+                .catch(() => {
+                  return null;
+                });
+            }
+          });
+          return data?.user;
+        }
+      });
+    }
+
+    return (
+      <ItemDetailsGrid>
+        <Grid>
+          <Grid.Col span={4}>
+            <DetailsImage
+              appRole={UserRoles.part}
+              imageActions={{
+                selectExisting: true,
+                uploadFile: true,
+                deleteFile: true
+              }}
+              src={part.image}
+              apiPath={apiUrl(ApiEndpoints.part_list, part.pk)}
+              refresh={refreshInstance}
+              pk={part.pk}
+            />
+          </Grid.Col>
+          <Grid.Col span={8}>
+            <Stack spacing="xs">
+              <PartIcons part={part} />
+              <DetailsTable fields={tl} item={part} />
+            </Stack>
+          </Grid.Col>
+        </Grid>
+        <DetailsTable fields={tr} item={part} />
+        <DetailsTable fields={bl} item={part} />
+        <DetailsTable fields={br} item={part} />
+      </ItemDetailsGrid>
+    );
+  }, [part, instanceQuery]);
+
   // Part data panels (recalculate when part data changes)
   const partPanels: PanelType[] = useMemo(() => {
     return [
       {
         name: 'details',
-        label: t`Details`,
-        icon: <IconInfoCircle />
+        label: t`Part Details`,
+        icon: <IconInfoCircle />,
+        content: detailsPanel
       },
       {
         name: 'parameters',
@@ -98,10 +472,10 @@ export default function PartDetail() {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
-        content: (
+        content: part.pk && (
           <StockItemTable
             params={{
-              part: part.pk ?? -1
+              part: part.pk
             }}
           />
         )
@@ -131,14 +505,7 @@ export default function PartDetail() {
         label: t`Build Orders`,
         icon: <IconTools />,
         hidden: !part.assembly,
-        content: (
-          <BuildOrderTable
-            params={{
-              part_detail: true,
-              part: part.pk ?? -1
-            }}
-          />
-        )
+        content: part?.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'used_in',
@@ -189,13 +556,7 @@ export default function PartDetail() {
         label: t`Sales Orders`,
         icon: <IconTruckDelivery />,
         hidden: !part.salable,
-        content: part.pk && (
-          <SalesOrderTable
-            params={{
-              part: part.pk ?? -1
-            }}
-          />
-        )
+        content: part.pk ? <SalesOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
         name: 'scheduling',
@@ -211,7 +572,12 @@ export default function PartDetail() {
         name: 'test_templates',
         label: t`Test Templates`,
         icon: <IconTestPipe />,
-        hidden: !part.trackable
+        hidden: !part.trackable,
+        content: part?.pk ? (
+          <PartTestTemplateTable partId={part?.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'related_parts',
@@ -225,7 +591,7 @@ export default function PartDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.part_attachment_list}
+            endpoint={ApiEndpoints.part_attachment_list}
             model="part"
             pk={part.pk ?? -1}
           />
@@ -237,7 +603,7 @@ export default function PartDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.part_list, part.pk)}
+            url={apiUrl(ApiEndpoints.part_list, part.pk)}
             data={part.notes ?? ''}
             allowEdit={true}
           />
@@ -267,17 +633,37 @@ export default function PartDetail() {
     );
   }, [part, id]);
 
+  const partFields = usePartFields({ create: false });
+
+  const editPart = useEditApiFormModal({
+    url: ApiEndpoints.part_list,
+    pk: part.pk,
+    title: t`Edit Part`,
+    fields: partFields,
+    onFormSuccess: refreshInstance
+  });
+
+  const stockActionProps: StockOperationProps = useMemo(() => {
+    return {
+      pk: part.pk,
+      model: ModelType.part,
+      refresh: refreshInstance
+    };
+  }, [part]);
+
+  const countStockItems = useCountStockItem(stockActionProps);
+  const transferStockItems = useTransferStockItem(stockActionProps);
+
   const partActions = useMemo(() => {
-    // TODO: Disable actions based on user permissions
     return [
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            disabled: part?.barcode_hash
+            hidden: part?.barcode_hash
           }),
           UnlinkBarcodeAction({
-            disabled: !part?.barcode_hash
+            hidden: !part?.barcode_hash
           })
         ]}
       />,
@@ -287,14 +673,26 @@ export default function PartDetail() {
         icon={<IconPackages />}
         actions={[
           {
-            icon: <IconClipboardList color="blue" />,
+            icon: (
+              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+            ),
             name: t`Count Stock`,
-            tooltip: t`Count part stock`
+            tooltip: t`Count part stock`,
+            hidden: !user.hasChangeRole(UserRoles.stock),
+            onClick: () => {
+              part.pk && countStockItems.open();
+            }
           },
           {
-            icon: <IconTransfer color="blue" />,
+            icon: (
+              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+            ),
             name: t`Transfer Stock`,
-            tooltip: t`Transfer part stock`
+            tooltip: t`Transfer part stock`,
+            hidden: !user.hasChangeRole(UserRoles.stock),
+            onClick: () => {
+              part.pk && transferStockItems.open();
+            }
           }
         ]}
       />,
@@ -303,18 +701,15 @@ export default function PartDetail() {
         tooltip={t`Part Actions`}
         icon={<IconDots />}
         actions={[
-          DuplicateItemAction({}),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.part)
+          }),
           EditItemAction({
-            onClick: () => {
-              part.pk &&
-                editPart({
-                  part_id: part.pk,
-                  callback: refreshInstance
-                });
-            }
+            hidden: !user.hasChangeRole(UserRoles.part),
+            onClick: () => editPart.open()
           }),
           DeleteItemAction({
-            disabled: part?.active
+            hidden: part?.active || !user.hasDeleteRole(UserRoles.part)
           })
         ]}
       />
@@ -323,6 +718,7 @@ export default function PartDetail() {
 
   return (
     <>
+      {editPart.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PartCategoryTree
@@ -344,6 +740,8 @@ export default function PartDetail() {
           actions={partActions}
         />
         <PanelGroup pageKey="part" panels={partPanels} />
+        {transferStockItems.modal}
+        {countStockItems.modal}
       </Stack>
     </>
   );

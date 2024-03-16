@@ -24,7 +24,7 @@ from rest_framework.authtoken.models import Token as AuthToken
 import common.models as common_models
 import InvenTree.helpers
 import InvenTree.models
-from InvenTree.ready import canAppAccessDatabase
+from InvenTree.ready import canAppAccessDatabase, isImportingData
 
 logger = logging.getLogger('inventree')
 
@@ -201,160 +201,172 @@ class RuleSet(models.Model):
 
     RULESET_PERMISSIONS = ['view', 'add', 'change', 'delete']
 
-    RULESET_MODELS = {
-        'admin': [
-            'auth_group',
-            'auth_user',
-            'auth_permission',
-            'users_apitoken',
-            'users_ruleset',
-            'report_reportasset',
-            'report_reportsnippet',
-            'report_billofmaterialsreport',
-            'report_purchaseorderreport',
-            'report_salesorderreport',
-            'account_emailaddress',
-            'account_emailconfirmation',
-            'sites_site',
-            'socialaccount_socialaccount',
-            'socialaccount_socialapp',
-            'socialaccount_socialtoken',
-            'otp_totp_totpdevice',
-            'otp_static_statictoken',
-            'otp_static_staticdevice',
-            'plugin_pluginconfig',
-            'plugin_pluginsetting',
-            'plugin_notificationusersetting',
-            'common_newsfeedentry',
-            'taggit_tag',
-            'taggit_taggeditem',
-            'flags_flagstate',
-        ],
-        'part_category': [
-            'part_partcategory',
-            'part_partcategoryparametertemplate',
-            'part_partcategorystar',
-        ],
-        'part': [
-            'part_part',
-            'part_partpricing',
-            'part_bomitem',
-            'part_bomitemsubstitute',
-            'part_partattachment',
-            'part_partsellpricebreak',
-            'part_partinternalpricebreak',
-            'part_parttesttemplate',
-            'part_partparametertemplate',
-            'part_partparameter',
-            'part_partrelated',
-            'part_partstar',
-            'part_partcategorystar',
-            'company_supplierpart',
-            'company_manufacturerpart',
-            'company_manufacturerpartparameter',
-            'company_manufacturerpartattachment',
-            'label_partlabel',
-        ],
-        'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
-        'stock_location': [
-            'stock_stocklocation',
-            'stock_stocklocationtype',
-            'label_stocklocationlabel',
-            'report_stocklocationreport',
-        ],
-        'stock': [
-            'stock_stockitem',
-            'stock_stockitemattachment',
-            'stock_stockitemtracking',
-            'stock_stockitemtestresult',
-            'report_testreport',
-            'label_stockitemlabel',
-        ],
-        'build': [
-            'part_part',
-            'part_partcategory',
-            'part_bomitem',
-            'part_bomitemsubstitute',
-            'build_build',
-            'build_builditem',
-            'build_buildline',
-            'build_buildorderattachment',
-            'stock_stockitem',
-            'stock_stocklocation',
-            'report_buildreport',
-            'label_buildlinelabel',
-        ],
-        'purchase_order': [
-            'company_company',
-            'company_companyattachment',
-            'company_contact',
-            'company_address',
-            'company_manufacturerpart',
-            'company_manufacturerpartparameter',
-            'company_supplierpart',
-            'company_supplierpricebreak',
-            'order_purchaseorder',
-            'order_purchaseorderattachment',
-            'order_purchaseorderlineitem',
-            'order_purchaseorderextraline',
-            'report_purchaseorderreport',
-        ],
-        'sales_order': [
-            'company_company',
-            'company_companyattachment',
-            'company_contact',
-            'company_address',
-            'order_salesorder',
-            'order_salesorderallocation',
-            'order_salesorderattachment',
-            'order_salesorderlineitem',
-            'order_salesorderextraline',
-            'order_salesordershipment',
-            'report_salesorderreport',
-        ],
-        'return_order': [
-            'company_company',
-            'company_companyattachment',
-            'company_contact',
-            'company_address',
-            'order_returnorder',
-            'order_returnorderlineitem',
-            'order_returnorderextraline',
-            'order_returnorderattachment',
-            'report_returnorderreport',
-        ],
-    }
+    @staticmethod
+    def get_ruleset_models():
+        """Return a dictionary of models associated with each ruleset."""
+        ruleset_models = {
+            'admin': [
+                'auth_group',
+                'auth_user',
+                'auth_permission',
+                'users_apitoken',
+                'users_ruleset',
+                'report_reportasset',
+                'report_reportsnippet',
+                'report_billofmaterialsreport',
+                'report_purchaseorderreport',
+                'report_salesorderreport',
+                'account_emailaddress',
+                'account_emailconfirmation',
+                'socialaccount_socialaccount',
+                'socialaccount_socialapp',
+                'socialaccount_socialtoken',
+                'otp_totp_totpdevice',
+                'otp_static_statictoken',
+                'otp_static_staticdevice',
+                'plugin_pluginconfig',
+                'plugin_pluginsetting',
+                'plugin_notificationusersetting',
+                'common_newsfeedentry',
+                'taggit_tag',
+                'taggit_taggeditem',
+                'flags_flagstate',
+                'machine_machineconfig',
+                'machine_machinesetting',
+            ],
+            'part_category': [
+                'part_partcategory',
+                'part_partcategoryparametertemplate',
+                'part_partcategorystar',
+            ],
+            'part': [
+                'part_part',
+                'part_partpricing',
+                'part_bomitem',
+                'part_bomitemsubstitute',
+                'part_partattachment',
+                'part_partsellpricebreak',
+                'part_partinternalpricebreak',
+                'part_parttesttemplate',
+                'part_partparametertemplate',
+                'part_partparameter',
+                'part_partrelated',
+                'part_partstar',
+                'part_partcategorystar',
+                'company_supplierpart',
+                'company_manufacturerpart',
+                'company_manufacturerpartparameter',
+                'company_manufacturerpartattachment',
+                'label_partlabel',
+            ],
+            'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
+            'stock_location': [
+                'stock_stocklocation',
+                'stock_stocklocationtype',
+                'label_stocklocationlabel',
+                'report_stocklocationreport',
+            ],
+            'stock': [
+                'stock_stockitem',
+                'stock_stockitemattachment',
+                'stock_stockitemtracking',
+                'stock_stockitemtestresult',
+                'report_testreport',
+                'label_stockitemlabel',
+            ],
+            'build': [
+                'part_part',
+                'part_partcategory',
+                'part_bomitem',
+                'part_bomitemsubstitute',
+                'build_build',
+                'build_builditem',
+                'build_buildline',
+                'build_buildorderattachment',
+                'stock_stockitem',
+                'stock_stocklocation',
+                'report_buildreport',
+                'label_buildlinelabel',
+            ],
+            'purchase_order': [
+                'company_company',
+                'company_companyattachment',
+                'company_contact',
+                'company_address',
+                'company_manufacturerpart',
+                'company_manufacturerpartparameter',
+                'company_supplierpart',
+                'company_supplierpricebreak',
+                'order_purchaseorder',
+                'order_purchaseorderattachment',
+                'order_purchaseorderlineitem',
+                'order_purchaseorderextraline',
+                'report_purchaseorderreport',
+            ],
+            'sales_order': [
+                'company_company',
+                'company_companyattachment',
+                'company_contact',
+                'company_address',
+                'order_salesorder',
+                'order_salesorderallocation',
+                'order_salesorderattachment',
+                'order_salesorderlineitem',
+                'order_salesorderextraline',
+                'order_salesordershipment',
+                'report_salesorderreport',
+            ],
+            'return_order': [
+                'company_company',
+                'company_companyattachment',
+                'company_contact',
+                'company_address',
+                'order_returnorder',
+                'order_returnorderlineitem',
+                'order_returnorderextraline',
+                'order_returnorderattachment',
+                'report_returnorderreport',
+            ],
+        }
+
+        if settings.SITE_MULTI:
+            ruleset_models['admin'].append('sites_site')
+
+        return ruleset_models
 
     # Database models we ignore permission sets for
-    RULESET_IGNORE = [
-        # Core django models (not user configurable)
-        'admin_logentry',
-        'contenttypes_contenttype',
-        # Models which currently do not require permissions
-        'common_colortheme',
-        'common_customunit',
-        'common_inventreesetting',
-        'common_inventreeusersetting',
-        'common_notificationentry',
-        'common_notificationmessage',
-        'common_notesimage',
-        'common_projectcode',
-        'common_webhookendpoint',
-        'common_webhookmessage',
-        'label_labeloutput',
-        'users_owner',
-        # Third-party tables
-        'error_report_error',
-        'exchange_rate',
-        'exchange_exchangebackend',
-        'user_sessions_session',
-        # Django-q
-        'django_q_ormq',
-        'django_q_failure',
-        'django_q_task',
-        'django_q_schedule',
-        'django_q_success',
-    ]
+    @staticmethod
+    def get_ruleset_ignore():
+        """Return a list of database tables which do not require permissions."""
+        return [
+            # Core django models (not user configurable)
+            'admin_logentry',
+            'contenttypes_contenttype',
+            # Models which currently do not require permissions
+            'common_colortheme',
+            'common_customunit',
+            'common_inventreesetting',
+            'common_inventreeusersetting',
+            'common_notificationentry',
+            'common_notificationmessage',
+            'common_notesimage',
+            'common_projectcode',
+            'common_webhookendpoint',
+            'common_webhookmessage',
+            'label_labeloutput',
+            'users_owner',
+            # Third-party tables
+            'error_report_error',
+            'exchange_rate',
+            'exchange_exchangebackend',
+            'user_sessions_session',
+            # Django-q
+            'django_q_ormq',
+            'django_q_failure',
+            'django_q_task',
+            'django_q_schedule',
+            'django_q_success',
+        ]
 
     RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
 
@@ -409,12 +421,12 @@ class RuleSet(models.Model):
             return True
 
         # If the table does *not* require permissions
-        if table in cls.RULESET_IGNORE:
+        if table in cls.get_ruleset_ignore():
             return True
 
         # Work out which roles touch the given table
         for role in cls.RULESET_NAMES:
-            if table in cls.RULESET_MODELS[role]:
+            if table in cls.get_ruleset_models()[role]:
                 if check_user_role(user, role, permission):
                     return True
 
@@ -474,7 +486,7 @@ class RuleSet(models.Model):
 
     def get_models(self):
         """Return the database tables / models that this ruleset covers."""
-        return self.RULESET_MODELS.get(self.name, [])
+        return self.get_ruleset_models().get(self.name, [])
 
 
 def split_model(model):
@@ -669,7 +681,7 @@ def clear_user_role_cache(user):
     Args:
         user: The User object to be expunged from the cache
     """
-    for role in RuleSet.RULESET_MODELS.keys():
+    for role in RuleSet.get_ruleset_models().keys():
         for perm in ['add', 'change', 'view', 'delete']:
             key = f'role_{user}_{role}_{perm}'
             cache.delete(key)
@@ -705,7 +717,10 @@ def check_user_role(user, role, permission):
     # First, check the cache
     key = f'role_{user}_{role}_{permission}'
 
-    result = cache.get(key)
+    try:
+        result = cache.get(key)
+    except Exception:
+        result = None
 
     if result is not None:
         return result
@@ -733,7 +748,11 @@ def check_user_role(user, role, permission):
                     break
 
     # Save result to cache
-    cache.set(key, result, timeout=3600)
+    try:
+        cache.set(key, result, timeout=3600)
+    except Exception:
+        pass
+
     return result
 
 
@@ -812,7 +831,7 @@ class Owner(models.Model):
             self.owner_type.name == 'user'
             and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES')
         ):
-            return self.owner.get_full_name()
+            return self.owner.get_full_name() or str(self.owner)
         return str(self.owner)
 
     def label(self):
@@ -904,7 +923,9 @@ class Owner(models.Model):
 @receiver(post_save, sender=get_user_model(), dispatch_uid='create_owner')
 def create_owner(sender, instance, **kwargs):
     """Callback function to create a new owner instance after either a new group or user instance is saved."""
-    Owner.create(obj=instance)
+    # Ignore during data import process to avoid data duplication
+    if not isImportingData():
+        Owner.create(obj=instance)
 
 
 @receiver(post_delete, sender=Group, dispatch_uid='delete_owner')

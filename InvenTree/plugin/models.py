@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.utils import IntegrityError
 from django.utils.translation import gettext_lazy as _
 
 import common.models
@@ -39,6 +40,16 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         max_length=255,
         verbose_name=_('Name'),
         help_text=_('PluginName of the plugin'),
+    )
+
+    package_name = models.CharField(
+        null=True,
+        blank=True,
+        max_length=255,
+        verbose_name=_('Package Name'),
+        help_text=_(
+            'Name of the installed package, if the plugin was installed via PIP'
+        ),
     )
 
     active = models.BooleanField(
@@ -122,7 +133,7 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         """Extend save method to reload plugins if the 'active' status changes."""
         reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
-        ret = super().save(force_insert, force_update, *args, **kwargs)
+        super().save(force_insert, force_update, *args, **kwargs)
 
         if self.is_builtin():
             # Force active if builtin
@@ -133,8 +144,6 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
                 if settings.PLUGIN_TESTING:
                     warnings.warn('A reload was triggered', stacklevel=2)
                 registry.reload_plugins()
-
-        return ret
 
     @admin.display(boolean=True, description=_('Installed'))
     def is_installed(self) -> bool:
@@ -160,6 +169,14 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             return False
 
         return self.plugin.check_is_builtin()
+
+    @admin.display(boolean=True, description=_('Package Plugin'))
+    def is_package(self) -> bool:
+        """Return True if this is a 'package' plugin."""
+        if not self.plugin:
+            return False
+
+        return getattr(self.plugin, 'is_package', False)
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):

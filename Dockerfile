@@ -9,13 +9,15 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-ARG base_image=python:3.10-alpine3.18
+ARG base_image=python:3.11-alpine3.18
 FROM ${base_image} as inventree_base
 
 # Build arguments for this image
+ARG commit_tag=""
 ARG commit_hash=""
 ARG commit_date=""
-ARG commit_tag=""
+
+ARG data_dir="data"
 
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
@@ -27,7 +29,7 @@ ENV INVENTREE_DOCKER="true"
 # InvenTree paths
 ENV INVENTREE_HOME="/home/inventree"
 ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
-ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
+ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/${data_dir}"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
@@ -61,12 +63,11 @@ RUN apk add --no-cache \
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
     py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
-    # SQLite support
-    sqlite \
-    # PostgreSQL support
-    postgresql-libs postgresql-client \
-    # MySQL / MariaDB support
-    mariadb-connector-c-dev mariadb-client && \
+    # Postgres client
+    postgresql13-client \
+    # MySQL / MariaDB client
+    mariadb-client mariadb-connector-c \
+    && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
 
@@ -90,13 +91,13 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
 COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
 RUN chmod +x init.sh
 
-ENTRYPOINT ["/bin/sh", "./init.sh"]
+ENTRYPOINT ["/bin/ash", "./init.sh"]
 
 FROM inventree_base as prebuild
 
 ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install --user -r base_requirements.txt -r requirements.txt --no-cache-dir && \
+    pip install --user -r base_requirements.txt -r requirements.txt --no-cache && \
     apk --purge del .build-deps
 
 # Frontend builder image:
@@ -141,7 +142,7 @@ EXPOSE 5173
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
-RUN pip install -r base_requirements.txt --no-cache-dir
+RUN pip install uv --no-cache-dir && pip install -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
@@ -164,10 +165,3 @@ ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
-
-# Image target for devcontainer
-FROM dev as devcontainer
-
-ARG workspace="/workspaces/InvenTree"
-
-WORKDIR ${WORKSPACE}

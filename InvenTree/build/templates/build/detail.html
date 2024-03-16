@@ -200,6 +200,11 @@
         <div id='build-lines-toolbar'>
             {% include "filter_list.html" with id='buildlines' %}
         </div>
+        {% if build.take_from %}
+        <div class='alert alert-block alert-info'>
+            {% trans "Available stock has been filtered based on specified source location for this build order" %}
+        </div>
+        {% endif %}
         <table class='table table-striped table-condensed' id='build-lines-table' data-toolbar='#build-lines-toolbar'></table>
     </div>
 </div>
@@ -373,7 +378,14 @@ onPanelLoad('allocate', function() {
     loadBuildLineTable(
         "#build-lines-table",
         {{ build.pk }},
-        {}
+        {
+            {% if build.take_from %}
+            location: {{ build.take_from.pk }},
+            {% endif %}
+            {% if build.project_code %}
+            project_code: {{ build.project_code.pk }},
+            {% endif %}
+        }
     );
 });
 
@@ -419,8 +431,8 @@ function allocateSelectedLines() {
 
     if (unallocated_lines.length == 0) {
         showAlertDialog(
-            '{% trans "Allocation Complete" %}',
-            '{% trans "All lines have been fully allocated" %}',
+            '{% trans "Allocation Complete" escape %}',
+            '{% trans "All lines have been fully allocated" escape %}',
         );
     } else {
 

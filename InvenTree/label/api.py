@@ -4,6 +4,7 @@ from django.core.exceptions import FieldError, ValidationError
 from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -13,6 +14,7 @@ from rest_framework.request import clone_request
 
 import build.models
 import common.models
+import InvenTree.exceptions
 import InvenTree.helpers
 import label.models
 import label.serializers
@@ -232,9 +234,17 @@ class LabelPrintMixin(LabelFilterMixin):
         # At this point, we offload the label(s) to the selected plugin.
         # The plugin is responsible for handling the request and returning a response.
 
-        result = plugin.print_labels(
-            label, items_to_print, request, printing_options=request.data
-        )
+        try:
+            result = plugin.print_labels(
+                label,
+                items_to_print,
+                request,
+                printing_options=(serializer.data if serializer else {}),
+            )
+        except ValidationError as e:
+            raise (e)
+        except Exception as e:
+            raise ValidationError([_('Error printing label'), str(e)])
 
         if isinstance(result, JsonResponse):
             result['plugin'] = plugin.plugin_slug()
@@ -372,129 +382,123 @@ class BuildLineLabelPrint(BuildLineLabelMixin, LabelPrintMixin, RetrieveAPI):
 
 label_api_urls = [
     # Stock item labels
-    re_path(
-        r'stock/',
+    path(
+        'stock/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
                         r'print/?',
                         StockItemLabelPrint.as_view(),
                         name='api-stockitem-label-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': label.models.StockItemLabel},
                         name='api-stockitem-label-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         StockItemLabelDetail.as_view(),
                         name='api-stockitem-label-detail',
                     ),
                 ]),
             ),
             # List view
-            re_path(
-                r'^.*$', StockItemLabelList.as_view(), name='api-stockitem-label-list'
-            ),
+            path('', StockItemLabelList.as_view(), name='api-stockitem-label-list'),
         ]),
     ),
     # Stock location labels
-    re_path(
-        r'location/',
+    path(
+        'location/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
                         r'print/?',
                         StockLocationLabelPrint.as_view(),
                         name='api-stocklocation-label-print',
                     ),
-                    re_path(
-                        r'metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': label.models.StockLocationLabel},
                         name='api-stocklocation-label-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         StockLocationLabelDetail.as_view(),
                         name='api-stocklocation-label-detail',
                     ),
                 ]),
             ),
             # List view
-            re_path(
-                r'^.*$',
+            path(
+                '',
                 StockLocationLabelList.as_view(),
                 name='api-stocklocation-label-list',
             ),
         ]),
     ),
     # Part labels
-    re_path(
-        r'^part/',
+    path(
+        'part/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
-                        r'^print/',
+                        r'print/?',
                         PartLabelPrint.as_view(),
                         name='api-part-label-print',
                     ),
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': label.models.PartLabel},
                         name='api-part-label-metadata',
                     ),
-                    re_path(
-                        r'^.*$', PartLabelDetail.as_view(), name='api-part-label-detail'
-                    ),
+                    path('', PartLabelDetail.as_view(), name='api-part-label-detail'),
                 ]),
             ),
             # List view
-            re_path(r'^.*$', PartLabelList.as_view(), name='api-part-label-list'),
+            path('', PartLabelList.as_view(), name='api-part-label-list'),
         ]),
     ),
     # BuildLine labels
-    re_path(
-        r'^buildline/',
+    path(
+        'buildline/',
         include([
             # Detail views
             path(
-                r'<int:pk>/',
+                '<int:pk>/',
                 include([
                     re_path(
-                        r'^print/',
+                        r'print/?',
                         BuildLineLabelPrint.as_view(),
                         name='api-buildline-label-print',
                     ),
-                    re_path(
-                        r'^metadata/',
+                    path(
+                        'metadata/',
                         MetadataView.as_view(),
                         {'model': label.models.BuildLineLabel},
                         name='api-buildline-label-metadata',
                     ),
-                    re_path(
-                        r'^.*$',
+                    path(
+                        '',
                         BuildLineLabelDetail.as_view(),
                         name='api-buildline-label-detail',
                     ),
                 ]),
             ),
             # List view
-            re_path(
-                r'^.*$', BuildLineLabelList.as_view(), name='api-buildline-label-list'
-            ),
+            path('', BuildLineLabelList.as_view(), name='api-buildline-label-list'),
         ]),
     ),
 ]

@@ -1,10 +1,101 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 161
+INVENTREE_API_VERSION = 183
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v183 - 2024-03-14 : https://github.com/inventree/InvenTree/pull/5972
+    - Adds "category_default_location" annotated field to part serializer
+    - Adds "part_detail.category_default_location" annotated field to stock item serializer
+    - Adds "part_detail.category_default_location" annotated field to purchase order line serializer
+    - Adds "parent_default_location" annotated field to category serializer
+
+v182 - 2024-03-13 : https://github.com/inventree/InvenTree/pull/6714
+    - Expose ReportSnippet model to the /report/snippet/ API endpoint
+    - Expose ReportAsset model to the /report/asset/ API endpoint
+
+v181 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6541
+    - Adds "width" and "height" fields to the LabelTemplate API endpoint
+    - Adds "page_size" and "landscape" fields to the ReportTemplate API endpoint
+
+v180 - 2024-3-02 : https://github.com/inventree/InvenTree/pull/6463
+    - Tweaks to API documentation to allow automatic documentation generation
+
+v179 - 2024-03-01 : https://github.com/inventree/InvenTree/pull/6605
+    - Adds "subcategories" count to PartCategory serializer
+    - Adds "sublocations" count to StockLocation serializer
+    - Adds "image" field to PartBrief serializer
+    - Adds "image" field to CompanyBrief serializer
+
+v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
+    - Adds "external_stock" field to the Part API endpoint
+    - Adds "external_stock" field to the BomItem API endpoint
+    - Adds "external_stock" field to the BuildLine API endpoint
+    - Stock quantites represented in the BuildLine API endpoint are now filtered by Build.source_location
+
+v177 - 2024-02-27 : https://github.com/inventree/InvenTree/pull/6581
+    - Adds "subcategoies" count to PartCategoryTree serializer
+    - Adds "sublocations" count to StockLocationTree serializer
+
+v176 - 2024-02-26 : https://github.com/inventree/InvenTree/pull/6535
+    - Adds the field "plugins_install_disabled" to the Server info API endpoint
+
+v175 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6538
+    - Adds "parts" count to PartParameterTemplate serializer
+
+v174 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6536
+    - Expose PartCategory filters to the API documentation
+    - Expose StockLocation filters to the API documentation
+
+v173 - 2024-02-20 : https://github.com/inventree/InvenTree/pull/6483
+    - Adds "merge_items" to the PurchaseOrderLine create API endpoint
+    - Adds "auto_pricing" to the PurchaseOrderLine create/update API endpoint
+
+v172 - 2024-02-20 : https://github.com/inventree/InvenTree/pull/6526
+    - Adds "enabled" field to the PartTestTemplate API endpoint
+    - Adds "enabled" filter to the PartTestTemplate list
+    - Adds "enabled" filter to the StockItemTestResult list
+
+v171 - 2024-02-19 : https://github.com/inventree/InvenTree/pull/6516
+    - Adds "key" as a filterable parameter to PartTestTemplate list endpoint
+
+v170 -> 2024-02-19 : https://github.com/inventree/InvenTree/pull/6514
+    - Adds "has_results" filter to the PartTestTemplate list endpoint
+
+v169 -> 2024-02-14 : https://github.com/inventree/InvenTree/pull/6430
+    - Adds 'key' field to PartTestTemplate API endpoint
+    - Adds annotated 'results' field to PartTestTemplate API endpoint
+    - Adds 'template' field to StockItemTestResult API endpoint
+
+v168 -> 2024-02-14 : https://github.com/inventree/InvenTree/pull/4824
+    - Adds machine CRUD API endpoints
+    - Adds machine settings API endpoints
+    - Adds machine restart API endpoint
+    - Adds machine types/drivers list API endpoints
+    - Adds machine registry status API endpoint
+    - Adds 'required' field to the global Settings API
+    - Discover sub-sub classes of the StatusCode API
+
+v167 -> 2024-02-07: https://github.com/inventree/InvenTree/pull/6440
+    - Fixes for OpenAPI schema generation
+
+v166 -> 2024-02-04 : https://github.com/inventree/InvenTree/pull/6400
+    - Adds package_name to plugin API
+    - Adds mechanism for uninstalling plugins via the API
+
+v165 -> 2024-01-28 : https://github.com/inventree/InvenTree/pull/6040
+    - Adds supplier_part.name, part.creation_user, part.required_for_sales_order
+
+v164 -> 2024-01-24 : https://github.com/inventree/InvenTree/pull/6343
+    - Adds "building" quantity to BuildLine API serializer
+
+v163 -> 2024-01-22 : https://github.com/inventree/InvenTree/pull/6314
+    - Extends API endpoint to expose auth configuration information for signin pages
+
+v162 -> 2024-01-14 : https://github.com/inventree/InvenTree/pull/6230
+    - Adds API endpoints to provide information on background tasks
 
 v161 -> 2024-01-13 : https://github.com/inventree/InvenTree/pull/6222
     - Adds API endpoint for system error information

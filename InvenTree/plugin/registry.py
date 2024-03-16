@@ -9,9 +9,10 @@ import importlib
 import logging
 import os
 import time
+from collections import OrderedDict
 from pathlib import Path
 from threading import Lock
-from typing import Any, Dict, List, OrderedDict
+from typing import Any
 
 from django.apps import apps
 from django.conf import settings
@@ -20,12 +21,6 @@ from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-
-from maintenance_mode.core import (
-    get_maintenance_mode,
-    maintenance_mode_on,
-    set_maintenance_mode,
-)
 
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
@@ -58,19 +53,19 @@ class PluginsRegistry:
         Set up all needed references for internal and external states.
         """
         # plugin registry
-        self.plugins: Dict[str, InvenTreePlugin] = {}  # List of active instances
-        self.plugins_inactive: Dict[
+        self.plugins: dict[str, InvenTreePlugin] = {}  # List of active instances
+        self.plugins_inactive: dict[
             str, InvenTreePlugin
         ] = {}  # List of inactive instances
-        self.plugins_full: Dict[
+        self.plugins_full: dict[
             str, InvenTreePlugin
         ] = {}  # List of all plugin instances
 
         # Keep an internal hash of the plugin registry state
         self.registry_hash = None
 
-        self.plugin_modules: List[InvenTreePlugin] = []  # Holds all discovered plugins
-        self.mixin_modules: Dict[str, Any] = {}  # Holds all discovered mixins
+        self.plugin_modules: list[InvenTreePlugin] = []  # Holds all discovered plugins
+        self.mixin_modules: dict[str, Any] = {}  # Holds all discovered mixins
 
         self.errors = {}  # Holds discovering errors
 
@@ -89,7 +84,7 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
-    def get_plugin(self, slug):
+    def get_plugin(self, slug, active=None):
         """Lookup plugin by slug (unique key)."""
         # Check if the registry needs to be reloaded
         self.check_reload()
@@ -98,7 +93,47 @@ class PluginsRegistry:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return None
 
-        return self.plugins[slug]
+        plg = self.plugins[slug]
+
+        if active is not None:
+            if active != plg.is_active():
+                return None
+
+        return plg
+
+    def get_plugin_config(self, slug: str, name: [str, None] = None):
+        """Return the matching PluginConfig instance for a given plugin.
+
+        Args:
+            slug: The plugin slug
+            name: The plugin name (optional)
+        """
+        import InvenTree.ready
+        from plugin.models import PluginConfig
+
+        if InvenTree.ready.isImportingData():
+            return None
+
+        try:
+            cfg = PluginConfig.objects.filter(key=slug).first()
+
+            if not cfg:
+                cfg = PluginConfig.objects.create(key=slug)
+
+        except PluginConfig.DoesNotExist:
+            return None
+        except (IntegrityError, OperationalError, ProgrammingError):  # pragma: no cover
+            return None
+
+        if name and cfg.name != name:
+            # Update the name if it has changed
+            try:
+                cfg.name = name
+                cfg.save()
+            except Exception as e:
+                logger.exception('Failed to update plugin name')
+
+        return cfg
 
     def set_plugin_state(self, slug, state):
         """Set the state(active/inactive) of a plugin.
@@ -114,9 +149,12 @@ class PluginsRegistry:
             logger.warning("Plugin registry has no record of plugin '%s'", slug)
             return
 
-        plugin = self.plugins_full[slug].db
-        plugin.active = state
-        plugin.save()
+        cfg = self.get_plugin_config(slug)
+        cfg.active = state
+        cfg.save()
+
+        # Update the registry hash value
+        self.update_plugin_hash()
 
     def call_plugin_function(self, slug, func, *args, **kwargs):
         """Call a member function (named by 'func') of the plugin named by 'slug'.
@@ -139,8 +177,14 @@ class PluginsRegistry:
         return plugin_func(*args, **kwargs)
 
     # region registry functions
-    def with_mixin(self, mixin: str, active=None, builtin=None):
-        """Returns reference to all plugins that have a specified mixin enabled."""
+    def with_mixin(self, mixin: str, active=True, builtin=None):
+        """Returns reference to all plugins that have a specified mixin enabled.
+
+        Args:
+            mixin (str): Mixin name
+            active (bool, optional): Filter by 'active' status of plugin. Defaults to True.
+            builtin (bool, optional): Filter by 'builtin' status of plugin. Defaults to None.
+        """
         # Check if the registry needs to be loaded
         self.check_reload()
 
@@ -172,11 +216,6 @@ class PluginsRegistry:
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
         logger.info('Loading plugins')
-
-        # Set maintenance mode
-        _maintenance = bool(get_maintenance_mode())
-        if not _maintenance:
-            set_maintenance_mode(True)
 
         registered_successful = False
         blocked_plugin = None
@@ -227,10 +266,6 @@ class PluginsRegistry:
         # ensure plugins_loaded is True
         self.plugins_loaded = True
 
-        # Remove maintenance mode
-        if not _maintenance:
-            set_maintenance_mode(False)
-
         logger.debug('Finished loading plugins')
 
         # Trigger plugins_loaded event
@@ -247,20 +282,11 @@ class PluginsRegistry:
         """
         logger.info('Start unloading plugins')
 
-        # Set maintenance mode
-        _maintenance = bool(get_maintenance_mode())
-        if not _maintenance:
-            set_maintenance_mode(True)  # pragma: no cover
-
         # remove all plugins from registry
         self._clean_registry()
 
         # deactivate all integrations
         self._deactivate_plugins(force_reload=force_reload)
-
-        # remove maintenance
-        if not _maintenance:
-            set_maintenance_mode(False)  # pragma: no cover
 
         logger.info('Finished unloading plugins')
 
@@ -292,15 +318,14 @@ class PluginsRegistry:
                 collect,
             )
 
-            with maintenance_mode_on():
-                if collect:
-                    logger.info('Collecting plugins')
-                    self.plugin_modules = self.collect_plugins()
+            if collect:
+                logger.info('Collecting plugins')
+                self.plugin_modules = self.collect_plugins()
 
-                self.plugins_loaded = False
-                self._unload_plugins(force_reload=force_reload)
-                self.plugins_loaded = True
-                self._load_plugins(full_reload=full_reload)
+            self.plugins_loaded = False
+            self._unload_plugins(force_reload=force_reload)
+            self.plugins_loaded = True
+            self._load_plugins(full_reload=full_reload)
 
             self.update_plugin_hash()
 
@@ -394,8 +419,8 @@ class PluginsRegistry:
                 raw_module = importlib.import_module(plugin)
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
 
-            if modules:
-                [collected_plugins.append(item) for item in modules]
+            for item in modules or []:
+                collected_plugins.append(item)
 
         # From this point any plugins are considered "external" and only loaded if plugins are explicitly enabled
         if settings.PLUGINS_ENABLED:
@@ -408,6 +433,7 @@ class PluginsRegistry:
                     try:
                         plugin = entry.load()
                         plugin.is_package = True
+                        plugin.package_name = getattr(entry.dist, 'name', None)
                         plugin._get_package_metadata()
                         collected_plugins.append(plugin)
                     except Exception as error:  # pragma: no cover
@@ -488,9 +514,7 @@ class PluginsRegistry:
                     plg_db = plugin_configs[plg_key]
                 else:
                     # Configuration needs to be created
-                    plg_db, _created = PluginConfig.objects.get_or_create(
-                        key=plg_key, name=plg_name
-                    )
+                    plg_db = self.get_plugin_config(plg_key, plg_name)
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
@@ -506,9 +530,20 @@ class PluginsRegistry:
             # Check if this is a 'builtin' plugin
             builtin = plg.check_is_builtin()
 
+            package_name = None
+
+            # Extract plugin package name
+            if getattr(plg, 'is_package', False):
+                package_name = getattr(plg, 'package_name', None)
+
             # Auto-enable builtin plugins
             if builtin and plg_db and not plg_db.active:
                 plg_db.active = True
+                plg_db.save()
+
+            # Save the package_name attribute to the plugin
+            if plg_db.package_name != package_name:
+                plg_db.package_name = package_name
                 plg_db.save()
 
             # Determine if this plugin should be loaded:
@@ -537,6 +572,7 @@ class PluginsRegistry:
 
                 # Safe extra attributes
                 plg_i.is_package = getattr(plg_i, 'is_package', False)
+
                 plg_i.pk = plg_db.pk if plg_db else None
                 plg_i.db = plg_db
 
@@ -651,9 +687,9 @@ class PluginsRegistry:
 
     def _clean_registry(self):
         """Remove all plugins from registry."""
-        self.plugins: Dict[str, InvenTreePlugin] = {}
-        self.plugins_inactive: Dict[str, InvenTreePlugin] = {}
-        self.plugins_full: Dict[str, InvenTreePlugin] = {}
+        self.plugins: dict[str, InvenTreePlugin] = {}
+        self.plugins_inactive: dict[str, InvenTreePlugin] = {}
+        self.plugins_full: dict[str, InvenTreePlugin] = {}
 
     def _update_urls(self):
         """Due to the order in which plugins are loaded, the patterns in urls.py may be out of date.
@@ -729,6 +765,7 @@ class PluginsRegistry:
         # Hash for all loaded plugins
         for slug, plug in self.plugins.items():
             data.update(str(slug).encode())
+            data.update(str(plug.name).encode())
             data.update(str(plug.version).encode())
             data.update(str(plug.is_active()).encode())
 

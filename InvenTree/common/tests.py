@@ -658,6 +658,74 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
         ...
 
 
+class ErrorReportTest(InvenTreeAPITestCase):
+    """Unit tests for the error report API."""
+
+    def test_error_list(self):
+        """Test error list."""
+        from InvenTree.exceptions import log_error
+
+        url = reverse('api-error-list')
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+        # Throw an error!
+        log_error(
+            'test error', error_name='My custom error', error_info={'test': 'data'}
+        )
+
+        response = self.get(url, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        err = response.data[0]
+        for k in ['when', 'info', 'data', 'path']:
+            self.assertIn(k, err)
+
+
+class TaskListApiTests(InvenTreeAPITestCase):
+    """Unit tests for the background task API endpoints."""
+
+    def test_pending_tasks(self):
+        """Test that the pending tasks endpoint is available."""
+        # Schedule some tasks
+        from django_q.models import OrmQ
+
+        from InvenTree.tasks import offload_task
+
+        n = OrmQ.objects.count()
+
+        for i in range(3):
+            offload_task(f'fake_module.test_{i}', force_async=True)
+
+        self.assertEqual(OrmQ.objects.count(), 3)
+
+        url = reverse('api-pending-task-list')
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), n + 3)
+
+        for task in response.data:
+            self.assertTrue(task['func'].startswith('fake_module.test_'))
+
+    def test_scheduled_tasks(self):
+        """Test that the scheduled tasks endpoint is available."""
+        from django_q.models import Schedule
+
+        for i in range(5):
+            Schedule.objects.create(
+                name='time.sleep', func='time.sleep', args=f'{i + 1}'
+            )
+
+        n = Schedule.objects.count()
+        self.assertGreater(n, 0)
+
+        url = reverse('api-scheduled-task-list')
+        response = self.get(url, expected_code=200)
+
+        for task in response.data:
+            self.assertTrue(task['name'] == 'time.sleep')
+
+
 class WebhookMessageTests(TestCase):
     """Tests for webhooks."""
 

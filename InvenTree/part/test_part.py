@@ -55,6 +55,10 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test the plugins_enabled tag."""
         self.assertEqual(inventree_extras.plugins_enabled(), True)
 
+    def test_plugins_install_disabled(self):
+        """Test the plugins_install_disabled tag."""
+        self.assertEqual(inventree_extras.plugins_install_disabled(), False)
+
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
@@ -237,7 +241,8 @@ class PartTest(TestCase):
     def test_attributes(self):
         """Test Part attributes."""
         self.assertEqual(self.r1.name, 'R_2K2_0805')
-        self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
 
     def test_category(self):
         """Test PartCategory path."""
@@ -378,9 +383,20 @@ class TestTemplateTest(TestCase):
         # Test the lowest-level part which has more associated tests
         variant = Part.objects.get(pk=10004)
 
-        self.assertEqual(variant.getTestTemplates().count(), 7)
-        self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 1)
+        self.assertEqual(variant.getTestTemplates().count(), 6)
+        self.assertEqual(variant.getTestTemplates(include_parent=False).count(), 0)
         self.assertEqual(variant.getTestTemplates(required=True).count(), 5)
+
+        # Test the 'enabled' status check
+        self.assertEqual(variant.getTestTemplates(enabled=True).count(), 6)
+        self.assertEqual(variant.getTestTemplates(enabled=False).count(), 0)
+
+        template = variant.getTestTemplates().first()
+        template.enabled = False
+        template.save()
+
+        self.assertEqual(variant.getTestTemplates(enabled=True).count(), 5)
+        self.assertEqual(variant.getTestTemplates(enabled=False).count(), 1)
 
     def test_uniqueness(self):
         """Test names must be unique for this part and also parts above."""
@@ -389,23 +405,54 @@ class TestTemplateTest(TestCase):
         with self.assertRaises(ValidationError):
             PartTestTemplate.objects.create(part=variant, test_name='Record weight')
 
+        # Test that error is raised if we try to create a duplicate test name
         with self.assertRaises(ValidationError):
             PartTestTemplate.objects.create(
-                part=variant, test_name='Check that chair is especially green'
+                part=variant, test_name='Check chair is green'
             )
 
         # Also should fail if we attempt to create a test that would generate the same key
         with self.assertRaises(ValidationError):
-            PartTestTemplate.objects.create(
+            template = PartTestTemplate.objects.create(
                 part=variant, test_name='ReCoRD       weiGHT  '
             )
+
+            template.clean()
 
         # But we should be able to create a new one!
         n = variant.getTestTemplates().count()
 
-        PartTestTemplate.objects.create(part=variant, test_name='A Sample Test')
+        template = PartTestTemplate.objects.create(
+            part=variant, test_name='A Sample Test'
+        )
+
+        # Test key should have been saved
+        self.assertEqual(template.key, 'asampletest')
 
         self.assertEqual(variant.getTestTemplates().count(), n + 1)
+
+    def test_key_generation(self):
+        """Test the key generation method."""
+        variant = Part.objects.get(pk=10004)
+
+        invalid_names = ['', '+', '+++++++', '   ', '<>$&&&']
+
+        for name in invalid_names:
+            template = PartTestTemplate(part=variant, test_name=name)
+            with self.assertRaises(ValidationError):
+                template.clean()
+
+        valid_names = [
+            'Собранный щит',
+            '!! 123 Собранный щит <><><> $$$$$ !!!',
+            '----hello world----',
+            'Olá Mundo',
+            '我不懂中文',
+        ]
+
+        for name in valid_names:
+            template = PartTestTemplate(part=variant, test_name=name)
+            template.clean()
 
 
 class PartSettingsTest(InvenTreeTestCase):

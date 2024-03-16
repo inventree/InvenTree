@@ -7,7 +7,6 @@ import {
   Switch,
   TextInput
 } from '@mantine/core';
-import { DateInput } from '@mantine/dates';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
@@ -17,10 +16,17 @@ import { Control, FieldValues, useController } from 'react-hook-form';
 
 import { ModelType } from '../../../enums/ModelType';
 import { ChoiceField } from './ChoiceField';
+import DateField from './DateField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
+import { TableField } from './TableField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
+
+export type ApiFormAdjustFilterType = {
+  filters: any;
+  data: FieldValues;
+};
 
 /** Definition of the ApiForm field component.
  * - The 'name' attribute *must* be provided
@@ -64,7 +70,8 @@ export type ApiFormFieldType = {
     | 'number'
     | 'choice'
     | 'file upload'
-    | 'nested object';
+    | 'nested object'
+    | 'table';
   api_url?: string;
   model?: ModelType;
   modelRenderer?: (instance: any) => ReactNode;
@@ -80,7 +87,8 @@ export type ApiFormFieldType = {
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
   onValueChange?: (value: any) => void;
-  adjustFilters?: (filters: any) => any;
+  adjustFilters?: (value: ApiFormAdjustFilterType) => any;
+  headers?: string[];
 };
 
 /**
@@ -139,24 +147,24 @@ export function ApiFormField({
   );
 
   // Coerce the value to a numerical value
-  const numericalValue: number | undefined = useMemo(() => {
-    let val = 0;
+  const numericalValue: number | '' = useMemo(() => {
+    let val: number | '' = 0;
 
     switch (definition.field_type) {
       case 'integer':
-        val = parseInt(value) ?? 0;
+        val = parseInt(value) ?? '';
         break;
       case 'decimal':
       case 'float':
       case 'number':
-        val = parseFloat(value) ?? 0;
+        val = parseFloat(value) ?? '';
         break;
       default:
         break;
     }
 
     if (isNaN(val) || !isFinite(val)) {
-      val = 0;
+      val = '';
     }
 
     return val;
@@ -187,7 +195,7 @@ export function ApiFormField({
             radius="sm"
             onChange={(event) => onChange(event.currentTarget.value)}
             rightSection={
-              definition.value && !definition.required ? (
+              value && !definition.required ? (
                 <IconX size="1rem" color="red" onClick={() => onChange('')} />
               ) : null
             }
@@ -207,20 +215,7 @@ export function ApiFormField({
           />
         );
       case 'date':
-        return (
-          <DateInput
-            {...reducedDefinition}
-            ref={ref}
-            id={fieldId}
-            radius="sm"
-            type={undefined}
-            error={error?.message}
-            value={value}
-            clearable={!definition.required}
-            onChange={(value) => onChange(value)}
-            valueFormat="YYYY-MM-DD"
-          />
-        );
+        return <DateField controller={controller} definition={definition} />;
       case 'integer':
       case 'decimal':
       case 'float':
@@ -272,6 +267,14 @@ export function ApiFormField({
             definition={definition}
             fieldName={fieldName}
             control={control}
+          />
+        );
+      case 'table':
+        return (
+          <TableField
+            definition={definition}
+            fieldName={fieldName}
+            control={controller}
           />
         );
       default:

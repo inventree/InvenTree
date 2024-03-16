@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, LoadingOverlay, Stack, Table } from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
@@ -14,12 +14,14 @@ import {
   IconQrcode,
   IconSitemap
 } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { DetailsField, DetailsTable } from '../../components/details/Details';
+import { DetailsImage } from '../../components/details/DetailsImage';
+import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
-  DeleteItemAction,
   DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
@@ -29,17 +31,20 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { BuildOrderTable } from '../../components/tables/build/BuildOrderTable';
-import { AttachmentTable } from '../../components/tables/general/AttachmentTable';
-import { StockItemTable } from '../../components/tables/stock/StockItemTable';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { buildOrderFields } from '../../forms/BuildForms';
-import { openEditApiForm } from '../../functions/forms';
+import { partCategoryFields } from '../../forms/PartForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import BuildLineTable from '../../tables/build/BuildLineTable';
+import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 /**
  * Detail page for a single Build Order
@@ -54,7 +59,7 @@ export default function BuildDetail() {
     refreshInstance,
     instanceQuery
   } = useInstance({
-    endpoint: ApiPaths.build_order_list,
+    endpoint: ApiEndpoints.build_order_list,
     pk: id,
     params: {
       part_detail: true
@@ -62,36 +67,127 @@ export default function BuildDetail() {
     refetchOnMount: true
   });
 
-  const buildDetailsPanel = useMemo(() => {
+  const detailsPanel = useMemo(() => {
+    if (instanceQuery.isFetching) {
+      return <Skeleton />;
+    }
+
+    let tl: DetailsField[] = [
+      {
+        type: 'link',
+        name: 'part',
+        label: t`Part`,
+        model: ModelType.part
+      },
+      {
+        type: 'status',
+        name: 'status',
+        label: t`Status`,
+        model: ModelType.build
+      },
+      {
+        type: 'text',
+        name: 'reference',
+        label: t`Reference`
+      },
+      {
+        type: 'text',
+        name: 'title',
+        label: t`Description`,
+        icon: 'description'
+      },
+      {
+        type: 'link',
+        name: 'parent',
+        icon: 'builds',
+        label: t`Parent Build`,
+        model_field: 'reference',
+        model: ModelType.build,
+        hidden: !build.parent
+      }
+    ];
+
+    let tr: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'quantity',
+        label: t`Build Quantity`
+      },
+      {
+        type: 'progressbar',
+        name: 'completed',
+        icon: 'progress',
+        total: build.quantity,
+        progress: build.completed,
+        label: t`Completed Outputs`
+      },
+      {
+        type: 'link',
+        name: 'sales_order',
+        label: t`Sales Order`,
+        icon: 'sales_orders',
+        model: ModelType.salesorder,
+        model_field: 'reference',
+        hidden: !build.sales_order
+      }
+    ];
+
+    let bl: DetailsField[] = [
+      {
+        type: 'text',
+        name: 'issued_by',
+        label: t`Issued By`,
+        badge: 'user'
+      },
+      {
+        type: 'text',
+        name: 'responsible',
+        label: t`Responsible`,
+        badge: 'owner',
+        hidden: !build.responsible
+      }
+    ];
+
+    let br: DetailsField[] = [
+      {
+        type: 'link',
+        name: 'take_from',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Source Location`,
+        backup_value: t`Any location`
+      },
+      {
+        type: 'link',
+        name: 'destination',
+        icon: 'location',
+        model: ModelType.stocklocation,
+        label: t`Destination Location`,
+        hidden: !build.destination
+      }
+    ];
+
     return (
-      <Group position="apart" grow>
-        <Table striped>
-          <tbody>
-            <tr>
-              <td>{t`Base Part`}</td>
-              <td>{build.part_detail?.name}</td>
-            </tr>
-            <tr>
-              <td>{t`Quantity`}</td>
-              <td>{build.quantity}</td>
-            </tr>
-            <tr>
-              <td>{t`Build Status`}</td>
-              <td>
-                {build.status && (
-                  <StatusRenderer
-                    status={build.status}
-                    type={ModelType.build}
-                  />
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </Table>
-        <Table></Table>
-      </Group>
+      <ItemDetailsGrid>
+        <Grid>
+          <Grid.Col span={4}>
+            <DetailsImage
+              appRole={UserRoles.part}
+              apiPath={ApiEndpoints.part_list}
+              src={build.part_detail?.image ?? build.part_detail?.thumbnail}
+              pk={build.part}
+            />
+          </Grid.Col>
+          <Grid.Col span={8}>
+            <DetailsTable fields={tl} item={build} />
+          </Grid.Col>
+        </Grid>
+        <DetailsTable fields={tr} item={build} />
+        <DetailsTable fields={bl} item={build} />
+        <DetailsTable fields={br} item={build} />
+      </ItemDetailsGrid>
     );
-  }, [build]);
+  }, [build, instanceQuery]);
 
   const buildPanels: PanelType[] = useMemo(() => {
     return [
@@ -99,13 +195,22 @@ export default function BuildDetail() {
         name: 'details',
         label: t`Build Details`,
         icon: <IconInfoCircle />,
-        content: buildDetailsPanel
+        content: detailsPanel
       },
       {
         name: 'allocate-stock',
         label: t`Allocate Stock`,
-        icon: <IconListCheck />
-        // TODO: Hide if build is complete
+        icon: <IconListCheck />,
+        content: build?.pk ? (
+          <BuildLineTable
+            params={{
+              build: id,
+              tracked: false
+            }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'incomplete-outputs',
@@ -142,12 +247,10 @@ export default function BuildDetail() {
         name: 'child-orders',
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
-        content: (
-          <BuildOrderTable
-            params={{
-              parent: id
-            }}
-          />
+        content: build.pk ? (
+          <BuildOrderTable parentBuildId={build.pk} />
+        ) : (
+          <Skeleton />
         )
       },
       {
@@ -156,7 +259,7 @@ export default function BuildDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiPaths.build_order_attachment_list}
+            endpoint={ApiEndpoints.build_order_attachment_list}
             model="build"
             pk={Number(id)}
           />
@@ -168,7 +271,7 @@ export default function BuildDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiPaths.build_order_list, build.pk)}
+            url={apiUrl(ApiEndpoints.build_order_list, build.pk)}
             data={build.notes ?? ''}
             allowEdit={true}
           />
@@ -177,24 +280,15 @@ export default function BuildDetail() {
     ];
   }, [build, id]);
 
-  const editBuildOrder = useCallback(() => {
-    let fields = buildOrderFields();
-
-    // Cannot edit part field after creation
-    fields['part'].hidden = true;
-
-    build.pk &&
-      openEditApiForm({
-        url: ApiPaths.build_order_list,
-        pk: build.pk,
-        title: t`Edit Build Order`,
-        fields: fields,
-        successMessage: t`Build Order updated`,
-        onFormSuccess: () => {
-          refreshInstance();
-        }
-      });
-  }, [build]);
+  const editBuild = useEditApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    pk: build.pk,
+    title: t`Edit Build Order`,
+    fields: buildOrderFields(),
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
 
   const buildActions = useMemo(() => {
     // TODO: Disable certain actions based on user permissions
@@ -206,10 +300,10 @@ export default function BuildDetail() {
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            disabled: build?.barcode_hash
+            hidden: build?.barcode_hash
           }),
           UnlinkBarcodeAction({
-            disabled: !build?.barcode_hash
+            hidden: !build?.barcode_hash
           })
         ]}
       />,
@@ -231,31 +325,36 @@ export default function BuildDetail() {
         icon={<IconDots />}
         actions={[
           EditItemAction({
-            onClick: editBuildOrder
+            onClick: () => editBuild.open(),
+            hidden: !user.hasChangeRole(UserRoles.build)
           }),
-          DuplicateItemAction({}),
-          DeleteItemAction({})
+          DuplicateItemAction({})
         ]}
       />
     ];
   }, [id, build, user]);
 
   const buildDetail = useMemo(() => {
-    return StatusRenderer({
-      status: build.status,
-      type: ModelType.build
-    });
+    return build?.status ? (
+      StatusRenderer({
+        status: build.status,
+        type: ModelType.build
+      })
+    ) : (
+      <Skeleton />
+    );
   }, [build, id]);
 
   return (
     <>
+      {editBuild.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={build.reference}
           subtitle={build.title}
           detail={buildDetail}
-          imageUrl={build.part_detail?.thumbnail}
+          imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
           breadcrumbs={[
             { name: t`Build Orders`, url: '/build' },
             { name: build.reference, url: `/build/${build.pk}` }

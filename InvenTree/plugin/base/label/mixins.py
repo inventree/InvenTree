@@ -2,17 +2,26 @@
 
 from typing import Union
 
+from django.core.exceptions import ValidationError
+from django.db.models.query import QuerySet
 from django.http import JsonResponse
+from django.utils.translation import gettext_lazy as _
 
 import pdf2image
 from rest_framework import serializers
 from rest_framework.request import Request
 
+from build.models import BuildLine
 from common.models import InvenTreeSetting
+from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
 from label.models import LabelTemplate
+from part.models import Part
 from plugin.base.label import label as plugin_label
 from plugin.helpers import MixinNotImplementedError
+from stock.models import StockItem, StockLocation
+
+LabelItemType = Union[StockItem, StockLocation, Part, BuildLine]
 
 
 class LabelPrintingMixin:
@@ -47,7 +56,11 @@ class LabelPrintingMixin:
             label: The LabelTemplate object to render
             request: The HTTP request object which triggered this print job
         """
-        return label.render(request)
+        try:
+            return label.render(request)
+        except Exception as e:
+            log_error('label.render_to_pdf')
+            raise ValidationError(_('Error rendering label to PDF'))
 
     def render_to_html(self, label: LabelTemplate, request, **kwargs):
         """Render this label to HTML format.
@@ -56,10 +69,26 @@ class LabelPrintingMixin:
             label: The LabelTemplate object to render
             request: The HTTP request object which triggered this print job
         """
-        return label.render_as_string(request)
+        try:
+            return label.render_as_string(request)
+        except Exception as e:
+            log_error('label.render_to_html')
+            raise ValidationError(_('Error rendering label to HTML'))
 
     def render_to_png(self, label: LabelTemplate, request=None, **kwargs):
-        """Render this label to PNG format."""
+        """Render this label to PNG format.
+
+        Arguments:
+            label: The LabelTemplate object to render
+            request: The HTTP request object which triggered this print job
+        Keyword Arguments:
+            pdf_data: The raw PDF data of the rendered label (if already rendered)
+            dpi: The DPI to use for the PNG rendering
+            use_cairo (bool): Whether to use the pdftocairo backend for rendering which provides better results in tests,
+                see [#6488](https://github.com/inventree/InvenTree/pull/6488) for details. If False, pdftoppm is used (default: True)
+            pdf2image_kwargs (dict): Additional keyword arguments to pass to the
+                [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes) method (optional)
+        """
         # Check if pdf data is provided
         pdf_data = kwargs.get('pdf_data', None)
 
@@ -68,18 +97,24 @@ class LabelPrintingMixin:
                 self.render_to_pdf(label, request, **kwargs).get_document().write_pdf()
             )
 
-        dpi = kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300))
+        pdf2image_kwargs = {
+            'dpi': kwargs.get('dpi', InvenTreeSetting.get_setting('LABEL_DPI', 300)),
+            'use_pdftocairo': kwargs.get('use_cairo', True),
+            **kwargs.get('pdf2image_kwargs', {}),
+        }
 
         # Convert to png data
-        png = pdf2image.convert_from_bytes(pdf_data, dpi=dpi)[0]
-        return png
+        try:
+            return pdf2image.convert_from_bytes(pdf_data, **pdf2image_kwargs)[0]
+        except Exception as e:
+            log_error('label.render_to_png')
+            raise ValidationError(_('Error rendering label to PNG'))
 
     def print_labels(
         self,
         label: LabelTemplate,
-        items: list,
+        items: QuerySet[LabelItemType],
         request: Request,
-        printing_options: dict,
         **kwargs,
     ):
         """Print one or more labels with the provided template and items.
@@ -121,7 +156,7 @@ class LabelPrintingMixin:
                 'user': user,
                 'width': label.width,
                 'height': label.height,
-                'printing_options': printing_options,
+                'printing_options': kwargs['printing_options'],
             }
 
             if self.BLOCKING_PRINT:

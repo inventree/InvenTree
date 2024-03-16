@@ -3,9 +3,13 @@
 import datetime
 import logging
 
+from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
+from django.views.generic.base import RedirectView
 
+from dj_rest_auth.views import LogoutView
+from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,6 +24,7 @@ from InvenTree.mixins import (
     RetrieveUpdateDestroyAPI,
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
+from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner, RuleSet, check_user_role
 from users.serializers import GroupSerializer, OwnerSerializer
 
@@ -106,6 +111,7 @@ class RoleDetails(APIView):
     """
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     def get(self, request, *args, **kwargs):
         """Return the list of roles / permissions available to the current user."""
@@ -199,10 +205,41 @@ class GroupList(ListCreateAPI):
     ordering_fields = ['name']
 
 
+@extend_schema_view(
+    post=extend_schema(
+        responses={200: OpenApiResponse(description='User successfully logged out')}
+    )
+)
+class Logout(LogoutView):
+    """API view for logging out via API."""
+
+    serializer_class = None
+
+    def post(self, request):
+        """Logout the current user.
+
+        Deletes user token associated with request.
+        """
+        from InvenTree.middleware import get_token_from_request
+
+        if request.user:
+            token_key = get_token_from_request(request)
+
+            if token_key:
+                try:
+                    token = ApiToken.objects.get(key=token_key, user=request.user)
+                    token.delete()
+                except ApiToken.DoesNotExist:
+                    pass
+
+        return super().logout(request)
+
+
 class GetAuthToken(APIView):
     """Return authentication token for an authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
 
     def get(self, request, *args, **kwargs):
         """Return an API token if the user is authenticated.
@@ -228,8 +265,14 @@ class GetAuthToken(APIView):
                 # User is authenticated, and requesting a token against the provided name.
                 token = ApiToken.objects.create(user=request.user, name=name)
 
+                logger.info(
+                    "Created new API token for user '%s' (name='%s')",
+                    user.username,
+                    name,
+                )
+
             # Add some metadata about the request
-            token.set_metadata('user_agent', request.META.get('HTTP_USER_AGENT', ''))
+            token.set_metadata('user_agent', request.headers.get('user-agent', ''))
             token.set_metadata('remote_addr', request.META.get('REMOTE_ADDR', ''))
             token.set_metadata('remote_host', request.META.get('REMOTE_HOST', ''))
             token.set_metadata('remote_user', request.META.get('REMOTE_USER', ''))
@@ -238,9 +281,9 @@ class GetAuthToken(APIView):
 
             data = {'token': token.key, 'name': token.name, 'expiry': token.expiry}
 
-            logger.info(
-                "Created new API token for user '%s' (name='%s')", user.username, name
-            )
+            # Ensure that the users session is logged in (PUI -> CUI login)
+            if not get_user(request).is_authenticated:
+                login(request, user)
 
             return Response(data)
 
@@ -248,24 +291,35 @@ class GetAuthToken(APIView):
             raise exceptions.NotAuthenticated()
 
 
+class LoginRedirect(RedirectView):
+    """Redirect to the correct starting page after backend login."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Return the URL to redirect to."""
+        session = self.request.session
+        if session.get('preferred_method', 'cui') == 'pui':
+            return f'/{FRONTEND_URL_BASE}/logged-in/'
+        return '/index/'
+
+
 user_urls = [
-    re_path(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
-    re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
-    re_path(r'^me/', MeUserDetail.as_view(), name='api-user-me'),
-    re_path(
-        r'^owner/',
+    path('roles/', RoleDetails.as_view(), name='api-user-roles'),
+    path('token/', GetAuthToken.as_view(), name='api-token'),
+    path('me/', MeUserDetail.as_view(), name='api-user-me'),
+    path(
+        'owner/',
         include([
             path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
-            re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
+            path('', OwnerList.as_view(), name='api-owner-list'),
         ]),
     ),
-    re_path(
-        r'^group/',
+    path(
+        'group/',
         include([
             re_path(
                 r'^(?P<pk>[0-9]+)/?$', GroupDetail.as_view(), name='api-group-detail'
             ),
-            re_path(r'^.*$', GroupList.as_view(), name='api-group-list'),
+            path('', GroupList.as_view(), name='api-group-list'),
         ]),
     ),
     re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='api-user-detail'),

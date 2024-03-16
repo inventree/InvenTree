@@ -34,47 +34,59 @@ def getSetting(key, backup_value=None):
     return common.models.InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
-def construct_absolute_url(*arg, **kwargs):
+def get_base_url(request=None):
+    """Return the base URL for the InvenTree server.
+
+    The base URL is determined in the following order of decreasing priority:
+
+    1. If a request object is provided, use the request URL
+    2. Multi-site is enabled, and the current site has a valid URL
+    3. If settings.SITE_URL is set (e.g. in the Django settings), use that
+    4. If the InvenTree setting INVENTREE_BASE_URL is set, use that
+    """
+    # Check if a request is provided
+    if request:
+        return request.build_absolute_uri('/')
+
+    # Check if multi-site is enabled
+    try:
+        from django.contrib.sites.models import Site
+
+        return Site.objects.get_current().domain
+    except (ImportError, RuntimeError):
+        pass
+
+    # Check if a global site URL is provided
+    if site_url := getattr(settings, 'SITE_URL', None):
+        return site_url
+
+    # Check if a global InvenTree setting is provided
+    try:
+        if site_url := common.models.InvenTreeSetting.get_setting(
+            'INVENTREE_BASE_URL', create=False, cache=False
+        ):
+            return site_url
+    except (ProgrammingError, OperationalError):
+        pass
+
+    # No base URL available
+    return ''
+
+
+def construct_absolute_url(*arg, base_url=None, request=None):
     """Construct (or attempt to construct) an absolute URL from a relative URL.
 
-    This is useful when (for example) sending an email to a user with a link
-    to something in the InvenTree web framework.
-    A URL is constructed in the following order:
-    1. If settings.SITE_URL is set (e.g. in the Django settings), use that
-    2. If the InvenTree setting INVENTREE_BASE_URL is set, use that
-    3. Otherwise, use the current request URL (if available)
+    Args:
+        *arg: The relative URL to construct
+        base_url: The base URL to use for the construction (if not provided, will attempt to determine from settings)
+        request: The request object to use for the construction (optional)
     """
     relative_url = '/'.join(arg)
 
-    # If a site URL is provided, use that
-    site_url = getattr(settings, 'SITE_URL', None)
+    if not base_url:
+        base_url = get_base_url(request=request)
 
-    if not site_url:
-        # Otherwise, try to use the InvenTree setting
-        try:
-            site_url = common.models.InvenTreeSetting.get_setting(
-                'INVENTREE_BASE_URL', create=False, cache=False
-            )
-        except (ProgrammingError, OperationalError):
-            pass
-
-    if not site_url:
-        # Otherwise, try to use the current request
-        request = kwargs.get('request', None)
-
-        if request:
-            site_url = request.build_absolute_uri('/')
-
-    if not site_url:
-        # No site URL available, return the relative URL
-        return relative_url
-
-    return urljoin(site_url, relative_url)
-
-
-def get_base_url(**kwargs):
-    """Return the base URL for the InvenTree server."""
-    return construct_absolute_url('', **kwargs)
+    return urljoin(base_url, relative_url)
 
 
 def download_image_from_url(remote_url, timeout=2.5):
@@ -192,6 +204,7 @@ def render_currency(
     currency=None,
     min_decimal_places=None,
     max_decimal_places=None,
+    include_symbol=True,
 ):
     """Render a currency / Money object to a formatted string (e.g. for reports).
 
@@ -201,6 +214,7 @@ def render_currency(
         currency: Optionally convert to the specified currency
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
+        include_symbol: If True, include the currency symbol in the output
     """
     if money in [None, '']:
         return '-'
@@ -246,7 +260,9 @@ def render_currency(
 
     decimal_places = max(decimal_places, max_decimal_places)
 
-    return format_money(money, decimal_places=decimal_places)
+    return format_money(
+        money, decimal_places=decimal_places, include_symbol=include_symbol
+    )
 
 
 def getModelsWithMixin(mixin_class) -> list:
@@ -287,6 +303,11 @@ def notify_responsible(
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
+    import InvenTree.ready
+
+    if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+        return
+
     notify_users(
         [instance.responsible], instance, sender, content=content, exclude=exclude
     )

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import logging
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import MinValueValidator
@@ -24,21 +26,15 @@ from mptt.models import MPTTModel, TreeForeignKey
 from taggit.managers import TaggableManager
 
 import common.models
+import InvenTree.exceptions
 import InvenTree.helpers
+import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import label.models
 import report.models
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from InvenTree.models import (
-    InvenTreeAttachment,
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    InvenTreeTree,
-    MetadataMixin,
-    extract_int,
-)
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockHistoryCode,
@@ -49,8 +45,10 @@ from part import models as PartModels
 from plugin.events import trigger_event
 from users.models import Owner
 
+logger = logging.getLogger('inventree')
 
-class StockLocationType(MetadataMixin, models.Model):
+
+class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
     """A type of stock location like Warehouse, room, shelf, drawer.
 
     Attributes:
@@ -104,10 +102,13 @@ class StockLocationManager(TreeManager):
 
         - Joins the StockLocationType by default for speedier icon access
         """
-        return super().get_queryset().select_related('location_type')
+        # return super().get_queryset().select_related("location_type")
+        return super().get_queryset()
 
 
-class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
+class StockLocation(
+    InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeTree
+):
     """Organization tree for StockItem objects.
 
     A "StockLocation" can be considered a warehouse, or storage location
@@ -185,7 +186,7 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
     )
 
     @property
-    def icon(self):
+    def icon(self) -> str:
         """Get the current icon used for this location.
 
         The icon field on this model takes precedences over the possibly assigned stock location type
@@ -258,7 +259,9 @@ class StockLocation(InvenTreeBarcodeMixin, MetadataMixin, InvenTreeTree):
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return reverse('stock-location-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('stock-location-detail', kwargs={'pk': self.id})
+        return InvenTree.helpers.pui_url(f'/stock/location/{self.id}')
 
     def get_stock_items(self, cascade=True):
         """Return a queryset for all stock items under this category.
@@ -325,8 +328,9 @@ def generate_batch_code():
         'year': now.year,
         'month': now.month,
         'day': now.day,
-        'hour': now.minute,
+        'hour': now.hour,
         'minute': now.minute,
+        'week': now.isocalendar()[1],
     }
 
     return Template(batch_template).render(context)
@@ -348,9 +352,10 @@ def default_delete_on_deplete():
 
 
 class StockItem(
-    InvenTreeBarcodeMixin,
-    InvenTreeNotesMixin,
-    MetadataMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PluginValidationMixin,
     common.models.MetaMixin,
     MPTTModel,
 ):
@@ -446,7 +451,7 @@ class StockItem(
         serial_int = 0
 
         if serial not in [None, '']:
-            serial_int = extract_int(serial)
+            serial_int = InvenTree.helpers.extract_int(serial)
 
         self.serial_int = serial_int
 
@@ -600,6 +605,10 @@ class StockItem(
                 plugin.validate_batch_code(self.batch, self)
             except ValidationError as exc:
                 raise ValidationError({'batch': exc.message})
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugin.{plugin.slug}.validate_batch_code'
+                )
 
     def clean(self):
         """Validate the StockItem object (separate to field validation).
@@ -721,7 +730,9 @@ class StockItem(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return reverse('stock-item-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('stock-item-detail', kwargs={'pk': self.id})
+        return InvenTree.helpers.pui_url(f'/stock/item/{self.id}')
 
     def get_part_name(self):
         """Returns part name."""
@@ -1544,6 +1555,54 @@ class StockItem(
             result.stock_item = self
             result.save()
 
+    def add_test_result(self, create_template=True, **kwargs):
+        """Helper function to add a new StockItemTestResult.
+
+        The main purpose of this function is to allow lookup of the template,
+        based on the provided test name.
+
+        If no template is found, a new one is created (if create_template=True).
+
+        Args:
+            create_template: If True, create a new template if it does not exist
+
+        kwargs:
+            template: The ID of the associated PartTestTemplate
+            test_name: The name of the test (if the template is not provided)
+            result: The result of the test
+            value: The value of the test
+            user: The user who performed the test
+            notes: Any notes associated with the test
+        """
+        template = kwargs.get('template', None)
+        test_name = kwargs.pop('test_name', None)
+
+        test_key = InvenTree.helpers.generateTestKey(test_name)
+
+        if template is None and test_name is not None:
+            # Attempt to find a matching template
+
+            ancestors = self.part.get_ancestors(include_self=True)
+
+            template = PartModels.PartTestTemplate.objects.filter(
+                part__tree_id=self.part.tree_id, part__in=ancestors, key=test_key
+            ).first()
+
+            if template is None:
+                if create_template:
+                    template = PartModels.PartTestTemplate.objects.create(
+                        part=self.part, test_name=test_name
+                    )
+                else:
+                    raise ValidationError({
+                        'template': _('Test template does not exist')
+                    })
+
+        kwargs['template'] = template
+        kwargs['stock_item'] = self
+
+        return StockItemTestResult.objects.create(**kwargs)
+
     def can_merge(self, other=None, raise_error=False, **kwargs):
         """Check if this stock item can be merged into another stock item."""
         allow_mismatched_suppliers = kwargs.get('allow_mismatched_suppliers', False)
@@ -1617,6 +1676,9 @@ class StockItem(
         if len(other_items) == 0:
             return
 
+        # Keep track of the tree IDs that are being merged
+        tree_ids = {self.tree_id}
+
         user = kwargs.get('user', None)
         location = kwargs.get('location', None)
         notes = kwargs.get('notes', None)
@@ -1627,6 +1689,8 @@ class StockItem(
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
                 return
+
+            tree_ids.add(other.tree_id)
 
         for other in other_items:
             self.quantity += other.quantity
@@ -1658,6 +1722,14 @@ class StockItem(
 
         self.location = location
         self.save()
+
+        # Rebuild stock trees as required
+        try:
+            for tree_id in tree_ids:
+                StockItem.objects.partial_rebuild(tree_id=tree_id)
+        except Exception:
+            logger.warning('Rebuilding entire StockItem tree')
+            StockItem.objects.rebuild()
 
     @transaction.atomic
     def splitStock(self, quantity, location=None, user=None, **kwargs):
@@ -1706,8 +1778,11 @@ class StockItem(
         # Nullify the PK so a new record is created
         new_stock = StockItem.objects.get(pk=self.pk)
         new_stock.pk = None
-        new_stock.parent = self
         new_stock.quantity = quantity
+
+        # Update the new stock item to ensure the tree structure is observed
+        new_stock.parent = self
+        new_stock.level = self.level + 1
 
         # Move to the new location if specified, otherwise use current location
         if location:
@@ -1747,6 +1822,19 @@ class StockItem(
             location=location,
             stockitem=new_stock,
         )
+
+        # Rebuild the tree for this parent item
+        try:
+            StockItem.objects.partial_rebuild(tree_id=self.tree_id)
+        except Exception:
+            logger.warning('Rebuilding entire StockItem tree')
+            StockItem.objects.rebuild()
+
+        # Attempt to reload the new item from the database
+        try:
+            new_stock.refresh_from_db()
+        except Exception:
+            pass
 
         # Return a copy of the "new" stock item
         return new_stock
@@ -1972,19 +2060,24 @@ class StockItem(
 
         results.delete()
 
-    def getTestResults(self, test=None, result=None, user=None):
+    def getTestResults(self, template=None, test=None, result=None, user=None):
         """Return all test results associated with this StockItem.
 
         Optionally can filter results by:
+        - Test template ID
         - Test name
         - Test result
         - User
         """
         results = self.test_results
 
+        if template:
+            results = results.filter(template=template)
+
         if test:
             # Filter by test name
-            results = results.filter(test=test)
+            test_key = InvenTree.helpers.generateTestKey(test)
+            results = results.filter(template__key=test_key)
 
         if result is not None:
             # Filter by test status
@@ -2015,8 +2108,7 @@ class StockItem(
         result_map = {}
 
         for result in results:
-            key = InvenTree.helpers.generateTestKey(result.test)
-            result_map[key] = result
+            result_map[result.key] = result
 
         # Do we wish to "cascade" and include test results from installed stock items?
         cascade = kwargs.get('cascade', False)
@@ -2076,7 +2168,7 @@ class StockItem(
 
     def hasRequiredTests(self):
         """Return True if there are any 'required tests' associated with this StockItem."""
-        return self.part.getRequiredTests().count() > 0
+        return self.required_test_count > 0
 
     def passedAllRequiredTests(self):
         """Returns True if this StockItem has passed all required tests."""
@@ -2173,7 +2265,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
             instance.part.schedule_pricing_update(create=True)
 
 
-class StockItemAttachment(InvenTreeAttachment):
+class StockItemAttachment(InvenTree.models.InvenTreeAttachment):
     """Model for storing file attachments against a StockItem object."""
 
     @staticmethod
@@ -2190,7 +2282,7 @@ class StockItemAttachment(InvenTreeAttachment):
     )
 
 
-class StockItemTracking(models.Model):
+class StockItemTracking(InvenTree.models.InvenTreeModel):
     """Stock tracking entry - used for tracking history of a particular StockItem.
 
     Note: 2021-05-11
@@ -2217,7 +2309,9 @@ class StockItemTracking(models.Model):
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return f'/stock/track/{self.id}'
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return f'/stock/track/{self.id}'
+        return InvenTree.helpers.pui_url(f'/stock/item/{self.item.id}')
 
     def label(self):
         """Return label."""
@@ -2254,7 +2348,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
     )
 
 
-class StockItemTestResult(MetadataMixin, models.Model):
+class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
 
     This is useful for tracking unit acceptance tests, and particularly useful when integrated
@@ -2264,7 +2358,7 @@ class StockItemTestResult(MetadataMixin, models.Model):
 
     Attributes:
         stock_item: Link to StockItem
-        test: Test name (simple string matching)
+        template: Link to TestTemplate
         result: Test result value (pass / fail / etc)
         value: Recorded test output value (optional)
         attachment: Link to StockItem attachment (optional)
@@ -2272,6 +2366,10 @@ class StockItemTestResult(MetadataMixin, models.Model):
         user: User who uploaded the test result
         date: Date the test result was recorded
     """
+
+    def __str__(self):
+        """Return string representation."""
+        return f'{self.test_name} - {self.result}'
 
     @staticmethod
     def get_api_url():
@@ -2312,14 +2410,22 @@ class StockItemTestResult(MetadataMixin, models.Model):
     @property
     def key(self):
         """Return key for test."""
-        return InvenTree.helpers.generateTestKey(self.test)
+        return InvenTree.helpers.generateTestKey(self.test_name)
 
     stock_item = models.ForeignKey(
         StockItem, on_delete=models.CASCADE, related_name='test_results'
     )
 
-    test = models.CharField(
-        blank=False, max_length=100, verbose_name=_('Test'), help_text=_('Test name')
+    @property
+    def test_name(self):
+        """Return the test name of the associated test template."""
+        return self.template.test_name
+
+    template = models.ForeignKey(
+        'part.parttesttemplate',
+        on_delete=models.CASCADE,
+        blank=False,
+        related_name='test_results',
     )
 
     result = models.BooleanField(

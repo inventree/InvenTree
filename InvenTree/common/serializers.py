@@ -1,7 +1,10 @@
 """JSON serializers for common components."""
 
+from django.db.models import OuterRef, Subquery
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
+import django_q.models
 from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
@@ -55,6 +58,10 @@ class SettingsSerializer(InvenTreeModelSerializer):
     value = SettingsValueField()
 
     units = serializers.CharField(read_only=True)
+
+    required = serializers.BooleanField(read_only=True)
+
+    typ = serializers.CharField(read_only=True)
 
     def get_choices(self, obj):
         """Returns the choices available for a given item."""
@@ -145,6 +152,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'model_name',
                 'api_url',
                 'typ',
+                'required',
             ]
 
         # set Meta class
@@ -192,7 +200,7 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     read = serializers.BooleanField()
 
-    def get_target(self, obj):
+    def get_target(self, obj) -> dict:
         """Function to resolve generic object reference to target."""
         target = get_objectreference(obj, 'target_content_type', 'target_object_id')
 
@@ -214,7 +222,7 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
         return target
 
-    def get_source(self, obj):
+    def get_source(self, obj) -> dict:
         """Function to resolve generic object reference to source."""
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 
@@ -316,3 +324,120 @@ class ErrorMessageSerializer(InvenTreeModelSerializer):
         fields = ['when', 'info', 'data', 'path', 'pk']
 
         read_only_fields = ['when', 'info', 'data', 'path', 'pk']
+
+
+class TaskOverviewSerializer(serializers.Serializer):
+    """Serializer for background task overview."""
+
+    is_running = serializers.BooleanField(
+        label=_('Is Running'),
+        help_text='Boolean value to indicate if the background worker process is running.',
+        read_only=True,
+    )
+
+    pending_tasks = serializers.IntegerField(
+        label=_('Pending Tasks'),
+        help_text='Number of active background tasks',
+        read_only=True,
+    )
+
+    scheduled_tasks = serializers.IntegerField(
+        label=_('Scheduled Tasks'),
+        help_text='Number of scheduled background tasks',
+        read_only=True,
+    )
+
+    failed_tasks = serializers.IntegerField(
+        label=_('Failed Tasks'),
+        help_text='Number of failed background tasks',
+        read_only=True,
+    )
+
+
+class PendingTaskSerializer(InvenTreeModelSerializer):
+    """Serializer for an individual pending task object."""
+
+    class Meta:
+        """Metaclass options for the serializer."""
+
+        model = django_q.models.OrmQ
+        fields = ['pk', 'key', 'lock', 'task_id', 'name', 'func', 'args', 'kwargs']
+
+    task_id = serializers.CharField(label=_('Task ID'), help_text=_('Unique task ID'))
+
+    lock = serializers.DateTimeField(label=_('Lock'), help_text=_('Lock time'))
+
+    name = serializers.CharField(label=_('Name'), help_text=_('Task name'))
+
+    func = serializers.CharField(label=_('Function'), help_text=_('Function name'))
+
+    args = serializers.CharField(label=_('Arguments'), help_text=_('Task arguments'))
+
+    kwargs = serializers.CharField(
+        label=_('Keyword Arguments'), help_text=_('Task keyword arguments')
+    )
+
+
+class ScheduledTaskSerializer(InvenTreeModelSerializer):
+    """Serializer for an individual scheduled task object."""
+
+    class Meta:
+        """Metaclass options for the serializer."""
+
+        model = django_q.models.Schedule
+        fields = [
+            'pk',
+            'name',
+            'func',
+            'args',
+            'kwargs',
+            'schedule_type',
+            'repeats',
+            'last_run',
+            'next_run',
+            'success',
+            'task',
+        ]
+
+    last_run = serializers.DateTimeField()
+    success = serializers.BooleanField()
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Add custom annotations to the queryset.
+
+        - last_run: The last time the task was run
+        - success: The outcome status of the last run
+        """
+        task = django_q.models.Task.objects.filter(id=OuterRef('task'))
+
+        queryset = queryset.annotate(
+            last_run=Subquery(task.values('started')[:1]),
+            success=Subquery(task.values('success')[:1]),
+        )
+
+        return queryset
+
+
+class FailedTaskSerializer(InvenTreeModelSerializer):
+    """Serializer for an individual failed task object."""
+
+    class Meta:
+        """Metaclass options for the serializer."""
+
+        model = django_q.models.Failure
+        fields = [
+            'pk',
+            'name',
+            'func',
+            'args',
+            'kwargs',
+            'started',
+            'stopped',
+            'attempt_count',
+            'result',
+        ]
+
+    pk = serializers.CharField(source='id', read_only=True)
+
+    result = serializers.CharField()

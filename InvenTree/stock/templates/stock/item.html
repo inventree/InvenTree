@@ -183,7 +183,10 @@
 
     $('#stock-item-install').click(function() {
 
+        {% settings_value "STOCK_ENFORCE_BOM_INSTALLATION" as enforce_bom %}
+
         installStockItem({{ item.pk }}, {{ item.part.pk }}, {
+            enforce_bom: {% js_bool enforce_bom %},
             onSuccess: function(response) {
                 $("#installed-table").bootstrapTable('refresh');
             }
@@ -196,6 +199,7 @@
             stock_item: {{ item.pk }},
             part: {{ item.part.pk }},
             quantity: {{ item.quantity|unlocalize }},
+            can_edit: {% js_bool roles.stock.change %},
         }
     );
 
@@ -276,7 +280,7 @@
                         },
                         multi_delete: true,
                         method: 'DELETE',
-                        title: '{% trans "Delete Test Data" %}',
+                        title: '{% trans "Delete Test Data" escape %}',
                         preFormContent: html,
                         refreshTable: '#test-result-table',
                     });
@@ -291,9 +295,10 @@
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
             fields: stockItemTestResultFields({
+                part: {{ item.part.pk }},
                 stock_item: {{ item.pk }},
             }),
-            title: '{% trans "Add Test Result" %}',
+            title: '{% trans "Add Test Result" escape %}',
             refreshTable: '#test-result-table',
         });
     });
