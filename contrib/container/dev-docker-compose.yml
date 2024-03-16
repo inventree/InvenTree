@@ -40,6 +40,7 @@ services:
           - inventree-dev-db
         build: &build_config
             context: .
+            dockerfile: contrib/container/Dockerfile
             target: dev
         # Cache the built image to be used by the inventree-dev-worker process
         image: inventree-dev-image
