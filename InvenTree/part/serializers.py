@@ -81,6 +81,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'url',
             'structural',
             'icon',
+            'parent_default_location',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -105,6 +106,10 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
             subcategories=part.filters.annotate_sub_categories(),
         )
 
+        queryset = queryset.annotate(
+            parent_default_location=part.filters.annotate_default_location('parent__')
+        )
+
         return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -120,6 +125,8 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
     path = serializers.ListField(
         child=serializers.DictField(), source='get_path', read_only=True
     )
+
+    parent_default_location = serializers.IntegerField(read_only=True)
 
 
 class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
@@ -283,6 +290,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pk',
             'IPN',
             'barcode_hash',
+            'category_default_location',
             'default_location',
             'name',
             'revision',
@@ -313,6 +321,8 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         if not pricing:
             self.fields.pop('pricing_min')
             self.fields.pop('pricing_max')
+
+    category_default_location = serializers.IntegerField(read_only=True)
 
     image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
@@ -611,6 +621,7 @@ class PartSerializer(
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
             'building',
+            'category_default_location',
             'in_stock',
             'ordering',
             'required_for_build_orders',
@@ -766,6 +777,12 @@ class PartSerializer(
             required_for_sales_orders=part.filters.annotate_sales_order_requirements(),
         )
 
+        queryset = queryset.annotate(
+            category_default_location=part.filters.annotate_default_location(
+                'category__'
+            )
+        )
+
         return queryset
 
     def get_starred(self, part) -> bool:
@@ -805,6 +822,7 @@ class PartSerializer(
     unallocated_stock = serializers.FloatField(
         read_only=True, label=_('Unallocated Stock')
     )
+    category_default_location = serializers.IntegerField(read_only=True)
     variant_stock = serializers.FloatField(read_only=True, label=_('Variant Stock'))
 
     minimum_stock = serializers.FloatField()

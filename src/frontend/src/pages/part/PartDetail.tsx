@@ -26,7 +26,6 @@ import {
   IconStack2,
   IconTestPipe,
   IconTools,
-  IconTransfer,
   IconTruckDelivery,
   IconVersions
 } from '@tabler/icons-react';
@@ -58,6 +57,12 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
+import {
+  StockOperationProps,
+  useCountStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -130,6 +135,13 @@ export default function PartDetail() {
         label: t`Default Location`,
         model: ModelType.stocklocation,
         hidden: !part.default_location
+      },
+      {
+        type: 'link',
+        name: 'category_default_location',
+        label: t`Category Default Location`,
+        model: ModelType.stocklocation,
+        hidden: part.default_location || !part.category_default_location
       },
       {
         type: 'string',
@@ -460,10 +472,10 @@ export default function PartDetail() {
         name: 'stock',
         label: t`Stock`,
         icon: <IconPackages />,
-        content: (
+        content: part.pk && (
           <StockItemTable
             params={{
-              part: part.pk ?? -1
+              part: part.pk
             }}
           />
         )
@@ -631,8 +643,18 @@ export default function PartDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const stockActionProps: StockOperationProps = useMemo(() => {
+    return {
+      pk: part.pk,
+      model: ModelType.part,
+      refresh: refreshInstance
+    };
+  }, [part]);
+
+  const countStockItems = useCountStockItem(stockActionProps);
+  const transferStockItems = useTransferStockItem(stockActionProps);
+
   const partActions = useMemo(() => {
-    // TODO: Disable actions based on user permissions
     return [
       <BarcodeActionDropdown
         actions={[
@@ -651,14 +673,26 @@ export default function PartDetail() {
         icon={<IconPackages />}
         actions={[
           {
-            icon: <IconClipboardList color="blue" />,
+            icon: (
+              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+            ),
             name: t`Count Stock`,
-            tooltip: t`Count part stock`
+            tooltip: t`Count part stock`,
+            hidden: !user.hasChangeRole(UserRoles.stock),
+            onClick: () => {
+              part.pk && countStockItems.open();
+            }
           },
           {
-            icon: <IconTransfer color="blue" />,
+            icon: (
+              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+            ),
             name: t`Transfer Stock`,
-            tooltip: t`Transfer part stock`
+            tooltip: t`Transfer part stock`,
+            hidden: !user.hasChangeRole(UserRoles.stock),
+            onClick: () => {
+              part.pk && transferStockItems.open();
+            }
           }
         ]}
       />,
@@ -667,13 +701,15 @@ export default function PartDetail() {
         tooltip={t`Part Actions`}
         icon={<IconDots />}
         actions={[
-          DuplicateItemAction({}),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.part)
+          }),
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.part),
             onClick: () => editPart.open()
           }),
           DeleteItemAction({
-            hidden: part?.active
+            hidden: part?.active || !user.hasDeleteRole(UserRoles.part)
           })
         ]}
       />
@@ -704,6 +740,8 @@ export default function PartDetail() {
           actions={partActions}
         />
         <PanelGroup pageKey="part" panels={partPanels} />
+        {transferStockItems.modal}
+        {countStockItems.modal}
       </Stack>
     </>
   );

@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { api } from '../../../../App';
@@ -36,7 +36,16 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         );
 
         if (preview.status !== 200) {
-          if (preview.data?.non_field_errors) {
+          if (templateType === 'report') {
+            let data;
+            try {
+              data = JSON.parse(await preview.data.text());
+            } catch (err) {
+              throw new Error(t`Failed to parse error response from server.`);
+            }
+
+            throw new Error(data.detail?.join(', '));
+          } else if (preview.data?.non_field_errors) {
             throw new Error(preview.data?.non_field_errors.join(', '));
           }
 

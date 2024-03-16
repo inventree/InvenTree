@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconCategory,
+  IconDots,
   IconInfoCircle,
   IconListDetails,
   IconSitemap
@@ -11,12 +12,20 @@ import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import {
+  ActionDropdown,
+  EditItemAction
+} from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { partCategoryFields } from '../../forms/PartForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
 import { PartListTable } from '../../tables/part/PartTable';
@@ -32,6 +41,8 @@ export default function CategoryDetail({}: {}) {
     () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
     [_id]
   );
+
+  const user = useUserState();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -104,6 +115,20 @@ export default function CategoryDetail({}: {}) {
         name: 'structural',
         label: t`Structural`,
         icon: 'sitemap'
+      },
+      {
+        type: 'link',
+        name: 'parent_default_location',
+        label: t`Parent default location`,
+        model: ModelType.stocklocation,
+        hidden: !category.parent_default_location || category.default_location
+      },
+      {
+        type: 'link',
+        name: 'default_location',
+        label: t`Default location`,
+        model: ModelType.stocklocation,
+        hidden: !category.default_location
       }
     ];
 
@@ -118,6 +143,31 @@ export default function CategoryDetail({}: {}) {
       </ItemDetailsGrid>
     );
   }, [category, instanceQuery]);
+
+  const editCategory = useEditApiFormModal({
+    url: ApiEndpoints.category_list,
+    pk: id,
+    title: t`Edit Part Category`,
+    fields: partCategoryFields({}),
+    onFormSuccess: refreshInstance
+  });
+
+  const categoryActions = useMemo(() => {
+    return [
+      <ActionDropdown
+        key="category"
+        tooltip={t`Category Actions`}
+        icon={<IconDots />}
+        actions={[
+          EditItemAction({
+            hidden: !id || !user.hasChangeRole(UserRoles.part_category),
+            tooltip: t`Edit Part Category`,
+            onClick: () => editCategory.open()
+          })
+        ]}
+      />
+    ];
+  }, [id, user]);
 
   const categoryPanels: PanelType[] = useMemo(
     () => [
@@ -170,24 +220,28 @@ export default function CategoryDetail({}: {}) {
   );
 
   return (
-    <Stack spacing="xs">
-      <LoadingOverlay visible={instanceQuery.isFetching} />
-      <PartCategoryTree
-        opened={treeOpen}
-        onClose={() => {
-          setTreeOpen(false);
-        }}
-        selectedCategory={category?.pk}
-      />
-      <PageDetail
-        title={t`Part Category`}
-        detail={<Text>{category.name ?? 'Top level'}</Text>}
-        breadcrumbs={breadcrumbs}
-        breadcrumbAction={() => {
-          setTreeOpen(true);
-        }}
-      />
-      <PanelGroup pageKey="partcategory" panels={categoryPanels} />
-    </Stack>
+    <>
+      {editCategory.modal}
+      <Stack spacing="xs">
+        <LoadingOverlay visible={instanceQuery.isFetching} />
+        <PartCategoryTree
+          opened={treeOpen}
+          onClose={() => {
+            setTreeOpen(false);
+          }}
+          selectedCategory={category?.pk}
+        />
+        <PageDetail
+          title={t`Part Category`}
+          detail={<Text>{category.name ?? 'Top level'}</Text>}
+          breadcrumbs={breadcrumbs}
+          breadcrumbAction={() => {
+            setTreeOpen(true);
+          }}
+          actions={categoryActions}
+        />
+        <PanelGroup pageKey="partcategory" panels={categoryPanels} />
+      </Stack>
+    </>
   );
 }

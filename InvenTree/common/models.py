@@ -1653,6 +1653,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'REPORT_LOG_ERRORS': {
+            'name': _('Log Report Errors'),
+            'description': _('Log errors which occur when generating reports'),
+            'default': False,
+            'validator': bool,
+        },
         'REPORT_DEFAULT_PAGE_SIZE': {
             'name': _('Page Size'),
             'description': _('Default page size for PDF reports'),
@@ -1742,6 +1748,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Show Installed Stock Items'),
             'description': _('Display installed stock items in stock tables'),
             'default': False,
+            'validator': bool,
+        },
+        'STOCK_ENFORCE_BOM_INSTALLATION': {
+            'name': _('Check BOM when installing items'),
+            'description': _(
+                'Installed stock items must exist in the BOM for the parent part'
+            ),
+            'default': True,
             'validator': bool,
         },
         'BUILDORDER_REFERENCE_PATTERN': {

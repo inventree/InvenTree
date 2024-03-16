@@ -458,7 +458,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
           ))}
           <Button
             onClick={form.handleSubmit(submitForm, onFormError)}
-            variant="outline"
+            variant="filled"
             radius="sm"
             color={props.submitColor ?? 'green'}
             disabled={isLoading || (props.fetchInitialData && !isDirty)}

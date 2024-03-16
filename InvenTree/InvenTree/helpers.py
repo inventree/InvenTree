@@ -1,5 +1,6 @@
 """Provides helper functions used throughout the InvenTree project."""
 
+import datetime
 import hashlib
 import io
 import json
@@ -11,6 +12,7 @@ from decimal import Decimal, InvalidOperation
 from typing import TypeVar
 from wsgiref.util import FileWrapper
 
+import django.utils.timezone as timezone
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
@@ -18,6 +20,7 @@ from django.core.files.storage import default_storage
 from django.http import StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _
 
+import pytz
 import regex
 from bleach import clean
 from djmoney.money import Money
@@ -861,6 +864,56 @@ def hash_barcode(barcode_data):
 def hash_file(filename: str):
     """Return the MD5 hash of a file."""
     return hashlib.md5(open(filename, 'rb').read()).hexdigest()
+
+
+def server_timezone() -> str:
+    """Return the timezone of the server as a string.
+
+    e.g. "UTC" / "Australia/Sydney" etc
+    """
+    return settings.TIME_ZONE
+
+
+def to_local_time(time, target_tz: str = None):
+    """Convert the provided time object to the local timezone.
+
+    Arguments:
+        time: The time / date to convert
+        target_tz: The desired timezone (string) - defaults to server time
+
+    Returns:
+        A timezone aware datetime object, with the desired timezone
+
+    Raises:
+        TypeError: If the provided time object is not a datetime or date object
+    """
+    if isinstance(time, datetime.datetime):
+        pass
+    elif isinstance(time, datetime.date):
+        time = timezone.datetime(year=time.year, month=time.month, day=time.day)
+    else:
+        raise TypeError(
+            f'Argument must be a datetime or date object (found {type(time)}'
+        )
+
+    # Extract timezone information from the provided time
+    source_tz = getattr(time, 'tzinfo', None)
+
+    if not source_tz:
+        # Default to UTC if not provided
+        source_tz = pytz.utc
+
+    if not target_tz:
+        target_tz = server_timezone()
+
+    try:
+        target_tz = pytz.timezone(str(target_tz))
+    except pytz.UnknownTimeZoneError:
+        target_tz = pytz.utc
+
+    target_time = time.replace(tzinfo=source_tz).astimezone(target_tz)
+
+    return target_time
 
 
 def get_objectreference(

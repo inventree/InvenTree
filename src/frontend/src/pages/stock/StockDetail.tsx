@@ -11,9 +11,6 @@ import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconCircleCheck,
-  IconCircleMinus,
-  IconCirclePlus,
   IconCopy,
   IconDots,
   IconHistory,
@@ -21,8 +18,7 @@ import {
   IconNotes,
   IconPackages,
   IconPaperclip,
-  IconSitemap,
-  IconTransfer
+  IconSitemap
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -46,11 +42,20 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useEditStockItem } from '../../forms/StockForms';
+import {
+  StockOperationProps,
+  useAddStockItem,
+  useCountStockItem,
+  useEditStockItem,
+  useRemoveStockItem,
+  useTransferStockItem
+} from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 
@@ -160,6 +165,14 @@ export default function StockDetail() {
         type: 'link',
         name: 'belongs_to',
         label: t`Installed In`,
+        model_formatter: (model: any) => {
+          let text = model?.part_detail?.full_name ?? model?.name;
+          if (model.serial && model.quantity == 1) {
+            text += `# ${model.serial}`;
+          }
+
+          return text;
+        },
         model: ModelType.stockitem,
         hidden: !stockitem.belongs_to
       },
@@ -255,7 +268,8 @@ export default function StockDetail() {
         name: 'installed_items',
         label: t`Installed Items`,
         icon: <IconBoxPadding />,
-        hidden: !stockitem?.part_detail?.assembly
+        hidden: !stockitem?.part_detail?.assembly,
+        content: <InstalledItemsTable parentId={stockitem.pk} />
       },
       {
         name: 'child_items',
@@ -300,7 +314,7 @@ export default function StockDetail() {
       { name: t`Stock`, url: '/stock' },
       ...(stockitem.location_path ?? []).map((l: any) => ({
         name: l.name,
-        url: `/stock/location/${l.pk}`
+        url: apiUrl(ApiEndpoints.stock_location_list, l.pk)
       }))
     ],
     [stockitem]
@@ -310,6 +324,19 @@ export default function StockDetail() {
     item_id: stockitem.pk,
     callback: () => refreshInstance()
   });
+
+  const stockActionProps: StockOperationProps = useMemo(() => {
+    return {
+      items: stockitem,
+      model: ModelType.stockitem,
+      refresh: refreshInstance
+    };
+  }, [stockitem]);
+
+  const countStockItem = useCountStockItem(stockActionProps);
+  const addStockItem = useAddStockItem(stockActionProps);
+  const removeStockItem = useRemoveStockItem(stockActionProps);
+  const transferStockItem = useTransferStockItem(stockActionProps);
 
   const stockActions = useMemo(
     () => /* TODO: Disable actions based on user permissions*/ [
@@ -332,22 +359,38 @@ export default function StockDetail() {
           {
             name: t`Count`,
             tooltip: t`Count stock`,
-            icon: <IconCircleCheck color="green" />
+            icon: (
+              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+            ),
+            onClick: () => {
+              stockitem.pk && countStockItem.open();
+            }
           },
           {
             name: t`Add`,
             tooltip: t`Add stock`,
-            icon: <IconCirclePlus color="green" />
+            icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
+            onClick: () => {
+              stockitem.pk && addStockItem.open();
+            }
           },
           {
             name: t`Remove`,
             tooltip: t`Remove stock`,
-            icon: <IconCircleMinus color="red" />
+            icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
+            onClick: () => {
+              stockitem.pk && removeStockItem.open();
+            }
           },
           {
             name: t`Transfer`,
             tooltip: t`Transfer stock`,
-            icon: <IconTransfer color="blue" />
+            icon: (
+              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+            ),
+            onClick: () => {
+              stockitem.pk && transferStockItem.open();
+            }
           }
         ]}
       />,
@@ -361,11 +404,7 @@ export default function StockDetail() {
             tooltip: t`Duplicate stock item`,
             icon: <IconCopy />
           },
-          EditItemAction({
-            onClick: () => {
-              stockitem.pk && editStockItem.open();
-            }
-          }),
+          EditItemAction({}),
           DeleteItemAction({})
         ]}
       />
@@ -398,6 +437,10 @@ export default function StockDetail() {
       />
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
       {editStockItem.modal}
+      {countStockItem.modal}
+      {addStockItem.modal}
+      {removeStockItem.modal}
+      {transferStockItem.modal}
     </Stack>
   );
 }
