@@ -393,7 +393,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     <Stack>
       {/* Attempt at making fixed footer with scroll area */}
       {/* Has some issues at low resolutions still */}
-      <Stack h={'60vh'}>
+      <Stack mah={'60vh'}>
         <ScrollArea.Autosize mah={'100%'}>
           {/* Form Fields */}
           <Stack spacing="sm">

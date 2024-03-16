@@ -1,5 +1,13 @@
 import { Trans, t } from '@lingui/macro';
-import { Alert, List, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import {
+  Alert,
+  List,
+  LoadingOverlay,
+  Spoiler,
+  Stack,
+  Text,
+  Title
+} from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -120,25 +128,29 @@ export function UserDrawer({
         id={`user-detail-drawer-${id}`}
       />
 
-      <Title order={5}>
-        <Trans>Groups</Trans>
-      </Title>
-      <Text ml={'md'}>
-        {userDetail?.groups && userDetail?.groups?.length > 0 ? (
-          <List>
-            {userDetail?.groups?.map((group) => (
-              <List.Item key={group.pk}>
-                <DetailDrawerLink
-                  to={`../group-${group.pk}`}
-                  text={group.name}
-                />
-              </List.Item>
-            ))}
-          </List>
-        ) : (
-          <Trans>No groups</Trans>
-        )}
-      </Text>
+      <Stack>
+        <Title order={5}>
+          <Trans>Groups</Trans>
+        </Title>
+        <Spoiler maxHeight={125} showLabel="Show More" hideLabel="Show Less">
+          <Text ml={'md'}>
+            {userDetail?.groups && userDetail?.groups?.length > 0 ? (
+              <List>
+                {userDetail?.groups?.map((group) => (
+                  <List.Item key={group.pk}>
+                    <DetailDrawerLink
+                      to={`../group-${group.pk}`}
+                      text={group.name}
+                    />
+                  </List.Item>
+                ))}
+              </List>
+            ) : (
+              <Trans>No groups</Trans>
+            )}
+          </Text>
+        </Spoiler>
+      </Stack>
     </Stack>
   );
 }
