@@ -234,12 +234,12 @@ def install(c, uv=False):
         c.run('pip3 install --upgrade pip')
         c.run('pip3 install --upgrade setuptools')
         c.run(
-            'pip3 install --no-cache-dir --disable-pip-version-check -U -r -r src/backend/requirements.txt'
+            'pip3 install --no-cache-dir --disable-pip-version-check -U -r src/backend/requirements.txt'
         )
     else:
         c.run('pip3 install --upgrade uv')
         c.run('uv pip install --upgrade setuptools')
-        c.run('uv pip install -U -r -r src/backend/requirements.txt')
+        c.run('uv pip install -U -r src/backend/requirements.txt')
 
     # Run plugins install
     plugins(c, uv=uv)
