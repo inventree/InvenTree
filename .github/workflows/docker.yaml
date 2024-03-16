@@ -86,13 +86,13 @@ jobs:
           docker run --rm inventree-test pg_dump --version
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
-        run: docker-compose --project-directory . -f contrib/container/docker-compose.yml build --no-cache
+        run: docker-compose --project-directory contrib/container build --no-cache
       - name: Update Docker Image
         run: |
-          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke update
-          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke setup-dev
-          docker-compose --project-directory . -f contrib/container/docker-compose.yml up -d
-          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke wait
+          docker-compose --project-directory contrib/container run inventree-dev-server invoke update
+          docker-compose --project-directory contrib/container run inventree-dev-server invoke setup-dev
+          docker-compose --project-directory contrib/container up -d
+          docker-compose --project-directory contrib/container run inventree-dev-server invoke wait
       - name: Check Data Directory
         # The following file structure should have been created by the docker image
         run: |
@@ -107,10 +107,10 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
-          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke test --disable-pty
-          docker-compose --project-directory . -f contrib/container/docker-compose.yml run inventree-dev-server invoke test --migrations --disable-pty
-          docker-compose --project-directory . -f contrib/container/docker-compose.yml down
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
+          docker-compose --project-directory contrib/container run inventree-dev-server invoke test --disable-pty
+          docker-compose --project-directory contrib/container run inventree-dev-server invoke test --migrations --disable-pty
+          docker-compose --project-directory contrib/container down
       - name: Clean up test folder
         run: |
           rm -rf InvenTree/_testfolder
