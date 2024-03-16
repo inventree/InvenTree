@@ -6,7 +6,7 @@ mkdocs:
 python:
   install:
     - requirements: docs/requirements.txt
-    - requirements: src/backend/InvenTree/requirements.txt
+    - requirements: src/backend/requirements.txt
 
 build:
   os: "ubuntu-22.04"
