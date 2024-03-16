@@ -4,6 +4,7 @@ import {
   DefaultMantineColor,
   Divider,
   LoadingOverlay,
+  Paper,
   ScrollArea,
   Text
 } from '@mantine/core';
@@ -392,9 +393,8 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
   return (
     <Stack>
       {/* Attempt at making fixed footer with scroll area */}
-      {/* Has some issues at low resolutions still */}
-      <Stack mah={'60vh'}>
-        <ScrollArea.Autosize mah={'100%'}>
+      <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
+        <div>
           {/* Form Fields */}
           <Stack spacing="sm">
             <LoadingOverlay visible={isLoading} />
@@ -436,14 +436,11 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
             </FormProvider>
             {props.postFormContent}
           </Stack>
-        </ScrollArea.Autosize>
-      </Stack>
+        </div>
+      </Paper>
 
-      {/* Not super happy with the padding above this divider */}
-      <Divider />
-
-      {/* Action Buttons */}
-      <Stack>
+      {/* Footer with Action Buttons */}
+      <div>
         <Group position="right">
           {props.actions?.map((action, i) => (
             <Button
@@ -466,7 +463,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
             {props.submitText ?? t`Submit`}
           </Button>
         </Group>
-      </Stack>
+      </div>
     </Stack>
   );
 }
