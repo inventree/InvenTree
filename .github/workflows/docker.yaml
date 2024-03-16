@@ -79,11 +79,12 @@ jobs:
       - name: Test Docker Image
         id: test-docker
         run: |
-          docker build . --target production --tag inventree-test --project-directory contrib/container/
-          docker run --rm inventree-test invoke --version --project-directory contrib/container/
-          docker run --rm inventree-test invoke --list --project-directory contrib/container/
-          docker run --rm inventree-test gunicorn --version --project-directory contrib/container/
-          docker run --rm inventree-test pg_dump --version --project-directory contrib/container/
+          cd contrib/container/
+          docker build . --target production --tag inventree-test
+          docker run --rm inventree-test invoke --version
+          docker run --rm inventree-test invoke --list
+          docker run --rm inventree-test gunicorn --version
+          docker run --rm inventree-test pg_dump --version
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: docker-compose --project-directory . -f contrib/container/docker-compose.yml build --no-cache
