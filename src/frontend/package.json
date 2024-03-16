@@ -69,5 +69,5 @@
         "vite": "^5.1.4",
         "vite-plugin-babel-macros": "^1.0.6"
     },
-    "packageManager": "yarn@4.1.0"
+    "packageManager": "yarn@4.1.1"
 }
