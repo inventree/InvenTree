@@ -5,13 +5,13 @@ from typing import cast
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
-from machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
 from rest_framework import serializers
 
 from common.models import InvenTreeUserSetting
 from InvenTree.serializers import DependentField
 from InvenTree.tasks import offload_task
 from label.models import LabelTemplate
+from machine.machine_types import LabelPrinterBaseDriver, LabelPrinterMachine
 from plugin import InvenTreePlugin
 from plugin.machine import registry
 from plugin.mixins import LabelPrintingMixin

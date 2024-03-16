@@ -10,7 +10,6 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
-import machine.api
 from dj_rest_auth.registration.views import (
     ConfirmEmailView,
     SocialAccountDisconnectView,
@@ -23,6 +22,7 @@ import build.api
 import common.api
 import company.api
 import label.api
+import machine.api
 import order.api
 import part.api
 import plugin.api
