@@ -1006,6 +1006,7 @@ if not ALLOWED_HOSTS:
         logger.error(
             'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
         )
+        sys.exit(-1)
 
 # Ensure that the ALLOWED_HOSTS do not contain any scheme info
 for i, host in enumerate(ALLOWED_HOSTS):
@@ -1024,6 +1025,12 @@ CSRF_TRUSTED_ORIGINS = get_setting(
 # If a list of trusted is not specified, but a site URL has been specified, use that
 if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
+
+if len(CSRF_TRUSTED_ORIGINS) == 0:
+    logger.error(
+        'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+    )
+    sys.exit(-1)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
