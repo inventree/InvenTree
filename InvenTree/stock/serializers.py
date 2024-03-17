@@ -146,7 +146,9 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
         finished = data.get('finished_datetime')
         if started is not None and finished is not None and started > finished:
             raise ValidationError({
-                'finished_datetime': _('The test finished time cannot be earlier than the test started time')
+                'finished_datetime': _(
+                    'The test finished time cannot be earlier than the test started time'
+                )
             })
         return data
 
