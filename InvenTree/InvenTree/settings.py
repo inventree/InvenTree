@@ -1002,7 +1002,7 @@ if not ALLOWED_HOSTS:
             'No ALLOWED_HOSTS specified. Defaulting to ["*"] for debug mode. This is not recommended for production use'
         )
         ALLOWED_HOSTS = ['*']
-    elif not TESTING:
+    else:
         logger.error(
             'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
         )
@@ -1026,7 +1026,7 @@ CSRF_TRUSTED_ORIGINS = get_setting(
 if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
 
-if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
+if len(CSRF_TRUSTED_ORIGINS) == 0:
     logger.error(
         'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
     )
