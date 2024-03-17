@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-15 22:12+0000\n"
-"PO-Revision-Date: 2024-03-11 09:31\n"
+"POT-Creation-Date: 2024-03-15 06:54+0000\n"
+"PO-Revision-Date: 2024-03-17 11:59\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2676,14 +2676,12 @@ msgid "Generate reports in debug mode (HTML output)"
 msgstr "Berichte im Entwickler-Modus generieren (als HTML)"
 
 #: common/models.py:1657
-#, fuzzy
-#| msgid "No errors"
 msgid "Log Report Errors"
-msgstr "Keine Fehler"
+msgstr "Berichtsfehler protokollieren"
 
 #: common/models.py:1658
 msgid "Log errors which occur when generating reports"
-msgstr ""
+msgstr "Fehler, die beim Erstellen von Berichten auftreten, protokollieren"
 
 #: common/models.py:1663 plugin/builtin/labels/label_sheet.py:28
 #: report/models.py:202
@@ -2803,10 +2801,8 @@ msgid "Check BOM when installing items"
 msgstr ""
 
 #: common/models.py:1756
-#, fuzzy
-#| msgid "Cannot allocate stock item to a line with a different part"
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr "Kann Lagerartikel keiner Zeile mit einem anderen Teil hinzufügen"
+msgstr ""
 
 #: common/models.py:1762
 msgid "Build Order Reference Pattern"
@@ -6446,17 +6442,15 @@ msgstr "Benutzer, der diesen Inventurbericht angefordert hat"
 
 #: part/models.py:3434
 msgid "Invalid template name - must include at least one alphanumeric character"
-msgstr ""
+msgstr "Ungültiger Vorlagenname - es muss mindestens ein alphanumerisches Zeichen enthalten sein"
 
 #: part/models.py:3445
 msgid "Test templates can only be created for trackable parts"
 msgstr "Test-Vorlagen können nur für verfolgbare Teile angelegt werden"
 
 #: part/models.py:3456
-#, fuzzy
-#| msgid "Test with this name already exists for this part"
 msgid "Test template with the same key already exists for part"
-msgstr "Ein Test mit diesem Namen besteht bereits für dieses Teil"
+msgstr ""
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -8461,10 +8455,8 @@ msgid "Return order query filters"
 msgstr "Rückgabe von Auftragsabfragefiltern"
 
 #: report/models.py:640
-#, fuzzy
-#| msgid "Stock item with this serial number already exists"
 msgid "Snippet file with this name already exists"
-msgstr "Ein Lagerartikel mit dieser Seriennummer existiert bereits"
+msgstr "Snippet-Datei mit diesem Namen existiert bereits"
 
 #: report/models.py:647
 msgid "Snippet"
@@ -8479,10 +8471,8 @@ msgid "Snippet file description"
 msgstr "Snippet-Beschreibung"
 
 #: report/models.py:713
-#, fuzzy
-#| msgid "Attachment with this filename already exists"
 msgid "Asset file with this name already exists"
-msgstr "Anhang mit diesem Dateinamen bereits vorhanden"
+msgstr ""
 
 #: report/models.py:721
 msgid "Asset"
@@ -9374,7 +9364,7 @@ msgstr "Dieser Lagerartikel ist einem Bauauftrag zugewiesen"
 
 #: stock/templates/stock/item_base.html:311
 msgid "This stock item is serialized. It has a unique serial number and the quantity cannot be adjusted"
-msgstr ""
+msgstr "Dieser Lagerartikel hat eine eindeutige Seriennummer, der Bestand kann nicht geändert werden"
 
 #: stock/templates/stock/item_base.html:317
 msgid "previous page"
@@ -10755,15 +10745,15 @@ msgstr "Keine Antwort vom InvenTree Server"
 
 #: templates/js/translated/api.js:232
 msgid "Error 400: Bad request"
-msgstr ""
+msgstr "Fehler 400: Ungültige Anforderung"
 
 #: templates/js/translated/api.js:233
 msgid "API request returned error code 400"
-msgstr ""
+msgstr "API Anfrage hat Fehler 400 zurückgegeben"
 
 #: templates/js/translated/api.js:237 templates/js/translated/modals.js:1140
 msgid "Error 401: Not Authenticated"
-msgstr ""
+msgstr "Fehler 401: Nicht authentifiziert"
 
 #: templates/js/translated/api.js:238 templates/js/translated/modals.js:1141
 msgid "Authentication credentials not supplied"
@@ -10771,7 +10761,7 @@ msgstr "Anmeldeinformationen nicht angegeben"
 
 #: templates/js/translated/api.js:242 templates/js/translated/modals.js:1145
 msgid "Error 403: Permission Denied"
-msgstr ""
+msgstr "Fehler 403: Zugriff verweigert"
 
 #: templates/js/translated/api.js:243 templates/js/translated/modals.js:1146
 msgid "You do not have the required permissions to access this function"
@@ -10779,39 +10769,39 @@ msgstr "Sie haben nicht die erforderliche Berechtigung auf diesen Inhalt zuzugre
 
 #: templates/js/translated/api.js:247 templates/js/translated/modals.js:1150
 msgid "Error 404: Resource Not Found"
-msgstr ""
+msgstr "Fehler 404: Ressource nicht gefunden"
 
 #: templates/js/translated/api.js:248 templates/js/translated/modals.js:1151
 msgid "The requested resource could not be located on the server"
-msgstr ""
+msgstr "Die angefragte Ressource konnte auf dem Server nicht gefunden werden"
 
 #: templates/js/translated/api.js:252
 msgid "Error 405: Method Not Allowed"
-msgstr ""
+msgstr "Fehler 405: Methode nicht erlaubt"
 
 #: templates/js/translated/api.js:253
 msgid "HTTP method not allowed at URL"
-msgstr ""
+msgstr "HTTP Methode für diese URL nicht erlaubt"
 
 #: templates/js/translated/api.js:257 templates/js/translated/modals.js:1155
 msgid "Error 408: Timeout"
-msgstr ""
+msgstr "Fehler 408: Zeitüberschreitung"
 
 #: templates/js/translated/api.js:258 templates/js/translated/modals.js:1156
 msgid "Connection timeout while requesting data from server"
-msgstr ""
+msgstr "Zeitüberschreitung beim Abfragen der Daten vom Server"
 
 #: templates/js/translated/api.js:261
 msgid "Error 503: Service Unavailable"
-msgstr ""
+msgstr "Fehler 503: Service nicht verfügbar"
 
 #: templates/js/translated/api.js:262
 msgid "The server is currently unavailable"
-msgstr ""
+msgstr "Der Server ist derzeit nicht erreichbar"
 
 #: templates/js/translated/api.js:265
 msgid "Unhandled Error Code"
-msgstr ""
+msgstr "Unbehandelter Fehlercode"
 
 #: templates/js/translated/api.js:266
 msgid "Error code"
@@ -10879,12 +10869,12 @@ msgstr "Serverfehler"
 
 #: templates/js/translated/barcode.js:217
 msgid "Unknown response from server"
-msgstr ""
+msgstr "Unbekannte Serverantwort"
 
 #: templates/js/translated/barcode.js:252
 #: templates/js/translated/modals.js:1120
 msgid "Invalid server response"
-msgstr ""
+msgstr "Ungültige Serverantwort"
 
 #: templates/js/translated/barcode.js:372
 msgid "Scan barcode data"
@@ -11707,13 +11697,13 @@ msgstr "Keine Herstellerteile gefunden"
 #: templates/js/translated/company.js:1557 templates/js/translated/part.js:798
 #: templates/js/translated/part.js:1210
 msgid "Template part"
-msgstr ""
+msgstr "Vorlagenteil"
 
 #: templates/js/translated/company.js:1273
 #: templates/js/translated/company.js:1561 templates/js/translated/part.js:802
 #: templates/js/translated/part.js:1214
 msgid "Assembled part"
-msgstr ""
+msgstr "Baugruppe"
 
 #: templates/js/translated/company.js:1393 templates/js/translated/part.js:1464
 msgid "No parameters found"
@@ -11757,43 +11747,43 @@ msgstr "Zulieferteile bearbeiten"
 
 #: templates/js/translated/company.js:1716
 msgid "Delete supplier part"
-msgstr ""
+msgstr "Zuliefererteil löschen"
 
 #: templates/js/translated/company.js:1769
 #: templates/js/translated/pricing.js:694
 msgid "Delete Price Break"
-msgstr ""
+msgstr "Staffelpreis löschen"
 
 #: templates/js/translated/company.js:1779
 #: templates/js/translated/pricing.js:712
 msgid "Edit Price Break"
-msgstr ""
+msgstr "Staffelpreis bearbeiten"
 
 #: templates/js/translated/company.js:1794
 msgid "No price break information found"
-msgstr ""
+msgstr "Keine Staffelpreisinformation gefunden"
 
 #: templates/js/translated/company.js:1823
 msgid "Last updated"
-msgstr ""
+msgstr "Zuletzt aktualisiert"
 
 #: templates/js/translated/company.js:1830
 msgid "Edit price break"
-msgstr ""
+msgstr "Staffelpreis bearbeiten"
 
 #: templates/js/translated/company.js:1831
 msgid "Delete price break"
-msgstr ""
+msgstr "Staffelpreis löschen"
 
 #: templates/js/translated/filters.js:186
 #: templates/js/translated/filters.js:672
 msgid "true"
-msgstr ""
+msgstr "wahr"
 
 #: templates/js/translated/filters.js:190
 #: templates/js/translated/filters.js:673
 msgid "false"
-msgstr ""
+msgstr "falsch"
 
 #: templates/js/translated/filters.js:214
 msgid "Select filter"
@@ -11805,40 +11795,40 @@ msgstr "Etiketten drucken"
 
 #: templates/js/translated/filters.js:441
 msgid "Print Reports"
-msgstr ""
+msgstr "Berichte drucken"
 
 #: templates/js/translated/filters.js:453
 msgid "Download table data"
-msgstr ""
+msgstr "Tabelle herunterladen"
 
 #: templates/js/translated/filters.js:460
 msgid "Reload table data"
-msgstr ""
+msgstr "Tabelle neu laden"
 
 #: templates/js/translated/filters.js:469
 msgid "Add new filter"
-msgstr ""
+msgstr "Neuen Filter hinzufügen"
 
 #: templates/js/translated/filters.js:477
 msgid "Clear all filters"
-msgstr ""
+msgstr "Alle Filter entfernen"
 
 #: templates/js/translated/filters.js:582
 msgid "Create filter"
-msgstr ""
+msgstr "Filter erstellen"
 
 #: templates/js/translated/forms.js:378 templates/js/translated/forms.js:393
 #: templates/js/translated/forms.js:407 templates/js/translated/forms.js:421
 msgid "Action Prohibited"
-msgstr ""
+msgstr "Aktion nicht erlaubt"
 
 #: templates/js/translated/forms.js:380
 msgid "Create operation not allowed"
-msgstr ""
+msgstr "Erstellen ist nicht erlaubt"
 
 #: templates/js/translated/forms.js:395
 msgid "Update operation not allowed"
-msgstr ""
+msgstr "Aktualisieren ist nicht erlaubt"
 
 #: templates/js/translated/forms.js:409
 msgid "Delete operation not allowed"
@@ -12189,27 +12179,27 @@ msgstr ""
 
 #: templates/js/translated/part.js:550
 msgid "All manufacturer and supplier information for this part will be deleted"
-msgstr ""
+msgstr "Alle Hersteller- und Lieferanteninformationen für dieses Teil werden gelöscht"
 
 #: templates/js/translated/part.js:557
 msgid "Delete Part"
-msgstr ""
+msgstr "Teil löschen"
 
 #: templates/js/translated/part.js:593
 msgid "You are subscribed to notifications for this item"
-msgstr ""
+msgstr "Du hast Benachrichtigungen zu diesem Artikel abonniert"
 
 #: templates/js/translated/part.js:595
 msgid "You have subscribed to notifications for this item"
-msgstr ""
+msgstr "Du hast Benachrichtigungen zu diesem Artikel abonniert"
 
 #: templates/js/translated/part.js:600
 msgid "Subscribe to notifications for this item"
-msgstr ""
+msgstr "Benachrichtigungen zu diesem Artikel abonnieren"
 
 #: templates/js/translated/part.js:602
 msgid "You have unsubscribed to notifications for this item"
-msgstr ""
+msgstr "Du erhältst keine Benachrichtigungen zu diesem Artikel mehr"
 
 #: templates/js/translated/part.js:619
 msgid "Validating the BOM will mark each line item as valid"
@@ -12217,15 +12207,15 @@ msgstr "Die Stückliste zu validieren markiert jede Position als gültig"
 
 #: templates/js/translated/part.js:629
 msgid "Validate Bill of Materials"
-msgstr ""
+msgstr "Stückliste prüfen"
 
 #: templates/js/translated/part.js:632
 msgid "Validated Bill of Materials"
-msgstr ""
+msgstr "Überprüfte Stückliste"
 
 #: templates/js/translated/part.js:657
 msgid "Copy Bill of Materials"
-msgstr ""
+msgstr "Stückliste kopieren"
 
 #: templates/js/translated/part.js:685
 #: templates/js/translated/table_filters.js:747
@@ -12238,7 +12228,7 @@ msgstr "Kein Lagerbestand verfügbar"
 
 #: templates/js/translated/part.js:748
 msgid "Demand"
-msgstr ""
+msgstr "Bedarf"
 
 #: templates/js/translated/part.js:771
 msgid "Unit"
@@ -12250,64 +12240,64 @@ msgstr "Virtuelles Teil"
 
 #: templates/js/translated/part.js:806
 msgid "Subscribed part"
-msgstr ""
+msgstr "Abonniertes Teil"
 
 #: templates/js/translated/part.js:810
 msgid "Salable part"
-msgstr ""
+msgstr "Verkäufliches Teil"
 
 #: templates/js/translated/part.js:889
 msgid "Schedule generation of a new stocktake report."
-msgstr ""
+msgstr "Erstellung eines neuen Inventurberichts planen."
 
 #: templates/js/translated/part.js:889
 msgid "Once complete, the stocktake report will be available for download."
-msgstr ""
+msgstr "Nach Fertigstellung steht der Inventurbericht zum Download zur Verfügung."
 
 #: templates/js/translated/part.js:897
 msgid "Generate Stocktake Report"
-msgstr ""
+msgstr "Inventurbericht erstellen"
 
 #: templates/js/translated/part.js:901
 msgid "Stocktake report scheduled"
-msgstr ""
+msgstr "Inventurbericht geplant"
 
 #: templates/js/translated/part.js:1050
 msgid "No stocktake information available"
-msgstr ""
+msgstr "Keine Inventurinformationen verfügbar"
 
 #: templates/js/translated/part.js:1108 templates/js/translated/part.js:1144
 msgid "Edit Stocktake Entry"
-msgstr ""
+msgstr "Inventureintrag bearbeiten"
 
 #: templates/js/translated/part.js:1112 templates/js/translated/part.js:1154
 msgid "Delete Stocktake Entry"
-msgstr ""
+msgstr "Inventureintrag löschen"
 
 #: templates/js/translated/part.js:1281
 msgid "No variants found"
-msgstr ""
+msgstr "Keine Varianten gefunden"
 
 #: templates/js/translated/part.js:1599
 msgid "No part parameter templates found"
-msgstr ""
+msgstr "Keine Teileparametervorlagen gefunden"
 
 #: templates/js/translated/part.js:1662
 msgid "Edit Part Parameter Template"
-msgstr ""
+msgstr "Teileparametervorlage bearbeiten"
 
 #: templates/js/translated/part.js:1674
 msgid "Any parameters which reference this template will also be deleted"
-msgstr ""
+msgstr "Alle Parameter mit Verweis auf diese Vorlage werden ebenfalls gelöscht"
 
 #: templates/js/translated/part.js:1682
 msgid "Delete Part Parameter Template"
-msgstr ""
+msgstr "Teileparametervorlage löschen"
 
 #: templates/js/translated/part.js:1716
 #: templates/js/translated/purchase_order.js:1655
 msgid "No purchase orders found"
-msgstr ""
+msgstr "Keine Bestellungen gefunden"
 
 #: templates/js/translated/part.js:1860
 #: templates/js/translated/purchase_order.js:2154
@@ -12323,105 +12313,105 @@ msgstr "Position empfangen"
 
 #: templates/js/translated/part.js:1969
 msgid "Delete part relationship"
-msgstr ""
+msgstr "Teilebeziehung löschen"
 
 #: templates/js/translated/part.js:1991
 msgid "Delete Part Relationship"
-msgstr ""
+msgstr "Teilebeziehung löschen"
 
 #: templates/js/translated/part.js:2079 templates/js/translated/part.js:2506
 msgid "No parts found"
-msgstr ""
+msgstr "Keine Teile gefunden"
 
 #: templates/js/translated/part.js:2200
 msgid "Set the part category for the selected parts"
-msgstr ""
+msgstr "Wähle die Kategorie für die ausgewählten Teile"
 
 #: templates/js/translated/part.js:2205
 msgid "Set Part Category"
-msgstr ""
+msgstr "Teilekategorie auswählen"
 
 #: templates/js/translated/part.js:2235
 msgid "Set category"
-msgstr ""
+msgstr "Kategorie wählen"
 
 #: templates/js/translated/part.js:2287
 msgid "part"
-msgstr ""
+msgstr "Teil"
 
 #: templates/js/translated/part.js:2288
 msgid "parts"
-msgstr ""
+msgstr "Teile"
 
 #: templates/js/translated/part.js:2384
 msgid "No category"
-msgstr ""
+msgstr "Keine Kategorien"
 
 #: templates/js/translated/part.js:2531 templates/js/translated/part.js:2661
 #: templates/js/translated/stock.js:2633
 msgid "Display as list"
-msgstr ""
+msgstr "Als Liste anzeigen"
 
 #: templates/js/translated/part.js:2547
 msgid "Display as grid"
-msgstr ""
+msgstr "Als Raster anzeigen"
 
 #: templates/js/translated/part.js:2645
 msgid "No subcategories found"
-msgstr ""
+msgstr "Keine Unterkategorien gefunden"
 
 #: templates/js/translated/part.js:2681 templates/js/translated/stock.js:2653
 msgid "Display as tree"
-msgstr ""
+msgstr "Als Baum anzeigen"
 
 #: templates/js/translated/part.js:2761
 msgid "Load Subcategories"
-msgstr ""
+msgstr "Unterkategorien laden"
 
 #: templates/js/translated/part.js:2777
 msgid "Subscribed category"
-msgstr ""
+msgstr "Abonnierte Kategorie"
 
 #: templates/js/translated/part.js:2864
 msgid "No test templates matching query"
-msgstr ""
+msgstr "Keine passenden Testvorlagen gefunden"
 
 #: templates/js/translated/part.js:2886 templates/js/translated/search.js:342
 msgid "results"
-msgstr ""
+msgstr "Ergebnisse"
 
 #: templates/js/translated/part.js:2936 templates/js/translated/stock.js:1446
 msgid "Edit test result"
-msgstr ""
+msgstr "Testergebnis bearbeiten"
 
 #: templates/js/translated/part.js:2937 templates/js/translated/stock.js:1447
 #: templates/js/translated/stock.js:1692
 msgid "Delete test result"
-msgstr ""
+msgstr "Testergebnis löschen"
 
 #: templates/js/translated/part.js:2941
 msgid "This test is defined for a parent part"
-msgstr ""
+msgstr "Dieser Test ist für ein übergeordnetes Teil definiert"
 
 #: templates/js/translated/part.js:2957
 msgid "Edit Test Result Template"
-msgstr ""
+msgstr "Vorlage für Testergebnis bearbeiten"
 
 #: templates/js/translated/part.js:2971
 msgid "Delete Test Result Template"
-msgstr ""
+msgstr "Vorlage für Testergebnis löschen"
 
 #: templates/js/translated/part.js:3050 templates/js/translated/part.js:3051
 msgid "No date specified"
-msgstr ""
+msgstr "Kein Datum angegeben"
 
 #: templates/js/translated/part.js:3053
 msgid "Specified date is in the past"
-msgstr ""
+msgstr "Das angegebene Datum liegt in der Vergangenheit"
 
 #: templates/js/translated/part.js:3059
 msgid "Speculative"
-msgstr ""
+msgstr "Spekulativ"
 
 #: templates/js/translated/part.js:3109
 msgid "No scheduling information available for this part"
@@ -12691,30 +12681,30 @@ msgstr "Zu erhaltende Menge"
 #: templates/js/translated/purchase_order.js:1333
 #: templates/js/translated/return_order.js:561
 msgid "Confirm receipt of items"
-msgstr ""
+msgstr "Empfang der Artikel bestätigen"
 
 #: templates/js/translated/purchase_order.js:1334
 msgid "Receive Purchase Order Items"
-msgstr ""
+msgstr "Bestellartikel erhalten"
 
 #: templates/js/translated/purchase_order.js:1402
 msgid "Scan Item Barcode"
-msgstr ""
+msgstr "Artikel-Barcode scannen"
 
 #: templates/js/translated/purchase_order.js:1403
 msgid "Scan barcode on incoming item (must not match any existing stock items)"
-msgstr ""
+msgstr "Scanne den Barcode am erhaltenen Artikel (darf nicht mit einem existierenden Lagerartikel übereinstimmen)"
 
 #: templates/js/translated/purchase_order.js:1417
 msgid "Invalid barcode data"
-msgstr ""
+msgstr "Ungültige Barcode-Daten"
 
 #: templates/js/translated/purchase_order.js:1682
 #: templates/js/translated/return_order.js:286
 #: templates/js/translated/sales_order.js:774
 #: templates/js/translated/sales_order.js:998
 msgid "Order is overdue"
-msgstr ""
+msgstr "Bestellung ist überfällig"
 
 #: templates/js/translated/purchase_order.js:1748
 #: templates/js/translated/return_order.js:354
@@ -14121,3 +14111,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
