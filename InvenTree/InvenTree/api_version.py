@@ -6,6 +6,9 @@ INVENTREE_API_VERSION = 183
 
 INVENTREE_API_TEXT = """
 
+v184 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/10464
+    - Add additional fields for tests (start/end datetime, test station)
+
 v183 - 2024-03-14 : https://github.com/inventree/InvenTree/pull/5972
     - Adds "category_default_location" annotated field to part serializer
     - Adds "part_detail.category_default_location" annotated field to stock item serializer
