@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-11 09:31\n"
+"PO-Revision-Date: 2024-03-17 11:59\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -24,11 +24,11 @@ msgstr "Titel"
 
 #: src/components/details/Details.tsx:321
 msgid "Copied"
-msgstr ""
+msgstr "Kopiert"
 
 #: src/components/details/Details.tsx:321
 msgid "Copy"
-msgstr ""
+msgstr "Kopieren"
 
 #: src/components/details/DetailsImage.tsx:63
 msgid "Remove Image"
@@ -70,7 +70,7 @@ msgid "Clear"
 msgstr "Leeren"
 
 #: src/components/details/DetailsImage.tsx:225
-#: src/components/forms/ApiForm.tsx:451
+#: src/components/forms/ApiForm.tsx:448
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
@@ -82,7 +82,7 @@ msgstr "Aus vorhandenen Bildern auswählen"
 
 #: src/components/details/DetailsImage.tsx:274
 msgid "Select Image"
-msgstr ""
+msgstr "Bild auswählen"
 
 #: src/components/details/DetailsImage.tsx:286
 msgid "Upload new image"
@@ -98,39 +98,39 @@ msgstr "Bild löschen"
 
 #: src/components/details/PartIcons.tsx:28
 msgid "Part is not active"
-msgstr ""
+msgstr "Teil ist nicht aktiv"
 
 #: src/components/details/PartIcons.tsx:34
 msgid "Inactive"
-msgstr ""
+msgstr "Inaktiv"
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "Teil ist eine Vorlage (Varianten des Teils können erstellt werden)"
 
 #: src/components/details/PartIcons.tsx:47
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "Teil kann aus anderen Teilen gefertigt werden"
 
 #: src/components/details/PartIcons.tsx:53
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "Teil kann in Baugruppen genutzt werden"
 
 #: src/components/details/PartIcons.tsx:59
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "Teilebestand wird über Seriennummern verfolgt"
 
 #: src/components/details/PartIcons.tsx:65
 msgid "Part can be purchased from external suppliers"
-msgstr ""
+msgstr "Teil kann bei externen Zulieferern gekauft werden"
 
 #: src/components/details/PartIcons.tsx:71
 msgid "Part can be sold to customers"
-msgstr ""
+msgstr "Teil kann an Kunden verkauft werden"
 
 #: src/components/details/PartIcons.tsx:76
 msgid "Part is virtual (not a physical part)"
-msgstr ""
+msgstr "Teil ist virtuell (kein physischer Gegenstand)"
 
 #: src/components/details/PartIcons.tsx:82
 #: src/tables/part/PartTable.tsx:243
@@ -145,97 +145,97 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:44
 msgid "Failed to parse error response from server."
-msgstr ""
+msgstr "Fehler beim Parsen der Serverantwort."
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:82
 msgid "Preview not available, click \"Reload Preview\"."
-msgstr ""
+msgstr "Vorschau nicht verfügbar, klicke \"Vorschau neu laden\"."
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr ""
+msgstr "PDF Vorschau"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:113
 msgid "Error loading template"
-msgstr ""
+msgstr "Fehler beim Laden der Vorlage"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:125
 msgid "Error saving template"
-msgstr ""
+msgstr "Fehler beim Speichern der Vorlage"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 msgid "Save & Reload preview?"
-msgstr ""
+msgstr "Vorschau speichern & neu laden?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:156
 msgid "Are you sure you want to Save & Reload the preview?"
-msgstr ""
+msgstr "Bist du sicher, dass du die Vorschau speichern & neu Laden möchtest?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
-msgstr ""
+msgstr "Um die Vorschau zu erstellen, muss die Vorlage auf dem Server mit deiner geänderten Version ersetzt werden. Das kann zu Fehlern bei Etiketten führen, wenn sie aktiv genutzt werden. Möchtest du fortfahren?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:162
 msgid "Save & Reload"
-msgstr ""
+msgstr "Speichern & Neu laden"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:191
 msgid "Preview updated"
-msgstr ""
+msgstr "Vorschau aktualisiert"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:192
 msgid "The preview has been updated successfully."
-msgstr ""
+msgstr "Die Vorlage wurde erfolgreich aktualisiert."
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:255
 msgid "Reload preview"
-msgstr ""
+msgstr "Vorschau neu laden"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:256
 msgid "Use the currently stored template from the server"
-msgstr ""
+msgstr "Benutze die aktuell auf dem Server gespeicherte Vorlage"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 msgid "Save & Reload preview"
-msgstr ""
+msgstr "Vorschau speichern & neu laden"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:264
 msgid "Save the current template and reload the preview"
-msgstr ""
+msgstr "Die aktuelle Vorlage speichern und die Vorschau neu laden"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:322
 #: src/tables/part/PartThumbTable.tsx:199
 msgid "Select"
-msgstr ""
+msgstr "Wähle"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:322
 msgid "to preview"
-msgstr ""
+msgstr "zur Vorschau"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:366
 msgid "Error rendering template"
-msgstr ""
+msgstr "Fehler bei Darstellung der Vorlage"
 
-#: src/components/forms/ApiForm.tsx:132
+#: src/components/forms/ApiForm.tsx:130
 #: src/functions/forms.tsx:259
 msgid "Form Error"
 msgstr "Formularfehler"
 
-#: src/components/forms/ApiForm.tsx:323
+#: src/components/forms/ApiForm.tsx:320
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
 msgstr "Abgeschlossen"
 
-#: src/components/forms/ApiForm.tsx:396
+#: src/components/forms/ApiForm.tsx:393
 msgid "Form Errors Exist"
 msgstr "Formularfehler vorhanden"
 
-#: src/components/forms/ApiForm.tsx:487
+#: src/components/forms/ApiForm.tsx:484
 #: src/tables/plugin/PluginListTable.tsx:441
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: src/components/forms/ApiForm.tsx:507
+#: src/components/forms/ApiForm.tsx:504
 #: src/components/items/ActionDropdown.tsx:199
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:121
@@ -491,11 +491,11 @@ msgstr "Keine Ergebnisse gefunden"
 
 #: src/components/forms/fields/TableField.tsx:49
 msgid "modelRenderer entry required for tables"
-msgstr ""
+msgstr "modelRenderer Eintrag für Tabellen erforderlich"
 
 #: src/components/forms/fields/TableField.tsx:72
 msgid "No entries available"
-msgstr ""
+msgstr "Keine Einträge vorhanden"
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -2218,32 +2218,32 @@ msgstr "Übergeordnete Teilkategorie"
 
 #: src/forms/PurchaseOrderForms.tsx:246
 msgid "Choose Location"
-msgstr ""
+msgstr "Lagerort wählen"
 
 #: src/forms/PurchaseOrderForms.tsx:254
 msgid "Item Destination selected"
-msgstr ""
+msgstr "Teile-Zielort ausgewählt"
 
 #: src/forms/PurchaseOrderForms.tsx:263
 msgid "Part category default location selected"
-msgstr ""
+msgstr "Standard-Lagerort der Teile-Kategorie ausgewählt"
 
 #: src/forms/PurchaseOrderForms.tsx:273
 msgid "Received stock location selected"
-msgstr ""
+msgstr "Lagerort zuvor empfangener Artikel ausgewählt"
 
 #: src/forms/PurchaseOrderForms.tsx:278
 msgid "Default location selected"
-msgstr ""
+msgstr "Standard-Lagerort ausgewählt"
 
 #: src/forms/PurchaseOrderForms.tsx:289
 #: src/forms/PurchaseOrderForms.tsx:365
 msgid "Scan Barcode"
-msgstr ""
+msgstr "Barcode scannen"
 
 #: src/forms/PurchaseOrderForms.tsx:333
 msgid "Set Location"
-msgstr ""
+msgstr "Lagerort festlegen"
 
 #: src/forms/PurchaseOrderForms.tsx:340
 msgid "Assign Batch Code{0}"
@@ -2251,12 +2251,12 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:349
 msgid "Change Status"
-msgstr ""
+msgstr "Status ändern"
 
 #: src/forms/PurchaseOrderForms.tsx:374
 #: src/forms/StockForms.tsx:359
 msgid "Remove item from list"
-msgstr ""
+msgstr "Artikel aus Liste entfernen"
 
 #: src/forms/PurchaseOrderForms.tsx:399
 #: src/forms/StockForms.tsx:416
@@ -2270,11 +2270,11 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:58
 #: src/pages/stock/StockDetail.tsx:160
 msgid "Location"
-msgstr ""
+msgstr "Lagerort"
 
 #: src/forms/PurchaseOrderForms.tsx:415
 msgid "Store at default location"
-msgstr ""
+msgstr "Am Standard-Lagerort einbuchen"
 
 #: src/forms/PurchaseOrderForms.tsx:428
 msgid "Store at line item destination"
@@ -2282,7 +2282,7 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:438
 msgid "Store with already received stock"
-msgstr ""
+msgstr "Bei bereits vorhandenen Lagerbestand einbuchen"
 
 #: src/forms/PurchaseOrderForms.tsx:647
 msgid "Receive line items"
@@ -3084,11 +3084,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:67
 #~ msgid "Stock item"
-#~ msgstr ""
+#~ msgstr "Stock item"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:76
 #~ msgid "Build line"
-#~ msgstr ""
+#~ msgstr "Build line"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:88
 msgid "Reports"
@@ -3101,15 +3101,15 @@ msgstr "Melden"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:99
 #~ msgid "Purchase order"
-#~ msgstr ""
+#~ msgstr "Purchase order"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:108
 #~ msgid "Sales order"
-#~ msgstr ""
+#~ msgstr "Sales order"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:117
 #~ msgid "Return order"
-#~ msgstr ""
+#~ msgstr "Return order"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:135
 #: src/pages/part/PartDetail.tsx:498
@@ -3122,7 +3122,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:154
 #~ msgid "Stock location"
-#~ msgstr ""
+#~ msgstr "Stock location"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:18
 #: src/tables/settings/UserTable.tsx:124
@@ -3506,7 +3506,7 @@ msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:136
 msgid "Manufacturer Part Details"
-msgstr ""
+msgstr "Herstellerteil Details"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:142
 #: src/pages/part/CategoryDetail.tsx:203
@@ -3523,30 +3523,30 @@ msgstr "Lieferanten"
 #: src/pages/company/ManufacturerPartDetail.tsx:186
 #: src/tables/purchasing/ManufacturerPartTable.tsx:101
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "Herstellerteil bearbeiten"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:195
 msgid "Manufacturer Part Actions"
-msgstr ""
+msgstr "Herstellerteil Aktionen"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:232
 msgid "ManufacturerPart"
-msgstr ""
+msgstr "Herstellerteil"
 
 #: src/pages/company/SupplierPartDetail.tsx:90
 #: src/tables/ColumnRenderers.tsx:78
 msgid "Note"
-msgstr ""
+msgstr "Notiz"
 
 #: src/pages/company/SupplierPartDetail.tsx:108
 msgid "SKU"
-msgstr ""
+msgstr "Art.-Nr."
 
 #: src/pages/company/SupplierPartDetail.tsx:136
 #: src/pages/company/SupplierPartDetail.tsx:187
 #: src/pages/stock/StockDetail.tsx:203
 msgid "Packaging"
-msgstr ""
+msgstr "Verpackung"
 
 #: src/pages/company/SupplierPartDetail.tsx:143
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:107
@@ -3557,33 +3557,33 @@ msgstr "Verpackungsmenge"
 
 #: src/pages/company/SupplierPartDetail.tsx:154
 msgid "Supplier Availability"
-msgstr ""
+msgstr "Lieferantenverfügbarkeit"
 
 #: src/pages/company/SupplierPartDetail.tsx:161
 msgid "Availability Updated"
-msgstr ""
+msgstr "Verfügbarkeit aktualisiert"
 
 #: src/pages/company/SupplierPartDetail.tsx:188
 msgid "Availability"
-msgstr "Availability"
+msgstr "Verfügbarkeit"
 
 #: src/pages/company/SupplierPartDetail.tsx:197
 msgid "Supplier Part Details"
-msgstr ""
+msgstr "Zuliefererteil Details"
 
 #: src/pages/company/SupplierPartDetail.tsx:203
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:232
 msgid "Received Stock"
-msgstr ""
+msgstr "Empfangene Lagerartikel"
 
 #: src/pages/company/SupplierPartDetail.tsx:228
 msgid "Supplier Part Actions"
-msgstr ""
+msgstr "Zuliefererteil Aktionen"
 
 #: src/pages/company/SupplierPartDetail.tsx:254
 #: src/tables/purchasing/SupplierPartTable.tsx:193
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "Zuliefererteil bearbeiten"
 
 #: src/pages/part/CategoryDetail.tsx:77
 #: src/pages/stock/LocationDetail.tsx:84
@@ -3593,47 +3593,47 @@ msgstr "Pfad"
 
 #: src/pages/part/CategoryDetail.tsx:93
 msgid "Parent Category"
-msgstr ""
+msgstr "Übergeordnete Kategorie"
 
 #: src/pages/part/CategoryDetail.tsx:109
 msgid "Subcategories"
-msgstr ""
+msgstr "Unterkategorien"
 
 #: src/pages/part/CategoryDetail.tsx:116
 #: src/pages/stock/LocationDetail.tsx:123
 #: src/tables/part/PartCategoryTable.tsx:69
 msgid "Structural"
-msgstr ""
+msgstr "Strukturell"
 
 #: src/pages/part/CategoryDetail.tsx:122
 msgid "Parent default location"
-msgstr ""
+msgstr "Übergeordneter Standard-Standort"
 
 #: src/pages/part/CategoryDetail.tsx:129
 msgid "Default location"
-msgstr ""
+msgstr "Standard-Lagerort"
 
 #: src/pages/part/CategoryDetail.tsx:140
 msgid "Top level part category"
-msgstr ""
+msgstr "Oberste Teile-Kategorie"
 
 #: src/pages/part/CategoryDetail.tsx:150
 #: src/pages/part/CategoryDetail.tsx:164
 #: src/tables/part/PartCategoryTable.tsx:96
 msgid "Edit Part Category"
-msgstr ""
+msgstr "Teilekategorie bearbeiten"
 
 #: src/pages/part/CategoryDetail.tsx:159
 msgid "Category Actions"
-msgstr ""
+msgstr "Kategorieaktionen"
 
 #: src/pages/part/CategoryDetail.tsx:176
 msgid "Category Details"
-msgstr ""
+msgstr "Kategorie-Details"
 
 #: src/pages/part/PartDetail.tsx:122
 msgid "Variant of"
-msgstr ""
+msgstr "Variante von"
 
 #: src/pages/part/PartDetail.tsx:129
 #: src/tables/notifications/NotificationsTable.tsx:31
@@ -3646,7 +3646,7 @@ msgstr "Standard Lagerort"
 
 #: src/pages/part/PartDetail.tsx:142
 msgid "Category Default Location"
-msgstr ""
+msgstr "Standard-Lagerort der Kategorie"
 
 #: src/pages/part/PartDetail.tsx:149
 msgid "IPN"
@@ -3690,11 +3690,11 @@ msgstr "Bestellt"
 
 #: src/pages/part/PartDetail.tsx:216
 msgid "Allocated to Build Orders"
-msgstr ""
+msgstr "Bauaufträgen zugeordnet"
 
 #: src/pages/part/PartDetail.tsx:227
 msgid "Allocated to Sales Orders"
-msgstr ""
+msgstr "Aufträgen zugeordnet"
 
 #: src/pages/part/PartDetail.tsx:237
 #: src/tables/bom/BomTable.tsx:212
@@ -3721,16 +3721,16 @@ msgstr "Aktiv"
 
 #: src/pages/part/PartDetail.tsx:258
 msgid "Template Part"
-msgstr ""
+msgstr "Vorlagenteil"
 
 #: src/pages/part/PartDetail.tsx:263
 #: src/tables/bom/BomTable.tsx:240
 msgid "Assembled Part"
-msgstr ""
+msgstr "Baugruppe"
 
 #: src/pages/part/PartDetail.tsx:268
 msgid "Component Part"
-msgstr ""
+msgstr "Komponente"
 
 #: src/pages/part/PartDetail.tsx:273
 #: src/tables/bom/BomTable.tsx:235
@@ -3739,15 +3739,15 @@ msgstr "Nachverfolgbares Teil"
 
 #: src/pages/part/PartDetail.tsx:278
 msgid "Purchaseable Part"
-msgstr ""
+msgstr "Käufliches Teil"
 
 #: src/pages/part/PartDetail.tsx:283
 msgid "Saleable Part"
-msgstr ""
+msgstr "Verkäufliches Teil"
 
 #: src/pages/part/PartDetail.tsx:288
 msgid "Virtual Part"
-msgstr ""
+msgstr "Virtuelles Teil"
 
 #: src/pages/part/PartDetail.tsx:296
 msgid "Creation Date"
@@ -3755,7 +3755,7 @@ msgstr "Erstelldatum"
 
 #: src/pages/part/PartDetail.tsx:301
 msgid "Created By"
-msgstr ""
+msgstr "Erstellt von"
 
 #: src/pages/part/PartDetail.tsx:310
 #~ msgid "Edit part"
@@ -3786,11 +3786,11 @@ msgstr "Letzte Inventur"
 
 #: src/pages/part/PartDetail.tsx:396
 msgid "Stocktake By"
-msgstr ""
+msgstr "Inventur durch"
 
 #: src/pages/part/PartDetail.tsx:461
 msgid "Part Details"
-msgstr ""
+msgstr "Teil-Details"
 
 #: src/pages/part/PartDetail.tsx:485
 msgid "Variants"
@@ -3832,11 +3832,11 @@ msgstr "Lager-Aktionen"
 
 #: src/pages/part/PartDetail.tsx:680
 msgid "Count part stock"
-msgstr ""
+msgstr "Bestand zählen"
 
 #: src/pages/part/PartDetail.tsx:691
 msgid "Transfer part stock"
-msgstr ""
+msgstr "Bestand übertragen"
 
 #: src/pages/part/PartDetail.tsx:701
 msgid "Part Actions"
@@ -3848,11 +3848,11 @@ msgstr "Teile-Aktionen"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:65
 msgid "Edit Purchase Order"
-msgstr ""
+msgstr "Bestellung bearbeiten"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:87
 msgid "Supplier Reference"
-msgstr ""
+msgstr "Lieferanten-Referenz"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:117
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:226
@@ -3880,19 +3880,19 @@ msgstr "Abgeschlossene Sendungen"
 #: src/pages/sales/ReturnOrderDetail.tsx:106
 #: src/pages/sales/SalesOrderDetail.tsx:110
 msgid "Order Currency,"
-msgstr ""
+msgstr "Auftragswährung,"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:145
 #: src/pages/sales/ReturnOrderDetail.tsx:111
 #: src/pages/sales/SalesOrderDetail.tsx:115
 msgid "Total Cost"
-msgstr ""
+msgstr "Gesamtkosten"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:175
 #: src/pages/sales/ReturnOrderDetail.tsx:141
 #: src/pages/sales/SalesOrderDetail.tsx:145
 msgid "Created On"
-msgstr ""
+msgstr "Erstellt am"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:181
 #: src/pages/sales/ReturnOrderDetail.tsx:147
@@ -3927,33 +3927,33 @@ msgstr "Ausstehende Sendungen"
 
 #: src/pages/stock/LocationDetail.tsx:100
 msgid "Parent Location"
-msgstr ""
+msgstr "Übergeordneter Lagerort"
 
 #: src/pages/stock/LocationDetail.tsx:117
 msgid "Sublocations"
-msgstr ""
+msgstr "Unter-Lagerorte"
 
 #: src/pages/stock/LocationDetail.tsx:129
 msgid "External"
-msgstr ""
+msgstr "Extern"
 
 #: src/pages/stock/LocationDetail.tsx:138
 msgid "Top level stock location"
-msgstr ""
+msgstr "Oberster Lagerort"
 
 #: src/pages/stock/LocationDetail.tsx:149
 msgid "Location Details"
-msgstr ""
+msgstr "Lagerort-Details"
 
 #: src/pages/stock/LocationDetail.tsx:173
 msgid "Default Parts"
-msgstr ""
+msgstr "Standardteile"
 
 #: src/pages/stock/LocationDetail.tsx:192
 #: src/pages/stock/LocationDetail.tsx:277
 #: src/tables/stock/StockLocationTable.tsx:106
 msgid "Edit Stock Location"
-msgstr ""
+msgstr "Lagerort bearbeiten"
 
 #: src/pages/stock/LocationDetail.tsx:272
 msgid "Location Actions"
@@ -4522,7 +4522,7 @@ msgstr ""
 
 #: src/tables/machine/MachineListTable.tsx:263
 msgid "Restart"
-msgstr ""
+msgstr "Neustart"
 
 #: src/tables/machine/MachineListTable.tsx:265
 msgid "Restart machine"
@@ -4530,7 +4530,7 @@ msgstr ""
 
 #: src/tables/machine/MachineListTable.tsx:267
 msgid "manual restart required"
-msgstr ""
+msgstr "manueller Neustart erforderlich"
 
 #: src/tables/machine/MachineListTable.tsx:283
 msgid "Machine information"
@@ -5844,3 +5844,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
