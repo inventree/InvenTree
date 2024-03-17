@@ -133,6 +133,7 @@ jobs:
       INVENTREE_PYTHON_TEST_SERVER: http://localhost:12345
       INVENTREE_PYTHON_TEST_USERNAME: testuser
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
+      INVENTREE_SITE_URL: http://localhost:8000
     outputs:
       version: ${{ steps.version.outputs.version }}
 
