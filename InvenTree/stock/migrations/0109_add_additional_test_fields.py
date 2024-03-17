@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stock', '0104_alter_stockitem_purchase_price_currency'),
+        ('stock', '0108_auto_20240219_0252'),
     ]
 
     operations = [
