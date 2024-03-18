@@ -144,6 +144,7 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
         started = data.get('started_datetime')
         finished = data.get('finished_datetime')
+
         if started is not None and finished is not None and started > finished:
             raise ValidationError({
                 'finished_datetime': _(

@@ -1686,6 +1686,12 @@ function loadStockTestResultsTable(table, options) {
         fields['template']['value'] = templateId;
         fields['template']['filters']['part'] = options.part;
 
+        if (!options.test_station_fields) {
+            delete fields['test_station'];
+            delete fields['started_datetime'];
+            delete fields['finished_datetime'];
+        }
+
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
             fields: fields,
