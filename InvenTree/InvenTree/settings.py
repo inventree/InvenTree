@@ -1221,6 +1221,9 @@ PLUGIN_RETRY = get_setting(
 )  # How often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 
+# Flag to allow table events during testing
+TESTING_TABLE_EVENTS = False
+
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
     'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True
