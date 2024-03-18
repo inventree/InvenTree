@@ -12,6 +12,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
+from django.test.utils import override_settings
 from django.urls import reverse
 
 import PIL
@@ -271,6 +272,7 @@ class SettingsTest(InvenTreeTestCase):
                 print(f"run_settings_check failed for user setting '{key}'")
                 raise exc
 
+    @override_settings(SITE_URL=None)
     def test_defaults(self):
         """Populate the settings with default values."""
         for key in InvenTreeSetting.SETTINGS.keys():
