@@ -277,6 +277,13 @@ export default function StockItemTestResultTable({
             message: t`Test result has been recorded`,
             color: 'green'
           });
+        })
+        .catch(() => {
+          showNotification({
+            title: t`Error`,
+            message: t`Failed to record test result`,
+            color: 'red'
+          });
         });
     },
     [itemId]
