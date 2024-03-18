@@ -1367,11 +1367,11 @@ function noResultBadge() {
     return `<span class='badge badge-right rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
 }
 
-function formatDate(row) {
+function formatDate(row, date, options={}) {
     // Function for formatting date field
-    var html = renderDate(row.date);
+    var html = renderDate(date, options);
 
-    if (row.user_detail) {
+    if (row.user_detail && !options.no_user_detail) {
         html += `<span class='badge badge-right rounded-pill bg-secondary'>${row.user_detail.username}</span>`;
     }
 
@@ -1391,6 +1391,13 @@ function stockItemTestResultFields(options={}) {
         attachment: {},
         notes: {
             icon: 'fa-sticky-note',
+        },
+        test_station: {},
+        started_datetime: {
+            icon: 'fa-calendar-alt',
+        },
+        finished_datetime: {
+            icon: 'fa-calendar-alt',
         },
         stock_item: {
             hidden: true,
@@ -1530,7 +1537,30 @@ function loadStockTestResultsTable(table, options) {
                 title: '{% trans "Test Date" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    return formatDate(row);
+                    return formatDate(row, row.date);
+                },
+            },
+            {
+                field: 'test_station',
+                title: '{% trans "Test station" %}',
+                visible: false,
+            },
+            {
+                field: 'started_timestamp',
+                title: '{% trans "Test started" %}',
+                sortable: true,
+                visible: false,
+                formatter: function(value, row) {
+                    return formatDate(row, row.started_datetime, {showTime: true, no_user_detail: true});
+                },
+            },
+            {
+                field: 'finished_timestamp',
+                title: '{% trans "Test finished" %}',
+                sortable: true,
+                visible: false,
+                formatter: function(value, row) {
+                    return formatDate(row, row.finished_datetime, {showTime: true, no_user_detail: true});
                 },
             },
             {
@@ -1655,6 +1685,8 @@ function loadStockTestResultsTable(table, options) {
         fields['stock_item']['value'] = options.stock_item;
         fields['template']['value'] = templateId;
         fields['template']['filters']['part'] = options.part;
+        fields['template']['started_datetime']['icon'] = 'fa-calendar-alt';
+        fields['template']['finished_datetime']['icon'] = 'fa-calendar-alt';
 
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',

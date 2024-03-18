@@ -114,16 +114,14 @@ export function OptionsApiForm({
       props.pk,
       props.pathParams
     ],
-    queryFn: () =>
-      api.options(url).then((res) => {
-        let fields: Record<string, ApiFormFieldType> | null = {};
-
-        if (!props.ignorePermissionCheck) {
-          fields = extractAvailableFields(res, props.method);
-        }
-
-        return fields;
-      }),
+    queryFn: async () => {
+      let response = await api.options(url);
+      let fields: Record<string, ApiFormFieldType> | null = {};
+      if (!props.ignorePermissionCheck) {
+        fields = extractAvailableFields(response, props.method);
+      }
+      return fields;
+    },
     throwOnError: (error: any) => {
       if (error.response) {
         invalidResponse(error.response.status);
@@ -134,7 +132,6 @@ export function OptionsApiForm({
           color: 'red'
         });
       }
-
       return false;
     }
   });
