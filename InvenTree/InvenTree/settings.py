@@ -1028,9 +1028,9 @@ CSRF_TRUSTED_ORIGINS = get_setting(
 
 if len(CSRF_TRUSTED_ORIGINS) == 0 and DEBUG:
     logger.warning(
-        'No CSRF_TRUSTED_ORIGINS specified. Defaulting to ["*"] for debug mode. This is not recommended for production use'
+        'No CSRF_TRUSTED_ORIGINS specified. Defaulting to http://* for debug mode. This is not recommended for production use'
     )
-    CSRF_TRUSTED_ORIGINS = ['*']
+    CSRF_TRUSTED_ORIGINS = ['http://*']
 
 # If a list of trusted is not specified, but a site URL has been specified, use that
 if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
