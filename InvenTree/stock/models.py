@@ -2464,14 +2464,14 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     )
 
     started_datetime = models.DateTimeField(
-        default=None,
+        default=datetime.now,
         blank=True,
         verbose_name=_('Started'),
         help_text=_('The timestamp of the test start'),
     )
 
     finished_datetime = models.DateTimeField(
-        default=None,
+        default=datetime.now,
         blank=True,
         verbose_name=_('Finished'),
         help_text=_('The timestamp of the test finish'),
