@@ -278,7 +278,7 @@ export default function StockItemTestResultTable({
             color: 'green'
           });
         })
-        .catch((error: any) => {
+        .catch(() => {
           showNotification({
             title: t`Error`,
             message: t`Failed to record test result`,
