@@ -1,13 +1,10 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 185
+INVENTREE_API_VERSION = 184
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
-
-v185 - 2024-03-18 : https://github.com/inventree/InvenTree/pull/6731
-    - Adds a default URL to the generated API schema (http://localhost:8000)
 
 v184 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/10464
     - Add additional fields for tests (start/end datetime, test station)
