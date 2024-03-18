@@ -1775,7 +1775,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'RETURNORDER_REFERENCE_PATTERN': {
             'name': _('Return Order Reference Pattern'),
             'description': _(
-                'Required pattern for generating Return Order reference field'
+                'Required pattern for generating Return Order referenfce field'
             ),
             'default': 'RMA-{ref:04d}',
             'validator': order.validators.validate_return_order_reference_pattern,
@@ -2009,6 +2009,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _(
                 'Prevent build outputs from being completed until all required tests pass'
             ),
+            'default': False,
+            'validator': bool,
+        },
+        'TEST_STATION_DATA': {
+            'name': _('Enable Test Station Data'),
+            'description': _('Enable test station data collection for test results'),
             'default': False,
             'validator': bool,
         },

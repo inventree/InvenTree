@@ -231,10 +231,13 @@
         });
     });
 
+    {% settings_value "TEST_STATION_DATA" as test_station_fields %}
+
     loadStockTestResultsTable(
         $("#test-result-table"), {
             part: {{ item.part.id }},
             stock_item: {{ item.id }},
+            test_station_fields: {% js_bool test_station_fields %}
         }
     );
 
