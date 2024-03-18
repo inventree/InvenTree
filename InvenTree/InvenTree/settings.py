@@ -1026,23 +1026,22 @@ CSRF_TRUSTED_ORIGINS = get_setting(
     typecast=list,
 )
 
-if len(CSRF_TRUSTED_ORIGINS) == 0 and DEBUG:
-    logger.warning(
-        'No CSRF_TRUSTED_ORIGINS specified. Defaulting to http://* for debug mode. This is not recommended for production use'
-    )
-    CSRF_TRUSTED_ORIGINS = ['http://*']
-
 # If a list of trusted is not specified, but a site URL has been specified, use that
 if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
 
 if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
-    logger.error(
-        'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
-    )
+    if DEBUG:
+        logger.warning(
+            'No CSRF_TRUSTED_ORIGINS specified. Defaulting to http://* for debug mode. This is not recommended for production use'
+        )
+        CSRF_TRUSTED_ORIGINS = ['http://*']
 
-    # Server thread cannot run without CSRF_TRUSTED_ORIGINS
-    if isInMainThread():
+    elif isInMainThread():
+        # Server thread cannot run without CSRF_TRUSTED_ORIGINS
+        logger.error(
+            'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+        )
         sys.exit(-1)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
