@@ -202,7 +202,8 @@ function TableStringValue(props: FieldProps) {
       style={{
         display: 'flex',
         justifyContent: 'space-between',
-        wordBreak: 'break-word'
+        wordBreak: 'break-word',
+        alignItems: 'flex-start'
       }}
     >
       <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
@@ -369,19 +370,16 @@ export function DetailsTableField({
     <tr>
       <td
         style={{
-          display: 'flex',
-          alignItems: 'center',
           gap: '20px',
-          width: '50',
-          justifyContent: 'flex-start'
+          width: '50'
         }}
       >
         <InvenTreeIcon icon={(field.icon ?? field.name) as InvenTreeIconType} />
       </td>
-      <td>
+      <td style={{ minWidth: '25%', maxWidth: '65%' }}>
         <Text>{field.label}</Text>
       </td>
-      <td style={{ minWidth: '40%' }}>
+      <td style={{ width: '100%' }}>
         <FieldType field_data={field} field_value={item[field.name]} />
       </td>
       <td style={{ width: '50' }}>
