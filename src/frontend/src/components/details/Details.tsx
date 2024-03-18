@@ -367,7 +367,7 @@ export function DetailsTableField({
   const FieldType: any = getFieldType(field.type);
 
   return (
-    <tr>
+    <tr style={{ verticalAlign: 'top' }}>
       <td
         style={{
           gap: '20px',
