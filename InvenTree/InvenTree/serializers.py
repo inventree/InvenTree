@@ -355,9 +355,9 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
             if hasattr(exc, 'message_dict'):
                 data = exc.message_dict
             elif hasattr(exc, 'message'):
-                data = {'non_field_errors': str(exc.message)}
+                data = {'non_field_errors': [str(exc.message)]}
             else:
-                data = {'non_field_errors': str(exc)}
+                data = {'non_field_errors': [str(exc)]}
 
             # Change '__all__' key (django style) to 'non_field_errors' (DRF style)
             if '__all__' in data:
