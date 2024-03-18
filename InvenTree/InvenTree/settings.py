@@ -26,6 +26,7 @@ import pytz
 from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
+from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
@@ -1006,7 +1007,10 @@ if not ALLOWED_HOSTS:
         logger.error(
             'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
         )
-        sys.exit(-1)
+
+        # Server cannot run without ALLOWED_HOSTS
+        if isInMainThread():
+            sys.exit(-1)
 
 # Ensure that the ALLOWED_HOSTS do not contain any scheme info
 for i, host in enumerate(ALLOWED_HOSTS):
@@ -1027,10 +1031,18 @@ if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
 
 if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
-    logger.error(
-        'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
-    )
-    sys.exit(-1)
+    if DEBUG:
+        logger.warning(
+            'No CSRF_TRUSTED_ORIGINS specified. Defaulting to http://* for debug mode. This is not recommended for production use'
+        )
+        CSRF_TRUSTED_ORIGINS = ['http://*']
+
+    elif isInMainThread():
+        # Server thread cannot run without CSRF_TRUSTED_ORIGINS
+        logger.error(
+            'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+        )
+        sys.exit(-1)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
