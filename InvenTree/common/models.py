@@ -1775,7 +1775,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'RETURNORDER_REFERENCE_PATTERN': {
             'name': _('Return Order Reference Pattern'),
             'description': _(
-                'Required pattern for generating Return Order referenfce field'
+                'Required pattern for generating Return Order reference field'
             ),
             'default': 'RMA-{ref:04d}',
             'validator': order.validators.validate_return_order_reference_pattern,
