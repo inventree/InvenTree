@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 183
+INVENTREE_API_VERSION = 184
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v184 - 2024-03-18 : https://github.com/inventree/InvenTree/pull/6731
+    - Adds a default URL to the generated API schema (http://localhost:8000)
 
 v183 - 2024-03-14 : https://github.com/inventree/InvenTree/pull/5972
     - Adds "category_default_location" annotated field to part serializer
