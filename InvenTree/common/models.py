@@ -2012,6 +2012,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'TEST_STATION_DATA': {
+            'name': _('Enable Test Station Data'),
+            'description': _('Enable test station data collection for test results'),
+            'default': False,
+            'validator': bool,
+        },
     }
 
     typ = 'inventree'

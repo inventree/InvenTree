@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { YesNoButton } from '../../components/items/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
@@ -73,9 +74,15 @@ export default function ParametricPartTable({
             extra.push(`${parameter.data_numeric} [${template.units}]`);
           }
 
+          let value: any = parameter.data;
+
+          if (template?.checkbox) {
+            value = <YesNoButton value={parameter.data} />;
+          }
+
           return (
             <TableHoverCard
-              value={parameter.data}
+              value={value}
               extra={extra}
               title={t`Internal Units`}
             />

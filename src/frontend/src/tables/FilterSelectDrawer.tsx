@@ -191,7 +191,7 @@ export function FilterSelectDrawer({
     >
       <Stack spacing="xs">
         {tableState.activeFilters &&
-          tableState.activeFilters.map((f) => (
+          tableState.activeFilters?.map((f) => (
             <FilterItem key={f.name} flt={f} tableState={tableState} />
           ))}
         {tableState.activeFilters && tableState.activeFilters.length > 0 && (

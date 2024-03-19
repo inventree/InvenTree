@@ -44,6 +44,7 @@ jobs:
               - docker-compose.yml
               - docker.dev.env
               - Dockerfile
+              - InvenTree/settings.py
               - requirements.txt
               - tasks.py
 

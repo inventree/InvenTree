@@ -117,7 +117,7 @@ def allow_table_event(table_name):
         return False  # pragma: no cover
 
     # Prevent table events when in testing mode (saves a lot of time)
-    if settings.TESTING:
+    if settings.TESTING and not settings.TESTING_TABLE_EVENTS:
         return False
 
     table_name = table_name.lower().strip()

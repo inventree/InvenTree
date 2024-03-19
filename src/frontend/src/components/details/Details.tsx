@@ -198,7 +198,13 @@ function TableStringValue(props: FieldProps) {
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        wordBreak: 'break-word'
+      }}
+    >
       <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
         <span>
           {value ? value : props.field_data?.unit && '0'}{' '}

@@ -22,12 +22,9 @@ export function setApiDefaults() {
 
   api.defaults.baseURL = host;
   api.defaults.timeout = 2500;
-
-  if (!!token) {
-    api.defaults.headers.common['Authorization'] = `Token ${token}`;
-  } else {
-    api.defaults.headers.common['Authorization'] = undefined;
-  }
+  api.defaults.headers.common['Authorization'] = token
+    ? `Token ${token}`
+    : undefined;
 
   if (!!getCsrfCookie()) {
     api.defaults.withCredentials = true;
