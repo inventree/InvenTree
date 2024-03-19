@@ -34,6 +34,7 @@ export const getSupportedLanguages = (): Record<string, string> => {
     it: t`Italian`,
     ja: t`Japanese`,
     ko: t`Korean`,
+    lv: t`Latvian`,
     nl: t`Dutch`,
     no: t`Norwegian`,
     pl: t`Polish`,
