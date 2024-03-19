@@ -111,7 +111,13 @@ export default function PartDetail() {
     // Construct the details tables
     let tl: DetailsField[] = [
       {
-        type: 'text',
+        type: 'string',
+        name: 'name',
+        label: t`Name`,
+        copy: true
+      },
+      {
+        type: 'string',
         name: 'description',
         label: t`Description`,
         copy: true
