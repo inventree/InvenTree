@@ -56,7 +56,6 @@ The following basic options are available:
 | INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) | True |
 | INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
-| INVENTREE_BASE_URL | base_url | Server base URL | *Not specified* |
 | INVENTREE_AUTO_UPDATE | auto_update | Database migrations will be run automatically | False |
 
 ## Server Access
