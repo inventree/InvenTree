@@ -114,6 +114,7 @@ export default function PartDetail() {
         type: 'string',
         name: 'name',
         label: t`Name`,
+        icon: 'part',
         copy: true
       },
       {
