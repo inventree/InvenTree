@@ -133,9 +133,10 @@ export function InvenTreeTable<T = any>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: false,
+    enabled: true,
     queryKey: ['options', url, tableState.tableKey],
     retry: 3,
+    refetchOnMount: true,
     queryFn: async () => {
       return api
         .options(url, {
