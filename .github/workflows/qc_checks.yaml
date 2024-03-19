@@ -505,7 +505,7 @@ jobs:
       - name: Install dependencies
         run: cd src/frontend && yarn install
       - name: Build frontend
-        run: cd src/frontend && npm run build
+        run: cd src/frontend && npm run compile && npm run build
       - name: Zip frontend
         run: |
           cd InvenTree/web/static
