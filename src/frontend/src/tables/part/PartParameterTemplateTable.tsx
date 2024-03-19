@@ -14,7 +14,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
@@ -61,9 +61,9 @@ export default function PartParameterTemplateTable() {
         sortable: true
       },
       DescriptionColumn({}),
-      {
+      BooleanColumn({
         accessor: 'checkbox'
-      },
+      }),
       {
         accessor: 'choices'
       }
