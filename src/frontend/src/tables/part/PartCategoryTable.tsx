@@ -95,7 +95,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     pk: selectedCategory,
     title: t`Edit Part Category`,
     fields: partCategoryFields({}),
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const tableActions = useMemo(() => {
@@ -143,8 +143,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
           tableFilters: tableFilters,
           tableActions: tableActions,
           rowActions: rowActions,
-          onRowClick: (record) =>
-            navigate(getDetailUrl(ModelType.partcategory, record.pk))
+          modelType: ModelType.partcategory
         }}
       />
     </>

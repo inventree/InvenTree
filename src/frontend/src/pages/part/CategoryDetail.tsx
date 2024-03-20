@@ -176,7 +176,6 @@ export default function CategoryDetail({}: {}) {
         label: t`Category Details`,
         icon: <IconInfoCircle />,
         content: detailsPanel
-        // hidden: !category?.pk,
       },
       {
         name: 'parts',
@@ -200,7 +199,7 @@ export default function CategoryDetail({}: {}) {
       },
       {
         name: 'parameters',
-        label: t`Parameters`,
+        label: t`Part Parameters`,
         icon: <IconListDetails />,
         content: <ParametricPartTable categoryId={id} />
       }
