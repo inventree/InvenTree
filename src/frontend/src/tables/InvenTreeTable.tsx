@@ -522,7 +522,7 @@ export function InvenTreeTable<T = any>({
         // Should it be opened in a new tab?
         if (event?.ctrlKey || event?.shiftKey || event?.buttons & 0x04) {
           // Open in a new tab
-          window.open(`/${base_url}{url}`, '_blank', 'noreferrer');
+          window.open(`/${base_url}${url}`, '_blank', 'noreferrer');
         } else {
           // Navigate internally
           navigate(url);
