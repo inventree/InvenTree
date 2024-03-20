@@ -31,6 +31,7 @@ import { ModelType } from '../enums/ModelType';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { getDetailUrl } from '../functions/urls';
 import { TableState } from '../hooks/UseTable';
+import { base_url } from '../main';
 import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
@@ -521,8 +522,7 @@ export function InvenTreeTable<T = any>({
         // Should it be opened in a new tab?
         if (event?.ctrlKey || event?.shiftKey || event?.buttons & 0x04) {
           // Open in a new tab
-          // TODO: Remove /platform/ prefix later on
-          window.open('/platform' + url, '_blank', 'noreferrer');
+          window.open(`/${base_url}{url}`, '_blank', 'noreferrer');
         } else {
           // Navigate internally
           navigate(url);
