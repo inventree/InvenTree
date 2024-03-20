@@ -34,8 +34,7 @@ function attachmentTableColumns(): TableColumn[] {
         if (record.attachment) {
           return <AttachmentLink attachment={record.attachment} />;
         } else if (record.link) {
-          // TODO: Custom renderer for links
-          return record.link;
+          return <AttachmentLink attachment={record.link} external />;
         } else {
           return '-';
         }
