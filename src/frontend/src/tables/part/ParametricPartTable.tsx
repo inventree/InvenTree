@@ -4,7 +4,6 @@ import { useHover } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
@@ -12,7 +11,6 @@ import { YesNoButton } from '../../components/items/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -99,7 +97,6 @@ export default function ParametricPartTable({
 }) {
   const table = useTable('parametric-parts');
   const user = useUserState();
-  const navigate = useNavigate();
 
   const categoryParmeters = useQuery({
     queryKey: ['category-parameters', categoryId],
@@ -289,11 +286,7 @@ export default function ParametricPartTable({
             category_detail: true,
             parameters: true
           },
-          onRowClick: (record) => {
-            if (record.pk) {
-              navigate(getDetailUrl(ModelType.part, record.pk));
-            }
-          }
+          modelType: ModelType.part
         }}
       />
     </>

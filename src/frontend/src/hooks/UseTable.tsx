@@ -34,6 +34,7 @@ export type TableState = {
   setPage: (page: number) => void;
   records: any[];
   setRecords: (records: any[]) => void;
+  updateRecord: (record: any) => void;
 };
 
 /**
@@ -95,6 +96,25 @@ export function useTable(tableName: string): TableState {
   // Table records
   const [records, setRecords] = useState<any[]>([]);
 
+  // Update a single record in the table, by primary key value
+  const updateRecord = useCallback(
+    (record: any) => {
+      let _records = [...records];
+
+      // Find the matching record in the table
+      const index = _records.findIndex((r) => r.pk === record.pk);
+
+      if (index >= 0) {
+        _records[index] = record;
+      } else {
+        _records.push(record);
+      }
+
+      setRecords(_records);
+    },
+    [records]
+  );
+
   return {
     tableKey,
     refreshTable,
@@ -115,6 +135,7 @@ export function useTable(tableName: string): TableState {
     page,
     setPage,
     records,
-    setRecords
+    setRecords,
+    updateRecord
   };
 }
