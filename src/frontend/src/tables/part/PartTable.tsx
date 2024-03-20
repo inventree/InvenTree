@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatPriceRange } from '../../defaults/formatters';
@@ -267,6 +268,7 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
 
   const table = useTable('part-list');
   const user = useUserState();
+  const navigate = useNavigate();
 
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,

@@ -6,6 +6,7 @@ import {
   IconSwitch3
 } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { YesNoButton } from '../../components/items/YesNoButton';
@@ -55,6 +56,7 @@ export function BomTable({
 }) {
   const user = useUserState();
   const table = useTable('bom');
+  const navigate = useNavigate();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
