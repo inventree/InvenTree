@@ -21,10 +21,12 @@ export function setApiDefaults(backend = false) {
   api.defaults.timeout = 2500;
 
   if (hasToken(backend)) {
+    console.log('Using CSRF token');
     api.defaults.withCredentials = true;
     api.defaults.xsrfCookieName = 'csrftoken';
     api.defaults.xsrfHeaderName = 'X-CSRFToken';
   } else {
+    console.log('No CSRF token');
     api.defaults.withCredentials = false;
     api.defaults.xsrfCookieName = undefined;
     api.defaults.xsrfHeaderName = undefined;
