@@ -53,8 +53,12 @@ export default function ParametricPartTable({
 
   const partParameterFields: ApiFormFieldSet = useMemo(() => {
     return {
-      part: {},
-      template: {},
+      part: {
+        disabled: true
+      },
+      template: {
+        disabled: true
+      },
       data: {}
     };
   }, []);
