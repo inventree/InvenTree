@@ -3,7 +3,8 @@
 from typing import Union, cast
 
 from django.db.models.query import QuerySet
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpRequest
+from django.contrib.auth.models import AnonymousUser
 from django.utils.translation import gettext_lazy as _
 
 from PIL.Image import Image
@@ -33,7 +34,6 @@ class LabelPrinterBaseDriver(BaseDriver):
         machine: 'LabelPrinterMachine',
         label: LabelTemplate,
         item: LabelItemType,
-        request: Request,
         **kwargs,
     ) -> None:
         """Print a single label with the provided template and item.
@@ -42,7 +42,6 @@ class LabelPrinterBaseDriver(BaseDriver):
             machine: The LabelPrintingMachine instance that should be used for printing
             label: The LabelTemplate object to use for printing
             item: The database item to print (e.g. StockItem instance)
-            request: The HTTP request object which triggered this print job
 
         Keyword Arguments:
             printing_options (dict): The printing options set for this print job defined in the PrintingOptionsSerializer
@@ -57,7 +56,6 @@ class LabelPrinterBaseDriver(BaseDriver):
         machine: 'LabelPrinterMachine',
         label: LabelTemplate,
         items: QuerySet[LabelItemType],
-        request: Request,
         **kwargs,
     ) -> Union[None, JsonResponse]:
         """Print one or more labels with the provided template and items.
@@ -80,7 +78,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         but this can be overridden by the particular driver.
         """
         for item in items:
-            self.print_label(machine, label, item, request, **kwargs)
+            self.print_label(machine, label, item, **kwargs)
 
     def get_printers(
         self, label: LabelTemplate, items: QuerySet[LabelItemType], **kwargs
@@ -122,30 +120,30 @@ class LabelPrinterBaseDriver(BaseDriver):
         return cast(LabelPrintingMixin, plg)
 
     def render_to_pdf(
-        self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
+        self, label: LabelTemplate, item: LabelItemType, **kwargs
     ) -> HttpResponse:
         """Helper method to render a label to PDF format for a specific item.
 
         Arguments:
             label: The LabelTemplate object to render
             item: The item to render the label with
-            request: The HTTP request object which triggered this print job
         """
         label.object_to_print = item
+        request = self._get_dummy_request()
         response = self.machine_plugin.render_to_pdf(label, request, **kwargs)
         label.object_to_print = None
         return response
 
     def render_to_pdf_data(
-        self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
+        self, label: LabelTemplate, item: LabelItemType, **kwargs
     ) -> bytes:
         """Helper method to render a label to PDF and return it as bytes for a specific item.
 
         Arguments:
             label: The LabelTemplate object to render
             item: The item to render the label with
-            request: The HTTP request object which triggered this print job
         """
+        request = self._get_dummy_request()
         return (
             self.render_to_pdf(label, item, request, **kwargs)
             .get_document()  # type: ignore
@@ -153,29 +151,28 @@ class LabelPrinterBaseDriver(BaseDriver):
         )
 
     def render_to_html(
-        self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
+        self, label: LabelTemplate, item: LabelItemType, **kwargs
     ) -> str:
         """Helper method to render a label to HTML format for a specific item.
 
         Arguments:
             label: The LabelTemplate object to render
             item: The item to render the label with
-            request: The HTTP request object which triggered this print job
         """
         label.object_to_print = item
+        self._get_dummy_request()
         html = self.machine_plugin.render_to_html(label, request, **kwargs)
         label.object_to_print = None
         return html
 
     def render_to_png(
-        self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
+        self, label: LabelTemplate, item: LabelItemType, **kwargs
     ) -> Image:
         """Helper method to render a label to PNG format for a specific item.
 
         Arguments:
             label: The LabelTemplate object to render
             item: The item to render the label with
-            request: The HTTP request object which triggered this print job
 
         Keyword Arguments:
             pdf_data (bytes): The pdf document as bytes (optional)
@@ -186,9 +183,22 @@ class LabelPrinterBaseDriver(BaseDriver):
                 [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes) method (optional)
         """
         label.object_to_print = item
+        request = self._get_dummy_request()
         png = self.machine_plugin.render_to_png(label, request, **kwargs)
         label.object_to_print = None
         return png
+    
+    def _get_dummy_request(self):
+        """Return a dummy request object to it work with legacy code.
+        
+        Note: this is a private method and can be removed at anytime
+        """
+        r = HttpRequest()
+        r.META["SERVER_PORT"] = "80"
+        r.META["SERVER_NAME"] = "localhost"
+        r.user = AnonymousUser()
+
+        return r
 
     required_overrides = [[print_label, print_labels]]
 
