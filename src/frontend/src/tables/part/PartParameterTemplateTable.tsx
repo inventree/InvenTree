@@ -96,7 +96,7 @@ export default function PartParameterTemplateTable() {
     pk: selectedTemplate,
     title: t`Edit Parameter Template`,
     fields: partParameterTemplateFields,
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const deleteTemplate = useDeleteApiFormModal({

@@ -53,7 +53,7 @@ export default function ProjectCodeTable() {
     pk: selectedProjectCode,
     title: t`Edit Project Code`,
     fields: projectCodeFields(),
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const deleteProjectCode = useDeleteApiFormModal({

@@ -72,7 +72,7 @@ export function ContactTable({
     pk: selectedContact,
     title: t`Edit Contact`,
     fields: contactFields,
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const newContact = useCreateApiFormModal({

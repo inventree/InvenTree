@@ -80,7 +80,7 @@ export function editAttachment({
   model: string;
   pk: number;
   attachmentType: 'file' | 'link';
-  callback?: () => void;
+  callback?: (record: any) => void;
 }) {
   let formFields: ApiFormFieldSet = {
     link: {},

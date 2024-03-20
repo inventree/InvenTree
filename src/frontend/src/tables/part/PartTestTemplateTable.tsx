@@ -134,7 +134,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     pk: selectedTest,
     title: t`Edit Test Template`,
     fields: partTestTemplateFields,
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const deleteTestTemplate = useDeleteApiFormModal({
