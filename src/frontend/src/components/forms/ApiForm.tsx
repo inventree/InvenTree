@@ -2,10 +2,8 @@ import { t } from '@lingui/macro';
 import {
   Alert,
   DefaultMantineColor,
-  Divider,
   LoadingOverlay,
   Paper,
-  ScrollArea,
   Text
 } from '@mantine/core';
 import { Button, Group, Stack } from '@mantine/core';
@@ -224,41 +222,46 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
       props.pathParams
     ],
     queryFn: async () => {
-      return api
-        .get(url)
-        .then((response) => {
-          const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
-            const res: NestedDict = {};
+      try {
+        // Await API call
+        let response = await api.get(url);
+        // Define function to process API response
+        const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
+          const res: NestedDict = {};
 
-            for (const [k, field] of Object.entries(fields)) {
-              const dataValue = data[k];
+          // TODO: replace with .map()
+          for (const [k, field] of Object.entries(fields)) {
+            const dataValue = data[k];
 
-              if (
-                field.field_type === 'nested object' &&
-                field.children &&
-                typeof dataValue === 'object'
-              ) {
-                res[k] = processFields(field.children, dataValue);
-              } else {
-                res[k] = dataValue;
-              }
+            if (
+              field.field_type === 'nested object' &&
+              field.children &&
+              typeof dataValue === 'object'
+            ) {
+              res[k] = processFields(field.children, dataValue);
+            } else {
+              res[k] = dataValue;
             }
+          }
 
-            return res;
-          };
-          const initialData: any = processFields(
-            props.fields ?? {},
-            response.data
-          );
+          return res;
+        };
 
-          // Update form values, but only for the fields specified for this form
-          form.reset(initialData);
+        // Process API response
+        const initialData: any = processFields(
+          props.fields ?? {},
+          response.data
+        );
 
-          return response;
-        })
-        .catch((error) => {
-          console.error('Error fetching initial data:', error);
-        });
+        // Update form values, but only for the fields specified for this form
+        form.reset(initialData);
+
+        return response;
+      } catch (error) {
+        console.error('Error fetching initial data:', error);
+        // Re-throw error to allow react-query to handle error
+        throw error;
+      }
     }
   });
 
