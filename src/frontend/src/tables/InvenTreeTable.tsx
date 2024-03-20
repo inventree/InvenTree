@@ -14,8 +14,12 @@ import { modals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { IconFilter, IconRefresh, IconTrash } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import { dataTagSymbol, useQuery } from '@tanstack/react-query';
+import {
+  DataTable,
+  DataTableCellClickHandler,
+  DataTableSortStatus
+} from 'mantine-datatable';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../App';
@@ -57,6 +61,7 @@ const defaultPageSize: number = 25;
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
+ * @param onCellClick : (event: any, record: any, recordIndex: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  */
 export type InvenTreeTableProps<T = any> = {
   params?: any;
@@ -79,6 +84,7 @@ export type InvenTreeTableProps<T = any> = {
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
+  onCellClick?: DataTableCellClickHandler<T>;
 };
 
 /**
@@ -260,15 +266,12 @@ export function InvenTreeTable<T = any>({
     );
   }
 
-  // Pagination
-  const [page, setPage] = useState(1);
-
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
-    setPage(1);
+    tableState.setPage(1);
   }, [tableState.searchTerm]);
 
   /*
@@ -295,7 +298,7 @@ export function InvenTreeTable<T = any>({
     if (tableProps.enablePagination && paginate) {
       let pageSize = tableProps.pageSize ?? defaultPageSize;
       queryParams.limit = pageSize;
-      queryParams.offset = (page - 1) * pageSize;
+      queryParams.offset = (tableState.page - 1) * pageSize;
     }
 
     // Ordering
@@ -356,7 +359,7 @@ export function InvenTreeTable<T = any>({
   );
 
   const handleSortStatusChange = (status: DataTableSortStatus) => {
-    setPage(1);
+    tableState.setPage(1);
     setSortStatus(status);
   };
 
@@ -388,7 +391,7 @@ export function InvenTreeTable<T = any>({
               results = [];
             }
 
-            setRecordCount(response.data?.count ?? results.length);
+            tableState.setRecordCount(response.data?.count ?? results.length);
 
             return results;
           case 400:
@@ -420,7 +423,7 @@ export function InvenTreeTable<T = any>({
 
   const { data, isFetching, refetch } = useQuery({
     queryKey: [
-      page,
+      tableState.page,
       props.params,
       sortStatus.columnAccessor,
       sortStatus.direction,
@@ -433,7 +436,10 @@ export function InvenTreeTable<T = any>({
     refetchOnMount: true
   });
 
-  const [recordCount, setRecordCount] = useState<number>(0);
+  // Update tableState.records when new data received
+  useEffect(() => {
+    tableState.setRecords(data ?? []);
+  }, [data]);
 
   // Callback function to delete the selected records in the table
   const deleteSelectedRecords = useCallback(() => {
@@ -597,10 +603,10 @@ export function InvenTreeTable<T = any>({
             pinLastColumn={tableProps.rowActions != undefined}
             idAccessor={tableProps.idAccessor}
             minHeight={300}
-            totalRecords={recordCount}
+            totalRecords={tableState.recordCount}
             recordsPerPage={tableProps.pageSize ?? defaultPageSize}
-            page={page}
-            onPageChange={setPage}
+            page={tableState.page}
+            onPageChange={tableState.setPage}
             sortStatus={sortStatus}
             onSortStatusChange={handleSortStatusChange}
             selectedRecords={
@@ -614,9 +620,10 @@ export function InvenTreeTable<T = any>({
             rowExpansion={tableProps.rowExpansion}
             fetching={isFetching}
             noRecordsText={missingRecordsText}
-            records={data}
+            records={tableState.records}
             columns={dataColumns}
             onRowClick={tableProps.onRowClick}
+            onCellClick={tableProps.onCellClick}
             defaultColumnProps={{
               noWrap: true,
               textAlignment: 'left',

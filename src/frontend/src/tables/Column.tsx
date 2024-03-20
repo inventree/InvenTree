@@ -16,4 +16,5 @@ export type TableColumn<T = any> = {
   ellipsis?: boolean; // Whether the column should be ellipsized
   textAlignment?: 'left' | 'center' | 'right'; // The text alignment of the column
   cellsStyle?: any; // The style of the cells in the column
+  extra?: any; // Extra data to pass to the render function
 };
