@@ -481,6 +481,58 @@ function shipSalesOrder(order_id, options={}) {
         `/api/order/so/${order_id}/complete/`,
         {
             method: 'POST',
+            title: '{% trans "Ship Sales Order" %}',
+            confirm: true,
+            fieldsFunction: function(opts) {
+                var fields = {
+                    accept_incomplete: {},
+                };
+
+                if (opts.context.is_complete) {
+                    delete fields['accept_incomplete'];
+                }
+
+                return fields;
+            },
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-block alert-info'>
+                    {% trans "Ship this order?" %}
+                </div>`;
+
+                if (opts.context.pending_shipments) {
+                    html += `
+                    <div class='alert alert-block alert-danger'>
+                    {% trans "Order cannot be shipped as there are incomplete shipments" %}<br>
+                    </div>`;
+                }
+
+                if (!opts.context.is_complete) {
+                    html += `
+                    <div class='alert alert-block alert-warning'>
+                    {% trans "This order has line items which have not been completed." %}<br>
+                    {% trans "Shipping this order means that the order and line items will no longer be editable." %}
+                    </div>`;
+                }
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
+
+/*
+ * Launches a modal form to mark a SalesOrder as "completed"
+ */
+function completeSalesOrder(order_id, options={}) {
+
+    constructForm(
+        `/api/order/so/${order_id}/complete/`,
+        {
+            method: 'POST',
             title: '{% trans "Complete Sales Order" %}',
             confirm: true,
             fieldsFunction: function(opts) {
@@ -500,21 +552,6 @@ function shipSalesOrder(order_id, options={}) {
                     {% trans "Mark this order as complete?" %}
                 </div>`;
 
-                if (opts.context.pending_shipments) {
-                    html += `
-                    <div class='alert alert-block alert-danger'>
-                    {% trans "Order cannot be completed as there are incomplete shipments" %}<br>
-                    </div>`;
-                }
-
-                if (!opts.context.is_complete) {
-                    html += `
-                    <div class='alert alert-block alert-warning'>
-                    {% trans "This order has line items which have not been completed." %}<br>
-                    {% trans "Completing this order means that the order and line items will no longer be editable." %}
-                    </div>`;
-                }
-
                 return html;
             },
             onSuccess: function(response) {
@@ -522,27 +559,6 @@ function shipSalesOrder(order_id, options={}) {
             }
         }
     );
-}
-
-/*
- * Launches a modal form to mark a SalesOrder as "completed"
- */
-function issueSalesOrder(order_id, options={}) {
-
-    let html = `
-    <div class='alert alert-block alert-info'>
-    {% trans "Issue this Sales Order?" %}
-    </div>`;
-
-    constructForm(`{% url "api-so-list" %}${order_id}/issue/`, {
-        method: 'POST',
-        title: '{% trans "Issue Sales Order" %}',
-        confirm: true,
-        preFormContent: html,
-        onSuccess: function(response) {
-            handleFormSuccess(response, options);
-        }
-    });
 }
 
 

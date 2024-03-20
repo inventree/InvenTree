@@ -988,7 +988,7 @@ class SalesOrder(TotalPriceMixin, Order):
                 )
 
             # Only an open order can be marked as shipped
-            elif not self.is_open:
+            elif not self.is_open and not self.is_completed:
                 raise ValidationError(_('Only an open order can be marked as complete'))
 
             elif self.pending_shipment_count > 0:
@@ -1030,9 +1030,12 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_complete(**kwargs):
             return False
 
-        self.status = SalesOrderStatus.SHIPPED.value
-        self.shipped_by = user
-        self.shipment_date = datetime.now()
+        if self.status == SalesOrderStatus.SHIPPED:
+            self.status = SalesOrderStatus.COMPLETE.value
+        else:
+            self.status = SalesOrderStatus.SHIPPED.value
+            self.shipped_by = user
+            self.shipment_date = datetime.now()
 
         self.save()
 
