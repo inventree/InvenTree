@@ -17,6 +17,7 @@ import { useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { UserRoles } from '../../enums/Roles';
+import { cancelEvent } from '../../functions/events';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
@@ -267,9 +268,8 @@ function ImageActionButtons({
               size="lg"
               tooltipAlignment="top"
               onClick={(event: any) => {
-                event?.preventDefault();
-                event?.stopPropagation();
-                event?.nativeEvent?.stopImmediatePropagation();
+                cancelEvent(event);
+
                 modals.open({
                   title: <StylishText size="xl">{t`Select Image`}</StylishText>,
                   size: 'xxl',
@@ -288,9 +288,7 @@ function ImageActionButtons({
               size="lg"
               tooltipAlignment="top"
               onClick={(event: any) => {
-                event?.preventDefault();
-                event?.stopPropagation();
-                event?.nativeEvent?.stopImmediatePropagation();
+                cancelEvent(event);
                 modals.open({
                   title: <StylishText size="xl">{t`Upload Image`}</StylishText>,
                   children: (
@@ -310,9 +308,7 @@ function ImageActionButtons({
               size="lg"
               tooltipAlignment="top"
               onClick={(event: any) => {
-                event?.preventDefault();
-                event?.stopPropagation();
-                event?.nativeEvent?.stopImmediatePropagation();
+                cancelEvent(event);
                 removeModal(apiPath, setImage);
               }}
             />
@@ -349,9 +345,7 @@ export function DetailsImage(props: DetailImageProps) {
   }, [props.imageActions]);
 
   const expandImage = (event: any) => {
-    event?.preventDefault();
-    event?.stopPropagation();
-    event?.nativeEvent?.stopImmediatePropagation();
+    cancelEvent(event);
     modals.open({
       children: <ApiImage src={img} />,
       withCloseButton: false

@@ -11,6 +11,7 @@ import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner } from '../components/render/User';
 import { formatCurrency, renderDate } from '../defaults/formatters';
 import { ModelType } from '../enums/ModelType';
+import { cancelEvent } from '../functions/events';
 import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
@@ -77,9 +78,7 @@ export function LinkColumn({
           target="_blank"
           rel="noreferrer noopener"
           onClick={(event: any) => {
-            event?.stopPropagation();
-            event?.preventDefault();
-            event?.nativeEvent?.stopImmediatePropagation();
+            cancelEvent(event);
 
             window.open(url, '_blank', 'noopener,noreferrer');
           }}
