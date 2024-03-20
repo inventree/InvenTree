@@ -14,13 +14,13 @@ export const api = axios.create({});
  * - Base URL
  * - CSRF token (if available)
  */
-export function setApiDefaults() {
+export function setApiDefaults(backend = false) {
   const host = useLocalState.getState().host;
 
   api.defaults.baseURL = host;
   api.defaults.timeout = 2500;
 
-  if (hasToken(true)) {
+  if (hasToken(backend)) {
     api.defaults.withCredentials = true;
     api.defaults.xsrfCookieName = 'csrftoken';
     api.defaults.xsrfHeaderName = 'X-CSRFToken';
