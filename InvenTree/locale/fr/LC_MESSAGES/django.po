@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-18 10:28+0000\n"
-"PO-Revision-Date: 2024-03-18 11:56\n"
+"POT-Creation-Date: 2024-03-19 01:26+0000\n"
+"PO-Revision-Date: 2024-03-20 12:27\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -28,7 +28,7 @@ msgstr "L'utilisateur n'a pas la permission de voir ce modèle"
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Unité fournie invalide ({unit})"
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
@@ -203,138 +203,142 @@ msgstr "Le serveur distant a renvoyé une réponse vide"
 msgid "Supplied URL is not a valid image file"
 msgstr "L'URL fournie n'est pas un fichier image valide"
 
-#: InvenTree/locales.py:16
+#: InvenTree/locales.py:18
 msgid "Bulgarian"
 msgstr "Bulgare"
 
-#: InvenTree/locales.py:17
+#: InvenTree/locales.py:19
 msgid "Czech"
 msgstr "Tchèque"
 
-#: InvenTree/locales.py:18
+#: InvenTree/locales.py:20
 msgid "Danish"
 msgstr "Danois"
 
-#: InvenTree/locales.py:19
+#: InvenTree/locales.py:21
 msgid "German"
 msgstr "Allemand"
 
-#: InvenTree/locales.py:20
+#: InvenTree/locales.py:22
 msgid "Greek"
 msgstr "Grec"
 
-#: InvenTree/locales.py:21
+#: InvenTree/locales.py:23
 msgid "English"
 msgstr "Anglais"
 
-#: InvenTree/locales.py:22
+#: InvenTree/locales.py:24
 msgid "Spanish"
 msgstr "Espagnol"
 
-#: InvenTree/locales.py:23
+#: InvenTree/locales.py:25
 msgid "Spanish (Mexican)"
 msgstr "Espagnol (Mexique)"
 
-#: InvenTree/locales.py:24
+#: InvenTree/locales.py:26
 msgid "Farsi / Persian"
 msgstr "Farsi / Perse"
 
-#: InvenTree/locales.py:25
+#: InvenTree/locales.py:27
 msgid "Finnish"
 msgstr "Finnois"
 
-#: InvenTree/locales.py:26
+#: InvenTree/locales.py:28
 msgid "French"
 msgstr "Français"
 
-#: InvenTree/locales.py:27
+#: InvenTree/locales.py:29
 msgid "Hebrew"
 msgstr "Hébreu"
 
-#: InvenTree/locales.py:28
+#: InvenTree/locales.py:30
 msgid "Hindi"
 msgstr "Hindi"
 
-#: InvenTree/locales.py:29
+#: InvenTree/locales.py:31
 msgid "Hungarian"
 msgstr "Hongrois"
 
-#: InvenTree/locales.py:30
+#: InvenTree/locales.py:32
 msgid "Italian"
 msgstr "Italien"
 
-#: InvenTree/locales.py:31
+#: InvenTree/locales.py:33
 msgid "Japanese"
 msgstr "Japonais"
 
-#: InvenTree/locales.py:32
+#: InvenTree/locales.py:34
 msgid "Korean"
 msgstr "Coréen"
 
-#: InvenTree/locales.py:33
+#: InvenTree/locales.py:35
+msgid "Latvian"
+msgstr "Letton"
+
+#: InvenTree/locales.py:36
 msgid "Dutch"
 msgstr "Néerlandais"
 
-#: InvenTree/locales.py:34
+#: InvenTree/locales.py:37
 msgid "Norwegian"
 msgstr "Norvégien"
 
-#: InvenTree/locales.py:35
+#: InvenTree/locales.py:38
 msgid "Polish"
 msgstr "Polonais"
 
-#: InvenTree/locales.py:36
+#: InvenTree/locales.py:39
 msgid "Portuguese"
 msgstr "Portugais"
 
-#: InvenTree/locales.py:37
+#: InvenTree/locales.py:40
 msgid "Portuguese (Brazilian)"
 msgstr "Portugais (Brésilien)"
 
-#: InvenTree/locales.py:38
+#: InvenTree/locales.py:41
 msgid "Russian"
 msgstr "Russe"
 
-#: InvenTree/locales.py:39
+#: InvenTree/locales.py:42
 msgid "Slovak"
-msgstr ""
+msgstr "Slovaque"
 
-#: InvenTree/locales.py:40
+#: InvenTree/locales.py:43
 msgid "Slovenian"
 msgstr "Slovénien"
 
-#: InvenTree/locales.py:41
+#: InvenTree/locales.py:44
 msgid "Serbian"
 msgstr "Serbe"
 
-#: InvenTree/locales.py:42
+#: InvenTree/locales.py:45
 msgid "Swedish"
 msgstr "Suédois"
 
-#: InvenTree/locales.py:43
+#: InvenTree/locales.py:46
 msgid "Thai"
 msgstr "Thaïlandais"
 
-#: InvenTree/locales.py:44
+#: InvenTree/locales.py:47
 msgid "Turkish"
 msgstr "Turc"
 
-#: InvenTree/locales.py:45
+#: InvenTree/locales.py:48
 msgid "Vietnamese"
 msgstr "Vietnamien"
 
-#: InvenTree/locales.py:46
+#: InvenTree/locales.py:49
 msgid "Chinese (Simplified)"
 msgstr "Chinois (Simplifié)"
 
-#: InvenTree/locales.py:47
+#: InvenTree/locales.py:50
 msgid "Chinese (Traditional)"
 msgstr "Chinois (Traditionnel)"
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr ""
+msgstr "[{site_name}] Se connecter à l'application"
 
 #: InvenTree/magic_login.py:38 company/models.py:132
 #: company/templates/company/company_base.html:132
@@ -345,7 +349,7 @@ msgstr "E-mail"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Erreur lors de l'exécution de la validation du plugin"
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
@@ -606,15 +610,15 @@ msgstr "Seuls les super-utilisateurs peuvent créer de nouveaux utilisateurs"
 
 #: InvenTree/serializers.py:472
 msgid "Your account has been created."
-msgstr ""
+msgstr "Votre compte a été créé."
 
 #: InvenTree/serializers.py:474
 msgid "Please use the password reset function to login"
-msgstr ""
+msgstr "Veuillez utiliser la fonction de réinitialisation du mot de passe pour vous connecter"
 
 #: InvenTree/serializers.py:481
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Bienvenue dans InvenTree"
 
 #: InvenTree/serializers.py:542
 msgid "Filename"
@@ -1277,7 +1281,7 @@ msgstr "La quantité ne peut pas être supérieure à la quantité de sortie"
 #: build/models.py:940 build/serializers.py:533
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr ""
+msgstr "La sortie de compilation {serial} n'a pas réussi tous les tests requis"
 
 #: build/models.py:1302
 msgid "Build object"
@@ -1666,7 +1670,7 @@ msgstr "Article du BOM"
 
 #: build/serializers.py:1106 templates/js/translated/index.js:130
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Stock alloué"
 
 #: build/serializers.py:1111 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:815 part/serializers.py:1478
@@ -1681,13 +1685,13 @@ msgstr "En Commande"
 #: templates/js/translated/build.js:2618
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr ""
+msgstr "En Production"
 
 #: build/serializers.py:1121 part/bom.py:172 part/serializers.py:1491
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1893
 msgid "Available Stock"
-msgstr ""
+msgstr "Stock disponible"
 
 #: build/tasks.py:171
 msgid "Stock required for build order"
@@ -1881,15 +1885,15 @@ msgstr "Priorité"
 
 #: build/templates/build/build_base.html:273
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Supprimer la commande de construction"
 
 #: build/templates/build/build_base.html:283
 msgid "Build Order QR Code"
-msgstr ""
+msgstr "Génération du QR Code de commande"
 
 #: build/templates/build/build_base.html:295
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "Lier le code-barres pour construire la commande"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1993,7 +1997,7 @@ msgstr "Commander des pièces"
 
 #: build/templates/build/detail.html:205
 msgid "Available stock has been filtered based on specified source location for this build order"
-msgstr ""
+msgstr "Le stock disponible a été filtré en fonction de l'emplacement source spécifié pour cette commande de construction"
 
 #: build/templates/build/detail.html:215
 msgid "Incomplete Build Outputs"
@@ -2037,11 +2041,11 @@ msgstr "Notes de construction"
 
 #: build/templates/build/detail.html:434
 msgid "Allocation Complete"
-msgstr ""
+msgstr "Allocation terminée"
 
 #: build/templates/build/detail.html:435
 msgid "All lines have been fully allocated"
-msgstr ""
+msgstr "Toutes les lignes ont été entièrement attribuées"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
@@ -2103,7 +2107,7 @@ msgstr "Date de la dernière mise à jour"
 
 #: common/models.py:105
 msgid "Site URL is locked by configuration"
-msgstr ""
+msgstr "L'URL du site est verrouillée par configuration"
 
 #: common/models.py:130
 msgid "Unique project code"
@@ -2553,7 +2557,7 @@ msgstr "Renforcer les unités des paramètres"
 
 #: common/models.py:1539
 msgid "If units are provided, parameter values must match the specified units"
-msgstr ""
+msgstr "Si des unités sont fournies, les valeurs de paramètre doivent correspondre aux unités spécifiées"
 
 #: common/models.py:1545
 msgid "Minimum Pricing Decimal Places"
