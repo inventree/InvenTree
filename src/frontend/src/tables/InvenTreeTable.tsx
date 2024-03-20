@@ -520,9 +520,10 @@ export function InvenTreeTable<T = any>({
         let url = getDetailUrl(tableProps.modelType, record.pk);
 
         // Should it be opened in a new tab?
-        if (event?.ctrlKey || event?.shiftKey || event?.buttons & 0x04) {
+        if (event?.ctrlKey || event?.shiftKey) {
           // Open in a new tab
-          window.open(`/${base_url}${url}`, '_blank', 'noreferrer');
+          url = `/${base_url}${url}`;
+          window.open(url, '_blank');
         } else {
           // Navigate internally
           navigate(url);
