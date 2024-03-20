@@ -156,29 +156,32 @@ export default function ParametricPartTable({
   });
 
   // Update a single parameter record in the table
-  const updateParameterRecord = useCallback((part: number, parameter: any) => {
-    let records = table.records;
-    let partIndex = records.findIndex((record: any) => record.pk == part);
+  const updateParameterRecord = useCallback(
+    (part: number, parameter: any) => {
+      let records = table.records;
+      let partIndex = records.findIndex((record: any) => record.pk == part);
 
-    if (partIndex < 0) {
-      // No matching part: reload the entire table
-      table.refreshTable();
-      return;
-    }
+      if (partIndex < 0) {
+        // No matching part: reload the entire table
+        table.refreshTable();
+        return;
+      }
 
-    let parameterIndex = records[partIndex].parameters.findIndex(
-      (p: any) => p.pk == parameter.pk
-    );
+      let parameterIndex = records[partIndex].parameters.findIndex(
+        (p: any) => p.pk == parameter.pk
+      );
 
-    if (parameterIndex < 0) {
-      // No matching parameter - append new parameter
-      records[partIndex].parameters.push(parameter);
-    } else {
-      records[partIndex].parameters[parameterIndex] = parameter;
-    }
+      if (parameterIndex < 0) {
+        // No matching parameter - append new parameter
+        records[partIndex].parameters.push(parameter);
+      } else {
+        records[partIndex].parameters[parameterIndex] = parameter;
+      }
 
-    table.setRecords(records);
-  }, []);
+      table.setRecords(records);
+    },
+    [table.records]
+  );
 
   const parameterColumns: TableColumn[] = useMemo(() => {
     let data = categoryParmeters.data ?? [];
