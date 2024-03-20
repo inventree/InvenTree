@@ -24,8 +24,14 @@ on:
     branches:
       - 'master'
 
+permissions:
+  contents: read
+
 jobs:
   paths-filter:
+    permissions:
+      contents: read  # for dorny/paths-filter to fetch a list of changed files
+      pull-requests: read  # for dorny/paths-filter to read pull requests
     name: Filter
     runs-on: ubuntu-latest
 

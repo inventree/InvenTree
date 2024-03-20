@@ -112,7 +112,7 @@ jobs:
           pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
         with:
           folder-path: docs
           config-file: docs/mlc_config.json
@@ -187,12 +187,12 @@ jobs:
               version: ${{ needs.schema.outputs.version }}
 
             steps:
-              - uses: actions/checkout@v4
+              - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
                 with:
                     repository: inventree/schema
                     token: ${{ secrets.SCHEMA_PAT }}
               - name: Download schema artifact
-                uses: actions/download-artifact@v3
+                uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
                 with:
                   name: schema.yml
               - name: Move schema to correct location
@@ -200,7 +200,7 @@ jobs:
                   echo "Version: $version"
                   mkdir export/${version}
                   mv schema.yml export/${version}/api.yaml
-              - uses: stefanzweifel/git-auto-commit-action@v5
+              - uses: stefanzweifel/git-auto-commit-action@8756aa072ef5b4a080af5dc8fef36c5d586e521d # v5.0.0
                 with:
                   commit_message: "Update API schema for ${version}"
 
