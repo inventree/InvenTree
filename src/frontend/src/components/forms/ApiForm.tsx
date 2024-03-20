@@ -398,12 +398,15 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
 
   return (
     <Stack>
+      {/* Show loading overlay while fetching fields */}
+      {/* zIndex used to force overlay on top of modal header bar */}
+      <LoadingOverlay visible={isLoading} zIndex={1010} />
+
       {/* Attempt at making fixed footer with scroll area */}
       <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
         <div>
           {/* Form Fields */}
           <Stack spacing="sm">
-            <LoadingOverlay visible={isLoading} />
             {(!isValid || nonFieldErrors.length > 0) && (
               <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
                 {nonFieldErrors.length > 0 && (
