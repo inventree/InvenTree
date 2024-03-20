@@ -1,11 +1,9 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { PartHoverCard } from '../../components/images/Thumbnail';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -23,8 +21,6 @@ export function UsedInTable({
   partId: number;
   params?: any;
 }) {
-  const navigate = useNavigate();
-
   const table = useTable('usedin');
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -87,7 +83,7 @@ export function UsedInTable({
           sub_part_detail: true
         },
         tableFilters: tableFilters,
-        onRowClick: (row) => navigate(getDetailUrl(ModelType.part, row.part))
+        modelType: ModelType.part
       }}
     />
   );

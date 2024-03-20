@@ -1,10 +1,8 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -268,7 +266,6 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
   const tableFilters = useMemo(() => partTableFilters(), []);
 
   const table = useTable('part-list');
-  const navigate = useNavigate();
   const user = useUserState();
 
   const newPart = useCreateApiFormModal({
@@ -305,14 +302,13 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
         props={{
           ...props,
           enableDownload: true,
+          modelType: ModelType.part,
           tableFilters: tableFilters,
           tableActions: tableActions,
           params: {
             ...props.params,
             category_detail: true
-          },
-          onRowClick: (record) =>
-            navigate(getDetailUrl(ModelType.part, record.pk))
+          }
         }}
       />
     </>

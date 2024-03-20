@@ -21,12 +21,15 @@ import {
   DataTableSortStatus
 } from 'mantine-datatable';
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { ModelType } from '../enums/ModelType';
 import { extractAvailableFields, mapFields } from '../functions/forms';
+import { getDetailUrl } from '../functions/urls';
 import { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
@@ -62,6 +65,7 @@ const defaultPageSize: number = 25;
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
  * @param onCellClick : (event: any, record: any, recordIndex: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
+ * @param modelType: ModelType - The model type for the table
  */
 export type InvenTreeTableProps<T = any> = {
   params?: any;
@@ -85,6 +89,7 @@ export type InvenTreeTableProps<T = any> = {
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
   onCellClick?: DataTableCellClickHandler<T>;
+  modelType?: ModelType;
 };
 
 /**
@@ -124,6 +129,8 @@ export function InvenTreeTable<T = any>({
 }) {
   const { getTableColumnNames, setTableColumnNames } = useLocalState();
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
+
+  const navigate = useNavigate();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -501,6 +508,30 @@ export function InvenTreeTable<T = any>({
     });
   }, [tableState.selectedRecords]);
 
+  // Callback when a row is clicked
+  const handleRowClick = useCallback(
+    (record: any, index: number, event: any) => {
+      if (props.onRowClick) {
+        // If a custom row click handler is provided, use that
+        props.onRowClick(record, index, event);
+      } else if (tableProps.modelType && record?.pk) {
+        // If a model type is provided, navigate to the detail view for that model
+        let url = getDetailUrl(tableProps.modelType, record.pk);
+
+        // Should it be opened in a new tab?
+        if (event?.ctrlKey || event?.shiftKey || event?.buttons & 0x04) {
+          // Open in a new tab
+          // TODO: Remove /platform/ prefix later on
+          window.open('/platform' + url, '_blank', 'noreferrer');
+        } else {
+          // Navigate internally
+          navigate(url);
+        }
+      }
+    },
+    [props.onRowClick]
+  );
+
   return (
     <>
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
@@ -622,7 +653,7 @@ export function InvenTreeTable<T = any>({
             noRecordsText={missingRecordsText}
             records={tableState.records}
             columns={dataColumns}
-            onRowClick={tableProps.onRowClick}
+            onRowClick={handleRowClick}
             onCellClick={tableProps.onCellClick}
             defaultColumnProps={{
               noWrap: true,

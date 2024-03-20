@@ -6,13 +6,11 @@ import {
   IconTool
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { PartHoverCard } from '../../components/images/Thumbnail';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -25,7 +23,6 @@ import { TableHoverCard } from '../TableHoverCard';
 export default function BuildLineTable({ params = {} }: { params?: any }) {
   const table = useTable('buildline');
   const user = useUserState();
-  const navigate = useNavigate();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -234,11 +231,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         },
         tableFilters: tableFilters,
         rowActions: rowActions,
-        onRowClick: (row: any) => {
-          if (row?.part_detail?.pk) {
-            navigate(getDetailUrl(ModelType.part, row.part_detail.pk));
-          }
-        }
+        modelType: ModelType.part
       }}
     />
   );

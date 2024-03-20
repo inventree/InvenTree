@@ -136,11 +136,7 @@ export function SalesOrderTable({
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
-          onRowClick: (row: any) => {
-            if (row.pk) {
-              navigate(getDetailUrl(ModelType.salesorder, row.pk));
-            }
-          }
+          modelType: ModelType.salesorder
         }}
       />
     </>

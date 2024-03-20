@@ -153,9 +153,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
           tableFilters: tableFilters,
           tableActions: tableActions,
           rowActions: rowActions,
-          onRowClick: (record) => {
-            navigate(getDetailUrl(ModelType.stocklocation, record.pk));
-          }
+          modelType: ModelType.stocklocation
         }}
       />
     </>

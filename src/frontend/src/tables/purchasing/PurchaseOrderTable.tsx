@@ -138,11 +138,7 @@ export function PurchaseOrderTable({
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
-          onRowClick: (row: any) => {
-            if (row.pk) {
-              navigate(getDetailUrl(ModelType.purchaseorder, row.pk));
-            }
-          }
+          modelType: ModelType.purchaseorder
         }}
       />
     </>

@@ -509,8 +509,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
           enableSelection: true,
           tableFilters: tableFilters,
           tableActions: tableActions,
-          onRowClick: (record) =>
-            navigate(getDetailUrl(ModelType.stockitem, record.pk)),
+          modelType: ModelType.stockitem,
           params: {
             ...params,
             part_detail: true,

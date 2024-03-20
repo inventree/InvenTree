@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -8,7 +7,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { notYetImplemented } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -35,8 +33,6 @@ import { InvenTreeTable } from '../InvenTreeTable';
 export function ReturnOrderTable({ params }: { params?: any }) {
   const table = useTable('return-orders');
   const user = useUserState();
-
-  const navigate = useNavigate();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -115,11 +111,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
         },
         tableFilters: tableFilters,
         tableActions: tableActions,
-        onRowClick: (row: any) => {
-          if (row.pk) {
-            navigate(getDetailUrl(ModelType.returnorder, row.pk));
-          }
-        }
+        modelType: ModelType.returnorder
       }}
     />
   );

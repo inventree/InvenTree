@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { ReactNode, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -9,8 +8,6 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
-import { notYetImplemented } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -27,7 +24,6 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   const table = useTable('manufacturerparts');
 
   const user = useUserState();
-  const navigate = useNavigate();
 
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -139,11 +135,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
           },
           rowActions: rowActions,
           tableActions: tableActions,
-          onRowClick: (record: any) => {
-            if (record?.pk) {
-              navigate(getDetailUrl(ModelType.manufacturerpart, record.pk));
-            }
-          }
+          modelType: ModelType.manufacturerpart
         }}
       />
     </>

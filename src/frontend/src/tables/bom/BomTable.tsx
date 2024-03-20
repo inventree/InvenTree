@@ -6,7 +6,6 @@ import {
   IconSwitch3
 } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { YesNoButton } from '../../components/items/YesNoButton';
@@ -16,7 +15,6 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
 import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
-import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -55,10 +53,7 @@ export function BomTable({
   partId: number;
   params?: any;
 }) {
-  const navigate = useNavigate();
-
   const user = useUserState();
-
   const table = useTable('bom');
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -355,8 +350,7 @@ export function BomTable({
           sub_part_detail: true
         },
         tableFilters: tableFilters,
-        onRowClick: (row) =>
-          navigate(getDetailUrl(ModelType.part, row.sub_part)),
+        modelType: ModelType.part,
         rowActions: rowActions
       }}
     />
