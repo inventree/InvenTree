@@ -26,6 +26,7 @@ import { useUserState } from '../../states/UserState';
 import {
   CurrencyColumn,
   LinkColumn,
+  NoteColumn,
   ReferenceColumn,
   TargetDateColumn,
   TotalPriceColumn
@@ -177,10 +178,7 @@ export function PurchaseOrderLineItemTable({
             ? RenderStockLocation({ instance: record.destination_detail })
             : '-'
       },
-      {
-        accessor: 'notes',
-        title: t`Notes`
-      },
+      NoteColumn(),
       LinkColumn({})
     ];
   }, [orderId, user]);
