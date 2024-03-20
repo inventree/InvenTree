@@ -61,6 +61,12 @@ The following basic options are available:
 !!! tip "INVENTREE_SITE_URL"
     The *INVENTREE_SITE_URL* option defines the base URL for the InvenTree server. This is a critical setting, and it is required for correct operation of the server. If not specified, the server will attempt to determine the site URL automatically - but this may not always be correct!
 
+### Timezone
+
+By default, the InvenTree server is configured to use the UTC timezone. This can be adjusted to your desired local timezone. You can refer to [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of available timezones. Use the values specified in the *TZ Identifier* column in the linked page.
+
+Date and time values are stored in the database in UTC format, and are converted to the selected timezone for display in the user interface or API.
+
 ## Server Access
 
 Depending on how your InvenTree installation is configured, you will need to pay careful attention to the following settings. If you are running your server behind a proxy, or want to adjust support for [CORS requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS), one or more of the following settings may need to be adjusted.
