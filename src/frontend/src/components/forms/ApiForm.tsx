@@ -2,15 +2,15 @@ import { t } from '@lingui/macro';
 import {
   Alert,
   DefaultMantineColor,
-  Divider,
   LoadingOverlay,
+  Paper,
   Text
 } from '@mantine/core';
 import { Button, Group, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useState } from 'react';
 import {
   FieldValues,
@@ -139,6 +139,12 @@ export function OptionsApiForm({
   const formProps: ApiFormProps = useMemo(() => {
     const _props = { ...props };
 
+    // This forcefully overrides initial data
+    // Currently, most modals do not get pre-loaded correctly
+    if (!data) {
+      _props.fields = undefined;
+    }
+
     if (!_props.fields) return _props;
 
     for (const [k, v] of Object.entries(_props.fields)) {
@@ -157,10 +163,6 @@ export function OptionsApiForm({
 
     return _props;
   }, [data, props]);
-
-  if (!data) {
-    return <LoadingOverlay visible={true} />;
-  }
 
   return <ApiForm id={id} props={formProps} />;
 }
@@ -222,41 +224,46 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
       props.pathParams
     ],
     queryFn: async () => {
-      return api
-        .get(url)
-        .then((response) => {
-          const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
-            const res: NestedDict = {};
+      try {
+        // Await API call
+        let response = await api.get(url);
+        // Define function to process API response
+        const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
+          const res: NestedDict = {};
 
-            for (const [k, field] of Object.entries(fields)) {
-              const dataValue = data[k];
+          // TODO: replace with .map()
+          for (const [k, field] of Object.entries(fields)) {
+            const dataValue = data[k];
 
-              if (
-                field.field_type === 'nested object' &&
-                field.children &&
-                typeof dataValue === 'object'
-              ) {
-                res[k] = processFields(field.children, dataValue);
-              } else {
-                res[k] = dataValue;
-              }
+            if (
+              field.field_type === 'nested object' &&
+              field.children &&
+              typeof dataValue === 'object'
+            ) {
+              res[k] = processFields(field.children, dataValue);
+            } else {
+              res[k] = dataValue;
             }
+          }
 
-            return res;
-          };
-          const initialData: any = processFields(
-            props.fields ?? {},
-            response.data
-          );
+          return res;
+        };
 
-          // Update form values, but only for the fields specified for this form
-          form.reset(initialData);
+        // Process API response
+        const initialData: any = processFields(
+          props.fields ?? {},
+          response.data
+        );
 
-          return response;
-        })
-        .catch((error) => {
-          console.error('Error fetching initial data:', error);
-        });
+        // Update form values, but only for the fields specified for this form
+        form.reset(initialData);
+
+        return response;
+      } catch (error) {
+        console.error('Error fetching initial data:', error);
+        // Re-throw error to allow react-query to handle error
+        throw error;
+      }
     }
   });
 
@@ -377,8 +384,12 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
   };
 
   const isLoading = useMemo(
-    () => isFormLoading || initialDataQuery.isFetching || isSubmitting,
-    [isFormLoading, initialDataQuery.isFetching, isSubmitting]
+    () =>
+      isFormLoading ||
+      initialDataQuery.isFetching ||
+      isSubmitting ||
+      !props.fields,
+    [isFormLoading, initialDataQuery.isFetching, isSubmitting, props.fields]
   );
 
   const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {
@@ -387,67 +398,81 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
 
   return (
     <Stack>
-      <Stack spacing="sm">
-        <LoadingOverlay visible={isLoading} />
-        {(!isValid || nonFieldErrors.length > 0) && (
-          <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
-            {nonFieldErrors.length > 0 && (
-              <Stack spacing="xs">
-                {nonFieldErrors.map((message) => (
-                  <Text key={message}>{message}</Text>
-                ))}
-              </Stack>
+      {/* Show loading overlay while fetching fields */}
+      {/* zIndex used to force overlay on top of modal header bar */}
+      <LoadingOverlay visible={isLoading} zIndex={1010} />
+
+      {/* Attempt at making fixed footer with scroll area */}
+      <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
+        <div>
+          {/* Form Fields */}
+          <Stack spacing="sm">
+            {(!isValid || nonFieldErrors.length > 0) && (
+              <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
+                {nonFieldErrors.length > 0 && (
+                  <Stack spacing="xs">
+                    {nonFieldErrors.map((message) => (
+                      <Text key={message}>{message}</Text>
+                    ))}
+                  </Stack>
+                )}
+              </Alert>
             )}
-          </Alert>
-        )}
-        {props.preFormContent}
-        {props.preFormSuccess && (
-          <Alert color="green" radius="sm">
-            {props.preFormSuccess}
-          </Alert>
-        )}
-        {props.preFormWarning && (
-          <Alert color="orange" radius="sm">
-            {props.preFormWarning}
-          </Alert>
-        )}
-        <FormProvider {...form}>
-          <Stack spacing="xs">
-            {Object.entries(props.fields ?? {}).map(([fieldName, field]) => (
-              <ApiFormField
-                key={fieldName}
-                fieldName={fieldName}
-                definition={field}
-                control={form.control}
-              />
-            ))}
+            {props.preFormContent}
+            {props.preFormSuccess && (
+              <Alert color="green" radius="sm">
+                {props.preFormSuccess}
+              </Alert>
+            )}
+            {props.preFormWarning && (
+              <Alert color="orange" radius="sm">
+                {props.preFormWarning}
+              </Alert>
+            )}
+            <FormProvider {...form}>
+              <Stack spacing="xs">
+                {Object.entries(props.fields ?? {}).map(
+                  ([fieldName, field]) => (
+                    <ApiFormField
+                      key={fieldName}
+                      fieldName={fieldName}
+                      definition={field}
+                      control={form.control}
+                    />
+                  )
+                )}
+              </Stack>
+            </FormProvider>
+            {props.postFormContent}
           </Stack>
-        </FormProvider>
-        {props.postFormContent}
-      </Stack>
-      <Divider />
-      <Group position="right">
-        {props.actions?.map((action, i) => (
+        </div>
+      </Paper>
+
+      {/* Footer with Action Buttons */}
+      <div>
+        <Group position="right">
+          {props.actions?.map((action, i) => (
+            <Button
+              key={i}
+              onClick={action.onClick}
+              variant={action.variant ?? 'outline'}
+              radius="sm"
+              color={action.color}
+            >
+              {action.text}
+            </Button>
+          ))}
           <Button
-            key={i}
-            onClick={action.onClick}
-            variant={action.variant ?? 'outline'}
+            onClick={form.handleSubmit(submitForm, onFormError)}
+            variant="filled"
             radius="sm"
-            color={action.color}
+            color={props.submitColor ?? 'green'}
+            disabled={isLoading || (props.fetchInitialData && !isDirty)}
           >
-            {action.text}
+            {props.submitText ?? t`Submit`}
           </Button>
-        ))}
-        <Button
-          onClick={form.handleSubmit(submitForm, onFormError)}
-          variant="filled"
-          radius="sm"
-          color={props.submitColor ?? 'green'}
-          disabled={isLoading || (props.fetchInitialData && !isDirty)}
-        >
-          {props.submitText ?? t`Submit`}
-        </Button>
-      </Group>
+        </Group>
+      </div>
     </Stack>
   );
 }
