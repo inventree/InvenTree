@@ -6,7 +6,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
-import { InvenTreeTable, InvenTreeTableProps } from '../InvenTreeTable';
+import { InvenTreeTable } from '../InvenTreeTable';
 
 export interface PluginRegistryErrorI {
   id: number;
@@ -18,7 +18,7 @@ export interface PluginRegistryErrorI {
 /**
  * Table displaying list of plugin registry errors
  */
-export function PluginErrorTable({ props }: { props: InvenTreeTableProps }) {
+export default function PluginErrorTable() {
   const table = useTable('registryErrors');
 
   const registryErrorTableColumns: TableColumn<PluginRegistryErrorI>[] =
@@ -47,16 +47,12 @@ export function PluginErrorTable({ props }: { props: InvenTreeTableProps }) {
       tableState={table}
       columns={registryErrorTableColumns}
       props={{
-        ...props,
         dataFormatter: (data: any) =>
           data.registry_errors.map((e: any, i: number) => ({ id: i, ...e })),
         idAccessor: 'id',
         enableDownload: false,
         enableFilters: false,
-        enableSearch: false,
-        params: {
-          ...props.params
-        }
+        enableSearch: false
       }}
     />
   );

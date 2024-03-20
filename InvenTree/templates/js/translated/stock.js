@@ -1367,11 +1367,11 @@ function noResultBadge() {
     return `<span class='badge badge-right rounded-pill bg-info'>{% trans "NO RESULT" %}</span>`;
 }
 
-function formatDate(row) {
+function formatDate(row, date, options={}) {
     // Function for formatting date field
-    var html = renderDate(row.date);
+    var html = renderDate(date, options);
 
-    if (row.user_detail) {
+    if (row.user_detail && !options.no_user_detail) {
         html += `<span class='badge badge-right rounded-pill bg-secondary'>${row.user_detail.username}</span>`;
     }
 
@@ -1381,17 +1381,32 @@ function formatDate(row) {
 /* Construct set of default fields for a StockItemTestResult */
 function stockItemTestResultFields(options={}) {
     let fields = {
-        test: {},
+        template: {
+            filters: {
+                include_inherited: true,
+            }
+        },
         result: {},
         value: {},
         attachment: {},
         notes: {
             icon: 'fa-sticky-note',
         },
+        test_station: {},
+        started_datetime: {
+            icon: 'fa-calendar-alt',
+        },
+        finished_datetime: {
+            icon: 'fa-calendar-alt',
+        },
         stock_item: {
             hidden: true,
         },
     };
+
+    if (options.part) {
+        fields.template.filters.part = options.part;
+    }
 
     if (options.stock_item) {
         fields.stock_item.value = options.stock_item;
@@ -1412,6 +1427,8 @@ function loadStockTestResultsTable(table, options) {
 
     let params = {
         part: options.part,
+        include_inherited: true,
+        enabled: true,
     };
 
     var filters = loadTableFilters(filterKey, params);
@@ -1424,17 +1441,17 @@ function loadStockTestResultsTable(table, options) {
 
         let html = '';
 
+
         if (row.requires_attachment == false && row.requires_value == false && !row.result) {
             // Enable a "quick tick" option for this test result
             html += makeIconButton('fa-check-circle icon-green', 'button-test-tick', row.test_name, '{% trans "Pass test" %}');
         }
 
-        html += makeIconButton('fa-plus icon-green', 'button-test-add', row.test_name, '{% trans "Add test result" %}');
+        html += makeIconButton('fa-plus icon-green', 'button-test-add', row.templateId, '{% trans "Add test result" %}');
 
         if (!grouped && row.result != null) {
-            var pk = row.pk;
-            html += makeEditButton('button-test-edit', pk, '{% trans "Edit test result" %}');
-            html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test result" %}');
+            html += makeEditButton('button-test-edit', row.testId, '{% trans "Edit test result" %}');
+            html += makeDeleteButton('button-test-delete', row.testId, '{% trans "Delete test result" %}');
         }
 
         return wrapButtons(html);
@@ -1520,7 +1537,30 @@ function loadStockTestResultsTable(table, options) {
                 title: '{% trans "Test Date" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    return formatDate(row);
+                    return formatDate(row, row.date);
+                },
+            },
+            {
+                field: 'test_station',
+                title: '{% trans "Test station" %}',
+                visible: false,
+            },
+            {
+                field: 'started_timestamp',
+                title: '{% trans "Test started" %}',
+                sortable: true,
+                visible: false,
+                formatter: function(value, row) {
+                    return formatDate(row, row.started_datetime, {showTime: true, no_user_detail: true});
+                },
+            },
+            {
+                field: 'finished_timestamp',
+                title: '{% trans "Test finished" %}',
+                sortable: true,
+                visible: false,
+                formatter: function(value, row) {
+                    return formatDate(row, row.finished_datetime, {showTime: true, no_user_detail: true});
                 },
             },
             {
@@ -1532,9 +1572,14 @@ function loadStockTestResultsTable(table, options) {
         ],
         onLoadSuccess: function(tableData) {
 
-            // Set "parent" for each existing row
-            tableData.forEach(function(item, idx) {
-                tableData[idx].parent = parent_node;
+            // Construct an initial dataset based on the returned templates
+            let results = tableData.map((template) => {
+                return {
+                    ...template,
+                    templateId: template.pk,
+                    parent: parent_node,
+                    results: []
+                };
             });
 
             // Once the test template data are loaded, query for test results
@@ -1544,7 +1589,9 @@ function loadStockTestResultsTable(table, options) {
             var query_params = {
                 stock_item: options.stock_item,
                 user_detail: true,
+                enabled: true,
                 attachment_detail: true,
+                template_detail: false,
                 ordering: '-date',
             };
 
@@ -1561,54 +1608,40 @@ function loadStockTestResultsTable(table, options) {
                 query_params,
                 {
                     success: function(data) {
-                        // Iterate through the returned test data
-                        data.forEach(function(item) {
 
-                            var match = false;
-                            var override = false;
+                        data.sort((a, b) => {
+                            return a.pk < b.pk;
+                        }).forEach((row) => {
+                            let idx = results.findIndex((template) => {
+                                return template.templateId == row.template;
+                            });
 
-                            // Extract the simplified test key
-                            var key = item.key;
+                            if (idx > -1) {
 
-                            // Attempt to associate this result with an existing test
-                            for (var idx = 0; idx < tableData.length; idx++) {
+                                results[idx].results.push(row);
 
-                                var row = tableData[idx];
-
-                                if (key == row.key) {
-
-                                    item.test_name = row.test_name;
-                                    item.test_description = row.description;
-                                    item.required = row.required;
-
-                                    if (row.result == null) {
-                                        item.parent = parent_node;
-                                        tableData[idx] = item;
-                                        override = true;
-                                    } else {
-                                        item.parent = row.pk;
-                                    }
-
-                                    match = true;
-
-                                    break;
+                                // Check if a test result is already recorded
+                                if (results[idx].testId) {
+                                    // Push this result into the results array
+                                    results.push({
+                                        ...results[idx],
+                                        ...row,
+                                        parent: results[idx].templateId,
+                                        testId: row.pk,
+                                    });
+                                } else {
+                                    // First result - update the parent row
+                                    results[idx] = {
+                                        ...row,
+                                        ...results[idx],
+                                        testId: row.pk,
+                                    };
                                 }
                             }
-
-                            // No match could be found
-                            if (!match) {
-                                item.test_name = item.test;
-                                item.parent = parent_node;
-                            }
-
-                            if (!override) {
-                                tableData.push(item);
-                            }
-
                         });
 
                         // Push data back into the table
-                        table.bootstrapTable('load', tableData);
+                        table.bootstrapTable('load', results);
                     }
                 }
             );
@@ -1645,25 +1678,23 @@ function loadStockTestResultsTable(table, options) {
     $(table).on('click', '.button-test-add', function() {
         var button = $(this);
 
-        var test_name = button.attr('pk');
+        var templateId = button.attr('pk');
+
+        let fields = stockItemTestResultFields();
+
+        fields['stock_item']['value'] = options.stock_item;
+        fields['template']['value'] = templateId;
+        fields['template']['filters']['part'] = options.part;
+
+        if (!options.test_station_fields) {
+            delete fields['test_station'];
+            delete fields['started_datetime'];
+            delete fields['finished_datetime'];
+        }
 
         constructForm('{% url "api-stock-test-result-list" %}', {
             method: 'POST',
-            fields: {
-                test: {
-                    value: test_name,
-                },
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {
-                    icon: 'fa-sticky-note',
-                },
-                stock_item: {
-                    value: options.stock_item,
-                    hidden: true,
-                }
-            },
+            fields: fields,
             title: '{% trans "Add Test Result" %}',
             onSuccess: reloadTestTable,
         });
@@ -1692,11 +1723,9 @@ function loadStockTestResultsTable(table, options) {
 
         var url = `/api/stock/test/${pk}/`;
 
-        var row = $(table).bootstrapTable('getRowByUniqueId', pk);
-
         var html = `
         <div class='alert alert-block alert-danger'>
-        <strong>{% trans "Delete test result" %}:</strong> ${row.test_name || row.test || row.key}
+        <strong>{% trans "Delete test result" %}</strong>
         </div>`;
 
         constructForm(url, {
@@ -3101,11 +3130,14 @@ function loadInstalledInTable(table, options) {
                 field: 'buttons',
                 title: '',
                 switchable: false,
+                visible: options.can_edit,
                 formatter: function(value, row) {
                     let pk = row.pk;
                     let html = '';
 
-                    html += makeIconButton('fa-unlink', 'button-uninstall', pk, '{% trans "Uninstall Stock Item" %}');
+                    if (options.can_edit) {
+                        html += makeIconButton('fa-unlink', 'button-uninstall', pk, '{% trans "Uninstall Stock Item" %}');
+                    }
 
                     return wrapButtons(html);
                 }
@@ -3208,7 +3240,7 @@ function installStockItem(stock_item_id, part_id, options={}) {
                     auto_fill: true,
                     filters: {
                         trackable: true,
-                        in_bom_for: part_id,
+                        in_bom_for: options.enforce_bom ? part_id : undefined,
                     }
                 },
                 stock_item: {

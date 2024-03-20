@@ -41,8 +41,8 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
             lookup: generate_lookup(response.data)
           });
         })
-        .catch((error) => {
-          console.error('Error fetching global settings:', error);
+        .catch((_error) => {
+          console.error('Error fetching global settings');
         });
     },
     getSetting: (key: string, default_value?: string) => {
@@ -75,8 +75,8 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
           lookup: generate_lookup(response.data)
         });
       })
-      .catch((error) => {
-        console.error('Error fetching user settings:', error);
+      .catch((_error) => {
+        console.error('Error fetching user settings');
       });
   },
   getSetting: (key: string, default_value?: string) => {
@@ -115,9 +115,54 @@ export const createPluginSettingsState = ({
             lookup: generate_lookup(settings)
           });
         })
+        .catch((_error) => {
+          console.error(`Error fetching plugin settings for plugin ${plugin}`);
+        });
+    },
+    getSetting: (key: string, default_value?: string) => {
+      return get().lookup[key] ?? default_value ?? '';
+    },
+    isSet: (key: string, default_value?: boolean) => {
+      let value = get().lookup[key] ?? default_value ?? 'false';
+      return isTrue(value);
+    }
+  }));
+};
+
+/**
+ * State management for machine settings
+ */
+interface CreateMachineSettingStateProps {
+  machine: string;
+  configType: 'M' | 'D';
+}
+
+export const createMachineSettingsState = ({
+  machine,
+  configType
+}: CreateMachineSettingStateProps) => {
+  const pathParams: PathParams = { machine, config_type: configType };
+
+  return createStore<SettingsStateProps>()((set, get) => ({
+    settings: [],
+    lookup: {},
+    endpoint: ApiEndpoints.machine_setting_detail,
+    pathParams,
+    fetchSettings: async () => {
+      await api
+        .get(apiUrl(ApiEndpoints.machine_setting_list, undefined, { machine }))
+        .then((response) => {
+          const settings = response.data.filter(
+            (s: any) => s.config_type === configType
+          );
+          set({
+            settings,
+            lookup: generate_lookup(settings)
+          });
+        })
         .catch((error) => {
           console.error(
-            `Error fetching plugin settings for plugin ${plugin}:`,
+            `Error fetching machine settings for machine ${machine} with type ${configType}:`,
             error
           );
         });

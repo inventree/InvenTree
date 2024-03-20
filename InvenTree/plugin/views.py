@@ -39,6 +39,6 @@ class InvenTreePluginViewMixin:
         ctx = super().get_context_data(**kwargs)
 
         if settings.PLUGINS_ENABLED:
-            ctx['plugin_panels'] = self.get_plugin_panels(ctx)
+            ctx['plugin_panels'] = self.get_plugin_panels(ctx.copy())
 
         return ctx

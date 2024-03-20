@@ -52,16 +52,14 @@ export default function CustomUnitsTable() {
     onFormSuccess: table.refreshTable
   });
 
-  const [selectedUnit, setSelectedUnit] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedUnit, setSelectedUnit] = useState<number>(-1);
 
   const editUnit = useEditApiFormModal({
     url: ApiEndpoints.custom_unit_list,
     pk: selectedUnit,
     title: t`Edit Custom Unit`,
     fields: customUnitsFields(),
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const deleteUnit = useDeleteApiFormModal({

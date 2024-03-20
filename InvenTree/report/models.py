@@ -7,6 +7,7 @@ import sys
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template import Context, Template
@@ -16,6 +17,8 @@ from django.utils.translation import gettext_lazy as _
 
 import build.models
 import common.models
+import InvenTree.exceptions
+import InvenTree.models
 import order.models
 import part.models
 import report.helpers
@@ -93,7 +96,7 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-class ReportBase(models.Model):
+class ReportBase(InvenTree.models.InvenTreeModel):
     """Base class for uploading html templates."""
 
     class Meta:
@@ -262,7 +265,12 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
 
         for plugin in plugins:
             # Let each plugin add its own context data
-            plugin.add_report_context(self, self.object_to_print, request, context)
+            try:
+                plugin.add_report_context(self, self.object_to_print, request, context)
+            except Exception:
+                InvenTree.exceptions.log_error(
+                    f'plugins.{plugin.slug}.add_report_context'
+                )
 
         return context
 
@@ -578,10 +586,7 @@ class ReturnOrderReport(ReportTemplateBase):
 
 def rename_snippet(instance, filename):
     """Function to rename a report snippet once uploaded."""
-    filename = os.path.basename(filename)
-
-    path = os.path.join('report', 'snippets', filename)
-
+    path = ReportSnippet.snippet_path(filename)
     fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
     # If the snippet file is the *same* filename as the one being uploaded,
@@ -603,6 +608,40 @@ class ReportSnippet(models.Model):
     Useful for 'common' template actions, sub-templates, etc
     """
 
+    def __str__(self) -> str:
+        """String representation of a ReportSnippet instance."""
+        return f'snippets/{self.filename}'
+
+    @property
+    def filename(self):
+        """Return the filename of the asset."""
+        path = self.snippet.name
+        if path:
+            return os.path.basename(path)
+        else:
+            return '-'
+
+    @staticmethod
+    def snippet_path(filename):
+        """Return the fully-qualified snippet path for the given filename."""
+        return os.path.join('report', 'snippets', os.path.basename(str(filename)))
+
+    def validate_unique(self, exclude=None):
+        """Validate that this report asset is unique."""
+        proposed_path = self.snippet_path(self.snippet)
+
+        if (
+            ReportSnippet.objects.filter(snippet=proposed_path)
+            .exclude(pk=self.pk)
+            .count()
+            > 0
+        ):
+            raise ValidationError({
+                'snippet': _('Snippet file with this name already exists')
+            })
+
+        return super().validate_unique(exclude)
+
     snippet = models.FileField(
         upload_to=rename_snippet,
         verbose_name=_('Snippet'),
@@ -619,18 +658,19 @@ class ReportSnippet(models.Model):
 
 def rename_asset(instance, filename):
     """Function to rename an asset file when uploaded."""
-    filename = os.path.basename(filename)
-
-    path = os.path.join('report', 'assets', filename)
+    path = ReportAsset.asset_path(filename)
+    fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
     # If the asset file is the *same* filename as the one being uploaded,
     # delete the original one from the media directory
     if str(filename) == str(instance.asset):
-        fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
-
         if fullpath.exists():
+            # Check for existing asset file with the same name
             logger.info("Deleting existing asset file: '%s'", filename)
             os.remove(fullpath)
+
+    # Ensure the cache is deleted for this asset
+    cache.delete(fullpath)
 
     return path
 
@@ -645,7 +685,35 @@ class ReportAsset(models.Model):
 
     def __str__(self):
         """String representation of a ReportAsset instance."""
-        return os.path.basename(self.asset.name)
+        return f'assets/{self.filename}'
+
+    @property
+    def filename(self):
+        """Return the filename of the asset."""
+        path = self.asset.name
+        if path:
+            return os.path.basename(path)
+        else:
+            return '-'
+
+    @staticmethod
+    def asset_path(filename):
+        """Return the fully-qualified asset path for the given filename."""
+        return os.path.join('report', 'assets', os.path.basename(str(filename)))
+
+    def validate_unique(self, exclude=None):
+        """Validate that this report asset is unique."""
+        proposed_path = self.asset_path(self.asset)
+
+        if (
+            ReportAsset.objects.filter(asset=proposed_path).exclude(pk=self.pk).count()
+            > 0
+        ):
+            raise ValidationError({
+                'asset': _('Asset file with this name already exists')
+            })
+
+        return super().validate_unique(exclude)
 
     # Asset file
     asset = models.FileField(

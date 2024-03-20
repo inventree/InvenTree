@@ -231,6 +231,8 @@ class RuleSet(models.Model):
                 'taggit_tag',
                 'taggit_taggeditem',
                 'flags_flagstate',
+                'machine_machineconfig',
+                'machine_machinesetting',
             ],
             'part_category': [
                 'part_partcategory',
@@ -715,7 +717,10 @@ def check_user_role(user, role, permission):
     # First, check the cache
     key = f'role_{user}_{role}_{permission}'
 
-    result = cache.get(key)
+    try:
+        result = cache.get(key)
+    except Exception:
+        result = None
 
     if result is not None:
         return result
@@ -743,7 +748,11 @@ def check_user_role(user, role, permission):
                     break
 
     # Save result to cache
-    cache.set(key, result, timeout=3600)
+    try:
+        cache.set(key, result, timeout=3600)
+    except Exception:
+        pass
+
     return result
 
 

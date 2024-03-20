@@ -971,7 +971,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
                 switchable: false,
                 title: '{% trans "Build Order" %}',
                 formatter: function(value, row) {
-                    let ref = `${row.build_detail.reference}`;
+                    let ref = row.build_detail?.reference ?? row.build;
                     let html = renderLink(ref, `/build/${row.build}/`);
 
                     html += `- <small>${row.build_detail.title}</small>`;
@@ -1127,6 +1127,8 @@ function loadBuildOutputTable(build_info, options={}) {
         '{% url "api-part-test-template-list" %}',
         {
             part: build_info.part,
+            required: true,
+            enabled: true,
         },
         {
             async: false,
@@ -1257,7 +1259,7 @@ function loadBuildOutputTable(build_info, options={}) {
             let final_result = false;
 
             row.tests.forEach(function(result) {
-                if (result.key == test.key) {
+                if (result.template == test.pk) {
                     final_result = result.result;
                 }
             });
@@ -2616,6 +2618,10 @@ function loadBuildLineTable(table, build_id, options={}) {
                         icons += makeIconBadge('fa-tools icon-blue', `{% trans "In Production" %}: ${formatDecimal(row.in_production)}`);
                     }
 
+                    if (row.external_stock > 0) {
+                        icons += makeIconBadge('fa-sitemap', `{% trans "External stock" %}: ${row.external_stock}`);
+                    }
+
                     return renderLink(text, url) + icons;
                 }
             },
@@ -2728,6 +2734,7 @@ function loadBuildLineTable(table, build_id, options={}) {
 
         allocateStockToBuild(build_id, [row], {
             output: options.output,
+            source_location: options.location,
             success: function() {
                 $(table).bootstrapTable('refresh');
             }

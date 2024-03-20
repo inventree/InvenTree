@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Input } from '@mantine/core';
+import { Input, useMantineTheme } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
@@ -30,7 +30,6 @@ export function RelatedModelField({
   limit?: number;
 }) {
   const fieldId = useId();
-
   const {
     field,
     fieldState: { error }
@@ -43,6 +42,7 @@ export function RelatedModelField({
 
   const [offset, setOffset] = useState<number>(0);
 
+  const [initialData, setInitialData] = useState<{}>({});
   const [data, setData] = useState<any[]>([]);
   const dataRef = useRef<any[]>([]);
 
@@ -53,21 +53,22 @@ export function RelatedModelField({
     // If the value is unchanged, do nothing
     if (field.value === pk) return;
 
-    if (field.value !== null && field.value !== undefined) {
+    if (
+      field.value !== null &&
+      field.value !== undefined &&
+      field.value !== ''
+    ) {
       const url = `${definition.api_url}${field.value}/`;
-
       api.get(url).then((response) => {
-        const data = response.data;
-
-        if (data && data.pk) {
+        if (response.data && response.data.pk) {
           const value = {
-            value: data.pk,
-            data: data
+            value: response.data.pk,
+            data: response.data
           };
 
-          setData([value]);
+          setInitialData(value);
           dataRef.current = [value];
-          setPk(data.pk);
+          setPk(response.data.pk);
         }
       });
     } else {
@@ -204,13 +205,67 @@ export function RelatedModelField({
     };
   }, [definition]);
 
-  const currentValue = useMemo(
-    () => pk !== null && data.find((item) => item.value === pk),
-    [pk, data]
-  );
+  const currentValue = useMemo(() => {
+    if (!pk) {
+      return null;
+    }
+
+    let _data = [...data, initialData];
+    return _data.find((item) => item.value === pk);
+  }, [pk, data]);
+
+  // Field doesn't follow Mantine theming
+  // Define color theme to pass to field based on Mantine theme
+  const theme = useMantineTheme();
+
+  const colors = useMemo(() => {
+    let colors: any;
+    if (theme.colorScheme === 'dark') {
+      colors = {
+        neutral0: theme.colors[theme.colorScheme][6],
+        neutral5: theme.colors[theme.colorScheme][4],
+        neutral10: theme.colors[theme.colorScheme][4],
+        neutral20: theme.colors[theme.colorScheme][4],
+        neutral30: theme.colors[theme.colorScheme][3],
+        neutral40: theme.colors[theme.colorScheme][2],
+        neutral50: theme.colors[theme.colorScheme][1],
+        neutral60: theme.colors[theme.colorScheme][0],
+        neutral70: theme.colors[theme.colorScheme][0],
+        neutral80: theme.colors[theme.colorScheme][0],
+        neutral90: theme.colors[theme.colorScheme][0],
+        primary: theme.colors[theme.primaryColor][7],
+        primary25: theme.colors[theme.primaryColor][6],
+        primary50: theme.colors[theme.primaryColor][5],
+        primary75: theme.colors[theme.primaryColor][4]
+      };
+    } else {
+      colors = {
+        neutral0: theme.white,
+        neutral5: theme.fn.darken(theme.white, 0.05),
+        neutral10: theme.fn.darken(theme.white, 0.1),
+        neutral20: theme.fn.darken(theme.white, 0.2),
+        neutral30: theme.fn.darken(theme.white, 0.3),
+        neutral40: theme.fn.darken(theme.white, 0.4),
+        neutral50: theme.fn.darken(theme.white, 0.5),
+        neutral60: theme.fn.darken(theme.white, 0.6),
+        neutral70: theme.fn.darken(theme.white, 0.7),
+        neutral80: theme.fn.darken(theme.white, 0.8),
+        neutral90: theme.fn.darken(theme.white, 0.9),
+        primary: theme.colors[theme.primaryColor][7],
+        primary25: theme.colors[theme.primaryColor][4],
+        primary50: theme.colors[theme.primaryColor][5],
+        primary75: theme.colors[theme.primaryColor][6]
+      };
+    }
+    return colors;
+  }, [theme]);
 
   return (
-    <Input.Wrapper {...fieldDefinition} error={error?.message}>
+    <Input.Wrapper
+      {...fieldDefinition}
+      error={error?.message}
+      styles={{ description: { paddingBottom: '5px' } }}
+    >
       <Select
         id={fieldId}
         value={currentValue}
@@ -224,7 +279,6 @@ export function RelatedModelField({
         onMenuScrollToBottom={() => setOffset(offset + limit)}
         onMenuOpen={() => {
           setIsOpen(true);
-          setValue('');
           resetSearch();
           selectQuery.refetch();
         }}
@@ -246,6 +300,15 @@ export function RelatedModelField({
         menuPosition="fixed"
         styles={{ menuPortal: (base: any) => ({ ...base, zIndex: 9999 }) }}
         formatOptionLabel={(option: any) => formatOption(option)}
+        theme={(theme) => {
+          return {
+            ...theme,
+            colors: {
+              ...theme.colors,
+              ...colors
+            }
+          };
+        }}
       />
     </Input.Wrapper>
   );

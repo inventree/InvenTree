@@ -25,7 +25,7 @@ class HTMLAPITests(InvenTreeTestCase):
         url = reverse('api-part-list')
 
         # Check JSON response
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get(url, headers={'accept': 'application/json'})
         self.assertEqual(response.status_code, 200)
 
     def test_build_api(self):
@@ -33,7 +33,7 @@ class HTMLAPITests(InvenTreeTestCase):
         url = reverse('api-build-list')
 
         # Check JSON response
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get(url, headers={'accept': 'application/json'})
         self.assertEqual(response.status_code, 200)
 
     def test_stock_api(self):
@@ -41,7 +41,7 @@ class HTMLAPITests(InvenTreeTestCase):
         url = reverse('api-stock-list')
 
         # Check JSON response
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get(url, headers={'accept': 'application/json'})
         self.assertEqual(response.status_code, 200)
 
     def test_company_list(self):
@@ -49,7 +49,7 @@ class HTMLAPITests(InvenTreeTestCase):
         url = reverse('api-company-list')
 
         # Check JSON response
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get(url, headers={'accept': 'application/json'})
         self.assertEqual(response.status_code, 200)
 
     def test_not_found(self):

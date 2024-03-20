@@ -98,16 +98,14 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     }
   });
 
-  const [selectedLocation, setSelectedLocation] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedLocation, setSelectedLocation] = useState<number>(-1);
 
   const editLocation = useEditApiFormModal({
     url: ApiEndpoints.stock_location_list,
     pk: selectedLocation,
     title: t`Edit Stock Location`,
     fields: stockLocationFields({}),
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const tableActions = useMemo(() => {
@@ -117,7 +115,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
       <AddItemButton
         tooltip={t`Add Stock Location`}
         onClick={() => newLocation.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);
@@ -150,14 +148,12 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         props={{
           enableDownload: true,
           params: {
-            parent: parentId ?? 'null'
+            parent: parentId
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
           rowActions: rowActions,
-          onRowClick: (record) => {
-            navigate(getDetailUrl(ModelType.stocklocation, record.pk));
-          }
+          modelType: ModelType.stocklocation
         }}
       />
     </>

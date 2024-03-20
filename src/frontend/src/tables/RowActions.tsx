@@ -4,6 +4,7 @@ import { Menu } from '@mantine/core';
 import { IconCopy, IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
+import { cancelEvent } from '../functions/events';
 import { notYetImplemented } from '../functions/notifications';
 
 // Type definition for a table row action
@@ -14,6 +15,7 @@ export type RowAction = {
   icon: ReactNode;
   onClick?: () => void;
   hidden?: boolean;
+  disabled?: boolean;
 };
 
 // Component for duplicating a row in a table
@@ -92,9 +94,7 @@ export function RowActions({
   // Prevent default event handling
   // Ref: https://icflorescu.github.io/mantine-datatable/examples/links-or-buttons-inside-clickable-rows-or-cells
   function openMenu(event: any) {
-    event?.preventDefault();
-    event?.stopPropagation();
-    event?.nativeEvent?.stopImmediatePropagation();
+    cancelEvent(event);
     setOpened(!opened);
   }
 
@@ -117,9 +117,7 @@ export function RowActions({
           icon={action.icon}
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
-            event?.preventDefault();
-            event?.stopPropagation();
-            event?.nativeEvent?.stopImmediatePropagation();
+            cancelEvent(event);
 
             if (action.onClick) {
               action.onClick();
@@ -129,6 +127,7 @@ export function RowActions({
 
             setOpened(false);
           }}
+          disabled={action.disabled || false}
         >
           {action.title}
         </Menu.Item>

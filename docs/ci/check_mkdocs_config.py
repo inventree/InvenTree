@@ -11,6 +11,6 @@ tld = os.path.abspath(os.path.join(here, '..'))
 config_file = os.path.join(tld, 'mkdocs.yml')
 
 with open(config_file, 'r') as f:
-    data = yaml.safe_load(f)
+    data = yaml.load(f, yaml.BaseLoader)
 
-    assert data['strict'] is True
+    assert data['strict'] == 'true'

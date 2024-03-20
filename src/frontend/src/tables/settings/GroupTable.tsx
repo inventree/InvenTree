@@ -118,9 +118,7 @@ export function GroupTable() {
     ];
   }, []);
 
-  const [selectedGroup, setSelectedGroup] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedGroup, setSelectedGroup] = useState<number>(-1);
 
   const deleteGroup = useDeleteApiFormModal({
     url: ApiEndpoints.group_list,

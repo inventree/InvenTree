@@ -127,16 +127,14 @@ export function AddressTable({
     onFormSuccess: table.refreshTable
   });
 
-  const [selectedAddress, setSelectedAddress] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedAddress, setSelectedAddress] = useState<number>(-1);
 
   const editAddress = useEditApiFormModal({
     url: ApiEndpoints.address_list,
     pk: selectedAddress,
     title: t`Edit Address`,
     fields: addressFields,
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const deleteAddress = useDeleteApiFormModal({

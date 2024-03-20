@@ -2,13 +2,6 @@
 
 from django.db import migrations
 
-from stock import models
-
-
-def update_tree(apps, schema_editor):
-    # Update the StockLocation MPTT model
-
-    models.StockLocation.objects.rebuild()
 
 
 class Migration(migrations.Migration):
@@ -19,6 +12,4 @@ class Migration(migrations.Migration):
         ('stock', '0011_auto_20190908_0404'),
     ]
 
-    operations = [
-        migrations.RunPython(update_tree)
-    ]
+    operations = []

@@ -51,6 +51,7 @@ export function useInstance<T = any>({
 
       return api
         .get(url, {
+          timeout: 10000,
           params: params
         })
         .then((response) => {

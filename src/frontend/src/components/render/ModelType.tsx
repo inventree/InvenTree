@@ -3,20 +3,20 @@ import { t } from '@lingui/macro';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 
-interface ModelInformationInterface {
+export interface ModelInformationInterface {
   label: string;
   label_multiple: string;
   url_overview?: string;
   url_detail?: string;
-  api_endpoint?: ApiEndpoints;
+  api_endpoint: ApiEndpoints;
   cui_detail?: string;
 }
 
-type ModelDictory = {
+export type ModelDict = {
   [key in keyof typeof ModelType]: ModelInformationInterface;
 };
 
-export const ModelInformationDict: ModelDictory = {
+export const ModelInformationDict: ModelDict = {
   part: {
     label: t`Part`,
     label_multiple: t`Parts`,
@@ -31,6 +31,13 @@ export const ModelInformationDict: ModelDictory = {
     url_overview: '/partparametertemplate',
     url_detail: '/partparametertemplate/:pk/',
     api_endpoint: ApiEndpoints.part_parameter_template_list
+  },
+  parttesttemplate: {
+    label: t`Part Test Template`,
+    label_multiple: t`Part Test Templates`,
+    url_overview: '/parttesttemplate',
+    url_detail: '/parttesttemplate/:pk/',
+    api_endpoint: ApiEndpoints.part_test_template_list
   },
   supplierpart: {
     label: t`Supplier Part`,
@@ -84,6 +91,14 @@ export const ModelInformationDict: ModelDictory = {
     url_detail: '/build/:pk/',
     cui_detail: '/build/:pk/',
     api_endpoint: ApiEndpoints.build_order_list
+  },
+  buildline: {
+    label: t`Build Line`,
+    label_multiple: t`Build Lines`,
+    url_overview: '/build/line',
+    url_detail: '/build/line/:pk/',
+    cui_detail: '/build/line/:pk/',
+    api_endpoint: ApiEndpoints.build_line_list
   },
   company: {
     label: t`Company`,
@@ -165,3 +180,12 @@ export const ModelInformationDict: ModelDictory = {
     api_endpoint: ApiEndpoints.user_list
   }
 };
+
+/*
+ * Extract model definition given the provided type
+ * @param type - ModelType to extract information from
+ * @returns ModelInformationInterface
+ */
+export function getModelInfo(type: ModelType): ModelInformationInterface {
+  return ModelInformationDict[type];
+}

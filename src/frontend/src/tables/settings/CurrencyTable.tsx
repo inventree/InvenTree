@@ -13,7 +13,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
 /*
  * Table for displaying available currencies
  */
-export function CurrencyTable() {
+export default function CurrencyTable() {
   const table = useTable('currency');
 
   const columns = useMemo(() => {
@@ -67,8 +67,8 @@ export function CurrencyTable() {
       columns={columns}
       props={{
         tableActions: tableActions,
-        dataFormatter: (data) => {
-          let rates = data?.exchange_rates ?? {};
+        dataFormatter: (data: any) => {
+          let rates = data.exchange_rates ?? {};
 
           return Object.entries(rates).map(([currency, rate]) => {
             return {

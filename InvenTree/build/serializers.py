@@ -27,6 +27,7 @@ from InvenTree.status_codes import BuildStatusGroups, StockStatus
 from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
+import common.models
 from common.serializers import ProjectCodeSerializer
 import part.filters
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
@@ -523,6 +524,17 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
         outputs = data.get('outputs', [])
 
+        if common.settings.prevent_build_output_complete_on_incompleted_tests():
+            errors = []
+            for output in outputs:
+                stock_item = output['output']
+                if stock_item.hasRequiredTests() and not stock_item.passedAllRequiredTests():
+                    serial = stock_item.serial
+                    errors.append(_(f"Build output {serial} has not passed all required tests"))
+
+            if errors:
+                raise ValidationError(errors)
+
         if len(outputs) == 0:
             raise ValidationError(_("A list of build outputs must be provided"))
 
@@ -908,18 +920,24 @@ class BuildAllocationSerializer(serializers.Serializer):
                 if build_line.bom_item.consumable:
                     continue
 
+                params = {
+                    "build_line": build_line,
+                    "stock_item": stock_item,
+                    "install_into": output,
+                }
+
                 try:
-                    # Create a new BuildItem to allocate stock
-                    build_item, created = BuildItem.objects.get_or_create(
-                        build_line=build_line,
-                        stock_item=stock_item,
-                        install_into=output,
-                    )
-                    if created:
-                        build_item.quantity = quantity
-                    else:
+                    if build_item := BuildItem.objects.filter(**params).first():
+                        # Find an existing BuildItem for this stock item
+                        # If it exists, increase the quantity
                         build_item.quantity += quantity
-                    build_item.save()
+                        build_item.save()
+                    else:
+                        # Create a new BuildItem to allocate stock
+                        build_item = BuildItem.objects.create(
+                            quantity=quantity,
+                            **params
+                        )
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
@@ -1023,7 +1041,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
         """Determine which extra details fields should be included"""
         part_detail = kwargs.pop('part_detail', True)
         location_detail = kwargs.pop('location_detail', True)
-        stock_detail = kwargs.pop('stock_detail', False)
+        stock_detail = kwargs.pop('stock_detail', True)
         build_detail = kwargs.pop('build_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -1065,6 +1083,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
             'available_substitute_stock',
             'available_variant_stock',
             'total_available_stock',
+            'external_stock',
         ]
 
         read_only_fields = [
@@ -1075,7 +1094,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField()
 
-    bom_item = serializers.PrimaryKeyRelatedField(label=_('Bom Item'), read_only=True)
+    bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 
     # Foreign key fields
     bom_item_detail = BomItemSerializer(source='bom_item', many=False, read_only=True, pricing=False)
@@ -1106,15 +1125,23 @@ class BuildLineSerializer(InvenTreeModelSerializer):
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
     total_available_stock = serializers.FloatField(read_only=True)
+    external_stock = serializers.FloatField(read_only=True)
 
     @staticmethod
-    def annotate_queryset(queryset):
+    def annotate_queryset(queryset, build=None):
         """Add extra annotations to the queryset:
 
         - allocated: Total stock quantity allocated against this build line
         - available: Total stock available for allocation against this build line
         - on_order: Total stock on order for this build line
         - in_production: Total stock currently in production for this build line
+
+        Arguments:
+            queryset: The queryset to annotate
+            build: The build order to filter against (optional)
+
+        Note: If the 'build' is provided, we can use it to filter available stock, depending on the specified location for the build
+
         """
         queryset = queryset.select_related(
             'build', 'bom_item',
@@ -1151,6 +1178,18 @@ class BuildLineSerializer(InvenTreeModelSerializer):
 
         ref = 'bom_item__sub_part__'
 
+        stock_filter = None
+
+        if build is not None and build.take_from is not None:
+            location = build.take_from
+            # Filter by locations below the specified location
+            stock_filter = Q(
+                location__tree_id=location.tree_id,
+                location__lft__gte=location.lft,
+                location__rght__lte=location.rght,
+                location__level__gte=location.level,
+            )
+
         # Annotate the "in_production" quantity
         queryset = queryset.annotate(
             in_production=part.filters.annotate_in_production_quantity(reference=ref)
@@ -1163,10 +1202,8 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         )
 
         # Annotate the "available" quantity
-        # TODO: In the future, this should be refactored.
-        # TODO: Note that part.serializers.BomItemSerializer also has a similar annotation
         queryset = queryset.alias(
-            total_stock=part.filters.annotate_total_stock(reference=ref),
+            total_stock=part.filters.annotate_total_stock(reference=ref, filter=stock_filter),
             allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(reference=ref),
             allocated_to_build_orders=part.filters.annotate_build_order_allocations(reference=ref),
         )
@@ -1179,11 +1216,21 @@ class BuildLineSerializer(InvenTreeModelSerializer):
             )
         )
 
+        external_stock_filter = Q(location__external=True)
+
+        if stock_filter:
+            external_stock_filter &= stock_filter
+
+        # Add 'external stock' annotations
+        queryset = queryset.annotate(
+            external_stock=part.filters.annotate_total_stock(reference=ref, filter=external_stock_filter)
+        )
+
         ref = 'bom_item__substitutes__part__'
 
         # Extract similar information for any 'substitute' parts
         queryset = queryset.alias(
-            substitute_stock=part.filters.annotate_total_stock(reference=ref),
+            substitute_stock=part.filters.annotate_total_stock(reference=ref, filter=stock_filter),
             substitute_build_allocations=part.filters.annotate_build_order_allocations(reference=ref),
             substitute_sales_allocations=part.filters.annotate_sales_order_allocations(reference=ref)
         )
@@ -1197,7 +1244,7 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         )
 
         # Annotate the queryset with 'available variant stock' information
-        variant_stock_query = part.filters.variant_stock_query(reference='bom_item__sub_part__')
+        variant_stock_query = part.filters.variant_stock_query(reference='bom_item__sub_part__', filter=stock_filter)
 
         queryset = queryset.alias(
             variant_stock_total=part.filters.annotate_variant_quantity(variant_stock_query, reference='quantity'),

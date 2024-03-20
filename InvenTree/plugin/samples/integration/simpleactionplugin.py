@@ -8,6 +8,7 @@ class SimpleActionPlugin(ActionMixin, InvenTreePlugin):
     """An EXTREMELY simple action plugin which demonstrates the capability of the ActionMixin class."""
 
     NAME = 'SimpleActionPlugin'
+    SLUG = 'simpleaction'
     ACTION_NAME = 'simple'
 
     def perform_action(self, user=None, data=None):

@@ -135,6 +135,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | review_needed | Flag if [StockItem](./context_variables.md#stockitem) needs review |
 | delete_on_deplete | If True, [StockItem](./context_variables.md#stockitem) will be deleted when the stock level gets to zero |
 | status | Status of this [StockItem](./context_variables.md#stockitem) (ref: InvenTree.status_codes.StockStatus) |
+| status_label | Textual representation of the status e.g. "OK" |
 | notes | Extra notes field |
 | build | Link to a Build (if this stock item was created from a build) |
 | is_building | Boolean field indicating if this stock item is currently being built (or is "in production") |

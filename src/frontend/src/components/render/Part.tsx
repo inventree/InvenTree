@@ -51,3 +51,16 @@ export function RenderPartParameterTemplate({
     />
   );
 }
+
+export function RenderPartTestTemplate({
+  instance
+}: {
+  instance: any;
+}): ReactNode {
+  return (
+    <RenderInlineModel
+      primary={instance.test_name}
+      secondary={instance.description}
+    />
+  );
+}

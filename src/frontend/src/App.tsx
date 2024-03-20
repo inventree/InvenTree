@@ -18,9 +18,12 @@ export function setApiDefaults() {
   const host = useLocalState.getState().host;
 
   api.defaults.baseURL = host;
-  api.defaults.headers.common['Authorization'] = undefined;
+  api.defaults.timeout = 2500;
+  api.defaults.headers.common['Authorization'] = token
+    ? `Token ${token}`
+    : undefined;
 
-  if (hasToken()) {
+  if (!!getCsrfCookie()) {
     api.defaults.withCredentials = true;
     api.defaults.xsrfCookieName = 'csrftoken';
     api.defaults.xsrfHeaderName = 'X-CSRFToken';

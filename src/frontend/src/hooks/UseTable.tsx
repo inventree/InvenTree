@@ -19,6 +19,8 @@ export type TableState = {
   activeFilters: TableFilter[];
   setActiveFilters: (filters: TableFilter[]) => void;
   clearActiveFilters: () => void;
+  expandedRecords: any[];
+  setExpandedRecords: (records: any[]) => void;
   selectedRecords: any[];
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
@@ -26,6 +28,13 @@ export type TableState = {
   setHiddenColumns: (columns: string[]) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  recordCount: number;
+  setRecordCount: (count: number) => void;
+  page: number;
+  setPage: (page: number) => void;
+  records: any[];
+  setRecords: (records: any[]) => void;
+  updateRecord: (record: any) => void;
 };
 
 /**
@@ -59,12 +68,21 @@ export function useTable(tableName: string): TableState {
     setActiveFilters([]);
   }, []);
 
+  // Array of expanded records
+  const [expandedRecords, setExpandedRecords] = useState<any[]>([]);
+
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
   const clearSelectedRecords = useCallback(() => {
     setSelectedRecords([]);
   }, []);
+
+  // Total record count
+  const [recordCount, setRecordCount] = useState<number>(0);
+
+  // Pagination data
+  const [page, setPage] = useState<number>(1);
 
   // A list of hidden columns, saved to local storage
   const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
@@ -75,18 +93,49 @@ export function useTable(tableName: string): TableState {
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  // Table records
+  const [records, setRecords] = useState<any[]>([]);
+
+  // Update a single record in the table, by primary key value
+  const updateRecord = useCallback(
+    (record: any) => {
+      let _records = [...records];
+
+      // Find the matching record in the table
+      const index = _records.findIndex((r) => r.pk === record.pk);
+
+      if (index >= 0) {
+        _records[index] = record;
+      } else {
+        _records.push(record);
+      }
+
+      setRecords(_records);
+    },
+    [records]
+  );
+
   return {
     tableKey,
     refreshTable,
     activeFilters,
     setActiveFilters,
     clearActiveFilters,
+    expandedRecords,
+    setExpandedRecords,
     selectedRecords,
     setSelectedRecords,
     clearSelectedRecords,
     hiddenColumns,
     setHiddenColumns,
     searchTerm,
-    setSearchTerm
+    setSearchTerm,
+    recordCount,
+    setRecordCount,
+    page,
+    setPage,
+    records,
+    setRecords,
+    updateRecord
   };
 }

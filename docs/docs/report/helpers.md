@@ -64,7 +64,47 @@ To return an element corresponding to a certain key in a container which support
 {% endraw %}
 ```
 
-## Rendering Currency
+## Number Formatting
+
+The helper function `format_number` allows for some common number formatting options. It takes a number (or a number-like string) as an input, as well as some formatting arguments. It returns a *string* containing the formatted number:
+
+```html
+{% raw %}
+{% load report %}
+{% format_number 3.14159265359 decimal_places=5, leading=3 %}
+<!-- output: 0003.14159 -->
+{% format_number 3.14159265359 integer=True %}
+<!-- output: 3 -->
+{% endraw %}
+```
+
+## Date Formatting
+
+For rendering date and datetime information, the following helper functions are available:
+
+- `format_date`: Format a date object
+- `format_datetime`: Format a datetime object
+
+Each of these helper functions takes a date or datetime object as an input, and returns a *string* containing the formatted date or datetime. The following additional arguments are available:
+
+| Argument | Description |
+| --- | --- |
+| timezone | Specify the timezone to render the date in. If not specified, uses the InvenTree server timezone |
+| format | Specify the format string to use for rendering the date. If not specified, uses ISO formatting. Refer to the [datetime format codes](https://docs.python.org/3/library/datetime.html#format-codes) for more information! |
+
+### Example
+
+A simple example of using the date formatting helper functions:
+
+```html
+{% raw %}
+{% load report %}
+Date: {% format_date my_date timezone="Australia/Sydney" %}
+Datetime: {% format_datetime my_datetime format="%d-%m-%Y %H:%M%S" %}
+{% endraw %}
+```
+
+## Currency Formatting
 
 The helper function `render_currency` allows for simple rendering of currency data. This function can also convert the specified amount of currency into a different target currency:
 

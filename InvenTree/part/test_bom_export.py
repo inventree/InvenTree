@@ -5,6 +5,7 @@ import csv
 from django.urls import reverse
 
 import part.models
+from InvenTree.settings import BASE_DIR
 from InvenTree.unit_test import InvenTreeTestCase
 
 
@@ -43,7 +44,7 @@ class BomExportTest(InvenTreeTestCase):
             'attachment; filename="InvenTree_BOM_Template.csv"',
         )
 
-        filename = '_tmp.csv'
+        filename = BASE_DIR / '_testfolder' / '_tmp.csv'
 
         with open(filename, 'wb') as f:
             f.write(response.getvalue())
@@ -89,7 +90,7 @@ class BomExportTest(InvenTreeTestCase):
         content = response.headers['Content-Disposition']
         self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.csv"')
 
-        filename = '_tmp.csv'
+        filename = BASE_DIR / '_testfolder' / '_tmp.csv'
 
         with open(filename, 'wb') as f:
             f.write(response.getvalue())

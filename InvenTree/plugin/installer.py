@@ -9,6 +9,9 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import plugin.models
+from InvenTree.exceptions import log_error
+
 logger = logging.getLogger('inventree')
 
 
@@ -30,6 +33,33 @@ def pip_command(*args):
     return subprocess.check_output(
         command, cwd=settings.BASE_DIR.parent, stderr=subprocess.STDOUT
     )
+
+
+def handle_pip_error(error, path: str) -> list:
+    """Raise a ValidationError when the pip command fails.
+
+    - Log the error to the database
+    - Format the output from a pip command into a list of error messages.
+    - Raise an appropriate error
+    """
+    log_error(path)
+
+    output = error.output.decode('utf-8')
+
+    logger.error('Pip command failed: %s', output)
+
+    errors = []
+
+    for line in output.split('\n'):
+        line = line.strip()
+
+        if line:
+            errors.append(line)
+
+    if len(errors) > 1:
+        raise ValidationError(errors)
+    else:
+        raise ValidationError(errors[0])
 
 
 def check_package_path(packagename: str):
@@ -57,6 +87,8 @@ def check_package_path(packagename: str):
                 return match.group(1)
 
     except subprocess.CalledProcessError as error:
+        log_error('check_package_path')
+
         output = error.output.decode('utf-8')
         logger.exception('Plugin lookup failed: %s', str(output))
         return False
@@ -80,16 +112,18 @@ def install_plugins_file():
     except subprocess.CalledProcessError as error:
         output = error.output.decode('utf-8')
         logger.exception('Plugin file installation failed: %s', str(output))
+        log_error('pip')
         return False
     except Exception as exc:
         logger.exception('Plugin file installation failed: %s', exc)
+        log_error('pip')
         return False
 
     # At this point, the plugins file has been installed
     return True
 
 
-def add_plugin_to_file(install_name):
+def update_plugins_file(install_name, remove=False):
     """Add a plugin to the plugins file."""
     logger.info('Adding plugin to plugins file: %s', install_name)
 
@@ -99,6 +133,10 @@ def add_plugin_to_file(install_name):
         logger.warning('Plugin file %s does not exist', str(pf))
         return
 
+    def compare_line(line: str):
+        """Check if a line in the file matches the installname."""
+        return line.strip().split('==')[0] == install_name.split('==')[0]
+
     # First, read in existing plugin file
     try:
         with pf.open(mode='r') as f:
@@ -107,19 +145,34 @@ def add_plugin_to_file(install_name):
         logger.exception('Failed to read plugins file: %s', str(exc))
         return
 
+    # Reconstruct output file
+    output = []
+
+    found = False
+
     # Check if plugin is already in file
     for line in lines:
-        if line.strip() == install_name:
-            logger.debug('Plugin already exists in file')
-            return
+        # Ignore processing for any commented lines
+        if line.strip().startswith('#'):
+            output.append(line)
+            continue
+
+        if compare_line(line):
+            found = True
+            if not remove:
+                # Replace line with new install name
+                output.append(install_name)
+        else:
+            output.append(line)
 
     # Append plugin to file
-    lines.append(f'{install_name}')
+    if not found and not remove:
+        output.append(install_name)
 
     # Write file back to disk
     try:
         with pf.open(mode='w') as f:
-            for line in lines:
+            for line in output:
                 f.write(line)
 
                 if not line.endswith('\n'):
@@ -128,19 +181,22 @@ def add_plugin_to_file(install_name):
         logger.exception('Failed to add plugin to plugins file: %s', str(exc))
 
 
-def install_plugin(url=None, packagename=None, user=None):
+def install_plugin(url=None, packagename=None, user=None, version=None):
     """Install a plugin into the python virtual environment.
 
-    Rules:
-    - A staff user account is required
-    - We must detect that we are running within a virtual environment
+    Args:
+        packagename: Optional package name to install
+        url: Optional URL to install from
+        user: Optional user performing the installation
+        version: Optional version specifier
     """
     if user and not user.is_staff:
-        raise ValidationError(
-            _('Permission denied: only staff users can install plugins')
-        )
+        raise ValidationError(_('Only staff users can administer plugins'))
 
-    logger.debug('install_plugin: %s, %s', url, packagename)
+    if settings.PLUGINS_INSTALL_DISABLED:
+        raise ValidationError(_('Plugin installation is disabled'))
+
+    logger.info('install_plugin: %s, %s', url, packagename)
 
     # Check if we are running in a virtual environment
     # For now, just log a warning
@@ -178,6 +234,9 @@ def install_plugin(url=None, packagename=None, user=None):
         # use pypi
         full_pkg = packagename
 
+        if version:
+            full_pkg = f'{full_pkg}=={version}'
+
     install_name.append(full_pkg)
 
     ret = {}
@@ -195,30 +254,81 @@ def install_plugin(url=None, packagename=None, user=None):
                 ret['result'] = _(f'Installed plugin into {path}')
 
     except subprocess.CalledProcessError as error:
-        # If an error was thrown, we need to parse the output
-
-        output = error.output.decode('utf-8')
-        logger.exception('Plugin installation failed: %s', str(output))
-
-        errors = [_('Plugin installation failed')]
-
-        for msg in output.split('\n'):
-            msg = msg.strip()
-
-            if msg:
-                errors.append(msg)
-
-        if len(errors) > 1:
-            raise ValidationError(errors)
-        else:
-            raise ValidationError(errors[0])
+        handle_pip_error(error, 'plugin_install')
 
     # Save plugin to plugins file
-    add_plugin_to_file(full_pkg)
+    update_plugins_file(full_pkg)
 
     # Reload the plugin registry, to discover the new plugin
     from plugin.registry import registry
 
+    registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+    return ret
+
+
+def validate_package_plugin(cfg: plugin.models.PluginConfig, user=None):
+    """Validate a package plugin for update or removal."""
+    if not cfg.plugin:
+        raise ValidationError(_('Plugin was not found in registry'))
+
+    if not cfg.is_package():
+        raise ValidationError(_('Plugin is not a packaged plugin'))
+
+    if not cfg.package_name:
+        raise ValidationError(_('Plugin package name not found'))
+
+    if user and not user.is_staff:
+        raise ValidationError(_('Only staff users can administer plugins'))
+
+
+def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=True):
+    """Uninstall a plugin from the python virtual environment.
+
+    - The plugin must not be active
+    - The plugin must be a "package" and have a valid package name
+
+    Args:
+        cfg: PluginConfig object
+        user: User performing the uninstall
+        delete_config: If True, delete the plugin configuration from the database
+    """
+    from plugin.registry import registry
+
+    if settings.PLUGINS_INSTALL_DISABLED:
+        raise ValidationError(_('Plugin uninstalling is disabled'))
+
+    if cfg.active:
+        raise ValidationError(
+            _('Plugin cannot be uninstalled as it is currently active')
+        )
+
+    validate_package_plugin(cfg, user)
+    package_name = cfg.package_name
+    logger.info('Uninstalling plugin: %s', package_name)
+
+    cmd = ['uninstall', '-y', package_name]
+
+    try:
+        result = pip_command(*cmd)
+
+        ret = {
+            'result': _('Uninstalled plugin successfully'),
+            'success': True,
+            'output': str(result, 'utf-8'),
+        }
+
+    except subprocess.CalledProcessError as error:
+        handle_pip_error(error, 'plugin_uninstall')
+
+    # Update the plugins file
+    update_plugins_file(package_name, remove=True)
+
+    if delete_config:
+        # Remove the plugin configuration from the database
+        cfg.delete()
+
+    # Reload the plugin registry
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
     return ret

@@ -346,7 +346,11 @@ function constructForm(url, options={}) {
     getApiEndpointOptions(url, function(OPTIONS) {
 
         // Copy across entire actions struct
-        options.actions = OPTIONS.actions.POST || OPTIONS.actions.PUT || OPTIONS.actions.PATCH || OPTIONS.actions.DELETE || {};
+        if (OPTIONS && OPTIONS.actions) {
+            options.actions = OPTIONS.actions.POST || OPTIONS.actions.PUT || OPTIONS.actions.PATCH || OPTIONS.actions.DELETE || {};
+        } else {
+            options.actions = {};
+        }
 
         // Extract any custom 'context' information from the OPTIONS data
         options.context = OPTIONS.context || {};
@@ -2586,6 +2590,9 @@ function constructInput(name, parameters, options={}) {
     case 'date':
         func = constructDateInput;
         break;
+    case 'datetime':
+        func = constructDateTimeInput;
+        break;
     case 'candy':
         func = constructCandyInput;
         break;
@@ -2855,6 +2862,19 @@ function constructDateInput(name, parameters) {
     );
 }
 
+
+/*
+ * Construct a field for a datetime input
+ */
+function constructDateTimeInput(name, parameters) {
+
+    return constructInputOptions(
+        name,
+        'datetimeinput form-control',
+        'datetime',
+        parameters
+    );
+}
 
 /*
  * Construct a "candy" field input

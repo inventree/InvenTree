@@ -204,6 +204,7 @@ def render_currency(
     currency=None,
     min_decimal_places=None,
     max_decimal_places=None,
+    include_symbol=True,
 ):
     """Render a currency / Money object to a formatted string (e.g. for reports).
 
@@ -213,6 +214,7 @@ def render_currency(
         currency: Optionally convert to the specified currency
         min_decimal_places: The minimum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES_MIN setting.
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
+        include_symbol: If True, include the currency symbol in the output
     """
     if money in [None, '']:
         return '-'
@@ -258,7 +260,9 @@ def render_currency(
 
     decimal_places = max(decimal_places, max_decimal_places)
 
-    return format_money(money, decimal_places=decimal_places)
+    return format_money(
+        money, decimal_places=decimal_places, include_symbol=include_symbol
+    )
 
 
 def getModelsWithMixin(mixin_class) -> list:
@@ -299,6 +303,11 @@ def notify_responsible(
         content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
         exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
+    import InvenTree.ready
+
+    if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+        return
+
     notify_users(
         [instance.responsible], instance, sender, content=content, exclude=exclude
     )

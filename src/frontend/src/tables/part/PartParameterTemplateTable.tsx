@@ -14,7 +14,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
@@ -52,13 +52,18 @@ export default function PartParameterTemplateTable() {
         switchable: false
       },
       {
+        accessor: 'parts',
+        sortable: true,
+        switchable: true
+      },
+      {
         accessor: 'units',
         sortable: true
       },
       DescriptionColumn({}),
-      {
+      BooleanColumn({
         accessor: 'checkbox'
-      },
+      }),
       {
         accessor: 'choices'
       }
@@ -91,7 +96,7 @@ export default function PartParameterTemplateTable() {
     pk: selectedTemplate,
     title: t`Edit Parameter Template`,
     fields: partParameterTemplateFields,
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const deleteTemplate = useDeleteApiFormModal({

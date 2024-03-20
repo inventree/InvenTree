@@ -8,6 +8,7 @@ site_author: InvenTree
 repo_url: https://github.com/inventree/inventree
 repo_name: inventree/inventree
 
+
 # Theme
 theme:
   name: material
@@ -34,6 +35,7 @@ theme:
   icon:
     repo: fontawesome/brands/github
   features:
+    - content.code.copy
     - header.autohide
     - navigation.expand
     - navigation.footer
@@ -55,6 +57,7 @@ extra_css:
   - stylesheets/bootstrap.css
   - stylesheets/splide.min.css
   - stylesheets/extra.css
+  - stylesheets/neoteroi-mkdocs.css
 extra_javascript:
   - javascripts/extra.js
   - javascripts/fontawesome.js
@@ -75,10 +78,9 @@ nav:
       - Terminology: concepts/terminology.md
       - Physical Units: concepts/units.md
     - Development:
-      - Getting started: develop/starting.md
       - Contributing: develop/contributing.md
       - Devcontainer: develop/devcontainer.md
-      - Platform UI: develop/react-frontend.md
+      - React Frontend: develop/react-frontend.md
     - Credits: credits.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
@@ -87,8 +89,7 @@ nav:
     - Configuration: start/config.md
     - Docker:
         - Introduction: start/docker.md
-        - Production: start/docker_prod.md
-        - Development: start/docker_dev.md
+        - Installation: start/docker_install.md
     - Bare Metal:
         - Introduction: start/install.md
         - Installer: start/installer.md
@@ -134,6 +135,7 @@ nav:
     - Project Codes: order/project_codes.md
   - Report:
     - Templates: report/report.md
+    - Template Editor: report/template_editor.md
     - Report Types:
       - Test Reports: report/test.md
       - Build Order: report/build.md
@@ -182,6 +184,7 @@ nav:
   - Extend:
     - InvenTree API:
       - Overview: api/api.md
+      - API Schema: api/schema.md
       - Model Metadata: api/metadata.md
       - Download Data: api/download.md
       - Bulk Delete: api/bulk_delete.md
@@ -217,11 +220,16 @@ nav:
       - Settings Mixin: extend/plugins/settings.md
       - URL Mixin: extend/plugins/urls.md
       - Validation Mixin: extend/plugins/validation.md
+    - Machines:
+      - Overview: extend/machines/overview.md
+      - Label Printer: extend/machines/label_printer.md
     - Themes: extend/themes.md
     - Third-Party: extend/integrate.md
 
 # Plugins
 plugins:
+  - neoteroi.mkdocsoad:
+      use_pymdownx: true
   - include-markdown:
       opening_tag: "{!"
       closing_tag: "!}"
@@ -232,6 +240,15 @@ plugins:
         on_config: "docs.docs.hooks:on_config"
   - macros:
       include_dir: docs/_includes
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths:
+            - ../InvenTree
+          options:
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
 
 # Extensions
 markdown_extensions:
@@ -240,7 +257,13 @@ markdown_extensions:
   - meta
   - pymdownx.details
   - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          # format: !!python/name:pymdownx.superfences.fence_code_format
   # - pymdownx.emoji:
   #     emoji_index: !!python/name:materialx.emoji.twemoji
   #     emoji_generator: !!python/name:materialx.emoji.to_svg
@@ -257,6 +280,10 @@ extra:
   # analytics:
   #  provider: google
   #  property: UA-143467500-1
+
+  min_python_version: 3.9
+  min_invoke_version: 2.0.0
+  django_version: 4.2
 
   version:
     default: stable

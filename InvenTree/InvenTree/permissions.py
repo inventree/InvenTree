@@ -69,6 +69,10 @@ class RolePermission(permissions.BasePermission):
 
         # The required role may be defined for the view class
         if role := getattr(view, 'role_required', None):
+            # If the role is specified as "role.permission", split it
+            if '.' in role:
+                role, permission = role.split('.')
+
             return users.models.check_user_role(user, role, permission)
 
         try:

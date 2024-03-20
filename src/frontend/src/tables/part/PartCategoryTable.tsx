@@ -88,16 +88,14 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     }
   });
 
-  const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedCategory, setSelectedCategory] = useState<number>(-1);
 
   const editCategory = useEditApiFormModal({
     url: ApiEndpoints.category_list,
     pk: selectedCategory,
     title: t`Edit Part Category`,
     fields: partCategoryFields({}),
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const tableActions = useMemo(() => {
@@ -140,13 +138,12 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         props={{
           enableDownload: true,
           params: {
-            parent: parentId ?? 'null'
+            parent: parentId
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
           rowActions: rowActions,
-          onRowClick: (record) =>
-            navigate(getDetailUrl(ModelType.partcategory, record.pk))
+          modelType: ModelType.partcategory
         }}
       />
     </>

@@ -1,12 +1,15 @@
 import { Trans, t } from '@lingui/macro';
 import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
+  IconCoins,
   IconCpu,
+  IconDevicesPc,
   IconExclamationCircle,
   IconList,
   IconListDetails,
   IconPlugConnected,
   IconScale,
+  IconTemplate,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
@@ -29,6 +32,10 @@ const PluginManagementPanel = Loadable(
   lazy(() => import('./PluginManagementPanel'))
 );
 
+const MachineManagementPanel = Loadable(
+  lazy(() => import('./MachineManagementPanel'))
+);
+
 const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
@@ -43,6 +50,14 @@ const CustomUnitsTable = Loadable(
 
 const PartParameterTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
+);
+
+const CurrencyTable = Loadable(
+  lazy(() => import('../../../../tables/settings/CurrencyTable'))
+);
+
+const TemplateManagementPanel = Loadable(
+  lazy(() => import('./TemplateManagementPanel'))
 );
 
 export default function AdminCenter() {
@@ -65,6 +80,12 @@ export default function AdminCenter() {
         label: t`Error Reports`,
         icon: <IconExclamationCircle />,
         content: <ErrorReportTable />
+      },
+      {
+        name: 'currencies',
+        label: t`Currencies`,
+        icon: <IconCoins />,
+        content: <CurrencyTable />
       },
       {
         name: 'projectcodes',
@@ -91,10 +112,22 @@ export default function AdminCenter() {
         content: <PartParameterTemplateTable />
       },
       {
+        name: 'templates',
+        label: t`Templates`,
+        icon: <IconTemplate />,
+        content: <TemplateManagementPanel />
+      },
+      {
         name: 'plugin',
         label: t`Plugins`,
         icon: <IconPlugConnected />,
         content: <PluginManagementPanel />
+      },
+      {
+        name: 'machine',
+        label: t`Machines`,
+        icon: <IconDevicesPc />,
+        content: <MachineManagementPanel />
       }
     ];
   }, []);

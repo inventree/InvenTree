@@ -36,7 +36,6 @@ export enum ApiEndpoints {
   api_search = 'search/',
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
-  notifications_list = 'notifications/',
   barcode = 'barcode/',
   news = 'news/',
   global_status = 'generic/status/',
@@ -44,6 +43,10 @@ export enum ApiEndpoints {
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+
+  // Notification endpoints
+  notifications_list = 'notifications/',
+  notifications_readall = 'notifications/readall/',
 
   // Build API endpoints
   build_order_list = 'build/',
@@ -80,16 +83,31 @@ export enum ApiEndpoints {
   stock_location_list = 'stock/location/',
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
+  stock_test_result_list = 'stock/test/',
+  stock_transfer = 'stock/transfer/',
+  stock_remove = 'stock/remove/',
+  stock_add = 'stock/add/',
+  stock_count = 'stock/count/',
+  stock_change_status = 'stock/change_status/',
+  stock_merge = 'stock/merge/',
+  stock_assign = 'stock/assign/',
+  stock_status = 'stock/status/',
+  stock_install = 'stock/:id/install',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',
   purchase_order_line_list = 'order/po-line/',
   purchase_order_attachment_list = 'order/po/attachment/',
+  purchase_order_receive = 'order/po/:id/receive/',
   sales_order_list = 'order/so/',
   sales_order_attachment_list = 'order/so/attachment/',
   sales_order_shipment_list = 'order/so/shipment/',
   return_order_list = 'order/ro/',
   return_order_attachment_list = 'order/ro/attachment/',
+
+  // Template API endpoints
+  label_list = 'label/:variant/',
+  report_list = 'report/:variant/',
 
   // Plugin API endpoints
   plugin_list = 'plugins/',
@@ -97,6 +115,17 @@ export enum ApiEndpoints {
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',
+  plugin_activate = 'plugins/:id/activate/',
+  plugin_uninstall = 'plugins/:id/uninstall/',
+
+  // Machine API endpoints
+  machine_types_list = 'machine/types/',
+  machine_driver_list = 'machine/drivers/',
+  machine_registry_status = 'machine/status/',
+  machine_list = 'machine/',
+  machine_restart = 'machine/:machine/restart/',
+  machine_setting_list = 'machine/:machine/settings/',
+  machine_setting_detail = 'machine/:machine/settings/:config_type/',
 
   // Miscellaneous API endpoints
   error_report_list = 'error-report/',
