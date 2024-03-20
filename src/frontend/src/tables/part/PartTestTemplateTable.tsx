@@ -190,7 +190,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       <AddItemButton
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);

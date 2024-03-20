@@ -134,7 +134,7 @@ export default function PartParameterTemplateTable() {
       <AddItemButton
         tooltip={t`Add parameter template`}
         onClick={() => newTemplate.open()}
-        disabled={!user.hasAddRole(UserRoles.part)}
+        hidden={!user.hasAddRole(UserRoles.part)}
       />
     ];
   }, [user]);
