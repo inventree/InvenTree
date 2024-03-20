@@ -200,7 +200,7 @@ export default function CategoryDetail({}: {}) {
       },
       {
         name: 'parameters',
-        label: t`Parameters`,
+        label: t`Part Parameters`,
         icon: <IconListDetails />,
         content: <ParametricPartTable categoryId={id} />
       }
