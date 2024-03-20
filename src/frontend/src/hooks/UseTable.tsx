@@ -32,6 +32,8 @@ export type TableState = {
   setRecordCount: (count: number) => void;
   page: number;
   setPage: (page: number) => void;
+  records: any[];
+  setRecords: (records: any[]) => void;
 };
 
 /**
@@ -90,6 +92,9 @@ export function useTable(tableName: string): TableState {
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  // Table records
+  const [records, setRecords] = useState<any[]>([]);
+
   return {
     tableKey,
     refreshTable,
@@ -108,6 +113,8 @@ export function useTable(tableName: string): TableState {
     recordCount,
     setRecordCount,
     page,
-    setPage
+    setPage,
+    records,
+    setRecords
   };
 }

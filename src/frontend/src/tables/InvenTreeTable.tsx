@@ -14,7 +14,7 @@ import { modals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { IconFilter, IconRefresh, IconTrash } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { dataTagSymbol, useQuery } from '@tanstack/react-query';
 import {
   DataTable,
   DataTableCellClickHandler,
@@ -436,6 +436,11 @@ export function InvenTreeTable<T = any>({
     refetchOnMount: true
   });
 
+  // Update tableState.records when new data received
+  useEffect(() => {
+    tableState.setRecords(data ?? []);
+  }, [data]);
+
   // Callback function to delete the selected records in the table
   const deleteSelectedRecords = useCallback(() => {
     if (tableState.selectedRecords.length == 0) {
@@ -615,7 +620,7 @@ export function InvenTreeTable<T = any>({
             rowExpansion={tableProps.rowExpansion}
             fetching={isFetching}
             noRecordsText={missingRecordsText}
-            records={data}
+            records={tableState.records}
             columns={dataColumns}
             onRowClick={tableProps.onRowClick}
             onCellClick={tableProps.onCellClick}
