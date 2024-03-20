@@ -158,7 +158,7 @@ plugins_enabled: False
 
 # Set this variable to True to enable auto-migrations
 # Alternatively, use the environment variable INVENTREE_AUTO_UPDATE
-auto_update: True
+auto_update: False
 
 # Allowed hosts (see ALLOWED_HOSTS in Django settings documentation)
 # A list of strings representing the host/domain names that this Django site can serve.
