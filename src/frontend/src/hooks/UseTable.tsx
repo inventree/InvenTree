@@ -28,6 +28,10 @@ export type TableState = {
   setHiddenColumns: (columns: string[]) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  recordCount: number;
+  setRecordCount: (count: number) => void;
+  page: number;
+  setPage: (page: number) => void;
 };
 
 /**
@@ -71,6 +75,12 @@ export function useTable(tableName: string): TableState {
     setSelectedRecords([]);
   }, []);
 
+  // Total record count
+  const [recordCount, setRecordCount] = useState<number>(0);
+
+  // Pagination data
+  const [page, setPage] = useState<number>(1);
+
   // A list of hidden columns, saved to local storage
   const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
     key: `inventree-hidden-table-columns-${tableName}`,
@@ -94,6 +104,10 @@ export function useTable(tableName: string): TableState {
     hiddenColumns,
     setHiddenColumns,
     searchTerm,
-    setSearchTerm
+    setSearchTerm,
+    recordCount,
+    setRecordCount,
+    page,
+    setPage
   };
 }
