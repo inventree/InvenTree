@@ -52,7 +52,7 @@ deprecated==1.2.14
 diff-match-patch==20230430
     # via django-import-export
 dj-rest-auth==5.0.2
-django==4.2.10
+django==4.2.11
     # via
     #   dj-rest-auth
     #   django-allauth
@@ -296,7 +296,7 @@ rpds-py==0.17.1
     #   referencing
 sentry-sdk==1.40.0
     # via django-q-sentry
-setuptools==69.1.0
+setuptools==69.2.0
     # via
     #   django-money
     #   opentelemetry-instrumentation

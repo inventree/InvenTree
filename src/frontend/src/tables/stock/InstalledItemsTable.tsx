@@ -1,9 +1,7 @@
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -18,7 +16,6 @@ export default function InstalledItemsTable({
 }) {
   const table = useTable('stock_item_install');
   const user = useUserState();
-  const navigate = useNavigate();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -60,11 +57,7 @@ export default function InstalledItemsTable({
         columns={tableColumns}
         props={{
           tableActions: tableActions,
-          onRowClick: (record: any) => {
-            if (record.pk) {
-              navigate(getDetailUrl(ModelType.stockitem, record.pk));
-            }
-          },
+          modelType: ModelType.stockitem,
           params: {
             belongs_to: parentId,
             part_detail: true

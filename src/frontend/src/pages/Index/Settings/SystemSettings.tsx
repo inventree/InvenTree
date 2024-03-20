@@ -132,7 +132,6 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
             />
-            <StylishText size="xl">{t`Exchange Rates`}</StylishText>
           </>
         )
       },
