@@ -162,7 +162,7 @@ function partTableColumns(): TableColumn[] {
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
-    LinkColumn()
+    LinkColumn({})
   ];
 }
 

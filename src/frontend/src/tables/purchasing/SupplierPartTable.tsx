@@ -122,7 +122,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           );
         }
       },
-      LinkColumn(),
+      LinkColumn({}),
       NoteColumn(),
       {
         accessor: 'available',

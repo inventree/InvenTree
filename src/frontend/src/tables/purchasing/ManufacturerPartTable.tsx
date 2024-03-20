@@ -54,7 +54,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
         sortable: true
       },
       DescriptionColumn({}),
-      LinkColumn()
+      LinkColumn({})
     ];
   }, [params]);
 

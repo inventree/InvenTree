@@ -60,7 +60,7 @@ export function DescriptionColumn({
 export function LinkColumn({
   accessor = 'link'
 }: {
-  accessor: string;
+  accessor?: string;
 }): TableColumn {
   return {
     accessor: accessor,

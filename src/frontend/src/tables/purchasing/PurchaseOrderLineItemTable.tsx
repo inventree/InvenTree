@@ -181,7 +181,7 @@ export function PurchaseOrderLineItemTable({
         accessor: 'notes',
         title: t`Notes`
       },
-      LinkColumn()
+      LinkColumn({})
     ];
   }, [orderId, user]);
 
