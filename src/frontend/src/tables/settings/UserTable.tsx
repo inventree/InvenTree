@@ -255,7 +255,7 @@ export function UserTable() {
       <AddItemButton
         key="add-user"
         onClick={newUser.open}
-        tooltip={t`New user`}
+        tooltip={t`Add user`}
       />
     );
 

@@ -139,6 +139,12 @@ export function OptionsApiForm({
   const formProps: ApiFormProps = useMemo(() => {
     const _props = { ...props };
 
+    // This forcefully overrides initial data
+    // Currently, most modals do not get pre-loaded correctly
+    if (!data) {
+      _props.fields = undefined;
+    }
+
     if (!_props.fields) return _props;
 
     for (const [k, v] of Object.entries(_props.fields)) {
@@ -157,10 +163,6 @@ export function OptionsApiForm({
 
     return _props;
   }, [data, props]);
-
-  if (!data) {
-    return <LoadingOverlay visible={true} />;
-  }
 
   return <ApiForm id={id} props={formProps} />;
 }
@@ -382,8 +384,12 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
   };
 
   const isLoading = useMemo(
-    () => isFormLoading || initialDataQuery.isFetching || isSubmitting,
-    [isFormLoading, initialDataQuery.isFetching, isSubmitting]
+    () =>
+      isFormLoading ||
+      initialDataQuery.isFetching ||
+      isSubmitting ||
+      !props.fields,
+    [isFormLoading, initialDataQuery.isFetching, isSubmitting, props.fields]
   );
 
   const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {
