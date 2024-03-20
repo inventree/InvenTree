@@ -315,14 +315,7 @@
     "@babel/plugin-transform-modules-commonjs" "^7.23.0"
     "@babel/plugin-transform-typescript" "^7.22.15"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.21.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
-  version "7.23.2"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.2.tgz#062b0ac103261d68a966c4c7baf2ae3e62ec3885"
-  integrity sha512-mM8eg4yl5D6i3lu2QKPuPH4FArvJ8KhTofbE7jwMUv9KX5mBvwPAqnV3MlyBNqdp9RyRKP6Yck8TrfYrPvX3bg==
-  dependencies:
-    regenerator-runtime "^0.14.0"
-
-"@babel/runtime@^7.18.6":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.6", "@babel/runtime@^7.20.13", "@babel/runtime@^7.21.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
   version "7.23.9"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.9.tgz#47791a15e4603bb5f905bc0753801cf21d6345f7"
   integrity sha512-0CX6F+BI2s9dkUqr08KFrAIZgNFj75rdBU/DjCyYLIaV/quFjkk6T+EJ2LkZHyZTbEV4L5p97mNkUsHl2wLFAw==
@@ -1023,13 +1016,22 @@
     jiti "^1.17.1"
     lodash.get "^4.4.2"
 
-"@lingui/core@4.5.0", "@lingui/core@^4.5.0":
+"@lingui/core@4.5.0":
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/@lingui/core/-/core-4.5.0.tgz#8b907238bd0b420b372272d0a757c56bed3aed14"
   integrity sha512-8zTuIXJo5Qvjato7LWE6Q4RHiO4LjTBVOoRlqfOGYDp8VZ9w9P7Z7IJgxI7UP5Z1wiuEvnMdVF9I1C4acqXGlQ==
   dependencies:
     "@babel/runtime" "^7.20.13"
     "@lingui/message-utils" "4.5.0"
+    unraw "^3.0.0"
+
+"@lingui/core@4.7.1", "@lingui/core@^4.5.0":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/core/-/core-4.7.1.tgz#7bf1fa22ff0c6892ff6fb965f96c3775c7050697"
+  integrity sha512-Ign2qnyy1WNY7hPzkYTPYaja+5ucs3oDy+rgxs8ChGsqGFf4RjchU4W+CxqliKJ19f/hy4gaDK1DWA9h47kGvw==
+  dependencies:
+    "@babel/runtime" "^7.20.13"
+    "@lingui/message-utils" "4.7.1"
     unraw "^3.0.0"
 
 "@lingui/format-po@4.5.0":
@@ -1060,13 +1062,21 @@
   dependencies:
     "@messageformat/parser" "^5.0.0"
 
-"@lingui/react@^4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@lingui/react/-/react-4.5.0.tgz#1cae72e89890f8d270b37cdde051a3c69df97727"
-  integrity sha512-dv/oxBshyaVJ3XzbPDnWn3abhwtaS1sx8cEO2qDjs+OhW0AeWD9hyVDrduf5SBIuXFJfJQNNA8+2P2nO0lxRbQ==
+"@lingui/message-utils@4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/message-utils/-/message-utils-4.7.1.tgz#d5dfb95f2cfba44721c933cafdbf54a4a08ce6db"
+  integrity sha512-c4D9Qg575LHvJHNyDDJfw+lAfyVv+3L+j4ZkaG8elNjc06ITx6sBWETFlj9FwoE8krF/r4yyXuCdnhBgUMrvJg==
+  dependencies:
+    "@messageformat/parser" "^5.0.0"
+    js-sha256 "^0.10.1"
+
+"@lingui/react@^4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/react/-/react-4.7.1.tgz#ba59312f8dda17e423f0f360cb413850f1e4c0aa"
+  integrity sha512-acfmKDt6kg2z8wYJXc8S5SmZk1sM46f6xIZFVN+HrJBN/Z7MO9pp4FroTScOBI5zbRsdvoaRdyruNJedLplnhQ==
   dependencies:
     "@babel/runtime" "^7.20.13"
-    "@lingui/core" "4.5.0"
+    "@lingui/core" "4.7.1"
 
 "@mantine/carousel@<7":
   version "6.0.21"
@@ -2375,6 +2385,11 @@ jiti@^1.17.1:
   version "1.20.0"
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.20.0.tgz#2d823b5852ee8963585c8dd8b7992ffc1ae83b42"
   integrity sha512-3TV69ZbrvV6U5DfQimop50jE9Dl6J8O1ja1dvBbMba/sZ3YBEQqJ2VZRoQPVnhlzjNtU1vaXRZVrVjU4qtm8yA==
+
+js-sha256@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/js-sha256/-/js-sha256-0.10.1.tgz#b40104ba1368e823fdd5f41b66b104b15a0da60d"
+  integrity sha512-5obBtsz9301ULlsgggLg542s/jqtddfOpV5KJc4hajc9JV8GeY2gZHSVpYBn4nWqAUTJ9v+xwtbJ1mIBgIH5Vw==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
