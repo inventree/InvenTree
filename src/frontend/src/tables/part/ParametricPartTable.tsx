@@ -1,5 +1,7 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { useHover } from '@mantine/hooks';
+import { IconEdit } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +24,73 @@ import { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
+
+// Render an individual parameter cell
+function ParameterCell({
+  record,
+  template,
+  canEdit,
+  onEdit
+}: {
+  record: any;
+  template: any;
+  canEdit: boolean;
+  onEdit: () => void;
+}) {
+  const { hovered, ref } = useHover();
+
+  // Find matching template parameter
+  let parameter = record.parameters?.find(
+    (p: any) => p.template == template.pk
+  );
+
+  let extra: any[] = [];
+
+  let value: any = parameter?.data;
+
+  if (template?.checkbox && value != undefined) {
+    value = <YesNoButton value={parameter.data} />;
+  }
+
+  if (
+    template.units &&
+    parameter &&
+    parameter.data_numeric &&
+    parameter.data_numeric != parameter.data
+  ) {
+    extra.push(`${parameter.data_numeric} [${template.units}]`);
+  }
+
+  const handleClick = useCallback((event: any) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    event?.nativeEvent?.stopImmediatePropagation();
+    onEdit();
+  }, []);
+
+  return (
+    <div>
+      <Group grow ref={ref} position="apart">
+        <Group grow style={{ flex: 1 }}>
+          <TableHoverCard
+            value={value ?? '-'}
+            extra={extra}
+            title={t`Internal Units`}
+          />
+        </Group>
+        {hovered && canEdit && (
+          <div style={{ flex: 0 }}>
+            <Tooltip label={t`Edit parameter`}>
+              <ActionIcon size="xs" onClick={handleClick}>
+                <IconEdit />
+              </ActionIcon>
+            </Tooltip>
+          </div>
+        )}
+      </Group>
+    </div>
+  );
+}
 
 export default function ParametricPartTable({
   categoryId
@@ -128,51 +197,27 @@ export default function ParametricPartTable({
         extra: {
           template: template.pk
         },
-        render: (record: any) => {
-          // Find matching template parameter
-          let parameter = record.parameters?.find(
-            (p: any) => p.template == template.pk
-          );
+        render: (record: any) => (
+          <ParameterCell
+            record={record}
+            template={template}
+            canEdit={user.hasChangeRole(UserRoles.part)}
+            onEdit={() => {
+              setSelectedTemplate(template.pk);
+              setSelectedPart(record.pk);
+              let parameter = record.parameters?.find(
+                (p: any) => p.template == template.pk
+              );
 
-          let extra: any[] = [];
-
-          let value: any = parameter?.data;
-
-          if (template?.checkbox && value != undefined) {
-            value = <YesNoButton value={parameter.data} />;
-          }
-
-          if (
-            template.units &&
-            parameter &&
-            parameter.data_numeric &&
-            parameter.data_numeric != parameter.data
-          ) {
-            extra.push(`${parameter.data_numeric} [${template.units}]`);
-          }
-
-          // if (user.hasChangeRole(UserRoles.part)) {
-          //   if (value === undefined) {
-          //     extra.push(
-          //       <Text>{t`Click to add parameter value`}</Text>
-          //     );
-          //   } else {
-          //     extra.push(
-          //       <Text>{t`Click to edit parameter value`}</Text>
-          //     )
-          //   }
-          // }
-
-          return (
-            <>
-              <TableHoverCard
-                value={value ?? '-'}
-                extra={extra}
-                title={t`Internal Units`}
-              />
-            </>
-          );
-        }
+              if (parameter) {
+                setSelectedParameter(parameter.pk);
+                editParameter.open();
+              } else {
+                addParameter.open();
+              }
+            }}
+          />
+        )
       };
     });
   }, [user, categoryParmeters.data]);
@@ -244,22 +289,6 @@ export default function ParametricPartTable({
           onRowClick: (record) => {
             if (record.pk) {
               navigate(getDetailUrl(ModelType.part, record.pk));
-            }
-          },
-          onCellClick: ({
-            event,
-            record,
-            recordIndex,
-            column,
-            columnIndex
-          }) => {
-            // Is this a "template" column?
-            if (user.hasChangeRole(UserRoles.part) && column?.extra?.template) {
-              event?.preventDefault();
-              event?.stopPropagation();
-              event?.nativeEvent?.stopImmediatePropagation();
-
-              handleCellClick(record, column);
             }
           }
         }}
