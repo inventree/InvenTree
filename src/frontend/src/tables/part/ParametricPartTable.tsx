@@ -11,6 +11,7 @@ import { YesNoButton } from '../../components/items/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { cancelEvent } from '../../functions/events';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -60,9 +61,7 @@ function ParameterCell({
   }
 
   const handleClick = useCallback((event: any) => {
-    event?.preventDefault();
-    event?.stopPropagation();
-    event?.nativeEvent?.stopImmediatePropagation();
+    cancelEvent(event);
     onEdit();
   }, []);
 
