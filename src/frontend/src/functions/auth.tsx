@@ -183,6 +183,7 @@ export function hasToken(check_backend = false) {
       })
       .catch(() => {
         is_auth = false;
+        clearCsrfCookie();
       });
     return is_auth;
   }
@@ -193,6 +194,7 @@ export function hasToken(check_backend = false) {
  * Clear out the CSRF cookie (force session logout)
  */
 export function clearCsrfCookie() {
+  console.log('Clearing CSRF cookie');
   document.cookie =
     'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
