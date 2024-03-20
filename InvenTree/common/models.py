@@ -1750,6 +1750,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'STOCK_ENFORCE_BOM_INSTALLATION': {
+            'name': _('Check BOM when installing items'),
+            'description': _(
+                'Installed stock items must exist in the BOM for the parent part'
+            ),
+            'default': True,
+            'validator': bool,
+        },
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _(
@@ -2001,6 +2009,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _(
                 'Prevent build outputs from being completed until all required tests pass'
             ),
+            'default': False,
+            'validator': bool,
+        },
+        'TEST_STATION_DATA': {
+            'name': _('Enable Test Station Data'),
+            'description': _('Enable test station data collection for test results'),
             'default': False,
             'validator': bool,
         },

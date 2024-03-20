@@ -34,8 +34,7 @@ function attachmentTableColumns(): TableColumn[] {
         if (record.attachment) {
           return <AttachmentLink attachment={record.attachment} />;
         } else if (record.link) {
-          // TODO: Custom renderer for links
-          return record.link;
+          return <AttachmentLink attachment={record.link} external />;
         } else {
           return '-';
         }
@@ -121,7 +120,9 @@ export function AttachmentTable({
                 model: model,
                 pk: record.pk,
                 attachmentType: record.attachment ? 'file' : 'link',
-                callback: table.refreshTable
+                callback: (record: any) => {
+                  table.updateRecord(record);
+                }
               });
             }
           })

@@ -132,7 +132,6 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
             />
-            <StylishText size="xl">{t`Exchange Rates`}</StylishText>
           </>
         )
       },
@@ -212,7 +211,9 @@ export default function SystemSettings() {
               'STOCK_ALLOW_EXPIRED_BUILD',
               'STOCK_OWNERSHIP_CONTROL',
               'STOCK_LOCATION_DEFAULT_ICON',
-              'STOCK_SHOW_INSTALLED_ITEMS'
+              'STOCK_SHOW_INSTALLED_ITEMS',
+              'STOCK_ENFORCE_BOM_INSTALLATION',
+              'TEST_STATION_DATA'
             ]}
           />
         )

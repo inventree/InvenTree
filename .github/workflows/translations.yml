@@ -22,6 +22,7 @@ jobs:
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
       INVENTREE_BACKUP_DIR: ./backup
+      INVENTREE_SITE_URL: http://localhost:8000
 
     steps:
       - name: Checkout Code
