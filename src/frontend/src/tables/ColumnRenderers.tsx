@@ -2,6 +2,7 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/macro';
+import { Anchor } from '@mantine/core';
 
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
@@ -55,11 +56,38 @@ export function DescriptionColumn({
   };
 }
 
-export function LinkColumn(): TableColumn {
+export function LinkColumn({
+  accessor = 'link'
+}: {
+  accessor: string;
+}): TableColumn {
   return {
-    accessor: 'link',
-    sortable: false
-    // TODO: Custom URL hyperlink renderer?
+    accessor: accessor,
+    sortable: false,
+    render: (record: any) => {
+      let url = record[accessor];
+
+      if (!url) {
+        return '-';
+      }
+
+      return (
+        <Anchor
+          href={url}
+          target="_blank"
+          rel="noreferrer noopener"
+          onClick={(event: any) => {
+            event?.stopPropagation();
+            event?.preventDefault();
+            event?.nativeEvent?.stopImmediatePropagation();
+
+            window.open(url, '_blank', 'noopener,noreferrer');
+          }}
+        >
+          {url}
+        </Anchor>
+      );
+    }
   };
 }
 
