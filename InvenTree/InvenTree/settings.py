@@ -1025,6 +1025,7 @@ CSRF_TRUSTED_ORIGINS = get_setting(
     default_value=[],
     typecast=list,
 )
+CSRF_COOKIE_SAMESITE = None
 
 # If a list of trusted is not specified, but a site URL has been specified, use that
 if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
