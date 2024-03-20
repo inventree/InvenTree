@@ -20,6 +20,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
+import { base_url } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { ProgressBar } from '../items/ProgressBar';
@@ -292,7 +293,7 @@ function TableAnchorValue(props: FieldProps) {
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
       {make_link ? (
         <Anchor
-          href={`/platform${detailUrl}`}
+          href={`/${base_url}${detailUrl}`}
           target={data?.external ? '_blank' : undefined}
           rel={data?.external ? 'noreferrer noopener' : undefined}
         >
