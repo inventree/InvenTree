@@ -72,7 +72,7 @@ repos:
       - "@typescript-eslint/parser"
     files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.16.3
+    rev: v8.18.2
     hooks:
     -   id: gitleaks
 #-   repo: https://github.com/jumanjihouse/pre-commit-hooks
