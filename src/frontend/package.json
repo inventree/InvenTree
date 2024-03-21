@@ -34,7 +34,7 @@
         "@uiw/codemirror-theme-vscode": "^4.21.22",
         "@uiw/react-codemirror": "^4.21.22",
         "@uiw/react-split": "^5.9.3",
-        "axios": "^1.6.0",
+        "axios": "^1.6.8",
         "dayjs": "^1.11.10",
         "easymde": "^2.18.0",
         "embla-carousel-react": "^7.1.0",
