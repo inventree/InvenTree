@@ -281,7 +281,7 @@ export default function Scan() {
           />
         </Group>
         <Button onClick={toggleFullscreen} size="sm" variant="subtle">
-          {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
+          {!fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
         </Button>
       </Group>
       <Space h={'md'} />
