@@ -54,7 +54,7 @@
         "@babel/core": "^7.23.2",
         "@babel/preset-react": "^7.22.15",
         "@babel/preset-typescript": "^7.23.2",
-        "@lingui/cli": "^4.5.0",
+        "@lingui/cli": "^4.7.1",
         "@lingui/macro": "^4.5.0",
         "@playwright/test": "^1.39.0",
         "@types/node": "^20.8.6",
