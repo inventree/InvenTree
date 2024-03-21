@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-20 12:26\n"
+"PO-Revision-Date: 2024-03-21 14:12\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -869,7 +869,7 @@ msgstr "Les paramètres du système"
 
 #: src/components/nav/MainMenu.tsx:60
 #: src/defaults/menuItems.tsx:63
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:161
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:172
 msgid "Admin Center"
 msgstr "Centre Admin"
 
@@ -911,7 +911,7 @@ msgid "Pages"
 msgstr "Pages"
 
 #: src/components/nav/NavigationDrawer.tsx:67
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:122
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:133
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
 msgstr "Extensions"
@@ -1128,7 +1128,7 @@ msgid "Project Code"
 msgstr "Code du projet"
 
 #: src/components/render/ModelType.tsx:113
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:92
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:97
 msgid "Project Codes"
 msgstr "Codes du projet"
 
@@ -1227,7 +1227,7 @@ msgid "User"
 msgstr "Utilisateur"
 
 #: src/components/render/ModelType.tsx:177
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:68
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:73
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
 msgstr ""
@@ -2981,45 +2981,49 @@ msgstr "Chargeur"
 #~ msgid "Advanced Amininistrative Options for InvenTree"
 #~ msgstr "Advanced Amininistrative Options for InvenTree"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:74
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:79
 msgid "Background Tasks"
 msgstr "Tâches en arrière plan"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:80
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:85
 msgid "Error Reports"
 msgstr "Rapports d'erreur"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:86
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:91
 msgid "Currencies"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:104
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:109
 msgid "Custom Units"
 msgstr "Unités personnalisées"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:110
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:115
 #: src/pages/part/CategoryDetail.tsx:202
 msgid "Part Parameters"
 msgstr "Paramètres de la pièce"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:116
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:121
+msgid "Category Parameters"
+msgstr ""
+
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 msgid "Templates"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:128
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:139
 #: src/tables/machine/MachineTypeTable.tsx:281
 msgid "Machines"
 msgstr ""
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:138
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:149
 msgid "Quick Actions"
 msgstr "Actions rapides"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:143
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:154
 msgid "Add a new user"
 msgstr "Ajouter un utilisateur"
 
-#: src/pages/Index/Settings/AdminCenter/Index.tsx:162
+#: src/pages/Index/Settings/AdminCenter/Index.tsx:173
 msgid "Advanced Options"
 msgstr "Options avancées"
 
@@ -3638,6 +3642,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:136
 #: src/tables/notifications/NotificationsTable.tsx:31
+#: src/tables/part/PartCategoryTemplateTable.tsx:68
 msgid "Category"
 msgstr "Catégorie"
 
@@ -4684,6 +4689,27 @@ msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:106
 msgid "Add Part Category"
+msgstr ""
+
+#: src/tables/part/PartCategoryTemplateTable.tsx:39
+#: src/tables/part/PartCategoryTemplateTable.tsx:132
+msgid "Add Category Parameter"
+msgstr ""
+
+#: src/tables/part/PartCategoryTemplateTable.tsx:47
+msgid "Edit Category Parameter"
+msgstr ""
+
+#: src/tables/part/PartCategoryTemplateTable.tsx:55
+msgid "Delete Category Parameter"
+msgstr ""
+
+#: src/tables/part/PartCategoryTemplateTable.tsx:77
+msgid "Parameter Template"
+msgstr ""
+
+#: src/tables/part/PartCategoryTemplateTable.tsx:93
+msgid "[{0}]"
 msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:106
