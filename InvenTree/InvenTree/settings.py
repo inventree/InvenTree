@@ -234,6 +234,9 @@ INSTALLED_APPS = [
     'allauth.account',  # Extend user with accounts
     'allauth.socialaccount',  # Use 'social' providers
     'allauth.mfa',  # MFA for for allauth
+    'django_otp',  # OTP is needed for MFA - base package
+    'django_otp.plugins.otp_totp',  # Time based OTP
+    'django_otp.plugins.otp_static',  # Backup codes
     'dj_rest_auth',  # Authentication APIs - dj-rest-auth
     'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
     'drf_spectacular',  # API documentation
