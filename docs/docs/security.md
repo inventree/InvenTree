@@ -11,7 +11,7 @@ InvenTree is open-source, and we welcome contributions from the community. Howev
 
 We provide a written [Security Policy](https://github.com/inventree/InvenTree/blob/master/SECURITY.md) in our main repo to ensure that all security issues are handled in a timely manner.
 
-If we become aware of a security issue, we will take immediate action to address the issue, and will provide a public disclosure of the issue once it has been resolved. We support assigning CVEs to security issues where appropriate. Our past security advisories can be found [here](https://github.com/inventree/InvenTree/security/advisories)
+If we become aware of a security issue, we will take immediate action to address the issue, and will provide a public disclosure of the issue once it has been resolved. We support assigning CVEs to security issues where appropriate.  Our past security advisories can be found [here](https://github.com/inventree/InvenTree/security/advisories)
 
 ## Technical measures
 
@@ -20,6 +20,7 @@ If we become aware of a security issue, we will take immediate action to address
 The InvenTree project is hosted on GitHub, and we rely on the security measures provided by GitHub to help protect the integrity of the codebase.
 
 Among those are:
+
 - Short-lived tokens where possible
 - Dependabot for automated dependency updates / alerts
 - Integrated security reporting
@@ -28,7 +29,8 @@ Among those are:
 
 ### Codestyle
 
-We enforce style and security checks in our CI/CD pipeline, and we have a number of automated tests to ensure that the codebase is secure and functional. Checks are run on every pull request, and we require that all checks pass before a pull request can be merged.
+We enforce style and security checks in our CI/CD pipeline, and we have a number of automated tests to ensure that the codebase is secure and functional.
+Checks are run on every pull request, and we require that all checks pass before a pull request can be merged.
 
 ### Current versions
 
@@ -47,5 +49,6 @@ We are pinning dependencies to specific versions - aiming for complete reproduce
 We follow most of GitHubs community best practices, check our compilance [here](https://github.com/inventree/InvenTree/community).
 
 We also follow OpenSSF recommodations where applicable and take part in multipbe of their security efforts:
+
 - OSSF Best Practices, currently at a [level of passing](https://www.bestpractices.dev/de/projects/7179)
 - OSSF Scorecard, running with each merge [check current state](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
