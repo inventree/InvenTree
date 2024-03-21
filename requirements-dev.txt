@@ -35,7 +35,7 @@ identify==2.5.35
     # via pre-commit
 idna==3.6
     # via requests
-importlib-metadata==7.1.0
+importlib-metadata==6.11.0
     # via build
 isort==5.13.2
 nodeenv==1.8.0
