@@ -25,7 +25,7 @@ def spa_bundle(manifest_path: Union[str, Path] = '', app: str = 'web'):
 
     if manifest_path == '':
         manifest_path = Path(__file__).parent.parent.joinpath(
-            'static/web/manifest.json'
+            'static/web/.vite/manifest.json'
         )
     manifest = Path(manifest_path)
 
